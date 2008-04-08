@@ -20,10 +20,11 @@
  */
 
 #include <dtAnim/hardwaresubmesh.h>
+#include <dtAnim/submesh.h> //for the cull callback.
+#include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Material>
 #include <osg/Texture2D>
 #include <osg/PolygonMode>
-#include <dtAnim/cal3dmodelwrapper.h>
 #include <osg/Uniform>
 #include <osg/PrimitiveSet>
 #include <osg/Vec3>
@@ -56,7 +57,7 @@ namespace dtAnim
             : mWrapper(&wrapper)
             , mHardwareModel(&model)
             , mBoneTransforms(&boneTrans)
-            , mMeshID(mesh)
+            , mHardwareMeshID(mesh)
          {
          }
 
@@ -64,8 +65,8 @@ namespace dtAnim
          virtual void update(osg::NodeVisitor*, osg::Drawable* drawable)
          {
             //select the proper hardware mesh
-            mHardwareModel->selectHardwareMesh(mMeshID);
-            
+            mHardwareModel->selectHardwareMesh(mHardwareMeshID);
+
             //spin through the bones in the hardware mesh
             int numBones = mHardwareModel->getBoneCount();
             for(int bone = 0; bone < numBones; ++bone)
@@ -98,7 +99,7 @@ namespace dtAnim
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
          CalHardwareModel* mHardwareModel;
          dtCore::RefPtr<osg::Uniform> mBoneTransforms;
-         unsigned mMeshID;
+         unsigned mHardwareMeshID;
    };
 
 
@@ -138,8 +139,10 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, Cal
       }
    }
 
+
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
+   setCullCallback(new SubmeshCullCallback(*mWrapper, mHardwareModel->getVectorHardwareMesh()[mMeshID].meshId));
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 

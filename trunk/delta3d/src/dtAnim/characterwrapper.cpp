@@ -133,7 +133,7 @@ namespace dtAnim
    {
       mAnimHelper = new dtAnim::AnimationHelper();
       mAnimHelper->LoadModel(filename);
-      
+
       mLocalOffset = new osg::MatrixTransform();
       mLocalOffset->addChild(mAnimHelper->GetNode());
       BaseClass::GetMatrixNode()->addChild(mLocalOffset.get());

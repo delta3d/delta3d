@@ -29,9 +29,10 @@ namespace dtAnim
                for(int meshId = 0; meshId < coreModel->getCoreMeshCount(); meshId++)
                {
                   AttachMesh(meshId);
+                  ShowMesh(meshId);
                }
-            }      
-         }     
+            }
+         }
       }
 
    //////////////////////////////////////////////////////////////////
@@ -55,6 +56,32 @@ namespace dtAnim
       return mCalModel->detachMesh(meshID); 
    }
 
+   //////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::ShowMesh( int meshID )
+   {
+      if (meshID >= GetMeshCount())
+         return;
+
+      mMeshVisibility[meshID] = true;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::HideMesh( int meshID )
+   {
+      if (meshID >= GetMeshCount())
+         return;
+
+      mMeshVisibility[meshID] = false;
+   }
+
+   //////////////////////////////////////////////////////////////////
+   bool Cal3DModelWrapper::IsMeshVisible( int meshID )
+   {
+      if (meshID >= GetMeshCount())
+         return false;
+
+      return mMeshVisibility[meshID];
+   }
 
    //////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::SetCalModel( CalModel *model )
@@ -66,28 +93,19 @@ namespace dtAnim
       mMixer    = mCalModel->getMixer();
    }
 
-   /** 
-    * @param id : a valid ID of an animation (0 based)
-    * @param weight : the strength of this animation in relation to the other
-    *                 animations already being blended.
-    * @param delay : how long it takes for this animation to become full strength (seconds)
-    * @return true if successful, false if an error happened.
-    */
+   //////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::BlendCycle( int id, float weight, float delay )
    {
       return mMixer->blendCycle(id, weight, delay);
    }
 
-   /** 
-    * @param id : a valid ID of an animation already being blended (0 based)
-    * @param delay : how long it takes to fade this animation out (seconds)
-    * @return true if successful, false if an error happened.
-    */
+   //////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::ClearCycle( int id, float delay )
    {
       return mMixer->clearCycle(id, delay);
    }
    
+   //////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::ClearAll()
    {
       std::vector<CalAnimation*> &animList = mMixer->getAnimationVector();
@@ -108,45 +126,26 @@ namespace dtAnim
       }
    }
 
-   /** 
-    * @param id : a valid ID of a animation to perform one-time (0 based)
-    * @param delayIn : how long it takes to fade in this animation to full strength (seconds)
-    * @param delayOut: how long it takes to fade out this animation (seconds)
-    * @param weightTgt : the strength of this animation
-    * @param autoLock : true prevents the action from being reset and removed on the last
-    *                   key frame
-    * @return true if successful, false if an error happened.
-    */
+   //////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::ExecuteAction( int id, float delayIn, float delayOut, 
          float weightTgt/*=1.f*/, bool autoLock/*=false*/ )
    {
       return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);
    }
 
-   /** 
-    * @param id : a valid ID of a one-time animation already playing (0 based)
-    * @return true if successful, false if an error happened or animation doesn't exist.
-    */
+   //////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::RemoveAction( int id )
    {
       return mMixer->removeAction(id);
    }
 
-   /** Warning! This violates the protective services brought to you by the wrapper.
-    * Only modify the CalModel if you know how it will impact the rest of the 
-    * Delta3D animation system.  You have been warned.
-    * @return A pointer to the internal CalModel this class operates on.
-    */
+   //////////////////////////////////////////////////////////////////
    CalModel* Cal3DModelWrapper::GetCalModel() 
    {
       return mCalModel;
    }
 
-   /** Warning! This violates the protective services brought to you by the wrapper.
-    * Only modify the CalModel if you know how it will impact the rest of the 
-    * Delta3D animation system.  You have been warned.
-    * @return A const pointer to the internal CalModel this class operates on.
-    */
+   //////////////////////////////////////////////////////////////////
    const CalModel* Cal3DModelWrapper::GetCalModel() const
    {
       return mCalModel;
@@ -168,8 +167,8 @@ namespace dtAnim
       {
          CalCoreKeyframe* calKeyFrame = cct->getCoreKeyframe(keyframeindex);
          const CalQuaternion& calQuat = calKeyFrame->getRotation();
-         return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);     
-      }  
+         return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);
+      }
 
       return osg::Quat();
    }

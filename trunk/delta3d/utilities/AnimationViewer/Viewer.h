@@ -72,11 +72,11 @@ public slots:
    
    void OnTimeout();
    
-   ///attach a mesh to the CalModel
-   void OnAttachMesh( int meshID );
+   /// Show the mesh on the CalModel
+   void OnShowMesh( int meshID );
 
-   ///detach a mesh from the CalModel
-   void OnDetachMesh( int meshID );
+   /// Hide the mesh on CalModel from view
+   void OnHideMesh( int meshID );
 
 signals:
    void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
@@ -109,8 +109,8 @@ private:
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Group> mBoneBasisGroup;
 
-   std::vector<int> mMeshesToAttach;
-   std::vector<int> mMeshesToDetach;
+   std::vector<int> mMeshesToShow;
+   std::vector<int> mMeshesToHide;
 
    dtCore::RefPtr<dtAnim::PoseMeshDatabase> mPoseDatabase;
    dtCore::RefPtr<dtAnim::PoseMeshUtility>  mPoseUtility;

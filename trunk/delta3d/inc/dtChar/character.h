@@ -28,7 +28,7 @@
 
 
 //remove this if you really, really want to use dtChar.
-#error "***dtChar has been deprecated in favor of dtAnim. Use dtChar at your own risk.***"
+//#error "***dtChar has been deprecated in favor of dtAnim. Use dtChar at your own risk.***"
 
 
 

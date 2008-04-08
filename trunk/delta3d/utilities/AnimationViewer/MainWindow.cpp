@@ -575,13 +575,13 @@ void MainWindow::OnMeshActivated( QListWidgetItem *item )
 
    if (item->checkState() == Qt::Checked)
    {
-      //attach the mesh to the CalModel
-      emit AttachMesh(meshID);
+      //Show the mesh on the CalModel
+      emit ShowMesh(meshID);
    }
    else
    {
-      //detach the mesh from the CalModel
-      emit DetachMesh(meshID);
+      //Hide the mesh on CalModel from view
+      emit HideMesh(meshID);
    }
 }
 
