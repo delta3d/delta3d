@@ -660,7 +660,7 @@ namespace dtHLAGM
          ++messageToInteractionIterator;
       }
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::SetSiteIdentifier(unsigned short siteIdentifier)
    {

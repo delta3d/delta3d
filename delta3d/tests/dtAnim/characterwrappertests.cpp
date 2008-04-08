@@ -69,9 +69,8 @@ namespace dtAnim
 
    void CharacterWrapperTests::tearDown()
    {
-      mCharacter = 0;
+      mCharacter = NULL;
    }
-
 
    void CharacterWrapperTests::TestCharacterWrapper()
    {

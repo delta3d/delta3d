@@ -20,15 +20,15 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          QT_QTCORE_LIBRARY
                                          QT_QTGUI_LIBRARY
                                          QT_QTOPENGL_LIBRARY
-                                         DTUTIL_LIBRARY   
+                                         DTUTIL_LIBRARY
                                          DTCORE_LIBRARY
                                          DTDAL_LIBRARY
-					 DTANIM_LIBRARY
-					 DTAUDIO_LIBRARY
+                                         DTANIM_LIBRARY
+                                         DTAUDIO_LIBRARY
                                          DTABC_LIBRARY
-					 DTGAME_LIBRARY 
-					 OSGFX_LIBRARY
-					 AGL_LIBRARY)
+                                         DTGAME_LIBRARY
+                                         OSGFX_LIBRARY
+                                         AGL_LIBRARY)
 
 MESSAGE(STATUS ${QT_LIBRARIES})
 
@@ -36,7 +36,7 @@ MESSAGE(STATUS ${QT_LIBRARIES})
 #IF(WIN32)
 #TARGET_LINK_LIBRARIES(${PROG_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
 #ENDIF(WIN32)
-                                              
+
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib

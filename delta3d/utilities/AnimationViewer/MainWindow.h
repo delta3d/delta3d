@@ -1,5 +1,5 @@
-#ifndef MainWindow_h__
-#define MainWindow_h__
+#ifndef DELTA_MainWindow
+#define DELTA_MainWindow
 
 #include <QtGui/QMainWindow>
 
@@ -47,8 +47,11 @@ signals:
    void StartAction(unsigned int, float, float);
    void LODScale_Changed(float scaleValue);
    void SpeedChanged(float speedFactor);
-   void AttachMesh(int meshID);
-   void DetachMesh(int meshID);
+
+   //Show the mesh on the CalModel
+   void ShowMesh(int meshID);
+   /// Hide the mesh on CalModel from view
+   void HideMesh(int meshID);
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString &animationName, unsigned int trackCount,
@@ -116,7 +119,7 @@ private:
    PoseMeshProperties   *mPoseMeshProperties;
 
    dtQt::OSGAdapterWidget* mGLWidget;
-   
+
 private slots:
    void OnOpenCharFile();
    void OpenRecentFile();
@@ -131,4 +134,4 @@ private slots:
    void OnToggleDisplayError(bool shouldDisplay);
    void OnToggleBoneBasisDisplay(bool shouldDisplay);
 };
-#endif // MainWindow_h__
+#endif // DELTA_MainWindow

@@ -150,7 +150,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    // try to clean up the scene graph
    if (mCharacter.valid())
-   {        
+   {
       mShadeDecorator->removeChild(mCharacter->GetNode());
       mWireDecorator->removeChild(mCharacter->GetNode());
       mCharacter = NULL;
@@ -165,7 +165,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
    try
    {
       // Create a new Cal3DWrapper
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());      
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
       mCharacter = new CharDrawable(wrapper.get());  
       mAttachmentController = new dtAnim::AttachmentController;
 
@@ -236,7 +236,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    CreateBoneBasisDisplay();
  
-   LOG_DEBUG("Done loading file: " + filename.toStdString() );   
+   LOG_DEBUG("Done loading file: " + filename.toStdString() );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ void Viewer::CreateBoneBasisDisplay()
       //create a HotSpot
       dtUtil::HotSpotDefinition hotSpotDefinition;
       hotSpotDefinition.mName = *boneNameIter;
-      hotSpotDefinition.mParentName = *boneNameIter;        
+      hotSpotDefinition.mParentName = *boneNameIter;
 
       //Create the axis geometry
       dtCore::PointAxis *axis = new dtCore::PointAxis();
@@ -270,9 +270,9 @@ void Viewer::CreateBoneBasisDisplay()
       axis->SetLength(dtCore::PointAxis::Y, 0.025f);
       axis->SetLength(dtCore::PointAxis::Z, 0.025f);
 
-      mAttachmentController->AddAttachment(*axis, hotSpotDefinition);        
+      mAttachmentController->AddAttachment(*axis, hotSpotDefinition);
 
-      mBoneBasisGroup->addChild(axis->GetOSGNode());         
+      mBoneBasisGroup->addChild(axis->GetOSGNode());
 
       ++boneNameIter;
    }
@@ -296,7 +296,7 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    mPoseUtility  = new dtAnim::PoseMeshUtility;
 
    if (mPoseDatabase->LoadFromFile(filename))
-   {      
+   {
       mPoseMeshes = &mPoseDatabase->GetMeshes();
       emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
    }
@@ -463,43 +463,41 @@ void Viewer::InitWireDecorator()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnAttachMesh( int meshID )
+void Viewer::OnShowMesh( int meshID )
 {
-   mMeshesToAttach.push_back(meshID);
+   mMeshesToShow.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnDetachMesh( int meshID )
+void Viewer::OnHideMesh( int meshID )
 {
-   mMeshesToDetach.push_back(meshID);
+   mMeshesToHide.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::PostFrame( const double deltaFrameTime )
 {
    {
-      std::vector<int>::iterator attachItr = mMeshesToAttach.begin();
-      while (attachItr != mMeshesToAttach.end())
+      std::vector<int>::iterator showItr = mMeshesToShow.begin();
+      while (showItr != mMeshesToShow.end())
       {
-         bool success = mCharacter->GetCal3DWrapper()->AttachMesh( (*attachItr) );
-         assert(success);
+         mCharacter->GetCal3DWrapper()->ShowMesh( (*showItr) );
 
-         ++attachItr;
+         ++showItr;
       }
 
-      mMeshesToAttach.clear();
+      mMeshesToShow.clear();
    }
-   
+
    {
-      std::vector<int>::iterator detachItr = mMeshesToDetach.begin();
-      while (detachItr != mMeshesToDetach.end())
+      std::vector<int>::iterator hideItr = mMeshesToHide.begin();
+      while (hideItr != mMeshesToHide.end())
       {
-         bool success = mCharacter->GetCal3DWrapper()->DetachMesh( (*detachItr) );
-         assert(success);
-         ++detachItr;
+         mCharacter->GetCal3DWrapper()->HideMesh( (*hideItr) );
+         ++hideItr;
       }
 
-      mMeshesToDetach.clear();
+      mMeshesToHide.clear();
    }
 }
 

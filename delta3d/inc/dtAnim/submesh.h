@@ -139,16 +139,26 @@ namespace dtAnim
          void SetUpMaterial();
    };
 
-   class SubmeshDirtyCallback: public osg::Geometry::UpdateCallback 
+   class SubmeshDirtyCallback: public osg::Drawable::UpdateCallback 
    {
       public:
          virtual void update (osg::NodeVisitor *, osg::Drawable *d);
    };
 
-   class SubmeshLODCullCallback: public osg::Geometry::CullCallback 
+   class SubmeshCullCallback: public osg::Drawable::CullCallback 
    {
       public:
+         SubmeshCullCallback(Cal3DModelWrapper& wrapper, int meshID)
+                  : mWrapper(&wrapper)
+                  , mMeshID(meshID)
+                  {}
+
          virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
+
+      private:
+         dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
+         CalHardwareModel* mHardwareModel;
+         int mMeshID;
    };
 
    class SubmeshUserData: public osg::Object

@@ -57,14 +57,32 @@ namespace dtAnim
 
          void SetCalModel( CalModel *model );
 
-         ///Get a pointer to the internal CalModel.  For advanced users only!
+         /**
+          * Get a pointer to the internal CalModel.  For advanced users only!
+          * 
+          * Warning! This violates the protective services brought to you by the wrapper.
+          * Only modify the CalModel if you know how it will impact the rest of the 
+          * Delta3D animation system.  You have been warned.
+          * @return A pointer to the internal CalModel this class operates on.
+          */
          CalModel* GetCalModel();
 
-         ///Get a const pointer to the internal CalModel.  For advanced users only!
+         /** 
+          * Get a const pointer to the internal CalModel.  For advanced users only!
+          * 
+          * Warning! This violates the protective services brought to you by the wrapper.
+          * Only modify the CalModel if you know how it will impact the rest of the 
+          * Delta3D animation system.  You have been warned.
+          * @return A const pointer to the internal CalModel this class operates on.
+          */
          const CalModel* GetCalModel() const;
 
          bool AttachMesh( int meshID ); 
          bool DetachMesh( int meshID ); 
+
+         void ShowMesh( int meshID ); 
+         void HideMesh( int meshID ); 
+         bool IsMeshVisible( int meshID ); 
 
          void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
          void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
@@ -212,20 +230,45 @@ namespace dtAnim
 
          bool HasAnimation(int animID) const;
 
-         /// Add a new looping animation to blend in using the mixer
+         /** 
+          * @param id : a valid ID of an animation (0 based)
+          * @param weight : the strength of this animation in relation to the other
+          *                 animations already being blended.
+          * @param delay : how long it takes for this animation to become full strength (seconds)
+          * @return true if successful, false if an error happened.
+          */
          bool BlendCycle(int id, float weight, float delay);
 
-         /// Remove an existing looping animation from the mixer
+         /** 
+          * @param id : a valid ID of an animation already being blended (0 based)
+          * @param delay : how long it takes to fade this animation out (seconds)
+          * @return true if successful, false if an error happened.
+          */
          bool ClearCycle(int id, float delay);
 
          /// Remove all existing animations from the mixer
          void ClearAll();
 
-         /// Perform a one-time animation from the mixer
+         /** 
+          * Peform a one time animation.
+          * 
+          * @param id : a valid ID of a animation to perform one-time (0 based)
+          * @param delayIn : how long it takes to fade in this animation to full strength (seconds)
+          * @param delayOut: how long it takes to fade out this animation (seconds)
+          * @param weightTgt : the strength of this animation
+          * @param autoLock : true prevents the action from being reset and removed on the last
+          *                   key frame
+          * @return true if successful, false if an error happened.
+          */
          bool ExecuteAction(int id, float delayIn, float delayOut,
                             float weightTgt=1.0f, bool autoLock=false);
 
-         /// Remove an existing one-time animation from the mixer
+         /** 
+          * Remove an existing one-time animation from the mixer
+          * 
+          * @param id : a valid ID of a one-time animation already playing (0 based)
+          * @return true if successful, false if an error happened or animation doesn't exist.
+          */
          bool RemoveAction(int id);
 
          /// sets the offset time used in synchronized looping animations.
@@ -233,15 +276,16 @@ namespace dtAnim
          /// @return the offset time used when playing looping animations.
          float GetAnimationTime();
 
-   protected:
-      virtual ~Cal3DModelWrapper();
-
+      protected:
+         virtual ~Cal3DModelWrapper();
 
       private:
          CalModel    *mCalModel;
          CalRenderer *mRenderer;
          CalMixer    *mMixer;
-   
+
+         typedef std::map<int, bool> MeshVisibilityMap;
+         MeshVisibilityMap mMeshVisibility;
    };
 }//namespace dtAnim
 

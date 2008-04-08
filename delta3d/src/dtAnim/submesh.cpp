@@ -66,31 +66,42 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////
-   bool SubmeshLODCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const 
+   bool SubmeshCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const 
    { 
+      if (!mWrapper->IsMeshVisible(mMeshID) || mWrapper->GetMeshCount() <= mMeshID)
+      {
+         return true;
+      }
+
       osg::Node* parent = nv->getNodePath().back();
       if (parent != NULL)
       {
          float distance = nv->getDistanceToEyePoint(parent->getBound().center(), true);
-         SubmeshDrawable* submeshDraw = static_cast<SubmeshDrawable*>(drawable);
-
-         float start = submeshDraw->GetLODOptions().GetStartDistance();
-         float end = submeshDraw->GetLODOptions().GetEndDistance();
-
-         float slope = 1.0f / (end - start);
-
-         float lod = 1.0f - (slope*(distance - start));
-         dtUtil::Clamp(lod, 0.0f, 1.0f);
-         if (!osg::isNaN(lod))
+         
+         SubmeshDrawable* submeshDraw = dynamic_cast<SubmeshDrawable*>(drawable);
+         if (submeshDraw != NULL)
          {
-            ///copy user data to the state.
-            //dtCore::RefPtr<SubmeshUserData> userData = new SubmeshUserData;
-            //userData->mLOD = lod;
-            //renderInfo->setUserData(userData.get());
-
-            submeshDraw->SetCurrentLOD(lod);
-
-            //std::cout << "Setting LOD to " << lod << std::endl;
+            // disappear once the max distance is reached
+            if (distance > submeshDraw->GetLODOptions().GetMaxVisibleDistance())
+               return true;
+   
+            float start = submeshDraw->GetLODOptions().GetStartDistance();
+            float end = submeshDraw->GetLODOptions().GetEndDistance();
+            float slope = 1.0f / (end - start);
+   
+            float lod = 1.0f - (slope*(distance - start));
+            dtUtil::Clamp(lod, 0.0f, 1.0f);
+            if (!osg::isNaN(lod))
+            {
+               ///copy user data to the state.
+               //dtCore::RefPtr<SubmeshUserData> userData = new SubmeshUserData;
+               //userData->mLOD = lod;
+               //renderInfo->setUserData(userData.get());
+   
+               submeshDraw->SetCurrentLOD(lod);
+   
+               //std::cout << "Setting LOD to " << lod << std::endl;
+            }
          }
       }
 
@@ -119,7 +130,7 @@ namespace dtAnim
       }
 
       //setUpdateCallback(new SubmeshDirtyCallback());
-      setCullCallback(new SubmeshLODCullCallback());
+      setCullCallback(new SubmeshCullCallback(*mWrapper, mMeshID));
       setComputeBoundingBoxCallback(new SubmeshComputeBound());
    }
 
