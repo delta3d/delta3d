@@ -401,6 +401,14 @@ namespace dtAnim
 
                glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
                glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+               // This data could potential cause problems
+               // so we clear it out here (i.e CEGUI incompatible)
+               state.setVertexPointer(NULL);
+
+               state.setNormalPointer(NULL);
+               state.setTexCoordPointer(0, NULL);
+               state.setTexCoordPointer(1, NULL);
          }
 
          // end the rendering
