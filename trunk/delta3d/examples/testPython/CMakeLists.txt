@@ -1,7 +1,7 @@
 
 SET(PROG_NAME     testPython)
 
-file(GLOB PROG_SOURCES "*.cpp" "*.h")
+file(GLOB PROG_SOURCES "*.cpp" "*.h")
 list(REMOVE_ITEM PROG_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
 ADD_EXECUTABLE(${PROG_NAME}
