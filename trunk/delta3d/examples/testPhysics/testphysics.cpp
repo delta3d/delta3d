@@ -211,42 +211,36 @@ protected:
             break;
          }
          case 'b' :
-         {
-            if( mObjects.size() < mLimit )
             {
-               RefPtr<Object> box = new Object("box");
-               box->LoadFile( "models/physics_crate.ive" );
-               
-               Transform xform(  RandFloat( -2.0f,2.0f ),
-                                 RandFloat( -2.0f, 2.0f ),
-                                 RandFloat( 8.0f, 13.0f ),
-                                 RandFloat( 0.0f, 180.0f ),
-                                 RandFloat( 0.0f, 90.0f ),
-                                 RandFloat( 0.0f, 90.0f ) );
-               box->SetCollisionBox();
-               box->SetTransform(xform);
+               if( mObjects.size() < mLimit )
+               {
+                  RefPtr<Object> box = new Object("box");
+                  box->LoadFile( "models/physics_crate.ive" );
 
-               float randomScale = RandFloat( 0.5f, 2.0f );
-               box->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
+                  box->SetCollisionBox();
+                  box->SetTransform( GetStartTransform() );
 
-               double lx = 1.0;
-               double ly = 1.0;
-               double lz = 1.0;
+                  float randomScale = RandFloat( 0.5f, 2.0f );
+                  box->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
-               dMass mass;
-               dMassSetBox( &mass, 1.0, lx, ly, lz );
-               box->SetMass(&mass);
+                  double lx = 1.0;
+                  double ly = 1.0;
+                  double lz = 1.0;
 
-               box->EnableDynamics();
+                  dMass mass;
+                  dMassSetBox( &mass, 1.0, lx, ly, lz );
+                  box->SetMass(&mass);
 
-               mToAdd.push(box);
-            }
-            else
-            {
-               mToRemove.push( mObjects.front() );
-            }
-            verdict = true;
-            break;
+                  box->EnableDynamics();
+
+                  mToAdd.push(box);
+               }
+               else
+               {
+                  mToRemove.push( mObjects.front() );
+               }
+               verdict = true;
+               break;
          }
          case 's' :
          {
@@ -255,18 +249,11 @@ protected:
                RefPtr<Object> sphere = new Object("sphere");
                sphere->LoadFile( "models/physics_happy_sphere.ive" );
 
-               Transform xform(  RandFloat( -2.0f, 2.0f ),
-                                 RandFloat( -2.0f, 2.0f ),
-                                 RandFloat( 8.0f, 13.0f ),
-                                 RandFloat( 0.0f, 180.0f ),
-                                 RandFloat( 0.0f, 90.0f ),
-                                 RandFloat( 0.0f, 90.0f ) );
-
                float randomScale = RandFloat( 0.5f, 2.0f );
                sphere->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
                sphere->SetCollisionSphere();
-               sphere->SetTransform(xform);
+               sphere->SetTransform( GetStartTransform() );
 
                double radius = 0.5;
 
@@ -291,18 +278,11 @@ protected:
                RefPtr<Object> cyl = new Object("cylinder");
                cyl->LoadFile( "models/physics_barrel.ive" );
 
-               Transform xform(  RandFloat( -2.0f,2.0f),
-                                 RandFloat( -2.0f, 2.0f ),
-                                 RandFloat( 8.0f, 13.0f ),
-                                 RandFloat( 0.0f, 180.0f ),
-                                 RandFloat( 0.0f, 90.0f ),
-                                 RandFloat( 0.0f, 90.0f ) );
-
                float randomScale = RandFloat( 0.5f, 2.0f );
                cyl->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
 
                cyl->SetCollisionCappedCylinder();
-               cyl->SetTransform(xform);
+               cyl->SetTransform( GetStartTransform() );
 
                double radius = 0.321; 
                double length = 1.0;
@@ -329,6 +309,25 @@ protected:
       }
 
       return verdict;
+   }
+
+   ///Use the mouse pick point to calculate the starting location
+   Transform GetStartTransform()
+   {
+      osg::Vec3 xyz;
+      if (GetView()->GetMousePickPosition(xyz))
+      {
+         Transform xform;
+         xyz[2] += 1.f; //bump up the z so objects aren't buried underground
+         xform.SetTranslation(xyz);
+         xform.SetRotation(RandFloat( 0.0f, 180.0f ),
+                           RandFloat( 0.0f, 90.0f ),
+                           RandFloat( 0.0f, 90.0f ) );
+
+         return xform;
+      }
+
+      return Transform();
    }
 
    private:

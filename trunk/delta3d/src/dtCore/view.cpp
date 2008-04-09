@@ -224,3 +224,42 @@ void View::DisablePaging()
 }
 
 
+
+bool View::GetMousePickPosition( osg::Vec3 &position )
+{
+   osgUtil::LineSegmentIntersector::Intersections hitList ;
+
+   const Camera *cam = GetCamera();
+   if (cam == NULL)  return false;
+
+   const osg::Viewport* vp = cam->GetOSGCamera()->getViewport();
+   if (vp == NULL) return false;
+
+   const float scr_width  = vp->width () ;
+   const float scr_height = vp->height() ;
+
+   const Mouse *mouse = GetMouse();
+   if (mouse == NULL) return false;
+
+   const osg::Vec2 pos = mouse->GetPosition() ;
+
+   // lower left screen has ( 0, 0 )
+   osg::Vec2 scr_map_coord( 0.0 , 0.0 ) ;
+   scr_map_coord[ 0 ] =  0.5 * ( pos.x() + 1.0 ) * scr_width;
+   scr_map_coord[ 1 ] =  0.5 * ( pos.y() + 1.0 ) * scr_height;
+
+
+   if( GetOsgViewerView()->computeIntersections( scr_map_coord.x() , scr_map_coord.y() , hitList ) )
+   {
+      std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin() ;
+      osgUtil::LineSegmentIntersector::Intersection hit = *itr ;
+      
+      position = hit.getWorldIntersectPoint() ;
+
+      return true ;
+   }
+   else
+   {
+      return false ;
+   }
+}
