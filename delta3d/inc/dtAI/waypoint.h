@@ -62,6 +62,7 @@ namespace dtAI
          void SetRenderFlag(RenderFlag rf) const{mRenderFlag = rf;}
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
 
+         ///Set a color scaling value.  Used for rendering (0.0..1.0)
          void SetGradient(float pGradient) const;
          float GetGradient() const;
 
