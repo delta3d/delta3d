@@ -148,6 +148,12 @@ namespace dtCore
          */
        double GetTargetFrameRate(){ return mTargetFrameRate; }
 
+       /** Use the mouse cursor position to do an intersection into the view.
+         * @param position : the world coordinate intersection point
+         * @return true if geometry was intersected, false otherwise
+         */
+       bool GetMousePickPosition( osg::Vec3 &position );
+
       
    protected:
 
