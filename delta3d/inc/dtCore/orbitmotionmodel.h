@@ -79,6 +79,9 @@ namespace dtCore
           */
          virtual ~OrbitMotionModel();
 
+         LogicalInputDevice *GetDefaultLogicalInputDevice() { return mDefaultInputDevice.get(); }
+         const LogicalInputDevice *GetDefaultLogicalInputDevice() const { return mDefaultInputDevice.get(); }
+
       public:
       
          /**            
@@ -214,10 +217,10 @@ namespace dtCore
           * @return If the 
           */
          virtual bool AxisStateChanged(const Axis* axis,
-                                       double oldState, 
-                                       double newState, 
-                                       double delta);         
-         
+                                       double oldState,
+                                       double newState,
+                                       double delta);
+
       private:
       
          /**

@@ -178,7 +178,7 @@ namespace dtAI
         /**
          * attempts to read a waypoint file, returns true if successful
          */
-        bool ReadFile(const std::string& pFileToRead);         
+        bool ReadFile(const std::string& pFileToRead);
 
         /**
          * Frees memory and clears waypoint mapping
@@ -195,7 +195,7 @@ namespace dtAI
         /**
          * Explicitly instantiates our static member
          */
-        static void CreateInstance(); 
+        static void CreateInstance();
 
          //setting a bool for notification that we read in new waypoints
          //we cannot call LoadActors() unless this flag is true
