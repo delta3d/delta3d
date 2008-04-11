@@ -74,10 +74,7 @@ IF(WIN32)
     ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
     #needed for net plugin
     SET (DELTA3D_SOCKET_LIBS wsock32)
-    # Both Cygwin and Msys need -DNOMINMAX ???
-    IF(UNIX)
-        ADD_DEFINITIONS(-DNOMINMAX)
-    ENDIF(UNIX)
+    ADD_DEFINITIONS(-DNOMINMAX)
 ########################################################################################################
 # the foolowing options are MSVC specific,
 # the first DELTA3D_MSVC_VERSIONED_DLL activate a custom build-time layout that should allow to run examples and application 
