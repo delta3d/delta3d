@@ -16,7 +16,7 @@ PROJECT(DELTA3D)
 
 ################################################################################
 # User Options
-OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" ON)
+OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
 OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
 OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
 OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
