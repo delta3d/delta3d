@@ -79,9 +79,9 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       osg::Vec3 transformed = finalRotation * mNativeForward;   
       transformed.normalize();
 
-       oss1 << "transformed = (" << transformed.x() << ", " << transformed.y() << ", " << transformed.z() << ")";
+      oss1 << "transformed = (" << transformed.x() << ", " << transformed.y() << ", " << transformed.z() << ")";
 
-      std::cout << oss1.str() << std::endl;
+      //std::cout << oss1.str() << std::endl;
 
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
@@ -101,8 +101,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       float testDotTranformed = testDirection * transformed;
       dtUtil::Clamp(testDotTranformed, -1.0f, 1.0f);
 
-      float precision = acosf(testDotTranformed);     
-
+      float precision = acosf(testDotTranformed);  
 
       //std::ostringstream oss;
       //oss << "Vert #" << vert_idx 
@@ -234,7 +233,7 @@ PoseMesh::~PoseMesh()
    for(unsigned int space=0; space<numspaces; ++space)
    {
       delete mBarySpaces[space];
-   }
+   }  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
