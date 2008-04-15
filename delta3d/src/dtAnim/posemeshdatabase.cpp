@@ -91,6 +91,8 @@ PoseMeshDatabase::~PoseMeshDatabase()
    std::for_each( mMeshes.begin(),
                   mMeshes.end(),
                   DeletePointer<PoseMeshList::value_type>() );
+
+   mMeshes.clear();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +135,9 @@ bool PoseMeshDatabase::LoadFromFile( const std::string& file )
                      mMeshes.end(),
                      DeletePointer<PoseMeshList::value_type>() );  
 
-      result = false;
+      mMeshes.clear();
+
+      result = false;    
    }
    
    return result;
