@@ -4,6 +4,7 @@
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/scene.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/keyboardmousehandler.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
@@ -229,14 +230,17 @@ bool View::GetMousePickPosition( osg::Vec3 &position )
 {
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
-   const Camera *cam = GetCamera();
+   Camera *cam = GetCamera();
    if (cam == NULL)  return false;
 
-   const osg::Viewport* vp = cam->GetOSGCamera()->getViewport();
-   if (vp == NULL) return false;
+   dtCore::DeltaWin *win = cam->GetWindow();
+   if (win == NULL )
+   {
+      return false;
+   }
 
-   const float scr_width  = vp->width () ;
-   const float scr_height = vp->height() ;
+   const float winWidth  = win->GetPosition().mWidth;
+   const float winHeight = win->GetPosition().mHeight;
 
    const Mouse *mouse = GetMouse();
    if (mouse == NULL) return false;
@@ -245,8 +249,8 @@ bool View::GetMousePickPosition( osg::Vec3 &position )
 
    // lower left screen has ( 0, 0 )
    osg::Vec2 scr_map_coord( 0.0 , 0.0 ) ;
-   scr_map_coord[ 0 ] =  0.5 * ( pos.x() + 1.0 ) * scr_width;
-   scr_map_coord[ 1 ] =  0.5 * ( pos.y() + 1.0 ) * scr_height;
+   scr_map_coord[ 0 ] =  0.5 * ( pos.x() + 1.0 ) * winWidth;
+   scr_map_coord[ 1 ] =  0.5 * ( pos.y() + 1.0 ) * winHeight;
 
 
    if( GetOsgViewerView()->computeIntersections( scr_map_coord.x() , scr_map_coord.y() , hitList ) )
