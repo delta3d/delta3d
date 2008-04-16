@@ -205,8 +205,22 @@ namespace dtCore
           *
           * @return the current distance
           */
-         float GetDistance();
-         
+         float GetDistance() const;
+
+         /**
+          * Returns the position of the focal point.
+          *
+          * @return the focal point
+          */
+         osg::Vec3 GetFocalPoint() const;
+
+         /**
+          * Sets the position of the focal point.
+          *
+          * @param point the new focal point
+          */
+         void SetFocalPoint(const osg::Vec3 &point);
+
          /**
           * Called when an axis' state has changed.
           *

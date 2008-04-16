@@ -333,11 +333,78 @@ void OrbitMotionModel::SetDistance(float distance)
  *
  * @return the current distance
  */
-float OrbitMotionModel::GetDistance()
+float OrbitMotionModel::GetDistance() const
 {
    return mDistance;
 }
-         
+
+/**
+ * Returns the position of the focal point.
+ *
+ * @return the focal point
+ */
+osg::Vec3 OrbitMotionModel::GetFocalPoint() const
+{
+   // get current position and orientation
+   osg::Vec3 xyz, hpr;
+   {
+      dtCore::Transform transform;
+      GetTarget()->GetTransform(transform);
+      transform.Get(xyz, hpr);
+   }
+
+   // get unit forward vector
+   osg::Vec3 forward(0.0f, 1.0f, 0.0f);
+   {
+      osg::Matrix mat;
+      dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
+      forward = osg::Matrix::transform3x3(forward, mat);
+   }
+
+   // step forward by distance
+   xyz += forward * GetDistance();
+
+   // that's the focal point
+   return xyz;
+}
+
+/**
+ * Sets the position of the focal point.
+ *
+ * @param point the new focal point
+ */
+void OrbitMotionModel::SetFocalPoint(const osg::Vec3f &point)
+{
+   // get current orientation
+   osg::Vec3 hpr;
+   {
+      dtCore::Transform transform;
+      GetTarget()->GetTransform(transform);
+      transform.GetRotation(hpr);
+   }
+
+   // start with focal point
+   osg::Vec3 xyz = point;
+
+   // get unit forward vector
+   osg::Vec3 forward(0.0f, 1.0f, 0.0f);
+   {
+      osg::Matrix mat;
+      dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
+      forward = osg::Matrix::transform3x3(forward, mat);
+   }
+
+   // step backward by distance
+   xyz -= forward * GetDistance();
+
+   // set the current position there
+   {
+      dtCore::Transform transform;
+      transform.Set(xyz, hpr);
+      GetTarget()->SetTransform(transform);
+   }
+}
+
 /**
  * Called when an axis' state has changed.
  *
