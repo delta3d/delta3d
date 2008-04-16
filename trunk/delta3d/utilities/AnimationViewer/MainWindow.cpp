@@ -502,7 +502,7 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
 /////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
 {   
-   assert(weightList.size() == (size_t)mAnimListWidget->rowCount());
+   if (weightList.size() != (size_t)mAnimListWidget->rowCount()) { return; }
 
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
    {

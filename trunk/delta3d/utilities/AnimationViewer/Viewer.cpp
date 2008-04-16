@@ -3,6 +3,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtGui/QColor>
+#include <QtGui/QMessageBox>
 
 #include "Viewer.h"
 
@@ -299,6 +300,11 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
    {
       mPoseMeshes = &mPoseDatabase->GetMeshes();
       emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
+   }
+   else
+   {
+      // Unable to load pose mesh (this will probably induce a timer callback to timeout())
+      QMessageBox::warning(NULL, "Error", "Unable to load pose meshes!", QMessageBox::Ok);
    }
 }
 
