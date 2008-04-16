@@ -67,8 +67,7 @@ namespace dtAnim
       */
       void BlendPoses(const PoseMesh *poseMesh,
                       dtAnim::Cal3DModelWrapper* model,
-                      const PoseMesh::TargetTriangle &targetTriangle, 
-                      float blendTime);
+                      const PoseMesh::TargetTriangle &targetTriangle);
 
       void SetBaseReferencePoses(std::vector<BaseReferencePose> *poseList,
                                  const dtAnim::Cal3DModelWrapper* model );
