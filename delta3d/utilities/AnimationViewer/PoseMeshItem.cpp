@@ -305,7 +305,7 @@ void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-   if (!IsItemMovable())
+   if (!IsItemMovable() && (event->buttons() & Qt::LeftButton))
    {
       // Update our blend to the latest and greatest position
       mLastMousePos = event->pos();
@@ -326,7 +326,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
    if (targetTri.mIsInside)
    { 
       dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
-      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri);
+      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri, 0.0f);
 
       if (mAreErrorSamplesDisplayed)
       {      
@@ -677,7 +677,7 @@ float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
                                     meshSpaceTrueValue.y(),
                                     blendTarget);
 
-   mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, blendTarget);
+   mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, blendTarget, 0.0f);
 
    // Apply the blended pose for this sample
    modelWrapper->Update(0.0f);
@@ -791,7 +791,7 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       outDirection = boneRotation * nativeBoneForward;
 
       // Re-apply the previous animation
-      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
+      mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri, 0.0f);  
       modelWrapper->Update(0.0f);
    }   
 }
@@ -918,7 +918,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       modelWrapper->Update(0.0f);
 
       // Apply the animation to test
-      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick);  
+      mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, trianglePick, 0.0f);  
 
       // Apply new blend to skeleton
       modelWrapper->Update(0.0f);
