@@ -927,13 +927,6 @@ void AudioManager::PreFrame( const double deltaFrameTime )
          continue;
       }
 
-      // set rolloff factor for attenuation
-      if( cmd == Sound::kCommand[Sound::MIN_GAIN] )
-      {
-         SetRolloff( snd.get() );
-         continue;
-      }
-
       // set minimum gain for attenuation
       if( cmd == Sound::kCommand[Sound::MIN_GAIN] )
       {
