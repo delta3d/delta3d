@@ -37,7 +37,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
 											  OSGTEXT_LIBRARY
-                                              OSGSIM_LIBRARY											 
+                                   OSGSIM_LIBRARY
 											  OSGDB_LIBRARY
 											  OSGGA_LIBRARY
 											  OSGVIEWER_LIBRARY
@@ -53,6 +53,11 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 					  ${MATH_LIBRARY}
 					  ${CARBON_LIBRARY}
 					  )
+
+if (X11_FOUND)
+   TARGET_LINK_LIBRARIES( ${LIB_NAME}
+               ${X11_LIBRARIES} Xxf86vm)
+endif (X11_FOUND)
                       
 IF (WIN32)
 TARGET_LINK_LIBRARIES(${LIB_NAME} Rpcrt4)

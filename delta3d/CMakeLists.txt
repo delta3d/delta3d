@@ -51,19 +51,22 @@ IF(APPLE)
     SET(CMAKE_C_FLAGS "-pipe -mmacosx-version-min=10.4")
     SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -compatibility_version 2 -current_version 2" )
     SET(CMAKE_CXX_FLAGS_DEBUG "-gdwarf-2")
+ELSE (APPLE)
+   #We only want X11 if we are not running on OSX, but still with a unix-like environment 
+   IF(UNIX)
+       FIND_PACKAGE(X11)
+   ENDIF(UNIX)
+
 ENDIF(APPLE)
 
 IF(UNIX)
-    # Not sure what this will do on Cygwin and Msys
-    # Also, remember OS X X11 is a user installed option so it may not exist.
-    FIND_PACKAGE(X11)
-    # Some Unicies need explicit linkage to the Math library or the build fails.
+     # Some Unicies need explicit linkage to the Math library or the build fails.
     FIND_LIBRARY(MATH_LIBRARY m)
 
     ADD_DEFINITIONS(-DSIGSLOT_PURE_ISO)
 
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-non-virtual-dtor")
-ENDIF(UNIX)
+ENDIF (UNIX)
         
 # Common global definitions
 ADD_DEFINITIONS(-DNO_DTCHAR)
