@@ -179,7 +179,7 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
 
 
 /////////////////////////////////////////////////
-bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y )
+bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y ) const
 {
    if ( x < -1.0f || x > 1.0f ) return false;
    if ( y < -1.0f || y > 1.0f ) return false;
@@ -195,13 +195,13 @@ bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y
 }
 
 /////////////////////////////////////////////////
-bool DeltaWin::CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy )
+bool DeltaWin::CalcPixelCoords( const osg::Vec2 &window_xy, osg::Vec2 &pixel_xy ) const
 {
    return CalcPixelCoords( window_xy.x(), window_xy.y(), pixel_xy.x(), pixel_xy.y() );
 }
 
 /////////////////////////////////////////////////
-bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
+bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y ) const
 {
    int wx, wy;
    int w, h;
@@ -225,7 +225,7 @@ bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &
 }
 
 /////////////////////////////////////////////////
-bool DeltaWin::CalcWindowCoords( osg::Vec2 pixel_xy, osg::Vec2& window_xy )
+bool DeltaWin::CalcWindowCoords( const osg::Vec2 &pixel_xy, osg::Vec2 &window_xy ) const
 {
    return CalcWindowCoords( pixel_xy.x(), pixel_xy.y(), window_xy.x(), window_xy.y() );
 }

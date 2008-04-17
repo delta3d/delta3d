@@ -112,12 +112,12 @@ namespace dtCore
        *
        * @return bool  : Returns true if the (x,y) is a valid window coordinate
        */
-      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y );
-      bool CalcPixelCoords( osg::Vec2 window_xy, osg::Vec2& pixel_xy );
+      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y ) const;
+      bool CalcPixelCoords( const osg::Vec2 &window_xy, osg::Vec2 &pixel_xy ) const;
 
       ///Calculate the window coords ([-1,1],[-1,1]), given the screen pixel coords (x,y) ([0,w],[0,h])
-      bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y );
-      bool CalcWindowCoords( osg::Vec2 pixel_xy, osg::Vec2& window_xy );
+      bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y ) const;
+      bool CalcWindowCoords( const osg::Vec2 &pixel_xy, osg::Vec2 &window_xy ) const;
 
       ///Draw the cursor or not
       void ShowCursor( bool show = true );
