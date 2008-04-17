@@ -23,8 +23,8 @@ void initDeltaWinBindings()
    DeltaWin* (*DeltaWinGI1)(int) = &DeltaWin::GetInstance;
    DeltaWin* (*DeltaWinGI2)(std::string) = &DeltaWin::GetInstance;
 
-   bool (DeltaWin::*CalcPixelCoords1)(osg::Vec2, osg::Vec2&) = &DeltaWin::CalcPixelCoords;
-   bool (DeltaWin::*CalcWindowCoords1)(osg::Vec2, osg::Vec2&) = &DeltaWin::CalcWindowCoords;
+   bool (DeltaWin::*CalcPixelCoords1) (const osg::Vec2 &, osg::Vec2 &) const = &DeltaWin::CalcPixelCoords;
+   bool (DeltaWin::*CalcWindowCoords1)(const osg::Vec2 &, osg::Vec2 &) const = &DeltaWin::CalcWindowCoords;
 
    bool (*DeltaWinCSR1)(int,int,int,int) = &DeltaWin::ChangeScreenResolution;
    bool (*DeltaWinCSR2)(DeltaWin::Resolution) = &DeltaWin::ChangeScreenResolution;
