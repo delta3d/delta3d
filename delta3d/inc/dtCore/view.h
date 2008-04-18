@@ -149,10 +149,22 @@ namespace dtCore
        double GetTargetFrameRate(){ return mTargetFrameRate; }
 
        /** Use the mouse cursor position to do an intersection into the view.
-         * @param position : the world coordinate intersection point
+         * @param intersectionPoint : the world coordinate intersection point
+         * @param traversalMask : the bit mask to use for the intersection traversal
          * @return true if geometry was intersected, false otherwise
          */
-       bool GetMousePickPosition( osg::Vec3 &position );
+       bool GetMousePickPosition( osg::Vec3 &intersectionPoint,
+                                  unsigned int traversalMask = 0xffffffff);
+
+       /** Use the supplied mouse position to do an intersection into the view.
+         * @param intersectionPoiont : the world coordinate intersection point
+         * @param mousePos : the mouse position to use (-1..1), (-1..1)
+         * @param traversalMask : the bit mask to use for the intersection traversal
+         * @return true if geometry was intersected, false otherwise
+         */
+       bool GetPickPosition( osg::Vec3 &intersectionPoint, 
+                             const osg::Vec2 &mousePos, 
+                             unsigned int traversalMask = 0xffffffff );
 
       
    protected:
