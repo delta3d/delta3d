@@ -12,6 +12,7 @@
 FIND_PATH(CPPUNIT_INCLUDE_DIR cppunit/extensions/HelperMacros.h
     $ENV{CPPUNIT_DIR}/include
     $ENV{CPPUNIT_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -31,6 +32,7 @@ FIND_LIBRARY(${MYLIBRARY}
     PATHS
     $ENV{CPPUNIT_DIR}/lib
     $ENV{CPPUNIT_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks

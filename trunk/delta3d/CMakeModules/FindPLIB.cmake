@@ -13,6 +13,7 @@ FIND_PATH(PLIB_INCLUDE_DIR plib/js.h
     $ENV{PLIB_DIR}/include
     $ENV{PLIB_DIR}
     $ENV{PLIB_ROOT}/include
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -36,6 +37,7 @@ MACRO(FIND_PLIB_LIBRARY MYLIBRARY MYLIBRARYNAMES)
         $ENV{OSGDIR}/lib
         $ENV{OSGDIR}
         $ENV{PLIB_ROOT}/lib
+        ${DELTA_DIR}/ext/lib
         $ENV{DELTA_ROOT}/ext/lib
         ~/Library/Frameworks
         /Library/Frameworks

@@ -15,6 +15,7 @@ FIND_PATH(OSG_INCLUDE_DIR osg/Node
     $ENV{OSGDIR}/include
     $ENV{OSGDIR}
     $ENV{OSG_ROOT}/include
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -38,7 +39,10 @@ MACRO(FIND_OSG_LIBRARY MYLIBRARY MYLIBRARYNAME)
         $ENV{OSGDIR}/lib
         $ENV{OSGDIR}
         $ENV{OSG_ROOT}/lib
+        ${DELTA_DIR}/ext/lib
+        ${DELTA_DIR}/ext/lib64
         $ENV{DELTA_ROOT}/ext/lib
+        $ENV{DELTA_ROOT}/ext/lib64
         ~/Library/Frameworks
         /Library/Frameworks
         /usr/local/lib

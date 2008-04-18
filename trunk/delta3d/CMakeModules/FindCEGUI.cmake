@@ -15,6 +15,7 @@ FIND_PATH(CEGUI_INCLUDE_DIR CEGUI.h
     $ENV{CEGUIDIR}/include/CEGUI
     $ENV{CEGUIDIR}
     $ENV{CEGUI_ROOT}/include/CEGUI
+    ${DELTA_DIR}/ext/inc/CEGUI
     $ENV{DELTA_ROOT}/ext/inc/CEGUI
     ~/Library/Frameworks/CEGUI.framework/Headers/CEGUI
     /Library/Frameworks/CEGUI.framework/Headers/CEGUI
@@ -38,6 +39,7 @@ MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAMES)
         $ENV{CEGUIDIR}/lib
         $ENV{CEGUIDIR}
         $ENV{CEGUI_ROOT}/lib
+        ${DELTA_DIR}/ext/lib
         $ENV{DELTA_ROOT}/ext/lib
         ~/Library/Frameworks
         /Library/Frameworks

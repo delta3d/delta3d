@@ -13,6 +13,7 @@ FIND_PATH(HAWKNL_INCLUDE_DIR nl.h
     ${HAWKNL_DIR}/include
     $ENV{HAWKNL_DIR}/include
     $ENV{HAWKNL_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -36,6 +37,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${HAWKNL_DIR}/lib
     $ENV{HAWKNL_DIR}/lib
     $ENV{HAWKNL_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks

@@ -10,6 +10,7 @@
 FIND_PATH(FLTK_INCLUDE_DIR FL.H
     $ENV{FLTK_DIR}/include
     $ENV{FLTK_DIR}
+    ${DELTA_DIR}/ext/inc/FL
     $ENV{DELTA_ROOT}/ext/inc/FL
     ~/Library/Frameworks
     /Library/Frameworks
@@ -30,8 +31,9 @@ FIND_LIBRARY(${MYLIBRARY}
     NAMES ${MYLIBRARYNAME}
     PATHS
     ${FLTK_DIR}/lib
-    $ENV{GNE_DIR}/lib
-    $ENV{GNE_DIR}
+    $ENV{FLTK_DIR}/lib
+    $ENV{FLTK_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks

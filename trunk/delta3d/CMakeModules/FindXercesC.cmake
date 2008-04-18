@@ -13,6 +13,7 @@ FIND_PATH(XERCES_INCLUDE_DIR xercesc
     ${XERCES_DIR}/include
     $ENV{XERCES_DIR}/include
     $ENV{XERCES_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/include
@@ -36,6 +37,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${XERCES_DIR}/lib
     $ENV{XERCES_DIR}/lib
     $ENV{XERCES_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/lib

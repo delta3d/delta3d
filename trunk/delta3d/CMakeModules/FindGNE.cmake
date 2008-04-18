@@ -13,6 +13,7 @@ FIND_PATH(GNE_INCLUDE_DIR gnelib.h
     ${GNE_DIR}/include
     $ENV{GNE_DIR}/include
     $ENV{GNE_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -35,6 +36,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${GNE_DIR}/lib
     $ENV{GNE_DIR}/lib
     $ENV{GNE_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks
