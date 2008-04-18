@@ -13,6 +13,7 @@ FIND_PATH(GDAL_INCLUDE_DIR gdal.h
     ${GDAL_DIR}/include
     $ENV{GDAL_DIR}/include
     $ENV{GDAL_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/include
@@ -37,6 +38,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${GDAL_DIR}/lib
     $ENV{GDAL_DIR}/lib
     $ENV{GDAL_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/lib

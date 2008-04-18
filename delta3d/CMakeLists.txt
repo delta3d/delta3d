@@ -34,7 +34,8 @@ SET(DELTA32_SONAMES TRUE)
 # Maybe this can be used override existing behavior if needed?
 SET(CMAKE_MODULE_PATH "${DELTA3D_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
-# Find OpenGL
+SET(DELTA_DIR ${CMAKE_SOURCE_DIR})
+
 FIND_PACKAGE(OpenGL REQUIRED)
 
 # Add macro functions 

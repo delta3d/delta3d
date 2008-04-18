@@ -79,6 +79,7 @@ SET(BOOST_DIR_SEARCH
   ${BOOST_DIR_SEARCH}
   C:/boost/include
   D:/boost/include
+  ${DELTA_DIR}/ext/inc
   $ENV{DELTA_ROOT}/ext/inc
   ~/Library/Frameworks
   /Library/Frameworks
@@ -182,6 +183,7 @@ MACRO(FIND_BOOST_PYTHON_LIBRARY MYLIBRARY MYLIBRARYNAME)
         NAMES ${MYLIBRARYNAME}
         PATHS
         ${Boost_LIBRARY_DIR}      
+        ${DELTA_DIR}/ext/lib
         ~/Library/Frameworks
         /Library/Frameworks
         /usr/local/lib

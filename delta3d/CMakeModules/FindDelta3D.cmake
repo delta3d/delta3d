@@ -11,7 +11,7 @@
 # Created by Robert Osfield. 
 
 FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
-    ${DELTA3D_DIR}/include
+    ${DELTA_DIR}/include
     $ENV{DELTA_ROOT}/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -26,7 +26,7 @@ FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
 )
 
 FIND_PATH( DELTA3D_EXT_DIR inc
-    ${DELTA3D_DIR}/ext
+    ${DELTA_DIR}/ext
     $ENV{DELTA_ROOT}/ext
 )
 

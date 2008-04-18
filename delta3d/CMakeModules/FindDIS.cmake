@@ -13,6 +13,7 @@ FIND_PATH(DIS_INCLUDE_DIR DIS/Pdu.h
     ${DIS_DIR}/include
     $ENV{DIS_DIR}/include
     $ENV{DIS_DIR}
+    ${DELTA_DIR}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
@@ -32,6 +33,7 @@ FIND_LIBRARY(DIS_LIBRARY
     ${DIS_DIR}/lib
     $ENV{DIS_DIR}/lib
     $ENV{DIS_DIR}
+    ${DELTA_DIR}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks
