@@ -28,7 +28,6 @@
 #include <dtCore/deltawin.h>
 #include <dtGame/basemessages.h>
 
-#include <ctime>
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(AppException);

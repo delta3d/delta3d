@@ -328,7 +328,7 @@ void UserInterface::SelectInstance()
       
       SkyColorLoadButton->color(sc);
 
-      int yr, mo, da, hr, mi, sec;
+      unsigned yr, mo, da, hr, mi, sec;
       e->GetDateTime(yr, mo, da, hr, mi, sec);
       EnvYear->value(yr);
       EnvMonth->value(mo);

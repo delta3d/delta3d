@@ -5,6 +5,7 @@
 #include <python/dtpython.h>
 #include <dtCore/environment.h>
 #include <dtCore/enveffect.h>
+#include <dtUtil/datetime.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -31,8 +32,8 @@ void initEnvironmentBindings()
 
    osg::Vec2 (Environment::*GetSunAzEl1)() const = &Environment::GetSunAzEl;
 
-   void (Environment::*SetDateTime1)(int, int, int, int, int, int) = &Environment::SetDateTime;
-   void (Environment::*SetDateTime2)(const Environment::DateTime&) = &Environment::SetDateTime;
+   void (Environment::*SetDateTime1)(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned) = &Environment::SetDateTime;
+   void (Environment::*SetDateTime2)(const dtUtil::DateTime&) = &Environment::SetDateTime;
    Environment::DateTime (Environment::*GetDateTime1)() const = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())

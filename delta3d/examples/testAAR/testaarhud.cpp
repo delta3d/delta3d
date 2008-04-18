@@ -38,7 +38,6 @@
 #include <CEGUI/CEGUIExceptions.h>
 #include <CEGUI/CEGUIPropertyHelper.h>
 
-#include <ctime>
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(HUDState);

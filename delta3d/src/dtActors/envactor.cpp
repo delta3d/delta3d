@@ -85,13 +85,13 @@ bool EnvActor::GetFogEnable() const
 }
 
 
-void EnvActor::SetTimeAndDate( const int year, const int month, const int day, const int hour, const int min, const int sec )
+void EnvActor::SetTimeAndDate( const unsigned year, const unsigned month, const unsigned day, const unsigned hour, const unsigned min, const unsigned sec )
 {
    mEnv->SetDateTime(year, month, day, hour, min, sec);
 }
 
 
-void EnvActor::GetTimeAndDate( int &year, int &month, int &day, int &hour, int &min, int &sec ) const
+void EnvActor::GetTimeAndDate( unsigned &year, unsigned &month, unsigned &day, unsigned &hour, unsigned &min, unsigned &sec ) const
 {
    mEnv->GetDateTime(year, month, day, hour, min, sec);
 }

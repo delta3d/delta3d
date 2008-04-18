@@ -24,7 +24,6 @@
 #include <sstream>
 
 #include <cstdio>
-#include <ctime>
 
 #include <osg/Math>
 #include <dtCore/globals.h>

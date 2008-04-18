@@ -37,7 +37,6 @@
 #include <dtGame/logtag.h>
 #include <dtLMS/lmscomponent.h>
 #include <dtDAL/gameevent.h>
-#include <ctime>
 
 ////////////////////////////////////////////////////////////////////
 TestAARInput::TestAARInput(const std::string &name, dtGame::LogController &logCtrl, TestAARHUD &hudComp) :

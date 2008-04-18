@@ -72,8 +72,8 @@ namespace dtActors
       * @param min The minute to set
       * @param sec The second to set
       */
-      void SetTimeAndDate(const int year, const int month, const int day,
-                                  const int hour, const int min,   const int sec);
+      void SetTimeAndDate(const unsigned year, const unsigned month, const unsigned day,
+                                  const unsigned hour, const unsigned min,   const unsigned sec);
 
 
       /**
@@ -85,7 +85,7 @@ namespace dtActors
       * @param min The minute to get
       * @param sec The second to get
       */
-      void GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const;
+      void GetTimeAndDate(unsigned &year, unsigned &month, unsigned &day, unsigned &hour, unsigned &min, unsigned &sec) const;
 
 
       void SetSkyDomeEnable( bool enabled );

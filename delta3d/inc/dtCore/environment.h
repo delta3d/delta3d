@@ -22,7 +22,7 @@
 #define DELTA_ENVIRONMENT
 
 #include <dtCore/deltadrawable.h>
-
+#include <dtUtil/datetime.h>
 #include <osg/Vec2>
 #include <osg/Vec3>
 #include <time.h>
@@ -50,16 +50,6 @@ namespace dtCore
      DECLARE_MANAGEMENT_LAYER(Environment)
 
    public:
-
-      struct DateTime
-      {
-         int mYear;
-         int mMonth;
-         int mDay;
-         int mHour;
-         int mMinute;
-         int mSecond;
-      };
 
       Environment( const std::string& name = "Environment" );
    protected:
@@ -152,15 +142,14 @@ namespace dtCore
       void Update(const double deltaFrameTime);
 
       ///Set the environment's date and time
-      void SetDateTime( int yr, int mo, int da,
-                        int hr, int mi, int sc);
+      void SetDateTime( unsigned yr, unsigned mo, unsigned da,
+                        unsigned hr, unsigned mi, unsigned sc);
 
-      void SetDateTime(const DateTime& dateTime);
+      void SetDateTime(const dtUtil::DateTime& dateTime);
 
+      void GetDateTime( unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc ) const;
 
-      void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const;
-
-      DateTime GetDateTime() const;
+      const dtUtil::DateTime& GetDateTime() const;
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong( const osg::Vec2& latLong );
@@ -232,11 +221,11 @@ namespace dtCore
       FogMode mFogMode; ///< Linear, Exp, Exp2, Advanced
       float mFogNear; ///<The near point of LINEAR fog
       
-      float mSunAltitude; ///< the current sun altitude (deg, 0=horizon)
-      float mSunAzimuth; ///<the current sun azimuth (deg, 0=north)
+      double mSunAltitude; ///< the current sun altitude (deg, 0=horizon)
+      double mSunAzimuth; ///<the current sun azimuth (deg, 0=north)
       osg::Vec3 mSunColor; ///<the current color of the sun
       osg::Vec2 mRefLatLong;  ///<the ephemeris reference lat/long (deg)
-      time_t mCurrTime;   ///< The current time/day of the sim
+      dtUtil::DateTime mCurrTime;   ///< The current time/day of the sim
 
       double mLastUpdate;
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering

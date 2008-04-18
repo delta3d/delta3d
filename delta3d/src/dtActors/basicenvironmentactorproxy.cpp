@@ -18,11 +18,11 @@
  *
  * William E. Johnson II
  */
-#include <ctime>
 #include <dtActors/basicenvironmentactorproxy.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
+#include <sstream>
 #include <dtCore/environment.h>
 
 namespace dtActors
@@ -197,13 +197,13 @@ namespace dtActors
          vec.push_back(mWeather->GetEnvironment()->GetChild(i));
    }
 
-   void BasicEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const
+   void BasicEnvironmentActor::GetTimeAndDate(unsigned &year, unsigned &month, unsigned &day, unsigned &hour, unsigned &min, unsigned &sec) const
    {
       mWeather->GetEnvironment()->GetDateTime(year, month, day, hour, min, sec);
    }
 
-   void BasicEnvironmentActor::SetTimeAndDate(const int year, const int month, const int day,
-                                              const int hour, const int min,   const int sec)
+   void BasicEnvironmentActor::SetTimeAndDate(const unsigned year, const unsigned month, const unsigned day,
+                                              const unsigned hour, const unsigned min,   const unsigned sec)
    {
       mWeather->GetEnvironment()->SetDateTime(year, month, day, hour, min, sec);
    }
@@ -227,9 +227,8 @@ namespace dtActors
 
    std::string BasicEnvironmentActor::GetCurrentTimeAndDateString() const
    {
-      time_t currentTime;
-      time(&currentTime);
-      return dtUtil::TimeAsUTC(currentTime);
+      return dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+         dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
    }
 
    dtABC::Weather& BasicEnvironmentActor::GetWeather()
@@ -240,7 +239,7 @@ namespace dtActors
    std::string BasicEnvironmentActor::GetTimeAndDateString() const
    {
       std::ostringstream oss;
-      int year, month, day, hour, min, sec;
+      unsigned year, month, day, hour, min, sec;
       GetTimeAndDate(year, month, day, hour, min, sec);
       oss << year << '-';
       if(month < 10)
