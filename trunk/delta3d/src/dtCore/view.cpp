@@ -225,8 +225,19 @@ void View::DisablePaging()
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+bool View::GetMousePickPosition( osg::Vec3 &position, unsigned int traversalMask )
+{
+   const Mouse *mouse = GetMouse();
+   if (mouse == NULL) return false;
 
-bool View::GetMousePickPosition( osg::Vec3 &position )
+   return GetPickPosition(position, mouse->GetPosition(), traversalMask);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool View::GetPickPosition( osg::Vec3 &intersectionPoint, 
+                           const osg::Vec2 &mousePos, 
+                           unsigned int traversalMask )
 {
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
@@ -242,23 +253,20 @@ bool View::GetMousePickPosition( osg::Vec3 &position )
    const float winWidth  = win->GetPosition().mWidth;
    const float winHeight = win->GetPosition().mHeight;
 
-   const Mouse *mouse = GetMouse();
-   if (mouse == NULL) return false;
-
-   const osg::Vec2 pos = mouse->GetPosition() ;
 
    // lower left screen has ( 0, 0 )
-   osg::Vec2 scr_map_coord( 0.0 , 0.0 ) ;
-   scr_map_coord[ 0 ] =  0.5 * ( pos.x() + 1.0 ) * winWidth;
-   scr_map_coord[ 1 ] =  0.5 * ( pos.y() + 1.0 ) * winHeight;
+   osg::Vec2 windowCoord( 0.0 , 0.0 ) ;
+   windowCoord[ 0 ] =  0.5 * ( mousePos.x() + 1.0 ) * winWidth;
+   windowCoord[ 1 ] =  0.5 * ( mousePos.y() + 1.0 ) * winHeight;
 
 
-   if( GetOsgViewerView()->computeIntersections( scr_map_coord.x() , scr_map_coord.y() , hitList ) )
+   if( GetOsgViewerView()->computeIntersections( windowCoord.x(), windowCoord.y(),
+                                                 hitList, traversalMask ) )
    {
       std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin() ;
       osgUtil::LineSegmentIntersector::Intersection hit = *itr ;
-      
-      position = hit.getWorldIntersectPoint() ;
+
+      intersectionPoint = hit.getWorldIntersectPoint() ;
 
       return true ;
    }
