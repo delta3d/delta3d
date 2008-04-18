@@ -22,7 +22,6 @@
 #define DELTA_EPHEMERIS
 
 #include <dtCore/export.h>
-#include <ctime>
 
 namespace dtCore
 {
@@ -33,9 +32,6 @@ namespace dtCore
                                     double elev,
                                     double *sun_alt, 
                                     double *sun_az );
-
-   ///Get the Greenwich Mean Time for the give day and time
-   DT_CORE_EXPORT time_t GetGMT(int year, int month, int day, int hour, int min, int sec);
 }
 
 #endif // DELTA_EPHEMERIS

@@ -111,49 +111,10 @@ namespace dtUtil
    }
    
    ////////////////////////////////////////////////////////////////////
-   long GetTimeZone(tm &timeParts)
-   {
-      #ifdef __APPLE__
-         return timeParts.tm_gmtoff;
-      #else
-         tzset();
-         return timezone * -1;
-      #endif
-   }
-
-   ////////////////////////////////////////////////////////////////////
    template<>
    bool ToType<bool>(const std::string& u)
    {
       return (u == "1" || u == "true" || u == "True" || u == "TRUE");
-   }
-
-   ////////////////////////////////////////////////////////////////////
-   const std::string TimeAsUTC(time_t time)
-   {
-      char data[28];
-      std::string result;
-      struct tm timeParts;
-      struct tm* tp = localtime(&time);
-      timeParts = *tp;
-   
-      long tz = GetTimeZone(timeParts);
-   
-      int tzHour = (int)floor(std::abs((double)tz / 3600));
-      int tzMin = (int)floor(std::abs((double)tz / 60) - (60 * tzHour));
-   
-      //since the function of getting hour does fabs,
-      //this needs to check the sign of tz.
-      if (tz < 0)
-         tzHour *= -1;
-   
-      snprintf(data, 28, "%04d-%02d-%02dT%02d:%02d:%02d.0%+03d:%02d",
-         timeParts.tm_year + 1900, timeParts.tm_mon + 1, timeParts.tm_mday,
-         timeParts.tm_hour, timeParts.tm_min, timeParts.tm_sec,
-         tzHour, tzMin);
-   
-      result.assign(data);
-      return result;
    }
 
    ////////////////////////////////////////////////////////////////////

@@ -42,7 +42,7 @@ Environment::Environment(const std::string& name):
    mFogNear(1.0f),
    mSunAltitude(0),
    mSunAzimuth(0),
-   mCurrTime(0),
+   mCurrTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
    mLastUpdate(0),
    mSunlightShader(new SunlightShader()),
    mSkyDomeShader(new SkyDomeShader()),
@@ -125,7 +125,6 @@ Environment::Environment(const std::string& name):
    SetFogMode(EXP2);
    SetVisibility(16000.f);
    SetFogEnable(true);
-   SetDateTime(-1, -1, -1, -1, -1, -1); //init to current system time/date
 
    Update(999.99);
 
@@ -471,28 +470,21 @@ float dtCore::Environment::GetFogDensity()
 * @param mi Minutes after the hour (0-59)
 * @param sc Seconds pass the minute (0-59)
 */
-void dtCore::Environment::SetDateTime( int yr, int mo, int da,
-                                       int hr, int mi, int sc )
+void dtCore::Environment::SetDateTime( unsigned yr, unsigned mo, unsigned da,
+                                       unsigned hr, unsigned mi, unsigned sc )
 {
-   if ((yr == -1) || (mo == -1) || (da == -1) ||
-      (hr == -1) || (mi == -1) || (sc == -1) )
-   {
-      mCurrTime = time(0);
-   }
-   else 
-   {
-      mCurrTime = GetGMT(yr-1900, mo-1, da, hr, mi, sc);
-   }
-   if( mCurrTime < 0 ) { mCurrTime = 0; }
+
+   mCurrTime.SetTime(yr, mo, da, hr, mi, sc);
+   
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__, "Sim time set to:%s",
-      asctime( localtime(&mCurrTime) ) );
+      mCurrTime.ToString(dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT));
 
    Update(999.99);
 }
 
 void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 {
-   SetDateTime(dateTime.mYear, dateTime.mMonth, dateTime.mDay, dateTime.mHour, dateTime.mMinute, dateTime.mSecond);
+   mCurrTime = dateTime;
 }
 
 /** Get the current Date and Time of this Environment within a second.
@@ -503,27 +495,14 @@ void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 * @param mi minute
 * @param sc second
 */
-void dtCore::Environment::GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const
+void dtCore::Environment::GetDateTime( unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc ) const
 {
-   if( mCurrTime < 0 )
-   {
-      yr = mo = da = hr = mi = sc = 0;
-      return;
-   }
-   struct tm *tmp = localtime(&mCurrTime);
-   yr = tmp->tm_year+1900;
-   mo = tmp->tm_mon+1;
-   da = tmp->tm_mday;
-   hr = tmp->tm_hour;
-   mi = tmp->tm_min;
-   sc = tmp->tm_sec;
+   mCurrTime.GetTime(yr, mo, da, hr, mi, sc);
 }
 
-dtCore::Environment::DateTime dtCore::Environment::GetDateTime() const
+const dtUtil::DateTime& dtCore::Environment::GetDateTime() const
 {
-   DateTime dateTime;
-   GetDateTime(dateTime.mYear, dateTime.mMonth, dateTime.mDay, dateTime.mHour, dateTime.mMinute, dateTime.mSecond);
-   return dateTime;
+   return mCurrTime;
 }
 
 void dtCore::Environment::Update(const double deltaFrameTime)
@@ -532,10 +511,7 @@ void dtCore::Environment::Update(const double deltaFrameTime)
    if (mLastUpdate > 1.0)
    {
       mLastUpdate = 0.0;      
-      double sun_alt, sun_az;
-      GetSunPos(mCurrTime, mRefLatLong[0], mRefLatLong[1], 1.0, &sun_alt, &sun_az);
-      mSunAltitude = sun_alt;
-      mSunAzimuth = sun_az;
+      GetSunPos(mCurrTime.GetGMTTime(), mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
       UpdateSkyLight();
       UpdateSunColor();
       UpdateEnvColors();

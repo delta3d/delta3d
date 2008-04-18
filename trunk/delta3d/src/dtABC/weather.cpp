@@ -238,7 +238,7 @@ void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season seaso
    mTimePeriod = period;
    mSeason = season;
 
-   int yr, mo, da, hr, mi, sc;
+   unsigned yr, mo, da, hr, mi, sc;
    mEnvironment->GetDateTime(yr, mo, da, hr, mi, sc);
 
    //the times should probably be related to the horizon events

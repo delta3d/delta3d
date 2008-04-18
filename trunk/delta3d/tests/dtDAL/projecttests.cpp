@@ -24,16 +24,15 @@
 #include <string>
 
 #include <cstdio>
-#include <ctime>
 
 #include <dtCore/globals.h>
 
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
 
 #include <dtUtil/tree.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
 #include <dtUtil/fileutils.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/datatype.h>
@@ -492,9 +491,9 @@ void ProjectTests::testResources()
 
       std::vector<dtCore::RefPtr<dtDAL::Map> > maps;
 
-      time_t currentTime;
-      time(&currentTime);
-      const std::string& utcTime = dtUtil::TimeAsUTC(currentTime);
+
+      const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+         dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 
       logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Current time as UTC is %s", utcTime.c_str());

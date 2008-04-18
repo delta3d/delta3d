@@ -10,7 +10,7 @@
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtCore/keyboard.h> //due to including scene.h
 #include <dtCore/system.h>
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
@@ -21,7 +21,6 @@
 #include <osgUtil/SceneView>
 #include <osgDB/WriteFile>
 
-#include <ctime>
 #include <osg/Version>
 
 #include <osgUtil/SceneView>
@@ -176,10 +175,8 @@ namespace dtCore
    ////////////////////////////////////////// 
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
    {
-      time_t currTime;
-      time(&currTime);
-
-      std::string timeString = dtUtil::TimeAsUTC(currTime);
+      std::string timeString = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+                                                          dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
       for(unsigned int i = 0 ; i < timeString.length(); ++i)
       {
          char c = timeString[i];

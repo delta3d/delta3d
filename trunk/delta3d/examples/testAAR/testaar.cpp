@@ -42,7 +42,6 @@
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
 
-#include <ctime>
 
 extern "C" TEST_AAR_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {

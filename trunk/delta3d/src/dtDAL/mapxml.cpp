@@ -22,7 +22,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <ctime>
 #include <cmath>
 
 #ifdef _MSC_VER
@@ -61,7 +60,7 @@
 #include <dtDAL/mapcontenthandler.h>
 
 #include <dtUtil/fileutils.h>
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
@@ -431,9 +430,8 @@ namespace dtDAL
 
          mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
 
-         time_t currTime;
-         time(&currTime);
-         const std::string& utcTime = dtUtil::TimeAsUTC(currTime);
+         const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+            dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 
          BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
          BeginElement(MapXMLConstants::HEADER_ELEMENT);

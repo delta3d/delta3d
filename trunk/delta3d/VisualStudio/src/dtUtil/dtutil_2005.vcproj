@@ -232,6 +232,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\datetime.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\exception.cpp"
 				>
 			</File>
@@ -355,6 +359,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\datastream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\datetime.h"
 				>
 			</File>
 			<File

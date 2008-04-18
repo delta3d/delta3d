@@ -19,7 +19,7 @@
  * William E. Johnson II
  */
 #include "testgameenvironmentactor.h"
-#include <dtUtil/stringutils.h>
+#include <dtUtil/datetime.h>
 #include <sstream>
 
 void TestGameEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
@@ -74,7 +74,7 @@ void TestGameEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, i
 
 void TestGameEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDate)
 {
-   int year, month, day, hour, min, sec;
+   unsigned year, month, day, hour, min, sec;
    char delimeter;
    std::istringstream iss(timeAndDate);
    // The time is stored in the universal format of:
@@ -88,9 +88,8 @@ void TestGameEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDa
 
 std::string TestGameEnvironmentActor::GetCurrentTimeAndDateString() const
 {
-   time_t currentTime;
-   time(&currentTime);
-   return dtUtil::TimeAsUTC(currentTime);
+   return dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+      dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 }
 
 std::string TestGameEnvironmentActor::GetTimeAndDateString() const
