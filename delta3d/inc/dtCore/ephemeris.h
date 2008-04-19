@@ -22,6 +22,7 @@
 #define DELTA_EPHEMERIS
 
 #include <dtCore/export.h>
+#include <time.h>
 
 namespace dtCore
 {
