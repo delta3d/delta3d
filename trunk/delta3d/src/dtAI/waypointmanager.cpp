@@ -552,18 +552,19 @@ namespace dtAI
          while(iter != endOfMap)
          {
             float gradient = (*iter).second->GetGradient();
+            float alpha    = (*iter).second->GetAlpha();
 
             if((*iter).second->GetRenderFlag() == Waypoint::RENDER_RED)
             {
-               glColor4f(1.0 * gradient, 0.0, 0.0, 1.0);
+               glColor4f(1.0 * gradient, 0.0, 0.0, alpha);
             }
             else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_GREEN)
             {
-               glColor4f(0.0, 1.0 * gradient, 0.0, 1.0);
+               glColor4f(0.0, 1.0 * gradient, 0.0, alpha);
             }
             else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_BLUE)
             {
-               glColor4f(0.0, 0.0, 1.0 * gradient, 1.0);
+               glColor4f(0.0, 0.0, 1.0 * gradient, alpha);
             }
             else
             {

@@ -66,11 +66,17 @@ namespace dtAI
          void SetGradient(float pGradient) const;
          float GetGradient() const;
 
-      private:
+         ///Set an alpha transparency value.  Used for rendering (0.0..1.0)
+         void SetAlpha(float newAlpha) const;
+         float GetAlpha() const;
+
+      private:        
          
-         mutable RenderFlag mRenderFlag;
          unsigned mID;
+
+         mutable RenderFlag mRenderFlag;
          mutable float mGradient;
+         mutable float mAlpha;
 
          osg::Vec3 mPosition;
    };
