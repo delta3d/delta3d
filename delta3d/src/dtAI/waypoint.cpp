@@ -29,9 +29,10 @@
 namespace dtAI
 {
    Waypoint::Waypoint()
-   : mRenderFlag(Waypoint::RENDER_DEFAULT)
-   , mID(0)
+   : mID(0)
+   , mRenderFlag(Waypoint::RENDER_DEFAULT)
    , mGradient(1.0f)
+   , mAlpha(1.0f)
    , mPosition()
    {
    }
@@ -42,9 +43,10 @@ namespace dtAI
    }
 
    Waypoint::Waypoint(const osg::Vec3& pPos)
-   : mRenderFlag(Waypoint::RENDER_DEFAULT)
-   , mID(0)
+   : mID(0)
+   , mRenderFlag(Waypoint::RENDER_DEFAULT)
    , mGradient(1.0f)
+   , mAlpha(1.0f)
    {
       mPosition = pPos;
    }
@@ -99,6 +101,16 @@ namespace dtAI
    float Waypoint::GetGradient() const
    {
       return mGradient;
+   }
+     
+   void Waypoint::SetAlpha(float newAlpha) const
+   {
+      mAlpha = newAlpha;
+   }
+
+   float Waypoint::GetAlpha() const
+   {
+      return mAlpha;
    }
 
 }//namespace 
