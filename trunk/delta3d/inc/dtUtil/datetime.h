@@ -165,7 +165,7 @@ namespace dtUtil
           * fractional seconds.  To get the fractional seconds use GetTime with a float for seconds or GetSecond().
           * @param the number of seconds to increase the clock by.
           */
-         void IncrementClock(float seconds);
+         void IncrementClock(double seconds);
 
          /**
           *	Gets the time internally stored using unsigned year, month, day, hour, minute, and seconds.  The float second version
@@ -209,11 +209,16 @@ namespace dtUtil
          void SetTime(unsigned year, unsigned month, unsigned day, unsigned hour, unsigned min, unsigned sec);
          
          ///Gets the time in the standard time_t format, specified as seconds elapsed since midnight, January 1, 1970        
+         ///@note this format only includes whole seconds
          time_t GetTime() const;         
          ///Gets the time in standard time_t format, the GMTOffset is added to the time before calculating time_t
          time_t GetGMTTime() const;
          ///sets time in standard time_t format, specified as seconds elapsed since midnight, January 1, 1970
          void SetTime(time_t);
+
+         ///returns the total clock time in seconds elapsed since midnight, January 1, 1970
+         ///this time includes fractional seconds
+         double GetTimeInSeconds() const;
 
          ///fills a standard c struct tm with the time
          void GetTime(tm&) const;
@@ -322,11 +327,11 @@ namespace dtUtil
          void ResetToDefaultValues();
          void GetGMTTime(time_t* t, tm& timeParts) const;
          void GetLocalTime(time_t* t, tm& timeParts) const;
-
-         float mTimeScale;
-
-         float mFractionalSeconds;
+         
+        
          float mGMTOffset;
+         float mTimeScale;
+         double mFractionalSeconds;
          unsigned mSeconds, mMinutes, mHours, mDays, mMonths, mYears;
 
          const TimeOrigin* mTimeOrigin;

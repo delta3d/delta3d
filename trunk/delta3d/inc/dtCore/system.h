@@ -188,6 +188,7 @@ namespace dtCore
        */
       Timer_t GetRealClockTime() const;
 
+
       /**
        * @note the simulation clock time is a 64 bit int in microseconds
        * @return the current simulation clock in the same format as the real clock time but can be changed
@@ -206,6 +207,13 @@ namespace dtCore
        * @return the simulation time in seconds.
        */
       double GetSimulationTime() const;
+
+      /**
+      *	@note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.  
+      *          it starts at 0 and goes up in microseconds.  This time cannot be changed but does scale
+      *          with the simulation time.
+      */
+      double GetSimTimeSinceStartup() const;
       
       /** 
        * This is the Simulation time that would be based on actual passage of time. This won't
@@ -251,9 +259,9 @@ namespace dtCore
       
       //The real world time (UTC) and a simulated, settable version of it. They are both
       // in microseconds since January 1, 1970.
-      Timer_t mRealClockTime, mSimulationClockTime;
+      Timer_t mRealClockTime, mSimulationClockTime, mSimTimeSinceStartup;
       Timer_t mLastDrawClockTime;
-      double mSimulationTime;
+      double mSimulationTime;      
       double mCorrectSimulationTime;
       double mFrameTime;
       double mTimeScale;

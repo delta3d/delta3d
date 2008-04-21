@@ -284,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtUtil\datetimetests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtGame\deadreckoningcomponenttests.cpp"
 				>
 			</File>

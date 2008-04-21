@@ -504,7 +504,10 @@ const dtUtil::DateTime& dtCore::Environment::GetDateTime() const
 {
    return mCurrTime;
 }
-
+dtUtil::DateTime& dtCore::Environment::GetDateTime() 
+{
+   return mCurrTime;
+}
 void dtCore::Environment::Update(const double deltaFrameTime)
 {
    mLastUpdate += deltaFrameTime;

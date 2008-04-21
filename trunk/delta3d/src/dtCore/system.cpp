@@ -123,6 +123,12 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   double System::GetSimTimeSinceStartup() const
+   {
+      return mSimTimeSinceStartup;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    double System::GetCorrectSimulationTime() const 
    {
       return mCorrectSimulationTime;
@@ -258,6 +264,7 @@ namespace dtCore
       mAccumulateLastRealDt = false;
 
       mSimulationTime += frameTime;
+      mSimTimeSinceStartup += Timer_t(frameTime * 1000000);
       mSimulationClockTime += Timer_t(frameTime * 1000000); 
     
       PreFrame(frameTime, mDt + mAccumulationTime);
@@ -303,6 +310,7 @@ namespace dtCore
             double simDt = mDt * mTimeScale;
             mWasPaused = false;
             mSimulationTime += simDt;
+            mSimTimeSinceStartup += Timer_t(simDt * 1000000);
             mSimulationClockTime += Timer_t(simDt * 1000000); 
 
             PreFrame(simDt, mDt);
@@ -344,6 +352,7 @@ namespace dtCore
       time_t realTime;
       time(&realTime); 
       mRealClockTime = realTime * 1000000;
+      mSimTimeSinceStartup = 0;
       mSimulationTime = mCorrectSimulationTime = 0.0;
       mLastDrawClockTime = mRealClockTime;
       mSimulationClockTime = mRealClockTime;

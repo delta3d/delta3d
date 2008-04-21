@@ -259,6 +259,12 @@ namespace dtGame
    {
       return dtCore::System::GetInstance().GetSimulationTime();
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   double GameManager::GetSimTimeSinceStartup() const
+   {
+      return dtCore::System::GetInstance().GetSimTimeSinceStartup();
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::Timer_t GameManager::GetSimulationClockTime() const
@@ -350,7 +356,7 @@ namespace dtGame
       SendMessage(*tickRemote);
 
       ProcessTimers(mRealTimeTimers, GetRealClockTime());
-      ProcessTimers(mSimulationTimers, GetSimulationClockTime());
+      ProcessTimers(mSimulationTimers, GetSimTimeSinceStartup());
 
       DoSendMessages();
 
@@ -1539,7 +1545,7 @@ namespace dtGame
       if(realTime)
          t.time = GetRealClockTime() + t.interval;
       else
-         t.time = GetSimulationClockTime() + t.interval;
+         t.time = GetSimTimeSinceStartup() + t.interval;
 
       t.repeat = repeat;
       realTime ? mRealTimeTimers.insert(t) : mSimulationTimers.insert(t);
