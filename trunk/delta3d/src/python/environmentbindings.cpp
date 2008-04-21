@@ -34,7 +34,8 @@ void initEnvironmentBindings()
 
    void (Environment::*SetDateTime1)(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned) = &Environment::SetDateTime;
    void (Environment::*SetDateTime2)(const dtUtil::DateTime&) = &Environment::SetDateTime;
-   Environment::DateTime (Environment::*GetDateTime1)() const = &Environment::GetDateTime;
+   const dtUtil::DateTime& (Environment::*GetDateTime1)() const = &Environment::GetDateTime;
+   dtUtil::DateTime& (Environment::*GetDateTime2)() = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
@@ -68,18 +69,11 @@ void initEnvironmentBindings()
       .def("Repaint", &Environment::Repaint)
       .def("SetDateTime", SetDateTime1)
       .def("SetDateTime", SetDateTime2)
-      .def("GetDateTime", GetDateTime1)
+      .def("GetDateTime", GetDateTime1, return_value_policy<copy_const_reference>() )
+      .def("GetDateTime", GetDateTime2, return_value_policy<reference_existing_object>() )
       .def("SetRefLatLong", SetRefLatLong1)
       .def("GetRefLatLong", GetRefLatLong1);
 
-   class_<Environment::DateTime>("DateTime")
-      .def_readwrite("mYear", &Environment::DateTime::mYear)
-      .def_readwrite("mMonth", &Environment::DateTime::mMonth)
-      .def_readwrite("mDay", &Environment::DateTime::mDay)
-      .def_readwrite("mHour", &Environment::DateTime::mHour)
-      .def_readwrite("mMinute", &Environment::DateTime::mMinute)
-      .def_readwrite("mSecond", &Environment::DateTime::mSecond)
-      ;
       
    enum_<Environment::FogMode>("FogMode")
       .value("LINEAR", Environment::LINEAR)
