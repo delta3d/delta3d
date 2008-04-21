@@ -551,23 +551,19 @@ namespace dtAI
 
          while(iter != endOfMap)
          {
-            float gradient = (*iter).second->GetGradient();
-            float alpha    = (*iter).second->GetAlpha();
+            const osg::Vec3 &color = (*iter).second->GetColor();
+            float alpha            = (*iter).second->GetAlpha();            
 
-            if((*iter).second->GetRenderFlag() == Waypoint::RENDER_RED)
+            // If we're using a render flag, output using this waypoint's color
+            if((*iter).second->GetRenderFlag() >= Waypoint::RENDERFLAG_FIRST &&
+               (*iter).second->GetRenderFlag() <= Waypoint::RENDERFLAG_LAST)
             {
-               glColor4f(1.0 * gradient, 0.0, 0.0, alpha);
-            }
-            else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_GREEN)
-            {
-               glColor4f(0.0, 1.0 * gradient, 0.0, alpha);
-            }
-            else if((*iter).second->GetRenderFlag() == Waypoint::RENDER_BLUE)
-            {
-               glColor4f(0.0, 0.0, 1.0 * gradient, alpha);
-            }
+               glColor4f(color.x(), color.y(), color.z(), alpha);   
+            }            
             else
             {
+               float gradient = (*iter).second->GetGradient();         
+
                osg::Vec4 waypointColor(mHelper->mWaypointColor);
                glColor4f(waypointColor[0] * gradient, waypointColor[1] * gradient, waypointColor[2] * gradient, waypointColor[3]);
             }

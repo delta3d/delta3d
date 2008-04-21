@@ -24,6 +24,7 @@
 
 #include <dtAI/export.h>
 #include <osg/Vec3>
+#include <osg/Vec4>
 
 namespace dtAI 
 {
@@ -39,7 +40,19 @@ namespace dtAI
       public:
 
          //render flags will determine how we draw our waypoints
-         enum RenderFlag{RENDER_DEFAULT = 0, RENDER_RED, RENDER_GREEN, RENDER_BLUE};
+         enum RenderFlag
+         {
+            RENDERFLAG_FIRST = 0,
+
+            RENDER_DEFAULT = RENDERFLAG_FIRST, 
+            RENDER_RED, 
+            RENDER_GREEN,
+            RENDER_BLUE, 
+            RENDER_CUSTOM,
+
+            RENDERFLAG_LAST = RENDER_CUSTOM,
+            RENDERFLAG_TOTAL
+         };
 
       public:
    
@@ -59,8 +72,11 @@ namespace dtAI
          void SetID(unsigned pID);
          unsigned GetID()const;
 
-         void SetRenderFlag(RenderFlag rf) const{mRenderFlag = rf;}
+         void SetRenderFlag(RenderFlag rf) const;
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
+
+         void SetColor(const osg::Vec3 &newColor);
+         const osg::Vec3& GetColor() const;
 
          ///Set a color scaling value.  Used for rendering (0.0..1.0)
          void SetGradient(float pGradient) const;
@@ -75,10 +91,13 @@ namespace dtAI
          unsigned mID;
 
          mutable RenderFlag mRenderFlag;
+         mutable osg::Vec3 mColor; 
          mutable float mGradient;
-         mutable float mAlpha;
+         mutable float mAlpha;         
 
-         osg::Vec3 mPosition;
+         osg::Vec3 mPosition;   
+
+         inline void SetColorFromRenderFlag() const;
    };
 }//namespace 
 
