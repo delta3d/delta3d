@@ -88,9 +88,11 @@ walkmotionmodelbindings.cpp
 
 ADD_DEPENDENCIES (${CORE_BINDINGS}
   dtCore
+  dtUtil
 )
 
 LINK_WITH_VARIABLES(${CORE_BINDINGS} 
+                                              DTUTIL_LIBRARY
                                               BOOST_PYTHON_LIBRARY
                                               PYTHON_LIBRARY
                                               OSG_LIBRARY)
