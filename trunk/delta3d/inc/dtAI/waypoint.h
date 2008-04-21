@@ -75,7 +75,7 @@ namespace dtAI
          void SetRenderFlag(RenderFlag rf) const;
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
 
-         void SetColor(const osg::Vec3 &newColor);
+         void SetColor(const osg::Vec3 &newColor) const;
          const osg::Vec3& GetColor() const;
 
          ///Set a color scaling value.  Used for rendering (0.0..1.0)

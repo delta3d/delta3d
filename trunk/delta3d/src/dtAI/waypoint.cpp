@@ -100,7 +100,7 @@ namespace dtAI
       SetColorFromRenderFlag();      
    }
 
-   void Waypoint::SetColor(const osg::Vec3 &color)
+   void Waypoint::SetColor(const osg::Vec3 &color) const
    {
       mColor = color;
 
