@@ -142,7 +142,7 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////
-   void DateTime::IncrementClock(float seconds)
+   void DateTime::IncrementClock(double seconds)
    {
       time_t timeInSeconds = *this;
       seconds *= mTimeScale;
@@ -251,6 +251,12 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////
+   double DateTime::GetTimeInSeconds() const
+   {
+      return double(GetTime()) + mFractionalSeconds;
+   }
+
+   ////////////////////////////////////////////////////////////////////
    time_t DateTime::GetTime() const
    {
       struct tm mt;
@@ -260,7 +266,7 @@ namespace dtUtil
       mt.tm_hour = mHours;
       mt.tm_min = mMinutes;
       mt.tm_sec = mSeconds;
-      mt.tm_isdst = -1; // let the system determine the proper time zone
+      mt.tm_isdst = 0;
 
 
       /**
@@ -373,7 +379,7 @@ namespace dtUtil
    {
       float offset = 7.5f;
       if(longitude < 0.0f) offset = -offset;
-      mGMTOffset = int(dayLightSavings) + (longitude + offset) / 15.0f;
+      mGMTOffset = float(int(dayLightSavings) + int((longitude + offset) / 15.0f));
    }
 
 

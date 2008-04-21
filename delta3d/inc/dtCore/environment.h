@@ -150,6 +150,7 @@ namespace dtCore
       void GetDateTime( unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc ) const;
 
       const dtUtil::DateTime& GetDateTime() const;
+      dtUtil::DateTime& GetDateTime();
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong( const osg::Vec2& latLong );

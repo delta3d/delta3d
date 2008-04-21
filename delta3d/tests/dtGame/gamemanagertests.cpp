@@ -1148,9 +1148,9 @@ void GameManagerTests::TestTimers()
    mManager->SetTimer("SimTimer1", proxy.get(), 0.001f);
    mManager->SetTimer("RepeatingTimer1", proxy.get(), 0.001f, true, true);
 
-   dtCore::Timer_t expectedSimTime  = mManager->GetSimulationClockTime() + 1000;
+   dtCore::Timer_t expectedSimTime  = mManager->GetSimTimeSinceStartup() + 1000;
    dtCore::Timer_t expectedRealTime = mManager->GetRealClockTime()       + 1000;
-   dtCore::Timer_t currentSimTime  = mManager->GetSimulationClockTime();
+   dtCore::Timer_t currentSimTime  = mManager->GetSimTimeSinceStartup();
    dtCore::Timer_t currentRealTime = mManager->GetRealClockTime();
 
    //this shouldn't ever need to run more than once, but sometimes windows doesn't sleep as long as it's supposed to.
@@ -1159,7 +1159,7 @@ void GameManagerTests::TestTimers()
       SLEEP(2);
       dtCore::System::GetInstance().Step();
 
-      currentSimTime  = mManager->GetSimulationClockTime();
+      currentSimTime  = mManager->GetSimTimeSinceStartup();
       currentRealTime = mManager->GetRealClockTime();
    }
    

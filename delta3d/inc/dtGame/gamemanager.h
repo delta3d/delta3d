@@ -789,6 +789,12 @@ namespace dtGame
          double GetSimulationTime() const;
 
          /**
+         * @return the current simulation time
+         * @see dtCore::System#GetSimTimeSinceStartup
+         */
+         double GetSimTimeSinceStartup() const;
+
+         /**
           * @return the current simulation wall-clock time
           * @see dtCore::System#GetSimulationClockTime
           */
