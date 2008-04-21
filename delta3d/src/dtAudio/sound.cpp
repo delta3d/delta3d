@@ -83,7 +83,7 @@ Sound::Sound()
    mPos[2L]       = 0.0f;
 
    mDir[0L]       = 0.0f;
-   mDir[1L]       = 1.0f;
+   mDir[1L]       = 0.0f;
    mDir[2L]       = 0.0f;
 
    mVelo[0L]      = 0.0f;
@@ -298,17 +298,13 @@ void Sound::SetTransform( const dtCore::Transform& xform, dtCore::Transformable:
    // get new transform, and break up into
    // position and direction for sound object
    dtCore::Transform    transform;
-   osg::Matrix          matrix;
    osg::Vec3            pos( 0.0f, 0.0f, 0.0f );
-   osg::Vec3            dir( 0.0f, 1.0f, 0.0f );
+   osg::Vec3            dir( 0.0f, 0.0f, 0.0f );
 
    GetTransform( transform, ABS_CS );
 
    transform.GetTranslation( pos );
-
-   transform.Get( matrix );
-   dir = osg::Matrix::transform3x3(dir, matrix);
-   //sgXformVec3( dir, matrix );
+   transform.GetRotation( dir );
 
    SetPosition( pos );
    SetDirection( dir );
