@@ -206,9 +206,6 @@ namespace dtAudio
                /// repositions sound if it's a child in scene-space
                virtual  void           OnMessage( MessageData* data );
 
-               /// override method so sound knows when it's becoming a child
-               virtual void            SetParent( dtCore::DeltaDrawable* parent );
-
                /// override methods for user to query sound state
                virtual  bool           IsPlaying( void )          const;
                virtual  bool           IsPaused( void )           const;

@@ -469,6 +469,12 @@ namespace dtAudio
          float       mGain;
          float       mPitch;
          osg::Vec3   mPos;
+         /// Sets sound direction.
+         /**
+         *  If this is not zero, then the source is automatically considered as
+         *  "directional" by OpenAL, which means its intensity is not the same
+         *  in all directions. Check OpenAL specs for details (see AL_DIRECTION).
+         */
          osg::Vec3   mDir;
          osg::Vec3   mVelo;
          float       mMinDist;

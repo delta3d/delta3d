@@ -218,6 +218,18 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
       dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
       return AL_TRUE;
    }
+   else
+   {
+      // check if we have an ALUT error
+      ALenum   alutError = 0;
+      if((alutError = alutGetError()) != ALUT_ERROR_NO_ERROR)
+      {
+         std::ostringstream finalStream;
+         finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
+         dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+         return AL_TRUE;
+      }
+   }
    return AL_FALSE;
 }
 
@@ -808,7 +820,6 @@ void AudioManager::PreFrame( const double deltaFrameTime )
       // set sound position
       if( cmd == Sound::kCommand[Sound::POSITION] )
       {
-         SetRelative( snd.get() );
          SetPosition( snd.get() );
          continue;
       }
@@ -816,7 +827,6 @@ void AudioManager::PreFrame( const double deltaFrameTime )
       // set sound direction
       if( cmd == Sound::kCommand[Sound::DIRECTION] )
       {
-         SetRelative( snd.get() );
          SetDirection( snd.get() );
          continue;
       }
@@ -824,7 +834,6 @@ void AudioManager::PreFrame( const double deltaFrameTime )
       // set sound velocity
       if( cmd == Sound::kCommand[Sound::VELOCITY] )
       {
-         SetRelative( snd.get() );
          SetVelocity( snd.get() );
          continue;
       }
@@ -1520,7 +1529,7 @@ void AudioManager::PlaySound( SoundObj* snd )
    if( snd->IsListenerRelative() )
    {
       // is listener relative
-      alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+      alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE);
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
 
       // set initial position and direction
@@ -1723,7 +1732,8 @@ void AudioManager::SetRelative( SoundObj* snd )
    {
       // does not have sound buffer
       // set flag and bail
-      snd->ResetState( Sound::POSITION );
+      snd->SetState( Sound::REL );
+      snd->ResetState( Sound::ABS );
       return;
    }
    else
@@ -1738,7 +1748,8 @@ void AudioManager::SetRelative( SoundObj* snd )
          // set flag and bail
          Log::GetInstance().LogMessage(Log::LOG_INFO, __FUNCTION__, 
             "AudioManager: A stereo Sound can't be positioned in 3D space");
-         snd->ResetState( Sound::POSITION );
+         snd->SetState( Sound::REL );
+         snd->ResetState( Sound::ABS );
          return;
       }
    }
@@ -1748,12 +1759,13 @@ void AudioManager::SetRelative( SoundObj* snd )
    {
       // sound is not playing
       // set flag and bail
-      snd->SetState( Sound::POSITION );
+      snd->SetState(Sound::REL);
+      snd->ResetState(Sound::ABS);
       return;
    }
 
    CheckForError("alGetBufferi && alIsSource calls check", __FUNCTION__, __LINE__);
-   alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+   alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
    if(CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
       return;
 
@@ -1773,7 +1785,8 @@ void AudioManager::SetAbsolute( SoundObj* snd )
    {
       // sound is not playing
       // set flag and bail
-      snd->ResetState( Sound::POSITION );
+      snd->SetState(Sound::ABS);
+      snd->ResetState(Sound::REL);
       return;
    }
 
@@ -2120,20 +2133,28 @@ void AudioManager::SoundObj::OnMessage( MessageData* data )
          // no source, don't bother with positions or direction
          return;
 
-      if( ! IsListenerRelative() )
-         // not relative, don't care about position or direction
-         return;
+      // the transform has already been set by parent classes. We just need here to
+      // copy the SoundObj position and direction to the AL object
 
+      // extract current transform from actor
       dtCore::Transform transform;
-      osg::Matrix       matrix;
-      osg::Vec3            pos   ( 0.0f, 0.0f, 0.0f );
-      osg::Vec3            dir   ( 0.0f, 1.0f, 0.0f );
+      if(IsListenerRelative())
+      {
+         GetTransform(transform, dtCore::Transformable::REL_CS);
+      }
+      else
+      {
+         GetTransform(transform, dtCore::Transformable::ABS_CS);
+      }
 
-      GetTransform( transform );
-      transform.GetTranslation( pos );
-      transform.Get( matrix );
-      dir = osg::Matrix::transform3x3(dir, matrix);
+      // extract separate values for position and direction now
+      osg::Vec3            pos   (0.0f, 0.0f, 0.0f);
+      osg::Vec3            dir   (0.0f, 0.0f, 0.0f);
 
+      transform.GetTranslation(pos);
+      transform.GetRotation(dir);
+
+      // set the values on the sound object
       SetPosition( pos );
       SetDirection( dir );
 
@@ -2191,32 +2212,19 @@ void AudioManager::SoundObj::OnMessage( MessageData* data )
 
    if( data->message == kCommand[REL] )
    {
-      SetState( Sound::POSITION );
+      SetState( Sound::REL );
+      ResetState( Sound::ABS );
       return;
    }
 
    if( data->message == kCommand[ABS] )
    {
-      ResetState( Sound::POSITION );
+      SetState( Sound::ABS );
+      ResetState( Sound::REL );
       return;
    }
    CheckForError("End of OnMessage", __FUNCTION__, __LINE__);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SoundObj::SetParent( dtCore::DeltaDrawable* parent )
-{
-   ListenerRelative( parent != NULL );
-   dtCore::Transformable::SetParent( parent );
-
-   if( parent )
-   {
-      dtCore::Transform transform;
-      SetTransform( transform, dtCore::Transformable::REL_CS );
-   }
-}
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 bool AudioManager::SoundObj::IsPlaying( void ) const
@@ -2245,7 +2253,7 @@ bool AudioManager::SoundObj::IsLooping( void ) const
 ////////////////////////////////////////////////////////////////////////////////
 bool AudioManager::SoundObj::IsListenerRelative( void ) const
 {
-   return    GetState( Sound::POSITION );
+   return    GetState( Sound::REL );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
