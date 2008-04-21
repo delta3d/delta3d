@@ -23,7 +23,7 @@
 #define DELTA_STEERINGBEHAVIOR
 
 #include <vector>
-
+#include <algorithm>
 #include <dtUtil/typetraits.h>
 #include <dtUtil/templateutility.h>
 

@@ -28,6 +28,7 @@
 #include <dtCore/globals.h>
 
 #include <dtUtil/datetime.h>
+#include <dtUtil/stringutils.h>
 
 #include <dtUtil/tree.h>
 #include <dtUtil/log.h>
