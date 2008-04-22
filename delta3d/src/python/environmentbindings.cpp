@@ -34,8 +34,8 @@ void initEnvironmentBindings()
 
    void (Environment::*SetDateTime1)(unsigned, unsigned, unsigned, unsigned, unsigned, unsigned) = &Environment::SetDateTime;
    void (Environment::*SetDateTime2)(const dtUtil::DateTime&) = &Environment::SetDateTime;
-   const dtUtil::DateTime& (Environment::*GetDateTime1)() const = &Environment::GetDateTime;
-   dtUtil::DateTime& (Environment::*GetDateTime2)() = &Environment::GetDateTime;
+   const dtUtil::DateTime &(Environment::*GetDateTime1)() const = &Environment::GetDateTime;
+   dtUtil::DateTime &(Environment::*GetDateTime2)() = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
@@ -74,7 +74,6 @@ void initEnvironmentBindings()
       .def("SetRefLatLong", SetRefLatLong1)
       .def("GetRefLatLong", GetRefLatLong1);
 
-      
    enum_<Environment::FogMode>("FogMode")
       .value("LINEAR", Environment::LINEAR)
       .value("EXP", Environment::EXP)
