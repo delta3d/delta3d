@@ -70,11 +70,14 @@ namespace dtQt
             mKeyMap[Qt::Key_F18            ] = osgGA::GUIEventAdapter::KEY_F18;
             mKeyMap[Qt::Key_F19            ] = osgGA::GUIEventAdapter::KEY_F19;
             mKeyMap[Qt::Key_F20            ] = osgGA::GUIEventAdapter::KEY_F20;
-
+            
+            mKeyMap[Qt::Key_hyphen         ] = '-';
+            mKeyMap[Qt::Key_Equal         ] = '=';
+            
             mKeyMap[Qt::Key_division      ] = osgGA::GUIEventAdapter::KEY_KP_Divide;
             mKeyMap[Qt::Key_multiply      ] = osgGA::GUIEventAdapter::KEY_KP_Multiply;
-            mKeyMap[Qt::Key_Minus         ] = osgGA::GUIEventAdapter::KEY_KP_Subtract;
-            mKeyMap[Qt::Key_Plus          ] = osgGA::GUIEventAdapter::KEY_KP_Add;
+            mKeyMap[Qt::Key_Minus         ] = '-';
+            mKeyMap[Qt::Key_Plus          ] = '+';
             //mKeyMap[Qt::Key_H              ] = osgGA::GUIEventAdapter::KEY_KP_Home;
             //mKeyMap[Qt::Key_                    ] = osgGA::GUIEventAdapter::KEY_KP_Up;
             //mKeyMap[92                    ] = osgGA::GUIEventAdapter::KEY_KP_Page_Up;
@@ -105,7 +108,7 @@ namespace dtQt
          }
 
       private:
-         typedef std::map<unsigned int, osgGA::GUIEventAdapter::KeySymbol> KeyMap;
+         typedef std::map<unsigned int, int> KeyMap;
          KeyMap mKeyMap;
    };
 
