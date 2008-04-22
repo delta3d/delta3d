@@ -10,24 +10,28 @@
 #
 # Created by Robert Osfield. 
 
-FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
-    ${DELTA_DIR}/include
-    $ENV{DELTA_ROOT}/inc
+FIND_PATH(DELTA_DIR inc/dtCore/dt.h
+    $(CMAKE_SOURCE_DIR)/../delta3d
+    $ENV{DELTA_ROOT}
+    $ENV{DELTA_INC}
     ~/Library/Frameworks
     /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /sw/include # Fink
-    /opt/local/include # DarwinPorts
-    /opt/csw/include # Blastwave
-    /opt/include
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;DELTA_ROOT]/inc
+    /usr/local
+    /usr
+    /sw # Fink
+    /opt/local # DarwinPorts
+    /opt/csw # Blastwave
+    /opt
+    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControl\\Control\\Session\ Manager\\Environment;DELTA_ROOT]
     /usr/freeware/include
+)
+
+FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
+    ${DELTA_DIR}/include
 )
 
 FIND_PATH( DELTA3D_EXT_DIR inc
     ${DELTA_DIR}/ext
-    $ENV{DELTA_ROOT}/ext
 )
 
 SET(DTUTIL_LIBRARY dtUtil)
