@@ -257,8 +257,8 @@ namespace dtCore
    ////////////////////////////////////////// 
    void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
-      // Only do our normal Camera stuff if it is enabled and not paused
-      if( (GetEnabled() == false) || (System::GetInstance().GetPause() == true) )
+      // Only do our normal Camera stuff if it is enabled
+      if(GetEnabled() == false)
       {
          return;
       }
