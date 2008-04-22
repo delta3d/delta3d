@@ -145,7 +145,7 @@ void Application::Frame( const double deltaSimTime )
    // to update drawables; especially particle systems.
    // The time delta will be ignored here and the absolute simulation
    // time passed to the OSG scene updater.
-   mCompositeViewer->frame( dtCore::System::GetInstance().GetSimulationTime() );
+   mCompositeViewer->frame( dtCore::System::GetInstance().GetSimTimeSinceStartup() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

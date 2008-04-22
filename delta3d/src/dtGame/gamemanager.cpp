@@ -356,7 +356,7 @@ namespace dtGame
       SendMessage(*tickRemote);
 
       ProcessTimers(mRealTimeTimers, GetRealClockTime());
-      ProcessTimers(mSimulationTimers, GetSimTimeSinceStartup());
+      ProcessTimers(mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
 
       DoSendMessages();
 
@@ -1545,7 +1545,7 @@ namespace dtGame
       if(realTime)
          t.time = GetRealClockTime() + t.interval;
       else
-         t.time = GetSimTimeSinceStartup() + t.interval;
+         t.time = dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0) + t.interval;
 
       t.repeat = repeat;
       realTime ? mRealTimeTimers.insert(t) : mSimulationTimers.insert(t);
