@@ -13,7 +13,7 @@ FIND_PATH(OPENTHREADS_INCLUDE_DIR OpenThreads/Thread
     ${OPENTHREADS_DIR}/include
     $ENV{OPENTHREADS_DIR}/include
     $ENV{OPENTHREADS_DIR}
-    ${DELTA_DIR}/ext/inc
+    ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/include
@@ -38,8 +38,8 @@ FIND_LIBRARY(${MYLIBRARY}
     $ENV{OPENTHREADS_DIR}/lib
     $ENV{OPENTHREADS_DIR}/lib64
     $ENV{OPENTHREADS_DIR}
-    ${DELTA_DIR}/ext/lib
-    ${DELTA_DIR}/ext/lib64
+    ${DELTA3D_EXT_DIR}/lib
+    ${DELTA3D_EXT_DIR}/lib64
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}/ext/lib64
     $ENV{DELTA_ROOT}

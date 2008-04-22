@@ -17,7 +17,7 @@
 # Other (Unix) systems should be able to utilize the non-framework paths.
 FIND_PATH(OPENAL_INCLUDE_DIR al.h
   $ENV{OPENALDIR}/include
-  ${DELTA_DIR}/ext/inc
+  ${DELTA3D_EXT_DIR}/inc
   ~/Library/Frameworks/OpenAL.framework/Headers
   /Library/Frameworks/OpenAL.framework/Headers
   /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
@@ -40,6 +40,35 @@ FIND_PATH(OPENAL_INCLUDE_DIR al.h
   /opt/include/OpenAL
   /opt/include
   )
+
+FIND_PATH(ALUT_INCLUDE_DIR alut.h
+  $ENV{OPENALDIR}/include
+  ${DELTA3D_EXT_DIR}/inc
+  ~/Library/Frameworks/OpenAL.framework/Headers
+  /Library/Frameworks/OpenAL.framework/Headers
+  /System/Library/Frameworks/OpenAL.framework/Headers # Tiger
+  ~/Library/Frameworks/ALUT.framework/Headers
+  /Library/Frameworks/ALUT.framework/Headers
+  /usr/local/include/AL
+  /usr/local/include/OpenAL
+  /usr/local/include
+  /usr/include/AL
+  /usr/include/OpenAL
+  /usr/include
+  /sw/include/AL # Fink
+  /sw/include/OpenAL 
+  /sw/include
+  /opt/local/include/AL # DarwinPorts
+  /opt/local/include/OpenAL
+  /opt/local/include
+  /opt/csw/include/AL # Blastwave
+  /opt/csw/include/OpenAL
+  /opt/csw/include
+  /opt/include/AL
+  /opt/include/OpenAL
+  /opt/include
+  )
+  
 # I'm not sure if I should do a special casing for Apple. It is 
 # unlikely that other Unix systems will find the framework path.
 # But if they do ([Next|Open|GNU]Step?), 
@@ -62,11 +91,32 @@ IF(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
   # Clear the temp variable so nobody can see it
   SET(OPENAL_FRAMEWORK_PATH_TMP "" CACHE INTERNAL "")
 
+  # if we don't have the integrated alut.h in the framework, we need a library
+  IF (NOT ${ALUT_INCLUDE_DIR} MATCHES "OpenAL.framework")
+    FIND_LIBRARY(ALUT_LIBRARY 
+    NAMES alut
+    PATHS
+    ~/Library/Frameworks/ALUT.framework/Headers
+    /Library/Frameworks/ALUT.framework/Headers
+	 ${DELTA3D_EXT_DIR}/Frameworks
+	 ${DELTA3D_EXT_DIR}/lib
+    $ENV{OPENALDIR}/lib
+    $ENV{OPENALDIR}/libs
+    /usr/local/lib
+    /usr/lib
+    /sw/lib
+    /opt/local/lib
+    /opt/csw/lib
+    /opt/lib
+    )
+  ENDIF (NOT ${ALUT_INCLUDE_DIR} MATCHES "OpenAL.framework")
+
+   
 ELSE(${OPENAL_INCLUDE_DIR} MATCHES ".framework")
   FIND_LIBRARY(OPENAL_LIBRARY 
     NAMES openal al OpenAL32
     PATHS
-    ${DELTA_DIR}/ext/lib
+    ${DELTA3D_EXT_DIR}/lib
     $ENV{OPENALDIR}/lib
     $ENV{OPENALDIR}/libs
     /usr/local/lib
