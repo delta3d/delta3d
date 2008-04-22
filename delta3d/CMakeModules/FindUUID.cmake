@@ -25,7 +25,7 @@ else (UUID_LIBRARIES AND UUID_INCLUDE_DIRS)
     ${UUID_DIR}/include
     $ENV{UUID_DIR}/include
     $ENV{UUID_DIR}
-    ${DELTA_DIR}/ext/inc
+    ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
     ~/Library/Frameworks
@@ -49,7 +49,7 @@ else (UUID_LIBRARIES AND UUID_INCLUDE_DIRS)
     ${UUID_DIR}/lib
     $ENV{UUID_DIR}/lib
     $ENV{UUID_DIR}
-    ${DELTA_DIR}/ext/lib
+    ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/lib
@@ -71,7 +71,7 @@ else (UUID_LIBRARIES AND UUID_INCLUDE_DIRS)
     ${UUID_DIR}/lib
     $ENV{UUID_DIR}/lib
     $ENV{UUID_DIR}
-    ${DELTA_DIR}/ext/lib
+    ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
     $ENV{OSG_ROOT}/lib

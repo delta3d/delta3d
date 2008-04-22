@@ -13,7 +13,7 @@ FIND_PATH(ISENSE_INCLUDE_DIR isense.h
     ${ISENSE_DIR}/include
     $ENV{ISENSE_DIR}/include
     $ENV{ISENSE_DIR}
-    ${DELTA_DIR}/ext/inc
+    ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}
     ~/Library/Frameworks
@@ -37,7 +37,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${ISENSE_DIR}/lib
     $ENV{ISENSE_DIR}/lib
     $ENV{ISENSE_DIR}
-    ${DELTA_DIR}/ext/lib
+    ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
     ~/Library/Frameworks

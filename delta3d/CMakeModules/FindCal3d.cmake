@@ -13,8 +13,8 @@ FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
     ${CAL3D_DIR}/include
     $ENV{CAL3D_DIR}/include
     $ENV{CAL3D_DIR}
-    ${DELTA_DIR}/ext/inc
-    ${DELTA_DIR}/ext/inc/cal3d
+    ${DELTA3D_EXT_DIR}/inc
+    ${DELTA3D_EXT_DIR}/inc/cal3d
     ${DELTA_DIR}
     $ENV{DELTA_ROOT}/ext/inc
     $ENV{DELTA_ROOT}/ext/inc/cal3d
@@ -40,7 +40,7 @@ FIND_LIBRARY(${MYLIBRARY}
     ${CAL3D_DIR}/lib
     $ENV{CAL3D_DIR}/lib
     $ENV{CAL3D_DIR}
-    ${DELTA_DIR}/ext/lib
+    ${DELTA3D_EXT_DIR}/lib
     ${DELTA_DIR}
     $ENV{DELTA_ROOT}/ext/lib
     $ENV{DELTA_ROOT}
