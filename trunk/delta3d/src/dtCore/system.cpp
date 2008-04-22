@@ -264,7 +264,7 @@ namespace dtCore
       mAccumulateLastRealDt = false;
 
       mSimulationTime += frameTime;
-      mSimTimeSinceStartup += Timer_t(frameTime * 1000000);
+      mSimTimeSinceStartup += frameTime;
       mSimulationClockTime += Timer_t(frameTime * 1000000); 
     
       PreFrame(frameTime, mDt + mAccumulationTime);
@@ -310,7 +310,7 @@ namespace dtCore
             double simDt = mDt * mTimeScale;
             mWasPaused = false;
             mSimulationTime += simDt;
-            mSimTimeSinceStartup += Timer_t(simDt * 1000000);
+            mSimTimeSinceStartup += simDt;
             mSimulationClockTime += Timer_t(simDt * 1000000); 
 
             PreFrame(simDt, mDt);

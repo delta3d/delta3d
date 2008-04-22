@@ -210,7 +210,7 @@ namespace dtCore
 
       /**
       *	@note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.  
-      *          it starts at 0 and goes up in microseconds.  This time cannot be changed but does scale
+      *          it starts at 0 and goes up in seconds.  This time cannot be changed but does scale
       *          with the simulation time.
       */
       double GetSimTimeSinceStartup() const;
@@ -259,9 +259,10 @@ namespace dtCore
       
       //The real world time (UTC) and a simulated, settable version of it. They are both
       // in microseconds since January 1, 1970.
-      Timer_t mRealClockTime, mSimulationClockTime, mSimTimeSinceStartup;
+      Timer_t mRealClockTime, mSimulationClockTime;
       Timer_t mLastDrawClockTime;
-      double mSimulationTime;      
+      double mSimulationTime;  
+      double mSimTimeSinceStartup;
       double mCorrectSimulationTime;
       double mFrameTime;
       double mTimeScale;
