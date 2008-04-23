@@ -78,7 +78,8 @@ namespace dtAI
             else return  myCost < otherCost;
          }
 
-         node_type* GetParent(){return mParent;}
+         node_type *GetParent() { return mParent; }
+         const node_type *GetParent() const { return mParent; }
 
          /**
          * This is the cost to get to the node from the start
