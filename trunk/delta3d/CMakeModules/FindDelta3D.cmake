@@ -27,7 +27,7 @@ FIND_PATH(DELTA_DIR inc/dtCore/dt.h
 )
 
 FIND_PATH(DELTA3D_INCLUDE_DIR dtCore/dt.h
-    ${DELTA_DIR}/include
+    ${DELTA_DIR}/inc
 )
 
 FIND_PATH( DELTA3D_EXT_DIR inc

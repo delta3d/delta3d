@@ -30,7 +30,7 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          OSGFX_LIBRARY
                                          AGL_LIBRARY)
 
-MESSAGE(STATUS ${QT_LIBRARIES})
+
 
 #Not Sure if this is needed
 #IF(WIN32)
