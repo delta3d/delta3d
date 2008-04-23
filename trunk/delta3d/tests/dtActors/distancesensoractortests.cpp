@@ -73,7 +73,10 @@ namespace dtActors
 
                mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mParentProxy);
                mGameManager->CreateActor(*dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE, mDSProxy1);
-               
+
+               mGameManager->AddActor(*mParentProxy, false, false);
+               mGameManager->AddActor(*mDSProxy1, false, false);
+
                CPPUNIT_ASSERT(mParentProxy.valid());
                CPPUNIT_ASSERT(mDSProxy1.valid());
             }
@@ -167,6 +170,7 @@ namespace dtActors
             CPPUNIT_ASSERT(!dsActor->RegisterWithSensor(TEST_NAME, *xformable, TestCallbackFunction()));
 
             dsActor->RemoveSensorRegistration(TEST_NAME);
+            dtCore::System::GetInstance().Step();
             CPPUNIT_ASSERT_MESSAGE("Registration should have been removed.",
                      !dsActor->HasRegistration(TEST_NAME));
          }
