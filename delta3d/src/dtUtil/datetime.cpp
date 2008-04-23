@@ -359,19 +359,27 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetGMTOffset(tm& timeParts, bool factorLocalDayLightSavingsIntoGMTOffset)
    {
-      #ifdef __APPLE__
-            long tz = timeParts.tm_gmtoff;
-      #else
+      #ifdef DELTA_WIN32
             tzset();
             long tz = timezone * -1;
+            mGMTOffset = tz / 3600.0f;
+            if(factorLocalDayLightSavingsIntoGMTOffset)
+            {
+               mGMTOffset += timeParts.tm_isdst;
+            }
+      #else
+            // If we are in daylight saving time, the gmt offset already accounts for that
+            // But the dateTime wants the value without it taken into account, so we have to
+            // subtract it back out.
+            long tz = timeParts.tm_gmtoff;
+            mGMTOffset = tz / 3600.0f;
+            if(!factorLocalDayLightSavingsIntoGMTOffset)
+            {
+               mGMTOffset -= timeParts.tm_isdst;
+            }
       #endif
 
-      mGMTOffset = tz / 3600.0f;
       
-      if(factorLocalDayLightSavingsIntoGMTOffset)
-      {
-         mGMTOffset += timeParts.tm_isdst;
-      }
    }
 
    ////////////////////////////////////////////////////////////////////
