@@ -23,7 +23,8 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
-//#include <dtDAL/project.h>
+
+#include <dtCore/timer.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shaderparamtexture2d.h>
@@ -34,14 +35,7 @@
 #include <osg/Geode>
 
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
+const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "data" + dtUtil::FileUtils::PATH_SEPARATOR + "ProjectContext";
 
 class ShaderManagerTests : public CPPUNIT_NS::TestFixture
 {
