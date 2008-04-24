@@ -1,7 +1,7 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/macros.h>
-#include <math.h>
+#include <cmath>
 
 namespace dtUtil
 {
@@ -53,7 +53,7 @@ namespace dtUtil
       }
       else if(mTimeOrigin == &TimeOrigin::LOCAL_TIME)
       {
-         SetToLocalTime();            
+         SetToLocalTime();
       }
    }
 
@@ -148,12 +148,12 @@ namespace dtUtil
       seconds *= mTimeScale;
       //accumulate fractions of a second and store off the remainder
       seconds += mFractionalSeconds;
-      int sec = floorf(seconds);
+      double floorSec = std::floor(seconds);
 
-      timeInSeconds += sec;
+      timeInSeconds += time_t(floorSec);
       SetTime(timeInSeconds);
 
-      mFractionalSeconds = seconds - sec;
+      mFractionalSeconds = seconds - floorSec;
    }
 
    ////////////////////////////////////////////////////////////////////
@@ -313,12 +313,11 @@ namespace dtUtil
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetTime(time_t t)
-   {      
+   {
       struct tm timeParts;
       GetGMTTime(&t, timeParts);
       SetTime(timeParts);
    }
-
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::GetTime(tm& timeParts) const
@@ -331,10 +330,9 @@ namespace dtUtil
    void DateTime::GetGMTTime(tm& timeParts) const
    {
       DateTime dt(GetTime());
-      dt.IncrementClock(3600.0f * -1.0f * mGMTOffset);
+      dt.IncrementClock(double(3600.0f * -mGMTOffset));
       dt.GetTime(timeParts);
    }
-
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetTime(const tm& mt)
@@ -348,7 +346,6 @@ namespace dtUtil
 
       mFractionalSeconds = 0.0f;
    }
-
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetGMTOffset(float hourOffset, bool dayLightSavings)
@@ -378,18 +375,15 @@ namespace dtUtil
                mGMTOffset -= timeParts.tm_isdst;
             }
       #endif
-
-      
    }
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetGMTOffset(double lattitude, double longitude, bool dayLightSavings)
    {
-      float offset = 7.5f;
+      double offset = 7.5;
       if(longitude < 0.0f) offset = -offset;
-      mGMTOffset = float(int(dayLightSavings) + int((longitude + offset) / 15.0f));
+      mGMTOffset = float(int(dayLightSavings) + int((longitude + offset) / 15.0));
    }
-
 
    ////////////////////////////////////////////////////////////////////
    float DateTime::GetGMTOffset() const
@@ -400,16 +394,16 @@ namespace dtUtil
    ////////////////////////////////////////////////////////////////////
    float DateTime::GetSecond() const
    {
-      return mSeconds;
+      return float(mSeconds) + mFractionalSeconds;
    }
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetSecond(float sec)
    {
-      mSeconds = floorf(sec);
-      mFractionalSeconds = sec - mSeconds;
+      float seconds = std::floor(sec);
+      mSeconds = unsigned(seconds);
+      mFractionalSeconds = double(sec) - double(seconds);
    }
-
 
    ////////////////////////////////////////////////////////////////////
    unsigned DateTime::GetMinute() const
@@ -422,7 +416,6 @@ namespace dtUtil
    {
       mMinutes = min;
    }
-
 
    ////////////////////////////////////////////////////////////////////
    unsigned DateTime::GetHour() const
@@ -501,7 +494,6 @@ namespace dtUtil
       mTimeType = &tt;
    }
 
-
    ////////////////////////////////////////////////////////////////////
    const DateTime::TimeOrigin& DateTime::GetTimeOrigin() const
    {
@@ -526,7 +518,6 @@ namespace dtUtil
    {
       mStringFormat = &tf;
    }
-
 
    ////////////////////////////////////////////////////////////////////
    std::string DateTime::ToString() const
@@ -638,8 +629,5 @@ namespace dtUtil
 
       memset(&timeParts, 0, sizeof(tm));
    }
-
-
-
 }
 
