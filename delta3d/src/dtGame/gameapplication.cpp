@@ -24,6 +24,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gameapplication.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/shadermanager.h>
 
 #include <dtGame/gameentrypoint.h>
 #include <dtGame/exceptionenum.h>
@@ -55,6 +56,7 @@ namespace dtGame
       GetCompositeViewer()->setKeyEventSetsDone(0);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    GameApplication::~GameApplication()
    {
       if (mEntryPoint != NULL)
@@ -77,6 +79,8 @@ namespace dtGame
 
       GetScene()->RemoveAllDrawables();
 
+      dtCore::ShaderManager::GetInstance().Clear();
+
       if (mGameManager.valid())
       {
          mGameManager->Shutdown();
@@ -86,10 +90,12 @@ namespace dtGame
       if (mDestroyFunction != NULL)
       {
          mDestroyFunction(mEntryPoint);
+         mDestroyFunction = NULL;
          mEntryPoint = NULL;
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void GameApplication::Config()
    {     
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
@@ -185,6 +191,7 @@ namespace dtGame
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void GameApplication::SetGameManager( dtGame::GameManager &gameManager )
    {
       mGameManager = &gameManager;
