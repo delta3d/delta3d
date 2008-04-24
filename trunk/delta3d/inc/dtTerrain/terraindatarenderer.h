@@ -25,7 +25,7 @@
 #include <osg/Group>
 #include "dtCore/base.h"
 #include "dtCore/refptr.h"
-#include "dtDAL/exceptionenum.h"
+#include "dtUtil/exception.h"
 #include "dtTerrain/pagedterraintile.h"
 #include "dtTerrain/terrain_export.h"
 
@@ -38,7 +38,7 @@ namespace dtTerrain
     * renderers.  Subclass this enumeration for specific error handling
     * identification.
     */
-   class DT_TERRAIN_EXPORT TerrainRendererException : public dtDAL::ExceptionEnum
+   class DT_TERRAIN_EXPORT TerrainRendererException : public dtUtil::BaseExceptionType
    {
       DECLARE_ENUM(TerrainRendererException);
       public:
@@ -50,7 +50,7 @@ namespace dtTerrain
       protected:
          
          ///Simple enumeration constructor.
-         TerrainRendererException(const std::string &name) : dtDAL::ExceptionEnum(name)
+         TerrainRendererException(const std::string &name) : dtUtil::BaseExceptionType(name)
          {
             AddInstance(this);
          }
