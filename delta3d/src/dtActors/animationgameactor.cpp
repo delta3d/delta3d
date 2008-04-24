@@ -29,7 +29,6 @@
 #include <dtDAL/functor.h>
 
 #include <dtAnim/animnodebuilder.h>
-#include <dtAnim/animationhelper.h>
 
 #include <osg/MatrixTransform>
 #include <osg/Geode>
