@@ -178,7 +178,7 @@ namespace dtCore
       double GetTimeScale() const;
 
       /**
-       * @return the scale of realtime at which the simulation time is running.
+       * @param newTimeScale set the scale of realtime at which the simulation time is to run.
        */
       void SetTimeScale(double newTimeScale);
       
