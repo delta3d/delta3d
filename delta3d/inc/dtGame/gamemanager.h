@@ -783,34 +783,34 @@ namespace dtGame
          float GetTimeScale() const;
                   
          /**
-          * @return the current simulation time
+          * @return the current simulation time. This is in SECONDs.
           * @see dtCore::System#GetSimulationTime
           */
          double GetSimulationTime() const;
 
          /**
-         * @return the current simulation time
+         * @return the current simulation time. This is in SECONDS.
          * @see dtCore::System#GetSimTimeSinceStartup
          */
          double GetSimTimeSinceStartup() const;
 
          /**
-          * @return the current simulation wall-clock time
+          * @return the current simulation wall-clock time. This is in MICRO SECONDS (seconds * 1000000LL).
           * @see dtCore::System#GetSimulationClockTime
           */
          dtCore::Timer_t GetSimulationClockTime() const;
          
          /**
-          * @return The current real clock time
+          * @return The current real clock time. This is in MICRO SECONDS (seconds * 1000000LL).
           * @see dtCore::System#GetRealClockTime
           */
          dtCore::Timer_t GetRealClockTime() const;
 
          /**
           * Change the time settings.
-          * @param newTime The new simulation time.
+          * @param newTime The new simulation time. In SECONDS.
           * @param newTimeScale the new simulation time progression as a factor of real time.
-          * @param newClockTime  The new simulation wall-clock time.
+          * @param newClockTime  The new simulation wall-clock time. In MICRO SECONDs (seconds * 1000000LL).
           */
          void ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t &newClockTime);
          
