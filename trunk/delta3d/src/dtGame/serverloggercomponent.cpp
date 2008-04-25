@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* Matthew W. Campbell
+* Curtiss Murphy, Matthew W. Campbell
 */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/serverloggercomponent.h>
@@ -29,6 +29,7 @@
 #include <dtGame/basemessages.h>
 #include <dtGame/loggermessages.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/datetime.h>
 #include <sstream>
 
 namespace dtGame
@@ -187,9 +188,12 @@ namespace dtGame
                }
                else
                {
+                  std::string time = dtUtil::DateTime::ToString(time_t(GetGameManager()->GetSimulationClockTime() / 1000000LL), 
+                     dtUtil::DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT); 
+
                   LogKeyframe autoKeyFrame;
                   autoKeyFrame.SetActiveMaps(mLogStatus.GetActiveMaps());
-                  autoKeyFrame.SetName("AutoKeyFrame " + dtUtil::ToString(mLogStatus.GetCurrentSimTime()));
+                  autoKeyFrame.SetName("AutoKeyFrame " + time);
                   autoKeyFrame.SetDescription("Auto captured keyframe.");
                   autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
                   DumpKeyFrame(autoKeyFrame);
