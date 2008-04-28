@@ -51,7 +51,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////////
    BinaryLogStream::BinaryLogStream(MessageFactory &msgFactory) : LogStream(msgFactory),
-      mMessagesFile(NULL), mIndexTablesFile(NULL),  mCurrentMinorVersion(0)
+      mMessagesFile(NULL), mIndexTablesFile(NULL),  mCurrentMinorVersion(0), mFilesAreOpenForWriting(false)
    {
    }
 
@@ -66,6 +66,9 @@ namespace dtGame
    {
       if (mIndexTablesFile != NULL || mMessagesFile != NULL)
          Flush();
+
+      // Flush uses this, so don't set this until after FLUSH. 
+      mFilesAreOpenForWriting = false;
 
       if (mMessagesFile != NULL)
       {
@@ -133,6 +136,8 @@ namespace dtGame
       indexHeader.msgDBFileName = mMessagesFileName;
       WriteIndexTableHeader(indexHeader);
 
+      mFilesAreOpenForWriting = true; // Write mode - Probably in a Record mode.
+
       mEndOfStream = false;
    }
 
@@ -195,6 +200,7 @@ namespace dtGame
       fclose(mIndexTablesFile);
       mIndexTablesFile = NULL;
 
+      mFilesAreOpenForWriting = false; // Read only - We're probably in PLAYBACK mode
       mEndOfStream = false;
    }
 
@@ -622,34 +628,41 @@ namespace dtGame
       std::vector<LogTag>::iterator tagItor;
       std::vector<LogKeyframe>::iterator keyFrameItor;
 
-      if (mIndexTablesFile == NULL)
+      if (mFilesAreOpenForWriting)
       {
-         //If the index file in NULL then we must have opened the log stream for
-         //reading.  So to flush, we need to open the index file in write mode.
-         mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"ab");
+
          if (mIndexTablesFile == NULL)
-            throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot flush the stream. "
-               "Index tables file is invalid.", __FILE__, __LINE__);
-      }
+         {
+            //If the index file in NULL then we must have opened the log stream for
+            //reading.  So to flush, we need to open the index file in write mode.
+            mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"ab");
+            if (mIndexTablesFile == NULL)
+               throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Cannot flush the stream. "
+                  "Index tables file is invalid.", __FILE__, __LINE__);
+         }
 
-      //Add the new tags...
-      for (tagItor=mNewTags.begin(); tagItor!=mNewTags.end(); ++tagItor)
-      {
-         WriteTag(*tagItor);
-         mExistingTags.push_back(*tagItor);
-      }
+         //Add the new tags...
+         for (tagItor=mNewTags.begin(); tagItor!=mNewTags.end(); ++tagItor)
+         {
+            WriteTag(*tagItor);
+            mExistingTags.push_back(*tagItor);
+         }
 
-      for (keyFrameItor = mNewKeyFrames.begin(); keyFrameItor!=mNewKeyFrames.end();
-         ++keyFrameItor)
-      {
-         WriteKeyFrame(*keyFrameItor);
-         mExistingKeyFrames.push_back(*keyFrameItor);
-      }
+         for (keyFrameItor = mNewKeyFrames.begin(); keyFrameItor!=mNewKeyFrames.end();
+            ++keyFrameItor)
+         {
+            WriteKeyFrame(*keyFrameItor);
+            mExistingKeyFrames.push_back(*keyFrameItor);
+         }
+
+         fflush(mIndexTablesFile);
+      } // if (mFilesAreOpenForWriting)
 
       mNewTags.clear();
       mNewKeyFrames.clear();
-      fflush(mIndexTablesFile);
-      fclose(mIndexTablesFile);
+
+      if (mIndexTablesFile != NULL)
+         fclose(mIndexTablesFile);
       mIndexTablesFile = NULL;
 
       //Update the header which can possible contain an updated record duration since
@@ -658,24 +671,29 @@ namespace dtGame
       if (mMessagesFile == NULL)
          return;
 
-      fflush(mMessagesFile);
+      if (mFilesAreOpenForWriting)
+         fflush(mMessagesFile);
       fclose(mMessagesFile);
-      mMessagesFile = fopen(mMessagesFileName.c_str(),"rb+");
-      if (mMessagesFile == NULL)
-         return;
 
-      MessageDataBaseHeader msgHeader;
-      msgHeader.magicNumber = BinaryLogStream::LOGGER_MSGDB_MAGIC_NUMBER;
-      msgHeader.majorVersion = BinaryLogStream::LOGGER_MAJOR_VERSION;
-      msgHeader.minorVersion = BinaryLogStream::LOGGER_MINOR_VERSION;
-      msgHeader.recordLength = GetRecordDuration();
-      msgHeader.indexTableFileNameLength = mIndexTablesFileName.length();
-      msgHeader.indexTableFileName = osgDB::getSimpleFileName(mIndexTablesFileName);
-      WriteMessageDataBaseHeader(msgHeader);
+      if (mFilesAreOpenForWriting)
+      {
+         mMessagesFile = fopen(mMessagesFileName.c_str(),"rb+");
+         if (mMessagesFile == NULL)
+            return;
 
-      //Close the messages file.
-      fflush(mMessagesFile);
-      fclose(mMessagesFile);
+         MessageDataBaseHeader msgHeader;
+         msgHeader.magicNumber = BinaryLogStream::LOGGER_MSGDB_MAGIC_NUMBER;
+         msgHeader.majorVersion = BinaryLogStream::LOGGER_MAJOR_VERSION;
+         msgHeader.minorVersion = BinaryLogStream::LOGGER_MINOR_VERSION;
+         msgHeader.recordLength = GetRecordDuration();
+         msgHeader.indexTableFileNameLength = mIndexTablesFileName.length();
+         msgHeader.indexTableFileName = osgDB::getSimpleFileName(mIndexTablesFileName);
+         WriteMessageDataBaseHeader(msgHeader);
+
+         //Close the messages file.
+         fflush(mMessagesFile);
+         fclose(mMessagesFile);
+      }
       mMessagesFile = NULL;
    }
 

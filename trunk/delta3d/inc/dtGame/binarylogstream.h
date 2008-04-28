@@ -374,6 +374,10 @@ namespace dtGame
          std::vector<LogKeyframe> mNewKeyFrames;
          
          int mCurrentMinorVersion;
+
+         // Tracks whether we have opened the files for write mode (typically RECORD only) 
+         // or for read mode (typically playback). 
+         bool mFilesAreOpenForWriting;
    };
 
 }

@@ -371,13 +371,27 @@ void GMLoggerTests::TestBinaryLogStreamOpen()
    {
       stream->Create(TESTS_DIR,LOGFILE);
       stream->Close();
+
+      std::string testFileName = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + LOGFILE;
+      const dtUtil::FileInfo firstInfo = dtUtil::FileUtils::GetInstance().GetFileInfo(testFileName);
+
+      SLEEP(1500);
+
       stream->Open(TESTS_DIR,LOGFILE);
       stream->Close();
+
+      const dtUtil::FileInfo secondInfo = dtUtil::FileUtils::GetInstance().GetFileInfo(testFileName);
+
+      // make sure that the time didn't change on the file between creating and opening. This ensures 
+      // that the open/close didn't write to the file.
+      CPPUNIT_ASSERT_MESSAGE("Time Shouldn't change just from opening and closing log stream.",
+         firstInfo.lastModified == secondInfo.lastModified);
    }
    catch(const dtUtil::Exception &e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
+   std::cout << "Curt Test END END END END 3. TestBinaryLogStreamOpen Message. " << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -574,7 +588,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
          tagList.size() == 0);
       stream->Close();
 
-      stream->Open(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       CPPUNIT_ASSERT_MESSAGE("Tag list should have been empty.",tagList.size() == 0);
 
@@ -672,7 +686,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
          kfList.size() == 0);
       stream->Close();
 
-      stream->Open(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->GetKeyFrameIndex(kfList);
       CPPUNIT_ASSERT_MESSAGE("Keyframe list should have been empty.",kfList.size() == 0);
 
