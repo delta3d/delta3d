@@ -57,7 +57,8 @@ namespace dtAI
             mStart(),
             mFinish(),
             mNodesExplored(0), 
-            mTimeSpent(0.0)
+            mTimeSpent(0.0),
+            mCheckClosedList(true)
          {
          }
 
@@ -87,6 +88,11 @@ namespace dtAI
          double mMaxTime;
          cost_type mMaxCost;
          unsigned int mMaxDepth;
+
+         ///when true, nodes already on closed list are not processed
+         ///should be set false for inconsistent heuristic functions
+         ///see Norvig and Russell, 2nd Edition, p. 99
+         bool mCheckClosedList;
 
 
       //private:
