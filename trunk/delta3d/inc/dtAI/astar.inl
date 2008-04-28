@@ -255,7 +255,7 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
          {
             data_type pNode = *iter;
             //if its not in the closed list
-            if(!mCheckClosedList || Contains(mClosed, pNode) == mClosed.end())
+            if(!mConfig.mCheckClosedList || Contains(mClosed, pNode) == mClosed.end())
             {
                //if it isnt in the open list
                typename AStarContainer::iterator pNodeLinkIter = Contains(mOpen, pNode);
