@@ -50,7 +50,11 @@ namespace dtAI
          typedef AStarNode<_NodeType, _DataType, _IterType, _CostType> BaseType;
 
       public:   
-         AStarNode(node_type* pParent, data_type pData, cost_type pGn, cost_type pHn): mData(pData), mCostToNode(pGn), mCostToGoal(pHn), mParent(pParent){}      
+         AStarNode(node_type* pParent, data_type pData, cost_type pGn, cost_type pHn): mData(pData), mCostToNode(pGn), mCostToGoal(pHn), mParent(pParent), mDepth(0)
+         {
+            if (pParent)
+               mDepth = pParent->GetDepth() + 1;
+         }
          virtual ~AStarNode(){}
           
          /**
@@ -106,6 +110,8 @@ namespace dtAI
          */
          virtual iterator end() const = 0;
 
+         unsigned int GetDepth() const {return mDepth;}
+
 
       protected:
          AStarNode(const AStarNode& pNode); //not implemented by design
@@ -116,7 +122,9 @@ namespace dtAI
          cost_type mCostToNode;
          cost_type mCostToGoal;
 
-         node_type* mParent;     
+         node_type* mParent;   
+
+         unsigned int mDepth;
    };
 
 }//namespace dtAI

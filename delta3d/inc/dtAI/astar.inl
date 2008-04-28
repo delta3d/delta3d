@@ -214,9 +214,10 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
       mTimer.Update();
       mConfig.mTimeSpent += mTimer.GetDT();
       bool pHasExceededTimeLimit(mConfig.mTimeSpent > mConfig.mMaxTime);
+      bool pAtOrExceedingMaxDepth(pStart->GetDepth() >= mConfig.mMaxDepth);
 
       //if we have exceeded a constraint or found a path to the end return
-      if(pHasPathToFinish || pExceededMaxCost || pHasExceededTimeLimit || (mConfig.mNodesExplored >= mConfig.mMaxNodesExplored))
+      if(pHasPathToFinish || pExceededMaxCost || pHasExceededTimeLimit || pAtOrExceedingMaxDepth || (mConfig.mNodesExplored >= mConfig.mMaxNodesExplored))
       {
          //we simply add it back to the container so it will be deleted later
          mClosed.push_back(pStart);
