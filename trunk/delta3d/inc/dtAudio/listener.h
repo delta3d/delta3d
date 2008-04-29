@@ -74,28 +74,28 @@ namespace   dtAudio
           *
           * @param velocity to set
           */
-         virtual  void  SetVelocity( const osg::Vec3& velocity )        = 0L;
+         virtual  void  SetVelocity( const osg::Vec3& velocity )        = 0;
        
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
-         virtual  void  GetVelocity( osg::Vec3& velocity )        const = 0L;
+         virtual  void  GetVelocity( osg::Vec3& velocity )        const = 0;
          
          /**
           * Sets the master volume of the listener.
           *
           * @param gain the new gain
           */
-         virtual  void  SetGain( float gain )                        = 0L;
+         virtual  void  SetGain( float gain )                        = 0;
 
          /**
           * Returns the master volume of the listener.
           *
           * @return the current volume
           */
-         virtual  float GetGain()                        const = 0L;
+         virtual  float GetGain()                        const = 0;
    };
 }
 

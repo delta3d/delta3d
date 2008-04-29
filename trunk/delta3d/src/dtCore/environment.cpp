@@ -477,7 +477,7 @@ void dtCore::Environment::SetDateTime( unsigned yr, unsigned mo, unsigned da,
    mCurrTime.SetTime(yr, mo, da, hr, mi, sc);
    
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__, "Sim time set to:%s",
-      mCurrTime.ToString(dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT));
+      (mCurrTime.ToString(dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT)).c_str());
 
    Update(999.99);
 }
