@@ -329,6 +329,12 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderI
       return;
  
    osg::State & state = *renderInfo.getState();
+
+   // If vertex arrays are enabled, CEGUI will eventually cause a crash that can appear
+   // in other parts of OSG (for instance a large terrain database). Added calls to 
+   // disableAllVertexArrays() and dirtyAllVertexArrays() to alleviate this
+   state.disableAllVertexArrays();
+
    //we must disable the client active texture unit because it may have been used and not disabled
    //this will cause our GUI to disappear
    state.setClientActiveTextureUnit(0);
@@ -338,4 +344,6 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderI
    glEnable(GL_TEXTURE_2D);
 
    mUI->getSingletonPtr()->renderGUI();
+   state.dirtyAllVertexArrays();
 }
+
