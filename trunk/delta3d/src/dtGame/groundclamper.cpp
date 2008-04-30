@@ -345,16 +345,17 @@ namespace dtGame
       }
       else
       {
+         osg::Vec3 position;
+         xform.GetTranslation(position);
+
          if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Using previous offset for actor z \"" << data.GetLastClampedOffset() << "\".";
+            ss << "Using previous offset for actor z \"" << data.GetLastClampedOffset() << "\".  Starting position is \"" << position << "\".";
 
             mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
 
-         osg::Vec3 position;
-         xform.GetTranslation(position);
          position.z() += data.GetLastClampedOffset();
          xform.SetTranslation(position);
          gameActorProxy.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);

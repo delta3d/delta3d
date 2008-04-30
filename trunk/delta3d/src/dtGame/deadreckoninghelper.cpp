@@ -482,8 +482,10 @@ namespace dtGame
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-                  "Dead Reckoning Algorithm set to NONE, doing nothing.");
+                  "Dead Reckoning Algorithm set to NONE, "
+                  "setting the transform to match the actor's current position.");
          }
+         gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
       }
       else if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::STATIC)
       {
@@ -536,12 +538,14 @@ namespace dtGame
 
       osg::Vec3 unclampedTranslation = pos;
 
-      if (!mFlying)
-         unclampedTranslation.z() = mLastTranslation.z();
+      // removed because the transform is now initialized to the
+      // the current DR'd position. 
+      //if (!mFlying)
+      //   unclampedTranslation.z() = mLastTranslation.z();
 
       //avoid the sqrtf by using length2.
       //we went to see if all this dr and ground clamping stuff has to be done.
-     if ( IsUpdated() || 
+      if ( IsUpdated() || 
          mLastTranslation != unclampedTranslation ||
          !mRotationResolved ||
          mVelocityVector.length2() > 1e-2f ||
