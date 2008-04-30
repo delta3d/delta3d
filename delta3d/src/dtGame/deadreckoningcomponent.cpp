@@ -269,7 +269,10 @@ namespace dtGame
          }
 
          dtCore::Transform xform;
-         gameActor.GetTransform(xform, dtCore::Transformable::REL_CS);
+         //Init the transform with the last deadreckoned position, not
+         //the current actual position, because the current actual can be clamped
+         xform.SetTranslation(helper.GetCurrentDeadReckonedTranslation());
+         xform.SetRotation(helper.GetCurrentDeadReckonedRotation());
 
          if (helper.IsUpdated())
          {
@@ -311,7 +314,12 @@ namespace dtGame
          {
             bool bForceClamp = ShouldForceClamp(helper, tickMessage.GetDeltaRealTime(), bTransformChanged);
             
-            if (bTransformChanged || (bForceClamp && *groundClampingType != GroundClamper::GroundClampingType::NONE))
+            // if the actor moved, it's time to force clamp, or we are using intermittent, 
+            // we should clamp.
+            // The clamping also applies the transform when the clamping type is none.
+            // force clamp is silly when using intermittent because it's already running intermittently.
+            if (bTransformChanged || *groundClampingType == GroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET
+                  || (bForceClamp && *groundClampingType != GroundClamper::GroundClampingType::NONE))
             {
                //we could probably group these queries together...
                mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
