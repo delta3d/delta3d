@@ -10,26 +10,23 @@
 # Created by David Guthrie.  Based on code by Robert Osfield 
 
 FIND_PATH(CAL3D_INCLUDE_DIR cal3d.h
+    PATHS 
     ${CAL3D_DIR}/include
     $ENV{CAL3D_DIR}/include
     $ENV{CAL3D_DIR}
     ${DELTA3D_EXT_DIR}/inc
-    ${DELTA3D_EXT_DIR}/inc/cal3d
     ${DELTA_DIR}
     $ENV{DELTA_ROOT}/ext/inc
-    $ENV{DELTA_ROOT}/ext/inc/cal3d
     $ENV{DELTA_ROOT}
     ~/Library/Frameworks
     /Library/Frameworks
-    /usr/local/include
-    /usr/include
-    /usr/include/cal3d
     /sw/include # Fink
     /opt/local/include # DarwinPorts
     /opt/csw/include # Blastwave
     /opt/include
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/include
     /usr/freeware/include
+    PATH_SUFFIXES cal3d
 )
 
 MACRO(FIND_CAL3D_LIBRARY MYLIBRARY MYLIBRARYNAME)

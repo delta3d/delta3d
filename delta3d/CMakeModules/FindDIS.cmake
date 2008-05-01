@@ -17,8 +17,6 @@ FIND_PATH(DIS_INCLUDE_DIR DIS/Pdu.h
     $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
-    /usr/local/include
-    /usr/include
     /sw/include # Fink
     /opt/local/include # DarwinPorts
     /opt/csw/include # Blastwave
@@ -37,8 +35,6 @@ FIND_LIBRARY(DIS_LIBRARY
     $ENV{DELTA_ROOT}/ext/lib
     ~/Library/Frameworks
     /Library/Frameworks
-    /usr/local/lib
-    /usr/lib
     /sw/lib
     /opt/local/lib
     /opt/csw/lib
@@ -51,5 +47,6 @@ SET(DIS_FOUND "NO")
 IF(DIS_LIBRARY AND DIS_INCLUDE_DIR)
     SET(DIS_FOUND "YES")
 ENDIF(DIS_LIBRARY AND DIS_INCLUDE_DIR)
+
 
 
