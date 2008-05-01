@@ -72,9 +72,10 @@ namespace dtAnim
 
          for (int i = 0; i < meshCount; ++i)
          {
-            //These should return true.  I don't know how with the api to tell
-            //if they were REALLY successful.
+            CPPUNIT_ASSERT(mModel->DetachMesh(i));
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes - 1, mModel->GetMeshCount());
             CPPUNIT_ASSERT(mModel->AttachMesh(i));
+            CPPUNIT_ASSERT_EQUAL(remainingMeshes, mModel->GetMeshCount());
             CPPUNIT_ASSERT(mModel->DetachMesh(i));
             --remainingMeshes;
             CPPUNIT_ASSERT_EQUAL(remainingMeshes, mModel->GetMeshCount());
