@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GUILayout>
+	<Window Type='DefaultWindow' Name='testWinLayout'>
+		<Window Type='WindowsLook/StaticImage' Name='Panel'>
+			<Property Name='UnifiedAreaRect' Value='{{0.000000,0.000000},{0.000000,0.000000},{1.000000,0.000000},{1.000000,0.000000}}'/>
+			<Window Type='WindowsLook/MultiColumnList' Name='List'>
+				<Property Name='UnifiedAreaRect' Value='{{0.100000,0.000000},{0.250000,0.000000},{0.500000,0.000000},{0.850000,0.000000}}'/>
+				<Property Name='SelectionMode' Value='RowSingle'/>
+				<Property Name='ColumnHeader' Value='text:Width width:{0.25,0} id:0'/>
+				<Property Name='ColumnHeader' Value='text:Height width:{0.25,0} id:1'/>
+				<Property Name='ColumnHeader' Value='text:Depth width:{0.25,0} id:2'/>
+				<Property Name='ColumnHeader' Value='text:Rate width:{0.25,0} id:3'/>
+			</Window>
+			<Window Type='WindowsLook/Checkbox' Name='FullscreenToggle'>
+				<Property Name='UnifiedAreaRect' Value='{{0.800000,0.000000},{0.613750,0.000000},{0.938125,0.000000},{0.713750,0.000000}}'/>
+				<Property Name='Text' Value='Fullscreen'/>
+				<Event Function='FullScreenToggleCB' Name='CheckStateChanged'/>
+			</Window>
+			<Window Type='WindowsLook/Editbox' Name='WindowTitle'>
+				<Property Name='UnifiedAreaRect' Value='{{0.336875,0.000000},{0.045000,0.000000},{0.633750,0.000000},{0.120000,0.000000}}'/>
+				<Property Name='Text' Value='Window Title'/>
+				<Event Function='WindowTitleCB' Name='TextAccepted'/>
+			</Window>
+			<Window Type='WindowsLook/Editbox' Name='WindowWidth'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.237916,0.000000},{0.800000,0.000000},{0.312916,0.000000}}'/>
+				<Property Name='Text' Value='Width'/>
+				<Event Function='WindowPositionCB' Name='TextAccepted'/>
+			</Window>
+			<Window Type='WindowsLook/Editbox' Name='WindowHeight'>
+				<Property Name='UnifiedAreaRect' Value='{{0.820000,0.000000},{0.236250,0.000000},{0.920000,0.000000},{0.311250,0.000000}}'/>
+				<Property Name='Text' Value='height'/>
+				<Event Function='WindowPositionCB' Name='TextAccepted'/>
+			</Window>
+			<Window Type='WindowsLook/Editbox' Name='WindowPosX'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.450000,0.000000},{0.800000,0.000000},{0.525000,0.000000}}'/>
+				<Property Name='Text' Value='X'/>
+				<Event Function='WindowPositionCB' Name='TextAccepted'/>
+			</Window>
+			<Window Type='WindowsLook/Editbox' Name='WindowPosY'>
+				<Property Name='UnifiedAreaRect' Value='{{0.820000,0.000000},{0.450000,0.000000},{0.920000,0.000000},{0.525000,0.000000}}'/>
+				<Property Name='Text' Value='Y'/>
+				<Event Function='WindowPositionCB' Name='TextAccepted'/>
+			</Window>
+			<Window Type='WindowsLook/Button' Name='ResChangeButton'>
+				<Property Name='UnifiedAreaRect' Value='{{0.151250,0.000000},{0.870000,0.000000},{0.401250,0.000000},{0.970000,0.000000}}'/>
+				<Property Name='Text' Value='Change Resolution'/>
+				<Event Function='ChangeResolutionCB' Name='Clicked'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='TitleLabel'>
+				<Property Name='UnifiedAreaRect' Value='{{0.172500,0.000000},{0.045000,0.000000},{0.322500,0.000000},{0.120000,0.000000}}'/>
+				<Property Name='Text' Value='Window Title'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='WidthLabel'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.152083,0.000000},{0.800000,0.000000},{0.227083,0.000000}}'/>
+				<Property Name='Text' Value='Width'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='WidthLabel1'>
+				<Property Name='UnifiedAreaRect' Value='{{0.820000,0.000000},{0.152083,0.000000},{0.920000,0.000000},{0.227083,0.000000}}'/>
+				<Property Name='Text' Value='Height'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='WidthLabel13'>
+				<Property Name='UnifiedAreaRect' Value='{{0.820000,0.000000},{0.360000,0.000000},{0.920000,0.000000},{0.435000,0.000000}}'/>
+				<Property Name='Text' Value='Y Pos'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+			<Window Type='WindowsLook/StaticText' Name='WidthLabel4'>
+				<Property Name='UnifiedAreaRect' Value='{{0.700000,0.000000},{0.360000,0.000000},{0.800000,0.000000},{0.435000,0.000000}}'/>
+				<Property Name='Text' Value='X Pos'/>
+				<Property Name='HorzFormatting' Value='HorzCentred'/>
+			</Window>
+		</Window>
+	</Window>
+</GUILayout>
