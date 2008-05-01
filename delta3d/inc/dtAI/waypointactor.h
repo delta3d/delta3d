@@ -23,6 +23,7 @@
 #define __DELTA_WAYPOINTACTOR_H__
 
 #include <dtAI/export.h>
+#include <dtAI/primitives.h>
 #include <dtCore/transformable.h>
 
 namespace dtAI 
@@ -42,11 +43,11 @@ namespace dtAI
       virtual ~WaypointActor();
    public:
 
-      void SetIndex(unsigned pIndex){mIndex = pIndex;}
-      unsigned GetIndex() const{return mIndex;}
+      void SetIndex(WaypointID id){mIndex = id;}
+      WaypointID GetIndex() const{return mIndex;}
 
    private:
-      unsigned mIndex;
+      WaypointID mIndex;
 
    };
 }//namespace 

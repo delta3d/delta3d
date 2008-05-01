@@ -23,6 +23,7 @@
 #define __DELTA_NAVMESH_H__
 
 #include <dtAI/export.h>
+#include <dtAI/primitives.h>
 #include <map>
 
 namespace dtAI
@@ -38,8 +39,8 @@ namespace dtAI
    {
    public:
 
-      typedef std::pair<unsigned, WaypointPair*> NavMeshPair;
-      typedef std::multimap<unsigned, WaypointPair*> NavMeshContainer;      
+      typedef std::pair<WaypointID, WaypointPair*> NavMeshPair;
+      typedef std::multimap<WaypointID, WaypointPair*> NavMeshContainer;      
 
    public:         
          NavMesh();

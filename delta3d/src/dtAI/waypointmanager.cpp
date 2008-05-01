@@ -107,18 +107,18 @@ namespace dtAI
       if(mLoadActors) 
          return;
 
-      unsigned pIndex = mWaypoints.size();
-      pWaypointActor.SetIndex(pIndex);
-      mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, new Waypoint(&pWaypointActor)));      
+      WaypointID id = mWaypoints.size();
+      pWaypointActor.SetIndex(id);
+      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, new Waypoint(&pWaypointActor)));      
    }
 
-   int WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
+   WaypointID WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
-      unsigned pIndex = mWaypoints.size();
+      WaypointID id = mWaypoints.size();
       Waypoint* pWay = new Waypoint(pWaypoint);
-	   pWay->SetID(pIndex);
-      mWaypoints.insert(std::pair<unsigned, Waypoint*>(pIndex, pWay));   
-      return pIndex;
+	   pWay->SetID(id);
+      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, pWay));   
+      return id;
    }
 
    void WaypointManager::RemoveWaypoint(const WaypointActor &pWaypoint)
@@ -127,22 +127,22 @@ namespace dtAI
       RemoveWaypoint(pWaypoint.GetIndex());
    }
 
-   void WaypointManager::RemoveWaypoint(unsigned pIndex)
+   void WaypointManager::RemoveWaypoint(WaypointID id)
    {
       //we are indexing into map with a key generated on AddWaypoint
-      mWaypoints.erase(pIndex);
+      mWaypoints.erase(id);
    }
 
-   Waypoint *WaypointManager::GetWaypoint(unsigned pIndex)
+   Waypoint* WaypointManager::GetWaypoint( WaypointID id )
    {
-      return pIndex < mWaypoints.size() ? mWaypoints[pIndex] : NULL;
+      return id < mWaypoints.size() ? mWaypoints[id] : NULL;
    }
-   const Waypoint *WaypointManager::GetWaypoint(unsigned pIndex) const
+   const Waypoint *WaypointManager::GetWaypoint(WaypointID id) const
    {
       /*
       DJMC note: We cannot simply do the following:
 
-      return mWaypoints[pIndex];
+      return mWaypoints[id];
 
       and still remain a const method since the [] operation might
       add a setting if it is not found inside. We must seek an
@@ -158,9 +158,9 @@ namespace dtAI
       remain a const method.
       //*/
 
-      if (pIndex < mWaypoints.size())
+      if (id < mWaypoints.size())
       {
-         WaypointMap::const_iterator i = mWaypoints.find(pIndex);
+         WaypointMap::const_iterator i = mWaypoints.find(id);
          if (i != mWaypoints.end())
          {
             return (*i).second;
@@ -169,15 +169,15 @@ namespace dtAI
       return NULL;
    }
 
-   void WaypointManager::MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos)
+   void WaypointManager::MoveWaypoint( WaypointID id, const osg::Vec3& pPos )
    {
       //we are indexing into map with a key generated on AddWaypoint
-      mWaypoints[pIndex]->SetPosition(pPos);
+      mWaypoints[id]->SetPosition(pPos);
    }
 
-   void WaypointManager::AddPathSegment(unsigned pIndexFrom, unsigned pIndexTo)
+   void WaypointManager::AddPathSegment( WaypointID idFrom, WaypointID idTo )
    {
-	   mNavMesh.AddPathSegment( mWaypoints[pIndexFrom], mWaypoints[pIndexTo] );
+	   mNavMesh.AddPathSegment( mWaypoints[idFrom], mWaypoints[idTo] );
    }
 
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
@@ -202,7 +202,7 @@ namespace dtAI
       unsigned size = pWaypointVector.size();
       outfile << size << std::endl;
 
-      for(unsigned i = 0; i < size; ++i)
+      for(WaypointID i = 0; i < size; ++i)
       {
          //we will use these ids when we write out the navmesh
          pWaypointVector[i]->SetID(i);
@@ -262,7 +262,7 @@ namespace dtAI
             unsigned size = 0;
             infile >> size;
 
-            for(unsigned i = 0; i < size; ++i)
+            for(WaypointID i = 0; i < size; ++i)
             {
                osg::Vec3 pPos;
                infile >> pPos[0] >> pPos[1] >> pPos[2];
@@ -271,7 +271,7 @@ namespace dtAI
                pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFAULT);
                pNewWaypoint->SetID(i);
 
-               mWaypoints.insert(std::pair<unsigned, Waypoint*>(i, pNewWaypoint));      
+               mWaypoints.insert(std::pair<WaypointID, Waypoint*>(i, pNewWaypoint));      
             }
 
             //read in the nav mesh
@@ -280,7 +280,7 @@ namespace dtAI
 
             for(unsigned i = 0; i < navMeshSize; ++i)
             {
-               unsigned indexFrom, indexTo;
+               WaypointID indexFrom, indexTo;
                infile >> indexFrom >> indexTo;            
                mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
             }
@@ -325,7 +325,7 @@ namespace dtAI
       WaypointIterator iter = mWaypoints.begin();
       WaypointIterator endOfMap = mWaypoints.end();
 
-      int id = 0;
+      WaypointID id = 0;
       while(iter != endOfMap)
       {
          Waypoint* pWaypoint1 = (*iter).second;

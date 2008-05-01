@@ -91,7 +91,7 @@ namespace dtAI
       NavMeshContainer::const_iterator iter = begin(pPair->GetWaypointTo());
       NavMeshContainer::const_iterator endOfList = end(pPair->GetWaypointTo());
 
-      unsigned id = pPair->GetWaypointFrom()->GetID();
+      WaypointID id = pPair->GetWaypointFrom()->GetID();
       while(iter != endOfList)
       {
          if(iter->second->GetWaypointTo()->GetID() == id)
