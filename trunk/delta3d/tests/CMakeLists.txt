@@ -4,7 +4,10 @@ SET(PROG_NAME     allTests)
 INCLUDE_DIRECTORIES( ${DELTA3D_SOURCE_DIR}/examples
                      ${DELTA3D_SOURCE_DIR}/utilities) 
 
-SET(DIRS dtABC dtAI dtActors dtAnim dtAudio dtCore dtDAL dtDIS dtGUI dtGame dtLMS dtUtil)
+SET(DIRS dtABC dtAI dtActors dtAnim dtAudio dtCore dtDAL dtGUI dtGame dtLMS dtUtil)
+IF(DIS_FOUND)
+  SET(DIRS ${DIRS} dtDIS)
+ENDIF(DIS_FOUND)
 
 file(GLOB TEMP_SOURCES "*.cpp" "*.h")
 SET(ALL_SOURCES ${TEMP_SOURCES}
@@ -35,15 +38,18 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          DTAI_LIBRARY
 					 DTDAL_LIBRARY   
                                          DTLMS_LIBRARY
-					 DTDIS_LIBRARY
 					 DTGUI_LIBRARY   
                                          DTACTORS_LIBRARY
 					 DTANIM_LIBRARY   
                                          DTABC_LIBRARY
 					 TEST_ACTOR_LIBRARY
                                          TEST_GAME_ACTOR_LIBRARY
-					 CPPUNIT_LIBRARY
+					 CPPUNIT_LIBRARY)                                         
+IF(DIS_FOUND)
+LINK_WITH_VARIABLES(${PROG_NAME}
+					 DTDIS_LIBRARY
 					 DIS_LIBRARY)                                         
+ENDIF(DIS_FOUND)
                                               
 INCLUDE(ModuleInstall OPTIONAL)
 
