@@ -23,6 +23,7 @@
 #define __DELTA_WAYPOINT_H__
 
 #include <dtAI/export.h>
+#include <dtAI/primitives.h>
 #include <osg/Vec3>
 #include <osg/Vec4>
 
@@ -69,8 +70,8 @@ namespace dtAI
          const osg::Vec3& GetPosition() const;
          void SetPosition(const osg::Vec3& pVec);
 
-         void SetID(unsigned pID);
-         unsigned GetID()const;
+         void SetID(WaypointID ID);
+         WaypointID GetID()const;
 
          void SetRenderFlag(RenderFlag rf) const;
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
@@ -88,7 +89,7 @@ namespace dtAI
 
       private:        
          
-         unsigned mID;
+         WaypointID mID;
 
          mutable RenderFlag mRenderFlag;
          mutable osg::Vec3 mColor; 

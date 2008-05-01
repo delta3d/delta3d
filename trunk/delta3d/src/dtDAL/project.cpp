@@ -1645,7 +1645,7 @@ namespace dtDAL
          dtAI::WaypointManager::WaypointIterator iter = pWaypoints.begin();
          dtAI::WaypointManager::WaypointIterator endOfVector = pWaypoints.end();
 
-         unsigned counter = 0;
+         dtAI::WaypointID counter = 0;
 
          while(iter != endOfVector)
          {

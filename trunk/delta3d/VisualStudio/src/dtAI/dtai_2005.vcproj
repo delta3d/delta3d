@@ -354,6 +354,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtAI\primitives.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtAI\sensor.h"
 				>
 			</File>

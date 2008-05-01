@@ -32,6 +32,7 @@
 #include <dtAI/waypointactor.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/export.h>
+#include <dtAI/primitives.h>
 
 #include <vector>
 #include <map>
@@ -51,7 +52,7 @@ namespace dtAI
    {
       public:     
 
-         typedef std::map<unsigned, Waypoint*> WaypointMap;
+         typedef std::map<WaypointID, Waypoint*> WaypointMap;
          typedef WaypointMap::iterator WaypointIterator;
 
       public:
@@ -93,12 +94,12 @@ namespace dtAI
 		  /**
          * Returns a single waypoint by index
          */
-        Waypoint* GetWaypoint(unsigned pIndex);
+        Waypoint* GetWaypoint(WaypointID id);
 
         /**
          * Returns a single waypoint by index (const version)
          */
-        const Waypoint *GetWaypoint(unsigned pIndex) const;
+        const Waypoint *GetWaypoint(WaypointID id) const;
 
         /**
          * Given a scene we create a NavMesh
@@ -143,24 +144,24 @@ namespace dtAI
          * Use this function to create your own waypoints
          * @return the index to use for deleting this waypoint
          */
-        int AddWaypoint(const osg::Vec3& pWaypoint);
+        WaypointID AddWaypoint(const osg::Vec3& pWaypoint);
 
         /**
          * Use this function to remove waypoints you have created
          */
-        void RemoveWaypoint(unsigned pIndex);
+        void RemoveWaypoint(WaypointID id);
 		 
 		  /**
          * Adds a path segment to the navigation mesh
          */
-        void AddPathSegment(unsigned pIndexFrom, unsigned pIndexTo);
+        void AddPathSegment(WaypointID idFrom, WaypointID idTo);
 
         /**
          * These are utility functions used by STAGE and dtDAL::Project         
          */
         void AddWaypoint(WaypointActor &pWaypoint);
         void RemoveWaypoint(const WaypointActor &pWaypoint);    
-        void MoveWaypoint(unsigned pIndex, const osg::Vec3& pPos);
+        void MoveWaypoint(WaypointID id, const osg::Vec3& pPos);
 
         void OnMapLoad(const std::string& pWaypointFilename);
         void OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene);

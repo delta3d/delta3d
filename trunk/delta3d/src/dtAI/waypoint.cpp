@@ -84,12 +84,12 @@ namespace dtAI
       mPosition = pVec;
    }
 
-   void Waypoint::SetID(unsigned pId)
+   void Waypoint::SetID( WaypointID ID )
    {
-      mID = pId;
+      mID = ID;
    }
 
-   unsigned Waypoint::GetID() const
+   dtAI::WaypointID Waypoint::GetID() const
    {
       return mID;
    }   

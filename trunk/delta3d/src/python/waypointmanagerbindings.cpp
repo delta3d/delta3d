@@ -17,10 +17,10 @@ void init_WaypointManagerBindings()
    //class_<WaypointManager::WaypointMap>("WaypointMap")
    //   .def(map_indexing_suite<WaypointManager::WaypointMap>());
 
-   int (WaypointManager::*AddWaypoint1)(const osg::Vec3&) = &WaypointManager::AddWaypoint;
+   WaypointID (WaypointManager::*AddWaypoint1)(const osg::Vec3&) = &WaypointManager::AddWaypoint;
 
-   const Waypoint *(WaypointManager::*GetWaypointc)(unsigned pIndex) const = &WaypointManager::GetWaypoint;
-   Waypoint *(WaypointManager::*GetWaypointnc)(unsigned pIndex)            = &WaypointManager::GetWaypoint;
+   const Waypoint *(WaypointManager::*GetWaypointc)(WaypointID pIndex) const = &WaypointManager::GetWaypoint;
+   Waypoint *(WaypointManager::*GetWaypointnc)(WaypointID pIndex)            = &WaypointManager::GetWaypoint;
 
    class_<std::vector<Waypoint*> >("WaypointList")
       .def(vector_indexing_suite<std::vector<Waypoint*> >());
