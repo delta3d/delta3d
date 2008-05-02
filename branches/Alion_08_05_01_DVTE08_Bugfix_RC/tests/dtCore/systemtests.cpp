@@ -327,7 +327,7 @@ void SystemTests::TestSimMode()
    CPPUNIT_ASSERT(!mDummyDrawable->mPostFrameCalled);
    CPPUNIT_ASSERT(!mDummyDrawable->mFrameCalled);
 
-   app->Config();
+   //app->Config();
 
    dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
    System::GetInstance().Start();

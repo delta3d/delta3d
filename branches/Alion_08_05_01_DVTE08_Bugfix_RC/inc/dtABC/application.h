@@ -70,17 +70,128 @@ namespace dtABC
    class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
    {
       DECLARE_MANAGEMENT_LAYER(Application)
+      typedef dtABC::BaseABC BaseClass;
 
    public:
-      Application( const std::string& configFilename = "", dtCore::DeltaWin *win = NULL );
-
+      /**
+       * Configuration property.
+       * <br>
+       * Sets the fixed simulated frame rate of the system. This only matters if a fixed time step
+       * is used.
+       * @see dtCore::System
+       */
       static const std::string SIM_FRAME_RATE;
+
+      /**
+       * Configuration property.
+       * <br>
+       * When using a fixed time step, it is possible that the time required to simulate could be
+       * so great that the system would never have time to draw a frame.  This time is used an as
+       * override so that it be guaranteed to at least draw a frame every so often.  This time is a
+       * floating point number in seconds.
+       * @see dtCore::System
+       */
       static const std::string MAX_TIME_BETWEEN_DRAWS;
+      
+      /**
+       * Configuration property.
+       * <br>
+       * Set to true or false.
+       * <br>
+       * This value defaults to false, which will make the delta time be equivalent to the time since the
+       * beginning of the last frame times the current time scale. If this is set to true, the delta
+       * time will be a fixed value multiplied times the time scale.  This helps make things like motion models
+       * physics, and other time-based calculations deterministic.  They also won't suffer from
+       * anomalies that occur with frame hiccups.
+       * @see dtCore::System
+       */
       static const std::string USE_FIXED_TIME_STEP;
 
-   public:
+      /**
+       * Configuration property.
+       * <br>
+       * Set to true or false
+       * <br>
+       * This will set the database pager for the default view to precompile gl objects or not.
+       * If they are not precomplied, they will be compiled when they are first viewed, which can
+       * cause major frame hiccups in some cases.  It defaults to true.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_PRECOMPILE_OBJECTS;
+
+      /**
+       * Configuration property.
+       * <br>
+       * Unsigned integer
+       * <br>
+       * The max number of GL objects to compile per frame.  This number should be low.  The default is
+       * 2.  Making it higher will make tiles page in sooner, but it will also cause more of a frame
+       * hiccup.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME;
+
+      /**
+       * Configuration property.
+       * <br>
+       * floating point number
+       * <br>
+       * The minimum amount of time to allocate from pre-compiling GL objects in a paged database
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE;
+
+      /**
+       * Configuration property.
+       * <br>
+       * floating point in frames per second.
+       * <br>
+       * The target frame rate.  The pager uses this to time certain operations.  
+       * If the system is set to use a fixed time step, the target frame rate is set to match the
+       * fixed frame rate (SIM_FRAME_RATE). Otherwise, it defaults to 100.
+       * Turning this number down can improve paging preformance somewhat.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_TARGET_FRAMERATE;
+
+      /**
+       * Configuration property.
+       * <br>
+       * DoNotModify, DisplayList, VBO or VertexArrays
+       * <br>
+       * This defaults to DoNotModify, but changing it will tell the pager to alter the drawing settings
+       * on loaded pages.  DisplayList will force drawables to draw using display lists.  VBO will tell
+       * drawables to draw using Vertex Buffer Objects.  VertexArrays will tell the drawables to draw using
+       * standard vertex arrays with no performance tricks.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_DRAWABLE_POLICY;
+
+      /**
+       * Configuration property.
+       * <br>
+       * Set the thread priority to DEFAULT, MIN, LOW, NOMINAL, HIGH or MAX.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_THREAD_PRIORITY;
+
+      /**
+       * Configuration property.
+       * <br>
+       * floating point in seconds.
+       * <br>
+       * the time in seconds of not being rendered before the database pager deletes pages.
+       * @see osgDB::DatabasePager
+       */
+      static const std::string DATABASE_PAGER_EXPIRY_DELAY;
+
+      Application( const std::string& configFilename = "", dtCore::DeltaWin *win = NULL );
+
       ///Start the Application
       virtual void Run();
+
+      //overridden the load config properties into settings.
+      virtual void Config();
 
       /// Generate a default configuration file.
       /// This method writes out all the default attributes from the internal Application
@@ -125,7 +236,7 @@ namespace dtABC
 
       ///Cycle through the statistics modes
       void SetNextStatisticsType();
-      
+
    protected:
 
       virtual ~Application();
@@ -154,8 +265,11 @@ namespace dtABC
       /// @return the instance of the osgViewer::CompositeViewer
       osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
 
-      void ReadSystemProperties();
-
+      /**
+       * Forces the application to re-read the set of config properties it handles.
+       * This is virtual so a subclass can add new properties.
+       */
+      virtual void ReadSystemProperties();
    private:
 
       /// A utility to apply the parsed data to the Application instance
