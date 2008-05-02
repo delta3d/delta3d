@@ -26,6 +26,7 @@
 #include "export.h"
 #include <dtGame/message.h>
 #include <dtGame/messagetype.h>
+#include <dtGame/messagefactory.h>
 #include <dtCore/uniqueid.h>
 
 ///////////////////////////////////////////////////////////////////////////////
