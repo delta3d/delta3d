@@ -269,7 +269,7 @@ void MessageTests::createActors(dtDAL::Map& map)
       for (unsigned int j=0; j<props.size(); j++) {
          mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                             "Property: Name: %s, Type: %s",
-                            props[j]->GetName().c_str(), props[j]->GetPropertyType().GetName().c_str());
+                            props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
       }
 
       map.AddProxy(*proxy);

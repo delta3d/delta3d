@@ -379,7 +379,7 @@ namespace dtEditQt
                 newControl = controlFactory->CreateObject(&curProp->GetPropertyType());
                 if (newControl == NULL)
                 {
-                    LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetPropertyType().GetName());
+                    LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetDataType().GetName());
                 }
                 else
                 {
@@ -427,7 +427,7 @@ namespace dtEditQt
             }
             catch (dtUtil::Exception &ex)
             {
-                LOG_ERROR("Failed to create a control for property: " + curProp->GetPropertyType().GetName() +
+                LOG_ERROR("Failed to create a control for property: " + curProp->GetDataType().GetName() +
                     " with error: " + ex.What());
             }
 
@@ -525,7 +525,7 @@ namespace dtEditQt
     {
         propertyTree->viewport()->update();
 
-        if(property->GetPropertyType() == dtDAL::DataType::TERRAIN)
+        if(property->GetDataType() == dtDAL::DataType::TERRAIN)
         {
            if(ViewportManager::GetInstance().IsPagingEnabled())
               ViewportManager::GetInstance().EnablePaging(false);

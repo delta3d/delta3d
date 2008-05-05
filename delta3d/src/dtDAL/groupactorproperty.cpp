@@ -79,7 +79,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    void GroupActorProperty::CopyFrom(const ActorProperty& otherProp)
    {
-      if (GetPropertyType() != otherProp.GetPropertyType())
+      if (GetDataType() != otherProp.GetDataType())
       {
          LOG_ERROR("Property types are incompatible. Cannot make copy.");
          return;

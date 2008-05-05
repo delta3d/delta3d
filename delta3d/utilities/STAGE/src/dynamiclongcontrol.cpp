@@ -53,7 +53,7 @@ namespace dtEditQt
     {
         // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-        if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::LONGINT) 
+        if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::LONGINT) 
         {
             myProperty = static_cast<dtDAL::LongActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -154,7 +154,7 @@ namespace dtEditQt
     const QString DynamicLongControl::getDescription() 
     {
         std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-            myProperty->GetPropertyType().GetName() + "]";
+            myProperty->GetDataType().GetName() + "]";
         return QString(tr(tooltip.c_str()));
     }
 

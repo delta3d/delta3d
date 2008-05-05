@@ -49,10 +49,10 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::ValidatePropertyType(const dtDAL::ActorProperty &property) const 
    {
-      if (property.GetPropertyType() != GetDataType())
+      if (property.GetDataType() != GetDataType())
       {
          throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
-            "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetPropertyType().GetName() +
+            "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetDataType().GetName() +
             "] does not match the Message Parameter [" + GetName() + 
             "] with Data Type [" + GetDataType().GetName() + "]", __FILE__, __LINE__);
       }

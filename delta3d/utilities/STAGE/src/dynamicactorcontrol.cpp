@@ -50,7 +50,7 @@ namespace dtEditQt
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::ACTOR)
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ACTOR)
       {
          myProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -196,7 +196,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetPropertyType().GetName() + "]";
+      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetDataType().GetName() + "]";
       return tr(tooltip.c_str());
    }
 

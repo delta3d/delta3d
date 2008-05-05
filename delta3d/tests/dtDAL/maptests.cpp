@@ -260,7 +260,7 @@ void MapTests::createActors(dtDAL::Map& map)
       {
          logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                             "Property: Name: %s, Type: %s",
-                            props[j]->GetName().c_str(), props[j]->GetPropertyType().GetName().c_str());
+                            props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
       }
       
       // Temporary timing for map tests...  when we get a slow one, we should exclude it from
@@ -497,7 +497,7 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
             //They will be getting.
             if (prop != NULL)
             {
-                if (prop->GetPropertyType() == type && which-- == 0)
+                if (prop->GetDataType() == type && which-- == 0)
                 {
                    LOGN_DEBUG("maptests.cpp", proxy->GetActorType().GetName());
                    return prop;
@@ -511,7 +511,7 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
             for (std::vector<dtDAL::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
             {
                 dtDAL::ActorProperty* prop = *j;
-                if (!prop->IsReadOnly() && prop->GetPropertyType() == type && which-- == 0)
+                if (!prop->IsReadOnly() && prop->GetDataType() == type && which-- == 0)
                 {
                     //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId() << std::endl;
                     //std::cout << "  " << proxy->GetActorType().GetName() << std::endl;

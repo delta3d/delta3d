@@ -58,7 +58,7 @@ namespace dtEditQt
     {
         // Note - Unlike the other properties, we can't static or reinterpret cast this object.
         // We need to dynamic cast it...
-        if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::ENUMERATION)
+        if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ENUMERATION)
         {
             myProperty = dynamic_cast<dtDAL::AbstractEnumActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -164,7 +164,7 @@ namespace dtEditQt
     const QString DynamicEnumControl::getDescription()
     {
         std::string tooltip = myProperty->AsActorProperty()->GetDescription() + "  [Type: " +
-            myProperty->AsActorProperty()->GetPropertyType().GetName() + "]";
+            myProperty->AsActorProperty()->GetDataType().GetName() + "]";
         return QString(tr(tooltip.c_str()));
     }
 

@@ -70,7 +70,7 @@ namespace dtEditQt
     {
         // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-        if (newProperty != NULL && newProperty->GetPropertyType().IsResource()) 
+        if (newProperty != NULL && newProperty->GetDataType().IsResource()) 
         {
             myProperty = static_cast<dtDAL::ResourceActorProperty*>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -78,9 +78,9 @@ namespace dtEditQt
         else 
         {
             std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-            std::string propType = (newProperty != NULL) ? newProperty->GetPropertyType().GetName() : "NULL";
+            std::string propType = (newProperty != NULL) ? newProperty->GetDataType().GetName() : "NULL";
             std::string isResource = (newProperty != NULL) ?
-                (newProperty->GetPropertyType().IsResource() ? "IsResource" : "NotAResource") : "NULL";
+                (newProperty->GetDataType().IsResource() ? "IsResource" : "NotAResource") : "NULL";
             LOG_ERROR("Cannot create dynamic control because property [" +
                 propertyName + "] is not the correct type[" + propType + "], [" +
                 isResource + "].");
@@ -98,7 +98,7 @@ namespace dtEditQt
     const QString DynamicResourceControl::getDescription() 
     {
         std::string tooltip = myProperty->GetDescription() + " - To assign a resource, select a [" + 
-            myProperty->GetPropertyType().GetName() + "] resource in the Resource Browser and press Use Current";
+            myProperty->GetDataType().GetName() + "] resource in the Resource Browser and press Use Current";
         return QString(tr(tooltip.c_str()));
     }
 
@@ -111,31 +111,31 @@ namespace dtEditQt
         if (resource == NULL) 
         {
             QString type;
-            if (myProperty->GetPropertyType() == dtDAL::DataType::SOUND) 
+            if (myProperty->GetDataType() == dtDAL::DataType::SOUND) 
             {
                 type = dtDAL::DataType::SOUND.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::STATIC_MESH) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::STATIC_MESH) 
             {
                 type = dtDAL::DataType::STATIC_MESH.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::SKELETAL_MESH) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH) 
             {
                type = dtDAL::DataType::SKELETAL_MESH.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::TEXTURE) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::TEXTURE) 
             {
                 type = dtDAL::DataType::TEXTURE.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::TERRAIN) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::TERRAIN) 
             {
                 type = dtDAL::DataType::TERRAIN.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM) 
             {
                 type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
+            else if (myProperty->GetDataType() == dtDAL::DataType::CHARACTER) 
             {
                 type = dtDAL::DataType::CHARACTER.GetDisplayName().c_str();
             }             
@@ -231,38 +231,38 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     dtDAL::ResourceDescriptor DynamicResourceControl::getCurrentResource() 
     {
-        if (myProperty->GetPropertyType() == dtDAL::DataType::SOUND) 
+        if (myProperty->GetDataType() == dtDAL::DataType::SOUND) 
         {
             return EditorData::GetInstance().getCurrentSoundResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::STATIC_MESH) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::STATIC_MESH) 
         {
             return EditorData::GetInstance().getCurrentMeshResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::TEXTURE) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::TEXTURE) 
         {
             return EditorData::GetInstance().getCurrentTextureResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::TERRAIN) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::TERRAIN) 
         {
             return EditorData::GetInstance().getCurrentTerrainResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM) 
         {
             return EditorData::GetInstance().getCurrentParticleResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::CHARACTER) 
         {
             return EditorData::GetInstance().getCurrentCharacterResource();
         } 
-        else if (myProperty->GetPropertyType() == dtDAL::DataType::SKELETAL_MESH) 
+        else if (myProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH) 
         {
            return EditorData::GetInstance().getCurrentSkeletalModelResource();
         } 
         else 
         {
             LOG_ERROR("Error setting current resource because DataType [" + 
-                myProperty->GetPropertyType().GetName() + 
+                myProperty->GetDataType().GetName() + 
                 "] is not supported for property [" + myProperty->GetName() + "].");
             // return something so we don't crash
             return dtDAL::ResourceDescriptor();

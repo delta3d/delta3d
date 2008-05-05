@@ -48,7 +48,7 @@ namespace dtEditQt
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
-      if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::GAME_EVENT)
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GAME_EVENT)
       {
          myProperty = dynamic_cast<dtDAL::GameEventActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -162,7 +162,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGameEventControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetPropertyType().GetName() + "]";
+      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
