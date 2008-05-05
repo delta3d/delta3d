@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -34,14 +34,14 @@
 namespace dtCore
 {
    class Camera;
-   
-   /** 
-    * Performs high-level frame coordination. The System is used to control the 
-    * frame-based coordination of all the dtCore classes.  There is only one 
+
+   /**
+    * Performs high-level frame coordination. The System is used to control the
+    * frame-based coordination of all the dtCore classes.  There is only one
     * instance of the System available and is always accessable using Instance();
-    * Once the application has created all the required instances, System::Run() 
-    * can be called and will block until System::Stop() gets called.  By 
-    * subscribing to the System, Base derived objects can receive the System 
+    * Once the application has created all the required instances, System::Run()
+    * can be called and will block until System::Stop() gets called.  By
+    * subscribing to the System, Base derived objects can receive the System
     * messages "preframe", "frame", "postframe", and "configure".
     *
     * To enable fixed time stepping, you will need to set the rate to the rate you
@@ -67,7 +67,7 @@ namespace dtCore
     * @see AddListener()
     * @see OnMessage()
     */
-   class DT_CORE_EXPORT System : public Base 
+   class DT_CORE_EXPORT System : public Base
    {
 
    public:
@@ -86,7 +86,7 @@ namespace dtCore
          STAGE_CONFIG      = 0X00000010, ///<"config" message, plus render a camera frame
          STAGES_DEFAULT  = STAGE_FRAMESYNCH|STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
       };
-   
+
       typedef unsigned int SystemStageFlags;
 
    protected:
@@ -121,7 +121,7 @@ namespace dtCore
        */
       SystemStageFlags GetSystemStages() const;
 
-      
+
 
       ///Toggles the running flag to true
       void Start();
@@ -137,7 +137,7 @@ namespace dtCore
 
       /** Performs one complete System frame step and performs DeltaWin processing.  This is
        *  useful if you wish to control the entire System's frame processing.
-       *  Emits the "preframe", "frame", and "postframe" messages. 
+       *  Emits the "preframe", "frame", and "postframe" messages.
        */
       void StepWindow();
 
@@ -152,7 +152,7 @@ namespace dtCore
 
       void SetPause( bool paused );
       bool GetPause() const;
-      
+
       /*!
       * Controls shutdown behavior of the system. Normally the system will only
       * shutdown if Stop() is called. If this function is called with 'true',
@@ -181,7 +181,7 @@ namespace dtCore
        * @param newTimeScale set the scale of realtime at which the simulation time is to run.
        */
       void SetTimeScale(double newTimeScale);
-      
+
       /**
        * @note the clock time is a 64 bit int in microseconds
        * @return the current real clock in microseconds since January 1, 1970
@@ -195,7 +195,7 @@ namespace dtCore
        *         and follows the time scale.
        */
       Timer_t GetSimulationClockTime() const;
-      
+
       /**
        * Sets the simulation wall clock time.  This is used for things like time of day.
        * @param newTime the new time in microseconds, like the real clock time.
@@ -209,19 +209,19 @@ namespace dtCore
       double GetSimulationTime() const;
 
       /**
-      *	@note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.  
+      *	@note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.
       *          it starts at 0 and goes up in seconds.  This time cannot be changed but does scale
       *          with the simulation time.
       */
       double GetSimTimeSinceStartup() const;
-      
-      /** 
+
+      /**
        * This is the Simulation time that would be based on actual passage of time. This won't
        * match the simulation time always when SetUseFixedTimeStep(true) is called.  The value
        * is probably not of any use to a developer.  This accessor exists for the sake of unit testsing.
        */
       double GetCorrectSimulationTime() const;
-      
+
       /**
        * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
        * @param newTime the new time in seconds since the start of the simulation for the simualtion time.
@@ -230,7 +230,7 @@ namespace dtCore
 
       /// this is the amount it should step by, only valid in mUseFixedTimeRate == true
       void SetFrameRate(double newRate);
-      
+
       /// your minimum number of frames you want it to draw, only valid in mUseFixedTimeRate == true
       void SetMaxTimeBetweenDraws(double newTime);
 
@@ -256,20 +256,19 @@ namespace dtCore
       /// time keeping variable.  This clock is used for calculating accurate time deltas using
       /// system dependent algorithms.  The value is not necessarily human understandable.
       Timer_t mTickClockTime;
-      
+
       //The real world time (UTC) and a simulated, settable version of it. They are both
       // in microseconds since January 1, 1970.
       Timer_t mRealClockTime, mSimulationClockTime;
       Timer_t mLastDrawClockTime;
-      double mSimulationTime;  
+      double mSimulationTime;
       double mSimTimeSinceStartup;
       double mCorrectSimulationTime;
       double mFrameTime;
       double mTimeScale;
-      double mDt;
       double mMaxTimeBetweenDraws;
       double mAccumulationTime;
-      
+
       SystemStageFlags mSystemStages;
 
       bool mUseFixedTimeStep;
@@ -278,10 +277,10 @@ namespace dtCore
       bool mShutdownOnWindowClose;
       bool mPaused;
       bool mWasPaused;
-      
-      
+
+
       // will step the system with a fixed time step.
-      void SystemStepFixed();
+      void SystemStepFixed(const double realDT);
 
       //initializes internal variables at the start of a run.
       void InitVars();
@@ -306,7 +305,7 @@ namespace dtCore
        */
       void Frame(const double deltaSimTime, const double deltaRealTime);
 
-      /** 
+      /**
        * Stuff to do after the frame.  Message: "postframe", delta time in seconds
        * @param deltaSimTime The change in simulation time is seconds.
        * @param deltaRealTime The change in real time in seconds.

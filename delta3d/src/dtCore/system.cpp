@@ -32,9 +32,8 @@ namespace dtCore
    , mLastDrawClockTime(0)
    , mSimulationTime(0.0)
    , mCorrectSimulationTime(0.0)
-   , mFrameTime(1.0f/60.0f)
-   , mTimeScale(1.0f)
-   , mDt(0.0)
+   , mFrameTime(1.0/60.0)
+   , mTimeScale(1.0)
    , mMaxTimeBetweenDraws(30000)
    , mAccumulationTime(0.0)
    , mSystemStages(STAGES_DEFAULT)
@@ -75,8 +74,8 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetShutdownOnWindowClose( bool shutdown ) 
-   { 
+   void System::SetShutdownOnWindowClose( bool shutdown )
+   {
       mShutdownOnWindowClose = shutdown;
    }
 
@@ -93,7 +92,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetTimeScale(double newTimeScale) 
+   void System::SetTimeScale(double newTimeScale)
    {
       mTimeScale = newTimeScale;
    }
@@ -105,7 +104,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   Timer_t System::GetSimulationClockTime() const 
+   Timer_t System::GetSimulationClockTime() const
    {
       return mSimulationClockTime;
    }
@@ -117,7 +116,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double System::GetSimulationTime() const 
+   double System::GetSimulationTime() const
    {
       return mSimulationTime;
    }
@@ -129,13 +128,13 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double System::GetCorrectSimulationTime() const 
+   double System::GetCorrectSimulationTime() const
    {
       return mCorrectSimulationTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetFrameRate(double newRate) 
+   void System::SetFrameRate(double newRate)
    {
       mFrameTime = 1.0/newRate;
    }
@@ -147,32 +146,32 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetUseFixedTimeStep(bool value) 
+   void System::SetUseFixedTimeStep(bool value)
    {
       mUseFixedTimeStep = value;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double System::GetFrameRate() const 
+   double System::GetFrameRate() const
    {
       return 1.0/mFrameTime;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool System::GetUsesFixedTimeStep() const 
+   bool System::GetUsesFixedTimeStep() const
    {
       return mUseFixedTimeStep;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   double System::GetMaxTimeBetweenDraws() const 
+   double System::GetMaxTimeBetweenDraws() const
    {
       return mMaxTimeBetweenDraws/1000000.0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetSimulationTime(double newTime) 
-   { 
+   void System::SetSimulationTime(double newTime)
+   {
       mSimulationTime = newTime;
       mCorrectSimulationTime = newTime;
    }
@@ -185,9 +184,9 @@ namespace dtCore
       {
          return;
       }
-         
+
       mPaused = paused;
-      
+
       if( mPaused )
       {
          SendMessage( "pause_start" );
@@ -234,24 +233,24 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SystemStepFixed()
+   void System::SystemStepFixed(const double realDT)
    {
-      mRealClockTime  += Timer_t(mDt * 1000000);
-      double simDt = mDt * mTimeScale;
+      mRealClockTime += Timer_t(realDT * 1000000);
+      const double simDT = realDT * mTimeScale;
 
-      float frameTime = mFrameTime * mTimeScale;
+      const float simFrameTime = mFrameTime * mTimeScale;
 
-      if(!mWasPaused)
+      if (!mWasPaused)
       {
-         mCorrectSimulationTime += simDt;
+         mCorrectSimulationTime += simDT;
       }
       else
       {
-         mCorrectSimulationTime += frameTime;
+         mCorrectSimulationTime += simFrameTime;
          mWasPaused = false;
       }
 
-      if (mCorrectSimulationTime + 0.001f < mSimulationTime + frameTime)
+      if (mCorrectSimulationTime + 0.001f < mSimulationTime + simFrameTime)
       {
          // we tried a sleep here, but even passing 1 millisecond was to long.
          mAccumulateLastRealDt = true;
@@ -263,21 +262,23 @@ namespace dtCore
 
       mAccumulateLastRealDt = false;
 
-      mSimulationTime += frameTime;
-      mSimTimeSinceStartup += frameTime;
-      mSimulationClockTime += Timer_t(frameTime * 1000000); 
-    
-      PreFrame(frameTime, mDt + mAccumulationTime);
+      mSimulationTime      += simFrameTime;
+      mSimTimeSinceStartup += simFrameTime;
+      mSimulationClockTime += Timer_t(simFrameTime * 1000000);
+
+      //const double realFrameTime = realDT + mAccumulationTime;
+      const double realFrameTime = mFrameTime;
+      PreFrame(simFrameTime, realFrameTime);
 
       //if we're ahead of the desired sim time, then draw.
-      if (mSimulationTime >= mCorrectSimulationTime 
+      if (mSimulationTime >= mCorrectSimulationTime
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
-         FrameSynch(frameTime, mDt + mAccumulationTime);
-         Frame(frameTime, mDt+ mAccumulationTime);
+         FrameSynch(simFrameTime, realFrameTime);
+         Frame(simFrameTime, realFrameTime);
       }
-      PostFrame(frameTime, mDt + mAccumulationTime);
+      PostFrame(simFrameTime, realFrameTime);
 
       mAccumulationTime = 0;
    }
@@ -286,41 +287,45 @@ namespace dtCore
    ///private
    void System::SystemStep()
    {
-      Timer_t lastClockTime  = mTickClockTime;
+      const Timer_t lastClockTime  = mTickClockTime;
       mTickClockTime = mClock.Tick();
 
-      mDt = mClock.DeltaSec(lastClockTime, mTickClockTime);
+      const double realDT = mClock.DeltaSec(lastClockTime, mTickClockTime);
       if (mAccumulateLastRealDt)
       {
          mAccumulationTime += mClock.DeltaSec(lastClockTime, mTickClockTime);
       }
 
-      if( mPaused )
+      if (mPaused)
       {
          mWasPaused = true;
-         Pause(mDt);
-         FrameSynch(0.0, mDt);
-         Frame(0.0, mDt);
+         Pause     (realDT);
+         FrameSynch(0.0, realDT);
+         Frame     (0.0, realDT);
       }
       else
       {
-         if(!mUseFixedTimeStep)
+         if (!mUseFixedTimeStep)
          {
-            mRealClockTime  += Timer_t(mDt * 1000000);
-            double simDt = mDt * mTimeScale;
             mWasPaused = false;
-            mSimulationTime += simDt;
-            mSimTimeSinceStartup += simDt;
-            mSimulationClockTime += Timer_t(simDt * 1000000); 
 
-            PreFrame(simDt, mDt);
-            FrameSynch(simDt, mDt);
-            Frame(simDt, mDt);
-            PostFrame(simDt, mDt);
+            // update real time variable(s)
+            mRealClockTime  += Timer_t(realDT * 1000000);
+
+            // update simulation time variable(s)
+            const double simDT = realDT * mTimeScale;
+            mSimulationTime      += simDT;
+            mSimTimeSinceStartup += simDT;
+            mSimulationClockTime += Timer_t(simDT * 1000000);
+
+            PreFrame  (simDT, realDT);
+            FrameSynch(simDT, realDT);
+            Frame     (simDT, realDT);
+            PostFrame (simDT, realDT);
          }
          else
          {
-            SystemStepFixed();
+            SystemStepFixed(realDT);
          }
       }
    }
@@ -350,7 +355,7 @@ namespace dtCore
       mAccumulateLastRealDt = false;
       mTickClockTime = mClock.Tick();
       time_t realTime;
-      time(&realTime); 
+      time(&realTime);
       mRealClockTime = realTime * 1000000;
       mSimTimeSinceStartup = 0;
       mSimulationTime = mCorrectSimulationTime = 0.0;
@@ -365,7 +370,7 @@ namespace dtCore
       InitVars();
 
       while( mRunning )
-      {	  
+      {
          StepWindow();
       }
 
