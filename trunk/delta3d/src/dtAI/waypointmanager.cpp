@@ -56,12 +56,12 @@ namespace dtAI
          return "The Waypoint Helper file ID was invalid";
       }
    };
-   
+
    osg::ref_ptr<WaypointManager> WaypointManager::mSingleton = 0;
 
    WaypointManager::WaypointManager()
       : mLoadActors(0)
-      , mDrawWaypoints(false) 
+      , mDrawWaypoints(false)
       , mDrawNavMesh(false)
       , mDrawNavMeshDetails(false)
       , mReadingFile(false)
@@ -74,10 +74,10 @@ namespace dtAI
    {
       mDrawable->addDrawable(new WaypointManagerDrawable(this));
    }
-   
+
    WaypointManager::~WaypointManager()
    {
-      
+
       #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
       mDrawable->removeDrawables(0, 1);
       #else
@@ -85,18 +85,18 @@ namespace dtAI
       #endif
       mDrawable = NULL;
 
-      Clear();         
+      Clear();
    }
 
-   void WaypointManager::CreateInstance()  
+   void WaypointManager::CreateInstance()
    {
       if(!mSingleton)
       {
          mSingleton = new WaypointManager();
-      }      
+      }
    }
 
-   WaypointManager& WaypointManager::GetInstance()  
+   WaypointManager& WaypointManager::GetInstance()
    {
       CreateInstance();
       return *mSingleton;
@@ -104,20 +104,20 @@ namespace dtAI
 
    void WaypointManager::AddWaypoint(WaypointActor &pWaypointActor)
    {
-      if(mLoadActors) 
+      if(mLoadActors)
          return;
 
       WaypointID id = mWaypoints.size();
       pWaypointActor.SetIndex(id);
-      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, new Waypoint(&pWaypointActor)));      
+      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, new Waypoint(&pWaypointActor)));
    }
 
    WaypointID WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
       WaypointID id = mWaypoints.size();
       Waypoint* pWay = new Waypoint(pWaypoint);
-	   pWay->SetID(id);
-      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, pWay));   
+      pWay->SetID(id);
+      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, pWay));
       return id;
    }
 
@@ -177,18 +177,18 @@ namespace dtAI
 
    void WaypointManager::AddPathSegment( WaypointID idFrom, WaypointID idTo )
    {
-	   mNavMesh.AddPathSegment( mWaypoints[idFrom], mWaypoints[idTo] );
+      mNavMesh.AddPathSegment( mWaypoints[idFrom], mWaypoints[idTo] );
    }
 
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
    {
       std::ofstream outfile;
 
-      outfile.open(pFileToWrite.c_str(), std::ofstream::out);      
+      outfile.open(pFileToWrite.c_str(), std::ofstream::out);
       if(outfile.fail()) return false;
 
-      //obtain a temporary vector for writing      
-      std::vector<Waypoint*> pWaypointVector = CopyWaypointsIntoVector(); 
+      //obtain a temporary vector for writing
+      std::vector<Waypoint*> pWaypointVector = CopyWaypointsIntoVector();
 
       //write the file id
       int id = WAYPOINT_HELPER_FILE_ID;
@@ -197,7 +197,7 @@ namespace dtAI
       //write the file format version
       int version = WAYPOINT_FILE_VERSION;
       outfile << version << std::endl;
-      
+
       //write the number of verts to read
       unsigned size = pWaypointVector.size();
       outfile << size << std::endl;
@@ -206,7 +206,7 @@ namespace dtAI
       {
          //we will use these ids when we write out the navmesh
          pWaypointVector[i]->SetID(i);
-         osg::Vec3 pPos = pWaypointVector[i]->GetPosition();         
+         osg::Vec3 pPos = pWaypointVector[i]->GetPosition();
          outfile << pPos[0] << " " << pPos[1] << " " << pPos[2] << std::endl;
       }
 
@@ -230,9 +230,9 @@ namespace dtAI
       return true;
    }
 
-   bool WaypointManager::ReadFile(const std::string& pFileToRead) 
+   bool WaypointManager::ReadFile(const std::string& pFileToRead)
    {
-      //we only want to allow loading after reading   
+      //we only want to allow loading after reading
       //also we maintain this flag because when we create actor proxies
       //we will key off of it in our insert to make sure we dont insert twice
       mLoadActors = true;
@@ -243,11 +243,11 @@ namespace dtAI
       bool read_file_ok = false;
       std::ifstream infile;
 
-      infile.open(pFileToRead.c_str());     
-      if(infile.is_open()) 
+      infile.open(pFileToRead.c_str());
+      if(infile.is_open())
       {
          try
-         {      
+         {
             //read the file id
             int id = 0;
             infile >> id;
@@ -266,12 +266,12 @@ namespace dtAI
             {
                osg::Vec3 pPos;
                infile >> pPos[0] >> pPos[1] >> pPos[2];
-               
+
                Waypoint* pNewWaypoint = new Waypoint(pPos);
                pNewWaypoint->SetRenderFlag(Waypoint::RENDER_DEFAULT);
                pNewWaypoint->SetID(i);
 
-               mWaypoints.insert(std::pair<WaypointID, Waypoint*>(i, pNewWaypoint));      
+               mWaypoints.insert(std::pair<WaypointID, Waypoint*>(i, pNewWaypoint));
             }
 
             //read in the nav mesh
@@ -281,7 +281,7 @@ namespace dtAI
             for(unsigned i = 0; i < navMeshSize; ++i)
             {
                WaypointID indexFrom, indexTo;
-               infile >> indexFrom >> indexTo;            
+               infile >> indexFrom >> indexTo;
                mNavMesh.AddPathSegment(mWaypoints[indexFrom], mWaypoints[indexTo]);
             }
 
@@ -294,7 +294,7 @@ namespace dtAI
          }
       }
 
-      infile.close();      
+      infile.close();
       mReadingFile = false;
       return read_file_ok;
    }
@@ -317,11 +317,11 @@ namespace dtAI
    }
 
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
-   {            
+   {
       float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
 
       osg::ref_ptr<dtCore::Isector> pIsector = new dtCore::Isector(pScene);
-   
+
       WaypointIterator iter = mWaypoints.begin();
       WaypointIterator endOfMap = mWaypoints.end();
 
@@ -337,7 +337,7 @@ namespace dtAI
          while(iter2 != endOfMap2)
          {
             if((*iter).second != (*iter2).second)
-            {               
+            {
                Waypoint* pWaypoint2 = (*iter2).second;
 
                if(WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance() < maxDistBetweenWaypoints)
@@ -353,7 +353,7 @@ namespace dtAI
                   {
                      mNavMesh.AddPathSegment(pWaypoint1, pWaypoint2);
                   }
-                  
+
                   pIsector->Reset();
                }
             }
@@ -369,11 +369,11 @@ namespace dtAI
 
    void WaypointManager::OnMapLoad(const std::string& pWaypointFilename)
    {
-      ReadFile(pWaypointFilename);      
+      ReadFile(pWaypointFilename);
    }
 
    void WaypointManager::OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene)
-   {      
+   {
       mNavMesh.Clear();
       if(pCreateNavMesh) CreateNavMesh(pScene);
       WriteFile(pWaypointFilename);
@@ -432,12 +432,12 @@ namespace dtAI
 
    const osg::Node* WaypointManager::GetOSGNode() const
    {
-      return mDrawable.get();            
+      return mDrawable.get();
    }
 
    osg::Node* WaypointManager::GetOSGNode()
    {
-      return mDrawable.get();      
+      return mDrawable.get();
    }
 
    void WaypointManager::SetDrawWaypoints(bool pDraw)
@@ -450,17 +450,17 @@ namespace dtAI
       template<class _Type>
          void operator()(_Type p1)
       {
-         delete p1.second; 
+         delete p1.second;
       }
    };
 
    void WaypointManager::Clear()
    {
-      //free memory      
+      //free memory
       std::for_each(mWaypoints.begin(), mWaypoints.end(), WaypointManagerDeleteFunc());
       mWaypoints.clear();
       mNavMesh.Clear();
-   }   
+   }
 
    void WaypointManager::SetWaypointColor(const osg::Vec4& pColor)
    {
@@ -500,7 +500,7 @@ namespace dtAI
 
       while(iter != endOfMap)
       {
-         const Waypoint* pWaypoint1 = (*iter).second;         
+         const Waypoint* pWaypoint1 = (*iter).second;
 
          WaypointMap::const_iterator iter2 = mWaypoints.begin();
          WaypointMap::const_iterator endOfMap2 = mWaypoints.end();
@@ -508,11 +508,11 @@ namespace dtAI
          while(iter2 != endOfMap2)
          {
             if((*iter).second != (*iter2).second)
-            {               
+            {
                const Waypoint* pWaypoint2 = (*iter2).second;
-               
+
                ++i;
-               pResult += WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance();               
+               pResult += WaypointPair(pWaypoint1, pWaypoint2).Get3DDistance();
             }
             ++iter2;
          }
@@ -528,14 +528,14 @@ namespace dtAI
 //////////////////////////////////////////////////////////////////////////
 
 
-   void WaypointManager::WaypointManagerDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const 
-   {     
+   void WaypointManager::WaypointManagerDrawable::drawImplementation(osg::RenderInfo & /*renderInfo*/) const
+   {
       //this will keep us from drawing when we are loading
       if(mHelper->mReadingFile) return;
 
       glDisable(GL_LIGHTING);
 
-      glEnable(GL_BLEND);      
+      glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       if(mHelper->mDrawWaypoints)
@@ -552,27 +552,27 @@ namespace dtAI
          while(iter != endOfMap)
          {
             const osg::Vec3 &color = (*iter).second->GetColor();
-            float alpha            = (*iter).second->GetAlpha();            
+            float alpha            = (*iter).second->GetAlpha();
 
             // If we're using a render flag, output using this waypoint's color
             if((*iter).second->GetRenderFlag() >= Waypoint::RENDERFLAG_FIRST &&
                (*iter).second->GetRenderFlag() <= Waypoint::RENDERFLAG_LAST)
             {
-               glColor4f(color.x(), color.y(), color.z(), alpha);   
-            }            
+               glColor4f(color.x(), color.y(), color.z(), alpha);
+            }
             else
             {
-               float gradient = (*iter).second->GetGradient();         
+               float gradient = (*iter).second->GetGradient();
 
                osg::Vec4 waypointColor(mHelper->mWaypointColor);
                glColor4f(waypointColor[0] * gradient, waypointColor[1] * gradient, waypointColor[2] * gradient, waypointColor[3]);
             }
-            
+
             osg::Vec3 pPos = (*iter).second->GetPosition();
             glVertex3f(pPos[0], pPos[1], pPos[2] + 0.15f); //added to the z component so they arent in the ground
             ++iter;
          }
-         
+
          glEnd();
       }
 
@@ -582,7 +582,7 @@ namespace dtAI
          float lineWidth = mHelper->mNavMeshWidth;
          if(lineWidth < 1.0f) lineWidth = 1.0f;
          glLineWidth(lineWidth);
-         osg::Vec4 lineColor(mHelper->mNavMeshColor);         
+         osg::Vec4 lineColor(mHelper->mNavMeshColor);
 
          glBegin(GL_LINES);
 
@@ -600,8 +600,8 @@ namespace dtAI
             glColor4fv(&lineColor[0]);
 
             glVertex3fv(&pFrom[0]);
-            
-            if(mHelper->mDrawNavMeshDetails && mHelper->mNavMesh.IsOneWay(pMesh)) 
+
+            if(mHelper->mDrawNavMeshDetails && mHelper->mNavMesh.IsOneWay(pMesh))
             {
                glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
             }
@@ -618,9 +618,9 @@ namespace dtAI
       glEnable(GL_LIGHTING);
 
       glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-      
+
    }
 
 
 
-}//namespace 
+}//namespace
