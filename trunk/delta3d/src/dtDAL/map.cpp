@@ -257,7 +257,7 @@ namespace dtDAL
             proxies[j]->GetPropertyList(props);
             for(unsigned int k = 0; k < props.size(); k++)
             {
-               if(props[k]->GetPropertyType() == DataType::ACTOR)
+               if(props[k]->GetDataType() == DataType::ACTOR)
                {
                   ActorActorProperty *aap = static_cast<ActorActorProperty*>(props[k]);
                   if(aap->GetValue() == &proxy)

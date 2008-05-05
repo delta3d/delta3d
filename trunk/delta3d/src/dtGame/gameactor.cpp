@@ -211,7 +211,7 @@ namespace dtGame
             {
                try
                {
-                  MessageParameter* mp = update.AddUpdateParameter(property->GetName(), property->GetPropertyType());
+                  MessageParameter* mp = update.AddUpdateParameter(property->GetName(), property->GetDataType());
                   mp->SetFromProperty(*property);
                   //if (mp != NULL)
                   //   mp->FromString(property->GetStringValue());
@@ -238,7 +238,7 @@ namespace dtGame
 
             try
             {
-               MessageParameter* mp = update.AddUpdateParameter(property.GetName(), property.GetPropertyType());
+               MessageParameter* mp = update.AddUpdateParameter(property.GetName(), property.GetDataType());
                if (mp != NULL)
                   mp->SetFromProperty(property);
                //   mp->FromString(property.GetStringValue());

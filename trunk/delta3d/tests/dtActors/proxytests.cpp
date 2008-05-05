@@ -122,7 +122,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          continue;
       }
       
-      if (props[i]->GetPropertyType() == DataType::FLOAT)
+      if (props[i]->GetDataType() == DataType::FLOAT)
       {
          dtDAL::FloatActorProperty* prop1 = static_cast<dtDAL::FloatActorProperty*>(props[i]);
          
@@ -142,7 +142,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                 + " should have value 1.3323233f, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, float(epsilon)));
       }
-      else if (props[i]->GetPropertyType() == DataType::DOUBLE)
+      else if (props[i]->GetDataType() == DataType::DOUBLE)
       {
          dtDAL::DoubleActorProperty* prop1 = static_cast<dtDAL::DoubleActorProperty*>(props[i]);
          
@@ -162,21 +162,21 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                 + " should have value 1.3323233, but it is: " + props[i]->ToString(),
                                 osg::equivalent(prop1->GetValue(), value1, double(epsilon)));
       }
-      else if (props[i]->GetPropertyType() == DataType::INT)
+      else if (props[i]->GetDataType() == DataType::INT)
       {
          static_cast<dtDAL::IntActorProperty*>(props[i])->SetValue(3);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                                 + " should have value 3, but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::IntActorProperty*>(props[i])->GetValue() == 3);
       }
-      else if (props[i]->GetPropertyType() == DataType::LONGINT)
+      else if (props[i]->GetDataType() == DataType::LONGINT)
       {
          static_cast<dtDAL::LongActorProperty*>(props[i])->SetValue(4);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                                 + " should have value 4, but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::LongActorProperty*>(props[i])->GetValue() == 4);
       }
-      else if (props[i]->GetPropertyType() == DataType::STRING)
+      else if (props[i]->GetDataType() == DataType::STRING)
       {
          // This one property is in UTC format for time. This test would fail
          if(props[i]->GetName() == "Time and Date")
@@ -192,7 +192,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                 + " should have value \"cache\", but it is: " + props[i]->ToString(),
                                 static_cast<dtDAL::StringActorProperty*>(props[i])->GetValue() == "cache");
       }
-      else if (props[i]->GetPropertyType() == DataType::BOOLEAN)
+      else if (props[i]->GetDataType() == DataType::BOOLEAN)
       {
          //there have been some problems with Normal Rescaling
          if (name != "Normal Rescaling" && name != "Collision Geometry")
@@ -207,7 +207,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    boolProp->GetValue());
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::ENUMERATION)
+      else if (props[i]->GetDataType() == DataType::ENUMERATION)
       {
          dtDAL::AbstractEnumActorProperty* eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(props[i]);
          
@@ -227,7 +227,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                 + " but it is " + eap->GetEnumValue().GetName(),
                                 eap->GetEnumValue() == **(eap->GetList().begin()));
       }
-      else if (props[i]->GetPropertyType() == DataType::ACTOR)
+      else if (props[i]->GetDataType() == DataType::ACTOR)
       {
          dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(props[i]);
          
@@ -262,7 +262,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          aap->SetValue(NULL);
          CPPUNIT_ASSERT_MESSAGE("The property's value should be NULL", !aap->GetValue());
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC3)
+      else if (props[i]->GetDataType() == DataType::VEC3)
       {
          dtDAL::Vec3ActorProperty* prop1 = static_cast<dtDAL::Vec3ActorProperty*>(props[i]);
          osg::Vec3 test(9.0f, 2.0f, 7.34f);
@@ -310,7 +310,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC3F)
+      else if (props[i]->GetDataType() == DataType::VEC3F)
       {
          dtDAL::Vec3fActorProperty* prop1 = static_cast<dtDAL::Vec3fActorProperty*>(props[i]);
          osg::Vec3f test(9.037829f, 2.02322f, 7.34324f);
@@ -350,7 +350,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC3D)
+      else if (props[i]->GetDataType() == DataType::VEC3D)
       {
          dtDAL::Vec3dActorProperty* prop1 = static_cast<dtDAL::Vec3dActorProperty*>(props[i]);
          osg::Vec3f test(9.037829, 2.02322, 7.34324);
@@ -390,7 +390,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC4)
+      else if (props[i]->GetDataType() == DataType::VEC4)
       {
          dtDAL::Vec4ActorProperty* prop1 = static_cast<dtDAL::Vec4ActorProperty*>(props[i]);
          osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
@@ -422,7 +422,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC4F)
+      else if (props[i]->GetDataType() == DataType::VEC4F)
       {
          dtDAL::Vec4fActorProperty* prop1 = static_cast<dtDAL::Vec4fActorProperty*>(props[i]);
          osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
@@ -455,7 +455,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          }
          
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC4D)
+      else if (props[i]->GetDataType() == DataType::VEC4D)
       {
          dtDAL::Vec4dActorProperty* prop1 = static_cast<dtDAL::Vec4dActorProperty*>(props[i]);
          osg::Vec4d test(9.037829, 2.02322, 7.34324, 7.2936299);
@@ -488,7 +488,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          }
          
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC2)
+      else if (props[i]->GetDataType() == DataType::VEC2)
       {
          dtDAL::Vec2ActorProperty* prop1 = static_cast<dtDAL::Vec2ActorProperty*>(props[i]);
          osg::Vec2 test(9.35320f, 2.0323f);
@@ -520,7 +520,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC2F)
+      else if (props[i]->GetDataType() == DataType::VEC2F)
       {
          dtDAL::Vec2fActorProperty* prop1 = static_cast<dtDAL::Vec2fActorProperty*>(props[i]);
          osg::Vec2 test(9.35320f, 2.0323f);
@@ -552,7 +552,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::VEC2D)
+      else if (props[i]->GetDataType() == DataType::VEC2D)
       {
          dtDAL::Vec2dActorProperty* prop1 = static_cast<dtDAL::Vec2dActorProperty*>(props[i]);
          osg::Vec2 test(9.35320, 2.0323);
@@ -584,7 +584,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(double(result[x]), double(test[x]), double(epsilon)));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::RGBACOLOR)
+      else if (props[i]->GetDataType() == DataType::RGBACOLOR)
       {
          dtDAL::ColorRgbaActorProperty* prop1 = static_cast<dtDAL::ColorRgbaActorProperty*>(props[i]);
          osg::Vec4 test(6.1335543f, 0.3523333f, 5.05345f, 7323.3f);
@@ -616,7 +616,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                    osg::equivalent(result[x], test[x], epsilon));
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::GAME_EVENT)
+      else if (props[i]->GetDataType() == DataType::GAME_EVENT)
       {
          dtDAL::GameEventActorProperty *prop = static_cast<dtDAL::GameEventActorProperty*>(props[i]);
          RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("TestEvent","This is a test game event.");
@@ -646,7 +646,7 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          CPPUNIT_ASSERT_MESSAGE("Game Event ids were not equal.",
                                 eventToCheck->GetUniqueId() == event->GetUniqueId());
       }
-      else if (props[i]->GetPropertyType() == DataType::GROUP)
+      else if (props[i]->GetDataType() == DataType::GROUP)
       {
          if (props[i]->GetName() == "TestGroup")
          {
@@ -698,51 +698,51 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
       
       CPPUNIT_ASSERT(prop2 != NULL);
       
-      if(props[i]->GetPropertyType() == DataType::FLOAT)
+      if(props[i]->GetDataType() == DataType::FLOAT)
       {
          CPPUNIT_ASSERT(osg::equivalent(((dtDAL::FloatActorProperty*)props[i])->GetValue(),
                                         ((dtDAL::FloatActorProperty*)prop2)->GetValue(), (float)epsilon));
       }
-      else if(props[i]->GetPropertyType() == DataType::DOUBLE)
+      else if(props[i]->GetDataType() == DataType::DOUBLE)
       {
          CPPUNIT_ASSERT(osg::equivalent(((dtDAL::DoubleActorProperty*)props[i])->GetValue(),
                                         ((dtDAL::DoubleActorProperty*)prop2)->GetValue(), (double)epsilon));
       }
-      else if(props[i]->GetPropertyType() == DataType::INT)
+      else if(props[i]->GetDataType() == DataType::INT)
       {
          CPPUNIT_ASSERT(((dtDAL::IntActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::IntActorProperty*)prop2)->GetValue());
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::LONGINT)
+      else if(props[i]->GetDataType() == DataType::LONGINT)
       {
          CPPUNIT_ASSERT(((dtDAL::LongActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::LongActorProperty*)prop2)->GetValue());
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::STRING)
+      else if(props[i]->GetDataType() == DataType::STRING)
       {
          CPPUNIT_ASSERT(((dtDAL::StringActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::StringActorProperty*)prop2)->GetValue());
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::BOOLEAN)
+      else if(props[i]->GetDataType() == DataType::BOOLEAN)
       {
          CPPUNIT_ASSERT(((dtDAL::BooleanActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::BooleanActorProperty*)prop2)->GetValue());
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::ENUMERATION)
+      else if(props[i]->GetDataType() == DataType::ENUMERATION)
       {
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::ACTOR)
+      else if(props[i]->GetDataType() == DataType::ACTOR)
       {
          CPPUNIT_ASSERT(((dtDAL::ActorActorProperty*)props[i])->GetValue() ==
                         ((dtDAL::ActorActorProperty*)prop2)->GetValue());
          CPPUNIT_ASSERT(props[i]->ToString() == prop2->ToString());
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC3)
+      else if(props[i]->GetDataType() == DataType::VEC3)
       {
          //if (true) continue;
          std::ostringstream ss;
@@ -756,7 +756,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec3ActorProperty*)prop2)->GetValue()[2], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC3F)
+      else if(props[i]->GetDataType() == DataType::VEC3F)
       {
          //if (true) continue;
          std::ostringstream ss;
@@ -770,7 +770,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec3fActorProperty*)prop2)->GetValue()[2], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC3D)
+      else if(props[i]->GetDataType() == DataType::VEC3D)
       {
          //if (true) continue;
          std::ostringstream ss;
@@ -784,7 +784,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec3dActorProperty*)prop2)->GetValue()[2], (double)epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC4)
+      else if(props[i]->GetDataType() == DataType::VEC4)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec4ActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec4ActorProperty*)prop2)->GetValue();
@@ -799,7 +799,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec4ActorProperty*)prop2)->GetValue()[3], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC4F)
+      else if(props[i]->GetDataType() == DataType::VEC4F)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec4fActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec4fActorProperty*)prop2)->GetValue();
@@ -814,7 +814,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec4fActorProperty*)prop2)->GetValue()[3], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC4D)
+      else if(props[i]->GetDataType() == DataType::VEC4D)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec4dActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec4dActorProperty*)prop2)->GetValue();
@@ -829,7 +829,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec4dActorProperty*)prop2)->GetValue()[3], (double)epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC2)
+      else if(props[i]->GetDataType() == DataType::VEC2)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec2ActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec2ActorProperty*)prop2)->GetValue();
@@ -840,7 +840,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec2ActorProperty*)prop2)->GetValue()[1], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC2F)
+      else if(props[i]->GetDataType() == DataType::VEC2F)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec2fActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec2fActorProperty*)prop2)->GetValue();
@@ -851,7 +851,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec2fActorProperty*)prop2)->GetValue()[1], epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::VEC2D)
+      else if(props[i]->GetDataType() == DataType::VEC2D)
       {
          std::ostringstream ss;
          ss << ((dtDAL::Vec2dActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec2dActorProperty*)prop2)->GetValue();
@@ -862,7 +862,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    ((dtDAL::Vec2dActorProperty*)prop2)->GetValue()[1], (double)epsilon)
                                 );
       }
-      else if(props[i]->GetPropertyType() == DataType::RGBACOLOR)
+      else if(props[i]->GetDataType() == DataType::RGBACOLOR)
       {
          dtDAL::ColorRgbaActorProperty& colorProp1 = *static_cast<dtDAL::ColorRgbaActorProperty*>(props[i]);
          dtDAL::ColorRgbaActorProperty& colorProp2 = *static_cast<dtDAL::ColorRgbaActorProperty*>(prop2);
@@ -880,7 +880,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                                    colorProp2.GetValue()[3], epsilon)
                                 );
       }
-      else if (props[i]->GetPropertyType() == DataType::GAME_EVENT)
+      else if (props[i]->GetDataType() == DataType::GAME_EVENT)
       {
          dtDAL::GameEventActorProperty& geProp1 = *static_cast<dtDAL::GameEventActorProperty*>(props[i]);
          dtDAL::GameEventActorProperty& geProp2 = *static_cast<dtDAL::GameEventActorProperty*>(prop2);
@@ -897,7 +897,7 @@ void ProxyTest::compareProxies(dtDAL::ActorProxy& ap1, dtDAL::ActorProxy& ap2)
                                    geProp1.GetValue() == geProp2.GetValue());
          }
       }
-      else if (props[i]->GetPropertyType() == DataType::GROUP)
+      else if (props[i]->GetDataType() == DataType::GROUP)
       {
          dtDAL::GroupActorProperty& gProp1 = *static_cast<dtDAL::GroupActorProperty*>(props[i]);
          dtDAL::GroupActorProperty& gProp2 = *static_cast<dtDAL::GroupActorProperty*>(prop2);

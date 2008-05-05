@@ -55,7 +55,7 @@ namespace dtEditQt
     {
         // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-        if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC4)
+        if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC4)
         {
             myVec4Property = static_cast<dtDAL::Vec4ActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -77,7 +77,7 @@ namespace dtEditQt
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         }
-        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC4F)
+        else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC4F)
         {
             myVec4fProperty = static_cast<dtDAL::Vec4fActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -99,7 +99,7 @@ namespace dtEditQt
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         } 
-        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC4D)
+        else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC4D)
         {
             myVec4dProperty = static_cast<dtDAL::Vec4dActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -152,19 +152,19 @@ namespace dtEditQt
         if(myVec4Property.valid())
         {
             std::string tooltip = myVec4Property->GetDescription() + "  [Type: " +
-                myVec4Property->GetPropertyType().GetName() + "]";
+                myVec4Property->GetDataType().GetName() + "]";
             return QString(tr(tooltip.c_str()));
         }
         else if(myVec4fProperty.valid())
         {
             std::string tooltip = myVec4fProperty->GetDescription() + "  [Type: " +
-                myVec4fProperty->GetPropertyType().GetName() + "]";
+                myVec4fProperty->GetDataType().GetName() + "]";
             return QString(tr(tooltip.c_str()));
         }
         else if(myVec4dProperty.valid())
         {
             std::string tooltip = myVec4dProperty->GetDescription() + "  [Type: " +
-                myVec4dProperty->GetPropertyType().GetName() + "]";
+                myVec4dProperty->GetDataType().GetName() + "]";
             return QString(tr(tooltip.c_str()));
         }
         else

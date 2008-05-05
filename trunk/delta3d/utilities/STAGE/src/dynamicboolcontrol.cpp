@@ -58,7 +58,7 @@ namespace dtEditQt
     {
         // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-        if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::BOOLEAN) 
+        if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::BOOLEAN) 
         {
             myProperty = static_cast<dtDAL::BooleanActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);

@@ -73,7 +73,7 @@ namespace dtDAL
           */
          virtual void CopyFrom(const ActorProperty& otherProp)
          {
-            if (GetPropertyType() != otherProp.GetPropertyType())
+            if (GetDataType() != otherProp.GetDataType())
             {
                LOG_ERROR("Property types are incompatible. Cannot make copy.");
                return;
@@ -215,7 +215,7 @@ namespace dtDAL
           */
          virtual void CopyFrom(const ActorProperty& otherProp)
          {
-            if (GetPropertyType() != otherProp.GetPropertyType())
+            if (GetDataType() != otherProp.GetDataType())
                LOG_ERROR("Property types are incompatible. Cannot make copy.");
             
             const ResourceActorProperty& prop =

@@ -59,7 +59,7 @@ namespace dtEditQt
             valueAsString = QString(tr("Unknown")); //newProperty->getValue().c_str()));
 
             std::string tooltip = newProperty->GetDescription() + "  [Type: " + 
-                newProperty->GetPropertyType().GetName() + "]";
+                newProperty->GetDataType().GetName() + "]";
             description = QString(tr(tooltip.c_str()));
 
             name = QString(tr(newProperty->GetLabel().c_str()));

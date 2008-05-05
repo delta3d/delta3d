@@ -65,7 +65,7 @@ namespace dtEditQt {
     {
         // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-        if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::RGBACOLOR)
+        if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::RGBACOLOR)
         {
             myProperty = static_cast<dtDAL::ColorRgbaActorProperty*>(newProperty);
 
@@ -107,7 +107,7 @@ namespace dtEditQt {
     const QString DynamicColorRGBAControl::getDescription() 
     {
         std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-            myProperty->GetPropertyType().GetName() + "]";
+            myProperty->GetDataType().GetName() + "]";
         return QString(tr(tooltip.c_str()));
     }
 

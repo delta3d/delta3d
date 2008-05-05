@@ -188,7 +188,7 @@ namespace dtEditQt
          for (unsigned int k = 0; k < properties.size(); ++k)
          {
             ActorProperty* prop = properties[k];
-            if (prop->GetPropertyType() == dtDAL::DataType::GAME_EVENT)
+            if (prop->GetDataType() == dtDAL::DataType::GAME_EVENT)
             {
                dtDAL::GameEventActorProperty* geProp = static_cast<dtDAL::GameEventActorProperty*>(prop);
                GameEvent* propEvent = geProp->GetValue();
