@@ -362,6 +362,13 @@ namespace dtCore
           */
          bool GetInvertMouse() {return mInvertMouse;}
 
+         /**
+          * Sets whether this motion model should operate even when unfocused.
+          * Defaults to false (no).
+          * @param operate True if motion model should operate even when unfocused
+          */
+         void ShouldOperateWhenUnfocused(bool operate);
+
       private:
          
          /**
@@ -457,6 +464,8 @@ namespace dtCore
          bool mFalling; ///<are we currently falling?
 
          bool mInvertMouse; //invert the nouse 
+
+         bool mOperateWhenUnfocused; // should motion model operate when unfocused? Defaults to false
 
          dtCore::RefPtr<Mouse>    mMouse;
          dtCore::RefPtr<Keyboard> mKeyboard;

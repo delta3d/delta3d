@@ -78,6 +78,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mFallingVec(0.f, 0.f, 0.f)
    , mFalling(false)
    , mInvertMouse(false)
+   , mOperateWhenUnfocused(false)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
    , mLookLeftRightCtrl(0.f)
@@ -481,6 +482,7 @@ float FPSMotionModel::GetFallingHeight() const
    return mFallingHeight;
 }
 
+
 /**
  * Message handler callback.
  *
@@ -489,7 +491,7 @@ float FPSMotionModel::GetFallingHeight() const
 void FPSMotionModel::OnMessage(MessageData *data)
 {
    if(GetTarget() != NULL &&
-      IsEnabled() && mMouse->GetHasFocus() &&
+      IsEnabled() && (mOperateWhenUnfocused || mMouse->GetHasFocus()) &&
       data->message == "preframe")
    {
       // use the real change in time, not the simulated time change
@@ -509,6 +511,12 @@ void FPSMotionModel::OnMessage(MessageData *data)
       // perform translations
       PerformTranslation(deltaFrameTime);
    }
+}
+
+
+void FPSMotionModel::ShouldOperateWhenUnfocused(bool operate)
+{
+   mOperateWhenUnfocused = operate;
 }
 
 /////////////////////////////////////////////////////////////////////////////
