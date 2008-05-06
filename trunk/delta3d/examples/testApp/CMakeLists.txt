@@ -1,4 +1,4 @@
-SET(TARGET_SRC testapp.cpp)
+SET(TARGET_SRC testapp.cpp readme.txt)
 
 
 BUILD_EXE_EXAMPLE( testApp
