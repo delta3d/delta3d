@@ -24,7 +24,7 @@ OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 
 
 IF (WIN32)
-SET(CMAKE_DEBUG_POSTFIX  "d")
+   SET(CMAKE_DEBUG_POSTFIX  "d")
 ENDIF (WIN32)
 
 # We want to build SONAMES shared librariess
@@ -40,6 +40,7 @@ FIND_PACKAGE(OpenGL REQUIRED)
 
 # Add macro functions 
 INCLUDE(UtilityMacros)
+INCLUDE(BuildExample)
 
  SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
  SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)

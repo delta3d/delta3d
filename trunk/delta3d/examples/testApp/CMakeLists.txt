@@ -1,22 +1,7 @@
+SET(TARGET_SRC testapp.cpp)
 
-SET(LIB_NAME     testApp)
 
-ADD_EXECUTABLE(${LIB_NAME}
-     testapp.cpp)
-
-LINK_WITH_VARIABLES(${LIB_NAME}                                         
-                                         DTCORE_LIBRARY
-                                         DTABC_LIBRARY     
-                                         OSG_LIBRARY)                                        
-                                              
-INCLUDE(ModuleInstall OPTIONAL)
-
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)
-
-IF (WIN32)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-ENDIF (WIN32)
+BUILD_EXE_EXAMPLE( testApp
+                                    DTCORE_LIBRARY
+                                    DTABC_LIBRARY     
+                                    OSG_LIBRARY)                                        
