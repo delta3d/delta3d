@@ -122,6 +122,18 @@ namespace dtCore
          * @param theta is the distance we maintain below the surface (should be less then half of k)
          */
          void SetDimensions(float pHeight, float pRadius, float k, float theta);
+
+         /*
+         * @return the bits used to determine what the feet can collide with
+         */
+         unsigned long GetCollisionBitsForFeet() const;
+         void SetCollisionBitsForFeet(unsigned long bits);    
+
+         /*
+         * @return the bits used to determine what the torso can collide with
+         */
+         unsigned long GetCollisionBitsForTorso() const;
+         void SetCollisionBitsForTorso(unsigned long bits);     
    
       private:
 

@@ -157,6 +157,16 @@ Scene* FPSMotionModel::GetScene()
 }
 
 /**
+* Returns the isector used for collision testing.
+*
+* @return the active Scene
+*/
+dtCore::Isector* FPSMotionModel::GetISector() const
+{
+   return mIsector.get();
+}
+
+/**
 * Enables or disables this motion model.
 *
 * @param enabled true to enable this motion model, false
