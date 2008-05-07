@@ -1,26 +1,10 @@
+SET(TARGET_SRC testMultiWin.cpp readme.txt)
+SET(TARGET_H testMultiWin.h)
 
-SET(PROG_NAME     testMultiWin)
-
-file(GLOB PROG_SOURCES "*.cpp" "*.h")
-list(REMOVE_ITEM PROG_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
-
-ADD_EXECUTABLE(${PROG_NAME}
-    ${PROG_SOURCES}
-)
-
-LINK_WITH_VARIABLES(${PROG_NAME}
+BUILD_EXE_EXAMPLE( testMultiWin
                                          DTUTIL_LIBRARY   
                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
                                          OSG_LIBRARY
                                          OSGUTIL_LIBRARY
                                          OSGVIEWER_LIBRARY)                                         
-                                              
-
-INCLUDE(ModuleInstall OPTIONAL)
-
-#little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
-  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../../bin/")
-  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)
