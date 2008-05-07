@@ -55,8 +55,9 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 					  )
 
 if (X11_FOUND)
+   FIND_LIBRARY(DTCORE_XXF86VM_LIB Xxf86vm)
    TARGET_LINK_LIBRARIES( ${LIB_NAME}
-               ${X11_LIBRARIES} Xxf86vm)
+               ${X11_LIBRARIES} ${DTCORE_XXF86VM_LIB})
 endif (X11_FOUND)
                       
 IF (WIN32)
