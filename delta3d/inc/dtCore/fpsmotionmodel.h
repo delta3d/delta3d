@@ -172,6 +172,13 @@ namespace dtCore
          Scene* GetScene();
 
          /**
+         * Returns the isector used for collision testing.
+         *
+         * @return the active Scene
+         */
+         dtCore::Isector* GetISector() const;
+
+         /**
          * Enables or disables this motion model.
          *
          * @param enabled true to enable this motion model, false

@@ -163,6 +163,25 @@ namespace dtCore
       InitBoundingVolumes();
    }
 
+   unsigned long FPSCollider::GetCollisionBitsForFeet() const
+   {
+      return dGeomGetCollideBits(mBBFeet);
+   }
+
+   void FPSCollider::SetCollisionBitsForFeet(unsigned long bits)
+   {
+      dGeomSetCollideBits(mBBFeet, bits);
+   }
+
+   unsigned long FPSCollider::GetCollisionBitsForTorso() const
+   {
+      return dGeomGetCollideBits(mBBTorso);
+   }
+
+   void FPSCollider::SetCollisionBitsForTorso(unsigned long bits)
+   {
+      dGeomSetCollideBits(mBBTorso, bits);
+   }
 
    dGeomID FPSCollider::GetFeetGeom()
    {
