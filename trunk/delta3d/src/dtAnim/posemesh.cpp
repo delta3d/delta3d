@@ -18,11 +18,11 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
                    const PoseMeshData& meshData)
   : mName(meshData.mName)
   , mBoneName(meshData.mBoneName)
-{  
+{
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
-      
-   mBoneID = model->GetCoreBoneID( meshData.mBoneName );  
+
+   mBoneID = model->GetCoreBoneID( meshData.mBoneName );
    assert(mBoneID != -1);
 
    // Store off the forward axis for this mesh
@@ -63,10 +63,10 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       int animID = *anim;
       model->BlendCycle(animID, 1.0f, 0.0f);
       model->Update(0.0f);
-     
+
       // frame 30 is a temp number intended to be the last or close to the last frame
-      //osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, mBoneID, 30 );  
-      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mBoneID);  
+      //osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame( *anim, mBoneID, 30 );
+      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mBoneID);
 
       model->ClearCycle(animID, 0.0f);
       model->Update(0.0f);
@@ -76,7 +76,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       oss1 << "forward = (" << boneForward.x() << ", " << boneForward.y() << ", " << boneForward.z() << ")" << std::endl;
 
       // calculate a vector transformed by the rotation data.
-      osg::Vec3 transformed = finalRotation * mNativeForward;   
+      osg::Vec3 transformed = finalRotation * mNativeForward;
       transformed.normalize();
 
       oss1 << "transformed = (" << transformed.x() << ", " << transformed.y() << ", " << transformed.z() << ")";
@@ -85,13 +85,13 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
-      float el = 0.f;     
+      float el = 0.f;
 
       osg::Vec3 pelvisForward(0, -1, 0);
       dtAnim::GetCelestialCoordinates( transformed, pelvisForward, az, el );
 
-      float testAzDegrees = osg::RadiansToDegrees(az);
-      float testElDegrees = osg::RadiansToDegrees(el);
+      //float testAzDegrees = osg::RadiansToDegrees(az);
+      //float testElDegrees = osg::RadiansToDegrees(el);
       std::string testName = model->GetCoreAnimationName(animID);
 
       osg::Vec3 testDirection;
@@ -101,15 +101,15 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       float testDotTranformed = testDirection * transformed;
       dtUtil::Clamp(testDotTranformed, -1.0f, 1.0f);
 
-      float precision = acosf(testDotTranformed);  
+      float precision = acosf(testDotTranformed);
 
       //std::ostringstream oss;
-      //oss << "Vert #" << vert_idx 
+      //oss << "Vert #" << vert_idx
       //    << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
       //    << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
       //    << std::endl;
 
-      //LOG_DEBUG(oss.str());      
+      //LOG_DEBUG(oss.str());
 
       // Store the vert for triangulation
       // - osg::PI_2
@@ -118,7 +118,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       celestialPoints.push_back( newVertPoint );
 
       // add a (az,el) vertex
-      PoseMesh::Vertex *newVert = new PoseMesh::Vertex( newVertPoint, *anim );      
+      PoseMesh::Vertex *newVert = new PoseMesh::Vertex( newVertPoint, *anim );
       mVertices.push_back(newVert);
 
       // Store debug info
@@ -129,7 +129,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       ++vert_idx;
    }
 
-   mTriangles.clear();   
+   mTriangles.clear();
 
    typedef std::map<PoseMesh::MeshIndexPair, std::pair<int, int> > EdgeCountMap;
    EdgeCountMap edgeCounts;
@@ -158,7 +158,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       std::string animName1( model->GetCoreAnimationName( mVertices[vertIndex1]->mAnimID ) );
       std::string animName2( model->GetCoreAnimationName( mVertices[vertIndex2]->mAnimID ) );
 
-      // Tally the number of edges so that we can determine 
+      // Tally the number of edges so that we can determine
       // which ones are the silhouettes
       PoseMesh::MeshIndexPair pair0(vertIndex0, vertIndex1);
       PoseMesh::MeshIndexPair pair1(vertIndex1, vertIndex2);
@@ -166,7 +166,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       ++edgeCounts[pair0].first;
       ++edgeCounts[pair1].first;
-      ++edgeCounts[pair2].first;	 
+      ++edgeCounts[pair2].first;
 
       edgeCounts[pair0].second = triIndex;
       edgeCounts[pair1].second = triIndex;
@@ -174,13 +174,13 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
       //std::ostringstream oss;
       //oss << "Triangle #" << triIndex << " contains (" << vertIndex0 << ", " << vertIndex1 <<
-      //   ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 << 
+      //   ", " << vertIndex2 << ")" << "  (" << animName0 << ", " << animName1 <<
       //   ", " << animName2 << ")" << std::endl;
 
       //LOG_DEBUG(oss.str());
-   }  
+   }
 
-   EdgeCountMap::iterator edgeIter = edgeCounts.begin(); 
+   EdgeCountMap::iterator edgeIter = edgeCounts.begin();
 
    // Find all edges that belong to a single face and store them
    while (edgeIter != edgeCounts.end())
@@ -191,7 +191,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       int total = edgeCounts[edge].first + edgeCounts[swappedEdge].first;
       assert(total != 0);
 
-      // If we found an edge with 
+      // If we found an edge with
       // only one face
       if (total == 1)
       {
@@ -201,7 +201,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
 
          // Mark this edge as done
          edgeIter->second.first = 69;
-      }       
+      }
 
       edgeIter++;
    }
@@ -215,7 +215,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       const osg::Vec3& b = mTriangles[polygon].mVertices[1]->mData;
       const osg::Vec3& c = mTriangles[polygon].mVertices[2]->mData;
       mBarySpaces[polygon] = new PoseMesh::Barycentric2D(a,b,c);
-   }  
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ PoseMesh::~PoseMesh()
    for(unsigned int space=0; space<numspaces; ++space)
    {
       delete mBarySpaces[space];
-   }  
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ PoseMesh::Triangle::Triangle(const PoseMesh::Vertex* a,
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMesh::GetIndexPairsForTriangle(int triangleID,                                              
+void PoseMesh::GetIndexPairsForTriangle(int triangleID,
                                         MeshIndexPair &pair0,
                                         MeshIndexPair &pair1,
                                         MeshIndexPair &pair2) const
@@ -283,7 +283,7 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
                                      const std::vector<std::string> &animNames,
                                      std::vector<unsigned int> &animIDs) const
 {
-   // Convert the animation string into a list of ID's           
+   // Convert the animation string into a list of ID's
    for (unsigned int animIndex = 0; animIndex < animNames.size(); ++animIndex)
    {
       int id = model->GetCoreAnimationIDByName( animNames[animIndex] );
@@ -318,13 +318,13 @@ void PoseMesh::ExtractNativeForward(dtAnim::Cal3DModelWrapper *model,
    //outDirection = boneRotation * nativeBoneForward;
 
    //// Re-apply the previous animation
-   //mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);  
+   //mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);
    //modelWrapper->Update(0.0f);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMesh::GetTargetTriangleData(const float azimuth,
-                                     const float elevation,                                                          
+                                     const float elevation,
                                      TargetTriangle &outTriangle) const
 {
    int triangleID = FindCelestialTriangleID( azimuth, elevation );
@@ -334,12 +334,12 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
 
    // Find the closest triangle point
    if (triangleID == -1)
-   {         
+   {
       osg::Vec3 closestPoint;
       int closestTriangleID;
 
       osg::Vec3 refPoint(azimuth, elevation, 0);
-      float minDistance = FLT_MAX;        
+      float minDistance = FLT_MAX;
 
       const PoseMesh::TriangleEdgeVector &silhouetteList = GetSilhouette();
       for (unsigned int edgeIndex = 0; edgeIndex < silhouetteList.size(); ++edgeIndex)
@@ -369,11 +369,11 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
       outTriangle.mAzimuth    = closestPoint.x();
       outTriangle.mElevation  = closestPoint.y();
       return;
-   }      
+   }
 
    outTriangle.mTriangleID = triangleID;
    outTriangle.mAzimuth    = azimuth;
-   outTriangle.mElevation  = elevation;		
+   outTriangle.mElevation  = elevation;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -394,7 +394,7 @@ int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation) const
       const osg::Vec3 &C = triangles[triIndex].mVertices[2]->mData;
 
       if (!dtAnim::IsPointBetweenVectors(point, A, B, C)) { continue; }
-      if (!dtAnim::IsPointBetweenVectors(point, B, A, C)) { continue; }      
+      if (!dtAnim::IsPointBetweenVectors(point, B, A, C)) { continue; }
 
       animationIndex = triIndex;
       break;

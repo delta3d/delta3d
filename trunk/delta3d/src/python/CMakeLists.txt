@@ -16,6 +16,7 @@ ADD_DEPENDENCIES (${UTIL_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${UTIL_BINDINGS} 
+                                              DTUTIL_LIBRARY
                                               BOOST_PYTHON_LIBRARY
                                               PYTHON_LIBRARY
                                               OSG_LIBRARY)											  
@@ -93,6 +94,7 @@ ADD_DEPENDENCIES (${CORE_BINDINGS}
 
 LINK_WITH_VARIABLES(${CORE_BINDINGS} 
                                               DTUTIL_LIBRARY
+                                              DTCORE_LIBRARY
                                               BOOST_PYTHON_LIBRARY
                                               PYTHON_LIBRARY
                                               OSG_LIBRARY)
@@ -129,6 +131,7 @@ ADD_DEPENDENCIES (${ABC_BINDINGS}
 )
 
 LINK_WITH_VARIABLES(${ABC_BINDINGS} 
+                                              DTABC_LIBRARY
                                               BOOST_PYTHON_LIBRARY
                                               PYTHON_LIBRARY
                                               OSG_LIBRARY)
@@ -266,7 +269,7 @@ IF(BUILD_PLIB)
                                                   BOOST_PYTHON_LIBRARY
                                                   PYTHON_LIBRARY
                                                   DTCORE_LIBRARY
-                                                  DTINPUT_PLIB)	
+                                                  DTINPUT_PLIB_LIBRARY)
 
 	IF (WIN32)
 	  SET_TARGET_PROPERTIES( ${PLIB_BINDINGS} PROPERTIES SUFFIX ".pyd")

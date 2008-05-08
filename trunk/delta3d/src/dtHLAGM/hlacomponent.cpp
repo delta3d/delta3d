@@ -1352,7 +1352,6 @@ namespace dtHLAGM
                {
                   RTI::AttributeHandle handle = theAttributes.getHandle(i);
 
-
                   if (handle == vectorIterator->GetAttributeHandle())
                   {
                      matched = true;

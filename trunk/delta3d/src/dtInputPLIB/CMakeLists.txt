@@ -13,13 +13,15 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}											  
-											  DTCORE_LIBRARY											 
-											  OSG_LIBRARY
-											  PLIB_JS_LIBRARY
-											  PLIB_UL_LIBRARY)
+                    DTCORE_LIBRARY											 
+                    OSG_LIBRARY
+                    PLIB_JS_LIBRARY
+                    PLIB_UL_LIBRARY
+                    IOKIT_LIBRARY  )
 											  
-TARGET_LINK_LIBRARIES(${LIB_NAME}
-													  winmm)
+IF (WIN32)
+   TARGET_LINK_LIBRARIES(${LIB_NAME} winmm)
+ENDIF (WIN32)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_INPUT_PLIB_LIBRARY)		
