@@ -359,6 +359,16 @@ namespace dtGame
             std::vector<LogKeyframe> kfList;
             mLogStream->Open(mLogDirectory,mLogStatus.GetLogFile());
             mLogStream->GetKeyFrameIndex(kfList);
+
+//            for (size_t i = 0; i < kfList.size(); ++i)
+//            {
+//               LogKeyframe& kf = kfList[i];
+//               std::cout << "\n\nKeyframe:" << kf.GetName() << "\n";
+//               std::cout << "Offset:" << kf.GetLogFileOffset() << "\n";
+//               std::cout << "Description:" << kf.GetDescription() << "\n";
+//               std::cout << "Time Stamp:" << kf.GetSimTimeStamp() << std::endl;
+//            }
+
             mLogStatus.SetCurrentRecordDuration(mLogStream->GetRecordDuration());
             if (kfList.empty())
                throw dtUtil::Exception(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed log.  No initial "
@@ -369,6 +379,7 @@ namespace dtGame
          }
          catch(const dtUtil::Exception &e)
          {
+            e.LogException(dtUtil::Log::LOG_ERROR);
             // if we got an error above, we revert back to IDLE and tell the world.  Not sure what else we can do
             GetGameManager()->RejectMessage(message, "Server Logger Component - Error occured "
                "trying to initialize record, will revert to IDLE.  Message: " + e.What());
@@ -378,10 +389,10 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e) 
+            catch(const dtUtil::Exception &e2) 
             {
                // LOG THE EXCEPTION
-               e.LogException(dtUtil::Log::LOG_ERROR);
+               e2.LogException(dtUtil::Log::LOG_ERROR);
             } // ignore it.  Already failed, nothing we can do }
          }
 
@@ -486,9 +497,9 @@ namespace dtGame
    {
       DoRecordMessage(message);
 
-      dtCore::RefPtr<LogGetKeyframeListMessage> response =
-            static_cast<LogGetKeyframeListMessage*>(GetGameManager()->GetMessageFactory().
-                  CreateMessage(MessageType::LOG_INFO_KEYFRAMES).get());
+      dtCore::RefPtr<LogGetKeyframeListMessage> response;
+      GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_INFO_KEYFRAMES, response);
+
       try
       {
          std::vector<LogKeyframe> kfList;

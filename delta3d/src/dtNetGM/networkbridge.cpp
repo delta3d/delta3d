@@ -29,14 +29,14 @@
 #include <gnelib.h>
 #include <dtUtil/log.h>
 
-namespace dtNetGM 
+namespace dtNetGM
 {
     NetworkBridge::NetworkBridge(NetworkComponent *networkComp)
         : dtCore::Base("NetworkBridge")
         , mNetworkComponent(networkComp)
-        , mConnectedClient(false)
         , mMachineInfo(new dtGame::MachineInfo())
         , mGneConnection(NULL)
+        , mConnectedClient(false)
         , mLastStream(0)
     {
         mMachineInfo->SetName("Not Connected");
@@ -64,16 +64,16 @@ namespace dtNetGM
         return *mMachineInfo;
     }
 
-    const bool NetworkBridge::IsNetworkConnected() 
+    const bool NetworkBridge::IsNetworkConnected()
     {
         if(mGneConnection != NULL) {
             return mGneConnection->isConnected();
         }
         return false;
-    }    
-    
+    }
+
     const bool NetworkBridge::IsConnectedClient() const
-    { 
+    {
         return mConnectedClient;
     }
 
@@ -128,7 +128,7 @@ namespace dtNetGM
     void NetworkBridge::OnReceive( GNE::Connection& conn )
     {
         // Set the timestamp to current time
-        SetTimeStamp();        
+        SetTimeStamp();
 
         // Get next packet from stream
         GNE::Packet *next = conn.stream().getNextPacket();
@@ -138,7 +138,7 @@ namespace dtNetGM
             // retrieve type
             int type = next->getType();
 
-            if(type == GNE::PingPacket::ID) 
+            if(type == GNE::PingPacket::ID)
             {
                 GNE::PingPacket &ping = *((GNE::PingPacket*)next);
                 if (ping.isRequest())
@@ -155,7 +155,7 @@ namespace dtNetGM
             }
 
 			// receive next of datastream packets, we have a reliable connection so packets are received and in correct order
-            if(type == DataStreamPacket::ID) 
+            if(type == DataStreamPacket::ID)
             {
                 DataStreamPacket *dataStreamPacket = static_cast<DataStreamPacket*>(next);
                 if(mLastStream != dataStreamPacket->GetDataStreamId())
@@ -167,15 +167,15 @@ namespace dtNetGM
 
                 // goto start point of this packet
                 mDataStream.Seekp((dataStreamPacket->GetIndex() * DataStreamPacket::MAX_PAYLOAD), dtUtil::DataStream::SeekTypeEnum::SET);
-                mDataStream.WriteBinary((char*)dataStreamPacket->GetPayloadBuffer(), dataStreamPacket->GetPayloadSize());			
+                mDataStream.WriteBinary((char*)dataStreamPacket->GetPayloadBuffer(), dataStreamPacket->GetPayloadSize());
 
-                LOG_DEBUG("Received " + dtUtil::ToString(dataStreamPacket->GetIndex() + 1) 
+                LOG_DEBUG("Received " + dtUtil::ToString(dataStreamPacket->GetIndex() + 1)
                         + " of " +  dtUtil::ToString(dataStreamPacket->GetPacketCount()) + " packets.");
 
                 // We have a reliable stream, so packets arrive in order
-                if(dataStreamPacket->GetIndex() == (dataStreamPacket->GetPacketCount() - 1)) 
-                {   
-                    if(dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG) 
+                if(dataStreamPacket->GetIndex() == (dataStreamPacket->GetPacketCount() - 1))
+                {
+                    if(dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG)
                     {
                         // Read MessageType::mId for special case
                         mDataStream.Rewind();
@@ -184,10 +184,10 @@ namespace dtNetGM
                         mDataStream.Rewind();
 
                         LOG_DEBUG("Received stream[" + dtUtil::ToString(mLastStream)
-                            + "] msgType[" + dtUtil::ToString(msgId) + "] size: "+ dtUtil::ToString(mDataStream.GetBufferSize()) 
+                            + "] msgType[" + dtUtil::ToString(msgId) + "] size: "+ dtUtil::ToString(mDataStream.GetBufferSize())
                             + " packetcount: " + dtUtil::ToString(dataStreamPacket->GetPacketCount()) + ")");
                     }
-                    mNetworkComponent->OnReceivedDataStream(*this, mDataStream);	
+                    mNetworkComponent->OnReceivedDataStream(*this, mDataStream);
                 }
             }
             delete next;
@@ -208,7 +208,7 @@ namespace dtNetGM
 
 		while(dataStream.GetRemainingReadSize() != 0)
 		{
-			if(dataStream.GetRemainingReadSize() >= dtNetGM::DataStreamPacket::MAX_PAYLOAD) 
+			if(dataStream.GetRemainingReadSize() >= unsigned(dtNetGM::DataStreamPacket::MAX_PAYLOAD))
 			{
 				dtNetGM::DataStreamPacket packet(streamId, dataStreamSize, index++);
 				int iBytes = dataStream.ReadBinary((char*) packet.GetPayloadBuffer(), dtNetGM::DataStreamPacket::MAX_PAYLOAD);
@@ -234,8 +234,8 @@ namespace dtNetGM
 				qPackets.pop();
 
 				packet.SetPacketCount(packetCount);
-				
-				// write packet to reliablestream    
+
+				// write packet to reliablestream
                 mGneConnection->stream().writePacket(packet, true);
 			}
 			LOG_DEBUG("Send DataStream[" + dtUtil::ToString(streamId) + "] in " + dtUtil::ToString(packetCount) + " packet(s) to " + GetHostDescription());
@@ -260,7 +260,7 @@ namespace dtNetGM
         mNetworkComponent->OnConnectFailure(*this, error);
     }
 
-    void NetworkBridge::OnTimeout(GNE::Connection &conn) 
+    void NetworkBridge::OnTimeout(GNE::Connection &conn)
     {
         // forward to NetworkComponent
         mNetworkComponent->OnTimeOut(*this);
@@ -277,7 +277,7 @@ namespace dtNetGM
         mMachineInfo->SetUniqueId(dtCore::UniqueId(mMachineInfo->GetHostName()));
 
         // Set Timestamp
-        SetTimeStamp();        
+        SetTimeStamp();
     }
 
     void NetworkBridge::SetTimeStamp()
