@@ -60,6 +60,8 @@ ELSE (APPLE)
    #We only want X11 if we are not running on OSX, but still with a unix-like environment 
    IF(UNIX)
        FIND_PACKAGE(X11)
+       FIND_LIBRARY(XXF86VM_LIBRARY Xxf86vm)
+       SET(${X11_LIBRARIES} "${X11_LIBRARIES} ${XXF86VM_LIBRARY}")
    ENDIF(UNIX)
 
 ENDIF(APPLE)
