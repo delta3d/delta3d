@@ -14,7 +14,13 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 
 LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
-											  DTCORE_LIBRARY)
+											  DTCORE_LIBRARY
+											  OSG_LIBRARY
+											  OSGDB_LIBRARY)
+											  
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+					   ${OPENGL_LIBRARY}
+				     )											  
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_AI_LIBRARY)
