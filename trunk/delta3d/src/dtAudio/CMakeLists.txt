@@ -19,7 +19,8 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
 											  OSGDB_LIBRARY
-											  OPENTHREADS_LIBRARY)
+											  OPENTHREADS_LIBRARY
+											  XERCES_LIBRARY)
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}		
 					                                  ${OPENAL_LIBRARY} 
