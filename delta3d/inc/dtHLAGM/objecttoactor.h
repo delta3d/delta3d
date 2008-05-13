@@ -198,6 +198,20 @@ namespace dtHLAGM
           */
          void SetOneToManyMappingVector(std::vector<AttributeToPropertyList> &thisOneToManyMapping);
 
+         /**
+          * Get the object mapping name.
+          * @param Name assigned to the mapping as found in the "name" attribute
+          *        of an object tag in a mapping XML.
+          */
+         void SetMappingName( const std::string& name );
+
+         /**
+          * Get the object mapping name.
+          * @return Name assigned to the mapping as found in the "name" attribute
+          *         of an object tag in a mapping XML.
+          */
+         const std::string& GetMappingName() const;
+
          ObjectToActor& operator=(const ObjectToActor& setTo);
 
          bool operator==(const ObjectToActor& toCompare) const;
@@ -223,6 +237,9 @@ namespace dtHLAGM
 
          /// The HLA Object Type Name for this Object to Actor mapping.
          std::string mObjectClassName;
+
+         /// The name of the mapping as seen ing the name attribute of the mapping XML object tag.
+         std::string mMappingName;
 
          /// The Object DIS ID for this Object to Actor mapping.
          EntityType mObjectDisID;

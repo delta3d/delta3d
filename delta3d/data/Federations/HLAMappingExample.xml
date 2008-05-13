@@ -43,7 +43,7 @@
             <ddmSpace>Geographic</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
-                <hlaName>EntityType</hlaName>
+                <hlaName>ENTITY_TYPE_ID</hlaName>
                 <hlaDataType>ENTITY_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
                 <gameName>Entity Type</gameName>
@@ -95,7 +95,7 @@
             </attrToProp>            
         </object>
 
-        <object extends="BaseEntity">
+        <object extends="BaseEntity" name="Test Tank">
             <objectClass>BaseEntity.PhysicalEntity.Platform.GroundVehicle</objectClass>
             <actorType>TestHLA.Tank</actorType>
             <disEntityEnum>
@@ -111,6 +111,22 @@
                 <gameName>Mesh</gameName>   
                 <gameDataType>StaticMeshes</gameDataType>
                 <default>StaticMeshes:articulation_test.ive</default>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>ENTITY_TYPE_ID</hlaName>
+               <hlaDataType>ENTITY_TYPE</hlaDataType>
+               <hlaRequired>true</hlaRequired>
+               <gameName>Entity Type As String</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
+            </attrToProp>
+            <attrToProp>
+               <hlaName>MAPPING_NAME</hlaName>
+               <hlaDataType>STRING_TYPE</hlaDataType>
+               <hlaRequired>false</hlaRequired>
+               <gameName>Object Mapping Name</gameName>
+               <gameDataType>STRING</gameDataType>
+               <gameRequired>false</gameRequired>
             </attrToProp>
         </object>
 
@@ -293,6 +309,14 @@
                  <value id="2 9 225 2 14 0 0">SHORT SMOKE</value>
                  <value id="2 9 225 2 14 1 0">LONG SMOKE</value>
               </enumerationMapping>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>MAPPING_NAME</hlaName>
+              <hlaDataType>STRING_TYPE</hlaDataType>
+              <hlaRequired>false</hlaRequired>
+              <gameName>Mapping Name</gameName>
+              <gameDataType>STRING</gameDataType>
+              <gameRequired>false</gameRequired>
            </paramToParam>
         </interaction>
     </interactions>

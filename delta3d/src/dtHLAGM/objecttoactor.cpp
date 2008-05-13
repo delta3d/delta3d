@@ -197,6 +197,18 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////
+   void ObjectToActor::SetMappingName( const std::string& name )
+   {
+      mMappingName = name;
+   }
+
+   /////////////////////////////////////////////////////////////////////
+   const std::string& ObjectToActor::GetMappingName() const
+   {
+      return mMappingName;
+   }
+
+   /////////////////////////////////////////////////////////////////////
    ObjectToActor& ObjectToActor::operator=(const ObjectToActor& setTo)
    {
       mActorType = setTo.mActorType;

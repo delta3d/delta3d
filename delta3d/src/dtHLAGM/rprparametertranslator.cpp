@@ -392,7 +392,21 @@ namespace dtHLAGM
       const OneToManyMapping& mapping,
       const OneToManyMapping::ParameterDefinition& paramDef) const
    {
-      if (parameter.GetDataType() != dtDAL::DataType::ENUMERATION)
+      std::stringstream valueAsString;
+
+      if( parameter.GetDataType() == dtDAL::DataType::ENUMERATION )
+      {
+         const std::string& msgParamValue
+            = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
+
+         valueAsString << (GetEnumValue(msgParamValue, paramDef, false).c_str());
+      }
+      else if( parameter.GetDataType() == dtDAL::DataType::STRING )
+      {
+         valueAsString << (static_cast<const dtGame::StringMessageParameter&>
+            (parameter).GetValue().c_str());
+      }
+      else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"."
@@ -401,16 +415,9 @@ namespace dtHLAGM
                              RPRAttributeType::VELOCITY_VECTOR_TYPE.GetName().c_str());
          return;
       } 
-      
+
       EntityType entityType;
-
-      const std::string& msgParamValue = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
-      
-      const std::string& valueAsString = GetEnumValue(msgParamValue, paramDef, false);
-
-      std::istringstream iss;
-      iss.str(valueAsString);
-      iss >> entityType;
+      valueAsString >> entityType;
       entityType.Encode(buffer);
    }
 
@@ -1462,20 +1469,29 @@ namespace dtHLAGM
       }
       else if (hlaType == RPRAttributeType::ENTITY_TYPE)
       {
-         EntityType entityType;
-         entityType.Decode(buffer);
-         
-         if (parameterDataType == dtDAL::DataType::ENUMERATION)
+         // Convert to Entity Type from either an Enum or a String.
+         if( parameterDataType == dtDAL::DataType::ENUMERATION
+            || parameterDataType == dtDAL::DataType::STRING )
          {
-            std::string mappedValue;
+            // Since this is a valid type, convert the buffer to
+            // an Entity Type object.
+            EntityType entityType;
+            entityType.Decode(buffer);
+
             std::ostringstream stringValue;
-            
             //this current code only allows for exact matches and a default.
             stringValue << entityType;
-            
-            mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
 
-            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);            
+            // Write the value to the property
+            if( parameterDataType == dtDAL::DataType::ENUMERATION )
+            {
+               std::string mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
+               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);  
+            }
+            else // STRING
+            {
+               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(stringValue.str());  
+            }
          }
          else
          {

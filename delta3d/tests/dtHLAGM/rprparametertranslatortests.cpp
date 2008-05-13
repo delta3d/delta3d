@@ -579,7 +579,12 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          pd.AddEnumerationMapping("2 8 342 3 8 3 10", "Another Value");
 
          //There is no mapping the expected result, so it should use the default.
-         InternalTestOutgoingEntityTypeDataTranslation(dtHLAGM::EntityType(2, 8, 342, 3, 8, 3, 9));
+         dtHLAGM::EntityType expectedResult_2(2, 8, 342, 3, 8, 3, 9);
+         InternalTestOutgoingEntityTypeDataTranslation(expectedResult_2);
+
+         // Test to be sure that entity type is not outgoing redundantly through
+         // a mapping to a game type string parameter.
+         InternalTestOutgoingStringToEntityTypeDataTranslation(expectedResult_2,"2 8 342 3 8 3 9");
       }
 
       void TestOutgoingIntDataTranslation()
@@ -772,14 +777,20 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          std::string paramValue = stringParam->GetValue();
          CPPUNIT_ASSERT_EQUAL(rtiId, paramValue);
       }
-
+      
+      //////////////////////////////////////////////////////////////////////////
       void TestIncomingEntityTypeDataTranslation()
       {
+         // Container for parameters that need to have their values set
+         // by incoming HLA parameters.
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
 
          dtCore::RefPtr<dtGame::EnumMessageParameter> enumParam = new dtGame::EnumMessageParameter("test");
          mMapping.SetHLAType(dtHLAGM::RPRAttributeType::ENTITY_TYPE);
 
+         // pd is contained in the mMapping object and its settings will be carried
+         // into the MapToMessageParameters method via mMapping being passed in by
+         // reference. This tells the translator how to convert the incoming HLA parameter.
          dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
          pd.SetGameType(enumParam->GetDataType());
          pd.AddEnumerationMapping("2 8 342 3 8 3 9", "hello");
@@ -805,8 +816,32 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mParameterTranslator->MapToMessageParameters(mBuffer, inputValue2.EncodedLength(), messageParameters, mMapping);
 
          CPPUNIT_ASSERT_EQUAL(expectedValue, enumParam->GetValue());
+
+
+         // Get ready for the next test, involving the conversion of the incoming
+         // HLA Parameter Type Entity Type to Game Parameter Type STRING.
+         messageParameters.clear();
+
+         // The target game type for the incoming Entity Type will be set to
+         // Game Type STRING.
+         std::string expectedStrValue("2 9 111 1 0 3 9");
+         dtCore::RefPtr<dtGame::StringMessageParameter> strParam = new dtGame::StringMessageParameter("Test String Param");
+         pd.SetGameType( strParam->GetDataType() );
+
+         // Add the parameter to the messageParameter list so that it can receive
+         // the value of the Entity Type encoding, currently encoded in the buffer.
+         messageParameters.push_back( strParam.get() );
+
+         // Let the parameter translator perform its work, setting the string value
+         // of the incoming Entity Type into the string parameter contained in the
+         // container, messageParameters.
+         mParameterTranslator->MapToMessageParameters(mBuffer, inputValue2.EncodedLength(), messageParameters, mMapping);
+         
+         // Translation of Entity Type to STRING should have been performed successfully.
+         CPPUNIT_ASSERT_EQUAL(expectedStrValue, strParam->GetValue());
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void TestIncomingVelocityVectorDataTranslation()
       {
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
@@ -1520,6 +1555,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_EQUAL(expectedResult, actualValue);
       }
 
+      //////////////////////////////////////////////////////////////////////////
       void InternalTestOutgoingEntityTypeDataTranslation(const dtHLAGM::EntityType& expectedResult)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
@@ -1542,6 +1578,31 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT_EQUAL(expectedResult, actualValue);
       }
 
+      //////////////////////////////////////////////////////////////////////////
+      void InternalTestOutgoingStringToEntityTypeDataTranslation(const dtHLAGM::EntityType& expectedResult, const std::string& entityTypeValue )
+      {
+         std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
+
+         char* buffer = NULL;
+         size_t size = 0;
+
+         mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
+         dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
+         stringParam->SetValue(entityTypeValue);
+         messageParameters.push_back(stringParam.get());
+
+         TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
+         CPPUNIT_ASSERT_EQUAL(unsigned(size), unsigned(expectedResult.EncodedLength()));
+
+         dtHLAGM::EntityType actualValue;
+         actualValue.Decode(buffer);
+
+         mParameterTranslator->DeallocateBuffer(buffer);
+
+         CPPUNIT_ASSERT_EQUAL(expectedResult, actualValue);
+      }
+
+      //////////////////////////////////////////////////////////////////////////
       template <typename ValueType>
       void InternalTestOutgoingIntDataTranslation(ValueType expectedResult)
       {

@@ -95,6 +95,13 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
       }
 };
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+static const std::string TEST_ATTR_ENTITY_TYPE("Entity Type As String");
+static const std::string TEST_ATTR_MAPPING_NAME("Object Mapping Name");
+static const std::string TEST_PARAM_MAPPING_NAME("Mapping Name");
+
 class HLAComponentTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(HLAComponentTests);
@@ -678,6 +685,27 @@ void HLAComponentTests::TestSubscription()
          {
             const dtHLAGM::AttributeToPropertyList& atpl = *j;
             CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
+
+            // Test for parameter mappings that should be marked as special.
+            // --- Get the HLA name of the mapping.
+            const std::string& hlaName = j->GetHLAName();
+
+            // --- Begin the assert message...
+            std::ostringstream oss;
+            oss << "HLA attribute \"" << hlaName.c_str() << "\"";
+
+            // --- Check the property mapping for its special state.
+            if( hlaName == dtHLAGM::HLAComponent::ATTR_NAME_ENTITY_TYPE 
+               || hlaName == dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME )
+            {
+               oss << " MUST be marked as special" << std::endl;
+               CPPUNIT_ASSERT_MESSAGE( oss.str(), j->IsSpecial() );
+            }
+            else // Normal property mapping that is not special.
+            {
+               oss << " should NOT be marked as special" << std::endl;
+               CPPUNIT_ASSERT_MESSAGE( oss.str(), ! j->IsSpecial() );
+            }
          }
       }
    }
@@ -919,6 +947,7 @@ void HLAComponentTests::TestReflectAttributes()
       RTI::AttributeHandleValuePairSet* ahs =
          RTI::AttributeSetFactory::create(4);
 
+      // Add Entity Identifier
       char encodedEntityIdentifier[6];
 
       dtHLAGM::EntityIdentifier entityId(3,3,1);
@@ -928,6 +957,8 @@ void HLAComponentTests::TestReflectAttributes()
       AddAttribute("EntityIdentifier", mClassHandle1, *ahs, encodedEntityIdentifier,
                    entityId.EncodedLength());
 
+
+      // Add Entity Type
       char encodedEntityType[8];
 
       dtHLAGM::EntityType entityType(1,1,222,2,4,6,0);
@@ -937,6 +968,8 @@ void HLAComponentTests::TestReflectAttributes()
       AddAttribute("EntityType", mClassHandle1, *ahs, encodedEntityType,
                    entityType.EncodedLength());
 
+
+      // Add Damage State
       char encodedInt[sizeof(unsigned)];
 
       *((unsigned*)encodedInt) = 1;
@@ -945,6 +978,8 @@ void HLAComponentTests::TestReflectAttributes()
 
       AddAttribute("DamageState", mClassHandle1, *ahs, encodedInt, sizeof(unsigned));
 
+
+      // Add Orientation
       char encodedEulerAngles[sizeof(float) * 3];
 
       dtHLAGM::EulerAngles rotation(2.0f, 1.1f, 3.14f);
@@ -956,6 +991,7 @@ void HLAComponentTests::TestReflectAttributes()
                    rotation.EncodedLength());
 
 
+      // Add World Location
       char encodedWorldCoordinate[sizeof(double) * 3];
       dtHLAGM::WorldCoordinate location(1.0, 1.0, 1.0);
       location.Encode(encodedWorldCoordinate);
@@ -966,7 +1002,9 @@ void HLAComponentTests::TestReflectAttributes()
                    encodedWorldCoordinate,
                    location.EncodedLength());
 
+
       mHLAComponent->discoverObjectInstance(mObjectHandle1, mClassHandle1, "dumbstringname");
+
 
       const dtCore::UniqueId* id = mHLAComponent->GetRuntimeMappings().GetId(mObjectHandle1);
       CPPUNIT_ASSERT(id != NULL);
@@ -997,7 +1035,8 @@ void HLAComponentTests::TestReflectAttributes()
       //There is a mapping to set the sending id to the new actor as well.
       CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
       
-      CPPUNIT_ASSERT(static_cast<const dtGame::ActorUpdateMessage&>(*msg).GetUpdateParameter("Mesh") != NULL);
+      const dtGame::ActorUpdateMessage& createMsg = static_cast<const dtGame::ActorUpdateMessage&>(*msg);
+      CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Mesh") != NULL);
 
       //check the entity id mapping.
       id = mHLAComponent->GetRuntimeMappings().GetId(entityId);
@@ -1005,6 +1044,29 @@ void HLAComponentTests::TestReflectAttributes()
 
       dtCore::RefPtr<dtGame::GameActorProxy> proxy = mGameManager->FindGameActorById(*id);
       CPPUNIT_ASSERT(proxy.valid());
+
+      const dtHLAGM::ObjectToActor* otoa = mHLAComponent->GetActorMapping(proxy->GetActorType());
+      const std::string& objectMappingName = otoa->GetMappingName();
+
+      // Test that the object name has been assigned to the update message if it
+      // has been mapped.
+      const dtGame::StringMessageParameter* mappingNameParam = 
+         dynamic_cast<const dtGame::StringMessageParameter*>(createMsg.GetUpdateParameter(TEST_ATTR_MAPPING_NAME));
+      if( mappingNameParam != NULL )
+      {
+         CPPUNIT_ASSERT( mappingNameParam->GetValue() == objectMappingName );
+      }
+
+      // Test that the Entity Type can be mapped to a string if it has been mapped
+      // as a string parameter to one of the object mappings.
+      const dtGame::StringMessageParameter* entityTypeParam = 
+         dynamic_cast<const dtGame::StringMessageParameter*>(createMsg.GetUpdateParameter(TEST_ATTR_ENTITY_TYPE));
+      if( entityTypeParam != NULL )
+      {
+         std::stringstream oss;
+         oss << entityType;
+         CPPUNIT_ASSERT( oss.str() == entityTypeParam->GetValue() );
+      }
 
       osg::Vec3 expectedTranslation = mHLAComponent->GetCoordinateConverter().
          ConvertToLocalTranslation(osg::Vec3d(location.GetX(),
@@ -1162,6 +1224,22 @@ void HLAComponentTests::TestPrepareUpdate()
          const std::string* rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
          CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  string should be set when an object is first sent out via HLA",
                rtiID != NULL);
+
+
+         // Ensure that special incoming-only parameters are not being sent out.
+         // The Object Mapping Name and Entity Type should be avoided.
+         const dtGame::MessageParameter* paramMappingName = testMsg->GetParameter( "Object Mapping Name" );
+         const dtGame::MessageParameter* paramEntityType = testMsg->GetParameter( "Entity Type As String" );
+         if( paramMappingName != NULL
+            || paramEntityType != NULL )
+         {
+            std::ostringstream oss;
+            oss << "Outgoing Actor Updates should NOT contain outgoing parameter \""
+               << ( paramMappingName != NULL ? paramMappingName->GetName().c_str() : paramEntityType->GetName().c_str() )
+               << "\". This parameter has been mapped to a special incoming-only HLA type." << std::endl;
+            CPPUNIT_ASSERT_MESSAGE( oss.str(), false );
+         }
+
          
          bool foundEntityTypeAttr = false;
          //There are two entity id's to be mapped because
@@ -1217,9 +1295,14 @@ void HLAComponentTests::TestPrepareUpdate()
                for (unsigned j = 0; j < oToA->GetOneToManyMappingVector().size(); ++j)
                {
                   const dtHLAGM::AttributeToPropertyList& aToPList = oToA->GetOneToManyMappingVector()[j];
+
+                  const dtHLAGM::OneToManyMapping::ParameterDefinition& paramDef
+                     = aToPList.GetParameterDefinitions()[0];
+
                   if (aToPList.GetAttributeHandle() == attrHandle)
                   {
-                     if (aToPList.GetParameterDefinitions()[0].GetGameName() == "Damage State")
+
+                     if (paramDef.GetGameName() == "Damage State")
                      {
                         foundDamageStateAttr = true;
                         unsigned long length;
@@ -1234,7 +1317,7 @@ void HLAComponentTests::TestPrepareUpdate()
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
                         
                      }
-                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_ROTATION)
+                     else if (paramDef.GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_ROTATION)
                      {
                         foundOrientationAttr = true;
                         unsigned long length;
@@ -1244,7 +1327,7 @@ void HLAComponentTests::TestPrepareUpdate()
                            length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));                        
                         //There are other tests that check the converter for rotation.
                      }                     
-                     else if (aToPList.GetParameterDefinitions()[0].GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)
+                     else if (paramDef.GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)
                      {
                         CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
                      }
@@ -1306,6 +1389,13 @@ void HLAComponentTests::TestPrepareInteraction()
       if (iToM != NULL)
       {
          mHLAComponent->TestPrepareInteraction(*testMsg, *phs, *iToM);
+
+
+         // Ensure that the interaction does not contain a parameter for the special
+         // incoming-only parameter, Mapping Name.
+         CPPUNIT_ASSERT_MESSAGE("Outgoing interactions should NOT be sending out the special incoming-only Mapping Name parameter.",
+            testMsg->GetParameter("Mapping Name") == NULL );
+
          
          bool foundEntityIdParameter = false;
          bool foundLateTimeParameter = false;
@@ -1425,6 +1515,18 @@ void HLAComponentTests::TestReceiveInteraction()
       dtCore::RefPtr<const dtGame::Message> msg = mTestComponent->FindProcessMessageOfType(dtGame::MessageType::INFO_TIMER_ELAPSED);
       CPPUNIT_ASSERT(msg.valid());
       CPPUNIT_ASSERT(msg->GetAboutActorId() == fakeActorId);
+
+      const dtHLAGM::InteractionToMessage* itom = mHLAComponent->GetMessageMapping(msg->GetMessageType());
+      const std::string& interactionMappingName = itom->GetMappingName();
+
+      // Test that the object name has been assigned to the update message if it
+      // has been mapped.
+      const dtGame::StringMessageParameter* mappingNameParam = 
+         dynamic_cast<const dtGame::StringMessageParameter*>(msg->GetParameter(TEST_PARAM_MAPPING_NAME));
+      if( mappingNameParam != NULL )
+      {
+         CPPUNIT_ASSERT( mappingNameParam->GetValue() == interactionMappingName );
+      }
 
    }
    catch (const dtUtil::Exception& ex)

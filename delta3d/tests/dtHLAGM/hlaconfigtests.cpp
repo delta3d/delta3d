@@ -351,15 +351,21 @@ void HLAConfigTests::TestConfigure()
       CPPUNIT_ASSERT_EQUAL(0L, mCalc->GetAppSpaceMinimum());
       CPPUNIT_ASSERT_EQUAL(199L, mCalc->GetAppSpaceMaximum());
 
-      
+
+      const std::string& entityTypeHLAAttrName = dtHLAGM::HLAComponent::ATTR_NAME_ENTITY_TYPE;
+      const std::string& mappingHLAAttrName = dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME;
+
       {
          dtHLAGM::EntityType type(1, 1, 222, 2, 4, 6, 0);
 
          std::vector<dtHLAGM::AttributeToPropertyList> props;
 
+         // Set Entity Type mapped to the default ENUMERATION Game Type
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("EntityType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
-            attrToProp.GetParameterDefinitions().push_back(dtHLAGM::OneToManyMapping::ParameterDefinition("Entity Type", dtDAL::DataType::ENUMERATION, "", false)); 
+            dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
+            attrToProp.GetParameterDefinitions().push_back(
+               dtHLAGM::OneToManyMapping::ParameterDefinition(
+                  "Entity Type", dtDAL::DataType::ENUMERATION, "", false)); 
             props.push_back(attrToProp);
          }
 
@@ -405,6 +411,24 @@ void HLAConfigTests::TestConfigure()
             props.push_back(attrToProp);
          }
 
+         // Set Entity Type mapped to STRING Game Type
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
+            attrToProp.GetParameterDefinitions().push_back(
+               dtHLAGM::OneToManyMapping::ParameterDefinition(
+                  "Entity Type As String", dtDAL::DataType::STRING, "", false)); 
+            props.push_back(attrToProp);
+         }
+
+         // Set a property for capturing the Object Mapping Name
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp(mappingHLAAttrName, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
+            attrToProp.GetParameterDefinitions().push_back(
+               dtHLAGM::OneToManyMapping::ParameterDefinition(
+                  "Object Mapping Name", dtDAL::DataType::STRING, "", false)); 
+            props.push_back(attrToProp);
+         }
+
          CheckObjectToActorMapping("TestHLA", "Tank",
             "BaseEntity.PhysicalEntity.Platform.GroundVehicle",
             "EntityIdentifier", "Geographic", &type, false, false, props);
@@ -413,7 +437,7 @@ void HLAConfigTests::TestConfigure()
       {
          std::vector<dtHLAGM::AttributeToPropertyList> props;
          {
-            dtHLAGM::AttributeToPropertyList attrToProp("EntityType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
+            dtHLAGM::AttributeToPropertyList attrToProp(entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Entity Type", dtDAL::DataType::ENUMERATION, "", false);
             attrToProp.GetParameterDefinitions().push_back(pd); 
@@ -555,6 +579,15 @@ void HLAConfigTests::TestConfigure()
             paramToParam.GetParameterDefinitions().push_back(pd); 
             params.push_back(paramToParam);
 
+         }
+
+         // Add a parameter to capture the name of the interaction mapping.
+         {
+            dtHLAGM::ParameterToParameterList paramToParam(
+               dtHLAGM::HLAComponent::PARAM_NAME_MAPPING_NAME, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mapping Name", dtDAL::DataType::STRING, "", false);
+            paramToParam.GetParameterDefinitions().push_back(pd); 
+            params.push_back(paramToParam);
          }
 
          CheckInteractionToMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED, "WeaponFire", "Geographic", params);

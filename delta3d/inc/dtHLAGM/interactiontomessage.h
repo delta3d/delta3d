@@ -113,6 +113,26 @@ namespace dtHLAGM
             mOneToMany = thisOneToManyVector;
          }
 
+         /**
+          * Set the interaction mapping name.
+          * @param name Name assigned to the mapping as found in the "name" attribute
+          *        of an interaction tag in a mapping XML.
+          */
+         void SetMappingName( const std::string& name )
+         {
+            mMappingName = name;
+         }
+
+         /**
+          * Get the interaction mapping name.
+          * @return Name assigned to the mapping as found in the "name" attribute
+          *         of an interaction tag in a mapping XML.
+          */
+         const std::string& GetMappingName() const
+         {
+            return mMappingName;
+         }
+
          InteractionToMessage& operator=(const InteractionToMessage& setTo)
          {
             mType = setTo.mType;
@@ -144,6 +164,11 @@ namespace dtHLAGM
 
          const dtGame::MessageType* mType;
          std::string mInteractionName;
+
+         // Name of the interaction mapping as found in the name attribute of an interaction tag
+         // in the mapping XML .
+         std::string mMappingName;
+
          RTI::InteractionClassHandle mInteractionHandle;
          std::vector<ParameterToParameterList> mOneToMany;
    };

@@ -294,6 +294,8 @@ namespace dtHLAGM
                GetAttributeValue(OBJECT_KEYNAME_ATTRIBUTE, attrs, keyName);
                if (!keyName.empty())
                {
+                  mCurrentObjectToActor->SetMappingName( keyName );
+
                   mNamedObjectToActors.insert(std::make_pair(keyName, mCurrentObjectToActor));
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -395,6 +397,8 @@ namespace dtHLAGM
                GetAttributeValue(INTERACTION_KEYNAME_ATTRIBUTE, attrs, keyName);
                if (!keyName.empty())
                {
+                  mCurrentInteractionToMessage->SetMappingName( keyName );
+
                   mNamedInteractionToMessages.insert(make_pair(keyName, mCurrentInteractionToMessage));
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -545,6 +549,10 @@ namespace dtHLAGM
          else if (topElement == HEADER_DIS_ENTITIES_ATTR_ELEMENT)
          {
             // the translator needs to be able to handle this.
+            if( ! sChars.empty() )
+            {
+               mTargetTranslator->SetHLAEntityTypeAttributeName( sChars );
+            }
          }
          else if (topElement == HEADER_AUTHOR_ELEMENT)
          {
