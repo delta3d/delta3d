@@ -78,6 +78,28 @@ namespace dtHLAGM
       public NullFederateAmbassador
    {
       public:
+         // Name of the HLA mapping object/interaction attribute that
+         // should map the defined object/interaction name into an
+         // actor property. A mapping name is the value as found in
+         // the Object tag Name attribute within an HLA mapping file.
+         // Example (Mapping Name for Object):
+         //         <object name="mapping name">
+         //
+         // Example (Mapping Name for Object):
+         //         <interaction name="mapping name">
+         //
+         // Example (Attribute Name for Objects and Interactions):
+         //         <hlaName>Attribute Name</hlaName>
+         //
+         static const std::string PARAM_NAME_MAPPING_NAME; // Interactions (have parameters)
+         static const std::string ATTR_NAME_MAPPING_NAME;  // Objects (have attributes)
+
+         // Reserved HLA object attribute name to capture the incoming Entity Type.
+         // --- This constant will refer to the HLA Entity Type Attribute Name set on this component.
+         static const std::string ATTR_NAME_ENTITY_TYPE; // Objects
+         // --- Default attribute name if one is not specified in mapping.
+         static const std::string ATTR_NAME_ENTITY_TYPE_DEFAULT;
+
          //Constant for the name of the about actor id property on a message.
          //It's used to map data to it like a message parameter in the mapping.
          static const std::string ABOUT_ACTOR_ID;
@@ -389,6 +411,19 @@ namespace dtHLAGM
          RTI::RTIambassador* GetRTIAmbassador() { return mRTIAmbassador; }
          const RTI::RTIambassador* GetRTIAmbassador() const { return mRTIAmbassador; }
 
+         /**
+          * Set the name of the HLA object attribute that is to be used as
+          * the Entity Type identifier.
+          * @param name Name of the HLA attribute being used as the Entity Type.
+          */
+         void SetHLAEntityTypeAttributeName( const std::string& name );
+
+         /**
+          * Get the name of the HLA object attribute that is used as the Entity Type.
+          * @return name Name of the HLA attribute being used as the Entity Type.
+          */
+         const std::string& GetHLAEntityTypeAttributeName() const;
+
       protected:
 
          /// Calls all of the subscription calculators to update their regions.
@@ -496,14 +531,48 @@ namespace dtHLAGM
                               const dtCore::UniqueId* currentActorId );
 
 
-         void LoadUpParameters( const RTI::AttributeHandleValuePairSet &theAttributes, 
-                                 unsigned long attrIdx, 
+         void LoadUpParameters( const char* buffer, 
+                                 unsigned long length, 
                                  std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                  dtGame::Message *msg );
 
          void SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                     bool bNewObject, 
                                     dtGame::Message *msg );
+
+         /**
+          * Convenience method for creating message parameters from a mapping between
+          * interaction parameters to game message parameters.
+          *
+          * @param paramNameBuffer Name of the interaction parameter.
+          * @param bufferLength Length of paramNameBuffer.
+          * @param paramToParamMapping Mapping between interaction to game message parameters
+          * @param message Game message to have parameters added.
+          * @param addMissingParams Flag used to add parameters to the message if not found. (mostly for actor update messages)
+          * @param classHandleString Name of the HLA Interaction (for logging error messages)
+          * @return FALSE if any of the parameter mappings failed; TRUE othewise.
+          */
+         bool CreateMessageParameters( 
+            const char* paramNameBuffer,
+            unsigned long bufferLength,
+            const OneToManyMapping& paramToParamMapping, // Interaction to Message Parameter Mapping Object
+            dtGame::Message& message, // Game message to have parameters added to it.
+            bool addMissingParams = false, // 
+            const std::string& classHandleString = "" // HLA Interaction class name (for log output)
+            );
+
+         /**
+          * Helper method for obtaining an RTI attribute's buffer and length if the
+          * attribute handle matches that as found on an AttributeToPropertyList.
+          * NOTE: The returned buffer has the same scope as that of the specified attributeSet.
+          *
+          * @param attributeSet Set of RTI attributes to be searched.
+          * @param curAttrToProp Attribute-to-property mapping that has the attribute handle of interest.
+          * @param outBufferLength Length of the attribute buffer that is returned; 0 if not found.
+          * @return Buffer associated with the found attribute; NULL if not found.
+          */
+         const char* GetAttributeBufferAndLength( const RTI::AttributeHandleValuePairSet& attributeSet,
+            AttributeToPropertyList& curAttrToProp, unsigned long& outBufferLength );
 
          /**
           * The RTI ambassador.
@@ -564,6 +633,8 @@ namespace dtHLAGM
          std::vector<dtCore::RefPtr<ParameterTranslator> > mParameterTranslators;
 
          dtCore::RefPtr<dtUtil::Log> mLogger;
+
+         std::string mHLAEntityTypeAttrName;
 
    };
 

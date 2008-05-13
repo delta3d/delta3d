@@ -226,7 +226,8 @@ namespace dtHLAGM
           * Constructor.
           */
          OneToManyMapping(): mHLAType(&AttributeType::UNKNOWN),
-            mRequiredForHLA(false), mInvalid(false)
+            mRequiredForHLA(false), mInvalid(false),
+            mSpecial(false)
          {}
 
          /**
@@ -234,13 +235,16 @@ namespace dtHLAGM
           * @param hlaName the name of the HLA value to map to.
           * @param hlaType the type of the HLA value.
           * @param requiredForHLA true if this field is required in the HLA FOM.
+          * @param special true if the mapping is to be handled as incoming-only.
           */
          OneToManyMapping(const std::string& hlaName,
             const AttributeType& attributeType,
-            bool requiredForHLA):
+            bool requiredForHLA,
+            bool special = false):
             mHLAName(hlaName),
             mHLAType(&attributeType),
-            mRequiredForHLA(requiredForHLA)
+            mRequiredForHLA(requiredForHLA),
+            mSpecial(special)
          {}
 
          /**
@@ -309,11 +313,38 @@ namespace dtHLAGM
             mRequiredForHLA = requiredForHLA;
          }
 
-         ///@return true if this mapping is not valid and should be ignored
-         bool IsInvalid() const { return mInvalid; }
+         /**
+          * @return true if this mapping is not valid and should be ignored
+          */
+         bool IsInvalid() const
+         {
+            return mInvalid;
+         }
 
-         ///Sets if this mapping is invaild and should be ignored.
-         void SetInvalid(bool newInvalid) {  mInvalid = newInvalid; }
+         /**
+          * Sets if this mapping is invaild and should be ignored.
+          */
+         void SetInvalid( bool newInvalid )
+         {
+            mInvalid = newInvalid;
+         }
+
+         /**
+          * Set whether this mapping is a special case, such as an
+          * incoming-only mapping.
+          */
+         void SetSpecial( bool special )
+         {
+            mSpecial = special;
+         }
+
+         /**
+          * @return TRUE if this mapping is flagged as a special case.
+          */
+         bool IsSpecial() const
+         {
+            return mSpecial;
+         }
 
          ///@return a reference to the vector of ParameterDefinitions that are used in this mapping.
          std::vector<ParameterDefinition>& GetParameterDefinitions() { return mGameParameters; };
@@ -336,6 +367,9 @@ namespace dtHLAGM
 
          ///whether or not this mapping is invalid.
          bool mInvalid;
+
+         // Flag for marking this mapping as a special case, such as an incoming-only mapping.
+         bool mSpecial;
          
          //A vector of the game parameter definitions for this mapping to use.
          std::vector<ParameterDefinition> mGameParameters; 
