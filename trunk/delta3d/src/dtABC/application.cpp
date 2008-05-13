@@ -19,20 +19,6 @@
  * John K. Grant
  */
 
-/*
-   ATM on Windows, we run into a problem when using std::max / std::min, because
-   Windows headers define max and min macros. If we set NOMINMAX prior to
-   including Windows headers, then this problem is resolved and we can use std::
-   max / std::min all we like. Since this seems to be the only affected file ATM
-   I'm putting this here -- if a better place to move this becomes clear, then
-   by all means please move.
-
-   - Danny J. McCue
-*/
-#ifdef WIN32
-# define NOMINMAX
-#endif
-
 #include <dtABC/application.h>
 
 #include <osgViewer/CompositeViewer>
