@@ -489,7 +489,16 @@ namespace dtHLAGM
 
          void PublishSubscribe();
          void UnsubscribeRegion(const std::string& name, RTI::Region& region);
-         
+
+         /**
+          * Output an error message about a mapping that describes the mapping
+          * arrangement and the reason that it is being reported in an error.
+          * @param mapping Attribute-To-Property or Parameter-To-Parameter mapping
+          *        that has caused an error or is invalid.
+          * @param reason Message describing why the mapping is being logged in an error.
+          */
+         void LogMappingError( const dtHLAGM::OneToManyMapping& mapping, const std::string& reason );
+
          virtual ~HLAComponent()
            throw (RTI::FederateInternalError);
 
@@ -530,11 +539,6 @@ namespace dtHLAGM
                               dtCore::RefPtr<ObjectToActor> bestObjectToActor,
                               const dtCore::UniqueId* currentActorId );
 
-
-         void LoadUpParameters( const char* buffer, 
-                                 unsigned long length, 
-                                 std::vector<AttributeToPropertyList>::iterator vectorIterator, 
-                                 dtGame::Message *msg );
 
          void SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                     bool bNewObject, 
