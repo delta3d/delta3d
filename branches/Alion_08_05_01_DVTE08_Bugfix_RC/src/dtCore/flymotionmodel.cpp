@@ -289,6 +289,11 @@ Axis* FlyMotionModel::GetFlyForwardBackwardAxis()
    return mFlyForwardBackwardAxis;
 }
 
+const Axis* FlyMotionModel::GetFlyForwardBackwardAxis() const
+{
+   return mFlyForwardBackwardAxis;
+}
+
 ////////////////////////////////////////////////////////////////////////////
 void FlyMotionModel::SetFlyLeftRightAxis(Axis* flyLeftRightAxis)
 {
@@ -302,6 +307,12 @@ Axis* FlyMotionModel::GetFlyLeftRightAxis()
 }
 
 ////////////////////////////////////////////////////////////////////////////
+const Axis* FlyMotionModel::GetFlyLeftRightAxis() const
+{
+   return mFlyLeftRightAxis;
+}
+
+////////////////////////////////////////////////////////////////////////////
 void FlyMotionModel::SetFlyUpDownAxis(Axis* flyUpDownAxis)
 {
    mFlyUpDownAxis = flyUpDownAxis;
@@ -309,6 +320,12 @@ void FlyMotionModel::SetFlyUpDownAxis(Axis* flyUpDownAxis)
 
 ////////////////////////////////////////////////////////////////////////////
 Axis* FlyMotionModel::GetFlyUpDownAxis()
+{
+   return mFlyUpDownAxis;
+}
+
+////////////////////////////////////////////////////////////////////////////
+const Axis* FlyMotionModel::GetFlyUpDownAxis() const
 {
    return mFlyUpDownAxis;
 }
@@ -337,6 +354,11 @@ Axis* FlyMotionModel::GetTurnLeftRightAxis()
    return mTurnLeftRightAxis;
 }
 
+const Axis* FlyMotionModel::GetTurnLeftRightAxis() const
+{
+   return mTurnLeftRightAxis;
+}
+
 /**
  * Sets the axis that turns the target up (for positive values)
  * or down (for negative values).
@@ -359,6 +381,11 @@ Axis* FlyMotionModel::GetTurnUpDownAxis()
    return mTurnUpDownAxis;
 }
 
+const Axis* FlyMotionModel::GetTurnUpDownAxis() const
+{
+   return mTurnUpDownAxis;
+}
+
 /**
  * Sets the maximum fly speed (meters per second).
  *
@@ -374,7 +401,7 @@ void FlyMotionModel::SetMaximumFlySpeed(float maximumFlySpeed)
  *
  * @return the current maximum fly speed
  */
-float FlyMotionModel::GetMaximumFlySpeed()
+float FlyMotionModel::GetMaximumFlySpeed() const
 {
    return mMaximumFlySpeed;
 }
@@ -394,7 +421,7 @@ void FlyMotionModel::SetMaximumTurnSpeed(float maximumTurnSpeed)
  *
  * @return the current maximum turn speed
  */
-float FlyMotionModel::GetMaximumTurnSpeed()
+float FlyMotionModel::GetMaximumTurnSpeed() const
 {
    return mMaximumTurnSpeed;
 }

@@ -100,6 +100,7 @@ namespace dtCore
           * @return the current forward/backward axis
           */
          Axis* GetFlyForwardBackwardAxis();
+         const Axis* GetFlyForwardBackwardAxis() const;
          
          /**
           * Sets the axis that moves the target left (for positive
@@ -116,6 +117,7 @@ namespace dtCore
           * @return the current left/right axis
           */
          Axis* GetFlyLeftRightAxis();
+         const Axis* GetFlyLeftRightAxis() const;
 
          /**
          * Sets the axis that moves the target target-relative up
@@ -134,6 +136,7 @@ namespace dtCore
          * @return the current up/down axis
          */
          Axis* GetFlyUpDownAxis();
+         const Axis* GetFlyUpDownAxis() const;
 
          /**
           * Sets the axis that turns the target left (for negative values)
@@ -150,6 +153,7 @@ namespace dtCore
           * @return the current turn left/right axis
           */
          Axis* GetTurnLeftRightAxis();
+         const Axis* GetTurnLeftRightAxis() const;
          
          /**
           * Sets the axis that turns the target up (for positive values)
@@ -166,6 +170,7 @@ namespace dtCore
           * @return the current turn up/down axis
           */
          Axis* GetTurnUpDownAxis();
+         const Axis* GetTurnUpDownAxis() const;
          
          /**
           * Sets the maximum fly speed (meters per second).
@@ -179,7 +184,7 @@ namespace dtCore
           *
           * @return the current maximum fly speed
           */
-         float GetMaximumFlySpeed();
+         float GetMaximumFlySpeed() const;
          
          /**
           * Sets the maximum turn speed (degrees per second).
@@ -193,13 +198,13 @@ namespace dtCore
           *
           * @return the current maximum turn speed
           */
-         float GetMaximumTurnSpeed();
+         float GetMaximumTurnSpeed() const;
          
          /**
           * Gets whether we are using sim time or not (aka real time)
           * for the speed of movement and rotation.
           */
-         bool GetUseSimTimeForSpeed() { return mUseSimTimeForSpeed; }
+         bool GetUseSimTimeForSpeed() const { return mUseSimTimeForSpeed; }
 
          /**
           * Sets whether we use sim time or not (aka real time)

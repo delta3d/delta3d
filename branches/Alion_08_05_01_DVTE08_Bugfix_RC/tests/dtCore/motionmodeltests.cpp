@@ -22,6 +22,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/inputdevice.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/flymotionmodel.h>
 
 using namespace dtCore;
 
@@ -56,6 +57,7 @@ class MotionModelTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(MotionModelTests);
    CPPUNIT_TEST(TestOribitMotionModelAxisStateClobbering);
+   CPPUNIT_TEST(TestFlyMotionModelProperties);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -64,6 +66,7 @@ public:
    void tearDown();
 
    void TestOribitMotionModelAxisStateClobbering();
+   void TestFlyMotionModelProperties();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MotionModelTests);
@@ -104,3 +107,37 @@ void MotionModelTests::TestOribitMotionModelAxisStateClobbering()
    inputDevice->GetAxis( 0 )->SetState( 2.0 );
    CPPUNIT_ASSERT( testAxisListener.HasAxisStateChanged() );
  }
+
+void MotionModelTests::TestFlyMotionModelProperties()
+{
+   dtCore::RefPtr<dtCore::FlyMotionModel> motionModel = new dtCore::FlyMotionModel();
+   const dtCore::FlyMotionModel* motionModelConst = motionModel.get();
+
+   float flySpeed = 123.456f;
+   float turnSpeed = 7.89f;
+   dtCore::RefPtr<dtCore::Axis> testAxis_FB = new dtCore::Axis(NULL,"Test Axis Forward/Back");
+   dtCore::RefPtr<dtCore::Axis> testAxis_LR = new dtCore::Axis(NULL,"Test Axis Left/Right");
+   dtCore::RefPtr<dtCore::Axis> testAxis_UD = new dtCore::Axis(NULL,"Test Axis Up/Down");
+   dtCore::RefPtr<dtCore::Axis> testAxis_Turn_LR = new dtCore::Axis(NULL,"Test Axis Turn Left/Right");
+   dtCore::RefPtr<dtCore::Axis> testAxis_Turn_UD = new dtCore::Axis(NULL,"Test Axis Turn Up/Down");
+
+   motionModel->SetMaximumFlySpeed( flySpeed );
+   motionModel->SetMaximumTurnSpeed( turnSpeed );
+   motionModel->SetFlyForwardBackwardAxis( testAxis_FB.get() );
+   motionModel->SetFlyLeftRightAxis( testAxis_LR.get() );
+   motionModel->SetFlyUpDownAxis( testAxis_UD.get() );
+   motionModel->SetTurnLeftRightAxis( testAxis_Turn_LR.get() );
+   motionModel->SetTurnUpDownAxis( testAxis_Turn_UD.get() );
+
+   CPPUNIT_ASSERT( motionModelConst->GetMaximumFlySpeed() == flySpeed );
+   CPPUNIT_ASSERT( motionModelConst->GetMaximumTurnSpeed() == turnSpeed );
+   CPPUNIT_ASSERT( motionModelConst->GetFlyForwardBackwardAxis() == testAxis_FB.get() );
+   CPPUNIT_ASSERT( motionModelConst->GetFlyLeftRightAxis() == testAxis_LR.get() );
+   CPPUNIT_ASSERT( motionModelConst->GetFlyUpDownAxis() == testAxis_UD.get() );
+   CPPUNIT_ASSERT( motionModelConst->GetTurnLeftRightAxis() == testAxis_Turn_LR.get() );
+   CPPUNIT_ASSERT( motionModelConst->GetTurnUpDownAxis() == testAxis_Turn_UD.get() );
+
+   CPPUNIT_ASSERT( motionModelConst->GetUseSimTimeForSpeed());
+   motionModel->SetUseSimTimeForSpeed( false );
+   CPPUNIT_ASSERT( ! motionModelConst->GetUseSimTimeForSpeed() );
+}
