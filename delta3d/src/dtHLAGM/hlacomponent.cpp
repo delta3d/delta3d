@@ -1391,7 +1391,12 @@ namespace dtHLAGM
          {
             curAttrToProp = &(*vectorIterator);
 
-            if (curAttrToProp->IsInvalid()) continue;
+            // Avoid invalid mappings.
+            if( curAttrToProp->IsInvalid() )
+            {
+               LogMappingError( *curAttrToProp, "ReflectAttributeValues found it to be INVALID. Ignoring." );
+               continue;
+            }
 
             const std::string& attributeString = curAttrToProp->GetHLAName();
 
@@ -1410,10 +1415,6 @@ namespace dtHLAGM
                   // Make sure that the default parameters are not used.
                   matched = true;
 
-                  // Use this to verify if current attribute to property mapping
-                  // should be marked invalid if CreateMessageParameters fails.
-                  bool success = false;
-
                   // Handle the Object Mapping Name or
                   // Entity Type if Entity Type usage is enabled.
                   // NOTE: Entity Type will be NULL on the ObjectToActor
@@ -1428,9 +1429,22 @@ namespace dtHLAGM
                   }
                   // Is this the Entity Type?
                   // GetDisID will not be NULL if Entity Types are being used.
-                  else if( bestObjectToActor->GetDisID() != NULL )
+                  else if( attributeString == ATTR_NAME_ENTITY_TYPE )
                   {
                      buf = GetAttributeBufferAndLength( theAttributes, *curAttrToProp, length );
+                  }
+                  else
+                  {
+                     // Bad match. Special parameter does not have the name of
+                     // a special attribute.
+                     curAttrToProp->SetInvalid( true );
+
+                     std::ostringstream reason;
+                     reason << "HLA attribute mapping \""
+                        << attributeString.c_str()
+                        << "\" was marked as SPECIAL but does NOT match the name of a special type HLA attribute."
+                        << std::endl;
+                     LogMappingError( *curAttrToProp, reason.str() );
                   }
 
                }
@@ -1803,6 +1817,7 @@ namespace dtHLAGM
          const dtGame::MessageType& messageType = thisInteractionToMessage->GetMessageType();
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(messageType);
 
+         ParameterToParameterList* curParamMapping = NULL;
          std::vector<ParameterToParameterList> currentParameterToParameterListVector = thisInteractionToMessage->GetOneToManyMappingVector();
          std::vector<ParameterToParameterList>::iterator vectorIterator;
 
@@ -1810,11 +1825,25 @@ namespace dtHLAGM
               vectorIterator != currentParameterToParameterListVector.end();
               ++vectorIterator)
          {
+            curParamMapping = &(*vectorIterator);
+
+            // Avoid invalid mappings.
+            if( curParamMapping->IsInvalid() )
+            {
+               LogMappingError( *curParamMapping, "ReceiveInteraction found it to be INVALID. Ignoring." );
+               continue;
+            }
+
             // Handle special case parameter mappings.
             // Mapped name of the interaction is one such case.
-            if( vectorIterator->IsSpecial()
-               && vectorIterator->GetHLAName() == PARAM_NAME_MAPPING_NAME )
+            if( curParamMapping->IsSpecial() )
             {
+               if( curParamMapping->GetHLAName() != PARAM_NAME_MAPPING_NAME )
+               {
+                  curParamMapping->SetInvalid( true );
+                  continue;
+               }
+
                const std::string& mappingName = thisInteractionToMessage->GetMappingName();
                const char* buf = mappingName.c_str();
                unsigned long length = mappingName.size() + 1;
@@ -1822,7 +1851,7 @@ namespace dtHLAGM
                CreateMessageParameters(
                   buf,               // Interaction Parameter Name
                   length,            // Interaction Parameter Name Length
-                  *vectorIterator,   // Interaction Param to Message Param Mapping Object
+                  *curParamMapping,  // Interaction Param to Message Param Mapping Object
                   *message,          // Game Message to have parameters added
                   false,             // Do NOT add parameters that are not found
                   classHandleString  // HLA Interaction Name
@@ -1834,8 +1863,8 @@ namespace dtHLAGM
                for (unsigned int i = 0; i < theParameters.size(); ++i)
                {
                   RTI::ParameterHandle handle = theParameters.getHandle(i);
-                  if (handle == vectorIterator->GetParameterHandle() &&
-                        !vectorIterator->GetParameterDefinitions().empty())
+                  if (handle == curParamMapping->GetParameterHandle() &&
+                        ! curParamMapping->GetParameterDefinitions().empty())
                   {
                      unsigned long length;
                      char* buf = theParameters.getValuePointer(i, length);
@@ -1843,71 +1872,11 @@ namespace dtHLAGM
                      CreateMessageParameters(
                         buf,               // Interaction Parameter Name
                         length,            // Interaction Parameter Name Length
-                        *vectorIterator,   // Interaction Param to Message Param Mapping Object
+                        *curParamMapping,  // Interaction Param to Message Param Mapping Object
                         *message,          // Game Message to have parameters added
                         false,             // Do NOT add parameters that are not found
                         classHandleString  // HLA Interaction Name
                         );
-
-                     /*for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
-                     {
-                        const dtDAL::DataType& gameParameterDataType = vectorIterator->GetParameterDefinitions()[propnum].GetGameType();
-
-                        const std::string& gameParameterName = vectorIterator->GetParameterDefinitions()[propnum].GetGameName();
-
-                        // The about actor id and source actor ID are special cases.
-                        // We create a dummy parameter to allow the mapper code to work, and
-                        // then set it back to the message after the fact.
-                        if (gameParameterDataType == dtDAL::DataType::ACTOR &&
-                           (gameParameterName == ABOUT_ACTOR_ID ||
-                           gameParameterName == SENDING_ACTOR_ID))
-                        {
-
-                           dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                                 dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                                    gameParameterName);
-                           if (gameParameterName == ABOUT_ACTOR_ID)
-                              aboutParameter = messageParameter;
-                           else
-                              sendingParameter = messageParameter;
-
-                           messageParameters.push_back(messageParameter);
-                        }
-                        else
-                        {
-                           dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
-                                 message->GetParameter(gameParameterName);
-
-                           if (messageParameter == NULL)
-                           {
-                              mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                                  "No message parameter named %s found in messageType %s when trying to map from HLA interaction %s",
-                                                  gameParameterName.c_str(),
-                                                  messageType.GetName().c_str(),
-                                                  classHandleString.c_str());
-
-                           }
-                           else if (gameParameterDataType != messageParameter->GetDataType())
-                           {
-                              mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
-                                                  "Message parameter named %s found in messageType %s has unexpected type %s.  %s was expected.  Attempting to set anyway.",
-                                                  gameParameterName.c_str(),
-                                                  messageType.GetName().c_str(),
-                                                  messageParameter->GetDataType().GetName().c_str(),
-                                                  gameParameterDataType.GetName().c_str());
-                           }
-                           else
-                              messageParameters.push_back(messageParameter);
-                        }
-                        
-                     }
-
-                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
-
-                     if (aboutParameter != NULL)
-                        message->SetAboutActorId(aboutParameter->ToString());
-                     if (sendingParameter != NULL)
-                        message->SetSendingActorId(sendingParameter->ToString());*/
                   }
                }
             }
@@ -2588,15 +2557,28 @@ namespace dtHLAGM
 
       const std::string* attrName = NULL;
 
+      AttributeToPropertyList* curAttrToProp = NULL;
+
       for (vectorIterator = attributeToPropertyListVector.begin();
            vectorIterator != attributeToPropertyListVector.end();
            ++vectorIterator)
       {
-         attrName = &vectorIterator->GetHLAName();
+         // Dereference the iterator once into a simple pointer to the current mapping.
+         curAttrToProp = &(*vectorIterator);
+
+         // Avoid invalid mappings.
+         if( curAttrToProp->IsInvalid() )
+         {
+            LogMappingError( *curAttrToProp, "PrepareUpdate found mapping to be INVALID. Ignoring." );
+            continue;
+         }
+
+         attrName = &curAttrToProp->GetHLAName();
 
          // Avoid no-name attributes.
          if ( attrName->empty() )
          {
+            LogMappingError( *curAttrToProp, "PrepareUpdate found mapping have NO HLA attribute name. Ignoring." );
             continue;
          }
 
@@ -2607,7 +2589,7 @@ namespace dtHLAGM
          //
          // The mapped object name should not be sent as it will not
          // work as outgoing through the RTI.
-         if( vectorIterator->IsSpecial() )
+         if( curAttrToProp->IsSpecial() )
          {
             continue;
          }
@@ -2615,18 +2597,24 @@ namespace dtHLAGM
          messageParameters.clear();
          bool hasAtLeastOneNonDefaultedParameter = false;
 
-         const size_t parameterDefListSize = vectorIterator->GetParameterDefinitions().size();
-         for (unsigned i = 0; i < parameterDefListSize; ++i)
+         typedef std::vector<dtHLAGM::OneToManyMapping::ParameterDefinition> ParamDefsList;
+         ParamDefsList& paramDefs = curAttrToProp->GetParameterDefinitions();
+         ParamDefsList::iterator curParamDef = paramDefs.begin();
+
+         for( unsigned i = 0; curParamDef != paramDefs.end(); ++curParamDef, ++i )
          {
-            const std::string& gameName = vectorIterator->GetParameterDefinitions()[i].GetGameName();
-            const dtDAL::DataType& gameType = vectorIterator->GetParameterDefinitions()[i].GetGameType();
-            const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[i].GetDefaultValue();
+            const std::string& gameName = curParamDef->GetGameName();
+            const dtDAL::DataType& gameType = curParamDef->GetGameType();
+            const std::string& defaultValue = curParamDef->GetDefaultValue();
    
             if (gameType == dtDAL::DataType::UNKNOWN)
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
-                  "Parameter definition \"%u\" for mapping of hla object attribute \"%s\" has \"UNKNOWN\" game data type.  Ingnoring.",
-                  i, vectorIterator->GetHLAName().c_str());
+               std::ostringstream reason;
+               reason << "Parameter definition \"" << curParamDef->GetGameName() << "\" ["
+                  << i << "] for mapping of HLA object attribute \""
+                  << curAttrToProp->GetHLAName()
+                  << "\" has \"UNKNOWN\" game data type.  Ingoring." << std::endl;
+               LogMappingError( *curAttrToProp, reason.str() );
                continue;
             }
    
@@ -2675,7 +2663,7 @@ namespace dtHLAGM
             {
                //send out the default if it's required or if it's the first time this object is
                //being updated.
-               if (vectorIterator->IsRequiredForHLA() || newObject )
+               if( curAttrToProp->IsRequiredForHLA() || newObject )
                   hasAtLeastOneNonDefaultedParameter = true;
                //Since the default value is in terms of the game value always, create a fake parameter
                //add it to the translation list with the proper game name, and set it to the default
@@ -2711,7 +2699,7 @@ namespace dtHLAGM
 
          if (hasAtLeastOneNonDefaultedParameter)
          {
-            const AttributeType& hlaType = vectorIterator->GetHLAType();
+            const AttributeType& hlaType = curAttrToProp->GetHLAType();
 
             if (hlaType == AttributeType::UNKNOWN)
                continue;
@@ -2723,9 +2711,9 @@ namespace dtHLAGM
    
             try
             {
-               MapFromMessageParameters(buffer, bufferSize, messageParameters, *vectorIterator);
+               MapFromMessageParameters( buffer, bufferSize, messageParameters, *curAttrToProp );
                if (bufferSize > 0) // A parameter may decide not to send anything without throwing an exception
-                  updateParams.add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
+                  updateParams.add( curAttrToProp->GetAttributeHandle(), buffer, bufferSize );
    
                ParameterTranslator::DeallocateBuffer(buffer);
             }
@@ -2763,6 +2751,14 @@ namespace dtHLAGM
 
          for (unsigned i = 0; i < paramMappingItor->GetParameterDefinitions().size(); ++i)
          {
+            // Avoid invalid mappings.
+            if( paramMappingItor->IsInvalid() )
+            {
+               LogMappingError( *paramMappingItor,
+                  "PrepareInteraction found mapping to be INVALID. Ignoring" );
+               continue;
+            }
+
             // Avoid sending out the mapped name of the interaction, since this parameter
             // was merely used to capture the mapped name. This parameter should be incoming-only
             // and thus should not be sent out.
@@ -2956,66 +2952,6 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void HLAComponent::LoadUpParameters( const char* buf,//const RTI::AttributeHandleValuePairSet &theAttributes, 
-                                        unsigned long length,//unsigned long attrIdx, 
-                                        std::vector<AttributeToPropertyList>::iterator vectorIterator,
-                                        dtGame::Message *msg )
-   {
-      std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
-      dtCore::RefPtr<dtGame::MessageParameter> aboutParameter;
-      dtCore::RefPtr<dtGame::MessageParameter> sendingParameter;
-
-      for (unsigned int propnum = 0; propnum < vectorIterator->GetParameterDefinitions().size(); propnum++)
-      {
-         OneToManyMapping::ParameterDefinition& paramDef = vectorIterator->GetParameterDefinitions()[propnum];
-         const std::string& propertyString = paramDef.GetGameName();
-         if (!(propertyString.empty())) {
-            const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
-
-            dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
-
-            //The about actor id and source actor ID are special cases.
-            //We create a dummy parameter to allow the mapper code to work, and
-            //then set it back to the message after the fact.
-            if (propertyDataType == dtDAL::DataType::ACTOR &&
-               (propertyString == ABOUT_ACTOR_ID ||
-               propertyString == SENDING_ACTOR_ID))
-            {
-               propertyParameter =
-                  dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
-                  propertyString);
-               if (propertyString == ABOUT_ACTOR_ID)
-                  aboutParameter = propertyParameter;
-               else
-                  sendingParameter = propertyParameter;
-            }
-            else
-            {
-               propertyParameter =
-                  FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-            }
-
-            if (propertyParameter != NULL)
-            {
-               messageParameters.push_back(propertyParameter);
-            }
-            else
-            {
-               //this is logged in the call to find the parameter.
-               vectorIterator->SetInvalid(true);
-            }
-         }
-      }
-
-      MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
-
-      if (aboutParameter!=NULL)
-         msg->SetAboutActorId(aboutParameter->ToString());
-      if (sendingParameter!=NULL)
-         msg->SetSendingActorId(sendingParameter->ToString());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
    void HLAComponent::SetDefaultParameters( std::vector<AttributeToPropertyList>::iterator vectorIterator, 
                                              bool bNewObject, dtGame::Message *msg )
    {
@@ -3049,5 +2985,46 @@ namespace dtHLAGM
          }
       }
    }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void HLAComponent::LogMappingError( const dtHLAGM::OneToManyMapping& mapping, const std::string& reason )
+   {
+      // Determine which of two mapping types the object is.
+      const dtHLAGM::ParameterToParameterList* paramMappingType
+         = dynamic_cast<const dtHLAGM::ParameterToParameterList*>(&mapping);
+
+      // Get the target game types for the mapping.
+      typedef std::vector<dtHLAGM::OneToManyMapping::ParameterDefinition> ParamDefsList;
+      const ParamDefsList& paramDefs = mapping.GetParameterDefinitions();
+
+      // Construct the error message.
+      std::ostringstream oss;
+      oss << (paramMappingType != NULL ? "HLA Interaction Parameter-To-Parameter" : "HLA Object Attribute-To-Property")
+         << " mapping between\nHLA type \"" << mapping.GetHLAName().c_str()
+            << "\" (" << mapping.GetHLAType().GetName().c_str() << ")";
+      
+      // --- Report the Game type mappings if they exist.
+      if( ! paramDefs.empty() )
+      {
+         ParamDefsList::const_iterator curParamDef = paramDefs.begin();
+         for( ; curParamDef != paramDefs.end(); ++curParamDef )
+         {
+            oss << "\nto Game type \"" << curParamDef->GetGameName().c_str()
+                   << "\" (" << curParamDef->GetGameType().GetName().c_str() << ")";
+         }
+      }
+      else
+      {
+         oss << "\nwith NO Game types";
+      }
+
+      // --- Finish the message with the reason.
+      oss << "\nis in error for the following reason:\n\t"
+         << reason.c_str() << std::endl;
+
+      // Output the message.
+      mLogger->LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str() );
+   }
+
 }
 
