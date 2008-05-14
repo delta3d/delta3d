@@ -35,7 +35,7 @@
 namespace dtAI
 {
    /**
-    * A Wrapper around a dtChar::Character that allows it to go between Waypoints
+    * A Wrapper around a dtAnim::CharacterWrapper that allows it to go between Waypoints
     */
    class AICharacter: public osg::Referenced
    {

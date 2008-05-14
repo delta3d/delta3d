@@ -7,9 +7,9 @@ Import ('*')
 # Grab all the sources from the terrain  source directory.
 sources = env.SGlob('*.cpp')
 
-dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 
+dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore',  'dtaudio', 'dtabc', 
                  'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
-                 'osgSim', 'osgFX','rbody', 'rvrutils', 'rcfgscript','gdal', 
+                 'osgSim', 'osgFX','gdal', 
                  'cal3d', 
                  'opengl' ]
 

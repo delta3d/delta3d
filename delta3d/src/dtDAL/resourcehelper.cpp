@@ -30,7 +30,6 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcetreenode.h>
-//#include <dtDAL/rbodyresourcetypehandler.h>
 #include <dtDAL/directoryresourcetypehandler.h>
 #include <dtDAL/resourcehelper.h>
 
@@ -167,8 +166,6 @@ namespace dtDAL
          mResourceDirectoryTypeHandlers.insert(std::make_pair(&d, extMap));
       }
 
-      //Not yet working properly
-      //RegisterResourceTypeHander(*new RBodyResourceTypeHandler);
 
       std::vector<std::string> fltMasterFiles;
       fltMasterFiles.push_back("main.flt");

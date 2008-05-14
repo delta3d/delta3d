@@ -3,7 +3,7 @@ import os
 Import('*')
 
 # order of dependencies...
-modules = [ 'dtUtil', 'dtCore', 'dtInputPLIB', 'dtAI', 'dtABC', 'dtAudio', 'dtAnim', 'dtChar', 'dtGUI',
+modules = [ 'dtUtil', 'dtCore', 'dtInputPLIB', 'dtAI', 'dtABC', 'dtAudio', 'dtAnim', 'dtGUI',
             'dtScript', 'dtNet', 'dtNetGM', 'dtInspector', 'dtDAL', 'dtActors',
             'dtTerrain', 'dtGame', 'dtHLAGM', 'dtLMS', 'dtDIS']
 

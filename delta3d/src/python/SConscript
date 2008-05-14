@@ -103,10 +103,6 @@ if CheckForBoost() :
                     'noisebindings.cpp',
                     'polardecompbindings.cpp' ] }
 
-   hasDTChar = False
-   if env['foundLibs'][env['extLibs']['rbody']] != 'notFound':
-      hasDTChar = True
-      pythonSrcs['dtChar'] = [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
          
    ##############
    # Build libs #
@@ -123,8 +119,6 @@ if CheckForBoost() :
    
    pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','cal3d']
    
-   if hasDTChar:
-     pythonDeps += ['rbody','rvrutils','rcfgscript']
    
    if env['OS'] == 'windows' :
       pythonDeps += [  'User32' ] 
@@ -149,7 +143,6 @@ if CheckForBoost() :
       dtCoreBindingsTarget = 'dtCoreBindingsd'
       dtAbcBindingsTarget = 'dtABCBindingsd'
       dtAudioBindingsTarget = 'dtAudioBindingsd'
-      dtCharBindingsTarget = 'dtCharBindingsd'
       dtDALBindingsTarget = 'dtDALBindingsd'
       dtAIBindingsTarget = 'dtAIBindingsd'
       dtInputPLIBBindingsTarget = 'dtInputPLIBBindingsd'
@@ -160,7 +153,6 @@ if CheckForBoost() :
       dtCoreBindingsTarget = 'dtCoreBindings'
       dtAbcBindingsTarget = 'dtABCBindings'
       dtAudioBindingsTarget = 'dtAudioBindings'
-      dtCharBindingsTarget = 'dtCharBindings'
       dtDALBindingsTarget = 'dtDALBindings'
       dtAIBindingsTarget = 'dtAIBindings'
       dtInputPLIBBindingsTarget = 'dtInputPLIBBindings'
@@ -176,8 +168,6 @@ if CheckForBoost() :
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [env['dtLibs']['dtABC'],env['dtLibs']['dtUtil'], env['dtLibs']['dtCore'],env['dtLibs']['dtDAL']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [env['dtLibs']['dtAudio'],env['dtLibs']['dtCore']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
-   if hasDTChar:
-      pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [env['dtLibs']['dtChar'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    
    pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [env['dtLibs']['dtDAL'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil'], env['dtLibs']['dtAI']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )
    pythonDtAILib = env.SharedLibrary(   dtAIBindingsTarget,     pythonSrcs['dtAI'],    LIBS = addToLibs + [env['dtLibs']['dtAI'],env['dtLibs']['dtCore'],env['dtLibs']['dtUtil']], FRAMEWORKS = addToFrameworks, CPPFLAGS=pythonCPPFlags )   
@@ -188,8 +178,6 @@ if CheckForBoost() :
    
    env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtDALLib, pythonDtAILib, pythonDtInputPLIBLib, pythonDtInspectorLib, pythonDtTerrainLib, pythonDtUtilLib )
    
-   if hasDTChar:
-     env.Precious(pythonDtCharLib)
 
    ################
    # Install libs #
@@ -206,7 +194,6 @@ if CheckForBoost() :
       dtCorePydTarget = '#'+dir+'/PyDtCored.'+suffix
       dtAbcPydTarget = '#'+dir+'/PyDtABCd.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
-      dtCharPydTarget = '#'+dir+'/PyDtChard.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDALd.'+suffix
       dtAIPydTarget = '#'+dir+'/PyDtAId.'+suffix
       dtInputPLIBPydTarget = '#'+dir+'/PyDtInputPLIBd.'+suffix
@@ -217,7 +204,6 @@ if CheckForBoost() :
       dtCorePydTarget = '#'+dir+'/PyDtCore.'+suffix
       dtAbcPydTarget = '#'+dir+'/PyDtABC.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudio.'+suffix
-      dtCharPydTarget = '#'+dir+'/PyDtChar.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDAL.'+suffix
       dtAIPydTarget = '#'+dir+'/PyDtAI.'+suffix
       dtInputPLIBPydTarget = '#'+dir+'/PyDtInputPLIB.'+suffix
@@ -244,8 +230,6 @@ if CheckForBoost() :
                      pythonDtTerrainLib[0], \
                      pythonDtUtilLib[0] ] )
 
-   if hasDTChar:
-      env.InstallAs( [ dtCharPydTarget ], [pythonDtCharLib[0]] )
       
       
    if env['OS'] == 'windows' :
@@ -260,7 +244,3 @@ if CheckForBoost() :
                               pythonDtTerrainLib[1:], \
                               pythonDtUtilLib[1:] ] )
 	  
-
-      if hasDTChar:
-         env.Install( '#/lib', [ pythonDtCharLib[1:] ] )
-

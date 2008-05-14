@@ -49,7 +49,6 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> SPOT_LIGHT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> STATIC_MESH_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> PARTICLE_SYSTEM_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CHARACTER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> INFINITE_TERRAIN_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> MESH_TERRAIN_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> SKY_BOX_ACTOR_TYPE;

@@ -13,12 +13,10 @@ defines = []
 # Grab all the sources from the DAL source directory.
 srcs = env.SGlob( '*.cpp' )
 
-if env['foundLibs'][env['extLibs']['rbody']] == 'notFound':
-   defines += ['NO_DTCHAR']
 
-deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'ode',
+deps = [ 'dtAnim', 'dtDAL', 'dtUtil', 'dtCore', 'dtABC', 'dtAudio', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
-        'osgUtil', 'osgSim', 'osgFX','cal3d','rbody', 'opengl', 'User32', 'Advapi32',
+        'osgUtil', 'osgSim', 'osgFX','cal3d', 'opengl', 'User32', 'Advapi32',
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon', 'dtGame']
 
