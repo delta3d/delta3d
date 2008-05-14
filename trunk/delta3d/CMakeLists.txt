@@ -83,7 +83,7 @@ IF(UNIX)
 ENDIF (UNIX)
         
 # Common global definitions
-ADD_DEFINITIONS(-DNO_DTCHAR)
+
 # Platform specific definitions
 
 IF(WIN32)

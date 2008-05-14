@@ -390,7 +390,6 @@ namespace dtCore
        * dtCore::SpotLight:       10
        * dtCore::Transformable:   11
        * 
-       * dtChar::Character:       12
        * dtAudio::Listener:       13
        * dtAudio::Sound:          14
        * dtHLA::Entity:           15

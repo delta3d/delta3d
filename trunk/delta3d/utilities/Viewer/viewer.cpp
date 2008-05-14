@@ -32,10 +32,6 @@
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
 
-#ifndef NO_DTCHAR
-#include <dtChar/dtchar.h>
-#endif
-
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 
@@ -348,9 +344,6 @@ void Viewer::LoadFile( ViewState* vs )
 
    bool fileLoaded = false;
    osg::Node*  filenode = NULL;
-#ifndef NO_DTCHAR
-   dtCore::RefPtr<dtChar::Character> pChar;
-#endif
    dtCore::RefPtr<dtCore::Object> fileobj;
 
    const std::string ext = osgDB::getLowerCaseFileExtension(filename);
@@ -396,42 +389,6 @@ void Viewer::LoadFile( ViewState* vs )
 
 
    }
-#ifndef NO_DTCHAR
-   else if (ext == "rbody")
-   {
-      //see if it is a replicant body file
-      pChar = new dtChar::Character();
-      fileLoaded = pChar->LoadFile(filename);
-
-      //this code gets a list of animations from rbody
-      //in order to add support for playback of animations
-      //we will need to save this string and provide a gui
-      //to cycle through animations
-      //NOTE: this code is commented out because
-      //rbody's getActionPrototypeNames is currently 
-      //unimplemented
-      //this is the output
-      //FIXME--Unimplemented
-      //Anderegg
-
-      //rbody::OsgBodyNode* bnode = pChar->GetBodyNode();
-      //if(bnode)
-      //{
-      //   rbody::Body* body = bnode->getBody();
-      //   if(body)
-      //   {
-      //      std::list<std::string> animationNames;
-      //      body->getActionPrototypeNames(animationNames);
-      //      std::cout << animationNames.front().c_str();
-      //   }
-      //}
-
-      if(fileLoaded)
-      {
-         filenode = pChar->GetOSGNode();
-      }
-   }
-#endif
    else
    {
       fileobj  = new Object;

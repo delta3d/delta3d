@@ -57,7 +57,7 @@ if env['ENV'].has_key('QTDIR'):
    else:
       env.Append(CPPPATH = [qtdir + '/include','#/utilities/STAGE/inc'] )
    
-   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame'] 
+   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtCore','dtUtil','dtAudio','dtABC','dtGame'] 
    
    # First, glob the header directory to obtain a list of potential files to run
    # the moc builder on.

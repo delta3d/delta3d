@@ -35,7 +35,7 @@ for suite in suites:
 sources['dtLMS'] += ['#utilities/LMS/WebPackager/package_utils.cpp']
 sources['all'] += ['#utilities/LMS/WebPackager/package_utils.cpp']
 
-mainlibs = suites + [ 'dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit', 'testGameActorLibrary']
+mainlibs = suites + [ 'dtAudio', 'dtABC', 'dtActors', 'cppunit', 'testGameActorLibrary']
 
 mainlibs += ['cppunit']
 if env.get('rti') != 0:

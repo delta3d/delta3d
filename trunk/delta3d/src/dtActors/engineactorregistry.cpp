@@ -27,9 +27,6 @@
 #include <dtActors/positionallightactorproxy.h>
 #include <dtActors/spotlightactorproxy.h>
 
-#ifndef NO_DTCHAR
-#include <dtActors/characteractorproxy.h>
-#endif
 
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/autotriggeractorproxy.h>
@@ -72,7 +69,6 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE(new dtDAL::ActorType("Spotlight", "dtcore.Lights", "Spotlight light actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::STATIC_MESH_ACTOR_TYPE(new dtDAL::ActorType("Static Mesh", "dtcore", "Loadable static mesh actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE(new dtDAL::ActorType("Particle System", "dtcore", "dtCore::ParticleSystem actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CHARACTER_ACTOR_TYPE(new dtDAL::ActorType("Character", "dtcore", "dtChar::Character actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE(new dtDAL::ActorType("Infinite Terrain", "dtcore.Terrain", "dtCore::InfiniteTerrain actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE(new dtDAL::ActorType("Mesh Terrain", "dtcore.Terrain", "An terrain actor who's geometry is represented via a mesh file."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKY_BOX_ACTOR_TYPE(new dtDAL::ActorType("Sky Box", "dtcore.Environment", "dtCore::SkyBox Actor."));
@@ -150,10 +146,6 @@ namespace dtActors
       mActorFactory->RegisterType<StaticMeshActorProxy>(STATIC_MESH_ACTOR_TYPE.get());
       //Particle System...
       mActorFactory->RegisterType<ParticleSystemActorProxy>(PARTICLE_SYSTEM_ACTOR_TYPE.get());
-      //Animated character...
-#ifndef NO_DTCHAR
-      mActorFactory->RegisterType<CharacterActorProxy>(CHARACTER_ACTOR_TYPE.get());
-#endif
       //Infinite terrain...
       mActorFactory->RegisterType<InfiniteTerrainActorProxy>(INFINITE_TERRAIN_ACTOR_TYPE.get());
       //Terrain mesh actor...

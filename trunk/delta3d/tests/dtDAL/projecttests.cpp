@@ -527,9 +527,6 @@ void ProjectTests::testResources()
 
       std::string dirtCategory = "fun:bigmamajama";
 
-      //add one marine before indexing
-      //dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "",
-      //      dtDAL::DataType::CHARACTER);
 
       dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/models/exampleTerrain", "terrain",
             dtDAL::DataType::TERRAIN);
@@ -537,9 +534,6 @@ void ProjectTests::testResources()
       //force resources to be indexed.
       p.GetAllResources();
 
-      //add one marine after indexing
-      //dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", DATA_DIR + "/marine/marine.rbody", "marine",
-      //      dtDAL::DataType::CHARACTER);
 
 
       dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/models/exampleTerrain/terrain.3ds", "",
@@ -555,30 +549,6 @@ void ProjectTests::testResources()
       //CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
       //      + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-      //dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
-      //   marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine.rbody", marineCategory->getFullCategory(), &marineRD));
-
-      /**
-      marineCategory = findTreeNodeFromCategory(toFill, NULL, "marine");
-
-      CPPUNIT_ASSERT_MESSAGE(std::string("the category \"marine")
-            + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
-
-      dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marine2Resource =
-         marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine2.rbody", marineCategory->getFullCategory(), &marine2RD));
-
-      CPPUNIT_ASSERT_MESSAGE("The marine resource should have been found.", marineResource != p.GetAllResources().end());
-      CPPUNIT_ASSERT_MESSAGE("The second marine resource should have been found.", marine2Resource != p.GetAllResources().end());
-
-      std::string characterDir(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::CHARACTER.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
-
-      CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine.rbody") &&
-            fileUtils.FileExists(characterDir + "marine.rbody" + dtUtil::FileUtils::PATH_SEPARATOR + "marine.rbody"));
-
-      CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine" +
-            dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody") &&
-            fileUtils.FileExists(characterDir + "marine" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody"));
-      */
       //Done with the marines
 
       p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);

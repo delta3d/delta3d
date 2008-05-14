@@ -6,7 +6,6 @@ Import ('*')
 
 # Grab all the sources from the DAL source directory.
 srcs = env.SGlob('*.cpp')
-srcs.remove('rbodyresourcetypehandler.cpp')
 
 deps =  [ 'dtUtil', 'dtCore', 'dtAI', 'ode', 
           'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',

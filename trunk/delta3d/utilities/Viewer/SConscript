@@ -8,10 +8,8 @@ if env['OS'] == 'windows' and env.has_key('MSVS') :
       viewerSrcs += env.RES( 'Viewer.rc' )
 
 defines = []
-if env['foundLibs'][env['extLibs']['rbody']] == 'notFound':
-   defines += ['NO_DTCHAR']
 
-viewerDeps = [ 'dtDAL', 'dtCore', 'dtABC', 'dtUtil', 'dtChar',
+viewerDeps = [ 'dtDAL', 'dtCore', 'dtABC', 'dtUtil',
                'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
 env.BuildProgram( 'viewer', viewerSrcs, viewerDeps, defines, buildAppBundle = 0 )

@@ -53,7 +53,7 @@ if env['ENV'].has_key('QTDIR'):
       cppDefines += ['_REENTRANT']
 
 
-   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtAnim','dtCore','dtUtil','dtAudio','dtChar','dtABC','dtGame', 'AGL'] 
+   libs = ['QtCore','QtGui','QtOpenGL','dtDAL','dtAI','dtAnim','dtCore','dtUtil','dtAudio','dtABC','dtGame', 'AGL'] 
 
    initialSources = env.SGlob('*.cpp')
 

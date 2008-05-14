@@ -8,9 +8,9 @@ Import ('*')
 # Grab all the sources from the source directory.
 sources = SGlob('*.cpp')
 
-tutorialLibDeps =[ 'dtGame', 'dtDAL', 'dtGUI', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'dtHLAGM', 
+tutorialLibDeps =[ 'dtGame', 'dtDAL', 'dtGUI', 'dtUtil', 'dtCore', 'dtAudio', 'dtABC', 'dtHLAGM', 
 		'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-		'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
+		'osgGA', 'osgSim', 'osgFX', 'osgProducer','gdal', 
         	'cal3d', 'xerces-c', 'openal',
 		'Producer', 'tinyxml', 'opengl', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'dtActors' ]
 

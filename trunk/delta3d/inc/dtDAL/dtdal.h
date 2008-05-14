@@ -38,7 +38,6 @@
 #include <dtDAL/physicalactorproxy.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/project.h>
-#include <dtDAL/rbodyresourcetypehandler.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourcehelper.h>
 #include <dtDAL/resourcetreenode.h>
