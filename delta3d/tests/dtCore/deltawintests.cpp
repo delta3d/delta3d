@@ -33,6 +33,9 @@ class  DeltaWinTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(DeltaWinTests);
       CPPUNIT_TEST(TestWindow);
+      CPPUNIT_TEST(TestWindowOrigin);
+      CPPUNIT_TEST(TestNormalizedWindowCoordConversion);
+      CPPUNIT_TEST(TestScreenCoordConversion);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -40,6 +43,9 @@ public:
    void setUp();
    void tearDown();
    void TestWindow();
+   void TestWindowOrigin();
+   void TestNormalizedWindowCoordConversion();
+   void TestScreenCoordConversion();
    osgViewer::GraphicsWindow * CreateGraphicsWindow();
 };
 
@@ -92,6 +98,63 @@ void DeltaWinTests::TestWindow()
       dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("testWin", *gw);
       CPPUNIT_ASSERT_MESSAGE("Overloaded constructor failed", win.valid() );
    }
+}
+
+void DeltaWinTests::TestWindowOrigin()
+{
+   //verify that window normalized coords of (-1,-1) equate to screen pixel (0,0);
+   dtCore::RefPtr<dtCore::DeltaWin> win = GetGlobalApplication().GetWindow();
+   
+   float pixelX, pixelY;
+   bool result = win->CalcPixelCoords(-1.f, -1.f, pixelX, pixelY);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords didn't like the supplied normalized coordinates",
+                                 true, result);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords doesn't think window x = -1.f is pixel 0",
+                                 0.f, pixelX);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("CalcPixelCoords doesn't think window y = -1.f is pixel 0",
+                                 0.f, pixelY);
+}
+
+void DeltaWinTests::TestNormalizedWindowCoordConversion()
+{
+   //test if we can go from normalized window coords to screen pixel coords and back
+   dtCore::RefPtr<dtCore::DeltaWin> win = GetGlobalApplication().GetWindow();
+   float pixelX, pixelY;
+   const float winX = 0.f;
+   const float winY = 0.f;
+
+   win->CalcPixelCoords(winX, winY, pixelX, pixelY);
+
+   float newWinX, newWinY;
+   win->CalcWindowCoords(pixelX, pixelY, newWinX, newWinY);
+
+   //the normalized window coords should be the same as when we started
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Wasn't able to convert between window and screen X coordinates",
+                                 winX, newWinX);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Wasn't able to convert between window and screen Y coordinates",
+                                 winY, newWinY);
+}
+
+void DeltaWinTests::TestScreenCoordConversion()
+{
+   //test if we can go from normalized window coords to screen pixel coords and back
+   dtCore::RefPtr<dtCore::DeltaWin> win = GetGlobalApplication().GetWindow();
+   const float pixelX = 10.f;
+   const float pixelY = 15.f;
+   float winX = 0.f;
+   float winY = 0.f;
+
+   win->CalcWindowCoords(pixelX, pixelY, winX, winY);
+
+   float newPixelX, newPixelY;
+   win->CalcPixelCoords(winX, winY, newPixelX, newPixelY);
+
+   //the screen pixel coordinates should be the same as when we started
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Wasn't able to convert between screen X coordinates and window coordinates",
+      pixelX, newPixelX, 0.000001);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Wasn't able to convert between screen Y coordinates and window coordinates",
+      pixelY, newPixelY, 0.000001);
 }
 
 osgViewer::GraphicsWindow * DeltaWinTests::CreateGraphicsWindow()

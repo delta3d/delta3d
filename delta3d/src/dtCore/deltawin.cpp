@@ -179,17 +179,17 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
 
 
 /////////////////////////////////////////////////
-bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y ) const
+bool DeltaWin::CalcPixelCoords( float winX, float winY, float &pixelX, float &pixelY ) const
 {
-   if ( x < -1.0f || x > 1.0f ) return false;
-   if ( y < -1.0f || y > 1.0f ) return false;
+   if ( winX < -1.0f || winX > 1.0f ) return false;
+   if ( winY < -1.0f || winY > 1.0f ) return false;
    
    int wx, wy;
    int w, h;
    mOsgViewerGraphicsWindow->getWindowRectangle( wx, wy, w, h );
 
-   pixel_x = ( w/2 ) * (x + 1.0f);
-   pixel_y = ( h/2 ) * (1.0f - y);
+   pixelX = ( w/2 ) * (winX + 1.0f);
+   pixelY = ( h/2 ) * (winY + 1.0f);
    
    return true;
 }

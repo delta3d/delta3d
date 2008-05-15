@@ -102,20 +102,29 @@ namespace dtCore
    public:
 
       /*!
-       * Calculate the screen coordinates given a window coordinate. Screen
-       * coordinate (0,0) is located in the lower left of the display.
+       * Calculate the screen pixel coordinates given a normalized window coordinate. Screen
+       * pixel coordinate (0,0) is located in the lower left of the display, which equates to
+       * the normalized window coordinates of (-1,-1).
        *
-       * @param x : window x coordinate [-1, 1]
-       * @param y : window y coordinate [-1, 1]
-       * @param &pixel_x : The screen X pixel equivalent [out]
-       * @param &pixel_y : The screen Y pixel equivalent [out]
+       * @param winX : normalized window x coordinate [-1, 1]
+       * @param winY : normalized window y coordinate [-1, 1]
+       * @param &pixelX : The screen X pixel equivalent (out) [0..window width]
+       * @param &pixelY : The screen Y pixel equivalent (out) [0..window height]
        *
        * @return bool  : Returns true if the (x,y) is a valid window coordinate
        */
-      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y ) const;
+      bool CalcPixelCoords( float winX, float winY, float &pixelX, float &pixelY ) const;
       bool CalcPixelCoords( const osg::Vec2 &window_xy, osg::Vec2 &pixel_xy ) const;
 
-      ///Calculate the window coords ([-1,1],[-1,1]), given the screen pixel coords (x,y) ([0,w],[0,h])
+      /** Calculate the normalized window coords given the screen pixel coords.  Pixel
+       *  coordinate (0,0) is the lower left of the display which equates to the
+       *  normalized window coordinate of (-1.0, -1.f).
+       * @param pixel_x : The screen X pixel [0..window width]
+       * @param pixel y : The screen Y pixel [0..window height]
+       * @param x : The normalized window X coordinate [-1.0..1.0]
+       * @param y : The normalized window Y coordinate [-1.0..1.0]
+       * @return bool : True if the screen pixel coords are valid
+       */
       bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y ) const;
       bool CalcWindowCoords( const osg::Vec2 &pixel_xy, osg::Vec2 &window_xy ) const;
 
