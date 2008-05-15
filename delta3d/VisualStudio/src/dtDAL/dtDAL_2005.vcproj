@@ -297,10 +297,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtDAL\rbodyresourcetypehandler.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtDAL\resourcedescriptor.cpp"
 				>
 			</File>
@@ -436,10 +432,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\project.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtDAL\rbodyresourcetypehandler.h"
 				>
 			</File>
 			<File
