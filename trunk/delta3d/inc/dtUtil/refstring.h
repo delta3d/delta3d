@@ -1,5 +1,6 @@
 #ifndef DELTA_REFSTRING
 #define DELTA_REFSTRING
+#include <dtUtil/export.h>
 
 #include <string>
 
@@ -11,7 +12,7 @@ namespace dtUtil
     * value will point to the same memory.  The strings are always only accessible as const, but
     * a new string may be assigned to the refstring  
     */
-   class RefString
+   class DT_UTIL_EXPORT RefString
    {
       public:
          /// @return the number of shared strings.
