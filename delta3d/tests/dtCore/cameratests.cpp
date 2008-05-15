@@ -72,14 +72,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
             mWin = mApp->GetWindow();
             
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-            dtCore::System::GetInstance().Start();
-             
-            dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-            std::string currentDir = fileUtils.CurrentDirectory();
-            std::string projectDir("data");
-            if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
-               fileUtils.PushDirectory(projectDir);
-            
+            dtCore::System::GetInstance().Start();            
          }
          catch (const dtUtil::Exception& e)
          {
@@ -102,12 +95,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          
          if (fileUtils.DirExists(SCREEN_SHOT_DIR))
-            fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
-         
-         std::string currentDir = fileUtils.CurrentDirectory();
-         std::string projectDir("data");
-         if (currentDir.substr(currentDir.size() - projectDir.size()) == projectDir)
-            fileUtils.PopDirectory();
+            fileUtils.DirDelete(SCREEN_SHOT_DIR, true);         
       }
       
       void TestSaveScreenShot()
