@@ -22,7 +22,7 @@ namespace dtUtil
 
    static __gnu_cxx::hash_set<std::string, hashString> StringSet(3000);
 #elif defined(_MSC_VER)
-   static stdext::hash_set<std::string> StringSet(3000);
+   static stdext::hash_set<std::string> StringSet;   
 #else
    static std::set<std::string> StringSet;
 #endif
