@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <string>
+#include <dtUtil/refstring.h>
 
 #include <dtCore/uniqueid.h>
 #include <dtCore/export.h>
@@ -139,7 +139,7 @@ namespace dtCore
       private:
 
          ///< The name of this instance.
-         std::string mName;
+         dtUtil::RefString mName;
          
          ///< The actual signal that gets triggered from SendMessage()
          sigslot::signal1<MessageData *> mSendMessage;

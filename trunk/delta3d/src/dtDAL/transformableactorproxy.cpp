@@ -29,15 +29,15 @@
 
 namespace dtDAL
 {
-   const std::string TransformableActorProxy::PROPERTY_ROTATION("Rotation");
-   const std::string TransformableActorProxy::PROPERTY_TRANSLATION("Translation");
-   const std::string TransformableActorProxy::PROPERTY_NORMAL_RESCALING("Normal Rescaling");
-   const std::string TransformableActorProxy::PROPERTY_RENDER_PROXY_NODE("Render Proxy Node");
-   const std::string TransformableActorProxy::PROPERTY_ENABLE_COLLISION("Enable Collision");
-   const std::string TransformableActorProxy::PROPERTY_COLLISION_TYPE("Collision Type");
-   const std::string TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
-   const std::string TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
-   const std::string TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_ROTATION("Rotation");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_TRANSLATION("Translation");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_NORMAL_RESCALING("Normal Rescaling");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_RENDER_PROXY_NODE("Render Proxy Node");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_ENABLE_COLLISION("Enable Collision");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_TYPE("Collision Type");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
+   const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
    
    //////////////////////////////////////////////////////
    TransformableActorProxy::TransformableActorProxy()
@@ -51,8 +51,8 @@ namespace dtDAL
    //////////////////////////////////////////////////////
    void TransformableActorProxy::BuildPropertyMap()
    {
-      static const std::string GROUPNAME = "Transformable";
-      static const std::string COLLISION_GROUP = "ODE Collision";
+      static const dtUtil::RefString GROUPNAME = "Transformable";
+      static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
       
@@ -118,7 +118,7 @@ namespace dtDAL
                                           COLLISION_GROUP));
 
 
-      static const std::string RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
+      static const dtUtil::RefString RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
       AddProperty(new BooleanActorProperty(PROPERTY_RENDER_PROXY_NODE, PROPERTY_RENDER_PROXY_NODE,
          MakeFunctor(*trans, &dtCore::Transformable::RenderProxyNode),
          MakeFunctorRet(*trans, &dtCore::Transformable::GetIsRenderingProxyNode),

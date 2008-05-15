@@ -44,10 +44,10 @@ namespace dtGame
    {
       public:
 
-         static const std::string NAME_PARAMETER;
-         static const std::string ACTOR_TYPE_NAME_PARAMETER;
-         static const std::string ACTOR_TYPE_CATEGORY_PARAMETER;
-         static const std::string UPDATE_GROUP_PARAMETER;
+         static const dtUtil::RefString NAME_PARAMETER;
+         static const dtUtil::RefString ACTOR_TYPE_NAME_PARAMETER;
+         static const dtUtil::RefString ACTOR_TYPE_CATEGORY_PARAMETER;
+         static const dtUtil::RefString UPDATE_GROUP_PARAMETER;
 
          /// Constructor
          ActorUpdateMessage();
@@ -96,7 +96,7 @@ namespace dtGame
           * ActorUpdateMessage::GetParameter() since the parameter was actually added
           * to an internal GroupMessageParameter, not the Message itself.
           */
-         dtDAL::NamedParameter* AddUpdateParameter(const std::string &name, const dtDAL::DataType &type);
+         dtDAL::NamedParameter* AddUpdateParameter(const std::string& name, dtDAL::DataType& type);
          
          /**
           * Adds a dtDAL::NamedParameter to an ActorUpdateMessage's internal GroupMessageParameter.

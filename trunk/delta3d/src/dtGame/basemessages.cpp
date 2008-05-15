@@ -27,10 +27,10 @@
 
 namespace dtGame
 {
-   const std::string TickMessage::PARAM_DELTA_SIM_TIME("DeltaSimTime");
-   const std::string TickMessage::PARAM_DELTA_REAL_TIME("DeltaRealTime");
-   const std::string TickMessage::PARAM_SIM_TIME_SCALE("SimTimeScale");
-   const std::string TickMessage::PARAM_SIMULATION_TIME("SimulationTime");;
+   const dtUtil::RefString TickMessage::PARAM_DELTA_SIM_TIME("DeltaSimTime");
+   const dtUtil::RefString TickMessage::PARAM_DELTA_REAL_TIME("DeltaRealTime");
+   const dtUtil::RefString TickMessage::PARAM_SIM_TIME_SCALE("SimTimeScale");
+   const dtUtil::RefString TickMessage::PARAM_SIMULATION_TIME("SimulationTime");;
 
    //////////////////////////////////////////////////////////////////////////////
    /// Constructor
@@ -168,7 +168,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
-   const std::string MapMessage::PARAM_MAP_NAMES("MapNames");
+   const dtUtil::RefString MapMessage::PARAM_MAP_NAMES("MapNames");
 
    class GetStringParameterFunc
    {

@@ -55,6 +55,7 @@ class TransformableSubClass : public Transformable
 class TransformableTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(TransformableTests);
+   CPPUNIT_TEST(TestAbsoluteRelative);
    CPPUNIT_TEST(TestDefaultBools);
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
@@ -80,6 +81,7 @@ public:
    void setUp();
    void tearDown();
 
+   void TestAbsoluteRelative();
    void TestDefaultBools();
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
@@ -100,9 +102,10 @@ public:
    void TestDistance();
 
 private:
-    bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
-    bool CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const;    
+   bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
+   bool CompareVector(const osg::Vec3& rhs, const osg::Vec3& lhs) const;    
 
+   RefPtr<Transformable> mParentTransformable;
    RefPtr<Transformable> mTransformable;
    Transform mTransform;
       
@@ -119,6 +122,7 @@ const float TransformableTests::TEST_EPSILON(1e-5f);
 
 void TransformableTests::setUp()
 {
+   mParentTransformable = new dtCore::Transformable("ParentTransformable");
    mTransformable = new dtCore::Transformable("TestTransformable");
    mTransform.Set( 2.0f, 4.0f, 1.0f, 30.0f, -20.0f, 2.5f );
    mBoxLengths.set( 2.0f, 3.0f, 4.0f );
@@ -131,6 +135,7 @@ void TransformableTests::tearDown()
    mTransformable->SetCollisionMesh(NULL);
    mTransformable->SetCollisionBox( mBoxLengths[0], mBoxLengths[1], mBoxLengths[2] );
    mTransformable = NULL;
+   mParentTransformable = NULL;
 }
 
 void TransformableTests::TestDefaultBools()
@@ -161,6 +166,58 @@ void TransformableTests::TestGetCollisionGeomDimensions()
       osg::equivalent( dimensions[0], mBoxLengths[0], 1e-2f ) && 
       osg::equivalent( dimensions[1], mBoxLengths[1], 1e-2f ) && 
       osg::equivalent( dimensions[2], mBoxLengths[2], 1e-2f ) );
+}
+
+void TransformableTests::TestAbsoluteRelative()
+{
+   dtCore::Transform xform;
+   //Set the parent to transform pre-created in setup
+   mParentTransformable->SetTransform(mTransform, dtCore::Transformable::ABS_CS);
+   mParentTransformable->AddChild(mTransformable.get());
+
+   mTransformable->GetTransform(xform, dtCore::Transformable::ABS_CS);
+   osg::Matrix mat, matExpected;
+   xform.Get(mat);
+   mTransform.Get(matExpected);
+   //Absolute of the child should match the absolute of the parent.
+   CPPUNIT_ASSERT(CompareMatrix(mat, matExpected));
+   
+   mTransformable->GetTransform(xform, dtCore::Transformable::REL_CS);
+
+   osg::Vec3 trans, rot, transExpected, rotExpected;
+   xform.GetTranslation(trans);
+   xform.GetRotation(rot);
+   //make sure the relative transform of the child null.
+   CPPUNIT_ASSERT(CompareVector(trans, osg::Vec3()));
+   CPPUNIT_ASSERT(CompareVector(rot, osg::Vec3()));
+   mTransform.GetTranslation(trans);
+
+   //Set the translation of the child to be same as the parent, but assign it to relative, so it will
+   //move twice as far in absolute space.
+   xform.SetTranslation(trans);
+   mTransformable->SetTransform(xform, dtCore::Transformable::REL_CS);
+
+   //Get back the absolute transform for the child.
+   mTransformable->GetTransform(xform, dtCore::Transformable::ABS_CS);
+
+   xform.GetTranslation(trans);
+   xform.GetRotation(rot);
+   
+   dtCore::Transform xformRel, xformExpected;
+   //Get back the absolute transform for the child.
+   mTransformable->GetTransform(xformRel, dtCore::Transformable::REL_CS);
+   
+   osg::Matrix matParent, matChild;
+   xformRel.Get(matParent);
+   mTransform.Get(matChild);
+   xformExpected.Set(matParent*matChild);
+   
+   xformExpected.GetTranslation(transExpected);
+   xformExpected.GetRotation(rotExpected);
+
+   CPPUNIT_ASSERT(CompareVector(trans, transExpected));
+   CPPUNIT_ASSERT(CompareVector(rot, rotExpected));
+
 }
 
 void TransformableTests::TestEpsilonEquals()

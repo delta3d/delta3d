@@ -291,7 +291,7 @@ namespace dtEditQt
         std::set<std::string>::const_iterator setIter;
         bool addedClasses = false;
 
-        std::set<std::string> actorClasses = proxy->GetClassHierarchy();
+        const std::set<std::string>& actorClasses = proxy->GetClassHierarchy();
 
         // walk through the class hierarchy of the new object
         for (setIter = actorClasses.begin(); setIter != actorClasses.end(); ++setIter)

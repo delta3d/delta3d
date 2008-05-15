@@ -46,14 +46,14 @@
 namespace dtActors
 {
 
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_GROUP("ANIMATION_GROUP");
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_GROUP_LABEL("Animation Group");
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP("ANIMATION_BLEND_GROUP_");
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT("ANIMATION_BLEND_WEIGHT_");
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID("ANIMATION_BLEND_ID_");
-   const std::string Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY("ANIMATION_BLEND_DELAY_");
-   const std::string Cal3DGameActor::PropertyNames::RENDER_MODE("RENDER_MODE");
-   const std::string Cal3DGameActor::PropertyNames::RENDER_MODE_LABEL("Render mode");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_GROUP("ANIMATION_GROUP");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_GROUP_LABEL("Animation Group");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP("ANIMATION_BLEND_GROUP_");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT("ANIMATION_BLEND_WEIGHT_");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID("ANIMATION_BLEND_ID_");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY("ANIMATION_BLEND_DELAY_");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::RENDER_MODE("RENDER_MODE");
+   const dtUtil::RefString Cal3DGameActor::PropertyNames::RENDER_MODE_LABEL("Render mode");
 
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
@@ -173,7 +173,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void Cal3DGameActorProxy::BuildPropertyMap()
    {
-      const std::string GROUPNAME = "AnimationModel";
+      const dtUtil::RefString GROUPNAME = "AnimationModel";
 
       dtGame::GameActorProxy::BuildPropertyMap();
 

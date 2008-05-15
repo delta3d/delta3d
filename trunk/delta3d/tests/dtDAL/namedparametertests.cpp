@@ -459,9 +459,9 @@ public:
     * This templated method is used to test each of the different message
     * parameters when using their list form.
     */
-   void TestResourceParameterList(const dtDAL::DataType &dataType,
-      dtDAL::ResourceDescriptor &t1, dtDAL::ResourceDescriptor &t2,
-      dtDAL::ResourceDescriptor &t3, dtDAL::ResourceDescriptor &t4)
+   void TestResourceParameterList(dtDAL::DataType& dataType,
+      dtDAL::ResourceDescriptor& t1, dtDAL::ResourceDescriptor& t2,
+      dtDAL::ResourceDescriptor& t3, dtDAL::ResourceDescriptor& t4)
    {
       std::vector<dtDAL::ResourceDescriptor> valueList;
       std::vector<dtDAL::ResourceDescriptor> testList;
@@ -478,7 +478,7 @@ public:
          CPPUNIT_FAIL("Should not be allowed to get a single value from a parameter "
             "that contains a list.");
       }
-      catch (dtUtil::Exception &) 
+      catch (dtUtil::Exception&) 
       { 
          // This is correct, do not cause an error
       }

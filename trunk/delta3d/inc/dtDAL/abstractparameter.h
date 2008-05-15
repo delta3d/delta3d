@@ -21,7 +21,7 @@
 #ifndef DELTA_ABSTRACT_PARAMETER
 #define DELTA_ABSTRACT_PARAMETER
 
-#include <string>
+#include <dtUtil/refstring.h>
 #include <osg/Referenced>
 
 namespace dtDAL
@@ -36,12 +36,18 @@ namespace dtDAL
    class AbstractParameter : public osg::Referenced
    {
       public:
+         
+         AbstractParameter(DataType& dataType, const dtUtil::RefString& name):
+            mDataType(dataType), mName(name) 
+         {}
 
-         ///@return the name of this message parameter
-         virtual const std::string &GetName() const = 0;
+         ///@return the type of this parameter.
+         DataType& GetDataType() const { return mDataType; };
 
-         ///@return 
-         virtual const dtDAL::DataType &GetDataType() const = 0;
+         /**
+          * Gets the unique name assigned to this parameter.
+          */
+         const std::string& GetName() const { return mName; }
 
          virtual const std::string ToString() const = 0;
 
@@ -49,11 +55,13 @@ namespace dtDAL
           * @return true if it was able to assign the value based on the string or false if not.
           * @param value the string value to assign the parameter to.
           */
-         virtual bool FromString(const std::string &value) = 0;
+         virtual bool FromString(const std::string& value) = 0;
 
       protected:
 
          virtual ~AbstractParameter() { }
+         DataType& mDataType;
+         dtUtil::RefString mName;
    };
 }
 #endif

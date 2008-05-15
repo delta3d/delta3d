@@ -57,19 +57,10 @@ namespace dtDAL
       public:
 
          /**
-          * Gets the unique name assigned to this property.
+          * @return Returns an enumeration of the data type that this property
+          * represents.
           */
-         virtual const std::string &GetName() const { return mName; }
-
-         ///@return the type of this property.
-         virtual const DataType &GetDataType() const { return mDataType; };
-
-
-         /**
-         * @return Returns an enumeration of the data type that this property
-         * represents.
-         */
-         DataType &GetPropertyType() const { return mDataType; };
+         DataType& GetPropertyType() const { return GetDataType(); };
 
          /**
           * Assigns the value of this property the value contained in the
@@ -88,16 +79,15 @@ namespace dtDAL
           */
          virtual void CopyFrom(const ActorProperty& otherProp) = 0;
 
-
          /**
           * Gets the label assigned to this property.
           */
-         const std::string &GetLabel() const { return mLabel; }
+         const std::string& GetLabel() const { return mLabel; }
 
          /**
           * Gets the description assigned to this property.
           */
-         const std::string &GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const { return mDescription; }
 
          /**
           * Gets the read only state of a property
@@ -114,7 +104,7 @@ namespace dtDAL
           * Set the group name
           * @param name The desired group name
           */
-         void SetGroupName(const std::string &name) { mGroupName = name; }
+         void SetGroupName(const std::string& name) { mGroupName = name; }
 
          /**
           * Get the group name
@@ -132,7 +122,7 @@ namespace dtDAL
          {
             mNumberPrecision = precision;
          }
-            
+
          /**
           * Gets the current floating point precision value on this
           * parameter.
@@ -144,28 +134,28 @@ namespace dtDAL
          }
 
       protected:
+
          /**
           * Constructs the actor property.  This is protected since the real
           * property functionality comes from classes extending this one.
           */
          ActorProperty(dtDAL::DataType& dataType, 
-                     const std::string &name,
-                     const std::string &label,
-                     const std::string &desc,
-                     const std::string &groupName,
+                     const dtUtil::RefString& name,
+                     const dtUtil::RefString& label,
+                     const dtUtil::RefString& desc,
+                     const dtUtil::RefString& groupName,
                      bool  readOnly = false) :
-            mDataType(dataType),
-            mName(name),
+            AbstractParameter(dataType, name),
             mLabel(label),
             mDescription(desc),
             mNumberPrecision(16),
             mReadOnly(readOnly)
             {
-               groupName.empty() ? SetGroupName("Base") : SetGroupName(groupName);
+               groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
             }
 
          /// The name of the property's group
-         std::string mGroupName;
+         dtUtil::RefString mGroupName;
 
          /**
           * Protected since actor properties are smart pointers.
@@ -173,20 +163,12 @@ namespace dtDAL
          virtual ~ActorProperty() { }
 
       private:
-         ///The datatype this property accesses
-         DataType& mDataType;
-      
-         /**
-          * Name of the property.  This is the key when searching for properties,
-          * therefore, no two properties should have the same name.
-          */
-         std::string mName;
 
          ///Label for use in UI applications that which to display the property.
-         std::string mLabel;
+         dtUtil::RefString mLabel;
 
          ///Description of what the property represents.
-         std::string mDescription;
+         dtUtil::RefString mDescription;
            
          ///the precision used for floating point numbers when doing a GetStringValue and SetStringValue
          unsigned int mNumberPrecision;
@@ -199,7 +181,8 @@ namespace dtDAL
          /**
           * hidden copy constructor
           */
-         ActorProperty(const ActorProperty& toCopy): mDataType(toCopy.mDataType) { }
+         ActorProperty(const ActorProperty& toCopy):
+            AbstractParameter(GetDataType(), GetName()) { }
 
          /**
           * hidden operator=
@@ -218,7 +201,7 @@ namespace dtDAL
    {
       std::string value;
       i >> value;
-      prop.FromString(value);      
+      prop.FromString(value);
       return i;
    }
 }

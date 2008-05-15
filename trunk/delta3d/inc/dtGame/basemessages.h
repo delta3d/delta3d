@@ -31,10 +31,10 @@ namespace dtGame
    class DT_GAME_EXPORT TickMessage : public Message
    {
       public:
-         static const std::string PARAM_DELTA_SIM_TIME;
-         static const std::string PARAM_DELTA_REAL_TIME;
-         static const std::string PARAM_SIM_TIME_SCALE;
-         static const std::string PARAM_SIMULATION_TIME;
+         static const dtUtil::RefString PARAM_DELTA_SIM_TIME;
+         static const dtUtil::RefString PARAM_DELTA_REAL_TIME;
+         static const dtUtil::RefString PARAM_SIM_TIME_SCALE;
+         static const dtUtil::RefString PARAM_SIMULATION_TIME;
          
 
          /// Constructor
@@ -202,7 +202,7 @@ namespace dtGame
    class DT_GAME_EXPORT MapMessage : public Message
    {
       public:
-         static const std::string PARAM_MAP_NAMES;
+         static const dtUtil::RefString PARAM_MAP_NAMES;
 
          /// Constructor
          MapMessage();
