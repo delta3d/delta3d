@@ -250,15 +250,9 @@ bool View::GetPickPosition( osg::Vec3 &intersectionPoint,
       return false;
    }
 
-   const float winWidth  = win->GetPosition().mWidth;
-   const float winHeight = win->GetPosition().mHeight;
-
-
    // lower left screen has ( 0, 0 )
    osg::Vec2 windowCoord( 0.0 , 0.0 ) ;
-   windowCoord[ 0 ] =  0.5 * ( mousePos.x() + 1.0 ) * winWidth;
-   windowCoord[ 1 ] =  0.5 * ( mousePos.y() + 1.0 ) * winHeight;
-
+   win->CalcPixelCoords(mousePos, windowCoord );
 
    if( GetOsgViewerView()->computeIntersections( windowCoord.x(), windowCoord.y(),
                                                  hitList, traversalMask ) )
