@@ -40,7 +40,8 @@ namespace dtHLAGM
    {
       public:
 
-         AttributeToProperty()
+         AttributeToProperty():
+            mAttributeHandle(0)
          {}
 
          /**
@@ -56,7 +57,7 @@ namespace dtHLAGM
          AttributeToProperty(const std::string& hlaName,
                              const std::string& gameName,
                              const AttributeType& attributeType,
-                             const dtDAL::DataType& gameType,
+                             dtDAL::DataType& gameType,
                              const std::string& defaultValue,
                              bool requiredForGame,
                              bool requiredForHLA):
@@ -66,7 +67,8 @@ namespace dtHLAGM
                                 gameType,
                                 defaultValue,
                                 requiredForGame,
-                                requiredForHLA)
+                                requiredForHLA),
+                             mAttributeHandle(0)
          {}
 
          virtual ~AttributeToProperty()
@@ -91,7 +93,8 @@ namespace dtHLAGM
    {
       public:
 
-         AttributeToPropertyList()
+         AttributeToPropertyList():
+            mAttributeHandle(0)
          {}
 
          /**

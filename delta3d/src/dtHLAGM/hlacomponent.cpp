@@ -1264,7 +1264,7 @@ namespace dtHLAGM
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, const dtDAL::DataType& type, dtGame::Message& msg)
+   dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, dtDAL::DataType& type, dtGame::Message& msg)
    {
       //first check to see if the named parameter is one of the default parameters
       //on an actor update message.
@@ -1922,7 +1922,7 @@ namespace dtHLAGM
       {
          // Get the parameter Game Type and Game Name.
          const OneToManyMapping::ParameterDefinition& paramDef = paramDefList[propnum];
-         const dtDAL::DataType& gameParameterDataType = paramDef.GetGameType();
+         dtDAL::DataType& gameParameterDataType = paramDef.GetGameType();
          const std::string& gameParameterName = paramDef.GetGameName();
 
          // This is not an HLA mapping if an HLA name has not been specified in the mapping.
@@ -2603,9 +2603,9 @@ namespace dtHLAGM
 
          for( unsigned i = 0; curParamDef != paramDefs.end(); ++curParamDef, ++i )
          {
-            const std::string& gameName = curParamDef->GetGameName();
-            const dtDAL::DataType& gameType = curParamDef->GetGameType();
-            const std::string& defaultValue = curParamDef->GetDefaultValue();
+            const std::string& gameName = vectorIterator->GetParameterDefinitions()[i].GetGameName();
+            dtDAL::DataType& gameType = vectorIterator->GetParameterDefinitions()[i].GetGameType();
+            const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[i].GetDefaultValue();
    
             if (gameType == dtDAL::DataType::UNKNOWN)
             {
@@ -2770,7 +2770,7 @@ namespace dtHLAGM
             const ParameterToParameterList::ParameterDefinition& pd = paramMappingItor->GetParameterDefinitions()[i];
             
             const std::string& gameParameterName = pd.GetGameName();
-            const dtDAL::DataType& gameParameterType = pd.GetGameType();
+            dtDAL::DataType& gameParameterType = pd.GetGameType();
             const std::string& defaultValue = pd.GetDefaultValue();
 
             //We map with message parameters, so if a
@@ -2964,7 +2964,7 @@ namespace dtHLAGM
             const std::string& defaultValue = paramDef.GetDefaultValue();
             if (!defaultValue.empty() && !propertyString.empty())
             {
-               const dtDAL::DataType& propertyDataType = paramDef.GetGameType();
+               dtDAL::DataType& propertyDataType = paramDef.GetGameType();
 
                //The actor id special cases are not supported here because people can't hard
                //code actor id's with default values.
