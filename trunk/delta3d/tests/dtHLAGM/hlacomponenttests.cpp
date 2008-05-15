@@ -684,11 +684,10 @@ void HLAComponentTests::TestSubscription()
             j != ota.GetOneToManyMappingVector().end(); ++j)
          {
             const dtHLAGM::AttributeToPropertyList& atpl = *j;
-            CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
 
             // Test for parameter mappings that should be marked as special.
             // --- Get the HLA name of the mapping.
-            const std::string& hlaName = j->GetHLAName();
+            const std::string& hlaName = atpl.GetHLAName();
 
             // --- Begin the assert message...
             std::ostringstream oss;
@@ -699,12 +698,14 @@ void HLAComponentTests::TestSubscription()
                || hlaName == dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME )
             {
                oss << " MUST be marked as special" << std::endl;
-               CPPUNIT_ASSERT_MESSAGE( oss.str(), j->IsSpecial() );
+               CPPUNIT_ASSERT_MESSAGE( oss.str(), atpl.IsSpecial() );
             }
             else // Normal property mapping that is not special.
             {
                oss << " should NOT be marked as special" << std::endl;
-               CPPUNIT_ASSERT_MESSAGE( oss.str(), ! j->IsSpecial() );
+               CPPUNIT_ASSERT_MESSAGE( oss.str(), ! atpl.IsSpecial() );
+               if (!hlaName.empty())
+                  CPPUNIT_ASSERT_MESSAGE(ss.str(), atpl.GetAttributeHandle() != 0);
             }
          }
       }
@@ -721,16 +722,23 @@ void HLAComponentTests::TestSubscription()
          i != toFillItm.end(); ++i)
       {
          const dtHLAGM::InteractionToMessage& itm = **i;
-         
+
          CPPUNIT_ASSERT_MESSAGE(message, itm.GetInteractionClassHandle() != 0);
-         
+
          for (std::vector<dtHLAGM::ParameterToParameterList>::const_iterator j = itm.GetOneToManyMappingVector().begin();
             j != itm.GetOneToManyMappingVector().end(); ++j)
          {
             const dtHLAGM::ParameterToParameterList& atpl = *j;
-            CPPUNIT_ASSERT_MESSAGE(message, atpl.GetParameterHandle() != 0);
+            if (atpl.GetHLAName() == dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME)
+            {
+               CPPUNIT_ASSERT_MESSAGE("The parameter handle for the MAPPING_NAME should be 0", 
+                        atpl.GetParameterHandle() == 0);
+            }
+            else
+            {
+               CPPUNIT_ASSERT_MESSAGE(message, atpl.GetParameterHandle() != 0);
+            }
          }
-         
       }
    }
    
@@ -1315,19 +1323,19 @@ void HLAComponentTests::TestPrepareUpdate()
                            osg::swapBytes((char*)&actual, sizeof(unsigned));
 
                         CPPUNIT_ASSERT_EQUAL_MESSAGE("The damage state value should be 3 (Destroyed)", unsigned(3), actual);
-                        
+
                      }
-                     else if (paramDef.GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_ROTATION)
+                     else if (dtDAL::TransformableActorProxy::PROPERTY_ROTATION == paramDef.GetGameName())
                      {
                         foundOrientationAttr = true;
                         unsigned long length;
                         //I just want the length.
                         ahs->getValuePointer(i, length);
                         CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.", 
-                           length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));                        
+                           length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));
                         //There are other tests that check the converter for rotation.
-                     }                     
-                     else if (paramDef.GetGameName() == dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION)
+                     }
+                     else if (dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION == paramDef.GetGameName())
                      {
                         CPPUNIT_FAIL("The world coordinate should not have ended up in the output.  It doesn't have a default value.");
                      }
@@ -1335,10 +1343,10 @@ void HLAComponentTests::TestPrepareUpdate()
                }
             }
          }
-         
+
          delete ahs;
          ahs = NULL;
-         
+
          CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the aboutActorId should have been found.", 
             foundEntityIdAttr1);
          CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the sendingActorId should have been found.", 

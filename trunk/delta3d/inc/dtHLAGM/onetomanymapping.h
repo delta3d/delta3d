@@ -93,7 +93,7 @@ namespace dtHLAGM
                 *
                 * @return the Data Type of the Game Type
                 */
-               const dtDAL::DataType& GetGameType() const
+               dtDAL::DataType& GetGameType() const
                {
                   return *mGameType;
                }
@@ -123,7 +123,7 @@ namespace dtHLAGM
                 *
                 * @param GameType Data Type
                 */
-               void SetGameType(const dtDAL::DataType& thisGameTypeType)
+               void SetGameType(dtDAL::DataType& thisGameTypeType)
                {
                   mGameType = &thisGameTypeType;
                }
@@ -205,7 +205,7 @@ namespace dtHLAGM
                std::string mGameName;
 
                ///The Game Parameter Type.
-               const dtDAL::DataType* mGameType;
+               dtDAL::DataType* mGameType;
 
                ///The Default Value for this Attribute/Property
                std::string mDefaultValue;

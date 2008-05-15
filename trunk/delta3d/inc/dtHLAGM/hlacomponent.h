@@ -508,7 +508,7 @@ namespace dtHLAGM
                                                    const RTI::AttributeHandleValuePairSet& theAttributes,
                                                    bool& hadEntityTypeProperty);
 
-         dtGame::MessageParameter* FindOrAddMessageParameter(const std::string& name, const dtDAL::DataType& type, dtGame::Message& msg);
+         dtGame::MessageParameter* FindOrAddMessageParameter(const std::string& name, dtDAL::DataType& type, dtGame::Message& msg);
 
          //called when connecting to the RTI to subscribe/publish all the attributes and objects in the given mapping.
          void RegisterObjectToActorWithRTI(ObjectToActor& objectToActor);

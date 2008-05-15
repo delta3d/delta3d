@@ -832,7 +832,7 @@ namespace dtHLAGM
       }
       else if (elementName == ONE_TO_MANY_GAME_DATATYPE_ELEMENT)
       {
-         const dtDAL::DataType* dt = static_cast<const dtDAL::DataType*>(dtDAL::DataType::GetValueForName(characters));
+         dtDAL::DataType* dt = static_cast<dtDAL::DataType*>(dtDAL::DataType::GetValueForName(characters));
          if (dt != NULL)
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
