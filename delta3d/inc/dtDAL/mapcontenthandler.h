@@ -243,12 +243,12 @@ namespace dtDAL
          dtCore::RefPtr<GameEvent> mGameEvent;
 
          dtCore::RefPtr<ActorProxy> mActorProxy;
-         const DataType* mActorPropertyType;
+         DataType* mActorPropertyType;
          dtCore::RefPtr<ActorProperty> mActorProperty;
 
          std::stack<dtCore::RefPtr<NamedParameter> > mParameterStack;
          std::string mParameterNameToCreate;
-         const DataType* mParameterTypeToCreate;
+         DataType* mParameterTypeToCreate;
 
          dtUtil::Log* mLogger;
 
@@ -284,7 +284,7 @@ namespace dtDAL
          //processes the mGroupProperties multimap to set GroupActorProperties.
          void AssignGroupProperties();
          //decides on a property's datatype base on the name of the element.
-         const DataType* ParsePropertyType(const XMLCh* const localname);
+         DataType* ParsePropertyType(const XMLCh* const localname);
          //Creates a named parameter based on the name and type last parsed and pushes it to the top of the stack.
          void CreateAndPushParameter();
    };

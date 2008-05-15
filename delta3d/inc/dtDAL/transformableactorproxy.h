@@ -38,15 +38,15 @@ namespace dtDAL
    {
       public:
 
-         static const std::string PROPERTY_ROTATION;
-         static const std::string PROPERTY_TRANSLATION;
-         static const std::string PROPERTY_NORMAL_RESCALING;
-         static const std::string PROPERTY_RENDER_PROXY_NODE;
-         static const std::string PROPERTY_ENABLE_COLLISION;
-         static const std::string PROPERTY_COLLISION_TYPE;
-         static const std::string PROPERTY_COLLISION_RADIUS;
-         static const std::string PROPERTY_COLLISION_LENGTH;
-         static const std::string PROPERTY_COLLISION_BOX;
+         static const dtUtil::RefString PROPERTY_ROTATION;
+         static const dtUtil::RefString PROPERTY_TRANSLATION;
+         static const dtUtil::RefString PROPERTY_NORMAL_RESCALING;
+         static const dtUtil::RefString PROPERTY_RENDER_PROXY_NODE;
+         static const dtUtil::RefString PROPERTY_ENABLE_COLLISION;
+         static const dtUtil::RefString PROPERTY_COLLISION_TYPE;
+         static const dtUtil::RefString PROPERTY_COLLISION_RADIUS;
+         static const dtUtil::RefString PROPERTY_COLLISION_LENGTH;
+         static const dtUtil::RefString PROPERTY_COLLISION_BOX;
 
          /**
           * Constructor

@@ -28,8 +28,8 @@
 
 namespace dtActors
 {
-   const std::string DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE("Trigger Distance");
-   const std::string DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR("AttachToActor");
+   const dtUtil::RefString DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE("Trigger Distance");
+   const dtUtil::RefString DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR("AttachToActor");
 
    ////////////////////////////////////////////////////
    DistanceSensorActorProxy::DistanceSensorActorProxy()
@@ -57,8 +57,8 @@ namespace dtActors
       DistanceSensorActor* actor;
       GetActor(actor);
 
-      static const std::string GROUP("Distance Sensor");
-      static const std::string EMPTY;
+      static const dtUtil::RefString GROUP("Distance Sensor");
+      static const dtUtil::RefString EMPTY;
 
       AddProperty(new dtDAL::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, 

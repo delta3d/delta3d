@@ -31,6 +31,32 @@ namespace dtDAL
    const char NamedParameter::DEFAULT_DELIMETER = '|';
 
    ///////////////////////////////////////////////////////////////////////////////
+   NamedParameter::NamedParameter(DataType& dataType, const dtUtil::RefString& name, bool isList):
+      AbstractParameter(dataType, name),
+      mIsList(isList)
+   {
+      SetParamDelimeter(DEFAULT_DELIMETER);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedParameter::IsList() const 
+   { 
+      return mIsList;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   char NamedParameter::GetParamDelimeter() const
+   {
+      return mParamListDelimeter;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedParameter::SetParamDelimeter(char delim)
+   {
+      mParamListDelimeter = delim;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
    {
       throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
@@ -60,7 +86,7 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<NamedParameter> NamedParameter::CreateFromType(
-      const dtDAL::DataType& type, const std::string& name, bool isList)
+      dtDAL::DataType& type, const dtUtil::RefString& name, bool isList)
    {
       dtCore::RefPtr<NamedParameter> param;
 
@@ -178,6 +204,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
+   NamedGroupParameter::NamedGroupParameter(const dtUtil::RefString& name) :
+      NamedParameter(dtDAL::DataType::GROUP, name, false)
+   {}
 
    void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const 
    {
@@ -376,8 +405,8 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NamedParameter* NamedGroupParameter::AddParameter(const std::string& name, 
-      const dtDAL::DataType& type) 
+   NamedParameter* NamedGroupParameter::AddParameter(const dtUtil::RefString& name, 
+      dtDAL::DataType& type) 
    {
       dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(type, name);
       if (param.valid())
@@ -389,7 +418,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<NamedParameter> NamedGroupParameter::RemoveParameter(const std::string &name)
+   dtCore::RefPtr<NamedParameter> NamedGroupParameter::RemoveParameter(const dtUtil::RefString& name)
    {
       NamedGroupParameter::ParameterList::iterator itor = mParameterList.find(name);
       if (itor != mParameterList.end())
@@ -411,14 +440,14 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NamedParameter* NamedGroupParameter::GetParameter(const std::string& name) 
+   NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name) 
    {
       NamedGroupParameter::ParameterList::iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const NamedParameter* NamedGroupParameter::GetParameter(const std::string& name) const 
+   const NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name) const 
    {
       NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
@@ -474,8 +503,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedBooleanParameter::NamedBooleanParameter(const std::string &name, bool defaultValue,
-      bool isList) : NamedPODParameter<bool>(name,defaultValue,isList)
+   NamedBooleanParameter::NamedBooleanParameter(const dtUtil::RefString& name, bool defaultValue,
+      bool isList) : NamedPODParameter<bool>(dtDAL::DataType::BOOLEAN, name, defaultValue, isList)
    {
    }
 
@@ -562,8 +591,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedUnsignedCharParameter::NamedUnsignedCharParameter(const std::string &name,
-      unsigned char defaultValue, bool isList) : NamedPODParameter<unsigned char>(name,defaultValue,isList)
+   NamedUnsignedCharParameter::NamedUnsignedCharParameter(const dtUtil::RefString& name,
+      unsigned char defaultValue, bool isList) :
+         NamedPODParameter<unsigned char>(dtDAL::DataType::UCHAR, name, defaultValue,isList)
    {
    }
 
@@ -574,8 +604,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedShortIntParameter::NamedShortIntParameter(const std::string &name,
-      short defaultValue, bool isList) : NamedPODParameter<short>(name,defaultValue,isList)
+   NamedShortIntParameter::NamedShortIntParameter(const dtUtil::RefString& name,
+      short defaultValue, bool isList) :
+         NamedPODParameter<short>(dtDAL::DataType::SHORTINT, name,defaultValue,isList)
    {
    }
 
@@ -586,8 +617,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedUnsignedShortIntParameter::NamedUnsignedShortIntParameter(const std::string &name,
-      unsigned short defaultValue, bool isList) : NamedPODParameter<unsigned short>(name,defaultValue,isList)
+   NamedUnsignedShortIntParameter::NamedUnsignedShortIntParameter(const dtUtil::RefString& name,
+      unsigned short defaultValue, bool isList) :
+         NamedPODParameter<unsigned short>(dtDAL::DataType::USHORTINT, name,defaultValue,isList)
    {
    }
 
@@ -598,8 +630,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedUnsignedIntParameter::NamedUnsignedIntParameter(const std::string &name,
-      unsigned int defaultValue,	 bool isList)  : NamedPODParameter<unsigned int>(name,defaultValue,isList)
+   NamedUnsignedIntParameter::NamedUnsignedIntParameter(const dtUtil::RefString& name,
+      unsigned int defaultValue,	 bool isList)  :
+         NamedPODParameter<unsigned int>(dtDAL::DataType::UINT, name,defaultValue,isList)
    {
    }
 
@@ -610,8 +643,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedIntParameter::NamedIntParameter(const std::string &name, int defaultValue,	bool isList) :
-   NamedPODParameter<int>(name,defaultValue,isList)
+   NamedIntParameter::NamedIntParameter(const dtUtil::RefString& name, int defaultValue,	bool isList) :
+   NamedPODParameter<int>(dtDAL::DataType::INT, name,defaultValue,isList)
    {
    }
 
@@ -641,8 +674,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedUnsignedLongIntParameter::NamedUnsignedLongIntParameter(const std::string &name,
-      unsigned long defaultValue, bool isList) : NamedPODParameter<unsigned long>(name,defaultValue,isList)
+   NamedUnsignedLongIntParameter::NamedUnsignedLongIntParameter(const dtUtil::RefString& name,
+      unsigned long defaultValue, bool isList) :
+         NamedPODParameter<unsigned long>(dtDAL::DataType::ULONGINT, name, defaultValue, isList)
    {
    }
 
@@ -653,8 +687,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedLongIntParameter::NamedLongIntParameter(const std::string &name, long defaultValue,
-      bool isList) : NamedPODParameter<long>(name,defaultValue,isList)
+   NamedLongIntParameter::NamedLongIntParameter(const dtUtil::RefString& name, long defaultValue,
+      bool isList) : NamedPODParameter<long>(dtDAL::DataType::LONGINT, name, defaultValue, isList)
    {
    }
 
@@ -683,8 +717,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedFloatParameter::NamedFloatParameter(const std::string &name, float defaultValue,
-      bool isList) : NamedPODParameter<float>(name, defaultValue, isList)
+   NamedFloatParameter::NamedFloatParameter(const dtUtil::RefString& name, float defaultValue,
+      bool isList) : NamedPODParameter<float>(dtDAL::DataType::FLOAT, name, defaultValue, isList)
    {
       SetNumberPrecision(9);
    }
@@ -714,8 +748,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedDoubleParameter::NamedDoubleParameter(const std::string &name, double defaultValue,
-      bool isList) : NamedPODParameter<double>(name,defaultValue,isList)
+   NamedDoubleParameter::NamedDoubleParameter(const dtUtil::RefString& name, double defaultValue,
+      bool isList) : NamedPODParameter<double>(dtDAL::DataType::DOUBLE, name,defaultValue,isList)
    {
    }
 
@@ -744,8 +778,15 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedStringParameter::NamedStringParameter(const std::string& name, const std::string& defaultValue,
-      bool isList) : NamedGenericParameter<std::string>(name,defaultValue,isList)
+   NamedStringParameter::NamedStringParameter(const dtUtil::RefString& name, const std::string& defaultValue,
+      bool isList) : NamedGenericParameter<std::string>(DataType::STRING, name, defaultValue, isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedStringParameter::NamedStringParameter(DataType& dataType, const dtUtil::RefString& name, 
+      const std::string& defaultValue, bool isList) : 
+         NamedGenericParameter<std::string>(dataType, name, defaultValue, isList)
    {
    }
 
@@ -829,8 +870,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedEnumParameter::NamedEnumParameter(const std::string& name, const std::string& defaultValue,
-      bool isList) : NamedStringParameter(name,defaultValue,isList)
+   NamedEnumParameter::NamedEnumParameter(const dtUtil::RefString& name, const std::string& defaultValue,
+      bool isList) : NamedStringParameter(dtDAL::DataType::ENUMERATION, name, defaultValue, isList)
    {
    }
 
@@ -858,9 +899,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedActorParameter::NamedActorParameter(const std::string& name,
+   NamedActorParameter::NamedActorParameter(const dtUtil::RefString& name,
       const dtCore::UniqueId& defaultValue, bool isList) :
-   NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
+   NamedGenericParameter<dtCore::UniqueId>(dtDAL::DataType::ACTOR, name,defaultValue,isList)
    {
    }
 
@@ -944,9 +985,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedGameEventParameter::NamedGameEventParameter(const std::string& name,
+   NamedGameEventParameter::NamedGameEventParameter(const dtUtil::RefString& name,
       const dtCore::UniqueId& defaultValue, bool isList) :
-   NamedGenericParameter<dtCore::UniqueId>(name,defaultValue,isList)
+   NamedGenericParameter<dtCore::UniqueId>(dtDAL::DataType::GAME_EVENT, name, defaultValue, isList)
    {
    }
 
@@ -1026,8 +1067,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec2Parameter::NamedVec2Parameter(const std::string &name,
-      const osg::Vec2& defaultValue, bool isList) : NamedVecParameter<osg::Vec2>(name,defaultValue,isList)
+   NamedVec2Parameter::NamedVec2Parameter(const dtUtil::RefString& name,
+      const osg::Vec2& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec2>(dtDAL::DataType::VEC2, name,defaultValue,isList)
    {
    }
 
@@ -1056,8 +1098,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec2fParameter::NamedVec2fParameter(const std::string &name,
-      const osg::Vec2f& defaultValue, bool isList) : NamedVecParameter<osg::Vec2f>(name,defaultValue,isList)
+   NamedVec2fParameter::NamedVec2fParameter(const dtUtil::RefString& name,
+      const osg::Vec2f& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec2f>(dtDAL::DataType::VEC2F, name,defaultValue,isList)
    {
    }
 
@@ -1086,8 +1129,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec2dParameter::NamedVec2dParameter(const std::string &name,
-      const osg::Vec2d& defaultValue, bool isList) : NamedVecParameter<osg::Vec2d>(name,defaultValue,isList)
+   NamedVec2dParameter::NamedVec2dParameter(const dtUtil::RefString& name,
+      const osg::Vec2d& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec2d>(dtDAL::DataType::VEC2D, name, defaultValue, isList)
    {
    }
 
@@ -1116,8 +1160,16 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3Parameter::NamedVec3Parameter(const std::string &name,
-      const osg::Vec3& defaultValue, bool isList) : NamedVecParameter<osg::Vec3>(name,defaultValue,isList)
+   NamedVec3Parameter::NamedVec3Parameter(const dtUtil::RefString& name,
+      const osg::Vec3& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec3>(dtDAL::DataType::VEC3, name,defaultValue,isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedVec3Parameter::NamedVec3Parameter(DataType& dataType, const dtUtil::RefString& name,
+      const osg::Vec3& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec3>(dataType, name,defaultValue,isList)
    {
    }
 
@@ -1146,8 +1198,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedRGBColorParameter::NamedRGBColorParameter(const std::string &name,
-      const osg::Vec3& defaultValue, bool isList) : NamedVec3Parameter(name,defaultValue,isList)
+   NamedRGBColorParameter::NamedRGBColorParameter(const dtUtil::RefString& name,
+      const osg::Vec3& defaultValue, bool isList) :
+         NamedVec3Parameter(dtDAL::DataType::RGBCOLOR, name, defaultValue, isList)
    {
    }
 
@@ -1158,8 +1211,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3fParameter::NamedVec3fParameter(const std::string &name,
-      const osg::Vec3f& defaultValue, bool isList) : NamedVecParameter<osg::Vec3f>(name,defaultValue,isList)
+   NamedVec3fParameter::NamedVec3fParameter(const dtUtil::RefString& name,
+      const osg::Vec3f& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec3f>(dtDAL::DataType::VEC3F, name, defaultValue, isList)
    {
    }
 
@@ -1188,8 +1242,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec3dParameter::NamedVec3dParameter(const std::string &name,
-      const osg::Vec3d& defaultValue, bool isList) : NamedVecParameter<osg::Vec3d>(name,defaultValue,isList)
+   NamedVec3dParameter::NamedVec3dParameter(const dtUtil::RefString& name,
+      const osg::Vec3d& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec3d>(dtDAL::DataType::VEC3D, name,defaultValue,isList)
    {
    }
 
@@ -1218,8 +1273,16 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4Parameter::NamedVec4Parameter(const std::string &name,
-      const osg::Vec4& defaultValue, bool isList) : NamedVecParameter<osg::Vec4>(name,defaultValue,isList)
+   NamedVec4Parameter::NamedVec4Parameter(const dtUtil::RefString& name,
+      const osg::Vec4& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec4>(dtDAL::DataType::VEC4, name, defaultValue, isList)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedVec4Parameter::NamedVec4Parameter(DataType& dataType, const dtUtil::RefString& name,
+      const osg::Vec4& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec4>(dataType, name, defaultValue, isList)
    {
    }
 
@@ -1248,8 +1311,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedRGBAColorParameter::NamedRGBAColorParameter(const std::string &name,
-      const osg::Vec4& defaultValue, bool isList) : NamedVec4Parameter(name,defaultValue,isList)
+   NamedRGBAColorParameter::NamedRGBAColorParameter(const dtUtil::RefString& name,
+      const osg::Vec4& defaultValue, bool isList) : 
+         NamedVec4Parameter(dtDAL::DataType::RGBACOLOR, name,defaultValue,isList)
    {
    }
 
@@ -1260,8 +1324,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4fParameter::NamedVec4fParameter(const std::string &name,
-      const osg::Vec4f& defaultValue, bool isList) : NamedVecParameter<osg::Vec4f>(name,defaultValue,isList)
+   NamedVec4fParameter::NamedVec4fParameter(const dtUtil::RefString& name,
+      const osg::Vec4f& defaultValue, bool isList) : 
+         NamedVecParameter<osg::Vec4f>(dtDAL::DataType::VEC4F, name,defaultValue,isList)
    {
    }
 
@@ -1290,8 +1355,9 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedVec4dParameter::NamedVec4dParameter(const std::string &name,
-      const osg::Vec4d& defaultValue, bool isList) : NamedVecParameter<osg::Vec4d>(name,defaultValue,isList)
+   NamedVec4dParameter::NamedVec4dParameter(const dtUtil::RefString& name,
+      const osg::Vec4d& defaultValue, bool isList) :
+         NamedVecParameter<osg::Vec4d>(dtDAL::DataType::VEC4D, name,defaultValue,isList)
    {
    }
 
@@ -1320,8 +1386,8 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedResourceParameter::NamedResourceParameter(const dtDAL::DataType& type,  const std::string &name,
-      bool isList) : NamedParameter(name,isList), mDataType(&type)
+   NamedResourceParameter::NamedResourceParameter(dtDAL::DataType& type,  const dtUtil::RefString& name,
+      bool isList) : NamedParameter(type, name,isList)
    {
       if (IsList())
          mValueList = new std::vector<dtDAL::ResourceDescriptor>();

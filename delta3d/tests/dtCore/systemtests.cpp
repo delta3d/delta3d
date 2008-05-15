@@ -277,8 +277,8 @@ void SystemTests::TestProperties()
    double aRandomFloat = dtUtil::RandFloat(10.0f, 50.0f);
    ourSystem.SetFrameRate(aRandomFloat);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Frame Step Property is broken",
-      aRandomFloat, ourSystem.GetFrameRate() );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Frame Step Property is broken",
+      aRandomFloat, ourSystem.GetFrameRate(), 0.001);
 
    aRandomFloat = dtUtil::RandFloat(0.0f, 10.0f);
    ourSystem.SetMaxTimeBetweenDraws(aRandomFloat);

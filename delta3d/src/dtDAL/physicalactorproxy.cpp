@@ -26,20 +26,20 @@
 
 namespace dtDAL
 {
-   const std::string PhysicalActorProxy::PROPERTY_ENABLE_DYNAMICS("Enable Dynamics");
-   const std::string PhysicalActorProxy::PROPERTY_MASS("Mass");
-   const std::string PhysicalActorProxy::PROPERTY_CENTER_OF_GRAVITY("Center of Gravity");
+   const dtUtil::RefString PhysicalActorProxy::PROPERTY_ENABLE_DYNAMICS("Enable Dynamics");
+   const dtUtil::RefString PhysicalActorProxy::PROPERTY_MASS("Mass");
+   const dtUtil::RefString PhysicalActorProxy::PROPERTY_CENTER_OF_GRAVITY("Center of Gravity");
 
    ///////////////////////////////////////////////////////////////////////////////
    void PhysicalActorProxy::BuildPropertyMap()
    {
-      static const std::string GROUPNAME = "ODE Physics";
+      static const dtUtil::RefString GROUPNAME("ODE Physics");
         
       TransformableActorProxy::BuildPropertyMap();
 
       dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
 
-      static const std::string ODE_PREFIX("ODE ");
+      static const dtUtil::RefString ODE_PREFIX("ODE ");
       //PHYSICS PROPS...
       AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
                                            MakeFunctor(*phys, &dtCore::Physical::EnableDynamics),

@@ -394,7 +394,7 @@ namespace  dtDAL
    void MapContentHandler::CreateAndPushParameter()
    {
       try 
-      {            
+      {
          NamedGroupParameter& gp = dynamic_cast<NamedGroupParameter&>(*mParameterStack.top());
          mParameterStack.push(gp.AddParameter(mParameterNameToCreate, *mParameterTypeToCreate));
          mParameterTypeToCreate = NULL;
@@ -404,7 +404,7 @@ namespace  dtDAL
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Tried to add a new parameter \"%s\" with type \"%s\", but failed",
-                             mParameterNameToCreate.c_str(), mParameterTypeToCreate->GetName().c_str());               
+                             mParameterNameToCreate.c_str(), mParameterTypeToCreate->GetName().c_str());
       }
    }
 
@@ -931,7 +931,7 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-   const DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname)
+   DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname)
    {
       if (XMLString::compareString(localname,
           MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT) == 0)

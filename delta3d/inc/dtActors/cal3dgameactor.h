@@ -49,14 +49,14 @@ namespace dtActors
       /// string constants for this actor
       struct DT_PLUGIN_EXPORT PropertyNames
       {
-         static const std::string ANIMATION_GROUP;
-         static const std::string ANIMATION_GROUP_LABEL;
-         static const std::string ANIMATION_BLEND_GROUP;
-         static const std::string ANIMATION_BLEND_WEIGHT;
-         static const std::string ANIMATION_BLEND_ID;
-         static const std::string ANIMATION_BLEND_DELAY;
-         static const std::string RENDER_MODE;
-         static const std::string RENDER_MODE_LABEL;
+         static const dtUtil::RefString ANIMATION_GROUP;
+         static const dtUtil::RefString ANIMATION_GROUP_LABEL;
+         static const dtUtil::RefString ANIMATION_BLEND_GROUP;
+         static const dtUtil::RefString ANIMATION_BLEND_WEIGHT;
+         static const dtUtil::RefString ANIMATION_BLEND_ID;
+         static const dtUtil::RefString ANIMATION_BLEND_DELAY;
+         static const dtUtil::RefString RENDER_MODE;
+         static const dtUtil::RefString RENDER_MODE_LABEL;
       };
 
       /// used to describe what to render.

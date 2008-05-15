@@ -31,6 +31,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/uniqueid.h>
 #include <sstream>
+#include <algorithm>
 
 namespace dtDAL
 {
@@ -72,6 +73,28 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
+   class RefStringInsert
+   {
+      public:
+         void operator()(const dtUtil::RefString& string)
+         {
+            toFill->insert(string.Get());
+         }
+
+         std::set<std::string>* toFill;
+   };
+   
+   //////////////////////////////////////////////////////////////////////////
+   const std::set<std::string> ActorProxy::GetClassHierarchy() const 
+   { 
+      RefStringInsert insertFunc;
+      std::set<std::string> hierarchy;
+      insertFunc.toFill = &hierarchy;
+      std::for_each(mClassNameSet.begin(), mClassNameSet.end(), insertFunc);
+      return hierarchy;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    const dtCore::UniqueId& ActorProxy::GetId() const
    {
       return GetActor()->GetUniqueId();
@@ -107,29 +130,34 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    ResourceDescriptor* ActorProxy::GetResource(const std::string &name)
    {
-      std::map<std::string, ResourceDescriptor>::iterator itor = mResourceMap.find(name);
+      ResourceMapType::iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? &itor->second : NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
    const ResourceDescriptor* ActorProxy::GetResource(const std::string &name) const
    {
-      std::map<std::string, ResourceDescriptor>::const_iterator itor = mResourceMap.find(name);
+      ResourceMapType::const_iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? &itor->second : NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetResource(const std::string &name, ResourceDescriptor *source)
    {
-      // first, remove the current setting from the map.
-      std::map<std::string, ResourceDescriptor>::iterator itor = mResourceMap.find(name);
-      if(itor != mResourceMap.end())
-         mResourceMap.erase(itor);
-      
-      // insert the new value, if we have one.
-      if(source != NULL)
+      if (source == NULL)
       {
-         mResourceMap.insert(std::make_pair(name, *source));
+         mResourceMap.erase(name);
+      }
+      else
+      {
+         //attempt to insert the value
+         std::pair<ResourceMapType::iterator, bool> result = mResourceMap.insert(std::make_pair(name, *source));
+         // result.second tells me if it was inserted
+         if (!result.second)
+         {
+            // if not, first of the result is the iterator to the map entry, so just change the map value.
+            result.first->second = *source;
+         }
       }
    }
     
@@ -137,29 +165,35 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    const ActorProxy* ActorProxy::GetLinkedActor(const std::string& name) const
    {
-      std::map<std::string, dtCore::RefPtr<ActorProxy> >::const_iterator itor = mActorProxyMap.find(name);
+      ActorProxyMapType::const_iterator itor = mActorProxyMap.find(name);
       return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
    ActorProxy* ActorProxy::GetLinkedActor(const std::string& name)
    {
-      std::map<std::string, dtCore::RefPtr<ActorProxy> >::iterator itor = mActorProxyMap.find(name);
+      ActorProxyMapType::iterator itor = mActorProxyMap.find(name);
       return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetLinkedActor(const std::string& name, ActorProxy* newValue)
    {
-      // first, remove the current setting from the map.
-      std::map<std::string, dtCore::RefPtr<ActorProxy> >::iterator itor = mActorProxyMap.find(name);
-      if(itor != mActorProxyMap.end())
-         mActorProxyMap.erase(itor);
-
-      // insert the new value, if we have one.
-      if(newValue != NULL)
+      if (newValue == NULL)
       {
-         mActorProxyMap.insert(std::make_pair(name, newValue));
+         mActorProxyMap.erase(name);
+      }
+      else
+      {
+         //attempt to insert the value
+         std::pair<ActorProxyMapType::iterator, bool> result = 
+            mActorProxyMap.insert(std::make_pair(name, newValue));
+         // result.second tells me if it was inserted
+         if (!result.second)
+         {
+            // if not, first of the result is the iterator to the map entry, so just change the map value.
+            result.first->second = newValue;
+         }
       }
    }
 
@@ -172,7 +206,7 @@ namespace dtDAL
             "AddProperty cannot add a NULL property", __FILE__, __LINE__);
       }
 
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
+      PropertyMapType::iterator itor =
          mPropertyMap.find(newProp->GetName());
       if(itor != mPropertyMap.end())
       {
@@ -183,7 +217,7 @@ namespace dtDAL
       }
       else
       {
-         mPropertyMap.insert(std::make_pair(newProp->GetName(),newProp));
+         mPropertyMap.insert(std::make_pair(dtUtil::RefString(newProp->GetName()),newProp));
          mProperties.push_back(newProp);
       }
    }
@@ -191,7 +225,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void ActorProxy::RemoveProperty(const std::string& nameToRemove)
    {
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
+      PropertyMapType::iterator itor =
          mPropertyMap.find(nameToRemove);
       if (itor != mPropertyMap.end())
       {
@@ -216,7 +250,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    ActorProperty* ActorProxy::GetProperty(const std::string &name)
    {
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
+      PropertyMapType::iterator itor =
          mPropertyMap.find(name);
 
       if(itor == mPropertyMap.end())
@@ -228,7 +262,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    const ActorProperty* ActorProxy::GetProperty(const std::string &name) const
    {
-      std::map<std::string,dtCore::RefPtr<ActorProperty> >::const_iterator itor =
+      PropertyMapType::const_iterator itor =
          mPropertyMap.find(name);
 
       if(itor == mPropertyMap.end())

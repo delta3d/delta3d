@@ -27,10 +27,10 @@
 
 namespace dtGame
 {
-   const std::string ActorUpdateMessage::NAME_PARAMETER("Name");
-   const std::string ActorUpdateMessage::ACTOR_TYPE_NAME_PARAMETER("Actor Type Name");
-   const std::string ActorUpdateMessage::ACTOR_TYPE_CATEGORY_PARAMETER("Actor Type Category");
-   const std::string ActorUpdateMessage::UPDATE_GROUP_PARAMETER("Update Group Parameter");
+   const dtUtil::RefString ActorUpdateMessage::NAME_PARAMETER("Name");
+   const dtUtil::RefString ActorUpdateMessage::ACTOR_TYPE_NAME_PARAMETER("Actor Type Name");
+   const dtUtil::RefString ActorUpdateMessage::ACTOR_TYPE_CATEGORY_PARAMETER("Actor Type Category");
+   const dtUtil::RefString ActorUpdateMessage::UPDATE_GROUP_PARAMETER("Update Group Parameter");
 
    ActorUpdateMessage::ActorUpdateMessage() : Message() 
    {
@@ -77,7 +77,7 @@ namespace dtGame
    }
 
    dtDAL::NamedParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
-                                                            const dtDAL::DataType &type)
+                                                            dtDAL::DataType &type)
    {
       return mUpdateParameters->AddParameter(name, type);
    }

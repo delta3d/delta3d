@@ -232,8 +232,9 @@ namespace dtDAL
    {
       if (mProxyMap.insert(std::make_pair(proxy.GetId(), dtCore::RefPtr<ActorProxy>(&proxy))).second) 
       {
+         const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
          mProxyActorClasses.insert(proxy.GetClassName());
-         mProxyActorClasses.insert(proxy.GetClassHierarchy().begin(), proxy.GetClassHierarchy().end());
+         mProxyActorClasses.insert(hierarchy.begin(), hierarchy.end());
          mModified = true;
       }
    }
@@ -283,9 +284,10 @@ namespace dtDAL
       mProxyActorClasses.clear();
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >::const_iterator i = mProxyMap.begin(); i != mProxyMap.end(); ++i) 
       {
-         const ActorProxy& ap = *(i->second);
-         mProxyActorClasses.insert(ap.GetClassName());
-         mProxyActorClasses.insert(ap.GetClassHierarchy().begin(), ap.GetClassHierarchy().end());
+         const ActorProxy& proxy = *(i->second);
+         const std::set<std::string>& hierarchy = proxy.GetClassHierarchy();
+         mProxyActorClasses.insert(proxy.GetClassName());
+         mProxyActorClasses.insert(hierarchy.begin(), hierarchy.end());
       }
    }
 

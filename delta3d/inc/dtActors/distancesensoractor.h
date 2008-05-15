@@ -39,8 +39,8 @@ namespace dtActors
    class DT_PLUGIN_EXPORT DistanceSensorActorProxy: public dtGame::GameActorProxy 
    {
       public:
-         static const std::string PROPERTY_TRIGGER_DISTANCE;
-         static const std::string PROPERTY_ATTACH_TO_ACTOR;
+         static const dtUtil::RefString PROPERTY_TRIGGER_DISTANCE;
+         static const dtUtil::RefString PROPERTY_ATTACH_TO_ACTOR;
 
          DistanceSensorActorProxy();
 

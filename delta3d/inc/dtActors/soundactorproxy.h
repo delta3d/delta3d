@@ -60,22 +60,22 @@ namespace dtActors
     class DT_PLUGIN_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
        public:
-          static const std::string PROPERTY_DIRECTION;
-          static const std::string PROPERTY_GAIN;
-          static const std::string PROPERTY_INITIAL_OFFSET_TIME;
-          static const std::string PROPERTY_LISTENER_RELATIVE;
-          static const std::string PROPERTY_LOOPING;
-          static const std::string PROPERTY_MAX_DISTANCE;
-          static const std::string PROPERTY_MIN_DISTANCE;
-          static const std::string PROPERTY_MAX_GAIN;
-          static const std::string PROPERTY_MIN_GAIN;
-          static const std::string PROPERTY_MAX_RANDOM_TIME;
-          static const std::string PROPERTY_MIN_RANDOM_TIME;
-          static const std::string PROPERTY_PITCH;
-          static const std::string PROPERTY_PLAY_AS_RANDOM;
-          static const std::string PROPERTY_ROLLOFF_FACTOR;
-          static const std::string PROPERTY_SOUND_EFFECT;
-          static const std::string PROPERTY_VELOCITY;
+          static const dtUtil::RefString PROPERTY_DIRECTION;
+          static const dtUtil::RefString PROPERTY_GAIN;
+          static const dtUtil::RefString PROPERTY_INITIAL_OFFSET_TIME;
+          static const dtUtil::RefString PROPERTY_LISTENER_RELATIVE;
+          static const dtUtil::RefString PROPERTY_LOOPING;
+          static const dtUtil::RefString PROPERTY_MAX_DISTANCE;
+          static const dtUtil::RefString PROPERTY_MIN_DISTANCE;
+          static const dtUtil::RefString PROPERTY_MAX_GAIN;
+          static const dtUtil::RefString PROPERTY_MIN_GAIN;
+          static const dtUtil::RefString PROPERTY_MAX_RANDOM_TIME;
+          static const dtUtil::RefString PROPERTY_MIN_RANDOM_TIME;
+          static const dtUtil::RefString PROPERTY_PITCH;
+          static const dtUtil::RefString PROPERTY_PLAY_AS_RANDOM;
+          static const dtUtil::RefString PROPERTY_ROLLOFF_FACTOR;
+          static const dtUtil::RefString PROPERTY_SOUND_EFFECT;
+          static const dtUtil::RefString PROPERTY_VELOCITY;
 
            /**
             * Constructor

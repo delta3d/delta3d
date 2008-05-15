@@ -27,6 +27,7 @@
 #include <set>
 #include <osg/Referenced>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/refstring.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
@@ -150,9 +151,9 @@ namespace dtDAL
          /**
           * Returns an alphabetically ordered list of strings corresponding to the list of
           * ancestor classes from which this derives.
-          * @return An STL set.
+          * @return a const STL set by value.
           */
-         const std::set<std::string>& GetClassHierarchy() const { return mClassNameSet; }
+         const std::set<std::string> GetClassHierarchy() const;
 
          /**
           * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.  
@@ -442,30 +443,35 @@ namespace dtDAL
          void RemoveProperty(const std::string& nameToRemove);
 
       private:
+         typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType; 
+         typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
+         typedef std::map<dtUtil::RefString, ResourceDescriptor> ResourceMapType;
+         typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProxy> > ActorProxyMapType;
+         typedef std::set<dtUtil::RefString> ClassHierarchyType;
          
          ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
          dtCore::RefPtr<dtCore::DeltaDrawable> mActor;
 
          ///Map of properties.
-         std::map<std::string, dtCore::RefPtr<ActorProperty> > mPropertyMap;
+         PropertyMapType mPropertyMap;
 
          ///vector of properties (for order).
-         std::vector<dtCore::RefPtr<ActorProperty> > mProperties;
+         PropertyVectorType mProperties;
 
          /// Map of propery names to resource values
-         std::map<std::string, ResourceDescriptor> mResourceMap;
+         ResourceMapType mResourceMap;
 
          /// Map of property names to actor proxy values
-         std::map<std::string, dtCore::RefPtr<ActorProxy> > mActorProxyMap;
+         ActorProxyMapType mActorProxyMap;
 
          /// Set of class names
-         std::set<std::string> mClassNameSet;
+         ClassHierarchyType mClassNameSet;
 
          ///ActorType corresponding to this proxy.
          dtCore::RefPtr<const ActorType> mActorType;
 
          /// The current class name
-         std::string mClassName;
+         dtUtil::RefString mClassName;
 
          ///Simple method for setting the actor type.
          void SetActorType(const ActorType &type);

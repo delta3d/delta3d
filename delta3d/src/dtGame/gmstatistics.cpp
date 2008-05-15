@@ -46,10 +46,10 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GMStatistics::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind, 
+   void GMStatistics::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind,
                                       const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
    {
-      std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator itor = 
+      std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator itor =
          mDebugLoggerInformation.find(uniqueIDToFind);
       if (itor != mDebugLoggerInformation.end())
       {
@@ -58,14 +58,14 @@ namespace dtGame
          {
             debugInfo.mTickLocalTime +=elapsedTime;
             debugInfo.mTimesThrough += 1;
-            debugInfo.mTotalTime += elapsedTime; 
+            debugInfo.mTotalTime += elapsedTime;
          }
          else
          {
-            debugInfo.mTotalTime += elapsedTime;  
+            debugInfo.mTotalTime += elapsedTime;
          }
       }
-      else 
+      else
       {
          dtCore::RefPtr<LogDebugInformation> toPushDebugInfo = new LogDebugInformation(nameOfObject, uniqueIDToFind, isComponent);
          toPushDebugInfo->mTotalTime = elapsedTime;
@@ -223,6 +223,7 @@ namespace dtGame
             ss << "[" << numComps << " comps]";
          ss << std::endl;
       }
+      ss << "* Shared String Count: " << dtUtil::RefString::GetSharedStringCount() << "\n";
       ss << "============ Ending Debug information ==============" << std::endl;
 
       // Do the writing

@@ -33,22 +33,22 @@ using namespace dtDAL;
 namespace dtActors
 {
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string SoundActorProxy::PROPERTY_DIRECTION("Direction"); // "Direction"
-   const std::string SoundActorProxy::PROPERTY_GAIN("Gain"); // "Gain"
-   const std::string SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME("Initial offset Time"); // "Initial offset Time"
-   const std::string SoundActorProxy::PROPERTY_LISTENER_RELATIVE("Listener Relative"); // "Listener Relative"
-   const std::string SoundActorProxy::PROPERTY_LOOPING("Looping"); // "Looping"
-   const std::string SoundActorProxy::PROPERTY_MAX_DISTANCE("Max Distance"); // "Max Distance"
-   const std::string SoundActorProxy::PROPERTY_MIN_DISTANCE("Min Distance"); // "Min Distance"
-   const std::string SoundActorProxy::PROPERTY_MAX_GAIN("Max Gain"); // "Max Gain"
-   const std::string SoundActorProxy::PROPERTY_MIN_GAIN("Min Gain"); // "Min Gain"
-   const std::string SoundActorProxy::PROPERTY_MAX_RANDOM_TIME("Max Random Time"); // "Max Random Time"
-   const std::string SoundActorProxy::PROPERTY_MIN_RANDOM_TIME("Min Random Time"); // "Min Random Time"
-   const std::string SoundActorProxy::PROPERTY_PITCH("Pitch"); // "Pitch"
-   const std::string SoundActorProxy::PROPERTY_PLAY_AS_RANDOM("Play As Random SFX"); // "Play As Random SFX"
-   const std::string SoundActorProxy::PROPERTY_ROLLOFF_FACTOR("Rolloff Factor"); // "Rolloff Factor"
-   const std::string SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
-   const std::string SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_DIRECTION("Direction"); // "Direction"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_GAIN("Gain"); // "Gain"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME("Initial offset Time"); // "Initial offset Time"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_LISTENER_RELATIVE("Listener Relative"); // "Listener Relative"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_LOOPING("Looping"); // "Looping"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_DISTANCE("Max Distance"); // "Max Distance"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_DISTANCE("Min Distance"); // "Min Distance"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_GAIN("Max Gain"); // "Max Gain"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_GAIN("Min Gain"); // "Min Gain"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_RANDOM_TIME("Max Random Time"); // "Max Random Time"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_RANDOM_TIME("Min Random Time"); // "Min Random Time"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_PITCH("Pitch"); // "Pitch"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_PLAY_AS_RANDOM("Play As Random SFX"); // "Play As Random SFX"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_ROLLOFF_FACTOR("Rolloff Factor"); // "Rolloff Factor"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
 
 
 
@@ -163,7 +163,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::BuildPropertyMap()
     {
-        const std::string &GROUPNAME = "Sound";
+        const dtUtil::RefString &GROUPNAME = "Sound";
         TransformableActorProxy::BuildPropertyMap();
 
         Sound *sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
