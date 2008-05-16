@@ -292,6 +292,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\refstring.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\seamlessnoise.cpp"
 				>
 			</File>
@@ -479,6 +483,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\polardecomp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\refstring.h"
 				>
 			</File>
 			<File
