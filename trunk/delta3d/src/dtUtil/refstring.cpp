@@ -1,3 +1,4 @@
+#include "prefix/dtutilprefix-src.h"
 #include <dtUtil/refstring.h>
 #ifdef __GNUG__
 #  include <ext/hash_set>
