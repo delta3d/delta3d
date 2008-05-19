@@ -2,22 +2,22 @@
 SET(LIB_NAME     dtDAL)
 
 
-SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
-SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
+SET(HEADER_PATH ${CMAKE_SOURCE_DIR}/inc/${LIB_NAME})
+SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
+ADD_LIBRARY(${LIB_NAME} SHARED
+    ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTUTIL_LIBRARY
-											  DTCORE_LIBRARY
-											  DTAI_LIBRARY)
-											  
+                          DTUTIL_LIBRARY
+                          DTCORE_LIBRARY
+                          DTAI_LIBRARY)
+                          
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DAL_LIBRARY)
 
@@ -29,3 +29,7 @@ IF (MSVC)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)
+
+IF (PCHSupport_FOUND)
+   ADD_PRECOMPILED_HEADER(${LIB_NAME} precomp.cpp prefix/dtdalprefix-src.h true)
+ENDIF (PCHSupport_FOUND)
