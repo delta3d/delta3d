@@ -177,7 +177,7 @@ void Application::ReadSystemProperties()
       {
           pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
       }
-      else if (value == "DisplayList" || value == "DL")
+      else if (value == "DisplayList" || value == "DisplayLists" || value == "DL")
       {
           pager->setDrawablePolicy(osgDB::DatabasePager::USE_DISPLAY_LISTS);
       }
@@ -185,7 +185,7 @@ void Application::ReadSystemProperties()
       {
           pager->setDrawablePolicy(osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
       }
-      else if (value == "VertexArrays" || value == "VA")
+      else if (value == "VertexArrays" || value == "VertexArray"||  value == "VA")
       {
           pager->setDrawablePolicy(osgDB::DatabasePager::USE_VERTEX_ARRAYS);
       }
