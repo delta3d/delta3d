@@ -25,6 +25,7 @@ OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects
 OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
 OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
 OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
+OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
 
 
 IF (WIN32)
@@ -129,6 +130,11 @@ ENDIF(WIN32)
 ################################################################################
 # 3rd Party Dependency Stuff
 # Common to all platforms:
+
+IF (BUILD_WITH_PCH)
+   FIND_PACKAGE(PCHSupport)
+ENDIF (BUILD_WITH_PCH)
+
 FIND_PACKAGE(Delta3D REQUIRED)
 
 IF(NOT WIN32)

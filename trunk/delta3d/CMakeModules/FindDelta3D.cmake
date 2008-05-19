@@ -1,4 +1,4 @@
-# Locate gdal
+# Locate Delta3D
 # This module defines
 # DTCORE_LIBRARY
 # DELTA3D_EXT_DIR

@@ -1,7 +1,7 @@
 
 SET(PROG_NAME STAGE)
 
-SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${PROG_NAME})
+SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/${PROG_NAME})
 file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")
 file(GLOB PROG_SOURCES "src/*.cpp")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
@@ -23,12 +23,12 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          DTUTIL_LIBRARY   
                                          DTCORE_LIBRARY
                                          DTDAL_LIBRARY
-					 DTANIM_LIBRARY
-					 DTAUDIO_LIBRARY
+                                         DTANIM_LIBRARY
+                                         DTAUDIO_LIBRARY
                                          DTABC_LIBRARY
-					 DTGAME_LIBRARY 
-					 OSGFX_LIBRARY
-					 AGL_LIBRARY)
+                                         DTGAME_LIBRARY
+                                         OSGFX_LIBRARY
+                                         AGL_LIBRARY)
 
 #MESSAGE(STATUS ${QT_LIBRARIES})
 
@@ -45,3 +45,7 @@ IF (MSVC)
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES IMPORT_PREFIX "../")
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 ENDIF (MSVC)
+
+IF (PCHSupport_FOUND)
+   ADD_PRECOMPILED_HEADER(${PROG_NAME} ${SOURCE_PATH}/src/precomp.cpp prefix/dtstageprefix-src.h true)
+ENDIF (PCHSupport_FOUND)

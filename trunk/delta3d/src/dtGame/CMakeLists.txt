@@ -11,19 +11,18 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-ADD_LIBRARY(${LIB_NAME} SHARED                        
-    ${LIB_PUBLIC_HEADERS}                         
+ADD_LIBRARY(${LIB_NAME} SHARED
+    ${LIB_PUBLIC_HEADERS}
     ${LIB_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTUTIL_LIBRARY
-											  DTCORE_LIBRARY
-											  DTABC_LIBRARY
-											  OSGSIM_LIBRARY)
+                             DTUTIL_LIBRARY
+                             DTCORE_LIBRARY
+                             DTABC_LIBRARY
+                             OSGSIM_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}												
-													  ${CARBON_LIBRARY})
+TARGET_LINK_LIBRARIES(${LIB_NAME}  ${CARBON_LIBRARY})
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_GAME_LIBRARY)
@@ -35,3 +34,8 @@ IF (MSVC)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC)
+
+IF (PCHSupport_FOUND)
+   ADD_PRECOMPILED_HEADER(${LIB_NAME} precomp.cpp  true)
+ENDIF (PCHSupport_FOUND)
+
