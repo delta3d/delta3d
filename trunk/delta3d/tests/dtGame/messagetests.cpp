@@ -640,19 +640,42 @@ void MessageTests::TestMessageDelivery()
       dtCore::RefPtr<const dtGame::Message> tickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
       dtCore::RefPtr<const dtGame::Message> actorCreatedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
       dtCore::RefPtr<const dtGame::Message> publishedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
+      dtCore::RefPtr<const dtGame::Message> tickEndOfFrame = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_END_OF_FRAME);
 
       CPPUNIT_ASSERT_MESSAGE("A Tick Local message should have been processed.", tickMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("A Tick Remote message should have been processed.", tickRemoteMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("An Actor Created message should have been processed.", actorCreatedMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("No Actor Published message should have been processed.", publishedMsg == NULL);
+      CPPUNIT_ASSERT_MESSAGE("A Tick End of Frame message should have been processed.", tickEndOfFrame != NULL);
 
       CPPUNIT_ASSERT_MESSAGE("A Tick Local message should have GetSource matching the GameManager.", tickMsg->GetSource() == mGameManager->GetMachineInfo());
       CPPUNIT_ASSERT_MESSAGE("A Tick Remote message should have GetSource matching the GameManager.", tickRemoteMsg->GetSource() == mGameManager->GetMachineInfo());
+      CPPUNIT_ASSERT_MESSAGE("A Tick End Of Frame message should have GetSource matching the GameManager.", tickEndOfFrame->GetSource() == mGameManager->GetMachineInfo());
       CPPUNIT_ASSERT_MESSAGE("An Actor Created message should have GetSource matching the GameManager.", actorCreatedMsg->GetSource() == mGameManager->GetMachineInfo());
 
       CPPUNIT_ASSERT_MESSAGE("A Tick Local message should have GetDestination matching the GameManager.", tickMsg->GetDestination() == &mGameManager->GetMachineInfo());
       CPPUNIT_ASSERT_MESSAGE("A Tick Remote message should have GetDestination matching the GameManager.", tickRemoteMsg->GetDestination() == &mGameManager->GetMachineInfo());
+      CPPUNIT_ASSERT_MESSAGE("A Tick End Of Frame message should have GetDestination matching the GameManager.", tickEndOfFrame->GetDestination() == &mGameManager->GetMachineInfo());
       CPPUNIT_ASSERT_MESSAGE("An Actor Created message should have GetDestination matching the GameManager.", actorCreatedMsg->GetDestination() == NULL);
+
+      dtCore::RefPtr<const dtGame::TickMessage> localTickMessage = dynamic_cast<const dtGame::TickMessage*>(tickMsg.get());
+      dtCore::RefPtr<const dtGame::TickMessage> remoteTickMessage = dynamic_cast<const dtGame::TickMessage*>(tickRemoteMsg.get());;
+      dtCore::RefPtr<const dtGame::TickMessage> endTickMessage = dynamic_cast<const dtGame::TickMessage*>(tickEndOfFrame.get());
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetDeltaSimTime(), remoteTickMessage->GetDeltaSimTime(), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetDeltaSimTime(), endTickMessage->GetDeltaSimTime(), 0.001f);
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetDeltaRealTime(), remoteTickMessage->GetDeltaRealTime(), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetDeltaRealTime(), endTickMessage->GetDeltaRealTime(), 0.001f);
+
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetSimTimeScale(), remoteTickMessage->GetSimTimeScale(), 0.001f);
+      CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("All the tick messages should have the same data.",
+               localTickMessage->GetSimTimeScale(), endTickMessage->GetSimTimeScale(), 0.001f);
 
       mGameManager->RemoveComponent(*tc);
       CPPUNIT_ASSERT(tc->GetGameManager() == NULL);

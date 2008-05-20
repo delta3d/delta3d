@@ -332,7 +332,7 @@ namespace dtGame
          frameTickStart = mGmStatistics.mStatsTickClock.Tick();
 
       DoSendNetworkMessages();
-      
+
       if (mMapChangeStateData.valid())
       {
          mMapChangeStateData->ContinueMapChange();
@@ -359,6 +359,12 @@ namespace dtGame
       ProcessTimers(mSimulationTimers, dtCore::Timer_t(GetSimTimeSinceStartup() * 1000000.0));
 
       DoSendMessages();
+
+      dtCore::RefPtr<TickMessage> tickEnd;
+      GetMessageFactory().CreateMessage(MessageType::TICK_END_OF_FRAME, tickEnd);
+      PopulateTickMessage(*tickEnd, deltaSimTime, deltaRealTime, simulationTime);
+
+      DoSendMessageToComponents(*tickEnd);
 
       RemoveDeletedActors();
 
@@ -495,7 +501,28 @@ namespace dtGame
          }
       }
    }
-   
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::DoSendMessage(const Message& message)
+   {
+      DoSendMessageToComponents(message);
+
+      InvokeGlobalInvokables(message);
+
+      // ABOUT ACTOR - The actor itself and others registered against a particular actor
+      if (!message.GetAboutActorId().ToString().empty())
+      {
+         //if we have an about actor, first try to send it to the actor itself
+         GameActorProxy* aboutActor = FindGameActorById(message.GetAboutActorId());
+         if (aboutActor != NULL && aboutActor->IsInGM())
+         {
+            InvokeForActorInvokables(message, *aboutActor);
+         }
+         
+         InvokeOtherActorInvokables(message);
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendMessages()
    {
@@ -514,25 +541,9 @@ namespace dtGame
                "Message in send queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
-         
+
          const Message& message = *messageRef;
-         
-         DoSendMessageToComponents(message);
-         
-         InvokeGlobalInvokables(message);
-         
-         // ABOUT ACTOR - The actor itself and others registered against a particular actor
-         if (!message.GetAboutActorId().ToString().empty())
-         {
-            //if we have an about actor, first try to send it to the actor itself
-            GameActorProxy* aboutActor = FindGameActorById(message.GetAboutActorId());
-            if (aboutActor != NULL && aboutActor->IsInGM())
-            {
-               InvokeForActorInvokables(message, *aboutActor);
-            }
-            
-            InvokeOtherActorInvokables(message);
-         }
+         DoSendMessage(message);
       }
    }
 
@@ -895,12 +906,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(dtDAL::ActorProxy& actorProxy)
    {
-      if(mEnvironment != NULL)
+      if (mEnvironment != NULL)
       {
-         if(mEnvironment.get() != &actorProxy)
+         if (mEnvironment.get() != &actorProxy)
          {
             IEnvGameActor *ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
-            if(ea == NULL)
+            if (ea == NULL)
             {
                LOG_ERROR("An environment actor proxy has an invalid actor");
                return;
@@ -963,7 +974,7 @@ namespace dtGame
       }
 
       gameActorProxy.SetIsInGM(true);
-      
+
       try
       {
          //If publishing fails. we need to delete the actor as well.
@@ -1643,9 +1654,25 @@ namespace dtGame
    }
    
    ///////////////////////////////////////////////////////////////////////////////
+   static void ValidateMessageType(const MessageType& type, GameActorProxy& proxy, 
+            const std::string& invokableName)
+   {
+      if (type == MessageType::TICK_END_OF_FRAME)
+      {
+         std::ostringstream ss;
+         ss << "Unable to register globally for MessageType \"" << MessageType::TICK_END_OF_FRAME.GetName() << " for Actor \"" 
+            << proxy.GetActorType() << "\" "
+            << " using invokable named \"" << invokableName << "\".  Only components may register for that message type.";
+
+         throw dtUtil::Exception(ss.str(), __FILE__, __LINE__);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, 
          const std::string& invokableName)
    {
+      ValidateMessageType(type, proxy, invokableName);
       CheckForDuplicateRegistration(&type, type.GetName(), proxy, invokableName, mGlobalMessageListeners);
 
       mGlobalMessageListeners.insert(
@@ -1680,6 +1707,8 @@ namespace dtGame
          const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
          const std::string& invokableName)
    {
+      ValidateMessageType(type, proxy, invokableName);
+
       ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
       
       ProxyInvokableMap* mapForType = NULL;

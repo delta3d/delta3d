@@ -44,6 +44,7 @@ namespace dtGame
       //base messages
       RegisterMessageType<TickMessage>(MessageType::TICK_LOCAL);
       RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
+      RegisterMessageType<TickMessage>(MessageType::TICK_END_OF_FRAME);
       RegisterMessageType<TimerElapsedMessage>(MessageType::INFO_TIMER_ELAPSED);
 
       RegisterMessageType<MapMessage>(MessageType::INFO_MAP_LOADED);

@@ -78,6 +78,7 @@ class GameActorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestInvokables);
       CPPUNIT_TEST(TestInvokableMessageRegistration);
       CPPUNIT_TEST(TestGlobalInvokableMessageRegistration);
+      CPPUNIT_TEST(TestGlobalInvokableMessageRegistrationEndOfFrame);
       CPPUNIT_TEST(TestGlobalInvokableMessageRegistrationDuplicates);
       CPPUNIT_TEST(TestOtherActorInvokableMessageRegistrationDuplicates);
       CPPUNIT_TEST(TestStaticGameActorTypes);
@@ -101,6 +102,7 @@ public:
    void TestInvokableMessageRegistration();
    void TestDefaultProcessMessageRegistration();
    void TestGlobalInvokableMessageRegistration();
+   void TestGlobalInvokableMessageRegistrationEndOfFrame();
    void TestGlobalInvokableMessageRegistrationDuplicates();
    void TestOtherActorInvokableMessageRegistrationDuplicates();
    void TestStaticGameActorTypes();
@@ -434,6 +436,30 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
    }
 }
 
+void GameActorTests::TestGlobalInvokableMessageRegistrationEndOfFrame()
+{
+   try
+   {
+      dtCore::RefPtr<const dtDAL::ActorType> actor1Type = mManager->FindActorType("ExampleActors", "Test2Actor");
+
+      dtCore::RefPtr<dtGame::GameActorProxy> gap1;
+      mManager->CreateActor(*actor1Type, gap1);
+
+      mManager->AddActor(*gap1, false, false);
+
+      dtGame::Invokable* iTestListener = gap1->GetInvokable("Test Message Listener");
+      
+      CPPUNIT_ASSERT_THROW(
+               mManager->RegisterForMessages(dtGame::MessageType::TICK_END_OF_FRAME, *gap1, iTestListener->GetName()), 
+               dtUtil::Exception);
+
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
+
 void GameActorTests::TestGlobalInvokableMessageRegistrationDuplicates()
 {
    try
@@ -449,7 +475,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistrationDuplicates()
 
       CPPUNIT_ASSERT_NO_THROW(
                mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()));
-      
+
       CPPUNIT_ASSERT_THROW(
                mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()), 
                dtUtil::Exception);
@@ -485,7 +511,7 @@ void GameActorTests::TestOtherActorInvokableMessageRegistrationDuplicates()
 
       CPPUNIT_ASSERT_NO_THROW(
                mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()));
-      
+
       CPPUNIT_ASSERT_THROW(
                mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()), 
                dtUtil::Exception);

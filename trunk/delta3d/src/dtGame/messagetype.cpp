@@ -28,6 +28,7 @@ namespace dtGame
    const MessageType MessageType::UNKNOWN("Unknown", "Unknown", "This is the default when creating a message with the empty constuctor", 0);
    const MessageType MessageType::TICK_LOCAL("Tick Local", "Tick", "Signals a frame event. Actors are local and should run the next frame of simulation code", 1);
    const MessageType MessageType::TICK_REMOTE("Tick Remote", "Tick", "Signals a frame event. Actors are remote and should run the next frame of simulation code", 2);
+   const MessageType MessageType::TICK_END_OF_FRAME("Tick End of Preframe", "Tick", "Signals the end of simulation step.  It is only sent to components.", 3);
 
    const MessageType MessageType::INFO_TIMER_ELAPSED("Timer Elapsed", "Info", "Sent when a timer associated with the Game Manager has fired", 10);
    const MessageType MessageType::INFO_ACTOR_CREATED("Actor Create", "Info", "Sent when a new actor has been created and published", 11);
@@ -139,5 +140,16 @@ namespace dtGame
    const MessageType MessageType::LOG_REQ_CLEAR_IGNORE_LIST("Logger - Clear Ignore List", 
       "Request", "Sent by the logger controller component (often a client) to request the logger server "
       " component to remove all actors from the recording ignore list", 221);
+
+   //////////////////////////////////////////////////////////////////////////////////////
+   MessageType::MessageType(const std::string& name, const std::string& category,
+               const std::string& description, const unsigned short id) :
+               dtUtil::Enumeration(name), mCategory(category), mDescription(description), mId(id)
+   {
+      AddInstance(this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////////////
+   MessageType::~MessageType() { }
 
 }

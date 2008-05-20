@@ -956,8 +956,14 @@ namespace dtGame
 
          void PopulateTickMessage(TickMessage& tickMessage,
                double deltaSimTime, double deltaRealTime, double simulationTime);
+
+         /// Sends network messages to components until the queue is empty.
          void DoSendNetworkMessages();
+         /// Sends messages until the queue is empty.
          void DoSendMessages();
+         /// Sends a single message to components and actors.
+         void DoSendMessage(const Message& message);
+         /// Sends a single message just to components.
          void DoSendMessageToComponents(const Message& message);
          void InvokeGlobalInvokables(const Message& message);
          void InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor);
@@ -1025,7 +1031,7 @@ namespace dtGame
          dtCore::RefPtr<dtCore::Scene> mScene;
          dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
          MessageFactory mFactory;
-         
+
          bool mPaused;
          NameVector mLoadedMaps;
          dtCore::RefPtr<MapChangeStateData> mMapChangeStateData;
@@ -1035,7 +1041,7 @@ namespace dtGame
 
          /// application the gm has. the one and only.
          dtABC::Application* mApplication;
-         
+
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
