@@ -114,7 +114,7 @@ namespace dtCore
          /**
           * Override to receive messages
           */
-         virtual void OnMessage(MessageData *data) {}
+         virtual void OnMessage(MessageData *) {}
 
          /**
           * Receive all messages from the supplied sender instance

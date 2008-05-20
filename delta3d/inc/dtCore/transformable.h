@@ -339,7 +339,7 @@ namespace dtCore
        * @return true to keep the contact joint as modified,
        * false to cancel it
        */
-      virtual bool FilterContact(dContact* contact, Transformable* collider) { return false; }
+      virtual bool FilterContact(dContact* /*contact*/, Transformable* /*collider*/) { return false; }
 
       /**
        * Updates the state of this object just after a physical

@@ -21,6 +21,40 @@
 
 using namespace dtAnim;
 
+#include <osg/LineWidth>
+#include <osg/Geode>
+
+osg::Geometry* CreateDebugLine(const osg::Vec3& beginsegment,
+                               const osg::Vec3& endsegment,
+                               const osg::Vec4& color,
+                               const float size)
+{
+   osg::Vec3Array *vArray = new osg::Vec3Array(2);
+   (*vArray)[0] = beginsegment;
+   (*vArray)[1] = endsegment;
+
+   osg::Vec4Array *colors = new osg::Vec4Array(1);
+   (*colors)[0] = color;
+
+   osg::Geometry* geometry = new osg::Geometry();
+   geometry->setVertexArray(vArray);
+   geometry->setColorArray(colors);
+   geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+   geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2));
+
+   osg::StateSet *dstate = new osg::StateSet();
+   dstate->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+   dstate->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+
+   osg::LineWidth *lineWidth = new osg::LineWidth(size);
+   dstate->setAttribute(lineWidth);
+
+   geometry->setStateSet(dstate);
+   return geometry;
+}
+
+
+
 CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
    : dtCore::Transformable()
    , mNode(new osg::Node())
@@ -30,6 +64,11 @@ CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
    AddSender(&dtCore::System::GetInstance());
 
    GetMatrixNode()->addChild(mNode.get());
+
+   osg::Geode *test = new osg::Geode;
+   test->addDrawable(CreateDebugLine(osg::Vec3(), osg::Z_AXIS * 100.0f, osg::Vec4(1.0, 0, 0, 1), 10.0f));
+
+   GetMatrixNode()->addChild(test);
 
    SetCal3DWrapper( wrapper );
 }
