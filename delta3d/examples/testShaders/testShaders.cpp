@@ -80,7 +80,7 @@ public:
       }
       else if(key == osgGA::GUIEventAdapter::KEY_Space)
       {
-         osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet(); 
+         //osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet(); 
 
          if(mEnabled)
          {
