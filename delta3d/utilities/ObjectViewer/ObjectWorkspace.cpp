@@ -27,6 +27,7 @@
 #include <QtGui/QDoubleSpinBox>
 #include <QtGui/QTabWidget>
 #include <QtGui/QListWidget>
+#include <QtGui/QTreeWidget>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
@@ -39,11 +40,11 @@
 #include <cassert>
 
 /////////////////////////////////////////////////////////////////////////////////////////
-ShaderWorkspace::ShaderWorkspace()
+ObjectWorkspace::ObjectWorkspace()
   : mExitAct(NULL)
   , mLoadShaderDefAction(NULL)
   , mLoadGeometryAction(NULL)
-  , mShaderListWidget(NULL)
+  , mShaderTreeWidget(NULL)
   , mGLWidget(NULL)
   , mPoseDock(NULL)
   , mPoseMeshScene(NULL)
@@ -55,7 +56,8 @@ ShaderWorkspace::ShaderWorkspace()
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
    nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
 
-   mShaderListWidget = new QListWidget(this);
+   mShaderTreeWidget = new QTreeWidget(this);
+   connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(OnSelectShaderItem()));
    //connect(mShaderListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
 
    CreateActions();
@@ -64,7 +66,7 @@ ShaderWorkspace::ShaderWorkspace()
    CreateToolbars();  
 
    mTabs = new QTabWidget(this);
-   mTabs->addTab(mShaderListWidget, tr("Shaders"));   
+   mTabs->addTab(mShaderTreeWidget, tr("Shaders"));   
 
    QWidget* glParent = new QWidget(this);
 
@@ -83,12 +85,12 @@ ShaderWorkspace::ShaderWorkspace()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-ShaderWorkspace::~ShaderWorkspace()
+ObjectWorkspace::~ObjectWorkspace()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::CreateMenus()
+void ObjectWorkspace::CreateMenus()
 {
    QMenu *windowMenu = menuBar()->addMenu("&File");
    QMenu *viewMenu   = menuBar()->addMenu("&View");
@@ -116,7 +118,7 @@ void ShaderWorkspace::CreateMenus()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::CreateActions()
+void ObjectWorkspace::CreateActions()
 {
    mExitAct = new QAction(tr("E&xit"), this);
    mExitAct->setShortcut(tr("Ctrl+Q"));
@@ -160,7 +162,7 @@ void ShaderWorkspace::CreateActions()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::CreateToolbars()
+void ObjectWorkspace::CreateToolbars()
 {
    mShadingToolbar = addToolBar("Shading toolbar"); 
    mShadingToolbar->addAction(mWireframeAction);
@@ -170,7 +172,7 @@ void ShaderWorkspace::CreateToolbars()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::DestroyPoseResources()
+void ObjectWorkspace::DestroyPoseResources()
 {
    if (mPoseMeshViewer)     { delete mPoseMeshViewer;     mPoseMeshViewer = NULL;     }
    if (mPoseMeshScene)      { delete mPoseMeshScene;      mPoseMeshScene = NULL;      }
@@ -179,7 +181,7 @@ void ShaderWorkspace::DestroyPoseResources()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnOpenCharFile()
+void ObjectWorkspace::OnOpenCharFile()
 {
    QString filename = QFileDialog::getOpenFileName(this,
       tr("Load Character File"),
@@ -193,12 +195,10 @@ void ShaderWorkspace::OnOpenCharFile()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::LoadCharFile( const QString &filename )
+void ObjectWorkspace::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
-   {      
-      mShaderListWidget->clear();
-      
+   {           
       // Make sure we start fresh
       DestroyPoseResources();
 
@@ -216,7 +216,7 @@ void ShaderWorkspace::LoadCharFile( const QString &filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnInitialization()
+void ObjectWorkspace::OnInitialization()
 {
    QSettings settings("MOVES", "Shader Viewer");
    QStringList files = settings.value("projectContextPath").toStringList();
@@ -254,23 +254,28 @@ void ShaderWorkspace::OnInitialization()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnNewShader(const QString &meshName)
+void ObjectWorkspace::OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram)
 {
-   QListWidgetItem *shaderItem = new QListWidgetItem();
-   shaderItem->setText(meshName);
+   QTreeWidgetItem *shaderItem = new QTreeWidgetItem();
+   QTreeWidgetItem *programItem = new QTreeWidgetItem();
+
+   shaderItem->setText(0, shaderGroup.c_str());
+   programItem->setText(0, shaderProgram.c_str());
+ 
    //meshItem->setData( Qt::UserRole, meshID );
 
    shaderItem->setFlags(Qt::ItemIsSelectable |
-                      Qt::ItemIsUserCheckable |
-                      Qt::ItemIsEnabled);
+                        Qt::ItemIsUserCheckable |
+                        Qt::ItemIsEnabled);
 
-   shaderItem->setCheckState(Qt::Checked);
+   shaderItem->setCheckState(0, Qt::Unchecked);
 
-   mShaderListWidget->addItem(shaderItem); 
+   mShaderTreeWidget->addTopLevelItem(shaderItem); 
+   shaderItem->addChild(programItem);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
+void ObjectWorkspace::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
                                     dtAnim::CharDrawable *model)
 {
    assert(!mPoseMeshScene);
@@ -367,7 +372,7 @@ void ShaderWorkspace::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &p
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnToggleShadingToolbar()
+void ObjectWorkspace::OnToggleShadingToolbar()
 {
    if (mShadingToolbar->isHidden())
    {
@@ -380,63 +385,62 @@ void ShaderWorkspace::OnToggleShadingToolbar()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::UpdateRecentFileActions()
+void ObjectWorkspace::UpdateRecentFileActions()
 {
-   QSettings settings("MOVES", "Shader Viewer");
-   QStringList files = settings.value("recentFileList").toStringList();
+   //QSettings settings("MOVES", "Shader Viewer");
+   //QStringList files = settings.value("recentFileList").toStringList();
 
-   int numRecentFiles = qMin(files.size(), 5);
+   //int numRecentFiles = qMin(files.size(), 5);
 
-   for (int i = 0; i < numRecentFiles; ++i) {
-      QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName() );
-      mRecentFilesAct[i]->setText(text);
-      mRecentFilesAct[i]->setData(files[i]);
-      mRecentFilesAct[i]->setVisible(true);
-   }
-   for (int j = numRecentFiles; j < 5; ++j)
-      mRecentFilesAct[j]->setVisible(false);
-
+   //for (int i = 0; i < numRecentFiles; ++i) {
+   //   QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName() );
+   //   mRecentFilesAct[i]->setText(text);
+   //   mRecentFilesAct[i]->setData(files[i]);
+   //   mRecentFilesAct[i]->setVisible(true);
+   //}
+   //for (int j = numRecentFiles; j < 5; ++j)
+   //   mRecentFilesAct[j]->setVisible(false);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::SetCurrentFile( const QString &filename )
+void ObjectWorkspace::SetCurrentFile( const QString &filename )
 {
-   if (filename.isEmpty())
-   {
-      setWindowTitle(tr("Shader Viewer"));
-   }
-   else
-   {
-      setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
-   }
+   //if (filename.isEmpty())
+   //{
+   //   setWindowTitle(tr("Shader Viewer"));
+   //}
+   //else
+   //{
+   //   setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
+   //}
 
-   QSettings settings("MOVES", "Shader Viewer");
-   QStringList files = settings.value("recentFileList").toStringList();
-   files.removeAll(filename);
-   files.prepend(filename);
+   //QSettings settings("MOVES", "Shader Viewer");
+   //QStringList files = settings.value("recentFileList").toStringList();
+   //files.removeAll(filename);
+   //files.prepend(filename);
 
-   while (files.size() > 5)
-   {
-      files.removeLast();
-   }
+   //while (files.size() > 5)
+   //{
+   //   files.removeLast();
+   //}
 
-   settings.setValue("recentFileList", files);
-   UpdateRecentFileActions();
+   //settings.setValue("recentFileList", files);
+   //UpdateRecentFileActions();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OpenRecentFile()
+void ObjectWorkspace::OpenRecentFile()
 {
-   QAction *action = qobject_cast<QAction*>(sender());
+   //QAction *action = qobject_cast<QAction*>(sender());
 
-   if (action)
-   {
-      LoadCharFile( action->data().toString() );
-   }
+   //if (action)
+   //{
+   //   LoadCharFile( action->data().toString() );
+   //}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnLoadShaderDefinition()
+void ObjectWorkspace::OnLoadShaderDefinition()
 {
    QString filename = QFileDialog::getOpenFileName(this,
                                                    tr("Load Shader Definition File"),
@@ -463,7 +467,7 @@ void ShaderWorkspace::OnLoadShaderDefinition()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnLoadGeometry()
+void ObjectWorkspace::OnLoadGeometry()
 {   
    QString filename = QFileDialog::getOpenFileName(this,
                                                    tr("Load Geometry File"),
@@ -490,37 +494,49 @@ void ShaderWorkspace::OnLoadGeometry()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnSelectModeGrab()
+void ObjectWorkspace::OnSelectModeGrab()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_GRAB);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnSelectModeBlendPick()
+void ObjectWorkspace::OnSelectModeBlendPick()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnSelectModeErrorPick()
+void ObjectWorkspace::OnSelectModeErrorPick()
 {
    mPoseMeshViewer->SetMode(PoseMeshView::MODE_ERROR_PICK);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnToggleDisplayEdges(bool shouldDisplay)
+void ObjectWorkspace::OnSelectShaderItem()
+{
+  
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnDoubleclickShaderItem(QTreeWidgetItem *item, int column)
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleDisplayEdges(bool shouldDisplay)
 {
    mPoseMeshViewer->SetDisplayEdges(shouldDisplay);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnToggleDisplayError(bool shouldDisplay)
+void ObjectWorkspace::OnToggleDisplayError(bool shouldDisplay)
 {
    mPoseMeshViewer->SetDisplayError(shouldDisplay);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderWorkspace::OnToggleBoneBasisDisplay(bool)
+void ObjectWorkspace::OnToggleBoneBasisDisplay(bool)
 {
    
 }

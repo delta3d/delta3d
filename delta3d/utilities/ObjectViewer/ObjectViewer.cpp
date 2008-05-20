@@ -1,4 +1,4 @@
-/// Included above ShaderViewer.h to avoid a compile error in linux
+/// Included above ObjectViewer.h to avoid a compile error in linux
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QString>
@@ -6,6 +6,7 @@
 #include <QtGui/QMessageBox>
 
 #include "ObjectViewer.h"
+#include "ObjectWorkspace.h"
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
@@ -67,7 +68,7 @@ using namespace dtCore;
 using namespace dtAnim;
 
 /////////////////////////////////////////////////////////////////////////////////////////
-ShaderViewer::ShaderViewer()
+ObjectViewer::ObjectViewer()
 : mCalDatabase(&Cal3DDatabase::GetInstance())
 , mPoseMeshes(NULL)
 {
@@ -75,19 +76,15 @@ ShaderViewer::ShaderViewer()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-ShaderViewer::~ShaderViewer()
+ObjectViewer::~ObjectViewer()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::Config()
+void ObjectViewer::Config()
 {
    dtABC::Application::Config();
    GetCompositeViewer()->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
-   //osg::Camera* camera = GetCamera()->GetOSGCamera();
-   //camera->setViewport(new osg::Viewport(0,0,mGLWidget->width(),mGLWidget->height()));
-   //camera->setProjectionMatrixAsPerspective(30.0f, 
-   //         static_cast<double>(mGLWidget->width())/static_cast<double>(mGLWidget->height()), 1.0f, 10000.0f);
 
    std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
    std::string rootDataPath    = dtCore::GetEnvironment("DELTA_DATA");
@@ -127,7 +124,7 @@ void ShaderViewer::Config()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnLoadCharFile( const QString &filename )
+void ObjectViewer::OnLoadCharFile( const QString &filename )
 {
    assert(0);
    return;
@@ -183,7 +180,7 @@ void ShaderViewer::OnLoadCharFile( const QString &filename )
       return;
    }
 
-   // set up the ShaderViewer's scene graph
+   // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mCharacter->GetNode());
    mWireDecorator->addChild(mCharacter->GetNode());
 
@@ -231,7 +228,7 @@ void ShaderViewer::OnLoadCharFile( const QString &filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::CreateBoneBasisDisplay()
+void ObjectViewer::CreateBoneBasisDisplay()
 {
    // Destroy any previous held point axes and start fresh  
    mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
@@ -270,7 +267,7 @@ void ShaderViewer::CreateBoneBasisDisplay()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnLoadPoseMeshFile( const std::string &filename )
+void ObjectViewer::OnLoadPoseMeshFile( const std::string &filename )
 { 
    assert(0);
    return;
@@ -302,26 +299,42 @@ void ShaderViewer::OnLoadPoseMeshFile( const std::string &filename )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnLoadShaderFile(const QString &filename)
+void ObjectViewer::OnLoadShaderFile(const QString &filename)
 {
-
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
    shaderManager.LoadShaderDefinitions(filename.toStdString());
+
+   std::vector<dtCore::RefPtr<ShaderGroup> > shaderGroupList;
+   shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
+
+   // Emit all shader groups and their individual shaders
+   for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
+   {
+      std::vector<dtCore::RefPtr<ShaderProgram> > programList;
+      shaderGroupList[groupIndex]->GetAllShaders(programList);
+
+      const std::string &groupName = shaderGroupList[groupIndex]->GetName();
+
+      for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+      {
+         emit ShaderLoaded(groupName, programList[programIndex]->GetName());
+      }
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnLoadGeometryFile(const QString &filename)
+void ObjectViewer::OnLoadGeometryFile(const QString &filename)
 {
    mObject = new dtCore::Object; 
    mObject->LoadFile(filename.toStdString());
 
-   // set up the ShaderViewer's scene graph
+   // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mObject->GetOSGNode());
    mWireDecorator->addChild(mObject->GetOSGNode());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
+void ObjectViewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
    if( mCharacter.valid() )
    {
@@ -331,7 +344,7 @@ void ShaderViewer::OnStartAction( unsigned int id, float delayIn, float delayOut
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnSetShaded()
+void ObjectViewer::OnSetShaded()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
    GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
@@ -340,7 +353,7 @@ void ShaderViewer::OnSetShaded()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnSetWireframe()
+void ObjectViewer::OnSetWireframe()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
    GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
@@ -349,7 +362,7 @@ void ShaderViewer::OnSetWireframe()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnSetShadedWireframe()
+void ObjectViewer::OnSetShadedWireframe()
 {
    GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
    GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
@@ -359,7 +372,7 @@ void ShaderViewer::OnSetShadedWireframe()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnSetBoneBasisDisplay(bool shouldDisplay)
+void ObjectViewer::OnSetBoneBasisDisplay(bool shouldDisplay)
 {
    if (shouldDisplay)
    {
@@ -372,7 +385,7 @@ void ShaderViewer::OnSetBoneBasisDisplay(bool shouldDisplay)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnTimeout()
+void ObjectViewer::OnTimeout()
 {
    if (mCharacter.valid())
    {   
@@ -407,7 +420,7 @@ void ShaderViewer::OnTimeout()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::InitShadeDecorator()
+void ObjectViewer::InitShadeDecorator()
 {
    //osg::StateSet *stateset = new osg::StateSet;  
    //osg::PolygonMode *polyMode = new osg::PolygonMode;
@@ -421,7 +434,7 @@ void ShaderViewer::InitShadeDecorator()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::InitWireDecorator()
+void ObjectViewer::InitWireDecorator()
 {
    osg::StateSet *stateset = new osg::StateSet;
    osg::PolygonOffset *polyOffset = new osg::PolygonOffset;
@@ -442,7 +455,7 @@ void ShaderViewer::InitWireDecorator()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::InitGridPlanes()
+void ObjectViewer::InitGridPlanes()
 {
    const int GRID_LINE_COUNT = 49;
    const float GRID_LINE_SPACING = 2.0f;
@@ -481,19 +494,19 @@ void ShaderViewer::InitGridPlanes()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnShowMesh( int meshID )
+void ObjectViewer::OnShowMesh( int meshID )
 {
    mMeshesToShow.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::OnHideMesh( int meshID )
+void ObjectViewer::OnHideMesh( int meshID )
 {
    mMeshesToHide.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ShaderViewer::PostFrame( const double deltaFrameTime )
+void ObjectViewer::PostFrame( const double deltaFrameTime )
 {
    {
       std::vector<int>::iterator showItr = mMeshesToShow.begin();

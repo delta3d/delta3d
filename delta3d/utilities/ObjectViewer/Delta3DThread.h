@@ -5,8 +5,8 @@
 #include <QtCore/QTimer>
 #include <dtCore/refptr.h>
 
-class ShaderWorkspace;
-class ShaderViewer;
+class ObjectWorkspace;
+class ObjectViewer;
 
 class Delta3DThread : public QThread
 {
@@ -14,15 +14,15 @@ class Delta3DThread : public QThread
 public:
 	Delta3DThread(QObject *parent=0);
 	~Delta3DThread();
-   void SetShaderWorkspace(ShaderWorkspace *win) { mWin = win;}
+   void SetObjectWorkspace(ObjectWorkspace *win) { mWin = win;}
    virtual void run();
 	
-   dtCore::RefPtr<ShaderViewer> mViewer;
+   dtCore::RefPtr<ObjectViewer> mViewer;
    
 protected:
 
 private:
    QTimer mTimer;
-   ShaderWorkspace *mWin;
+   ObjectWorkspace *mWin;
 };
 #endif // Delta3DThread_h__

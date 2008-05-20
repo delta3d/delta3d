@@ -17,14 +17,14 @@ int main(int argc, char *argv[])
 {
    QApplication qapp(argc, argv);
 
-   ShaderWorkspace win;
+   ObjectWorkspace win;
    win.show();
 
    Delta3DThread *thread = new Delta3DThread(&qapp);
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
 
-   thread->SetShaderWorkspace(&win);
+   thread->SetObjectWorkspace(&win);
    //thread->start();
    thread->run();
 

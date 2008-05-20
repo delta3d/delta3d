@@ -47,13 +47,13 @@ namespace CEGUI
 }
 
 
-class ShaderViewer: public QObject, public dtABC::Application
+class ObjectViewer: public QObject, public dtABC::Application
 {
    Q_OBJECT
 
 public:
-	ShaderViewer();
-	~ShaderViewer();
+	ObjectViewer();
+	~ObjectViewer();
 
    virtual void Config();
 
@@ -81,7 +81,7 @@ signals:
    void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
                            unsigned int keyframes, float duration);
 
-   void ShaderLoaded(const QString &meshName);
+   void ShaderLoaded(const std::string &shaderGroup, const std::string &shaderName);
 
    void PoseMeshLoaded(const dtAnim::PoseMesh &poseMesh);
 
