@@ -1,5 +1,5 @@
-#ifndef DELTA_ShaderWorkspace
-#define DELTA_ShaderWorkspace
+#ifndef DELTA_ObjectWorkspace
+#define DELTA_ObjectWorkspace
 
 #include <QtGui/QMainWindow>
 
@@ -9,8 +9,8 @@ class QAction;
 class QTableWidgetItem;
 class QToolBar;
 class AnimationTableWidget;
-class QListWidget;
-class QListWidgetItem;
+class QTreeWidget;
+class QTreeWidgetItem;
 class QGraphicsView;
 class QGraphicsScene;
 class QTabWidget;
@@ -34,13 +34,13 @@ namespace dtAnim
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class ShaderWorkspace : public QMainWindow
+class ObjectWorkspace : public QMainWindow
 {
    friend class Delta3DThread;
    Q_OBJECT
 public:
-   ShaderWorkspace();
-   ~ShaderWorkspace();
+   ObjectWorkspace();
+   ~ObjectWorkspace();
 
    dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
    
@@ -49,11 +49,12 @@ signals:
    void LoadShaderDefinition(const QString &);
    void LoadGeometry(const QString &);
    void StartAction(unsigned int, float, float);
+   void ApplyShader(const std::string &group, const std::string &name);
 
 public slots:
    
    void OnInitialization();
-   void OnNewShader(const QString &shaderName);
+   void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);
 
    void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
                            dtAnim::CharDrawable *model);  
@@ -83,7 +84,7 @@ private:
    QToolBar *mShadingToolbar; 
    QTabWidget *mTabs;
   
-   QListWidget          *mShaderListWidget;  
+   QTreeWidget          *mShaderTreeWidget;  
 
    QDockWidget          *mPoseDock;
    PoseMeshView         *mPoseMeshViewer;
@@ -105,8 +106,11 @@ private slots:
    void OnSelectModeBlendPick();
    void OnSelectModeErrorPick();
 
+   void OnSelectShaderItem();
+   void OnDoubleclickShaderItem(QTreeWidgetItem *item, int column);
+
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);
    void OnToggleBoneBasisDisplay(bool shouldDisplay);
 };
-#endif // DELTA_ShaderWorkspace
+#endif // DELTA_ObjectWorkspace

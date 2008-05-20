@@ -1,8 +1,8 @@
 #include <QtOpenGL/QGLContext>
 
 #include "Delta3DThread.h"
-#include "ObjectWorkspace.h"
 #include "ObjectViewer.h"
+#include "ObjectWorkspace.h"
 #include <dtCore/system.h>
 #include <dtCore/deltawin.h>
 
@@ -82,7 +82,7 @@ void Delta3DThread::run()
    //need to set the current context so that all the open gl stuff in osg can initialize.
    dtQt::OSGAdapterWidget& glWidget = *mWin->GetGLWidget();
    
-   mViewer = new ShaderViewer();
+   mViewer = new ObjectViewer();
 
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
    
@@ -92,7 +92,8 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(LoadShaderDefinition(const QString &)), mViewer.get(), SLOT(OnLoadShaderFile(const QString &)));
    connect(mWin, SIGNAL(LoadGeometry(const QString &)), mViewer.get(), SLOT(OnLoadGeometryFile(const QString &)));
 
-   connect(mViewer.get(), SIGNAL(ShaderLoaded(const QString&)), mWin, SLOT(OnNewShader(int,const QString&)));
+   connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string &, const std::string &)), 
+           mWin, SLOT(OnNewShader(const std::string &, const std::string &)));
 
    connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)), 
            mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*))); 
