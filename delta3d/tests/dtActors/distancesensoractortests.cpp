@@ -74,9 +74,6 @@ namespace dtActors
                mGameManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, mParentProxy);
                mGameManager->CreateActor(*dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE, mDSProxy1);
 
-               mGameManager->AddActor(*mParentProxy, false, false);
-               mGameManager->AddActor(*mDSProxy1, false, false);
-
                CPPUNIT_ASSERT(mParentProxy.valid());
                CPPUNIT_ASSERT(mDSProxy1.valid());
             }
@@ -91,6 +88,8 @@ namespace dtActors
          {
             dtCore::System::GetInstance().SetPause(false);
             dtCore::System::GetInstance().Stop();
+            mParentProxy = NULL;
+            mDSProxy1 = NULL;
             if(mGameManager.valid())
             {
                mGameManager->DeleteAllActors();
@@ -101,6 +100,9 @@ namespace dtActors
          ///////////////////////////////////////////////////////////////////////////////
          void TestAttachToProperty()
          {
+            mGameManager->AddActor(*mParentProxy, false, false);
+            mGameManager->AddActor(*mDSProxy1, false, false);
+
             dtDAL::ActorActorProperty* aap;
             mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
             CPPUNIT_ASSERT(aap != NULL);
@@ -117,6 +119,9 @@ namespace dtActors
          ///////////////////////////////////////////////////////////////////////////////
          void TestTriggerDistanceProperty()
          {
+            mGameManager->AddActor(*mParentProxy, false, false);
+            mGameManager->AddActor(*mDSProxy1, false, false);
+
             dtDAL::FloatActorProperty* fap;
             mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE, fap);
             CPPUNIT_ASSERT(fap != NULL);
@@ -131,15 +136,22 @@ namespace dtActors
          ///////////////////////////////////////////////////////////////////////////////
          void TestAttachTo()
          {
-            dtDAL::ActorActorProperty* aap;
-            mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
-            CPPUNIT_ASSERT(aap != NULL);
-            aap->SetValue(mParentProxy.get());
-            //add the parent second
-            mGameManager->AddActor(*mParentProxy, false, false);
-            mGameManager->AddActor(*mDSProxy1, false, false);
+            try
+            {
+               dtDAL::ActorActorProperty* aap;
+               mDSProxy1->GetProperty(DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, aap);
+               CPPUNIT_ASSERT(aap != NULL);
+               aap->SetValue(mParentProxy.get());
 
-            CPPUNIT_ASSERT(mDSProxy1->GetActor()->GetParent() == mParentProxy->GetActor());
+               mGameManager->AddActor(*mParentProxy, false, false);
+               mGameManager->AddActor(*mDSProxy1, false, false);
+
+               CPPUNIT_ASSERT(mDSProxy1->GetActor()->GetParent() == mParentProxy->GetActor());
+            }
+            catch (const dtUtil::Exception& ex)
+            {
+               CPPUNIT_FAIL(ex.ToString());
+            }
          }
 
          struct TestCallbackFunction
@@ -154,6 +166,9 @@ namespace dtActors
 
          void TestRegistration()
          {
+            mGameManager->AddActor(*mParentProxy, false, false);
+            mGameManager->AddActor(*mDSProxy1, false, false);
+
             DistanceSensorActor* dsActor;
             mDSProxy1->GetActor(dsActor);
             const std::string TEST_NAME("jojo");
