@@ -39,7 +39,7 @@ namespace dtGame
          static const MessageType UNKNOWN;
          static const MessageType TICK_LOCAL;
          static const MessageType TICK_REMOTE;
-
+         static const MessageType TICK_END_OF_FRAME;
          ///Sent when a timer time
          static const MessageType INFO_TIMER_ELAPSED;
          static const MessageType INFO_ACTOR_CREATED;
@@ -141,20 +141,16 @@ namespace dtGame
       protected:
 
          /// Constructor
-         MessageType(const std::string &name, const std::string &category = "",
-                     const std::string description = "", const unsigned short id = 0) :
-                     dtUtil::Enumeration(name), mCategory(category), mDescription(description), mId(id)
-         {
-            AddInstance(this);
-         }
+         MessageType(const std::string& name, const std::string& category,
+                     const std::string& description, const unsigned short id);
 
          /// Destructor
-         virtual ~MessageType() { }
+         virtual ~MessageType();
 
          static const unsigned short USER_DEFINED_MESSAGE_TYPE = 1024;
-         
+
       private:
-         
+
          std::string mCategory, mDescription;
          const unsigned short mId;
    };
