@@ -137,12 +137,12 @@ namespace dtUtil
 
    private:
       ///Private assignment operator to enforce enumeration storage by reference.
-      Enumeration &operator=(const Enumeration &rhs) { return *this; }
+      Enumeration &operator=(const Enumeration &) { return *this; }
 
       ///String representation of the enumeration.
       std::string mName;
       ///Private copy constructor to enforce enumeration storage by reference.
-      Enumeration(const Enumeration &rhs) { }
+      Enumeration(const Enumeration &) { }
 
       ///Helper method to print enumerations to an output stream.
       friend std::ostream &operator<<(std::ostream &os,
