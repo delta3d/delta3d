@@ -247,7 +247,7 @@ namespace dtAnim
          bool ClearCycle(int id, float delay);
 
          /// Remove all existing animations from the mixer
-         void ClearAll();
+         void ClearAll(float delay);
 
          /** 
           * Peform a one time animation.
