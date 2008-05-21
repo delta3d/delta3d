@@ -31,7 +31,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    //mNativeForward = model->GetBoneAbsoluteRotation(mBoneID).inverse() * -osg::Y_AXIS;
    //ExtractNativeForward(model, mNativeForward);
 
-   model->ClearAll();
+   model->ClearAll(0.0f);
    model->Update(0.0f);
 
    // Allocate space for osg to triangulate our verts
@@ -306,7 +306,7 @@ void PoseMesh::ExtractNativeForward(dtAnim::Cal3DModelWrapper *model,
                                     osg::Vec3 &outNativeForward)
 {
    // Clear all animations from the skeleton
-   model->ClearAll();
+   model->ClearAll(0.0f);
    model->Update(0.0f);
 
    //// Get the bone's rotation without this pose mesh's animations applied

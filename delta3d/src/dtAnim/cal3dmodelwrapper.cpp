@@ -106,7 +106,7 @@ namespace dtAnim
    }
    
    //////////////////////////////////////////////////////////////////
-   void Cal3DModelWrapper::ClearAll()
+   void Cal3DModelWrapper::ClearAll(float delay)
    {
       std::vector<CalAnimation*> &animList = mMixer->getAnimationVector();
       for (size_t animIndex = 0; animIndex < animList.size(); ++animIndex)
@@ -116,7 +116,7 @@ namespace dtAnim
          {
             if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)  
             {
-               ClearCycle(animIndex, 0);
+               ClearCycle(animIndex, delay);
             }
             else if (currentAnim->getType() == CalAnimation::TYPE_ACTION)
             {
@@ -127,14 +127,14 @@ namespace dtAnim
    }
 
    //////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::ExecuteAction( int id, float delayIn, float delayOut, 
-         float weightTgt/*=1.f*/, bool autoLock/*=false*/ )
+   bool Cal3DModelWrapper::ExecuteAction(int id, float delayIn, float delayOut, 
+         float weightTgt/*=1.f*/, bool autoLock/*=false*/)
    {
       return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);
    }
 
    //////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::RemoveAction( int id )
+   bool Cal3DModelWrapper::RemoveAction(int id)
    {
       return mMixer->removeAction(id);
    }
