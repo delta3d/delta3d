@@ -377,18 +377,22 @@ namespace dtTest
       system.SetMaxTimeBetweenDraws(0.003);
 
       osgDB::DatabasePager* pager = app.GetView()->GetOsgViewerView()->getDatabasePager();
-      pager->setTargetFrameRate(100.0);
-      pager->setMaximumNumOfObjectsToCompilePerFrame(2);
-      pager->setMinimumTimeAvailableForGLCompileAndDeletePerFrame(0.001);
-      pager->setDoPreCompile(true);
-      pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
-      pager->setExpiryDelay(10.0);
-      pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
+      if (pager != NULL)
+      {
+         pager->setTargetFrameRate(100.0);
+         pager->setMaximumNumOfObjectsToCompilePerFrame(2);
+         pager->setMinimumTimeAvailableForGLCompileAndDeletePerFrame(0.001);
+         pager->setDoPreCompile(true);
+         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
+         pager->setExpiryDelay(10.0);
+         pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
+      }
    }
    
    void ApplicationTests::TestReadSystemProperties()
    {
       dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
+      app->GetView()->GetScene()->EnablePaging();
       ResetConfigPropertyDefaults(*app);
 
       osgDB::DatabasePager* pager = app->GetView()->GetOsgViewerView()->getDatabasePager();
@@ -396,14 +400,12 @@ namespace dtTest
       bool ignoreThreadPrioritySupport = 
          pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT) == -1;
 
-      app->GetView()->GetScene()->DisablePaging();
-
       app->SetConfigPropertyValue(dtABC::Application::SIM_FRAME_RATE, "32.1");
       app->SetConfigPropertyValue(dtABC::Application::MAX_TIME_BETWEEN_DRAWS, "1.03");
-      app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_PRECOMPILE_OBJECTS, "false");
-      app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME, "700");
-      app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE, "31.0");
-      app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_EXPIRY_DELAY, "6.23");
+      app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_PRECOMPILE_OBJECTS, "false");
+      app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME, "700");
+      app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE, "31.0");
+      app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_EXPIRY_DELAY, "6.23");
 
       app->SetConfigPropertyValue(dtABC::Application::USE_FIXED_TIME_STEP, "false");
 
@@ -431,16 +433,17 @@ namespace dtTest
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtABC::Application::USE_FIXED_TIME_STEP, "true");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_DRAWABLE_POLICY, "DisplayList");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "MAX");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_DRAWABLE_POLICY, "DisplayList");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "MAX");
 
          app->ReadSystemProperties();
 
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_DISPLAY_LISTS);
-         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(
-                  "If the system is set to fixed frame rate, and the pager target framerate is not "
-                  "set, should pickup the one from the system", 
-                  system.GetFrameRate(), pager->getTargetFrameRate(), 0.01);
+         //It no longer does this
+//         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(
+//                  "If the system is set to fixed frame rate, and the pager target framerate is not "
+//                  "set, should pickup the one from the system", 
+//                  system.GetFrameRate(), pager->getTargetFrameRate(), 0.01);
 
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MAX);
@@ -448,12 +451,27 @@ namespace dtTest
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtABC::Application::USE_FIXED_TIME_STEP, "false");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_DRAWABLE_POLICY, "VBO");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "HIGH");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_TARGET_FRAMERATE, "31.6");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_DRAWABLE_POLICY, "VBO");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "HIGH");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_TARGET_FRAMERATE, "31.6");
 
          app->ReadSystemProperties();
 
+         ///Check before deleting the pager.
+         CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+                  pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
+
+         // Destroying and re-creating the pager should not affect the settings because it should re-read them.
+         // so we test that be deleting and recreating the pager after setting and reading the properties.
+         app->GetView()->GetScene()->DisablePaging();
+         CPPUNIT_ASSERT_MESSAGE("The pager should be deleted", app->GetView()->GetOsgViewerView()->getDatabasePager() == NULL);
+         app->GetView()->GetScene()->EnablePaging();
+         pager = app->GetView()->GetOsgViewerView()->getDatabasePager();
+         CPPUNIT_ASSERT_MESSAGE("The pager should now exist again.", pager != NULL);
+
+         ///Check after deleting the pager.
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
@@ -461,8 +479,8 @@ namespace dtTest
 
          //-------------------------------------
 
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_DRAWABLE_POLICY, "VertexArrays");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "NOMINAL");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_DRAWABLE_POLICY, "VertexArrays");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "NOMINAL");
 
          app->ReadSystemProperties();
 
@@ -472,8 +490,8 @@ namespace dtTest
 
          //-------------------------------------
 
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_DRAWABLE_POLICY, "DoNotModify");
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "LOW");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_DRAWABLE_POLICY, "DoNotModify");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "LOW");
 
          app->ReadSystemProperties();
 
@@ -483,7 +501,7 @@ namespace dtTest
 
          //-------------------------------------
 
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "MIN");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "MIN");
 
          app->ReadSystemProperties();
 
@@ -492,7 +510,7 @@ namespace dtTest
 
          //-------------------------------------
 
-         app->SetConfigPropertyValue(dtABC::Application::DATABASE_PAGER_THREAD_PRIORITY, "DEFAULT");
+         app->SetConfigPropertyValue(dtCore::View::DATABASE_PAGER_THREAD_PRIORITY, "DEFAULT");
 
          app->ReadSystemProperties();
 

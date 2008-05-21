@@ -43,14 +43,19 @@
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   class Group;   
+   class Group;
 }
 
 namespace osgParticle
 {
-   class ParticleSystem;   
+   class ParticleSystem;
 }
 /// @endcond
+
+namespace dtUtil
+{
+   class ConfigProperties;
+}
 
 namespace dtCore
 {         
@@ -221,13 +226,13 @@ namespace dtCore
        * node has been added to the scene
        * @note all settings must be made before this call
        */
-      void EnablePaging() { mPagingEnabled = true; UpdateViewSet(); }
+      void EnablePaging();
       
       /**
        *  Disables Paging, after enabled
        *  called on scene cleanup
        */
-      void DisablePaging() { mPagingEnabled = false; UpdateViewSet(); }
+      void DisablePaging();
 
       /// Returns if paging is enabled
       bool IsPagingEnabled() const { return mPagingEnabled; }
@@ -242,15 +247,27 @@ namespace dtCore
       /// Get the cleanup time for paging
       double GetPagingCleanup() { return mCleanupTime; }
       
+      /**
+       * Set the configuration property set.  This is only stored as a pointer, so you can't
+       * delete the one that is assigned here after it's assigned unless you enjoy crashing.
+       */
+      void SetConfiguration(dtUtil::ConfigProperties* config);
+
+      /**
+       * @return the configuration property set assigned, or NULL is non has been assigned.
+       */
+      dtUtil::ConfigProperties* GetConfiguration();
+      const dtUtil::ConfigProperties* GetConfiguration() const;
+
    protected:
-      
+
       friend class View;
-      
+
       /// define the owner mView of this instance
-      void RemoveView(dtCore::View * view) { mViewSet.remove(view); }
-      void AddView(dtCore::View * view) { mViewSet.push_back(view); }
-            
-    private:
+      void RemoveView(dtCore::View& view);
+      void AddView(dtCore::View& view);
+
+   private:
 
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if
@@ -261,6 +278,7 @@ namespace dtCore
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
+
 
       void UpdateViewSet();
       
@@ -288,8 +306,7 @@ namespace dtCore
 
       typedef std::list<osg::observer_ptr<View> > ViewSet;
       ViewSet mViewSet;
-      
-      
+
       Mode mRenderMode;
       Face mRenderFace;
 
@@ -299,7 +316,9 @@ namespace dtCore
       double mCleanupTime;
  
       ParticleSystemFreezer mFreezer;
-   };   
+
+      dtUtil::ConfigProperties* mConfigProperties;
+   };
 }
 
 

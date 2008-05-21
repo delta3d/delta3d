@@ -58,14 +58,6 @@ const std::string Application::SIM_FRAME_RATE("System.SimFrameRate");
 const std::string Application::MAX_TIME_BETWEEN_DRAWS("System.MaxTimeBetweenDraws");
 const std::string Application::USE_FIXED_TIME_STEP("System.UseFixedTimeStep");
 
-const std::string Application::DATABASE_PAGER_PRECOMPILE_OBJECTS("System.DatabasePager.PrecompileObjects");
-const std::string Application::DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME("System.DatabasePager.MaxObjectsToCompilePerFrame");
-const std::string Application::DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE("System.DatabasePager.MinObjectCompileTime");
-const std::string Application::DATABASE_PAGER_TARGET_FRAMERATE("System.DatabasePager.TargetFrameRate");
-const std::string Application::DATABASE_PAGER_DRAWABLE_POLICY("System.DatabasePager.DrawablePolicy");
-const std::string Application::DATABASE_PAGER_THREAD_PRIORITY("System.DatabasePager.ThreadPriority");
-const std::string Application::DATABASE_PAGER_EXPIRY_DELAY("System.DatabasePager.ExpiryDelay");
-
 ///////////////////////////////////////////////////////////////////////////////
 Application::Application(const std::string& configFilename, dtCore::DeltaWin *win) 
 :  BaseClass("Application"),
@@ -134,98 +126,7 @@ void Application::ReadSystemProperties()
       dtCore::System::GetInstance().SetUseFixedTimeStep(useFixed);
    }
 
-   osgDB::DatabasePager* pager = GetView()->GetOsgViewerView()->getDatabasePager();
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_PRECOMPILE_OBJECTS);
-   if (!value.empty())
-   {
-      bool precompile = dtUtil::ToType<bool>(value);
-      pager->setDoPreCompile(precompile);
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME);
-   if (!value.empty())
-   {
-      unsigned int maxNum = dtUtil::ToType<unsigned int>(value);
-      //Can't be less than 1.  That doesn't make sense.
-      maxNum = std::max(maxNum, 1U);
-      pager->setMaximumNumOfObjectsToCompilePerFrame(maxNum);
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE);
-   if (!value.empty())
-   {
-      float minTime = dtUtil::ToType<float>(value);
-      pager->setMinimumTimeAvailableForGLCompileAndDeletePerFrame(minTime);
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_TARGET_FRAMERATE);
-   if (!value.empty())
-   {
-      double target = dtUtil::ToType<double>(value);
-      pager->setTargetFrameRate(target);
-   }
-   else if (dtCore::System::GetInstance().GetUsesFixedTimeStep())
-   {
-      pager->setTargetFrameRate(dtCore::System::GetInstance().GetFrameRate());
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_DRAWABLE_POLICY);
-   if (!value.empty())
-   {
-      if (value == "DoNotModify")
-      {
-          pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
-      }
-      else if (value == "DisplayList" || value == "DisplayLists" || value == "DL")
-      {
-          pager->setDrawablePolicy(osgDB::DatabasePager::USE_DISPLAY_LISTS);
-      }
-      else if (value == "VBO")
-      {
-          pager->setDrawablePolicy(osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
-      }
-      else if (value == "VertexArrays" || value == "VertexArray"||  value == "VA")
-      {
-          pager->setDrawablePolicy(osgDB::DatabasePager::USE_VERTEX_ARRAYS);
-      }
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_THREAD_PRIORITY);
-   if (!value.empty())
-   {
-      if (value == "DEFAULT")
-      {
-          pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
-      }
-      else if (value == "MIN")
-      {
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_MIN);
-      }
-      else if (value == "LOW")
-      {
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_LOW);
-      }
-      else if (value == "NOMINAL")
-      {
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_NOMINAL);
-      }
-      else if (value == "HIGH")
-      {
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_HIGH);
-      } 
-      else if (value == "MAX")
-      {
-         pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_MAX);
-      }
-   }
-
-   value = GetConfigPropertyValue(DATABASE_PAGER_EXPIRY_DELAY);
-   if (!value.empty())
-   {
-      double delay = dtUtil::ToType<double>(value);
-      pager->setExpiryDelay(delay);
-   }
+   GetScene()->SetConfiguration(this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -23,6 +23,7 @@
 #include <dtCore/system.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/configproperties.h>
 
 #include <cassert>
 
@@ -116,7 +117,8 @@ Scene::Scene( const std::string& name) : Base(name),
    mPagingEnabled(false),
    mStartTick(0),
    mFrameNum(0),
-   mCleanupTime(0.0025)
+   mCleanupTime(0.0025),
+   mConfigProperties(NULL)
 {
    RegisterInstance(this);
    SetName(name);
@@ -179,11 +181,6 @@ Scene::~Scene()
    dSpaceDestroy(mSpaceID);
 
    DeregisterInstance(this);
-
-//   if(mPagingEnabled)
-//   {
-//      DisablePaging();
-//   }
 
    RemoveSender( &System::GetInstance() );
 }
@@ -426,50 +423,10 @@ void Scene::OnMessage(MessageData *data)
 {
    if(data->message == "postframe")
    {
-      // TODO database pager is managed by the viewer so this code is not require any else
-      //  but check if work well
-//      double cleanup = mCleanupTime;
-//      if(mPagingEnabled)
-//      {
-//         if (osgDB::Registry::instance()->getDatabasePager())
-//         {
-//             osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
-//
-//            for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
-//            {
-//               Camera *cam = Camera::GetInstance(camNum);
-//
-//               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*(cam->GetSceneHandler()->GetSceneView()->getState()), cleanup);
-//
-//               cam->GetSceneHandler()->GetSceneView()->flushDeletedGLObjects(cleanup);
-//             }
-//         }
-//      }
    }
    else if(data->message == "preframe")
    {
       double dt = *static_cast<double*>(data->userData);
-      //TODO idem as previous
-//      //if paging is enabled, update pager
-//      if(mPagingEnabled)
-//      {
-//		  osg::ref_ptr<osg::FrameStamp> frameStamp = new osg::FrameStamp;
-//         frameStamp->setReferenceTime(Timer::Instance()->DeltaSec(mStartTick, Timer::Instance()->Tick()));
-//         frameStamp->setFrameNumber(mFrameNum++);
-//
-//         // Patch submitted by user to allow multiple camera to work with the database pager
-//         for( int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
-//         {
-//            Camera::GetInstance( camNum )->GetSceneHandler()->GetSceneView()->setFrameStamp( frameStamp.get() );
-//         }
-//         //
-//
-//         if (osgDB::Registry::instance()->getDatabasePager())
-//         {
-//            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
-//            osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
-//         }
-//      }
 
       bool usingDeltaStep = false;
 
@@ -734,8 +691,52 @@ void Scene::UseSceneLight( bool lightState )
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+void Scene::EnablePaging() 
+{ 
+   mPagingEnabled = true;
+   UpdateViewSet();
+}
 
+/////////////////////////////////////////////////////////////////////////////
+void Scene::DisablePaging()
+{
+   mPagingEnabled = false;
+   UpdateViewSet();
+}
 
+/////////////////////////////////////////////////////////////////////////////
+void Scene::SetConfiguration(dtUtil::ConfigProperties* config)
+{
+   mConfigProperties = config;
+   UpdateViewSet();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+dtUtil::ConfigProperties* Scene::GetConfiguration()
+{
+   return mConfigProperties;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+const dtUtil::ConfigProperties* Scene::GetConfiguration() const
+{
+   return mConfigProperties;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void Scene::RemoveView(dtCore::View& view) 
+{
+   mViewSet.remove(&view);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void Scene::AddView(dtCore::View& view)
+{
+   mViewSet.push_back(&view);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void Scene::UpdateViewSet()
 {
    if (mViewSet.empty() == false)
