@@ -1,7 +1,4 @@
 #include "ObjectWorkspace.h"
-#include "PoseMeshView.h"
-#include "PoseMeshScene.h"
-#include "PoseMeshProperties.h"
 #include "OSGAdapterWidget.h"
 #include "DialogProjectContext.h"
 
@@ -275,103 +272,6 @@ void ObjectWorkspace::OnNewShader(const std::string &shaderGroup, const std::str
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                                    dtAnim::CharDrawable *model)
-{
-   assert(!mPoseMeshScene);
-   assert(!mPoseMeshViewer);
-   assert(!mPoseMeshProperties);
-
-   mPoseMeshScene  = new PoseMeshScene(this);
-   mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
-
-   mPoseDock = new QDockWidget("Pose Mesh Viewer");
-   mPoseDock->setWidget(mPoseMeshViewer);
-
-   addDockWidget(Qt::RightDockWidgetArea, mPoseDock);
-   resize(1000, 800);     
-
-   // Create icons for the mode toolbar
-   QIcon modeGrabIcon(QPixmap(":/images/handIcon.png"));
-   QIcon modeBlendIcon(QPixmap(":/images/reticle.png"));
-   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));
-
-   QToolBar *poseModesToolbar = new QToolBar;
-
-   // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(poseModesToolbar);
-   actionGroup->setExclusive(true); 
-
-   QAction *grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
-   QAction *pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");     
-   QAction *errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
-
-   poseModesToolbar->addAction(grabAction);
-   poseModesToolbar->addAction(pickAction);
-   
-   // Not full implemented so leave out
-   //poseModesToolbar->addAction(errorAction);
-
-   grabAction->setCheckable(true);
-   pickAction->setCheckable(true); 
-   errorAction->setCheckable(true);
-
-   pickAction->setChecked(true);
-
-   poseModesToolbar->addSeparator();  
-   poseModesToolbar->addSeparator();
-
-   QIcon displayEdgesIcon(QPixmap(":/images/displayEdges.png"));
-   QIcon displayErrorIcon(QPixmap(":/images/displayError.png"));
-
-   QAction *displayEdgesAction = poseModesToolbar->addAction(displayEdgesIcon, "Display Edges.");
-   QAction *displayErrorAction = poseModesToolbar->addAction(displayErrorIcon, "Display Error Samples.");
-
-   displayEdgesAction->setCheckable(true);
-   displayErrorAction->setCheckable(true);
-
-   displayEdgesAction->setChecked(true);
-
-   mPoseDock->setTitleBarWidget(poseModesToolbar);
-
-   // Add the properties tab
-   mPoseMeshProperties = new PoseMeshProperties;     
-   
-   mTabs->addTab(mPoseMeshProperties, tr("IK"));   
-   mTabs->setCurrentWidget(mPoseMeshProperties);
-
-   // Establish connections from the properties tab
-   connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
-           mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
- 
-   connect(mPoseMeshProperties, SIGNAL(PoseMeshStatusChanged(const std::string&, bool)),
-           mPoseMeshScene, SLOT(OnPoseMeshStatusChanged(const std::string&, bool)));
-
-   // Establish connections from the scene
-   connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
-           mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
-   
-   connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
-   connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));
-   connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectModeErrorPick()));
-
-   connect(displayEdgesAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayEdges(bool)));
-   connect(displayErrorAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayError(bool)));
-
-   for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
-   {
-      dtAnim::PoseMesh *newMesh = poseMeshList[poseIndex];
-
-      // Add new pose mesh visualization and properties
-      mPoseMeshScene->AddMesh(*newMesh, model);
-      mPoseMeshProperties->AddMesh(*newMesh, *model->GetCal3DWrapper());   
-   }
-
-   // Set the default mode
-   OnSelectModeBlendPick();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleShadingToolbar()
 {
    if (mShadingToolbar->isHidden())
@@ -494,24 +394,6 @@ void ObjectWorkspace::OnLoadGeometry()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnSelectModeGrab()
-{
-   mPoseMeshViewer->SetMode(PoseMeshView::MODE_GRAB);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnSelectModeBlendPick()
-{
-   mPoseMeshViewer->SetMode(PoseMeshView::MODE_BLEND_PICK);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnSelectModeErrorPick()
-{
-   mPoseMeshViewer->SetMode(PoseMeshView::MODE_ERROR_PICK);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnSelectShaderItem()
 {
   
@@ -521,22 +403,4 @@ void ObjectWorkspace::OnSelectShaderItem()
 void ObjectWorkspace::OnDoubleclickShaderItem(QTreeWidgetItem *item, int column)
 {
 
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleDisplayEdges(bool shouldDisplay)
-{
-   mPoseMeshViewer->SetDisplayEdges(shouldDisplay);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleDisplayError(bool shouldDisplay)
-{
-   mPoseMeshViewer->SetDisplayError(shouldDisplay);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnToggleBoneBasisDisplay(bool)
-{
-   
 }

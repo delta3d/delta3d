@@ -25,21 +25,13 @@ LIBS += -L$(DELTA_LIB)
 SOURCES = Delta3DThread.cpp \
 	      main.cpp \
 	      ObjectWorkspace.cpp \
-	      ObjectViewer.cpp \	      
-          PoseMeshView.cpp \
-          PoseMeshScene.cpp \
-          PoseMeshItem.cpp \ 
-		  PoseMeshProperties.cpp \
+	      ObjectViewer.cpp \	
 		  OSGAdapterWidget.cpp \
           DialogProjectContext.cpp
 	    	    
 HEADERS = Delta3DThread.h \
 	      ObjectWorkspace.h \
-          ObjectViewer.h \          
-          PoseMeshView.h \
-          PoseMeshScene.h \
-          PoseMeshItem.h \
-		  PoseMeshProperties.h \
+          ObjectViewer.h \    
 		  OSGAdapterWidget.h \
           DialogProjectContext.h
           

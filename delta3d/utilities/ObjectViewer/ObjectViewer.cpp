@@ -26,7 +26,6 @@
 #include <dtAnim/chardrawable.h>
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
-#include <dtAnim/posemesh.h>
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
