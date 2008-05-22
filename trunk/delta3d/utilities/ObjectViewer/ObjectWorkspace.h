@@ -54,10 +54,7 @@ signals:
 public slots:
    
    void OnInitialization();
-   void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);
-
-   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                           dtAnim::CharDrawable *model);  
+   void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);  
    
    void OnToggleShadingToolbar(); 
 	
@@ -101,16 +98,8 @@ private slots:
 
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
-
-   void OnSelectModeGrab();
-   void OnSelectModeBlendPick();
-   void OnSelectModeErrorPick();
-
+ 
    void OnSelectShaderItem();
    void OnDoubleclickShaderItem(QTreeWidgetItem *item, int column);
-
-   void OnToggleDisplayEdges(bool shouldDisplay);
-   void OnToggleDisplayError(bool shouldDisplay);
-   void OnToggleBoneBasisDisplay(bool shouldDisplay);
 };
 #endif // DELTA_ObjectWorkspace
