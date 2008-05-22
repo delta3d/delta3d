@@ -2578,7 +2578,8 @@ namespace dtHLAGM
          // Avoid no-name attributes.
          if ( attrName->empty() )
          {
-            LogMappingError( *curAttrToProp, "PrepareUpdate found mapping have NO HLA attribute name. Ignoring." );
+            // This is NOT an error. This happens if the attribute is only a game type with
+            // no HLA mapping.
             continue;
          }
 
