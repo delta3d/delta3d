@@ -333,6 +333,25 @@ void ObjectViewer::OnLoadGeometryFile(const QString &filename)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnApplyShader(const std::string &groupName, const std::string &programName)
+{
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+   osg::Node *scene = GetScene()->GetSceneNode();
+
+   dtCore::ShaderProgram *program = shaderManager.FindShaderPrototype(programName, groupName);
+   assert(program);
+
+   shaderManager.AssignShaderFromPrototype(*program, *scene);
+} 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnRemoveShader()
+{
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+   shaderManager.UnassignShaderFromNode(*GetScene()->GetSceneNode());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 {
    if( mCharacter.valid() )

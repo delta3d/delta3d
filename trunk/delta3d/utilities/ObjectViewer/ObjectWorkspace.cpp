@@ -17,17 +17,11 @@
 #include <QtCore/QSettings>
 #include <QtGui/QStatusBar>
 #include <QtGui/QToolBar>
-#include <QtGui/QPushButton>
-#include <QtGui/QRadioButton>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMessageBox>
-#include <QtGui/QDoubleSpinBox>
 #include <QtGui/QTabWidget>
-#include <QtGui/QListWidget>
 #include <QtGui/QTreeWidget>
-#include <QtGui/QGraphicsScene>
 #include <QtGui/QHBoxLayout>
-#include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
 
 #include <QtGui/QStandardItemModel>
@@ -44,9 +38,6 @@ ObjectWorkspace::ObjectWorkspace()
   , mShaderTreeWidget(NULL)
   , mGLWidget(NULL)
   , mPoseDock(NULL)
-  , mPoseMeshScene(NULL)
-  , mPoseMeshViewer(NULL)
-  , mPoseMeshProperties(NULL)
 {
    resize(1024, 768);
 
@@ -54,7 +45,8 @@ ObjectWorkspace::ObjectWorkspace()
    nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
 
    mShaderTreeWidget = new QTreeWidget(this);
-   connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(OnSelectShaderItem()));
+   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
+           this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
    //connect(mShaderListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
 
    CreateActions();
@@ -95,6 +87,7 @@ void ObjectWorkspace::CreateMenus()
 
    windowMenu->addAction(mLoadShaderDefAction);
    windowMenu->addAction(mLoadGeometryAction);
+   windowMenu->addAction(mChangeContextAction);
 
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
 
@@ -127,10 +120,14 @@ void ObjectWorkspace::CreateActions()
    mLoadShaderDefAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadShaderDefAction, SIGNAL(triggered()), this, SLOT(OnLoadShaderDefinition()));
 
-   mLoadGeometryAction = new QAction(tr("&Load Geometry..."), this);
+   mLoadGeometryAction = new QAction(tr("Load Geometry..."), this);
    //mLoadGeometryAction->setShortcut(tr("Ctrl+O"));
    mLoadGeometryAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));   
+
+   mChangeContextAction = new QAction(tr("Change Project..."), this);
+   mChangeContextAction->setStatusTip(tr("Change the project context directory."));
+   connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));   
 
    for (int i=0; i<5; i++)
    {
@@ -169,15 +166,6 @@ void ObjectWorkspace::CreateToolbars()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::DestroyPoseResources()
-{
-   if (mPoseMeshViewer)     { delete mPoseMeshViewer;     mPoseMeshViewer = NULL;     }
-   if (mPoseMeshScene)      { delete mPoseMeshScene;      mPoseMeshScene = NULL;      }
-   if (mPoseMeshProperties) { delete mPoseMeshProperties; mPoseMeshProperties = NULL; }
-   if (mPoseDock)           { delete mPoseDock;           mPoseDock = NULL;           }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnOpenCharFile()
 {
    QString filename = QFileDialog::getOpenFileName(this,
@@ -195,10 +183,7 @@ void ObjectWorkspace::OnOpenCharFile()
 void ObjectWorkspace::LoadCharFile( const QString &filename )
 {
    if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
-   {           
-      // Make sure we start fresh
-      DestroyPoseResources();
-
+   {        
       emit FileToLoad( filename );
 
       SetCurrentFile(filename);
@@ -221,38 +206,23 @@ void ObjectWorkspace::OnInitialization()
    // If the user has not selected a project context, have them do so now
    if (files.empty())
    {
-      ProjectContextDialog dialog(this);
-
-      if (dialog.exec() == QDialog::Accepted)
-      {
-         mContextPath = dialog.getProjectPath().toStdString();
-      }  
-      else
-      {
-         return;
-      }
+      mContextPath = GetContextPathFromUser();
    }
    else
    {
       mContextPath = files.at(0).toStdString();
    }
 
-   try
-   {      
-      dtDAL::Project::GetInstance().SetContext(mContextPath);
-
-      settings.setValue("projectContextPath", mContextPath.c_str());
-      settings.sync();
-   }
-   catch (const dtUtil::Exception &e)
-   {
-      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
-   }         
+   SaveCurrentContextPath();         
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram)
 {
+   // We don't want this signal emitted when we're adding a shader
+   disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
+              this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
+
    QTreeWidgetItem *shaderItem = new QTreeWidgetItem();
    QTreeWidgetItem *programItem = new QTreeWidgetItem();
 
@@ -265,10 +235,14 @@ void ObjectWorkspace::OnNewShader(const std::string &shaderGroup, const std::str
                         Qt::ItemIsUserCheckable |
                         Qt::ItemIsEnabled);
 
-   shaderItem->setCheckState(0, Qt::Unchecked);
+   // The shader itself should have a checkbox
+   programItem->setCheckState(0, Qt::Unchecked);
 
    mShaderTreeWidget->addTopLevelItem(shaderItem); 
    shaderItem->addChild(programItem);
+
+   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
+           this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -394,13 +368,69 @@ void ObjectWorkspace::OnLoadGeometry()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnSelectShaderItem()
+void ObjectWorkspace::OnChangeContext()
 {
-  
+   std::string newPath = GetContextPathFromUser();
+
+   if (!newPath.empty())
+   {
+      mContextPath = newPath;
+      SaveCurrentContextPath();
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnShaderItemChanged(QTreeWidgetItem *item, int column)
+{ 
+   if (column == 0)
+   {
+      QString programName = item->text(0);
+      QString groupName   = item->parent()->text(0);
+
+      if (item->checkState(0) == Qt::Checked)
+      {
+         emit ApplyShader(groupName.toStdString(), programName.toStdString());         
+      }
+      else if (item->checkState(0) == Qt::Unchecked)
+      {
+         emit RemoveShader();
+      }
+   }  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnDoubleclickShaderItem(QTreeWidgetItem *item, int column)
 {
 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+std::string ObjectWorkspace::GetContextPathFromUser()
+{
+   ProjectContextDialog dialog(this);
+
+   if (dialog.exec() == QDialog::Accepted)
+   {
+      return(dialog.getProjectPath().toStdString());
+   }  
+   
+   return std::string();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SaveCurrentContextPath()
+{
+   QSettings settings("MOVES", "Shader Viewer");
+
+   try
+   {      
+      dtDAL::Project::GetInstance().SetContext(mContextPath);
+
+      settings.setValue("projectContextPath", mContextPath.c_str());
+      settings.sync();
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
 }
