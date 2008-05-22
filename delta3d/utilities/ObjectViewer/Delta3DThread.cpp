@@ -95,8 +95,10 @@ void Delta3DThread::run()
    connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string &, const std::string &)), 
            mWin, SLOT(OnNewShader(const std::string &, const std::string &)));
 
-   connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)), 
-           mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*))); 
+   connect(mWin, SIGNAL(ApplyShader(const std::string &, const std::string &)), 
+           mViewer.get(), SLOT(OnApplyShader(const std::string &, const std::string &)));  
+
+   connect(mWin, SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
    
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
 

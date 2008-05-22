@@ -63,6 +63,8 @@ public slots:
    void OnLoadPoseMeshFile(const std::string &filename);
    void OnLoadShaderFile(const QString &filename);
    void OnLoadGeometryFile(const QString &filename);
+   void OnApplyShader(const std::string &groupName, const std::string &programName);
+   void OnRemoveShader();
    void OnStartAction(unsigned int id, float delayIn, float delayOut);    
    void OnSetShaded();
    void OnSetWireframe();

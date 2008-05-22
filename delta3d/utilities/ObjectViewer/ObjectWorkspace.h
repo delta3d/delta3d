@@ -17,9 +17,6 @@ class QTabWidget;
 class QGridLayout;
 class QStandardItemModel;
 class QTableView;
-class PoseMeshView;
-class PoseMeshScene;
-class PoseMeshProperties;
 
 namespace dtQt
 {
@@ -27,8 +24,7 @@ namespace dtQt
 }
 
 namespace dtAnim
-{
-   class PoseMesh;
+{   
    class CharDrawable;
 }
 
@@ -49,7 +45,9 @@ signals:
    void LoadShaderDefinition(const QString &);
    void LoadGeometry(const QString &);
    void StartAction(unsigned int, float, float);
+
    void ApplyShader(const std::string &group, const std::string &name);
+   void RemoveShader();
 
 public slots:
    
@@ -62,15 +60,17 @@ private:
    void CreateMenus();
    void CreateActions();
    void CreateToolbars();
-   void DestroyPoseResources();
    void UpdateRecentFileActions();
    void SetCurrentFile(const QString &filename);
    void LoadObjectFile(const QString &filename);
    void LoadCharFile(const QString &filename);
 
-   QAction *mExitAct;
+   // File menu
    QAction *mLoadShaderDefAction;
    QAction *mLoadGeometryAction;
+   QAction *mChangeContextAction;
+   QAction *mExitAct;
+
    QAction *mRecentFilesAct[5];
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
@@ -82,11 +82,7 @@ private:
    QTabWidget *mTabs;
   
    QTreeWidget          *mShaderTreeWidget;  
-
-   QDockWidget          *mPoseDock;
-   PoseMeshView         *mPoseMeshViewer;
-   PoseMeshScene        *mPoseMeshScene;
-   PoseMeshProperties   *mPoseMeshProperties;
+   QDockWidget          *mPoseDock;  
 
    std::string mContextPath;
 
@@ -96,10 +92,15 @@ private slots:
    void OnOpenCharFile();
    void OpenRecentFile(); 
 
+   // File menu callbacks
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
+   void OnChangeContext();
  
-   void OnSelectShaderItem();
+   void OnShaderItemChanged(QTreeWidgetItem *item, int column);
    void OnDoubleclickShaderItem(QTreeWidgetItem *item, int column);
+
+   std::string GetContextPathFromUser();
+   void SaveCurrentContextPath();
 };
 #endif // DELTA_ObjectWorkspace
