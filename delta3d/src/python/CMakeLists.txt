@@ -148,6 +148,37 @@ ENDIF (MSVC)
 
 
 ################
+SET(ACTORS_BINDINGS "PyDtActors")
+
+ADD_LIBRARY ( ${ACTORS_BINDINGS} SHARED
+  ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h  
+  dtactorsbindings.cpp
+  waypointvolumebindings.cpp
+)
+
+ADD_DEPENDENCIES (${ACTORS_BINDINGS}
+  dtActors
+  dtCore
+)
+
+LINK_WITH_VARIABLES(${ABC_BINDINGS} 
+                                              DTCORE_LIBRARY
+                                              DTACTORS_LIBRARY
+                                              BOOST_PYTHON_LIBRARY
+                                              PYTHON_LIBRARY
+                                              OSG_LIBRARY)
+
+IF (WIN32)
+  SET_TARGET_PROPERTIES( ${ACTORS_BINDINGS} PROPERTIES SUFFIX ".pyd")
+ENDIF (WIN32)
+
+#little hack to get the .dll into /bin and .lib into /lib
+IF (MSVC)
+  SET_TARGET_PROPERTIES( ${ACTORS_BINDINGS} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES( ${ACTORS_BINDINGS} PROPERTIES IMPORT_PREFIX "../")
+ENDIF (MSVC)
+
+################
 SET(AI_BINDINGS "PyDtAI")
 
 ADD_LIBRARY ( ${AI_BINDINGS} SHARED
