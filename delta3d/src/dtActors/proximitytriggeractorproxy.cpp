@@ -103,7 +103,6 @@ namespace dtActors
          MakeFunctor(*trigger,&ProximityTrigger::SetTimeDelay),
          MakeFunctorRet(*trigger,&ProximityTrigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
-
    }
    
    //////////////////////////////////////////////////////////////////////////
