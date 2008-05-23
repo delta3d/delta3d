@@ -100,6 +100,8 @@ namespace dtABC
       */
       virtual bool FilterContact( dContact* contact, Transformable* collider );
 
+      bool IsPointInVolume(float x, float y, float z);
+
 
       void SetTimeDelay(float delay){mTrigger->SetTimeDelay(delay);}
       float GetTimeDelay()const{return mTrigger->GetTimeDelay();}

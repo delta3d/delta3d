@@ -2,6 +2,8 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 
+#include <assert.h>
+
 using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER(ProximityTrigger)
@@ -46,3 +48,5 @@ bool ProximityTrigger::FilterContact( dContact* contact, Transformable* collider
    //in Scene. The dynamic_cast in there would filter it out anyways, but still...
    return false;
 }
+
+

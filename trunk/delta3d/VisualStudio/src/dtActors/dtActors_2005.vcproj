@@ -346,6 +346,10 @@
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\waypointvolumeactor.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -506,6 +510,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\tripodactorproxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\waypointvolumeactor.h"
 				>
 			</File>
 		</Filter>
