@@ -10,7 +10,7 @@
 # Created by David Guthrie. 
 
 FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
-                        $ENV{RTI}/include/1.3)	
+                        $ENV{RTI})	
 
 FIND_PATH(RTIS_INCLUDE_DIR RTI.hh
     $ENV{RTI}/include/1.3
