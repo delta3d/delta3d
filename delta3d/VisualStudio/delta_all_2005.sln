@@ -476,10 +476,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testAnim", "examples\testAn
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtActorsBindings", "src\dtActorsBindings\dtActorsBindings.vcproj", "{EB81F470-C279-4616-ADAE-1FB3227B074E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A} = {FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtActorsBindings", "src\python\dtActorsBindings.vcproj", "{EB81F470-C279-4616-ADAE-1FB3227B074E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
