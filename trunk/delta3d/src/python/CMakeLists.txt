@@ -161,7 +161,7 @@ ADD_DEPENDENCIES (${ACTORS_BINDINGS}
   dtCore
 )
 
-LINK_WITH_VARIABLES(${ABC_BINDINGS} 
+LINK_WITH_VARIABLES(${ACTORS_BINDINGS} 
                                               DTCORE_LIBRARY
                                               DTACTORS_LIBRARY
                                               BOOST_PYTHON_LIBRARY
