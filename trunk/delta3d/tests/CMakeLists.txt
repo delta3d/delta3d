@@ -73,11 +73,11 @@ GET_TARGET_PROPERTY(ALLTESTS_PREFIX ${PROG_NAME} PREFIX)
 GET_TARGET_PROPERTY(ALLTESTS_SUFFIX ${PROG_NAME} SUFFIX)
 
 if (WIN32)
-   ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
-                        POST_BUILD
-                        COMMAND "tests/runTests$(IntDir).bat"
-                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-                        COMMENT Run the unit tests)
+#   ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
+#                        POST_BUILD
+#                        COMMAND "tests/runTests$(IntDir).bat"
+#                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#                        COMMENT Run the unit tests)
 else (WIN32)
    if (NOT ALLTESTS_SUFFIX)
       SET(ALLTESTS_SUFFIX "")
