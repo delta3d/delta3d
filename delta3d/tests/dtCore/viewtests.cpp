@@ -5,8 +5,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 
-extern dtABC::Application& GetGlobalApplication();
-
 namespace dtTest
 {
    class ViewTests : public CPPUNIT_NS::TestFixture
