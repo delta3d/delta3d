@@ -409,18 +409,18 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
-   dtCore::DeltaWin* dinst = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
+   dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
    dtCore::Camera *camera = dtCore::Camera::GetInstance( data.CAMERA_INSTANCE );
    dtCore::View *view = dtCore::View::GetInstance( data.VIEW_NAME );
    dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
 
-   if( (dinst != NULL) && (camera != NULL) )
+   if( (win != NULL) && (camera != NULL) )
    {
-      camera->SetWindow( dinst );
+      camera->SetWindow( win );
    }
    else
    {
-      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.SCENE_INSTANCE );
+      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.WINDOW_INSTANCE );
       valid = false;
    }
 
