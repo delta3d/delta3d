@@ -78,7 +78,7 @@ if (WIN32)
 else (WIN32)
    ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                         POST_BUILD
-                        COMMAND ./allTests
+                        COMMAND ${CMAKE_BINARY_DIR}/tests/allTests
                         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                         COMMENT Run the unit tests)
 endif(WIN32)
