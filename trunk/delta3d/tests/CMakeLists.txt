@@ -69,9 +69,6 @@ IF (PCHSupport_FOUND)
    ADD_PRECOMPILED_HEADER(${PROG_NAME} precomp.cpp prefix/dtgameprefix-src.h true)
 ENDIF (PCHSupport_FOUND)
 
-GET_TARGET_PROPERTY(ALLTESTS_PREFIX ${PROG_NAME} PREFIX)
-GET_TARGET_PROPERTY(ALLTESTS_SUFFIX ${PROG_NAME} SUFFIX)
-
 if (WIN32)
 #   ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
 #                        POST_BUILD
@@ -79,15 +76,9 @@ if (WIN32)
 #                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 #                        COMMENT Run the unit tests)
 else (WIN32)
-   if (NOT ALLTESTS_SUFFIX)
-      SET(ALLTESTS_SUFFIX "")
-   endif (NOT ALLTESTS_SUFFIX)
-
-   SET(ALLTESTS_PROGRAM ${PROG_NAME}${ALLTESTS_SUFFIX})
-
    ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                         POST_BUILD
-                        COMMAND tests/${ALLTESTS_PROGRAM}
+                        COMMAND ./allTests
                         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                         COMMENT Run the unit tests)
 endif(WIN32)
