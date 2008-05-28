@@ -2055,16 +2055,18 @@ bool AudioManager::GetSource( SoundObj* snd )
    {
       src   = mAvailable.front();
       mAvailable.pop();
+      assert( alIsSource( src ) == AL_TRUE );
+
+      snd->Source( src );
+      snd->SetInitialized( true );
+      mSourceMap[src] = snd;
+      return true;
+   }
+   else
+   {
+      return false;
    }
 
-   snd->Source( src );
-   snd->SetInitialized( true );
-
-   if( alIsSource( src ) == AL_FALSE || !snd->IsInitialized() )
-      return false;
-
-   mSourceMap[src]   = snd;
-   return true;
 }
 
 
