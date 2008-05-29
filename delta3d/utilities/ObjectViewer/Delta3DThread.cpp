@@ -88,10 +88,14 @@ void Delta3DThread::run()
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
    
    mViewer->Config();
-
-   connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );  
+  
    connect(mWin, SIGNAL(LoadShaderDefinition(const QString &)), mViewer.get(), SLOT(OnLoadShaderFile(const QString &)));
-   connect(mWin, SIGNAL(LoadGeometry(const QString &)), mViewer.get(), SLOT(OnLoadGeometryFile(const QString &)));
+   
+   connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string &)),
+           mViewer.get(), SLOT(OnLoadGeometryFile(const std::string &)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(UnloadGeometry()),
+           mViewer.get(), SLOT(OnUnloadGeometryFile()));
 
    connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string &, const std::string &)), 
            mWin->GetResourceObject(), SLOT(OnNewShader(const std::string &, const std::string &)));

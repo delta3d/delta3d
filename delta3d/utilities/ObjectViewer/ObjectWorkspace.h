@@ -25,27 +25,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class ResourceDock;
 class QAction;
-class QTableWidgetItem;
 class QToolBar;
-class AnimationTableWidget;
-class QTreeWidget;
-class QTreeWidgetItem;
-class QGraphicsView;
-class QGraphicsScene;
-class QTabWidget;
-class QGridLayout;
-class QStandardItemModel;
-class QTableView;
 
 namespace dtQt
 {
    class OSGAdapterWidget; 
-}
-
-namespace dtAnim
-{   
-   class CharDrawable;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,17 +65,15 @@ private:
    void CreateActions();
    void CreateToolbars();
    void UpdateRecentFileActions();
-   void SetCurrentFile(const QString &filename);
+   void UpdateResourceLists();
    void LoadObjectFile(const QString &filename);
-   void LoadCharFile(const QString &filename);
 
    // File menu
    QAction *mLoadShaderDefAction;
    QAction *mLoadGeometryAction;
    QAction *mChangeContextAction;
    QAction *mExitAct;
-
-   QAction *mRecentFilesAct[5];
+  
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
    QAction *mShadedWireAction;
@@ -100,15 +84,13 @@ private:
    QToolBar *mDisplayToolbar;    
    QToolBar *mShaderToolbar;
 
-   QDockWidget *mResourceDock;
+   ResourceDock *mResourceDock;
 
    std::string mContextPath;
 
    dtQt::OSGAdapterWidget* mGLWidget;
 
-private slots:
-   void OnOpenCharFile();
-   void OpenRecentFile(); 
+private slots:  
 
    // File menu callbacks
    void OnLoadShaderDefinition();
