@@ -143,16 +143,22 @@ void ObjectWorkspace::CreateActions()
    QIcon wireframeIcon(":/images/wireframe.png");
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
+   QIcon gridIcon(":/images/xygrid.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
    mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");  
+   
+   mGridAction = new QAction(gridIcon, "Toggle Grid", this);
+   connect(mGridAction, SIGNAL(toggled(bool)), this, SLOT(OnToggleGridClicked(bool)));
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
    mShadedWireAction->setCheckable(true);
+   mGridAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
+   mGridAction->setChecked(true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +169,7 @@ void ObjectWorkspace::CreateToolbars()
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
    mShadingToolbar->addSeparator();
+   mShadingToolbar->addAction(mGridAction);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -402,6 +409,12 @@ void ObjectWorkspace::OnShaderItemChanged(QTreeWidgetItem *item, int column)
 void ObjectWorkspace::OnDoubleclickShaderItem(QTreeWidgetItem *item, int column)
 {
 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleGridClicked(bool toggledOn)
+{
+   emit ToggleGrid(toggledOn);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
