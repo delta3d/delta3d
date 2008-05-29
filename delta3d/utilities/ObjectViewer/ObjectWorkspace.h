@@ -1,5 +1,25 @@
-#ifndef DELTA_ObjectWorkspace
-#define DELTA_ObjectWorkspace
+/*
+* Delta3D Open Source Game and Simulation Engine 
+* Copyright (C) 2008 MOVES Institute 
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free 
+* Software Foundation; either version 2.1 of the License, or (at your option) 
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License 
+* along with this library; if not, write to the Free Software Foundation, Inc., 
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+*
+*/
+
+#ifndef DELTA_OBJECTWORKSPACE
+#define DELTA_OBJECTWORKSPACE
 
 #include <QtGui/QMainWindow>
 
@@ -38,24 +58,20 @@ public:
    ObjectWorkspace();
    ~ObjectWorkspace();
 
-   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
+   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget;     }
+   QObject* GetResourceObject();          
    
 signals:
    void FileToLoad(const QString&);  
    void LoadShaderDefinition(const QString &);
    void LoadGeometry(const QString &);
    void StartAction(unsigned int, float, float);
-
-   void ApplyShader(const std::string &group, const std::string &name);
-   void RemoveShader();
-
+   
    void ToggleGrid(bool shouldShow);
 
 public slots:
    
-   void OnInitialization();
-   void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);  
-   
+   void OnInitialization(); 
    void OnToggleShadingToolbar(); 
 	
 private:
@@ -81,11 +97,10 @@ private:
    QAction *mDiffuseLightAction;
    QAction *mPointLightAction;
 
-   QToolBar *mShadingToolbar; 
-   QTabWidget *mTabs;
-  
-   QTreeWidget          *mShaderTreeWidget;  
-   QDockWidget          *mPoseDock;  
+   QToolBar *mDisplayToolbar;    
+   QToolBar *mShaderToolbar;
+
+   QDockWidget *mResourceDock;
 
    std::string mContextPath;
 
@@ -99,13 +114,11 @@ private slots:
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
    void OnChangeContext();
- 
-   void OnShaderItemChanged(QTreeWidgetItem *item, int column);
-   void OnDoubleclickShaderItem(QTreeWidgetItem *item, int column);
-
+   
    void OnToggleGridClicked(bool toggledOn);
 
    std::string GetContextPathFromUser();
    void SaveCurrentContextPath();
 };
-#endif // DELTA_ObjectWorkspace
+
+#endif // DELTA_OBJECTWORKSPACE

@@ -27,13 +27,15 @@ SOURCES = Delta3DThread.cpp \
 	      ObjectWorkspace.cpp \
 	      ObjectViewer.cpp \	
 		  OSGAdapterWidget.cpp \
-          DialogProjectContext.cpp
+          DialogProjectContext.cpp \ 
+          ResourceDock.cpp 
 	    	    
 HEADERS = Delta3DThread.h \
 	      ObjectWorkspace.h \
           ObjectViewer.h \    
 		  OSGAdapterWidget.h \
-          DialogProjectContext.h
+          DialogProjectContext.h \
+          ResourceDock.h 
           
 INCLUDEPATH += $$(DELTA_ROOT)/inc
 INCLUDEPATH += $$(DELTA_ROOT)/ext/inc

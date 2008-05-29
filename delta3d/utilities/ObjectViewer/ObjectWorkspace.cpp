@@ -1,6 +1,7 @@
 #include "ObjectWorkspace.h"
 #include "OSGAdapterWidget.h"
 #include "DialogProjectContext.h"
+#include "ResourceDock.h"
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
@@ -35,27 +36,14 @@ ObjectWorkspace::ObjectWorkspace()
   : mExitAct(NULL)
   , mLoadShaderDefAction(NULL)
   , mLoadGeometryAction(NULL)
-  , mShaderTreeWidget(NULL)
   , mGLWidget(NULL)
-  , mPoseDock(NULL)
 {
    resize(1024, 768);
-
-   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
-   nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
-
-   mShaderTreeWidget = new QTreeWidget(this);
-   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
-           this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
-   //connect(mShaderListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
-
+  
    CreateActions();
    CreateMenus();
    statusBar();
-   CreateToolbars();  
-
-   mTabs = new QTabWidget(this);
-   mTabs->addTab(mShaderTreeWidget, tr("Shaders"));   
+   CreateToolbars();     
 
    QWidget* glParent = new QWidget(this);
 
@@ -67,15 +55,20 @@ ObjectWorkspace::ObjectWorkspace()
    hbLayout->addWidget(mGLWidget);
    setCentralWidget(glParent);
 
-   QDockWidget* tabsDockWidget = new QDockWidget();
-   tabsDockWidget->setWidget(mTabs);
+   mResourceDock = new ResourceDock;
+   addDockWidget(Qt::RightDockWidgetArea, mResourceDock);   
 
-   addDockWidget(Qt::RightDockWidgetArea, tabsDockWidget); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::~ObjectWorkspace()
 {
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+QObject* ObjectWorkspace::GetResourceObject()
+{ 
+   return mResourceDock; 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -164,12 +157,15 @@ void ObjectWorkspace::CreateActions()
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateToolbars()
 {
-   mShadingToolbar = addToolBar("Shading toolbar"); 
-   mShadingToolbar->addAction(mWireframeAction);
-   mShadingToolbar->addAction(mShadedAction);
-   mShadingToolbar->addAction(mShadedWireAction);
-   mShadingToolbar->addSeparator();
-   mShadingToolbar->addAction(mGridAction);
+   mDisplayToolbar = addToolBar("Display toolbar"); 
+   mDisplayToolbar->addAction(mWireframeAction);
+   mDisplayToolbar->addAction(mShadedAction);
+   mDisplayToolbar->addAction(mShadedWireAction);
+   mDisplayToolbar->addSeparator();
+   mDisplayToolbar->addAction(mGridAction);
+
+   mShaderToolbar = addToolBar("Shader toolbar");
+   mShaderToolbar->addAction("recompile");
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -224,44 +220,15 @@ void ObjectWorkspace::OnInitialization()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram)
-{
-   // We don't want this signal emitted when we're adding a shader
-   disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
-              this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
-
-   QTreeWidgetItem *shaderItem = new QTreeWidgetItem();
-   QTreeWidgetItem *programItem = new QTreeWidgetItem();
-
-   shaderItem->setText(0, shaderGroup.c_str());
-   programItem->setText(0, shaderProgram.c_str());
- 
-   //meshItem->setData( Qt::UserRole, meshID );
-
-   shaderItem->setFlags(Qt::ItemIsSelectable |
-                        Qt::ItemIsUserCheckable |
-                        Qt::ItemIsEnabled);
-
-   // The shader itself should have a checkbox
-   programItem->setCheckState(0, Qt::Unchecked);
-
-   mShaderTreeWidget->addTopLevelItem(shaderItem); 
-   shaderItem->addChild(programItem);
-
-   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem *, int)), 
-           this, SLOT(OnShaderItemChanged(QTreeWidgetItem *, int)));
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleShadingToolbar()
 {
-   if (mShadingToolbar->isHidden())
+   if (mDisplayToolbar->isHidden())
    {
-      mShadingToolbar->show();
+      mDisplayToolbar->show();
    }
    else
    {
-      mShadingToolbar->hide();
+      mDisplayToolbar->hide();
    }
 }
 
@@ -384,31 +351,6 @@ void ObjectWorkspace::OnChangeContext()
       mContextPath = newPath;
       SaveCurrentContextPath();
    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnShaderItemChanged(QTreeWidgetItem *item, int column)
-{ 
-   if (column == 0)
-   {
-      QString programName = item->text(0);
-      QString groupName   = item->parent()->text(0);
-
-      if (item->checkState(0) == Qt::Checked)
-      {
-         emit ApplyShader(groupName.toStdString(), programName.toStdString());         
-      }
-      else if (item->checkState(0) == Qt::Unchecked)
-      {
-         emit RemoveShader();
-      }
-   }  
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnDoubleclickShaderItem(QTreeWidgetItem *item, int column)
-{
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

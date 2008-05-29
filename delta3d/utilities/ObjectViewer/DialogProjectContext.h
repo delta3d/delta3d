@@ -25,9 +25,13 @@
 
 #include <QtGui/QDialog>
 
+///////////////////////////////////////////////////////////////////////////////
+
 class QLineEdit;
 class QPushButton;
 class QCloseEvent;
+
+///////////////////////////////////////////////////////////////////////////////
 
 class ProjectContextDialog: public QDialog
 {
@@ -54,6 +58,5 @@ private:
    QPushButton *applyButton;
    QLineEdit   *pathEdit;
 };
-
 
 #endif

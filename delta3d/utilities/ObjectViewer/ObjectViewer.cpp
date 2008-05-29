@@ -62,13 +62,9 @@
 
 typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
 
-using namespace dtUtil;
-using namespace dtCore;
-using namespace dtAnim;
-
 /////////////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
-: mCalDatabase(&Cal3DDatabase::GetInstance())
+: mCalDatabase(&dtAnim::Cal3DDatabase::GetInstance())
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -103,11 +99,11 @@ void ObjectViewer::Config()
    GetCamera()->SetTransform( camPos );
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   mMotion = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+   mMotion = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
    mMotion->SetTarget( GetCamera() );
    mMotion->SetDistance(5.f);
 
-   Light *l = GetScene()->GetLight(0);
+   dtCore::Light *l = GetScene()->GetLight(0);
    l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
    l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
 
@@ -125,11 +121,11 @@ void ObjectViewer::Config()
    OnSetShaded();
    OnToggleGrid(true);
 
-   Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadCharFile( const QString &filename )
+void ObjectViewer::OnLoadCharFile(const QString &filename)
 {
    assert(0);
    return;
@@ -138,8 +134,8 @@ void ObjectViewer::OnLoadCharFile( const QString &filename )
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList( dtCore::GetDataFilePathList() + ";" +
-                        dir.path().toStdString() + ";" );
+   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
+                               dir.path().toStdString() + ";");
 
    // try to clean up the scene graph
    if (mCharacter.valid())
@@ -158,8 +154,8 @@ void ObjectViewer::OnLoadCharFile( const QString &filename )
    try
    {
       // Create a new Cal3DWrapper
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
-      mCharacter = new CharDrawable(wrapper.get());  
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
+      mCharacter = new dtAnim::CharDrawable(wrapper.get());  
       mAttachmentController = new dtAnim::AttachmentController;      
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
@@ -181,7 +177,7 @@ void ObjectViewer::OnLoadCharFile( const QString &filename )
    mShadeDecorator->addChild(mCharacter->GetNode());
    mWireDecorator->addChild(mCharacter->GetNode());
 
-   dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
+   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
 
    //get all the data for animations and tell the world
    for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
@@ -269,13 +265,13 @@ void ObjectViewer::OnLoadShaderFile(const QString &filename)
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
    shaderManager.LoadShaderDefinitions(filename.toStdString());
 
-   std::vector<dtCore::RefPtr<ShaderGroup> > shaderGroupList;
+   std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
    shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
 
    // Emit all shader groups and their individual shaders
    for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
    {
-      std::vector<dtCore::RefPtr<ShaderProgram> > programList;
+      std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
       shaderGroupList[groupIndex]->GetAllShaders(programList);
 
       const std::string &groupName = shaderGroupList[groupIndex]->GetName();
@@ -302,19 +298,18 @@ void ObjectViewer::OnLoadGeometryFile(const QString &filename)
 void ObjectViewer::OnApplyShader(const std::string &groupName, const std::string &programName)
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
-   osg::Node *scene = GetScene()->GetSceneNode();
 
    dtCore::ShaderProgram *program = shaderManager.FindShaderPrototype(programName, groupName);
    assert(program);
 
-   shaderManager.AssignShaderFromPrototype(*program, *scene);
+   shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
 } 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnRemoveShader()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
-   shaderManager.UnassignShaderFromNode(*GetScene()->GetSceneNode());
+   shaderManager.UnassignShaderFromNode(*mShadedScene);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +317,7 @@ void ObjectViewer::OnStartAction( unsigned int id, float delayIn, float delayOut
 {
    if( mCharacter.valid() )
    {
-      Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
+      dtAnim::Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ExecuteAction(id, delayIn, delayOut);
    }
 }
