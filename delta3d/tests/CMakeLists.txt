@@ -59,26 +59,28 @@ IF (BUILD_HLA)
   TARGET_LINK_LIBRARIES(${PROG_NAME} ${RTIS_LIBRARIES})
 ENDIF (BUILD_HLA)
 
-SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "../tests/")
-
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../") #little hack to get the .exe into the correct folder
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")#tack on the "d" for debug
+  SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests) #drop the .exe into the delta3d/tests folder
+ELSE (MSVC)
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "../tests/")
 ENDIF (MSVC)
 
 IF (PCHSupport_FOUND)
    ADD_PRECOMPILED_HEADER(${PROG_NAME} precomp.cpp prefix/dtgameprefix-src.h true)
 ENDIF (PCHSupport_FOUND)
 
-if (WIN32)
-#   ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
-#                        POST_BUILD
-#                        COMMAND "tests/runTests$(IntDir).bat"
-#                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#                        COMMENT Run the unit tests)
-else (WIN32)
+#This will automatically run the unit test executable upon successfull compile/link
+IF (WIN32)
+  ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
+                        POST_BUILD
+                        COMMAND "\"$(TargetPath)\""
+                        COMMENT "Run the unit tests")  
+ELSE (WIN32)
    ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                         POST_BUILD
                         COMMAND ${CMAKE_BINARY_DIR}/tests/allTests
                         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                         COMMENT Run the unit tests)
-endif(WIN32)
+ENDIF (WIN32)
