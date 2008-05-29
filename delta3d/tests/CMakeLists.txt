@@ -63,6 +63,7 @@ IF (MSVC)
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../") #little hack to get the .exe into the correct folder
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")#tack on the "d" for debug
   SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests) #drop the .exe into the delta3d/tests folder
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4290") #ignore the C4290 warning
 ELSE (MSVC)
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "../tests/")
 ENDIF (MSVC)
