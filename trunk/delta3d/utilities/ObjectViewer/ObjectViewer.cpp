@@ -64,7 +64,6 @@ typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
-: mCalDatabase(&dtAnim::Cal3DDatabase::GetInstance())
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -109,7 +108,6 @@ void ObjectViewer::Config()
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
-   mBoneBasisGroup = new osg::Group;
 
    GetScene()->GetSceneNode()->addChild(mShadedScene.get());
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
@@ -122,141 +120,6 @@ void ObjectViewer::Config()
    OnToggleGrid(true);
 
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadCharFile(const QString &filename)
-{
-   assert(0);
-   return;
-   LOG_DEBUG("Loading file: " + filename.toStdString() );
-
-   QDir dir(filename);
-   dir.cdUp();
-
-   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
-                               dir.path().toStdString() + ";");
-
-   // try to clean up the scene graph
-   if (mCharacter.valid())
-   {
-      mShadeDecorator->removeChild(mCharacter->GetNode());
-      mWireDecorator->removeChild(mCharacter->GetNode());
-      mCharacter = NULL;
-   }  
-
-   //wipe out any previously loaded characters. This will ensure we can 
-   //reload the same file (which might have been modified).
-   mCalDatabase->TruncateDatabase();
-   mCalDatabase->PurgeLoaderCaches();
-
-   //create an instance from the character definition file
-   try
-   {
-      // Create a new Cal3DWrapper
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
-      mCharacter = new dtAnim::CharDrawable(wrapper.get());  
-      mAttachmentController = new dtAnim::AttachmentController;      
-   }
-   catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
-   {
-      //something bad happened while parsing, we should get out of here
-      char* msg = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
-
-      QString errorMsg;
-      errorMsg = QString("Parsing error at line %1 : %2")
-                        .arg(e.getLineNumber())
-                        .arg(msg);
-
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &msg );
-      emit ErrorOccured(errorMsg);
-      return;
-   }
-
-   // set up the ObjectViewer's scene graph
-   mShadeDecorator->addChild(mCharacter->GetNode());
-   mWireDecorator->addChild(mCharacter->GetNode());
-
-   dtCore::RefPtr<dtAnim::Cal3DModelWrapper> wrapper = mCharacter->GetCal3DWrapper();
-
-   //get all the data for animations and tell the world
-   for (int animID=0; animID<wrapper->GetCoreAnimationCount(); animID++)
-   {
-      QString nameToSend = QString::fromStdString(wrapper->GetCoreAnimationName(animID));
-      unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
-      unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
-      float dur = wrapper->GetCoreAnimationDuration(animID);
-      //emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
-   }
-
-   //get all data for the meshes and emit
-   for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
-   {
-      QString nameToSend = QString::fromStdString( wrapper->GetCoreMeshName(meshID) );
-      //emit MeshLoaded(meshID, nameToSend);
-   }
-
-   //get all material data and emit
-   for (int matID=0; matID<wrapper->GetCoreMaterialCount(); matID++)
-   {
-      QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
-
-      osg::Vec4 diffuse = wrapper->GetCoreMaterialDiffuse(matID);
-      QColor diffColor( (int)(diffuse[0]), (int)(diffuse[1]), (int)(diffuse[2]), (int)(diffuse[3]) );
-
-      osg::Vec4 ambient = wrapper->GetCoreMaterialAmbient(matID);
-      QColor ambColor( (int)(ambient[0]), (int)(ambient[1]), (int)(ambient[2]), (int)(ambient[3]) );
-
-      osg::Vec4 specular = wrapper->GetCoreMaterialSpecular(matID);
-      QColor specColor( (int)(specular[0]), (int)(specular[1]), (int)(specular[2]), (int)(specular[3]) );
-
-      float shininess = wrapper->GetCoreMaterialShininess(matID);
-
-      emit MaterialLoaded(matID, nameToSend, diffColor, ambColor, specColor, shininess);
-   }
-
-   CreateBoneBasisDisplay();
- 
-   LOG_DEBUG("Done loading file: " + filename.toStdString() );
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::CreateBoneBasisDisplay()
-{
-   // Destroy any previous held point axes and start fresh  
-   mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
-
-   VectorHotSpot hotSpotList;
-   dtAnim::Cal3DModelWrapper *modelWrapper = mCharacter->GetCal3DWrapper();
-
-   std::vector<int> boneList;
-   modelWrapper->GetCoreBoneChildrenIDs(0, boneList);
-
-   std::vector<std::string> boneVec;
-   modelWrapper->GetCoreBoneNames( boneVec );
-
-   //for every bone
-   std::vector<std::string>::const_iterator boneNameIter = boneVec.begin();
-   std::vector<std::string>::const_iterator boneNameEnd = boneVec.end();
-   while( boneNameIter!=boneNameEnd )
-   {
-      //create a HotSpot
-      dtUtil::HotSpotDefinition hotSpotDefinition;
-      hotSpotDefinition.mName = *boneNameIter;
-      hotSpotDefinition.mParentName = *boneNameIter;
-
-      //Create the axis geometry
-      dtCore::PointAxis *axis = new dtCore::PointAxis();
-      axis->SetLength(dtCore::PointAxis::X, 0.025f);
-      axis->SetLength(dtCore::PointAxis::Y, 0.025f);
-      axis->SetLength(dtCore::PointAxis::Z, 0.025f);
-
-      mAttachmentController->AddAttachment(*axis, hotSpotDefinition);
-
-      mBoneBasisGroup->addChild(axis->GetOSGNode());
-
-      ++boneNameIter;
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -284,14 +147,32 @@ void ObjectViewer::OnLoadShaderFile(const QString &filename)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadGeometryFile(const QString &filename)
+void ObjectViewer::OnLoadGeometryFile(const std::string &filename)
 {
+   // For now only allow 1 object
+   if (mObject.valid())
+   {
+      OnUnloadGeometryFile();
+   }
+
    mObject = new dtCore::Object; 
-   mObject->LoadFile(filename.toStdString());
+   mObject->LoadFile("staticmeshes/" + filename);
 
    // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mObject->GetOSGNode());
    mWireDecorator->addChild(mObject->GetOSGNode());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnUnloadGeometryFile()
+{   
+   if (mObject.valid())
+   {
+      mShadeDecorator->removeChild(mObject->GetOSGNode());
+      mWireDecorator->removeChild(mObject->GetOSGNode());
+
+      mObject = NULL;
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -310,16 +191,6 @@ void ObjectViewer::OnRemoveShader()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
    shaderManager.UnassignShaderFromNode(*mShadedScene);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
-{
-   if( mCharacter.valid() )
-   {
-      dtAnim::Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
-      wrapper->ExecuteAction(id, delayIn, delayOut);
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -351,19 +222,6 @@ void ObjectViewer::OnSetShadedWireframe()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnSetBoneBasisDisplay(bool shouldDisplay)
-{
-   if (shouldDisplay)
-   {
-      mUnShadedScene->addChild(mBoneBasisGroup.get());
-   }
-   else
-   {
-      mUnShadedScene->removeChild(mBoneBasisGroup.get());
-   }  
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnToggleGrid(bool shouldDisplay)
 {
    if (shouldDisplay)
@@ -374,41 +232,6 @@ void ObjectViewer::OnToggleGrid(bool shouldDisplay)
    {
       mUnShadedScene->removeChild(mGridGeode.get());
    }  
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnTimeout()
-{
-   if (mCharacter.valid())
-   {   
-      dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
-      assert(rapper);
-
-      mAttachmentController->Update(*rapper);
-
-      std::vector<CalAnimation*> animVec = rapper->GetCalModel()->getMixer()->getAnimationVector();
-      std::vector<CalAnimation*>::iterator animItr = animVec.begin();
-
-      std::vector<float> weightList;
-      weightList.reserve(animVec.size());
-
-      while (animItr != animVec.end())
-      {
-         CalAnimation *anim = *(animItr);
-         float weight = 0.f;
-
-         if (anim!=NULL)
-         {
-            weight = anim->getWeight();  
-         }
-
-         weightList.push_back(weight);
-        
-         ++animItr;
-      }   
-
-      emit BlendUpdate(weightList);   
-   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -484,42 +307,9 @@ void ObjectViewer::InitGridPlanes()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnShowMesh( int meshID )
+void ObjectViewer::PostFrame(const double)
 {
-   mMeshesToShow.push_back(meshID);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnHideMesh( int meshID )
-{
-   mMeshesToHide.push_back(meshID);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::PostFrame( const double deltaFrameTime )
-{
-   {
-      std::vector<int>::iterator showItr = mMeshesToShow.begin();
-      while (showItr != mMeshesToShow.end())
-      {
-         mCharacter->GetCal3DWrapper()->ShowMesh( (*showItr) );
-
-         ++showItr;
-      }
-
-      mMeshesToShow.clear();
-   }
-
-   {
-      std::vector<int>::iterator hideItr = mMeshesToHide.begin();
-      while (hideItr != mMeshesToHide.end())
-      {
-         mCharacter->GetCal3DWrapper()->HideMesh( (*hideItr) );
-         ++hideItr;
-      }
-
-      mMeshesToHide.clear();
-   }
+   
 }
 
 

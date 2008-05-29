@@ -70,30 +70,21 @@ public:
    virtual void Config();
 
 public slots:
-
-   void OnLoadCharFile(const QString &filename);
+  
    void OnLoadShaderFile(const QString &filename);
-   void OnLoadGeometryFile(const QString &filename);
+   void OnLoadGeometryFile(const std::string &filename);
+   void OnUnloadGeometryFile();
    void OnApplyShader(const std::string &groupName, const std::string &programName);
    void OnRemoveShader();
-   void OnStartAction(unsigned int id, float delayIn, float delayOut);    
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
-   void OnSetBoneBasisDisplay(bool shouldDisplay);
-   void OnToggleGrid(bool shouldDisplay);
-   
-   void OnTimeout();
-   
-   /// Show the mesh on the CalModel
-   void OnShowMesh( int meshID );
-
-   /// Hide the mesh on CalModel from view
-   void OnHideMesh( int meshID );
+   void OnToggleGrid(bool shouldDisplay);    
 
 signals:
-   void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
-                           unsigned int keyframes, float duration);
+
+   void AnimationLoaded(unsigned int, const QString &, unsigned int trackCount,
+                        unsigned int keyframes, float duration);
 
    void ShaderLoaded(const std::string &shaderGroup, const std::string &shaderName);   
 
@@ -108,28 +99,20 @@ signals:
 protected:
    virtual void PostFrame( const double deltaFrameTime );  
 
-private:
-  
-   dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
+private:  
+ 
    dtCore::RefPtr<dtCore::Object> mObject;
-   dtCore::RefPtr<dtAnim::AttachmentController> mAttachmentController;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
+
    dtCore::RefPtr<osg::Group> mShadedScene;
    dtCore::RefPtr<osg::Group> mUnShadedScene;
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
-   dtCore::RefPtr<osg::Group> mBoneBasisGroup;
    dtCore::RefPtr<osg::Geode> mGridGeode;
-
-   std::vector<int> mMeshesToShow;
-   std::vector<int> mMeshesToHide;
-  
-   dtCore::RefPtr<dtAnim::Cal3DDatabase>    mCalDatabase; ///<Need to keep this around since it holds our textures   
 
    void InitShadeDecorator();
    void InitWireDecorator();
    void InitGridPlanes();
-   void CreateBoneBasisDisplay();
 };
 
 #endif // DELTA_OBJECT_VIEWER

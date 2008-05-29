@@ -15,21 +15,19 @@
 #include <QtGui/QAction>
 #include <QtGui/QFileDialog>
 #include <QtGui/QTableWidget>
-#include <QtCore/QSettings>
 #include <QtGui/QStatusBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMessageBox>
-#include <QtGui/QTabWidget>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QHBoxLayout>
-#include <QtGui/QTreeWidgetItem>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
 
-#include <QtGui/QGraphicsEllipseItem>
-#include <cassert>
+#include <QtCore/QSettings>
+#include <QtCore/QDir>
+
+#include <assert.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
@@ -87,12 +85,7 @@ void ObjectWorkspace::CreateMenus()
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
 
-   connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
-
-   for (int i=0; i<5; ++i)
-   {
-      windowMenu->addAction(mRecentFilesAct[i]);
-   }
+   connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));  
 
    menuBar()->addSeparator();
    windowMenu->addAction(mExitAct);
@@ -120,14 +113,7 @@ void ObjectWorkspace::CreateActions()
 
    mChangeContextAction = new QAction(tr("Change Project..."), this);
    mChangeContextAction->setStatusTip(tr("Change the project context directory."));
-   connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));   
-
-   for (int i=0; i<5; i++)
-   {
-      mRecentFilesAct[i] = new QAction(this);
-      mRecentFilesAct[i]->setVisible(false);
-      connect(mRecentFilesAct[i], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
-   }
+   connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));     
 
    // The actiongroup is used to make the action behave like radio buttons
    QActionGroup *actionGroup = new QActionGroup(this);
@@ -169,38 +155,6 @@ void ObjectWorkspace::CreateToolbars()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnOpenCharFile()
-{
-   QString filename = QFileDialog::getOpenFileName(this,
-      tr("Load Character File"),
-      ".",
-      tr("Characters (*.xml)") );
-
-   if (!filename.isEmpty())
-   {
-      LoadCharFile(filename);
-   }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::LoadCharFile( const QString &filename )
-{
-   if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
-   {        
-      emit FileToLoad( filename );
-
-      SetCurrentFile(filename);
-
-      statusBar()->showMessage(tr("File loaded"), 2000);
-   }
-   else
-   {
-      QString errorString = QString("File not found: %1").arg( filename );
-      QMessageBox::warning( this, "Warning", errorString, "&Ok" );
-   }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnInitialization()
 {
    QSettings settings("MOVES", "Shader Viewer");
@@ -216,7 +170,8 @@ void ObjectWorkspace::OnInitialization()
       mContextPath = files.at(0).toStdString();
    }
 
-   SaveCurrentContextPath();         
+   SaveCurrentContextPath();   
+   UpdateResourceLists();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -251,40 +206,41 @@ void ObjectWorkspace::UpdateRecentFileActions()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::SetCurrentFile( const QString &filename )
+void ObjectWorkspace::UpdateResourceLists()
 {
-   //if (filename.isEmpty())
-   //{
-   //   setWindowTitle(tr("Shader Viewer"));
-   //}
-   //else
-   //{
-   //   setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
-   //}
+   assert(!mContextPath.empty());
 
-   //QSettings settings("MOVES", "Shader Viewer");
-   //QStringList files = settings.value("recentFileList").toStringList();
-   //files.removeAll(filename);
-   //files.prepend(filename);
+   QDir directory(mContextPath.c_str());
+   
+   if (directory.cd(QString(mContextPath.c_str()) + "/shaders"))
+   {
+      QStringList nameFilters;
+      nameFilters << "*.xml";
 
-   //while (files.size() > 5)
-   //{
-   //   files.removeLast();
-   //}
+      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
 
-   //settings.setValue("recentFileList", files);
-   //UpdateRecentFileActions();
-}
+      while (!fileList.empty())
+      {
+         QFileInfo fileInfo = fileList.takeFirst();
+         emit LoadShaderDefinition(QString("shaders/%1").arg(fileInfo.fileName()));
+      }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OpenRecentFile()
-{
-   //QAction *action = qobject_cast<QAction*>(sender());
+      directory.cdUp();
+   }
 
-   //if (action)
-   //{
-   //   LoadCharFile( action->data().toString() );
-   //}
+   if (directory.cd(QString(mContextPath.c_str()) + "/staticmeshes"))
+   {
+      QStringList nameFilters;
+      nameFilters << "*.ive" << "*.osg";
+
+      QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
+
+      while (!fileList.empty())
+      {
+         QFileInfo fileInfo = fileList.takeFirst();
+         mResourceDock->OnNewGeometry(fileInfo.fileName().toStdString());         
+      }      
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -301,8 +257,7 @@ void ObjectWorkspace::OnLoadShaderDefinition()
    {       
       if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
       {
-         emit LoadShaderDefinition(filename);
-         SetCurrentFile(filename);
+         emit LoadShaderDefinition(filename);         
          statusMessage = QString(tr("File Loaded"));
       }      
    }
@@ -329,7 +284,6 @@ void ObjectWorkspace::OnLoadGeometry()
       if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
       {
          emit LoadGeometry(filename);
-         SetCurrentFile(filename);
          statusMessage = QString(tr("File Loaded"));
       }      
    }
