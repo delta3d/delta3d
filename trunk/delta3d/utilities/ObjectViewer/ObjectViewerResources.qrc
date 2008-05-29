@@ -4,13 +4,7 @@
  	  <file>images/shaded.png</file>              
   	  <file>images/shadedwire.png</file>    
 	  <file>images/diffuseLight.png</file>                          
- 	  <file>images/pointLight.png</file>        
-	  <file>images/checker.png</file>
-	  <file>images/reticle.png</file>
-	  <file>images/handIcon.png</file>
-	  <file>images/epsilon.png</file>
-	  <file>images/epsilonCursor.png</file>
-	  <file>images/displayEdges.png</file>
-	  <file>images/displayError.png</file>
+ 	  <file>images/pointLight.png</file>   
+      <file>images/xygrid.png</file>
     </qresource>
 </RCC>

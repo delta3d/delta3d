@@ -99,6 +99,8 @@ void Delta3DThread::run()
            mViewer.get(), SLOT(OnApplyShader(const std::string &, const std::string &)));  
 
    connect(mWin, SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
+
+   connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));
    
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
 

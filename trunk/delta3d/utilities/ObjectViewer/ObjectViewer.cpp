@@ -69,8 +69,10 @@ using namespace dtAnim;
 /////////////////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
 : mCalDatabase(&Cal3DDatabase::GetInstance())
-, mPoseMeshes(NULL)
 {
+   mShadedScene   = new osg::Group;
+   mUnShadedScene = new osg::Group;
+
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
 }
 
@@ -112,12 +114,16 @@ void ObjectViewer::Config()
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
    mBoneBasisGroup = new osg::Group;
+
+   GetScene()->GetSceneNode()->addChild(mShadedScene.get());
+   GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
   
    InitWireDecorator(); 
    InitShadeDecorator();
    InitGridPlanes();
 
    OnSetShaded();
+   OnToggleGrid(true);
 
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
 }
@@ -154,15 +160,7 @@ void ObjectViewer::OnLoadCharFile( const QString &filename )
       // Create a new Cal3DWrapper
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
       mCharacter = new CharDrawable(wrapper.get());  
-      mAttachmentController = new dtAnim::AttachmentController;
-
-      // Retrieve the data to check for the inclusion of an IK pose mesh file
-      dtAnim::Cal3DModelData *modelData = mCalDatabase->GetModelData(*wrapper.get());
-
-      if (!modelData->GetPoseMeshFilename().empty())
-      {
-         OnLoadPoseMeshFile(modelData->GetPoseMeshFilename());
-      }
+      mAttachmentController = new dtAnim::AttachmentController;      
    }
    catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
@@ -266,38 +264,6 @@ void ObjectViewer::CreateBoneBasisDisplay()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadPoseMeshFile( const std::string &filename )
-{ 
-   assert(0);
-   return;
-
-   dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
-   assert(rapper);
-
-   // Delete any previous data
-   if (mPoseDatabase.valid())
-   {
-      mPoseDatabase = NULL;
-      mPoseUtility  = NULL;
-   }
-
-   // Create the database to store loaded data
-   mPoseDatabase = new dtAnim::PoseMeshDatabase(rapper);
-   mPoseUtility  = new dtAnim::PoseMeshUtility;
-
-   if (mPoseDatabase->LoadFromFile(filename))
-   {
-      mPoseMeshes = &mPoseDatabase->GetMeshes();
-      emit PoseMeshesLoaded(*mPoseMeshes, mCharacter.get());
-   }
-   else
-   {
-      // Unable to load pose mesh (this will probably induce a timer callback to timeout())
-      QMessageBox::warning(NULL, "Error", "Unable to load pose meshes!", QMessageBox::Ok);
-   }
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadShaderFile(const QString &filename)
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
@@ -364,29 +330,29 @@ void ObjectViewer::OnStartAction( unsigned int id, float delayIn, float delayOut
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetShaded()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+   mShadedScene->removeChild(mWireDecorator.get());
+   mShadedScene->removeChild(mShadeDecorator.get());
 
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
+   mShadedScene->addChild(mShadeDecorator.get());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetWireframe()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+   mShadedScene->removeChild(mWireDecorator.get());
+   mShadedScene->removeChild(mShadeDecorator.get());
 
-   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
+   mShadedScene->addChild(mWireDecorator.get());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetShadedWireframe()
 {
-   GetScene()->GetSceneNode()->removeChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->removeChild(mShadeDecorator.get());
+   mShadedScene->removeChild(mWireDecorator.get());
+   mShadedScene->removeChild(mShadeDecorator.get());
 
-   GetScene()->GetSceneNode()->addChild(mWireDecorator.get());
-   GetScene()->GetSceneNode()->addChild(mShadeDecorator.get());
+   mShadedScene->addChild(mWireDecorator.get());
+   mShadedScene->addChild(mShadeDecorator.get());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -394,11 +360,24 @@ void ObjectViewer::OnSetBoneBasisDisplay(bool shouldDisplay)
 {
    if (shouldDisplay)
    {
-      GetScene()->GetSceneNode()->addChild(mBoneBasisGroup.get());
+      mUnShadedScene->addChild(mBoneBasisGroup.get());
    }
    else
    {
-      GetScene()->GetSceneNode()->removeChild(mBoneBasisGroup.get());
+      mUnShadedScene->removeChild(mBoneBasisGroup.get());
+   }  
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnToggleGrid(bool shouldDisplay)
+{
+   if (shouldDisplay)
+   {
+      mUnShadedScene->addChild(mGridGeode.get());
+   }
+   else
+   {
+      mUnShadedScene->removeChild(mGridGeode.get());
    }  
 }
 
@@ -502,13 +481,11 @@ void ObjectViewer::InitGridPlanes()
    geometry->setVertexArray(new osg::Vec3Array(numVerts, verts));
    geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVerts));
 
-   osg::Geode* geode = new osg::Geode;
-   assert( geode );
+   assert(!mGridGeode.valid());
+   mGridGeode = new osg::Geode;
 
-   geode->addDrawable(geometry);
-   geode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);
-
-   GetScene()->GetSceneNode()->addChild(geode);
+   mGridGeode->addDrawable(geometry);
+   mGridGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

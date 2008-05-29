@@ -49,6 +49,8 @@ signals:
    void ApplyShader(const std::string &group, const std::string &name);
    void RemoveShader();
 
+   void ToggleGrid(bool shouldShow);
+
 public slots:
    
    void OnInitialization();
@@ -75,6 +77,7 @@ private:
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
    QAction *mShadedWireAction;
+   QAction *mGridAction;
    QAction *mDiffuseLightAction;
    QAction *mPointLightAction;
 
@@ -99,6 +102,8 @@ private slots:
  
    void OnShaderItemChanged(QTreeWidgetItem *item, int column);
    void OnDoubleclickShaderItem(QTreeWidgetItem *item, int column);
+
+   void OnToggleGridClicked(bool toggledOn);
 
    std::string GetContextPathFromUser();
    void SaveCurrentContextPath();
