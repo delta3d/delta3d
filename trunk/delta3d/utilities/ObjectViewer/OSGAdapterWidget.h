@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #ifndef OSGADAPTERWIDGET_H_
 #define OSGADAPTERWIDGET_H_
 
@@ -30,14 +31,17 @@
 
 #include <dtCore/refptr.h>
 
+///////////////////////////////////////////////////////////////////////////////
+
 namespace osgViewer
 {
    class GraphicsWindow;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 namespace dtQt
 {
-
    class OSGAdapterWidget : public QGLWidget
    {
       Q_OBJECT

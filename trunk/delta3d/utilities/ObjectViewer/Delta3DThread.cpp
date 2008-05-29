@@ -1,4 +1,5 @@
 #include <QtOpenGL/QGLContext>
+#include <QtGui/QDockWidget>
 
 #include "Delta3DThread.h"
 #include "ObjectViewer.h"
@@ -93,12 +94,12 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(LoadGeometry(const QString &)), mViewer.get(), SLOT(OnLoadGeometryFile(const QString &)));
 
    connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string &, const std::string &)), 
-           mWin, SLOT(OnNewShader(const std::string &, const std::string &)));
+           mWin->GetResourceObject(), SLOT(OnNewShader(const std::string &, const std::string &)));
 
-   connect(mWin, SIGNAL(ApplyShader(const std::string &, const std::string &)), 
+   connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string &, const std::string &)), 
            mViewer.get(), SLOT(OnApplyShader(const std::string &, const std::string &)));  
 
-   connect(mWin, SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
+   connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
 
    connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));
    
