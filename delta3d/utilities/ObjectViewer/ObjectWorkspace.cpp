@@ -55,7 +55,6 @@ ObjectWorkspace::ObjectWorkspace()
 
    mResourceDock = new ResourceDock;
    addDockWidget(Qt::RightDockWidgetArea, mResourceDock);   
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +241,9 @@ void ObjectWorkspace::UpdateResourceLists()
       directory.cdUp();
    }
 
-   if (directory.cd(QString(mContextPath.c_str()) + "/staticmeshes"))
+   QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
+
+   if (directory.cd(staticMeshDir))
    {
       QStringList nameFilters;
       nameFilters << "*.ive" << "*.osg";
@@ -252,7 +253,7 @@ void ObjectWorkspace::UpdateResourceLists()
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         mResourceDock->OnNewGeometry(fileInfo.fileName().toStdString());         
+         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());         
       }      
    }
 }
@@ -296,9 +297,28 @@ void ObjectWorkspace::OnLoadGeometry()
    if (!filename.isEmpty())
    {       
       if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
-      {
-         emit LoadGeometry(filename);
-         statusMessage = QString(tr("File Loaded"));
+      {         
+         QFileInfo fileInfo(filename);
+
+         std::string fullName = fileInfo.absoluteFilePath().toStdString();
+         QTreeWidgetItem *geometryItem = mResourceDock->FindGeometryItem(fullName);
+
+         // Only reload the item if it has not already been loaded
+         if (!geometryItem)
+         {
+            // Give the required information to the resource manager(dock)
+            mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(), 
+               fileInfo.fileName().toStdString());
+
+            // Display the geometry right away
+            mResourceDock->SetGeometry(fileInfo.absoluteFilePath().toStdString(), true);
+
+            statusMessage = QString(tr("File Loaded"));
+         }
+         else
+         {
+            QMessageBox::information(this, "Warning", "Geometry already loaded!", QMessageBox::Ok);
+         }         
       }      
    }
    else

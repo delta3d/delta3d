@@ -55,9 +55,16 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
-Delta3DThread::Delta3DThread(QObject *parent):
-QThread(parent)
+Delta3DThread::Delta3DThread(QApplication *parent)
+   : QThread(parent)
 {
+   QStringList argList = parent->arguments();
+
+   // If we have an argument(possibly from drag and drop)
+   if (argList.size() > 1)
+   {
+      mStartupFile = argList.at(1).toStdString();      
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -94,6 +101,9 @@ void Delta3DThread::run()
 
    connect(mWin, SIGNAL(ReloadShaderDefinition(const QString &)), 
            mViewer.get(), SLOT(OnReloadShaderFile(const QString &)));
+
+   connect(mWin, SIGNAL(LoadGeometry(const std::string &)),
+           mViewer.get(), SLOT(OnLoadGeometryFile(const std::string &)));
    
    connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string &)),
            mViewer.get(), SLOT(OnLoadGeometryFile(const std::string &)));
@@ -119,5 +129,5 @@ void Delta3DThread::run()
    dtCore::System::GetInstance().Start();
    mTimer.start(10);
 
-   mWin->OnInitialization();
+   mWin->OnInitialization();  
 }
