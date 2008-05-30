@@ -51,6 +51,7 @@ signals:
    void FileToLoad(const QString&);  
    void LoadShaderDefinition(const QString &);
    void LoadGeometry(const QString &);
+   void ReloadShaderDefinition(const QString &);
    void StartAction(unsigned int, float, float);
    
    void ToggleGrid(bool shouldShow);
@@ -59,6 +60,7 @@ public slots:
    
    void OnInitialization(); 
    void OnToggleShadingToolbar(); 
+   void OnRecompileClicked();
 	
 private:
    void CreateMenus();
@@ -74,12 +76,14 @@ private:
    QAction *mChangeContextAction;
    QAction *mExitAct;
   
+   // Toolbar
    QAction *mWireframeAction; 
    QAction *mShadedAction;    
    QAction *mShadedWireAction;
    QAction *mGridAction;
    QAction *mDiffuseLightAction;
    QAction *mPointLightAction;
+   QAction *mRecompileAction;
 
    QToolBar *mDisplayToolbar;    
    QToolBar *mShaderToolbar;
@@ -87,6 +91,7 @@ private:
    ResourceDock *mResourceDock;
 
    std::string mContextPath;
+   QString mShaderDefinitionName;
 
    dtQt::OSGAdapterWidget* mGLWidget;
 
