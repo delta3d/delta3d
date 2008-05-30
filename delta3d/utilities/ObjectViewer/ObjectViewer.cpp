@@ -43,7 +43,7 @@ ObjectViewer::ObjectViewer()
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
 
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

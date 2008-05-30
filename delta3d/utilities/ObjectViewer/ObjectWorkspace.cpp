@@ -26,6 +26,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
+#include <QtCore/QUrl>
 
 #include <assert.h>
 
@@ -45,7 +46,7 @@ ObjectWorkspace::ObjectWorkspace()
 
    QWidget* glParent = new QWidget(this);
 
-   mGLWidget = new dtQt::OSGAdapterWidget(false, glParent);
+   mGLWidget = new dtQt::OSGAdapterWidget(false, this);
 
    QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
    hbLayout->setMargin(0);
@@ -54,7 +55,9 @@ ObjectWorkspace::ObjectWorkspace()
    setCentralWidget(glParent);
 
    mResourceDock = new ResourceDock;
-   addDockWidget(Qt::RightDockWidgetArea, mResourceDock);   
+   addDockWidget(Qt::RightDockWidgetArea, mResourceDock);     
+
+   setAcceptDrops(true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +69,27 @@ ObjectWorkspace::~ObjectWorkspace()
 QObject* ObjectWorkspace::GetResourceObject()
 { 
    return mResourceDock; 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::dragEnterEvent(QDragEnterEvent *event)
+{
+   if (event->mimeData()->hasFormat("text/uri-list"))
+   {
+      event->acceptProposedAction();
+   }   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::dropEvent(QDropEvent *event)
+{
+   QList<QUrl> urlList = event->mimeData()->urls();
+
+   if (!urlList.empty())
+   {
+      QString filename = urlList.first().toLocalFile();
+      OnLoadGeometry(filename.toStdString());
+   }   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
