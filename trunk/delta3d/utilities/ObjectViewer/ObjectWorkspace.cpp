@@ -123,6 +123,7 @@ void ObjectWorkspace::CreateActions()
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
    QIcon gridIcon(":/images/xygrid.png");
+   QIcon compileIcon(":/images/recompile.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
@@ -130,6 +131,9 @@ void ObjectWorkspace::CreateActions()
    
    mGridAction = new QAction(gridIcon, "Toggle Grid", this);
    connect(mGridAction, SIGNAL(toggled(bool)), this, SLOT(OnToggleGridClicked(bool)));
+
+   mRecompileAction = new QAction(compileIcon, tr("Recompile Shaders"), this);
+   connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
@@ -151,7 +155,7 @@ void ObjectWorkspace::CreateToolbars()
    mDisplayToolbar->addAction(mGridAction);
 
    mShaderToolbar = addToolBar("Shader toolbar");
-   mShaderToolbar->addAction("recompile");
+   mShaderToolbar->addAction(mRecompileAction);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -188,6 +192,12 @@ void ObjectWorkspace::OnToggleShadingToolbar()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnRecompileClicked()
+{
+   emit ReloadShaderDefinition(mShaderDefinitionName);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::UpdateRecentFileActions()
 {
    //QSettings settings("MOVES", "Shader Viewer");
@@ -219,10 +229,14 @@ void ObjectWorkspace::UpdateResourceLists()
 
       QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
 
+      // Are multiple definitions allowed?
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         emit LoadShaderDefinition(QString("shaders/%1").arg(fileInfo.fileName()));
+         mShaderDefinitionName = QString("shaders/%1").arg(fileInfo.fileName());
+         emit LoadShaderDefinition(mShaderDefinitionName);
+
+         break;
       }
 
       directory.cdUp();

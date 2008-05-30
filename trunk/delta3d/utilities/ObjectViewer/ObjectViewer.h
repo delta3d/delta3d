@@ -72,6 +72,7 @@ public:
 public slots:
   
    void OnLoadShaderFile(const QString &filename);
+   void OnReloadShaderFile(const QString &filename);
    void OnLoadGeometryFile(const std::string &filename);
    void OnUnloadGeometryFile();
    void OnApplyShader(const std::string &groupName, const std::string &programName);

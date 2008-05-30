@@ -6,5 +6,6 @@
 	  <file>images/diffuseLight.png</file>                          
  	  <file>images/pointLight.png</file>   
       <file>images/xygrid.png</file>
+      <file>images/recompile.png</file>
     </qresource>
 </RCC>
