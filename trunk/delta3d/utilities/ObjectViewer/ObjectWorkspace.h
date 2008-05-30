@@ -66,7 +66,6 @@ private:
    void CreateMenus();
    void CreateActions();
    void CreateToolbars();
-   void UpdateRecentFileActions();
    void UpdateResourceLists();
    void LoadObjectFile(const QString &filename);
 
@@ -100,6 +99,7 @@ private slots:
    // File menu callbacks
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
+   void OnLoadGeometry(const std::string &fullName);
    void OnChangeContext();
    
    void OnToggleGridClicked(bool toggledOn);

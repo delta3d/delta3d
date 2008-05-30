@@ -130,4 +130,5 @@ void Delta3DThread::run()
    mTimer.start(10);
 
    mWin->OnInitialization();  
+   mWin->OnLoadGeometry(mStartupFile.c_str());
 }

@@ -88,8 +88,6 @@ void ObjectWorkspace::CreateMenus()
 
    menuBar()->addSeparator();
    windowMenu->addAction(mExitAct);
-
-   UpdateRecentFileActions();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -197,24 +195,6 @@ void ObjectWorkspace::OnRecompileClicked()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::UpdateRecentFileActions()
-{
-   //QSettings settings("MOVES", "Shader Viewer");
-   //QStringList files = settings.value("recentFileList").toStringList();
-
-   //int numRecentFiles = qMin(files.size(), 5);
-
-   //for (int i = 0; i < numRecentFiles; ++i) {
-   //   QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName() );
-   //   mRecentFilesAct[i]->setText(text);
-   //   mRecentFilesAct[i]->setData(files[i]);
-   //   mRecentFilesAct[i]->setVisible(true);
-   //}
-   //for (int j = numRecentFiles; j < 5; ++j)
-   //   mRecentFilesAct[j]->setVisible(false);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::UpdateResourceLists()
 {
    assert(!mContextPath.empty());
@@ -296,30 +276,7 @@ void ObjectWorkspace::OnLoadGeometry()
 
    if (!filename.isEmpty())
    {       
-      if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
-      {         
-         QFileInfo fileInfo(filename);
-
-         std::string fullName = fileInfo.absoluteFilePath().toStdString();
-         QTreeWidgetItem *geometryItem = mResourceDock->FindGeometryItem(fullName);
-
-         // Only reload the item if it has not already been loaded
-         if (!geometryItem)
-         {
-            // Give the required information to the resource manager(dock)
-            mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(), 
-               fileInfo.fileName().toStdString());
-
-            // Display the geometry right away
-            mResourceDock->SetGeometry(fileInfo.absoluteFilePath().toStdString(), true);
-
-            statusMessage = QString(tr("File Loaded"));
-         }
-         else
-         {
-            QMessageBox::information(this, "Warning", "Geometry already loaded!", QMessageBox::Ok);
-         }         
-      }      
+      OnLoadGeometry(filename.toStdString());
    }
    else
    {
@@ -327,6 +284,31 @@ void ObjectWorkspace::OnLoadGeometry()
    }
 
    statusBar()->showMessage(statusMessage, 2000);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
+{
+   if (dtUtil::FileUtils::GetInstance().FileExists(fullName))
+   {         
+      QFileInfo fileInfo(fullName.c_str());
+      QTreeWidgetItem *geometryItem = mResourceDock->FindGeometryItem(fullName);
+
+      // Only reload the item if it has not already been loaded
+      if (!geometryItem)
+      {
+         // Give the required information to the resource manager(dock)
+         mResourceDock->OnNewGeometry(fileInfo.absolutePath().toStdString(), 
+            fileInfo.fileName().toStdString());
+
+         // Display the geometry right away
+         mResourceDock->SetGeometry(fileInfo.absoluteFilePath().toStdString(), true);
+      }
+      else
+      {
+         QMessageBox::information(this, "Warning", "Geometry already loaded!", QMessageBox::Ok);
+      }         
+   }      
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
