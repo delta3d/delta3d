@@ -13,6 +13,8 @@
    #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
 
+#include <iostream>
+
 int main(int argc, char *argv[]) 
 {
    QApplication qapp(argc, argv);
@@ -24,20 +26,11 @@ int main(int argc, char *argv[])
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
 
-   thread->SetObjectWorkspace(&win);
-   //thread->start();
+   thread->SetObjectWorkspace(&win);   
    thread->run();
 
    qapp.exec();
-
-   //thread->quit();
-   //thread->exit();
-
-   /*while (thread->isRunning())
-   {
-      SLEEP(100);
-   }*/
-
+  
    delete thread;
 
    return EXIT_SUCCESS;

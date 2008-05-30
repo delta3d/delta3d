@@ -73,7 +73,7 @@ public slots:
   
    void OnLoadShaderFile(const QString &filename);
    void OnReloadShaderFile(const QString &filename);
-   void OnLoadGeometryFile(const std::string &filename);
+   void OnLoadGeometryFile(const std::string &filename);   
    void OnUnloadGeometryFile();
    void OnApplyShader(const std::string &groupName, const std::string &programName);
    void OnRemoveShader();
@@ -84,21 +84,11 @@ public slots:
 
 signals:
 
-   void AnimationLoaded(unsigned int, const QString &, unsigned int trackCount,
-                        unsigned int keyframes, float duration);
-
    void ShaderLoaded(const std::string &shaderGroup, const std::string &shaderName);   
-
-   void MaterialLoaded(int materialID, const QString &name, 
-                       const QColor &diffuse, const QColor &ambient, const QColor &specular,
-                       float shininess);
-
-   void ErrorOccured( const QString &msg );
-
-   void BlendUpdate(const std::vector<float> &weightList);
+   void ErrorOccured(const QString &msg);
 
 protected:
-   virtual void PostFrame( const double deltaFrameTime );  
+   virtual void PostFrame(const double deltaFrameTime);  
 
 private:  
  
@@ -111,7 +101,6 @@ private:
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Geode> mGridGeode;
 
-   void InitShadeDecorator();
    void InitWireDecorator();
    void InitGridPlanes();
 };

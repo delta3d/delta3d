@@ -2,11 +2,10 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QString>
-#include <QtGui/QColor>
 #include <QtGui/QMessageBox>
 
-#include "ObjectViewer.h"
-#include "ObjectWorkspace.h"
+#include <ObjectViewer.h>
+#include <ObjectWorkspace.h>
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
@@ -19,24 +18,11 @@
 #include <dtCore/exceptionenum.h>
 #include <dtCore/shadermanager.h>
 
-#include <dtAnim/characterfilehandler.h>
-#include <dtAnim/chardrawable.h>
-#include <dtAnim/characterfilehandler.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/chardrawable.h>
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/cal3dmodeldata.h>
-
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
-
-#include <dtGUI/ceuidrawable.h>
-
-#include <xercesc/sax/SAXParseException.hpp>  // for base class
-#include <xercesc/util/XMLString.hpp>
 
 #include <osg/Geode>
 #include <osg/Shape>
@@ -49,18 +35,7 @@
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
-#include <cal3d/animation.h>
-
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/CEGUISystem.h>
-#include <CEGUI/CEGUISchemeManager.h>
-
-#include <dtAnim/hotspotdriver.h>
-#include <dtCore/hotspotattachment.h>
-#include <dtCore/refptr.h>
-#include <dtCore/pointaxis.h>
-
-typedef std::vector<dtCore::RefPtr<dtCore::HotSpotAttachment> > VectorHotSpot;
+#include <assert.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
@@ -90,16 +65,16 @@ void ObjectViewer::Config()
 
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ( 0.f, -5.f, 1.f );
-   osg::Vec3 lookAtXYZ ( 0.f, 0.f, 1.f );
-   osg::Vec3 upVec ( 0.f, 0.f, 1.f );
-   camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
+   osg::Vec3 camXYZ(0.f, -5.f, 1.f);
+   osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
+   osg::Vec3 upVec (0.f, 0.f, 1.f);
+   camPos.SetLookAt(camXYZ, lookAtXYZ, upVec);
 
-   GetCamera()->SetTransform( camPos );
+   GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   mMotion = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
-   mMotion->SetTarget( GetCamera() );
+   mMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+   mMotion->SetTarget(GetCamera());
    mMotion->SetDistance(5.f);
 
    dtCore::Light *l = GetScene()->GetLight(0);
@@ -113,7 +88,6 @@ void ObjectViewer::Config()
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
   
    InitWireDecorator(); 
-   InitShadeDecorator();
    InitGridPlanes();
 
    OnSetShaded();
@@ -162,7 +136,7 @@ void ObjectViewer::OnLoadGeometryFile(const std::string &filename)
    }
 
    mObject = new dtCore::Object; 
-   mObject->LoadFile("staticmeshes/" + filename);
+   mObject->LoadFile(filename);
 
    // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mObject->GetOSGNode());
@@ -238,20 +212,6 @@ void ObjectViewer::OnToggleGrid(bool shouldDisplay)
    {
       mUnShadedScene->removeChild(mGridGeode.get());
    }  
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::InitShadeDecorator()
-{
-   //osg::StateSet *stateset = new osg::StateSet;  
-   //osg::PolygonMode *polyMode = new osg::PolygonMode;
-   //polyMode->setMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-   //
-   //osg::Material *material = new osg::Material;
-   //stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);  
-   //stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
-
-   //mShadeDecorator->setStateSet(stateset);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

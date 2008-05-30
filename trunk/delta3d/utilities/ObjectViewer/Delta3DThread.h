@@ -36,7 +36,7 @@ class Delta3DThread : public QThread
 {
    Q_OBJECT
 public:
-	Delta3DThread(QObject *parent=0);
+	Delta3DThread(QApplication *parent=0);
 	~Delta3DThread();
    void SetObjectWorkspace(ObjectWorkspace *win) { mWin = win;}
    virtual void run();
@@ -48,6 +48,8 @@ protected:
 private:
    QTimer mTimer;
    ObjectWorkspace *mWin;
+
+   std::string mStartupFile;
 };
 
 #endif // DELTA3DTHREAD_H__
