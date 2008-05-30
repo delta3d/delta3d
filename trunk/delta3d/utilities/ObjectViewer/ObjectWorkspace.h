@@ -46,6 +46,9 @@ public:
 
    dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget;     }
    QObject* GetResourceObject();          
+
+   virtual void dragEnterEvent(QDragEnterEvent *event);
+   virtual void dropEvent(QDropEvent *event);
    
 signals:
    void FileToLoad(const QString&);  
