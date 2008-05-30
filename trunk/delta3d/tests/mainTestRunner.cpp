@@ -291,7 +291,6 @@ int main(int argc, char* argv[])
 
    dtAudio::AudioManager::Destroy();
 
-   //dtAudio::AudioManager::Destroy();
    return collectedResults.wasSuccessful () ? 0 : 1;
 }
 
