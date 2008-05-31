@@ -126,8 +126,7 @@ void Delta3DThread::run()
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
 
-   dtCore::System::GetInstance().Start();
-   mTimer.start(10);
+   dtCore::System::GetInstance().Start();  
 
    mWin->OnInitialization();  
    mWin->OnLoadGeometry(mStartupFile.c_str());

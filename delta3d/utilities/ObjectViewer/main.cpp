@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
    thread->SetObjectWorkspace(&win);   
    thread->run();
-
+   
    qapp.exec();
   
    delete thread;
