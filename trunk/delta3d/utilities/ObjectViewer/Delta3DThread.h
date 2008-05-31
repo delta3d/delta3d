@@ -46,9 +46,8 @@ public:
 protected:
 
 private:
-   QTimer mTimer;
-   ObjectWorkspace *mWin;
 
+   ObjectWorkspace *mWin;
    std::string mStartupFile;
 };
 

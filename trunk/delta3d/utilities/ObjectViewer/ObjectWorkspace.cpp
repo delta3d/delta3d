@@ -232,14 +232,12 @@ void ObjectWorkspace::UpdateResourceLists()
 
       QFileInfoList fileList = directory.entryInfoList(nameFilters, QDir::Files);
 
-      // Are multiple definitions allowed?
+      // Try to load all definitions
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
          mShaderDefinitionName = QString("shaders/%1").arg(fileInfo.fileName());
          emit LoadShaderDefinition(mShaderDefinitionName);
-
-         break;
       }
 
       directory.cdUp();

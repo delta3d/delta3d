@@ -99,25 +99,33 @@ void ObjectViewer::Config()
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadShaderFile(const QString &filename)
 {
-   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
-   shaderManager.LoadShaderDefinitions(filename.toStdString());
-
-   std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
-   shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
-
-   // Emit all shader groups and their individual shaders
-   for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
+   try
    {
-      std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
-      shaderGroupList[groupIndex]->GetAllShaders(programList);
+      dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.LoadShaderDefinitions(filename.toStdString());
 
-      const std::string &groupName = shaderGroupList[groupIndex]->GetName();
+      std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
+      shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
 
-      for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+      // Emit all shader groups and their individual shaders      
       {
-         emit ShaderLoaded(groupName, programList[programIndex]->GetName());
+         size_t groupIndex = shaderGroupList.size() - 1;
+
+         std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
+         shaderGroupList[groupIndex]->GetAllShaders(programList);
+
+         const std::string &groupName = shaderGroupList[groupIndex]->GetName();
+
+         for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+         {
+            emit ShaderLoaded(groupName, programList[programIndex]->GetName());
+         }
       }
    }
+   catch (dtUtil::Exception &e)
+   {
+      QMessageBox::critical(NULL, "Error", e.ToString().c_str());
+   }   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
