@@ -1,1 +1,0 @@
-call tests\allTestsd.exe
