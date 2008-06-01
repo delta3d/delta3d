@@ -26,6 +26,7 @@ OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
 OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
 OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
+OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
 
 
 IF (WIN32)
