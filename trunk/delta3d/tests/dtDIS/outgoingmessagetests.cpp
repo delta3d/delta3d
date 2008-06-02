@@ -10,7 +10,7 @@
 #include <dtGame/messagefactory.h>        // for usage
 #include <dtGame/message.h>
 
-namespace dtTest
+namespace dtDIS
 {
    /// tests the multicast socket code needed for DIS.
    class OutgoingMessageTests : public CPPUNIT_NS::TestFixture
@@ -63,7 +63,6 @@ namespace dtTest
 
 }
 
-using namespace dtTest;
 using namespace dtDIS;
 CPPUNIT_TEST_SUITE_REGISTRATION( OutgoingMessageTests );
 

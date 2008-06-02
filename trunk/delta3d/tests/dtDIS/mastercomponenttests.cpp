@@ -11,7 +11,7 @@
 #include <dtABC/application.h>
 extern dtABC::Application& GetGlobalApplication();
 
-namespace dtTest
+namespace dtDIS
 {
    /// a way to spin some cycles while I am waiting for an actual design.
    class MasterComponentTests : public CPPUNIT_NS::TestFixture
@@ -28,7 +28,7 @@ namespace dtTest
    };
 }
 
-using namespace dtTest;
+using namespace dtDIS;
 CPPUNIT_TEST_SUITE_REGISTRATION( MasterComponentTests );
 
 void MasterComponentTests::Test()
