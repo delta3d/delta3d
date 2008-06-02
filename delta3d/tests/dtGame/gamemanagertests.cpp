@@ -1184,11 +1184,15 @@ void GameManagerTests::TestTimers()
          const dtGame::TimerElapsedMessage *tem = static_cast<const dtGame::TimerElapsedMessage*> (msgs[i].get());
 
          if(tem->GetTimerName() == "SimTimer1")
-            CPPUNIT_ASSERT_MESSAGE("The late time should be reasonably close to the expected late time",
-               osg::equivalent(tem->GetLateTime(), float(lateSimTime) * 1e-6f, 1e-5f));
+         {
+            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
+                                                 float(lateSimTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+         }
          else if(tem->GetTimerName() == "RepeatingTimer1")
-            CPPUNIT_ASSERT_MESSAGE("The late time should be reasonably close to the expected late time",
-               osg::equivalent(tem->GetLateTime(), float(lateRealTime) * 1e-6f, 1e-5f));
+         {
+            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
+                                                  float(lateRealTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+         }
 
          foundTimeMsg = true;
       }
