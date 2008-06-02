@@ -69,39 +69,39 @@ CPPUNIT_TEST_SUITE_REGISTRATION( OutgoingMessageTests );
 void OutgoingMessageTests::TestAddRemove()
 {
    OutgoingMessage outgoing( DIS::BIG, 3 );
-   //CPPUNIT_ASSERT( outgoing.GetAdapters().empty() );
+   CPPUNIT_ASSERT( outgoing.GetAdapters().empty() );
 
    SampleAdapter adapter;
 
    outgoing.AddAdaptor( &dtGame::MessageType::INFO_ACTOR_CREATED, &adapter );
-   //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );
+   CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );
 
    // add another one to the same key
    {
       SampleAdapter adapter2;
       outgoing.AddAdaptor( &dtGame::MessageType::INFO_ACTOR_CREATED, &adapter2 );
-      //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );
+      CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );
 
       outgoing.RemoveAdaptor( &dtGame::MessageType::INFO_ACTOR_CREATED, &adapter2 );
-      //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );    // should have removed 1 element
+      CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );    // should have removed 1 element
    }
 
    // add another one to a different key
    {
       SampleAdapter adapter2;
       outgoing.AddAdaptor( &dtGame::MessageType::INFO_ACTOR_DELETED, &adapter2 );
-      //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );
+      CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );
 
       outgoing.RemoveAdaptor( &dtGame::MessageType::INFO_ACTOR_CREATED, &adapter2 );
-      //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );  // should not remove any elements
+      CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(2) );  // should not remove any elements
 
       // go ahead and clean up
       outgoing.RemoveAdaptor( &dtGame::MessageType::INFO_ACTOR_DELETED, &adapter2 );
-      //CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );  // should not remove any elements
+      CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size() , size_t(1) );  // should not remove any elements
    }
 
    outgoing.RemoveAdaptor( &dtGame::MessageType::INFO_ACTOR_CREATED, &adapter );
-   //CPPUNIT_ASSERT( outgoing.GetAdapters().empty() );
+   CPPUNIT_ASSERT( outgoing.GetAdapters().empty() );
 }
 
 void OutgoingMessageTests::TestHandle()
