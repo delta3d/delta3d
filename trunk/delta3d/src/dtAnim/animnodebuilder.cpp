@@ -49,7 +49,18 @@ namespace dtAnim
 
 AnimNodeBuilder::AnimNodeBuilder()
 {
-   SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+   if (SupportsHardware())
+   {
+      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateHardware));
+   }
+   else if (SupportsSoftware())
+   {
+      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateSoftware));
+   }
+   else
+   {
+      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateNULL));     
+   }
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
@@ -262,6 +273,13 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    return geode.get();
 }
 
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL( Cal3DModelWrapper* pWrapper )
+{
+   //NULL create function.  Used if hardware and software create functions fail.
+   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
+   return geode.get();
+}
+
 
 dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
@@ -390,6 +408,41 @@ void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel,
             indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
          }
       }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool AnimNodeBuilder::SupportsHardware() const
+{
+   //check if hardware supports our requirements
+   return SupportsVertexBuffers();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool AnimNodeBuilder::SupportsSoftware() const
+{
+   //check if hardware supports our requirements
+   return SupportsVertexBuffers();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool AnimNodeBuilder::SupportsVertexBuffers() const
+{
+   //see if we can support vertext buffer objects
+   osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
+   GLuint vbo;
+   glExt->glGenBuffers(1, &vbo);
+   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
+   glExt->glBufferData(GL_ARRAY_BUFFER_ARB, 18 * sizeof(float) * 10, NULL, GL_STATIC_DRAW_ARB);
+
+   float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+   if (vboVertexAttr == NULL)
+   {
+      return false;
+   }
+   else
+   {
+      return true;
    }
 }
 
