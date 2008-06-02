@@ -16,6 +16,7 @@ SET(ALL_SOURCES ${TEMP_SOURCES}
 
 FOREACH(varname ${DIRS}) 
   file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
+  SOURCE_GROUP( ${varname} FILES ${TEMP_SOURCES} )
   SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
 ENDFOREACH(varname)
 
