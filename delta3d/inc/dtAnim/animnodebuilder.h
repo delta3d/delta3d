@@ -79,6 +79,14 @@ public:
 
    virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
+   
+
+   ///Does the hardware support hardware skinning?
+   bool SupportsHardware() const;
+
+   ///Does the hardware support software skinning?
+   bool SupportsSoftware() const;
 
 
 
@@ -125,6 +133,10 @@ private:
    void InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
                                  float* vboVertexAttr, Cal3DModelData* modelData,
                                  Array<CalIndex> &indexArray );
+
+   ///Does the hardware support vertex buffers?
+   bool SupportsVertexBuffers() const;
+
 };
 
 }//namespace dtAnim
