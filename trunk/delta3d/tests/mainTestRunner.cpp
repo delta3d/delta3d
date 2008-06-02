@@ -206,6 +206,11 @@ int main(int argc, char* argv[])
       TimingListener timelistener;
       testResult.addListener(&timelistener);
 
+      //This will print out the name of the test right before it runs.  Helpful
+      //to track down a test that is seg faulting.
+      CPPUNIT_NS::BriefTestProgressListener brief;
+      testResult.addListener(&brief);
+      
       // setup the test runner - does all the work
       CPPUNIT_NS::TestRunner testRunner;
       CPPUNIT_NS::Test *fullTestSuite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
