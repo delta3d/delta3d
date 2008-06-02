@@ -214,7 +214,7 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
    if((error = alGetError()) != AL_NO_ERROR)
    {
       std::ostringstream finalStream;
-      finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alGetString(error) << "] Line " << lineNumber;
+      finalStream << "User Message: [" << userMessage << "] " << "OpenAL Message: [" << alGetString(error) << "] Line " << lineNumber;
       dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
       return AL_TRUE;
    }
@@ -225,7 +225,7 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
       if((alutError = alutGetError()) != ALUT_ERROR_NO_ERROR)
       {
          std::ostringstream finalStream;
-         finalStream << "User Message [" << userMessage << "] " << "OpenALMessage [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
+         finalStream << "User Message: [" << userMessage << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
          dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
          return AL_TRUE;
       }
