@@ -136,7 +136,11 @@ namespace dtAnim
       dtCore::System::GetInstance().Start();
 
       AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
-      nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+      if (nodeBuilder.SupportsSoftware())
+      {
+         nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
+      }
+
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
       mGM = new dtGame::GameManager(*mScene);
