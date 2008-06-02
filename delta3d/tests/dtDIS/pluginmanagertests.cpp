@@ -3,7 +3,7 @@
 #include <dtDIS/pluginmanager.h>         // for testing
 #include <dtCore/base.h>                 // for base class
 
-namespace dtTest
+namespace dtDIS
 {
    /// a way to spin some cycles while I am waiting for an actual design.
    class PluginManagerTests : public CPPUNIT_NS::TestFixture
@@ -56,7 +56,7 @@ namespace dtTest
    };
 }
 
-using namespace dtTest;
+using namespace dtDIS;
 //CPPUNIT_TEST_SUITE_REGISTRATION( PluginManagerTests );
 
 void PluginManagerTests::TestLoadUnload()
@@ -70,9 +70,9 @@ void PluginManagerTests::TestLoadUnload()
    std::string plugName("plugins/" + pluginPlatformDependentName);
 
    // test observability
-   dtCore::RefPtr<dtTest::LibRegObserver> lrObs = new dtTest::LibRegObserver();
-   plugMgr.GetLoadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnLoaded );
-   plugMgr.GetUnloadedSignal().connect_slot( lrObs.get() , &dtTest::LibRegObserver::OnUnloaded );
+   dtCore::RefPtr<dtDIS::LibRegObserver> lrObs = new dtDIS::LibRegObserver();
+   plugMgr.GetLoadedSignal().connect_slot( lrObs.get() , &dtDIS::LibRegObserver::OnLoaded );
+   plugMgr.GetUnloadedSignal().connect_slot( lrObs.get() , &dtDIS::LibRegObserver::OnUnloaded );
 
    CPPUNIT_ASSERT( plugMgr.LoadPlugin( plugName ) );
    CPPUNIT_ASSERT( lrObs->mLoadedHit );

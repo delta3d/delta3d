@@ -5,7 +5,7 @@
 #include <cstdlib>  // for NULL
 
 
-namespace dtTest
+namespace dtDIS
 {
    /// tests the multicast socket code needed for DIS.
    class ConnectionTests : public CPPUNIT_NS::TestFixture
@@ -23,7 +23,7 @@ namespace dtTest
 
 }
 
-using namespace dtTest;
+using namespace dtDIS;
 CPPUNIT_TEST_SUITE_REGISTRATION( ConnectionTests );
 
 void ConnectionTests::setup()
