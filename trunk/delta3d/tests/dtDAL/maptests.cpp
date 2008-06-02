@@ -145,7 +145,7 @@ void MapTests::setUp()
             fileUtils.FileDelete(rbodyToDelete);
 
         dtAudio::AudioManager::Instantiate();
-        dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
+        dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
 
         dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
