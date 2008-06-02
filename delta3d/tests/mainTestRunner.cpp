@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
    dtAudio::AudioManager::Instantiate();
-   dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
+   dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
 
    GlobalApplication = new dtABC::Application("config.xml");
    GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);

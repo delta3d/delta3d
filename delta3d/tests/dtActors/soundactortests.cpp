@@ -93,7 +93,7 @@ void SoundActorTests::setUp()
       mGameManager->LoadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
 
       dtAudio::AudioManager::Instantiate();
-      dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
+      dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
 
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
