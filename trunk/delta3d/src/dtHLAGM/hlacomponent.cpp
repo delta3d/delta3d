@@ -1394,7 +1394,6 @@ namespace dtHLAGM
             // Avoid invalid mappings.
             if( curAttrToProp->IsInvalid() )
             {
-               LogMappingError( *curAttrToProp, "ReflectAttributeValues found it to be INVALID. Ignoring." );
                continue;
             }
 
@@ -1466,6 +1465,8 @@ namespace dtHLAGM
                   {
                      // One or more parameter mappings failed.
                      curAttrToProp->SetInvalid( true );
+
+                     LogMappingError( *curAttrToProp, "Mapping was not successful, it was not able to create the correct message parameters." );
                   }
                }
             }
@@ -1841,6 +1842,8 @@ namespace dtHLAGM
                if( curParamMapping->GetHLAName() != PARAM_NAME_MAPPING_NAME )
                {
                   curParamMapping->SetInvalid( true );
+                  LogMappingError( *curParamMapping, 
+                           "Mapping is marked special, but doesn't have a special HLA parameter name." );
                   continue;
                }
 
@@ -1957,9 +1960,6 @@ namespace dtHLAGM
 
                if( ! messageParameter.valid() )
                {
-                  // The mapping is invalid.
-                  // This should be done outside of this method:
-                  // paramToParamMapping.SetInvalid(true);
                   success = false;
                }
             }
@@ -2575,7 +2575,7 @@ namespace dtHLAGM
 
          attrName = &curAttrToProp->GetHLAName();
 
-         // Avoid no-name attributes.
+         // Don't map attributes with no name.
          if ( attrName->empty() )
          {
             // This is NOT an error. This happens if the attribute is only a game type with
