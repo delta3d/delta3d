@@ -1321,7 +1321,7 @@ namespace dtDAL
 
       try
       {
-		  dtUtil::FileType ftype = fileUtils.GetFileInfo(path).fileType;
+         dtUtil::FileType ftype = fileUtils.GetFileInfo(path).fileType;
 
          if (ftype != dtUtil::REGULAR_FILE)
          {
