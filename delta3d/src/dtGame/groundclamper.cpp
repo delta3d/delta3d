@@ -365,15 +365,15 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    void GroundClamper::RunClampBatch()
-   {      
+   {
       if (mGroundClampBatch.empty())
          return;
-      
+
       if (mGroundClampBatch.size() > 32)
       {
          mLogger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Attempted to batch %u entities, when 32 is the max.", mGroundClampBatch.size());        
       }
-      
+
       //I don't really like doing this, but there doesn't seem to be an efficient way to 
       //reuse the ones that exist.  This should be revisited. - DID - AD 5/1/2007
       //mIsector->DeleteAllISectors();
@@ -392,69 +392,78 @@ namespace dtGame
          dtCore::Transform& xform = mGroundClampBatch[i].first;
          osg::Vec3 singlePoint;
          xform.GetTranslation(singlePoint);
-         
+
          single.SetSectorAsLineSegment(osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] + 100.0f),
                osg::Vec3(singlePoint[0], singlePoint[1], singlePoint[2] - 100.0f));
       }
 
-      if (mIsector->Update(mCurrentEyePointABSPos, GetEyePointActor() == NULL))
+      bool ignoreEyePoint = GetEyePointActor() == NULL;
+      if (!mIsector->Update(mCurrentEyePointABSPos, ignoreEyePoint))
       {
-         osg::Vec3 normal;
-         osg::Vec3 hp;
-
-         BatchVector::iterator i, iend;
-         i = mGroundClampBatch.begin();
-         iend = mGroundClampBatch.end();
-
-         unsigned index = 0;
-         for (; i != iend; ++i, ++index)
+         if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            dtCore::Transform& xform = i->first;
-            osg::Matrix rotation;
-            xform.GetRotation(rotation);
-            osg::Vec3 singlePoint;
-            xform.GetTranslation(singlePoint);
-
-            dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(index);
-            if (GetClosestHit(single, singlePoint.z(), hp, normal))
-            {
-               if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  std::ostringstream ss;
-                  ss << "Found a hit - old z " << singlePoint.z() << " new z " << hp.z();
-                  mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
-               }
-
-               dtGame::GameActorProxy* proxy = i->second.first;
-               GroundClampingData* gcData = i->second.second;
-
-               gcData->SetLastClampedOffset(hp.z() - singlePoint.z());
-
-               singlePoint = hp;
-
-               if (gcData->GetAdjustRotationToGround())
-               {
-                  normal.normalize();
-
-                  osg::Vec3 oldNormal(0, 0, 1);
-
-                  oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
-                  osg::Matrix normalRot;
-                  normalRot.makeRotate(oldNormal, normal);
-
-                  rotation = rotation * normalRot;
-               }
-
-               xform.Set(singlePoint, rotation);
-               proxy->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
-            }
+            std::ostringstream ss;
+            ss << "Found no hits with batch query.";
+            mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
-      } 
-      else if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      }
+
+      //Even if there are no hits, we still have to set the positions.
+      osg::Vec3 normal;
+      osg::Vec3 hp;
+
+      BatchVector::iterator i, iend;
+      i = mGroundClampBatch.begin();
+      iend = mGroundClampBatch.end();
+
+      unsigned index = 0;
+      for (; i != iend; ++i, ++index)
       {
-         std::ostringstream ss;
-         ss << "Found no hits with batch query.";
-         mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         dtCore::Transform& xform = i->first;
+         osg::Matrix rotation;
+         xform.GetRotation(rotation);
+         osg::Vec3 singlePoint;
+         xform.GetTranslation(singlePoint);
+
+         dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(index);
+
+         dtGame::GameActorProxy* proxy = i->second.first;
+         GroundClampingData* gcData = i->second.second;
+
+         if (GetClosestHit(single, singlePoint.z(), hp, normal))
+         {
+            if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Found a hit - old z " << singlePoint.z() << " new z " << hp.z();
+               mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+            }
+
+            gcData->SetLastClampedOffset(hp.z() - singlePoint.z());
+
+            singlePoint = hp;
+
+            if (gcData->GetAdjustRotationToGround())
+            {
+               normal.normalize();
+
+               osg::Vec3 oldNormal(0, 0, 1);
+
+               oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
+               osg::Matrix normalRot;
+               normalRot.makeRotate(oldNormal, normal);
+
+               rotation = rotation * normalRot;
+            }
+
+            xform.Set(singlePoint, rotation);
+            proxy->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
+         }
+         else
+         {
+            gcData->SetLastClampedOffset(0);
+            proxy->GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
+         }
       }
       mGroundClampBatch.clear();
    }
@@ -480,7 +489,7 @@ namespace dtGame
       {
          osg::Vec3 position;
          xform.GetTranslation(position);
-   
+ 
          const osg::Vec3 eyePoint = GetLastEyePoint();
          if ((GetEyePointActor() != NULL
                   && GetLowResGroundClampingRange() > 0.0f
@@ -503,12 +512,12 @@ namespace dtGame
             ClampToGroundThreePoint(xform, gameActorProxy, data);
             //position has changed, so get it again.
             xform.GetTranslation(position);
-   
+
             if (mLogger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
                ss << "New ground-clamped actor position \"" << position << "\".";
-   
+
                mLogger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
 

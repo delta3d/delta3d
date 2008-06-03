@@ -324,7 +324,7 @@ namespace dtGame
                //we could probably group these queries together...
                mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
                         xform, gameActor.GetGameActorProxy(), helper.GetGroundClampingData());
-               
+
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                {
                   std::ostringstream ss;
