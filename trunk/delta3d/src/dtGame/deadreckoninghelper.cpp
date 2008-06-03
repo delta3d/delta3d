@@ -565,10 +565,10 @@ namespace dtGame
             if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
-               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an HLA update " << std::endl
-                  << "      ROTATE   [" << mLastRotation[0] << ", " << mLastRotation[1] << ", " << mLastRotation[2] << "] " << std::endl 
-                  << "      POSITION [" << mLastTranslation[0] << ", " << mLastTranslation[1] << ", " << mLastTranslation[2] << "] " << std::endl 
-                  << "Tag Time [" << mLastTimeTag << "]";
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an update " << std::endl
+                  << "      Rotation \"" << mLastRotation  << "\" " << std::endl 
+                  << "      Position \"" << mLastTranslation << "\" " << std::endl 
+                  << "Tag Time \"" << mLastTimeTag << "\"";
                pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
          }
@@ -702,7 +702,7 @@ namespace dtGame
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Actor [" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "] has pos " << "[" << pos << "]";
+            ss << "Actor \"" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "\" has pos " << "\"" << pos << "\"";
             pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
          }
       }
@@ -717,9 +717,9 @@ namespace dtGame
       {
          std::ostringstream ss;
          ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " target pos "
-            << "[" << drPos << "], temp[" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "]\n";
+            << "\"" << drPos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"\n";
          ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
-            << "[" << pos << "], temp[" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "]";
+            << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"";
          pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
       }
    }
