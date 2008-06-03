@@ -1412,16 +1412,11 @@ void MessageTests::TestChangeMapErrorConditions()
 {
    try 
    {
-      dtDAL::Project::GetInstance().CreateContext("data/ChangeMapErrorProject");
-      dtDAL::Project::GetInstance().SetContext("data/ChangeMapErrorProject");
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap(""), dtUtil::Exception);
    
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("This map does not exist"), dtUtil::Exception);
    
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("../examples/testMap/testMap"), dtUtil::Exception);
-   
-      dtUtil::FileUtils::GetInstance().DirDelete("dtGame/WorkingProject", true);
-      CPPUNIT_ASSERT(!dtUtil::FileUtils::GetInstance().DirExists("dtGame/WorkingProject"));
    }
    catch (const dtUtil::Exception& ex)
    {
