@@ -391,7 +391,6 @@ void GMLoggerTests::TestBinaryLogStreamOpen()
    {
       CPPUNIT_FAIL(e.ToString());
    }
-   std::cout << "Curt Test END END END END 3. TestBinaryLogStreamOpen Message. " << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////
