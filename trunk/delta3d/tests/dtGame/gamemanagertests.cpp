@@ -99,7 +99,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestComponentPriority);
         CPPUNIT_TEST(TestFindActorById);
         CPPUNIT_TEST(TestFindGameActorById);
-        CPPUNIT_TEST(TestTemplateActors);
+        CPPUNIT_TEST(TestPrototypeActors);
         CPPUNIT_TEST(TestGMShutdown);
 
         CPPUNIT_TEST(TestTimers);
@@ -130,7 +130,7 @@ public:
    void TestComponentPriority();
    void TestFindActorById();
    void TestFindGameActorById();
-   void TestTemplateActors();
+   void TestPrototypeActors();
    void TestGMShutdown();
 
    void TestTimers();
@@ -286,40 +286,49 @@ void GameManagerTests::TestTemplatedActorMethods()
 }
 
 /////////////////////////////////////////////////
-void GameManagerTests::TestTemplateActors()
+void GameManagerTests::TestPrototypeActors()
 {
    //GameManager::CreateActor()
-   dtCore::RefPtr<dtActors::GameMeshActorProxy> toMakeAsATemplate;
-   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsATemplate);
-   toMakeAsATemplate->SetName("TemplateActorProxy");
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> toMakeAsAPrototype;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, toMakeAsAPrototype);
+   toMakeAsAPrototype->SetName("PrototypeActorProxy");
 
    std::vector<dtDAL::ActorProxy*> toFill;
    mManager->GetAllPrototypes(toFill);
-   CPPUNIT_ASSERT_MESSAGE("GameManager shouldnt have had templates in it currently...", toFill.size() == 0);
+   CPPUNIT_ASSERT_MESSAGE("GameManager shouldn't have had prototypes in it currently...", toFill.size() == 0);
 
-   mManager->AddActorAsAPrototype(*toMakeAsATemplate);
+   mManager->AddActorAsAPrototype(*toMakeAsAPrototype);
 
    mManager->GetAllPrototypes(toFill);
-   CPPUNIT_ASSERT_MESSAGE("Tried adding a template into the game manager, but it surely didnt want to stay around.", toFill.size() != 0);
+   CPPUNIT_ASSERT_MESSAGE("Tried adding a prototype into the game manager, but it surely didnt want to stay around.", toFill.size() != 0);
 
    toFill.clear();
 
-   dtDAL::ActorProxy *templateToFill = mManager->FindPrototypeByID(toMakeAsATemplate->GetId());
-   CPPUNIT_ASSERT_MESSAGE("Tried finding a template that should be in the gm, but its not....",templateToFill != 0 );
+   dtDAL::ActorProxy *prototypeToFill = mManager->FindPrototypeByID(toMakeAsAPrototype->GetId());
+   CPPUNIT_ASSERT_MESSAGE("Tried finding a prototype that should be in the gm, but its not....",prototypeToFill != 0 );
 
-   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId());
+   dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId());
    
-   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor != NULL);
-   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a template, didn't work out too well...", ourActualActor->GetName() == toMakeAsATemplate->GetName());
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor != NULL);
+   CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor->GetName() == toMakeAsAPrototype->GetName());
 
    dtCore::RefPtr<dtActors::GameMeshActorProxy> testFindPrototype;
-   mManager->FindPrototypeByID(toMakeAsATemplate->GetId(), testFindPrototype);
-   CPPUNIT_ASSERT_MESSAGE("The templated method should have been able to find the prototype", 
+   mManager->FindPrototypeByID(toMakeAsAPrototype->GetId(), testFindPrototype);
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have been able to find the prototype", 
       testFindPrototype.valid());
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have found the correct prototype", 
+      testFindPrototype->GetId() == toMakeAsAPrototype->GetId());
+
+   dtActors::GameMeshActorProxy* testFindPrototypeByName = NULL;
+   mManager->FindPrototypeByName(toMakeAsAPrototype->GetName(), testFindPrototypeByName);
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have been able to find the prototype", 
+      testFindPrototypeByName != NULL);
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have found the correct prototype", 
+      testFindPrototype->GetId() == testFindPrototypeByName->GetId());
 
    dtCore::RefPtr<dtActors::GameMeshActorProxy> testCreatePrototype;
-   mManager->CreateActorFromPrototype(toMakeAsATemplate->GetId(), testCreatePrototype);
-   CPPUNIT_ASSERT_MESSAGE("The templated method should have been able to create the prototype",
+   mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId(), testCreatePrototype);
+   CPPUNIT_ASSERT_MESSAGE("The prototyped method should have been able to create the prototype",
       testCreatePrototype.valid());
 }
 /////////////////////////////////////////////////
