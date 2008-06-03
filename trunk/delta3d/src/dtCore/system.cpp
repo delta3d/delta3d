@@ -356,7 +356,7 @@ namespace dtCore
       mTickClockTime = mClock.Tick();
       time_t realTime;
       time(&realTime);
-      mRealClockTime = realTime * 1000000;
+      mRealClockTime = Timer_t(realTime) * 1000000;
       mSimTimeSinceStartup = 0;
       mSimulationTime = mCorrectSimulationTime = 0.0;
       mLastDrawClockTime = mRealClockTime;
