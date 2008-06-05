@@ -26,12 +26,15 @@
 
 namespace dtGUI
 {
+
+   class HUD;
+
    /// A mouse device listener to inject input to CEGUI.
    ///\todo Why maintain mWidth AND mHalfWidth?
    class DT_GUI_EXPORT CEGUIMouseListener : public dtCore::MouseListener
    {
    public:
-      CEGUIMouseListener();
+      CEGUIMouseListener(HUD *pGui=NULL);
 
       void SetWindowSize(unsigned int width, unsigned int height);
 
@@ -54,6 +57,7 @@ namespace dtGUI
       ~CEGUIMouseListener();
 
    private:
+      HUD  *m_pGUI;
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
       int mHalfWidth; ///<the width of the Window

@@ -1,11 +1,13 @@
 #include <dtGUI/ceguimouselistener.h>
+#include <dtGUI/hud.h>
 #include <CEGUI/CEGUIInputEvent.h>       // for internal type, CEGUI::Key::Scan
 #include <CEGUI/CEGUISystem.h>
 #include <dtUtil/mathdefines.h>          // for fast math function
 
 using namespace dtGUI;
 
-CEGUIMouseListener::CEGUIMouseListener()
+CEGUIMouseListener::CEGUIMouseListener(HUD *pGui):
+m_pGUI(pGui)
 {
 }
 
@@ -23,6 +25,11 @@ void CEGUIMouseListener::SetWindowSize(unsigned int width, unsigned int height)
 
 bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)
 {
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+
    mMouseX = x - mMouseX;
    mMouseY = y - mMouseY;
    CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
@@ -40,6 +47,12 @@ bool CEGUIMouseListener::HandleMouseDragged(const dtCore::Mouse* mouse, float x,
 
 bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+
    switch( button )
    {
    case dtCore::Mouse::LeftButton:
@@ -58,6 +71,12 @@ bool CEGUIMouseListener::HandleButtonPressed(const dtCore::Mouse* mouse, dtCore:
 
 bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+   
    switch(button)
    {
    case dtCore::Mouse::LeftButton:
@@ -81,6 +100,12 @@ bool CEGUIMouseListener::HandleButtonReleased(const dtCore::Mouse* mouse, dtCore
 
 bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int delta)
 {
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
+   SetWindowSize( CEGUI::System::getSingleton().getRenderer()->getWidth(), CEGUI::System::getSingleton().getRenderer()->getHeight() );
+
    return CEGUI::System::getSingleton().injectMouseWheelChange( (float)delta );
 }
 
