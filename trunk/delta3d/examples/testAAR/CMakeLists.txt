@@ -3,7 +3,8 @@ SET(LIB_NAME     testAAR)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/examples/testAAR)
 
-ADD_LIBRARY(${LIB_NAME} SHARED  
+ADD_LIBRARY(${LIB_NAME} SHARED 
+    ${HEADER_PATH}/readme.txt
      ${HEADER_PATH}/export.h
      ${HEADER_PATH}/testaar.h
      ${HEADER_PATH}/testaar.cpp
