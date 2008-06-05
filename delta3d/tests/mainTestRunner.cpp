@@ -20,6 +20,7 @@
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/CompilerOutputter.h>
+#include <cppunit/XmlOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
@@ -126,7 +127,7 @@ class TimingListener : public CppUnit::TestListener
             testResult << " *** SLOW TEST ***";
             mSlowTests << testResult.str() << std::endl;
          }
-         std::cerr << testResult.str() << std::endl;
+         std::cout << testResult.str() << std::endl;
       }
 
       void addFailure( const CppUnit::TestFailure &failure )
@@ -261,8 +262,21 @@ int main(int argc, char* argv[])
       // Go to it!!!  Run this puppy!
       testRunner.run(testResult);
 
-      CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults,std::cerr);
+      CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults,std::cout);
       compilerOutputter.write();
+
+      //write out an xml report file
+      #ifdef _DEBUG
+         std::string filename = "unittestreportd.xml";
+      #else 
+         std::string filename = "unittestreport.xml";
+      #endif
+
+      std::ofstream reportFile;
+      reportFile.open(filename.c_str());
+      CPPUNIT_NS::XmlOutputter xmlout(&collectedResults, reportFile);
+      xmlout.write();
+      reportFile.close();
 
       // print out slow tests and total time.
       dtCore::Timer_t testsTimerStop = testsClock.Tick();
@@ -270,12 +284,12 @@ int main(int argc, char* argv[])
       timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
       if(!mSlowTests.str().empty())
       {
-         std::cerr << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
+         std::cout << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
             mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" << 
             timeDelta << "] >>> " << std::endl;
       }
       else 
-         std::cerr << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
+         std::cout << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
    }
    catch (const std::invalid_argument &ie)
    {
