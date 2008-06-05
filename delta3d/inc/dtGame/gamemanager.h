@@ -80,6 +80,10 @@ namespace dtGame
       friend class GMStatistics;
 
       public:
+         static const std::string CONFIG_STATISTICS_INTERVAL;
+         static const std::string CONFIG_STATISTICS_TO_CONSOLE;
+         static const std::string CONFIG_STATISTICS_OUTPUT_FILE;
+
          typedef std::vector<std::string> NameVector;
 
          class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
@@ -710,7 +714,18 @@ namespace dtGame
              * appropriate log level is on, the GM will output statistics periodically
              * Default is 0.
              */
-            int GetStatisticsInterval() { return mGmStatistics.GetStatisticsInterval(); }
+            int GetStatisticsInterval() const;
+            
+            /**
+             * @return true if the Debug Statistics are set to log to the console.
+             */
+            bool GetStatisticsToConsole() const;
+
+            /**
+             * @return the log file for the Debug Statistics or empty if it is set
+             *         to log to the console or statistics are turned off.
+             */
+            const std::string& GetStatisticsLogFilePath() const;
 
             /**
              * Records statistics about different components and actors.
