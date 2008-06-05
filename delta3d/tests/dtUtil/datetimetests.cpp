@@ -190,19 +190,19 @@ namespace dtUtil
    {
       DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);  
 
-      std::cerr << "TESTING TIME OUTPUT" << std::endl;
+      std::cout << "TESTING TIME OUTPUT" << std::endl;
 
-      std::cerr << "LOCAL_DATE_AND_TIME_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LOCAL_DATE_AND_TIME_FORMAT) << std::endl;
-      std::cerr << "LOCAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LOCAL_DATE_FORMAT) << std::endl;
-      std::cerr << "CLOCK_TIME_12_HOUR_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CLOCK_TIME_12_HOUR_FORMAT) << std::endl;
-      std::cerr << "CLOCK_TIME_24_HOUR_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT) << std::endl;
-      std::cerr << "LEXICAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LEXICAL_DATE_FORMAT) << std::endl;
-      std::cerr << "CALENDAR_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CALENDAR_DATE_FORMAT) << std::endl;
-      std::cerr << "ORDINAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::ORDINAL_DATE_FORMAT) << std::endl;
-      std::cerr << "WEEK_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::WEEK_DATE_FORMAT) << std::endl;
-      std::cerr << "CALENDAR_DATE_AND_TIME_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT) << std::endl;
+      std::cout << "LOCAL_DATE_AND_TIME_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LOCAL_DATE_AND_TIME_FORMAT) << std::endl;
+      std::cout << "LOCAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LOCAL_DATE_FORMAT) << std::endl;
+      std::cout << "CLOCK_TIME_12_HOUR_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CLOCK_TIME_12_HOUR_FORMAT) << std::endl;
+      std::cout << "CLOCK_TIME_24_HOUR_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CLOCK_TIME_24_HOUR_FORMAT) << std::endl;
+      std::cout << "LEXICAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::LEXICAL_DATE_FORMAT) << std::endl;
+      std::cout << "CALENDAR_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CALENDAR_DATE_FORMAT) << std::endl;
+      std::cout << "ORDINAL_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::ORDINAL_DATE_FORMAT) << std::endl;
+      std::cout << "WEEK_DATE_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::WEEK_DATE_FORMAT) << std::endl;
+      std::cout << "CALENDAR_DATE_AND_TIME_FORMAT: " << dt_local.ToString(DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT) << std::endl;
 
-      std::cerr << "END TIME OUPUT TESTS" << std::endl;
+      std::cout << "END TIME OUPUT TESTS" << std::endl;
 
    }
 }
