@@ -92,7 +92,7 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestActorSearching);
         CPPUNIT_TEST(TestAddActor);
         CPPUNIT_TEST(TestAddActorCrash);
-        
+
         CPPUNIT_TEST(TestCreateRemoteActor);
         CPPUNIT_TEST(TestComplexScene);
         CPPUNIT_TEST(TestAddRemoveComponents);
@@ -343,8 +343,12 @@ void GameManagerTests::TestApplicationMember()
    {
       CPPUNIT_ASSERT(ex.TypeEnum() == dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION);
    }
-   
+
    dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
+
+   app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_INTERVAL, "4");
+   app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_TO_CONSOLE, "false");
+   app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_OUTPUT_FILE, "testOut.txt");
    
    mManager->SetApplication(*app);
 
@@ -356,6 +360,10 @@ void GameManagerTests::TestApplicationMember()
    {
       CPPUNIT_FAIL("The application should not be NULL.");
    }
+   
+   CPPUNIT_ASSERT_EQUAL(mManager->GetStatisticsInterval(), 4);
+   CPPUNIT_ASSERT(!mManager->GetStatisticsToConsole());
+   CPPUNIT_ASSERT_EQUAL(mManager->GetStatisticsLogFilePath(), std::string("testOut.txt"));
    
 }
 

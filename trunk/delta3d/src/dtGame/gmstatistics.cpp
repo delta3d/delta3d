@@ -46,6 +46,43 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   GMStatistics::~GMStatistics() {}
+
+   //////////////////////////////////////////////////////////////////////////////
+   int GMStatistics::GetStatisticsInterval() const 
+   { 
+      return mStatisticsInterval;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   const std::string& GMStatistics::GetFilePathToPrintDebugInformation() const 
+   { 
+      static const std::string emptyString;
+      if (mPrintFileToConsole)
+         return emptyString;
+
+      return mFilePathToPrintDebugInformation;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool GMStatistics::ShouldWeLogActors() const 
+   {
+      return (mStatisticsInterval > 0 && mDoStatsOnTheActors);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool GMStatistics::ShouldWeLogComponents() const 
+   {
+      return (mStatisticsInterval > 0 && mDoStatsOnTheComponents);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   bool GMStatistics::ShouldWeLogToConsole() const
+   {
+      return (mStatisticsInterval > 0 && mPrintFileToConsole);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void GMStatistics::UpdateDebugStats(const dtCore::UniqueId &uniqueIDToFind,
                                       const std::string& nameOfObject, float elapsedTime, bool isComponent, bool ticklocal)
    {
@@ -92,6 +129,8 @@ namespace dtGame
       mDoStatsOnTheComponents    = false;
       mDoStatsOnTheActors        = false;
       mStatisticsInterval        = 0;
+      mFilePathToPrintDebugInformation.clear();
+
       if(logLastTime)
       {
          // temporarily 100, fill in to correct time if needbe.

@@ -48,6 +48,10 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameManager);
 
+   const std::string GameManager::CONFIG_STATISTICS_INTERVAL("GameManager.Statistics.Interval");
+   const std::string GameManager::CONFIG_STATISTICS_TO_CONSOLE("GameManager.Statistics.ToConsole");
+   const std::string GameManager::CONFIG_STATISTICS_OUTPUT_FILE("GameManager.Statistics.OutputFile");
+
    IMPLEMENT_ENUM(GameManager::ComponentPriority);
 
    const GameManager::ComponentPriority GameManager::ComponentPriority::HIGHEST("HIGHEST", 1);
@@ -178,6 +182,23 @@ namespace dtGame
    void GameManager::SetApplication(dtABC::Application& application)
    {
       mApplication = &application;
+      std::string value;
+      value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_INTERVAL, "0");
+      int interval = dtUtil::ToType<int>(value);
+      if (interval <= 0)
+      {
+         DebugStatisticsTurnOff(false, true);
+      }
+      else
+      {
+         value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_TO_CONSOLE, "true");
+         bool toConsole = dtUtil::ToType<bool>(value);
+         value = mApplication->GetConfigPropertyValue(CONFIG_STATISTICS_OUTPUT_FILE, "");
+         if (value.empty())
+            DebugStatisticsTurnOn(true, true, interval, toConsole);
+         else
+            DebugStatisticsTurnOn(true, true, interval, toConsole, value);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1917,6 +1938,24 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
    /*                            Statistics Information                          */
    ////////////////////////////////////////////////////////////////////////////////
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int GameManager::GetStatisticsInterval() const 
+   { 
+      return mGmStatistics.GetStatisticsInterval(); 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool GameManager::GetStatisticsToConsole() const 
+   { 
+      return mGmStatistics.ShouldWeLogToConsole(); 
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& GameManager::GetStatisticsLogFilePath() const
+   {
+      return mGmStatistics.GetFilePathToPrintDebugInformation();
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DebugStatisticsTurnOff(bool logLastTime, bool clearList)
