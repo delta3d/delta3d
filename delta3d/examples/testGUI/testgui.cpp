@@ -209,6 +209,10 @@ int main( int argc, const char* argv[] )
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data;" +
+                               dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                               dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                               dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                               dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
                                dtCore::GetDeltaRootPath() + "/examples/testGUI;");
 
    std::string filename;
