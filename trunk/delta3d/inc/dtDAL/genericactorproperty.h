@@ -43,17 +43,19 @@ namespace dtDAL
    class GenericActorProperty : public ActorProperty
    {
    public:
+      typedef dtUtil::Functor<void, TYPELIST_1(SetType)> SetFuncType;
+      typedef dtUtil::Functor<GetType, TYPELIST_0()> GetFuncType;
       /**
       * Constructs the actor property.  Note, that functor objects must be
       * specified and match the set and get types of the GenericActorProperty.
       */
       GenericActorProperty(DataType& dataType,
-         const std::string &name,
-         const std::string &label,
-         Functor1<SetType> &set,
-         Functor0Ret<GetType> &get,
-         const std::string &desc,
-         const std::string &groupName,
+         const dtUtil::RefString& name,
+         const dtUtil::RefString& label,
+         SetFuncType& set,
+         GetFuncType& get,
+         const dtUtil::RefString& desc,
+         const dtUtil::RefString& groupName,
          bool readOnly = false) :
       ActorProperty(dataType, name,label,desc, groupName, readOnly),
          SetPropFunctor(set),
@@ -106,10 +108,9 @@ namespace dtDAL
 
    private:
       ///Set functor taking one parameter and optionally returning a value.
-      Functor1<SetType> SetPropFunctor;
-
+      SetFuncType SetPropFunctor;
       ///Get functor which returns a value and takes no parameters.
-      Functor0Ret<GetType> GetPropFunctor;
+      GetFuncType GetPropFunctor;
    };
 
 }

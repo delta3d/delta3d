@@ -40,7 +40,8 @@ namespace dtGame
    class DT_GAME_EXPORT Invokable : public osg::Referenced
    {
       public:
-      	Invokable(const std::string& name, dtDAL::Functor1<const Message&> toInvoke);
+         typedef dtUtil::Functor<void, TYPELIST_1(const Message&)> InvokableFunc;
+      	Invokable(const std::string& name, InvokableFunc toInvoke);
          
          /**
           * @return the name of this invokable.
@@ -58,10 +59,10 @@ namespace dtGame
       private:
          std::string mName;
          ///functor taking one parameter and optionally returning a value.
-         dtDAL::Functor1<const Message&> mMethodToInvoke;
+         InvokableFunc mMethodToInvoke;
 
          Invokable(const Invokable& toCopy) {}
-         Invokable& operator=(const Invokable& toAssign) { return *this; }         
+         Invokable& operator=(const Invokable& toAssign) { return *this; }
    };
    
 }

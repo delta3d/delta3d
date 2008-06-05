@@ -53,21 +53,21 @@ namespace dtActors
           * Sets the game event being tracked by this task.
           * @param event The game event to track.
           */
-         void SetGameEvent(dtDAL::GameEvent *event) { mGameEvent = event; }
+         void SetGameEvent(dtDAL::GameEvent* event) { mGameEvent = event; }
 
          /**
           * Gets the game event currently tracked by this task.
           * @return The game event or NULL if this task is not currenlty responsible
           *   for an event.
           */
-         dtDAL::GameEvent *GetGameEvent() { return mGameEvent.get(); }
+         dtDAL::GameEvent* GetGameEvent() { return mGameEvent.get(); }
 
          /**
           * Gets the game event currently tracked by this task.
           * @return The game event or NULL if this task is not currenlty responsible
           *   for an event.
           */
-         const dtDAL::GameEvent *GetGameEvent() const { return mGameEvent.get(); }
+         const dtDAL::GameEvent* GetGameEvent() const { return mGameEvent.get(); }
 
          /**
           * Sets the number of times the game event tracked by this task must be

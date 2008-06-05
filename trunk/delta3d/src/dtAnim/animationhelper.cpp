@@ -158,7 +158,8 @@ void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy,
    static const std::string PROPERTY_SKELETAL_MESH_DESC
       ("The model resource that defines the skeletal mesh");
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
-      PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH, dtDAL::MakeFunctor(*this, &AnimationHelper::LoadModel),
+      PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH, 
+      dtDAL::ResourceActorProperty::SetFuncType(this, (void (AnimationHelper::*)(const std::string&))(&AnimationHelper::LoadModel)),
       PROPERTY_SKELETAL_MESH_DESC, ANIMATION_MODEL_GROUP));
 }
 

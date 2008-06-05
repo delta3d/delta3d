@@ -30,8 +30,8 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////
    GroupActorProperty::GroupActorProperty(const std::string& name,
                                           const std::string& label,
-                                          Functor1<const NamedGroupParameter&> set,
-                                          Functor0Ret<dtCore::RefPtr<NamedGroupParameter> > get,
+                                          SetFunctorType set,
+                                          GetFunctorType get,
                                           const std::string& desc,
                                           const std::string& groupName,
                                           const std::string& editorType,

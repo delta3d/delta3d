@@ -61,7 +61,7 @@ namespace dtGame
    }
 
    ////////////////////////////////////////////////////////////////////
-   void BaseInputComponent::OnAddedToGM() 
+   void BaseInputComponent::OnAddedToGM()
    { 
       //enable the keyboard input.
       dtCore::View * view = GetGameManager()->GetApplication().GetView();
