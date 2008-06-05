@@ -187,10 +187,10 @@ class CEGUIConnectionManager
             const CEGUI::WindowEventArgs *pWEA;
             
             //note: if RTTI was enabled for CEGUI, we should be doing a dynamic_cast
-            //if(pWEA = dynamic_cast<const CEGUI::WindowEventArgs *>(&args))
-            //   Disconnect<CEGUIConnectionManager>(pWEA->window, "", 0, 0);
+            pWEA = static_cast<const CEGUI::WindowEventArgs *>(&args);
+            //pWEA = dynamic_cast<const CEGUI::WindowEventArgs *>(&args);
 
-            if(pWEA = static_cast<const CEGUI::WindowEventArgs *>(&args))
+            if(pWEA != NULL)
                 Disconnect<CEGUIConnectionManager>(pWEA->window, "", 0, 0);
             return true;
         }
