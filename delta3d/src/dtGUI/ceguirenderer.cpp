@@ -4,6 +4,8 @@
 #if defined( __APPLE__ )
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+//needed for something in CEGUI. weird.
+#include <CoreFoundation/CoreFoundation.h>
 #else /* __APPLE__ **/
  #if defined(_MSC_VER)
  #include <windows.h>
@@ -560,32 +562,32 @@ void CEGUIRenderer::setModuleIdentifierString()
 
 /************************************************************************
     Grabs all loaded textures to local buffers and frees them
-*************************************************************************
-void CEGUIRenderer::grabTextures()
-{
-    typedef std::list<Texture*> texlist;
-    texlist::iterator i = m_texturelist.begin();
-    while (i!=m_texturelist.end())
-    {
-        (*i)->grabTexture();
-        i++;
-    }
-}
+*************************************************************************/
+//void CEGUIRenderer::grabTextures()
+//{
+//    typedef std::list<Texture*> texlist;
+//    texlist::iterator i = m_texturelist.begin();
+//    while (i!=m_texturelist.end())
+//    {
+//        (*i)->grabTexture();
+//        i++;
+//    }
+//}
 
 
 /************************************************************************
     Restores all textures from the previous call to 'grabTextures'
-*************************************************************************
-void CEGUIRenderer::restoreTextures()
-{
-    typedef std::list<Texture*> texlist;
-    texlist::iterator i = m_texturelist.begin();
-    while (i!=m_texturelist.end())
-    {
-        (*i)->restoreTexture();
-        i++;
-    }
-}
+*************************************************************************/
+//void CEGUIRenderer::restoreTextures()
+//{
+//    typedef std::list<Texture*> texlist;
+//    texlist::iterator i = m_texturelist.begin();
+//    while (i!=m_texturelist.end())
+//    {
+//        (*i)->restoreTexture();
+//        i++;
+//    }
+//}
 /***********************************************************************
     Get the current ImageCodec object used 
 *************************************************************************/

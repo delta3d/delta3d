@@ -48,10 +48,10 @@ IMPLEMENT_MANAGEMENT_LAYER(HUD)
 
 HUD::HUD(osg::Camera *pTargetCamera, dtCore::Keyboard *pObservedKeyboard, dtCore::Mouse *pObservedMouse, const std::string& sName) :
     dtCore::Base(sName),
+    m_Viewport(0,0,0,0),
     m_pCamera(0),
     m_pKeyboard(0),
-    m_pMouse(0),
-    m_Viewport(0,0,0,0)
+    m_pMouse(0)
 {    
    m_pMouseListener = new dtGUI::CEGUIMouseListener(this);
    m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener(this);
@@ -71,10 +71,10 @@ HUD::HUD(osg::Camera *pTargetCamera, dtCore::Keyboard *pObservedKeyboard, dtCore
 
 HUD::HUD(dtCore::Camera *pTargetCamera, dtCore::Keyboard *pObservedKeyboard, dtCore::Mouse *pObservedMouse, const std::string& sName) :
     dtCore::Base(sName),
+    m_Viewport(0,0,0,0),
     m_pCamera(0),
     m_pKeyboard(0),
-    m_pMouse(0),
-    m_Viewport(0,0,0,0)
+    m_pMouse(0)
 {    
     m_pMouseListener = new CEGUIMouseListener(this);
     m_pKeyboardListener = new CEGUIKeyboardListener(this);

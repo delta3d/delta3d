@@ -27,7 +27,7 @@
 namespace dtGame
 {
 
-   Invokable::Invokable(const std::string& name, dtDAL::Functor1<const Message&> toInvoke):
+   Invokable::Invokable(const std::string& name, InvokableFunc toInvoke):
       mName(name), mMethodToInvoke(toInvoke)
    {
    }
