@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <GUIScheme Name="WindowsLookSkin">
-	<Imageset Name="WindowsLook" Filename="gui/imagesets/WindowsLook.imageset" />
-	<LookNFeel Filename="gui/looknfeel/WindowsLook.looknfeel" />
+	<Imageset Name="WindowsLook" Filename="WindowsLook.imageset" />
+	<LookNFeel Filename="WindowsLook.looknfeel" />
 	<WindowSet Filename="CEGUIFalagardWRBase" />
-	<Font Name="DejaVuSans-10" Filename="gui/fonts/DejaVuSans-10.font" />
+	<Font Name="DejaVuSans-10" Filename="DejaVuSans-10.font" />
 	<FalagardMapping WindowType="WindowsLook/Button"      TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/Button" />
 	<FalagardMapping WindowType="WindowsLook/Checkbox"    TargetType="CEGUI/Checkbox"    Renderer="Falagard/ToggleButton" LookNFeel="WindowsLook/Checkbox" />
 	<FalagardMapping WindowType="WindowsLook/IconButton"  TargetType="CEGUI/PushButton"  Renderer="Falagard/Button"       LookNFeel="WindowsLook/IconButton" />
