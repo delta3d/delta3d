@@ -1,11 +1,13 @@
 #include <dtGUI/ceguikeyboardlistener.h>
+#include <dtGUI/hud.h>
 #include <CEGUI/CEGUISystem.h>
 
 #include <osgGA/GUIEventAdapter>
 
 using namespace dtGUI;
 
-CEGUIKeyboardListener::CEGUIKeyboardListener()
+CEGUIKeyboardListener::CEGUIKeyboardListener(HUD *pGUI):
+m_pGUI(pGUI)
 {
 }
 
@@ -17,9 +19,17 @@ bool CEGUIKeyboardListener::HandleKeyPressed(const dtCore::Keyboard* keyboard, i
 {
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
+      if (m_pGUI != NULL)
+      {
+         m_pGUI->MakeCurrent();
+      }
       CEGUI::System::getSingleton().injectKeyDown(scanKey);
    }
 
+   if (m_pGUI != NULL)
+   {
+      m_pGUI->MakeCurrent();
+   }
    return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(key) );   
 }
 
@@ -28,6 +38,10 @@ bool CEGUIKeyboardListener::HandleKeyReleased(const dtCore::Keyboard* keyboard, 
    bool handled(false);
    if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
    {
+      if (m_pGUI != NULL)
+      {
+         m_pGUI->MakeCurrent();
+      }
       handled = CEGUI::System::getSingleton().injectKeyUp(scanKey);
    }
 

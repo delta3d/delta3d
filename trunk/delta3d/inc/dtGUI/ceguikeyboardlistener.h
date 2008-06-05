@@ -27,10 +27,12 @@
 
 namespace dtGUI
 {
+   class HUD;
+
    class DT_GUI_EXPORT CEGUIKeyboardListener : public dtCore::KeyboardListener
    {
    public:
-      CEGUIKeyboardListener();
+      CEGUIKeyboardListener(HUD *pGUI=NULL);
 
       bool HandleKeyPressed(const dtCore::Keyboard* keyboard, int key);
       bool HandleKeyReleased(const dtCore::Keyboard* keyboard, int key);
@@ -51,6 +53,7 @@ namespace dtGUI
       virtual ~CEGUIKeyboardListener();
 
    private:
+      HUD *m_pGUI;
    };
 }
 
