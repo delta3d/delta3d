@@ -1,4 +1,4 @@
-SET(TARGET_SRC testHUD.cpp testHUD.h)
+SET(TARGET_SRC TestHUD.cpp TestHUD.h)
 
 BUILD_EXE_EXAMPLE( testHUD
                                          DTGUI_LIBRARY
