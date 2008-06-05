@@ -130,7 +130,7 @@ void ExceptionTests::TestLogAndPrintFunctions()
 {
    try
    {
-      dtUtil::Exception testException(TestEnumType::ENUM, "test exception", "enumerationtests.cpp", __LINE__);
+      dtUtil::Exception testException(TestEnumType::ENUM, "test exception", __FILE__, __LINE__);
       testException.LogException(dtUtil::Log::LOG_INFO);
       testException.LogException(dtUtil::Log::LOG_INFO, "__+default+__");
       testException.LogException(dtUtil::Log::LOG_INFO, *mLogger);
