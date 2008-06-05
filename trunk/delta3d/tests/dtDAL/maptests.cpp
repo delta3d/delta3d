@@ -245,7 +245,7 @@ void MapTests::createActors(dtDAL::Map& map)
       dtCore::Timer_t testClockStart = testClock.Tick();
       
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy with type \"%s\".", actorTypes[i]->ToString().c_str());
+                         "Creating actor proxy with type \"" + actorTypes[i]->GetFullName() + "\"." );
       
       proxy = libMgr.CreateActorProxy(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
