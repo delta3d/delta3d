@@ -32,7 +32,7 @@
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
-
+#include <dtUtil/log.h>
 #include <osgDB/DatabasePager>
 #include <osgViewer/View>
 
@@ -62,6 +62,7 @@ namespace dtTest
 
       private:
          std::string mConfigName;
+         dtUtil::Log::LogMessageType mLogLevel;
 
          void ResetConfigPropertyDefaults(dtABC::Application& app);
 
@@ -170,6 +171,7 @@ namespace dtTest
 
    void ApplicationTests::setUp()
    {
+      mLogLevel = dtUtil::Log::GetInstance().GetLogLevel();
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mConfigName = "test_config.xml";
       // delete the file
@@ -184,6 +186,7 @@ namespace dtTest
       {
          dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(paths[i]);
       }
+      dtUtil::Log::GetInstance().SetLogLevel( mLogLevel );
    }
 
    void ApplicationTests::TestInput()
