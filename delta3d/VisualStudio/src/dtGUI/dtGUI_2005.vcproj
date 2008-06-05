@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib OpenThreadsd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib opengl32.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib OpenThreadsd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib opengl32.lib Glu32.lib"
 				OutputFile="../../../bin/dtGUId.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib OpenThreads.lib CEGUIBase.lib OpenGLGUIRenderer.lib opengl32.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib OpenThreads.lib CEGUIBase.lib OpenGLGUIRenderer.lib opengl32.lib Glu32.lib"
 				OutputFile="../../../bin/dtGUI.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -194,6 +194,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\src\dtGUI\ceguiconnectionmanager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGUI\ceguikeyboardlistener.cpp"
 				>
 			</File>
@@ -202,11 +206,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGUI\ceguirenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGUI\ceguitexture.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGUI\ceuidrawable.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGUI\guiexceptionenum.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGUI\hud.cpp"
 				>
 			</File>
 			<File
@@ -232,11 +248,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGUI\ceguiconnectionmanager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGUI\ceguiconnectionsignatures.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGUI\ceguikeyboardlistener.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGUI\ceguimouselistener.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGUI\ceguirenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGUI\ceguitexture.h"
 				>
 			</File>
 			<File
@@ -256,6 +288,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGUI\hud.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGUI\renderer.h"
 				>
 			</File>
@@ -265,6 +301,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGUI\scriptmodule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGUI\widget.h"
 				>
 			</File>
 		</Filter>
