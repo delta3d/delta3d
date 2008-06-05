@@ -22,10 +22,6 @@ namespace dtCore
    class OrbitMotionModel;
 }
 
-namespace dtGUI
-{
-   class CEUIDrawable;
-}
 
 namespace osg
 {

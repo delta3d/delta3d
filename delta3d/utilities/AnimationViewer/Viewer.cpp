@@ -32,8 +32,6 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
-#include <dtGUI/ceuidrawable.h>
-
 #include <xercesc/sax/SAXParseException.hpp>  // for base class
 #include <xercesc/util/XMLString.hpp>
 
