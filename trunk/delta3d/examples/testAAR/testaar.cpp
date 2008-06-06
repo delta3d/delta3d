@@ -81,7 +81,7 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char **argv)
    app.GetWindow()->SetWindowTitle("testAAR");
    app.GetCamera()->SetTransform(tx);
 
-   mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), false);
+   mFMM = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), dtCore::FlyMotionModel::OPTION_REQUIRE_MOUSE_DOWN);
    mFMM->SetTarget(app.GetCamera());
 }
 
