@@ -46,6 +46,39 @@ namespace dtCore
 
       public:
 
+         enum BehaviorOptions
+         {       
+            OPTION_NONE                  = 0x0,
+            OPTION_USE_SIMTIME_FOR_SPEED = 0x1,
+            OPTION_REQUIRE_MOUSE_DOWN    = 0x2,
+            OPTION_RESET_MOUSE_CURSOR    = 0x4,
+            OPTION_USE_CURSOR_KEYS       = 0x8,
+            OPTION_DEFAULT               = OPTION_USE_CURSOR_KEYS | OPTION_REQUIRE_MOUSE_DOWN
+
+            /** OPTION_USE_SIMTIME_FOR_SPEED
+            * Indicates whether the fly motion model will use Sim Time
+            * or not (aka Real Time) for speed of movement and turn rotation
+            */
+
+            /** OPTION_REQUIRE_MOUSE_DOWN
+            * Indicates whether the fly motion model will require the mouse
+            * button(s) depressed in order to control turn rotation (defaults
+            * to true)
+            */
+
+            /** OPTION_RESET_MOUSE_CURSOR
+            * Indicates whether the fly motion model will reset the mouse
+            * cursor coordinates to the center of the screen each frame
+            * (defaults to false)
+            */
+
+            /** OPTION_USE_CURSOR_KEYS
+            * Indicates whether the fly motion model will move the camera
+            * in response to pressing the cursor keys.
+            * (defaults to true)
+            */
+         };
+
          /**
           * Constructor.
           *
@@ -62,10 +95,8 @@ namespace dtCore
           * the center of the scene each frame. (Default is false.)
           */
          FlyMotionModel(Keyboard* keyboard = NULL,
-                        Mouse* mouse = NULL, 
-                        bool useSimTimeForSpeed = true,
-                        bool requireMouseDown = true,
-                        bool resetMouseCursor = false);
+                        Mouse* mouse = NULL,                        
+                        BehaviorOptions options = OPTION_DEFAULT);
 
       protected:
 
@@ -75,6 +106,14 @@ namespace dtCore
          virtual ~FlyMotionModel();
 
       public:
+
+         /**
+         * Returns whether the motion model has been created with a 
+         * specific behavior option
+         *
+         * @param option the option to query         
+         */
+         bool HasOption(BehaviorOptions option) { return (mOptions & option) > 0; }
          
          /**
           * Sets the input axes to a set of default mappings for mouse
@@ -193,20 +232,13 @@ namespace dtCore
           *
           * @return the current maximum turn speed
           */
-         float GetMaximumTurnSpeed();
-         
-         /**
-          * Gets whether we are using sim time or not (aka real time)
-          * for the speed of movement and rotation.
-          */
-         bool GetUseSimTimeForSpeed() { return mUseSimTimeForSpeed; }
+         float GetMaximumTurnSpeed();   
 
          /**
           * Sets whether we use sim time or not (aka real time)
           * for the speed of movement and rotation.
           */
-         void SetUseSimTimeForSpeed(bool useSimTimeForSpeed) { mUseSimTimeForSpeed = useSimTimeForSpeed; }
-
+         void SetUseSimTimeForSpeed(bool useSimTimeForSpeed);
          /**
           * Message handler callback.
           *
@@ -327,27 +359,13 @@ namespace dtCore
           */
          float mMaximumTurnSpeed;
 
-         /**
-          * Indicates whether the fly motion model will use Sim Time
-          * or not (aka Real Time) for speed of movement and turn rotation
-          */
-         bool mUseSimTimeForSpeed;
-
-         /**
-         * Indicates whether the fly motion model will require the mouse
-         * button(s) depressed in order to control turn rotation (defaults
-         * to true)
-         */
-         bool mRequireMouseDown;
-
-         /**
-         * Indicates whether the fly motion model will reset the mouse
-         * cursor coordinates to the center of the screen each frame
-         * (defaults to false)
-         */
-         bool mResetMouseCursor;
-
          Mouse *mMouse;
+
+         /**
+         * The bitwise combination of the types of behavior this
+         * motion model will enforce
+         */
+         BehaviorOptions mOptions;
    };
 }
 
