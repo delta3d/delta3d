@@ -14,18 +14,19 @@ SET(ALL_SOURCES ${TEMP_SOURCES}
   ${DELTA3D_SOURCE_DIR}/utilities/LMS/WebPackager/package_utils.h
   ${DELTA3D_SOURCE_DIR}/utilities/LMS/WebPackager/package_utils.cpp)
 
-FOREACH(varname ${DIRS}) 
-  file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
-  SOURCE_GROUP( ${varname} FILES ${TEMP_SOURCES} )
-  SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
-ENDFOREACH(varname)
 
 IF (BUILD_HLA)
   INCLUDE_DIRECTORIES(${RTIS_INCLUDE_DIR}) 
   file(GLOB TEMP_SOURCES "dtHLAGM/*.cpp" "dtHLAGM/*.h")
   SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
+  SET (DIRS ${DIRS} dtHLAGM)
 ENDIF (BUILD_HLA)
 
+FOREACH(varname ${DIRS}) 
+  file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
+  SOURCE_GROUP( ${varname} FILES ${TEMP_SOURCES} )
+  SET(ALL_SOURCES ${ALL_SOURCES} ${TEMP_SOURCES})
+ENDFOREACH(varname)
 list(REMOVE_ITEM ALL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
 ADD_EXECUTABLE(${PROG_NAME}
