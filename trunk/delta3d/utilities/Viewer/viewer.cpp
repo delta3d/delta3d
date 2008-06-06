@@ -204,45 +204,46 @@ void Viewer::SetState( ViewState* vs )
    }
 
 
+   
    // set each of the display items
    if( vs->GetDisplayFlag( ViewState::DISPLAY ) )
    {
       // toggle the display items
-      EnableDisplay( vs->GetDisplayFlag( ViewState::COMPASS ), COMPASS );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::XY_PLANE ), XY_PLANE );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::YZ_PLANE ), YZ_PLANE );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::ZX_PLANE ), ZX_PLANE );
+      EnableDisplay( vs->GetDisplayFlag( ViewState::COMPASS ) ? true : false, COMPASS );
+      EnableDisplay( vs->GetDisplayFlag( ViewState::XY_PLANE ) ? true : false, XY_PLANE );
+      EnableDisplay( vs->GetDisplayFlag( ViewState::YZ_PLANE ) ? true : false, YZ_PLANE );
+      EnableDisplay( vs->GetDisplayFlag( ViewState::ZX_PLANE ) ? true : false, ZX_PLANE );
 
       // set the scene view modes
-      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::SCENEPOLY ) );
-      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::SCENEWIRE ) );
-      EnableTexture( vs->GetDisplayFlag( ViewState::SCENETXT ) );
-      EnableLighting( vs->GetDisplayFlag( ViewState::SCENELIGHT ) );
+      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::SCENEPOLY ) ? true : false  );
+      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::SCENEWIRE ) ? true : false );
+      EnableTexture( vs->GetDisplayFlag( ViewState::SCENETXT ) ? true : false );
+      EnableLighting( vs->GetDisplayFlag( ViewState::SCENELIGHT ) ? true : false );
    }
 
    // set the model view modes
    if(   mCurState.GetDisplayFlag( ViewState::POLYGON ) !=
          vs->GetDisplayFlag( ViewState::POLYGON )       )
    {
-      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::POLYGON ), vs->GetIndex() );
+      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::POLYGON ) ? true : false, vs->GetIndex() );
    }
 
    if(   mCurState.GetDisplayFlag( ViewState::WIREFRAME ) !=
          vs->GetDisplayFlag( ViewState::WIREFRAME )       )
    {
-      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::WIREFRAME ), vs->GetIndex() );
+      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::WIREFRAME ) ? true : false, vs->GetIndex() );
    }
 
    if(   mCurState.GetDisplayFlag( ViewState::TEXTURE ) !=
          vs->GetDisplayFlag( ViewState::TEXTURE )       )
    {
-      EnableTexture( vs->GetDisplayFlag( ViewState::TEXTURE ), vs->GetIndex() );
+      EnableTexture( vs->GetDisplayFlag( ViewState::TEXTURE ) ? true : false, vs->GetIndex() );
    }
 
    if(   mCurState.GetDisplayFlag( ViewState::LIGHTING ) !=
          vs->GetDisplayFlag( ViewState::LIGHTING )       )
    {
-      EnableLighting( vs->GetDisplayFlag( ViewState::LIGHTING ), vs->GetIndex() );
+      EnableLighting( vs->GetDisplayFlag( ViewState::LIGHTING ) ? true : false, vs->GetIndex() );
    }
 
 
@@ -287,13 +288,13 @@ void Viewer::SetState( ViewState* vs )
    if(   mCurState.GetJoystickFlag( ViewState::JOY_1 )   !=
          vs->GetJoystickFlag( ViewState::JOY_1 )         )
    {
-      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_1 ), JOY_1 );
+      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_1 ) ? true : false, JOY_1 );
    }
 
    if(   mCurState.GetJoystickFlag( ViewState::JOY_2 )   !=
          vs->GetJoystickFlag( ViewState::JOY_2 )         )
    {
-      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_2 ), JOY_2 );
+      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_2 ) ? true : false, JOY_2 );
    }
 
    mCurState = *vs;
@@ -394,7 +395,7 @@ void Viewer::LoadFile( ViewState* vs )
       fileobj  = new Object;
 
      // load the graphics file from disk
-      fileLoaded = fileobj->LoadFile( filename );
+      fileLoaded = fileobj->LoadFile( filename ) ? true : false;
 
       if (fileLoaded)
       {
