@@ -38,10 +38,8 @@ IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
  * the center of the scene each frame. (Default is false.)
  */
 FlyMotionModel::FlyMotionModel(Keyboard *keyboard,
-                               Mouse *mouse, 
-                               bool useSimTimeForSpeed,
-                               bool requireMouseDown,
-                               bool resetMouseCursor)
+                               Mouse *mouse,                             
+                               BehaviorOptions options)
    : MotionModel("FlyMotionModel"),
      mLeftButtonUpDownMapping(NULL),
      mLeftButtonLeftRightMapping(NULL),
@@ -63,11 +61,9 @@ FlyMotionModel::FlyMotionModel(Keyboard *keyboard,
      mTurnLeftRightAxis(NULL),
      mTurnUpDownAxis(NULL),
      mMaximumFlySpeed(100.0f),
-     mMaximumTurnSpeed(90.0f),
-     mUseSimTimeForSpeed(useSimTimeForSpeed),
-     mRequireMouseDown(requireMouseDown),
-     mResetMouseCursor(resetMouseCursor),
-     mMouse(mouse)
+     mMaximumTurnSpeed(90.0f),   
+     mMouse(mouse),
+     mOptions(options)
 {
 
    RegisterInstance(this);
@@ -105,7 +101,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 
       Axis *leftButtonUpAndDown, *leftButtonLeftAndRight;
 
-      if (mRequireMouseDown)
+      if (HasOption(OPTION_REQUIRE_MOUSE_DOWN))
       {
          leftButtonUpAndDown = mDefaultInputDevice->AddAxis(
             "left mouse button up/down",
@@ -151,21 +147,46 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
    
-      Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
-         "arrow keys up/down",
-         mArrowKeysUpDownMapping = new ButtonsToAxis(
+      if (HasOption(OPTION_USE_CURSOR_KEYS))
+      {
+         Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
+            "arrow keys up/down",
+            mArrowKeysUpDownMapping = new ButtonsToAxis(
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
-         )
-      );
-         
-      Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
-         "arrow keys left/right",
-         mArrowKeysLeftRightMapping = new ButtonsToAxis(
+            )
+            );
+
+         Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
+            "arrow keys left/right",
+            mArrowKeysLeftRightMapping = new ButtonsToAxis(
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
-         )
-      );
+            )
+            );
+
+         mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
+            "default turn left/right",
+            new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
+            );
+
+         mDefaultTurnUpDownAxis = mDefaultInputDevice->AddAxis(
+            "default turn up/down",
+            new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
+            );
+      }    
+      else
+      {
+         mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
+            "default turn left/right",
+            new AxisToAxis(mouse->GetAxis(0))
+            );
+
+         mDefaultTurnUpDownAxis = mDefaultInputDevice->AddAxis(
+            "default turn up/down",
+            new AxisToAxis(mouse->GetAxis(1))
+            );
+      }
       
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "w/s keys stafe forward/back",
@@ -204,17 +225,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
          "default fly up/down",
          new AxesToAxis(qeKeysFlyUpAndDown, 0) // not sure what to map for right 2nd parameter (?)
-      );
-
-      mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default turn left/right",
-         new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
-      );
-         
-      mDefaultTurnUpDownAxis = mDefaultInputDevice->AddAxis(
-         "default turn up/down",
-         new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
-      );
+      );     
    }
    else
    {
@@ -399,6 +410,12 @@ float FlyMotionModel::GetMaximumTurnSpeed()
    return mMaximumTurnSpeed;
 }
 
+void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
+{
+   unsigned int newOptions = (unsigned int)mOptions | (unsigned int)OPTION_USE_SIMTIME_FOR_SPEED;
+   mOptions = (BehaviorOptions)newOptions; 
+}
+
 /**
  * Message handler callback.
  *
@@ -409,14 +426,14 @@ void FlyMotionModel::OnMessage(MessageData *data)
    if(GetTarget() != 0 &&
       IsEnabled() && 
       (data->message == "preframe" || 
-        (!mUseSimTimeForSpeed && data->message == "pause")))
+        (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == "pause")))
    {
       // Get the time change (sim time or real time)
       double delta;
       double* timeChange = (double*)data->userData;
       if (data->message == "pause") // paused and !useSimTime
          delta = *timeChange; // 0 is real time when paused
-      else if (mUseSimTimeForSpeed) 
+      else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED)) 
          delta = timeChange[0]; // 0 is sim time
       else
          delta = timeChange[1]; // 1 is real time
@@ -458,11 +475,11 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       transform.SetRotation(hpr);
 
-      if (mResetMouseCursor)
-      {
+      if (HasOption(OPTION_RESET_MOUSE_CURSOR))
+      {       
          // fix to avoid camera drift
          mTurnUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
-         mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left
+         mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left                
 
          mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
       }
