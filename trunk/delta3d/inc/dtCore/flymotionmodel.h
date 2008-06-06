@@ -53,7 +53,7 @@ namespace dtCore
             OPTION_REQUIRE_MOUSE_DOWN    = 0x2,
             OPTION_RESET_MOUSE_CURSOR    = 0x4,
             OPTION_USE_CURSOR_KEYS       = 0x8,
-            OPTION_DEFAULT               = OPTION_USE_CURSOR_KEYS | OPTION_REQUIRE_MOUSE_DOWN
+            OPTION_DEFAULT               = OPTION_USE_SIMTIME_FOR_SPEED | OPTION_USE_CURSOR_KEYS | OPTION_REQUIRE_MOUSE_DOWN
 
             /** OPTION_USE_SIMTIME_FOR_SPEED
             * Indicates whether the fly motion model will use Sim Time
