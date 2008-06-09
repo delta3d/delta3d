@@ -13,8 +13,10 @@ noise = Noise1f()
 
 def radians(v):
    return v * pi/180
+   
+system = System.GetInstance(0)
 
-while True:
+while system.IsRunning():
    transform.Set(40*cos(radians(angle)),
                  100 + 40*sin(radians(angle)), 
                  0.0,
