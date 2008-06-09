@@ -29,6 +29,7 @@ class TestPythonApplication(Application):
         self.angle += 45.0*deltaFrameTime
 
 SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                               GetDeltaRootPath() + '/examples/data/;' +
                      GetDeltaDataPathList() )   
 testPythonApp = TestPythonApplication('config.xml')
 

@@ -240,6 +240,7 @@ class TestPathedCameraApplication(Application):
         self.spc.Update(deltaFrameTime)
 
 SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                               GetDeltaRootPath() + '/examples/data/;' +
                      GetDeltaDataPathList() )
 
 testPathedCameraApp = TestPathedCameraApplication('config.xml')
