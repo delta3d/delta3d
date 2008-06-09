@@ -33,9 +33,11 @@ There are a few other examples re-implemented in Python:
 
 Instructions
 ------------
+Note: Set the environment variable PYTHONPATH to the folder that contains
+      the Delta3D .pyd files.  Otherwise the scripts will not be able to
+      import the modules.
 
 Win32 Source:
-- Open examples/testPython/testPython.sln.
 - Go to the Tools->Options->Projects->VC++ Directories and select 
   "Show directories for: Include files".
 - Add the Boost and Python include directories (e.g., "c:\boost_1_32_0",
@@ -49,9 +51,6 @@ Win32 Binary:
 - Go to bin.
 - Double-click testPython.exe.
 
-Hit the 'S' key to kick off the script automatically using dtScript::ScriptManager.
-This should make the helo fly in a circle.
-Hit escape to exit.
 
 Linux Source:
 - To build only testPython, from the root delta3d folder:
@@ -63,5 +62,5 @@ Linux Binary:
 
 Controls
 --------
-Esc  - Exit
-S    - Triggers flyhelo.py and makes the helo fly in a circle.
+<Esc>  - Exit
+'s'    - Triggers flyhelo.py and makes the helo fly in a circle.
