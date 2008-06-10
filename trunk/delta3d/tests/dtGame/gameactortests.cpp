@@ -288,7 +288,8 @@ void GameActorTests::TestInvokables()
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Fire One ",iF != NULL);
       CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named Reset ",iR != NULL);
 
-      dtDAL::BooleanActorProperty* prop = static_cast<dtDAL::BooleanActorProperty*>(gap->GetProperty("Has Fired"));
+      dtDAL::BooleanActorProperty* prop = NULL;
+      gap->GetProperty("Has Fired", prop);
 
       CPPUNIT_ASSERT_MESSAGE("The actor should have a property named \"Has Fired\"", prop != NULL);
 
@@ -427,8 +428,8 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
       dtCore::System::GetInstance().Step();
 
       // One publish message should have been received. So, count should be 2
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("We should only have gotten 1 publish, so count shoudl be 2.",
-         (unsigned int) 2, (unsigned int) static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("We should only have gotten 1 publish, so count should be 2.",
+         int(2), static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue());
    }
    catch (const dtUtil::Exception &e)
    {

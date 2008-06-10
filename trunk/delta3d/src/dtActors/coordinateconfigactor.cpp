@@ -47,10 +47,10 @@ namespace dtActors
       CoordinateConfigActor *cca = static_cast<CoordinateConfigActor*>(GetActor());
 
       dtCore::RefPtr<dtDAL::Vec3dActorProperty> currentOriginProp = new dtDAL::Vec3dActorProperty("Current Origin", "Current Origin Translation", 
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginLocation), 
-         dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetCurrentOriginLocation), 
-         "The current origin translation that will be used based on the actor property configuration.",
-         "Current Coordinate Config");
+               dtDAL::Vec3dActorProperty::SetFuncType(), 
+               dtDAL::Vec3dActorProperty::GetFuncType(cca, &CoordinateConfigActor::GetCurrentOriginLocation), 
+               "The current origin translation that will be used based on the actor property configuration.",
+               "Current Coordinate Config");
       currentOriginProp->SetReadOnly(true);
       AddProperty(currentOriginProp.get());
 
@@ -67,9 +67,9 @@ namespace dtActors
          "Coordinate Config"));
 
       dtCore::RefPtr<dtDAL::Vec3ActorProperty> currentOriginRotProp = new dtDAL::Vec3ActorProperty("Current Origin Rotation", "Current Origin Rotation", 
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetOriginRotation), 
-         dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetCurrentOriginRotation), 
-         "The current origin translation that will be used based on the actor property configuration.", "Current Coordinate Config");
+               dtDAL::Vec3ActorProperty::SetFuncType(), 
+               dtDAL::Vec3ActorProperty::GetFuncType(cca, &CoordinateConfigActor::GetCurrentOriginRotation), 
+               "The current origin translation that will be used based on the actor property configuration.", "Current Coordinate Config");
       currentOriginRotProp->SetReadOnly(true);
       AddProperty(currentOriginRotProp.get());
 
@@ -80,10 +80,10 @@ namespace dtActors
          "Coordinate Config"));
 
       dtCore::RefPtr<dtDAL::Vec3dActorProperty> convertedGeoOriginProp = new dtDAL::Vec3dActorProperty("Converted Geo Origin", "Converted Geo Origin", 
-         dtDAL::MakeFunctor(*cca, &CoordinateConfigActor::SetGeoOrigin), 
-         dtDAL::MakeFunctorRet(*cca, &CoordinateConfigActor::GetConvertedGeoOrigin), 
-         "The Geo Origin in Lat/Lon/Elevation converted from the current origin translation",
-         "Current Coordinate Config");
+               dtDAL::Vec3dActorProperty::SetFuncType(), 
+               dtDAL::Vec3dActorProperty::GetFuncType(cca, &CoordinateConfigActor::GetConvertedGeoOrigin), 
+               "The Geo Origin in Lat/Lon/Elevation converted from the current origin translation",
+               "Current Coordinate Config");
       convertedGeoOriginProp->SetReadOnly(true);
       AddProperty(convertedGeoOriginProp.get());
 

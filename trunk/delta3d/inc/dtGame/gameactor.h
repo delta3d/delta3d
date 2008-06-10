@@ -496,15 +496,6 @@ namespace dtGame
            */
          void InvokeEnteredWorld();
          
-         /**
-          * Sets whether or not this is a game actor
-          * @note, this property is read only, the the setter definition is merely a 
-          * dummy definition since it is needed to make the functor for this property
-          * internally, if a property is read only its setter method is ignored, so this 
-          * isn't an issue
-          */
-         void SetIsGameActorProxy(bool b) {}  
-            
          /// This was added so the GameManager can be set on creation.
          void SetIsInGM(bool value);
 

@@ -405,13 +405,6 @@ namespace dtActors
          unsigned GetSubTaskCount() const { return unsigned(mSubTaskProxies.size()); }
 
          /**
-          * This method exists for the property system.  Note, this method is a no-op.
-          * IsTopLevelTask() is set if this task is added as a child to another.
-          * @param flag
-          */
-         void SetTopLevelTask(bool flag) { }
-
-         /**
           * Gets whether or not this task is a top level task.  A top level task is a task
           * with no parent.
           * @return True if this is a top level task (i.e. This task has no parent.)
