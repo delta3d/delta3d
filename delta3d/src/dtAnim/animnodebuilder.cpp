@@ -36,6 +36,7 @@
 #include <osg/BoundingSphere>
 #include <osg/BoundingBox>
 #include <osg/Texture2D>
+#include <osg/GLExtensions>
 
 #include <cal3d/hardwaremodel.h>
 
@@ -428,22 +429,10 @@ bool AnimNodeBuilder::SupportsSoftware() const
 //////////////////////////////////////////////////////////////////////////
 bool AnimNodeBuilder::SupportsVertexBuffers() const
 {
-   //see if we can support vertext buffer objects
+   //see if we can support vertex buffer objects
    osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
-   GLuint vbo;
-   glExt->glGenBuffers(1, &vbo);
-   glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
-   glExt->glBufferData(GL_ARRAY_BUFFER_ARB, 18 * sizeof(float) * 10, NULL, GL_STATIC_DRAW_ARB);
-
-   float* vboVertexAttr = static_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-   if (vboVertexAttr == NULL)
-   {
-      return false;
-   }
-   else
-   {
-      return true;
-   }
+   
+   return (osg::isGLExtensionSupported(0, "GL_ARB_vertex_buffer_object"));
 }
 
 
