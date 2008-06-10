@@ -467,19 +467,19 @@ void Viewer::InitWireDecorator()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnShowMesh( int meshID )
+void Viewer::OnShowMesh(int meshID)
 {
    mMeshesToShow.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnHideMesh( int meshID )
+void Viewer::OnHideMesh(int meshID)
 {
    mMeshesToHide.push_back(meshID);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::PostFrame( const double deltaFrameTime )
+void Viewer::PostFrame(const double)
 {
    {
       std::vector<int>::iterator showItr = mMeshesToShow.begin();

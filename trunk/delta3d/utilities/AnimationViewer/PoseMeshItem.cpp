@@ -372,6 +372,9 @@ QPainterPath PoseMeshItem::shape() const
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+   UNREFERENCED_PARAMETER(widget);
+   UNREFERENCED_PARAMETER(option);
+
    if (mAreErrorSamplesDisplayed && isEnabled())
    {
       PaintErrorSamples(painter);
@@ -908,7 +911,8 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
 
       osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
       osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
-      int animID = vertList[vertIndex]->mAnimID;
+
+      //int animID = vertList[vertIndex]->mAnimID;
 
       // Remove this mesh's contribution to the animation so we can get the baseline
       //mMeshUtil->ClearPoses(mPoseMesh, modelWrapper, 0.0f);
@@ -958,7 +962,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
       float blendDotTrue = blendDirection * trueDirection;
       dtUtil::Clamp(blendDotTrue, -1.0f, 1.0f);
 
-      float angle = acosf(blendDotTrue);
+      //float angle = acosf(blendDotTrue);
       //assert(angle == 0.0f);
    }
    
@@ -982,7 +986,8 @@ void PoseMeshItem::AssertAzElConversion()
 
       osg::Vec3 debugDirection = vertList[vertIndex]->mDebugData;
       osg::Quat debugRotation  = vertList[vertIndex]->mDebugRotation;
-      int animID = vertList[vertIndex]->mAnimID;
+
+      //int animID = vertList[vertIndex]->mAnimID;
 
       osg::Vec3 directionFromAzEl;
 

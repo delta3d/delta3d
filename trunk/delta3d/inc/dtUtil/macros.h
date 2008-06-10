@@ -137,4 +137,7 @@
    #endif
 #endif
 
+// Eliminate compiler warnings for unused variables
+#define UNREFERENCED_PARAMETER(parameter) (parameter)
+
 #endif // DELTA_MACROS

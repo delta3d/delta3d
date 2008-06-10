@@ -54,13 +54,13 @@ public:
 
 public slots:
 
-   void OnLoadCharFile    ( const QString &filename );
-   void OnLoadPoseMeshFile( const std::string &filename );
-   void OnStartAnimation  ( unsigned int id, float weight, float delay );
-   void OnStopAnimation   ( unsigned int id, float delay );
-   void OnStartAction     ( unsigned int id, float delayIn, float delayOut );  
-   void OnLODScale_Changed( float scaleValue );
-   void OnSpeedChanged    ( float speedFactor );
+   void OnLoadCharFile    (const QString &filename);
+   void OnLoadPoseMeshFile(const std::string &filename);
+   void OnStartAnimation  (unsigned int id, float weight, float delay);
+   void OnStopAnimation   (unsigned int id, float delay);
+   void OnStartAction     (unsigned int id, float delayIn, float delayOut);  
+   void OnLODScale_Changed(float scaleValue);
+   void OnSpeedChanged    (float speedFactor);
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
@@ -69,14 +69,14 @@ public slots:
    void OnTimeout();
    
    /// Show the mesh on the CalModel
-   void OnShowMesh( int meshID );
+   void OnShowMesh(int meshID);
 
    /// Hide the mesh on CalModel from view
-   void OnHideMesh( int meshID );
+   void OnHideMesh(int meshID);
 
 signals:
-   void AnimationLoaded( unsigned int, const QString &, unsigned int trackCount,
-                           unsigned int keyframes, float duration);
+   void AnimationLoaded(unsigned int, const QString &, unsigned int trackCount,
+                        unsigned int keyframes, float duration);
 
    void MeshLoaded(int meshID, const QString &meshName);
 
@@ -89,7 +89,7 @@ signals:
                        const QColor &diffuse, const QColor &ambient, const QColor &specular,
                        float shininess);
 
-   void ErrorOccured( const QString &msg );
+   void ErrorOccured(const QString &msg);
 
    void BlendUpdate(const std::vector<float> &weightList);
 
@@ -98,9 +98,11 @@ protected:
 
 private:
   
-   dtCore::RefPtr<dtAnim::CharDrawable> mCharacter;
+   dtCore::RefPtr<dtAnim::CharDrawable>         mCharacter;
    dtCore::RefPtr<dtAnim::AttachmentController> mAttachmentController;
+
    dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
+
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Group> mBoneBasisGroup;
