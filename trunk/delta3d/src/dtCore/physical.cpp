@@ -5,7 +5,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h>//due to include of scene.h
 #include <dtCore/physical.h>
 #include <dtUtil/log.h>
 

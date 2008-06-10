@@ -8,7 +8,6 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
-#include <dtCore/keyboard.h> //due to including scene.h
 #include <dtCore/system.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>

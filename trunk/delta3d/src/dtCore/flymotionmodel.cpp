@@ -11,8 +11,6 @@
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/mouse.h>
 #include <dtCore/keyboard.h>
-//#include <dtCore/transform.h>
-//#include <dtCore/transformable.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h>
