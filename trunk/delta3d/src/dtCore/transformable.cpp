@@ -53,6 +53,44 @@ Transformable::CollisionGeomType::RAY("RAY");
 Transformable::CollisionGeomType
 Transformable::CollisionGeomType::MESH("MESH");
 
+
+namespace dtCore
+{
+
+   /** Custom NodeVisitor used to collect the parent NodePaths of a Node.
+     * This Visitor will only traverse osg::Transforms and is used to 
+     * calculate a Node's absolute coordinate.  It sets a node mask
+     * override in case any of the parent Nodes' masks are un-traversable.
+     * Modified from osg::CollectParentPaths class.
+     */
+   class CollectParentPaths : public osg::NodeVisitor
+   {
+   public:
+      CollectParentPaths(osg::Node* haltTraversalAtNode=0) : 
+         osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_PARENTS),
+            _haltTraversalAtNode(haltTraversalAtNode)
+         {
+            //this will force the traversal over nodes that have a mask of 0x0
+            this->setNodeMaskOverride(0xffffffff);
+         }
+
+         virtual void apply(osg::Transform& node)
+         {
+            if (node.getNumParents()==0 || &node==_haltTraversalAtNode)
+            {
+               _nodePaths.push_back(getNodePath());
+            }
+            else
+            {
+               traverse(node);
+            }
+         }
+
+         osg::Node*           _haltTraversalAtNode;
+         osg::NodePathList    _nodePaths;
+   };
+}
+
 Transformable::Transformable( const std::string& name )
    :  DeltaDrawable(name),
       mGeomID(NULL),
@@ -222,7 +260,9 @@ bool Transformable::GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMat
 {
    if( node != NULL )
    {
-      osg::NodePathList nodePathList = node->getParentalNodePaths();
+      dtCore::CollectParentPaths cpp(NULL);
+      const_cast<osg::Node*>(node)->accept(cpp);
+      osg::NodePathList nodePathList = cpp._nodePaths;
 
       if( !nodePathList.empty() )
       {

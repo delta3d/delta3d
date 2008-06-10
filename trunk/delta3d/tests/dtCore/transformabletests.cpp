@@ -24,6 +24,8 @@
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
 #include <dtCore/object.h>
+#include <dtCore/camera.h>
+#include <dtCore/view.h>
 
 #include <osg/MatrixTransform>
 #include <osg/io_utils>
@@ -60,7 +62,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestEpsilonEquals);
-   CPPUNIT_TEST(TestSetTransform);
+   CPPUNIT_TEST(TestODEInSyncOnSetTransform);
    CPPUNIT_TEST(TestSetMatrix);
    CPPUNIT_TEST(TestSetPosHPR);
    CPPUNIT_TEST(TestSetPosQuat);
@@ -74,6 +76,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
    CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST(TestDistance);
+   CPPUNIT_TEST(TestGetTransformWithDisabledCamera);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -86,7 +89,7 @@ public:
    void TestGetCollisionGeomDimensions();
    void TestSetCollisionBox();
    void TestEpsilonEquals();
-   void TestSetTransform();
+   void TestODEInSyncOnSetTransform();
    void TestSetPosHPR();
    void TestSetPosQuat();
    void TestScale();
@@ -100,6 +103,7 @@ public:
    void TestSetMatrix();
    void TestRows();
    void TestDistance();
+   void TestGetTransformWithDisabledCamera();
 
 private:
    bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
@@ -268,7 +272,7 @@ void TransformableTests::TestSetCollisionBox()
       mTransformable->GetCollisionGeomType() == &Transformable::CollisionGeomType::CUBE );
 }
 
-void TransformableTests::TestSetTransform()
+void TransformableTests::TestODEInSyncOnSetTransform()
 {
    // In order to test scale, we must have a valid collsion geom
    mTransformable->SetCollisionBox( mBoxLengths[0], mBoxLengths[1], mBoxLengths[2] );
@@ -695,4 +699,45 @@ void TransformableTests::TestDistance()
 
    CPPUNIT_ASSERT(dtUtil::Equivalent(expectedValue, transform1.CalcDistanceSquared(transform2)));
    CPPUNIT_ASSERT(dtUtil::Equivalent(expectedValuert, transform1.CalcDistance(transform2)));
+}
+
+//////////////////////////////////////////////////////////////////////////
+void TransformableTests::TestGetTransformWithDisabledCamera()
+{
+   //Test if Transformable::GetTransform() works correctly with a
+   //parent-child hierarchy with the Camera disabled.
+   using namespace dtCore;
+
+   RefPtr<dtCore::View> view = new dtCore::View();
+   RefPtr<Camera> cam = new Camera();
+   RefPtr<Scene> scene = new Scene();
+
+   view->SetCamera(cam.get());
+   view->SetScene(scene.get());
+
+   RefPtr<Transformable> parent = new Transformable("parent");
+   Transform cameraEnabledParentTransform;
+   const osg::Vec3 cameraEnabledParentXYZ(1.f, 2.f, 3.f);
+   cameraEnabledParentTransform.SetTranslation(cameraEnabledParentXYZ);
+   parent->SetTransform(cameraEnabledParentTransform);
+
+   RefPtr<Transformable> child = new Transformable("child");
+   Transform cameraEnabledChildTransform;
+   const osg::Vec3 cameraEnabledChildXYZ(10.f, 10.f, 10.f);
+   cameraEnabledChildTransform.SetTranslation(cameraEnabledChildXYZ);
+   child->SetTransform(cameraEnabledChildTransform);
+
+   parent->AddChild( child.get() );
+
+   scene->AddDrawable(parent.get());
+
+   cam->SetEnabled(false);
+
+   Transform cameraDisabledChildTransform;
+   child->GetTransform(cameraDisabledChildTransform);
+   const osg::Vec3 cameraDisabledChildXYZ = cameraDisabledChildTransform.GetTranslation();
+   
+   //the child's absolute translation should be the same as the parent's + the child's
+   CPPUNIT_ASSERT_MESSAGE("A Transformable's translation should not change when the Camera is disabled",
+                           dtUtil::Equivalent(cameraDisabledChildXYZ, cameraEnabledChildXYZ+cameraEnabledParentXYZ, TEST_EPSILON) );
 }
