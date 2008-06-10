@@ -1333,7 +1333,8 @@ void MapTests::TestMapSaveAndLoadGroup()
       
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(*at);
       
-      dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("TestGroup"));
+      dtDAL::GroupActorProperty* groupProp;
+      proxy->GetProperty("TestGroup", groupProp);
       
       dtDAL::ResourceDescriptor rd("StaticMeshes:Chicken:Horse.ive", "StaticMeshes:Chicken:Horse.ive");
       
@@ -1386,9 +1387,9 @@ void MapTests::TestMapSaveAndLoadGroup()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The map was saved with one proxy.  It should have one when loaded.", toFill.size(), size_t(1));
       
       proxy = toFill[0];
-      
-      groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("TestGroup"));      
-      
+
+      proxy->GetProperty("TestGroup", groupProp);
+
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
 
       CPPUNIT_ASSERT(actualResult.valid());
@@ -1515,7 +1516,8 @@ void MapTests::TestMapSaveAndLoadActorGroups()
          expectedResult->AddParameter(ss.str(), dtDAL::DataType::ACTOR)->FromString(subTasks[i]->GetId().ToString());
       }
 
-      dtDAL::GroupActorProperty* groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("SubTasks"));      
+      dtDAL::GroupActorProperty* groupProp = NULL;
+      proxy->GetProperty("SubTasks", groupProp);
       groupProp->SetValue(*expectedResult);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
@@ -1530,7 +1532,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       //Here the old proxy will be deleted, but we get the id for it to load the new instance in the map.
       proxy = map->GetProxyById(proxy->GetId());
       CPPUNIT_ASSERT(proxy.valid());
-      groupProp = dynamic_cast<dtDAL::GroupActorProperty*>(proxy->GetProperty("SubTasks"));
+      proxy->GetProperty("SubTasks", groupProp);
       actualResult = groupProp->GetValue();
       
       CPPUNIT_ASSERT_EQUAL(expectedResult->GetParameterCount() , actualResult->GetParameterCount());      

@@ -124,8 +124,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       
       if (props[i]->GetDataType() == DataType::FLOAT)
       {
-         dtDAL::FloatActorProperty* prop1 = static_cast<dtDAL::FloatActorProperty*>(props[i]);
-         
+         dtDAL::FloatActorProperty* prop1 = NULL;
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(props[i]->GetName(), prop1);
+
          float value1 = 0.3323233f;
          prop1->SetValue(value1);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
@@ -144,8 +146,10 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::DOUBLE)
       {
-         dtDAL::DoubleActorProperty* prop1 = static_cast<dtDAL::DoubleActorProperty*>(props[i]);
-         
+         dtDAL::DoubleActorProperty* prop1 = NULL;
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(props[i]->GetName(), prop1);
+
          double value1 = 1.3323233;
          prop1->SetValue(value1);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
@@ -164,17 +168,23 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::INT)
       {
-         static_cast<dtDAL::IntActorProperty*>(props[i])->SetValue(3);
+         dtDAL::IntActorProperty* prop1 = NULL;
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(props[i]->GetName(), prop1);
+         prop1->SetValue(3);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 3, but it is: " + props[i]->ToString(),
-                                static_cast<dtDAL::IntActorProperty*>(props[i])->GetValue() == 3);
+                                + " should have value 3, but it is: " + prop1->ToString(),
+                                prop1->GetValue() == 3);
       }
       else if (props[i]->GetDataType() == DataType::LONGINT)
       {
-         static_cast<dtDAL::LongActorProperty*>(props[i])->SetValue(4);
+         dtDAL::LongActorProperty* prop1 = NULL;
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(props[i]->GetName(), prop1);
+         prop1->SetValue(3);
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value 4, but it is: " + props[i]->ToString(),
-                                static_cast<dtDAL::LongActorProperty*>(props[i])->GetValue() == 4);
+                                + " should have value 3, but it is: " + prop1->ToString(),
+                                prop1->GetValue() == 3);
       }
       else if (props[i]->GetDataType() == DataType::STRING)
       {
@@ -187,18 +197,22 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          {
             continue;
          }
-         static_cast<dtDAL::StringActorProperty*>(props[i])->SetValue("cache");
+         dtDAL::StringActorProperty* prop1 = NULL;
+         /// Call the GetProperty method so that we can test every type with the templated getter.
+         proxy.GetProperty(props[i]->GetName(), prop1);
+         prop1->SetValue("cache");
          CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                                + " should have value \"cache\", but it is: " + props[i]->ToString(),
-                                static_cast<dtDAL::StringActorProperty*>(props[i])->GetValue() == "cache");
+                                + " should have value \"cache\", but it is: " + prop1->ToString(),
+                                prop1->GetValue() == "cache");
       }
       else if (props[i]->GetDataType() == DataType::BOOLEAN)
       {
          //there have been some problems with Normal Rescaling
          if (name != "Normal Rescaling" && name != "Collision Geometry")
          {
-            dtDAL::BooleanActorProperty* boolProp = static_cast<dtDAL::BooleanActorProperty*>(props[i]);
-            
+            dtDAL::BooleanActorProperty* boolProp = NULL;
+            proxy.GetProperty(props[i]->GetName(), boolProp);
+
             boolProp->SetValue(false);
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxy.GetName() + " should be false, but it's not." ,
                                    !boolProp->GetValue());
@@ -209,37 +223,39 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::ENUMERATION)
       {
-         dtDAL::AbstractEnumActorProperty* eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(props[i]);
-         
+         dtDAL::AbstractEnumActorProperty* eap = NULL;
+         proxy.GetProperty(props[i]->GetName(), eap);
+
          CPPUNIT_ASSERT(eap != NULL);
-         
+
          //set it to second value because it's less likely to the be second than the first.
          eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin()+1)));
-         
+
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be ") + (*(eap->GetList().begin()+1))->GetName()
                                 + " but it is " + eap->GetEnumValue().GetName(),
                                 eap->GetEnumValue() == **(eap->GetList().begin()+1));
-         
+
          //set it back to the first value to make sure it really got set.
          eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin())));
-         
+
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be ") + (*(eap->GetList().begin()))->GetName()
                                 + " but it is " + eap->GetEnumValue().GetName(),
                                 eap->GetEnumValue() == **(eap->GetList().begin()));
       }
       else if (props[i]->GetDataType() == DataType::ACTOR)
       {
-         dtDAL::ActorActorProperty* aap = dynamic_cast<dtDAL::ActorActorProperty*>(props[i]);
-         
+         dtDAL::ActorActorProperty* aap = NULL;
+         proxy.GetProperty(props[i]->GetName(), aap);
+
          CPPUNIT_ASSERT_MESSAGE("The ActorActorProperty should not be NULL", aap);
-         
+
          aap->SetValue(NULL);
-         
+
          CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
-         
+
          const std::string &actorClass = aap->GetDesiredActorClass();
          dtDAL::ActorProxy *tempProxy  = NULL;
-         
+
          for(unsigned int i = 0; i < proxies.size(); ++i)
          {
             if(proxies[i]->IsInstanceOf(actorClass))
@@ -253,27 +269,28 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
 
          aap->SetValue(tempProxy);
          dtDAL::ActorProxy *ap = aap->GetValue();
-         
+
          CPPUNIT_ASSERT_MESSAGE("GetValue should return what it was set to", ap == tempProxy);
-         
+
          ap->SetName("Bob");
          CPPUNIT_ASSERT_MESSAGE("The proxy's name should be Bob", ap->GetName() == "Bob");
-         
+
          aap->SetValue(NULL);
          CPPUNIT_ASSERT_MESSAGE("The property's value should be NULL", !aap->GetValue());
       }
       else if (props[i]->GetDataType() == DataType::VEC3)
       {
-         dtDAL::Vec3ActorProperty* prop1 = static_cast<dtDAL::Vec3ActorProperty*>(props[i]);
+         dtDAL::Vec3ActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec3 test(9.0f, 2.0f, 7.34f);
-         
+
          //The character is currently broken.
          if (proxyTypeName == "Character")
          {
             std::cout << "Skipping property " << name << " on actor " << proxyTypeName << std::endl;
             continue;
          }
-         
+
          if (name == "Direction")
             //Direction ignores the y rotation because you can't roll a vector.
             test.y() = 0.0f;
@@ -312,7 +329,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC3F)
       {
-         dtDAL::Vec3fActorProperty* prop1 = static_cast<dtDAL::Vec3fActorProperty*>(props[i]);
+         dtDAL::Vec3fActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec3f test(9.037829f, 2.02322f, 7.34324f);
          if (name == "Direction")
             //Direction ignores the y rotation because you can't roll a vector.
@@ -352,15 +370,16 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC3D)
       {
-         dtDAL::Vec3dActorProperty* prop1 = static_cast<dtDAL::Vec3dActorProperty*>(props[i]);
-         osg::Vec3f test(9.037829, 2.02322, 7.34324);
+         dtDAL::Vec3dActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
+         osg::Vec3d test(9.037829, 2.02322, 7.34324);
          if (name == "Direction")
             //Direction ignores the y rotation because you can't roll a vector.
             test.y() = 0.0;
-         
+
          prop1->SetValue(test);
          osg::Vec3d result = prop1->GetValue();
-         
+
          for (int x = 0; x < 3; x++)
          {
             if (x == 1 && name == "Direction")
@@ -376,9 +395,9 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
          //change the value so we can change it back.
          prop1->SetValue(test2);
          CPPUNIT_ASSERT(prop1->FromString(stringValue));
-         
+
          result = prop1->GetValue();
-         
+
          for (int x = 0; x < 3; x++)
          {
             if (x == 1 && name == "Direction")
@@ -392,8 +411,9 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC4)
       {
-         dtDAL::Vec4ActorProperty* prop1 = static_cast<dtDAL::Vec4ActorProperty*>(props[i]);
-         osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
+         dtDAL::Vec4ActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
+         osg::Vec4 test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
          prop1->SetValue(test);
          osg::Vec4 result = prop1->GetValue();
          
@@ -424,7 +444,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC4F)
       {
-         dtDAL::Vec4fActorProperty* prop1 = static_cast<dtDAL::Vec4fActorProperty*>(props[i]);
+         dtDAL::Vec4fActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
          prop1->SetValue(test);
          osg::Vec4f result = prop1->GetValue();
@@ -457,7 +478,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC4D)
       {
-         dtDAL::Vec4dActorProperty* prop1 = static_cast<dtDAL::Vec4dActorProperty*>(props[i]);
+         dtDAL::Vec4dActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec4d test(9.037829, 2.02322, 7.34324, 7.2936299);
          prop1->SetValue(test);
          osg::Vec4d result = prop1->GetValue();
@@ -490,7 +512,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC2)
       {
-         dtDAL::Vec2ActorProperty* prop1 = static_cast<dtDAL::Vec2ActorProperty*>(props[i]);
+         dtDAL::Vec2ActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec2 test(9.35320f, 2.0323f);
          prop1->SetValue(test);
          osg::Vec2 result = prop1->GetValue();
@@ -522,7 +545,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC2F)
       {
-         dtDAL::Vec2fActorProperty* prop1 = static_cast<dtDAL::Vec2fActorProperty*>(props[i]);
+         dtDAL::Vec2fActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec2 test(9.35320f, 2.0323f);
          prop1->SetValue(test);
          osg::Vec2f result = prop1->GetValue();
@@ -554,7 +578,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::VEC2D)
       {
-         dtDAL::Vec2dActorProperty* prop1 = static_cast<dtDAL::Vec2dActorProperty*>(props[i]);
+         dtDAL::Vec2dActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec2 test(9.35320, 2.0323);
          prop1->SetValue(test);
          osg::Vec2d result = prop1->GetValue();
@@ -586,7 +611,8 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::RGBACOLOR)
       {
-         dtDAL::ColorRgbaActorProperty* prop1 = static_cast<dtDAL::ColorRgbaActorProperty*>(props[i]);
+         dtDAL::ColorRgbaActorProperty* prop1 = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop1);
          osg::Vec4 test(6.1335543f, 0.3523333f, 5.05345f, 7323.3f);
          prop1->SetValue(test);
          osg::Vec4 result = prop1->GetValue();
@@ -618,11 +644,12 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       }
       else if (props[i]->GetDataType() == DataType::GAME_EVENT)
       {
-         dtDAL::GameEventActorProperty *prop = static_cast<dtDAL::GameEventActorProperty*>(props[i]);
+         dtDAL::GameEventActorProperty* prop = NULL;
+         proxy.GetProperty(props[i]->GetName(), prop);
          RefPtr<dtDAL::GameEvent> event = new dtDAL::GameEvent("TestEvent","This is a test game event.");
          dtDAL::GameEventManager::GetInstance().AddEvent(*event);
          prop->SetValue(event.get());
-         
+
          dtDAL::GameEvent *eventToCheck = prop->GetValue();
          CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
                                 eventToCheck->GetName() == event->GetName());
@@ -630,14 +657,14 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
                                 eventToCheck->GetDescription() == event->GetDescription());
          CPPUNIT_ASSERT_MESSAGE("Game Event ids were not equal.",
                                 eventToCheck->GetUniqueId() == event->GetUniqueId());
-         
+
          std::string stringValue = prop->ToString();
          CPPUNIT_ASSERT_MESSAGE("Resulting string value was not correct on the GAME_EVENT property.",
                                 stringValue == event->GetUniqueId().ToString());
-         
+
          CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a game event.",
                                 prop->FromString(event->GetUniqueId().ToString()));
-         
+
          eventToCheck = prop->GetValue();
          CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
                                 eventToCheck->GetName() == event->GetName());
@@ -650,20 +677,21 @@ void ProxyTest::testProps(dtDAL::ActorProxy& proxy)
       {
          if (props[i]->GetName() == "TestGroup")
          {
-            dtDAL::GroupActorProperty *prop = static_cast<dtDAL::GroupActorProperty*>(props[i]);
+            dtDAL::GroupActorProperty* prop = NULL;
+            proxy.GetProperty(props[i]->GetName(), prop);
             RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter("TestGroup");
-            
+
             param->AddParameter(*new dtDAL::NamedIntParameter("horse", 4));
             param->AddParameter(*new dtDAL::NamedFloatParameter("cow", 4.3f));
             param->AddParameter(*new dtDAL::NamedStringParameter("pig", "hello"));
-            
+
             prop->SetValue(*param);
-            
+
             RefPtr<dtDAL::NamedGroupParameter> valParam = prop->GetValue();
             CPPUNIT_ASSERT(valParam.valid());
             CPPUNIT_ASSERT_EQUAL(valParam->GetName(), param->GetName());
             CPPUNIT_ASSERT_EQUAL(valParam->GetParameterCount(), param->GetParameterCount());
-            
+
             dtDAL::NamedIntParameter* intParam = dynamic_cast<dtDAL::NamedIntParameter*>(valParam->GetParameter("horse"));
             CPPUNIT_ASSERT(intParam != NULL);
             CPPUNIT_ASSERT_EQUAL(4, intParam->GetValue());

@@ -221,8 +221,8 @@ namespace dtActors
 
       //IsTopLevel...
       AddProperty(new dtDAL::BooleanActorProperty("IsTopLevel","Top Level Task",
-         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetTopLevelTask),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::IsTopLevelTask),
+         dtDAL::BooleanActorProperty::SetFuncType(),
+         dtDAL::BooleanActorProperty::GetFuncType(this, &TaskActorProxy::IsTopLevelTask),
          "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
 

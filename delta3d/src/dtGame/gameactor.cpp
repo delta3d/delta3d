@@ -73,24 +73,24 @@ namespace dtGame
 
       dtDAL::PhysicalActorProxy::BuildPropertyMap();
 
-		dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty("IsGameActor", "Is Game Actor",
-			dtDAL::MakeFunctor(*this, &GameActorProxy::SetIsGameActorProxy),
-			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsGameActorProxy),
-			"Read only property that always returns true", "");
-		bap->SetReadOnly(true);
-		AddProperty(bap);
+      dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty("IsGameActor", "Is Game Actor",
+               dtDAL::BooleanActorProperty::SetFuncType(),
+               dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsGameActorProxy),
+               "Read only property that always returns true", "");
+      bap->SetReadOnly(true);
+      AddProperty(bap);
 
       bap = new dtDAL::BooleanActorProperty("IsRemote", "Is Remote",
-         dtDAL::MakeFunctor(*this, &GameActorProxy::SetRemote),
-         dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsRemote),
-         "Sets/Gets if a game actor is remote", "");
+               dtDAL::BooleanActorProperty::SetFuncType(),
+               dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsRemote),
+               "Sets/Gets if a game actor is remote", "");
      bap->SetReadOnly(true);
      AddProperty(bap);
 
-	  bap = new dtDAL::BooleanActorProperty("IsPublished", "Is Published",
-			dtDAL::MakeFunctor(*this, &GameActorProxy::SetPublished),
-			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsPublished),
-			"Sets/Gets if a game actor is published", "");
+     bap = new dtDAL::BooleanActorProperty("IsPublished", "Is Published",
+              dtDAL::BooleanActorProperty::SetFuncType(),
+              dtDAL::BooleanActorProperty::GetFuncType(this, &GameActorProxy::IsPublished),
+              "Sets/Gets if a game actor is published", "");
      bap->SetReadOnly(true);
      AddProperty(bap);
 
