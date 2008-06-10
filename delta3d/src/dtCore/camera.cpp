@@ -97,6 +97,7 @@ namespace dtCore
       AddSender( sys );
    
       mOsgCamera = new osg::Camera;
+      mOsgCamera->setName(GetName());
 
       double height = osg::DisplaySettings::instance()->getScreenHeight();
       double width = osg::DisplaySettings::instance()->getScreenWidth();
