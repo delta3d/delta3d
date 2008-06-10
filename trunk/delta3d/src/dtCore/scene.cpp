@@ -122,6 +122,7 @@ Scene::Scene( const std::string& name) : Base(name),
 {
    RegisterInstance(this);
    SetName(name);
+   mSceneNode->setName(name);
 
    InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
       

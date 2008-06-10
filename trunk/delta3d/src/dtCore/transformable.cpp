@@ -65,6 +65,9 @@ Transformable::Transformable( const std::string& name )
       mRenderingGeometry(false), 
       mRenderProxyNode(false)
 {
+   //set the name of the node
+   mNode->setName( GetName() );
+
    Ctor();
 }
 
