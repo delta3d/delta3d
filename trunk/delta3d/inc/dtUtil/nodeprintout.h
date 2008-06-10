@@ -23,7 +23,7 @@
 #define __DELTA_NODE_PRINT_OUT__
 
 #include <dtUtil/export.h>
-#include <cstdio>
+#include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>
 #include <osg/Node>
 #include <sstream>
@@ -40,6 +40,15 @@ namespace osg
 
 namespace dtUtil
 {
+   ///Utility class used to traverse a node and generate a formatted text output
+   /** Example:
+   * @code 
+   * osg::Node *node = LoadFile("myFile.ive");
+   * RefPtr<NodePrintOut> printout = new NodePrintOut();
+   * std::cout << printout->CollectNodeData(*node) << std::endl;
+   * @endcode
+   */
+
    class DT_UTIL_EXPORT NodePrintOut : public osg::Referenced
    {
       public:
@@ -49,8 +58,28 @@ namespace dtUtil
          virtual ~NodePrintOut() {}
 
       public:
-         /// Called from anyone that wants to print out a file, takes in a node, outputs file*
-         void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true);
+         /** Traverse a node's graph and generate a text printout of the
+           * hierarchy.
+           * @param nodeToPrint : the node to traverse
+           * @param outputFilename : an optional filename to save the output to (default = "")
+           * @param printVertData : optionally print out vertex information (default = false)
+           * @return The formatted string output.
+           * 
+           */
+         std::string CollectNodeData( const osg::Node &nodeToPrint, 
+                                      const std::string &outputFilename = "",
+                                      bool printVertData = false );
+
+         
+         /// Deprecated 06/10/08  Use CollectNodeData() instead
+         void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true)
+         {
+            DEPRECATE("void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true)",
+                      "std::string CollectNodeData( const osg::Node &nodeToPrint, const std::string &outputFilename = "", bool printVertData = false );");
+
+            CollectNodeData(nodeToPrint, printOutFileName, PrintVerts);
+          }
+
       
          /// Returns the file stream
          std::string GetFileOutput() const;

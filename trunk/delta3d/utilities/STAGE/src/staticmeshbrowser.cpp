@@ -452,11 +452,9 @@ namespace dtEditQt
          if (node)
          {
             dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-            std::string file;
-            nodepo->PrintOutNode(file, *node, false, false);
             
             text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-            text->setText(tr(nodepo->GetFileOutput().c_str()));
+            text->setText( tr(nodepo->CollectNodeData(*node).c_str()) );
 
             obj = NULL;
             nodepo = NULL;
@@ -466,7 +464,6 @@ namespace dtEditQt
 
             connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
             dlg.exec();
-            dtUtil::FileUtils::GetInstance().FileDelete(file);
          }
 	   }
 	}
