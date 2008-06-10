@@ -7,7 +7,6 @@
 #include <dtCore/infinitelight.h>
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
-#include <dtCore/keyboard.h> //due to including scene.h
 #include <dtCore/skydome.h>
 #include <dtCore/skydomeshader.h>
 #include <dtCore/sunlightshader.h>

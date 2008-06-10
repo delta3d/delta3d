@@ -11,7 +11,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h>//due to include of scene.h
 
 #include <osgViewer/GraphicsWindow>
 #include <ctime>

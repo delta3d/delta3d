@@ -4,7 +4,6 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h>//due to include of scene.h
 
 #include <osg/FrameStamp>
 #include <osg/PolygonMode>
