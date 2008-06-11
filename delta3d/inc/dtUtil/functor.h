@@ -8,6 +8,7 @@
 #include <dtUtil/generic.h>
 #include <dtUtil/funtraits.h>
 #include <dtUtil/funcall.h>
+#include <cstddef>
 #include <utility>  // for std::pair<>
 
 namespace dtUtil
