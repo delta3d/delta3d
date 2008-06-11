@@ -329,7 +329,7 @@ namespace dtEditQt
       mIsector->SetScene( getScene());
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
       osg::Vec3 nearPoint, farPoint;
-      int yLoc = this->sceneView->getViewport()->height()-y;
+      int yLoc = int(this->sceneView->getViewport()->height()-y);
 
       this->sceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
       mIsector->SetStartPosition(nearPoint);
