@@ -30,6 +30,7 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/shadergroup.h>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 
 #include <osg/Geode>
 #include <osg/State>
@@ -276,6 +277,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL( Cal3DModelWrapper* pWrapper )
 {
+   UNREFERENCED_PARAMETER(pWrapper);
+
    //NULL create function.  Used if hardware and software create functions fail.
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
    return geode.get();
@@ -430,7 +433,7 @@ bool AnimNodeBuilder::SupportsSoftware() const
 bool AnimNodeBuilder::SupportsVertexBuffers() const
 {
    //see if we can support vertex buffer objects
-   osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
+   osg::Drawable::getExtensions(0, true);
    
    return (osg::isGLExtensionSupported(0, "GL_ARB_vertex_buffer_object"));
 }
