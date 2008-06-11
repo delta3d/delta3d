@@ -267,7 +267,7 @@ namespace dtEditQt
         else if (e->button() == Qt::RightButton) {
             osg::Vec3 nearPoint,farPoint;
             int xLoc = e->pos().x();
-            int yLoc = getSceneView()->getViewport()->height()-e->pos().y();
+            int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
             getSceneView()->projectWindowXYIntoObject(xLoc,yLoc,nearPoint,farPoint);
             this->zoomToPosition = nearPoint;
             this->currentMode = &OrthoViewport::InteractionModeExt::CAMERA_ZOOM;
