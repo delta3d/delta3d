@@ -160,11 +160,11 @@ namespace dtUtil
 
       testIncrementTime1.IncrementClock(3605.0f);
       testIncrementTime2.SetSecond(testIncrementTime2.GetSecond() + 5.0f);
-      testIncrementTime2.SetHour(testIncrementTime2.GetHour() + 1.0f);
+      testIncrementTime2.SetHour(testIncrementTime2.GetHour() + 1);
       CompareTimes(testIncrementTime1, testIncrementTime2);
 
       testIncrementTime1.IncrementClock(86400.0f); //24 hours
-      testIncrementTime2.SetDay(testIncrementTime2.GetDay() + 1.0f);
+      testIncrementTime2.SetDay(testIncrementTime2.GetDay() + 1);
       CompareTimes(testIncrementTime1, testIncrementTime2);
 
       yr = 1979;
