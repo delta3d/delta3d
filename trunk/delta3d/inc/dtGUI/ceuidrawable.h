@@ -134,6 +134,13 @@ namespace dtGUI
 
       void SetOSGNode(osg::Node* pNode){mNode = pNode;}
 
+      /**
+       * Set the render bin details on the contained geode's state set.
+       * @param binNumber Order of the bin in relation to other bins.
+       * @param binName Name of the bin.
+       */
+      void SetRenderBinDetails( int binNumber, const std::string& binName );
+
 
    protected: 
 
@@ -149,6 +156,7 @@ namespace dtGUI
       dtCore::RefPtr<dtCore::Mouse> mMouse;
       dtCore::RefPtr<dtCore::Keyboard> mKeyboard;
       dtCore::RefPtr<osg::Node> mNode;
+      dtCore::RefPtr<osg::Geode> mGeode;
       int mWidth;
       int mHeight;
 

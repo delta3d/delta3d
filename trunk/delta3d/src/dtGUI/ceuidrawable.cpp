@@ -165,10 +165,10 @@ void CEUIDrawable::Config()
 
    mUI = CEGUI::System::getSingletonPtr();
 
-   osg::Geode *geod = new osg::Geode();
-   geod->setName("CEUIDrawable_Geode");
+   mGeode = new osg::Geode();
+   mGeode->setName("CEUIDrawable_Geode");
 
-   osg::StateSet* stateset = geod->getOrCreateStateSet();
+   osg::StateSet* stateset = mGeode->getOrCreateStateSet();
    stateset->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
 
    stateset->setRenderBinDetails(11,"RenderBin");
@@ -176,17 +176,22 @@ void CEUIDrawable::Config()
 
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
 
-   geod->setStateSet(stateset);
+   mGeode->setStateSet(stateset);
 
    osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
-   geod->addDrawable( osgCEUI.get() ); //add our osg node here
+   mGeode->addDrawable( osgCEUI.get() ); //add our osg node here
 
    mTransform->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
-   mTransform->addChild( geod );
+   mTransform->addChild( mGeode.get() );
 
    mProjection->addChild( mTransform.get() );
 
    SetOSGNode( mProjection.get() );
+}
+
+void CEUIDrawable::SetRenderBinDetails( int binNumber, const std::string& binName )
+{
+   return mGeode->getStateSet()->setRenderBinDetails( binNumber, binName );
 }
 
 bool CEUIDrawable::AddChild(DeltaDrawable *child)
