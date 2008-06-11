@@ -9,6 +9,7 @@ find_path(RTIS_INCLUDE_DIR
       RTI.hh
    PATHS
       /usr/local/include
+      /usr/include
 	$ENV{CERTI_HOME}/include
 )
 
@@ -17,6 +18,7 @@ find_library(RTIS_LIBRARY
       RTI
    PATHS
       /usr/local/lib 
+      /usr/lib 
 	$ENV{CERTI_HOME}/release
 )
 
@@ -25,6 +27,7 @@ find_library(RTIS_RTI_LIBRARY
       CERTI
    PATHS
       /usr/local/lib 
+      /usr/lib 
 	$ENV{CERTI_HOME}/release
 )
 
@@ -34,6 +37,7 @@ find_library(RTIS_PARSER_LIBRARY
       xml2
    PATHS
       /usr/local/lib 
+      /usr/lib 
 )
 endif(UNIX)
 
