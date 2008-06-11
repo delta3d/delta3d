@@ -602,7 +602,6 @@ void NamedParameterTests::setUp()
       logger = &dtUtil::Log::GetInstance("MessageParameter");
       //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
-      dtCore::Scene* scene = new dtCore::Scene();
       mManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
       mManager->SetApplication(GetGlobalApplication());
       mManager->LoadActorRegistry(mTestActorLibrary);
