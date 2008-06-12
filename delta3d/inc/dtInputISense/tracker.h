@@ -33,7 +33,7 @@
 #undef Bool
 #endif
 
-#include <isense.h>
+#include "isense.h"
 #include <dtCore/inputdevice.h>
 #include <dtInputISense/export.h>
 
