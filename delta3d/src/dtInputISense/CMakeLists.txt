@@ -18,7 +18,7 @@ SET(LIB_PUBLIC_HEADERS
        
 IF (NOT MSVC)
   SET( LIB_SOURCES ${LIB_SOURCES}
-         {SOURCE_PATH}/dlcompat.c )
+         ${SOURCE_PATH}/dlcompat.c )
          
   SET( LIB_PUBLIC_HEADERS ${LIB_PUBLIC_HEADERS}
          ${HEADER_PATH}/dlcompat.h )
