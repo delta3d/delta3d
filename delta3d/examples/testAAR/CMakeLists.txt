@@ -31,8 +31,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTAI_LIBRARY    
                                          DTGUI_LIBRARY                                            
                                          DTLMS_LIBRARY
-                                         CEGUI_LIBRARY                                         
-                                         OSG_LIBRARY)                                        
+                                          OSG_LIBRARY)                                        
                                               
 
 INCLUDE(ModuleInstall OPTIONAL)

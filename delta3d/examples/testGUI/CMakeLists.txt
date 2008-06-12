@@ -7,4 +7,4 @@ BUILD_EXE_EXAMPLE( testGUI
                                          DTDAL_LIBRARY
                                          DTGUI_LIBRARY
                                          OSG_LIBRARY                                       
-                                         CEGUI_LIBRARY)
+                                         )

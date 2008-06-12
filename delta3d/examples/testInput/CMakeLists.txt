@@ -7,5 +7,4 @@ BUILD_EXE_EXAMPLE( testInput
                                          DTGUI_LIBRARY
                                          OSG_LIBRARY
                                          OSGDB_LIBRARY
-                                         CEGUI_LIBRARY
                                          DTINPUT_PLIB_LIBRARY)
