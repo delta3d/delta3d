@@ -1,5 +1,7 @@
 SET(TARGET_SRC testinput.cpp readme.txt)
 
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
+
 BUILD_EXE_EXAMPLE( testInput
                                          DTUTIL_LIBRARY   
                                          DTCORE_LIBRARY
