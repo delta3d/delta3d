@@ -48,10 +48,6 @@
 
 #include <cal3d/animation.h>
 
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/CEGUISystem.h>
-#include <CEGUI/CEGUISchemeManager.h>
-
 #include <dtAnim/hotspotdriver.h>
 #include <dtCore/hotspotattachment.h>
 #include <dtCore/refptr.h>

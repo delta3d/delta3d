@@ -36,11 +36,6 @@ namespace dtAnim
    class PoseMeshDatabase;
 }
 
-namespace CEGUI
-{
-   class Window;
-}
-
 
 class Viewer : public QObject, public dtABC::Application
 {
