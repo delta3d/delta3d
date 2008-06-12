@@ -11,11 +11,10 @@ ADD_EXECUTABLE(${PROG_NAME}
 
 LINK_WITH_VARIABLES(${PROG_NAME}
                                          DTUTIL_LIBRARY   
-                                         DTGUI_LIBRARY
-                                         DTCORE_LIBRARY
+                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
                                         DTGAME_LIBRARY
-                                         CEGUI_LIBRARY)
+                                         )
 
                                               
 INCLUDE(ModuleInstall OPTIONAL)

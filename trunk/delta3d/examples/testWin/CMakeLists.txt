@@ -6,4 +6,4 @@ BUILD_EXE_EXAMPLE( testWin
 											  DTCORE_LIBRARY
 											  DTABC_LIBRARY
 											  OSGDB_LIBRARY
-											  CEGUI_LIBRARY)
+											  )

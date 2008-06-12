@@ -5,4 +5,4 @@ BUILD_EXE_EXAMPLE( testMotionModels
                                          DTGUI_LIBRARY
                                          DTCORE_LIBRARY
                                          DTABC_LIBRARY
-                                         CEGUI_LIBRARY)
+                                         )

@@ -17,8 +17,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          DTAI_LIBRARY
                                          DTGAME_LIBRARY
                                          DTACTORS_LIBRARY
-                                         CEGUI_LIBRARY  
-                                         CEGUIOPENGL_LIBRARY                                         
                                          OSG_LIBRARY
                                          OSGDB_LIBRARY)                                        
                                               
