@@ -119,9 +119,9 @@ void Tracker::Poll()
 {
    if(mTrackerHandle > 0)
    {
-      ISD_TRACKER_DATA_TYPE data;
+      ISD_TRACKING_DATA_TYPE data;
 
-      ISD_GetData(mTrackerHandle, &data);
+      ISD_GetTrackingData(mTrackerHandle, &data);
 
       for(int i=0;i<ISD_MAX_STATIONS;i++)
       {
@@ -131,11 +131,11 @@ void Tracker::Poll()
 
          GetAxis(i*6+2)->SetState(data.Station[i].Position[2]);
 
-         GetAxis(i*6+3)->SetState(data.Station[i].Orientation[0]);
+         GetAxis(i*6+3)->SetState(data.Station[i].Euler[0]);
 
-         GetAxis(i*6+4)->SetState(data.Station[i].Orientation[1]);
+         GetAxis(i*6+4)->SetState(data.Station[i].Euler[1]);
 
-         GetAxis(i*6+5)->SetState(data.Station[i].Orientation[2]);
+         GetAxis(i*6+5)->SetState(data.Station[i].Euler[2]);
       }
    }
 }
