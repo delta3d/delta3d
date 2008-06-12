@@ -1,7 +1,9 @@
 
 SET(PROG_NAME AnimationViewer)
 
-INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
+                                  ${CAL3D_INCLUDE_DIR}#for dtAnim
+                                  )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${PROG_NAME})
 file(GLOB PROG_HEADERS "*.h")

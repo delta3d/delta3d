@@ -4,6 +4,8 @@ SET(LIB_NAME     testAnim)
 file(GLOB LIB_SOURCES "*.cpp" "*.h")
 list(REMOVE_ITEM LIB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
+INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
+
 ADD_LIBRARY(${LIB_NAME} SHARED  
    ${LIB_SOURCES}
    readme.txt

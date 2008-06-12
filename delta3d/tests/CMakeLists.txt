@@ -5,9 +5,9 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/examples
                      ${CMAKE_SOURCE_DIR}/utilities) 
 
 SET(DIRS dtABC dtAI dtActors dtAnim dtAudio dtCore dtDAL dtGUI dtGame dtLMS dtUtil)
-IF(DIS_FOUND)
+IF(DTDIS_AVAILABLE)
   SET(DIRS ${DIRS} dtDIS)
-ENDIF(DIS_FOUND)
+ENDIF(DTDIS_AVAILABLE)
 
 file(GLOB TEMP_SOURCES "*.cpp" "*.h")
 SET(ALL_SOURCES ${TEMP_SOURCES}
@@ -31,6 +31,12 @@ FOREACH(varname ${DIRS})
 ENDFOREACH(varname)
 list(REMOVE_ITEM ALL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precomp.cpp)
 
+
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} #for dtGUI
+                                    ${CAL3D_INCLUDE_DIR} #for dtAnim
+                                    )
+
+
 ADD_EXECUTABLE(${PROG_NAME}
     ${ALL_SOURCES}
 )
@@ -50,11 +56,11 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                      TEST_GAME_ACTOR_LIBRARY
                      CPPUNIT_LIBRARY)
 
-IF(DIS_FOUND)
+IF(DTDIS_AVAILABLE)
    LINK_WITH_VARIABLES(${PROG_NAME}
                         DTDIS_LIBRARY
                         DIS_LIBRARY)
-ENDIF(DIS_FOUND)
+ENDIF(DTDIS_AVAILABLE)
 
 INCLUDE(ModuleInstall OPTIONAL)
 

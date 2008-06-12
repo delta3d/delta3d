@@ -1,6 +1,8 @@
 SET (LIB_NAME fireFighter)
 file(GLOB LIB_SOURCES "*.cpp" "*.h")
 
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
+
 ADD_LIBRARY( ${LIB_NAME} SHARED
 	${LIB_SOURCES}
 	readme.txt
@@ -14,7 +16,6 @@ LINK_WITH_VARIABLES( ${LIB_NAME}
                                     DTGAME_LIBRARY
                                     DTGUI_LIBRARY
                                     DTLMS_LIBRARY
-                                    CEGUI_LIBRARY
                                     )
 
 #fireFighter needs to have the "delta3d/demos" folder as an #include search path

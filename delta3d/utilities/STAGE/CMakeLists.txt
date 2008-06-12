@@ -6,7 +6,9 @@ file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")
 file(GLOB PROG_SOURCES "src/*.cpp")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
 
-INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
+                                  ${CAL3D_INCLUDE_DIR} #for dtAnim
+                                  )
 
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 

@@ -1,5 +1,7 @@
 SET(TARGET_SRC testmotionmodels.cpp)
 
+INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
+
 BUILD_EXE_EXAMPLE( testMotionModels
                                          DTUTIL_LIBRARY   
                                          DTGUI_LIBRARY
