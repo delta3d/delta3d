@@ -25,7 +25,7 @@ IF (APPLE)
 ENDIF (APPLE)
 
 #need to add inc/dtInputIsense to the header search path for isence.c can see isense.h
-INCLUDE_DIRECTORIES( ${HEADER_PATH} )
+INCLUDE_DIRECTORIES( BEFORE ${HEADER_PATH} )
 
 ADD_LIBRARY(${LIB_NAME} SHARED                        
     ${LIB_PUBLIC_HEADERS}                         
