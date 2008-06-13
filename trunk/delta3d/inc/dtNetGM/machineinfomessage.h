@@ -25,7 +25,7 @@
 #include <dtNetGM/export.h>
 #include <dtCore/refptr.h>
 #include <dtGame/message.h>
-#include <dtGame/messageparameter.h>
+#include <dtGame/messageparameter.h> 
 
 namespace dtNetGM
 {
