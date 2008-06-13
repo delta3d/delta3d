@@ -51,10 +51,7 @@ MainWindow::MainWindow()
   , mPoseMeshViewer(NULL)
   , mPoseMeshProperties(NULL)
 {
-   resize(800, 800);
-
-   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
-   nodeBuilder.SetCreate(dtAnim::AnimNodeBuilder::CreateFunc(&nodeBuilder, &dtAnim::AnimNodeBuilder::CreateSoftware));
+   resize(800, 800);   
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(6);
