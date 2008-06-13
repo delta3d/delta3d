@@ -9,25 +9,38 @@
 #
 # Created by David Guthrie with code from Robert Osfield. 
 
-FIND_PATH(CEGUI_INCLUDE_DIR CEGUI.h 
-    $ENV{CEGUI_DIR}/include/CEGUI
-    $ENV{CEGUI_DIR}
-    $ENV{CEGUIDIR}/include/CEGUI
-    $ENV{CEGUIDIR}
-    $ENV{CEGUI_ROOT}/include/CEGUI
-    ${DELTA3D_EXT_DIR}/inc/CEGUI
-    $ENV{DELTA_ROOT}/ext/inc/CEGUI
-    ~/Library/Frameworks/CEGUI.framework/Headers/CEGUI
-    /Library/Frameworks/CEGUI.framework/Headers/CEGUI
-    /usr/local/include/CEGUI
-    /usr/include/CEGUI
-    /sw/include/CEGUI # Fink
-    /opt/local/include/CEGUI # DarwinPorts
-    /opt/csw/include/CEGUI # Blastwave
-    /opt/include/CEGUI
-    [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;CEGUI_ROOT]/include/CEGUI
-    /usr/freeware/include/CEGUI
+FIND_PATH(CEGUI_INCLUDE_DIR CEGUI/CEGUI.h 
+    PATHS
+    $ENV{CEGUI_DIR}/include
+    $ENV{CEGUIDIR}/include
+    $ENV{CEGUI_ROOT}/include
+    ${DELTA3D_EXT_DIR}/inc
+    ${DELTA3D_EXT_DIR}/Frameworks
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local/include
+    /usr/include
+    /sw/include # Fink
+    /opt/local/include # DarwinPorts
+    /opt/csw/include # Blastwave
+    /opt/include
+    /usr/freeware/include
 )
+
+IF (APPLE)
+   FIND_PATH(CEGUI_FRAMEWORK_DIR CEGUI.h 
+     PATHS
+       ~/Library/Frameworks/CEGUI.framework/Headers
+       /Library/Frameworks/CEGUI.framework/Headers
+       ${DELTA3D_EXT_DIR}/Frameworks/CEGUI.framework/Headers
+)
+ENDIF (APPLE)
+
+IF (CEGUI_FRAMEWORK_DIR)
+   SET(CEGUI_INCLUDE_DIR ${CEGUI_INCLUDE_DIR} ${CEGUI_FRAMEWORK_DIR})
+ELSE (CEGUI_FRAMEWORK_DIR)
+   SET(CEGUI_INCLUDE_DIR ${CEGUI_INCLUDE_DIR} ${CEGUI_INCLUDE_DIR}/CEGUI)
+ENDIF (CEGUI_FRAMEWORK_DIR)
 
 MACRO(FIND_CEGUI_LIBRARY MYLIBRARY MYLIBRARYNAMES)
 

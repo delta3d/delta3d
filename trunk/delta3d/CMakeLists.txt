@@ -190,7 +190,7 @@ ENDIF(BUILD_PLIB)
 
 # Make the headers visible to everything
 INCLUDE_DIRECTORIES(
-    ${DELTA3D_SOURCE_DIR}/inc
+    ${CMAKE_SOURCE_DIR}/inc
     ${OPENGL_INCLUDE_DIR}
     ${OPENTHREADS_INCLUDE_DIR}
     ${OSG_INCLUDE_DIR}
