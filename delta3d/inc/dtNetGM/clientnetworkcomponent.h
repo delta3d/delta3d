@@ -24,7 +24,6 @@
 #include <dtNetGM/export.h>
 #include <dtNetGM/networkcomponent.h>
 
-
 namespace dtNetGM
 {
     class NetworkComponent;

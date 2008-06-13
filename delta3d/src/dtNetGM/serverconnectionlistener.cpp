@@ -27,7 +27,8 @@
 #include <gnelib/ConnectionParams.h>
 #include <dtUtil/log.h>
 
-namespace dtNetGM {
+namespace dtNetGM 
+{
     ServerConnectionListener::ServerConnectionListener(ServerNetworkComponent *serverNetworkComp, int inRate, int outRate, bool reliable)
         : GNE::ServerConnectionListener()
         , mInRate(inRate)
