@@ -15,14 +15,14 @@
 
 int main(int argc, char *argv[]) 
 {
-   QApplication qapp(argc, argv);
-
-   MainWindow win;
-   win.show();
+   QApplication qapp(argc, argv);  
 
    Delta3DThread *thread = new Delta3DThread(&qapp);
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
+
+   MainWindow win;
+   win.show();
 
    thread->SetMainWindow(&win);
    //thread->start();
