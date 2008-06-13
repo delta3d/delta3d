@@ -638,6 +638,10 @@ osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(osg::Group* rootT
 	BOOL switchEnableChildren[9];
 	//memset(switchEnableChildren, 0, sizeof(BOOL) * 9);
 
+   //by default disable all of them, then set the ones to be enabled
+   //todo- make option for selecting whether they are all on or off by default
+   switcher->setAllChildrenOff();
+
 	if(pblock2)
 	{
 		pblock2->GetValue(switch_enable_children1, t, switchEnableChildren[0], iv);
