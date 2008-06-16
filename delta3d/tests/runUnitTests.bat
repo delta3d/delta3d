@@ -11,7 +11,7 @@
 @if "%ERRORLEVEL%" == "0" goto good
 
 :bad
-@echo "Error: Substantial problem in unit test.  Perhaps an access violation."
+@echo "error : Unit tests might have crashed."
 @exit 1
 
 :notFound
