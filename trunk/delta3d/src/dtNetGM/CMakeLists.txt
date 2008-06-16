@@ -18,8 +18,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTAI_LIBRARY
-											  DTDAL_LIBRARY
 											  DTGAME_LIBRARY
 											  GNE_LIBRARY
 											  HAWKNL_LIBRARY
