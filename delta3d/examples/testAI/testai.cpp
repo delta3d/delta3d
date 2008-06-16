@@ -15,8 +15,6 @@
 #include <dtAI/waypoint.h>
 #include <dtAI/waypointmanager.h>
 
-#include <dtCore/generickeyboardlistener.h>
-#include <dtGUI/ceguikeyboardlistener.h>
 
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/log.h>
