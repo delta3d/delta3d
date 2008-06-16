@@ -45,11 +45,11 @@ MainWindow::MainWindow()
   , mMeshListWidget(NULL)
   , mMaterialModel(NULL)
   , mMaterialView(NULL)
-  , mGLWidget(NULL)
   , mPoseDock(NULL)
-  , mPoseMeshScene(NULL)
   , mPoseMeshViewer(NULL)
+  , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
+  , mGLWidget(NULL)
 {
    resize(800, 800);   
 
