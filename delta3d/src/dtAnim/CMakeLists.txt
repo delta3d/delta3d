@@ -18,9 +18,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTUTIL_LIBRARY
 											  DTCORE_LIBRARY
-											  DTAI_LIBRARY
 											  DTDAL_LIBRARY
-											  DTABC_LIBRARY
 											  DTGAME_LIBRARY
 											  CAL3D_LIBRARY
 											  OSG_LIBRARY
