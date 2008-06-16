@@ -1,4 +1,4 @@
-SET(TARGET_SRC testinput.cpp readme.txt)
+SET(TARGET_SRC testinput.cpp readme.txt gui.xml)
 
 INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} )
 
