@@ -192,8 +192,8 @@ Windows with Visual Studio 2005
   
    6. Open a cmd shell and navigate to your Boost directory.
    
-   7. Run 'bjam stage --with-python'. This will build the Boost.Python set of 
-      Boost libraries to a directory something like "boost*/stage/lib". Make sure to add this directory 
+   7. Run 'bjam stage --with-python' and 'bjam stage --with-python debug'. This will build the Release/Debug
+      Boost.Python set of Boost libraries to a directory something like "boost*/stage/lib". Make sure to add this directory 
       to your PATH environment variable so Windows can find the Boost.Python DLLs 
       at runtime.
          
@@ -201,12 +201,7 @@ Windows with Visual Studio 2005
       make sure to remove the Boost.Python DLLs contained in delta3d\ext\bin before
       going any further. Otherwise, they will conflict with the DLL you just built.
    
-   9. Open a solution contain the project files for the Delta3D Python bindings:
-      -delta3d\VisualStudio\src\python\dtpython.sln or
-      -delta3d\VisualStudio\delta_all.sln.
-      
-   10. Before building...
-   
+   9. Open Visual Studio and add the search paths to the Boost folder
       -Select Tools->Options
       -Select the Projects folder
       -Select VC++ Directories
@@ -215,11 +210,11 @@ Windows with Visual Studio 2005
       -Change 'Show directories for:' to Library files
       -Add 'boost_*\stage\lib' (or whatever your proper path is)to the list
    
-   11. Build!
+   10. Build!
    
-   12. Make sure the .pyd libraries were built into delta3d\bin. If not, rinse and repeat.
+   11. Make sure the .pyd libraries were built into delta3d\bin. If not, rinse and repeat.
    
-   13. Set your PYTHONPATH environement variable contains the directory with the resulting 
+   12. Set your PYTHONPATH environement variable contains the directory with the resulting 
        .pyd libraries (most likely delta3d\bin).
 
    STAGE
