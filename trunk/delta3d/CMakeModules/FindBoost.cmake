@@ -194,6 +194,7 @@ MACRO(FIND_BOOST_PYTHON_LIBRARY MYLIBRARY MYLIBRARYNAME)
         /opt/lib
         [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;PLIB_ROOT]/lib
         /usr/freeware/lib64
+        DOC "The Boost Python library file.  E.g. boost_python-vc80-mt.lib or boost_python-vc80-mt-gd.lib"
     )
 	
 ENDMACRO(FIND_BOOST_PYTHON_LIBRARY MYLIBRARY MYLIBRARYNAME)
