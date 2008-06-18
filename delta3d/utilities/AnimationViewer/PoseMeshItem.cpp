@@ -84,8 +84,11 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
    // We want to manually control when the item is movable
    setFlag(ItemIsMovable, false);
 
+   // This needs to be set in order to receive mousemove events
+   setFlag(ItemIsSelectable, true);
+
    // Make sure this gets drawn on top of the background
-   setZValue(1);
+   setZValue(1);  
 
    setAcceptsHoverEvents(true);
    setToolTip(poseMesh.GetName().c_str());     
