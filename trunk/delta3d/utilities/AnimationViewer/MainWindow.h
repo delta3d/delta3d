@@ -132,6 +132,5 @@ private slots:
 
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);
-   void OnToggleBoneBasisDisplay(bool shouldDisplay);
 };
 #endif // DELTA_MainWindow

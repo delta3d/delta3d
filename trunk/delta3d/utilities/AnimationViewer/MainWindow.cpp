@@ -210,7 +210,6 @@ void MainWindow::CreateToolbars()
    mSpeedToolbar   = addToolBar("Animation Speed toolbar");
    //mLightingToolbar = addToolBar("Lighting toolbar");
 
-
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
    mShadingToolbar->addAction(mShadedWireAction);
@@ -226,8 +225,7 @@ void MainWindow::CreateToolbars()
 
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
-
-   connect(mBoneBasisAction, SIGNAL(toggled(bool)), SLOT(OnToggleBoneBasisDisplay(bool)));
+  
    connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
 }
@@ -795,12 +793,6 @@ void MainWindow::OnToggleDisplayEdges(bool shouldDisplay)
 void MainWindow::OnToggleDisplayError(bool shouldDisplay)
 {
    mPoseMeshViewer->SetDisplayError(shouldDisplay);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnToggleBoneBasisDisplay(bool shouldDisplay)
-{
-   
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
