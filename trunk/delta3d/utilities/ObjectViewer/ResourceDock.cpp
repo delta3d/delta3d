@@ -19,7 +19,7 @@
 *
 */
 
-#include <ResourceDock.h>
+#include "ResourceDock.h"
 #include <QtGui/QAction>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTreeWidget>

@@ -4,8 +4,8 @@
 #include <QtCore/QString>
 #include <QtGui/QMessageBox>
 
-#include <ObjectViewer.h>
-#include <ObjectWorkspace.h>
+#include "ObjectViewer.h"
+#include "ObjectWorkspace.h"
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
