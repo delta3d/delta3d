@@ -23,7 +23,8 @@ namespace dtExample
       UFO,
       ORBIT,
       FPS,
-      COLLISION
+      COLLISION,
+      RTS
    };
 
    /// a small helper class that will set up and modify the GUI
@@ -38,7 +39,9 @@ namespace dtExample
          mUFO(NULL), 
          mOrbit(NULL), 
          mFPS(NULL), 
-         mCollision(NULL), mForwardingFunctor(ff)
+         mCollision(NULL),
+         mRTS(NULL),
+         mForwardingFunctor(ff)
       {
       }
 
@@ -80,6 +83,10 @@ namespace dtExample
             {
                mCollision->setSelected(true);
             } 
+            case RTS:
+            {
+               mRTS->setSelected(true);
+            } 
             break;
          }
       }
@@ -94,6 +101,7 @@ namespace dtExample
          else if( mOrbit == wea.window ) { mForwardingFunctor( ORBIT ); }
          else if( mFPS == wea.window )   { mForwardingFunctor( FPS ); }
          else if( mCollision == wea.window )   { mForwardingFunctor( COLLISION ); }
+         else if( mRTS == wea.window )   { mForwardingFunctor( RTS ); }
 
          return true;
       }
@@ -167,6 +175,14 @@ namespace dtExample
             col->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
             menu->addChildWindow( col );
 
+            CEGUI::Window* rts = CreateWidget("WindowsLook/RadioButton","RTS");
+            rts->setArea(CEGUI::UVector2(cegui_reldim(0.25),cegui_reldim(0.25)),
+                         CEGUI::UVector2(cegui_reldim(0.2),cegui_reldim(1.0)));
+            rts->setText("RTS (7)");
+            rts->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged, CEGUI::Event::Subscriber(&QuickMenuManager::ChangeMotionModelCB,this));
+            menu->addChildWindow( rts );
+
+
             CEGUI::System::getSingleton().setGUISheet( menu );
 
             InitializeWidgets(static_cast<CEGUI::RadioButton*>(walk),
@@ -174,7 +190,9 @@ namespace dtExample
                               static_cast<CEGUI::RadioButton*>(ufo),
                               static_cast<CEGUI::RadioButton*>(orb),
                               static_cast<CEGUI::RadioButton*>(fps),
-                              static_cast<CEGUI::RadioButton*>(col));
+                              static_cast<CEGUI::RadioButton*>(col),
+                              static_cast<CEGUI::RadioButton*>(rts)
+                              );
 
          }
          catch(CEGUI::Exception& )
@@ -188,7 +206,10 @@ namespace dtExample
       {
       }
 
-      void InitializeWidgets(CEGUI::RadioButton* walk, CEGUI::RadioButton* fly, CEGUI::RadioButton* ufo, CEGUI::RadioButton* orb, CEGUI::RadioButton* fps, CEGUI::RadioButton* col)
+      void InitializeWidgets(CEGUI::RadioButton* walk, CEGUI::RadioButton* fly,
+                             CEGUI::RadioButton* ufo, CEGUI::RadioButton* orb,
+                             CEGUI::RadioButton* fps, CEGUI::RadioButton* col,
+                             CEGUI::RadioButton* rts)
       {
          mWalk = walk;
          mFly = fly;
@@ -196,6 +217,7 @@ namespace dtExample
          mOrbit = orb;
          mFPS = fps;
          mCollision = col;
+         mRTS = rts;
       }
 
       CEGUI::Window* CreateWidget(const std::string &wtype, const std::string &wname)
@@ -227,6 +249,7 @@ namespace dtExample
       CEGUI::RadioButton* mOrbit;
       CEGUI::RadioButton* mFPS;
       CEGUI::RadioButton* mCollision;
+      CEGUI::RadioButton* mRTS;
 
       ForwardingFunctor mForwardingFunctor;
    };
@@ -275,6 +298,8 @@ public:
       osg::Vec3 gravity;
       GetScene()->GetGravity(gravity);
       mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene(), GetKeyboard(), GetMouse()) );
+
+      mMotionModels.push_back( new RTSMotionModel(GetKeyboard(), GetMouse()) );
 
       for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {  
@@ -327,6 +352,10 @@ public:
          break;
       case '6':
          mMenuManager->SetSelected(dtExample::COLLISION);
+         verdict = true;
+         break;
+      case '7':
+         mMenuManager->SetSelected(dtExample::RTS);
          verdict = true;
          break;
       default:
