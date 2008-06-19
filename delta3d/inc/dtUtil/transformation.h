@@ -25,8 +25,7 @@ namespace dtUtil
    {
    public:
       EdgeStepFilter(double low, double high)
-         : Transformation()
-         , mLow(low)
+         : mLow(low)
          , mHigh(high)
       { }
 
