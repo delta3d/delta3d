@@ -121,9 +121,14 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + 
-      ";" + dtCore::GetDeltaRootPath() + "/examples/data;"); 
-   std::cout << "Path list is: " << dtCore::GetDataFilePathList() <<  std::endl;
+   std::string dataPath = dtCore::GetDeltaDataPathList();
+   dtCore::SetDataFilePathList(dataPath + ";" + 
+                              dtCore::GetDeltaRootPath() + "/examples/data;" +
+                              dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
+                              dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
+                              dtCore::GetDeltaRootPath() + "/examples/data/gui/fonts;" +
+                              dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;");
+   LOG_ALWAYS("Path list is: " + dtCore::GetDataFilePathList() );
 
    dtDAL::Project::GetInstance().SetContext("StageProject");
 
