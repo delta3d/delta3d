@@ -39,6 +39,7 @@ public:
 signals:
 
    void ViewPoseMesh(const std::string &meshName);
+   void PoseMeshItemAdded(const PoseMeshItem *newItem);
 
 private slots:
    void OnPoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
