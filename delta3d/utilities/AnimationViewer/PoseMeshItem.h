@@ -36,9 +36,10 @@ struct TriangleSampleSpace
    std::vector<TriangleSample> mSamples;
 };
 
-class PoseMeshItem: public QGraphicsItem
-{    
-public:
+class PoseMeshItem: public QObject, public QGraphicsItem
+{   
+   Q_OBJECT
+public:   
 
    PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
                 dtAnim::CharDrawable *model,
@@ -66,6 +67,9 @@ public:
    virtual QRectF boundingRect() const;
    virtual QPainterPath shape() const;
    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget); 
+
+signals:
+   void NewItemBlend(const dtAnim::PoseMesh* posemesh, float itemAzimth, float itemElevation);
 
 private: 
 

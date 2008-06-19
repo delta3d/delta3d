@@ -320,10 +320,13 @@ void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
-{
+{   
+   float posemeshAzimuth   = xCoord / VERT_SCALE;
+   float posemeshElevation = -yCoord / VERT_SCALE;
+
    // Scale back into pose space and flip the y coord
    dtAnim::PoseMesh::TargetTriangle targetTri;
-   mPoseMesh->GetTargetTriangleData(xCoord / VERT_SCALE, -yCoord / VERT_SCALE, targetTri);
+   mPoseMesh->GetTargetTriangleData(posemeshAzimuth, posemeshElevation, targetTri);
 
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
@@ -348,6 +351,8 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
 
    // Make sure to redraw the changed portion
    update(boundingRect());
+
+   emit NewItemBlend(mPoseMesh, posemeshAzimuth, posemeshElevation);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

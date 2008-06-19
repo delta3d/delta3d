@@ -434,6 +434,9 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    // Establish connections from the scene
    connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
            mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
+
+   connect(mPoseMeshScene, SIGNAL(PoseMeshItemAdded(const PoseMeshItem*)),
+           mPoseMeshProperties, SLOT(OnItemAdded(const PoseMeshItem*)));
    
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
    connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));

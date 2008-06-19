@@ -3,11 +3,17 @@
 
 #include <QtGui/QTreeWidget>
 
+///////////////////////////////////////////////////////////////////////////////
+
 namespace dtAnim 
 {
    class PoseMesh; 
    class Cal3DModelWrapper;
 }
+
+class PoseMeshItem;
+
+///////////////////////////////////////////////////////////////////////////////
 
 class PoseMeshProperties: public QTreeWidget
 {   
@@ -24,14 +30,21 @@ public slots:
    void OnItemToggled(QTreeWidgetItem *item, int column);
    void OnItemExpanded(QTreeWidgetItem *item);
    void OnBlendUpdate(const std::vector<float> &weightList);
+   void OnItemAdded(const PoseMeshItem *meshItem);
+   void OnNewItemBlend(const dtAnim::PoseMesh *posemesh, float itemAzimuth, float itemElevation);
 
 signals:
    void ViewPoseMesh(const std::string &meshName);
    void PoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
 
-private:
+private:  
+
+   typedef std::map<const dtAnim::PoseMesh*, QTreeWidgetItem*> StatePropertyMap;
 
    std::vector<QTreeWidgetItem*> mVertProperties;   
+   StatePropertyMap mStatePropertyMap;
 };
+
+///////////////////////////////////////////////////////////////////////////////
 
 #endif // _POSEMESH_PROPERTIES_H_

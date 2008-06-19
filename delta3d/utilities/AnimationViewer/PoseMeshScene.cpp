@@ -60,6 +60,8 @@ void PoseMeshScene::AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::CharDrawab
    newItem->setPos(middleX, middleY);  
 
    addItem(newItem);
+
+   emit PoseMeshItemAdded(newItem);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
