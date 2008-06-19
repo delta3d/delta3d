@@ -54,6 +54,7 @@
 #include <dtCore/pointaxis.h>
 #include <dtCore/recorder.h>
 #include <dtCore/refptr.h>
+#include <dtCore/rtsmotionmodel.h>
 #include <dtCore/scene.h>
 #include <dtCore/skybox.h>
 #include <dtCore/skydome.h>
