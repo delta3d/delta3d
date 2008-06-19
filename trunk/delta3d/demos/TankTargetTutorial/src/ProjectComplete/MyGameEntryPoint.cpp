@@ -34,7 +34,6 @@
 
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
-//#include <dtGame/rulescomponent.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/binarylogstream.h>
@@ -55,7 +54,6 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
-#include <dtABC/application.h>
 
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
@@ -117,8 +115,6 @@ void MyGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char *
 //////////////////////////////////////////////////////////////////////////
 void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 {
-   //dtABC::Application& app = GetGameManager()->GetApplication();
-
    // init our file path so it can find GUI Scheme
    // add extra data paths here if you need them
    std::string dataPath = dtCore::GetDeltaDataPathList();
