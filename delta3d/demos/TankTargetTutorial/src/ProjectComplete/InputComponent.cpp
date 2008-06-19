@@ -24,7 +24,6 @@
 #include <dtGame/messagetype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtABC/application.h>
-#include <dtCore/camera.h>
 #include <dtCore/shadermanager.h>
 
 ////////////////////////////////////////////////////////////////////
@@ -99,7 +98,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
          break;
 
       case osgGA::GUIEventAdapter::KEY_Insert:
-         //GetGameManager()->GetApplication().GetCamera()->SetNextStatisticsType();
+         GetGameManager()->GetApplication().SetNextStatisticsType();
          break;
 
       case '1':
