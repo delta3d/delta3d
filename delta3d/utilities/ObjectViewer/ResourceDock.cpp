@@ -172,8 +172,8 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string &fullName) con
       std::string currentPath = childItem->toolTip(0).toStdString();
       std::string findPath = fullName;
 
-      std::transform(currentPath.begin(), currentPath.end(), currentPath.begin(), std::tolower);
-      std::transform(findPath.begin(), findPath.end(), findPath.begin(), std::tolower);
+      std::transform(currentPath.begin(), currentPath.end(), currentPath.begin(), (int(*)(int))std::tolower);
+      std::transform(findPath.begin(), findPath.end(), findPath.begin(), (int(*)(int))std::tolower);
 
       // Case insensitive comparison
       if (currentPath == findPath)
