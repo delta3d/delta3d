@@ -60,8 +60,11 @@ namespace dtEditQt
         connect(listBox,SIGNAL(itemSelectionChanged()),
             this,SLOT(onSelectionChanged()));
 #else
- 	     connect(listBox, SIGNAL(itemClicked(QListWidgetItem*)), 
-			   this, SLOT(onItemClicked(QListWidgetItem*)));
+        connect(listBox, SIGNAL(itemClicked(QListWidgetItem*)), 
+           this, SLOT(onItemClicked(QListWidgetItem*)));
+
+        connect(listBox, SIGNAL(itemDoubleClicked(QListWidgetItem*)), 
+           this, SLOT(onItemDoubleClicked(QListWidgetItem*)));
 
         connect(listBox, SIGNAL(currentRowChanged(int)), 
            this, SLOT(onCurrentRowChanged(int)));
@@ -117,6 +120,13 @@ namespace dtEditQt
 	{
 	   currentItem = i->text();	
 	}
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DialogListSelection::onItemDoubleClicked(QListWidgetItem *i)
+   {
+      currentItem = i->text();
+      this->done(QDialog::Accepted);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DialogListSelection::onCurrentRowChanged(int i)
