@@ -10,12 +10,14 @@ file(GLOB PROG_HEADERS "*.h")
 file(GLOB PROG_SOURCES "*.cpp")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
+QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 
 ADD_EXECUTABLE(${PROG_NAME}
     ${PROG_HEADERS}
     ${PROG_SOURCES}
     ${MOC_SOURCES}
+    ${RCC_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${PROG_NAME}
@@ -24,11 +26,8 @@ LINK_WITH_VARIABLES(${PROG_NAME}
                                          QT_QTOPENGL_LIBRARY
                                          DTUTIL_LIBRARY
                                          DTCORE_LIBRARY
-                                         DTDAL_LIBRARY
                                          DTANIM_LIBRARY
-                                         DTAUDIO_LIBRARY
                                          DTABC_LIBRARY
-                                         DTGAME_LIBRARY
                                          OSGFX_LIBRARY
                                          AGL_LIBRARY)
 
