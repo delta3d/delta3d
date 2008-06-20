@@ -72,7 +72,13 @@ namespace dtEditQt
        QTextEdit *textEdit = new QTextEdit();
 
        textEdit->setReadOnly(true);
-       textEdit->setHtml("<h3>Select</h3>"
+       textEdit->setHtml(
+          "<h3>Tools</h3>"
+          "'Ctrl + Shift + C' = Camera Mode<br>"
+          "'Ctrl + Shift + S' = Select Actors Mode<br>"
+          "'Ctrl + Shift + T' = Translate Actors Mode<br>"
+          "'Ctrl + Shift + R' = Rotate Actors Mode"
+          "<h3>Select</h3>"
           "'Ctrl LMB' = select mesh<br>"
           "'Crtl + Alt LMB' = multi select mesh"
           "<h3>Rotate</h3>"
