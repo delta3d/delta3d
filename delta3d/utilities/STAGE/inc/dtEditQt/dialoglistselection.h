@@ -76,6 +76,7 @@ namespace dtEditQt
     protected slots:
         void onSelectionChanged();
         void onItemClicked(QListWidgetItem *i);
+        void onItemDoubleClicked(QListWidgetItem *i);
         void onCurrentRowChanged(int newRow);
 
     private:
