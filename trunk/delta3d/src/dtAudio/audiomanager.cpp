@@ -86,9 +86,12 @@ AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
 
    AddSender( &dtCore::System::GetInstance() );
 
-   //CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   alutInit( 0L, NULL );
-   CheckForError("alutInit( 0L, NULL )", __FUNCTION__, __LINE__);
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+   if (alutInit(NULL, NULL) == AL_FALSE)
+   {
+      std::cout << "Error initializing alut" << std::cout;
+      CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,23 +213,23 @@ bool  AudioManager::CheckForError( const std::string& userMessage,
                                   const std::string& msgFunction,
                                   int lineNumber)
 {
-   ALint error = 0; 
-   if((error = alGetError()) != AL_NO_ERROR)
+   ALenum error = alGetError();
+   if(error != AL_NO_ERROR)
    {
       std::ostringstream finalStream;
-      finalStream << "User Message: [" << userMessage << "] " << "OpenAL Message: [" << alGetString(error) << "] Line " << lineNumber;
-      dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+      finalStream << "User Message: [" << userMessage << "] OpenAL Message: [" << alGetString(error) << "]";
+      dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
       return AL_TRUE;
    }
    else
    {
       // check if we have an ALUT error
-      ALenum   alutError = 0;
-      if((alutError = alutGetError()) != ALUT_ERROR_NO_ERROR)
+      ALenum alutError = alutGetError();
+      if(alutError != ALUT_ERROR_NO_ERROR)
       {
          std::ostringstream finalStream;
          finalStream << "User Message: [" << userMessage << "] " << "Alut Message: [" << alutGetErrorString(alutError) << "] Line " << lineNumber;
-         dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, finalStream.str().c_str());
+         dtUtil::Log::GetInstance().LogMessage( Log::LOG_WARNING, msgFunction, lineNumber, finalStream.str().c_str());
          return AL_TRUE;
       }
    }
@@ -713,7 +716,7 @@ bool AudioManager::LoadFile( const std::string& file )
 
    #endif // ALUT_API_MAJOR_VERSION 
 
-   if( data == 0 )
+   if( data == NULL )
    {
       #ifndef ALUT_API_MAJOR_VERSION
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
@@ -1311,7 +1314,7 @@ bool AudioManager::ConfigSources( unsigned int num )
       return false;
    }
 
-   ALenum   error(alGetError());
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    alGenSources( mNumSources, mSource );
    if(CheckForError("AudioManager: alGenSources Error", __FUNCTION__, __LINE__))
    {
