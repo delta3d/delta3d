@@ -339,7 +339,7 @@ void View::DisablePaging()
    }
    else
    {
-      LOG_ERROR("DisablePaging was called when paging wasn't enabled");
+      LOG_DEBUG("DisablePaging was called when paging wasn't enabled");
    }
 }
 
