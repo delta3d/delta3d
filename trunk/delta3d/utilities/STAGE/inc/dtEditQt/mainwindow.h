@@ -73,13 +73,13 @@ namespace dtEditQt
           * Finds the recently opened projects, if applicable
           * @return The number of projects found
           */
-         std::vector<std::string> findRecentProjects();
+         std::vector<std::string> FindRecentProjects();
 
          /**
           * Finds the recently opened maps, if applicable
           * @return A vector containing the maps
           */
-         std::vector<std::string> findRecentMaps();
+         std::vector<std::string> FindRecentMaps();
 
          /**
           * Searches for stored preferences

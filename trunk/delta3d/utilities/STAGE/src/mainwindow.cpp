@@ -359,7 +359,7 @@ namespace dtEditQt
            findAndLoadPreferences();
            perspView->onEditorPreferencesChanged();
 
-           if(!EditorData::GetInstance().getLoadLastProject())//findRecentProjects().empty())
+           if(!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
            {
                ProjectContextDialog dialog(this);
                if (dialog.exec() == QDialog::Accepted)
@@ -693,8 +693,11 @@ namespace dtEditQt
             bool loadProjs = settings.value(EditorSettings::LOAD_RECENT_PROJECTS).toBool();
             EditorData::GetInstance().setLoadLastProject(loadProjs);
 
-            findRecentProjects();
-            findRecentMaps();
+            if ( !FindRecentProjects().empty() )
+            {
+               //no point in trying to find any maps if no previous context were found
+               FindRecentMaps();
+            }
 
             if(loadProjs)
             {
@@ -769,70 +772,76 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    std::vector<std::string> MainWindow::findRecentProjects()
+    std::vector<std::string> MainWindow::FindRecentProjects()
     {
-        EditorSettings settings;
-        std::vector<std::string> projects;
+       EditorSettings settings;
+       std::vector<std::string> projects;
 
-        settings.beginGroup(EditorSettings::RECENT_PROJECTS);
-            if(settings.contains(EditorSettings::RECENT_PROJECT0))
-            {
-                std::string project = settings.value(EditorSettings::RECENT_PROJECT0).toString().toStdString();
+       settings.beginGroup(EditorSettings::RECENT_PROJECTS);
+       if(settings.contains(EditorSettings::RECENT_PROJECT0))
+       {
+          std::string project = settings.value(EditorSettings::RECENT_PROJECT0).toString().toStdString();
 
-                if(dtUtil::FileUtils::GetInstance().DirExists(project))
-                {
-                    EditorData::GetInstance().addRecentProject(project);
-                    if(EditorData::GetInstance().getLoadLastProject())
-                    {
-                        EditorData::GetInstance().setCurrentProjectContext(project);
-                        dtDAL::Project::GetInstance().SetContext(project);
-                    }
-                    projects.push_back(project);
-                }
-                else
-                {
-                    QMessageBox::critical(this, tr("Failed to load previous context"),
-                        tr("Failed to load the previous project context.\n") +
-                        tr("This can happen if the last project context\n has been moved, renamed, or deleted."),
-                        tr("OK"));
+          if(dtUtil::FileUtils::GetInstance().DirExists(project))
+          {
+             EditorData::GetInstance().addRecentProject(project);
+             if(EditorData::GetInstance().getLoadLastProject())
+             {
+                EditorData::GetInstance().setCurrentProjectContext(project);
+                dtDAL::Project::GetInstance().SetContext(project);
+             }
+             projects.push_back(project);
+          }
+          else
+          {
+             QMessageBox::critical(this, tr("Failed to load previous context"),
+                tr("Failed to load the previous project context.\n") +
+                tr("This can happen if the last project context\n has been moved, renamed, or deleted."),
+                tr("OK"));
 
-                    //Remove the recent projects entry from the settings object since it
-                    //has become somehow corrupted.
-                    settings.remove(EditorSettings::RECENT_PROJECT0);
-                }
-            }
-        settings.endGroup();
-        return projects;
+             //Remove the recent projects entry from the settings object since it
+             //has become somehow corrupted.
+             settings.remove(EditorSettings::RECENT_PROJECT0);
+          }
+       }
+       settings.endGroup();
+       return projects;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    std::vector<std::string> MainWindow::findRecentMaps()
+    std::vector<std::string> MainWindow::FindRecentMaps()
     {
-        std::vector<std::string> maps;
-        EditorSettings settings;
+       std::vector<std::string> maps;
+       EditorSettings settings;
 
-        settings.beginGroup(EditorSettings::RECENT_MAPS);
-            if(settings.contains(EditorSettings::RECENT_MAP0))
-            {
-                const std::string& mapName = settings.value(EditorSettings::RECENT_MAP0).toString().toStdString();
-
+       settings.beginGroup(EditorSettings::RECENT_MAPS);
+       if(settings.contains(EditorSettings::RECENT_MAP0))
+       {
+          const std::string& mapName = settings.value(EditorSettings::RECENT_MAP0).toString().toStdString();
+          if (!mapName.empty())
+          {
+             if (dtDAL::Project::GetInstance().IsContextValid())
+             {
                 std::set<std::string>::const_iterator itor = dtDAL::Project::GetInstance().GetMapNames().find(mapName);
                 if(itor != dtDAL::Project::GetInstance().GetMapNames().end())
                 {
-                    maps.push_back(mapName);
-                    EditorData::GetInstance().addRecentMap(mapName);
+                   maps.push_back(mapName);
+                   EditorData::GetInstance().addRecentMap(mapName);
                 }
                 else
                 {
-                    settings.setValue(EditorSettings::RECENT_MAP0, QVariant(""));
-                    QMessageBox::critical(this, tr("Failed to load previous map"),
-                       tr("Failed to load the previous map.\n") +
-                       tr("This can happen if the last map has been moved, renamed, \ndeleted, or no longer in the previous project context."),
-                       QMessageBox::Ok);
+                   settings.setValue(EditorSettings::RECENT_MAP0, QVariant(""));
+                   QMessageBox::critical(this, tr("Failed to load previous map"),
+                      tr("Failed to load the previous map.\n") +
+                      tr("This can happen if the last map has been moved, renamed, \ndeleted, or no longer in the previous project context."),
+                      QMessageBox::Ok);
                 }
-            }
-        settings.endGroup();
-        return maps;
+             }
+          }
+
+       }
+       settings.endGroup();
+       return maps;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
