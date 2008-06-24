@@ -131,32 +131,14 @@ ENDIF(WIN32)
 
 
 ################################################################################
-# 3rd Party Dependency Stuff
-# Common to all platforms:
 
-IF (BUILD_WITH_PCH)
-   FIND_PACKAGE(PCHSupport)
-ENDIF (BUILD_WITH_PCH)
-
+#required external dependencies for core functionality
 FIND_PACKAGE(Delta3D REQUIRED)
-
-IF(NOT WIN32)
-FIND_PACKAGE(Curses REQUIRED)
-ENDIF(NOT WIN32)
-
-FIND_PACKAGE(OpenAL)
-
 FIND_PACKAGE(OpenThreads REQUIRED)
 FIND_PACKAGE(OSG REQUIRED)
-
-FIND_PACKAGE(Cal3d)
-FIND_PACKAGE(CEGUI)
-FIND_PACKAGE(CPPUNIT)
 FIND_PACKAGE(ODE REQUIRED)
 FIND_PACKAGE(XercesC REQUIRED)
 FIND_PACKAGE(FLTK REQUIRED)
-FIND_PACKAGE(HAWKNL)
-FIND_PACKAGE(GNE)
 
 IF (NOT WIN32)
   FIND_PACKAGE(Curses REQUIRED)
@@ -166,26 +148,37 @@ IF (NOT WIN32 AND NOT APPLE)
   FIND_PACKAGE(UUID REQUIRED) 
 ENDIF (NOT WIN32 AND NOT APPLE)
 
+#optional external dependencies
+FIND_PACKAGE(OpenAL)  #for dtAudio
+FIND_PACKAGE(Cal3d)   #for dtAnim
+FIND_PACKAGE(CEGUI)   #for dtGUI
+FIND_PACKAGE(CPPUNIT) #for unit tests
+FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM
+FIND_PACKAGE(GNE)     #for dtNet, dtNetGM
+
 SET(QT_USE_QTOPENGL "true")
-FIND_PACKAGE(Qt4)
+FIND_PACKAGE(Qt4)     #for STAGE, AnimationViewer, ObjectViewer
 
-FIND_PACKAGE(GDAL)
-FIND_PACKAGE(DIS)
+FIND_PACKAGE(GDAL)    #for dtTerrain
+FIND_PACKAGE(DIS)     #for dtDIS
 
-FIND_PACKAGE(Boost)
-FIND_PACKAGE(PythonLibs)
+FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
+FIND_PACKAGE(PythonLibs) #for Python bindings
 
 if (BUILD_HLA)
    #RTI-S
-   FIND_PACKAGE(RTI-s REQUIRED)
+   FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
    #or try to find the CERTI RTI
    #FIND_PACKAGE(RTICERTI REQUIRED)
 ENDIF(BUILD_HLA)
 
 IF (BUILD_PLIB)
-	FIND_PACKAGE(PLIB)
+	FIND_PACKAGE(PLIB) #for dtInputPLIB
 ENDIF(BUILD_PLIB)
   
+IF (BUILD_WITH_PCH)
+   FIND_PACKAGE(PCHSupport)
+ENDIF (BUILD_WITH_PCH)
 
 #MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
 
