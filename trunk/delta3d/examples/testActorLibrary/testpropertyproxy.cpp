@@ -22,7 +22,6 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/groupactorproperty.h>
-#include <dtActors/deltaobjectactorproxy.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
