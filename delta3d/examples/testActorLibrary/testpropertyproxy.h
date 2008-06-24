@@ -21,7 +21,6 @@
 #ifndef DELTA_EXAMPLETESTPROPERTYPROXY
 #define DELTA_EXAMPLETESTPROPERTYPROXY
 
-#include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
