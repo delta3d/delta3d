@@ -29,7 +29,9 @@
 #include <osg/Texture3D>
 #include <osg/Texture2D>
 #include <osg/Geode>
-#include <Producer/RenderSurface>
+//#include <Producer/RenderSurface>
+
+#include <Windows.h>
 
 class GraphicsContext {
 public:

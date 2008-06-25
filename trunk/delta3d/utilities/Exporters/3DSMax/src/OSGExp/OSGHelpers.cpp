@@ -44,6 +44,7 @@
 #include <osg/Point>
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>
+#include <osg/Switch>
 #include <osgSim/DOFTransform>
 
 #include <crtdbg.h>

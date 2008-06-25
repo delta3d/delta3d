@@ -51,6 +51,7 @@
 #include "OSGExp.h" 
 #include "osgconv.h"
 
+#include <osg/Version>
 #include <osgUtil/Optimizer> 
 #include <fstream>
 #include "..\..\include\Previewer\Previewer.h"
@@ -515,8 +516,14 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
                 }
             }
 
-			osgDB::ReaderWriter::WriteResult res = 
-				osgDB::Registry::instance()->writeNode(*rootTransform, filename);
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
+            osgDB::ReaderWriter::WriteResult res = 
+               osgDB::Registry::instance()->writeNode(*rootTransform, filename, NULL);
+#else
+            osgDB::ReaderWriter::WriteResult res = 
+               osgDB::Registry::instance()->writeNode(*rootTransform, filename);
+#endif
+
 			if(res.error() && _options->getShowErrMsg()){
 				static TCHAR szBuffer[256];
 				wsprintf(szBuffer,TEXT("Error writing file %s:\n%s"), 
