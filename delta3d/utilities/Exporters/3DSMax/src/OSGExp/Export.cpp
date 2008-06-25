@@ -73,7 +73,7 @@
  *                  unshared when this helper is used.
  */
 
-
+#include <osg/Switch>
 #include <osgParticle/Particle>
 #include <osgParticle/ParticleSystem>
 #include <osgParticle/ParticleSystemUpdater>
