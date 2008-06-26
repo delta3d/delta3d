@@ -10,8 +10,9 @@ FILE (GLOB HEADER_FILES "${HEADER_PATH}/*.h")
 FILE (GLOB SOURCE_FILES "${SOURCE_PATH}/*.cpp")
 
 #.cpp files need the path to the header files
-INCLUDE_DIRECTORIES( ${HEADER_PATH}
-                     ${3DS_INCLUDE_DIR}
+INCLUDE_DIRECTORIES( 
+                      ${3DS_INCLUDE_DIR}
+                      ${HEADER_PATH}
                    )
 
 ADD_LIBRARY( ${OSG_EXP} SHARED
@@ -46,6 +47,7 @@ IF (MSVC)
 ENDIF (MSVC)
 
 
+
 ################################################################
 # OsgExp Previewer library
 ################################################################
@@ -61,6 +63,7 @@ FILE (GLOB SOURCE_FILES "${SOURCE_PATH}/*.cpp")
 #.cpp files need the path to the header files
 INCLUDE_DIRECTORIES( ${HEADER_PATH}
                    )
+                   
 
 ADD_LIBRARY( ${EXP_PRE} SHARED
              ${HEADER_FILES}
@@ -68,9 +71,9 @@ ADD_LIBRARY( ${EXP_PRE} SHARED
 )
 
 LINK_WITH_VARIABLES( ${EXP_PRE}
-                     ${OSG_LIBRARY}
-                     ${OSGGA_LIBRARY}
-                     ${OSGUTIL_LIBRARY}
+                     OSG_LIBRARY
+                     OSGGA_LIBRARY
+                     OSGUTIL_LIBRARY
                    )
                       
 TARGET_LINK_LIBRARIES( ${EXP_PRE}
@@ -84,6 +87,8 @@ IF (MSVC)
   SET_TARGET_PROPERTIES(${EXP_PRE} PROPERTIES DEFINE_SYMBOL PREVIEWER_LIBRARY)
 
 ENDIF (MSVC)
+
+
 
 
 ################################################################
