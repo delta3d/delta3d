@@ -424,15 +424,26 @@ namespace dtEditQt
            //findAndLoadPreferences();
 
            setUpdatesEnabled(true);
+           propertyWindow->setUpdatesEnabled(true);
+           actorTab->setUpdatesEnabled(true);
+           resourceBrowser->setUpdatesEnabled(true);
         }
         catch(const dtUtil::Exception& ex)
         {
            setUpdatesEnabled(true);
+           propertyWindow->setUpdatesEnabled(true);
+           actorTab->setUpdatesEnabled(true);
+           resourceBrowser->setUpdatesEnabled(true);
+
            throw ex;
         }   
         catch(const std::exception& ex)
         {
            setUpdatesEnabled(true);
+           propertyWindow->setUpdatesEnabled(true);
+           actorTab->setUpdatesEnabled(true);
+           resourceBrowser->setUpdatesEnabled(true);
+
            throw ex;
         }
 
