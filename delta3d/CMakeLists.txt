@@ -28,7 +28,7 @@ OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_DEMOS "Enables the building of the Delta3D demo projects" ON)
 OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
 OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
-
+OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
 IF (WIN32)
    SET(CMAKE_DEBUG_POSTFIX  "d")
