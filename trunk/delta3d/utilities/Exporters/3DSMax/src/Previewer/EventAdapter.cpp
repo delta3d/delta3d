@@ -32,6 +32,8 @@
  */
 #include "EventAdapter.h"
 
+#include <osg/Version>
+
 // default to no mouse buttons being pressed.
 unsigned int EventAdapter::_s_accumulatedButtonMask = 0;
 
@@ -65,10 +67,16 @@ void EventAdapter::copyStaticVariables()
     setButtonMask(_s_accumulatedButtonMask);
     setModKeyMask(_s_modKeyMask);
     setButton(_s_button);
+
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
+    setInputRange(_s_Xmin, _s_Ymin, _s_Xmax, _s_Ymax);
+#else
     setXmin(_s_Xmin);
     setXmax(_s_Xmax);
     setYmin(_s_Ymin);
     setYmax(_s_Ymax);
+#endif
+
     setX(_s_mx);
     setY(_s_my);
 }
