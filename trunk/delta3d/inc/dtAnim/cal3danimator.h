@@ -23,14 +23,15 @@
 #define __DELTA_CAL3DANIMATOR_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/ical3ddriver.h>
+#include <dtAnim/cal3dmodelwrapper.h>
+
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 
 namespace dtAnim
 {
 
-   class Cal3DModelWrapper;
-   class ICal3DDriver;
 
 class	DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
 {

@@ -27,13 +27,10 @@
 #include <dtCore/refptr.h>
 
 #include <dtAnim/export.h>
-
+#include <dtUtil/hotspotdefinition.h>
 #include <vector>
 
-namespace dtUtil
-{
-   struct HotSpotDefinition;
-}
+
 
 namespace dtCore
 {

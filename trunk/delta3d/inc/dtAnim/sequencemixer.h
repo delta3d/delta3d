@@ -23,6 +23,8 @@
 #define __DELTA_SEQUENCEMIXER_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/animationsequence.h>
+
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
 
@@ -33,7 +35,6 @@
 namespace dtAnim
 {
 
-   class AnimationSequence;
    class Animatable;
 
 

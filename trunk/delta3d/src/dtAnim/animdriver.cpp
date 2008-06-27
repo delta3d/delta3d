@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/animdriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 #include <cal3d/model.h>
 #include <cal3d/mixer.h>

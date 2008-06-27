@@ -24,7 +24,6 @@
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
 #include <dtCore/hotspotattachment.h>
-#include <dtUtil/hotspotdefinition.h>
 #include <dtUtil/log.h>
 
 #include <osg/Quat>

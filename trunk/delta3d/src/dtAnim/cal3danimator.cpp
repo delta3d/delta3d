@@ -20,8 +20,6 @@
  */
 
 #include <dtAnim/cal3danimator.h>
-#include <dtAnim/ical3ddriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 #include <dtAnim/animdriver.h>
 #include <dtAnim/skeletondriver.h>

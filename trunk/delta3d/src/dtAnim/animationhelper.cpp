@@ -24,13 +24,10 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/cal3danimator.h>
 #include <dtAnim/ical3ddriver.h>
-#include <dtAnim/sequencemixer.h>
 #include <dtAnim/animationsequence.h>
 #include <dtAnim/animationchannel.h>
 #include <dtAnim/animationwrapper.h>
-#include <dtAnim/attachmentcontroller.h>
 
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
