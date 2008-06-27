@@ -18,6 +18,7 @@
 FIND_PATH(OPENAL_INCLUDE_DIR al.h
   $ENV{OPENALDIR}/include/AL
   $ENV{OPENALDIR}/include/OpenAL
+  ${DELTA3D_EXT_DIR}/inc
   ${DELTA3D_EXT_DIR}/inc/AL
   ${DELTA3D_EXT_DIR}/inc/OpenAL
   ~/Library/Frameworks/OpenAL.framework/Headers
