@@ -44,7 +44,6 @@
 #include <dtDAL/project.h>
 
 #include <dtAnim/animationgameactor.h>
-#include <dtActors/engineactorregistry.h>
 
 #include <osg/Vec3>
 #include <osg/Quat>
