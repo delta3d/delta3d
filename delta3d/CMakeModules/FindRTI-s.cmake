@@ -3,6 +3,7 @@
 # RTIS_LIBRARY
 # RTIS_FOUND, if false, do not try to link to OSG
 # RTI_INCLUDE_DIR, where to find the headers
+# RTI_LIBRARIES, list of all required RTI libraries
 #
 # $RTIS_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$RTIS_DIR
@@ -104,7 +105,7 @@ SET(RTIS_FOUND "NO")
 IF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
     SET(RTIS_FOUND "YES")
     
-    SET(RTIS_LIBRARIES
+    SET(RTI_LIBRARIES
       ${RTIS_NG_LIBRARY}
       ${RTIS_MEMPOOL_LIBRARY}
       ${RTIS_13_LIBRARY}
