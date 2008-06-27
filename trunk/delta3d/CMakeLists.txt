@@ -32,6 +32,12 @@ OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
 IF (WIN32)
    SET(CMAKE_DEBUG_POSTFIX  "d")
+   
+   OPTION(BUILD_WITH_MP "Enables the /MP multi-processor compiler option for Visual Studio 2005 and above" OFF)
+   MARK_AS_ADVANCED(BUILD_WITH_MP)
+   IF(BUILD_WITH_MP)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+   ENDIF(BUILD_WITH_MP)
 ENDIF (WIN32)
 
 # We want to build SONAMES shared librariess
