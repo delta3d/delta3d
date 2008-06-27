@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtUtil/log.h>

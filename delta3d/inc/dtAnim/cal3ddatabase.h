@@ -25,6 +25,7 @@
 #include <dtAnim/export.h>
 #include <dtAnim/cal3dloader.h>
 #include <dtAnim/animnodebuilder.h>
+#include <dtAnim/cal3dmodeldata.h>
 #include <dtCore/refptr.h>
 
 #include <osg/Referenced>
@@ -37,7 +38,6 @@ class CalCoreModel;
 namespace dtAnim
 {
    class Cal3DModelData;
-   class Cal3DModelWrapper; 
 
    class DT_ANIM_EXPORT Cal3DDatabase: public osg::Referenced
    {

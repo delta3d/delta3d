@@ -69,8 +69,6 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> GAME_MESH_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> WAYPOINT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> WAYPOINT_VOLUME_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> CAL3D_ACTOR_TYPE;       
-       static dtCore::RefPtr<dtDAL::ActorType> ANIMATION_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> DISTANCE_SENSOR_ACTOR_TYPE;
 
         /**

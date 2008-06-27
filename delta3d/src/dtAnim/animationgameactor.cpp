@@ -18,7 +18,7 @@
 *
 * Bradley G Anderegg
 */
-#include <dtActors/animationgameactor.h>
+#include <dtAnim/animationgameactor.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
@@ -33,7 +33,7 @@
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 
-namespace dtActors
+namespace dtAnim
 {
    AnimationGameActor::AnimationGameActor(dtGame::GameActorProxy &proxy)
       : dtGame::GameActor(proxy)

@@ -23,20 +23,20 @@
 
 #include <dtCore/refptr.h>
 #include <dtGame/gameactor.h>
-#include <dtDAL/plugin_export.h>
+#include <dtAnim/export.h>
 #include <dtDAL/namedparameter.h>  // for function signatures
 #include <dtAnim/animationhelper.h> //for RefPtr member
 #include <string>                  // for static constants
 
 
-namespace dtActors
+namespace dtAnim
 {
    /**
    * This class is the game actor for an animated model.
    * @see GameActor
    * @see AnimationGameActorProxy
    */
-   class DT_PLUGIN_EXPORT AnimationGameActor : public dtGame::GameActor
+   class DT_ANIM_EXPORT AnimationGameActor : public dtGame::GameActor
    {
    public:
 
@@ -73,7 +73,7 @@ namespace dtActors
    * @see GameActorProxy
    * @see AnimationGameActor
    */
-   class DT_PLUGIN_EXPORT AnimationGameActorProxy : public dtGame::GameActorProxy
+   class DT_ANIM_EXPORT AnimationGameActorProxy : public dtGame::GameActorProxy
    {
    public:
 
