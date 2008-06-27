@@ -50,9 +50,7 @@
 #include <dtActors/envactor.h>
 #include <dtActors/coordinateconfigactor.h>
 #include <dtActors/playerstartactorproxy.h>
-#include <dtActors/animationgameactor.h>
 #include <dtActors/gamemeshactor.h>
-#include <dtActors/cal3dgameactor.h>
 #include <dtActors/distancesensoractor.h>
 #include <dtDAL/waypointactorproxy.h>
 #include <dtActors/waypointvolumeactor.h>
@@ -88,8 +86,6 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE(new dtDAL::ActorType("WaypointVolume", "dtai.waypoint", "dtActos::Waypoint VolumeActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAL3D_ACTOR_TYPE(new dtDAL::ActorType("Cal3DGameActor", "dtanim", "Cal3DGameActor"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ANIMATION_ACTOR_TYPE(new dtDAL::ActorType("AnimationGameActor", "dtanim", "AnimationGameActor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
       new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
       "Game Actor that supports a single Mesh geometry"));
@@ -173,8 +169,6 @@ namespace dtActors
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
       mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaypointVolumeActorProxy>(WAYPOINT_VOLUME_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<Cal3DGameActorProxy>(CAL3D_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<AnimationGameActorProxy>(ANIMATION_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

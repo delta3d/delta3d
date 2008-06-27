@@ -22,32 +22,33 @@
 #define DELTA_CAL3DGAMEACTOR_H
 
 #include <dtGame/gameactor.h>
-#include <dtDAL/plugin_export.h>
+#include <dtAnim/export.h>
+#include <dtAnim/cal3danimator.h>
+#include <dtAnim/cal3ddatabase.h>
 #include <dtDAL/namedparameter.h>  // for function signatures
 #include <string>                  // for static constants
 
 // namespace specific forward declarations
 namespace dtCore{ class Scene;         }
-namespace dtAnim{ class Cal3DDatabase;   }
-namespace dtAnim{ class Cal3DAnimator; }
+
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg   { class Geode;         }
 /// @endcond
 
 
-namespace dtActors
+namespace dtAnim
 {
    /**
    * This class is the game actor for an animated model.
    * @see GameActor
    * @see Cal3DGameActorProxy
    */
-   class DT_PLUGIN_EXPORT Cal3DGameActor : public dtGame::GameActor
+   class DT_ANIM_EXPORT Cal3DGameActor : public dtGame::GameActor
    {
    public:
       /// string constants for this actor
-      struct DT_PLUGIN_EXPORT PropertyNames
+      struct DT_ANIM_EXPORT PropertyNames
       {
          static const dtUtil::RefString ANIMATION_GROUP;
          static const dtUtil::RefString ANIMATION_GROUP_LABEL;
@@ -120,7 +121,7 @@ namespace dtActors
    * @see GameActorProxy
    * @see Cal3DGameActor
    */
-   class DT_PLUGIN_EXPORT Cal3DGameActorProxy : public dtGame::GameActorProxy
+   class DT_ANIM_EXPORT Cal3DGameActorProxy : public dtGame::GameActorProxy
    {
    public:
 

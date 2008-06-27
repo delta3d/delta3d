@@ -18,7 +18,7 @@
 *
 * Michael Guerrero
 */
-#include <dtActors/cal3dgameactor.h>
+#include <dtAnim/cal3dgameactor.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
@@ -43,7 +43,7 @@
 
 #include <cstddef>  // for NULL
 
-namespace dtActors
+namespace dtAnim
 {
 
    const dtUtil::RefString Cal3DGameActor::PropertyNames::ANIMATION_GROUP("ANIMATION_GROUP");

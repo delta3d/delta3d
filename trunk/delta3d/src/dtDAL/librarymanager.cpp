@@ -35,6 +35,7 @@ namespace dtDAL
 {
    static const std::string ACTOR_LIBRARY("dtActors");
    static const std::string AUDIO_ACTOR_LIBRARY("dtAudio");
+   static const std::string ANIM_ACTOR_LIBRARY("dtAnim");
    
    //Singleton global variable for the library manager.
    dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
@@ -50,8 +51,9 @@ namespace dtDAL
 
 
       //try to load some optional actor libraries that depend on optional
-      //external dependencies.  If the file isn't found, don't try to load it.
+      //external dependencies.  If the file isn't found, don't try to load it. 
       LoadOptionalActorRegistry( AUDIO_ACTOR_LIBRARY );
+      LoadOptionalActorRegistry( ANIM_ACTOR_LIBRARY );
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -381,11 +383,19 @@ namespace dtDAL
 
       if (fullLibraryName.empty())
       {
-         LOG_INFO("The optional actor library '" + libName + "' wasn't found.");;
+         LOG_INFO("The optional actor library '" + libName + "' wasn't found.");
+         return;
       }
-      else
+
+      try
       {
          LoadActorRegistry(libName);
+      }
+      catch (dtUtil::Exception)
+      {
+         //this shouldn't happen, but if it does (corrupt file, etc) then
+         //try to handle this quietly since its not critical.
+         LOG_WARNING("Failed loading optional library '" + libName + "'.  Some actors may not be available.");
       }
    }
 }

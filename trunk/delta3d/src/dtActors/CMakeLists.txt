@@ -8,7 +8,6 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
-INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
 ADD_LIBRARY(${LIB_NAME} SHARED                        
     ${LIB_PUBLIC_HEADERS}                         
@@ -16,8 +15,8 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTGAME_LIBRARY
-											  DTANIM_LIBRARY)
+                    DTDAL_LIBRARY
+									  DTGAME_LIBRARY)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_PLUGIN)
