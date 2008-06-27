@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/springdriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 #include <cal3d/model.h>
 #include <cal3d/springsystem.h>

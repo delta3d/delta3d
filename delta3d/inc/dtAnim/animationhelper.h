@@ -23,6 +23,10 @@
 #define __DELTA_ANIMATIONHELPER_H__
 
 #include <dtAnim/export.h>
+#include <dtAnim/cal3danimator.h>
+#include <dtAnim/sequencemixer.h>
+#include <dtAnim/attachmentcontroller.h>
+
 #include <dtCore/refptr.h>
 
 #include <osg/Referenced>
@@ -46,11 +50,8 @@ namespace dtDAL
 namespace dtAnim
 {
    class Cal3DModelWrapper;
-   class Cal3DAnimator;
    class AnimNodeBuilder;
    class Cal3DDatabase;
-   class SequenceMixer;
-   class AttachmentController;
    
    /**
     *  The AnimationHelper class is a utility class to simplify adding animation

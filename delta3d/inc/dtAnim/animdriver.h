@@ -25,10 +25,11 @@
 #include <dtAnim/export.h>
 #include <dtCore/refptr.h>
 #include <dtAnim/ical3ddriver.h>
+#include <dtAnim/cal3dmodelwrapper.h>
 
 namespace dtAnim
 {
-   class Cal3DModelWrapper;
+  
 
 class	DT_ANIM_EXPORT AnimDriver: public ICal3DDriver
 {

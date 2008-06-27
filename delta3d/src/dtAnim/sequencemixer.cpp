@@ -19,9 +19,8 @@
  * Bradley Anderegg 04/20/2007
  */
 
-#include <dtAnim/sequencemixer.h>
-#include <dtAnim/animationsequence.h>
 #include <dtAnim/animatable.h>
+#include <dtAnim/sequencemixer.h>
 #include <dtUtil/log.h>
 
 

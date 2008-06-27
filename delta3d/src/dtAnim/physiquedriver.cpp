@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/physiquedriver.h>
-#include <dtAnim/cal3dmodelwrapper.h>
 
 #include <cal3d/model.h>
 #include <cal3d/physique.h>

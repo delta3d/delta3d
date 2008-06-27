@@ -26,18 +26,12 @@
 #include <string>
 #include <map>
 #include <osg/ref_ptr>
+#include <osg/Texture2D>
 #include <dtCore/refptr.h>
 #include <osg/Referenced>
 
 
 class CalCoreModel;
-
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg
-{
-   class Texture2D;
-}
-/// @endcond
 
 
 namespace dtAnim
