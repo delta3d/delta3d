@@ -21,7 +21,7 @@
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include <dtActors/soundactorproxy.h>
+#include <dtAudio/soundactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 
 #include <dtAudio/audiomanager.h>
@@ -129,7 +129,7 @@ void SoundActorTests::TestProperties()
          mGameManager->FindActorType("dtcore.Environment","Sound Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
 
-      dtCore::RefPtr<dtActors::SoundActorProxy> proxy;
+      dtCore::RefPtr<dtAudio::SoundActorProxy> proxy;
       mGameManager->CreateActor(*actorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create sound actor proxy.",proxy.valid());
 
@@ -137,13 +137,13 @@ void SoundActorTests::TestProperties()
       // Random Sound Effect
       // Offset Time
       dtDAL::BooleanActorProperty* propRandom = static_cast<dtDAL::BooleanActorProperty*>
-         (proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_PLAY_AS_RANDOM ));
+         (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_PLAY_AS_RANDOM ));
       dtDAL::IntActorProperty* propOffsetTime = static_cast<dtDAL::IntActorProperty*>
-         (proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME ));
+         (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME ));
       dtDAL::IntActorProperty* propRandTimeMax = static_cast<dtDAL::IntActorProperty*>
-         (proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MAX_RANDOM_TIME ));
+         (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_RANDOM_TIME ));
       dtDAL::IntActorProperty* propRandTimeMin = static_cast<dtDAL::IntActorProperty*>
-         (proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MIN_RANDOM_TIME ));
+         (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MIN_RANDOM_TIME ));
 
       // Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a random flag property.",
@@ -155,29 +155,29 @@ void SoundActorTests::TestProperties()
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a random-minimum-time property.",
          propRandTimeMin != NULL);
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a direction property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_DIRECTION ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_DIRECTION ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a gain property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_GAIN ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_GAIN ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a listener-relative flag property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_LISTENER_RELATIVE ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_LISTENER_RELATIVE ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a looping flag property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_LOOPING ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_LOOPING ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a max distance property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MAX_DISTANCE ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_DISTANCE ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a min distance property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MIN_DISTANCE ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MIN_DISTANCE ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a max gain property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MAX_GAIN ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_GAIN ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a min gain property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_MIN_GAIN ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MIN_GAIN ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a pith property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_PITCH ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_PITCH ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a rolloff factor property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_ROLLOFF_FACTOR ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_ROLLOFF_FACTOR ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a sound-file property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_SOUND_EFFECT ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_SOUND_EFFECT ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a velocity property.",
-         proxy->GetProperty( dtActors::SoundActorProxy::PROPERTY_VELOCITY ) != NULL );
+         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_VELOCITY ) != NULL );
 
       // Check the default values.
       CPPUNIT_ASSERT_MESSAGE("Sound should not be random by default",
@@ -191,7 +191,7 @@ void SoundActorTests::TestProperties()
 
       // Test loading a sound.
       proxy->LoadFile( "Sounds/silence.wav" );
-      dtAudio::Sound* sound = static_cast<dtActors::SoundActor&>(proxy->GetGameActor()).GetSound();
+      dtAudio::Sound* sound = static_cast<dtAudio::SoundActor&>(proxy->GetGameActor()).GetSound();
 
       dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
 
