@@ -34,7 +34,13 @@ namespace dtGame
 {
    class MessageType;
    
-   //intentionally not exported
+   /**
+    * A helper class for changing the map on the GM.  In the future, it would be nice
+    * to allow swapping out this class on the GM so people could override/add to the process to 
+    * do loading screens and such.
+    * 
+    * @see dtGame::GameManager::ChangeMapSet for more information on the process.
+    */
    class DT_GAME_EXPORT MapChangeStateData: public osg::Referenced
    {
       public:
@@ -63,10 +69,10 @@ namespace dtGame
       
          MapChangeStateData(dtGame::GameManager& gm);
                   
-         const NameVector& GetOldMapNames() const { return mOldMapNames; }        
-         const NameVector& GetNewMapNames() const { return mNewMapNames; }        
+         const NameVector& GetOldMapNames() const { return mOldMapNames; }
+         const NameVector& GetNewMapNames() const { return mNewMapNames; }
       
-         const MapChangeState& GetCurrentState() const { return *mCurrentState; }    
+         const MapChangeState& GetCurrentState() const { return *mCurrentState; }
          void ChangeState(const MapChangeState& newState) { mCurrentState = &newState; }
          
          /**

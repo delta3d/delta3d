@@ -620,8 +620,9 @@ namespace dtGame
             bool LoadGameState();
 
             /**
-             * Changes the map being used by the Game Manager.  All actors, Game events, and associated data will be deleted.
-             * It will send INFO_MAP_LOADED.  If another map is currently open, that map will be closed via calling CloseCurrentMap()
+             * Loads a single map, closing any currenly opened maps.  For loading multiple maps together, you should
+             * call ChangeMapSet.  It also describes the sequence of messages.
+             * @see #ChangeMapSet
              * @see #CloseCurrentMap()
              * @param mapName       The name of the map to load.
              * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
@@ -635,8 +636,20 @@ namespace dtGame
 
             /**
              * Changes the maps being used by the Game Manager.  All actors, Game events, and associated data will be deleted.
-             * It will send INFO_MAP_LOADED.  If another map group of maps is currently open, they will be closed via calling CloseCurrentMap()
+             * The process of changing maps takes several frames, but code should not depend on the exact sequence of steps. It should
+             * instead look for the messages that are sent after each step.
+             * First it will send INFO_MAP_CHANGE_BEGIN
+             * If a map or maps is currently open, it will send INFO_MAP_UNLOAD_BEGIN.
+             * Once that map or map set is closed, it will set INFO_MAP_UNLOADED
+             * Right before it begins loading maps, it sends INFO_MAP_LOAD_BEGIN
+             * When that finishes, it will send INFO_MAP_LOADED.
+             * At the very end it sends INFO_MAP_CHANGED.
+             * 
+             * Listening for INFO_MAP_CHANGED and INFO_MAP_LOADED both are equally valid for doing things
+             * once the map is finished loading since unloading a map does not send the change messages.
+             * Only one of each message is sent, regardless of the number of maps being loaded.
              * @see #CloseCurrentMap()
+             * @see dtGame::MapChangeStateData
              * @param mapNames      The list of names of maps to load.
              * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
              *                      added to the scene.  This should only be true for debugging purposes.
@@ -649,7 +662,9 @@ namespace dtGame
 
             /**
              * Closes the open maps, if any, being used by the Game Manager.  All actors will be deleted whether maps are closed or not.
-             * It will send an INFO_MAP_UNLOADED message if a map is actually closed.
+             * 
+             * It will send an INFO_MAP_UNLOAD_BEGIN at the beginning and an INFO_MAP_UNLOADED message 
+             * if a map is actually closed.
              */
             void CloseCurrentMap();
 
