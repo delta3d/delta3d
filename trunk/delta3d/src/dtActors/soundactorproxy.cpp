@@ -22,7 +22,7 @@
 #include <dtActors/soundactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
-#include <dtAudio/dtaudio.h>
+#include <dtAudio/audiomanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/invokable.h>
 #include <dtUtil/mathdefines.h>
