@@ -16,10 +16,8 @@
 # But for now, we have to look around.
 # Other (Unix) systems should be able to utilize the non-framework paths.
 FIND_PATH(OPENAL_INCLUDE_DIR al.h
-  $ENV{OPENALDIR}/include
   $ENV{OPENALDIR}/include/AL
   $ENV{OPENALDIR}/include/OpenAL
-  ${DELTA3D_EXT_DIR}/inc
   ${DELTA3D_EXT_DIR}/inc/AL
   ${DELTA3D_EXT_DIR}/inc/OpenAL
   ~/Library/Frameworks/OpenAL.framework/Headers
@@ -43,6 +41,7 @@ FIND_PATH(OPENAL_INCLUDE_DIR al.h
   /opt/include/AL
   /opt/include/OpenAL
   /opt/include
+  NO_DEFAULT_PATH #Added so it won't find the system one before the delta3d/ext one.
   )
 
 FIND_PATH(ALUT_INCLUDE_DIR alut.h
@@ -73,6 +72,7 @@ FIND_PATH(ALUT_INCLUDE_DIR alut.h
   /opt/include/AL
   /opt/include/OpenAL
   /opt/include
+  NO_DEFAULT_PATH
   )
   
 # I'm not sure if I should do a special casing for Apple. It is 
