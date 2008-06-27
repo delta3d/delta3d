@@ -30,6 +30,12 @@ OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled head
 OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
+if (BUILD_HLA)
+   OPTION(USE_RTIS "Use RTI-s for the RTI implementation" ON)
+   OPTION(USE_CERTI "Use CERTI for the RTI implementation" OFF)
+endif (BUILD_HLA)
+
+
 IF (WIN32)
    SET(CMAKE_DEBUG_POSTFIX  "d")
    
@@ -172,11 +178,18 @@ FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
 FIND_PACKAGE(PythonLibs) #for Python bindings
 
 if (BUILD_HLA)
-   #RTI-S
-   FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
-   #or try to find the CERTI RTI
-   #FIND_PACKAGE(RTICERTI REQUIRED)
-ENDIF(BUILD_HLA)
+   if (USE_RTIS)
+      MESSAGE("RTI-s selected for HLA")
+      FIND_PACKAGE(RTI-s) #for dtHLAGM
+   else (USE_RTIS)
+      if (USE_CERTI)
+         MESSAGE("CERTI selected for HLA")
+         FIND_PACKAGE(RTICERTI REQUIRED)
+      else (USE_CERTI)
+            MESSAGE("No HLA RTI selected, PICK CERTI or RTI-s")
+      endif (USE_CERTI)
+   endif (USE_RTIS)
+endif (BUILD_HLA)
 
 IF (BUILD_PLIB)
 	FIND_PACKAGE(PLIB) #for dtInputPLIB
