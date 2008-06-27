@@ -19,7 +19,7 @@
 * William E. Johnson II
 */
 
-#include <dtActors/soundactorproxy.h>
+#include <dtAudio/soundactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtAudio/audiomanager.h>
@@ -30,7 +30,7 @@
 using namespace dtAudio;
 using namespace dtDAL;
 
-namespace dtActors
+namespace dtAudio
 {
    ///////////////////////////////////////////////////////////////////////////////
    const dtUtil::RefString SoundActorProxy::PROPERTY_DIRECTION("Direction"); // "Direction"

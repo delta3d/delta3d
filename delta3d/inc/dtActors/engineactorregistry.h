@@ -40,7 +40,6 @@ namespace dtActors
     public:
          
        static dtCore::RefPtr<dtDAL::ActorType> TASK_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> SOUND_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> GAME_EVENT_TASK_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> ROLL_UP_TASK_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> ORDERED_TASK_ACTOR_TYPE;

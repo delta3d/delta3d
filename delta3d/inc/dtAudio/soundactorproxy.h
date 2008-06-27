@@ -21,8 +21,8 @@
 #ifndef DELTA_SOUND_ACTOR_PROXY
 #define DELTA_SOUND_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/transformableactorproxy.h"
+#include <dtAudio/export.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtGame/gameactor.h>
 
@@ -31,10 +31,10 @@ namespace dtAudio
    class Sound;
 }
 
-namespace dtActors 
+namespace dtAudio 
 {
 
-   class DT_PLUGIN_EXPORT SoundActor : public dtGame::GameActor
+   class DT_AUDIO_EXPORT SoundActor : public dtGame::GameActor
    {
    public:
 
@@ -57,7 +57,7 @@ namespace dtActors
      * @class SoundActorProxy
      * @brief This proxy wraps the Sound Delta3D object.
      */
-    class DT_PLUGIN_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
+    class DT_AUDIO_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
        public:
           static const dtUtil::RefString PROPERTY_DIRECTION;

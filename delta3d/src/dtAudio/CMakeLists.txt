@@ -9,6 +9,10 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 file(GLOB LIB_SOURCES "*.cpp")
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
+INCLUDE_DIRECTORIES( ${OPENAL_INCLUDE_DIR} #for al.h
+                     ${ALUT_INCLUDE_DIR}  #for alut.h
+                   )
+
 ADD_LIBRARY(${LIB_NAME} SHARED                        
     ${LIB_PUBLIC_HEADERS}                         
     ${LIB_SOURCES}
@@ -16,6 +20,8 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 
 LINK_WITH_VARIABLES(${LIB_NAME}
 											  DTCORE_LIBRARY
+											  DTDAL_LIBRARY #for SoundActorProxy
+											  DTGAME_LIBRARY #for SoundActorProxy
 											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
 											  OSGDB_LIBRARY
