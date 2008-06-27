@@ -192,6 +192,13 @@ namespace dtDAL
           */
          virtual ~LibraryManager();
 
+         
+         ///Is the supplied library name already in the registry?
+         bool IsInRegistry( const std::string &libName ) const;
+
+         ///If the supplied library exists, then try to load it.
+         void LoadOptionalActorRegistry(const std::string &libName);
+
          ///Singleton instance of this class.
          static dtCore::RefPtr<LibraryManager> mInstance;
 

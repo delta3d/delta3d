@@ -27,11 +27,14 @@
 
 #include <dtUtil/log.h>
 
+#include <osgDB/FileUtils>
+
 #include <sstream>
 
 namespace dtDAL
 {
    static const std::string ACTOR_LIBRARY("dtActors");
+   static const std::string AUDIO_ACTOR_LIBRARY("dtAudio");
    
    //Singleton global variable for the library manager.
    dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
@@ -44,6 +47,11 @@ namespace dtDAL
       mLogger = &dtUtil::Log::GetInstance("librarymanager.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing actor library manager.");
       LoadActorRegistry(ACTOR_LIBRARY);
+
+
+      //try to load some optional actor libraries that depend on optional
+      //external dependencies.  If the file isn't found, don't try to load it.
+      LoadOptionalActorRegistry( AUDIO_ACTOR_LIBRARY );
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -64,6 +72,20 @@ namespace dtDAL
       mRegistries.clear();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   bool LibraryManager::IsInRegistry( const std::string &libName ) const
+   {
+      RegistryMap::const_iterator regItor = mRegistries.find(libName);
+      if (regItor != mRegistries.end())
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void LibraryManager::LoadActorRegistry(const std::string &libName)
    {
@@ -73,8 +95,7 @@ namespace dtDAL
       //To add a new registry, we first make sure its name is unique.  If
       //it is, we add it to the manager's list of currently loaded registries.
       //If it is not, we generate a unique name for it and then add it.
-      RegistryMapItor regItor = mRegistries.find(libName);
-      if (regItor != mRegistries.end())
+      if (IsInRegistry(libName))
       {
          msg.clear();
          msg.str("");
@@ -344,5 +365,27 @@ namespace dtDAL
    std::string LibraryManager::GetPlatformIndependentLibraryName(const std::string &libName)
    {
       return dtUtil::LibrarySharingManager::GetPlatformIndependentLibraryName(libName);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LibraryManager::LoadOptionalActorRegistry( const std::string &libName )
+   {
+      const std::string actualLibName = GetPlatformSpecificLibraryName(libName);
+      std::string fullLibraryName = osgDB::findLibraryFile(actualLibName);            
+
+      //If the file wasn't found using OSG paths, try the LibrarySharingManager's paths
+      if (fullLibraryName.empty())
+      {
+         fullLibraryName = dtUtil::LibrarySharingManager::GetInstance().FindLibraryInSearchPath(actualLibName);
+      }
+
+      if (fullLibraryName.empty())
+      {
+         LOG_INFO("The optional actor library '" + libName + "' wasn't found.");;
+      }
+      else
+      {
+         LoadActorRegistry(libName);
+      }
    }
 }

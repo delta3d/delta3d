@@ -56,12 +56,10 @@
 #include <dtActors/distancesensoractor.h>
 #include <dtDAL/waypointactorproxy.h>
 #include <dtActors/waypointvolumeactor.h>
-#include <dtActors/soundactorproxy.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TASK_ACTOR_TYPE(new dtDAL::ActorType("Task Actor", "dtcore.Tasks","Generic task actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SOUND_ACTOR_TYPE(new dtDAL::ActorType("Sound Actor", "dtcore.Environment","Generic Sound Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE(new dtDAL::ActorType("GameEvent Task Actor", "dtcore.Tasks","Game event task actor.", TASK_ACTOR_TYPE.get()));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ROLL_UP_TASK_ACTOR_TYPE(new dtDAL::ActorType("Rollup Task Actor", "dtcore.Tasks", "Rollup or container based task actor.", TASK_ACTOR_TYPE.get()));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE(new dtDAL::ActorType("Ordered Task Actor", "dtcore.Tasks", "Ordered task actor similar to a roll up task actor but with a constraint on the order in which sub tasks may be completed.", TASK_ACTOR_TYPE.get()));
@@ -130,8 +128,6 @@ namespace dtActors
 
       //Generic Task Actor
       mActorFactory->RegisterType<TaskActorProxy>(TASK_ACTOR_TYPE.get());
-      // sound actor
-      mActorFactory->RegisterType<SoundActorProxy>(SOUND_ACTOR_TYPE.get());
       // Game Event Task Actor
       mActorFactory->RegisterType<TaskActorGameEventProxy>(GAME_EVENT_TASK_ACTOR_TYPE.get());
       //Rollup Task Actor - Parent is generic task actor.
