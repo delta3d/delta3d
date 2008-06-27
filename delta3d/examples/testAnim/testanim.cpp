@@ -55,8 +55,8 @@
 #include <dtAnim/sequencemixer.h>
 #include <dtAnim/animatable.h>
 
-#include <dtActors/animationgameactor.h>
-#include <dtActors/engineactorregistry.h>
+#include <dtAnim/animationgameactor.h>
+#include <dtAnim/animactorregistry.h>
 
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
@@ -168,7 +168,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
       for(;iter != endIter; ++iter)
       {
-         dtActors::AnimationGameActorProxy* gameProxy = dynamic_cast<dtActors::AnimationGameActorProxy*>(*iter);
+         dtAnim::AnimationGameActorProxy* gameProxy = dynamic_cast<dtAnim::AnimationGameActorProxy*>(*iter);
 
          if(gameProxy != NULL)
          {         
@@ -194,13 +194,13 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
       {
          for(int j = 0; j < 10; ++j, startPos[1] += 2.0f)
          {
-            dtCore::RefPtr<dtActors::AnimationGameActorProxy> proxy;
-            gameManager.CreateActor(*dtActors::EngineActorRegistry::ANIMATION_ACTOR_TYPE, proxy);
+            dtCore::RefPtr<dtAnim::AnimationGameActorProxy> proxy;
+            gameManager.CreateActor(*dtAnim::AnimActorRegistry::ANIMATION_ACTOR_TYPE, proxy);
             if(proxy.valid())
             {
                gameManager.AddActor(*proxy);
 
-               dtActors::AnimationGameActor* actor = dynamic_cast<dtActors::AnimationGameActor*>(&proxy->GetGameActor());
+               dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&proxy->GetGameActor());
                actor->SetModel("SkeletalMeshes/marine.xml");
                InitializeAnimationActor(proxy.get(), animComp, false, app.GetCamera());
 
@@ -240,12 +240,11 @@ void TestAnim::OnShutdown(dtGame::GameApplication& app)
 {
 }
 
-void TestAnim::InitializeAnimationActor(dtActors::AnimationGameActorProxy* gameProxy,
+void TestAnim::InitializeAnimationActor( dtAnim::AnimationGameActorProxy* gameProxy, 
                                         dtAnim::AnimationComponent* animComp,
-                                        bool isPlayer,
-                                        dtCore::Camera *camera)
+                                        bool isPlayer, dtCore::Camera *camera )
 {   
-      dtActors::AnimationGameActor* actor = dynamic_cast<dtActors::AnimationGameActor*>(&gameProxy->GetGameActor());
+      dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
       if(actor != NULL)
       {
