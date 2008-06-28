@@ -20,14 +20,20 @@ PROJECT(DELTA3D)
 
 ################################################################################
 # User Options
-OPTION(BUILD_HLA "Enables the building of HLA related projects (e.g., dtHLAGM)" OFF)
-OPTION(BUILD_BINDINGS "Enabled the building of the bindings and related projects" OFF)
-OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB" OFF)
-OPTION(BUILD_ISENSE "Enables the building the Delta Intersense library dtInputISENSE" OFF)
+OPTION(BUILD_ANIM "Enables the building of dtAnim (requires CAL3D)" ON)
+OPTION(BUILD_AUDIO "Enables the building of dtAudio (requires openAL/ALUT)" ON)
+OPTION(BUILD_BINDINGS "Enabled the building of the bindings (requires Python, Boost.Python)" OFF)
+OPTION(BUILD_DIS "Enables the building of dtDIS (requires DIS-cpp,HawkNL)" ON)
+OPTION(BUILD_GUI "Enables the building of dtGUI (requires CEGUI)" ON)
+OPTION(BUILD_HLA "Enables the building of dtHLA related projects (requires RTI)" OFF)
+OPTION(BUILD_PLIB "Enabes the building of dtInputPLIB (requires PLIB)" ON)
+OPTION(BUILD_NET "Enables the building of dtNet/dtNetGM (requires HawkNL,GNE,Boost)" ON)
+OPTION(BUILD_TERRAIN "Enables the building of dtTerrain (requires GDAL)" ON)
+OPTION(BUILD_TESTS "Enables the building of the unit tests (requires CPPUNIT)" ON)
+
 OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_DEMOS "Enables the building of the Delta3D demo projects" ON)
 OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
-OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
 if (BUILD_HLA)
@@ -144,6 +150,17 @@ ENDIF(WIN32)
 
 ################################################################################
 
+# Make the headers visible to everything
+INCLUDE_DIRECTORIES(
+    ${CMAKE_SOURCE_DIR}/inc
+    ${OPENGL_INCLUDE_DIR}
+    ${OPENTHREADS_INCLUDE_DIR}
+    ${OSG_INCLUDE_DIR}
+    ${ODE_INCLUDE_DIR}
+    ${XERCES_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_PATH}  
+)
+
 #required external dependencies for core functionality
 FIND_PACKAGE(Delta3D REQUIRED)
 FIND_PACKAGE(OpenThreads REQUIRED)
@@ -160,24 +177,42 @@ IF (NOT WIN32 AND NOT APPLE)
   FIND_PACKAGE(UUID REQUIRED) 
 ENDIF (NOT WIN32 AND NOT APPLE)
 
+
+
 #optional external dependencies
-FIND_PACKAGE(OpenAL)  #for dtAudio
-FIND_PACKAGE(Cal3d)   #for dtAnim
-FIND_PACKAGE(CEGUI)   #for dtGUI
-FIND_PACKAGE(CPPUNIT) #for unit tests
-FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM
-FIND_PACKAGE(GNE)     #for dtNet, dtNetGM
+IF (BUILD_ANIM)  
+  FIND_PACKAGE(Cal3d)   #for dtAnim
+  ADD_SUBDIRECTORY(src/dtAnim)
+  SET(DTANIM_AVAILABLE "YES")
+ENDIF (BUILD_ANIM)
 
-SET(QT_USE_QTOPENGL "true")
-FIND_PACKAGE(Qt4)     #for STAGE, AnimationViewer, ObjectViewer
+IF (BUILD_AUDIO)
+  FIND_PACKAGE(OpenAL)  #for dtAudio
+  ADD_SUBDIRECTORY(src/dtAudio)
+  SET(DTAUDIO_AVAILABLE "YES")
+ENDIF (BUILD_AUDIO)
 
-FIND_PACKAGE(GDAL)    #for dtTerrain
-FIND_PACKAGE(DIS)     #for dtDIS
+IF (BUILD_BINDINGS) 
+  FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
+  FIND_PACKAGE(PythonLibs) #for Python bindings
+  ADD_SUBDIRECTORY(src/python)
+  ADD_SUBDIRECTORY(src/dtScript)
+ENDIF (BUILD_BINDINGS)
 
-FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
-FIND_PACKAGE(PythonLibs) #for Python bindings
+IF (BUILD_DIS)  
+  FIND_PACKAGE(DIS)     #for dtDIS
+  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM, dtDIS
+  ADD_SUBDIRECTORY(src/dtDIS)
+  SET(DTDIS_AVAILABLE "YES")
+ENDIF (BUILD_DIS)  
 
-if (BUILD_HLA)
+IF (BUILD_GUI)  
+  FIND_PACKAGE(CEGUI)   #for dtGUI
+  SET(DTGUI_AVAILABLE "YES")
+  ADD_SUBDIRECTORY(src/dtGUI)
+ENDIF (BUILD_GUI) 
+
+IF (BUILD_HLA)
    if (USE_RTIS)
       MESSAGE("RTI-s selected for HLA")
       FIND_PACKAGE(RTI-s) #for dtHLAGM
@@ -189,11 +224,44 @@ if (BUILD_HLA)
             MESSAGE("No HLA RTI selected, PICK CERTI or RTI-s")
       endif (USE_CERTI)
    endif (USE_RTIS)
+  
+   ADD_SUBDIRECTORY(src/dtHLAGM)
+   SET(DTHLAGM_AVAILABLE "YES")
 endif (BUILD_HLA)
+
 
 IF (BUILD_PLIB)
 	FIND_PACKAGE(PLIB) #for dtInputPLIB
+	ADD_SUBDIRECTORY(src/dtInputPLIB)
 ENDIF(BUILD_PLIB)
+
+IF (BUILD_NET)
+  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM
+  FIND_PACKAGE(GNE)     #for dtNet, dtNetGM
+  FIND_PACKAGE(Boost)   #for dtNet, dtNetGM, Python bindings
+  ADD_SUBDIRECTORY(src/dtNet)
+  ADD_SUBDIRECTORY(src/dtNetGM)
+  SET(DTNET_AVAILABLE "YES")
+  SET(DTNETGM_AVAILABLE "YES")
+ENDIF (BUILD_NET)  
+
+IF (BUILD_TERRAIN)
+  FIND_PACKAGE(GDAL)    #for dtTerrain
+  ADD_SUBDIRECTORY(src/dtTerrain)
+  SET(DTTERRAIN_AVAILABLE "YES")
+ENDIF (BUILD_TERRAIN)
+
+IF (BUILD_TESTS)
+  OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
+
+  FIND_PACKAGE(CPPUNIT) #for unit tests
+  ADD_SUBDIRECTORY(tests)
+ENDIF (BUILD_TESTS)  
+
+
+SET(QT_USE_QTOPENGL "true")
+FIND_PACKAGE(Qt4)     #for STAGE, AnimationViewer, ObjectViewer
+
   
 IF (BUILD_WITH_PCH)
    FIND_PACKAGE(PCHSupport)
@@ -201,16 +269,7 @@ ENDIF (BUILD_WITH_PCH)
 
 #MESSAGE(STATUS "${Boost_INCLUDE_DIR} ${Boost_PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}")
 
-# Make the headers visible to everything
-INCLUDE_DIRECTORIES(
-    ${CMAKE_SOURCE_DIR}/inc
-    ${OPENGL_INCLUDE_DIR}
-    ${OPENTHREADS_INCLUDE_DIR}
-    ${OSG_INCLUDE_DIR}
-    ${ODE_INCLUDE_DIR}
-    ${XERCES_INCLUDE_DIR}
-    ${PYTHON_INCLUDE_PATH}  
-)
+
 
 IF (APPLE)
    INCLUDE_DIRECTORIES(/usr/include/malloc)
@@ -270,7 +329,7 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} CACHE STRING "You may add additiona
 # This is unofficial so this may be removed or changed at anytime.
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "(EXPERIMENTAL) You may add additional search paths here. Use ; to separate multiple paths.")
 
-
+ADD_SUBDIRECTORY(src/dtActors)
 ADD_SUBDIRECTORY(src/dtUtil)
 ADD_SUBDIRECTORY(src/dtCore)
 ADD_SUBDIRECTORY(src/dtAI)
@@ -278,76 +337,12 @@ ADD_SUBDIRECTORY(src/dtABC)
 ADD_SUBDIRECTORY(src/dtDAL)
 ADD_SUBDIRECTORY(src/dtGame)
 ADD_SUBDIRECTORY(src/dtInspector)
+ADD_SUBDIRECTORY(src/dtInputISense)
 ADD_SUBDIRECTORY(src/dtLMS)
 
-
-IF (OPENAL_FOUND)
-  ADD_SUBDIRECTORY(src/dtAudio)
-  SET(DTAUDIO_AVAILABLE "YES")
-ENDIF (OPENAL_FOUND)
-
-IF(Boost_FOUND AND HAWKNL_FOUND AND GNE_FOUND)  
-  ADD_SUBDIRECTORY(src/dtNet)
-  ADD_SUBDIRECTORY(src/dtNetGM)
-  SET(DTNET_AVAILABLE "YES")
-  SET(DTNETGM_AVAILABLE "YES")
-ENDIF(Boost_FOUND AND HAWKNL_FOUND AND GNE_FOUND)
-
-IF (CEGUI_FOUND)
-  SET(DTGUI_AVAILABLE "YES")
-  ADD_SUBDIRECTORY(src/dtGUI)
-ENDIF (CEGUI_FOUND)
-
-IF (CAL3D_FOUND)
-  ADD_SUBDIRECTORY(src/dtAnim)
-  SET(DTANIM_AVAILABLE "YES")
-ENDIF(CAL3D_FOUND)
-
-IF (CAL3D_FOUND)
-  ADD_SUBDIRECTORY(src/dtActors)
-  SET(DTACTORS_AVAILABLE "YES")
-ENDIF (CAL3D_FOUND)
-
-IF (GDAL_FOUND)
-  ADD_SUBDIRECTORY(src/dtTerrain)
-  SET(DTTERRAIN_AVAILABLE "YES")
-ENDIF (GDAL_FOUND)
-
-IF(DIS_FOUND AND HAWKNL_FOUND)
-  ADD_SUBDIRECTORY(src/dtDIS)
-  SET(DTDIS_AVAILABLE "YES")
-ENDIF(DIS_FOUND AND HAWKNL_FOUND)
-
-IF (BUILD_HLA)
-  ADD_SUBDIRECTORY(src/dtHLAGM)
-  SET(DTHLAGM_AVAILABLE "YES")
-ENDIF (BUILD_HLA)
-
-IF (BUILD_PLIB)
-	ADD_SUBDIRECTORY(src/dtInputPLIB)
-ENDIF(BUILD_PLIB)
-
-IF (BUILD_ISENSE)
-	ADD_SUBDIRECTORY(src/dtInputISense)
-ENDIF(BUILD_ISENSE)
-
-IF (BUILD_BINDINGS)  
-  FIND_PACKAGE(PythonLibs REQUIRED)
-  IF(PYTHON_LIBRARIES AND Boost_FOUND)  
-    ADD_SUBDIRECTORY(src/python)
-    ADD_SUBDIRECTORY(src/dtScript)
-  ENDIF (PYTHON_LIBRARIES AND Boost_FOUND)
-ENDIF (BUILD_BINDINGS)
-
 ADD_SUBDIRECTORY(demos)
-
 ADD_SUBDIRECTORY(examples)
-
 ADD_SUBDIRECTORY(utilities)
-
-IF (CPPUNIT_FOUND AND  DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE AND DTANIM_AVAILABLE)
-  ADD_SUBDIRECTORY(tests)
-ENDIF (CPPUNIT_FOUND AND  DTAUDIO_AVAILABLE AND DTGUI_AVAILABLE AND DTANIM_AVAILABLE)
 
 
 # This is for an advanced option to give aggressive warnings 
