@@ -36,7 +36,7 @@ find_library(RTI_RTI_LIBRARY
 )
 
 if(UNIX)
-find_library(RTIS_PARSER_LIBRARY
+find_library(RTI_PARSER_LIBRARY
    NAMES
       xml2
    PATHS
