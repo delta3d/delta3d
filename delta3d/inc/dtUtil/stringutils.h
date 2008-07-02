@@ -155,7 +155,7 @@ namespace dtUtil
       if(toTrim.empty())
          return toTrim;
 
-      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i)
+      for (int i = (int)(toTrim.size() - 1); i >= 0; --i)
       {
          if( isspace(toTrim[i]) )
          {
