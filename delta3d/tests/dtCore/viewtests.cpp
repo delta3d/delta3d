@@ -4,6 +4,7 @@
 #include <dtCore/view.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
+#include <osg/Version>
 
 namespace dtTest
 {
@@ -83,7 +84,14 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
    public:
       TestPager() {};
 
-      osgDB::DatabasePager::PagedLODList GetPagedLODList() {return _pagedLODList;}
+      osgDB::DatabasePager::PagedLODList GetPagedLODList() 
+      {
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
+         return _pagedLODList;
+#else
+         return _activePagedLODList;
+#endif
+      }
    };
 
    ///custom drawable which sets up a couple PagedLOD Nodes
