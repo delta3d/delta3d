@@ -166,3 +166,4 @@ namespace dtCore
    };
 }
 #endif // databasepager_h__
+
