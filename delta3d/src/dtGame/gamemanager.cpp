@@ -1052,9 +1052,6 @@ namespace dtGame
          IEnvGameActor *ea = static_cast<IEnvGameActor*>(envActor->GetActor());
 
          dtCore::RefPtr<IEnvGameActorProxy> oldProxy = mEnvironment;
-         bool wasPagingEnabled = mScene->IsPagingEnabled();
-         if(wasPagingEnabled)
-            mScene->DisablePaging();
 
          if(mEnvironment.valid())
          {
@@ -1081,8 +1078,6 @@ namespace dtGame
          mEnvironment = envActor;
          mEnvironment->SetGameManager(this);
          AddActor(*mEnvironment, false, false);
-         if(wasPagingEnabled)
-            mScene->EnablePaging();
          ea = dynamic_cast<IEnvGameActor*>(mEnvironment->GetActor());
          if(ea == NULL)
          {
@@ -1095,14 +1090,7 @@ namespace dtGame
          // Setting current valid env actor to NULL
          if(mEnvironment != NULL)
          {
-            if(mScene->IsPagingEnabled())
-            {
-               mScene->DisablePaging();
-               DeleteActor(*mEnvironment);
-               mScene->EnablePaging();
-            }
-            else
-               DeleteActor(*mEnvironment);
+            DeleteActor(*mEnvironment);
          }
          // else, Currently NULL internal env actor being set to NULL. No-Op
       }
@@ -1526,19 +1514,19 @@ namespace dtGame
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
       std::vector<std::string> emptyVec;
-      mMapChangeStateData->BeginMapChange(mLoadedMaps, emptyVec, false, false);
+      mMapChangeStateData->BeginMapChange(mLoadedMaps, emptyVec, false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging) 
+   void GameManager::ChangeMap(const std::string &mapName, bool addBillboards) 
    {
       std::vector<std::string> names;
       names.push_back(mapName);
-      ChangeMapSet(names, addBillboards, enableDatabasePaging);
+      ChangeMapSet(names, addBillboards);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeMapSet(const GameManager::NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)
+   void GameManager::ChangeMapSet(const GameManager::NameVector& mapNames, bool addBillboards)
    {
       if (mapNames.empty())
          throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "At least one map must be passed to ChangeMapSet.", __FILE__, __LINE__);
@@ -1558,7 +1546,7 @@ namespace dtGame
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, changeMessage, __FILE__, __LINE__);
       }
 
-      mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards, enableDatabasePaging);
+      mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards);
    }
    
    ///////////////////////////////////////////////////////////////////////////////

@@ -24,8 +24,8 @@
 #include <dtCore/export.h>
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-
-
+#include <dtCore/databasepager.h>
+#include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>
 #include <osgViewer/View>
 
@@ -54,83 +54,7 @@ namespace dtCore
 
    public:
 
-      /**
-       * Configuration property.
-       * <br>
-       * Set to true or false
-       * <br>
-       * This will set the database pager for the default view to precompile gl objects or not.
-       * If they are not precomplied, they will be compiled when they are first viewed, which can
-       * cause major frame hiccups in some cases.  It defaults to true.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_PRECOMPILE_OBJECTS;
 
-      /**
-       * Configuration property.
-       * <br>
-       * Unsigned integer
-       * <br>
-       * The max number of GL objects to compile per frame.  This number should be low.  The default is
-       * 2.  Making it higher will make tiles page in sooner, but it will also cause more of a frame
-       * hiccup.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_MAX_OBJECTS_TO_COMPILE_PER_FRAME;
-
-      /**
-       * Configuration property.
-       * <br>
-       * floating point number
-       * <br>
-       * The minimum amount of time to allocate from pre-compiling GL objects in a paged database
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_MIN_TIME_FOR_OBJECT_COMPILE;
-
-      /**
-       * Configuration property.
-       * <br>
-       * floating point in frames per second.
-       * <br>
-       * The target frame rate.  The pager uses this to time certain operations.  
-       * If the system is set to use a fixed time step, the target frame rate is set to match the
-       * fixed frame rate (SIM_FRAME_RATE). Otherwise, it defaults to 100.
-       * Turning this number down can improve paging preformance somewhat.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_TARGET_FRAMERATE;
-
-      /**
-       * Configuration property.
-       * <br>
-       * DoNotModify, DisplayList, VBO or VertexArrays
-       * <br>
-       * This defaults to DoNotModify, but changing it will tell the pager to alter the drawing settings
-       * on loaded pages.  DisplayList will force drawables to draw using display lists.  VBO will tell
-       * drawables to draw using Vertex Buffer Objects.  VertexArrays will tell the drawables to draw using
-       * standard vertex arrays with no performance tricks.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_DRAWABLE_POLICY;
-
-      /**
-       * Configuration property.
-       * <br>
-       * Set the thread priority to DEFAULT, MIN, LOW, NOMINAL, HIGH or MAX.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_THREAD_PRIORITY;
-
-      /**
-       * Configuration property.
-       * <br>
-       * floating point in seconds.
-       * <br>
-       * the time in seconds of not being rendered before the database pager deletes pages.
-       * @see osgDB::DatabasePager
-       */
-      static const std::string DATABASE_PAGER_EXPIRY_DELAY;
 
       View(const std::string& name = "view", bool useSceneLight = true);
       View(osgViewer::View * view, const std::string& name = "view", bool useSceneLight = true);
@@ -202,29 +126,7 @@ namespace dtCore
       //this method is commented out in the implementation
       //void Frame();
       
-      /**
-       * Enables paging when called ONLY AFTER a page-able
-       * node has been added to the scene
-       * @note all settings must be made before this call
-       */
-      void EnablePaging();
-      
-      /**
-       *  Disables Paging, after enabled
-       *  called on scene cleanup
-       */
-      void DisablePaging();
 
-      /**
-        * Sets target frame rate for database pager, default 60
-        * @param target framerate for paging thread in Frames / Sec
-        */
-       void SetTargetFrameRate(double pTargetFR){ mTargetFrameRate = pTargetFR; }
-
-       /**
-         * return target frame rate for database pager, default 60
-         */
-       double GetTargetFrameRate(){ return mTargetFrameRate; }
 
        /** Use the mouse cursor position to do an intersection into the view.
          * @param intersectionPoint : the world coordinate intersection point
@@ -245,6 +147,54 @@ namespace dtCore
                              unsigned int traversalMask = 0xffffffff );
 
       
+       /** Supply a DatabasePager instance to overwrite the internal default pager.
+         * @param pager : A custom DatabasePager (or NULL to disable database paging)
+         */
+       void SetDatabasePager( dtCore::DatabasePager *pager );
+
+       /** Get the DatabasePager instance this View is using.  
+         * @return The internal DatabasePager (could be NULL)
+         */
+       dtCore::DatabasePager* GetDatabasePager();
+
+       /** Get the DatabasePager instance this View is using.  
+       * @return The internal DatabasePager (could be NULL)
+       */
+       const dtCore::DatabasePager* GetDatabasePager() const;
+
+
+       ///Deprecated 07/01/08
+       void EnablePaging()
+       {
+          DEPRECATE("dtCore::View::EnablePaging()",
+                    "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
+       }
+
+       ///Deprecated 07/01/08
+       void DisablePaging()
+       {
+          DEPRECATE("dtCore::View::DisablePaging()",
+                    "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
+       }
+
+       ///Deprecated 07/01/08
+       void SetTargetFrameRate(double pTargetFR)
+       { 
+          DEPRECATE("dtCore::View::SetTargetFrameRate(double)",
+             "dtCore::DatabasePager::SetTargetFrameRate(double)");
+
+          GetDatabasePager()->SetTargetFrameRate(pTargetFR);
+       }
+
+       ///Deprecated 07/01/08
+       double GetTargetFrameRate()
+       { 
+          DEPRECATE("double dtCore::View::GetTargetFrameRate()",
+             "double dtCore::DatabasePager::GetTargetFrameRate() const");
+
+          return GetDatabasePager()->GetTargetFrameRate();
+       }
+
    protected:
 
       virtual ~View();
@@ -255,7 +205,9 @@ namespace dtCore
            
       
    private:
-
+ 
+      ///constructor implementation
+      void Ctor(bool useSceneLight);
 
       KeyboardMouseHandler * GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
 
@@ -278,6 +230,8 @@ namespace dtCore
       
       double mTargetFrameRate;
       unsigned int mFrameBin;
+
+      RefPtr<DatabasePager> mPager; ///< The pager this View will use (could be NULL)
    };
 }
 

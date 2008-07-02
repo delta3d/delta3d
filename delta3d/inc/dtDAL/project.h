@@ -30,6 +30,7 @@
 #include <osg/Referenced>
 
 #include <dtUtil/tree.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/resourcehelper.h>
 #include <dtDAL/export.h>
@@ -236,29 +237,30 @@ namespace dtDAL
           */
          Map& OpenMapBackup(const std::string& name);
 
-         /**
-          * Loads a map by name into an application.  If the map is already opened, the currently
-          * loaded map will be reused.
-          * @param name The name of the map to load.
-          * @param scene The application to add the proxy objects to.
-          * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-          * @param enablePaging pass true to enable paging in the scene
-          * @return the map that was loaded into the scene.
-          * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-          * @throws FileExceptionEnum::FileNotFound if the map does not exist.
-          * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-          */
-         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true);
 
          /**
-          * Loads a map into a scene.
-          * @param map The map to load into the scene
-          * @param scene the scene to load the map into
-          * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-          * @param enablePaging pass true to enable paging in the scene
-          * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-          */
-         void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true);
+         * Loads a map by name into an application.  If the map is already opened, the currently
+         * loaded map will be reused.
+         * @param name The name of the map to load.
+         * @param scene The application to add the proxy objects to.
+         * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+         * @return the map that was loaded into the scene.
+         * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
+         * @throws FileExceptionEnum::FileNotFound if the map does not exist.
+         * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+         */
+         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false);
+
+
+         /**
+         * Loads a map into a scene.
+         * @param map The map to load into the scene
+         * @param scene the scene to load the map into
+         * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+         * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+         */
+         void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false);
+
 
          /**
           * Creates a new map and saves it.
@@ -559,6 +561,24 @@ namespace dtDAL
           * @see class dtDAL::ActorProxy
           */
          const bool GetEditMode() const { return mEditMode; }
+
+
+         ///Deprecated 07/01/08
+         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards, bool enablePaging )
+         {
+            DEPRECATE("Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)",
+               "Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false)");
+            return LoadMapIntoScene(name, scene, addBillBoards);
+         }
+
+         ///Deprecated 07/01/08
+         void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
+         {
+            DEPRECATE("dtDAL::Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)",
+               "dtDAL::Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false)");
+            LoadMapIntoScene(map, scene, addBillBoards);
+         }
+
    };
 
 }

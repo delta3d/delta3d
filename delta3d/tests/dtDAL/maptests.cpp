@@ -1590,7 +1590,7 @@ void MapTests::TestLoadMapIntoScene()
         dtCore::Scene& scene = *app->GetScene();
         //actually load the map into the scene.
         //TODO, test with the last param as false to make sure ALL proxies end up in the scene.
-        project.LoadMapIntoScene(map, scene, true);
+        project.LoadMapIntoScene(map, scene);
 
         //spin through the scene removing each actor found from the set.
         for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); x++)

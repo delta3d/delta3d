@@ -37,6 +37,8 @@
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
 
+#include <dtUtil/deprecationmgr.h>
+
 namespace dtUtil
 {
    class Log;
@@ -627,12 +629,11 @@ namespace dtGame
              * @param mapName       The name of the map to load.
              * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
              *                      added to the scene.  This should only be true for debugging purposes.
-             * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
-             *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
              */
-            void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true);
+            void ChangeMap(const std::string &mapName, bool addBillboards = false);
+
 
             /**
              * Changes the maps being used by the Game Manager.  All actors, Game events, and associated data will be deleted.
@@ -653,12 +654,10 @@ namespace dtGame
              * @param mapNames      The list of names of maps to load.
              * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
              *                      added to the scene.  This should only be true for debugging purposes.
-             * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
-             *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
              */
-            void ChangeMapSet(const NameVector& mapNames, bool addBillboards = false, bool enableDatabasePaging = true);
+            void ChangeMapSet(const NameVector& mapNames, bool addBillboards = false);
 
             /**
              * Closes the open maps, if any, being used by the Game Manager.  All actors will be deleted whether maps are closed or not.
@@ -969,6 +968,23 @@ namespace dtGame
              * destroyed, but can be called manually at the appropriate time as well.
              */
             void Shutdown();
+
+
+            ///Deprecated 07/01/08
+            void ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging)
+            {
+               DEPRECATE("dtGame::GameManager::ChangeMap(const std::string &mapName, bool addBillboards=false, bool enableDatabasePaging=false)",
+                         "dtGame::GameManager::ChangeMap(const std::string &mapName, bool addBillboards=false)");
+               ChangeMap(mapName, addBillboards);
+            }
+
+            ///Deprecated 07/01/08
+            void ChangeMapSet(const NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)
+            {
+               DEPRECATE("dtGame::GameMananger::ChangeMapSet(const NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)",
+                         "dtGame::GameMananger::ChangeMapSet(const NameVector& mapNames, bool addBillboards)");
+               ChangeMapSet(mapNames, addBillboards);
+            }
 
          protected:
 

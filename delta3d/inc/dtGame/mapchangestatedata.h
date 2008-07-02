@@ -74,16 +74,27 @@ namespace dtGame
       
          const MapChangeState& GetCurrentState() const { return *mCurrentState; }
          void ChangeState(const MapChangeState& newState) { mCurrentState = &newState; }
-         
+
          /**
-          * @throws dtUtil::Exception with ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the GameManager has been deleted.
-          */
-         void BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging);
+         * @throws dtUtil::Exception with ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the GameManager has been deleted.
+         */
+         void BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards);
          
           /**
           * @throws dtUtil::Exception with ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if the GameManager has been deleted.
           */
          void ContinueMapChange();
+
+
+         ///Deprecated 07/01/08
+         void BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)
+         {
+            DEPRECATE("dtGame::MapChangeStateData::BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)",
+                      "dtGame::MapChangeStateData::BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards)" );
+
+            BeginMapChange(oldMapNames, newMapNames, addBillboards);
+         }
+
       protected:
 
          //Takes an open map name and loads all the actors into the GM
@@ -102,7 +113,7 @@ namespace dtGame
          NameVector mNewMapNames;
 
          const MapChangeState* mCurrentState;
-         bool mAddBillboards, mEnableDatabasePaging;
+         bool mAddBillboards;
 
          //disable copy constructor and operator = 
          MapChangeStateData(const MapChangeStateData& toCopy) {}
