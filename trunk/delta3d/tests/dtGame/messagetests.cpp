@@ -1094,7 +1094,7 @@ void MessageTests::TestChangeMapGameEvents()
       geMan.AddEvent(*event);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be one event.", geMan.GetNumEvents(), (unsigned int) 1);
 
-      mGameManager->ChangeMap(mapName, false, false);
+      mGameManager->ChangeMap(mapName, false);
       //two ticks to finish the change.
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
@@ -1120,7 +1120,7 @@ void MessageTests::TestChangeMapGameEvents()
          geMan.GetNumEvents(), (unsigned int) 1);
 
       // re-add the events and try again.
-      mGameManager->ChangeMap(mapName, false, false);
+      mGameManager->ChangeMap(mapName, false);
       //two ticks to finish the change.
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
@@ -1238,7 +1238,7 @@ void MessageTests::TestChangeMap()
       TestComponent& tc = *new TestComponent("name");
       mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
-      mGameManager->ChangeMapSet(mapNamesExpected, false, false);
+      mGameManager->ChangeMapSet(mapNamesExpected, false);
 
       std::vector<dtDAL::ActorProxy*> toFill;
       mGameManager->GetAllActors(toFill);
@@ -1307,7 +1307,7 @@ void MessageTests::TestChangeMap()
 
       tc.reset();
 
-      mGameManager->ChangeMapSet(mapNames2Expected, false, false);
+      mGameManager->ChangeMapSet(mapNames2Expected, false);
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();

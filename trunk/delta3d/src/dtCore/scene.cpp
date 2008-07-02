@@ -113,11 +113,8 @@ Scene::Scene( const std::string& name) : Base(name),
    mLights(MAX_LIGHTS),
    mRenderMode(POINT),
    mRenderFace(FRONT),
-   mPagingEnabled(false),
    mStartTick(0),
-   mFrameNum(0),
-   mCleanupTime(0.0025),
-   mConfigProperties(NULL)
+   mFrameNum(0)
 {
    RegisterInstance(this);
    SetName(name);
@@ -229,6 +226,11 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
    drawable->AddedToScene(this);
 
    mAddedDrawables.push_back(drawable);
+
+   if (mPager.valid())
+   {
+      mPager->RegisterDrawable( *drawable );
+   }
 }
 /////////////////////////////////////////////
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
@@ -691,38 +693,6 @@ void Scene::UseSceneLight( bool lightState )
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////
-void Scene::EnablePaging() 
-{ 
-   mPagingEnabled = true;
-   UpdateViewSet();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void Scene::DisablePaging()
-{
-   mPagingEnabled = false;
-   UpdateViewSet();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void Scene::SetConfiguration(dtUtil::ConfigProperties* config)
-{
-   mConfigProperties = config;
-   UpdateViewSet();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-dtUtil::ConfigProperties* Scene::GetConfiguration()
-{
-   return mConfigProperties;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-const dtUtil::ConfigProperties* Scene::GetConfiguration() const
-{
-   return mConfigProperties;
-}
 
 /////////////////////////////////////////////////////////////////////////////
 void Scene::RemoveView(dtCore::View& view) 
@@ -752,5 +722,13 @@ void Scene::UpdateViewSet()
    }
 }
 
+//friend of dtCore::View
+void Scene::SetDatabasePager( dtCore::DatabasePager *pager )
+{
+   mPager = pager;
 }
+
+}
+
+
 

@@ -31,6 +31,9 @@
 #include <dtCore/view.h>
 #include <dtCore/light.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/databasepager.h>
+
+#include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
 #include <ode/collision_space.h>
@@ -221,43 +224,67 @@ namespace dtCore
       /// Get the number of Drawables which have been directly added to the Scene
       unsigned int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
 
-      /**
-       * Enables paging when called ONLY AFTER a page-able
-       * node has been added to the scene
-       * @note all settings must be made before this call
-       */
-      void EnablePaging();
+      /// DEPRECATED 06/30/08 in favor of dtCore::View::EnablePaging()
+      void EnablePaging()
+      {
+         DEPRECATE("void dtCore::Scene::EnablePaging()",
+                   "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
+      }
       
-      /**
-       *  Disables Paging, after enabled
-       *  called on scene cleanup
-       */
-      void DisablePaging();
+      /// DEPRECATED 06/30/08 in favor of dtCore::View::DisablePaging()
+      void DisablePaging()
+      {
+         DEPRECATE("dtCore::Scene::DisablePaging()",
+                   "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
+      }
 
       /// Returns if paging is enabled
-      bool IsPagingEnabled() const { return mPagingEnabled; }
+      bool IsPagingEnabled() const 
+      {
+         DEPRECATE("dtCore::Scene::DisablePaging() const",
+                   "dtCore::DatabasePager* dtCore::View::GetDatabasePager() const");
+         return false; 
+      }
 
-      /**
-       *  Set's Slice time allocated for scene cleanup
-       *  default 0.0025
-       *  @param allocated cleanup time in seconds
-       */
-      void SetPagingCleanup(double pCleanup){mCleanupTime = pCleanup;}
+      /// DEPRECATED 06/30/08
+      void SetPagingCleanup(double pCleanup)
+      {
+         DEPRECATE("dtCore::Scene::SetPagingCleanup(double)",
+                   "N/A");
+      }
 
-      /// Get the cleanup time for paging
-      double GetPagingCleanup() { return mCleanupTime; }
-      
-      /**
-       * Set the configuration property set.  This is only stored as a pointer, so you can't
-       * delete the one that is assigned here after it's assigned unless you enjoy crashing.
-       */
-      void SetConfiguration(dtUtil::ConfigProperties* config);
+      /// DEPRECATED 06/30/08
+      double GetPagingCleanup() 
+      { 
+         DEPRECATE("double dtCore::Scene::GetPagingCleanup()",
+                   "N/A");
+         return 0.0;
+      }
 
-      /**
-       * @return the configuration property set assigned, or NULL is non has been assigned.
-       */
-      dtUtil::ConfigProperties* GetConfiguration();
-      const dtUtil::ConfigProperties* GetConfiguration() const;
+      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager::SetConfiguration()
+      void SetConfiguration(dtUtil::ConfigProperties* config)
+      {
+         DEPRECATE("void dtCore::Scene::SetConfiguration(dtUtil::ConfigProperties* config)",
+                   "void dtCore::DatabasePager::SetConfiguration(dUtil::ConfigProperties *config");
+      }
+
+      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager:GetConfiguration()
+      dtUtil::ConfigProperties* GetConfiguration()
+      {
+         DEPRECATE("dtUtil::ConfigProperties* dtCore::Scene::GetConfiguration()",
+                   "dtUtil::ConfigProperties* dtCore::DatabasePager::GetConfiguration()");
+
+         return NULL;
+      }
+
+      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager::GetConfiguration()
+      const dtUtil::ConfigProperties* GetConfiguration() const
+      {
+         DEPRECATE("const dtUtil::ConfigProperties* dtCore::Scene::GetConfiguration() const",
+                   "const dtUtil::ConfigProperties* dtCore::DatabasePager::GetConfiguration() const" );
+
+         return NULL;
+      }
 
    protected:
 
@@ -266,6 +293,9 @@ namespace dtCore
       /// define the owner mView of this instance
       void RemoveView(dtCore::View& view);
       void AddView(dtCore::View& view);
+
+      void SetDatabasePager( dtCore::DatabasePager *pager );
+      dtCore::DatabasePager* GetDatabasePager() const {return mPager.get();}
 
    private:
 
@@ -310,14 +340,12 @@ namespace dtCore
       Mode mRenderMode;
       Face mRenderFace;
 
-      bool mPagingEnabled;
       Timer_t mStartTick;
       unsigned int mFrameNum;
-      double mCleanupTime;
  
       ParticleSystemFreezer mFreezer;
 
-      dtUtil::ConfigProperties* mConfigProperties;
+      dtCore::RefPtr<dtCore::DatabasePager> mPager;
    };
 }
 

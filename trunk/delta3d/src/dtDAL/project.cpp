@@ -548,16 +548,15 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   Map& Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, 
-            bool addBillBoards, bool enablePaging)
+   Map& Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards)
    {
       Map& m = GetMap(name);
-      LoadMapIntoScene(m, scene, addBillBoards, enablePaging);
+      LoadMapIntoScene(m, scene, addBillBoards);
       return m;
    }
 
    //////////////////////////////////////////////////////////
-   void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
+   void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards)
    {
       CheckMapValidity(map, true);
       std::vector<dtCore::RefPtr<ActorProxy> > container;
@@ -645,13 +644,6 @@ namespace dtDAL
          scene.AddDrawable(map.GetEnvironmentActor()->GetActor());
       }
 
-      if(enablePaging)
-      {
-         if(scene.IsPagingEnabled())
-            scene.DisablePaging();
-
-         scene.EnablePaging();
-      }
    }
 
    //////////////////////////////////////////////////////////

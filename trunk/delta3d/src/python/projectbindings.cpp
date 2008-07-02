@@ -13,8 +13,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DM_overloads, DeleteMap, 1, 2)
 
 void initProjectBindings()
 {
-   Map& ( Project::*LMIS1 )( const std::string&, dtCore::Scene&, bool, bool) = &Project::LoadMapIntoScene;
-   void ( Project::*LMIS2 )( Map&, dtCore::Scene&, bool, bool) = &Project::LoadMapIntoScene;
+   Map& ( Project::*LMIS1 )( const std::string&, dtCore::Scene&, bool) = &Project::LoadMapIntoScene;
+   void ( Project::*LMIS2 )( Map&, dtCore::Scene&, bool) = &Project::LoadMapIntoScene;
    
    void ( Project::*DM1 )( Map&, bool ) = &Project::DeleteMap;
    void ( Project::*DM2 )( const std::string&, bool ) = &Project::DeleteMap;

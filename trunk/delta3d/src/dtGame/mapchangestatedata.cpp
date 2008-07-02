@@ -22,8 +22,6 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
-#include <dtCore/scene.h>
-
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actortype.h>
@@ -52,12 +50,12 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    MapChangeStateData::MapChangeStateData(GameManager& gm):
       osg::Referenced(), mGameManager(&gm), mCurrentState(&MapChangeStateData::MapChangeState::IDLE), 
-      mAddBillboards(false), mEnableDatabasePaging(false) 
+      mAddBillboards(false)
    {
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   void MapChangeStateData::BeginMapChange(const MapChangeStateData::NameVector& oldMapNames, const MapChangeStateData::NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)
+   void MapChangeStateData::BeginMapChange(const MapChangeStateData::NameVector& oldMapNames, const MapChangeStateData::NameVector& newMapNames, bool addBillboards)
    {
       if (!mGameManager.valid())
       {
@@ -72,7 +70,6 @@ namespace dtGame
       mOldMapNames = oldMapNames;
       mNewMapNames = newMapNames;
       mAddBillboards = addBillboards;
-      mEnableDatabasePaging = enableDatabasePaging;
 
       mCurrentState = &MapChangeState::UNLOAD;
 
@@ -289,12 +286,6 @@ namespace dtGame
          {
             LoadSingleMapIntoGM(*i);
          }
-
-         if (mGameManager->GetScene().IsPagingEnabled())
-            mGameManager->GetScene().DisablePaging();
-
-         if (mEnableDatabasePaging)
-            mGameManager->GetScene().EnablePaging();
          
          // set the app to unpause so time stepping is correct
          mGameManager->SetPaused(false);

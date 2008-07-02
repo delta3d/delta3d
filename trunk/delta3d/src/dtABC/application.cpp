@@ -31,6 +31,7 @@
 
 #include <dtCore/system.h>
 #include <dtCore/view.h>
+#include <dtCore/databasepager.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/globals.h>
@@ -126,7 +127,10 @@ void Application::ReadSystemProperties()
       dtCore::System::GetInstance().SetUseFixedTimeStep(useFixed);
    }
 
-   GetScene()->SetConfiguration(this);
+   if (GetView()->GetDatabasePager())
+   {
+      GetView()->GetDatabasePager()->SetConfiguration(this);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

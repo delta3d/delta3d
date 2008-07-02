@@ -1372,7 +1372,7 @@ void GameManagerTests::TestGMShutdown()
    
       project.SaveMap(m);
       
-      mManager->ChangeMap(m.GetName(), false, false);
+      mManager->ChangeMap(m.GetName(), false);
       
       //Make sure the map change completes.
       dtCore::System::GetInstance().Step();
