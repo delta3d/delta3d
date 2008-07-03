@@ -22,17 +22,9 @@
 #include <osgDB/FileNameUtils>
 
 #include <dtUtil/stringutils.h>
-#include <dtCore/scene.h>
-
-#include <dtDAL/mapxml.h>
-#include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/waypointactorproxy.h>
-#include <dtDAL/gameeventmanager.h>
-#include <dtDAL/gameevent.h>
 #include <dtDAL/environmentactor.h>
 
 namespace dtDAL 
