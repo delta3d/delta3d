@@ -2072,8 +2072,8 @@ void GMLoggerTests::TestLoggerActorIDLists()
 
 
    // Test the start frame for the existence of actors
-   CPPUNIT_ASSERT_MESSAGE("Started playback, 0 actor IDs should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 0 );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Started playback, 0 actor IDs should exist in playback",
+                                 0, serverLoggerComp->GetPlaybackActorCount() );
 
    // Check keyframe jumps...
    // --- Forward (1.0 to KF1 - proxy1)
