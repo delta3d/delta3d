@@ -227,8 +227,9 @@ Windows with Visual Studio 2005
    Building Qt 4.x Open Source Version with MSVC
    -----------------------------------------------
     1. To configure Qt, just use the Visual Studio Command prompt, change
-        directory to where Qt is, and type "configure -platform win32-msvc2005".  To see
-        the list of supported compilers, see the folder "mkspecs" in the Qt installation.
+        directory to where Qt is, and type "configure -platform win32-msvc2005" (or
+        whatever compiler you have installed).  To see the list of supported 
+        compilers, see the folder "mkspecs" in the Qt installation.
         
      2. Once that is finished type "nmake" to start the compiling.  If you just want
           to build the libraries (much faster), type "nmake sub-src".
