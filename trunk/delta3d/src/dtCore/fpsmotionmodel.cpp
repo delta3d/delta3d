@@ -183,7 +183,7 @@ void FPSMotionModel::SetEnabled(bool enabled)
       mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
       mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
    }
-   else
+   if (!enabled && MotionModel::IsEnabled())
    {
       mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
       mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
