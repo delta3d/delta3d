@@ -14,7 +14,6 @@
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
 
-#include <osg/FrameStamp>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 #include <osgUtil/SceneView>
@@ -24,7 +23,6 @@
 
 #include <osgUtil/SceneView>
 #include <osgViewer/View>
-#include <osgViewer/Renderer>
 #include <osgViewer/GraphicsWindow>
 
 #include <cassert>
@@ -84,7 +82,6 @@ namespace dtCore
 
    Camera::Camera(const std::string& name)
    :  Transformable(name),
-      mFrameBin(0),
       mAddedToSceneGraph(false),
       mEnable(true),
       mEnabledNodeMask(0xffffffff)
@@ -117,7 +114,6 @@ namespace dtCore
    ////////////////////////////////////////// 
    Camera::Camera(dtCore::View * view, const std::string& name)
       :  Transformable(name),
-         mFrameBin(0),
          mAddedToSceneGraph(false),
          mEnable(true),
          mEnabledNodeMask(0xffffffff)
@@ -162,15 +158,6 @@ namespace dtCore
       DeregisterInstance(this);
       RemoveSender( &dtCore::System::GetInstance() );
    }
-
-//   void Camera::SetFrameBin( unsigned int frameBin )
-//   {
-//      mCameraGroup->RemoveCamera(this);
-//
-//      mFrameBin = frameBin;
-//
-//      mCameraGroup->AddCamera(this);
-//   }
 
    ////////////////////////////////////////// 
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
@@ -402,18 +389,6 @@ namespace dtCore
       return GetOSGCamera()->getLODScale();
    }
 
-//   void Camera::ConvertToOrtho( float d )
-//   {
-//      mCamera->getLens()->convertToOrtho(d);
-//   }
-//
-//   bool Camera::ConvertToPerspective( float d )
-//   {
-//      bool t;
-//      t = mCamera->getLens()->convertToPerspective(d);
-//      return t;
-//   }
-//
    ////////////////////////////////////////// 
    float Camera::GetHorizontalFov()
    {

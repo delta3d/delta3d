@@ -252,8 +252,6 @@ namespace dtCore
       Camera( const Camera& );
       
       void OnWindowChanged();
-
-      unsigned int mFrameBin;
       
       RefPtr<osg::Camera> mOsgCamera; // Handle to the osg Camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
