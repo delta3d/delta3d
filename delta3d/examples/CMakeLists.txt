@@ -1,6 +1,8 @@
 # MUST Build these libraries because they are needed for the unit tests
-ADD_SUBDIRECTORY(testActorLibrary)
-ADD_SUBDIRECTORY(testGameActorLibrary)
+IF (BUILD_TESTS OR BUILD_EXAMPLES)
+  ADD_SUBDIRECTORY(testActorLibrary)
+  ADD_SUBDIRECTORY(testGameActorLibrary)
+ENDIF (BUILD_TESTS OR BUILD_EXAMPLES)
 
 IF (BUILD_EXAMPLES)
   
