@@ -7,11 +7,11 @@
 # $FLTK_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$FLTK_DIR
 
-FIND_PATH(FLTK_INCLUDE_DIR FL.H
+FIND_PATH(FLTK_INCLUDE_DIR FL/Fl.H
     $ENV{FLTK_DIR}/include
     $ENV{FLTK_DIR}
-    ${DELTA3D_EXT_DIR}/inc/FL
-    $ENV{DELTA_ROOT}/ext/inc/FL
+    ${DELTA3D_EXT_DIR}/inc
+    $ENV{DELTA_ROOT}/ext/inc
     ~/Library/Frameworks
     /Library/Frameworks
     /usr/local/include
