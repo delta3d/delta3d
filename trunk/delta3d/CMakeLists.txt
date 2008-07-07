@@ -157,8 +157,7 @@ INCLUDE_DIRECTORIES(
     ${OPENTHREADS_INCLUDE_DIR}
     ${OSG_INCLUDE_DIR}
     ${ODE_INCLUDE_DIR}
-    ${XERCES_INCLUDE_DIR}
-    ${PYTHON_INCLUDE_PATH}  
+    ${XERCES_INCLUDE_DIR}  
 )
 
 #required external dependencies for core functionality
