@@ -1,8 +1,0 @@
-Import('*')
-
-import glob
-
-srcs = env.SGlob('*.cpp')
-deps = ['dtGame', 'dtNet', 'dtCore', 'dtDAL', 'ncurses', 'dtUtil', 'osg', 'gne', 'HawkNL', 'winsock']
-       
-env.BuildLib( 'dtNetGM', srcs, deps, ['DT_NETGM_LIBRARY'])
