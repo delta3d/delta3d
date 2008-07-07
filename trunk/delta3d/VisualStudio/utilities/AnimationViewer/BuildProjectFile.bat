@@ -1,1 +1,0 @@
-qmake AnimationViewer.pro
