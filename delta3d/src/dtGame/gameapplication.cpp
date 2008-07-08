@@ -33,7 +33,6 @@
 #include <dtCore/scene.h>
 #include <osgViewer/CompositeViewer>
 #include <dtCore/keyboard.h>
-#include <dtCore/generickeyboardlistener.h>
 
 namespace dtGame
 {

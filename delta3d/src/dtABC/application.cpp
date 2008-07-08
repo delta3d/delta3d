@@ -26,7 +26,6 @@
 #include <dtABC/applicationconfigwriter.h>
 #include <dtABC/applicationconfighandler.h>
 #include <dtABC/applicationconfigdata.h>           // for return type, member
-#include <dtCore/generickeyboardlistener.h>
 #include <dtCore/stats.h>
 
 #include <dtCore/system.h>
@@ -62,12 +61,18 @@ const std::string Application::USE_FIXED_TIME_STEP("System.UseFixedTimeStep");
 ///////////////////////////////////////////////////////////////////////////////
 Application::Application(const std::string& configFilename, dtCore::DeltaWin *win) 
 :  BaseClass("Application"),
-   mKeyboardListener(new dtCore::GenericKeyboardListener())
+   mKeyboardListener(new dtCore::GenericKeyboardListener()),
+   mMouseListener( new dtCore::GenericMouseListener() )
 {
    RegisterInstance(this);
 
    mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
    mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyReleased));
+   mMouseListener->SetPressedCallback(dtCore::GenericMouseListener::ButtonCallbackType(this, &Application::MouseButtonPressed));
+   mMouseListener->SetReleasedCallback(dtCore::GenericMouseListener::ButtonCallbackType(this, &Application::MouseButtonReleased));
+   mMouseListener->SetMovedCallback(dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseMoved));
+   mMouseListener->SetDraggedCallback(dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseDragged));
+   mMouseListener->SetScrolledCallback(dtCore::GenericMouseListener::WheelCallbackType(this, &Application::MouseScrolled));
 
    mWindow = win;
 
@@ -186,11 +191,43 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, int kc)
 
    return false;
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 bool Application::KeyReleased(const dtCore::Keyboard* keyboard, int kc)
 {
    return false;
 }
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseButtonPressed( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button )
+{
+   return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseButtonReleased( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button )
+{
+   return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseMoved( const dtCore::Mouse* mouse, float x, float y )
+{
+   return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseDragged( const dtCore::Mouse* mouse, float x, float y )
+{
+   return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseScrolled( const dtCore::Mouse* mouse, int delta )
+{
+   return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void Application::CreateInstances(const std::string& name, int x, int y, int width, 
                                   int height, bool cursor, bool fullScreen )
