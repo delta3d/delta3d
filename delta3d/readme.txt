@@ -47,47 +47,16 @@ for other users.
 # Dependencies #
 ################
 
-See the Depedencies page on http://www.delta3d.org for more info on version compatibility.
+Delta3D makes use of many different external dependencies; some are
+required and some are optional.
 
-If you are on Windows and are using VS2003 or VS2005, we have prepared dependency
-pacakges for you. These will live as a folder called 'ext' that should live inside
-your Delta3D directory. Check if you have the ext/ directory already in delta3d/. 
-If you do not  have it, please download the latest version of delta3d-dependencies from 
-our SourceForge download site:
-http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
-and extract it into the Delta3D folder.
+If you are on Windows and are using a supported version of 
+Visual Studio, we have prepared pre-compiled dependency pacakges for you.
+These will live as a folder called 'ext' that should reside inside
+your Delta3D directory. 
 
-If you are not using VS2003 or VS2005, you will need to either build the depedencies
-yourself or track them down via your favorite package manager. So here's a handy list.
-
-Required Libraries 
-------------------
-CAL3D
-CppUnit
-Crazy Eddie's GUI System
-FLTK
-Game Networking Engine
-GDAL
-InterSense Interface Libraries SDK
-HawkNL
-OpenAL
-FreeALUT
-Open Dynamics Engine
-OpenThreads
-OpenSceneGraph
-Producer
-PLIB
-ReplicantBody
-Xerces-C
-
-Linux only: Xxf88vm, uuid, ncurses.
-
-Optional Libraries
-------------------
-Qt 4.x - Needed for STAGE.
-Boost - Needed for Python bindings only.
-Python - Needed for Python script support.
-RTI 1.3 - Needed for HLA libraries, utilities, & examples.
+Please see the latest information on the External Dependencies at:
+http://delta3d.wiki.sourceforge.net/Dependencies.
 
 
 #########################
@@ -98,7 +67,7 @@ Delta3D requires environment variables at runtime (but not at compile-time).
 The Windows installer will set these up for you, but if you use the zip
 package or are on Linux you need to set them youself.
 
-Microsoft Windows XP
+Microsoft Windows
 --------------------
 Make sure the Delta3D environment variables are set:
 
@@ -106,8 +75,10 @@ DELTA_ROOT = "C:\Program Files\delta3d"  (or wherever Delta3D is installed)
 DELTA_INC = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI
 DELTA_LIB = %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
 DELTA_DATA = %DELTA_ROOT%\data
+DELTA_BIN = %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin
 
-And, of course, add %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin to your PATH.
+By adding DELTA_BIN to your PATH environment, all Delta3D applications
+will find the Delta3D .dll files.
 
 Once set, these variables can be used in Visual Studio in the project properties
 or in the global VC++ directories (Tools->Options->Projects) as shown below:
