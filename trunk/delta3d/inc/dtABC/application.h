@@ -24,7 +24,8 @@
 #include <dtCore/refptr.h>
 #include <dtABC/baseabc.h>
 #include <dtABC/export.h>
-
+#include <dtCore/generickeyboardlistener.h>
+#include <dtCore/genericmouselistener.h>
 #include <dtUtil/configproperties.h>
 
 #include <string>
@@ -40,7 +41,8 @@ namespace osgViewer
 
 namespace dtCore
 {
-   class GenericKeyboardListener;
+   class Keyboard;
+   class Mouse;
    class StatsHandler;
    class DeltaWin;
 }
@@ -138,6 +140,40 @@ namespace dtABC
       /// @return the instance of the listener used for callbacks
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
+
+      /** Called when a mouse button is pressed.  Overwrite for custom functionality.
+        * @param mouse Handle to the Mouse that triggered this
+        * @param button The button index
+        */
+      virtual bool MouseButtonPressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+
+      /** Called when a mouse button is released.  Overwrite for custom functionality.
+      * @param mouse Handle to the Mouse that triggered this
+      * @param button The button index
+      */
+      virtual bool MouseButtonReleased(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+
+      /** Called when a mouse is moved.  Overwrite for custom functionality.
+      * @param mouse Handle to the Mouse that triggered this
+      * @param x The left-right distance the mouse traveled
+      * @param y The up-down distance the mouse traveled
+      */
+      virtual bool MouseMoved(const dtCore::Mouse* mouse, float x, float y);
+
+
+      /** Called when a mouse is dragged (button down).  Overwrite for custom functionality.
+      * @param mouse Handle to the Mouse that triggered this
+      * @param x The left-right distance the mouse traveled
+      * @param y The up-down distance the mouse traveled
+      */
+      virtual bool MouseDragged(const dtCore::Mouse* mouse, float x, float y);
+
+      /** Called when a mouse scroll wheel moved.  Overwrite for custom functionality.
+      * @param mouse Handle to the Mouse that triggered this
+      * @param delta The amount of wheel scrolled
+      */
+      virtual bool MouseScrolled(const dtCore::Mouse* mouse, int delta);
+
       /// the publicized default settings for a generated config file.
       static ApplicationConfigData GetDefaultConfigData();
 
@@ -208,6 +244,7 @@ namespace dtABC
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
 
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
+      dtCore::RefPtr<dtCore::GenericMouseListener>    mMouseListener;
 
       typedef std::map<std::string, std::string> AppConfigPropertyMap;
       AppConfigPropertyMap mConfigProperties;
