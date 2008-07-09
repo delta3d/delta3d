@@ -153,6 +153,14 @@ namespace dtABC
       */
       virtual bool MouseButtonReleased(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
 
+      /** Called when a mouse button has been "double-clicked".  Overwrite for custom
+        * functionality.
+        * @param mouse Handle to the Mouse that triggered this
+        * @param button The button index
+        * @param clickCount : The number of times the button was clicked
+        */
+      virtual bool MouseButtonDoubleClicked(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount);
+
       /** Called when a mouse is moved.  Overwrite for custom functionality.
       * @param mouse Handle to the Mouse that triggered this
       * @param x The left-right distance the mouse traveled
