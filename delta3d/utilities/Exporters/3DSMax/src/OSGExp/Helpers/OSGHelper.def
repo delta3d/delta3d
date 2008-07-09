@@ -1,4 +1,4 @@
-LIBRARY OSGHelper
+LIBRARY OSGHelper.dlo
 EXPORTS
 	LibDescription			@1
 	LibNumberClasses		@2
