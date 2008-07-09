@@ -70,6 +70,7 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin *wi
    mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType     (this, &Application::KeyReleased));
    mMouseListener->SetPressedCallback    (dtCore::GenericMouseListener::ButtonCallbackType  (this, &Application::MouseButtonPressed));
    mMouseListener->SetReleasedCallback   (dtCore::GenericMouseListener::ButtonCallbackType  (this, &Application::MouseButtonReleased));
+   mMouseListener->SetClickedCallback    (dtCore::GenericMouseListener::ClickCallbackType   (this, &Application::MouseButtonDoubleClicked));
    mMouseListener->SetMovedCallback      (dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseMoved));
    mMouseListener->SetDraggedCallback    (dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseDragged));
    mMouseListener->SetScrolledCallback   (dtCore::GenericMouseListener::WheelCallbackType   (this, &Application::MouseScrolled));
@@ -206,6 +207,12 @@ bool Application::MouseButtonPressed( const dtCore::Mouse *mouse, dtCore::Mouse:
 
 //////////////////////////////////////////////////////////////////////////
 bool Application::MouseButtonReleased( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button )
+{
+   return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool Application::MouseButtonDoubleClicked( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount )
 {
    return false;
 }
