@@ -66,13 +66,13 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin *wi
 {
    RegisterInstance(this);
 
-   mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
-   mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyReleased));
-   mMouseListener->SetPressedCallback(dtCore::GenericMouseListener::ButtonCallbackType(this, &Application::MouseButtonPressed));
-   mMouseListener->SetReleasedCallback(dtCore::GenericMouseListener::ButtonCallbackType(this, &Application::MouseButtonReleased));
-   mMouseListener->SetMovedCallback(dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseMoved));
-   mMouseListener->SetDraggedCallback(dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseDragged));
-   mMouseListener->SetScrolledCallback(dtCore::GenericMouseListener::WheelCallbackType(this, &Application::MouseScrolled));
+   mKeyboardListener->SetPressedCallback (dtCore::GenericKeyboardListener::CallbackType     (this, &Application::KeyPressed));
+   mKeyboardListener->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType     (this, &Application::KeyReleased));
+   mMouseListener->SetPressedCallback    (dtCore::GenericMouseListener::ButtonCallbackType  (this, &Application::MouseButtonPressed));
+   mMouseListener->SetReleasedCallback   (dtCore::GenericMouseListener::ButtonCallbackType  (this, &Application::MouseButtonReleased));
+   mMouseListener->SetMovedCallback      (dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseMoved));
+   mMouseListener->SetDraggedCallback    (dtCore::GenericMouseListener::MovementCallbackType(this, &Application::MouseDragged));
+   mMouseListener->SetScrolledCallback   (dtCore::GenericMouseListener::WheelCallbackType   (this, &Application::MouseScrolled));
 
    mWindow = win;
 
@@ -249,6 +249,7 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
    
    GetKeyboard()->AddKeyboardListener( mKeyboardListener.get() );
+   GetMouse()->AddMouseListener( mMouseListener.get() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

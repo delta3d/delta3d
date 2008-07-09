@@ -135,9 +135,9 @@ namespace dtABC
       /// @param key the key released
       virtual bool KeyReleased(const dtCore::Keyboard* keyboard, int kc);
 
-      /// @return the instance of the listener used for callbacks
+      /// @return the instance of the keyboard listener used for callbacks
       const dtCore::GenericKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
-      /// @return the instance of the listener used for callbacks
+      /// @return the instance of the keyboard listener used for callbacks
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
 
@@ -173,6 +173,11 @@ namespace dtABC
       * @param delta The amount of wheel scrolled
       */
       virtual bool MouseScrolled(const dtCore::Mouse* mouse, int delta);
+
+      /// @return the instance of the mouse listener used for callbacks
+      const dtCore::GenericMouseListener* GetMouseListener() const { return mMouseListener.get(); }
+      /// @return the instance of the mouse listener used for callbacks
+      dtCore::GenericMouseListener* GetMouseListener() { return mMouseListener.get(); }
 
       /// the publicized default settings for a generated config file.
       static ApplicationConfigData GetDefaultConfigData();
