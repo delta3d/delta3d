@@ -71,6 +71,12 @@ class ApplicationWrap : public Application, public wrapper<Application>
       }
       return Application::KeyPressed( keyboard, kc );
    }
+   
+   virtual bool DefaultKeyPressed( const dtCore::Keyboard* keyboard,
+                                   int kc )
+   {
+      return this->Application::KeyPressed( keyboard, kc );
+   }
 
    virtual bool KeyReleased( const dtCore::Keyboard* keyboard,
       int kc )
@@ -86,17 +92,116 @@ class ApplicationWrap : public Application, public wrapper<Application>
       return Application::KeyReleased( keyboard, kc );
    }
 
-   virtual bool DefaultKeyPressed( const dtCore::Keyboard* keyboard,
-                                   int kc )
-   {
-      return this->Application::KeyPressed( keyboard, kc );
-   }
-
    virtual bool DefaultKeyReleased( const dtCore::Keyboard* keyboard,
       int kc )
    {
       return this->Application::KeyReleased( keyboard, kc );
    }
+
+   virtual bool MouseButtonPressed( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button )
+   {
+      if( override MouseButtonPressed = this->get_override("MouseButtonPressed") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseButtonPressed.ptr(), boost::ref(mouse), button );
+#else
+         return MouseButtonPressed( boost::ref(mouse), button );
+#endif
+      }
+      return Application::MouseButtonPressed( mouse, button );
+   }
+
+   virtual bool DefaultMouseButtonPressed( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button )
+   {
+      return this->Application::MouseButtonPressed( mouse, button );
+   }
+
+   virtual bool MouseButtonReleased( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button )
+   {
+      if( override MouseButtonReleased = this->get_override("MouseButtonReleased") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseButtonReleased.ptr(), boost::ref(mouse), button );
+#else
+         return MouseButtonReleased( boost::ref(mouse), button );
+#endif
+      }
+      return Application::MouseButtonReleased( mouse, button );
+   }
+
+   virtual bool DefaultMouseButtonReleased( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button )
+   {
+      return this->Application::MouseButtonReleased( mouse, button );
+   }
+ 
+   virtual bool MouseMoved( const dtCore::Mouse* mouse,
+      float x,
+	  float y )
+   {
+      if( override MouseMoved = this->get_override("MouseMoved") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseMoved.ptr(), boost::ref(mouse), x, y );
+#else
+         return MouseMoved( boost::ref(mouse), x, y );
+#endif
+      }
+      return Application::MouseMoved( mouse, x, y );
+   }
+
+   virtual bool DefaultMouseMoved( const dtCore::Mouse* mouse,
+      float x,
+	  float y )
+   {
+      return this->Application::MouseMoved( mouse, x, y );
+   }
+
+   virtual bool MouseDragged( const dtCore::Mouse* mouse,
+      float x,
+	  float y )
+   {
+      if( override MouseDragged = this->get_override("MouseDragged") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseDragged.ptr(), boost::ref(mouse), x, y );
+#else
+         return MouseDragged( boost::ref(mouse), x, y );
+#endif
+      }
+      return Application::MouseDragged( mouse, x, y );
+   }
+
+   virtual bool DefaultMouseDragged( const dtCore::Mouse* mouse,
+      float x,
+	  float y )
+   {
+      return this->Application::MouseDragged( mouse, x, y );
+   }
+   
+   virtual bool MouseScrolled( const dtCore::Mouse* mouse,
+      int delta )
+   {
+      if( override MouseScrolled = this->get_override("MouseScrolled") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseScrolled.ptr(), boost::ref(mouse), delta );
+#else
+         return MouseScrolled( boost::ref(mouse), delta );
+#endif
+      }
+      return Application::MouseScrolled( mouse, delta );
+   }
+
+   virtual bool DefaultMouseScrolled( const dtCore::Mouse* mouse,
+      int delta )
+   {
+      return this->Application::MouseScrolled( mouse, delta );
+   }
+
 
    virtual void OnCollisionMessage(PythonCollisionData pData)
    {
@@ -217,8 +322,12 @@ void initApplicationBindings()
       .def("Run", &Application::Run)
       .def("KeyPressed",&Application::KeyPressed,&ApplicationWrap::DefaultKeyPressed)
       .def("KeyReleased",&Application::KeyReleased,&ApplicationWrap::DefaultKeyReleased)
+	  .def("MouseButtonPressed",&Application::MouseButtonPressed,&ApplicationWrap::DefaultMouseButtonPressed)
+	  .def("MouseButtonReleased",&Application::MouseButtonReleased,&ApplicationWrap::DefaultMouseButtonReleased)
+	  .def("MouseMoved",&Application::MouseMoved,&ApplicationWrap::DefaultMouseMoved)
+	  .def("MouseDragged",&Application::MouseDragged,&ApplicationWrap::DefaultMouseDragged)
+	  .def("MouseScrolled",&Application::MouseScrolled,&ApplicationWrap::DefaultMouseScrolled)
       ;
-
 
    class_<PythonCollisionData>("CollisionData")
       .def("GetBody1", &PythonCollisionData::GetBody1, return_value_policy<reference_existing_object>())
