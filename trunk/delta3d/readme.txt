@@ -29,9 +29,7 @@ The Delta3D Team
 
 Here's what we know does work:
 
-Microsoft Windows XP w/ Microsoft Visual Studio .NET 2003 (7.1)
-Microsoft Windows XP w/ Microsoft Visual Studio .NET 2005 (8.0)
-Microsoft Windows XP w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
+Microsoft Windows XP and Vista with Microsoft Visual Studio 2003-2008
 Linux w/ gcc3.3.x
 Linux w/ gcc3.4.x
 Linux w/ gcc4.0.x
@@ -96,27 +94,28 @@ DELTA_LIB: $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib:$DELTA_ROOT/ext/lib/osgPlugins
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
 
 ########################################
-# Platform-specific build instructions #
+# Build instructions                   #
 ########################################
 
-Windows with Visual Studio 2005
+Building with CMake
 -------------------------------
 
 1. Make sure you have your depedencies setup (see above).
 
-2. Open VisualStudio/delta_2005.sln, build! This will generate the essential Delta3D
-   libraries that can be built with our distributed dependencies.
+2. Run CMake.exe (Windows) or ccmake (Linux), supplying the %DELTA_ROOT%/CMakelists.txt file.
 
-3. The rest of the components can be build with project files of
-   the individual componets.
-   (dependencies that we do not distribute are listed in parentheses):
+3. Select the Build options for the projects you wish to generate. Some
+   build options enable other options and require additional external
+   dependencies, some of which might not be distributed.
    
-   VisualStudio/src/dtHLAGM/dthlagm.sln      : HLA library (RTI)
-   VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
-   VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
- 
-   Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
-   VisualStudio/delta_all_2005.sln  
+4. Click the Configure button and resolve any missing dependencies.  Continue
+   to Configure and set options.
+
+5. Once the CMake Generate button is enabled, you're good to go.  Click on 
+   Generate and the project files will be generated
+   
+6. See the online tutorials for more building information.   
+
 
    dtHLAGM
    -----
@@ -124,16 +123,6 @@ Windows with Visual Studio 2005
    Delta3D, so you are on your own. The dtHLAGM module is compiled and tested
    against RTI-S 1.3_D18 although any RTI supporting spec 1.3 should work.
 
-   To build the module dtHLAGM, 
-   you must add your RTI include and lib paths to the project settings or to
-   your global search directories using :
-
-   Tools->Options->Projects->VC++ Directories
-   
-   Also, in order to run the unit tests, you must add the directory containing
-   your RTI DLLs to the VC++ directory for executable files.
-
-   VS solutions are provided for these apps in the delta_all_2005.sln.
 
    The Python Bindings
    -------------------
@@ -172,27 +161,19 @@ Windows with Visual Studio 2005
       make sure to remove the Boost.Python DLLs contained in delta3d\ext\bin before
       going any further. Otherwise, they will conflict with the DLL you just built.
    
-   9. Open Visual Studio and add the search paths to the Boost folder
-      -Select Tools->Options
-      -Select the Projects folder
-      -Select VC++ Directories
-      -Change 'Show directories for:' to Include files
-      -Add your Boost directory to the list
-      -Change 'Show directories for:' to Library files
-      -Add 'boost_*\stage\lib' (or whatever your proper path is)to the list
+   9. Ensure CMake has the valid Boost include and library paths
    
    10. Build!
    
-   11. Make sure the .pyd libraries were built into delta3d\bin. If not, rinse and repeat.
+   11. Ensure the generated .pyd files are in the /bin folder under your CMake build folder.
    
-   12. Set your PYTHONPATH environement variable contains the directory with the resulting 
-       .pyd libraries (most likely delta3d\bin).
+   12. Set your PYTHONPATH environment variable contains the directory with the resulting 
+       .pyd libraries.
 
    STAGE
    -----
    You'll need:
-   -Visual Studio .NET 2005
-   -Qt 4.x, the windows open-source release (http://www.trolltech.com)
+   -Qt 4.x, the Windows or Linux open-source release (http://www.trolltech.com)
    
    
    Building Qt 4.x Open Source Version with MSVC
@@ -206,7 +187,7 @@ Windows with Visual Studio 2005
           to build the libraries (much faster), type "nmake sub-src".
    
    
-   Building the Delta3D Editor with MSVC
+   Building STAGE
    -------------------------------------
    
    1. IMPORTANT: If you have installed the Windows dependency package or
@@ -216,87 +197,9 @@ Windows with Visual Studio 2005
       reading this section it means you _are_ rebuilding Qt in order
       to rebuild STAGE, so the old DLLs will conflict.
    
-   2. Ok, onto building the editor. Open:
-      delta3d\VisualStudio\utilities\STAGE\dtEditQt_2005.sln
+   2. If all the requirements are met, CMake should generate the STAGE project.
    
-   3. Build the entire solution.
+   3. Build!.
 
-   4. The STAGE.exe file should now reside in delta3d/bin.  Double-click to run!
-
-Windows w/ SCons & Linux
------------------------
-
-1. Download SCons from http://www.scons.org .
-
-2. You will notice files called SConstruct and SConscript in the delta3d 
-   subdirectories. These files are high-level scripts that tell SCons how 
-   to build Delta3D.
-
-   To build the Delta3D libraries from the root delta3d directory type:
-    scons
-
-   By default, this will build everything possible, including all
-   Delta3D libraries, examples, utilities, and Python bindings. If SCons
-   cannot find Boost.Python (or buildPythonBindings=0 is passed to scons)
-   the bindings will be skipped. Likewise, if RTI cannot be found, the dtHLAGM
-   library will be skipped.
-    
-   To install the shared libraries in the lib folder under the prefix
-   you specified:
-    scons install
-
-   Use options include:
-    -Q     - Quiet output.
-    -j N   - Number of jobs to use, help for multiple processors.
-    -c     - Clean out the previous build.
-    --help - Display all options
-
-    prefix=path - Path to in which to install Delta3D (e.g. /usr/local)
-    libdir=path - Path to install libraries to (overrides prefix) (e.g. /usr/loca/lib64)
-    includedir=path - Path to install headers to (overrides prefix)
-    bindir=path - Path to install executables to (overrides prefix)
-    mode=debug|release - 'debug' builds with debugging symbols.
-                         'release' builds with optimizations enabled.
-    boost=path to your boost installation
-    rti=path ro your RTI installation
-    cpppath=additional include directories (comma delimited)
-    libpath=additional library directories (comma delimited)
-    buildPythonBindings=0|1 - Set this to 0 if you want to skip the bindings
-
-3. To build your own Delta3D apps in SCons, feel free to hack on scons_template
-   as a template for how to use SCons outside our source tree.   
-
-   dtPython
-   --------
-   The Delta3D Python bindings requires the following additional 
-   packages: Python and Boost.Python. 
-
-   Install Boost Python (Linux w/ bjam, see above for MSVC):
-   - Obtain the Boost library from SourceForge (package 'boost'):
-     http://sourceforge.net/projects/boost/
-   - Obtain Boost Jam (package 'boost-jam').
-   - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
-   - Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
-   - Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
-   - Go to boost/libs/python/build.
-   - Run 'bjam -sTOOLS=gcc'.
-   - Root up and 'bjam install'
-
-   Build the Python bindings for Delta3D engine:
-   - Go to the delta3d root directory.
-   - If your installation of Boost is in a non-standard location,
-     run scons with the 'boost=/path/to/boost' option, otherwise just build
-     as normal.
-    
-   Set the PYTHONPATH environement variable to contain the var DELTA_LIB.
-
-   dtHLAGM
-   -----
-   Requries RTI package to be installed! We cannot distribute RTI with
-   Delta3D, so you are on your own. The dtHLAGM module is compiled and tested
-   against RTI-S although any RTI should work.
-
-   Once your have an RTI installed, run:
-
-   'scons rti=/path/to/rti'
-   
+   4. The STAGE.exe file should now reside in the /bin folder of your CMake 
+      build folder.  Double-click to run!
