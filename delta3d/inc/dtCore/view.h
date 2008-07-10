@@ -43,6 +43,7 @@ namespace dtCore
 {
    class Camera;
    class Scene;
+   class DeltaDrawable;
 
    class KeyboardMouseHandler;
    class Keyboard;
@@ -146,6 +147,12 @@ namespace dtCore
                              const osg::Vec2 &mousePos, 
                              unsigned int traversalMask = 0xffffffff );
 
+       /** Use the mouse cursor position to do an intersection into the view.  Return
+         * back the first DeltaDrawable if one was intersected.
+         * @param traversalMask : the bit mask to use for the intersection traversal
+         * @return A DeltaDrawable that was intersected, or NULL
+         */
+       dtCore::DeltaDrawable* GetMousePickedObject(unsigned int traversalMask = 0xffffffff);
       
        /** Supply a DatabasePager instance to overwrite the internal default pager.
          * @param pager : A custom DatabasePager (or NULL to disable database paging)
@@ -212,7 +219,12 @@ namespace dtCore
       KeyboardMouseHandler * GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
 
       dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
-            
+
+      ///Get the list of Intersections given the mouse position and traversal mask
+      bool GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersections& hitList,
+                                 const osg::Vec2& mousePos,
+                                 unsigned int traversalMask);
+
       typedef std::set<dtCore::RefPtr<dtCore::Camera> > CameraSet;
       /// set of osg::Camera wrapping the mView camera slave list
       CameraSet mCameraSlave;
