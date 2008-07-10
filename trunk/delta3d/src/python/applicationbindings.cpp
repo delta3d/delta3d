@@ -202,6 +202,27 @@ class ApplicationWrap : public Application, public wrapper<Application>
       return this->Application::MouseScrolled( mouse, delta );
    }
 
+   virtual bool MouseButtonDoubleClicked( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button,
+	  int clickCount )
+   {
+      if( override MouseButtonDoubleClicked = this->get_override("MouseButtonDoubleClicked") )
+      {
+#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( MouseButtonDoubleClicked.ptr(), boost::ref(mouse), button, clickCount );
+#else
+         return MouseButtonDoubleClicked( boost::ref(mouse), button, clickCount );
+#endif
+      }
+      return Application::MouseButtonDoubleClicked( mouse, button, clickCount );
+   }
+
+   virtual bool DefaultMouseButtonDoubleClicked( const dtCore::Mouse* mouse,
+      dtCore::Mouse::MouseButton button,
+	  int clickCount )
+   {
+      return this->Application::MouseButtonDoubleClicked( mouse, button, clickCount );
+   }
 
    virtual void OnCollisionMessage(PythonCollisionData pData)
    {
