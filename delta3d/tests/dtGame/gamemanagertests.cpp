@@ -70,14 +70,6 @@
 
 extern dtABC::Application& GetGlobalApplication();
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
-
 class GameManagerTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameManagerTests);
@@ -251,9 +243,9 @@ void GameManagerTests::TestTemplatedActorMethods()
       //proxies.push_back(p);
       mManager->AddActor(*p, false, false);
    }
-   
+
    dtActors::GameMeshActorProxy *shouldBeValid;
-   
+
    mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
    mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
    CPPUNIT_ASSERT(shouldBeValid != NULL);
@@ -308,22 +300,22 @@ void GameManagerTests::TestPrototypeActors()
    CPPUNIT_ASSERT_MESSAGE("Tried finding a prototype that should be in the gm, but its not....",prototypeToFill != 0 );
 
    dtCore::RefPtr<dtDAL::ActorProxy> ourActualActor = mManager->CreateActorFromPrototype(toMakeAsAPrototype->GetId());
-   
+
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor != NULL);
    CPPUNIT_ASSERT_MESSAGE("Tried cloning from a prototype, didn't work out too well...", ourActualActor->GetName() == toMakeAsAPrototype->GetName());
 
    dtCore::RefPtr<dtActors::GameMeshActorProxy> testFindPrototype;
    mManager->FindPrototypeByID(toMakeAsAPrototype->GetId(), testFindPrototype);
-   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have been able to find the prototype", 
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have been able to find the prototype",
       testFindPrototype.valid());
-   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have found the correct prototype", 
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by Id method should have found the correct prototype",
       testFindPrototype->GetId() == toMakeAsAPrototype->GetId());
 
    dtActors::GameMeshActorProxy* testFindPrototypeByName = NULL;
    mManager->FindPrototypeByName(toMakeAsAPrototype->GetName(), testFindPrototypeByName);
-   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have been able to find the prototype", 
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have been able to find the prototype",
       testFindPrototypeByName != NULL);
-   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have found the correct prototype", 
+   CPPUNIT_ASSERT_MESSAGE("The prototype find by name method should have found the correct prototype",
       testFindPrototype->GetId() == testFindPrototypeByName->GetId());
 
    dtCore::RefPtr<dtActors::GameMeshActorProxy> testCreatePrototype;
@@ -338,7 +330,7 @@ void GameManagerTests::TestApplicationMember()
    {
       mManager->GetApplication();
       CPPUNIT_FAIL("Trying to get the application when it's NULL should fail.");
-   } 
+   }
    catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_ASSERT(ex.TypeEnum() == dtGame::ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION);
@@ -349,22 +341,22 @@ void GameManagerTests::TestApplicationMember()
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_INTERVAL, "4");
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_TO_CONSOLE, "false");
    app->SetConfigPropertyValue(dtGame::GameManager::CONFIG_STATISTICS_OUTPUT_FILE, "testOut.txt");
-   
+
    mManager->SetApplication(*app);
 
    try
    {
       CPPUNIT_ASSERT(app == &mManager->GetApplication());
-   } 
+   }
    catch (const dtUtil::Exception&)
    {
       CPPUNIT_FAIL("The application should not be NULL.");
    }
-   
+
    CPPUNIT_ASSERT_EQUAL(mManager->GetStatisticsInterval(), 4);
    CPPUNIT_ASSERT(!mManager->GetStatisticsToConsole());
    CPPUNIT_ASSERT_EQUAL(mManager->GetStatisticsLogFilePath(), std::string("testOut.txt"));
-   
+
 }
 
 /////////////////////////////////////////////////
@@ -577,8 +569,8 @@ void GameManagerTests::TestActorSearching()
       for(unsigned int i = 0; i < typeVec.size() && i < 5; i++)
       {
          // In order to keep the tests fasts, we skip the nasty slow ones.
-         if (typeVec[i]->GetName() == "Cloud Plane" || typeVec[i]->GetName() == "Environment" || 
-            typeVec[i]->GetName() == "Test Environment Actor") 
+         if (typeVec[i]->GetName() == "Cloud Plane" || typeVec[i]->GetName() == "Environment" ||
+            typeVec[i]->GetName() == "Test Environment Actor")
          {
             numActorsSkipped ++;
             continue;
@@ -608,7 +600,7 @@ void GameManagerTests::TestActorSearching()
 
       //unsigned t = supportedProxies.size();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of proxies found is not equal to the number that exist", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of proxies found is not equal to the number that exist",
          supportedProxies.size(), size_t(size));
 
 
@@ -677,11 +669,11 @@ void GameManagerTests::TestAddRemoveComponents()
       mManager->AddComponent(*whackComp, dtGame::GameManager::ComponentPriority::NORMAL);
       CPPUNIT_FAIL("A component with the name rulesComp was already added. An exception wasn't thrown when it should  have been.");
    }
-   catch(const dtUtil::Exception&) 
+   catch(const dtUtil::Exception&)
    {
       // Correct
    }
-   
+
 
    CPPUNIT_ASSERT(rc->GetGameManager() == mManager.get());
    CPPUNIT_ASSERT(rc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::LOWER);
@@ -694,7 +686,7 @@ void GameManagerTests::TestAddRemoveComponents()
 
    comp = mManager->GetComponentByName("rulesComp");
    CPPUNIT_ASSERT_MESSAGE("Finding the rules component by name should return the correct pointer", comp == rc.get());
-   
+
    mManager->AddComponent(*dmc, dtGame::GameManager::ComponentPriority::HIGHEST);
    CPPUNIT_ASSERT(dmc->GetComponentPriority() == dtGame::GameManager::ComponentPriority::HIGHEST);
 
@@ -703,7 +695,7 @@ void GameManagerTests::TestAddRemoveComponents()
 
    comp = mManager->GetComponentByName("whack");
    CPPUNIT_ASSERT_MESSAGE("No component named whack was added. The pointer should be NULL", comp == NULL);
-   
+
    //test const get all
    std::vector<const dtGame::GMComponent*> toFill2;
    mManager->GetAllComponents(toFill2);
@@ -816,10 +808,10 @@ void GameManagerTests::TestCreateRemoteActor()
    //sanity check.
    CPPUNIT_ASSERT(type.valid());
    CPPUNIT_ASSERT(gameActorType.valid());
-  
+
    CPPUNIT_ASSERT_THROW(mManager->CreateRemoteGameActor(*type), dtUtil::Exception);
-   
-   dtCore::RefPtr<dtGame::GameActorProxy> proxy; 
+
+   dtCore::RefPtr<dtGame::GameActorProxy> proxy;
    CPPUNIT_ASSERT_NO_THROW(proxy = mManager->CreateRemoteGameActor(*gameActorType));
    CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
    CPPUNIT_ASSERT_MESSAGE("The proxy created as remote should not be NULL.", proxy.valid());
@@ -830,13 +822,13 @@ void GameManagerTests::TestCreateRemoteActor()
 //////////////////////////////////////////////////////////////////////////
 void GameManagerTests::TestAddActorCrash()
 {
-   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestCrash");   
+   dtCore::RefPtr<const dtDAL::ActorType> type = mManager->FindActorType("ExampleActors", "TestCrash");
    CPPUNIT_ASSERT(type != NULL);
    dtCore::RefPtr<dtGame::GameActorProxy> proxy;
    mManager->CreateActor(*type, proxy);
-   CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor as both remote and published should throw and exception.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("Adding an actor as both remote and published should throw and exception.",
          mManager->AddActor(*proxy, true, true), dtUtil::Exception);
-   
+
    CPPUNIT_ASSERT(!proxy->IsInGM());
 
    dtCore::System::GetInstance().Step();
@@ -858,10 +850,10 @@ void GameManagerTests::TestAddActor()
       mManager->CreateActor(*type, proxy);
       CPPUNIT_ASSERT_MESSAGE("Proxy should not be in the gm yet", proxy->IsInGM() != true);
       CPPUNIT_ASSERT_MESSAGE("Proxy should have a valid GM on it", proxy->GetGameManager() != NULL);
-      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL", 
+      CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL",
             proxy != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActorProxy should return true", proxy->IsGameActorProxy());
-      
+
       mManager->CreateActor(type->GetCategory(), type->GetName(), proxy);
       CPPUNIT_ASSERT_MESSAGE("Proxy, the result of a dynamic_cast to dtGame::GameActorProxy, should not be NULL",
             proxy != NULL);
@@ -869,26 +861,26 @@ void GameManagerTests::TestAddActor()
 
       if (x % 3 == 0)
       {
-         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to valid", 
+         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to valid",
                proxy->GetGameManager() != NULL);
-         
+
          mManager->AddActor(*proxy, false, false);
-         
+
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
-         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set", 
+         CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set",
                proxy->GetGameManager() == mManager.get());
-         dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound = 
+         dtCore::RefPtr<dtGame::GameActorProxy> gameProxyFound =
             mManager->FindGameActorById(proxy->GetId());
-            
+
          CPPUNIT_ASSERT(gameProxyFound != NULL);
          CPPUNIT_ASSERT(gameProxyFound.get() == proxy.get());
          CPPUNIT_ASSERT_MESSAGE("Actor should not be remote.", !proxy->IsRemote());
          CPPUNIT_ASSERT_MESSAGE("Actor should not be published.", !proxy->IsPublished());
 
          CPPUNIT_ASSERT_MESSAGE("The actor should have been added to the scene.",
-            mManager->GetScene().GetDrawableIndex(proxy->GetActor()) 
+            mManager->GetScene().GetDrawableIndex(proxy->GetActor())
             != mManager->GetScene().GetNumberOfAddedDrawable());
 
          try
@@ -917,7 +909,7 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          //have to send a from event to make the actor get deleted
-         SLEEP(10);
+         dtCore::AppSleep(10);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not be in the scene.",
@@ -929,18 +921,18 @@ void GameManagerTests::TestAddActor()
       else if (x % 3 == 1)
       {
          CPPUNIT_ASSERT_THROW_MESSAGE(
-               "Adding an actor as both remote and published should throw and exception.", 
+               "Adding an actor as both remote and published should throw and exception.",
                mManager->AddActor(*proxy, true, true), dtUtil::Exception);
 
-         
+
          CPPUNIT_ASSERT_MESSAGE("An actor should not be added to the GM if it's both remote and published.", mManager->FindGameActorById(proxy->GetId()) == NULL);
 
          // Setting the game manager to NULL to verify that add actor makes sure it's set.
          proxy->SetGameManager(NULL);
          CPPUNIT_ASSERT_NO_THROW_MESSAGE("Adding an actor as ", mManager->AddActor(*proxy, true, false));
- 
+
          CPPUNIT_ASSERT(proxy->GetGameManager() == mManager.get());
-         
+
          dtCore::RefPtr<dtDAL::ActorProxy> proxyFound = mManager->FindActorById(proxy->GetId());
          CPPUNIT_ASSERT(proxyFound != NULL);
          CPPUNIT_ASSERT(proxyFound.get() == proxy.get());
@@ -968,13 +960,13 @@ void GameManagerTests::TestAddActor()
          bool testIsInGM = proxy->IsInGM();
 
          CPPUNIT_ASSERT_MESSAGE("The proxy should not be in the gm", testIsInGM != true);
-         
+
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          CPPUNIT_ASSERT_MESSAGE("The actor should still be in the scene.",
             mManager->GetScene().GetDrawableIndex(proxy->GetActor()) != mManager->GetScene().GetNumberOfAddedDrawable());
          //have to send a from event to make the actor get deleted
-         SLEEP(10);
+         dtCore::AppSleep(10);
          dtCore::System::GetInstance().Step();
 
          CPPUNIT_ASSERT_MESSAGE("The actor should not still be in the scene.",
@@ -1079,7 +1071,7 @@ void GameManagerTests::TestComplexScene()
    //remove proxy 0 to make it's children move up one.
    mManager->DeleteActor(*proxies[0]);
 
-   SLEEP(2);
+   dtCore::AppSleep(2);
    dtCore::System::GetInstance().Step();
 
    //check current children.
@@ -1101,7 +1093,7 @@ void GameManagerTests::TestComplexScene()
    //remove proxy 5 to make it's children move up one.
    mManager->DeleteActor(*proxies[5]);
 
-   SLEEP(2);
+   dtCore::AppSleep(2);
    dtCore::System::GetInstance().Step();
 
    unsigned currentInScene[] = { 1, 2, 3, 4, 6, 7 };
@@ -1132,19 +1124,19 @@ void GameManagerTests::TestComplexScene()
 void GameManagerTests::TestOnAddedToGM()
 {
    dtCore::RefPtr<TestComponent> tc = new TestComponent;
-   CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should not be called until added to the GM.", 
+   CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should not be called until added to the GM.",
       !(tc->mWasOnAddedToGMCalled));
 
    mManager->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
-   CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should be called when added to the GM.", 
+   CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should be called when added to the GM.",
       tc->mWasOnAddedToGMCalled);
 
    dtCore::System::GetInstance().Step();
-   CPPUNIT_ASSERT_MESSAGE("GM should have sent RESTARTED message on startup.", 
+   CPPUNIT_ASSERT_MESSAGE("GM should have sent RESTARTED message on startup.",
       tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESTARTED).valid());
 
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
-   CPPUNIT_ASSERT_MESSAGE("INFO_RESTARTED should be very first message from GM. Always.", 
+   CPPUNIT_ASSERT_MESSAGE("INFO_RESTARTED should be very first message from GM. Always.",
       msgs[0]->GetMessageType() == dtGame::MessageType::INFO_RESTARTED);
 }
 
@@ -1173,13 +1165,13 @@ void GameManagerTests::TestTimers()
    //this shouldn't ever need to run more than once, but sometimes windows doesn't sleep as long as it's supposed to.
    while (currentSimTime < expectedSimTime)
    {
-      SLEEP(2);
+      dtCore::AppSleep(6);
       dtCore::System::GetInstance().Step();
 
       currentSimTime  = mManager->GetSimulationClockTime();
       currentRealTime = mManager->GetRealClockTime();
    }
-   
+
    std::ostringstream msg1;
    msg1 << "(" << currentSimTime << ") should be > than (" <<expectedSimTime << ")";
    CPPUNIT_ASSERT_MESSAGE(msg1.str(), currentSimTime  > expectedSimTime);
@@ -1203,12 +1195,16 @@ void GameManagerTests::TestTimers()
          if(tem->GetTimerName() == "SimTimer1")
          {
             CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
-                                                 float(lateSimTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+                                                 double(lateSimTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
          }
          else if(tem->GetTimerName() == "RepeatingTimer1")
          {
             CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The late time should be reasonably close to the expected late time",
-                                                  float(lateRealTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+                                                  double(lateRealTime) * 1e-6f, tem->GetLateTime(), 1e-5f);
+         }
+         else
+         {
+            CPPUNIT_FAIL("A timer elapsed message was received with an unexpected name: " + tem->GetTimerName());
          }
 
          foundTimeMsg = true;
@@ -1218,7 +1214,7 @@ void GameManagerTests::TestTimers()
 
    msgs.clear();
    tc->reset();
-   SLEEP(2);
+   dtCore::AppSleep(2);
    dtCore::System::GetInstance().Step();
    msgs = tc->GetReceivedProcessMessages();
    foundTimeMsg = false;
@@ -1250,7 +1246,7 @@ void GameManagerTests::TestTimers()
 
    msgs.clear();
    tc->reset();
-   SLEEP(2);
+   dtCore::AppSleep(2);
    dtCore::System::GetInstance().Step();
    msgs = tc->GetReceivedProcessMessages();
    unsigned int msgCount = 0;
@@ -1271,9 +1267,9 @@ void GameManagerTests::TestTimers()
    msgs.clear();
    tc->reset();
 
-   SLEEP(5);
+   dtCore::AppSleep(5);
    dtCore::System::GetInstance().Step();
-   SLEEP(1);
+   dtCore::AppSleep(1);
    dtCore::System::GetInstance().Step();
 
    msgs = tc->GetReceivedProcessMessages();
@@ -1293,7 +1289,7 @@ void GameManagerTests::TestFindActorById()
    CPPUNIT_ASSERT(transActor.valid());
    mManager->AddActor(*transActor);
 
-   dtDAL::TransformableActorProxy *value; 
+   dtDAL::TransformableActorProxy *value;
    mManager->FindActorById(transActor->GetId(), value);
 
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should not return NULL", transActor.valid());
@@ -1317,7 +1313,7 @@ void GameManagerTests::TestFindGameActorById()
 
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should not return NULL", envActor.valid());
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should return the correct pointer", value == envActor.get());
-   
+
    TestPlayerProxy *shouldBeNULL;
    mManager->FindGameActorById(envActor->GetId(), shouldBeNULL);
    CPPUNIT_ASSERT_MESSAGE("The template version of FindGameActorById should have returned NULL", shouldBeNULL == NULL);
@@ -1352,28 +1348,28 @@ void GameManagerTests::TestGMShutdown()
    dtCore::RefPtr<TestComponent> tc = new TestComponent;
    mManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    dtDAL::Project& project = dtDAL::Project::GetInstance();
-   try 
+   try
    {
       const std::string context = "data/ProjectContext";
       project.SetContext(context);
-      
-      dtDAL::Map& m = project.CreateMap("testMap", "aa");      
-      
+
+      dtDAL::Map& m = project.CreateMap("testMap", "aa");
+
       const unsigned int numActors = 20;
       for(unsigned int i = 0; i < numActors; i++)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy = 
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
             mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE);
-   
+
          CPPUNIT_ASSERT(proxy.valid());
-   
+
          m.AddProxy(*proxy);
       }
-   
+
       project.SaveMap(m);
-      
+
       mManager->ChangeMap(m.GetName(), false);
-      
+
       //Make sure the map change completes.
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
@@ -1382,24 +1378,24 @@ void GameManagerTests::TestGMShutdown()
       CPPUNIT_ASSERT_EQUAL(1U, unsigned(mManager->GetCurrentMapSet().size()));
 
       dtCore::ObserverPtr<dtDAL::Map> mapPtr = &m;
-   
+
       mManager->Shutdown();
-   
+
       CPPUNIT_ASSERT_MESSAGE("The map should have been closed on shutdown.", !mapPtr.valid());
-      
-      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component", 
+
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have flipped the removed from GM flag on the component",
          tc->mWasOnRemovedFromGMCalled);
-   
-      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component", 
+
+      CPPUNIT_ASSERT_MESSAGE("Shutdown of the game manager should have removed the test component",
          mManager->GetComponentByName(tc->GetName()) == NULL);
-   
+
       CPPUNIT_ASSERT(mManager->GetCurrentMapSet().empty());
-   
+
       std::vector<dtDAL::ActorProxy*> proxies;
       mManager->GetAllActors(proxies);
-      CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors", 
+      CPPUNIT_ASSERT_MESSAGE("Shut down of the game manager should have deleted the actors",
          proxies.empty());
-         
+
       //calling it twice should be ok.
       //mManager->Shutdown();
       dtDAL::Project::GetInstance().DeleteMap("testMap");
