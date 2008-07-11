@@ -9,6 +9,7 @@
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include <cassert>
+#include <osgUtil/LineSegmentIntersector>
 
 #include <osgViewer/View>
 
@@ -201,39 +202,89 @@ bool View::GetMousePickPosition( osg::Vec3 &position, unsigned int traversalMask
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool View::GetPickPosition( osg::Vec3 &intersectionPoint, 
+bool View::GetPickPosition(osg::Vec3& intersectionPoint, 
                            const osg::Vec2 &mousePos, 
-                           unsigned int traversalMask )
+                           unsigned int traversalMask)
 {
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
-   Camera *cam = GetCamera();
-   if (cam == NULL)  return false;
-
-   dtCore::DeltaWin *win = cam->GetWindow();
-   if (win == NULL )
-   {
-      return false;
-   }
-
-   // lower left screen has ( 0, 0 )
-   osg::Vec2 windowCoord( 0.0 , 0.0 ) ;
-   win->CalcPixelCoords(mousePos, windowCoord );
-
-   if( GetOsgViewerView()->computeIntersections( windowCoord.x(), windowCoord.y(),
-                                                 hitList, traversalMask ) )
+   if (GetMouseIntersections(hitList, mousePos, traversalMask))
    {
       std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin() ;
       osgUtil::LineSegmentIntersector::Intersection hit = *itr ;
 
       intersectionPoint = hit.getWorldIntersectPoint() ;
 
-      return true ;
+      return true;
    }
    else
    {
-      return false ;
+      return false;
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersections& hitList,
+                                         const osg::Vec2& mousePos,
+                                         unsigned int traversalMask)
+{
+   if (GetCamera() == NULL)  {return false;}
+
+   if (GetCamera()->GetWindow() == NULL) {return false;}
+
+   // lower left screen has ( 0, 0 )
+   osg::Vec2 windowCoord( 0.0 , 0.0 ) ;
+   GetCamera()->GetWindow()->CalcPixelCoords(mousePos, windowCoord );
+
+   if (GetOsgViewerView()->computeIntersections(windowCoord.x(), windowCoord.y(),
+                                                hitList, traversalMask))
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask) 
+{
+   const Mouse* mouse = GetMouse();
+   if (mouse == NULL) {return NULL;}
+
+   dtCore::Scene *scene = GetScene();
+   if (scene == NULL) {return NULL;}
+
+   osgUtil::LineSegmentIntersector::Intersections hitList ;
+
+   if (GetMouseIntersections(hitList, mouse->GetPosition(), traversalMask) == false) 
+   {
+      return NULL;
+   }
+
+   //if a node in a hit's node path is owned by a DeltaDrawable, then return it
+   std::multiset< osgUtil::LineSegmentIntersector::Intersection >::const_iterator hitItr = hitList.begin();
+   while (hitItr != hitList.end())
+   {
+      for (unsigned int i=0; i<scene->GetNumberOfAddedDrawable(); i++)
+      {
+         osg::NodePath::const_iterator nodeItr = hitItr->nodePath.begin();
+         while (nodeItr != hitItr->nodePath.end())
+         {
+            if (*nodeItr == scene->GetDrawable(i)->GetOSGNode())
+            {
+               //found a match, return it
+               return scene->GetDrawable(i);
+            }
+            ++nodeItr;
+         }
+      }
+      ++hitItr;
+   }
+
+   //nothing hit or no match found, return NULL
+   return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -273,3 +324,4 @@ const dtCore::DatabasePager* dtCore::View::GetDatabasePager() const
 {
    return mPager.get();
 }
+

@@ -311,6 +311,24 @@ protected:
       return verdict;
    }
 
+   //If a physical object is picked, apply a little spinning force to it
+   virtual bool MouseButtonPressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button)
+   {
+      if (button != 0) {return false;}
+
+      dtCore::DeltaDrawable* drawable = GetView()->GetMousePickedObject();
+      if (drawable == NULL) {return false;} //nothing picked
+
+      dtCore::Physical *phys = dynamic_cast<dtCore::Physical *>(drawable);
+      if (phys == NULL) {return false;} //didn't pick a Physical
+
+      if (phys->DynamicsEnabled() == false) {return false;} //not enabled
+      
+      dBodyAddForce(phys->GetBodyID(), 0.f, 0.f, 120.f);
+      dBodyAddTorque(phys->GetBodyID(), 0.f, 0.f, 60.f);
+      return true;
+   }
+
    ///Use the mouse pick point to calculate the starting location
    Transform GetStartTransform()
    {
