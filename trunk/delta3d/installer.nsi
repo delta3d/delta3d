@@ -10,6 +10,10 @@
   OutFile dt_win32_${VERSION}_setup.exe
 !endif
 
+!ifndef DELTA_BUILD_DIR
+  !define DELTA_BUILD_DIR 'build'
+!endif
+
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Delta3D"
 !define PRODUCT_VERSION ${VERSION}
@@ -76,22 +80,24 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   File "changes.txt"
+  File "CMakeLists.txt"
+  File "configure"
+  File "configure.bat"
+  File "configure-debug"
   File "credits.txt"
-  File "delta3d.py"
-  File "gch.py"
   File "installer.nsi"
   File "license.txt"
-  File "macosx.py"
-  File "qt4.py"
   File "readme.txt"
-  File "scons_template"
-  File "SConstruct"
 
-  ;bin : both debug/release .dlls, all release .exe's, and the python bindings
-  SetOutPath "$INSTDIR\bin"
-  File .\bin\*.dll
-  File /x *d.exe .\bin\*.exe
-  File .\bin\*.pyd
+
+  ;bin : both debug/release .dlls, all release .exe's
+  SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin"
+  File .\${DELTA_BUILD_DIR}\bin\*.dll
+  File /x *d.exe .\${DELTA_BUILD_DIR}\bin\*.exe
+  
+  ;bin\release : the Python bindinds
+  SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
+  File .\${DELTA_BUILD_DIR}\bin\release\*.pyd
   
   ;data
   SetOutPath "$INSTDIR\data"
@@ -105,7 +111,6 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR\doc"
   File "doc\doxyfile.cfg"
   File "doc\footer.html"
-  File "doc\SConscript"
   File /r /x .svn .\doc\html
   
   ;examples
@@ -121,8 +126,8 @@ Section "!Delta3D" Delta3DSection
   File /r /x .svn .\inc\*
   
   ;lib
-  SetOutPath "$INSTDIR\lib"
-  File /x *.exp .\lib\*
+  SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\lib"
+  File /x *.exp .\${DELTA_BUILD_DIR}\lib\*
   
   ;macosx
   SetOutPath "$INSTDIR\macosx"
@@ -246,21 +251,21 @@ Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\changes.txt"
+  Delete "$INSTDIR\CMakeLists.txt"
+  Delete "$INSTDIR\configure"
+  Delete "$INSTDIR\configure.bat"
+  Delete "$INSTDIR\configure-debug"
   Delete "$INSTDIR\credits.txt"
-  Delete "$INSTDIR\delta3d.py"
-  Delete "$INSTDIR\gch.py"
   Delete "$INSTDIR\installer.nsi"
   Delete "$INSTDIR\license.txt"
-  Delete "$INSTDIR\macosx.py"
-  Delete "$INSTDIR\qt4.py"
   Delete "$INSTDIR\readme.txt"
-  Delete "$INSTDIR\scons_template"
-  Delete "$INSTDIR\SConstruct"
   Delete "$INSTDIR\oalinst.exe"
   Delete "$INSTDIR\vcredist_x86.exe"
 
+
+
   ;bin
-  RMDir /r $INSTDIR\bin
+  RMDir /r $INSTDIR\${DELTA_BUILD_DIR}\bin
   
   ;data
   RMDIR /r $INSTDIR\data
@@ -281,7 +286,7 @@ Section Uninstall
   RMDIR /r $INSTDIR\inc
   
   ;lib
-  RMDIR /r $INSTDIR\lib
+  RMDIR /r $INSTDIR\${DELTA_BUILD_DIR}\lib
   
   ;macosx
   RMDIR /r $INSTDIR\macosx
