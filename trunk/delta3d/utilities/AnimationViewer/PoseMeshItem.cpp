@@ -571,7 +571,7 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
       if (++rangeStart != rangeEnd)
       {
          newInfo.triangleIDs[1] = rangeStart->second;
-         assert(++rangeStart == rangeEnd);
+         //assert(++rangeStart == rangeEnd);
       }      
       else
       {

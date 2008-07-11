@@ -1,12 +1,22 @@
-#ifndef _TRACKVIEW_H_
-#define _TRACKVIEW_H_
+#ifndef _POSE_MESH_VIEW_H_
+#define _POSE_MESH_VIEW_H_
 
 #include <QtGui/QGraphicsView>
+#include <QtGui/QDialog>
 #include <QtCore/QTimer>
 #include "PoseMeshScene.h"
 
+///////////////////////////////////////////////////////////////////////////////
+
 class PoseMeshScene;
 class PoseMeshItem;
+
+namespace Ui
+{
+   class PoseMeshPropertiesContainer;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 class PoseMeshView: public QGraphicsView
 {
@@ -23,7 +33,7 @@ public:
       MODE_TOTAL
    };
 
-   PoseMeshView(PoseMeshScene *scene, QWidget *parent = 0);
+   PoseMeshView(PoseMeshScene* scene, QWidget* parent = 0);
    ~PoseMeshView();
 
    eMODE GetMode();
@@ -47,8 +57,8 @@ public:
    void SetMaxScaled(float maxPercent){ mMaxScale = maxPercent; }   
 
    // Overrides
-   void setScene(QGraphicsScene *scene);
-   void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode = Qt::IgnoreAspectRatio);
+   void setScene(QGraphicsScene* scene);
+   void fitInView(const QRectF& rect, Qt::AspectRatioMode aspectRadioMode = Qt::IgnoreAspectRatio);
 
 public slots:
    void OnSetCenterTarget(float sceneX, float sceneY);  
@@ -57,9 +67,9 @@ public slots:
 
 protected:
 
-   PoseMeshScene *mScene;
-   PoseMeshItem  *mLastItem;
-   QGraphicsItem *mDragItem;
+   PoseMeshScene* mScene;
+   PoseMeshItem * mLastItem;
+   QGraphicsItem* mDragItem;
 
    QPointF mCurrentTarget;
    QPointF mCurrentSource;
@@ -67,7 +77,7 @@ protected:
    QPointF mCurrentVelocity;
    QRectF  mItemRect;
 
-   QCursor *mCursor[MODE_TOTAL];
+   QCursor* mCursor[MODE_TOTAL];
 
    QPointF mTestPoint;
 
@@ -79,12 +89,12 @@ protected:
    float mCurrentScale;
 
    // Event overrides
-   void wheelEvent(QWheelEvent *event);
-   void keyPressEvent(QKeyEvent *event);
-   void mouseMoveEvent(QMouseEvent *event);  
-   void mousePressEvent(QMouseEvent *event);
-   void mouseReleaseEvent(QMouseEvent *event);
-   void contextMenuEvent(QContextMenuEvent *event);
+   void wheelEvent(QWheelEvent* event);
+   void keyPressEvent(QKeyEvent* event);
+   void mouseMoveEvent(QMouseEvent* event);  
+   void mousePressEvent(QMouseEvent* event);
+   void mouseReleaseEvent(QMouseEvent* event);
+   void contextMenuEvent(QContextMenuEvent* event);
 
 private: 
 
@@ -92,14 +102,21 @@ private:
    QTimer  mTimer;
    bool    mIsMoving;
 
-   QAction *mActionZoomItemExtents;
-   QAction *mActionClearBlend;
-   QAction *mActionToggleEnabled;
+   QAction* mActionZoomItemExtents;
+   QAction* mActionClearBlend;
+   QAction* mActionToggleEnabled;
+   QAction* mActionProperties;
+
+   QDialog                          mPropertyDialog;
+   Ui::PoseMeshPropertiesContainer* mPropertyContainer;
 
 private slots:
    void OnZoomToItemExtents();
    void OnClearBlend();
    void OnToggleEnabled();
+   void OnShowProperties();
 };
 
-#endif
+///////////////////////////////////////////////////////////////////////////////
+
+#endif // _POSE_MESH_VIEW_H_
