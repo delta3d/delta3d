@@ -138,7 +138,7 @@ private:
    void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
-   void CheckMapNames(const dtGame::MapMessage& mapLoadedMsg, 
+   void CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
          const dtGame::GameManager::NameVector& mapNames);
    dtUtil::Log* mLogger;
 
@@ -229,9 +229,31 @@ void MessageTests::createActors(dtDAL::Map& map)
    std::vector<const dtDAL::ActorType*> actorTypes;
    std::vector<dtDAL::ActorProperty*> props;
 
-   mGameManager->GetActorTypes(actorTypes);
+   actorTypes.push_back(dtActors::EngineActorRegistry::TASK_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::ROLL_UP_TASK_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::ORDERED_TASK_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::INFINITE_LIGHT_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::POSITIONAL_LIGHT_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::SPOT_LIGHT_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::STATIC_MESH_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::PARTICLE_SYSTEM_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::MESH_TERRAIN_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::BEZIER_NODE_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::BEZIER_CONTROL_POINT_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::BEZIER_CONTROLLER_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::TRIGGER_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::WAYPOINT_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE.get());
+   actorTypes.push_back(dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE.get());
 
-   int skippedActors = 0;
+   actorTypes.push_back(TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE.get());
+   //mGameManager->GetActorTypes(actorTypes);
+
    int nameCounter = 0;
    char nameAsString[21];
 
@@ -239,18 +261,6 @@ void MessageTests::createActors(dtDAL::Map& map)
 
    for (unsigned int i=0; i< actorTypes.size(); i++)
    {
-      // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actorTypes[i]->GetName() == "Cloud Plane" || 
-          actorTypes[i]->GetName() == "Cloud Dome"  ||
-          actorTypes[i]->GetName() == "Environment" || 
-          actorTypes[i]->GetName() == "Test Environment Actor" ||
-          actorTypes[i]->GetName() == "Waypoint" ||
-          actorTypes[i]->GetName() == "Sound Actor") 
-      {
-         skippedActors ++;
-         continue; // go to next actor
-      }
-
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
 
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
@@ -275,7 +285,7 @@ void MessageTests::createActors(dtDAL::Map& map)
       map.AddProxy(*proxy);
 
       CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-                             map.GetAllProxies().size() == (i + 1 - skippedActors));
+                             map.GetAllProxies().size() == (i + 1));
       CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
                              map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
    }
@@ -287,7 +297,7 @@ void MessageTests::TestOperatorEquals()
 
    dtCore::RefPtr<dtGame::MachineInfo> machineInfo1 = new dtGame::MachineInfo;
    dtCore::RefPtr<dtGame::MachineInfo> machineInfo2 = new dtGame::MachineInfo;
-   
+
    dtCore::RefPtr<dtGame::TickMessage> msg1;
    dtCore::RefPtr<dtGame::TickMessage> msg2;
    dtCore::RefPtr<dtGame::TickMessage> msg3;
@@ -309,27 +319,27 @@ void MessageTests::TestOperatorEquals()
    msg2->SetDestination(machineInfo2.get());
    CPPUNIT_ASSERT(*msg1 == *msg2);
 
-   
+
    msg1->SetSendingActorId(dtCore::UniqueId());
    CPPUNIT_ASSERT(*msg1 == *msg1);
    CPPUNIT_ASSERT(*msg1 != *msg2);
    msg2->SetSendingActorId(msg1->GetSendingActorId());
    CPPUNIT_ASSERT(*msg1 == *msg2);
-   
-   
+
+
    msg1->SetAboutActorId(dtCore::UniqueId());
    CPPUNIT_ASSERT(*msg1 == *msg1);
    CPPUNIT_ASSERT(*msg1 != *msg2);
    msg2->SetAboutActorId(msg1->GetAboutActorId());
    CPPUNIT_ASSERT(*msg1 == *msg2);
-   
+
 
    msg1->SetDeltaRealTime(22.343);
    CPPUNIT_ASSERT(*msg1 == *msg1);
    CPPUNIT_ASSERT(*msg1 != *msg2);
    msg2->SetDeltaRealTime(msg1->GetDeltaRealTime());
    CPPUNIT_ASSERT(*msg1 == *msg2);
-   
+
    msg1->SetCausingMessage(msg3.get());
    CPPUNIT_ASSERT(*msg1 == *msg1);
    CPPUNIT_ASSERT(*msg1 != *msg2);
@@ -534,7 +544,7 @@ void MessageTests::TestMessageFactory()
       dtCore::RefPtr<dtGame::MapMessage> commandChangeMsg;
       factory.CreateMessage(dtGame::MessageType::COMMAND_LOAD_MAP, commandChangeMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a COMMAND_LOAD_MAP message", commandChangeMsg.valid());
-      
+
       dtCore::RefPtr<dtGame::MapMessage> requestChangeMsg;
       factory.CreateMessage(dtGame::MessageType::REQUEST_LOAD_MAP, requestChangeMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to a REQUEST_LOAD_MAP message", requestChangeMsg.valid());
@@ -1066,7 +1076,7 @@ void MessageTests::TestChangeMapGameEvents()
 {
    try
    {
-      // NOTE - This whole test should be with a map or with the GM. It definitely doesn't belong with 
+      // NOTE - This whole test should be with a map or with the GM. It definitely doesn't belong with
       // message tests.
 
       dtDAL::Project& project = dtDAL::Project::GetInstance();
@@ -1074,14 +1084,14 @@ void MessageTests::TestChangeMapGameEvents()
       dtDAL::Map* map = &project.CreateMap(mapName, "mga");
 
       dtCore::RefPtr<dtDAL::GameEvent> event;
-      
+
       event = new dtDAL::GameEvent("one", "");
       map->GetEventManager().AddEvent(*event);
       event = new dtDAL::GameEvent("two", "");
       map->GetEventManager().AddEvent(*event);
       event = new dtDAL::GameEvent("three", "");
       map->GetEventManager().AddEvent(*event);
-      
+
       project.SaveMap(*map);
       project.CloseMap(*map);
 
@@ -1099,16 +1109,16 @@ void MessageTests::TestChangeMapGameEvents()
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Four events should be in the game event manager singleton.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Four events should be in the game event manager singleton.",
          geMan.GetNumEvents(), (unsigned int)4);
 
-      CPPUNIT_ASSERT_MESSAGE("The first game event should be in the Game Event Manager singleton on map change.", 
+      CPPUNIT_ASSERT_MESSAGE("The first game event should be in the Game Event Manager singleton on map change.",
          geMan.FindEvent("one") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The second game event should be in the Game Event Manager singleton on map change.", 
+      CPPUNIT_ASSERT_MESSAGE("The second game event should be in the Game Event Manager singleton on map change.",
          geMan.FindEvent("two") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The third game event should be in the Game Event Manager singleton on map change.", 
+      CPPUNIT_ASSERT_MESSAGE("The third game event should be in the Game Event Manager singleton on map change.",
          geMan.FindEvent("three") != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The fourth game event should be in the Game Event Manager singleton on map change.", 
+      CPPUNIT_ASSERT_MESSAGE("The fourth game event should be in the Game Event Manager singleton on map change.",
          geMan.FindEvent("non-map event") != NULL);
 
       // test the new flag for removing game events
@@ -1116,7 +1126,7 @@ void MessageTests::TestChangeMapGameEvents()
       //two ticks to finish the change.
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Closing the map should have removed some of the events since we didnt change the flag.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Closing the map should have removed some of the events since we didnt change the flag.",
          geMan.GetNumEvents(), (unsigned int) 1);
 
       // re-add the events and try again.
@@ -1125,7 +1135,7 @@ void MessageTests::TestChangeMapGameEvents()
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Three events should be back in the game event manager singleton.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Three events should be back in the game event manager singleton.",
          geMan.GetNumEvents(), (unsigned int) 4);
       mGameManager->SetRemoveGameEventsOnMapChange(false);
       mGameManager->CloseCurrentMap();
@@ -1133,16 +1143,16 @@ void MessageTests::TestChangeMapGameEvents()
       dtCore::System::GetInstance().Step();
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The events should still be in the Game Manager since we changed the flag.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The events should still be in the Game Manager since we changed the flag.",
          geMan.GetNumEvents(), (unsigned int) 4);
    }
-   catch(const dtUtil::Exception &e) 
+   catch(const dtUtil::Exception &e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
 }
 
-void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg, 
+void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
       const dtGame::GameManager::NameVector& mapNames)
 {
    static dtGame::GameManager::NameVector mapNamesGet;
@@ -1157,9 +1167,9 @@ void MessageTests::CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
 void MessageTests::RemoveOneProxy(dtDAL::Map& map)
 {
    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-   map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(), 
+   map.FindProxies(toFill, "", TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetCategory(),
          TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE->GetName());
-   
+
    CPPUNIT_ASSERT(!toFill.empty());
    map.RemoveProxy(*toFill[0]);
 }
@@ -1313,31 +1323,31 @@ void MessageTests::TestChangeMap()
       dtCore::System::GetInstance().Step();
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOAD_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOAD_BEGIN message should have been processed.",
             processMapUnloadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapUnloadedMsg.get());
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       processMapUnloadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_UNLOADED);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_UNLOADED message should have been processed.",
             processMapUnloadedMsg.valid());
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapUnloadedMsg.get());
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_CHANGE_BEGIN message should have been processed.",
             processMapChange.valid());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOAD_BEGIN);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOAD_BEGIN message should have been processed.",
             processMapLoadedMsg.valid());
 
       processMapLoadedMsg = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_LOADED);
-      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOADED message should NOT have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("An INFO_MAP_LOADED message should NOT have been processed.",
             !processMapLoadedMsg.valid());
 
       processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGED);
-      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.", 
+      CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.",
             !processMapChange.valid());
 
       mGameManager->GetAllActors(toFill);
@@ -1349,7 +1359,7 @@ void MessageTests::TestChangeMap()
 
       mGameManager->GetAllActors(toFill);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors.",
             numActors2 - 2, toFill.size());
 
       // make sure that the events from both maps are in the gem.
@@ -1370,13 +1380,13 @@ void MessageTests::TestChangeMap()
       CheckMapNames(*mapLoadedMsg, mapNames2Expected);
 
    }
-   catch(const dtUtil::Exception &e) 
+   catch(const dtUtil::Exception &e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
 //   catch(const std::exception &e)
 //   {
-//      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() + 
+//      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() +
 //                   std::string(" Message: ")  + e.what());
 //   }
 }
@@ -1410,19 +1420,19 @@ void MessageTests::TestGameEventMessage()
 
 void MessageTests::TestChangeMapErrorConditions()
 {
-   try 
+   try
    {
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap(""), dtUtil::Exception);
-   
+
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("This map does not exist"), dtUtil::Exception);
-   
+
       CPPUNIT_ASSERT_THROW(mGameManager->ChangeMap("../examples/testMap/testMap"), dtUtil::Exception);
    }
    catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_FAIL(ex.ToString());
    }
-   
+
 }
 
 void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
@@ -1434,7 +1444,7 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 
    dtCore::RefPtr<dtGame::Message> pauseCommand;
    mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_PAUSE, pauseCommand);
-   
+
    mGameManager->SendMessage(*pauseCommand);
    SLEEP(10);
    dtCore::System::GetInstance().Step();
@@ -1522,14 +1532,14 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
 
    if (partial)
    {
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should not be part of the update.", 
+      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should not be part of the update.",
          actorUpdateMsg->GetUpdateParameter("Local Tick Count") == NULL);
       CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should not be part of the update.",
          actorUpdateMsg->GetUpdateParameter("Remote Tick Count") == NULL);
    }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be part of the update.", 
+      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be part of the update.",
          actorUpdateMsg->GetUpdateParameter("Local Tick Count") != NULL);
       CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be part of the update.",
          actorUpdateMsg->GetUpdateParameter("Remote Tick Count") != NULL);
@@ -1547,30 +1557,30 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    dtCore::System::GetInstance().Step();
    if (remote)
    {
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.",
                              gap->GetProperty("Has Fired")->ToString(), std::string("true"));
       if (partial)
       {
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
                                 gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.",
                                 gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
       }
       else
       {
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.", 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.",
                                 gap->GetProperty("Local Tick Count")->ToString(), std::string("96"));
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.", 
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.",
                                 gap->GetProperty("Remote Tick Count")->ToString(), std::string("107"));
       }
    }
    else
    {
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should still be false.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should still be false.",
                                     gap->GetProperty("Has Fired")->ToString(), std::string("false"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.",
                                     gap->GetProperty("Local Tick Count")->ToString(), std::string("0"));
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.",
                                     gap->GetProperty("Remote Tick Count")->ToString(), std::string("0"));
    }
 
