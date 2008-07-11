@@ -1,6 +1,7 @@
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
 #include "PoseMeshItem.h"
+#include "ui_PoseMeshProperties.h"
 
 #include <QtGui/QWheelEvent>
 #include <QtGui/QGraphicsScene>
@@ -23,7 +24,7 @@ const float kDefaultMaxScale = 6.0f;
 const float kDefaultMinScale = 0.2f;
 
 /////////////////////////////////////////////////////////////////////////////////////////
-PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
+PoseMeshView::PoseMeshView(PoseMeshScene* scene, QWidget* parent)
 :QGraphicsView(scene, parent) 
 , mScene(scene)
 , mDragItem(NULL)
@@ -47,13 +48,18 @@ PoseMeshView::PoseMeshView(PoseMeshScene *scene, QWidget *parent)
    mActionZoomItemExtents = new QAction("Zoom Extents", this);
    mActionClearBlend      = new QAction("Clear Blend", this);
    mActionToggleEnabled   = new QAction("Disable", this);
+   mActionProperties      = new QAction("Properties", this);
 
    connect(mActionZoomItemExtents, SIGNAL(triggered()), SLOT(OnZoomToItemExtents()));
    connect(mActionClearBlend, SIGNAL(triggered()), SLOT(OnClearBlend()));
    connect(mActionToggleEnabled, SIGNAL(triggered()), SLOT(OnToggleEnabled()));
+   connect(mActionProperties, SIGNAL(triggered()), SLOT(OnShowProperties()));
 
    // Allow our view to be frequently updated
    connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
+
+   mPropertyContainer = new Ui::PoseMeshPropertiesContainer;
+   mPropertyContainer->setupUi(&mPropertyDialog);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +69,7 @@ PoseMeshView::~PoseMeshView()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::wheelEvent(QWheelEvent *event)
+void PoseMeshView::wheelEvent(QWheelEvent* event)
 {
    // Delta is in eighths of degrees
    int numberOfDegrees = event->delta() / 8;
@@ -75,7 +81,7 @@ void PoseMeshView::wheelEvent(QWheelEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::keyPressEvent(QKeyEvent *event)
+void PoseMeshView::keyPressEvent(QKeyEvent* event)
 {
    QGraphicsView::keyPressEvent(event);
 
@@ -90,7 +96,7 @@ void PoseMeshView::keyPressEvent(QKeyEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::mouseMoveEvent(QMouseEvent *event)
+void PoseMeshView::mouseMoveEvent(QMouseEvent* event)
 {
    QGraphicsView::mouseMoveEvent(event);   
 }
@@ -101,7 +107,7 @@ void PoseMeshView::SetMode(eMODE newMode)
    bool allowMovement = (newMode == MODE_GRAB);
    
    QList<QGraphicsItem*> itemList = items();
-   foreach (QGraphicsItem *item, itemList)
+   foreach (QGraphicsItem* item, itemList)
    {
       item->setFlag(QGraphicsItem::ItemIsMovable, allowMovement);
       item->setCursor(*mCursor[newMode]);
@@ -114,7 +120,7 @@ void PoseMeshView::SetMode(eMODE newMode)
 void PoseMeshView::SetDisplayEdges(bool shouldDisplay)
 {
    QList<QGraphicsItem*> itemList = items();
-   foreach (QGraphicsItem *item, itemList)
+   foreach (QGraphicsItem* item, itemList)
    {
       PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(item);
       if (poseItem)
@@ -128,7 +134,7 @@ void PoseMeshView::SetDisplayEdges(bool shouldDisplay)
 void PoseMeshView::SetDisplayError(bool shouldDisplay)
 {
    QList<QGraphicsItem*> itemList = items();
-   foreach (QGraphicsItem *item, itemList)
+   foreach (QGraphicsItem* item, itemList)
    {
       PoseMeshItem *poseItem = dynamic_cast<PoseMeshItem*>(item);
       if (poseItem)
@@ -176,9 +182,9 @@ void PoseMeshView::Zoom(float numberOfSteps)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::OnZoomToPoseMesh(const std::string &meshName)
+void PoseMeshView::OnZoomToPoseMesh(const std::string& meshName)
 {
-   PoseMeshItem *item = mScene->GetPoseMeshItemByName(meshName);
+   PoseMeshItem* item = mScene->GetPoseMeshItemByName(meshName);
 
    if (item)
    { 
@@ -223,7 +229,7 @@ float PoseMeshView::GetScale()
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::setScene(QGraphicsScene *scene)
+void PoseMeshView::setScene(QGraphicsScene* scene)
 {
    QGraphicsView::setScene(scene);
 
@@ -235,7 +241,7 @@ void PoseMeshView::setScene(QGraphicsScene *scene)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRadioMode)
+void PoseMeshView::fitInView(const QRectF& rect, Qt::AspectRatioMode aspectRadioMode)
 {
    QGraphicsView::fitInView(rect, aspectRadioMode);   
 
@@ -255,7 +261,7 @@ void PoseMeshView::OnSetCenterTarget(float sceneX, float sceneY)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::mousePressEvent(QMouseEvent *event)
+void PoseMeshView::mousePressEvent(QMouseEvent* event)
 {
    if (mIsMoving)
    {
@@ -280,7 +286,7 @@ void PoseMeshView::mouseReleaseEvent(QMouseEvent *event)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
+void PoseMeshView::contextMenuEvent(QContextMenuEvent* event)
 {
    QGraphicsView::contextMenuEvent(event);
    
@@ -309,6 +315,8 @@ void PoseMeshView::contextMenuEvent( QContextMenuEvent *event )
        {
          menu.addAction(mActionClearBlend);
        }
+
+       menu.addAction(mActionProperties);
        
        menu.exec(event->globalPos());
    }  
@@ -360,4 +368,10 @@ void PoseMeshView::OnToggleEnabled()
       mLastItem->SetEnabled(true);
       mActionToggleEnabled->setText("Disable");
    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::OnShowProperties()
+{
+   mPropertyDialog.show();
 }
