@@ -213,14 +213,12 @@ ENDIF (BUILD_GUI)
 
 IF (BUILD_HLA)
    if (USE_RTIS)
-      MESSAGE("RTI-s selected for HLA")
       FIND_PACKAGE(RTI-s) #for dtHLAGM
    else (USE_RTIS)
       if (USE_CERTI)
-         MESSAGE("CERTI selected for HLA")
          FIND_PACKAGE(RTICERTI REQUIRED)
       else (USE_CERTI)
-            MESSAGE("No HLA RTI selected, PICK CERTI or RTI-s")
+            MESSAGE("No HLA RTI selected, choose USE_CERTI or USE_RTIS")
       endif (USE_CERTI)
    endif (USE_RTIS)
   
