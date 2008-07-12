@@ -8,6 +8,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class QAbstractButton;
 class PoseMeshScene;
 class PoseMeshItem;
 
@@ -115,6 +116,7 @@ private slots:
    void OnClearBlend();
    void OnToggleEnabled();
    void OnShowProperties();
+   void OnPropertyDialogButtonPressed(QAbstractButton* pressedButton);
 };
 
 ///////////////////////////////////////////////////////////////////////////////

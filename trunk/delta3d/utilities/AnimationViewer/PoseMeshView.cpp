@@ -9,6 +9,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QCursor>
 #include <QtGui/QGraphicsItem>
+#include <QtGui/QPushButton>
 
 #include <dtUtil/mathdefines.h>
 
@@ -50,16 +51,21 @@ PoseMeshView::PoseMeshView(PoseMeshScene* scene, QWidget* parent)
    mActionToggleEnabled   = new QAction("Disable", this);
    mActionProperties      = new QAction("Properties", this);
 
+   mPropertyContainer = new Ui::PoseMeshPropertiesContainer;
+   mPropertyContainer->setupUi(&mPropertyDialog);
+
+   // Connect the context menu actions
    connect(mActionZoomItemExtents, SIGNAL(triggered()), SLOT(OnZoomToItemExtents()));
    connect(mActionClearBlend, SIGNAL(triggered()), SLOT(OnClearBlend()));
    connect(mActionToggleEnabled, SIGNAL(triggered()), SLOT(OnToggleEnabled()));
    connect(mActionProperties, SIGNAL(triggered()), SLOT(OnShowProperties()));
+   
+   // Connect the dialog buttons
+   connect(mPropertyContainer->buttonBox, SIGNAL(clicked(QAbstractButton*)), 
+           SLOT(OnPropertyDialogButtonPressed(QAbstractButton*)));
 
    // Allow our view to be frequently updated
-   connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));   
-
-   mPropertyContainer = new Ui::PoseMeshPropertiesContainer;
-   mPropertyContainer->setupUi(&mPropertyDialog);
+   connect(&mTimer, SIGNAL(timeout()), this, SLOT(OnUpdateView()));     
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -373,5 +379,28 @@ void PoseMeshView::OnToggleEnabled()
 /////////////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::OnShowProperties()
 {
+   double minError = static_cast<double>(mLastItem->GetMinimumErrorValue());
+   double maxError = static_cast<double>(mLastItem->GetMaximumErrorValue());
+
+   mPropertyContainer->spinBoxMinimumPercentage->setValue(minError);
+   mPropertyContainer->spinBoxMaximumPercentage->setValue(maxError);
+
    mPropertyDialog.show();
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshView::OnPropertyDialogButtonPressed(QAbstractButton* pressedButton)
+{
+   QAbstractButton *applyButton = mPropertyContainer->buttonBox->button(QDialogButtonBox::Apply);
+   
+   if (pressedButton == applyButton)
+   {
+      double minError = mPropertyContainer->spinBoxMinimumPercentage->value();
+      double maxError = mPropertyContainer->spinBoxMaximumPercentage->value();
+
+      mLastItem->SetMaximumErrorValue(static_cast<float>(maxError));
+      mLastItem->SetMinimumErrorValue(static_cast<float>(minError));
+   }
 }
