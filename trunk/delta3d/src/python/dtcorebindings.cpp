@@ -35,6 +35,7 @@ void initMouseBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
 void initCollisionMotionModelBindings();
+void initViewBindings();
 
 
 //#ifndef WIN32
@@ -144,4 +145,6 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initInfiniteLightBindings();
    initPositionalLightBindings();
    initSpotLightBindings();
+
+   initViewBindings();
 }
