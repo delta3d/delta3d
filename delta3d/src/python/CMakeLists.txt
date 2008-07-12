@@ -72,6 +72,7 @@ SET(TARGET_SRC
   transformbindings.cpp    
   tripodbindings.cpp  
   ufomotionmodelbindings.cpp
+  viewbindings.cpp
   walkmotionmodelbindings.cpp
 )
   
