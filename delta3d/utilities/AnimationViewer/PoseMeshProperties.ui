@@ -25,7 +25,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons" >
-    <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+    <set>QDialogButtonBox::Apply|QDialogButtonBox::Close</set>
    </property>
    <property name="centerButtons" >
     <bool>false</bool>
@@ -69,7 +69,7 @@
      <string>Maximum Percentage:</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox" >
+   <widget class="QDoubleSpinBox" name="spinBoxMinimumPercentage" >
     <property name="geometry" >
      <rect>
       <x>140</x>
@@ -79,7 +79,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="doubleSpinBox_2" >
+   <widget class="QDoubleSpinBox" name="spinBoxMaximumPercentage" >
     <property name="geometry" >
      <rect>
       <x>140</x>

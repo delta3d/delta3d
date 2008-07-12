@@ -78,6 +78,9 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
   , mIsActive(true)
   , mAreErrorSamplesDisplayed(false)
   , mAreEdgesDisplayed(true)
+  , mErrorMinimum(0.0f)
+  , mErrorMaximum(7.5f)
+  , mShouldRecomputeError(false)
 {
    assert(mModel);
 
@@ -194,6 +197,32 @@ void PoseMeshItem::Clear()
 
    // Remove highlighting and target ellipse from scene
    update(boundingRect());
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::SetMinimumErrorValue(float minError)
+{
+   mErrorMinimum = minError;
+   mShouldRecomputeError = true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+float PoseMeshItem::GetMinimumErrorValue()
+{
+   return mErrorMinimum;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void PoseMeshItem::SetMaximumErrorValue(float maxError)
+{
+   mErrorMaximum = maxError;
+   mShouldRecomputeError = true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+float PoseMeshItem::GetMaximumErrorValue()
+{
+   return mErrorMaximum;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -385,6 +414,15 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
    if (mAreErrorSamplesDisplayed && isEnabled())
    {
+      // If the min or max error range has change recompute should be true
+      if (mShouldRecomputeError)
+      {
+         ExtractErrorFromMesh(*mPoseMesh);
+         update();
+
+         mShouldRecomputeError = false;
+      }
+
       PaintErrorSamples(painter);
    }
    
@@ -809,13 +847,11 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
 
 /////////////////////////////////////////////////////////////////////////////////////////
 QColor PoseMeshItem::GetErrorColor(float degreesOfError)
-{
-   const float maxError = 7.5f;
-
+{   
    QColor errorColor;
 
-   float percentError = degreesOfError / maxError;
-   dtUtil::ClampMax(percentError, 1.0f);
+   float percentError = (degreesOfError - mErrorMinimum) / mErrorMaximum;
+   dtUtil::Clamp(percentError, 0.0f, 1.0f);
 
    // In HSV color, red is at 0 and blue is at 240 degrees 
    const float blue = 2.0f / 3.0f;   

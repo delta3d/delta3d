@@ -10,6 +10,8 @@
 
 #include <set>
 
+///////////////////////////////////////////////////////////////////////////////
+
 class QGraphicsItem;
 class QGraphicsScene;
 class QCursor;
@@ -36,6 +38,8 @@ struct TriangleSampleSpace
    std::vector<TriangleSample> mSamples;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+
 class PoseMeshItem: public QObject, public QGraphicsItem
 {   
    Q_OBJECT
@@ -57,6 +61,12 @@ public:
    void OnBlendUpdate();
 
    void Clear();  
+
+   void  SetMinimumErrorValue(float minError);
+   float GetMinimumErrorValue();
+
+   void  SetMaximumErrorValue(float maxError);
+   float GetMaximumErrorValue();
 
    // Qt overrides
    virtual bool sceneEvent(QEvent *event);  
@@ -104,6 +114,10 @@ private:
 
    osg::Vec3 mBoneSpaceForward;
 
+   float mErrorMinimum;
+   float mErrorMaximum;
+   bool  mShouldRecomputeError;
+
    void BlendPosesFromItemCoordinates(float xCoord, float yCoord);
 
    // Functions to precompute/extract data from the pose mesh
@@ -140,5 +154,7 @@ private:
    void AssertZeroErrorAtVertices();
    void AssertAzElConversion();
 };
+
+///////////////////////////////////////////////////////////////////////////////
 
 #endif // _POSEMESH_ITEM_H_
