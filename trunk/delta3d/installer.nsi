@@ -181,8 +181,9 @@ SectionGroup /e "Addition Installations"
 	Section "Environment Variables" EnvironmentVariableSection
 	!define DELTA_ROOT "$INSTDIR"
 	!define DELTA_INC "%DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI"
-	!define DELTA_LIB "%DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib"
+	!define DELTA_LIB "%DELTA_ROOT%\${DELTA_BUILD_DIR}\lib;%DELTA_ROOT%\ext\lib"
 	!define DELTA_DATA "%DELTA_ROOT%\data"
+	!define DELTA_BIN "%DELTA_ROOT%\${DELTA_BUILD_DIR}\bin;%DELTA_ROOT%\ext\bin"
 	
 	   Push "DELTA_ROOT"
 	   Push '${DELTA_ROOT}'
@@ -199,11 +200,13 @@ SectionGroup /e "Addition Installations"
 	   Push "DELTA_DATA"
 	   Push '${DELTA_DATA}'
 	   Call WriteEnvExpStr
+	   
+	   Push "DELTA_BIN"
+	   Push '${DELTA_BIN}'
+	   Call WriteEnvExpStr
 	
 	   ;PATH
-	   Push "${DELTA_ROOT}\bin"
-	   Call AddToPath
-	   Push "${DELTA_ROOT}\ext\bin"
+	   Push "${DELTA_BIN}"
 	   Call AddToPath
 	SectionEnd
 	
@@ -312,10 +315,10 @@ Section Uninstall
   Call un.DeleteEnvStr
   Push "DELTA_DATA"
   Call un.DeleteEnvStr
+  Push "DELTA_BIN"
+  Call un.DeleteEnvStr
 
-  Push "${DELTA_ROOT}\bin"
-  Call un.RemoveFromPath
-  Push "${DELTA_ROOT}\ext\bin"
+  Push "${DELTA_BIN}"
   Call un.RemoveFromPath
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
