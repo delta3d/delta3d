@@ -211,8 +211,8 @@ PathFindResult AStar<_NodeType, _CostFunc, _Container, _Timer>::FindPath()
       bool pExceededMaxCost(pCost >= mConfig.mMaxCost);
       bool pHasPathToFinish = mConfig.AtFinish(pStart->GetData());
 
-      mTimer.Update();
       mConfig.mTimeSpent += mTimer.GetDT();
+      mTimer.Update();
       bool pHasExceededTimeLimit(mConfig.mTimeSpent > mConfig.mMaxTime);
       bool pAtOrExceedingMaxDepth(pStart->GetDepth() >= mConfig.mMaxDepth);
 
