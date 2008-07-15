@@ -448,20 +448,13 @@ void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
  */
 void FlyMotionModel::OnMessage(MessageData *data)
 {
-   if(GetTarget() != 0 &&
+   if (GetTarget() != 0 &&
       IsEnabled() && 
       (data->message == "preframe" || 
         (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == "pause")))
    {
       // Get the time change (sim time or real time)
-      double delta;
-      double* timeChange = (double*)data->userData;
-      if (data->message == "pause") // paused and !useSimTime
-         delta = *timeChange; // 0 is real time when paused
-      else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED)) 
-         delta = timeChange[0]; // 0 is sim time
-      else
-         delta = timeChange[1]; // 1 is real time
+      double delta = GetTimeDelta(data);
 
       Transform transform;
       
@@ -473,73 +466,107 @@ void FlyMotionModel::OnMessage(MessageData *data)
 
       // rotation
 
-      if(mTurnLeftRightAxis != 0)
-      {
-         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * delta);
-      }
-      
-      if(mTurnUpDownAxis != 0)
-      {
-         float rotateTo = hpr[1] + float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
-
-         if( rotateTo < -89.5f )
-         {
-            hpr[1] = -89.5f;
-         }
-         else if( rotateTo > 89.5f )
-         {
-            hpr[1] = 89.5f;
-         }
-         else
-         {
-            hpr[1] = rotateTo;
-         }
-      }
-      
-      hpr[2] = 0.0f;
-      
+      hpr = Rotate(hpr, delta);
       transform.SetRotation(hpr);
-
-      if (HasOption(OPTION_RESET_MOUSE_CURSOR))
-      {       
-         // fix to avoid camera drift
-         mTurnUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
-         mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left                
-
-         mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
-      }
 
       // translation
 
-      osg::Vec3 translation;
-      
-      if(mFlyForwardBackwardAxis != 0)
-      {
-         translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
-      }
-      
-      if(mFlyLeftRightAxis != 0)
-      {
-         translation[0] = float(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * delta);
-      }
-
-      if(mFlyUpDownAxis != 0)
-      {
-         translation[2] = float(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * delta);
-      }
-
-      osg::Matrix mat;
-      
-      transform.GetRotation(mat);
-      
-      translation = osg::Matrix::transform3x3(translation, mat);
-      
-      xyz += translation;
-      
+      xyz = Translate(xyz, delta);
       transform.SetTranslation(xyz);
 
       // finalize changes
 
       GetTarget()->SetTransform(transform);  
    }
+}
+
+double FlyMotionModel::GetTimeDelta(const MessageData* data) const
+{
+   // Get the time change (sim time or real time)
+   double delta;
+   double* timeChange = (double*)data->userData;
+   if (data->message == "pause") // paused and !useSimTime
+      delta = *timeChange; // 0 is real time when paused
+   else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED)) 
+      delta = timeChange[0]; // 0 is sim time
+   else
+      delta = timeChange[1]; // 1 is real time
+
+   return delta;
+}
+
+osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3 &hpr, double delta) const
+{
+   osg::Vec3 out = hpr;
+
+   if (mTurnLeftRightAxis != 0)
+   {
+      out[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * delta);
+   }
+
+   if (mTurnUpDownAxis != 0)
+   {
+      float rotateTo = out[1] + float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
+
+      if (rotateTo < -89.5f)
+      {
+         out[1] = -89.5f;
+      }
+      else if (rotateTo > 89.5f)
+      {
+         out[1] = 89.5f;
+      }
+      else
+      {
+         out[1] = rotateTo;
+      }
+   }
+
+   out[2] = 0.0f;
+
+   if (HasOption(OPTION_RESET_MOUSE_CURSOR))
+   {       
+      // fix to avoid camera drift
+      mTurnUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
+      mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left                
+
+      mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
+   }
+
+   return out;
+}
+
+osg::Vec3 FlyMotionModel::Translate(const osg::Vec3 &xyz, double delta) const
+{
+   osg::Vec3 translation;
+
+   if (mFlyForwardBackwardAxis != 0)
+   {
+      translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
+   }
+
+   if (mFlyLeftRightAxis != 0)
+   {
+      translation[0] = float(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * delta);
+   }
+
+   if (mFlyUpDownAxis != 0)
+   {
+      translation[2] = float(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * delta);
+   }
+
+   // rotate
+   {
+      Transform transform;
+      GetTarget()->GetTransform(transform);
+      osg::Matrix mat;
+
+      transform.GetRotation(mat);
+
+      translation = osg::Matrix::transform3x3(translation, mat);
+   }
+
+   osg::Vec3 out = xyz + translation;
+
+   return out;
 }

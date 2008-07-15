@@ -113,7 +113,7 @@ namespace dtCore
          *
          * @param option the option to query         
          */
-         bool HasOption(BehaviorOptions option) { return (mOptions & option) > 0; }
+         bool HasOption(BehaviorOptions option) const { return (mOptions & option) > 0; }
          
          /**
           * Sets the input axes to a set of default mappings for mouse
@@ -250,7 +250,11 @@ namespace dtCore
           * @param data the message data
           */
          virtual void OnMessage(MessageData *data);
-         
+
+      protected:
+         double GetTimeDelta(const MessageData* data) const;
+         osg::Vec3 Rotate(const osg::Vec3 &hpr, double delta) const;
+         osg::Vec3 Translate(const osg::Vec3 &xyz, double delta) const;
          
       private:
 
