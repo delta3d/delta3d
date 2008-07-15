@@ -168,8 +168,8 @@ namespace dtAI
             return NO_PLAN;
          }
 
-         mConfig.mTimer.Update();
          mConfig.mCurrentElapsedTime += mConfig.mTimer.GetDT();
+         mConfig.mTimer.Update();
 
          const PlannerNodeLink* pCurrent = FindLowestCost();
 
@@ -184,8 +184,8 @@ namespace dtAI
                pCurrent = pCurrent->mParent;
             }
 
-            mConfig.mCurrentElapsedTime = 0.0;
             mConfig.mTotalElapsedTime += mConfig.mCurrentElapsedTime;
+            mConfig.mCurrentElapsedTime = 0.0;
 
             if(pReachedGoal) return PLAN_FOUND;
             else return PARTIAL_PLAN;

@@ -41,7 +41,7 @@ namespace dtAI
    {
    public:
       void Update(){ mTime = dtCore::Timer::Instance()->Tick();}
-      double GetDT(){return dtCore::Timer::Instance()->DeltaMil(mTime, dtCore::Timer::Instance()->Tick());}
+      double GetDT(){return dtCore::Timer::Instance()->DeltaSec(mTime, dtCore::Timer::Instance()->Tick());}
 
    private:
       dtCore::Timer_t mTime;
