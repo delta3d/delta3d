@@ -144,12 +144,20 @@ namespace dtCore
       /**
        * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix, 
        * then rescales it based on the vector passed in.  This is not something you want to call often.
+       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only 
+       * relevant to visible 3D objects - it was separated out to significantly improve performance. 
+       * To use a permanent scale on an object, you should have a separate matrix transform that holds 
+       * the scale value and make your mesh be a child of that. See GameMeshActor for an example.
        */
       void Rescale(const osg::Vec3d& scale);
       
       /**
        * Does a polar decomposition (SLOW) on the matrix to get the scale and the unscaled rotation matrix, 
        * then rescales it based on the vector passed in.  This is not something you want to call often.
+       * Note - this scale value will be wiped out if you call SetRotation(). Scale is really only 
+       * relevant to visible 3D objects - it was separated out to significantly improve performance. 
+       * To use a permanent scale on an object, you should have a separate matrix transform that holds 
+       * the scale value and make your mesh be a child of that. See GameMeshActor for an example.
        */
       void Rescale(const osg::Vec3f& scale);
 
