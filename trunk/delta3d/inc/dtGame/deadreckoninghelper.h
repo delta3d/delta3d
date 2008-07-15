@@ -66,6 +66,9 @@ namespace dtGame
    class DT_GAME_EXPORT DeadReckoningHelper : public dtCore::Base
    {
       public:
+         static const float DEFAULT_MAX_SMOOTHING_TIME_ROT;
+         static const float DEFAULT_MAX_SMOOTHING_TIME_POS;
+
          class DT_GAME_EXPORT DeadReckoningDOF : public osg::Referenced
          {
             public:

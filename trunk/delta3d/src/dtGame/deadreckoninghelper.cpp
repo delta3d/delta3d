@@ -39,6 +39,9 @@ namespace dtGame
    DeadReckoningAlgorithm DeadReckoningAlgorithm::VELOCITY_ONLY("Velocity Only");
    DeadReckoningAlgorithm DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION("Velocity and Acceleration");
 
+   const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT = 2.0f;
+   const float DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS = 8.0f;
+
    const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION("Position");
    const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE("PositionRate");
    const std::string DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION("Extension");
@@ -70,8 +73,8 @@ namespace dtGame
       mTimeUntilForceClamp(0.0f),
       mAverageTimeBetweenTranslationUpdates(0.0f),
       mAverageTimeBetweenRotationUpdates(0.0f), 
-      mMaxTranslationSmoothingTime(8.0f),
-      mMaxRotationSmoothingTime(2.0f),
+      mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS),
+      mMaxRotationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_ROT),
       mTranslationCurrentSmoothingTime(0.0f),
       mRotationCurrentSmoothingTime(0.0f), 
       mTranslationEndSmoothingTime(0.0f),
@@ -206,7 +209,7 @@ namespace dtGame
    void DeadReckoningHelper::ComputeRotationChangeWithAngularVelocity(double deltaTime, osg::Matrix& result)
    {
       //mComputedAngularRotationMatrix
-      if (mAngularVelocityVector.length2() < 1e-11)
+      if (mAngularVelocityVector.length2() < 1e-6)
       {
          result.makeIdentity();
       }
@@ -635,27 +638,41 @@ namespace dtGame
       {
 
          // For vel and Accel, we use the angular velocity to compute a dead reckoning matrix to slerp to
-         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
+         // assuming that we have an angular velocity at all...
+         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION && 
+            mAngularVelocityVector.length2() < 1e-6)
          {
+            // if we're here, we had some sort of change, however small
+            isRotationChangedByAccel = true;
+
             // Compute The change in the rotation based Dead Reckoning matrix
             // The Dead Reckoning Matrix
             osg::Matrix angularRotation;
             ComputeRotationChangeWithAngularVelocity(mRotationCurrentSmoothingTime, angularRotation);
 
+            // Expected DR'ed rotation - Take the last rot and add the change over time
+            osg::Quat angularRotAsQuat;
+            angularRotation.get(angularRotAsQuat);
+            drQuat = angularRotAsQuat * mLastQuatRotation; // The current DR'ed rotation
+
+            // Previous DR'ed rotation - same, but uses where we were before the last update, so we can smooth it out...
+            startRotation = angularRotAsQuat * mRotQuatBeforeLastUpdate; // The current DR'ed rotation
+
             // New hpr computation 
-            osg::Matrix drRot = angularRotation * mLastRotationMatrix;
-            //dtUtil::MatrixUtil::Print(mComputedAngularRotationMatrix);
+            //osg::Matrix drRot = angularRotation * mLastRotationMatrix;
+            //////dtUtil::MatrixUtil::Print(mComputedAngularRotationMatrix);
             // Compute change in rotation as quaternion representation 
-            drRot.get(drQuat);
-            osg::Quat rotationChange = drQuat - mLastQuatRotation;
-            isRotationChangedByAccel = rotationChange.length2() > 1e-6;
-            startRotation = mRotQuatBeforeLastUpdate + rotationChange;
+            //drRot.get(drQuat);
+            //osg::Quat rotationChange = drQuat - mLastQuatRotation;
+            //isRotationChangedByAccel = rotationChange.length2() > 1e-6;
+            //osg::Matrix drStartRot = angularRotation * mLastRotationMatrix;
+            //startRotation = mRotQuatBeforeLastUpdate + rotationChange;
          }
 
          // If there is a difference in the rotations and we still have time to smooth, then 
          // slerp between the two quats: 1) the old rotation plus the expected change using angular
          //    velocity and 2) the desired new rotation
-         if (isRotationChangedByAccel || mRotationCurrentSmoothingTime <  mRotationEndSmoothingTime)
+         if ((mRotationEndSmoothingTime > 0.0f) && (mRotationCurrentSmoothingTime <  mRotationEndSmoothingTime))
          {
             float smoothingFactor = mRotationCurrentSmoothingTime/mRotationEndSmoothingTime;
             dtUtil::Clamp(smoothingFactor, 0.0f, 1.0f);
@@ -664,7 +681,7 @@ namespace dtGame
          else // Either smoothing time is done or the current rotation equals the desired rotation
          {
             newRot = drQuat;
-            mRotationResolved = true;
+            mRotationResolved = !isRotationChangedByAccel; //true;
          }
 
          // we finished DR, so update the rotation values on the helper and transform
@@ -692,7 +709,7 @@ namespace dtGame
 
       // If we still have time left in our smoothing, then
       // blend the positions.
-      if (mTranslationCurrentSmoothingTime < mTranslationEndSmoothingTime)
+      if ((mTranslationEndSmoothingTime > 0.0f) && (mTranslationCurrentSmoothingTime < mTranslationEndSmoothingTime))
       {
          pos = mTransBeforeLastUpdate + positionChange;
          float smoothingFactor = mTranslationCurrentSmoothingTime/mTranslationEndSmoothingTime;

@@ -205,8 +205,10 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
             CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
-            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 2.0f);
-            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 8.0f);
+            CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() == 
+               dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT);
+            CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 
+               dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS);
             CPPUNIT_ASSERT(helper->GetTimeUntilForceClamp() == 0.0f);
             CPPUNIT_ASSERT(helper->GetAdjustRotationToGround());
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
