@@ -1355,7 +1355,7 @@ namespace dtEditQt
          try
          {
             dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
-                  *(ViewportManager::GetInstance().getMasterScene()), true, false);
+                  *(ViewportManager::GetInstance().getMasterScene()), true);
 
          }
          catch (const dtUtil::Exception& e)
