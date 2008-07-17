@@ -222,20 +222,22 @@ BUILD_PYTHON_BINDING(${INSPECTOR_BINDINGS}
 
 
 ################
-SET(TERRAIN_BINDINGS "PyDtTerrain")
+IF (BUILD_TERRAIN)
+    SET(TERRAIN_BINDINGS "PyDtTerrain")
 
-SET(TARGET_SRC 
-  dtTerrainBindings.cpp
-  geocoordinateBindings.cpp
-  terrainBindings.cpp
-)
-SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
+    SET(TARGET_SRC 
+      dtTerrainBindings.cpp
+      geocoordinateBindings.cpp
+      terrainBindings.cpp
+    )
+    SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
 
 
 
-BUILD_PYTHON_BINDING(${TERRAIN_BINDINGS} 
-                                        BOOST_PYTHON_LIBRARY
-                                        PYTHON_LIBRARY
-                                        DTCORE_LIBRARY
-                                        DTTERRAIN_LIBRARY)
+    BUILD_PYTHON_BINDING(${TERRAIN_BINDINGS} 
+                                            BOOST_PYTHON_LIBRARY
+                                            PYTHON_LIBRARY
+                                            DTCORE_LIBRARY
+                                            DTTERRAIN_LIBRARY)
+ENDIF(BUILD_TERRAIN)
 
