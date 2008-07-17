@@ -54,7 +54,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Tripod)
       
       ///Contructor which takes in a optional Camera and Transformable
-      Tripod(Camera *cam = 0, Transformable *parent = 0);
+      Tripod(Camera* cam = 0, Transformable* parent = 0);
       
    protected:
 
@@ -63,22 +63,23 @@ namespace dtCore
    public:
 
       ///Supply a Camera to connect to this Tripod
-      void SetCamera( Camera *cam );
+      void SetCamera(Camera* cam);
 
       ///set camera by name
-      void SetCamera( const std::string& camName );
+      void SetCamera(const std::string& camName);
 
       ///Get a non-const pointer to the currently connected Camera
       Camera* GetCamera();
 
       ///Attach this Tripod to a Transformable
-      void SetAttachToTransformable(Transformable *parent);
+      void SetAttachToTransformable(Transformable* parent);
 
       ///Attach to transformable by name
       void SetAttachToTransformable(const std::string& parentName);
 
-      ///Get a non-const pointer to the currently connected Transformable
-      Transformable* GetAttachedTransformable() {return mParentTrans.get();}
+      ///Get a pointer to the currently connected Transformable
+      Transformable* GetAttachedTransformable() { return mParentTrans.get(); }
+      const Transformable* GetAttachedTransformable() const { return mParentTrans.get(); }
 
       ///Set the Tripod's offset from the parent Transformable
       void SetOffset(float x, float y, float z, float h, float p, float r)
