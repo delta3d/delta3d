@@ -227,23 +227,21 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicVectorElementControl::updateEditorFromModel(QWidget *widget)
     {
-        if (widget != NULL && widget == temporaryEditControl)
-        {
-           std::ostringstream ss;
-           ss << "Updating editor for index " << mElementIndex;
-           LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
-            // set the current value from our property
-            double value = getValue();
-            //QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+       if (widget != NULL && widget == temporaryEditControl)
+       {
+          std::ostringstream ss;
+          ss << "Updating editor for index " << mElementIndex;
+          LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
+          // set the current value from our property
+          const double value = getValue();
 
-            osg::Vec3 testVect;
-            bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
+          osg::Vec3 testVect;
+          const bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
 
-            QLocale locale(QLocale::C);
-            QString strValue = locale.toString(value, 'f', isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
-            temporaryEditControl->setText(strValue);
-            temporaryEditControl->selectAll();
-        }
+          QString strValue = QString::number(value, 'f', isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
+          temporaryEditControl->setText(strValue);
+          temporaryEditControl->selectAll();
+       }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
