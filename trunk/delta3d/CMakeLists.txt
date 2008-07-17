@@ -150,16 +150,6 @@ ENDIF(WIN32)
 
 ################################################################################
 
-# Make the headers visible to everything
-INCLUDE_DIRECTORIES(
-    ${CMAKE_SOURCE_DIR}/inc
-    ${OPENGL_INCLUDE_DIR}
-    ${OPENTHREADS_INCLUDE_DIR}
-    ${OSG_INCLUDE_DIR}
-    ${ODE_INCLUDE_DIR}
-    ${XERCES_INCLUDE_DIR}  
-)
-
 #required external dependencies for core functionality
 FIND_PACKAGE(Delta3D REQUIRED)
 FIND_PACKAGE(OpenThreads REQUIRED)
@@ -176,6 +166,15 @@ IF (NOT WIN32 AND NOT APPLE)
   FIND_PACKAGE(UUID REQUIRED) 
 ENDIF (NOT WIN32 AND NOT APPLE)
 
+# Make the headers visible to everything
+INCLUDE_DIRECTORIES(
+    ${CMAKE_SOURCE_DIR}/inc
+    ${OPENGL_INCLUDE_DIR}
+    ${OPENTHREADS_INCLUDE_DIR}
+    ${OSG_INCLUDE_DIR}
+    ${ODE_INCLUDE_DIR}
+    ${XERCES_INCLUDE_DIR}  
+)
 
 
 #optional external dependencies
@@ -447,5 +446,6 @@ CONFIGURE_FILE(
   IMMEDIATE @ONLY)
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
 
 
