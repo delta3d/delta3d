@@ -81,7 +81,7 @@ namespace dtActors
           * Gets the description of this task.
           * @return The task's description.
           */
-         std::string GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const { return mDescription; }
 
          /**
           * Sets the display name of this task. This allows you to have a pretty value for the user.
@@ -93,7 +93,7 @@ namespace dtActors
           * Gets the display name of this task. Allows for a pretty value for the user.
           * @return The task's display name.
           */
-         std::string GetDisplayName() const { return mDisplayName; }
+         const std::string& GetDisplayName() const { return mDisplayName; }
 
          /**
           * Sets the passing score of this task.  The passing score is used

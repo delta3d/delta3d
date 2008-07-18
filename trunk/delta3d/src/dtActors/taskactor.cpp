@@ -173,14 +173,14 @@ namespace dtActors
 
       //Description...
       AddProperty(new dtDAL::StringActorProperty("Description","Description",
-         dtDAL::MakeFunctor(task,&TaskActor::SetDescription),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetDescription),
+         dtDAL::StringActorProperty::SetFuncType(&task,&TaskActor::SetDescription),
+         dtDAL::StringActorProperty::GetFuncType(&task,&TaskActor::GetDescription),
          "Sets/gets the description of this task.",GROUPNAME));
 
       //DisplayName...
       AddProperty(new dtDAL::StringActorProperty("DisplayName","Display Name",
-         dtDAL::MakeFunctor(task,&TaskActor::SetDisplayName),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetDisplayName),
+         dtDAL::StringActorProperty::SetFuncType(&task,&TaskActor::SetDisplayName),
+         dtDAL::StringActorProperty::GetFuncType(&task,&TaskActor::GetDisplayName),
          "Sets/gets the display name (ie. user viewable) of this task.",GROUPNAME));
 
       //Passing Score...
