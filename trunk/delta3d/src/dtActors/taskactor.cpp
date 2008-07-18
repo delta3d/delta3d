@@ -207,11 +207,11 @@ namespace dtActors
          dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
 
-	  //NotifyLMSOnUpdate
-	  AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
-		  dtDAL::MakeFunctor(task,&TaskActor::SetNotifyLMSOnUpdate),
-		  dtDAL::MakeFunctorRet(task,&TaskActor::GetNotifyLMSOnUpdate),
-		  "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
+      //NotifyLMSOnUpdate
+      AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
+         dtDAL::MakeFunctor(task,&TaskActor::SetNotifyLMSOnUpdate),
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetNotifyLMSOnUpdate),
+         "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
       AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
@@ -231,6 +231,24 @@ namespace dtActors
          dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
          "The list of subtasks.", GROUPNAME, "TaskChildren"));
+
+      // REMOVE USELESS PROPERTIES - These properties really should not show in
+      // STAGE and ought to be completely removed from the object completely.
+      // However, the overhead is part of sub-classing GameActor.
+      RemoveProperty("Rotation");
+      RemoveProperty("Translation");
+      RemoveProperty("Normal Rescaling");
+      RemoveProperty("Render Proxy Node");
+      RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_BOX);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
+      RemoveProperty("Enable Dynamics"); // "ODE Enable Dynamics"
+      RemoveProperty("Mass"); // "ODE Mass"
+      RemoveProperty("Center of Gravity"); // "ODE Center of Gravity"
+      RemoveProperty("ShaderGroup");
    }
 
    //////////////////////////////////////////////////////////////////////////////
