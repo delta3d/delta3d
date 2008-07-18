@@ -301,6 +301,7 @@ bool Application::ParseConfigFile(const std::string& file)
    if (!parsed_well)
    {
       LOG_ERROR("The Application config file, " + file + ", wasn't parsed correctly.");
+      return(false);
    } 
 
    AppXMLApplicator applicator;
@@ -308,9 +309,10 @@ bool Application::ParseConfigFile(const std::string& file)
    if (!applied_well)
    {
       LOG_ERROR("The Application config file data wasn't applied correctly.");
+      return(false);
    }
 
-   return( applied_well || parsed_well );
+   return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

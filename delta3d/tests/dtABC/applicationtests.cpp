@@ -31,11 +31,36 @@
 #include <dtUtil/fileutils.h>                  // for verification when writing the config file
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
+#include <dtUtil/xerceswriter.h>
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
 #include <dtUtil/log.h>
 #include <osgDB/DatabasePager>
 #include <osgViewer/View>
 
+
+//////////////////////////////////////////////////////////////////////////
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/util/XMLString.hpp>
+
+/// Little util to generate a mal-formed config xml file
+void WriteBadConfigFile(const std::string& filename)
+{
+   XERCES_CPP_NAMESPACE_USE
+
+   dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
+   writer->CreateDocument("Application");
+   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
+   DOMElement* app = doc->getDocumentElement();
+
+   DOMElement* camera = doc->createElement(XMLString::transcode("Camera"));
+   app->appendChild(camera);
+
+   writer->WriteFile(filename);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 namespace dtTest
 {
    /// unit tests for dtCore::Application
@@ -48,6 +73,7 @@ namespace dtTest
       CPPUNIT_TEST( TestConfigSaveLoad );
       CPPUNIT_TEST( TestReadSystemProperties );
       CPPUNIT_TEST( TestSupplyingWindowToApplicationConstructor );
+      CPPUNIT_TEST( TestReadingBadConfigFile );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -59,6 +85,7 @@ namespace dtTest
          void TestConfigSaveLoad();
          void TestReadSystemProperties();
          void TestSupplyingWindowToApplicationConstructor();
+         void TestReadingBadConfigFile();
 
       private:
          std::string mConfigName;
@@ -545,6 +572,31 @@ namespace dtTest
    }
 
 
+   //////////////////////////////////////////////////////////////////////////
+   void ApplicationTests::TestReadingBadConfigFile()
+   {
+      //verify Application can continue living with a bad config file
+      const std::string filename = "badconfig.xml";
+
+      //write out bad config file
+      WriteBadConfigFile(filename);
+
+      dtCore::RefPtr<dtABC::Application> app;
+      try
+      {
+         app = new dtABC::Application(filename);
+      }
+      catch (...)
+      {
+      	CPPUNIT_FAIL("Application should not have thrown an exception when parsing a bad config file");
+      }
+      
+      //delete config file
+      dtUtil::FileUtils::GetInstance().FileDelete( filename );
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
    class ApplicationSetupTests : public CPPUNIT_NS::TestFixture
    {
 
