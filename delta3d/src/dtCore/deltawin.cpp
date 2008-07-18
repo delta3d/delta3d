@@ -31,9 +31,9 @@ DeltaWin::DeltaWin(  const std::string& name,
 
    osg::ref_ptr<osg::GraphicsContext::Traits> traits;
    traits = CreateTraits(name, x, y, width, height,
-                          0, cursor, inheritedWindowData );
+                          0, cursor, inheritedWindowData);
 
-   CreateGraphicsWindow( *traits );
+   mOsgViewerGraphicsWindow = CreateGraphicsWindow(*traits).get();
    
    if(!fullScreen)
    {
@@ -45,10 +45,10 @@ DeltaWin::DeltaWin(  const std::string& name,
    }
 }
 
-
-osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow( osg::GraphicsContext::Traits &traits )
+//////////////////////////////////////////////////////////////////////////
+osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const
 {
-   osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( &traits );
+   osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
    
    if (gc.valid() == false)
    {
@@ -57,18 +57,16 @@ osgViewer::GraphicsWindow * DeltaWin::CreateGraphicsWindow( osg::GraphicsContext
          __FILE__, __LINE__ );
    }
    
-   osgViewer::GraphicsWindow* gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
-   if (gw)
+   osg::ref_ptr<osgViewer::GraphicsWindow> gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
+   if (gw != NULL)
    {
       gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
-                                                                      traits.width, traits.height );
+                                                                      traits.width, traits.height);
+      gw->realize();
+      gw->makeCurrent();
    }
-   
-   mOsgViewerGraphicsWindow = gw;
-   gw->realize();
-   gw->makeCurrent();
-   
-   return (mOsgViewerGraphicsWindow.get());
+      
+   return gw;
 }
 
 
@@ -106,11 +104,13 @@ const std::string DeltaWin::GetWindowTitle() const
    return mOsgViewerGraphicsWindow->getWindowName();
 }
 
+//////////////////////////////////////////////////////////////////////////
 void DeltaWin::ShowCursor( bool show )
 {
    mOsgViewerGraphicsWindow->useCursor(show);
 }
 
+//////////////////////////////////////////////////////////////////////////
 void DeltaWin::SetFullScreenMode( bool enable )
 {
    if (mIsFullScreen == enable) return;

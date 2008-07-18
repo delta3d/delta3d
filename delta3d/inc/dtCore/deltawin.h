@@ -204,7 +204,7 @@ namespace dtCore
    private:
 
       ///Convenient method to create a GraphicsWindow
-      osgViewer::GraphicsWindow* CreateGraphicsWindow( osg::GraphicsContext::Traits &traits );
+      osg::ref_ptr<osgViewer::GraphicsWindow> CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const;
 
       static int CalcRefreshRate( int width, int height, int dotclock );
 
