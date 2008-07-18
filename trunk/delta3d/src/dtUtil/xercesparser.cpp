@@ -113,6 +113,12 @@ bool XercesParser::Parse(  const std::string& datafile,
       LOG_ERROR(std::string("Exception message is: ") + message)
       XMLString::release(&message);
    }
+   catch (const SAXParseException&)
+   {
+      //problem with the xml parsing.  Not much to do here since the XercesErrorHandler
+      //will report it for us.
+      retVal = false;
+   }
 
    return retVal;
 }
