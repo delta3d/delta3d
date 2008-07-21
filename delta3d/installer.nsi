@@ -90,11 +90,13 @@ Section "!Delta3D" Delta3DSection
   File "readme.txt"
 
 
-  ;bin : both debug/release .dlls, all release .exe's
+  ;bin : both debug/release .dlls, all release .exe's, 3D max plugin Release binaries
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin"
   File .\${DELTA_BUILD_DIR}\bin\*.dll
   File /x *d.exe .\${DELTA_BUILD_DIR}\bin\*.exe
-  
+  File /nonfatal /x *d.dle .\.\${DELTA_BUILD_DIR}\bin\*.dle
+  File /nonfatal /x *d.dlo .\.\${DELTA_BUILD_DIR}\bin\*.dlo
+
   ;bin\release : the Python bindinds
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
   File .\${DELTA_BUILD_DIR}\bin\release\*.pyd
