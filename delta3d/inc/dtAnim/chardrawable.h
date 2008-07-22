@@ -62,7 +62,7 @@ namespace dtAnim
       CharDrawable(Cal3DModelWrapper* wrapper);
       ~CharDrawable();
 
-      void OnMessage(dtCore::Base::MessageData *data);
+      void OnMessage(dtCore::Base::MessageData* data);
 
       Cal3DModelWrapper* GetCal3DWrapper();
       osg::Node* GetNode() { return mNode.get(); }
@@ -70,16 +70,16 @@ namespace dtAnim
       /// change the data this class is viewing.
       void SetCal3DWrapper(Cal3DModelWrapper* wrapper);
 
-   private:
-      CharDrawable();
-
-      dtCore::RefPtr<osg::Node>    mNode;
+   protected:
       dtCore::RefPtr<Cal3DAnimator> mAnimator;
-
+      dtCore::RefPtr<osg::Node>     mNode;
       int mLastMeshCount;
 
       ///Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer
       void RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode);
+
+   private:
+      CharDrawable();
    };
 }
 #endif // chardrawable_h__

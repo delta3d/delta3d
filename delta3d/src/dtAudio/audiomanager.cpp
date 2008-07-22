@@ -1490,7 +1490,7 @@ void AudioManager::PlaySound( SoundObj* snd )
       }
 
       src   = snd->Source();
-	   source_is_new = true; 
+      source_is_new = true; 
    }
    else
    {
