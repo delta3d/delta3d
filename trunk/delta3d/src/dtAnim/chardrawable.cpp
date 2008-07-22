@@ -36,7 +36,7 @@ CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
 
 CharDrawable::~CharDrawable()
 {
-   RemoveSender(&dtCore::System::GetInstance()); 
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
 
@@ -45,12 +45,12 @@ Cal3DModelWrapper* CharDrawable::GetCal3DWrapper()
    return mAnimator->GetWrapper();
 }
 
-void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
+void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 {
    assert(mAnimator.get());
 
    // tick the animation
-   if( data->message == "preframe" )
+   if (data->message == "preframe")
    {
       double dt = *static_cast<double*>(data->userData);
       mAnimator->Update(dt);
@@ -62,7 +62,6 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData *data)
          RebuildSubmeshes(wrapper, mNode.get());
          mLastMeshCount = wrapper->GetMeshCount();
       }
-
    }
 }
 
