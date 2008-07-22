@@ -13,10 +13,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                          DTUTIL_LIBRARY
-                          DTCORE_LIBRARY
-                          DTAI_LIBRARY)
+                          
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTAI_LIBRARY}
+                     )                          
                           
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DAL_LIBRARY)

@@ -42,35 +42,45 @@ ADD_EXECUTABLE(${PROG_NAME}
 )
 
 LINK_WITH_VARIABLES(${PROG_NAME}
-                     DTUTIL_LIBRARY
-                     DTCORE_LIBRARY
-                     DTAUDIO_LIBRARY
-                     DTAI_LIBRARY
-                     DTDAL_LIBRARY
-                     DTLMS_LIBRARY
-                     DTGUI_LIBRARY
-                     DTACTORS_LIBRARY
-                     DTANIM_LIBRARY
-                     DTABC_LIBRARY
-                     TEST_ACTOR_LIBRARY
-                     TEST_GAME_ACTOR_LIBRARY
                      CPPUNIT_LIBRARY)
 
+TARGET_LINK_LIBRARIES( ${PROG_NAME}
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTAUDIO_LIBRARY}
+                       ${DTAI_LIBRARY}
+                       ${DTDAL_LIBRARY}
+                       ${DTLMS_LIBRARY}
+                       ${DTGUI_LIBRARY}
+                       ${DTACTORS_LIBRARY}
+                       ${DTANIM_LIBRARY}
+                       ${DTABC_LIBRARY}
+                       ${TEST_ACTOR_LIBRARY}
+                       ${TEST_GAME_ACTOR_LIBRARY}
+                     )
 IF(DTDIS_AVAILABLE)
-   LINK_WITH_VARIABLES(${PROG_NAME}
-                        DTDIS_LIBRARY
-                        DIS_LIBRARY)
+   TARGET_LINK_LIBRARIES(${PROG_NAME}
+                         ${DTDIS_LIBRARY}
+                         ${DIS_LIBRARY}
+                        )
 ENDIF(DTDIS_AVAILABLE)
 
 INCLUDE(ModuleInstall OPTIONAL)
 
 IF (BUILD_HLA)
-  LINK_WITH_VARIABLES(${PROG_NAME}  DTHLAGM_LIBRARY)
-  TARGET_LINK_LIBRARIES(${PROG_NAME} ${RTI_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${PROG_NAME}  
+                        ${DTHLAGM_LIBRARY}
+                        )
+                        
+  TARGET_LINK_LIBRARIES(${PROG_NAME}
+                        ${RTI_LIBRARIES}
+                        )
 ENDIF (BUILD_HLA)
 
 IF (BUILD_DEMOS)
-    LINK_WITH_VARIABLES( ${PROG_NAME} FIREFIGHTER_DEMO_LIBRARY )
+    TARGET_LINK_LIBRARIES( ${PROG_NAME} 
+                           ${FIREFIGHTER_DEMO_LIBRARY}
+                         )
     #fireFighter needs the demos folder added for #include search paths
     INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/demos")  
 ENDIF (BUILD_DEMOS)

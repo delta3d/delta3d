@@ -9,12 +9,12 @@ ADD_EXECUTABLE(${PROG_NAME}
     ${PROG_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${PROG_NAME}
-                                         DTUTIL_LIBRARY   
-                                          DTCORE_LIBRARY
-                                         DTABC_LIBRARY
-                                        DTGAME_LIBRARY
-                                         )
+TARGET_LINK_LIBRARIES(${PROG_NAME}
+                      dtUtil
+                      dtCore
+                      dtABC
+                      dtGame
+                     )
 
                                               
 INCLUDE(ModuleInstall OPTIONAL)

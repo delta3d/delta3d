@@ -7,7 +7,7 @@ MACRO(BUILD_EXE_EXAMPLE TGTNAME)
   ADD_EXECUTABLE(${TGTNAME} ${TARGET_SRC} ${TARGET_H})
   
   FOREACH(varname ${ARGN})
-      LINK_WITH_VARIABLES( ${TGTNAME} ${varname} )
+      TARGET_LINK_LIBRARIES( ${TGTNAME} ${varname} )
   ENDFOREACH(varname)
   
   #little hack to get the .dll into /bin and .lib into /lib

@@ -32,10 +32,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}											  
-											  DTCORE_LIBRARY											 
-											  OSG_LIBRARY)
-											  
+LINK_WITH_VARIABLES(${LIB_NAME}                       
+                     OSG_LIBRARY)
+
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${DTCORE_LIBRARY}
+                     )											  
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_INPUT_ISENSE_LIBRARY)					

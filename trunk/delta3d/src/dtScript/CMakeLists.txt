@@ -15,14 +15,17 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-                       DTUTIL_LIBRARY
-                       DTCORE_LIBRARY
                        OSG_LIBRARY
                        OSGDB_LIBRARY
                        OSGGA_LIBRARY
                        OPENTHREADS_LIBRARY
                        PYTHON_LIBRARY)
-
+                       
+TARGET_LINK_LIBRARIES( ${LIB_NAME}                       
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                      )
+                      
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_SCRIPT_LIBRARY)
 

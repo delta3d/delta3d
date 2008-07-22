@@ -15,18 +15,20 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
  
  LINK_WITH_VARIABLES(${LIB_NAME}
-												DTUTIL_LIBRARY
-												DTCORE_LIBRARY
-												OSG_LIBRARY
-												OSGGA_LIBRARY
-												OPENTHREADS_LIBRARY
-												CEGUI_LIBRARY
-												CEGUIOPENGL_LIBRARY)
+                        OSG_LIBRARY
+                        OSGGA_LIBRARY
+                        OPENTHREADS_LIBRARY
+                        CEGUI_LIBRARY
+                        CEGUIOPENGL_LIBRARY
+										)
 												
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}  
-													  ${OPENGL_LIBRARY} 
-													  ${MATH_LIBRARY})
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${OPENGL_LIBRARY} 
+                       ${MATH_LIBRARY}
+                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_GUI_LIBRARY)

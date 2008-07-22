@@ -16,19 +16,17 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTUTIL_LIBRARY
-											  DTCORE_LIBRARY
-											  DTDAL_LIBRARY
-											  DTGAME_LIBRARY
-											  CAL3D_LIBRARY
-											  OSG_LIBRARY
-											  OSGDB_LIBRARY
-											  OPENTHREADS_LIBRARY
-											  XERCES_LIBRARY)
+									  CAL3D_LIBRARY
+									 )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
-													  ${OPENGL_LIBRARY} 
-													  ${MATH_LIBRARY})
+                      ${OPENGL_LIBRARY} 
+                      ${MATH_LIBRARY}
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTDAL_LIBRARAY}
+                      ${DTGAME_LIBRARY}
+                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_ANIM_LIBRARY)

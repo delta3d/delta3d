@@ -16,13 +16,16 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTUTIL_LIBRARY
-											  DTDAL_LIBRARY
-											  DTGAME_LIBRARY
-											  OSGSIM_LIBRARY
-											  OPENTHREADS_LIBRARY)
+										 OSGSIM_LIBRARY
+										 OPENTHREADS_LIBRARY
+									 )
 
-TARGET_LINK_LIBRARIES(${LIB_NAME} ${RTI_LIBRARIES} )
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+										  ${DTUTIL_LIBRARY}
+										  ${DTDAL_LIBRARY}
+										  ${DTGAME_LIBRARY}
+                      ${RTI_LIBRARIES} 
+                     )
 
 IF (WIN32)
 TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)

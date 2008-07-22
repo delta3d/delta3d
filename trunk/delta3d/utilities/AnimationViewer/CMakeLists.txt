@@ -23,16 +23,20 @@ ADD_EXECUTABLE(${PROG_NAME}
     ${UI_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${PROG_NAME}
-                                         QT_QTCORE_LIBRARY
-                                         QT_QTGUI_LIBRARY
-                                         QT_QTOPENGL_LIBRARY
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY
-                                         DTANIM_LIBRARY
-                                         DTABC_LIBRARY
-                                         OSGFX_LIBRARY
-                                         AGL_LIBRARY)
+LINK_WITH_VARIABLES( ${PROG_NAME}
+                     QT_QTCORE_LIBRARY
+                     QT_QTGUI_LIBRARY
+                     QT_QTOPENGL_LIBRARY
+                     OSGFX_LIBRARY
+                     AGL_LIBRARY
+                    )
+                     
+TARGET_LINK_LIBRARIES( ${PROG_NAME}
+                       ${DTUTIL_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTANIM_LIBRARY}
+                       ${DTABC_LIBRARY}
+                     )           
 
 
 

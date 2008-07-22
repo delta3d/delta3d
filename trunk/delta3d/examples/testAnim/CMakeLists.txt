@@ -11,16 +11,15 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    readme.txt
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY
-                                         DTABC_LIBRARY
-                                         DTANIM_LIBRARY
-                                         DTAI_LIBRARY
-                                         DTGAME_LIBRARY
-                                         DTACTORS_LIBRARY
-                                         OSG_LIBRARY
-                                         OSGDB_LIBRARY)                                        
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTABC_LIBRARY}
+                      ${DTANIM_LIBRARY}
+                      ${DTAI_LIBRARY}
+                      ${DTGAME_LIBRARY}
+                      ${DTACTORS_LIBRARY}
+                   )                                        
                                               
 
 INCLUDE(ModuleInstall OPTIONAL)

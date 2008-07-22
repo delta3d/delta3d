@@ -4,10 +4,10 @@ SET(TARGET_H clientmessageprocessor.h testClient.h)
 INCLUDE_DIRECTORIES( ${GNE_INCLUDE_DIR} ${BOOST_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR} ${HAWKNL_INCLUDE_DIR} )
 
 BUILD_EXE_EXAMPLE( testClient 
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY                                         
-                                         DTABC_LIBRARY
-                                         DTDAL_LIBRARY
-                                         DTGAME_LIBRARY
-                                         DTNETGM_LIBRARY
-                                         OSG_LIBRARY)                                        
+                   ${DTUTIL_LIBRARY}
+                   ${DTCORE_LIBRARY}
+                   ${DTABC_LIBRARY}
+                   ${DTDAL_LIBRARY}
+                   ${DTGAME_LIBRARY}
+                   ${DTNETGM_LIBRARY}
+                 )                                        

@@ -1,17 +1,28 @@
 #Build a Delta3D Python binding.
 #Expects files to be compiled in TARGET_SRC and TARGET_H.
 #Supply the target name as the first parameter.  Additional
-#parameters will be passed to LINK_WITH_VARIABLES
+#parameters will be passed to TARGET_LINK_LIBRARIES()
 MACRO (BUILD_PYTHON_BINDING TGTNAME)
   
+  #With Cmake2.6.x and CMP003 NEW, if user sets BOOST_PYTHON_LIBRARY
+  #to be the non-versioned file ("boost_python-vc90-mt.lib"), the compiler
+  #will try to link with the versioned file ("boost_python-vc90-mt-1_35.lib")
+  #so we need an additional search path to find it.
+  LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+
   ADD_LIBRARY( ${TGTNAME} SHARED ${TARGET_SRC} ${TARGET_H} )
   INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} 
                        ${Boost_INCLUDE_DIR} )
 
-  
   FOREACH(varname ${ARGN})
-      LINK_WITH_VARIABLES( ${TGTNAME} ${varname} )
+      TARGET_LINK_LIBRARIES( ${TGTNAME} ${varname} )
   ENDFOREACH(varname)
+  
+  LINK_WITH_VARIABLES( ${TGTNAME} 
+                       BOOST_PYTHON_LIBRARY
+                       PYTHON_LIBRARY
+                     )
+
 
   IF (WIN32)
     SET_TARGET_PROPERTIES( ${TGTNAME} PROPERTIES SUFFIX ".pyd")
