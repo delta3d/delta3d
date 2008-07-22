@@ -36,8 +36,6 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                      )                                        
                                               
 
-INCLUDE(ModuleInstall OPTIONAL)
-
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL TEST_AAR_LIBRARY)
 
