@@ -8,4 +8,9 @@ BUILD_EXE_EXAMPLE( testNetwork
                    ${DTUTIL_LIBRARY}
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
-                  )                                         
+                  )
+LINK_WITH_VARIABLES( testNetwork
+                     GNE_LIBRARY
+                     HAWKNL_LIBRARY
+                     CURSES_LIBRARY
+                   )
