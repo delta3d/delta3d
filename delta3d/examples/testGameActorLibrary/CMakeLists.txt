@@ -21,8 +21,6 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_EXAMPLE_LIBRARY)
 
-INCLUDE(ModuleInstall OPTIONAL)
-
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
