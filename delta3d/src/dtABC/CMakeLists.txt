@@ -19,12 +19,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 TARGET_LINK_LIBRARIES(${LIB_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       ${DTDAL_LIBRARY}		
-											 ${FLTK_LIBRARY}
-											 ${OPENGL_LIBRARY}
-											 ${MATH_LIBRARY})
-												 
-												 
+                       ${DTDAL_LIBRARY}    
+                       ${FLTK_LIBRARY}
+                       ${OPENGL_LIBRARY}
+                       ${MATH_LIBRARY})
+                         
+                         
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_ABC_LIBRARY)

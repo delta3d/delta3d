@@ -16,14 +16,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-										 OSGSIM_LIBRARY
-										 OPENTHREADS_LIBRARY
-									 )
+                     OSGSIM_LIBRARY
+                     OPENTHREADS_LIBRARY
+                   )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-										  ${DTUTIL_LIBRARY}
-										  ${DTDAL_LIBRARY}
-										  ${DTGAME_LIBRARY}
+                      ${DTUTIL_LIBRARY}
+                      ${DTDAL_LIBRARY}
+                      ${DTGAME_LIBRARY}
                       ${RTI_LIBRARIES} 
                      )
 

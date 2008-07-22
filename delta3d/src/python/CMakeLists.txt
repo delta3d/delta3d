@@ -174,15 +174,15 @@ BUILD_PYTHON_BINDING(${DAL_BINDINGS}
 
 IF(BUILD_PLIB)
 
-	SET(PLIB_BINDINGS "PyDtInputPLIB")
+  SET(PLIB_BINDINGS "PyDtInputPLIB")
 
-    SET(TARGET_SRC   joystickbindings.cpp	)
+    SET(TARGET_SRC   joystickbindings.cpp  )
 
     SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
 
 
-	
-	BUILD_PYTHON_BINDING(${PLIB_BINDINGS} 
+  
+  BUILD_PYTHON_BINDING(${PLIB_BINDINGS} 
                        ${DTINPUT_PLIB_LIBRARY}
                       )
 ENDIF(BUILD_PLIB)

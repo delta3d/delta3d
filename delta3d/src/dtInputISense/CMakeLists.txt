@@ -37,10 +37,10 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTCORE_LIBRARY}
-                     )											  
+                     )                        
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_INPUT_ISENSE_LIBRARY)					
+                     PROPERTIES DEFINE_SYMBOL DT_INPUT_ISENSE_LIBRARY)          
 
 INCLUDE(ModuleInstall OPTIONAL)
 

@@ -12,12 +12,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_SOURCES}
 )
 
-											  
+                        
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
              ${DTUTIL_LIBRARY}
              ${DTCORE_LIBRARY}
-					   ${OPENGL_LIBRARY}
-				     )											  
+             ${OPENGL_LIBRARY}
+             )                        
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_AI_LIBRARY)

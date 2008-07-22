@@ -16,8 +16,8 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-									  CAL3D_LIBRARY
-									 )
+                    CAL3D_LIBRARY
+                   )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
                       ${OPENGL_LIBRARY} 

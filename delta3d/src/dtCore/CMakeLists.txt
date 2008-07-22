@@ -49,10 +49,10 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
             ${DTUTIL_LIBRARY}
-					  ${OPENGL_LIBRARY} 
-					  ${MATH_LIBRARY}
-					  ${CARBON_LIBRARY}
-					  )
+            ${OPENGL_LIBRARY} 
+            ${MATH_LIBRARY}
+            ${CARBON_LIBRARY}
+            )
 
 if (X11_FOUND)
    TARGET_LINK_LIBRARIES( ${LIB_NAME}

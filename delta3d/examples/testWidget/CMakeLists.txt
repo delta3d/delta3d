@@ -6,5 +6,5 @@ BUILD_EXE_EXAMPLE( testWidget
                    ${DTABC_LIBRARY}
                  )
 IF (WIN32)                                             
-	TARGET_LINK_LIBRARIES(testWidget Ws2_32 Comctl32)
+  TARGET_LINK_LIBRARIES(testWidget Ws2_32 Comctl32)
 ENDIF (WIN32)
