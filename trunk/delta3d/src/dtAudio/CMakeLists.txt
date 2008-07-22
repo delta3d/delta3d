@@ -19,12 +19,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  OSG_LIBRARY
-											  OSGDB_LIBRARY
-											  OPENTHREADS_LIBRARY
-											  XERCES_LIBRARY)
+                        OSG_LIBRARY
+                        OSGDB_LIBRARY
+                        OPENTHREADS_LIBRARY
+                        XERCES_LIBRARY)
 
-TARGET_LINK_LIBRARIES( ${LIB_NAME}		
+TARGET_LINK_LIBRARIES( ${LIB_NAME}    
                        ${OPENAL_LIBRARY} 
                        ${ALUT_LIBRARY} 
                        ${DTCORE_LIBRARY}

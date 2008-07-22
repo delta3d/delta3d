@@ -15,16 +15,16 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  OSG_LIBRARY
-											  OSGDB_LIBRARY
-											  GDAL_LIBRARY
-									  )
+                        OSG_LIBRARY
+                        OSGDB_LIBRARY
+                        GDAL_LIBRARY
+                    )
 
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
                       ${OPENGL_LIBRARY}
                       ${MATH_LIBRARY}
-											${DTUTIL_LIBRARY}
-									    ${DTCORE_LIBRARY}                     
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}                     
                       )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}

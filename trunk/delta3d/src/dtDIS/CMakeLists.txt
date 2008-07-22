@@ -17,13 +17,13 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-				            HAWKNL_LIBRARY
+                    HAWKNL_LIBRARY
                     DIS_LIBRARY
                    )
 
 IF (WIN32)   
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-				wsock32)
+        wsock32)
 ENDIF (WIN32)
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}
@@ -32,9 +32,9 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTGAME_LIBRARY}
                       ${CARBON_LIBRARY}
                       )                                         
-																								
+                                                
 SET_TARGET_PROPERTIES(${LIB_NAME}
-                     PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)				 
+                     PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)         
 
 
 

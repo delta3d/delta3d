@@ -16,14 +16,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  OSG_LIBRARY 
-											  OSGDB_LIBRARY 
-											  XERCES_LIBRARY
-											  OPENTHREADS_LIBRARY)
+                        OSG_LIBRARY 
+                        OSGDB_LIBRARY 
+                        XERCES_LIBRARY
+                        OPENTHREADS_LIBRARY)
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_UTIL_LIBRARY)
-					 
+           
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib

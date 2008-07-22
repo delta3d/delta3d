@@ -20,8 +20,8 @@ ADD_LIBRARY(${LIB_NAME} SHARED
                         OPENTHREADS_LIBRARY
                         CEGUI_LIBRARY
                         CEGUIOPENGL_LIBRARY
-										)
-												
+                    )
+                        
 
 TARGET_LINK_LIBRARIES(${LIB_NAME}  
                        ${DTUTIL_LIBRARY}
