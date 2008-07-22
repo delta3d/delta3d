@@ -22,22 +22,23 @@ ADD_LIBRARY( ${LIB_NAME} SHARED
                     
 INCLUDE_DIRECTORIES( ${CEGUI_INCLUDE_DIR} ) #for dtGUI
 
-LINK_WITH_VARIABLES( ${LIB_NAME}
-                                  DTABC_LIBRARY
-                                  DTACTORS_LIBRARY
-                                  DTCORE_LIBRARY
-                                  DTDAL_LIBRARY
-                                  DTGAME_LIBRARY
-                                  DTGUI_LIBRARY
-                                  DTUTIL_LIBRARY
-                                  )
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${DTABC_LIBRARY}
+                       ${DTACTORS_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTDAL_LIBRARY}
+                       ${DTGAME_LIBRARY}
+                       ${DTGUI_LIBRARY}
+                       ${DTUTIL_LIBRARY}
+                     )
 
 SET (PREPROCESSOR_PROPS "")
 
 #Use dtHLAGM if we have access to it
 IF (DTHLAGM_AVAILABLE)
-  LINK_WITH_VARIABLES (${LIB_NAME}
-                                      DTHLAGM_LIBRARY )
+  TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                         ${DTHLAGM_LIBRARY}
+                       )
   
   INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR}) 
                                           

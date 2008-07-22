@@ -17,20 +17,21 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-				DTUTIL_LIBRARY
-				DTCORE_LIBRARY
-				HAWKNL_LIBRARY
-                                DIS_LIBRARY
-                                DTGAME_LIBRARY)
+				            HAWKNL_LIBRARY
+                    DIS_LIBRARY
+                   )
 
 IF (WIN32)   
 TARGET_LINK_LIBRARIES(${LIB_NAME}
 				wsock32)
 ENDIF (WIN32)
+
 TARGET_LINK_LIBRARIES(${LIB_NAME}
-												${CARBON_LIBRARY}
-												#${FLTK_LIBRARY}
-												)																					
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTGAME_LIBRARY}
+                      ${CARBON_LIBRARY}
+                      )                                         
 																								
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_DIS_LIBRARY COMPILE_FLAGS -DDT_DIS_DEFAULT_PLUGIN)				 

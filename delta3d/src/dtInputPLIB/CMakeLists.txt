@@ -13,11 +13,16 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}											  
-                    DTCORE_LIBRARY											 
                     OSG_LIBRARY
                     PLIB_JS_LIBRARY
                     PLIB_UL_LIBRARY
-                    IOKIT_LIBRARY  )
+                    IOKIT_LIBRARY 
+                    )
+                    
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${DTCORE_LIBRARY}
+                     )
+                    
 											  
 IF (WIN32)
    TARGET_LINK_LIBRARIES(${LIB_NAME} winmm)

@@ -18,10 +18,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTGAME_LIBRARY
 											  GNE_LIBRARY
 											  HAWKNL_LIBRARY
 											  CURSES_LIBRARY)
+											  
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+											 ${DTGAME_LIBRARY}
+                     )
+                     						  
 IF (WIN32)
 TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
 ENDIF (WIN32)

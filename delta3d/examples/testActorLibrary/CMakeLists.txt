@@ -8,13 +8,13 @@ ADD_LIBRARY(${LIB_NAME} SHARED
    ${LIB_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY
-                                         DTDAL_LIBRARY
-                                         DTACTORS_LIBRARY
-                                         DTABC_LIBRARY         
-                                         OSG_LIBRARY)                                        
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTDAL_LIBRARY}
+                      ${DTACTORS_LIBRARY}
+                      ${DTABC_LIBRARY}
+                      )                                        
                                               
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_PLUGIN)

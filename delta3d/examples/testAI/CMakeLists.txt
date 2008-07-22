@@ -4,11 +4,9 @@ SET(TARGET_H aicharacter.h testai.h)
 INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
 BUILD_EXE_EXAMPLE( testAI                                          
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY
-                                         DTABC_LIBRARY
-                                         DTANIM_LIBRARY
-                                         DTAI_LIBRARY                                          
-                                         OSG_LIBRARY
-                                         OSGDB_LIBRARY
-                                         OSGUTIL_LIBRARY)                                        
+                   ${DTUTIL_LIBRARY}
+                   ${DTCORE_LIBRARY}
+                   ${DTABC_LIBRARY}
+                   ${DTANIM_LIBRARY}
+                   ${DTAI_LIBRARY}
+                  )

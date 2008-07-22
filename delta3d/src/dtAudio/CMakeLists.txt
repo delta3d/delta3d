@@ -19,18 +19,19 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTCORE_LIBRARY
-											  DTDAL_LIBRARY #for SoundActorProxy
-											  DTGAME_LIBRARY #for SoundActorProxy
-											  DTUTIL_LIBRARY
 											  OSG_LIBRARY
 											  OSGDB_LIBRARY
 											  OPENTHREADS_LIBRARY
 											  XERCES_LIBRARY)
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}		
-					                                  ${OPENAL_LIBRARY} 
-					                                  ${ALUT_LIBRARY} )
+                       ${OPENAL_LIBRARY} 
+                       ${ALUT_LIBRARY} 
+                       ${DTCORE_LIBRARY}
+                       ${DTDAL_LIBRARY} #for SoundActorProxy
+                       ${DTGAME_LIBRARY} #for SoundActorProxy
+                       ${DTUTIL_LIBRARY}
+                       )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_AUDIO_LIBRARY)

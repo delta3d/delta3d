@@ -13,9 +13,9 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_SOURCES}
 )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTGAME_LIBRARY
-											  )
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTGAME_LIBRARY}
+                      )
 
 IF (WIN32)
 TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)

@@ -23,17 +23,17 @@ ADD_LIBRARY(${LIB_NAME} SHARED
      ${HEADER_PATH}/testaarmessagetypes.h
      ${HEADER_PATH}/testaarmessagetypes.cpp)
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                                         DTUTIL_LIBRARY
-                                         DTCORE_LIBRARY
-                                         DTDAL_LIBRARY
-                                         DTGAME_LIBRARY
-                                         DTACTORS_LIBRARY
-                                         DTABC_LIBRARY                                                                                  
-                                         DTAI_LIBRARY    
-                                         DTGUI_LIBRARY                                            
-                                         DTLMS_LIBRARY
-                                          OSG_LIBRARY)                                        
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTDAL_LIBRARY}
+                      ${DTGAME_LIBRARY}
+                      ${DTACTORS_LIBRARY}
+                      ${DTABC_LIBRARY}
+                      ${DTAI_LIBRARY}
+                      ${DTGUI_LIBRARY}
+                      ${DTLMS_LIBRARY}
+                     )                                        
                                               
 
 INCLUDE(ModuleInstall OPTIONAL)

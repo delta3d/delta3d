@@ -11,14 +11,12 @@ ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS}                         
     ${LIB_SOURCES}
 )
-
-LINK_WITH_VARIABLES(${LIB_NAME}													 
-											  DTCORE_LIBRARY	
-											  DTABC_LIBRARY)
                                               
-#TARGET_LINK_LIBRARIES(${LIB_NAME}
-#                                                      wsock32
-#                                                      comctl32)
+TARGET_LINK_LIBRARIES(${LIB_NAME}
+                      ${DTCORE_LIBRARY}
+                      ${DTABC_LIBRARY}
+                     )
+
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_INSPECTOR_LIBRARY)					

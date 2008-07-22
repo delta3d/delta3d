@@ -8,15 +8,15 @@ ADD_LIBRARY( ${LIB_NAME} SHARED
 	readme.txt
 )
 
-LINK_WITH_VARIABLES( ${LIB_NAME}
-                                    DTACTORS_LIBRARY
-                                    DTAUDIO_LIBRARY
-                                    DTCORE_LIBRARY
-                                    DTDAL_LIBRARY
-                                    DTGAME_LIBRARY
-                                    DTGUI_LIBRARY
-                                    DTLMS_LIBRARY
-                                    )
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
+                       ${DTACTORS_LIBRARY}
+                       ${DTAUDIO_LIBRARY}
+                       ${DTCORE_LIBRARY}
+                       ${DTDAL_LIBRARY}
+                       ${DTGAME_LIBRARY}
+                       ${DTGUI_LIBRARY}
+                       ${DTLMS_LIBRARY}
+                     )
 
 #fireFighter needs to have the "delta3d/demos" folder as an #include search path
 INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/..")

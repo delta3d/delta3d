@@ -10,14 +10,16 @@ ADD_EXECUTABLE(${PROG_NAME}
 )
 
 LINK_WITH_VARIABLES(${PROG_NAME}
-                                         DTUTIL_LIBRARY   
-                                         DTCORE_LIBRARY
-                                         DTDAL_LIBRARY
-                                         DTABC_LIBRARY 
-					 OSGFX_LIBRARY)
+                    OSGFX_LIBRARY)
 
+TARGET_LINK_LIBRARIES(${PROG_NAME} 
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTDAL_LIBRARY}
+                      ${DTABC_LIBRARY}
+                     )
 IF(WIN32)
-TARGET_LINK_LIBRARIES(${PROG_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
+  TARGET_LINK_LIBRARIES(${PROG_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
 ENDIF(WIN32)
                                               
 INCLUDE(ModuleInstall OPTIONAL)

@@ -17,12 +17,14 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-                             DTUTIL_LIBRARY
-                             DTCORE_LIBRARY
-                             DTABC_LIBRARY
-                             OSGSIM_LIBRARY)
+                    OSGSIM_LIBRARY)
 
-TARGET_LINK_LIBRARIES(${LIB_NAME}  ${CARBON_LIBRARY})
+TARGET_LINK_LIBRARIES(${LIB_NAME}  
+                      ${CARBON_LIBRARY}
+                      ${DTUTIL_LIBRARY}
+                      ${DTCORE_LIBRARY}
+                      ${DTABC_LIBRARY}
+                      )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_GAME_LIBRARY)

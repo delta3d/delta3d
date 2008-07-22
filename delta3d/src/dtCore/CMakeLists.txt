@@ -34,21 +34,21 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}
-											  DTUTIL_LIBRARY
-											  OSG_LIBRARY
-											  OSGTEXT_LIBRARY
-                                   OSGSIM_LIBRARY
-											  OSGDB_LIBRARY
-											  OSGGA_LIBRARY
-											  OSGVIEWER_LIBRARY
-											  OSGPARTICLE_LIBRARY
-											  OSGUTIL_LIBRARY
-											  OPENTHREADS_LIBRARY
-											  ODE_LIBRARY
-											  XERCES_LIBRARY
-											  UUID_LIBRARY)
+                    OSG_LIBRARY
+                    OSGTEXT_LIBRARY
+                    OSGSIM_LIBRARY
+                    OSGDB_LIBRARY
+                    OSGGA_LIBRARY
+                    OSGVIEWER_LIBRARY
+                    OSGPARTICLE_LIBRARY
+                    OSGUTIL_LIBRARY
+                    OPENTHREADS_LIBRARY
+                    ODE_LIBRARY
+                    XERCES_LIBRARY
+                    UUID_LIBRARY)
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
+            ${DTUTIL_LIBRARY}
 					  ${OPENGL_LIBRARY} 
 					  ${MATH_LIBRARY}
 					  ${CARBON_LIBRARY}

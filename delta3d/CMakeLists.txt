@@ -13,7 +13,7 @@ ENDIF(WIN32)
 
 #see cmake --help-policy CMP0003 for more information
 IF(COMMAND cmake_policy)
-    CMAKE_POLICY(SET CMP0003 OLD)
+    CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
 PROJECT(DELTA3D)
