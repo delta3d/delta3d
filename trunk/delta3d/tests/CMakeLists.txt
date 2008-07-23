@@ -4,7 +4,7 @@ SET(PROG_NAME     allTests)
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/examples
                      ${CMAKE_SOURCE_DIR}/utilities) 
 
-SET(DIRS dtABC dtAI dtActors dtAnim dtAudio dtCore dtDAL dtGUI dtGame dtLMS dtUtil)
+SET(DIRS dtABC dtAI dtActors dtCore dtDAL dtGame dtLMS dtUtil)
 IF(DTDIS_AVAILABLE)
   SET(DIRS ${DIRS} dtDIS)
 ENDIF(DTDIS_AVAILABLE)
@@ -23,6 +23,18 @@ ENDIF (BUILD_HLA)
 IF (BUILD_DEMOS)
   SET(DIRS ${DIRS} "demos/firefighter")
 ENDIF (BUILD_DEMOS)
+
+IF (DTANIM_AVAILABLE)
+  SET(DIRS ${DIRS} dtAnim)
+ENDIF (DTANIM_AVAILABLE)
+  
+IF (DTAUDIO_AVAILABLE)
+  SET(DIRS ${DIRS} dtAudio)
+ENDIF (DTAUDIO_AVAILABLE)
+
+IF (DTGUI_AVAILABLE)
+  SET(DIRS ${DIRS} dtGUI)
+ENDIF (DTGUI_AVAILABLE)
 
 FOREACH(varname ${DIRS}) 
   file(GLOB TEMP_SOURCES "${varname}/*.cpp" "${varname}/*.h")
@@ -47,13 +59,11 @@ LINK_WITH_VARIABLES(${PROG_NAME}
 TARGET_LINK_LIBRARIES( ${PROG_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       ${DTAUDIO_LIBRARY}
+                       ${DTAUDIO_LIBRARY}#required since the unit tests use dtAudio
                        ${DTAI_LIBRARY}
                        ${DTDAL_LIBRARY}
                        ${DTLMS_LIBRARY}
-                       ${DTGUI_LIBRARY}
                        ${DTACTORS_LIBRARY}
-                       ${DTANIM_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${TEST_ACTOR_LIBRARY}
                        ${TEST_GAME_ACTOR_LIBRARY}
@@ -83,6 +93,25 @@ IF (BUILD_DEMOS)
     #fireFighter needs the demos folder added for #include search paths
     INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/demos")  
 ENDIF (BUILD_DEMOS)
+
+IF (DTANIM_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${PROG_NAME}
+                         ${DTANIM_LIBRARY}
+                       )
+ENDIF (DTANIM_AVAILABLE)
+                       
+IF (DTAUDIO_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${PROG_NAME}
+                         ${DTAUDIO_LIBRARY}
+                       )
+ENDIF (DTAUDIO_AVAILABLE)
+
+IF (DTGUI_AVAILABLE)
+  TARGET_LINK_LIBRARIES( ${PROG_NAME}
+                         ${DTGUI_LIBRARY}
+                       )
+ENDIF (DTGUI_AVAILABLE)
+
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests) #drop the .exe into the delta3d/tests folder
 
