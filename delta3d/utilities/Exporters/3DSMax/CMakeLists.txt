@@ -9,6 +9,7 @@ SET(HEADER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include/OSGExp)
 FILE (GLOB HEADER_FILES "${HEADER_PATH}/*.h")
 FILE (GLOB SOURCE_FILES "${SOURCE_PATH}/*.cpp")
 
+
 #.cpp files need the path to the header files
 INCLUDE_DIRECTORIES( 
                       ${3DS_INCLUDE_DIR}
@@ -19,6 +20,7 @@ ADD_LIBRARY( ${OSG_EXP} SHARED
              ${HEADER_FILES}
              ${SOURCE_FILES}
              ${SOURCE_PATH}/OSGExp.def
+             ${SOURCE_PATH}/OSGExp.rc
 )
 
 LINK_WITH_VARIABLES( ${OSG_EXP}
@@ -112,6 +114,7 @@ ADD_LIBRARY( ${EXP_HELP} SHARED
              ${HEADER_FILES}
              ${SOURCE_FILES}
              ${SOURCE_PATH}/OSGHelper.def
+             ${SOURCE_PATH}/OSGHelper.rc
 )
 
 TARGET_LINK_LIBRARIES( ${EXP_HELP}
