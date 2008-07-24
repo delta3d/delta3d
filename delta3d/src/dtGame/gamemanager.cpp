@@ -61,7 +61,7 @@ namespace dtGame
    const GameManager::ComponentPriority GameManager::ComponentPriority::LOWEST("LOWEST", 5);
 
    ///////////////////////////////////////////////////////////////////////////////
-   GameManager::GameManager(dtCore::Scene &scene) :
+   GameManager::GameManager(dtCore::Scene& scene) :
       mMachineInfo(new MachineInfo()),
       mSendCreatesAndDeletes(true),
       mAddActorsToScene(true),
@@ -78,7 +78,7 @@ namespace dtGame
       mMapChangeStateData = new MapChangeStateData(*this);
 
       // when we come alive, the first message everyone gets will be INFO_RESTARTED
-      dtCore::RefPtr<Message> restartMessage = 
+      dtCore::RefPtr<Message> restartMessage =
          GetMessageFactory().CreateMessage(MessageType::INFO_RESTARTED);
       SendMessage(*restartMessage);
    }
@@ -99,31 +99,31 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::LoadActorRegistry(const std::string &libName)
+   void GameManager::LoadActorRegistry(const std::string& libName)
    {
       mLibMgr->LoadActorRegistry(libName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnloadActorRegistry(const std::string &libName)
+   void GameManager::UnloadActorRegistry(const std::string& libName)
    {
       mLibMgr->UnloadActorRegistry(libName);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*> &actorTypes)
+   void GameManager::GetActorTypes(std::vector<const dtDAL::ActorType*>& actorTypes)
    {
       mLibMgr->GetActorTypes(actorTypes);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorType* GameManager::FindActorType(const std::string &category, const std::string &name)
+   const dtDAL::ActorType* GameManager::FindActorType(const std::string& category, const std::string& name)
    {
       return mLibMgr->FindActorType(category, name);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorPluginRegistry* GameManager::GetRegistry(const std::string &name)
+   dtDAL::ActorPluginRegistry* GameManager::GetRegistry(const std::string& name)
    {
       return mLibMgr->GetRegistry(name);
    }
@@ -135,13 +135,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   std::string GameManager::GetPlatformSpecificLibraryName(const std::string &libBase)
+   std::string GameManager::GetPlatformSpecificLibraryName(const std::string& libBase)
    {
       return mLibMgr->GetPlatformSpecificLibraryName(libBase);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   std::string GameManager::GetPlatformIndependentLibraryName(const std::string &libName)
+   std::string GameManager::GetPlatformIndependentLibraryName(const std::string& libName)
    {
       return mLibMgr->GetPlatformIndependentLibraryName(libName);
    }
@@ -162,7 +162,7 @@ namespace dtGame
    dtABC::Application& GameManager::GetApplication()
    {
       if (mApplication == NULL)
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
 
       return *mApplication;
@@ -172,7 +172,7 @@ namespace dtGame
    const dtABC::Application& GameManager::GetApplication() const
    {
       if (mApplication == NULL)
-         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+         throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
          "No Application was ever assigned to the GameManager.", __FILE__, __LINE__);
 
       return *mApplication;
@@ -203,17 +203,17 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    const std::string& GameManager::GetCurrentMap() const
-   { 
+   {
       static std::string emptyString;
       if (mLoadedMaps.empty())
          return emptyString;
-      return mLoadedMaps[0]; 
+      return mLoadedMaps[0];
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    const GameManager::NameVector& GameManager::GetCurrentMapSet() const
-   { 
-      return mLoadedMaps; 
+   {
+      return mLoadedMaps;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,7 @@ namespace dtGame
    const dtCore::Scene& GameManager::GetScene() const { return *mScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
+   void GameManager::SetScene(dtCore::Scene& newScene) { mScene = &newScene; }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::OnMessage(MessageData *data)
@@ -280,7 +280,7 @@ namespace dtGame
    {
       return dtCore::System::GetInstance().GetSimulationTime();
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    double GameManager::GetSimTimeSinceStartup() const
    {
@@ -300,7 +300,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t &newClockTime)
+   void GameManager::ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t& newClockTime)
    {
       dtCore::System::GetInstance().SetSimulationClockTime(newClockTime);
       dtCore::System::GetInstance().SetSimulationTime(newTime);
@@ -342,7 +342,7 @@ namespace dtGame
       tickMessage.SetDestination(&GetMachineInfo());
       tickMessage.SetSimulationTime(simulationTime);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PreFrame(double deltaSimTime, double deltaRealTime)
    {
@@ -368,7 +368,7 @@ namespace dtGame
       dtCore::RefPtr<TickMessage> tick;
       GetMessageFactory().CreateMessage(MessageType::TICK_LOCAL, tick);
       PopulateTickMessage(*tick, deltaSimTime, deltaRealTime, simulationTime);
-      
+
       dtCore::RefPtr<TickMessage> tickRemote;
       GetMessageFactory().CreateMessage(MessageType::TICK_REMOTE, tickRemote);
       PopulateTickMessage(*tickRemote, deltaSimTime, deltaRealTime, simulationTime);
@@ -402,10 +402,10 @@ namespace dtGame
          GameActorProxy& gameActorProxy = *mDeleteList[i];
 
          // Notify the Game Actor that it was removed from the world.
-         // It could listen for the ACTOR_DELETE_MESSAGE instead. 
+         // It could listen for the ACTOR_DELETE_MESSAGE instead.
          gameActorProxy.OnRemovedFromWorld();
 
-         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor 
+         std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::iterator itor
             = mGameActorProxyMap.find(gameActorProxy.GetId());
 
          dtCore::UniqueId id;
@@ -423,7 +423,7 @@ namespace dtGame
 
       mDeleteList.clear();
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::DoSendNetworkMessages()
    {
@@ -439,7 +439,7 @@ namespace dtGame
 
          if (!message.valid())
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Message in send to network queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
@@ -463,12 +463,12 @@ namespace dtGame
                // Statistics information
                if(logComponents)
                {
-                  double frameTickDelta = 
-                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+                  double frameTickDelta =
+                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                               mGmStatistics.mStatsTickClock.Tick());
 
-                  mGmStatistics.UpdateDebugStats(component.GetUniqueId(), 
-                                                 component.GetName(), 
+                  mGmStatistics.UpdateDebugStats(component.GetUniqueId(),
+                                                 component.GetName(),
                                                  frameTickDelta, true, false);
                }
             }
@@ -477,7 +477,7 @@ namespace dtGame
          {
             ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
          }
-      }      
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -487,7 +487,7 @@ namespace dtGame
       bool logComponents = mGmStatistics.ShouldWeLogComponents();
       dtCore::Timer_t frameTickStartCurrent(0);
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
-      
+
       // Components get messages first
       std::vector<dtCore::RefPtr<GMComponent> >::iterator i, iend;
       i = mComponentList.begin();
@@ -512,12 +512,12 @@ namespace dtGame
          // Statistics information
          if (logComponents)
          {
-            double frameTickDelta = 
-               mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+            double frameTickDelta =
+               mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                                       mGmStatistics.mStatsTickClock.Tick());
 
-            mGmStatistics.UpdateDebugStats(component.GetUniqueId(), 
-                                           component.GetName(), 
+            mGmStatistics.UpdateDebugStats(component.GetUniqueId(),
+                                           component.GetName(),
                                            frameTickDelta, true, isATickLocalMessage);
          }
       }
@@ -539,7 +539,7 @@ namespace dtGame
          {
             InvokeForActorInvokables(message, *aboutActor);
          }
-         
+
          InvokeOtherActorInvokables(message);
       }
    }
@@ -555,10 +555,10 @@ namespace dtGame
          // Forward to Components first
          dtCore::RefPtr<const Message> messageRef = mSendMessageQueue.front();
          mSendMessageQueue.pop();
-         
+
          if (!messageRef.valid())
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Message in send queue is NULL.  Something is majorly wrong with the GameManager.");
             continue;
          }
@@ -575,9 +575,9 @@ namespace dtGame
       bool logActors = mGmStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
       bool isATickLocalMessage = (message.GetMessageType() == MessageType::TICK_LOCAL);
-      
+
       // GLOBAL INVOKABLES - Process it on globally registered invokables
-      const MessageType &msgType = message.GetMessageType();
+      const MessageType& msgType = message.GetMessageType();
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
          = mGlobalMessageListeners.find(&msgType);
 
@@ -587,14 +587,14 @@ namespace dtGame
          ++itor;
 
          // hold onto the actor in a refptr so that the stats code
-         // won't crash if the actor unregisters for the message. 
+         // won't crash if the actor unregisters for the message.
          dtCore::RefPtr<GameActorProxy> listenerActorProxy = listener.first;
-         
+
          Invokable* invokable = NULL;
-            
+
          if (listenerActorProxy->IsInGM())
             invokable = listenerActorProxy->GetInvokable(listener.second);
-         
+
 
          if (invokable != NULL)
          {
@@ -614,12 +614,12 @@ namespace dtGame
             // Statistics information
             if (logActors)
             {
-               double frameTickDelta 
-               = mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+               double frameTickDelta
+               = mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                                         mGmStatistics.mStatsTickClock.Tick());
 
-               mGmStatistics.UpdateDebugStats(listenerActorProxy->GetId(), 
-                     listenerActorProxy->GetName(), frameTickDelta, 
+               mGmStatistics.UpdateDebugStats(listenerActorProxy->GetId(),
+                     listenerActorProxy->GetName(), frameTickDelta,
                      false, isATickLocalMessage);
             }
          }
@@ -631,7 +631,7 @@ namespace dtGame
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                       "Invokable named %s is registered as a listener, but "
                                       "Proxy %s does not have an invokable by that name.",
-                                      listener.second.c_str(), 
+                                      listener.second.c_str(),
                                       listener.first->GetActorType().GetName().c_str());
             }
             else
@@ -642,29 +642,29 @@ namespace dtGame
                                       "Invokable named %s is registered as a listener, "
                                       "but Proxy %s is no longer in the GM and is probably "
                                       "being deleted.",
-                                      listener.second.c_str(), 
+                                      listener.second.c_str(),
                                       listenerActorProxy->GetActorType().GetName().c_str());
                }
             }
          }
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::InvokeForActorInvokables(const Message& message, GameActorProxy& aboutActor)
    {
       //statistics stuff.
       bool logActors = mGmStatistics.ShouldWeLogActors();
       dtCore::Timer_t frameTickStartCurrent(0);
-      
+
       std::vector<dtGame::Invokable*> aboutActorInvokables;
 
       aboutActor.GetMessageHandlers(message.GetMessageType(), aboutActorInvokables);
-      
+
       std::vector<dtGame::Invokable*>::iterator i, iend;
       i = aboutActorInvokables.begin();
       iend = aboutActorInvokables.end();
-      
+
       for (;i != iend; ++i)
       {
          // Statistics information
@@ -683,16 +683,16 @@ namespace dtGame
          // Statistics information
          if (logActors)
          {
-            double frameTickDelta = 
-                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+            double frameTickDelta =
+                     mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                                             mGmStatistics.mStatsTickClock.Tick());
 
-            mGmStatistics.UpdateDebugStats(aboutActor.GetId(), aboutActor.GetName(), 
+            mGmStatistics.UpdateDebugStats(aboutActor.GetId(), aboutActor.GetName(),
                                            frameTickDelta, false, false);
          }
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::InvokeOtherActorInvokables(const Message& message)
    {
@@ -701,7 +701,7 @@ namespace dtGame
       dtCore::Timer_t frameTickStartCurrent(0);
 
       //next, sent it to all actors listening to that actor for that message type.
-      // TODO - This should be refactored like we did for the Global 
+      // TODO - This should be refactored like we did for the Global
       // Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
       std::vector<std::pair<GameActorProxy*, std::string > > toFill;
       GetRegistrantsForMessagesAboutActor(message.GetMessageType(), message.GetAboutActorId(), toFill);
@@ -716,15 +716,15 @@ namespace dtGame
          Invokable* invokable = NULL;
 
          /// Don't want to invoke
-         if (currentProxy.IsInGM()) 
+         if (currentProxy.IsInGM())
             invokable = currentProxy.GetInvokable(listener.second);
-         
+
          if (invokable != NULL)
          {
             // Statistics information
             if (logActors)
                frameTickStartCurrent = mGmStatistics.mStatsTickClock.Tick();
-            
+
             try
             {
                invokable->Invoke(message);
@@ -732,14 +732,14 @@ namespace dtGame
             catch (const dtUtil::Exception& ex)
             {
                ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-            }                  
+            }
 
             if (logActors)
             {
-               double frameTickDelta = 
-                  mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent, 
+               double frameTickDelta =
+                  mGmStatistics.mStatsTickClock.DeltaSec(frameTickStartCurrent,
                                                          mGmStatistics.mStatsTickClock.Tick());
-               mGmStatistics.UpdateDebugStats(currentProxy.GetId(), currentProxy.GetName(), 
+               mGmStatistics.UpdateDebugStats(currentProxy.GetId(), currentProxy.GetName(),
                                               frameTickDelta, false, false);
             }
          }
@@ -764,7 +764,7 @@ namespace dtGame
       }
 
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::PostFrame()
    {
@@ -774,9 +774,9 @@ namespace dtGame
    void GameManager::AddComponent(GMComponent& component, const GameManager::ComponentPriority& priority)
    {
       if(GetComponentByName(component.GetName()) != NULL)
-         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, 
+         throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
          "A component was already registered with the Game Manager with the name: " + component.GetName(), __FILE__, __LINE__);
-      
+
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
       //we sort the items by priority so that components of higher priority get messages first.
@@ -818,7 +818,7 @@ namespace dtGame
    void GameManager::GetAllComponents(std::vector<GMComponent*>& toFill)
    {
       toFill.clear();
-      unsigned int componentListSize = mComponentList.size(); 
+      unsigned int componentListSize = mComponentList.size();
       toFill.reserve(componentListSize);
 
       for (unsigned i = 0; i < componentListSize; ++i)
@@ -841,7 +841,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GMComponent* GameManager::GetComponentByName(const std::string &name)
+   GMComponent* GameManager::GetComponentByName(const std::string& name)
    {
       for(std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin();
           i != mComponentList.end(); ++i)
@@ -853,7 +853,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const GMComponent* GameManager::GetComponentByName(const std::string &name) const
+   const GMComponent* GameManager::GetComponentByName(const std::string& name) const
    {
       for(std::vector<dtCore::RefPtr<GMComponent> >::const_iterator i = mComponentList.begin();
          i != mComponentList.end(); ++i)
@@ -874,9 +874,9 @@ namespace dtGame
       {
          result->SetRemote(true);
       }
-      else 
+      else
       {
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \"" 
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type \""
             + actorType.GetFullName() + "\" is invalid because it is not a game actor type."
             , __FILE__, __LINE__);
       }
@@ -885,7 +885,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const dtDAL::ActorType& actorType) 
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const dtDAL::ActorType& actorType)
    {
       try
       {
@@ -900,7 +900,7 @@ namespace dtGame
                gap->BuildInvokables();
             }
             else
-               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+               throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
          }
 
@@ -914,11 +914,11 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const std::string &category, const std::string &name) 
+   dtCore::RefPtr<dtDAL::ActorProxy> GameManager::CreateActor(const std::string& category, const std::string& name)
    {
       dtCore::RefPtr<const dtDAL::ActorType> type = FindActorType(category, name);
       if(!type.valid())
-         throw dtUtil::Exception(ExceptionEnum::UNKNOWN_ACTOR_TYPE, 
+         throw dtUtil::Exception(ExceptionEnum::UNKNOWN_ACTOR_TYPE,
          "No actor exists of the specified name and category", __FILE__, __LINE__);
 
       return CreateActor(*type);
@@ -1068,7 +1068,7 @@ namespace dtGame
          GetAllActors(actors);
          mScene->RemoveAllDrawables();
          mScene->UseSceneLight(true);
-         size_t actorsSize = actors.size(); 
+         size_t actorsSize = actors.size();
          for(size_t i = 0; i < actorsSize; i++)
          {
             if(actors[i] != oldProxy.get())
@@ -1285,10 +1285,10 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetUsedActorTypes(std::set<const dtDAL::ActorType*>& toFill) const
    {
-      toFill.clear();      
+      toFill.clear();
 
       // spin through the actors and add all used actor types to the set, so that we don't
-      // get duplicates. 
+      // get duplicates.
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
          itor != mGameActorProxyMap.end(); ++itor)
          toFill.insert(&itor->second->GetActorType());
@@ -1299,7 +1299,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllGameActors(std::vector<GameActorProxy*> &toFill) const
+   void GameManager::GetAllGameActors(std::vector<GameActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size());
@@ -1310,7 +1310,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllNonGameActors(std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::GetAllNonGameActors(std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mActorProxyMap.size());
@@ -1321,7 +1321,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllActors(std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size() + mPrototypeActors.size());
@@ -1339,8 +1339,8 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*> &toFill) const
-   {  
+   void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*>& toFill) const
+   {
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
 
@@ -1350,7 +1350,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetActorsInScene(std::vector<dtCore::DeltaDrawable*> &vec) const
+   void GameManager::GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const
    {
       vec.clear();
       vec.reserve(mScene->GetNumberOfAddedDrawable());
@@ -1360,7 +1360,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
@@ -1381,7 +1381,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
@@ -1389,30 +1389,30 @@ namespace dtGame
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
          itor != mGameActorProxyMap.end(); ++itor)
       {
-         if (itor->second->GetActorType() == type)
+         if (itor->second->GetActorType().InstanceOf(type))
             toFill.push_back(itor->second.get());
       }
 
       for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.begin();
          itor != mActorProxyMap.end(); ++itor)
       {
-         if (itor->second->GetActorType() == type)
+         if (itor->second->GetActorType().InstanceOf(type))
             toFill.push_back(itor->second.get());
       }
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsByClassName(const std::string &className, 
-      std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindActorsByClassName(const std::string& className,
+      std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mActorProxyMap.size() + mGameActorProxyMap.size());
 
-      if(!className.empty()) 
+      if(!className.empty())
       {
          for(std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = mActorProxyMap.begin();
-            i != mActorProxyMap.end(); ++i) 
+            i != mActorProxyMap.end(); ++i)
          {
             dtDAL::ActorProxy *ap = i->second.get();
             if(ap->IsInstanceOf(className))
@@ -1426,11 +1426,11 @@ namespace dtGame
             if(gap->IsInstanceOf(className))
                toFill.push_back(gap);
          }
-      } 
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
@@ -1444,7 +1444,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindPrototypesByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mPrototypeActors.size());
@@ -1468,20 +1468,20 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*> &toFill) const
+   void GameManager::FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
       toFill.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId &id) const
+   GameActorProxy* GameManager::FindGameActorById(const dtCore::UniqueId& id) const
    {
       std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.find(id);
       return itor == mGameActorProxyMap.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxy* GameManager::FindActorById(const dtCore::UniqueId &id) const
+   dtDAL::ActorProxy* GameManager::FindActorById(const dtCore::UniqueId& id) const
    {
       dtDAL::ActorProxy* actorProxy = FindGameActorById(id);
 
@@ -1518,7 +1518,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ChangeMap(const std::string &mapName, bool addBillboards) 
+   void GameManager::ChangeMap(const std::string& mapName, bool addBillboards)
    {
       std::vector<std::string> names;
       names.push_back(mapName);
@@ -1530,7 +1530,7 @@ namespace dtGame
    {
       if (mapNames.empty())
          throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "At least one map must be passed to ChangeMapSet.", __FILE__, __LINE__);
-      
+
       std::vector<std::string>::const_iterator i = mapNames.begin();
       std::vector<std::string>::const_iterator end = mapNames.end();
       for (; i != end; ++i)
@@ -1538,7 +1538,7 @@ namespace dtGame
          if (i->empty())
             throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER, "Empty string is not a valid map name.", __FILE__, __LINE__);
       }
-      
+
       if (mMapChangeStateData->GetCurrentState() != MapChangeStateData::MapChangeState::IDLE)
       {
          static std::string changeMessage("You may not change the map set while a map change is already in progress.");
@@ -1548,7 +1548,7 @@ namespace dtGame
 
       mMapChangeStateData->BeginMapChange(mLoadedMaps, mapNames, addBillboards);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::SetTimer(const std::string& name, const GameActorProxy* aboutActor,
       float time, bool repeat, bool realTime)
@@ -1572,7 +1572,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ClearTimerSingleSet(std::set<TimerInfo>& timerSet, 
+   void GameManager::ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
          const std::string& name, const GameActorProxy *proxy)
    {
       std::set<TimerInfo>::iterator i = timerSet.begin();
@@ -1588,9 +1588,9 @@ namespace dtGame
          }
          else
             ++i;
-      }      
+      }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::ClearTimer(const std::string& name, const GameActorProxy *proxy)
    {
@@ -1599,7 +1599,7 @@ namespace dtGame
     }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetRegistrantsForMessages(const MessageType& type, 
+   void GameManager::GetRegistrantsForMessages(const MessageType& type,
          std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const
    {
       toFill.clear();
@@ -1617,8 +1617,8 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type, 
-         const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, 
+   void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type,
+         const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*,
          std::string > >& toFill) const
    {
       toFill.clear();
@@ -1642,7 +1642,7 @@ namespace dtGame
    }
 
    template <typename MapType, typename KeyType>
-   void GameManager::CheckForDuplicateRegistration(const KeyType& key, const std::string& typeString, GameActorProxy& proxy, 
+   void GameManager::CheckForDuplicateRegistration(const KeyType& key, const std::string& typeString, GameActorProxy& proxy,
             const std::string& invokableName, MapType& mapToCheck)
    {
       typedef typename MapType::iterator MapIterator;
@@ -1653,7 +1653,7 @@ namespace dtGame
          if (pip.first.get() == &proxy && pip.second == invokableName)
          {
             std::ostringstream ss;
-            ss << "Unable to register globally for MessageType \"" << typeString << " for Actor \"" 
+            ss << "Unable to register globally for MessageType \"" << typeString << " for Actor \""
                << proxy.GetActorType() << "\" "
                << " using invokable named \"" << invokableName << "\".  It is already registered.";
 
@@ -1661,15 +1661,15 @@ namespace dtGame
          }
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
-   static void ValidateMessageType(const MessageType& type, GameActorProxy& proxy, 
+   static void ValidateMessageType(const MessageType& type, GameActorProxy& proxy,
             const std::string& invokableName)
    {
       if (type == MessageType::TICK_END_OF_FRAME)
       {
          std::ostringstream ss;
-         ss << "Unable to register globally for MessageType \"" << MessageType::TICK_END_OF_FRAME.GetName() << " for Actor \"" 
+         ss << "Unable to register globally for MessageType \"" << MessageType::TICK_END_OF_FRAME.GetName() << " for Actor \""
             << proxy.GetActorType() << "\" "
             << " using invokable named \"" << invokableName << "\".  Only components may register for that message type.";
 
@@ -1678,20 +1678,20 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, 
+   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy,
          const std::string& invokableName)
    {
       ValidateMessageType(type, proxy, invokableName);
       CheckForDuplicateRegistration(&type, type.GetName(), proxy, invokableName, mGlobalMessageListeners);
 
       mGlobalMessageListeners.insert(
-            std::make_pair(&type, 
+            std::make_pair(&type,
                   std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, 
+   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy,
          const std::string& invokableName)
    {
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
@@ -1712,16 +1712,16 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterForMessagesAboutActor(const MessageType& type, 
-         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
+   void GameManager::RegisterForMessagesAboutActor(const MessageType& type,
+         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
          const std::string& invokableName)
    {
       ValidateMessageType(type, proxy, invokableName);
 
       ActorMessageListenerMap::iterator itor = mActorMessageListeners.find(&type);
-      
+
       ProxyInvokableMap* mapForType = NULL;
-      
+
       if (itor == mActorMessageListeners.end())
       {
          itor = mActorMessageListeners.insert(std::make_pair(&type, ProxyInvokableMap() )).first;
@@ -1729,7 +1729,7 @@ namespace dtGame
             mapForType = &itor->second;
          else
             //this is one of those "it should never happen" things.
-            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, 
+            throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
             "Internal Error: Unable to find item just inserted in the map.", __FILE__, __LINE__);
       }
       else
@@ -1743,8 +1743,8 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterForMessagesAboutActor(const MessageType& type, 
-         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, 
+   void GameManager::UnregisterForMessagesAboutActor(const MessageType& type,
+         const dtCore::UniqueId& targetActorId, GameActorProxy& proxy,
          const std::string& invokableName)
    {
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
@@ -1807,9 +1807,9 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RejectMessage(const dtGame::Message &reasonMessage, const std::string &rejectDescription)
+   void GameManager::RejectMessage(const dtGame::Message& reasonMessage, const std::string& rejectDescription)
    {
-      const MachineInfo &causingMachine = reasonMessage.GetSource();
+      const MachineInfo& causingMachine = reasonMessage.GetSource();
       dtCore::RefPtr<Message> rejPtrMsg = mFactory.CreateMessage(MessageType::SERVER_REQUEST_REJECTED);
       ServerMessageRejected *rejectMsg = static_cast<ServerMessageRejected *> (rejPtrMsg.get());
       rejectMsg->SetCausingMessage(&reasonMessage);
@@ -1832,7 +1832,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SetProjectContext(const std::string &context, bool readOnly)
+   void GameManager::SetProjectContext(const std::string& context, bool readOnly)
    {
       dtDAL::Project::GetInstance().SetContext(context, readOnly);
    }
@@ -1844,7 +1844,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ProcessTimers(std::set<TimerInfo> &listToProcess, dtCore::Timer_t clockTime)
+   void GameManager::ProcessTimers(std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime)
    {
       std::set<TimerInfo>::iterator itor;
       std::set<TimerInfo> repeatingTimers;
@@ -1898,7 +1898,7 @@ namespace dtGame
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
          project.CloseAllMaps(true);
-         //clear the maps vector because if someone happens to call shutdown again, 
+         //clear the maps vector because if someone happens to call shutdown again,
          //it will reopen all the maps.
          mLoadedMaps.clear();
       }
@@ -1907,14 +1907,14 @@ namespace dtGame
       {
          RemoveComponent(*mComponentList.back());
       }
-      
+
       mGmStatistics.mDebugLoggerInformation.clear();
-     
+
       while(!mSendNetworkMessageQueue.empty())
-      {    
+      {
          mSendNetworkMessageQueue.pop();
       }
-      
+
       while(!mSendMessageQueue.empty())
       {
          mSendMessageQueue.pop();
@@ -1928,15 +1928,15 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
 
    ////////////////////////////////////////////////////////////////////////////////
-   int GameManager::GetStatisticsInterval() const 
-   { 
-      return mGmStatistics.GetStatisticsInterval(); 
+   int GameManager::GetStatisticsInterval() const
+   {
+      return mGmStatistics.GetStatisticsInterval();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   bool GameManager::GetStatisticsToConsole() const 
-   { 
-      return mGmStatistics.ShouldWeLogToConsole(); 
+   bool GameManager::GetStatisticsToConsole() const
+   {
+      return mGmStatistics.ShouldWeLogToConsole();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -1952,10 +1952,10 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameManager::DebugStatisticsTurnOn(bool logComponents, bool logActors, 
+   void GameManager::DebugStatisticsTurnOn(bool logComponents, bool logActors,
       const int statisticsInterval, bool toConsole, const std::string& path)
    {
-      mGmStatistics.DebugStatisticsTurnOn(logComponents, logActors, 
+      mGmStatistics.DebugStatisticsTurnOn(logComponents, logActors,
          statisticsInterval, toConsole, path);
    }
 } // end namespace
