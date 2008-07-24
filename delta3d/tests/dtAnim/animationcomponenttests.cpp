@@ -23,7 +23,7 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 
-#include <dtABC/application.h> 
+#include <dtABC/application.h>
 
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/animationhelper.h>
@@ -125,7 +125,7 @@ namespace dtAnim
    {
       mLogger = &dtUtil::Log::GetInstance("animationcomponenttests.cpp");
 
-      
+
       dtABC::Application& app = GetGlobalApplication();
       mScene = app.GetScene();
       mWin = app.GetWindow();
@@ -178,12 +178,12 @@ namespace dtAnim
       mAnimComp->RegisterActor(*mTestGameActor, *mHelper);
       CPPUNIT_ASSERT(mAnimComp->IsRegisteredActor(*mTestGameActor));
       mGM->AddActor(*mTestGameActor, false, false);
-      
+
       mGM->DeleteActor(*mTestGameActor);
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT(!mAnimComp->IsRegisteredActor(*mTestGameActor));
    }
-   
+
    void AnimationComponentTests::TestRegisterMapUnload()
    {
       dtCore::RefPtr<TestAnimHelper> mHelper = new TestAnimHelper();
@@ -212,7 +212,7 @@ namespace dtAnim
 
    void AnimationComponentTests::TestAnimationPerformance()
    {
-      typedef std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > ProxyContainer;
+      typedef std::vector<dtDAL::ActorProxy* > ProxyContainer;
       ProxyContainer proxies;
       ProxyContainer groundActor;
 
@@ -229,31 +229,49 @@ namespace dtAnim
          dtCore::System::GetInstance().Step();
          dtCore::System::GetInstance().Step();
 
-         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(proxies, "CharacterEntity");
-         dtDAL::Project::GetInstance().GetMap("AnimationPerformance").FindProxies(groundActor, "GroundActor");
+         mGM->FindActorsByName("CharacterEntity", proxies);
+         mGM->FindActorsByName("groundActor", groundActor);
 
+         // we only want 20 for the test, so delete the rest.
+         int size = proxies.size();
+         int numToDelete = size - 20;
+         CPPUNIT_ASSERT_MESSAGE("There should be at least 20 character actors in the map to pref test.",
+                  numToDelete >= 0);
+
+         for (int i = 0; i < numToDelete; ++i)
+         {
+            mGM->DeleteActor(*proxies[i]);
+         }
+         //Make sure they are deleted.
+         dtCore::System::GetInstance().Step();
+
+         //re-fetch the actors.
+         proxies.clear();
+         mGM->FindActorsByName("CharacterEntity", proxies);
+         CPPUNIT_ASSERT_MESSAGE("There should be at exactly 20 actors in the vector",
+                  numToDelete >= 0);
       }
       catch (dtUtil::Exception &e)
       {
          CPPUNIT_FAIL(e.ToString());
       }
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
-            "Performance testing AnimationComponent with " + 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+            "Performance testing AnimationComponent with " +
             dtUtil::ToString(proxies.size()) + " animated entities.");
 
       //register animation actors
       ProxyContainer::iterator iter, end;
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
+         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
          if(gameProxy)
          {
-            dtAnim::AnimationGameActor* actor = 
+            dtAnim::AnimationGameActor* actor =
                dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
                if(actor)
-               { 
+               {
                   mAnimComp->RegisterActor(*gameProxy, *actor->GetHelper());
                   actor->GetHelper()->SetGroundClamp(true);
                }
@@ -272,17 +290,17 @@ namespace dtAnim
       timerStart = timer.Tick();
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
+         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>(*iter);
          if(gameProxy)
          {
-            dtAnim::AnimationGameActor* actor = 
+            dtAnim::AnimationGameActor* actor =
                dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
             if(actor)
-            { 
+            {
                actor->GetHelper()->PlayAnimation("Walk");
-            }      
-         } 
+            }
+         }
       }
       timerEnd = timer.Tick();
 
@@ -316,7 +334,7 @@ namespace dtAnim
       timerEnd = timer.Tick();
 
       mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
-            "Time Results for Update: " 
+            "Time Results for Update: "
             + dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       //////////////////////////////////////////////////////////////////////////
 
@@ -324,10 +342,10 @@ namespace dtAnim
       if(!groundActor.empty())
       {
          ProxyContainer::iterator iter = groundActor.begin();
-         dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>((*iter).get());
+         dtDAL::ActorProxy* proxy = dynamic_cast<dtDAL::ActorProxy*>(*iter);
          if(proxy)
          {
-            dtCore::Transformable* transform 
+            dtCore::Transformable* transform
                = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
             if(transform)
             {
@@ -366,22 +384,22 @@ namespace dtAnim
       timerStart = timer.Tick();
       for(iter = proxies.begin(), end = proxies.end(); iter != end; ++iter)
       {
-         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter).get());
+         dtGame::GameActorProxy* gameProxy = dynamic_cast<dtGame::GameActorProxy*>((*iter));
          if(gameProxy)
          {
-            dtAnim::AnimationGameActor* actor 
+            dtAnim::AnimationGameActor* actor
                = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
             if(actor)
-            { 
+            {
                actor->GetHelper()->ClearAnimation("Walk", 0.0);
-            }      
+            }
          }
       }
       timerEnd = timer.Tick();
 
-      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__, 
-            "Time Results for Clear Animation: " + 
+      mLogger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+            "Time Results for Clear Animation: " +
             dtUtil::ToString(timer.DeltaMil(timerStart, timerEnd)) + " ms");
       //////////////////////////////////////////////////////////////////////////
 
