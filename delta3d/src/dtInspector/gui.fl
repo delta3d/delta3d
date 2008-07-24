@@ -1,20 +1,23 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
-header_name {gui_fltk.h} 
+version 1.0109 
+header_name {../../inc/dtInspector/gui_fltk.h} 
 code_name {gui_fltk.cpp}
-decl {\#include "dtCore/base.h"} {public
+decl {\#include <dtCore/base.h>} {public
+} 
+
+decl {\#include <dtInspector/export.h>} {public
 } 
 
 decl {///Do not create directly - use dtCore::GUI instead} {public
 } 
 
-class UserInterface {open
+class DT_INSPECTOR_EXPORT UserInterface {open selected
 } {
   Function {make_window()} {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {552 191 545 555} type Double visible
+      xywh {-1554 364 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -62,7 +65,7 @@ class UserInterface {open
         }
       }
       Fl_Group TransformGroup {
-        label Transformable open selected
+        label Transformable
         xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
@@ -135,7 +138,7 @@ class UserInterface {open
           xywh {500 265 25 25}
         }
       }
-      Fl_Group CameraGroup {
+      Fl_Group CameraGroup {open
         xywh {10 265 530 120} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Group {} {
@@ -167,12 +170,6 @@ class UserInterface {open
             private xywh {325 295 25 75}
           }
         }
-        Fl_Choice CameraSceneChoice {
-          label {Scene:}
-          user_data this
-          callback {((UserInterface*)v)->CameraSceneCB(o)}
-          private xywh {420 280 110 25} down_box BORDER_BOX
-        } {}
         Fl_Choice CameraWinChoice {
           label {Window:}
           user_data this
@@ -184,12 +181,6 @@ class UserInterface {open
           user_data this
           callback {((UserInterface*)v)->CamStatisticsCB(o)}
           xywh {115 290 80 25}
-        }
-        Fl_Value_Input CamFrameBin {
-          label {Frame Bin:}
-          user_data this
-          callback {((UserInterface*)v)->CameraFrameBinCB(o)}
-          xywh {140 335 55 25} deactivate
         }
       }
       Fl_Group WindowGroup {
@@ -268,6 +259,22 @@ class UserInterface {open
           callback {((UserInterface*)v)->WinFullScreenCB(o)}
           private tooltip {Resize the window to full-screen and remove the window border} xywh {275 350 25 25} down_box DOWN_BOX align 4
         }
+      }
+      Fl_Group ViewGroup {open
+        xywh {175 165 355 260} box ENGRAVED_BOX align 5 hide
+      } {
+        Fl_Choice ViewSceneChoice {
+          label {Scene:}
+          user_data this
+          callback {((UserInterface*)v)->ViewSceneCB(o)} open
+          xywh {420 280 110 25} down_box BORDER_BOX
+        } {}
+        Fl_Choice ViewCameraChoice {
+          label {Camera:}
+          user_data this
+          callback {((UserInterface*)v)->ViewCameraCB(o)} open
+          xywh {420 309 110 25} down_box BORDER_BOX
+        } {}
       }
       Fl_Group SkyBoxGroup {
         xywh {60 155 430 229} hide
@@ -908,7 +915,7 @@ class UserInterface {open
         }
       }
       Fl_Group InfiniteLightGroup {
-        label {Azimuth/Elevation} open
+        label {Azimuth/Elevation}
         xywh {130 279 142 50} box THIN_DOWN_BOX
       } {
         Fl_Value_Input InfLightAzInput {
@@ -970,7 +977,6 @@ class UserInterface {open
   decl {void CameraClearColorBrowserCB(Fl_Button*);} {}
   decl {void CameraClearColorCB(Fl_Value_Input* )} {}
   decl {void CameraWinCB(Fl_Choice *);} {}
-  decl {void CameraSceneCB(Fl_Choice *);} {}
   decl {void WinPosCB( Fl_Value_Input * );} {}
   decl {void WinSizeCB( Fl_Menu_Button * );} {}
   decl {void WinCursorCB( Fl_Check_Button * );} {}
@@ -1024,14 +1030,6 @@ class UserInterface {open
   decl {void ParticleRelativeCB(Fl_Check_Button*);} {}
   decl {void ParticleEnabledCB(Fl_Check_Button*);} {}
   decl {void CamStatisticsCB(Fl_Button*);} {}
-  decl {void CameraFrameBinCB(Fl_Value_Input*);} {}
-} 
-
-decl {\#pragma comment(lib, "fltk.lib")} {public
-} 
-
-decl {\#pragma comment(lib, "wsock32.lib")} {public
-} 
-
-decl {\#pragma comment(lib, "comctl32.lib")} {public
+  decl {void ViewSceneCB(Fl_Choice*);} {}
+  decl {void ViewCameraCB(Fl_Choice*);} {}
 } 
