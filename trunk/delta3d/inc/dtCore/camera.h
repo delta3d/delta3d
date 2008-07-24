@@ -26,28 +26,11 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <dtCore/timer.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 #include <osg/Vec4>
-#include <osg/Version>
-
 
 #include <osg/Camera>
-
-#include <dtUtil/deprecationmgr.h>
-
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg
-{
-   class FrameStamp;
-}
-/// @endcond
-
-namespace dtCore
-{
-   class View;
-}
 
 
 namespace dtCore
@@ -80,7 +63,7 @@ namespace dtCore
       
 
       Camera(const std::string& name = "camera");
-      Camera(dtCore::View * view, const std::string& name = "camera");
+      Camera(osg::Camera& osgCamera, const std::string& name = "camera");
 
    protected:
 
@@ -233,6 +216,9 @@ namespace dtCore
       Camera( const Camera& );
       
       void OnWindowChanged();
+
+      ///Common constructor functionality
+      void Ctor();
       
       RefPtr<osg::Camera> mOsgCamera; // Handle to the osg Camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin

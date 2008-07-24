@@ -11,19 +11,13 @@
 #include <dtCore/system.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
-#include <dtCore/exceptionenum.h>
-#include <dtUtil/exception.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
-#include <osgUtil/SceneView>
 #include <osgDB/WriteFile>
 
 #include <osg/Version>
 
-#include <osgUtil/SceneView>
-#include <osgViewer/View>
-#include <osgViewer/GraphicsWindow>
 
 #include <cassert>
 
@@ -84,15 +78,9 @@ namespace dtCore
    :  Transformable(name),
       mAddedToSceneGraph(false),
       mEnable(true),
-      mEnabledNodeMask(0xffffffff)
+      mEnabledNodeMask(0xffffffff),
+      mOsgCamera(new osg::Camera)
    {
-      RegisterInstance(this);
-
-      System*  sys   = &dtCore::System::GetInstance();
-      assert( sys );
-      AddSender( sys );
-   
-      mOsgCamera = new osg::Camera;
       mOsgCamera->setName(GetName());
 
       double height = osg::DisplaySettings::instance()->getScreenHeight();
@@ -101,56 +89,38 @@ namespace dtCore
       double vfov = osg::RadiansToDegrees(atan2(height/2.0f,distance)*2.0);
       mOsgCamera->setProjectionMatrixAsPerspective( vfov, width/height, 1.0f,10000.0f);
 
-      SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
-
-      // Default collision category = 1
-      SetCollisionCategoryBits( UNSIGNED_BIT(1));
-
-      mScreenShotTaker = new ScreenShotCallback;
-      mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
+      Ctor();
    }
 
 
    ////////////////////////////////////////// 
-   Camera::Camera(dtCore::View * view, const std::string& name)
+   Camera::Camera(osg::Camera& osgCamera, const std::string& name)
       :  Transformable(name),
          mAddedToSceneGraph(false),
          mEnable(true),
-         mEnabledNodeMask(0xffffffff)
+         mEnabledNodeMask(0xffffffff),
+         mOsgCamera(&osgCamera)
+   {
+      Ctor();
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void Camera::Ctor()
    {
       RegisterInstance(this);
 
-      System*  sys   = &dtCore::System::GetInstance();
-      assert( sys );
-      AddSender( sys );
+      System* sys = &dtCore::System::GetInstance();
+      AddSender(sys);
 
-      if(view == NULL)
-      {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-            "Supplied dtCore::View is NULL", __FILE__, __LINE__);
-      }
-
-      if(view->GetOsgViewerView() == NULL)
-      {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-            "Supplied dtCore::View::GetOsgViewerView() is NULL", __FILE__, __LINE__);
-      }
-
-      if(view->GetOsgViewerView()->getCamera() == NULL)
-      {
-         throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-            "Supplied dtCore::View::GetOsgViewerView()->getCamera() is NULL", __FILE__, __LINE__);
-      }
-      mOsgCamera = view->GetOsgViewerView()->getCamera();
-
-      SetClearColor( 0.2f, 0.2f, 0.6f, 1.f);
+      SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
 
       // Default collision category = 1
-      SetCollisionCategoryBits( UNSIGNED_BIT(1) );
+      SetCollisionCategoryBits(UNSIGNED_BIT(1));
 
       mScreenShotTaker = new ScreenShotCallback;
       mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
    }
+
 
    ////////////////////////////////////////// 
    Camera::~Camera()
