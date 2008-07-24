@@ -17,6 +17,12 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTABC_LIBRARY}
                      )
 
+IF (WIN32)
+  TARGET_LINK_LIBRARIES(${LIB_NAME}
+                          Ws2_32 
+                          Comctl32
+                       )
+ENDIF (WIN32)  
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL DT_INSPECTOR_LIBRARY)          

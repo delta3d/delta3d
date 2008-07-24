@@ -214,6 +214,8 @@ void UserInterface::SelectInstance()
    /** View **/
    if (View *v = dynamic_cast<View*>(b))
    {
+      InstanceClassName->label( "dtCore::View" ); 
+
       //rebuild the ViewSceneChoice menu here in case
       //we have new Scene's or they changed their names
       ViewSceneChoice->clear();
@@ -260,9 +262,9 @@ void UserInterface::SelectInstance()
          }
       }
       
-      unsigned int num = v->GetFrameBin();
-      ViewFrameBin->value(num);
-      
+      //unsigned int num = v->GetFrameBin();
+      //ViewFrameBin->value(num);
+      ViewGroup->show();
    }
    else ViewGroup->hide();
    
@@ -827,12 +829,12 @@ void UserInterface::CamStatisticsCB( Fl_Button *o)
 //   cam->SetNextStatisticsType();
 }
 
-void UserInterface::ViewFrameBinCB(Fl_Value_Input *o)
-{
-   View *view = dynamic_cast<View*>(GetSelectedInstance(this));
-   unsigned int num = (unsigned int)o->value();
-   view->SetFrameBin(num);
-}
+//void UserInterface::ViewFrameBinCB(Fl_Value_Input *o)
+//{
+//   View *view = dynamic_cast<View*>(GetSelectedInstance(this));
+//   unsigned int num = (unsigned int)o->value();
+//   view->SetFrameBin(num);
+//}
 
 void UserInterface::WinPosCB( Fl_Value_Input *o)
 {
