@@ -129,14 +129,6 @@ namespace dtCore
        */
       void SetPerspectiveParams( double vfov, double aspectRatio, double nearClip, double farClip );
 
-      ///DEPRECATED 01/22/08
-      void SetPerspective( double hfov, double vfov, double nearClip, double farClip )
-      {
-         DEPRECATE("void Camera::SetPerspective()",
-                   "void Camera::SetPerspectiveParams()" );
-
-         SetPerspectiveParams(vfov, hfov/vfov, nearClip, farClip);
-      }
 
       /**
       * Get the perspective parameters of this Camera.
@@ -146,17 +138,6 @@ namespace dtCore
       * @param farClip : the distance from the Camera to the far clipping plane
       */
       void GetPerspectiveParams(double &vfov, double &aspectRatio, double &nearClip, double &farClip);
-
-      ///DEPRECATED 01/22/08
-      void GetPerspective(double &hfov, double &vfov, double &nearClip, double &farClip)
-      {
-         DEPRECATE("void Camera::GetPerspective()",
-                   "void Camera::GetPerspectiveParams()");
-         
-         double aspectRatio;
-         GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip );
-         hfov = vfov * aspectRatio;
-      }
 
 
       ///Set view frustrum of camera lens

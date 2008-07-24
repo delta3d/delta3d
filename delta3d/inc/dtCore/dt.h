@@ -45,7 +45,6 @@
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/motionmodel.h>
 #include <dtCore/mouse.h>
-#include <dtCore/notify.h>
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/particlesystem.h>
