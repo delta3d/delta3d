@@ -24,7 +24,7 @@
 
 #include <ode/ode.h>
 
-#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
 #include <osg/CameraNode>
 #endif
 
@@ -57,7 +57,7 @@ namespace dtCore
 {
 
    /** Custom NodeVisitor used to collect the parent NodePaths of a Node.
-     * This Visitor will only traverse osg::Transforms and is used to 
+     * This Visitor will only traverse osg::Transforms and is used to
      * calculate a Node's absolute coordinate.  It sets a node mask
      * override in case any of the parent Nodes' masks are un-traversable.
      * Modified from osg::CollectParentPaths class.
@@ -65,7 +65,7 @@ namespace dtCore
    class CollectParentPaths : public osg::NodeVisitor
    {
    public:
-      CollectParentPaths(osg::Node* haltTraversalAtNode=0) : 
+      CollectParentPaths(osg::Node* haltTraversalAtNode=0) :
          osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_PARENTS),
             _haltTraversalAtNode(haltTraversalAtNode)
          {
@@ -99,7 +99,7 @@ Transformable::Transformable( const std::string& name )
       mMeshIndices(NULL),
       mGeomGeod(NULL),
       mNode(new TransformableNode),
-      mRenderingGeometry(false), 
+      mRenderingGeometry(false),
       mRenderProxyNode(false)
 {
    //set the name of the node
@@ -108,7 +108,7 @@ Transformable::Transformable( const std::string& name )
    Ctor();
 }
 
-Transformable::Transformable( TransformableNode &node, const std::string &name ) 
+Transformable::Transformable( TransformableNode &node, const std::string &name )
    : DeltaDrawable(name),
       mGeomID(NULL),
       mOriginalGeomID(NULL),
@@ -117,7 +117,7 @@ Transformable::Transformable( TransformableNode &node, const std::string &name )
       mMeshIndices(NULL),
       mGeomGeod(NULL),
       mNode(&node),
-      mRenderingGeometry(false), 
+      mRenderingGeometry(false),
       mRenderProxyNode(false)
 {
    Ctor();
@@ -145,7 +145,7 @@ void Transformable::Ctor()
 Transformable::~Transformable()
 {
    dGeomDestroy(mGeomID);
-   
+
    if(mTriMeshDataID != NULL)
    {
       dGeomTriMeshDataDestroy(mTriMeshDataID);
@@ -170,7 +170,7 @@ void Transformable::ReplaceMatrixNode( TransformableNode* matrixTransform )
       LOG_ERROR("The matrix node may not be set to NULL.");
       return;
    }
-   
+
    // Save off the parent
    RefPtr<DeltaDrawable> oldParent;
    RefPtr<Scene> oldScene;
@@ -206,7 +206,7 @@ void Transformable::ReplaceMatrixNode( TransformableNode* matrixTransform )
 
    // Save preseve normal rescaling property
    bool normalRescaling = GetNormalRescaling();
-     
+
    // Save whether or not we are rendering the proxy node
    bool usingProxyNode(false);
    if( GetMatrixNode()->containsNode( GetProxyNode() ) )
@@ -267,7 +267,7 @@ bool Transformable::GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMat
       {
          osg::NodePath nodePath = nodePathList[0];
 
-         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
          // Luckily, this behavior is redundant with OSG 1.1
          if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
          {
@@ -279,22 +279,22 @@ bool Transformable::GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMat
          return true;
       }
    }
-   
+
    return false;
 }
 
 /**
  * Set position/attitude of this Transformable using the supplied Transform.
  * An optional coordinate system parameter may be supplied to specify whether
- * the Transform is in relation to this Transformable's parent.  
+ * the Transform is in relation to this Transformable's parent.
  *
  * If the CoordSysEnum is ABS_CS,
- * then the Transformable is positioned assuming 
+ * then the Transformable is positioned assuming
  * absolute world coordinates and the Transformable parent/child relative
  * position is recalculated.
  * If the CoordSysEnum is REL_CS, then the Transformable is positioned relative
  * to it's parent's Transform. (Note - if REL_CS is supplied and the Transformable
- * does not have a parent, the Transform is assumed to be an absolute world 
+ * does not have a parent, the Transform is assumed to be an absolute world
  * coordinate.
  *
  * @param *xform : The new Transform to position this instance
@@ -325,7 +325,7 @@ void Transformable::SetTransform( const Transform& xform, CoordSysEnum cs )
          //pass the rel matrix to this node
          GetMatrixNode()->setMatrix(relMat);
       }
-      else 
+      else
       {
          //pass the xform to the this node
          GetMatrixNode()->setMatrix(newMat);
@@ -351,9 +351,9 @@ void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
    const TransformableNode* mt = GetMatrixNode();
 
    if( cs == ABS_CS )
-   { 
+   {
       osg::Matrix newMat;
-      GetAbsoluteMatrix( mt, newMat );     
+      GetAbsoluteMatrix( mt, newMat );
       xform.Set( newMat );
    }
    else if( cs == REL_CS )
@@ -364,23 +364,23 @@ void Transformable::GetTransform( Transform& xform, CoordSysEnum cs ) const
 }
 
 ////////////////////////////////////////////////////////////////////////////
-const osg::Matrix& Transformable::GetMatrix() const 
-{ 
-   return mNode->getMatrix(); 
+const osg::Matrix& Transformable::GetMatrix() const
+{
+   return mNode->getMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////
-void Transformable::SetMatrix(const osg::Matrix& mat) 
-{ 
-   mNode->setMatrix(mat); 
+void Transformable::SetMatrix(const osg::Matrix& mat)
+{
+   mNode->setMatrix(mat);
 }
 
 /**
- * Add a child to this Transformable.  This will allow the child to be 
+ * Add a child to this Transformable.  This will allow the child to be
  * repositioned whenever the parent moves.  An optional offset may be applied to
  * the child.  Any number of children may be added to a parent.
- * The child's position in relation to the parent's will not change (ie: the 
- * child will *not* snap to the parent's position) unless the offset is 
+ * The child's position in relation to the parent's will not change (ie: the
+ * child will *not* snap to the parent's position) unless the offset is
  * overwritten using SetTransform() on the child.
  *
  * @param *child : The child to add to this Transformable
@@ -391,7 +391,7 @@ void Transformable::SetMatrix(const osg::Matrix& mat)
 bool Transformable::AddChild(DeltaDrawable *child)
 {
    // Add the child's node to our's
-   if( DeltaDrawable::AddChild(child) ) 
+   if( DeltaDrawable::AddChild(child) )
    {
       GetMatrixNode()->addChild( child->GetOSGNode() );
       return true;
@@ -518,11 +518,11 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
 
    switch( geomClass )
    {
-   case dSphereClass :	
+   case dSphereClass :
       return &CollisionGeomType::SPHERE;
    case dBoxClass	:
       return &CollisionGeomType::CUBE;
-   case dCCylinderClass :	
+   case dCCylinderClass :
       return &CollisionGeomType::CYLINDER;
    case dRayClass	:
       return &CollisionGeomType::RAY;
@@ -547,9 +547,9 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
 * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
 */
 void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
-{  
+{
    dimensions.clear();
-   
+
    // Sync up ODE with our OSG transforms.
    PrePhysicsStepUpdate();
 
@@ -566,7 +566,7 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
          geomClass = dGeomGetClass(id);
       }
    }
-   
+
    switch( geomClass )
    {
       case dSphereClass :
@@ -587,7 +587,7 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
 
          break;
       }
-      case dCCylinderClass :	
+      case dCCylinderClass :
       {
          dReal radius, length;
          dGeomCCylinderGetParams(id, &radius, &length);
@@ -619,12 +619,12 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
    }
 }
 
-/** 
+/**
  * Set the category bits of this collision geom. Here's the defaults:
  *
  * dtABC::ProximityTrigger  0
  *
- * dtCore::Camera:          1  
+ * dtCore::Camera:          1
  * dtCore::Compass:         2
  * dtCore::InfiniteTerrain: 3
  * dtCore::ISector:         4
@@ -635,12 +635,12 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
  * dtCore::PositionalLight: 9
  * dtCore::SpotLight:       10
  * dtCore::Transformable:   11
- * 
+ *
  * dtAudio::Listener:       13
  * dtAudio::Sound:          14
  * dtHLA::Entity:           15
  * dtTerrain::Terrain:      16
- * 
+ *
  */
 void Transformable::SetCollisionCategoryBits( unsigned long bits )
 {
@@ -652,7 +652,7 @@ unsigned long Transformable::GetCollisionCategoryBits() const
    return dGeomGetCategoryBits(mGeomID);
 }
 
-/** 
+/**
  * Set the collide bits of this collision geom. If you want this geom to
  * collide with a geom of category bit 00000010 for example, make sure these
  * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
@@ -678,10 +678,10 @@ unsigned long Transformable::GetCollisionCollideBits() const
 * @param solid true if the Transformable is solid
 */
 void Transformable::SetCollisionDetection( bool enabled )
-{ 
+{
    if( mGeomID != 0 )
    {
-      
+
       int geomClass = dGeomGetClass(mGeomID) ;
       dGeomID id = mGeomID;
       while( geomClass == dGeomTransformClass && id != 0 )
@@ -692,7 +692,7 @@ void Transformable::SetCollisionDetection( bool enabled )
             geomClass = dGeomGetClass(id);
          }
       }
-      
+
       //If we get here then a collision shape has been found.
       //Now we can enable/disable the GeomTransform at the top of the hierarchy.
       //Disabling the collision geometry itself will not prevent the transform
@@ -714,8 +714,8 @@ void Transformable::SetCollisionDetection( bool enabled )
 *
 * @return true if the Transformable is solid
 */
-bool Transformable::GetCollisionDetection() const 
-{ 
+bool Transformable::GetCollisionDetection() const
+{
    if( mGeomID != 0 )
    {
       return dGeomIsEnabled(mGeomID) == 1;
@@ -792,8 +792,8 @@ public:
          if(d->supports(mFunctor))
          {
             osg::NodePath nodePath = getNodePath();
-            
-            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
+
+            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
             // Luckily, this behavior is redundant with OSG 1.1
             if (dynamic_cast<osg::CameraNode*>(nodePath[0]) != NULL)
             {
@@ -1284,7 +1284,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
                   &mv.mFunctor.mTriangles[0],
                   mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle) );
       }
-      
+
       if (mTriMeshDataID == NULL)
       {
          mTriMeshDataID = dGeomTriMeshDataCreate();
@@ -1294,7 +1294,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
          mTriMeshDataID,
          (dReal*)mMeshVertices,
          mv.mFunctor.mVertices.size(),
-         mMeshIndices,
+         (dTriIndex*)mMeshIndices,
          mv.mFunctor.mTriangles.size()*3
          );
 
@@ -1317,7 +1317,7 @@ void Transformable::ClearCollisionGeometry()
 {
    SetCollisionDetection(false);
    dGeomTransformSetGeom(mGeomID, 0);
-   
+
    //If the collision geometry is valid, this implies the user has
    //enabled render collision geometry.  Therefore, we just remove
    //the drawables from the geode.  When the user turns off render
@@ -1341,7 +1341,7 @@ void Transformable::ClearCollisionGeometry()
 void Transformable::PrePhysicsStepUpdate()
 {
    if (!GetCollisionDetection()) return;
-   
+
    Transform transform;
 
    this->GetTransform(transform, Transformable::ABS_CS);
@@ -1375,7 +1375,7 @@ void Transformable::PrePhysicsStepUpdate()
       dRot[10] = rotation(2,2);
 
       dGeomSetRotation(mGeomID, dRot);
-      
+
       int geomClass = dGeomGetClass( mGeomID ) ;
       dGeomID id = mGeomID;
 
@@ -1548,7 +1548,7 @@ void Transformable::RenderCollisionGeometry( bool enable )
          }
 
       default:
-         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, 
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__,
             "Transformable:Can't render unhandled geometry class:%d",
             dGeomGetClass(id) );
          break;
