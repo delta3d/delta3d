@@ -64,10 +64,10 @@ namespace dtABC
    class Application;
 }
 
-/** 
+/**
  * A high-level library that manages interaction between game actors.
  */
-namespace dtGame 
+namespace dtGame
 {
    //class Message;
    class GMComponent;
@@ -75,7 +75,7 @@ namespace dtGame
    class TickMessage;
    class GMStatistics;
 
-   class DT_GAME_EXPORT GameManager : public dtCore::Base 
+   class DT_GAME_EXPORT GameManager : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(GameManager)
 
@@ -111,7 +111,7 @@ namespace dtGame
                unsigned int GetOrderId() const { return mOrderId; }
 
             protected:
-               ComponentPriority(const std::string &name, unsigned int orderId) : Enumeration(name), mOrderId(orderId)
+               ComponentPriority(const std::string& name, unsigned int orderId) : Enumeration(name), mOrderId(orderId)
                {
                   AddInstance(this);
                }
@@ -119,7 +119,7 @@ namespace dtGame
          };
 
          /// Constructor
-         GameManager(dtCore::Scene &scene);
+         GameManager(dtCore::Scene& scene);
 
          protected:
 
@@ -132,20 +132,20 @@ namespace dtGame
              * Loads an actor registry
              * @param libName the name of the library to load
              */
-            void LoadActorRegistry(const std::string &libName);
+            void LoadActorRegistry(const std::string& libName);
 
             /**
              * Unloads an actor registry
              * @param libName the name of the library to unload
              */
-            void UnloadActorRegistry(const std::string &libName);
+            void UnloadActorRegistry(const std::string& libName);
 
             /**
-             * Returns a list of all the actor types the library manager knows how 
+             * Returns a list of all the actor types the library manager knows how
              * to create.
              * @param actorTypes A vector to fill
              */
-            void GetActorTypes(std::vector<const dtDAL::ActorType*> &actorTypes);
+            void GetActorTypes(std::vector<const dtDAL::ActorType*>& actorTypes);
 
             /**
              * Gets a single actor type that matches the name and category specified.
@@ -153,21 +153,21 @@ namespace dtGame
              * @param name Name of the actor type.
              * @return A pointer to the actor type if the actor type was found or NULL otherwise.
              */
-            const dtDAL::ActorType* FindActorType(const std::string &category, const std::string &name);
+            const dtDAL::ActorType* FindActorType(const std::string& category, const std::string& name);
 
             /**
              * Fills a vector with the game proxys whose types match the name parameter
              * @param The name to search for
              * @param The vector to fill
              */
-            void FindPrototypesByActorType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Fills a vector with the game proxys whose names match the name parameter
              * @param The name to search for
              * @param The vector to fill
              */
-            void FindPrototypesByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindPrototypesByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Convenience method to return a single prototype
@@ -175,7 +175,7 @@ namespace dtGame
              * @param The proxy to cast
              */
             template <class ProxyType>
-            void FindPrototypeByName(const std::string &name, ProxyType *&proxy) const
+            void FindPrototypeByName(const std::string& name, ProxyType*& proxy) const
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindPrototypesByName(name, toFill);
@@ -189,7 +189,7 @@ namespace dtGame
              * Fills a vector with all the templates.
              * @param The vector to fill
              */
-            void GetAllPrototypes(std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void GetAllPrototypes(std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * @param The uniqueID to look for or NULL for error
@@ -202,7 +202,7 @@ namespace dtGame
              * @return the actor proxy with that ID
              */
             template <typename T>
-            void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T> &proxy)
+            void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T>& proxy)
             {
                dtDAL::ActorProxy *tempProxy = FindPrototypeByID(uniqueID);
                proxy = dynamic_cast<T*>(tempProxy);
@@ -218,20 +218,20 @@ namespace dtGame
             dtCore::RefPtr<dtDAL::ActorProxy> CreateActorFromPrototype(const dtCore::UniqueId& uniqueID);
 
             template <typename T>
-            void CreateActorFromPrototype(const dtCore::UniqueId& uniqueID, 
-                     dtCore::RefPtr<T> &proxy)
+            void CreateActorFromPrototype(const dtCore::UniqueId& uniqueID,
+                     dtCore::RefPtr<T>& proxy)
             {
                dtCore::RefPtr<dtDAL::ActorProxy> baseProxy = CreateActorFromPrototype(uniqueID);
                proxy = dynamic_cast<T*>(baseProxy.get());
             }
 
             /**
-             * Gets a registry currently loaded by the library manager.  
+             * Gets a registry currently loaded by the library manager.
              * @param name The name of the library.  Note, this name is the
              * system independent name.
              * @return A handle to the registry or NULL if it is not currently loaded.
              */
-            dtDAL::ActorPluginRegistry* GetRegistry(const std::string &name);
+            dtDAL::ActorPluginRegistry* GetRegistry(const std::string& name);
 
             /**
              * @param actorType the actor type to get the registry for.
@@ -249,7 +249,7 @@ namespace dtGame
              *  library name would be ExampleActors.dll, however, on Unix-based
              *  platforms, the resulting name could be libExampleActors.so.
              */
-            std::string GetPlatformSpecificLibraryName(const std::string &libBase);
+            std::string GetPlatformSpecificLibraryName(const std::string& libBase);
 
             /**
              * Strips off the path and platform specific library prefixes and extensions
@@ -257,7 +257,7 @@ namespace dtGame
              * @param libName The platform specific library name.
              * @return A platform independent library name.
              */
-            std::string GetPlatformIndependentLibraryName(const std::string &libName);
+            std::string GetPlatformIndependentLibraryName(const std::string& libName);
 
             /**
              * Called by the dtCore::Base class
@@ -310,21 +310,21 @@ namespace dtGame
              * Returns a const component of the requested name or NULL if none exists
              * @return A pointer to the requested component, or NULL
              */
-            GMComponent* GetComponentByName(const std::string &name);
+            GMComponent* GetComponentByName(const std::string& name);
 
             /**
              * Templated version of GetComponentByName that calls the normal one and dynamic casts
              * it to the type of the pointer passed in.  The pointer will be null if the name is not
              * found or the component is not the right type.
-             * 
+             *
              * Unlike the actor find, this uses a dynamic cast because it is expected to be called
              * much less often, so safety was preferred.
-             * 
+             *
              * @param name the name of the component to find
              * @param component the pointer to assign with the component found.
              */
             template <typename ComponentType>
-            void GetComponentByName(const std::string &name, ComponentType*& component)
+            void GetComponentByName(const std::string& name, ComponentType*& component)
             {
                component = dynamic_cast<ComponentType*>(GetComponentByName(name));
             }
@@ -333,13 +333,13 @@ namespace dtGame
              * Returns a const component of the requested name or NULL if none exists
              * @return A pointer to the requested component, or NULL
              */
-            const GMComponent* GetComponentByName(const std::string &name) const;
+            const GMComponent* GetComponentByName(const std::string& name) const;
 
             /**
              * Const version of the other templated GetComponentByName method
              */
             template <typename ComponentType>
-            void GetComponentByName(const std::string &name, const ComponentType*& component) const
+            void GetComponentByName(const std::string& name, const ComponentType*& component) const
             {
                component = dynamic_cast<const ComponentType*>(GetComponentByName(name));
             }
@@ -392,7 +392,7 @@ namespace dtGame
              * @param name The name corresponding to the actor type
              * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
              */
-            dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string &category, const std::string &name);
+            dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string& category, const std::string& name);
 
             /**
              * Creates an actor based on the string version of the actor type and store it in a ref pointer.
@@ -421,7 +421,7 @@ namespace dtGame
              * @param isRemote true if the actor is remotely controlled, false if not.  If a GameActor
              *                 is remote, then it is assumed it will be controlled via
              *                 dtGame::Message sent through the GameManager.  If it's local,
-             *                 the GameActor will be controlling itself and creating and 
+             *                 the GameActor will be controlling itself and creating and
              *                 sending dtGame::Message with its updated data.
              * @param publish true if the actor should be immediately published.
              * @throws ExceptionEnum::ACTOR_IS_REMOTE if the actor is remote and publish is true.
@@ -444,11 +444,11 @@ namespace dtGame
 
             /**
              * Removes all game actors and actors from the game manager
-             * Currently all actors are removed immediately, but this should not be 
+             * Currently all actors are removed immediately, but this should not be
              * assumed to be true going forward.
              * INFO_ACTOR_DELETE messages are only sent for local actors.
-             * @note This method causes delete messages to be sent for all actors 
-             *    that need to be deleted.  If an immediate delete or clear of the 
+             * @note This method causes delete messages to be sent for all actors
+             *    that need to be deleted.  If an immediate delete or clear of the
              *    game manager is required call this method with a true flag.
              */
             void DeleteAllActors() { DeleteAllActors(false); }
@@ -456,7 +456,7 @@ namespace dtGame
             /**
              * Removes an actor or game actor from the game manager.
              * Game actors are not actually removed until the end of the current frame so that
-             * messages can propogate.  Regular actor proxies are removed immediately.  
+             * messages can propogate.  Regular actor proxies are removed immediately.
              * An INFO_ACTOR_DELETE message is only sent if it's a game actor and is local.
              * @param The actor to remove
              */
@@ -464,12 +464,12 @@ namespace dtGame
 
             /**
              * Removes all game actors and actors from the game manager
-             * Currently all actors are removed immediately, but this should not be 
+             * Currently all actors are removed immediately, but this should not be
              * assumed to be true going forward.
              * @param immediate False if the message about deleting should be sent, if
              *    true, this method will clear all actor management related lists thus
              *    "immediately" removing all actors from the game manager.  Calling this
-             *    method with "true" is useful for complete game state changes such as 
+             *    method with "true" is useful for complete game state changes such as
              *    map changes.
              */
             void DeleteAllActors(bool immediate);
@@ -492,32 +492,32 @@ namespace dtGame
              * Retrieves all the game actors added to the GM
              * @param toFill The vector to fill
              */
-            void GetAllGameActors(std::vector<GameActorProxy*> &toFill) const;
+            void GetAllGameActors(std::vector<GameActorProxy*>& toFill) const;
 
             /**
              * Retrieves all the non game actors added to the GM
              * @param toFill The vector to fill
              */
-            void GetAllNonGameActors(std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void GetAllNonGameActors(std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Retrieves all the actors added to the GM
              * @param toFill The vector to fill
              */
-            void GetAllActors(std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Fills a vector with actors that are currently in the scene
              * @param vec The vector to fill
              */
-            void GetActorsInScene(std::vector<dtCore::DeltaDrawable*> &vec) const;
+            void GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const;
 
             /**
              * Fills a vector with the game proxys whose names match the name parameter
              * @param The name to search for
              * @param The vector to fill
              */
-            void FindActorsByName(const std::string &name, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindActorsByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Convenience method to return an actor
@@ -525,13 +525,13 @@ namespace dtGame
              * @param The proxy to cast
              */
             template <class ProxyType>
-            void FindActorByName(const std::string &name, ProxyType *&proxy) const
+            void FindActorByName(const std::string& name, ProxyType *&proxy) const
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByName(name, toFill);
                if(!toFill.empty())
                {
-                  proxy = dynamic_cast<ProxyType*>(toFill[0]);   
+                  proxy = dynamic_cast<ProxyType*>(toFill[0]);
                }
             }
 
@@ -540,7 +540,7 @@ namespace dtGame
              * @param The type to search for
              * @param The vector to fill
              */
-            void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Convenience method to return an actor
@@ -548,13 +548,13 @@ namespace dtGame
              * @param The proxy to cast
              */
             template <class ProxyType>
-            void FindActorByType(const dtDAL::ActorType &type, ProxyType *&proxy) const
+            void FindActorByType(const dtDAL::ActorType& type, ProxyType*& proxy) const
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByType(type, toFill);
                if(!toFill.empty())
                {
-                  proxy = dynamic_cast<ProxyType*>(toFill[0]);   
+                  proxy = dynamic_cast<ProxyType*>(toFill[0]);
                }
             }
 
@@ -563,28 +563,28 @@ namespace dtGame
              * @param className the classname
              * @param toFill The vector to fill
              */
-            void FindActorsByClassName(const std::string &className, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindActorsByClassName(const std::string& className, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Fills a vector with the game proxys whose position is within the radius parameter
-             * @param radius The radius to search in 
+             * @param radius The radius to search in
              * @param toFill The vector to fill
              */
-            void FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*> &toFill) const;
+            void FindActorsWithinRadius(const float radius, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Returns the game actor proxy whose is matches the parameter
              * @param id The id of the proxy to find
              * @return The proxy, or NULL if not found
              */
-            GameActorProxy* FindGameActorById(const dtCore::UniqueId &id) const;
+            GameActorProxy* FindGameActorById(const dtCore::UniqueId& id) const;
 
             /**
              * Getst the game actor proxy whose is matches the parameter
              * @param id The id of the proxy to find
              */
             template<typename ProxyType>
-            void FindGameActorById(const dtCore::UniqueId &id, ProxyType*& proxy) const
+            void FindGameActorById(const dtCore::UniqueId& id, ProxyType*& proxy) const
             {
                proxy = dynamic_cast<ProxyType*>(FindGameActorById(id));
             }
@@ -595,7 +595,7 @@ namespace dtGame
              * @param id The id of the proxy to find
              * @return The proxy, or NULL if not found
              */
-            dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId &id) const;
+            dtDAL::ActorProxy* FindActorById(const dtCore::UniqueId& id) const;
 
             /**
              * Returns the actor proxy whose is matches the parameter. This will search both the game actors and the
@@ -604,7 +604,7 @@ namespace dtGame
              * @return The proxy, or NULL if not found
              */
             template<typename ProxyType>
-            void FindActorById(const dtCore::UniqueId &id, ProxyType*& proxy) const
+            void FindActorById(const dtCore::UniqueId& id, ProxyType*& proxy) const
             {
                proxy = dynamic_cast<ProxyType*>(FindActorById(id));
             }
@@ -627,12 +627,12 @@ namespace dtGame
              * @see #ChangeMapSet
              * @see #CloseCurrentMap()
              * @param mapName       The name of the map to load.
-             * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
+             * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be
              *                      added to the scene.  This should only be true for debugging purposes.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
              */
-            void ChangeMap(const std::string &mapName, bool addBillboards = false);
+            void ChangeMap(const std::string& mapName, bool addBillboards = false);
 
 
             /**
@@ -645,14 +645,14 @@ namespace dtGame
              * Right before it begins loading maps, it sends INFO_MAP_LOAD_BEGIN
              * When that finishes, it will send INFO_MAP_LOADED.
              * At the very end it sends INFO_MAP_CHANGED.
-             * 
+             *
              * Listening for INFO_MAP_CHANGED and INFO_MAP_LOADED both are equally valid for doing things
              * once the map is finished loading since unloading a map does not send the change messages.
              * Only one of each message is sent, regardless of the number of maps being loaded.
              * @see #CloseCurrentMap()
              * @see dtGame::MapChangeStateData
              * @param mapNames      The list of names of maps to load.
-             * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
+             * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be
              *                      added to the scene.  This should only be true for debugging purposes.
              * @throws ExceptionEnum::INVALID_PARAMETER if no map name is supplied.
              * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if map change is already in progress.
@@ -661,8 +661,8 @@ namespace dtGame
 
             /**
              * Closes the open maps, if any, being used by the Game Manager.  All actors will be deleted whether maps are closed or not.
-             * 
-             * It will send an INFO_MAP_UNLOAD_BEGIN at the beginning and an INFO_MAP_UNLOADED message 
+             *
+             * It will send an INFO_MAP_UNLOAD_BEGIN at the beginning and an INFO_MAP_UNLOADED message
              * if a map is actually closed.
              */
             void CloseCurrentMap();
@@ -678,7 +678,7 @@ namespace dtGame
              * @param repeat True to repeat the timer, false if once only
              * @param realTime True if this time should use real time, or false if it should use simulation time.
              */
-            void SetTimer(const std::string& name, const GameActorProxy* aboutActor, float time, 
+            void SetTimer(const std::string& name, const GameActorProxy* aboutActor, float time,
                      bool repeat = false, bool realTime = false);
 
             /**
@@ -704,16 +704,16 @@ namespace dtGame
              * This should not be changed after startup.
              * @param The new scene to assign
              */
-            void SetScene(dtCore::Scene &newScene);
+            void SetScene(dtCore::Scene& newScene);
 
             ///@return the configuration properties.
-            dtUtil::ConfigProperties& GetConfiguration(); 
+            dtUtil::ConfigProperties& GetConfiguration();
 
             ///@return the configuration properties.
-            const dtUtil::ConfigProperties& GetConfiguration() const; 
+            const dtUtil::ConfigProperties& GetConfiguration() const;
 
             ///@return the application that owns this game mananger.
-            dtABC::Application& GetApplication(); 
+            dtABC::Application& GetApplication();
 
             ///@return the application that owns this game mananger.
             const dtABC::Application& GetApplication() const;
@@ -722,14 +722,14 @@ namespace dtGame
             void SetApplication(dtABC::Application& application);
 
             /**
-             * Gets the interval (in seconds) used for writing out GM Statistics. This 
+             * Gets the interval (in seconds) used for writing out GM Statistics. This
              * is usually a debug setting that can be used to see how much work the GM is doing
-             * as compared to how much work your scene is doing.  If this is > 0, and the 
+             * as compared to how much work your scene is doing.  If this is > 0, and the
              * appropriate log level is on, the GM will output statistics periodically
              * Default is 0.
              */
             int GetStatisticsInterval() const;
-            
+
             /**
              * @return true if the Debug Statistics are set to log to the console.
              */
@@ -743,9 +743,9 @@ namespace dtGame
 
             /**
              * Records statistics about different components and actors.
-             * Sets the interval (in seconds) used for writing out GM Statistics. This 
+             * Sets the interval (in seconds) used for writing out GM Statistics. This
              * is usually a debug setting that can be used to see how much work the GM is doing
-             * as compared to how much work your scene is doing.  If this is > 0, and the 
+             * as compared to how much work your scene is doing.  If this is > 0, and the
              * appropriate log level is on, the GM will output statistics periodically
              * @param logComponents log timing for components
              * @param logActors log timing for actors
@@ -753,8 +753,8 @@ namespace dtGame
              * @param toConsole true to print to console, false to print to file
              * @param path if toConsole == false, print to this file.
              */
-            void DebugStatisticsTurnOn(bool logComponents, bool logActors, 
-                     const int statisticsInterval, bool toConsole = true, 
+            void DebugStatisticsTurnOn(bool logComponents, bool logActors,
+                     const int statisticsInterval, bool toConsole = true,
                      const std::string& path = "gamemanagerDebugInfo.txt");
 
             /// Turn off statistics information - params to log before stopping, and if user wants to clear history
@@ -768,7 +768,7 @@ namespace dtGame
              * Normally, when a map is closed, the Game Manager removes the events that came from the
              * map. This flag allows the case where sometimes an event comes from a map but you don't want
              * it to go away.  The default is true.
-             * @return Flag for whether we remove a map's GameEvents from 
+             * @return Flag for whether we remove a map's GameEvents from
              * the GameEventManager when closing a map. (default is true)
              */
             bool GetRemoveGameEventsOnMapChange() const { return mRemoveGameEventsOnMapChange; }
@@ -778,7 +778,7 @@ namespace dtGame
              * Normally, when a map is closed, the Game Manager removes the events that came from the
              * map. This flag allows the case where sometimes an event comes from a map but you don't want
              * it to go away.  The default is true.
-             * @param removeGameEventsOnMapChange Flag for whether we remove a map's GameEvents from 
+             * @param removeGameEventsOnMapChange Flag for whether we remove a map's GameEvents from
              * the GameEventManager when closing a map. (default is true)
              */
             void SetRemoveGameEventsOnMapChange(const bool removeGameEventsOnMapChange) { mRemoveGameEventsOnMapChange = removeGameEventsOnMapChange; }
@@ -788,14 +788,14 @@ namespace dtGame
              * @return mFactory he message factory
              * @see class dtGame::MessageFactory
              */
-            MessageFactory& GetMessageFactory()  { return mFactory; } 
+            MessageFactory& GetMessageFactory()  { return mFactory; }
 
             /**
              * Retrieves the message factor that is controlled by the GameManager
              * @return mFactory he message factory
              * @see class dtGame::MessageFactory
              */
-            const MessageFactory& GetMessageFactory() const { return mFactory; } 
+            const MessageFactory& GetMessageFactory() const { return mFactory; }
 
             /**
              * Gets the const version of the machine info
@@ -857,7 +857,7 @@ namespace dtGame
              * @param newTimeScale the new simulation time progression as a factor of real time.
              * @param newClockTime  The new simulation wall-clock time. In MICRO SECONDs (seconds * 1000000LL).
              */
-            void ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t &newClockTime);
+            void ChangeTimeSettings(double newTime, float newTimeScale, const dtCore::Timer_t& newClockTime);
 
             /**
              * Get all of the GameActorProxies registered to receive all messages of a certain type.
@@ -873,22 +873,22 @@ namespace dtGame
              * @param toFill a vector to fill with the GameActorProxies.
              */
             void GetRegistrantsForMessagesAboutActor(
-                     const MessageType& type, 
-                     const dtCore::UniqueId& targetActorId, 
+                     const MessageType& type,
+                     const dtCore::UniqueId& targetActorId,
                      std::vector<std::pair<GameActorProxy*, std::string > >& toFill) const;
 
             /**
              * @param type
              * @param proxy
              * @param invokableName
-             */ 
+             */
             void RegisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
 
             /**
              * @param type
              * @param proxy
              * @param invokableName
-             */ 
+             */
             void UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
 
             /**
@@ -896,11 +896,11 @@ namespace dtGame
              * @param targetActorId
              * @param proxy
              * @param invokableName
-             */ 
+             */
             void RegisterForMessagesAboutActor(
-                     const MessageType& type, 
-                     const dtCore::UniqueId& targetActorId, 
-                     GameActorProxy& proxy, 
+                     const MessageType& type,
+                     const dtCore::UniqueId& targetActorId,
+                     GameActorProxy& proxy,
                      const std::string& invokableName);
 
             /**
@@ -908,11 +908,11 @@ namespace dtGame
              * @param targetActorId
              * @param proxy
              * @param invokableName
-             */ 
+             */
             void UnregisterForMessagesAboutActor(
-                     const MessageType& type, 
-                     const dtCore::UniqueId& targetActorId, 
-                     GameActorProxy& proxy, 
+                     const MessageType& type,
+                     const dtCore::UniqueId& targetActorId,
+                     GameActorProxy& proxy,
                      const std::string& invokableName);
 
             /**
@@ -927,7 +927,7 @@ namespace dtGame
 
             /**
              * Pauses or unpauses this GameManager.
-             * @param pause true of false if this GM should be paused. If this value is 
+             * @param pause true of false if this GM should be paused. If this value is
              *              the same as the current state, this call is a noop.
              */
             void SetPaused(bool pause);
@@ -935,14 +935,14 @@ namespace dtGame
             /**
              * Handles a reject message.  This is typically called by a component (usually server side)
              * when it has determined that a request message is invalid and it needs to reject it.
-             * The method creates a ServerMessageRejected - SERVER_REQUEST_REJECTED message.  If the 
+             * The method creates a ServerMessageRejected - SERVER_REQUEST_REJECTED message.  If the
              * reasonMessage has a MachineInfo that indicates it came from this server, then this method
              * does a SendMessage on the new rejected message.  Otherwise, it does a SendNetworkMessage.
              * The resulting reject message will eventually make its way back to the source client-component.
              * @param toReject the Message that you are trying to reject.
              * @param rejectDescription A text message describing why the message was rejected.
              */
-            void RejectMessage(const Message &reasonMessage, const std::string &rejectDescription);
+            void RejectMessage(const Message& reasonMessage, const std::string& rejectDescription);
 
             /**
              * Wrapper method to encapsulate SetContext on dtDAL::Project so an outside
@@ -951,17 +951,17 @@ namespace dtGame
              * @param context A path to the context to use
              * @param readOnly True to open the context in read only mode
              */
-            void SetProjectContext(const std::string &context, bool readOnly = false);
+            void SetProjectContext(const std::string& context, bool readOnly = false);
 
             /**
-             * Wrapper method that returns a string to the project context currently 
+             * Wrapper method that returns a string to the project context currently
              * being used
              * @return A path to the new context
              */
             const std::string& GetProjectContext() const;
 
             /**
-             * Shuts down the Game Manager. 
+             * Shuts down the Game Manager.
              * This method will clear out all internals of the GameManager including
              * removing dtGame::GMComponent and Actors, as well as sending any queued up
              * messages.  This gets called automatically when a dtGame::GameEntryPoint gets
@@ -971,10 +971,10 @@ namespace dtGame
 
 
             ///Deprecated 07/01/08
-            void ChangeMap(const std::string &mapName, bool addBillboards, bool enableDatabasePaging)
+            void ChangeMap(const std::string& mapName, bool addBillboards, bool enableDatabasePaging)
             {
-               DEPRECATE("dtGame::GameManager::ChangeMap(const std::string &mapName, bool addBillboards=false, bool enableDatabasePaging=false)",
-                         "dtGame::GameManager::ChangeMap(const std::string &mapName, bool addBillboards=false)");
+               DEPRECATE("dtGame::GameManager::ChangeMap(const std::string& mapName, bool addBillboards=false, bool enableDatabasePaging=false)",
+                         "dtGame::GameManager::ChangeMap(const std::string& mapName, bool addBillboards=false)");
                ChangeMap(mapName, addBillboards);
             }
 
@@ -988,7 +988,7 @@ namespace dtGame
 
          protected:
 
-            struct TimerInfo 
+            struct TimerInfo
             {
                std::string name;
                dtCore::UniqueId aboutActor;
@@ -996,11 +996,11 @@ namespace dtGame
                bool repeat;
                dtCore::Timer_t interval;
 
-               bool operator < (const TimerInfo &rhs) const
+               bool operator < (const TimerInfo& rhs) const
                {
                   if (time == rhs.time)
-                     return this < &rhs;
-                  return time < rhs.time; 
+                     return this <& rhs;
+                  return time < rhs.time;
                }
             };
 
@@ -1037,16 +1037,16 @@ namespace dtGame
             std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
 
             /// Does the work of ClearTimer for each of the timer info sets.
-            void ClearTimerSingleSet(std::set<TimerInfo>& timerSet, 
+            void ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
                      const std::string& name, const GameActorProxy *proxy);
 
             /**
              * Private helper method to process the timers. This is called from PreFrame
-             * @param listToProcess The timer list to process 
+             * @param listToProcess The timer list to process
              * @param clockTime The time to use
              * @note The clock time should correspond to the list to be processed
              */
-            void ProcessTimers(std::set<TimerInfo> &listToProcess, dtCore::Timer_t clockTime);
+            void ProcessTimers(std::set<TimerInfo>& listToProcess, dtCore::Timer_t clockTime);
 
             /**
              * Removes the proxy from the scene
@@ -1072,7 +1072,7 @@ namespace dtGame
             std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mPrototypeActors;
 
             std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
-            //These are used during changing the map so that 
+            //These are used during changing the map so that
             //the map code can modify game manager with some control.
             bool mSendCreatesAndDeletes;
             bool mAddActorsToScene;
@@ -1087,7 +1087,7 @@ namespace dtGame
             typedef std::map<const MessageType*,  ProxyInvokableMap> ActorMessageListenerMap;
             ActorMessageListenerMap mActorMessageListeners;
 
-            std::vector<dtCore::RefPtr<GMComponent> > mComponentList; 
+            std::vector<dtCore::RefPtr<GMComponent> > mComponentList;
             std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
             std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
             dtCore::RefPtr<dtCore::Scene> mScene;
