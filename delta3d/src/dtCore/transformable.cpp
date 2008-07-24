@@ -73,7 +73,7 @@ namespace dtCore
             this->setNodeMaskOverride(0xffffffff);
          }
 
-         virtual void apply(osg::Transform& node)
+         virtual void apply(osg::Node& node)
          {
             if (node.getNumParents()==0 || &node==_haltTraversalAtNode)
             {
