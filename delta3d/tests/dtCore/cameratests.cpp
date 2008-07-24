@@ -55,6 +55,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_TEST(TestSaveScreenShot);
          CPPUNIT_TEST(TestPerspective);
          CPPUNIT_TEST(TestFrustum);
+         CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
    
       CPPUNIT_TEST_SUITE_END();
    
@@ -171,6 +172,15 @@ class CameraTests : public CPPUNIT_NS::TestFixture
                   nearSet, nearClip, 0.01);
          CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
                   farSet, farClip, 0.01);
+      }
+
+      void TestSupplyingOSGCameraToConstructor()
+      {
+         osg::ref_ptr<osg::Camera> osgCam = new osg::Camera();
+         dtCore::RefPtr<dtCore::Camera> camera = new dtCore::Camera(*osgCam);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Camera didn't return back the supplied OSG Camera",
+                                       osgCam.get(), camera->GetOSGCamera() );
       }
 
    private:
