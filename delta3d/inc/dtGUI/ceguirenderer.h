@@ -11,189 +11,184 @@
 
 namespace CEGUI
 {
-    class Base;
-    class Texture;
-    class ImageCodec;
+   class Base;
+   class Texture;
+   class ImageCodec;
 }
 
 #if defined(_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable : 4251)
+#   pragma warning(push)
+#   pragma warning(disable : 4251)
 #endif
 
-#define OGLRENDERER_VBUFF_CAPACITY	4096
-
-
-
-
-
+#define OGLRENDERER_VBUFF_CAPACITY   4096
 
 namespace dtGUI
 {
 
-class CEGUITexture;
-class DynamicModule;
+   class CEGUITexture;
+   class DynamicModule;
 
-class DT_GUI_EXPORT CEGUIRenderer : public CEGUI::Renderer
-{
+   class DT_GUI_EXPORT CEGUIRenderer : public CEGUI::Renderer
+   {
 
-    public:
+      public:
 
-        CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec* codec = 0);
+         CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec* codec = 0);
 
-        CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI::ImageCodec* codec  = 0);
+         CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI::ImageCodec* codec  = 0);
 
-        virtual ~CEGUIRenderer(void);
+         virtual ~CEGUIRenderer(void);
 
-        virtual	void addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours, CEGUI::QuadSplitMode quam_split_mode);
+         virtual   void addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours, CEGUI::QuadSplitMode quam_split_mode);
 
-        virtual	void doRender(void);
+         virtual   void doRender(void);
 
-        virtual	void clearRenderList(void);
+         virtual   void clearRenderList(void);
 
-        virtual void setQueueingEnabled(bool setting) {m_queueing = setting;}
+         virtual void setQueueingEnabled(bool setting) {m_queueing = setting;}
 
-        virtual	CEGUI::Texture*	createTexture(void);
+         virtual   CEGUI::Texture*   createTexture(void);
 
-        virtual	CEGUI::Texture*	createTexture(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
+         virtual   CEGUI::Texture*   createTexture(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
 
-        virtual	CEGUI::Texture*	createTexture(float size);
+         virtual   CEGUI::Texture*   createTexture(float size);
 
-        virtual	void destroyTexture(CEGUI::Texture* texture);
+         virtual   void destroyTexture(CEGUI::Texture* texture);
 
-        virtual void destroyAllTextures(void);
+         virtual void destroyAllTextures(void);
 
-        virtual bool isQueueingEnabled(void) const{return m_queueing;}
+         virtual bool isQueueingEnabled(void) const{return m_queueing;}
 
-        virtual float getWidth(void) const		{return m_display_area.getWidth();}
+         virtual float getWidth(void) const      {return m_display_area.getWidth();}
 
-        virtual float getHeight(void) const		{return m_display_area.getHeight();}
+         virtual float getHeight(void) const      {return m_display_area.getHeight();}
 
-        virtual CEGUI::Size	getSize(void) const			{return m_display_area.getSize();}
+         virtual CEGUI::Size   getSize(void) const         {return m_display_area.getSize();}
 
-        virtual CEGUI::Rect	getRect(void) const			{return m_display_area;}
+         virtual CEGUI::Rect   getRect(void) const         {return m_display_area;}
 
-        virtual	CEGUI::uint	getMaxTextureSize(void) const		{return m_maxTextureSize;}
+         virtual   CEGUI::uint   getMaxTextureSize(void) const      {return m_maxTextureSize;}
 
-        virtual	CEGUI::uint	getHorzScreenDPI(void) const	{return 96;}
+         virtual   CEGUI::uint   getHorzScreenDPI(void) const   {return 96;}
 
-        virtual	CEGUI::uint	getVertScreenDPI(void) const	{return 96;}
+         virtual   CEGUI::uint   getVertScreenDPI(void) const   {return 96;}
 
-        void setDisplaySize(const CEGUI::Size& sz);
+         void setDisplaySize(const CEGUI::Size& sz);
 
-        CEGUI::ImageCodec& getImageCodec(void);
-    
-        void setImageCodec(const CEGUI::String& codecName);
+         CEGUI::ImageCodec& getImageCodec(void);
 
-        void setImageCodec(CEGUI::ImageCodec* codec);
-     
-        static void setDefaultImageCodecName(const CEGUI::String& codecName);
-    
-        static const CEGUI::String& getDefaultImageCodecName();
+         void setImageCodec(const CEGUI::String& codecName);
 
-        void SetGraphicsContext(osg::GraphicsContext *);
-    
-    private:
+         void setImageCodec(CEGUI::ImageCodec* codec);
 
-        /************************************************************************
-	    	Implementation Constants
-        *************************************************************************/
-        static const int			VERTEX_PER_QUAD;							//!< number of vertices per quad
-        static const int			VERTEX_PER_TRIANGLE;						//!< number of vertices for a triangle
-        static const int			VERTEXBUFFER_CAPACITY;						//!< capacity of the allocated vertex buffer
-    
-        /*************************************************************************
-		    Implementation Structs & classes
-        **************************************************************************/
-        struct MyQuad
-        {
+         static void setDefaultImageCodecName(const CEGUI::String& codecName);
+
+         static const CEGUI::String& getDefaultImageCodecName();
+
+         void SetGraphicsContext(osg::GraphicsContext *);
+
+      private:
+
+         /************************************************************************
+          Implementation Constants
+          *************************************************************************/
+         static const int         VERTEX_PER_QUAD;                     //!< number of vertices per quad
+         static const int         VERTEX_PER_TRIANGLE;                  //!< number of vertices for a triangle
+         static const int         VERTEXBUFFER_CAPACITY;                  //!< capacity of the allocated vertex buffer
+
+         /*************************************************************************
+          Implementation Structs & classes
+          **************************************************************************/
+         struct MyQuad
+         {
             float tex[2];
             CEGUI::uint32 color;
             float vertex[3];
-        };
+         };
 
-        struct QuadInfo
-        {
-            GLuint		texid;  
+         struct QuadInfo
+         {
+            GLuint      texid;
             CEGUI::Rect position;
-            float		z;
-            CEGUI::Rect		texPosition;
-            CEGUI::uint32		topLeftCol;
-            CEGUI::uint32		topRightCol;
-            CEGUI::uint32		bottomLeftCol;
-            CEGUI::uint32		bottomRightCol;
+            float      z;
+            CEGUI::Rect      texPosition;
+            CEGUI::uint32      topLeftCol;
+            CEGUI::uint32      topRightCol;
+            CEGUI::uint32      bottomLeftCol;
+            CEGUI::uint32      bottomRightCol;
 
             CEGUI::QuadSplitMode   splitMode;
 
             bool operator<(const QuadInfo& other) const
             {
-            	return z > other.z;
+               return z > other.z;
             }
 
-        };
+         };
 
 
-        /*************************************************************************
-		    Implementation Methods
-        **************************************************************************/
-        // setup states etc
-        void	initPerFrameStates(void);
+         /*************************************************************************
+          Implementation Methods
+          **************************************************************************/
+         // setup states etc
+         void   initPerFrameStates(void);
 
-        // restore states
-        void  exitPerFrameStates(void);
+         // restore states
+         void  exitPerFrameStates(void);
 
-        // render whatever is in the vertex buffer
-        void	renderVBuffer(void);
+         // render whatever is in the vertex buffer
+         void   renderVBuffer(void);
 
-        // sort quads list according to texture
-        void	sortQuads(void);
+         // sort quads list according to texture
+         void   sortQuads(void);
 
-        // render a quad directly to the display
-        void	renderQuadDirect(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours, CEGUI::QuadSplitMode quam_split_mode);
+         // render a quad directly to the display
+         void   renderQuadDirect(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours, CEGUI::QuadSplitMode quam_split_mode);
 
-        // convert colour value to whatever the OpenGL system is expecting.
-        CEGUI::uint32	colourToOGL(const CEGUI::colour& col) const;
+         // convert colour value to whatever the OpenGL system is expecting.
+         CEGUI::uint32   colourToOGL(const CEGUI::colour& col) const;
 
-        // set the module ID string
-        void setModuleIdentifierString();
-      
-        // setup image codec 
-        void setupImageCodec(const CEGUI::String& codecName);
-        
-        // cleanup image codec 
-        void cleanupImageCodec();
-        
-        /*************************************************************************
-	        Implementation Data
-        **************************************************************************/
-        typedef std::multiset<QuadInfo>		QuadList;
-        QuadList m_quadlist;
+         // set the module ID string
+         void setModuleIdentifierString();
 
-        CEGUI::Rect		m_display_area;
+         // setup image codec
+         void setupImageCodec(const CEGUI::String& codecName);
 
-        MyQuad		myBuff[OGLRENDERER_VBUFF_CAPACITY];
+         // cleanup image codec
+         void cleanupImageCodec();
 
-        bool		m_queueing;			//!< setting for queuing control.
-        CEGUI::uint m_currTexture;		//!< Currently bound texture.
-        int			m_bufferPos;		//!< index into buffer where next vertex should be put.
-        bool		m_sorted;			//!< true when data in quad list is sorted.
+         /*************************************************************************
+           Implementation Data
+          **************************************************************************/
+         typedef std::multiset<QuadInfo>      QuadList;
+         QuadList m_quadlist;
 
-        std::list<CEGUITexture*>	m_texturelist;		//!< List used to track textures.
-        GLint       m_maxTextureSize;		//!< Holds maximum supported texture size (in pixels).
-        
-        CEGUI::ImageCodec* m_imageCodec;           //!< Holds a pointer to the image codec to use.
-        CEGUI::DynamicModule* m_imageCodecModule; //!< Holds a pointer to the image codec module. If m_imageCodecModule is 0 we are not owner of the image codec object 
-        
-        static CEGUI::String m_defaultImageCodecName; //!< Holds the name of the default codec to use 
+         CEGUI::Rect      m_display_area;
 
-        osg::ref_ptr<osg::GraphicsContext> m_pGraphicsContext;
-                
-};
+         MyQuad      myBuff[OGLRENDERER_VBUFF_CAPACITY];
+
+         bool      m_queueing;         //!< setting for queuing control.
+         CEGUI::uint m_currTexture;      //!< Currently bound texture.
+         int         m_bufferPos;      //!< index into buffer where next vertex should be put.
+         bool      m_sorted;         //!< true when data in quad list is sorted.
+
+         std::list<CEGUITexture*>   m_texturelist;      //!< List used to track textures.
+         GLint       m_maxTextureSize;      //!< Holds maximum supported texture size (in pixels).
+
+         CEGUI::ImageCodec* m_imageCodec;           //!< Holds a pointer to the image codec to use.
+         CEGUI::DynamicModule* m_imageCodecModule; //!< Holds a pointer to the image codec module. If m_imageCodecModule is 0 we are not owner of the image codec object
+
+         static CEGUI::String m_defaultImageCodecName; //!< Holds the name of the default codec to use
+
+         osg::ref_ptr<osg::GraphicsContext> m_pGraphicsContext;
+
+   };
 
 } //namespace dtGUI
 
 #if defined(_MSC_VER)
-#	pragma warning(pop)
+#pragma warning(pop)
 #endif
 
 #endif //DTHUD_CEGUIRENDERER_H
