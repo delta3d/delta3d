@@ -1269,6 +1269,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
       }
 
       mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
+      //I used a uint32 because it's the type used in ode 0.10 for the indicies, at least usually.
       mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
 
       if( !mv.mFunctor.mVertices.empty() )
@@ -1294,7 +1295,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
          mTriMeshDataID,
          (dReal*)mMeshVertices,
          mv.mFunctor.mVertices.size(),
-         (dTriIndex*)mMeshIndices,
+         mMeshIndices,
          mv.mFunctor.mTriangles.size()*3
          );
 
