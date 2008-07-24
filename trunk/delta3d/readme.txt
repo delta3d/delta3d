@@ -150,7 +150,7 @@ Building with CMake
    5. Unzip Boost-Jam ('bjam.exe') and place it somewhere in your PATH or
       into your Boost directory
   
-   6. Open a cmd shell and navigate to your Boost directory.
+   6. Open a  Visual Studio Command prompt and navigate to your Boost directory.
    
    7. Run 'bjam stage --with-python' and 'bjam stage --with-python debug'. This will build the Release/Debug
       Boost.Python set of Boost libraries to a directory something like "boost*/stage/lib". Make sure to add this directory 
