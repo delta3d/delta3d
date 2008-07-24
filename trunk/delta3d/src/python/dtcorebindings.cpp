@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
-#include <dtCore/notify.h>
 #include <dtCore/globals.h>
 
 using namespace boost::python;
@@ -64,10 +63,6 @@ void initWalkMotionModelBindings();
 void initFPSColliderBindings();
 
 
-void NotifyWrap(NotifySeverity ns, const char* msg)
-{
-   Notify(ns, msg);
-}
 
 BOOST_PYTHON_MODULE(PyDtCore)
 {
@@ -77,17 +72,6 @@ BOOST_PYTHON_MODULE(PyDtCore)
    def("GetDeltaRootPath", GetDeltaRootPath);
    def("GetEnvironment", GetEnvironment);
 
-   def("SetNotifyLevel", SetNotifyLevel);
-   def("Notify", NotifyWrap);
-   
-   enum_<NotifySeverity>("NotifySeverity")
-      .value("ALWAYS", ALWAYS)
-      .value("FATAL", FATAL)
-      .value("WARN", WARN)
-      .value("NOTICE", NOTICE)
-      .value("INFO", INFO)
-      .value("DEBUG_INFO", DEBUG_INFO)
-      .export_values();
 
 
    initOSGVec2();
