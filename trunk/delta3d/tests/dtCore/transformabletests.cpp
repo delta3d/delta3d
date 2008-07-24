@@ -77,6 +77,8 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST(TestDistance);
    CPPUNIT_TEST(TestGetTransformWithDisabledCamera);
+   CPPUNIT_TEST(TestGetTransformInSceneWithNoCamera);
+   CPPUNIT_TEST(TestGetTransformNotInScene);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -104,6 +106,8 @@ public:
    void TestRows();
    void TestDistance();
    void TestGetTransformWithDisabledCamera();
+   void TestGetTransformInSceneWithNoCamera();
+   void TestGetTransformNotInScene();
 
 private:
    bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
@@ -740,4 +744,51 @@ void TransformableTests::TestGetTransformWithDisabledCamera()
    //the child's absolute translation should be the same as the parent's + the child's
    CPPUNIT_ASSERT_MESSAGE("A Transformable's translation should not change when the Camera is disabled",
                            dtUtil::Equivalent(cameraDisabledChildXYZ, cameraEnabledChildXYZ+cameraEnabledParentXYZ, TEST_EPSILON) );
+}
+
+void TransformableTests::TestGetTransformInSceneWithNoCamera()
+{
+   //Make sure Transformable::GetTransform() works ok when the Transformable
+   //is added to a Scene that doesn't have a Camera associated with it.
+   using namespace dtCore;
+
+   RefPtr<Transformable> transformable = new Transformable();
+   transformable->SetName("testNode");
+
+   Transform startXform;
+   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   startXform.SetTranslation(startXYZ);
+
+   transformable->SetTransform(startXform);
+
+   RefPtr<Scene> scene = new Scene();
+   scene->AddDrawable(transformable.get());
+
+   Transform endXform;
+   transformable->GetTransform(endXform);
+
+   CPPUNIT_ASSERT_MESSAGE("Transformable's GetTransform didn't match the SetTransform, when in a Scene without a Camera",
+                          dtUtil::Equivalent(startXYZ, endXform.GetTranslation(), TEST_EPSILON) );
+}
+
+void TransformableTests::TestGetTransformNotInScene()
+{
+   //Make sure Transformable::GetTransform() works ok when the Transformable
+   //is not added to a Scene.
+   using namespace dtCore;
+
+   RefPtr<Transformable> transformable = new Transformable();
+   transformable->SetName("testNode");
+
+   Transform startXform;
+   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   startXform.SetTranslation(startXYZ);
+
+   transformable->SetTransform(startXform);
+
+   Transform endXform;
+   transformable->GetTransform(endXform);
+
+   CPPUNIT_ASSERT_MESSAGE("Transformable's GetTransform didn't match the SetTransform, when not in a Scene.",
+                           dtUtil::Equivalent(startXYZ, endXform.GetTranslation(), TEST_EPSILON) );
 }
