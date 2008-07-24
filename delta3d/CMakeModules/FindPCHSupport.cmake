@@ -39,10 +39,10 @@ ELSE(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 
-MACRO(_PCH_GET_COMPILE_FLAGS _out_compile_flags)
+MACRO(_PCH_GET_COMPILE_FLAGS BUILD_TYPE _out_compile_flags)
 
 
-  STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+  STRING(TOUPPER "CMAKE_CXX_FLAGS_${BUILD_TYPE}" _flags_var_name)
   SET(${_out_compile_flags} ${${_flags_var_name}} )
   
   IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -71,7 +71,7 @@ MACRO(_PCH_GET_COMPILE_FLAGS _out_compile_flags)
     LIST(APPEND ${_out_compile_flags} "${_PCH_define_prefix}${item}")
   ENDFOREACH(item)
 
-  GET_DIRECTORY_PROPERTY(DIRDEF COMPILE_DEFINITIONS_${CMAKE_BUILD_TYPE} )
+  GET_DIRECTORY_PROPERTY(DIRDEF COMPILE_DEFINITIONS_${BUILD_TYPE} )
   FOREACH(item ${DIRDEF})
     LIST(APPEND ${_out_compile_flags} "${_PCH_define_prefix}${item}")
   ENDFOREACH(item)
@@ -229,7 +229,7 @@ MACRO(ADD_PRECOMPILED_HEADER _targetName _input _include_name)
 
   FILE(MAKE_DIRECTORY ${_outdir})
 
-  _PCH_GET_COMPILE_FLAGS(_compile_FLAGS)
+  _PCH_GET_COMPILE_FLAGS(${CMAKE_BUILD_TYPE} _compile_FLAGS)
   
   #MESSAGE("_compile_FLAGS: ${_compile_FLAGS}")
   #message("COMMAND ${CMAKE_CXX_COMPILER}	${_compile_FLAGS} -x c++-header -o ${_output} ${_input}")
