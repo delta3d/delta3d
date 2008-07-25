@@ -59,7 +59,6 @@ LINK_WITH_VARIABLES(${PROG_NAME}
 TARGET_LINK_LIBRARIES( ${PROG_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       ${DTAUDIO_LIBRARY}#required since the unit tests use dtAudio
                        ${DTAI_LIBRARY}
                        ${DTDAL_LIBRARY}
                        ${DTLMS_LIBRARY}
