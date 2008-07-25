@@ -3,10 +3,9 @@
 #include <uuid/uuid.h>
 
 #include "dtCore/uniqueid.h"
-#include "dtCore/notify.h"
 
 using namespace dtCore;
-   
+
 UniqueId::UniqueId()
 {
    uuid_t uuid;
