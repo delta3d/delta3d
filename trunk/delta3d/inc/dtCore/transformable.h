@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty lof MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty lof MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -38,19 +38,19 @@ namespace osg
 
 namespace dtCore
 {
-   /** 
-    * The Transformable class is the base class of anything that can move in the 
+   /**
+    * The Transformable class is the base class of anything that can move in the
     * virtual world and can be added to the Scene.
-    * 
+    *
     * The default coordinate system of dtCore is +X to the right, +Y forward into
     * the screen, and +Z is up.  Therefore, heading is around the Z axis, pitch
     * is around the X axis, and roll is around the Y axis.  The angles are all
     * right-hand-rule.
-    * 
+    *
     * The Transformable class creates a osg::MatrixTransform node for the
-    * protected member mNode.  
+    * protected member mNode.
     */
-   class DT_CORE_EXPORT Transformable : public DeltaDrawable  
+   class DT_CORE_EXPORT Transformable : public DeltaDrawable
    {
    public:
       /**
@@ -122,7 +122,7 @@ namespace dtCore
 
       ///Add a DeltaDrawable child
       virtual bool AddChild( DeltaDrawable* child );
-         
+
       ///Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable* child );
 
@@ -148,14 +148,14 @@ namespace dtCore
 
       ///Convenience function to return back the internal matrix transform node
       TransformableNode* GetMatrixNode()
-      { 
-         return mNode.get(); 
+      {
+         return mNode.get();
       }
 
       ///Convenience function to return back the internal matrix transform node
       const TransformableNode* GetMatrixNode() const
-      { 
-         return mNode.get(); 
+      {
+         return mNode.get();
       }
 
       /// @returns the matrix for this transformable.  Call this instead of getMatrixNode->getMatrix
@@ -163,13 +163,13 @@ namespace dtCore
 
       /// set the matrix for this transformable.  Call this instead of getMatrixNode->setMatrix
       void SetMatrix(const osg::Matrix& mat);
-      
+
       ///Render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );
 
       /// Returns if we are rendering the proxy node
       virtual bool GetIsRenderingProxyNode() const { return mRenderProxyNode; }
-      
+
       /**
        * Gets the world coordinate matrix for the supplied node.
        *
@@ -345,12 +345,12 @@ namespace dtCore
        * Updates the state of this object just after a physical
        * simulation step.  Should only be called by dtCore::Scene.
        * The default implementation here does nothing. Physical
-       * overrides it and copies the new object position into the 
+       * overrides it and copies the new object position into the
        * user-accessible transformation.
        */
       virtual void PostPhysicsStepUpdate() {}
 
-      /** 
+      /**
        * Enable or disable the rendering of the collision geometry.
        * This will draw a purple outline of shape the collision
        * detection routine is using.
@@ -360,25 +360,25 @@ namespace dtCore
        */
       void RenderCollisionGeometry( bool enable = true );
 
-      /** 
+      /**
        * Are we currently rendering the collision geometry?
        * @return True if we are rendering collision geometry.
        */
       bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
-      /** 
+      /**
        * Supply the Scene this Transformable has been added to. Normally this
        * is done inside Scene::RegisterCollidable.
        * @param scene The Scene to which this Transformable is being added to.
        */
       virtual void AddedToScene( Scene* scene );
-      
-      /** 
+
+      /**
        * Set the category bits of this collision geom. Here's the defaults:
        *
        * dtABC::ProximityTrigger  0
        *
-       * dtCore::Camera:          1  
+       * dtCore::Camera:          1
        * dtCore::Compass:         2
        * dtCore::InfiniteTerrain: 3
        * dtCore::ISector:         4
@@ -389,37 +389,37 @@ namespace dtCore
        * dtCore::PositionalLight: 9
        * dtCore::SpotLight:       10
        * dtCore::Transformable:   11
-       * 
+       *
        * dtAudio::Listener:       13
        * dtAudio::Sound:          14
        * dtHLA::Entity:           15
        * dtTerrain::Terrain:      16
-       * 
+       *
        */
       void SetCollisionCategoryBits( unsigned long bits );
-      
+
       unsigned long GetCollisionCategoryBits() const;
-      
-      /** 
+
+      /**
        * Set the collide bits of this collision geom. If you want this geom to
        * collide with a geom of category bit 00000010 for example, make sure these
        * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
        * comes in handy here. UNSIGNED_BIT(4) = 00000100
        */
       void SetCollisionCollideBits( unsigned long bits );
-      
+
       unsigned long GetCollisionCollideBits() const;
 
       ///required by DeltaDrawable
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
-            
+
    protected:
-      
+
       /**
        * The last geometry transform reported to ODE.
        */
-      Transform mGeomTransform; 
+      Transform mGeomTransform;
 
    private:
       void Ctor();
@@ -462,14 +462,14 @@ namespace dtCore
       RefPtr<TransformableNode> mNode;
 
       /**
-       * If we're rendering the collision geometry.                                                                    
+       * If we're rendering the collision geometry.
        */
       bool mRenderingGeometry;
 
       /**
        * If we're rendering the proxy node
        */
-      bool mRenderProxyNode; 
+      bool mRenderProxyNode;
 
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();
