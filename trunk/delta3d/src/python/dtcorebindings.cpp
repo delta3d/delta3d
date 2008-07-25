@@ -35,6 +35,7 @@ void initObjectBindings();
 void initOrbitMotionModelBindings();
 void initCollisionMotionModelBindings();
 void initViewBindings();
+void initRTSMotionModelBindings();
 
 
 //#ifndef WIN32
@@ -131,4 +132,5 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initSpotLightBindings();
 
    initViewBindings();
+   initRTSMotionModelBindings();
 }
