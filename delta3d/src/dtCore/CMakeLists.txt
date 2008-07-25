@@ -3,7 +3,6 @@
 
 SET(LIB_NAME     dtCore)
 
-
 IF (WIN32)
    SET(PlatformSources deltawin_win32.cpp uniqueid_win32.cpp)
 ELSE (WIN32) 
@@ -13,6 +12,10 @@ ELSE (WIN32)
       SET(PlatformSources deltawin_x11.cpp uniqueid_linux.cpp)      
    ENDIF (APPLE)
 ENDIF (WIN32)
+
+IF (ODE_VERSION_LT_0_10)
+   ADD_DEFINITIONS(-DdTriIndex=int)
+ENDIF (ODE_VERSION_LT_0_10)
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
