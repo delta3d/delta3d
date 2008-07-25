@@ -23,8 +23,8 @@ using namespace dtAnim;
 
 CharDrawable::CharDrawable(Cal3DModelWrapper* wrapper)
    : dtCore::Transformable()
-   , mNode(new osg::Node())
    , mAnimator(new Cal3DAnimator(wrapper))
+   , mNode(new osg::Node())
    , mLastMeshCount(0)
 {
    AddSender(&dtCore::System::GetInstance());
