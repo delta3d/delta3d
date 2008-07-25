@@ -35,7 +35,6 @@
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
-#include <dtAudio/audiomanager.h>
 #include <dtABC/application.h>
 
 #include <dtUtil/fileutils.h>
@@ -180,9 +179,6 @@ int main(int argc, char* argv[])
    //Set delta data.
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
-   dtAudio::AudioManager::Instantiate();
-   dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
-
    GlobalApplication = new dtABC::Application("config.xml");
    GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);
    GlobalApplication->Config();
@@ -307,8 +303,6 @@ int main(int argc, char* argv[])
    }
 
    GlobalApplication = NULL;
-
-   dtAudio::AudioManager::Destroy();
 
    return collectedResults.wasSuccessful () ? 0 : 1;
 }

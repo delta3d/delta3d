@@ -52,7 +52,6 @@
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
-#include <dtAudio/audiomanager.h>
 
 #include <dtDAL/physicalactorproxy.h>
 
@@ -144,9 +143,6 @@ void MapTests::setUp()
         else if (fileUtils.FileExists(rbodyToDelete))
             fileUtils.FileDelete(rbodyToDelete);
 
-        dtAudio::AudioManager::Instantiate();
-        dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
-
         dtDAL::Project::GetInstance().CreateContext("WorkingMapProject");
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
         //copy the vector because the act of deleting a map will reload the map names list.
@@ -167,8 +163,6 @@ void MapTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////////////
 void MapTests::tearDown()
 {
-   dtAudio::AudioManager::Destroy();
-
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
    bool shouldPopDir;
    
@@ -233,7 +227,8 @@ void MapTests::createActors(dtDAL::Map& map)
           actorTypes[i]->GetName() == "Cloud Dome" ||
           actorTypes[i]->GetName() == "Environment" || 
           actorTypes[i]->GetName() == "Test Environment Actor" ||
-          actorTypes[i]->GetName() == "Waypoint") 
+          actorTypes[i]->GetName() == "Waypoint" ||
+          actorTypes[i]->GetName() == "Sound Actor") 
       {
          skippedActors ++;
          continue; // go to next actor
