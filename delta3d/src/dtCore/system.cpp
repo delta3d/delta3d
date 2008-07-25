@@ -6,11 +6,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
-#include <dtCore/view.h>
 #include <dtCore/deltawin.h>
-#include <dtCore/scene.h>
-#include <dtCore/camera.h>
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 
 #include <osgViewer/GraphicsWindow>
 #include <ctime>
