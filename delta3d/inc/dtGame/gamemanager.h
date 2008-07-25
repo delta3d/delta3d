@@ -87,6 +87,8 @@ namespace dtGame
          static const std::string CONFIG_STATISTICS_OUTPUT_FILE;
 
          typedef std::vector<std::string> NameVector;
+         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
+         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
 
          class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
          {
@@ -264,7 +266,7 @@ namespace dtGame
              * @param The data from the message
              * @see dtCore::Base
              */
-            virtual void OnMessage(MessageData *data);
+            virtual void OnMessage(MessageData* data);
 
             /**
              * Calls DispatchNetworkMessage on all of the components
@@ -511,6 +513,42 @@ namespace dtGame
              * @param vec The vector to fill
              */
             void GetActorsInScene(std::vector<dtCore::DeltaDrawable*>& vec) const;
+
+            /**
+             * Allows performing an operation on each actor, excluding prototypes, in the game manager.
+             * @param func a class with an operator() that takes an actor proxy by reference (dtDAL::ActorProxy&)
+             * @note you must include dtGame/gamemanager.inl to use the method.
+             */
+            template <typename UnaryFunctor>
+            void ForEachActor(UnaryFunctor func) const;
+
+            /**
+             * Allows performing an operation on each prototype actor in the game manager.
+             * @param func a class with an operator() that takes an actor proxy by reference (dtDAL::ActorProxy&)
+             * @note you must include dtGame/gamemanager.inl to use the method.
+             */
+            template <typename UnaryFunctor>
+            void ForEachPrototype(UnaryFunctor func) const;
+
+            /**
+             * Allows custom searching on each non-prototype actor in the game manager.
+             * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtDAL::ActorProxy&)
+             * and returns true if you want to add it the vector.
+             * @param toFill the vector to fill with the results. It will be cleared before searching.
+             * @note you must include dtGame/gamemanager.inl to use the method.
+             */
+            template <typename FindFunctor>
+            void FindActorsIf(FindFunctor ifFunc, std::vector<dtDAL::ActorProxy*>& toFill) const;
+
+            /**
+             * Allows custom searching on each prototype actor in the game manager.
+             * @param ifFunc a class with an operator() that takes an actor proxy by reference (dtDAL::ActorProxy&)
+             * and returns true if you want to add it the vector.
+             * @param toFill the vector to fill with the results. It will be cleared before searching.
+             * @note you must include dtGame/gamemanager.inl to use the method.
+             */
+            template <typename FindFunctor>
+            void FindPrototypesIf(FindFunctor ifFunc, std::vector<dtDAL::ActorProxy*>& toFill) const;
 
             /**
              * Fills a vector with the game proxys whose names match the name parameter
@@ -1067,9 +1105,9 @@ namespace dtGame
             dtCore::RefPtr<MachineInfo>            mMachineInfo;
             dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
 
-            std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
-            std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
-            std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mPrototypeActors;
+            GameActorMap mGameActorProxyMap;
+            ActorMap mActorProxyMap;
+            GameActorMap mPrototypeActors;
 
             std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
             //These are used during changing the map so that
@@ -1112,6 +1150,7 @@ namespace dtGame
 
             bool mRemoveGameEventsOnMapChange;
    };
+
 }
 
 #endif

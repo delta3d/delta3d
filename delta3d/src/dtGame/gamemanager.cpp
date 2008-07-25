@@ -23,6 +23,8 @@
 #include <dtABC/application.h>
 
 #include <dtGame/gamemanager.h>
+#include <dtGame/gamemanager.inl>
+
 #include <dtGame/messagefactory.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/actorupdatemessage.h>
@@ -1360,101 +1362,106 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   class GMWildMatchSearchFunc
+   {
+   public:
+      GMWildMatchSearchFunc(const std::string& name)
+      : mName(name)
+      {
+      }
+
+      bool operator()(dtDAL::ActorProxy& proxy)
+      {
+         return dtUtil::Match(const_cast<char*>(mName.c_str()), const_cast<char*>(proxy.GetName().c_str()));
+      }
+
+      const std::string& mName;
+   };
+
+   ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
-          itor != mGameActorProxyMap.end(); ++itor)
+      GMWildMatchSearchFunc searchFunc(name);
+      FindActorsIf(searchFunc, toFill);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   class GMTypeMatchSearchFunc
+   {
+   public:
+      GMTypeMatchSearchFunc(const dtDAL::ActorType& type)
+      : mType(type)
       {
-         if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
-             toFill.push_back(itor->second.get());
       }
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.begin();
-          itor != mActorProxyMap.end(); ++itor)
+      bool operator()(dtDAL::ActorProxy& proxy)
       {
-          if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
-             toFill.push_back(itor->second.get());
+         return proxy.GetActorType().InstanceOf(mType);
       }
-   }
+
+      const dtDAL::ActorType& mType;
+   };
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.clear();
       toFill.reserve(mGameActorProxyMap.size() + mActorProxyMap.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mGameActorProxyMap.begin();
-         itor != mGameActorProxyMap.end(); ++itor)
-      {
-         if (itor->second->GetActorType().InstanceOf(type))
-            toFill.push_back(itor->second.get());
-      }
-
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor = mActorProxyMap.begin();
-         itor != mActorProxyMap.end(); ++itor)
-      {
-         if (itor->second->GetActorType().InstanceOf(type))
-            toFill.push_back(itor->second.get());
-      }
-
+      GMTypeMatchSearchFunc searchFunc(type);
+      FindActorsIf(searchFunc, toFill);
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   class GMClassMatchSearchFunc
+   {
+   public:
+      GMClassMatchSearchFunc(const std::string& type)
+      : mType(type)
+      {
+      }
+
+      bool operator()(dtDAL::ActorProxy& proxy)
+      {
+         return proxy.IsInstanceOf(mType);
+      }
+
+      const std::string& mType;
+   };
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindActorsByClassName(const std::string& className,
       std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.clear();
-      toFill.reserve(mActorProxyMap.size() + mGameActorProxyMap.size());
-
       if(!className.empty())
       {
-         for(std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator i = mActorProxyMap.begin();
-            i != mActorProxyMap.end(); ++i)
-         {
-            dtDAL::ActorProxy *ap = i->second.get();
-            if(ap->IsInstanceOf(className))
-               toFill.push_back(ap);
-         }
-
-         for(std::map<dtCore::UniqueId, dtCore::RefPtr<dtGame::GameActorProxy> >::const_iterator i = mGameActorProxyMap.begin();
-             i != mGameActorProxyMap.end(); ++i)
-         {
-            dtGame::GameActorProxy *gap = i->second.get();
-            if(gap->IsInstanceOf(className))
-               toFill.push_back(gap);
-         }
+         toFill.reserve(mActorProxyMap.size() + mGameActorProxyMap.size());
+         GMClassMatchSearchFunc searchFunc(className);
+         FindActorsIf(searchFunc, toFill);
+      }
+      else
+      {
+         toFill.clear();
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindPrototypesByActorType(const dtDAL::ActorType& type, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.clear();
       toFill.reserve(mPrototypeActors.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.begin();
-         itor != mPrototypeActors.end(); ++itor)
-      {
-         if (itor->second->GetActorType() == type)
-            toFill.push_back(itor->second.get());
-      }
+      GMTypeMatchSearchFunc searchFunc(type);
+      FindPrototypesIf(searchFunc, toFill);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::FindPrototypesByName(const std::string& name, std::vector<dtDAL::ActorProxy*>& toFill) const
    {
-      toFill.clear();
       toFill.reserve(mPrototypeActors.size());
 
-      for (std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> >::const_iterator itor = mPrototypeActors.begin();
-         itor != mPrototypeActors.end(); ++itor)
-      {
-         if (dtUtil::Match(const_cast<char*>(name.c_str()), const_cast<char*>(itor->second->GetName().c_str())))
-            toFill.push_back(itor->second.get());
-      }
+      GMWildMatchSearchFunc searchFunc(name);
+      FindPrototypesIf(searchFunc, toFill);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
