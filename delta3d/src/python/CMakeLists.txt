@@ -62,6 +62,7 @@ SET(TARGET_SRC
   pointaxisbindings.cpp           
   positionallightbindings.cpp            
   recorderbindings.cpp   
+  rtsmotionmodelbindings.cpp
   scenebindings.cpp      
   skyboxbindings.cpp       
   skydomebindings.cpp      
