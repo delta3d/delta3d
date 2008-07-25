@@ -3,14 +3,13 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "dtCore/uniqueid.h"
-#include "dtCore/notify.h"
 
 using namespace dtCore;
- 
+
 std::string CFStringRefToStdString(CFStringRef stringRef)
 {
-   CFIndex  size = 
-   CFStringGetMaximumSizeForEncoding(CFStringGetLength(stringRef), 
+   CFIndex  size =
+   CFStringGetMaximumSizeForEncoding(CFStringGetLength(stringRef),
                                      kCFStringEncodingASCII);
    char* buf = new char[size + 1];
    std::string result;
@@ -21,7 +20,7 @@ std::string CFStringRefToStdString(CFStringRef stringRef)
    } else {
       result = buf;
    }
-   
+
    delete[] buf;
    return result;
 }
@@ -32,9 +31,9 @@ UniqueId::UniqueId()
    CFStringRef string;
    uuid = CFUUIDCreate( NULL );
    string = CFUUIDCreateString(NULL, uuid);
-   
+
    mId = CFStringRefToStdString(string);
-   
+
    if (string) CFRelease(string);
    CFRelease(uuid);
 }
