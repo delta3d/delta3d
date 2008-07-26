@@ -110,7 +110,13 @@ namespace dtActors
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new ActorProxyIcon(ActorProxyIcon::IconType::TRIGGER);
+         //a proximity trigger does not need orientation arrows,
+         //this is how to get rid of them.
+         dtDAL::ActorProxyIcon::ActorProxyIconConfig config;
+         config.mForwardVector = false;
+         config.mUpVector = false;
+
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::TRIGGER, config);
       }
 
       return mBillBoardIcon.get();
