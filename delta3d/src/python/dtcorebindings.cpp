@@ -46,6 +46,8 @@ void initOSGMatrix();
 void initOSGMath();
 //#endif //WIN32
 
+void initODE();
+
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initPointAxisBindings();
@@ -80,6 +82,8 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initOSGVec4();
    initOSGMatrix();
    initOSGMath();
+
+   initODE();
 
    initBaseBindings();
    initSystemBindings();
