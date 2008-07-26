@@ -15,13 +15,15 @@ void init_WaypointBindings()
       .def("GetRenderFlag", &Waypoint::GetRenderFlag)
       .def("SetRenderFlag", &Waypoint::SetRenderFlag)
       .def("SetGradient", &Waypoint::SetGradient)
+	  .def("SetColor", &Waypoint::SetColor)
+	  .def("GetColor", &Waypoint::GetColor, return_value_policy<copy_const_reference>())
       ;
-   
 
    enum_<Waypoint::RenderFlag>("RenderFlag")
       .value("RENDER_DEFAULT", Waypoint::RENDER_DEFAULT)
       .value("RENDER_RED", Waypoint::RENDER_RED)
       .value("RENDER_GREEN", Waypoint::RENDER_GREEN)
       .value("RENDER_BLUE", Waypoint::RENDER_BLUE)
+	  .value("RENDER_CUSTOM", Waypoint::RENDER_CUSTOM)
       .export_values();
 }
