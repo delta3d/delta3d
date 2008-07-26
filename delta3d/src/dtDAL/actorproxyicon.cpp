@@ -168,17 +168,15 @@ namespace dtDAL
       }
 
       mIconNode = new dtCore::Transformable();
-      
-      osg::Matrix scale;
-      scale(0,0) = mConfig.mScale;
-      scale(1,1) = mConfig.mScale;
-      scale(2,2) = mConfig.mScale;
-
-      mIconNode->GetMatrixNode()->setMatrix(scale);
+      osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform();
+      scaleMatrix->setMatrix(osg::Matrix::scale(osg::Vec3(mConfig.mScale,mConfig.mScale,mConfig.mScale)));
 
       osg::Geode *billBoard = new osg::Geode();
       billBoard->addDrawable(geom);
-      mIconNode->GetMatrixNode()->addChild(billBoard);
+      scaleMatrix->addChild(billBoard);
+
+      mIconNode->GetMatrixNode()->addChild(scaleMatrix);
+
 
       mBillBoard = new BillBoardDrawable();
       mBillBoard->AddChild(mIconNode.get());
@@ -426,8 +424,10 @@ namespace dtDAL
       coneTx->addChild(coneGeode);
 
       osg::Group *group = new osg::Group();
-      group->addChild(cylinderTx);
-      group->addChild(coneTx);
+      osg::MatrixTransform* scaleMatrix = new osg::MatrixTransform;
+      scaleMatrix->addChild(cylinderTx);
+      scaleMatrix->addChild(coneTx);
+      group->addChild(scaleMatrix);
       return group;
    }
 
