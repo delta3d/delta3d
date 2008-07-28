@@ -7,7 +7,7 @@
 #include <cassert>
 
 #include <dtCore/deltawin.h>
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 
 #include <osgViewer/GraphicsWindow>
 
@@ -120,7 +120,11 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    }
 
    if(!changeSuccessful)
-      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
+   {
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+                                    "Resolution could not be changed to %dx%d @ %d, %d",
+                                    width, height, colorDepth, refreshRate );
+   }
 
    //change back to original fullScreen state
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
