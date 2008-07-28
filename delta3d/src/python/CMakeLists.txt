@@ -50,7 +50,8 @@ SET(TARGET_SRC
   logicalinputdevicebindings.cpp
   motionmodelbindings.cpp
   mousebindings.cpp   
-  objectbindings.cpp      
+  objectbindings.cpp
+  odebindings.cpp   
   orbitmotionmodelbindings.cpp        
   osgmath.cpp           
   osgmatrix.cpp           
