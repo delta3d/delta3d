@@ -121,7 +121,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    if(!changeSuccessful)
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FILE__, 
                                     "Resolution could not be changed to %dx%d @ %d, %d",
                                     width, height, colorDepth, refreshRate );
    }
