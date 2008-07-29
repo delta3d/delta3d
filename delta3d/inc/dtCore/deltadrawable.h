@@ -27,6 +27,7 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
+#include <osg/Node>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -128,6 +129,25 @@ namespace dtCore
            */
          void GetBoundingSphere( osg::Vec3 *center, float *radius );
 
+         /**
+          * Make this DeltaDrawable "active" or "inactive".  The default 
+          * DeltaDrawalbe behavior will set the node mask of the node returned
+          * from GetOSGNode() to 0x0 when false.  This will disable its rendering and 
+          * other scene graph processing.  Any previously set node mask will be 
+          * restored upon passing true.
+          * Overwrite in derived classes for custom active/inactive behavior.
+          * @param enable : true to activate, false to deactivate
+          */
+         virtual void SetActive(bool enable);
+
+         /**
+          * Query if this DeltaDrawable is currently active and its scene graph
+          * is being traversed.
+          * Overwrite in derived classes for custom active/inactive behavior.
+          * @return true if active, false if not active
+          */
+         virtual bool GetActive() const;
+
       protected:
 
          DeltaDrawable( const std::string& name = "DeltaDrawable" );
@@ -158,6 +178,9 @@ namespace dtCore
          Scene* mParentScene; ///< The Scene this Drawable was added to (Weak pointer to prevent circular reference).
 
          RefPtr<osg::Node> mProxyNode;
+
+         bool mIsActive; ///<Is this DeltaDrawable active (rendering)
+         osg::Node::NodeMask mActiveNodeMask; ///<The last known node mask corresponding to its active state.
    };
 }
 
