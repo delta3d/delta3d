@@ -7,6 +7,7 @@
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/boundingboxvisitor.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <dtUtil/polardecomp.h>
 
@@ -50,8 +51,7 @@ namespace dtCore
 
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
 
-      // Default collision category = 5
-      SetCollisionCategoryBits( UNSIGNED_BIT(5) );
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
    }
 
 

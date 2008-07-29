@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/physical.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <ode/ode.h>
 
@@ -282,6 +283,5 @@ void Physical::Ctor()
 
    dMassSetSphere(&mMass, 1.0f, 1.0f);
 
-   // Default collision category = 7
-   SetCollisionCategoryBits( UNSIGNED_BIT(7) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PHYSICAL);
 }

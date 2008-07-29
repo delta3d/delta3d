@@ -26,6 +26,7 @@
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/keyboard.h>//due to include of scene.h
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <osg/Group>
 #include <osg/Version> // For #ifdef
@@ -42,16 +43,14 @@ namespace dtCore
    Isector::Isector(dtCore::Scene *scene) :
       mStart(0,0,0), mDirection(0,1,0), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
    {
-      // Default collision category = 4
-      SetCollisionCategoryBits( UNSIGNED_BIT(4) );
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
    
    ///////////////////////////////////////////////////////////////////////////////
    Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,dtCore::Scene *scene):
       mStart(start), mDirection(dir), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
    {
-      // Default collision category = 4
-      SetCollisionCategoryBits( UNSIGNED_BIT(4) );
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -61,8 +60,7 @@ namespace dtCore
       mDirection = end-start;
       mLineLength = mDirection.length();
    
-      // Default collision category = 4
-      SetCollisionCategoryBits( UNSIGNED_BIT(4) );
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

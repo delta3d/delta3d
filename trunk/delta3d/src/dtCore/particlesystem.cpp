@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 
 #include <osg/Group>
@@ -69,8 +70,7 @@ ParticleSystem::ParticleSystem(std::string name)
    
    RegisterInstance(this);
 
-   // Default collision category = 6
-   SetCollisionCategoryBits( UNSIGNED_BIT(6) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
 }
 
 /**

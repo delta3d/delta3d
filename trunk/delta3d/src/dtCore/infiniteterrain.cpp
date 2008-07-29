@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
-#include <dtUtil/mathdefines.h>
 #include <dtCore/infiniteterrain.h>
+#include <dtCore/collisioncategorydefaults.h>
+#include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
 
 #include <osg/Drawable>
@@ -193,8 +194,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
    
    RegisterInstance(this);
 
-   // Default collision category = 3
-   SetCollisionCategoryBits( UNSIGNED_BIT(3) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_INFINITETERRAIN);
 
    SetLineOfSightSpacing(25.f); // a bit less than DTED L2
 }

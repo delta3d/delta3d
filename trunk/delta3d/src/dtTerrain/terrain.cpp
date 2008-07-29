@@ -25,6 +25,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <dtTerrain/terrain.h>
 #include <dtTerrain/terraindatareader.h>
@@ -109,8 +110,7 @@ namespace dtTerrain
       SetTerrainTileFactory(*(new PagedTerrainTileFactory()));
       AddSender(&dtCore::System::GetInstance());
 
-      // Default collision category = 16
-      SetCollisionCategoryBits( UNSIGNED_BIT(16) );
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TERRAIN);
       SetLineOfSightSpacing(25.f); // a bit less than DTED L2
    }
 

@@ -374,27 +374,8 @@ namespace dtCore
       virtual void AddedToScene( Scene* scene );
 
       /**
-       * Set the category bits of this collision geom. Here's the defaults:
-       *
-       * dtABC::ProximityTrigger  0
-       *
-       * dtCore::Camera:          1
-       * dtCore::Compass:         2
-       * dtCore::InfiniteTerrain: 3
-       * dtCore::ISector:         4
-       * dtCore::Object:          5
-       * dtCore::ParticlSsystem:  6
-       * dtCore::Physical:        7
-       * dtCore::PointAxis:       8
-       * dtCore::PositionalLight: 9
-       * dtCore::SpotLight:       10
-       * dtCore::Transformable:   11
-       *
-       * dtAudio::Listener:       13
-       * dtAudio::Sound:          14
-       * dtHLA::Entity:           15
-       * dtTerrain::Terrain:      16
-       *
+       * Set the category bits of this collision geom.
+       * The defaults are listed in collisioncategorydefaults.h.
        */
       void SetCollisionCategoryBits( unsigned long bits );
 

@@ -2,6 +2,7 @@
 #include <dtCore/positionallight.h>
 
 #include <dtUtil/matrixutil.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <osg/Light>
 #include <osg/LightSource>
@@ -63,8 +64,7 @@ PositionalLight::PositionalLight( int number, const std::string& name, LightingM
 {
    mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
    
-   // Default collision category = 9
-   SetCollisionCategoryBits( UNSIGNED_BIT(9) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
 }
 
 PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
@@ -72,8 +72,7 @@ PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const 
 {
    mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
 
-   // Default collision category = 9
-   SetCollisionCategoryBits( UNSIGNED_BIT(9) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
 }
 
 PositionalLight::~PositionalLight()
