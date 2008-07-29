@@ -26,10 +26,15 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/transformable.h>
-#include <ode/mass.h>
+
+struct dMass;
 
 namespace dtCore
 {
+
+   class ODEBodyWrap;
+
+
    /**
     * A rigid body object which can behave with realistic physical properties.
     * Typical use would involve supplying the shape to use for the collision
@@ -174,24 +179,12 @@ namespace dtCore
           */
          virtual bool FilterContact(dContact* /*contact*/, Transformable* /*collider*/) { return true; }
 
+
       private:
          
          void Ctor();
 
-         /**
-          * The ODE body identifier.
-          */
-         dBodyID mBodyID;
-
-         /**
-          * Whether or not dynamics have been enabled for this object.
-          */
-         bool mDynamicsEnabled;
-
-         /**
-          * The mass, center of gravity, and inertia tensor of the body.
-          */
-         dMass mMass;
+         dtCore::RefPtr<ODEBodyWrap> mBodyWrap;
 
    };
 }
