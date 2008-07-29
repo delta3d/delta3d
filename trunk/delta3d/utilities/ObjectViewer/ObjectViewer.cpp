@@ -43,6 +43,9 @@ ObjectViewer::ObjectViewer()
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
 
+   osg::StateSet* shadedState = mShadedScene->getOrCreateStateSet();
+   shadedState->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
@@ -73,19 +76,46 @@ void ObjectViewer::Config()
    GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   mMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
-   mMotion->SetTarget(GetCamera());
-   mMotion->SetDistance(5.f);
+   // Add the compass (3d basis axes) to the bottom left of the screen
+   mCompass = new dtCore::Compass(GetCamera());
+   GetScene()->GetSceneNode()->addChild(mCompass->GetOSGNode());
+
+   mModelMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+   mModelMotion->SetTarget(GetCamera());
+   mModelMotion->SetDistance(5.f);
 
    dtCore::Light *l = GetScene()->GetLight(0);
-   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
-   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
+   l->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);  
+   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f); 
+   l->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+
+   // Infinite lights must start here, point light from the postive y axis
+   l->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
 
+   mLightArrow = new dtCore::Object;
+   mLightArrow->LoadFile("models/LightArrow.ive");     
+
+   dtCore::Transform lightArrowTransform;
+   lightArrowTransform.SetTranslation(0.0f, 0.0f, 0.0f);
+
+   mLightArrowTransformable = new dtCore::Transformable;
+   mLightArrowTransformable->AddChild(mLightArrow.get()); 
+   mLightArrowTransformable->AddChild(l);
+
+   mLightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+   mLightMotion->SetTarget(mLightArrowTransformable.get());
+   mLightMotion->SetDistance(3.f);
+   mLightMotion->SetFocalPoint(osg::Vec3());
+   mLightMotion->SetLeftRightTranslationAxis(NULL);
+   mLightMotion->SetUpDownTranslationAxis(NULL);
+
    GetScene()->GetSceneNode()->addChild(mShadedScene.get());
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
+
+   GetScene()->AddDrawable(mLightArrowTransformable.get());
   
    InitWireDecorator(); 
    InitGridPlanes();
@@ -149,6 +179,21 @@ void ObjectViewer::OnLoadGeometryFile(const std::string &filename)
    // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mObject->GetOSGNode());
    mWireDecorator->addChild(mObject->GetOSGNode());
+
+   osg::Vec3 center;   
+
+   if (mObject.valid())
+   {
+      float radius;
+      mObject->GetBoundingSphere(&center, &radius); 
+
+      mLightMotion->SetDistance(radius * 0.5f);
+      mLightMotion->SetFocalPoint(center); 
+
+      // Adust the size of the light arrow
+      float arrowScale = radius * 0.5f;
+      mLightArrow->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+   }   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -223,6 +268,32 @@ void ObjectViewer::OnToggleGrid(bool shouldDisplay)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnAddLight(int id)
+{
+   //dtCore::Light *l = GetScene()->GetLight(0);
+   //l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
+   //l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnEnterObjectMode()
+{
+   mLightMotion->SetTarget(NULL);
+   mModelMotion->SetTarget(GetCamera());   
+
+   //mLightArrowTransformable->GetMatrixNode()->setNodeMask(0x0);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnEnterLightMode()
+{  
+   mModelMotion->SetTarget(NULL);
+   mLightMotion->SetTarget(mLightArrowTransformable.get());      
+   
+   mLightArrowTransformable->GetMatrixNode()->setNodeMask(0xffffffff);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitWireDecorator()
 {
    osg::StateSet *stateset = new osg::StateSet;
@@ -283,7 +354,29 @@ void ObjectViewer::InitGridPlanes()
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::PostFrame(const double)
 {
-   
+   // Broadcast the current state of all the lights in the scene
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   {
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+
+      if (light)
+      {
+         dtCore::Transform arrowTransform;
+         mLightArrowTransformable->GetTransform(arrowTransform);
+
+         osg::Vec3 lightPos = arrowTransform.GetTranslation();
+
+         std::ostringstream oss;
+         oss << "arrow pos: (" << lightPos.x() << ", " << lightPos.y() << ", " << lightPos.z() << ")";
+
+         std::cout << oss.str() << std::endl;
+
+         emit LightUpdate(light);
+         continue;
+      }
+
+      break;
+   }
 }
 
 

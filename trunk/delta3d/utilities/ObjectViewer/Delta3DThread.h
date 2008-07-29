@@ -37,19 +37,20 @@ class Delta3DThread : public QThread
 {
    Q_OBJECT
 public:
-	Delta3DThread(QApplication *parent=0);
+	Delta3DThread(QApplication* parent=0);
 	~Delta3DThread();
-   void SetObjectWorkspace(ObjectWorkspace *win) { mWin = win;}
+
+   void SetObjectWorkspace(ObjectWorkspace* win) { mWin = win;}
    virtual void run();
 	
    dtCore::RefPtr<ObjectViewer> mViewer;
-   
-protected:
 
 private:
 
-   ObjectWorkspace *mWin;
+   ObjectWorkspace* mWin;
    std::string mStartupFile;
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // DELTA3DTHREAD_H__
