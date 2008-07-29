@@ -27,6 +27,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/object.h>
+#include <dtCore/compass.h>
 #include <dtABC/application.h>
 
 #include <dtAnim/posemeshdatabase.h>
@@ -43,6 +44,7 @@ class QColor;
 namespace dtCore
 {
    class OrbitMotionModel;
+   class Light;
 }
 
 namespace osg
@@ -80,26 +82,38 @@ public slots:
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
-   void OnToggleGrid(bool shouldDisplay);    
+   void OnToggleGrid(bool shouldDisplay); 
+   void OnAddLight(int id);
+
+   // Usage mode slots
+   void OnEnterObjectMode();
+   void OnEnterLightMode();
 
 signals:
 
    void ShaderLoaded(const std::string &shaderGroup, const std::string &shaderName);   
    void ErrorOccured(const QString &msg);
+   void LightUpdate(const dtCore::Light* light);
 
 protected:
    virtual void PostFrame(const double deltaFrameTime);  
 
 private:  
  
-   dtCore::RefPtr<dtCore::Object> mObject;
-   dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion;
+   dtCore::RefPtr<dtCore::Object>  mObject;
+   dtCore::RefPtr<dtCore::Compass> mCompass;
+
+   dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
+   dtCore::RefPtr<dtCore::OrbitMotionModel> mLightMotion;
 
    dtCore::RefPtr<osg::Group> mShadedScene;
    dtCore::RefPtr<osg::Group> mUnShadedScene;
    dtCore::RefPtr<osg::Group> mWireDecorator;
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Geode> mGridGeode;
+
+   dtCore::RefPtr<dtCore::Transformable> mLightArrowTransformable;
+   dtCore::RefPtr<dtCore::Object>        mLightArrow;
 
    void InitWireDecorator();
    void InitGridPlanes();

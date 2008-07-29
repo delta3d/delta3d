@@ -26,11 +26,18 @@
 #include <QtGui/QMainWindow>
 #include <QtCore/QObject>
 
+#include <dtCore/infinitelight.h>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class QTabWidget;
 class QTreeWidget;
 class QTreeWidgetItem;
+
+namespace dtCore
+{
+   class Light;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -60,6 +67,9 @@ signals:
    void LoadGeometry(const std::string &filename);
    void UnloadGeometry();
 
+   void AddLight();
+   void RemoveLight(int id);
+
 public slots:
    
    void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);
@@ -67,13 +77,32 @@ public slots:
 
    void OnNewGeometry(const std::string &path, const std::string &filename);
    void OnGeometryItemChanged(QTreeWidgetItem *item, int column);
+   
+   void OnLightUpdate(const dtCore::Light* light);
 
 private:
 
-   QTabWidget *mTabs;
+   struct LightItems
+   {
+      QTreeWidgetItem* type;
+      QTreeWidgetItem* position;
+      QTreeWidgetItem* ambient;
+      QTreeWidgetItem* diffuse;
+      QTreeWidgetItem* specular;
+   };
 
-   QTreeWidget *mShaderTreeWidget;
-   QTreeWidget *mGeometryTreeWidget;  
+   QTabWidget* mTabs;
+
+   QTreeWidget* mShaderTreeWidget;
+   QTreeWidget* mGeometryTreeWidget;  
+   QTreeWidget* mLightTreeWidget;  
+
+   LightItems mLightItems[dtCore::MAX_LIGHTS];  
+
+   void CreateLightItems();
+
+   QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);
+   QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
 };
 
 

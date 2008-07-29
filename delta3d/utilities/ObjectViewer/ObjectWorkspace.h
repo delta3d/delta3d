@@ -55,7 +55,6 @@ signals:
    void LoadShaderDefinition(const QString &);
    void LoadGeometry(const QString &);
    void ReloadShaderDefinition(const QString &);
-   void StartAction(unsigned int, float, float);
    
    void ToggleGrid(bool shouldShow);
 
@@ -63,32 +62,44 @@ public slots:
    
    void OnInitialization(); 
    void OnToggleShadingToolbar(); 
-   void OnRecompileClicked();
+   void OnRecompileClicked(); 
+   void OnOpenShaderFile();
 	
 private:
    void CreateMenus();
-   void CreateActions();
+   void CreateFileMenuActions();
+   void CreateModeToolbarActions();
+   void CreateDisplayToolbarActions();
+   void CreateShaderToolbarActions();
    void CreateToolbars();
    void UpdateResourceLists();
    void LoadObjectFile(const QString &filename);
 
    // File menu
-   QAction *mLoadShaderDefAction;
-   QAction *mLoadGeometryAction;
-   QAction *mChangeContextAction;
-   QAction *mExitAct;
-  
-   // Toolbar
-   QAction *mWireframeAction; 
-   QAction *mShadedAction;    
-   QAction *mShadedWireAction;
-   QAction *mGridAction;
-   QAction *mDiffuseLightAction;
-   QAction *mPointLightAction;
-   QAction *mRecompileAction;
+   QAction* mLoadShaderDefAction;
+   QAction* mLoadGeometryAction;
+   QAction* mChangeContextAction;
+   QAction* mExitAct;
 
-   QToolBar *mDisplayToolbar;    
-   QToolBar *mShaderToolbar;
+   // Mode Toolbar
+   QAction* mObjectModeAction;
+   QAction* mLightModeAction;
+  
+   // Display Toolbar
+   QAction* mWireframeAction; 
+   QAction* mShadedAction;    
+   QAction* mShadedWireAction;
+   QAction* mGridAction;
+   QAction* mDiffuseLightAction;
+   QAction* mPointLightAction;
+
+   // Shader Toolbar
+   QAction* mRecompileAction;
+   QAction* mOpenShaderAction;
+
+   QToolBar* mDisplayToolbar;    
+   QToolBar* mShaderToolbar;
+   QToolBar* mModeToolbar;
 
    ResourceDock *mResourceDock;
 

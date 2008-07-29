@@ -30,7 +30,7 @@
 
 #include <assert.h>
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
   : mExitAct(NULL)
   , mLoadShaderDefAction(NULL)
@@ -38,8 +38,13 @@ ObjectWorkspace::ObjectWorkspace()
   , mGLWidget(NULL)
 {
    resize(1024, 768);
-  
-   CreateActions();
+
+   // Create all program actions
+   CreateFileMenuActions();
+   CreateModeToolbarActions();
+   CreateDisplayToolbarActions();
+   CreateShaderToolbarActions();
+
    CreateMenus();
    statusBar();
    CreateToolbars();     
@@ -55,23 +60,23 @@ ObjectWorkspace::ObjectWorkspace()
    setCentralWidget(glParent);
 
    mResourceDock = new ResourceDock;
-   addDockWidget(Qt::RightDockWidgetArea, mResourceDock);     
+   addDockWidget(Qt::LeftDockWidgetArea, mResourceDock); 
 
    setAcceptDrops(true);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::~ObjectWorkspace()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 QObject* ObjectWorkspace::GetResourceObject()
 { 
    return mResourceDock; 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::dragEnterEvent(QDragEnterEvent *event)
 {
    if (event->mimeData()->hasFormat("text/uri-list"))
@@ -80,7 +85,7 @@ void ObjectWorkspace::dragEnterEvent(QDragEnterEvent *event)
    }   
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::dropEvent(QDropEvent *event)
 {
    QList<QUrl> urlList = event->mimeData()->urls();
@@ -92,18 +97,18 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
    }   
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateMenus()
 {
-   QMenu *windowMenu = menuBar()->addMenu("&File");
-   QMenu *viewMenu   = menuBar()->addMenu("&View");
-   QMenu *toolBarMenu = viewMenu->addMenu("&Toolbars");   
+   QMenu* windowMenu = menuBar()->addMenu("&File");
+   QMenu* viewMenu   = menuBar()->addMenu("&View");
+   QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");   
 
    windowMenu->addAction(mLoadShaderDefAction);
    windowMenu->addAction(mLoadGeometryAction);
    windowMenu->addAction(mChangeContextAction);
 
-   QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
+   QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
@@ -114,28 +119,49 @@ void ObjectWorkspace::CreateMenus()
    windowMenu->addAction(mExitAct);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::CreateActions()
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::CreateFileMenuActions()
 {
    mExitAct = new QAction(tr("E&xit"), this);
    mExitAct->setShortcut(tr("Ctrl+Q"));
    mExitAct->setStatusTip(tr("Exit the application"));
    connect(mExitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-   mLoadShaderDefAction = new QAction(tr("&Load Shader Definitions..."), this);
-   //mLoadShaderDefAction->setShortcut(tr("Ctrl+O"));
+   mLoadShaderDefAction = new QAction(tr("&Load Shader Definitions..."), this);  
    mLoadShaderDefAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadShaderDefAction, SIGNAL(triggered()), this, SLOT(OnLoadShaderDefinition()));
 
    mLoadGeometryAction = new QAction(tr("Load Geometry..."), this);
-   //mLoadGeometryAction->setShortcut(tr("Ctrl+O"));
    mLoadGeometryAction->setStatusTip(tr("Open an existing shader definition file."));
    connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));   
 
    mChangeContextAction = new QAction(tr("Change Project..."), this);
    mChangeContextAction->setStatusTip(tr("Change the project context directory."));
    connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));     
+}
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::CreateModeToolbarActions()
+{
+   QIcon lightModeIcon(":/images/lightMode.png");
+   QIcon objectModeIcon(":/images/objectMode.png");
+
+   QActionGroup *modeGroup = new QActionGroup(this);
+   modeGroup->setExclusive(true); 
+
+   mObjectModeAction = modeGroup->addAction(objectModeIcon, "Object Mode");
+   mLightModeAction  = modeGroup->addAction(lightModeIcon, "Light Mode");
+
+   mObjectModeAction->setCheckable(true);   
+   mObjectModeAction->setChecked(true);
+
+   mLightModeAction->setCheckable(true);
+   //mLightModeAction->setDisabled(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::CreateDisplayToolbarActions()
+{
    // The actiongroup is used to make the action behave like radio buttons
    QActionGroup *actionGroup = new QActionGroup(this);
    actionGroup->setExclusive(true); 
@@ -144,17 +170,13 @@ void ObjectWorkspace::CreateActions()
    QIcon shadedIcon(":/images/shaded.png");
    QIcon shadedWireIcon(":/images/shadedwire.png");
    QIcon gridIcon(":/images/xygrid.png");
-   QIcon compileIcon(":/images/recompile.png");
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
    mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");  
-   
+
    mGridAction = new QAction(gridIcon, "Toggle Grid", this);
    connect(mGridAction, SIGNAL(toggled(bool)), this, SLOT(OnToggleGridClicked(bool)));
-
-   mRecompileAction = new QAction(compileIcon, tr("Recompile Shaders"), this);
-   connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
 
    mWireframeAction->setCheckable(true);
    mShadedAction->setCheckable(true); 
@@ -162,12 +184,32 @@ void ObjectWorkspace::CreateActions()
    mGridAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
-   mGridAction->setChecked(true);
+   mGridAction->setChecked(true);   
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::CreateShaderToolbarActions()
+{
+   QIcon compileIcon(":/images/recompile.png");
+   QIcon sourceIcon(":/images/shaderSource.png");
+
+   mRecompileAction = new QAction(compileIcon, tr("Recompile Shaders"), this);
+   mOpenShaderAction = new QAction(sourceIcon, tr("Open Current Shader"), this);
+   
+   // Not yet implemented
+   mOpenShaderAction->setDisabled(true);
+
+   connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
+   connect(mOpenShaderAction, SIGNAL(triggered()), this, SLOT(OnOpenShaderFile()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateToolbars()
 {
+   mModeToolbar = addToolBar("Mode toolbar");
+   mModeToolbar->addAction(mObjectModeAction);
+   mModeToolbar->addAction(mLightModeAction);
+
    mDisplayToolbar = addToolBar("Display toolbar"); 
    mDisplayToolbar->addAction(mWireframeAction);
    mDisplayToolbar->addAction(mShadedAction);
@@ -176,10 +218,11 @@ void ObjectWorkspace::CreateToolbars()
    mDisplayToolbar->addAction(mGridAction);
 
    mShaderToolbar = addToolBar("Shader toolbar");
+   mShaderToolbar->addAction(mOpenShaderAction);
    mShaderToolbar->addAction(mRecompileAction);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnInitialization()
 {
    QSettings settings("MOVES", "Shader Viewer");
@@ -199,7 +242,7 @@ void ObjectWorkspace::OnInitialization()
    UpdateResourceLists();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleShadingToolbar()
 {
    if (mDisplayToolbar->isHidden())
@@ -212,13 +255,34 @@ void ObjectWorkspace::OnToggleShadingToolbar()
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnRecompileClicked()
 {
    emit ReloadShaderDefinition(mShaderDefinitionName);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnOpenShaderFile()
+{
+   std::string shaderPath = mContextPath + "/shaders";
+   QString filename = QFileDialog::getOpenFileName(this,
+                                                   tr("Open Shader File"),
+                                                   shaderPath.c_str(),
+                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *)") );
+
+   QString statusMessage;
+
+   if (!filename.isEmpty())
+   {       
+      
+   }
+   else
+   {
+      statusMessage = QString(tr("Unable to open file: %1")).arg(filename);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::UpdateResourceLists()
 {
    assert(!mContextPath.empty());
@@ -260,7 +324,7 @@ void ObjectWorkspace::UpdateResourceLists()
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnLoadShaderDefinition()
 {
    QString filename = QFileDialog::getOpenFileName(this,
@@ -286,7 +350,7 @@ void ObjectWorkspace::OnLoadShaderDefinition()
     statusBar()->showMessage(statusMessage, 2000);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnLoadGeometry()
 {   
    QString filename = QFileDialog::getOpenFileName(this,
@@ -308,7 +372,7 @@ void ObjectWorkspace::OnLoadGeometry()
    statusBar()->showMessage(statusMessage, 2000);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
 {
    if (dtUtil::FileUtils::GetInstance().FileExists(fullName))
@@ -333,7 +397,7 @@ void ObjectWorkspace::OnLoadGeometry(const std::string &fullName)
    }      
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnChangeContext()
 {
    std::string newPath = GetContextPathFromUser();
@@ -345,13 +409,13 @@ void ObjectWorkspace::OnChangeContext()
    }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnToggleGridClicked(bool toggledOn)
 {
    emit ToggleGrid(toggledOn);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 std::string ObjectWorkspace::GetContextPathFromUser()
 {
    ProjectContextDialog dialog(this);
@@ -364,14 +428,14 @@ std::string ObjectWorkspace::GetContextPathFromUser()
    return std::string();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SaveCurrentContextPath()
 {
    QSettings settings("MOVES", "Shader Viewer");
 
    try
    {      
-      dtDAL::Project::GetInstance().SetContext(mContextPath);
+      dtDAL::Project::GetInstance().SetContext(mContextPath);     
 
       settings.setValue("projectContextPath", mContextPath.c_str());
       settings.sync();
