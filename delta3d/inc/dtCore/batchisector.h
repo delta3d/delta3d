@@ -36,17 +36,22 @@ namespace dtCore
    class Scene;
 
    /**
-      To search the whole Scene for the height of terrain at a given xyz:
-   \code
-      BatchIsector *isect = new BatchIsector( mScene );
-      osg::Vec3 queryPoint( 500.0f, 500.0f, 1000.0f );
-      isect->EnableAndGetISector(0).SetSectorAsLineSegment(const osg::Vec3& startPos, const osg::Vec3& endPos);
-      isect->Update(queryPoint, true);
-      osg::Vec3 hitPt;
-      isect->GetSingleISector(0).GetHitPoint( hitPt );
-   \endcode
+    * Used to perform intersection tests using multiple line segments.
+    * 
+    * Example : To search the whole Scene for intersections:
+    *\code
+    * BatchIsector *isect = new BatchIsector( mScene );
+    * osg::Vec3 eyePoint( 500.0f, 500.0f, 1000.0f );
+    * osg::Vec3 startPos(100.f, 100.f, 10.f);
+    * osg::Vec3 endPos(100.f, 1000.f, 10.f);
+    * isect->EnableAndGetISector(0).SetSectorAsLineSegment(startPos, endPos);
+    * isect->Update(eyePoint, true);
+    * osg::Vec3 hitPt;
+    * isect->GetSingleISector(0).GetHitPoint(hitPt);
+    *\endcode
+    *
+    * @see dtCore::Isector
     */
-
    class DT_CORE_EXPORT BatchIsector : public osg::Referenced
    {
       public:
