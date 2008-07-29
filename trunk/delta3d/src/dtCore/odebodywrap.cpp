@@ -184,3 +184,79 @@ void dtCore::ODEBodyWrap::GetInertiaTensor(osg::Matrix& dest) const
    dest(1,2) = mMass.I[9];
    dest(2,2) = mMass.I[10];
 }
+
+//////////////////////////////////////////////////////////////////////////
+osg::Vec3 dtCore::ODEBodyWrap::GetLinearVelocity() const
+{
+   osg::Vec3 velVec;
+
+   if (GetBodyID() != 0)
+   {
+      const dReal *vel = dBodyGetLinearVel(GetBodyID());
+      velVec.set(vel[0], vel[1], vel[2]);
+   }
+
+   return velVec;
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Vec3 dtCore::ODEBodyWrap::GetAngularVelocity() const
+{
+   osg::Vec3 angVec;
+
+   if (GetBodyID() != 0)
+   {
+      const dReal *vel = dBodyGetAngularVel(GetBodyID());
+      angVec.set(vel[0], vel[1], vel[2]);
+   }
+
+   return angVec;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyForce(const osg::Vec3& force)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddForce(GetBodyID(), force.x(), force.y(), force.z());
+   }
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyRelForce(const osg::Vec3& relForce)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddRelForce(GetBodyID(), relForce.x(), relForce.y(), relForce.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyRelForceAtRelPos(const osg::Vec3& relForce, 
+                                                const osg::Vec3& relPosition)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddRelForceAtRelPos(GetBodyID(), relForce.x(), relForce.y(), relForce.z(),
+                               relPosition.x(), relPosition.y(), relPosition.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyTorque(const osg::Vec3& torque)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddTorque(GetBodyID(), torque.x(), torque.y(), torque.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyRelTorque(const osg::Vec3& torque)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddRelTorque(GetBodyID(), torque.x(), torque.y(), torque.z());
+   }
+}

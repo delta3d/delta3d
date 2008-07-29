@@ -179,6 +179,17 @@ namespace dtCore
           */
          virtual bool FilterContact(dContact* /*contact*/, Transformable* /*collider*/) { return true; }
 
+         /** 
+          * Get the const internal ODE physical body wrapper object.
+          * @return The body wrapper object
+          */
+         const ODEBodyWrap* GetBodyWrapper() const {return mBodyWrap.get();}
+
+         /** 
+         * Get the internal ODE physical body wrapper object.
+         * @return The body wrapper object
+         */
+         ODEBodyWrap* GetBodyWrapper() {return mBodyWrap.get();}
 
       private:
          
