@@ -36,7 +36,7 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestOrphanedDrawables);
    CPPUNIT_TEST(FailedGetChildByIndex);
    CPPUNIT_TEST(ValidGetChildByIndex);
-
+   CPPUNIT_TEST(TestActive);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -45,6 +45,7 @@ public:
    void TestParentChildRelationships();
    void FailedGetChildByIndex();
    void ValidGetChildByIndex();
+   void TestActive();
 
 private:
 
@@ -157,4 +158,47 @@ void DeltaDrawableTests::ValidGetChildByIndex()
 
    CPPUNIT_ASSERT_MESSAGE("Should be the first child", parent->GetChild(0) == childOne.get() );
    CPPUNIT_ASSERT_MESSAGE("Should be the second child", parent->GetChild(1) == childTwo.get() );
+}
+
+class TestDrawable : public dtCore::DeltaDrawable
+{
+public:
+   TestDrawable():
+      mNode(new osg::Group())
+   {      
+   }
+
+   ~TestDrawable() {};
+
+   const osg::Node *GetOSGNode(void) const {return mNode.get();}
+   osg::Node *GetOSGNode(void) { return mNode.get(); }
+
+private:
+   osg::ref_ptr<osg::Group> mNode;
+};
+
+
+void DeltaDrawableTests::TestActive()
+{
+   using namespace dtCore;
+
+   RefPtr<TestDrawable> draw = new TestDrawable();
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should be enabled", true, draw->GetActive());
+   CPPUNIT_ASSERT_MESSAGE("Node mask should not be 0x0", unsigned(0x0) != draw->GetOSGNode()->getNodeMask() );
+
+   draw->SetActive(false);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should be disabled", false, draw->GetActive());
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be 0x0", unsigned(0x0), draw->GetOSGNode()->getNodeMask() );
+
+
+   //check if the node mask we set it to remains after toggling it off/on
+   draw->SetActive(true);
+   const unsigned int nodeMask = 0x00001111;
+   draw->GetOSGNode()->setNodeMask(nodeMask);
+   draw->SetActive(false);
+   draw->SetActive(true);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be what it was set to before being disabled",
+                                 nodeMask, draw->GetOSGNode()->getNodeMask());
 }

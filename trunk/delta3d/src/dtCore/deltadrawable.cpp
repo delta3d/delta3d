@@ -14,7 +14,9 @@ IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 DeltaDrawable::DeltaDrawable(const std::string& name)
 :  Base(name),
    mParent(NULL), 
-   mParentScene(NULL)
+   mParentScene(NULL),
+   mIsActive(true),
+   mActiveNodeMask(0xffffffff)
 {
    RegisterInstance(this);
 }
@@ -214,4 +216,39 @@ void DeltaDrawable::GetBoundingSphere( osg::Vec3 *center, float *radius )
    {
       LOG_WARNING("Can't calculate Bounding Sphere, there is no geometry associated with this DeltaDrawable");
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawable::SetActive(bool enable)
+{
+   if (mIsActive == enable)
+   {
+      return; //nothing to do here
+   }
+
+   mIsActive = enable;
+
+   if (mIsActive == true)
+   {
+      if (GetOSGNode()->getNodeMask() != 0x0)
+      {
+         //error: the user must have set the node mask while the 
+         //DeltaDrawable was disabled. tsk tsk
+         LOG_ERROR("User supplied DeltaDrawable node mask will be overwritten.");
+      }
+
+      GetOSGNode()->setNodeMask(mActiveNodeMask);
+   }
+   else
+   {
+      //save off the existing, non-NULL, node mask
+      mActiveNodeMask = GetOSGNode()->getNodeMask();
+      GetOSGNode()->setNodeMask(0x0); //turn it off
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool DeltaDrawable::GetActive() const
+{
+   return mIsActive;
 }
