@@ -4,7 +4,7 @@
 #include <dtUtil/mathdefines.h>
 #include <osg/Quat>
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
                                      const osg::Vec3 &lookForward,                                    
                                      float &azimuth, 
@@ -51,7 +51,7 @@ void dtAnim::GetCelestialCoordinates(osg::Vec3 target,
    azimuth    = acos(lookDotTargetForward) * azimuthSign;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtAnim::GetCelestialDirection(const float azimuth,
                                    const float elevation,
                                    const osg::Vec3& forwardDirection,
@@ -73,7 +73,7 @@ void dtAnim::GetCelestialDirection(const float azimuth,
    outDirection = celestialRotation * forwardDirection;   
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtAnim::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
                                       const osg::Vec3 &endPoint,
                                       const osg::Vec3 &refPoint,
@@ -100,7 +100,7 @@ void dtAnim::GetClosestPointOnSegment(const osg::Vec3 &startPoint,
    }
 }   
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool dtAnim::IsPointBetweenVectors(const osg::Vec3f &point,
                                    const osg::Vec3f &origin,
                                    const osg::Vec3f &A,
@@ -118,7 +118,7 @@ bool dtAnim::IsPointBetweenVectors(const osg::Vec3f &point,
            (CrossB * refCross >= 0));
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtAnim::MapCelestialToScreen(float azimuth,
                                   float elevation,
                                   float maxDistance,                             

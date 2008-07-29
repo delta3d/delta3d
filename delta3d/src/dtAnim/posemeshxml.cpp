@@ -16,7 +16,7 @@ const char PoseMeshFileHandler::DEFAULT_VALUE[]          = { "default\0" };
 const char PoseMeshFileHandler::TRIANGLE_NODE_NAME[]     = { "Triangle\0" };
 const char PoseMeshFileHandler::ANIMATION_NODE_NAME[]    = { "Animation\0" };
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 PoseMeshFileHandler::PoseMeshFileHandler()
 : mMeshDataList()
 , mCurrentData()
@@ -25,12 +25,12 @@ PoseMeshFileHandler::PoseMeshFileHandler()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 PoseMeshFileHandler::~PoseMeshFileHandler()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void PoseMeshFileHandler::startElement( const XMLCh* const uri,const XMLCh* const localname,
                                              const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs )
 {
@@ -94,7 +94,7 @@ void PoseMeshFileHandler::startElement( const XMLCh* const uri,const XMLCh* cons
    mNodeStack.push( currentNode );
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void PoseMeshFileHandler::endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname)
 {
    dtUtil::XMLStringConverter elementName(localname);
@@ -113,7 +113,7 @@ void PoseMeshFileHandler::endElement(const XMLCh* const uri,const XMLCh* const l
    mNodeStack.pop();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void PoseMeshFileHandler::characters(const XMLCh* const chars, const unsigned int length)
 {
    switch( mNodeStack.top() )

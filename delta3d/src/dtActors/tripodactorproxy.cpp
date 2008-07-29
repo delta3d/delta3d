@@ -35,7 +35,7 @@ IMPLEMENT_ENUM(dtActors::TripodActorProxy::TetherModeEnum)
 TripodActorProxy::TetherModeEnum TripodActorProxy::TetherModeEnum::TETHER_PARENT_REL("TETHER_PARENT_REL");
 TripodActorProxy::TetherModeEnum TripodActorProxy::TetherModeEnum::TETHER_WORLD_REL("TETHER_WORLD_REL");
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::CreateActor()
 {
    SetActor(*new Tripod);
@@ -48,7 +48,7 @@ void TripodActorProxy::CreateActor()
    //Tripod* tripod = static_cast< Tripod* >( GetActor() );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::BuildPropertyMap()
 {
    const std::string& GROUPNAME = "Tripod";
@@ -98,7 +98,7 @@ void TripodActorProxy::BuildPropertyMap()
       "Sets the tether mode for this tripod actor.", GROUPNAME));     
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetCamera( ActorProxy* cameraProxy )
 {
    SetLinkedActor( "Camera", cameraProxy );
@@ -114,7 +114,7 @@ void TripodActorProxy::SetCamera( ActorProxy* cameraProxy )
    tripod->SetCamera(camera);      
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetCamera()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -122,7 +122,7 @@ DeltaDrawable* TripodActorProxy::GetCamera()
    return tripod->GetCamera();
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetAttachToTransformable( ActorProxy* transformableProxy )
 {
    SetLinkedActor( "Parent", transformableProxy );
@@ -139,7 +139,7 @@ void TripodActorProxy::SetAttachToTransformable( ActorProxy* transformableProxy 
    tripod->SetAttachToTransformable(parent);         
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -147,7 +147,7 @@ DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
    return tripod->GetAttachedTransformable();
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetLookAtTarget( ActorProxy* targetProxy )
 {
    SetLinkedActor( "Look-At Target", targetProxy );
@@ -164,7 +164,7 @@ void TripodActorProxy::SetLookAtTarget( ActorProxy* targetProxy )
    tripod->SetLookAtTarget(target);         
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetLookAtTarget()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -172,7 +172,7 @@ DeltaDrawable* TripodActorProxy::GetLookAtTarget()
    return tripod->GetLookAtTarget();
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetRotationOffset( const osg::Vec3 &rotation )
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -213,7 +213,7 @@ void TripodActorProxy::SetRotationOffset( const osg::Vec3 &rotation )
    tripod->SetOffset( xyz, hpr );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 TripodActorProxy::GetRotationOffset()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -225,7 +225,7 @@ osg::Vec3 TripodActorProxy::GetRotationOffset()
    return hpr;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetTranslationOffset( const osg::Vec3& translation )
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -236,7 +236,7 @@ void TripodActorProxy::SetTranslationOffset( const osg::Vec3& translation )
    tripod->SetOffset( translation, hpr );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 TripodActorProxy::GetTranslationOffset()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -248,7 +248,7 @@ osg::Vec3 TripodActorProxy::GetTranslationOffset()
    return xyz;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetTranslationScaleOffset( const osg::Vec3& scale )
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -259,7 +259,7 @@ void TripodActorProxy::SetTranslationScaleOffset( const osg::Vec3& scale )
    tripod->SetScale( scale, hpr );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 TripodActorProxy::GetTranslationScaleOffset()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -270,7 +270,7 @@ osg::Vec3 TripodActorProxy::GetTranslationScaleOffset()
    return xyz;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetRotationScaleOffset( const osg::Vec3& scale )
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -281,7 +281,7 @@ void TripodActorProxy::SetRotationScaleOffset( const osg::Vec3& scale )
    tripod->SetScale( xyz, scale );
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 osg::Vec3 TripodActorProxy::GetRotationScaleOffset()
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -293,7 +293,7 @@ osg::Vec3 TripodActorProxy::GetRotationScaleOffset()
    return hpr;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::SetTetherMode( TripodActorProxy::TetherModeEnum& mode )
 {
    Tripod* tripod = static_cast< Tripod* >( GetActor() );
@@ -308,7 +308,7 @@ void TripodActorProxy::SetTetherMode( TripodActorProxy::TetherModeEnum& mode )
    }
 }
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 TripodActorProxy::TetherModeEnum& TripodActorProxy::GetTetherMode() const
 {
    const Tripod* tripod = static_cast< const Tripod* >( GetActor() );
