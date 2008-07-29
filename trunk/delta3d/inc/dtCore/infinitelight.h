@@ -49,12 +49,12 @@ namespace dtCore
        * @param name: a name for the light, defaulted to defaultInfiniteLight
        * @param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
        */
-      InfiniteLight( int number, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL );
+      InfiniteLight(int number, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL);
 
       /**
        * Constructor for an osg::LightSource
        */
-      InfiniteLight( const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL  );
+      InfiniteLight(const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL );
 
    protected:
 
@@ -70,14 +70,14 @@ namespace dtCore
       /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
       /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
       /// @pre el<=90.0 && el>-90
-      void SetAzimuthElevation( float az, float el );
-      void SetAzimuthElevation( const osg::Vec2& azEl );
+      void SetAzimuthElevation(float az, float el);
+      void SetAzimuthElevation(const osg::Vec2& azEl);
 
       /// Values returned may be different than those set due to math limitations, but
       /// they are guarunteed to be equal internally.
       /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
       /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
-      void GetAzimuthElevation( float& az, float& el ) const;
+      void GetAzimuthElevation(float& az, float& el) const;
       osg::Vec2 GetAzimuthElevation() const;
    };
 
