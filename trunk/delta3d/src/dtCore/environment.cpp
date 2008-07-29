@@ -6,7 +6,7 @@
 #include <dtCore/ephemeris.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/scene.h>
-#include <dtCore/keyboardmousehandler.h> //due to including scene.h
+#include <dtCore/keyboardmousehandler.h> // due to including scene.h
 #include <dtCore/skydome.h>
 #include <dtCore/skydomeshader.h>
 #include <dtCore/sunlightshader.h>
@@ -26,43 +26,43 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
-Environment::Environment(const std::string& name):
-   mAmbLightTable(new InterpTable()),
-   mDifLightTable(new InterpTable()),
-   mSpecLightTable(new InterpTable()),
-   mSkyLightTable(new InterpTable()),
-   mEnvEffectNode(new osg::Group()),
-   mDrawableNode(new osg::Group()),
-   mSkyLight(NULL),
-   mFog(new osg::Fog()),
-   mVisibility(0),
-   mFogEnabled(true),
-   mFogMode(EXP2),
-   mFogNear(1.0f),
-   mSunAltitude(0),
-   mSunAzimuth(0),
-   mCurrTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
-   mLastUpdate(0),
-   mSunlightShader(new SunlightShader()),
-   mSkyDomeShader(new SkyDomeShader()),
-   mSkyDome(NULL)
+Environment::Environment(const std::string& name)
+   : mAmbLightTable(new InterpTable())
+   , mDifLightTable(new InterpTable())
+   , mSpecLightTable(new InterpTable())
+   , mSkyLightTable(new InterpTable())
+   , mEnvEffectNode(new osg::Group())
+   , mDrawableNode(new osg::Group())
+   , mSkyLight(NULL)
+   , mFog(new osg::Fog())
+   , mVisibility(0)
+   , mFogEnabled(true)
+   , mFogMode(EXP2)
+   , mFogNear(1.0f)
+   , mSunAltitude(0)
+   , mSunAzimuth(0)
+   , mCurrTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME)
+   , mLastUpdate(0)
+   , mSunlightShader(new SunlightShader())
+   , mSkyDomeShader(new SkyDomeShader())
+   , mSkyDome(NULL)
 {
    RegisterInstance(this);
 
    SetName(name);
-   SetOSGNode( new osg::Group() );
+   SetOSGNode(new osg::Group());
    GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
    mFogColor.set(0.84f, 0.87f, 1.f);
-   mAdvFogCtrl.set(1.f, 10.f, 2.545 ); //T, E, N
+   mAdvFogCtrl.set(1.f, 10.f, 2.545 ); // T, E, N
    mSunColor.set(1.f, 1.f, 1.f);
    mModFogColor.set(mFogColor);
    
    mRefLatLong.set(36.586944f, -121.842778f);
 
-   osg::StateSet *state = mDrawableNode->getOrCreateStateSet();
+   osg::StateSet* state = mDrawableNode->getOrCreateStateSet();
    state->setAttributeAndModes(mFog.get());
    mDrawableNode->setStateSet(state);
 
@@ -132,18 +132,18 @@ Environment::Environment(const std::string& name):
 
 Environment::~Environment()
 {
-   while (GetNumEffects()>0)
+   while (GetNumEffects() > 0)
    {
-      if( EnvEffect* e = GetEffect(0) )
+      if (EnvEffect* e = GetEffect(0))
       {
          RemEffect(e);
          RemoveEffectCache();
       }
    }
 
-   while (GetNumChildren()>0)
+   while (GetNumChildren() > 0)
    {
-      DeltaDrawable *d = GetChild(0);
+      DeltaDrawable* d = GetChild(0);
       RemoveChild(d);
    }
 
@@ -159,44 +159,44 @@ Environment::~Environment()
    RemoveSender(&System::GetInstance());
 }
 
-///Notifies this object that it has been added to a Scene
+/// Notifies this object that it has been added to a Scene
 void Environment::AddedToScene(Scene* scene)
 {
-   DeltaDrawable::AddedToScene( scene );
+   DeltaDrawable::AddedToScene(scene);
 
-   if( scene != 0 )
+   if (scene != 0)
    {
       mSkyLight = scene->GetLight(0);
    }
 }
       
 // Add an Environmental Effect to the Environment
-void Environment::AddEffect(EnvEffect *effect)
+void Environment::AddEffect(EnvEffect* effect)
 {
-   if(!effect) return;
+   if (!effect) { return; }
 
    // we add EnvEffects to our "mEnvEffectNode"
-   if( std::find( mEffectList.begin(), mEffectList.end(), effect ) == mEffectList.end() )
+   if (std::find(mEffectList.begin(), mEffectList.end(), effect) == mEffectList.end())
    {
-      //effect doesn't exit so add it to the list
+      // effect doesn't exit so add it to the list
       mEffectList.push_back(effect);
 
-      if( SkyDome *dome = dynamic_cast<SkyDome*>(effect) ) //is a SkyDome
+      if(SkyDome* dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
       {
          mSkyDome = dome;
-         mEnvEffectNode->addChild( dome->GetOSGNode() ); 
+         mEnvEffectNode->addChild(dome->GetOSGNode()); 
 
-         //add the skydome shader to dome's stateset
+         // add the skydome shader to dome's stateset
          short attr = osg::StateAttribute::OFF;
-         if( GetFogMode()==Environment::ADV ) attr = osg::StateAttribute::ON;
+         if (GetFogMode() == Environment::ADV) attr = osg::StateAttribute::ON;
 
-         osg::StateSet *state = dome->GetOSGNode()->getOrCreateStateSet();
-         state->setAttributeAndModes( mSkyDomeShader->GetLightScatterinVP(), attr );
-         state->setAttributeAndModes( mSkyDomeShader->GetDomeFP(), attr );
+         osg::StateSet* state = dome->GetOSGNode()->getOrCreateStateSet();
+         state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr);
+         state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr);
       }
       else
       {
-         mEnvEffectNode->addChild( effect->GetOSGNode() );
+         mEnvEffectNode->addChild(effect->GetOSGNode());
       }
 
       this->Repaint();
@@ -207,12 +207,12 @@ void Environment::AddEffect(EnvEffect *effect)
   * has previously been added, then puts the effect into a holding bin for 
   * removal at a later time.
   */
-void Environment::RemEffect( EnvEffect *effect )
+void Environment::RemEffect(EnvEffect* effect)
 {
-   if(!effect) return;
+   if (!effect) { return; }
 
-   EnvEffectList::iterator it = std::find( mEffectList.begin(), mEffectList.end(), effect );
-   if( it != mEffectList.end() )
+   EnvEffectList::iterator it = std::find(mEffectList.begin(), mEffectList.end(), effect);
+   if (it != mEffectList.end())
    {
       //its in our list of effects, so lets mark it for removal
       mToBeRemoved.push_back(effect);
@@ -224,28 +224,28 @@ void Environment::RemEffect( EnvEffect *effect )
   */
 void Environment::RemoveEffectCache()
 {
-   for(EnvEffectList::iterator it = mToBeRemoved.begin();
-       it != mToBeRemoved.end();
-       ++it)
+   for (EnvEffectList::iterator it = mToBeRemoved.begin();
+        it != mToBeRemoved.end();
+        ++it)
    {
-      EnvEffect *effect = it->get();
+      EnvEffect* effect = it->get();
 
-      mEnvEffectNode->removeChild( effect->GetOSGNode() );
+      mEnvEffectNode->removeChild(effect->GetOSGNode());
 
       // Also take it out of the Environment's effect list
-      mEffectList.erase(   std::remove( mEffectList.begin(), mEffectList.end(), effect ),
-                           mEffectList.end() );
+      mEffectList.erase(std::remove(mEffectList.begin(), mEffectList.end(), effect),
+                        mEffectList.end());
    }
    mToBeRemoved.clear();
 }
 
-///Add a DeltaDrawable to the Scene to be viewed.
-bool Environment::AddChild( DeltaDrawable *child )
+/// Add a DeltaDrawable to the Scene to be viewed.
+bool Environment::AddChild(DeltaDrawable* child)
 {
-   //we add Drawables to our mDrawableNode
-   if( DeltaDrawable::AddChild( child ) )
+   // we add Drawables to our mDrawableNode
+   if (DeltaDrawable::AddChild(child))
    {
-      mDrawableNode->addChild( child->GetOSGNode() );
+      mDrawableNode->addChild(child->GetOSGNode());
       return true;
    }
    else
@@ -254,18 +254,19 @@ bool Environment::AddChild( DeltaDrawable *child )
    }
 }
 
-///Remove a DeltaDrawable from the Environment Node.
-void Environment::RemoveChild( DeltaDrawable *child )
+/// Remove a DeltaDrawable from the Environment Node.
+void Environment::RemoveChild(DeltaDrawable* child)
 {
-	//we add Drawables to our mDrawableNode
-	if(child)
+	// we add Drawables to our mDrawableNode
+	if (child)
 	{
-		mDrawableNode->removeChild( child->GetOSGNode() );
-      DeltaDrawable::RemoveChild( child );
+		mDrawableNode->removeChild(child->GetOSGNode());
+      DeltaDrawable::RemoveChild(child);
 	}
 }
 
-void Environment::OnMessage(MessageData *data)
+
+void Environment::OnMessage(MessageData* data)
 {
    if (data->message == "preframe")
    {
@@ -274,15 +275,15 @@ void Environment::OnMessage(MessageData *data)
    }
    else if (data->message == "postframe")
    {
-      //remove any EnvEffects that need removing
-      if(mToBeRemoved.size()>0) RemoveEffectCache();
+      // remove any EnvEffects that need removing
+      if (mToBeRemoved.size() > 0) { RemoveEffectCache(); }
    }
-   else if ( data->message == "exit" )
+   else if (data->message == "exit")
    {
-      //time to get rid of any added children
-      while (GetNumChildren()>0)
+      // time to get rid of any added children
+      while (GetNumChildren() > 0)
       {
-         DeltaDrawable *d = GetChild(0);
+         DeltaDrawable* d = GetChild(0);
          RemoveChild(d);
       }
    }
@@ -293,46 +294,48 @@ void Environment::OnMessage(MessageData *data)
   * using the time of day.  NOTE: This value is not used for the fog 
   * when the FogMode is ADV, but it still can be used by the EnvEffects.
   */
-void dtCore::Environment::SetFogColor( const osg::Vec3& color )
+void dtCore::Environment::SetFogColor(const osg::Vec3& color)
 {
    mFogColor = color; // base fog color
 
-   UpdateFogColor(); //tweak color based on sun angle
+   UpdateFogColor(); // tweak color based on sun angle
 
    Repaint();
 }
 
+
 void dtCore::Environment::Repaint()
 {
    float vis = mVisibility;
-   if (!GetFogEnable()) vis = 200000.f;
+   if (!GetFogEnable()) { vis = 200000.f; }
 
-   //if fog is enabled, use the modified fog color otherwise just use
-   //the modified sky color
+   // if fog is enabled, use the modified fog color otherwise just use
+   // the modified sky color
    osg::Vec3 fogColor = mModFogColor;
-   if (!GetFogEnable()) fogColor = mModSkyColor;
+   if (!GetFogEnable()) { fogColor = mModSkyColor; }
 
-   for (EnvEffectList::iterator it=mEffectList.begin(); it!=mEffectList.end(); ++it)
+   for (EnvEffectList::iterator it = mEffectList.begin(); it != mEffectList.end(); ++it)
    {
-      (*it)->Repaint(mModSkyColor, fogColor, mSunAltitude, mSunAzimuth, vis );
+      (*it)->Repaint(mModSkyColor, fogColor, mSunAltitude, mSunAzimuth, vis);
    }
 }
 
-void dtCore::Environment::SetSkyColor( const osg::Vec3& color )
+
+void dtCore::Environment::SetSkyColor(const osg::Vec3& color)
 {
-   //what does this do if there is no SkyDome in the Environment?  Clear color?
+   // what does this do if there is no SkyDome in the Environment?  Clear color?
    mSkyColor = color;
    Repaint();
 }
 
 /** Set the fog mode.  Any Drawables added to the Environment will be fogged
-*   based on the FogMode.  The ADV FogMode uses a pixel shader to calculate
-*   a somewhat physically correct fog/haze.  LINEAR, EXP, and EXP2 use standard
-*   OpenGL Fog.
-*/
+ *   based on the FogMode.  The ADV FogMode uses a pixel shader to calculate
+ *   a somewhat physically correct fog/haze.  LINEAR, EXP, and EXP2 use standard
+ *   OpenGL Fog.
+ */
 void dtCore::Environment::SetFogMode(FogMode mode)
 {
-   if (mFogMode == mode) return;
+   if (mFogMode == mode) { return; }
 
    mFogMode = mode;
    osg::Fog::Mode fm;
@@ -340,32 +343,32 @@ void dtCore::Environment::SetFogMode(FogMode mode)
 
    switch (mode)
    {
-      case Environment::LINEAR:  fm = osg::Fog::LINEAR;  break;
-      case Environment::EXP:     fm = osg::Fog::EXP;   	break;
-      case Environment::EXP2:    fm = osg::Fog::EXP2;    break;
-      case Environment::ADV:
+   case Environment::LINEAR:  fm = osg::Fog::LINEAR; break;
+   case Environment::EXP:     fm = osg::Fog::EXP;    break;
+   case Environment::EXP2:    fm = osg::Fog::EXP2;   break;
+   case Environment::ADV:
       {
          fm = osg::Fog::LINEAR;
-         if (GetFogEnable())  attr = osg::StateAttribute::ON;
-         else                 attr = osg::StateAttribute::OFF;
+         if (GetFogEnable())  { attr = osg::StateAttribute::ON;  }
+         else                 { attr = osg::StateAttribute::OFF; }
       }
       break;
-      default: fm = osg::Fog::LINEAR; break;
+   default: fm = osg::Fog::LINEAR; break;
    }
 
-   //when we switch to ADV mode, all we really do is enable/disable this
-   //shader.  So when we SetFogMode to ADV, we have to check to see if the
-   //FogEnable is on or off.
-   osg::StateSet *state = mDrawableNode->getOrCreateStateSet();
-   state->setAttributeAndModes(mSunlightShader->GetLightScatterinVP(), attr );
-   state->setAttributeAndModes(mSunlightShader->GetTerrainFP(), attr );
+   // when we switch to ADV mode, all we really do is enable/disable this
+   // shader.  So when we SetFogMode to ADV, we have to check to see if the
+   // FogEnable is on or off.
+   osg::StateSet* state = mDrawableNode->getOrCreateStateSet();
+   state->setAttributeAndModes(mSunlightShader->GetLightScatterinVP(), attr);
+   state->setAttributeAndModes(mSunlightShader->GetTerrainFP(), attr);
 
-   //if we're using a skyDome, turn on/off its shader
+   // if we're using a skyDome, turn on/off its shader
    if (mSkyDome.valid())
    {
       state = mSkyDome->GetOSGNode()->getOrCreateStateSet();
-      state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr );
-      state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr );
+      state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr);
+      state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr);
    }
 
    mFog->setMode(fm);
@@ -375,12 +378,12 @@ void dtCore::Environment::SetFogMode(FogMode mode)
   * LINEAR.  
   * @param val : the near value (meters)
   */
-void dtCore::Environment::SetFogNear( float val )
+void dtCore::Environment::SetFogNear(float val)
 {
    mFogNear = val;
-   if (mFogNear<0.f) mFogNear = 0.f;
+   if (mFogNear < 0.f) { mFogNear = 0.f; }
 
-   if (mFogNear > mVisibility) mFogNear = mVisibility;
+   if (mFogNear > mVisibility) { mFogNear = mVisibility; }
 
    mFog->setStart(mFogNear);
    mFog->setEnd(mVisibility);
@@ -394,12 +397,12 @@ void dtCore::Environment::SetFogNear( float val )
   */
 void dtCore::Environment::SetVisibility(float distance)
 {
-   if (mVisibility == distance) return;
+   if (mVisibility == distance) { return; }
 
    mVisibility = distance;
 
-   double sqrt_m_log01 = sqrt( -log(0.01) );
-   float density = sqrt_m_log01/mVisibility;
+   double sqrt_m_log01 = sqrt(-log(0.01));
+   float density = sqrt_m_log01 / mVisibility;
 
    mFog->setDensity(density);
    mFog->setEnd(mVisibility);
@@ -409,10 +412,10 @@ void dtCore::Environment::SetVisibility(float distance)
 /** Turns the fog effect on or off */
 void dtCore::Environment::SetFogEnable(bool enable)
 {
-   if (mFogEnabled == enable) return;
+   if (mFogEnabled == enable) { return; }
 
    mFogEnabled = enable;
-   osg::StateSet *state = mDrawableNode->getOrCreateStateSet();
+   osg::StateSet* state = mDrawableNode->getOrCreateStateSet();
    short attr = osg::StateAttribute::ON;
 
    if (enable)
@@ -424,21 +427,21 @@ void dtCore::Environment::SetFogEnable(bool enable)
       attr = osg::StateAttribute::OFF;
    }
 
-   state->setMode( GL_FOG, attr );
+   state->setMode(GL_FOG, attr);
 
-   if (GetFogMode()==Environment::ADV)
+   if (GetFogMode() == Environment::ADV)
    {
-      //if we're using ADV, then we turn on/off this shader which overrides
-      //the standard openGL fog
-      state->setAttributeAndModes(mSunlightShader->GetLightScatterinVP(), attr );
-      state->setAttributeAndModes(mSunlightShader->GetTerrainFP(), attr );
+      // if we're using ADV, then we turn on/off this shader which overrides
+      // the standard openGL fog
+      state->setAttributeAndModes(mSunlightShader->GetLightScatterinVP(), attr);
+      state->setAttributeAndModes(mSunlightShader->GetTerrainFP(), attr);
 
-      //if we're using a skyDome, turn on/off its shader
+      // if we're using a skyDome, turn on/off its shader
       if (mSkyDome.valid())
       {        
          state = mSkyDome.get()->GetOSGNode()->getOrCreateStateSet();
-         state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr );
-         state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr );
+         state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr);
+         state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr);
       }
    }
 
@@ -448,10 +451,11 @@ void dtCore::Environment::SetFogEnable(bool enable)
 
 
 
-void dtCore::Environment::SetFogDensity( float density )
+void dtCore::Environment::SetFogDensity(float density)
 {
    mFog->setDensity(density);
 }
+
 
 float dtCore::Environment::GetFogDensity()
 {
@@ -461,16 +465,16 @@ float dtCore::Environment::GetFogDensity()
 
 
 /** Set the starting date and time.  Any value of -1 resets the date/time
-*  to be the system time.
-* @param yr Year (1900-xxxx)
-* @param mo Month of the year (1-12)
-* @param da Day of the Month (1-31)
-* @param hr Hour since midnight (0-23)
-* @param mi Minutes after the hour (0-59)
-* @param sc Seconds pass the minute (0-59)
-*/
-void dtCore::Environment::SetDateTime( unsigned yr, unsigned mo, unsigned da,
-                                       unsigned hr, unsigned mi, unsigned sc )
+ *  to be the system time.
+ * @param yr Year (1900-xxxx)
+ * @param mo Month of the year (1-12)
+ * @param da Day of the Month (1-31)
+ * @param hr Hour since midnight (0-23)
+ * @param mi Minutes after the hour (0-59)
+ * @param sc Seconds pass the minute (0-59)
+ */
+void dtCore::Environment::SetDateTime(unsigned yr, unsigned mo, unsigned da,
+                                      unsigned hr, unsigned mi, unsigned sc)
 {
 
    mCurrTime.SetTime(yr, mo, da, hr, mi, sc);
@@ -481,32 +485,38 @@ void dtCore::Environment::SetDateTime( unsigned yr, unsigned mo, unsigned da,
    Update(999.99);
 }
 
+
 void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 {
    mCurrTime = dateTime;
 }
 
 /** Get the current Date and Time of this Environment within a second.
-* @param yr year
-* @param mo month 
-* @param da day
-* @param hr hour
-* @param mi minute
-* @param sc second
-*/
-void dtCore::Environment::GetDateTime( unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc ) const
+ * @param yr year
+ * @param mo month 
+ * @param da day
+ * @param hr hour
+ * @param mi minute
+ * @param sc second
+ */
+void dtCore::Environment::GetDateTime(unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc) const
 {
    mCurrTime.GetTime(yr, mo, da, hr, mi, sc);
 }
+
 
 const dtUtil::DateTime& dtCore::Environment::GetDateTime() const
 {
    return mCurrTime;
 }
+
+
 dtUtil::DateTime& dtCore::Environment::GetDateTime() 
 {
    return mCurrTime;
 }
+
+
 void dtCore::Environment::Update(const double deltaFrameTime)
 {
    mLastUpdate += deltaFrameTime;
@@ -521,34 +531,39 @@ void dtCore::Environment::Update(const double deltaFrameTime)
       Repaint();
    }
 
-   if (GetFogMode()==Environment::ADV) UpdateShaders();
+   if (GetFogMode() == Environment::ADV) { UpdateShaders(); }
 }
+
 
 void dtCore::Environment::UpdateEnvColors()
 {
    float skyBright = mSkyLightTable->Interpolate(mSunAltitude);
 
-   //Modify the sky color
+   // Modify the sky color
    mModSkyColor = mSkyColor * skyBright;
 
-   //Modify the fog color based on sky brightness
+   // Modify the fog color based on sky brightness
    mModFogColor = mFogColor * skyBright;
 }
 
-Environment::InterpTable::InterpTable():
-mSize(0)
+
+Environment::InterpTable::InterpTable()
+   : mSize(0)
 {
 }
+
 
 Environment::InterpTable::~InterpTable()
 {
 }
+
 
 void Environment::InterpTable::AddEntry(double ind, double dep)
 {
    mTable.push_back(TableEntry(ind,dep));
    mSize++;
 }
+
 
 double Environment::InterpTable::Interpolate(double x) const
 {
@@ -560,7 +575,7 @@ double Environment::InterpTable::Interpolate(double x) const
       return (0.0);
    }
 
-   while ((i<mSize) && (x>mTable[i].ind)) 
+   while ((i < mSize) && (x > mTable[i].ind)) 
    {
       i++;
    }
@@ -577,7 +592,7 @@ double Environment::InterpTable::Interpolate(double x) const
 
    y =   mTable[i].dep +
          ((mTable[i-1].dep - mTable[i].dep) *
-         (x-mTable[i].ind) ) /
+         (x - mTable[i].ind) ) /
          (mTable[i-1].ind - mTable[i].ind);
 
    return y;
@@ -588,26 +603,26 @@ double Environment::InterpTable::Interpolate(double x) const
  */
 void dtCore::Environment::UpdateSkyLight()
 {
-   if(mSkyLight.valid())
+   if (mSkyLight.valid())
    {
-      if( InfiniteLight *sun = static_cast<InfiniteLight*>( mSkyLight.get() ) )
+      if (InfiniteLight* sun = static_cast<InfiniteLight*>(mSkyLight.get()))
       {
-         sun->SetAzimuthElevation( mSunAzimuth, mSunAltitude );
+         sun->SetAzimuthElevation(mSunAzimuth, mSunAltitude);
       }
    }
 }
 
 /** Update the fog color based on the sun angle and the sun color.
-*
-*  TODO: Adjust based on the Camera's current heading
-*/
+ *
+ *  TODO: Adjust based on the Camera's current heading
+ */
 void dtCore::Environment::UpdateFogColor()
 {
    // Calculate the fog color in the direction of the sun for
    // sunrise/sunset effects.
-   float red =   (mModFogColor[0] + 2.f * mSunColor[0]*mSunColor[0]) / 3.f;
-   float green = (mModFogColor[1] + 2.f * mSunColor[1]*mSunColor[1]) / 3.f;
-   float blue =  (mModFogColor[2] + 2.f * mSunColor[2]) / 3.f;
+   float red   = (mModFogColor[0] + 2.f * mSunColor[0] * mSunColor[0]) / 3.f;
+   float green = (mModFogColor[1] + 2.f * mSunColor[1] * mSunColor[1]) / 3.f;
+   float blue  = (mModFogColor[2] + 2.f * mSunColor[2]) / 3.f;
 
    // interpolate between the sunrise/sunset color and the color
    // at the opposite direction of this effect. Take in account
@@ -623,15 +638,15 @@ void dtCore::Environment::UpdateFogColor()
    }
 
    double sunRotation = osg::DegreesToRadians(-95.0);
-   double heading = osg::DegreesToRadians(-95.0);
+   double heading     = osg::DegreesToRadians(-95.0);
 
-   double rotation = -(sunRotation+osg::PI) - heading;
+   double rotation = -(sunRotation + osg::PI) - heading;
 
    float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
-   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude)*2.f)/2.f + 0.000001f;
+   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude) * 2.f)/2.f + 0.000001f;
 
-   float rf1  = std::abs((rotation-osg::PI)/osg::PI); //difference between eyepoint heading and sun heading (rad)
-   float rf2 = inverseVis * pow(rf1*rf1, 1/sif);
+   float rf1  = std::abs((rotation-osg::PI) / osg::PI); // difference between eyepoint heading and sun heading (rad)
+   float rf2 = inverseVis * pow(rf1 * rf1, 1/sif);
 
    float rf3  = 1.f - rf2;
    
@@ -639,8 +654,8 @@ void dtCore::Environment::UpdateFogColor()
    mModFogColor[1] = rf3 * mModFogColor[1] + rf2 * green;
    mModFogColor[2] = rf3 * mModFogColor[2] + rf2 * blue;
 
-   //now apply the fog's color
-   mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f) );
+   // now apply the fog's color
+   mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f));
 }
 
 
@@ -648,31 +663,31 @@ void dtCore::Environment::UpdateFogColor()
 */
 void dtCore::Environment::UpdateSunColor()
 {
-   //magic light color code borrowed from osgEphemeris, courtesy of Don Burns
+   // magic light color code borrowed from osgEphemeris, courtesy of Don Burns
 
-   double red = mSunAltitude * 0.5;
+   double red   = mSunAltitude * 0.5;
    double green = mSunAltitude * 0.25;
-   double blue = mSunAltitude * 0.125;
+   double blue  = mSunAltitude * 0.125;
 
-   dtUtil::Clamp<double>(red, 0.0, 1.0);
+   dtUtil::Clamp<double>(red,   0.0, 1.0);
    dtUtil::Clamp<double>(green, 0.0, 1.0);
-   dtUtil::Clamp<double>(blue, 0.0, 1.0);
+   dtUtil::Clamp<double>(blue,  0.0, 1.0);
    osg::Vec3 diff(red, green, blue);
 
-   red = (mSunAltitude + 10.0) * 0.04;
+   red   = (mSunAltitude + 10.0) * 0.04;
    green = (mSunAltitude + 10.0) * 0.02;
-   blue = (mSunAltitude + 10.0) * 0.01;
-   dtUtil::Clamp<double>(red, 0.01, 0.3);
+   blue  = (mSunAltitude + 10.0) * 0.01;
+   dtUtil::Clamp<double>(red,   0.01, 0.3);
    dtUtil::Clamp<double>(green, 0.01, 0.3);
-   dtUtil::Clamp<double>(blue, 0.01, 0.3);
+   dtUtil::Clamp<double>(blue,  0.01, 0.3);
    osg::Vec3 amb(red, green, blue);
 
    mSunColor = diff;
 
-   if(mSkyLight.valid())
+   if (mSkyLight.valid())
    {
-      mSkyLight->SetDiffuse( diff[0], diff[1], diff[2], 1.f );
-      mSkyLight->SetAmbient( amb[0], amb[1], amb[2], 1.f );
+      mSkyLight->SetDiffuse(diff[0], diff[1], diff[2], 1.f);
+      mSkyLight->SetAmbient(amb[0],  amb[1],  amb[2],  1.f);
    }
 
 }
@@ -683,27 +698,29 @@ void dtCore::Environment::UpdateShaders()
    osg::Vec2 sunDir;
    GetSunAzEl(sunDir[0], sunDir[1]);
 
-   Camera *cam  = Camera::GetInstance(0);
+   Camera* cam  = Camera::GetInstance(0);
    Transform camXform;
-   cam->GetTransform( camXform );
+   cam->GetTransform(camXform);
    osg::Vec3 xyz;
    camXform.GetTranslation(xyz);
 
-   mSunlightShader->Update(   sunDir,
-                              xyz, mAdvFogCtrl[0], mAdvFogCtrl[1], 
-                              mAdvFogCtrl[2] * 10.0e25 );
+   mSunlightShader->Update(sunDir,
+                           xyz, mAdvFogCtrl[0], mAdvFogCtrl[1], 
+                           mAdvFogCtrl[2] * 10.0e25);
 
-   mSkyDomeShader->Update( sunDir,
-                           mAdvFogCtrl[0], mAdvFogCtrl[1], 
-                           mAdvFogCtrl[2] * 10.0e25 );
+   mSkyDomeShader->Update(sunDir,
+                          mAdvFogCtrl[0], mAdvFogCtrl[1], 
+                          mAdvFogCtrl[2] * 10.0e25);
 }
 
-void dtCore::Environment::SetRefLatLong( const osg::Vec2& latLong )
+
+void dtCore::Environment::SetRefLatLong(const osg::Vec2& latLong)
 {
    mRefLatLong = latLong;
 }
 
-void dtCore::Environment::SetOSGNode( osg::Node* pNode )
+
+void dtCore::Environment::SetOSGNode(osg::Node* pNode)
 {
    mNode = pNode;
 }

@@ -72,10 +72,10 @@ void TestTrigger::Config()
    // If you want this ProximityTrigger to hit more than once class, just do the OR of all
    // the relavent category bits. See the docs for Transformable::SetCollisionCollideBits
    // for more info.
-   mProximityTrigger->SetCollisionCollideBits( GetCamera()->GetCollisionCategoryBits() );
+   mProximityTrigger->SetCollisionCollideBits(GetCamera()->GetCollisionCategoryBits());
 
    // Assign our custom action to the internal trigger.
-   mProximityTrigger->GetTrigger()->SetAction( new LightAction( mPositionalLight.get() ) );
+   mProximityTrigger->GetTrigger()->SetAction(new LightAction(mPositionalLight.get()));
 
    // Make the trigger activate an unlimited number of times.
    mProximityTrigger->GetTrigger()->SetTimesActive(-1);
