@@ -1,5 +1,6 @@
 #include <dtABC/application.h>
 #include <dtCore/object.h>
+#include <dtCore/odebodywrap.h>
 #include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/scene.h>
@@ -153,15 +154,11 @@ protected:
    //apply some linear and angular velocity dampening
    void DampenBody( Object *obj, float vScale, float aScale )
    {
-      if( dBodyID ID = obj->GetBodyID() )
+      if (obj->DynamicsEnabled())
       {
-         if( dBodyIsEnabled( ID ) )
-         {
-            dReal const * V = dBodyGetLinearVel( ID );
-            dBodyAddForce( ID, vScale*V[0], vScale*V[1], vScale*V[2] );
-            dReal const * A = dBodyGetAngularVel( ID );
-            dBodyAddTorque( ID, aScale*A[0], aScale*A[1], aScale*A[2] );
-         }
+         ODEBodyWrap* body = obj->GetBodyWrapper(); 
+         body->ApplyForce(body->GetLinearVelocity() * vScale);
+         body->ApplyTorque(body->GetAngularVelocity() * aScale);
       }
    }
 
@@ -171,7 +168,7 @@ protected:
             i!=mObjects.end(); 
             ++i )
       {
-         DampenBody( i->get(), 0.10f, -0.04f );
+         DampenBody( i->get(), -0.10f, -0.04f );
       }
    }
 
@@ -324,8 +321,8 @@ protected:
 
       if (phys->DynamicsEnabled() == false) {return false;} //not enabled
       
-      dBodyAddForce(phys->GetBodyID(), 0.f, 0.f, 120.f);
-      dBodyAddTorque(phys->GetBodyID(), 0.f, 0.f, 60.f);
+      phys->GetBodyWrapper()->ApplyForce(osg::Vec3(0.f, 0.f, 120.f));
+      phys->GetBodyWrapper()->ApplyTorque(osg::Vec3(0.f, 0.f, 60.f));
       return true;
    }
 

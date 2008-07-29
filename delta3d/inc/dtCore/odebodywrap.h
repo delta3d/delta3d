@@ -124,6 +124,49 @@ namespace dtCore
       */
       void GetInertiaTensor(osg::Matrix& dest) const;
 
+      /**      
+      * @return the Body's linear velocity
+      */
+      osg::Vec3 GetLinearVelocity() const;
+
+      /**
+      * @return the Body's angular velocity
+      */
+      osg::Vec3 GetAngularVelocity() const;
+
+      /**
+      * Apply a force at the center of mass in world coordinates.
+      * @param force : the world coordinate force to apply
+      */
+      void ApplyForce(const osg::Vec3& force);
+
+      /**
+      * Apply a force at the center of mass in body relative coordinates.
+      * @param relForce : the body relative force to apply
+      */
+      void ApplyRelForce(const osg::Vec3& relForce);
+
+      /**
+      * Apply a body relative force at a body relative position.
+      * @param relForce : The body relative force to apply
+      * @param relPosition : The body relative position to apply the force to
+      */
+      void ApplyRelForceAtRelPos(const osg::Vec3& relForce,
+                                 const osg::Vec3& relPosition);
+
+      /**
+      * Apply a torque at the center of mass in world coordinates.
+      * @param torque: the world coordinate torque to apply
+      */
+      void ApplyTorque(const osg::Vec3& torque);
+
+      /**
+      * Apply a torque at the center of mass in body relative coordinates.
+      * @param torque: the body relative torque to apply
+      */
+      void ApplyRelTorque(const osg::Vec3& torque);
+
+
    protected:
       virtual ~ODEBodyWrap();
    	
