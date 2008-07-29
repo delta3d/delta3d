@@ -9,6 +9,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtCore/system.h>
+#include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 
@@ -114,8 +115,7 @@ namespace dtCore
 
       SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
 
-      // Default collision category = 1
-      SetCollisionCategoryBits(UNSIGNED_BIT(1));
+      SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
 
       mScreenShotTaker = new ScreenShotCallback;
       mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());

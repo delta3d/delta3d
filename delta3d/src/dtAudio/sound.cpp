@@ -7,6 +7,7 @@
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
 #include <dtUtil/mathdefines.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 
 #include <xercesc/dom/DOMDocument.hpp>
@@ -90,8 +91,7 @@ Sound::Sound()
    mVelo[1L]      = 0.0f;
    mVelo[2L]      = 0.0f;
 
-   // Default collision category = 14
-   SetCollisionCategoryBits( UNSIGNED_BIT(14) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SOUND);
 }
 
 

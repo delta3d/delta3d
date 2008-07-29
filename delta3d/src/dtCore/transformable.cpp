@@ -6,6 +6,7 @@
 
 #include <dtCore/transformable.h>
 #include <dtCore/boundingboxvisitor.h>
+#include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 
@@ -135,11 +136,10 @@ void Transformable::Ctor()
    dGeomTransformSetInfo(mGeomID, 1);
    dGeomDisable(mGeomID);
 
-   // Default collision category = 11
-   SetCollisionCategoryBits( UNSIGNED_BIT(11) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_TRANSFORMABLE);
 
    // By default, collide with all categories.
-   SetCollisionCollideBits( 0xFFFFFFFF );
+   SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
 }
 
 Transformable::~Transformable()

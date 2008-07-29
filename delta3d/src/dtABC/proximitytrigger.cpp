@@ -1,6 +1,7 @@
 #include <dtABC/proximitytrigger.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 #include <assert.h>
 
@@ -22,8 +23,8 @@ ProximityTrigger::ProximityTrigger( const std::string& name )
    SetCollisionSphere(5.0f);
 
    // By default, we want the trigger itself to collide with anything
-   SetCollisionCollideBits(0xFFFFFFFF);
-   SetCollisionCategoryBits(0);
+   SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
 
    // Set the update callback which keeps track of traversal numbers.
    GetOSGNode()->setUpdateCallback( new NodeCallback(this) );

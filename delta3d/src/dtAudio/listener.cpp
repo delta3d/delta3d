@@ -1,5 +1,6 @@
 #include <dtAudio/listener.h>
 #include <dtCore/scene.h>
+#include <dtCore/collisioncategorydefaults.h>
 
 // namespaces
 using namespace   dtAudio;
@@ -20,8 +21,7 @@ Listener::Listener()
    SetName("Listener");
    RegisterInstance(this);
 
-   // Default collision category = 13
-   SetCollisionCategoryBits( UNSIGNED_BIT(13) );
+   SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_LISTENER);
 }
 
 
