@@ -5,7 +5,7 @@
 #include <python/dtpython.h>
 #include <dtCore/physical.h>
 #include <osg/MatrixTransform>
-
+#include <ode/ode.h>
 using namespace boost::python;
 using namespace dtCore;
 
@@ -16,7 +16,7 @@ class PhysicalWrap : public Physical
          : Physical (name),
            mSelf(self) {}
 
-      PhysicalWrap (PyObject* self, TransformableNode &node, const std::string &name="Pysical") 
+      PhysicalWrap (PyObject* self, TransformableNode &node, const std::string &name="Pysical")
          : Physical (node, name),
            mSelf (self) {}
 
@@ -24,12 +24,12 @@ class PhysicalWrap : public Physical
       {
          call_method<void>(mSelf, "PostPhysicsStepUpdate");
       }
-      
+
       void DefaultPostPhysicsStepUpdate()
       {
          Physical::PostPhysicsStepUpdate();
       }
-      
+
    protected:
 
       PyObject* mSelf;
@@ -42,7 +42,7 @@ void initPhysicalBindings()
 {
    void (Physical::*SetMass1)(const dMass*) = &Physical::SetMass;
    void (Physical::*SetMass2)(float) = &Physical::SetMass;
-   
+
    void (Physical::*GetMass1)(dMass*) const = &Physical::GetMass;
    float (Physical::*GetMass2)() const = &Physical::GetMass;
 
@@ -70,5 +70,5 @@ void initPhysicalBindings()
       .def("PostPhysicsStepUpdate", &Physical::PostPhysicsStepUpdate, &PhysicalWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Physical::RenderCollisionGeometry)
       ;
-      
+
 }
