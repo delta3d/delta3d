@@ -3,9 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/physical.h>
+#include <dtCore/odebodywrap.h>
 #include <dtCore/collisioncategorydefaults.h>
-
-#include <ode/ode.h>
+#include <ode/collision.h>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -14,26 +14,21 @@ IMPLEMENT_MANAGEMENT_LAYER(Physical)
 
 Physical::Physical( const std::string& name )
    :  Transformable(name),
-      mBodyID(0),
-      mDynamicsEnabled(false)
+      mBodyWrap(new ODEBodyWrap())
 {
    Ctor();
 }
 
 Physical::Physical( TransformableNode &node, const std::string &name )
    : Transformable(node, name),
-      mBodyID(0),
-      mDynamicsEnabled(false)
+      mBodyWrap(new ODEBodyWrap())
 {
    Ctor();
 }
 
 Physical::~Physical()
 {
-   if( mBodyID != 0 )
-   {
-      dBodyDestroy(mBodyID);
-   }
+   mBodyWrap = NULL;
    
    DeregisterInstance(this);
 }
@@ -46,29 +41,33 @@ Physical::~Physical()
  */
 void Physical::SetBodyID( dBodyID bodyID )
 {
-   if( mBodyID != 0 )
-   {
-      dBodyDestroy(mBodyID);
-   }
+   mBodyWrap->SetBodyID(bodyID);
 
-   mBodyID = bodyID;
-
-   EnableDynamics(mDynamicsEnabled);
-
-   SetMass(&mMass);
-
-   if( mBodyID != 0 )
+   if( bodyID != 0 )
    {
       // Copy position and rotation of geometry over to 
       const dReal* position = dGeomGetPosition( GetGeomID() );
-      dBodySetPosition( mBodyID, position[0], position[1], position[2] );
+      mBodyWrap->SetPosition(osg::Vec3(position[0], position[1], position[2]));
+
       const dReal* rotation = dGeomGetRotation( GetGeomID() );
-      dBodySetRotation( mBodyID, rotation );
+      osg::Matrix mat;
+      mat(0,0) = rotation[0];
+      mat(1,0) = rotation[1];
+      mat(2,0) = rotation[2];
+
+      mat(0,1) = rotation[4];
+      mat(1,1) = rotation[5];
+      mat(2,1) = rotation[6];
+
+      mat(0,2) = rotation[8];
+      mat(1,2) = rotation[9];
+      mat(2,2) = rotation[10];
+      mBodyWrap->SetRotation(mat);
    }
 
    // This wipes out all previous transforms on the geom, so
    // that's why we had to copy them into the body first.
-   dGeomSetBody( GetGeomID(), mBodyID );
+   dGeomSetBody(GetGeomID(), bodyID);
 }
 
 /**
@@ -79,7 +78,7 @@ void Physical::SetBodyID( dBodyID bodyID )
  */
 dBodyID Physical::GetBodyID() const
 {
-   return mBodyID;
+   return mBodyWrap->GetBodyID();
 }
 
 /**
@@ -89,19 +88,7 @@ dBodyID Physical::GetBodyID() const
  */
 void Physical::EnableDynamics(bool enable)
 {
-   mDynamicsEnabled = enable;
-
-   if(mBodyID != 0)
-   {
-      if(enable)
-      {
-         dBodyEnable(mBodyID);
-      }
-      else
-      {
-         dBodyDisable(mBodyID);
-      }
-   }
+   mBodyWrap->EnableDynamics(enable);
 }
 
 /**
@@ -112,7 +99,7 @@ void Physical::EnableDynamics(bool enable)
  */
 bool Physical::DynamicsEnabled() const
 {
-   return mDynamicsEnabled;
+   return mBodyWrap->DynamicsEnabled();
 }
 
 /**
@@ -122,12 +109,7 @@ bool Physical::DynamicsEnabled() const
  */
 void Physical::SetMass(const dMass* mass)
 {
-   mMass = *mass;
-
-   if(mBodyID != 0)
-   {
-      dBodySetMass(mBodyID, &mMass);
-   }
+   mBodyWrap->SetMass(mass);
 }
 
 /**
@@ -137,7 +119,7 @@ void Physical::SetMass(const dMass* mass)
  */
 void Physical::GetMass(dMass* mass) const
 {
-   *mass = mMass;
+   mBodyWrap->GetMass(mass);
 }
 
 /**
@@ -147,12 +129,7 @@ void Physical::GetMass(dMass* mass) const
  */
 void Physical::SetMass(float mass)
 {
-   mMass.mass = mass;
-
-   if(mBodyID != 0)
-   {
-      dBodySetMass(mBodyID, &mMass);
-   }
+   mBodyWrap->SetMass(mass);
 }
 
 /**
@@ -162,7 +139,7 @@ void Physical::SetMass(float mass)
  */
 float Physical::GetMass() const
 {
-   return mMass.mass;
+   return mBodyWrap->GetMass();
 }
 
 /**
@@ -172,14 +149,7 @@ float Physical::GetMass() const
  */
 void Physical::SetCenterOfGravity(const osg::Vec3& centerOfGravity)
 {
-   mMass.c[0] = centerOfGravity[0];
-   mMass.c[1] = centerOfGravity[1];
-   mMass.c[2] = centerOfGravity[2];
-
-   if(mBodyID != 0)
-   {
-      dBodySetMass(mBodyID, &mMass);
-   }
+   mBodyWrap->SetCenterOfGravity(centerOfGravity);
 }
 
 /**
@@ -190,9 +160,7 @@ void Physical::SetCenterOfGravity(const osg::Vec3& centerOfGravity)
  */
 void Physical::GetCenterOfGravity(osg::Vec3& dest) const
 {
-   dest[0] = mMass.c[0];
-   dest[1] = mMass.c[1];
-   dest[2] = mMass.c[2];
+   mBodyWrap->GetCenterOfGravity(dest);
 }
 
 /**
@@ -203,22 +171,7 @@ void Physical::GetCenterOfGravity(osg::Vec3& dest) const
 
 void Physical::SetInertiaTensor(const osg::Matrix& inertiaTensor)
 {
-   mMass.I[0] = inertiaTensor(0,0);
-   mMass.I[1] = inertiaTensor(1,0);
-   mMass.I[2] = inertiaTensor(2,0);
-
-   mMass.I[4] = inertiaTensor(0,1);
-   mMass.I[5] = inertiaTensor(1,1);
-   mMass.I[6] = inertiaTensor(2,1);
-
-   mMass.I[8] = inertiaTensor(0,2);
-   mMass.I[9] = inertiaTensor(1,2);
-   mMass.I[10] = inertiaTensor(2,2);
-
-   if(mBodyID != 0)
-   {
-      dBodySetMass(mBodyID, &mMass);
-   }
+   mBodyWrap->SetInertiaTensor(inertiaTensor);
 }
 
 /**
@@ -229,17 +182,7 @@ void Physical::SetInertiaTensor(const osg::Matrix& inertiaTensor)
  */
 void Physical::GetInertiaTensor(osg::Matrix& dest) const
 {
-   dest(0,0) = mMass.I[0];
-   dest(1,0) = mMass.I[1];
-   dest(2,0) = mMass.I[2];
-
-   dest(0,1) = mMass.I[4];
-   dest(1,1) = mMass.I[5];
-   dest(2,1) = mMass.I[6];
-
-   dest(0,2) = mMass.I[8];
-   dest(1,2) = mMass.I[9];
-   dest(2,2) = mMass.I[10];
+   mBodyWrap->GetInertiaTensor(dest);
 }
 
 /**
@@ -280,8 +223,6 @@ void Physical::PostPhysicsStepUpdate()
 void Physical::Ctor()
 {
    RegisterInstance(this);
-
-   dMassSetSphere(&mMass, 1.0f, 1.0f);
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PHYSICAL);
 }
