@@ -366,10 +366,10 @@ void ObjectViewer::PostFrame(const double)
 
          osg::Vec3 lightPos = arrowTransform.GetTranslation();
 
-         std::ostringstream oss;
-         oss << "arrow pos: (" << lightPos.x() << ", " << lightPos.y() << ", " << lightPos.z() << ")";
+         //std::ostringstream oss;
+         //oss << "arrow pos: (" << lightPos.x() << ", " << lightPos.y() << ", " << lightPos.z() << ")";
 
-         std::cout << oss.str() << std::endl;
+         //std::cout << oss.str() << std::endl;
 
          emit LightUpdate(light);
          continue;

@@ -10,5 +10,7 @@
       <file>images/lightMode.png</file>
       <file>images/objectMode.png</file>
       <file>images/shaderSource.png</file>
+      <file>images/vertexShaderSource.png</file>
+      <file>images/fragmentShaderSource.png</file>
     </qresource>
 </RCC>

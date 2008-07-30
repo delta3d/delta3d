@@ -63,7 +63,6 @@ public slots:
    void OnInitialization(); 
    void OnToggleShadingToolbar(); 
    void OnRecompileClicked(); 
-   void OnOpenShaderFile();
 	
 private:
    void CreateMenus();
@@ -95,13 +94,14 @@ private:
 
    // Shader Toolbar
    QAction* mRecompileAction;
-   QAction* mOpenShaderAction;
+   QAction* mOpenVertexShaderAction;
+   QAction* mOpenFragmentShaderAction;
 
    QToolBar* mDisplayToolbar;    
    QToolBar* mShaderToolbar;
-   QToolBar* mModeToolbar;
+   QToolBar* mModeToolbar;  
 
-   ResourceDock *mResourceDock;
+   ResourceDock* mResourceDock;
 
    std::string mContextPath;
    QString mShaderDefinitionName;
