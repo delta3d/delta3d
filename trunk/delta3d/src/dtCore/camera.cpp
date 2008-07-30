@@ -31,7 +31,7 @@ namespace dtCore
    {
       public:
          ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
-         
+
          void SetNameToOutput(const std::string& name)
          {
             mTakeScreenShotNextFrame  = true;
@@ -46,12 +46,12 @@ namespace dtCore
             {
                mTakeScreenShotNextFrame = false;
                osg::ref_ptr<osg::Image> image = new osg::Image;
-               
+
                int x = static_cast<int>(camera.getViewport()->x());
                int y = static_cast<int>(camera.getViewport()->y());
                unsigned int width = static_cast<unsigned int>(camera.getViewport()->width());
                unsigned int height = static_cast<unsigned int>(camera.getViewport()->height());
-               
+
                image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
                image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
                bool status = osgDB::writeImageFile( *image.get(), mNameOfScreenShotToOutput.c_str() ); // jpg, rgb, png, bmp
@@ -94,7 +94,7 @@ namespace dtCore
    }
 
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    Camera::Camera(osg::Camera& osgCamera, const std::string& name)
       :  Transformable(name),
          mAddedToSceneGraph(false),
@@ -104,7 +104,7 @@ namespace dtCore
    {
       Ctor();
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Camera::Ctor()
    {
@@ -122,14 +122,14 @@ namespace dtCore
    }
 
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    Camera::~Camera()
    {
       DeregisterInstance(this);
       RemoveSender( &dtCore::System::GetInstance() );
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
    {
       std::string timeString = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
@@ -149,7 +149,7 @@ namespace dtCore
       return outputName;
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetEnabled( bool enabled )
    {
       if (mEnable == enabled)
@@ -163,7 +163,7 @@ namespace dtCore
       {
          if (GetOSGCamera()->getNodeMask() != 0x0)
          {
-            //error: the user must have set the node mask while the 
+            //error: the user must have set the node mask while the
             //camera was disabled. tsk tsk
             LOG_ERROR("User supplied camera node mask will be overwritten.");
          }
@@ -178,13 +178,13 @@ namespace dtCore
       }
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    bool Camera::GetEnabled() const
    {
        return (mEnable);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::OnMessage( MessageData* data )
    {
 
@@ -193,8 +193,8 @@ namespace dtCore
          FrameSynch( *static_cast<const double*>(data->userData) );
       }
    }
-   
-   ////////////////////////////////////////// 
+
+   //////////////////////////////////////////
    void Camera::SetNearFarCullingMode( AutoNearFarCullingMode mode )
    {
       osg::CullSettings::ComputeNearFarMode osgMode;
@@ -211,7 +211,7 @@ namespace dtCore
       GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
       // Only do our normal Camera stuff if it is enabled
@@ -284,39 +284,39 @@ namespace dtCore
    }
 
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetPerspectiveParams(double vfov, double aspectRatio, double nearClip, double farClip)
    {
       mOsgCamera->setProjectionMatrixAsPerspective(vfov, aspectRatio , nearClip, farClip);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::GetPerspectiveParams(double &vfov, double &aspectRatio, double &nearClip, double &farClip)
    {
       mOsgCamera->getProjectionMatrixAsPerspective(vfov, aspectRatio, nearClip, farClip);
    }
 
-   ////////////////////////////////////////// 
-   void Camera::SetFrustum(double left, double right, double bottom, double top, 
+   //////////////////////////////////////////
+   void Camera::SetFrustum(double left, double right, double bottom, double top,
             double nearClip, double farClip)
    {
       mOsgCamera->setProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
 
-   ////////////////////////////////////////// 
-   void Camera::GetFrustum(double& left, double& right, double& bottom, double& top, 
+   //////////////////////////////////////////
+   void Camera::GetFrustum(double& left, double& right, double& bottom, double& top,
             double& nearClip, double& farClip)
    {
       mOsgCamera->getProjectionMatrixAsFrustum(left, right, bottom, top, nearClip, farClip);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
    {
       mOsgCamera->setProjectionMatrixAsOrtho(left, right, bottom, top, nearClip, farClip);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetClearColor(float r, float g, float b, float a)
    {
       osg::Vec4 color(r, g, b, a);
@@ -324,42 +324,42 @@ namespace dtCore
       SetClearColor(color);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetClearColor(const osg::Vec4& color)
    {
        mOsgCamera->setClearColor(color);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::GetClearColor( float& r, float& g, float& b, float& a )
    {
       osg::Vec4 color = mOsgCamera->getClearColor();
-       
+
       r = color[0];
       g = color[1];
       b = color[2];
       a = color[3];
    }
-   
-   ////////////////////////////////////////// 
+
+   //////////////////////////////////////////
    void Camera::GetClearColor(osg::Vec4& color)
    {
       color = mOsgCamera->getClearColor();
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::SetLODScale(float newScale)
    {
       GetOSGCamera()->setLODScale(newScale);
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    float Camera::GetLODScale() const
    {
       return GetOSGCamera()->getLODScale();
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    float Camera::GetHorizontalFov()
    {
       double vfov, aspectRatio, nearClip, farClip;
@@ -401,16 +401,54 @@ namespace dtCore
    }
 
    //////////////////////////////////////////
+   bool Camera::ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const
+   {
+      // DEBUG: Print the incoming 3D point.
+      // std::cout << "t\World XYZ [" << worldPos << "]\n" << std::endl;
+
+      const osg::Camera& cam = *GetOSGCamera();
+      // Start with a Vec4 version of the specified world coordinate.
+      osg::Vec4d screenXYZ( worldPos.x(), worldPos.y(), worldPos.z(), 1.0 );
+
+      // Go from world space to view space.
+      screenXYZ = cam.getViewMatrix().preMult( screenXYZ );
+
+      // Go from view space to screen space (with perspective).
+      screenXYZ = cam.getProjectionMatrix().preMult( screenXYZ );
+
+      // Capture the XY coordinates
+      outScreenPos.set( screenXYZ.x(), screenXYZ.y(), screenXYZ.z() );
+
+      // Remove perspective.
+      outScreenPos /= screenXYZ.w();
+
+      // Center the resulting normalized coordinates.
+      outScreenPos += osg::Vec3d( 1.0, 1.0, 1.0 );
+      outScreenPos *= 0.5;
+
+      // If W is negative, flip the Z value to negative to
+      // flag this point as being behind the camera view.
+      if( screenXYZ.w() < 0.0 )
+      {
+         outScreenPos.z() *= -1.0;
+      }
+
+      return outScreenPos.z() > 0.0
+         && outScreenPos.x() >= 0.0 && outScreenPos.x() <= 1.0
+         && outScreenPos.y() >= 0.0 && outScreenPos.y() <= 1.0;
+   }
+
+   //////////////////////////////////////////
    void Camera::SetWindow( DeltaWin* win )
    {
       if (mWindow == win) return;
-            
+
       mWindow = win;
 
       OnWindowChanged();
    }
 
-   ////////////////////////////////////////// 
+   //////////////////////////////////////////
    void Camera::OnWindowChanged()
    {
       if (mWindow.valid())
@@ -419,7 +457,7 @@ namespace dtCore
          mOsgCamera->setGraphicsContext(gw);
 
          const osg::GraphicsContext::Traits * traits = gw->getTraits();
-         
+
          double fovy, aspectRatio, zNear, zFar;
          mOsgCamera->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
 

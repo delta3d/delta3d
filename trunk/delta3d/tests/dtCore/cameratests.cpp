@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * @author David Guthrie
  */
 #include <prefix/dtgameprefix-src.h>
@@ -37,28 +37,29 @@ extern dtABC::Application& GetGlobalApplication();
 class CameraTests : public CPPUNIT_NS::TestFixture
 {
       CPPUNIT_TEST_SUITE(CameraTests);
-   
+
          CPPUNIT_TEST(TestSaveScreenShot);
          CPPUNIT_TEST(TestPerspective);
          CPPUNIT_TEST(TestFrustum);
          CPPUNIT_TEST(TestEnabled);
          CPPUNIT_TEST(TestSettingTheCullingMode);
          CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
-   
+         CPPUNIT_TEST(TestOnScreen);
+
       CPPUNIT_TEST_SUITE_END();
-   
+
    public:
 
       void setUp() {}
-      
+
       void tearDown()
-      {      
+      {
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-         
+
          if (fileUtils.DirExists(SCREEN_SHOT_DIR))
-            fileUtils.DirDelete(SCREEN_SHOT_DIR, true);         
+            fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
       }
-      
+
       void TestSaveScreenShot();
       void TestPerspective();
       void TestFrustum();
@@ -66,8 +67,33 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestEnabled();
       void TestSettingTheCullingMode();
 
+      void TestOnScreen()
+      {
+         dtCore::Camera& camera = *GetGlobalApplication().GetCamera();
+         dtCore::Transform xform;
+         xform.SetTranslation(osg::Vec3(0.0, 0.0, 0.0));
+         camera.SetTransform(xform);
+         osg::Vec3 testPos(0.0, 5.0, 0.0);
+
+         osg::Vec3d screenPos;
+         bool onScreen = camera.ConvertWorldCoordinateToScreenCoordinate(testPos, screenPos);
+         CPPUNIT_ASSERT(onScreen);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, screenPos.x(), 0.001);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, screenPos.y(), 0.001);
+         CPPUNIT_ASSERT(screenPos.z() > 0.0);
+
+         testPos.set(0.0, -10.0, 0.0);
+         onScreen = camera.ConvertWorldCoordinateToScreenCoordinate(testPos, screenPos);
+         CPPUNIT_ASSERT(!onScreen);
+
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, screenPos.x(), 0.001);
+         CPPUNIT_ASSERT_DOUBLES_EQUAL(0.5, screenPos.y(), 0.001);
+         CPPUNIT_ASSERT(screenPos.z() < 0.0);
+
+      }
+
    private:
-      static const std::string SCREEN_SHOT_DIR;      
+      static const std::string SCREEN_SHOT_DIR;
 };
 
 const std::string CameraTests::SCREEN_SHOT_DIR("TestScreenShot");
@@ -87,7 +113,7 @@ void CameraTests::TestSaveScreenShot()
 
    CPPUNIT_ASSERT_MESSAGE("The resulting string should be longer.", result.size() > prefix.size());
 
-   CPPUNIT_ASSERT_MESSAGE("The result should begin with the prefix.", 
+   CPPUNIT_ASSERT_MESSAGE("The result should begin with the prefix.",
       prefix == result.substr(0,prefix.size()));
 
    CPPUNIT_ASSERT_MESSAGE(result + " should not exist yet.", !fileUtils.FileExists(result));
@@ -124,21 +150,21 @@ void CameraTests::TestPerspective()
 
    double vfov, aspectRatio, nearClip, farClip;
    camera->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical field of view should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical field of view should be the same as the one set",
       vfovSet, vfov, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio should be the same as the one set",
       aspectSet, aspectRatio, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set",
       nearSet, nearClip, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set",
       farSet, farClip, 0.01);
 
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio method should return the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The aspect ratio method should return the one set",
       aspectSet, camera->GetAspectRatio(), 0.01);
 
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical fov method should return the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The vertical fov method should return the one set",
       vfovSet, camera->GetVerticalFov(), 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The horizontal fov method should return vertical fov * aspectRatio.", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The horizontal fov method should return vertical fov * aspectRatio.",
       vfovSet * aspectSet, camera->GetHorizontalFov(), 0.01);
 }
 
@@ -154,17 +180,17 @@ void CameraTests::TestFrustum()
 
    double left, right, bottom, top, nearClip, farClip;
    camera->GetFrustum(left, right, bottom, top, nearClip, farClip);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The left plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The left plane should be the same as the one set",
       leftSet, left, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The right plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The right plane should be the same as the one set",
       rightSet, right, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The top plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The top plane should be the same as the one set",
       topSet, top, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The bottom plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The bottom plane should be the same as the one set",
       bottomSet, bottom, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The near plane should be the same as the one set",
       nearSet, nearClip, 0.01);
-   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set", 
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The far plane should be the same as the one set",
       farSet, farClip, 0.01);
 }
 
@@ -209,19 +235,19 @@ void CameraTests::TestSettingTheCullingMode()
 
    cam->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be DO_NOT_COMPUTE_NEAR_FAR", 
-      osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR, 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be DO_NOT_COMPUTE_NEAR_FAR",
+      osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR,
       osgCam->getComputeNearFarMode() );
 
    cam->SetNearFarCullingMode(dtCore::Camera::BOUNDING_VOLUME_NEAR_FAR);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES", 
-      osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES, 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES",
+      osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES,
       osgCam->getComputeNearFarMode() );
 
    cam->SetNearFarCullingMode(dtCore::Camera::PRIMITIVE_NEAR_FAR);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_PRIMITIVES", 
-      osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES, 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_PRIMITIVES",
+      osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES,
       osgCam->getComputeNearFarMode() );
 }
