@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -52,13 +52,13 @@ namespace dtEditQt
          * Sets the position of the camera to the position specfied in world coordinates.
          * @param pos The new position.
          */
-        void setPosition(const osg::Vec3 &pos);
+        void setPosition(const osg::Vec3& pos);
 
         /**
          * Moves the camera relative to its orientation.
          * @param relPos A vector containing the relative position from the current one.
          */
-        void move(const osg::Vec3 &relPos);
+        void move(const osg::Vec3& relPos);
 
         /**
          * Rotates the camera about its local x-axis.
@@ -82,7 +82,7 @@ namespace dtEditQt
          * Rotates the camera using the given quaternion.
          * @param q The quaternion to rotate by.
          */
-        void rotate(const osg::Quat &q);
+        void rotate(const osg::Quat& q);
 
         /**
          * Zooms in camera.
@@ -204,7 +204,7 @@ namespace dtEditQt
          * @return Returns a 3D vector corresponding to this camera's current position
          * in world coordinates.
          */
-        const osg::Vec3 &getPosition() const {
+        const osg::Vec3& getPosition() const {
             return this->position;
         }
 
@@ -215,17 +215,17 @@ namespace dtEditQt
          * @see makePerspective
          * @see makeOrtho
          */
-        const osg::Matrix &getProjectionMatrix();
+        const osg::Matrix& getProjectionMatrix();
 
         /**
          * Gets the camera's current view matrix.
          * @return The view matrix is generated from its current position and its
          * current orientation.
          */
-        const osg::Matrix &getWorldViewMatrix();
+        const osg::Matrix& getWorldViewMatrix();
 
-        void getOrthoParams(double &left, double &right, double &bottom, double &top,
-            double &nearZ, double &farZ);
+        void getOrthoParams(double& left, double& right, double& bottom, double& top,
+            double& nearZ, double& farZ);
 
         /**
          * Updates the camera's viewing and projection matrices.  Also updates
@@ -237,13 +237,13 @@ namespace dtEditQt
          * Attaches a transformableactorproxy to the camera.
          * @param proxy The proxy to attach.
          */
-        void attachActorProxy(dtDAL::TransformableActorProxy *proxy);
+        void attachActorProxy(dtDAL::TransformableActorProxy* proxy);
 
         /**
          * Removes a transformableactorproxy that is currently attached to the camera.
          * @param proxy The proxy to remove from this camera.
          */
-        void detachActorProxy(dtDAL::TransformableActorProxy *proxy);
+        void detachActorProxy(dtDAL::TransformableActorProxy* proxy);
 
         /**
          * Removes all actor proxies currently attached to this camera.
