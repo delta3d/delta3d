@@ -20,11 +20,15 @@
 */
 
 #include "ResourceDock.h"
+#include "TextEdit.h"
+
 #include <QtGui/QAction>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTreeWidget>
 
 #include <osg/LightSource>
+#include <dtCore/globals.h>
+#include <dtCore/shadermanager.h>
 
 #include <algorithm>
 #include <cctype>
@@ -165,10 +169,17 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 
       if (item->checkState(0) == Qt::Checked)
       {
+         // Store so we know where the source files can be found
+         mCurrentShaderGroup   = groupName;
+         mCurrentShaderProgram = programName;
+
          emit ApplyShader(groupName.toStdString(), programName.toStdString());         
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
+         mCurrentShaderGroup.clear();
+         mCurrentShaderProgram.clear();
+
          emit RemoveShader();
       }
    }  
@@ -247,6 +258,36 @@ void ResourceDock::OnLightUpdate(const dtCore::Light* light)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnOpenCurrentVertexShaderSources()
+{
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+
+   dtCore::ShaderProgram *program = 
+      shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
+   
+   if (program)
+   {
+      const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+      OpenFilesInTextEditor(vertShaderList);     
+   }  
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnOpenCurrentFragmentShaderSources()
+{
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+
+   dtCore::ShaderProgram *program = 
+      shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
+
+   if (program)
+   {
+      const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+      OpenFilesInTextEditor(fragShaderList);     
+   }  
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::CreateLightItems()
 {  
    QStringList headerLables;
@@ -311,6 +352,20 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    alphaAmbientItem->setText(0, "a");
 
    return ambientItem;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OpenFilesInTextEditor(const std::vector<std::string>& fileList)
+{   
+   for (size_t fileIndex = 0; fileIndex < fileList.size(); ++fileIndex)
+   {
+      std::string fileName = dtCore::FindFileInPathList(fileList[fileIndex]);      
+
+      TextEdit* editor = new TextEdit;
+      editor->resize(700, 800);
+      editor->load(fileName.c_str());
+      editor->show();
+   }      
 }
 
 

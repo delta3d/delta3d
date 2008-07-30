@@ -80,6 +80,9 @@ public slots:
    
    void OnLightUpdate(const dtCore::Light* light);
 
+   void OnOpenCurrentVertexShaderSources();
+   void OnOpenCurrentFragmentShaderSources();
+
 private:
 
    struct LightItems
@@ -95,14 +98,19 @@ private:
 
    QTreeWidget* mShaderTreeWidget;
    QTreeWidget* mGeometryTreeWidget;  
-   QTreeWidget* mLightTreeWidget;  
+   QTreeWidget* mLightTreeWidget; 
 
    LightItems mLightItems[dtCore::MAX_LIGHTS];  
+
+   QString mCurrentShaderGroup;
+   QString mCurrentShaderProgram;
 
    void CreateLightItems();
 
    QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
+
+   void OpenFilesInTextEditor(const std::vector<std::string>& fileList);
 };
 
 

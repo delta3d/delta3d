@@ -39,6 +39,9 @@ ObjectWorkspace::ObjectWorkspace()
 {
    resize(1024, 768);
 
+   mResourceDock = new ResourceDock;
+   addDockWidget(Qt::LeftDockWidgetArea, mResourceDock); 
+
    // Create all program actions
    CreateFileMenuActions();
    CreateModeToolbarActions();
@@ -57,10 +60,7 @@ ObjectWorkspace::ObjectWorkspace()
    hbLayout->setMargin(0);
    glParent->setLayout(hbLayout);
    hbLayout->addWidget(mGLWidget);
-   setCentralWidget(glParent);
-
-   mResourceDock = new ResourceDock;
-   addDockWidget(Qt::LeftDockWidgetArea, mResourceDock); 
+   setCentralWidget(glParent);   
 
    setAcceptDrops(true);
 }
@@ -191,16 +191,20 @@ void ObjectWorkspace::CreateDisplayToolbarActions()
 void ObjectWorkspace::CreateShaderToolbarActions()
 {
    QIcon compileIcon(":/images/recompile.png");
-   QIcon sourceIcon(":/images/shaderSource.png");
+   QIcon vertexSourceIcon(":/images/vertexShaderSource.png");
+   QIcon fragmentSourceIcon(":/images/fragmentShaderSource.png");
 
    mRecompileAction = new QAction(compileIcon, tr("Recompile Shaders"), this);
-   mOpenShaderAction = new QAction(sourceIcon, tr("Open Current Shader"), this);
-   
-   // Not yet implemented
-   mOpenShaderAction->setDisabled(true);
+   mOpenVertexShaderAction = new QAction(vertexSourceIcon, tr("Open Current Vertex Shader"), this);
+   mOpenFragmentShaderAction = new QAction(fragmentSourceIcon, tr("Open Current Fragment Shader"), this);
 
    connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
-   connect(mOpenShaderAction, SIGNAL(triggered()), this, SLOT(OnOpenShaderFile()));
+
+   connect(mOpenVertexShaderAction, SIGNAL(triggered()), 
+           mResourceDock, SLOT(OnOpenCurrentVertexShaderSources()));
+
+   connect(mOpenFragmentShaderAction, SIGNAL(triggered()), 
+           mResourceDock, SLOT(OnOpenCurrentFragmentShaderSources()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +222,8 @@ void ObjectWorkspace::CreateToolbars()
    mDisplayToolbar->addAction(mGridAction);
 
    mShaderToolbar = addToolBar("Shader toolbar");
-   mShaderToolbar->addAction(mOpenShaderAction);
+   mShaderToolbar->addAction(mOpenVertexShaderAction);
+   mShaderToolbar->addAction(mOpenFragmentShaderAction);
    mShaderToolbar->addAction(mRecompileAction);
 }
 
@@ -259,27 +264,6 @@ void ObjectWorkspace::OnToggleShadingToolbar()
 void ObjectWorkspace::OnRecompileClicked()
 {
    emit ReloadShaderDefinition(mShaderDefinitionName);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectWorkspace::OnOpenShaderFile()
-{
-   std::string shaderPath = mContextPath + "/shaders";
-   QString filename = QFileDialog::getOpenFileName(this,
-                                                   tr("Open Shader File"),
-                                                   shaderPath.c_str(),
-                                                   tr("Geometry(*.osg *.ive *.flt *.3ds *.txp *.xml *)") );
-
-   QString statusMessage;
-
-   if (!filename.isEmpty())
-   {       
-      
-   }
-   else
-   {
-      statusMessage = QString(tr("Unable to open file: %1")).arg(filename);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
