@@ -5,6 +5,7 @@
 #include <QtGui/QMessageBox>
 
 #include "ObjectViewer.h"
+#include "ObjectViewerData.h"
 #include "ObjectWorkspace.h"
 
 #include <dtCore/system.h>
@@ -366,14 +367,18 @@ void ObjectViewer::PostFrame(const double)
          dtCore::Transform arrowTransform;
          mLightArrowTransformable->GetTransform(arrowTransform);
 
-         osg::Vec3 lightPos = arrowTransform.GetTranslation();
+         //osg::Vec3 lightPos = arrowTransform.GetTranslation();
 
          //std::ostringstream oss;
          //oss << "arrow pos: (" << lightPos.x() << ", " << lightPos.y() << ", " << lightPos.z() << ")";
 
          //std::cout << oss.str() << std::endl;
 
-         emit LightUpdate(light);
+         LightInfo lightInfo;
+         lightInfo.light = light;
+         lightInfo.transform = &arrowTransform;
+
+         emit LightUpdate(lightInfo);
          continue;
       }
 

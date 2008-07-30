@@ -20,6 +20,7 @@
 */
 
 #include "ResourceDock.h"
+#include "ObjectViewerData.h"
 #include "TextEdit.h"
 
 #include <QtGui/QAction>
@@ -234,20 +235,25 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnLightUpdate(const dtCore::Light* light)
+void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
 {
-   int lightNumber = light->GetNumber();
+   int lightIndex = lightInfo.light->GetNumber();  
 
-   dtCore::Transform lightTransform;
-   light->GetTransform(lightTransform);
-
-   const osg::LightSource* osgSource = light->GetLightSource();
+   const osg::LightSource* osgSource = lightInfo.light->GetLightSource();
    const osg::Light* osgLight = osgSource->getLight();
 
-   const osg::Vec4& position = osgLight->getPosition();
+   const osg::Vec3& position = lightInfo.transform->GetTranslation();
    const osg::Vec4& ambient  = osgLight->getAmbient();
    const osg::Vec4& diffuse  = osgLight->getDiffuse();
    const osg::Vec4& specular = osgLight->getSpecular();
+
+   QString typeString = (osgLight->getPosition().w() > 0.0f) ? "Positional": "Infinite";
+   mLightItems[lightIndex].type->setText(1, typeString);
+
+   SetPositionItem(mLightItems[lightIndex].position, position);
+   SetColorItem(mLightItems[lightIndex].ambient, ambient);
+   SetColorItem(mLightItems[lightIndex].diffuse, diffuse);
+   SetColorItem(mLightItems[lightIndex].specular, specular);     
 
    //std::ostringstream oss;
    //oss << "light #" << lightNumber << ": (" 
@@ -316,6 +322,10 @@ void ResourceDock::CreateLightItems()
       mLightItems[lightIndex].diffuse  = CreateColorItem("Diffuse", newLightItem);
       mLightItems[lightIndex].specular = CreateColorItem("Specular", newLightItem);
    }
+
+   // Set the default light to "on"
+   QTreeWidgetItem* light0 = mLightItems[0].type->parent();
+   light0->setText(1, "Enabled");   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -352,6 +362,32 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    alphaAmbientItem->setText(0, "a");
 
    return ambientItem;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& position)
+{
+   QString xString = QString("%1").arg(position.x());
+   QString yString = QString("%1").arg(position.y());
+   QString zString = QString("%1").arg(position.z());
+  
+   item->child(0)->setText(1, xString);
+   item->child(1)->setText(1, yString);
+   item->child(2)->setText(1, zString);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color)
+{
+   QString rString = QString("%1").arg(color.x());
+   QString gString = QString("%1").arg(color.y());
+   QString bString = QString("%1").arg(color.z());
+   QString aString = QString("%1").arg(color.w());
+
+   item->child(0)->setText(1, rString);
+   item->child(1)->setText(1, gString);
+   item->child(2)->setText(1, bString);
+   item->child(3)->setText(1, aString);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

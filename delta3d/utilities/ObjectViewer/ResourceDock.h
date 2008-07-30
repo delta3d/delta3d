@@ -34,6 +34,8 @@ class QTabWidget;
 class QTreeWidget;
 class QTreeWidgetItem;
 
+struct LightInfo;
+
 namespace dtCore
 {
    class Light;
@@ -78,7 +80,7 @@ public slots:
    void OnNewGeometry(const std::string &path, const std::string &filename);
    void OnGeometryItemChanged(QTreeWidgetItem *item, int column);
    
-   void OnLightUpdate(const dtCore::Light* light);
+   void OnLightUpdate(const LightInfo& lightInfo);
 
    void OnOpenCurrentVertexShaderSources();
    void OnOpenCurrentFragmentShaderSources();
@@ -109,6 +111,9 @@ private:
 
    QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
+
+   void SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& position);
+   void SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color);
 
    void OpenFilesInTextEditor(const std::vector<std::string>& fileList);
 };

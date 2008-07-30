@@ -41,6 +41,8 @@
 
 class QColor;
 
+struct LightInfo;
+
 namespace dtCore
 {
    class OrbitMotionModel;
@@ -65,7 +67,8 @@ class ObjectViewer: public QObject, public dtABC::Application
 {
    Q_OBJECT
 
-public:
+public:   
+
 	ObjectViewer();
 	~ObjectViewer();
 
@@ -93,7 +96,7 @@ signals:
 
    void ShaderLoaded(const std::string &shaderGroup, const std::string &shaderName);   
    void ErrorOccured(const QString &msg);
-   void LightUpdate(const dtCore::Light* light);
+   void LightUpdate(const LightInfo& lightInfo);
 
 protected:
    virtual void PostFrame(const double deltaFrameTime);  
