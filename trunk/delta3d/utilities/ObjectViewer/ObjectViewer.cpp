@@ -123,6 +123,8 @@ void ObjectViewer::Config()
    OnSetShaded();
    OnToggleGrid(true);
 
+   OnEnterObjectMode();
+
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
@@ -278,17 +280,17 @@ void ObjectViewer::OnAddLight(int id)
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterObjectMode()
 {
-   mLightMotion->SetTarget(NULL);
-   mModelMotion->SetTarget(GetCamera());   
+   mModelMotion->SetEnabled(true);
+   mLightMotion->SetEnabled(false);   
 
-   //mLightArrowTransformable->GetMatrixNode()->setNodeMask(0x0);
+   mLightArrowTransformable->GetMatrixNode()->setNodeMask(0x0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterLightMode()
 {  
-   mModelMotion->SetTarget(NULL);
-   mLightMotion->SetTarget(mLightArrowTransformable.get());      
+   mModelMotion->SetEnabled(false);
+   mLightMotion->SetEnabled(true);  
    
    mLightArrowTransformable->GetMatrixNode()->setNodeMask(0xffffffff);
 }
