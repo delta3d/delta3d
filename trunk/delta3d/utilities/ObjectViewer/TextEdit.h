@@ -48,12 +48,12 @@
 #include <QtCore/QMap>
 #include <QtCore/QPointer>
 
-QT_FORWARD_DECLARE_CLASS(QAction)
-QT_FORWARD_DECLARE_CLASS(QComboBox)
-QT_FORWARD_DECLARE_CLASS(QFontComboBox)
-QT_FORWARD_DECLARE_CLASS(QTextEdit)
-QT_FORWARD_DECLARE_CLASS(QTextCharFormat)
-QT_FORWARD_DECLARE_CLASS(QMenu)
+class QAction;
+class QComboBox;
+class QFontComboBox;
+class QTextEdit;
+class QTextCharFormat;
+class QMenu;
 
 class TextEdit : public QMainWindow
 {
@@ -104,19 +104,19 @@ private:
     void alignmentChanged(Qt::Alignment a);
 
     QAction *actionSave,
-        *actionTextBold,
-        *actionTextUnderline,
-        *actionTextItalic,
-        *actionTextColor,
-        *actionAlignLeft,
-        *actionAlignCenter,
-        *actionAlignRight,
-        *actionAlignJustify,
-        *actionUndo,
-        *actionRedo,
-        *actionCut,
-        *actionCopy,
-        *actionPaste;    
+            *actionTextBold,
+            *actionTextUnderline,
+            *actionTextItalic,
+            *actionTextColor,
+            *actionAlignLeft,
+            *actionAlignCenter,
+            *actionAlignRight,
+            *actionAlignJustify,
+            *actionUndo,
+            *actionRedo,
+            *actionCut,
+            *actionCopy,
+            *actionPaste;    
    
     QString fileName;
     QTextEdit *textEdit;
