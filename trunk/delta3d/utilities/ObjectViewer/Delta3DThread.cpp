@@ -117,8 +117,8 @@ void Delta3DThread::run()
    connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)), 
            mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));  
 
-   connect(mViewer.get(), SIGNAL(LightUpdate(const dtCore::Light*)),
-           mWin->GetResourceObject(), SLOT(OnLightUpdate(const dtCore::Light*)));
+   connect(mViewer.get(), SIGNAL(LightUpdate(const LightInfo&)),
+           mWin->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
 
