@@ -77,9 +77,7 @@ private slots:
     void fileOpen();
     bool fileSave();
     bool fileSaveAs();
-    void filePrint();
-    void filePrintPreview();
-    void filePrintPdf();
+    void filePrint();    
 
     void textBold();
     void textUnderline();
@@ -95,7 +93,6 @@ private slots:
 
     void clipboardDataChanged();
     void about();
-    void printPreview(QPrinter *);
 
 private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
