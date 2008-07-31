@@ -15,8 +15,7 @@ DeltaDrawable::DeltaDrawable(const std::string& name)
 :  Base(name),
    mParent(NULL), 
    mParentScene(NULL),
-   mIsActive(true),
-   mActiveNodeMask(0xffffffff)
+   mIsActive(true)
 {
    RegisterInstance(this);
 }
@@ -177,6 +176,25 @@ void DeltaDrawable::AddedToScene( Scene *scene )
    {
       (*itr)->AddedToScene(scene);
    }
+
+   //If we've been set to inactive before being added to a Scene,
+   //then we need to do add in our Switch node.  If we've just been
+   //removed from a Scene and we're inactive, then we should remove our Switch
+   if (mParentScene != NULL)
+   {
+      if (GetActive() == false)
+      {
+         InsertSwitchNode();
+      }
+   }
+   else
+   {
+      //we've just been removed from a scene
+      if (GetActive() == false)
+      {
+         RemoveSwitchNode();
+      }
+   }
 }
 
 /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
@@ -228,22 +246,20 @@ void DeltaDrawable::SetActive(bool enable)
 
    mIsActive = enable;
 
-   if (mIsActive == true)
+   if (mParentScene == NULL)
    {
-      if (GetOSGNode()->getNodeMask() != 0x0)
-      {
-         //error: the user must have set the node mask while the 
-         //DeltaDrawable was disabled. tsk tsk
-         LOG_ERROR("User supplied DeltaDrawable node mask will be overwritten.");
-      }
-
-      GetOSGNode()->setNodeMask(mActiveNodeMask);
+      //if we haven't been added to a Scene yet, then we are already effectively
+      //inactive.  Once we get added to a Scene, we'll make sure we remain inactive.
+      return;
+   }
+   
+   if (mIsActive == false)
+   {
+      InsertSwitchNode();
    }
    else
    {
-      //save off the existing, non-NULL, node mask
-      mActiveNodeMask = GetOSGNode()->getNodeMask();
-      GetOSGNode()->setNodeMask(0x0); //turn it off
+      RemoveSwitchNode();
    }
 }
 
@@ -251,4 +267,60 @@ void DeltaDrawable::SetActive(bool enable)
 bool DeltaDrawable::GetActive() const
 {
    return mIsActive;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawable::InsertSwitchNode()
+{
+   //save off all parents of the Node
+   osg::Node::ParentList parents = GetOSGNode()->getParents();
+
+   //remove the Node from all its parents
+   osg::Node::ParentList::iterator parentItr = parents.begin();
+   while (parentItr != parents.end())
+   {
+      (*parentItr)->removeChild(GetOSGNode());
+      ++parentItr;
+   }
+
+   osg::ref_ptr<osg::Switch> parentSwitch = new osg::Switch();
+   parentSwitch->setAllChildrenOff();
+
+   //add the Node as a child of parentSwitch
+   parentSwitch->addChild(GetOSGNode());
+
+   //add parentSwitch to all of the Node's parents
+   parentItr = parents.begin();
+   while (parentItr != parents.end())
+   {
+      (*parentItr)->addChild(parentSwitch.get());
+      ++parentItr;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::RemoveSwitchNode()
+{
+   osg::Switch *parentSwitch = dynamic_cast<osg::Switch*>(GetOSGNode()->getParent(0));
+   
+   if (parentSwitch == NULL) {return;}
+
+   //save off all parents of the Switch Node
+   osg::Node::ParentList parents = parentSwitch->getParents();
+
+   //remove the Switch node from all its parents
+   osg::Node::ParentList::iterator parentItr = parents.begin();
+   while (parentItr != parents.end())
+   {
+      (*parentItr)->removeChild(parentSwitch);
+      ++parentItr;
+   }
+
+   //Add the Node as a child to what was the Switch node's parents
+   parentItr = parents.begin();
+   while (parentItr != parents.end())
+   {
+      (*parentItr)->addChild(GetOSGNode());
+      ++parentItr;
+   }
 }

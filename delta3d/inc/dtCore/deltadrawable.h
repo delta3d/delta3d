@@ -27,7 +27,6 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include <osg/Node>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -170,6 +169,12 @@ namespace dtCore
          DeltaDrawable& operator=( const DeltaDrawable& ); 
          DeltaDrawable( const DeltaDrawable& );
 
+         ///Insert a new Switch Node above GetOSGNode() and below it's parents
+         void InsertSwitchNode();
+
+         ///Remove Switch Node above GetOSGNode()
+         void RemoveSwitchNode();
+
          DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
 
          typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
@@ -180,7 +185,6 @@ namespace dtCore
          RefPtr<osg::Node> mProxyNode;
 
          bool mIsActive; ///<Is this DeltaDrawable active (rendering)
-         osg::Node::NodeMask mActiveNodeMask; ///<The last known node mask corresponding to its active state.
    };
 }
 
