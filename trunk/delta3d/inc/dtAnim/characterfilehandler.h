@@ -112,6 +112,10 @@ namespace dtAnim
       static const std::string LOD_END_DISTANCE_ELEMENT;
       static const std::string MAX_VISIBLE_DISTANCE_ELEMENT;
 
+	  static const std::string CharacterFileHandler::SCALE_ELEMENT;
+	  static const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT;
+
+
    public:
    	CharacterFileHandler();
    	~CharacterFileHandler();
@@ -139,6 +143,9 @@ namespace dtAnim
       //need these definitions to properly export a std::vector<std::string>
       template class DT_ANIM_EXPORT std::allocator<std::string>;
       template class DT_ANIM_EXPORT std::vector<std::string>;
+	
+	  // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
+	  #pragma warning(disable : 4251)
 #endif
 
       ///structure to contain all info related to an animation
@@ -196,6 +203,9 @@ namespace dtAnim
 
       double mLODStartDistance, mLODEndDistance, mLODMaxVisibleDistance;
       bool mFoundLODOptions;
+
+	  bool  mFoundScale; 
+	  float mScale; ///< The scaling factor
       
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
@@ -209,12 +219,14 @@ namespace dtAnim
       void AnimChannelCharacters(const XMLCh* const chars);
       void AnimSequenceCharacters(const XMLCh* const chars);
       void LODCharacters(const XMLCh* const chars);
+      void ScaleCharacters(const XMLCh* const chars);
 
       typedef std::stack<std::string> ElementStack;
       ElementStack mElements;
       
       bool mInSkinningShader;
       bool mInLOD;
+	  bool mInScale;
       bool mInChannel;
       bool mInSequence;
       dtUtil::Log* mLogger;

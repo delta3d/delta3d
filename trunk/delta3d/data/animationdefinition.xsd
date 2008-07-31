@@ -8,6 +8,7 @@
             <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="LOD" />
+            <xs:element ref="scale" />
             <xs:element ref="skinningShader" />
             <xs:element ref="animationChannel" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="animationSequence" minOccurs="0" maxOccurs="unbounded" />
@@ -63,6 +64,13 @@
             <xs:element name="lodStartDistance" type="xs:float" />
             <xs:element name="lodEndDistance" type="xs:float" />
             <xs:element name="maxVisibleDistance" type="xs:float" minOccurs="0" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="scale">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="scalingFactor" type="xs:float" />
          </xs:sequence>
       </xs:complexType>
    </xs:element>
