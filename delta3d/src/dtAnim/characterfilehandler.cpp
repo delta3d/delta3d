@@ -65,6 +65,9 @@ const std::string CharacterFileHandler::LOD_START_DISTANCE_ELEMENT("lodStartDist
 const std::string CharacterFileHandler::LOD_END_DISTANCE_ELEMENT("lodEndDistance");
 const std::string CharacterFileHandler::MAX_VISIBLE_DISTANCE_ELEMENT("maxVisibleDistance");
 
+const std::string CharacterFileHandler::SCALE_ELEMENT("scale");
+const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT("scalingFactor");
+
 CharacterFileHandler::AnimatableStruct::AnimatableStruct():
    mStartDelay(0.0f), 
    mFadeIn(0.0f), 
@@ -95,10 +98,13 @@ CharacterFileHandler::CharacterFileHandler()
 , mLODEndDistance(500.0)
 , mLODMaxVisibleDistance(1000.0)
 , mFoundLODOptions(false)
+, mScale(1.0f)
+, mFoundScale(false)
 , mAnimationChannels()
 , mSkeletonFilename()
 , mInSkinningShader(false)
 , mInLOD(false)
+, mInScale(false)
 , mInChannel(false)
 , mInSequence(false)
 , mLogger(NULL)
@@ -128,9 +134,11 @@ void CharacterFileHandler::startDocument()
    mSkeletonFilename.clear();
 
    mFoundLODOptions = false;
+   mFoundScale = false;
 
    mInSkinningShader = false;
    mInLOD = false;
+   mInScale = false;
    mInChannel = false;
    mInSequence = false;
 }
@@ -288,6 +296,11 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       mInLOD = true;
       mFoundLODOptions = true;
    }
+   else if (elementStr == SCALE_ELEMENT)
+   {
+      mInScale = true;
+      mFoundScale = true;
+   }
    else if (elementStr == CHANNEL_ELEMENT)
    {      
       mInChannel = true;
@@ -341,6 +354,10 @@ void CharacterFileHandler::endElement(
    { 
       mInLOD = false;
    }
+   else if(elementStr == SCALE_ELEMENT)
+   { 
+	   mInScale = false;
+   }
    else if(elementStr == CHANNEL_ELEMENT)
    { 
       mInChannel = false;
@@ -373,6 +390,10 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
    else if (mInLOD)
    {
       LODCharacters(chars);
+   }
+   else if (mInScale)
+   {
+      ScaleCharacters(chars);
    }
    else if (mInChannel)
    {
@@ -419,6 +440,13 @@ void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
    {
       mLODMaxVisibleDistance = value;
    }
+}
+
+void CharacterFileHandler::ScaleCharacters(const XMLCh* const chars)
+{
+   mScale = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
+   std::string& topEl = mElements.top();
+   assert (topEl == SCALE_FACTOR_ELEMENT);
 }
 
 bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable)
