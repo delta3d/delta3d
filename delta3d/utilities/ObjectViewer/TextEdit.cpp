@@ -65,7 +65,6 @@
 #include <QtCore/QtDebug>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QMessageBox>
-#include <QtGui/QPrintPreviewDialog>
 
 #ifdef Q_WS_MAC
 const QString rsrcPath = ":/images/mac";
@@ -180,16 +179,7 @@ void TextEdit::setupFileActions()
     a = new QAction(QIcon(rsrcPath + "/fileprint.png"), tr("&Print..."), this);
     a->setShortcut(QKeySequence::Print);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));   
-    menu->addAction(a);
-
-    a = new QAction(QIcon(rsrcPath + "/fileprint.png"), tr("Print Preview..."), this);
-    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
-    menu->addAction(a);
-
-    a = new QAction(QIcon(rsrcPath + "/exportpdf.png"), tr("&Export PDF..."), this);
-    a->setShortcut(Qt::CTRL + Qt::Key_D);
-    connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));   
-    menu->addAction(a);
+    menu->addAction(a);  
 
     menu->addSeparator();
 
@@ -394,42 +384,6 @@ void TextEdit::filePrint()
         textEdit->print(&printer);
     }
     delete dlg;
-#endif
-}
-
-void TextEdit::filePrintPreview()
-{
-#ifndef QT_NO_PRINTER
-    QPrinter printer(QPrinter::HighResolution);
-    QPrintPreviewDialog preview(&printer, this);
-    connect(&preview, SIGNAL(paintRequested(QPrinter *)), SLOT(printPreview(QPrinter *)));
-    preview.exec();
-#endif
-}
-
-void TextEdit::printPreview(QPrinter *printer)
-{
-#ifndef QT_NO_PRINTER
-    textEdit->print(printer);
-#endif
-}
-
-
-void TextEdit::filePrintPdf()
-{
-#ifndef QT_NO_PRINTER
-//! [0]
-    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
-                                                    QString(), "*.pdf");
-    if (!fileName.isEmpty()) {
-        if (QFileInfo(fileName).suffix().isEmpty())
-            fileName.append(".pdf");
-        QPrinter printer(QPrinter::HighResolution);
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setOutputFileName(fileName);
-        textEdit->document()->print(&printer);
-    }
-//! [0]
 #endif
 }
 
