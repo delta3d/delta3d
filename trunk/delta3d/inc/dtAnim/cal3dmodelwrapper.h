@@ -208,6 +208,13 @@ namespace dtAnim
          ///Get the name associated with the material using the supplied material ID
          const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
 
+         /** 
+          * Apply a scaling factor to the core model.  May need to rebuild
+          * any local geometry after calling this.
+          * @param scaleFactor : amount to scale the character (2.0 = double the size)
+          */
+         void ApplyCoreModelScaleFactor(float scaleFactor) const;
+
          /************************************************************************/
          int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
          int GetNormals(float *normals, int stride=0) { return mRenderer->getNormals(normals, stride); }

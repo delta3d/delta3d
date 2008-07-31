@@ -70,13 +70,14 @@ namespace dtAnim
       /// change the data this class is viewing.
       void SetCal3DWrapper(Cal3DModelWrapper* wrapper);
 
+      ///Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer
+      void RebuildSubmeshes();
+
    protected:
       dtCore::RefPtr<Cal3DAnimator> mAnimator;
       dtCore::RefPtr<osg::Node>     mNode;
       int mLastMeshCount;
 
-      ///Delete and rebuild all the SubMeshDrawables required, based on the CalRenderer
-      void RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode);
 
    private:
       CharDrawable();

@@ -18,6 +18,7 @@ class QTableView;
 class PoseMeshView;
 class PoseMeshScene;
 class PoseMeshProperties;
+class QDoubleSpinBox;
 
 namespace dtQt
 {
@@ -47,6 +48,7 @@ signals:
    void StartAction(unsigned int, float, float);
    void LODScale_Changed(float scaleValue);
    void SpeedChanged(float speedFactor);
+   void ScaleFactorChanged(float scaleFactorValue);
 
    //Show the mesh on the CalModel
    void ShowMesh(int meshID);
@@ -72,9 +74,11 @@ public slots:
    void OnMeshActivated( QListWidgetItem *item );
    void OnLODScale_Changed(double newValue);
    void OnSpeedChanged(double newValue);
+   void OnChangeScaleFactor();
    void OnToggleHardwareSkinning();
    void OnToggleShadingToolbar();
    void OnToggleLODScaleToolbar();
+   void OnToggleScalingToolbar();
    void OnToggleLightingToolbar(); 
    void OnDisplayError( const QString &msg );
 	
@@ -104,6 +108,9 @@ private:
    QToolBar *mLightingToolbar;
    QToolBar *mLODScaleToolbar;
    QToolBar *mSpeedToolbar;
+   QToolBar *mScalingToolbar;
+
+   QDoubleSpinBox *mScaleFactorSpinner;
 
    QTabWidget  *mTabs;
 
