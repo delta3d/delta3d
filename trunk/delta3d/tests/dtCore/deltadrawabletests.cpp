@@ -22,6 +22,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtCore/system.h>
+#include <dtABC/application.h>
 
 #include <osg/MatrixTransform>
 #include <osg/io_utils>
@@ -30,6 +32,8 @@
 
 using namespace dtCore;
 
+extern dtABC::Application& GetGlobalApplication();
+
 class DeltaDrawableTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(DeltaDrawableTests);  
@@ -37,6 +41,9 @@ class DeltaDrawableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(FailedGetChildByIndex);
    CPPUNIT_TEST(ValidGetChildByIndex);
    CPPUNIT_TEST(TestActive);
+   CPPUNIT_TEST(TestDeactive);
+   CPPUNIT_TEST(TestDeactiveThenAddedToScene);
+   CPPUNIT_TEST(TestDeactiveAddedToSceneThenActive);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -46,6 +53,9 @@ public:
    void FailedGetChildByIndex();
    void ValidGetChildByIndex();
    void TestActive();
+   void TestDeactive();
+   void TestDeactiveThenAddedToScene();
+   void TestDeactiveAddedToSceneThenActive();
 
 private:
 
@@ -160,12 +170,32 @@ void DeltaDrawableTests::ValidGetChildByIndex()
    CPPUNIT_ASSERT_MESSAGE("Should be the second child", parent->GetChild(1) == childTwo.get() );
 }
 
+//////////////////////////////////////////////////////////////////////////
 class TestDrawable : public dtCore::DeltaDrawable
 {
 public:
+
+   class CullCallback : public osg::NodeCallback
+   {
+   public:
+      CullCallback():
+         mTraversed(false)
+         {}
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      { 
+         mTraversed = true;
+         traverse(node,nv);
+      }
+
+      bool mTraversed;
+   };
+
    TestDrawable():
-      mNode(new osg::Group())
+      mNode(new osg::Group()),
+      mCullCallback(new CullCallback())
    {      
+      mNode->setCullCallback(mCullCallback.get());
    }
 
    ~TestDrawable() {};
@@ -173,32 +203,93 @@ public:
    const osg::Node *GetOSGNode(void) const {return mNode.get();}
    osg::Node *GetOSGNode(void) { return mNode.get(); }
 
-private:
    osg::ref_ptr<osg::Group> mNode;
+   osg::ref_ptr<CullCallback> mCullCallback;
 };
 
-
+//////////////////////////////////////////////////////////////////////////
 void DeltaDrawableTests::TestActive()
 {
+   //control test.  Verify defaults case, should render
    using namespace dtCore;
 
    RefPtr<TestDrawable> draw = new TestDrawable();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should be enabled", true, draw->GetActive());
-   CPPUNIT_ASSERT_MESSAGE("Node mask should not be 0x0", unsigned(0x0) != draw->GetOSGNode()->getNodeMask() );
 
+   RefPtr<Scene> scene = GetGlobalApplication().GetScene();
+   scene->AddDrawable(draw.get());
+
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should have rendered", true, draw->mCullCallback->mTraversed);
+
+   System::GetInstance().Stop();
+   scene->RemoveDrawable(draw.get());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestDeactive()
+{
+   //Added to scene, deactivated.  Should not render
+   using namespace dtCore;
+
+   RefPtr<TestDrawable> draw = new TestDrawable();
+
+   RefPtr<Scene> scene = GetGlobalApplication().GetScene();
+   scene->AddDrawable(draw.get());
+   
    draw->SetActive(false);
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should be disabled", false, draw->GetActive());
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be 0x0", unsigned(0x0), draw->GetOSGNode()->getNodeMask() );
+   System::GetInstance().Start();
+   System::GetInstance().Step();
 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should not have rendered", false, draw->mCullCallback->mTraversed);
 
-   //check if the node mask we set it to remains after toggling it off/on
-   draw->SetActive(true);
-   const unsigned int nodeMask = 0x00001111;
-   draw->GetOSGNode()->setNodeMask(nodeMask);
+   System::GetInstance().Stop();
+   scene->RemoveDrawable(draw.get());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestDeactiveThenAddedToScene()
+{
+   //deactive, added to scene.  Should not render
+   using namespace dtCore;
+
+   RefPtr<TestDrawable> draw = new TestDrawable();
    draw->SetActive(false);
+
+   RefPtr<Scene> scene = GetGlobalApplication().GetScene();
+   scene->AddDrawable(draw.get());
+
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should not have rendered", false, draw->mCullCallback->mTraversed);
+
+   System::GetInstance().Stop();
+   scene->RemoveDrawable(draw.get());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void DeltaDrawableTests::TestDeactiveAddedToSceneThenActive()
+{
+   //deactived, added to scene, then activated. Should render
+   using namespace dtCore;
+
+   RefPtr<TestDrawable> draw = new TestDrawable();
+   draw->SetActive(false);
+
+   RefPtr<Scene> scene = GetGlobalApplication().GetScene();
+   scene->AddDrawable(draw.get());
+
    draw->SetActive(true);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be what it was set to before being disabled",
-                                 nodeMask, draw->GetOSGNode()->getNodeMask());
+   System::GetInstance().Start();
+   System::GetInstance().Step();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DeltaDrawable should have rendered", true, draw->mCullCallback->mTraversed);
+
+   System::GetInstance().Stop();
+   scene->RemoveDrawable(draw.get());
 }

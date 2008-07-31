@@ -79,6 +79,8 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestGetTransformWithDisabledCamera);
    CPPUNIT_TEST(TestGetTransformInSceneWithNoCamera);
    CPPUNIT_TEST(TestGetTransformNotInScene);
+   CPPUNIT_TEST(TestGetTransformFromInactiveTransformable);
+   CPPUNIT_TEST(TestGetTransformFromInactiveParent);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -108,6 +110,8 @@ public:
    void TestGetTransformWithDisabledCamera();
    void TestGetTransformInSceneWithNoCamera();
    void TestGetTransformNotInScene();
+   void TestGetTransformFromInactiveTransformable();
+   void TestGetTransformFromInactiveParent();
 
 private:
    bool CompareMatrix(const osg::Matrix& rhs, const osg::Matrix& lhs) const;
@@ -792,3 +796,60 @@ void TransformableTests::TestGetTransformNotInScene()
    CPPUNIT_ASSERT_MESSAGE("Transformable's GetTransform didn't match the SetTransform, when not in a Scene.",
                            dtUtil::Equivalent(startXYZ, endXform.GetTranslation(), TEST_EPSILON) );
 }
+
+//////////////////////////////////////////////////////////////////////////
+void TransformableTests::TestGetTransformFromInactiveTransformable()
+{
+   using namespace dtCore;
+
+   RefPtr<Transformable> transformable = new Transformable();
+   transformable->SetName("testNode");
+
+   Transform startXform;
+   const osg::Vec3 startXYZ(1.f, 2.f, 3.f);
+   startXform.SetTranslation(startXYZ);
+
+   transformable->SetTransform(startXform);
+
+   transformable->SetActive(false);
+
+   Transform endXform;
+   transformable->GetTransform(endXform);
+
+   CPPUNIT_ASSERT_MESSAGE("Transformable's GetTransform didn't match the SetTransform, when InActive.",
+                         dtUtil::Equivalent(startXYZ, endXform.GetTranslation(), TEST_EPSILON) );
+}
+
+//////////////////////////////////////////////////////////////////////////
+void TransformableTests::TestGetTransformFromInactiveParent()
+{
+   using namespace dtCore;
+   RefPtr<Transformable> parent = new Transformable();
+   parent->SetName("parent");
+   Transform parentStart;
+   const osg::Vec3 parentStartXYZ(10.f, 10.f, 10.f);
+   parentStart.SetTranslation(parentStartXYZ);
+   parent->SetTransform(parentStart);
+   parent->SetActive(false);
+
+   RefPtr<Scene> scene = new dtCore::Scene();
+   scene->AddDrawable(parent.get());
+
+   RefPtr<Transformable> child = new Transformable();
+   child->SetName("child");
+
+   parent->AddChild(child.get());
+   child->SetActive(true);
+
+   Transform startXform;
+   const osg::Vec3 childStartXYZ(1.f, 2.f, 3.f);
+   startXform.SetTranslation(childStartXYZ);
+   child->SetTransform(startXform, Transformable::REL_CS);
+
+   Transform endXform;
+   child->GetTransform(endXform, Transformable::ABS_CS);
+
+   CPPUNIT_ASSERT_MESSAGE("A child Transformable's GetTransform() didn't add up when parent is InActive.",
+      dtUtil::Equivalent(childStartXYZ+parentStartXYZ, endXform.GetTranslation(), TEST_EPSILON) );
+}
+
