@@ -121,7 +121,7 @@ class TimingListener : public CppUnit::TestListener
          timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
          testResult << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") <<
             ": time [" << timeDelta << "]";
-         if (timeDelta > 2.0)
+         if (timeDelta > 0.7)
          {
             testResult << " *** SLOW TEST ***";
             mSlowTests << testResult.str() << std::endl;
