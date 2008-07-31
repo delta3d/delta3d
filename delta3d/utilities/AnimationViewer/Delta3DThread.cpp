@@ -113,6 +113,7 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(StartAction(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAction(unsigned int,float,float)));
    connect(mWin, SIGNAL(LODScale_Changed(float)), mViewer.get(), SLOT(OnLODScale_Changed(float)));
    connect(mWin, SIGNAL(SpeedChanged(float)), mViewer.get(), SLOT(OnSpeedChanged(float)));
+   connect(mWin, SIGNAL(ScaleFactorChanged(float)), mViewer.get(), SLOT(OnScaleFactorChanged(float)));
 
    connect(&mTimer, SIGNAL(timeout()), mViewer.get(), SLOT(OnTimeout()));
    connect(mViewer.get(), SIGNAL(BlendUpdate(const std::vector<float>&)), mWin, SLOT(OnBlendUpdate(const std::vector<float>&)));

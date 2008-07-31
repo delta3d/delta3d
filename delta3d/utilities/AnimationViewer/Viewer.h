@@ -56,6 +56,7 @@ public slots:
    void OnStartAction     (unsigned int id, float delayIn, float delayOut);  
    void OnLODScale_Changed(float scaleValue);
    void OnSpeedChanged    (float speedFactor);
+   void OnScaleFactorChanged (float scaleFactorValue);
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();

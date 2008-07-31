@@ -25,6 +25,7 @@
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/cal3dmodeldata.h>
 #include <dtAnim/posemesh.h>
+#include <dtAnim/characterwrapper.h>
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/stringutils.h>
@@ -346,6 +347,16 @@ void Viewer::OnLODScale_Changed( float scaleValue )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnScaleFactorChanged(float scaleFactorValue)
+{
+   if (mCharacter.get())
+   {
+      mCharacter->GetCal3DWrapper()->ApplyCoreModelScaleFactor(scaleFactorValue);
+      mCharacter->RebuildSubmeshes();//need to rebuild our geometry to match the new mesh size
+   }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnSpeedChanged( float speedFactor )
 {
    dtCore::System::GetInstance().SetTimeScale(speedFactor);
@@ -500,5 +511,6 @@ void Viewer::PostFrame(const double)
       mMeshesToHide.clear();
    }
 }
+
 
 

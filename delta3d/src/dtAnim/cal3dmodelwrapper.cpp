@@ -454,6 +454,12 @@ namespace dtAnim
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor) const
+   {
+      mCalModel->getCoreModel()->scale(scaleFactor);
+   }
+
    void Cal3DModelWrapper::SetAnimationTime(float time)
    {
       mMixer->setAnimationTime(time);

@@ -59,7 +59,7 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
       if (mLastMeshCount != wrapper->GetMeshCount())
       {
          //there are a different number of meshes, better rebuild our drawables
-         RebuildSubmeshes(wrapper, mNode.get());
+         RebuildSubmeshes();
          mLastMeshCount = wrapper->GetMeshCount();
       }
    }
@@ -69,10 +69,10 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 /** Will delete all existing drawables added to the geode, then add in a whole
   * new set.
   */
-void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode)
+void CharDrawable::RebuildSubmeshes()
 {
-   GetMatrixNode()->removeChild(geode);
-   dtCore::RefPtr<osg::Node> newNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(wrapper);
+   GetMatrixNode()->removeChild(mNode.get());
+   dtCore::RefPtr<osg::Node> newNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(mAnimator->GetWrapper());
    GetMatrixNode()->addChild(newNode.get());
    mNode = newNode;
 }
@@ -80,7 +80,7 @@ void CharDrawable::RebuildSubmeshes(Cal3DModelWrapper* wrapper, osg::Node* geode
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
 {
    mAnimator->SetWrapper(wrapper);
-   RebuildSubmeshes(wrapper, mNode.get());
+   RebuildSubmeshes();
    mLastMeshCount = wrapper->GetMeshCount();
 }
 

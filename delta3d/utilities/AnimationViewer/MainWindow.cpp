@@ -50,6 +50,7 @@ MainWindow::MainWindow()
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
   , mGLWidget(NULL)
+  , mScaleFactorSpinner(NULL)
 {
    resize(800, 800);   
 
@@ -127,6 +128,7 @@ void MainWindow::CreateMenus()
    QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
    QAction *toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
    //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
+   QAction *toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
@@ -134,9 +136,12 @@ void MainWindow::CreateMenus()
    toggleLODScaleToolbarAction->setChecked(true);
    //toggleLightToolBarAction->setCheckable(true);
    //toggleLightToolBarAction->setChecked(true);
+   toggleScalingToolbarAction->setCheckable(true);
+   toggleScalingToolbarAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
    connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
+   connect(toggleScalingToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleScalingToolbar()));
 
    for (int i=0; i<5; ++i)
    {
@@ -199,16 +204,29 @@ void MainWindow::CreateToolbars()
    lodScaleSpinner->setRange(0.01, 500.0);
    lodScaleSpinner->setSingleStep(0.01);
    lodScaleSpinner->setValue(1);
+   lodScaleSpinner->setToolTip(tr("Level of Detail scale"));
 
    QDoubleSpinBox *speedSpinner = new QDoubleSpinBox(this);
    speedSpinner->setRange(0.0, 100.0);
    speedSpinner->setSingleStep(0.01);
    speedSpinner->setValue(1.0);
+   speedSpinner->setToolTip(tr("Animation Speed Scale Factor"));
+
+   mScaleFactorSpinner = new QDoubleSpinBox(this);
+   mScaleFactorSpinner->setRange(0.001, 500.0);
+   mScaleFactorSpinner->setSingleStep(0.01);
+   mScaleFactorSpinner->setValue(1);
+   mScaleFactorSpinner->setToolTip(tr("Scale Factor"));
 
    mShadingToolbar = addToolBar("Shading toolbar");
+   mShadingToolbar->setToolTip("Shading toolbar");
    mLODScaleToolbar= addToolBar("LOD Scale toolbar");
+   mLODScaleToolbar->setToolTip("LOD Scale toolbar");
    mSpeedToolbar   = addToolBar("Animation Speed toolbar");
+   mSpeedToolbar->setToolTip("Animation Speed toolbar");
    //mLightingToolbar = addToolBar("Lighting toolbar");
+   mScalingToolbar = addToolBar("Scaling toolbar");
+   mScalingToolbar->setToolTip("Scaling toolbar");
 
    mShadingToolbar->addAction(mWireframeAction);
    mShadingToolbar->addAction(mShadedAction);
@@ -217,8 +235,12 @@ void MainWindow::CreateToolbars()
    mShadingToolbar->addAction(mBoneBasisAction);
 
    mLODScaleToolbar->addWidget(lodScaleSpinner);
-   
    mSpeedToolbar->addWidget(speedSpinner);
+   mScalingToolbar->addWidget(mScaleFactorSpinner);
+   QPushButton* applyScaleFactorButton = new QPushButton(tr("Apply"), this);
+   applyScaleFactorButton->adjustSize();
+   applyScaleFactorButton->setToolTip(tr("Apply scale factor"));
+   mScalingToolbar->addWidget(applyScaleFactorButton);
    
    //QIcon diffuseIcon(":/images/diffuseLight.png");
    //QIcon pointLightIcon(":/images/pointLight.png");
@@ -228,6 +250,8 @@ void MainWindow::CreateToolbars()
   
    connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
+   connect(applyScaleFactorButton, SIGNAL(clicked()), this, SLOT(OnChangeScaleFactor()));
+   connect(mScaleFactorSpinner, SIGNAL(editingFinished()), this, SLOT(OnChangeScaleFactor()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,6 +298,9 @@ void MainWindow::LoadCharFile( const QString &filename )
       {
          mMaterialModel->removeRow(0);
       }
+
+      // reset the scale spinbox
+      mScaleFactorSpinner->setValue(1.0f);
 
       emit FileToLoad( filename );
 
@@ -596,6 +623,15 @@ void MainWindow::OnSpeedChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnChangeScaleFactor()
+{
+   emit ScaleFactorChanged(float(mScaleFactorSpinner->value()));
+
+   //reset the scaling factor to 1.0
+   mScaleFactorSpinner->setValue(1.0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleHardwareSkinning()
 {
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
@@ -642,6 +678,19 @@ void MainWindow::OnToggleLODScaleToolbar()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleScalingToolbar()
+{
+   if (mScalingToolbar->isHidden())
+   {
+      mScalingToolbar->show();
+   }
+   else
+   {
+      mScalingToolbar->hide();
+   }   
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnToggleLightingToolbar()
 {
 
