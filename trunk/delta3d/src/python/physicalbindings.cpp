@@ -12,11 +12,11 @@ using namespace dtCore;
 class PhysicalWrap : public Physical
 {
    public:
-      PhysicalWrap(PyObject* self, const std::string &name="Physcial")
+      PhysicalWrap(PyObject* self, const std::string &name="Physical")
          : Physical (name),
            mSelf(self) {}
 
-      PhysicalWrap (PyObject* self, TransformableNode &node, const std::string &name="Pysical")
+      PhysicalWrap (PyObject* self, TransformableNode &node, const std::string &name="Physical")
          : Physical (node, name),
            mSelf (self) {}
 
