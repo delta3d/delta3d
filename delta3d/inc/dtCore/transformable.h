@@ -71,7 +71,7 @@ namespace dtCore
          static CollisionGeomType MESH;
 
       private:
-         CollisionGeomType(const std::string &name) : dtUtil::Enumeration(name)
+         CollisionGeomType(const std::string& name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
@@ -89,7 +89,7 @@ namespace dtCore
       ///set to true.
       static const std::string COLLISION_GEODE_ID;
 
-      Transformable( const std::string& name = "Transformable" );
+      Transformable(const std::string& name = "Transformable");
 
       typedef osg::MatrixTransform TransformableNode;
 
@@ -98,7 +98,7 @@ namespace dtCore
       * @param node : A node this class should use internally
       * @param name : The name of this instance
       */
-      Transformable( TransformableNode &node, const std::string &name = "Transformable" );
+      Transformable(TransformableNode& node, const std::string &name = "Transformable");
 
    protected:
 
@@ -114,17 +114,17 @@ namespace dtCore
        * Transformable.
        * @pre matrixTransform != NULL
        */
-      void ReplaceMatrixNode( TransformableNode* matrixTransform );
+      void ReplaceMatrixNode(TransformableNode* matrixTransform);
 
       virtual ~Transformable();
 
    public:
 
       ///Add a DeltaDrawable child
-      virtual bool AddChild( DeltaDrawable* child );
+      virtual bool AddChild(DeltaDrawable* child);
 
       ///Remove a DeltaDrawable child
-      virtual void RemoveChild( DeltaDrawable* child );
+      virtual void RemoveChild(DeltaDrawable* child);
 
       /**
        * Sets the Transform to reposition this Transformable. Note that if this
@@ -165,7 +165,7 @@ namespace dtCore
       void SetMatrix(const osg::Matrix& mat);
 
       ///Render method for an object which may not have geometry
-      virtual void RenderProxyNode( bool enable = true );
+      virtual void RenderProxyNode(bool enable = true);
 
       /// Returns if we are rendering the proxy node
       virtual bool GetIsRenderingProxyNode() const { return mRenderProxyNode; }
@@ -177,10 +177,10 @@ namespace dtCore
        * @param wcMatrix The matrix to fill
        * @return Success
        */
-      static bool GetAbsoluteMatrix( const osg::Node* node, osg::Matrix& wcMatrix );
+      static bool GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix);
 
       ///Automatically rescales normals if you scale your objects.
-      void SetNormalRescaling( bool enable );
+      void SetNormalRescaling(bool enable);
 
       ///Checks if we are rescaling normals for this object.
       bool GetNormalRescaling() const;
@@ -213,7 +213,7 @@ namespace dtCore
        * CYLINDER : ( radius, length )
        * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
        */
-      void GetCollisionGeomDimensions( std::vector<float>& dimensions );
+      void GetCollisionGeomDimensions(std::vector<float>& dimensions);
 
       /**
        * Sets whether or not collisions detection will be performed.
@@ -224,7 +224,7 @@ namespace dtCore
        *
        * @param enabled true if the Transformable will perform collision detection
        */
-      void SetCollisionDetection( bool enabled );
+      void SetCollisionDetection(bool enabled);
 
       /**
        * Gets whether or not collisions with other Transformables
@@ -358,7 +358,7 @@ namespace dtCore
        * @param enable If true, the scene will now render the collision
        * geomertry.
        */
-      void RenderCollisionGeometry( bool enable = true );
+      void RenderCollisionGeometry(bool enable = true);
 
       /**
        * Are we currently rendering the collision geometry?
@@ -371,13 +371,13 @@ namespace dtCore
        * is done inside Scene::RegisterCollidable.
        * @param scene The Scene to which this Transformable is being added to.
        */
-      virtual void AddedToScene( Scene* scene );
+      virtual void AddedToScene(Scene* scene);
 
       /**
        * Set the category bits of this collision geom.
        * The defaults are listed in collisioncategorydefaults.h.
        */
-      void SetCollisionCategoryBits( unsigned long bits );
+      void SetCollisionCategoryBits(unsigned long bits);
 
       unsigned long GetCollisionCategoryBits() const;
 
@@ -387,7 +387,7 @@ namespace dtCore
        * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
        * comes in handy here. UNSIGNED_BIT(4) = 00000100
        */
-      void SetCollisionCollideBits( unsigned long bits );
+      void SetCollisionCollideBits(unsigned long bits);
 
       unsigned long GetCollisionCollideBits() const;
 
