@@ -284,7 +284,7 @@ void ObjectViewer::OnEnterObjectMode()
    mModelMotion->SetEnabled(true);
    mLightMotion->SetEnabled(false);   
 
-   mLightArrowTransformable->GetMatrixNode()->setNodeMask(0x0);
+   mLightArrow->SetActive(false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ void ObjectViewer::OnEnterLightMode()
    mModelMotion->SetEnabled(false);
    mLightMotion->SetEnabled(true);  
    
-   mLightArrowTransformable->GetMatrixNode()->setNodeMask(0xffffffff);
+   mLightArrow->SetActive(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
