@@ -26,6 +26,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QTabWidget>
 #include <QtGui/QTreeWidget>
+#include <QtGui/QColorDialog>
 
 #include <osg/LightSource>
 #include <dtCore/globals.h>
@@ -34,6 +35,7 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include <assert.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 ResourceDock::ResourceDock()
@@ -45,7 +47,7 @@ ResourceDock::ResourceDock()
   
    mGeometryTreeWidget = new QTreeWidget(this);
    mShaderTreeWidget   = new QTreeWidget(this);  
-   mLightTreeWidget     = new QTreeWidget(this);  
+   mLightTreeWidget    = new QTreeWidget(this);  
 
    mGeometryTreeWidget->headerItem()->setText(0, "");
    mShaderTreeWidget->headerItem()->setText(0, "");
@@ -56,6 +58,9 @@ ResourceDock::ResourceDock()
 
    connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
            this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int))); 
+
+   connect(mLightTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+           this, SLOT(OnLightItemClicked(QTreeWidgetItem*, int)));
 
    mTabs = new QTabWidget;
    mTabs->addTab(mGeometryTreeWidget, tr("Geometry"));
@@ -71,7 +76,7 @@ ResourceDock::ResourceDock()
 ResourceDock::~ResourceDock(){}
 
 ///////////////////////////////////////////////////////////////////////////////
-QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string &fullName) const
+QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) const
 {
    for (int itemIndex = 0; itemIndex < mGeometryTreeWidget->topLevelItemCount(); ++itemIndex)
    {
@@ -94,11 +99,11 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string &fullName) con
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string &name) const
+QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string& name) const
 {
    for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
    {
-      QTreeWidgetItem *childItem = mShaderTreeWidget->topLevelItem(itemIndex);
+      QTreeWidgetItem* childItem = mShaderTreeWidget->topLevelItem(itemIndex);
 
       if (name == childItem->text(0).toStdString())
       {
@@ -110,9 +115,9 @@ QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string &name) cons
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::SetGeometry(const std::string &fullName, bool shouldDisplay) const
+void ResourceDock::SetGeometry(const std::string& fullName, bool shouldDisplay) const
 {  
-   QTreeWidgetItem *geometryItem = FindGeometryItem(fullName);
+   QTreeWidgetItem* geometryItem = FindGeometryItem(fullName);
    
    if (geometryItem)
    {
@@ -121,14 +126,14 @@ void ResourceDock::SetGeometry(const std::string &fullName, bool shouldDisplay) 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::SetGeometry(QTreeWidgetItem *geometryItem, bool shouldDisplay) const
+void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay) const
 {
    std::string fullName = geometryItem->toolTip(0).toStdString();
    geometryItem->setCheckState(0, (shouldDisplay) ? Qt::Checked : Qt::Unchecked);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram)
+void ResourceDock::OnNewShader(const std::string& shaderGroup, const std::string& shaderProgram)
 {
    //// We don't want this signal emitted when we're adding a shader
    disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
@@ -309,10 +314,12 @@ void ResourceDock::CreateLightItems()
       QTreeWidgetItem* newLightItem = new QTreeWidgetItem;
       newLightItem->setText(0, oss.str().c_str());  
       newLightItem->setText(1, "Disabled");
+      newLightItem->setFlags(Qt::ItemIsEnabled);
 
       QTreeWidgetItem* type = new QTreeWidgetItem(newLightItem);
       type->setText(0, "Type");  
-      type->setText(1, "Infinite");      
+      type->setText(1, "Infinite");    
+      type->setFlags(Qt::ItemIsEnabled);
 
       mLightTreeWidget->addTopLevelItem(newLightItem);
 
@@ -333,6 +340,7 @@ QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* position = new QTreeWidgetItem(parent);
    position->setText(0, "Position");  
+   position->setFlags(Qt::ItemIsEnabled);
 
    QTreeWidgetItem* xItem = new QTreeWidgetItem(position);
    QTreeWidgetItem* yItem = new QTreeWidgetItem(position);
@@ -348,20 +356,21 @@ QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 ///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWidgetItem* parent)
 {
-   QTreeWidgetItem* ambientItem = new QTreeWidgetItem(parent);
-   ambientItem->setText(0, name.c_str());
+   QTreeWidgetItem* colorItem = new QTreeWidgetItem(parent);
+   colorItem->setText(0, name.c_str());
+   colorItem->setFlags(Qt::ItemIsEnabled);
 
-   QTreeWidgetItem* redAmbientItem   = new QTreeWidgetItem(ambientItem);
-   QTreeWidgetItem* greenAmbientItem = new QTreeWidgetItem(ambientItem);
-   QTreeWidgetItem* blueAmbientItem  = new QTreeWidgetItem(ambientItem);
-   QTreeWidgetItem* alphaAmbientItem = new QTreeWidgetItem(ambientItem);
+   QTreeWidgetItem* redItem   = new QTreeWidgetItem(colorItem);
+   QTreeWidgetItem* greenItem = new QTreeWidgetItem(colorItem);
+   QTreeWidgetItem* blueItem  = new QTreeWidgetItem(colorItem);
+   QTreeWidgetItem* alphaItem = new QTreeWidgetItem(colorItem);
 
-   redAmbientItem->setText(0, "r");
-   greenAmbientItem->setText(0, "g");
-   blueAmbientItem->setText(0, "b");
-   alphaAmbientItem->setText(0, "a");
+   redItem->setText(0, "r");
+   greenItem->setText(0, "g");
+   blueItem->setText(0, "b");
+   alphaItem->setText(0, "a");
 
-   return ambientItem;
+   return colorItem;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -379,6 +388,14 @@ void ResourceDock::SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& posit
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color)
 {
+   QColor qtColor(color.x(), 
+                  color.y(),
+                  color.z(),
+                  color.w());
+
+   QBrush newBrush(QColor::fromRgbF(color.x(), color.y(), color.z(), color.a()));    
+   item->setBackground(1, newBrush);
+
    QString rString = QString("%1").arg(color.x());
    QString gString = QString("%1").arg(color.y());
    QString bString = QString("%1").arg(color.z());
@@ -402,6 +419,71 @@ void ResourceDock::OpenFilesInTextEditor(const std::vector<std::string>& fileLis
       editor->load(fileName.c_str());
       editor->show();
    }      
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int ResourceDock::GetLightIDFromItem(const QTreeWidgetItem* item)
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   {
+      if (mLightItems[lightIndex].type     == item ||
+          mLightItems[lightIndex].position == item ||
+          mLightItems[lightIndex].ambient  == item ||
+          mLightItems[lightIndex].diffuse  == item ||
+          mLightItems[lightIndex].specular == item)
+      {
+         return lightIndex;
+      }
+   }
+
+   return -1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
+{
+   if (column == 1)
+   {
+      // Verify this is a light color item
+      bool isAmbient  = item->text(0) == QString("Ambient");
+      bool isDiffuse  = item->text(0) == QString("Diffuse");
+      bool isSpecular = item->text(0) == QString("Specular");
+
+      if (isAmbient || isDiffuse || isSpecular)
+      {
+         // Bring up the color picker
+         bool clickedOk = false;
+         QRgb pickedColor = QColorDialog::getRgba(0xffffffff, &clickedOk);
+
+         // If the ok button was pressed
+         if (clickedOk)
+         {
+            int lightID = GetLightIDFromItem(item);
+            assert(lightID != -1);
+
+            // Get the normalized color values
+            float red   = qRed(pickedColor) / 255.0f;
+            float green = qGreen(pickedColor) / 255.0f;
+            float blue  = qBlue(pickedColor) / 255.0f;
+            float alpha = qAlpha(pickedColor) / 255.0f;
+
+            osg::Vec4 lightColor(red, green, blue, alpha);
+
+            if (isAmbient)
+            {
+               emit SetAmbient(lightID, lightColor);
+            }
+            else if (isDiffuse)
+            {
+               emit SetDiffuse(lightID, lightColor);
+            }
+            else if (isSpecular)
+            {
+               emit SetSpecular(lightID, lightColor);
+            }
+         }         
+      }
+   }   
 }
 
 

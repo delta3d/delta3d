@@ -53,7 +53,6 @@ public:
 signals:
    void FileToLoad(const QString&);  
    void LoadShaderDefinition(const QString &);
-   void LoadGeometry(const QString &);
    void ReloadShaderDefinition(const QString &);
    
    void ToggleGrid(bool shouldShow);

@@ -49,6 +49,8 @@ private:
 
    ObjectWorkspace* mWin;
    std::string mStartupFile;
+
+   void MakeConnections();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

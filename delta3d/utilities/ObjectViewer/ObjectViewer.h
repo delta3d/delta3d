@@ -86,7 +86,12 @@ public slots:
    void OnSetWireframe();
    void OnSetShadedWireframe();
    void OnToggleGrid(bool shouldDisplay); 
+
+   // Lighting slots
    void OnAddLight(int id);
+   void OnSetAmbient(int id, const osg::Vec4& color);
+   void OnSetDiffuse(int id, const osg::Vec4& color);
+   void OnSetSpecular(int id, const osg::Vec4& color);
 
    // Usage mode slots
    void OnEnterObjectMode();

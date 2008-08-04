@@ -279,6 +279,27 @@ void ObjectViewer::OnAddLight(int id)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetAmbient(int id, const osg::Vec4& color)
+{
+   dtCore::Light* light = GetScene()->GetLight(id);
+   light->SetAmbient(color);  
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetDiffuse(int id, const osg::Vec4& color)
+{
+   dtCore::Light* light = GetScene()->GetLight(id);
+   light->SetDiffuse(color);  
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
+{
+   dtCore::Light* light = GetScene()->GetLight(id);
+   light->SetSpecular(color);  
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterObjectMode()
 {
    mModelMotion->SetEnabled(true);
