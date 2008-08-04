@@ -55,30 +55,34 @@ public:
    ResourceDock();  
    virtual ~ResourceDock();
 
-   QTreeWidgetItem* FindGeometryItem(const std::string &fullName) const;
-   QTreeWidgetItem* FindShaderGroupItem(const std::string &name) const;
+   QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
+   QTreeWidgetItem* FindShaderGroupItem(const std::string& name) const;
 
-   void SetGeometry(const std::string &fullName, bool shouldDisplay) const;
-   void SetGeometry(QTreeWidgetItem *geometryItem, bool shouldDisplay) const;
+   void SetGeometry(const std::string& fullName, bool shouldDisplay) const;
+   void SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay) const;
 
 signals:
 
-   void ApplyShader(const std::string &group, const std::string &name);
+   void ApplyShader(const std::string& group, const std::string& name);
    void RemoveShader();
 
-   void LoadGeometry(const std::string &filename);
+   void LoadGeometry(const std::string& filename);
    void UnloadGeometry();
 
    void AddLight();
    void RemoveLight(int id);
 
+   void SetAmbient(int id, const osg::Vec4& ambient);
+   void SetDiffuse(int id, const osg::Vec4& diffuse);
+   void SetSpecular(int id, const osg::Vec4& specular);
+
 public slots:
    
-   void OnNewShader(const std::string &shaderGroup, const std::string &shaderProgram);
-   void OnShaderItemChanged(QTreeWidgetItem *item, int column);
+   void OnNewShader(const std::string& shaderGroup, const std::string& shaderProgram);
+   void OnShaderItemChanged(QTreeWidgetItem* item, int column);
 
-   void OnNewGeometry(const std::string &path, const std::string &filename);
-   void OnGeometryItemChanged(QTreeWidgetItem *item, int column);
+   void OnNewGeometry(const std::string& path, const std::string& filename);
+   void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
    
    void OnLightUpdate(const LightInfo& lightInfo);
 
@@ -116,6 +120,13 @@ private:
    void SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color);
 
    void OpenFilesInTextEditor(const std::vector<std::string>& fileList);
+
+   int GetLightIDFromItem(const QTreeWidgetItem* item);
+
+private slots:
+
+   void OnLightItemClicked(QTreeWidgetItem* item, int column);
+
 };
 
 

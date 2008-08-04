@@ -95,32 +95,49 @@ void Delta3DThread::run()
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
    
    mViewer->Config();
-  
+
+   MakeConnections();    
+
+   dtCore::System::GetInstance().Start();  
+
+   mWin->OnInitialization();  
+   mWin->OnLoadGeometry(mStartupFile.c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Delta3DThread::MakeConnections()
+{
    connect(mWin, SIGNAL(LoadShaderDefinition(const QString&)), 
-           mViewer.get(), SLOT(OnLoadShaderFile(const QString&)));
+      mViewer.get(), SLOT(OnLoadShaderFile(const QString&)));
 
    connect(mWin, SIGNAL(ReloadShaderDefinition(const QString&)), 
-           mViewer.get(), SLOT(OnReloadShaderFile(const QString&)));
+      mViewer.get(), SLOT(OnReloadShaderFile(const QString&)));  
 
-   connect(mWin, SIGNAL(LoadGeometry(const std::string&)),
-           mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
-   
    connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
-           mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
+      mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(UnloadGeometry()),
-           mViewer.get(), SLOT(OnUnloadGeometryFile()));
+      mViewer.get(), SLOT(OnUnloadGeometryFile()));
 
    connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string&, const std::string&)), 
-           mWin->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&)));
+      mWin->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)), 
-           mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));  
+      mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));  
 
    connect(mViewer.get(), SIGNAL(LightUpdate(const LightInfo&)),
-           mWin->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
+      mWin->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
+           mViewer.get(), SLOT(OnSetAmbient(int, const osg::Vec4&)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetDiffuse(int, const osg::Vec4&)),
+           mViewer.get(), SLOT(OnSetDiffuse(int, const osg::Vec4&)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
+           mViewer.get(), SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
    connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));   
 
@@ -130,11 +147,6 @@ void Delta3DThread::run()
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mLightModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterLightMode()));
    connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));
-
-   dtCore::System::GetInstance().Start();  
-
-   mWin->OnInitialization();  
-   mWin->OnLoadGeometry(mStartupFile.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
