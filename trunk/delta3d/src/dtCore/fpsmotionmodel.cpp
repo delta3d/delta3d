@@ -504,12 +504,13 @@ void FPSMotionModel::OnMessage(MessageData *data)
       IsEnabled() && (mOperateWhenUnfocused || mMouse->GetHasFocus()) &&
       data->message == "preframe")
    {
-      // use the real change in time, not the simulated time change
+      // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
-      double deltaFrameTime = static_cast<const double*>(data->userData)[1];
+      // The ideal solution would be to use options, like FlyMotionModel
+      double deltaFrameTime = static_cast<const double*>(data->userData)[0];
 
-      // clamp frame time to be no less then 20 fps
-      const double MAX_FRAME_TIME = 1.0 / 20.0;
+      // clamp frame time to be no more then 3 fps
+      const double MAX_FRAME_TIME = 1.0 / 3.0;
       if (deltaFrameTime > MAX_FRAME_TIME)
       {
          deltaFrameTime = MAX_FRAME_TIME;
