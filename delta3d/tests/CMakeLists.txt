@@ -131,7 +131,7 @@ IF (AUTO_RUN_TESTS)
   IF (WIN32)
     ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                           POST_BUILD
-                          COMMAND "\"$(TargetPath)\""
+                          COMMAND "$(TargetPath)"
                           COMMENT "Run the unit tests")  
   ELSE (WIN32)
      ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
