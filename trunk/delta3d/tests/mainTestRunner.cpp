@@ -46,7 +46,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
-#include <ctime>
+#include <ctime>   
 
 static std::ostringstream mSlowTests;
 
@@ -57,20 +57,20 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface(&oldInterface)
       {
       }
-
-      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
+      
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
          osg::GraphicsContext::ScreenIdentifier())
       {
          return mInterface->getNumScreens(screenIdentifier);
       }
 
-      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
                unsigned int& width, unsigned int& height)
       {
          mInterface->getScreenResolution(screenIdentifier, width, height);
       }
 
-      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
                unsigned int width, unsigned int height)
       {
          return mInterface->setScreenResolution(screenIdentifier, width, height);
@@ -96,11 +96,11 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
 
 static dtCore::RefPtr<dtABC::Application> GlobalApplication;
 
-dtABC::Application& GetGlobalApplication()
+dtABC::Application& GetGlobalApplication() 
 {
   GlobalApplication->GetScene()->RemoveAllDrawables();
   GlobalApplication->GetScene()->UseSceneLight(true);
-  return *GlobalApplication;
+  return *GlobalApplication; 
 }
 
 class TimingListener : public CppUnit::TestListener
@@ -111,7 +111,7 @@ class TimingListener : public CppUnit::TestListener
         mFailure = false;
         mTestClockStart = mTestClock.Tick();
      }
-
+ 
       void endTest( CppUnit::Test *test )
       {
          // handle timing - for checking slow tests
@@ -136,70 +136,46 @@ class TimingListener : public CppUnit::TestListener
 
     private:
        dtCore::Timer mTestClock;
-       dtCore::Timer_t mTestClockStart;
+       dtCore::Timer_t mTestClockStart; 
        bool mFailure;
 };
-
+ 
 
 int main(int argc, char* argv[])
 {
    const std::string executable = argv[0];
-   bool changeDir = true;
    std::string singleSuiteName;
    std::string singleTestName;
 
-   int arg = 1;
-   std::string currArg;
-   for (int arg = 1; arg < argc; ++arg)
-   {
-      currArg = argv[arg];
-      if (currArg == "-nochdir")
-      {
-         changeDir = false;
-      }
-      else if (singleSuiteName.empty())
-      {
-         singleSuiteName = currArg;
-      }
-      else if (singleSuiteName.empty())
-      {
-         singleTestName = currArg;
-      }
-      else
-      {
-         std::cerr << "Ignoring argument: " << currArg << std::endl;
-      }
-   }
+   // Get the test name from args.
+   if (argc > 1)
+      singleSuiteName = argv[1];
+   if (argc > 2)
+      singleTestName = argv[2];
 
-   if (changeDir)
+   // We need to change our directory based on the executable
+   dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
+   if(info.fileType == dtUtil::FILE_NOT_FOUND)
    {
-      // We need to change our directory based on the executable
-      dtUtil::FileInfo info = dtUtil::FileUtils::GetInstance().GetFileInfo(executable);
-      if(info.fileType == dtUtil::FILE_NOT_FOUND)
-      {
-         LOG_ERROR(std::string("Unable to change to the directory of application \"")
+      LOG_ERROR(std::string("Unable to change to the directory of application \"")
          + executable + "\": file not found.");
-      }
-      else
+   }
+   else
+   {
+      std::string path = info.path;
+      LOG_ALWAYS(std::string("Changing to directory \"") + info.path + "\".");
+
+      try 
       {
-         std::string path = info.path;
-         LOG_ALWAYS("The path to the executable is: " + path);
-         LOG_ALWAYS(std::string("Changing to directory \"") + path + dtUtil::FileUtils::PATH_SEPARATOR + "..\".");
-
-         try
-         {
-            if(!info.path.empty())
-               dtUtil::FileUtils::GetInstance().ChangeDirectory(path);
-
-            dtUtil::FileUtils::GetInstance().ChangeDirectory("..");
-         }
-         catch(const dtUtil::Exception &ex)
-         {
-            ex.LogException(dtUtil::Log::LOG_ERROR);
-         }
+         if(!info.path.empty())
+            dtUtil::FileUtils::GetInstance().ChangeDirectory(info.path);
+      } 
+      catch(const dtUtil::Exception &ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR);
       }
    }
-
+   
    //Set delta data.
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
@@ -207,7 +183,7 @@ int main(int argc, char* argv[])
    GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);
    GlobalApplication->Config();
 
-   ///Reset the windowing system for osg to use an embedded one.
+   ///Reset the windowing system for osg to use an embedded one. 
    osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
 
    if (winSys != NULL)
@@ -220,9 +196,9 @@ int main(int argc, char* argv[])
    try
    {
       dtCore::Timer testsClock;
-      dtCore::Timer_t testsTimerStart = testsClock.Tick();
+      dtCore::Timer_t testsTimerStart = testsClock.Tick(); 
 
-      CPPUNIT_NS::TestResult testResult;
+      CPPUNIT_NS::TestResult testResult;   
       testResult.addListener(&collectedResults);
       TimingListener timelistener;
       testResult.addListener(&timelistener);
@@ -231,7 +207,7 @@ int main(int argc, char* argv[])
       //to track down a test that is seg faulting.
       CPPUNIT_NS::BriefTestProgressListener brief;
       testResult.addListener(&brief);
-
+      
       // setup the test runner - does all the work
       CPPUNIT_NS::TestRunner testRunner;
       CPPUNIT_NS::Test *fullTestSuite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
@@ -243,7 +219,7 @@ int main(int argc, char* argv[])
          CPPUNIT_NS::Test *suiteTest = fullTestSuite->findTest(singleSuiteName);
          if (suiteTest == NULL)
          {
-            std::cerr << " *** FAILED to find test suite named [" << singleSuiteName <<
+            std::cerr << " *** FAILED to find test suite named [" << singleSuiteName << 
                "]. Please check suite name. The name should match what was used in the registration line, " <<
                "\'CPPUNIT_TEST_SUITE(MyTests)\' would be \'MyTests\'. Aborting test." <<  std::endl;
          }
@@ -254,14 +230,14 @@ int main(int argc, char* argv[])
             CPPUNIT_NS::Test *individualTest = suiteTest->findTest(singleTestName);
             if (individualTest == NULL)
             {
-               std::cerr << " *** FAILED to individual test [" << singleTestName <<
+               std::cerr << " *** FAILED to individual test [" << singleTestName << 
                   "] inside suite [" << singleSuiteName << "]. Please check suite name. " <<
                   "The name should match what was used in the registration line, " <<
                   "\'CPPUNIT_TEST(TestFunction)\' would be \'TestFunction\'. Aborting test." <<  std::endl;
             }
-            else
+            else 
             {
-               LOG_ALWAYS(std::string("   *** Found test suite and single test[ ") +
+               LOG_ALWAYS(std::string("   *** Found test suite and single test[ ") + 
                   singleTestName + std::string("].  Starting run."));
                testRunner.addTest(individualTest);
             }
@@ -273,7 +249,7 @@ int main(int argc, char* argv[])
             testRunner.addTest(suiteTest);
          }
       }
-      else
+      else 
       {
          LOG_ALWAYS(std::string("No arguments detected.  Running all tests!  Pass the suite name as 1st arg to run a single suite. For single test, pass test name as 2nd arg."));
          testRunner.addTest(fullTestSuite);
@@ -288,7 +264,7 @@ int main(int argc, char* argv[])
       //write out an xml report file
       #ifdef _DEBUG
          std::string filename = "unittestreportd.xml";
-      #else
+      #else 
          std::string filename = "unittestreport.xml";
       #endif
 
@@ -304,16 +280,16 @@ int main(int argc, char* argv[])
       timeDelta = (floor(timeDelta * 10000.0)) / 10000.0; // force data truncation
       if(!mSlowTests.str().empty())
       {
-         std::cout << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl <<
-            mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" <<
+         std::cout << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
+            mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" << 
             timeDelta << "] >>> " << std::endl;
       }
-      else
+      else 
          std::cout << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
    }
    catch (const std::invalid_argument &ie)
    {
-      std::cerr << " <<< Invalid argument occurred. Likely, the suite name or test name are invalid or not found. " <<
+      std::cerr << " <<< Invalid argument occurred. Likely, the suite name or test name are invalid or not found. " << 
          " For tests, be sure to include the class name like [MyClass::TestStuff]. Or, see cppunit.sourceforge.net for more info.  Error: [" <<
          ie.what() << "]. >>> " << std::endl;
    }
