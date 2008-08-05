@@ -20,7 +20,7 @@ namespace dtCore {
       * @param sourceAxis the source axis
       * @param transformation the arbitrary transformation
       */
-      AxisToAxisTransformation(Axis *sourceAxis, dtUtil::Transformation<double> *transformation);
+      AxisToAxisTransformation(Axis* sourceAxis, dtUtil::Transformation<double>* transformation);
 
    protected:
 
@@ -33,42 +33,42 @@ namespace dtCore {
       *
       * @param sourceAxis the new source axis
       */
-      void SetSourceAxis(Axis *sourceAxis);
+      void SetSourceAxis(Axis* sourceAxis);
 
       /**
       * Returns the source axis.
       *
       * @return the current source axis
       */
-      Axis *GetSourceAxis();
+      Axis* GetSourceAxis();
 
       /**
       * Sets the target axis.
       *
       * @param targetAxis the new target axis
       */
-      virtual void SetTargetAxis(LogicalAxis *targetAxis);
+      virtual void SetTargetAxis(LogicalAxis* targetAxis);
 
       /**
       * Gets the target axis.
       *
       * @return the current target axis
       */
-      virtual LogicalAxis *GetTargetAxis();
+      virtual LogicalAxis* GetTargetAxis();
 
       /**
       * Sets this mapping's transformation.
       *
       * @param transformation the new arbitrary transformation
       */
-      void SetTransformation(dtUtil::Transformation<double> *transformation);
+      void SetTransformation(dtUtil::Transformation<double>* transformation);
 
       /**
       * Retrieves this mapping's transformation.
       *
       * @return The transformation.
       */
-      dtUtil::Transformation<double> *GetTransformation() const;
+      dtUtil::Transformation<double>* GetTransformation() const;
 
       /**
       * Called when an axis' state has changed.
@@ -80,9 +80,9 @@ namespace dtCore {
       * @return Whether the event was handled.
       */
       virtual bool AxisStateChanged(const Axis *axis,
-         double oldState, 
-         double newState, 
-         double delta);
+                                    double oldState, 
+                                    double newState, 
+                                    double delta);
 
    private:
       /// The source axis.
@@ -92,7 +92,7 @@ namespace dtCore {
       RefPtr<LogicalAxis> mTargetAxis;
 
       /// The arbitrary transformation.
-      dtUtil::Transformation<double> *mpTransformation;
+      dtUtil::Transformation<double>* mpTransformation;
 
       /// Updates the state of the target axis.
       bool UpdateTargetAxisState();
