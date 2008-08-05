@@ -7,8 +7,6 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/examples
 SET(DIRS dtABC dtAI dtActors dtCore dtDAL dtGame dtLMS dtUtil)
 IF(DTDIS_AVAILABLE)
   SET(DIRS ${DIRS} dtDIS)
-  INCLUDE_DIRECTORIES( ${DIS_INCLUDE_DIR}
-                     ${HAWKNL_INCLUDE_DIR} ) 
 ENDIF(DTDIS_AVAILABLE)
 
 file(GLOB TEMP_SOURCES "*.cpp" "*.h")
@@ -114,12 +112,14 @@ IF (DTGUI_AVAILABLE)
 ENDIF (DTGUI_AVAILABLE)
 
 
-SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/tests) #drop the .exe into the delta3d/tests folder
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests) #drop the .exe into the delta3d/tests folder
 
 IF (MSVC)
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "/../") #little hack to get the .exe into the correct folder
   SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")#tack on the "d" for debug
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4290") #ignore the C4290 warning
+ELSE (MSVC)
+  SET_TARGET_PROPERTIES(${PROG_NAME} PROPERTIES PREFIX "../tests/")
 ENDIF (MSVC)
 
 IF (PCHSupport_FOUND)
@@ -131,13 +131,12 @@ IF (AUTO_RUN_TESTS)
   IF (WIN32)
     ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                           POST_BUILD
-                          COMMAND "\"$(TargetPath)\"" -nochdir
-                          WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                          COMMAND "\"$(TargetPath)\""
                           COMMENT "Run the unit tests")  
   ELSE (WIN32)
      ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                           POST_BUILD
-                          COMMAND ${CMAKE_BINARY_DIR}/tests/allTests -nochdir
+                          COMMAND ${CMAKE_BINARY_DIR}/tests/allTests
                           WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                           COMMENT Run the unit tests)
   ENDIF (WIN32)
