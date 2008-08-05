@@ -136,7 +136,7 @@ IF (AUTO_RUN_TESTS)
   ELSE (WIN32)
      ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                           POST_BUILD
-                          COMMAND ${CMAKE_BINARY_DIR}/tests/allTests
+                          COMMAND ${CMAKE_SOURCE_DIR}/tests/allTests
                           WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                           COMMENT Run the unit tests)
   ENDIF (WIN32)
