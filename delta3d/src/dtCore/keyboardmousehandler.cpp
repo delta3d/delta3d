@@ -133,13 +133,17 @@ bool KeyboardMouseHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIAc
 
    case osgGA::GUIEventAdapter::KEYDOWN:
       return (mKeyboard->KeyDown(ea.getKey()));
+      break;
 
    case osgGA::GUIEventAdapter::KEYUP:
       return (mKeyboard->KeyUp(ea.getKey()));
+      break;
 
    default:
       return (false);
-   }    
+   }
+
+   return (false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
