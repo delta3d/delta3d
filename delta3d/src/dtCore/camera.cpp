@@ -76,11 +76,11 @@ namespace dtCore
    //////////////////////////////////////////////////////////////////////
 
    Camera::Camera(const std::string& name)
-   :  Transformable(name),
-      mAddedToSceneGraph(false),
-      mEnable(true),
-      mEnabledNodeMask(0xffffffff),
-      mOsgCamera(new osg::Camera)
+   : Transformable(name)
+   , mOsgCamera(new osg::Camera)
+   , mAddedToSceneGraph(false)
+   , mEnable(true)
+   , mEnabledNodeMask(0xffffffff)
    {
       mOsgCamera->setName(GetName());
 
@@ -96,11 +96,11 @@ namespace dtCore
 
    //////////////////////////////////////////
    Camera::Camera(osg::Camera& osgCamera, const std::string& name)
-      :  Transformable(name),
-         mAddedToSceneGraph(false),
-         mEnable(true),
-         mEnabledNodeMask(0xffffffff),
-         mOsgCamera(&osgCamera)
+   : Transformable(name)
+   , mOsgCamera(&osgCamera)
+   , mAddedToSceneGraph(false)
+   , mEnable(true)
+   , mEnabledNodeMask(0xffffffff)
    {
       Ctor();
    }
