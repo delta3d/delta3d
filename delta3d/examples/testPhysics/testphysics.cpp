@@ -78,11 +78,11 @@ public:
       GetCamera()->SetTransform(position);
 
       //position first falling crate
-      position.Set( 0.55f, 0.0f, 6.0f, 0.0f, 40.0f, 0.0f);
+      position.Set( 0.55f, 0.0f, 7.0f, 0.0f, 40.0f, 0.0f);
       obj2->SetTransform(position);
 
       //position the crate on the ground
-      position.Set( 0.0f, 0.0f, 3.5f, 0.0f, 0.0f, 0.0f);
+      position.Set( 0.0f, 0.0f, 4.f, 0.0f, 0.0f, 0.0f);
       obj3->SetTransform(position);
 
       double lx = 1.0;
