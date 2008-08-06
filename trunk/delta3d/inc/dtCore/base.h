@@ -67,8 +67,8 @@ namespace dtCore
          struct DT_CORE_EXPORT MessageData
          {
             std::string message; ///<Textual message
-            Base *sender;        ///<Pointer to the sender
-            void *userData;      ///<Void pointer to user data
+            Base* sender;        ///<Pointer to the sender
+            void* userData;      ///<Void pointer to user data
          };
          
          /**
@@ -104,7 +104,7 @@ namespace dtCore
          /**
           * This sets the unique ID, for general purposes this should not be used.
           */
-         void SetUniqueId( const UniqueId& id ) { mId = id; };
+         void SetUniqueId(const UniqueId& id) { mId = id; };
 
          /**
           * This class returns an instance the the UniqueID
@@ -114,17 +114,17 @@ namespace dtCore
          /**
           * Override to receive messages
           */
-         virtual void OnMessage(MessageData *) {}
+         virtual void OnMessage(MessageData*) {}
 
          /**
           * Receive all messages from the supplied sender instance
           */
-         void AddSender( Base *sender );
+         void AddSender(Base* sender);
 
          /**
           * Stop receiving messages from the supplied sender instance
           */
-         void RemoveSender( Base *sender );
+         void RemoveSender(Base* sender);
          
          /**
           *  Send a message to any instances that are subscribed
@@ -134,7 +134,7 @@ namespace dtCore
           *  @param message Optional string message
           *  @param data Optional pointer to user data
           */
-         void SendMessage(const std::string& message="", void *data=0);
+         void SendMessage(const std::string& message = "", void* data = 0);
 
       private:
 
@@ -142,7 +142,7 @@ namespace dtCore
          dtUtil::RefString mName;
          
          ///< The actual signal that gets triggered from SendMessage()
-         sigslot::signal1<MessageData *> mSendMessage;
+         sigslot::signal1<MessageData*> mSendMessage;
          
          UniqueId mId;
    };
