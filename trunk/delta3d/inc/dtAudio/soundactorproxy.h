@@ -60,6 +60,8 @@ namespace dtAudio
     class DT_AUDIO_EXPORT SoundActorProxy : public dtGame::GameActorProxy 
     {
        public:
+          static const dtUtil::RefString CLASS_NAME;
+          static const dtUtil::RefString INVOKABLE_TIMER_HANDLER;
           static const dtUtil::RefString PROPERTY_DIRECTION;
           static const dtUtil::RefString PROPERTY_GAIN;
           static const dtUtil::RefString PROPERTY_INITIAL_OFFSET_TIME;
@@ -76,6 +78,10 @@ namespace dtAudio
           static const dtUtil::RefString PROPERTY_ROLLOFF_FACTOR;
           static const dtUtil::RefString PROPERTY_SOUND_EFFECT;
           static const dtUtil::RefString PROPERTY_VELOCITY;
+          static const dtUtil::RefString TIMER_NAME;
+
+          static const float DEFAULT_RANDOM_TIME_MAX;
+          static const float DEFAULT_RANDOM_TIME_MIN;
 
            /**
             * Constructor
@@ -118,9 +124,19 @@ namespace dtAudio
            osg::Vec3 GetVelocity();
 
            /**
-            * Plays the sound
+            * Plays the sound immediately without using timers.
             */
            void Play();
+
+           /**
+            * Play the sound using the random time range properties set on this sound actor.
+            * A sound timer is created in the Game Manager to trigger the sound to play.
+            * The sound will play once the timer elapses while this actor is contained
+            * in the Game Manager.
+            * @param offsetSeconds Time in seconds to wait prior to playing the sound.
+            *        The offset is added with randomized time if this actor is set as random.
+            */
+           void PlayQueued(float offsetSeconds = 0.0f);
 
            /**
             * Gets the render mode of sound actor proxies.
@@ -155,14 +171,57 @@ namespace dtAudio
            bool IsARandomSoundEffect() const {return mRandomSoundEffect;}
            void SetToHaveRandomSoundEffect(bool value) {mRandomSoundEffect = value;}
            
-           void SetMinRandomTime(int value) {mMinRandomTime = value;}
-           int GetMinRandomTime() const {return mMinRandomTime;}
-           
-           void SetMaxRandomTime(int value) {mMaxRandomTime = value;}
-           int GetMaxRandomTime() const {return mMaxRandomTime;}
-           
-           int GetOffsetTime() const {return mOffsetTime;}
-           void SetOffsetTime(int value) {mOffsetTime = value;}
+           /**
+            * Set the minimum seconds to wait between random executions of the sound.
+            * @param seconds Minimum time to wait in whole and/or partial seconds.
+            */
+           void SetMinRandomTime(float seconds) {mMinRandomTime = seconds;}
+
+           /**
+            * @return Minimum time to wait in whole and/or partial seconds
+            *         prior to playing the sound.
+            */
+           float GetMinRandomTime() const {return mMinRandomTime;}
+
+           /**
+            * Set the maximum seconds to wait between random executions of the sound.
+            * @param seconds Maximum time to wait in whole and/or partial seconds.
+            */
+           void SetMaxRandomTime(float seconds) {mMaxRandomTime = seconds;}
+
+           /**
+            * @return Maximum time to wait in whole and/or partial seconds
+            *         prior to playing the sound.
+            */
+           float GetMaxRandomTime() const {return mMaxRandomTime;}
+
+           /**
+            * Set the seconds to wait before the initial execution of the sound.
+            * Note that this is only used when the sound actor enters the Game Manager.
+            * @param seconds Time to wait in whole and/or partial seconds.
+            */
+           float GetOffsetTime() const {return mOffsetTime;}
+
+           /**
+            * @return Time to wait in whole and/or partial seconds
+            *         prior to playing the sound for the first time
+            *         when the actor enters the Game Manager.
+            */
+           void SetOffsetTime(float seconds) {mOffsetTime = seconds;}
+
+           /**
+            * Access the sound object directly without having to grab a hold
+            * of the associated Sound Actor.
+            * @return Sound object held by the associated Sound Actor.
+            */
+           dtAudio::Sound* GetSound();
+
+           /**
+            * Access the sound object directly without having to grab a hold
+            * of the associated Sound Actor.
+            * @return Sound object held by the associated Sound Actor.
+            */
+           const dtAudio::Sound* GetSound() const;
 
       protected:
 
@@ -181,14 +240,18 @@ namespace dtAudio
          /// Does the sound effect play at a random time
          bool mRandomSoundEffect;
 
-         /// What is the minimum amount for rand to calculate
-         int mMinRandomTime;
+         /// Minimum seconds for rand to calculate
+         float mMinRandomTime;
 
-         /// What is the maximum amount for rand to calculate
-         int mMaxRandomTime;
+         /// Maximum seconds for rand to calculate
+         float mMaxRandomTime;
 
-         /// In case you have many objects all playing at random, this is so they wont overlap
-         int mOffsetTime;
+         /**
+          * Seconds to wait before play the sound.
+          * In case you have many objects all playing at random,
+          * this is so they wont overlap.
+          */
+         float mOffsetTime;
     };
 }
 
