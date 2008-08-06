@@ -43,7 +43,7 @@ Base::Base(const std::string& name) : mName(name)
  */
 Base::~Base()
 {
-   Log &log = Log::GetInstance();
+   Log& log = Log::GetInstance();
 
    log.LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destroying '%s'", GetName().c_str());
    DeregisterInstance(this);
@@ -74,18 +74,18 @@ const std::string& Base::GetName() const
  * sends, will be received in the OnMessage() method.
  * @param sender The sender that this instance should listen to
  */
-void Base::AddSender(Base *sender)
+void Base::AddSender(Base* sender)
 {
    //connect the sender's signal to our slot
-   sender->mSendMessage.connect_slot( this, &Base::OnMessage );
+   sender->mSendMessage.connect_slot(this, &Base::OnMessage);
 }
 
 /**
  * Stop receiving messages from the supplied sender instance
  */
-void Base::RemoveSender(Base *sender)
+void Base::RemoveSender(Base* sender)
 {
-   sender->mSendMessage.disconnect( this );
+   sender->mSendMessage.disconnect(this);
 }
 
 /**
@@ -93,14 +93,14 @@ void Base::RemoveSender(Base *sender)
  * @param message Optional text message (def = "")
  * @param data Optional void pointer to any user data (def = 0)
  */
-void Base::SendMessage(const std::string& message, void *data)
+void Base::SendMessage(const std::string& message, void* data)
 {
    //make a new MessageData, load it up, and pass it to our signal
    MessageData dataToSend;
    dataToSend.message = message;
    dataToSend.sender = this;
    dataToSend.userData = data;
-   mSendMessage( &dataToSend );
+   mSendMessage(&dataToSend);
 }
 
 }
