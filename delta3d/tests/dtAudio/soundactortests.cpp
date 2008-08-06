@@ -61,6 +61,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(SoundActorTests);
       CPPUNIT_TEST(TestProperties);
+      CPPUNIT_TEST(TestTimedPlay);
    CPPUNIT_TEST_SUITE_END();
 
 
@@ -68,12 +69,18 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
       void setUp();
       void tearDown();
 
+      // Helper Methods
+      void TickSystem( int milliseconds );
+
+      // Test Methods
       void TestProperties();
+      void TestTimedPlay();
 
    private:
       static const std::string LIBRARY_TEST_GAME_ACTOR;
 
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
+      dtCore::RefPtr<dtAudio::SoundActorProxy> mProxy;
 };
 
 //Registers the fixture into the 'registry'
@@ -97,6 +104,13 @@ void SoundActorTests::setUp()
 
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
+
+      dtCore::RefPtr<const dtDAL::ActorType> actorType =
+         mGameManager->FindActorType("dtcore.Environment","Sound Actor");
+      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
+
+      mGameManager->CreateActor(*actorType, mProxy);
+      CPPUNIT_ASSERT_MESSAGE("Could not create sound actor proxy.",mProxy.valid());
    }
    catch (const dtUtil::Exception& e)
    {
@@ -121,28 +135,32 @@ void SoundActorTests::tearDown()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void SoundActorTests::TickSystem( int milliseconds )
+{
+   for(int i = 0; i < milliseconds; ++i)
+   {
+      SLEEP(1);
+   }
+   dtCore::System::GetInstance().Step();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void SoundActorTests::TestProperties()
 {
    try
    {
-      dtCore::RefPtr<const dtDAL::ActorType> actorType =
-         mGameManager->FindActorType("dtcore.Environment","Sound Actor");
-      CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",actorType.valid());
-
-      dtCore::RefPtr<dtAudio::SoundActorProxy> proxy;
-      mGameManager->CreateActor(*actorType, proxy);
-      CPPUNIT_ASSERT_MESSAGE("Could not create sound actor proxy.",proxy.valid());
+      const dtAudio::SoundActorProxy* proxy = mProxy.get();
 
       // Get the tested properties.
       // Random Sound Effect
       // Offset Time
-      dtDAL::BooleanActorProperty* propRandom = static_cast<dtDAL::BooleanActorProperty*>
+      const dtDAL::BooleanActorProperty* propRandom = static_cast<const dtDAL::BooleanActorProperty*>
          (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_PLAY_AS_RANDOM ));
-      dtDAL::IntActorProperty* propOffsetTime = static_cast<dtDAL::IntActorProperty*>
+      const dtDAL::FloatActorProperty* propOffsetTime = static_cast<const dtDAL::FloatActorProperty*>
          (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME ));
-      dtDAL::IntActorProperty* propRandTimeMax = static_cast<dtDAL::IntActorProperty*>
+      const dtDAL::FloatActorProperty* propRandTimeMax = static_cast<const dtDAL::FloatActorProperty*>
          (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_RANDOM_TIME ));
-      dtDAL::IntActorProperty* propRandTimeMin = static_cast<dtDAL::IntActorProperty*>
+      const dtDAL::FloatActorProperty* propRandTimeMin = static_cast<const dtDAL::FloatActorProperty*>
          (proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MIN_RANDOM_TIME ));
 
       // Make sure the correct properties exist on the proxy.
@@ -183,41 +201,87 @@ void SoundActorTests::TestProperties()
       CPPUNIT_ASSERT_MESSAGE("Sound should not be random by default",
          ! propRandom->GetValue() );
       CPPUNIT_ASSERT_MESSAGE("Sound should a time offset of 0 by default",
-         propOffsetTime->GetValue() == 0 );
+         propOffsetTime->GetValue() == 0.0f );
       CPPUNIT_ASSERT_MESSAGE("Sound max random time is 30 by default",
-         propRandTimeMax->GetValue() == 30 );
+         propRandTimeMax->GetValue() == dtAudio::SoundActorProxy::DEFAULT_RANDOM_TIME_MAX );
       CPPUNIT_ASSERT_MESSAGE("Sound min random time is 5 by default",
-         propRandTimeMin->GetValue() == 5 );
+         propRandTimeMin->GetValue() == dtAudio::SoundActorProxy::DEFAULT_RANDOM_TIME_MIN );
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL(e.ToString());
+   }
+}
 
+
+///////////////////////////////////////////////////////////////////////////////
+void SoundActorTests::TestTimedPlay()
+{
+   try
+   {
       // Test loading a sound.
-      proxy->LoadFile( "Sounds/silence.wav" );
-      dtAudio::Sound* sound = static_cast<dtAudio::SoundActor&>(proxy->GetGameActor()).GetSound();
+      mProxy->LoadFile( "Sounds/silence.wav" );
+      dtAudio::SoundActor* soundActor = NULL;
+      mProxy->GetActor( soundActor );
+      dtAudio::Sound* sound = soundActor->GetSound();
 
+      // --- Ensure the proxy returns the same sound object.
+      CPPUNIT_ASSERT_MESSAGE("Sound proxy should return the same sound object contained in the sound actor.",
+         mProxy->GetSound() == sound );
+
+      // --- Ensure he sound does not play when simply loaded.
       dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
-
       CPPUNIT_ASSERT_MESSAGE( "Sound should not be playing yet",
          ! sound->IsPlaying() );
 
       // Test adding to the game manager.
-      mGameManager->AddActor( *proxy, false, false );
-      dtCore::System::GetInstance().Step(); // Sends create message.
-      CPPUNIT_ASSERT_MESSAGE( "Sound should not be playing yet",
-         ! sound->IsPlaying() );
-      // --- Start the sound
+      mProxy->SetOffsetTime( 0.1f );
       sound->SetLooping( true );
+      mGameManager->AddActor( *mProxy, false, false );
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE( "Sound should not be playing yet.",
+         ! sound->IsPlaying() );
+
+      TickSystem(20);
+      CPPUNIT_ASSERT_MESSAGE( "Sound should still not be playing yet.",
+         ! sound->IsPlaying() );
+
+      TickSystem(61);
+      CPPUNIT_ASSERT_MESSAGE( "Sound should now be playing.",
+         sound->IsPlaying() );
+
+      // --- Stop the sound
+      sound->Stop();
+      dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
+      CPPUNIT_ASSERT_MESSAGE( "Sound should now be Stopped",
+         ! sound->IsPlaying() );
+
+      // --- Start the sound to test stopping on removal from the system.
       sound->Play();
       dtCore::System::GetInstance().Step(); // Sends sound commands to Audio Manager.
-      CPPUNIT_ASSERT_MESSAGE( "Sound should now be playing",
+      CPPUNIT_ASSERT_MESSAGE( "Sound should be playing again.",
          sound->IsPlaying() );
 
       // Test removing from the game manager.
-      mGameManager->DeleteActor( *proxy );
-      dtCore::System::GetInstance().Step(); // Removes actor from world and sends commands to Audio Manager,
-                                            // such as stop.
-      dtCore::System::GetInstance().Step(); // Removes actor from world and sends commands to Audio Manager,
+      mGameManager->DeleteActor( *mProxy );
+      dtCore::System::GetInstance().Step(); // Removes actor from world and sends commands to Audio Manager.
       // such as stop.
       CPPUNIT_ASSERT_MESSAGE( "Sound should have been stopped when the actor was removed from the world",
          ! sound->IsPlaying() );
+
+      // Test adding with a time offset of 0.
+      mProxy->SetOffsetTime( 0.0f );
+      mGameManager->AddActor( *mProxy, false, false );
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE( "Sound be playing.",
+         sound->IsPlaying() );
+
+      // --- Remove again
+      mGameManager->DeleteActor( *mProxy );
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE( "Sound should have been stopped when the actor was removed from the world again.",
+         ! sound->IsPlaying() );
+
    }
    catch (const dtUtil::Exception& e)
    {

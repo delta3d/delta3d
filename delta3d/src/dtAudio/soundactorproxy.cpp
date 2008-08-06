@@ -33,6 +33,10 @@ using namespace dtDAL;
 namespace dtAudio
 {
    ///////////////////////////////////////////////////////////////////////////////
+   // CLASS CONSTANTS
+   ///////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString SoundActorProxy::CLASS_NAME("dtAudio::Sound");
+   const dtUtil::RefString SoundActorProxy::INVOKABLE_TIMER_HANDLER("HandleActorTimers");
    const dtUtil::RefString SoundActorProxy::PROPERTY_DIRECTION("Direction"); // "Direction"
    const dtUtil::RefString SoundActorProxy::PROPERTY_GAIN("Gain"); // "Gain"
    const dtUtil::RefString SoundActorProxy::PROPERTY_INITIAL_OFFSET_TIME("Initial offset Time"); // "Initial offset Time"
@@ -49,9 +53,15 @@ namespace dtAudio
    const dtUtil::RefString SoundActorProxy::PROPERTY_ROLLOFF_FACTOR("Rolloff Factor"); // "Rolloff Factor"
    const dtUtil::RefString SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
    const dtUtil::RefString SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
+   const dtUtil::RefString SoundActorProxy::TIMER_NAME("PlaySoundTimer");
+
+   const float SoundActorProxy::DEFAULT_RANDOM_TIME_MAX = 30.0f;
+   const float SoundActorProxy::DEFAULT_RANDOM_TIME_MIN = 5.0f;
 
 
 
+   //////////////////////////////////////////////////////////////////////////////
+   // ACTOR CODE
    //////////////////////////////////////////////////////////////////////////////
    SoundActor::SoundActor(dtGame::GameActorProxy &proxy)  
       : dtGame::GameActor(proxy)
@@ -77,12 +87,16 @@ namespace dtAudio
       return mSound.get();
    }
 
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+   // PROXY CODE
    ///////////////////////////////////////////////////////////////////////////////
    SoundActorProxy::SoundActorProxy()
       : mRandomSoundEffect(false)
-      , mMinRandomTime(5)
-      , mMaxRandomTime(30)
-      , mOffsetTime(0)
+      , mMinRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MIN)
+      , mMaxRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MAX)
+      , mOffsetTime(0.0f)
    {
       /**
       * @note You must instantiate, configure, and shutdown the
@@ -93,7 +107,7 @@ namespace dtAudio
       dtAudio::AudioManager::GetManager()->Config(AudioConfigData&)
       * \endcode
       */
-      SetClassName("dtAudio::Sound");
+      SetClassName(SoundActorProxy::CLASS_NAME.Get());
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -118,11 +132,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////
     void SoundActorProxy::OnEnteredWorld()
     {
-      if(mRandomSoundEffect)
-      {
-         int time = dtUtil::RandRange(mMinRandomTime, mMaxRandomTime) + mOffsetTime;
-         GetGameManager()->SetTimer("PlaySoundTimer", this, time);
-      }
+       PlayQueued(mOffsetTime);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -140,10 +150,11 @@ namespace dtAudio
     {
        dtGame::GameActorProxy::BuildInvokables();
 
-       AddInvokable(*new dtGame::Invokable("HandleActorTimers",
+       AddInvokable(*new dtGame::Invokable(SoundActorProxy::INVOKABLE_TIMER_HANDLER.Get(),
           dtDAL::MakeFunctor(*this, &SoundActorProxy::HandleActorTimers)));
 
-       RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_TIMER_ELAPSED, "HandleActorTimers");
+       RegisterForMessagesAboutSelf(dtGame::MessageType::INFO_TIMER_ELAPSED,
+          SoundActorProxy::INVOKABLE_TIMER_HANDLER.Get());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -151,11 +162,11 @@ namespace dtAudio
     {
        if(msg.GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED)
        {
+          Play();
+
           if(mRandomSoundEffect)
           {
-             Play();
-             int time = dtUtil::RandRange(mMinRandomTime, mMaxRandomTime);
-             GetGameManager()->SetTimer("PlaySoundTimer", this, time);
+             PlayQueued(0.0f);
           }
        }
     }
@@ -281,26 +292,26 @@ namespace dtAudio
             "Sets the velocity of a sound.", GROUPNAME));
 
         // new properties
-        AddProperty(new IntActorProperty(
+        AddProperty(new FloatActorProperty(
            PROPERTY_MAX_RANDOM_TIME,
            PROPERTY_MAX_RANDOM_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetMaxRandomTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetMaxRandomTime),
-           "Coincides with Play As Random SFX flag", GROUPNAME));
+           "Maximum seconds to wait between random executions of the sound", GROUPNAME));
 
-        AddProperty(new IntActorProperty(
+        AddProperty(new FloatActorProperty(
            PROPERTY_MIN_RANDOM_TIME,
            PROPERTY_MIN_RANDOM_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetMinRandomTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetMinRandomTime),
-           "Coincides with Play As Random SFX flag", GROUPNAME));
+           "Minimum seconds to wait between random executions of the sound", GROUPNAME));
 
-        AddProperty(new IntActorProperty(
+        AddProperty(new FloatActorProperty(
            PROPERTY_INITIAL_OFFSET_TIME,
            PROPERTY_INITIAL_OFFSET_TIME,
            MakeFunctor(*this, &SoundActorProxy::SetOffsetTime),
            MakeFunctorRet(*this, &SoundActorProxy::GetOffsetTime),
-           "Used initially so all sounds that are random are not playing at the start.", GROUPNAME));
+           "Time in seconds to wait before the sound is played when it enters the Game Manager", GROUPNAME));
 
         AddProperty(new BooleanActorProperty(
            PROPERTY_PLAY_AS_RANDOM,
@@ -370,6 +381,17 @@ namespace dtAudio
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void SoundActorProxy::PlayQueued(float offsetSeconds)
+    {
+       if(mRandomSoundEffect)
+       {
+          offsetSeconds += float(dtUtil::RandRange(mMinRandomTime, mMaxRandomTime));
+       }
+
+       GetGameManager()->SetTimer(SoundActorProxy::TIMER_NAME.Get(), this, offsetSeconds);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon* SoundActorProxy::GetBillBoardIcon()
     {
         if(!mBillBoardIcon.valid()) 
@@ -379,5 +401,21 @@ namespace dtAudio
         }
 
         return mBillBoardIcon.get();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    dtAudio::Sound* SoundActorProxy::GetSound()
+    {
+       dtAudio::SoundActor* actor = NULL;
+       GetActor( actor );
+       return actor->GetSound();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    const dtAudio::Sound* SoundActorProxy::GetSound() const
+    {
+       const dtAudio::SoundActor* actor = NULL;
+       GetActor( actor );
+       return actor->GetSound();
     }
 }
