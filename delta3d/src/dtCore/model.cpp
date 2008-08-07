@@ -25,46 +25,16 @@
 
 namespace dtCore
 {
-   class ModelMatrixUpdateCallback : public osg::NodeCallback
-   {
-      public:
 
-         ModelMatrixUpdateCallback(osg::Vec3& scale):
-            mScale(scale)
-         {
-
-         }
-
-         /** Callback method called by the NodeVisitor when visiting a node.*/
-         virtual void operator() (osg::Node* node, osg::NodeVisitor* nv)
-         {
-            osg::MatrixTransform* modelTransform = static_cast<osg::MatrixTransform*>(node);
-            dtCore::Transform xform;
-            osg::Matrix m;
-            xform.Set(modelTransform->getMatrix());
-            xform.Rescale(mScale);
-            xform.Get(m);
-            modelTransform->setMatrix(m);
-            traverse(node,nv);
-
-            node->setUpdateCallback(NULL);
-         }
-
-      private:
-
-         osg::Vec3& mScale;
-   };
-
-   /////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Model::Model():
       mModelTransform(new osg::MatrixTransform),
-      mScale(1.0f, 1.0f, 1.0f),
-      mUpdateCallback(new ModelMatrixUpdateCallback(mScale))
+      mScale(1.0f, 1.0f, 1.0f)
    {
       SetDirty();
    }
 
-   /////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    Model::~Model()
    {
 
@@ -73,7 +43,10 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Model::SetDirty()
    {
-      mModelTransform->setUpdateCallback(mUpdateCallback.get());
+      dtCore::Transform xform;
+      GetTransform(xform);
+      xform.Rescale(mScale);
+      UpdateMatrixTransform(xform);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -92,10 +65,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Model::SetTransform(const dtCore::Transform& xform)
    {
-      //two copies?  Not good.
-      osg::Matrix m;
-      xform.Get(m);
-      mModelTransform->setMatrix(m);
+      UpdateMatrixTransform(xform);
       //dirty so we can re-apply the scale.
       SetDirty();
    }
@@ -104,5 +74,14 @@ namespace dtCore
    void Model::GetTransform(dtCore::Transform& xform) const
    {
       xform.Set(mModelTransform->getMatrix());
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Model::UpdateMatrixTransform(const dtCore::Transform &xform)
+   {
+      //two copies?  Not good.
+      osg::Matrix m;
+      xform.Get(m);
+      mModelTransform->setMatrix(m);
    }
 }
