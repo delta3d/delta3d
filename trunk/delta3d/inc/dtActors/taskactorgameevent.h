@@ -70,6 +70,18 @@ namespace dtActors
          const dtDAL::GameEvent* GetGameEvent() const { return mGameEvent.get(); }
 
          /**
+          * Set an alternative event that can cause this task to fail.
+          * @param gameEvent Event that causes this task to fail.
+          */
+         void SetFailGameEvent(dtDAL::GameEvent* gameEvent) { mGameEventFail = gameEvent; }
+
+         /**
+          * @return Game event that will cause this task to fail; NULL if no event assigned.
+          */
+         dtDAL::GameEvent* GetFailGameEvent() { return mGameEventFail.get(); }
+         const dtDAL::GameEvent* GetFailGameEvent() const { return mGameEventFail.get(); }
+
+         /**
           * Sets the number of times the game event tracked by this task must be
           * fired before the task should be considered complete.
           * @param times The number of times.
@@ -104,6 +116,7 @@ namespace dtActors
 
       private:
          dtCore::ObserverPtr<dtDAL::GameEvent> mGameEvent;
+         dtCore::ObserverPtr<dtDAL::GameEvent> mGameEventFail;
          int mMinOccurances;
          int mNumTimesEventFired;
    };
@@ -116,6 +129,10 @@ namespace dtActors
    class DT_PLUGIN_EXPORT TaskActorGameEventProxy : public TaskActorProxy
    {
       public:
+         static const dtUtil::RefString CLASS_NAME;
+         static const dtUtil::RefString PROPERTY_EVENT_COMPLETE;
+         static const dtUtil::RefString PROPERTY_EVENT_FAIL;
+         static const dtUtil::RefString PROPERTY_MIN_OCCURANCES;
 
          /**
           * Constructs the task game event proxy.
