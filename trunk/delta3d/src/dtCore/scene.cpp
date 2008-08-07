@@ -769,15 +769,7 @@ void Scene::SetDatabasePager( dtCore::DatabasePager *pager )
    mPager = pager;
    if (mPager.valid())
    {
-      //now we need to remove and re-add all the drawables
-      DrawableList dl = mAddedDrawables;
-      RemoveAllDrawables();
-
-      DrawableList::iterator iterEnd = dl.end();
-      for(DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
-      {
-         AddDrawable((*iter).get());
-      }
+      mPager->GetOsgDatabasePager()->registerPagedLODs(GetSceneNode());
    }
 }
 
