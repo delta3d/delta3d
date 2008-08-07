@@ -20,6 +20,7 @@
  */
 #include <dtActors/taskactor.h>
 
+#include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
@@ -59,21 +60,23 @@ namespace dtActors
       }
       else
       {
+         TaskActorProxy& proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+
          // If setting, then we need to get a new time stamp
-         if (flag)
+         if(flag)
          {
-            if (GetGameActorProxy().GetGameManager() == NULL)
+            if(proxy.GetGameManager() == NULL)
             {
                LOG_ERROR("Error setting complete flag on Task Actor.  Game Manager was invalid on this actor.");
             }
             else
             {
-               double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
+               double currSimTime = proxy.GetGameManager()->GetSimulationTime();
                SetCompletedTimeStamp(currSimTime);
             }
          }
          // don't overwrite complete time if we are already failed. Allows setting this back to false.
-         else if (!IsFailed()) 
+         else if(!IsFailed()) 
          {
             SetCompletedTimeStamp(-1.0);
          }
@@ -81,10 +84,15 @@ namespace dtActors
          mComplete = flag;
 
          // Significant change, so notify the world  
-         if (GetGameActorProxy().GetGameManager() == NULL)
+         if(proxy.GetGameManager() == NULL)
          {
-            TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
             proxy.NotifyActorUpdate();
+         }
+
+         // Send the Notify Completed Event if marking this task as completed.
+         if( mComplete && mNotifyEventCompleted.valid() )
+         {
+            proxy.SendGameEvent( *mNotifyEventCompleted );
          }
       }
    }
@@ -102,21 +110,23 @@ namespace dtActors
       }
       else
       {
+         TaskActorProxy& proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+
          // If setting, then we need to get a new time stamp
-         if (flag)
+         if(flag)
          {
-            if (GetGameActorProxy().GetGameManager() == NULL)
+            if (proxy.GetGameManager() == NULL)
             {
                LOG_ERROR("Error setting failed flag on Task Actor.  Game Manager was invalid on this actor.");
             }
             else
             {
-               double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
+               double currSimTime = proxy.GetGameManager()->GetSimulationTime();
                SetCompletedTimeStamp(currSimTime);
             }
          }
          // don't overwrite complete time if we are already failed. Allows setting this back to false.
-         else if (!IsComplete()) // don't overwrite complete time if we are already complete
+         else if(!IsComplete()) // don't overwrite complete time if we are already complete
          {
             SetCompletedTimeStamp(-1.0);
          }
@@ -124,10 +134,15 @@ namespace dtActors
          mFailed = flag;
 
          // Significant change, so notify the world  
-         if (GetGameActorProxy().GetGameManager() == NULL)
+         if(proxy.GetGameManager() == NULL)
          {
-            TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
             proxy.NotifyActorUpdate();
+         }
+
+         // Send the Notify Failed Event if marking this task as failed.
+         if( mFailed && mNotifyEventFailed.valid() )
+         {
+            proxy.SendGameEvent( *mNotifyEventFailed );
          }
       }
    }
@@ -152,9 +167,14 @@ namespace dtActors
 
    ///////////////////////////BEGIN TASK PROXY///////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
+   const dtUtil::RefString TaskActorProxy::CLASS_NAME("dtActors::TaskActor");
+   const dtUtil::RefString TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED("NotifyCompletedEvent");
+   const dtUtil::RefString TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED("NotifyFailedEvent");
+
+   //////////////////////////////////////////////////////////////////////////////
    TaskActorProxy::TaskActorProxy()
    {
-      SetClassName("dtActors::TaskActor");
+      SetClassName(TaskActorProxy::CLASS_NAME);
       mParentTaskProxy = NULL;
    }
 
@@ -231,6 +251,24 @@ namespace dtActors
          dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
          "The list of subtasks.", GROUPNAME, "TaskChildren"));
+
+      // Notify Completed Event
+      AddProperty(new dtDAL::GameEventActorProperty(*this, 
+         TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED,
+         "Notify Completed Event",
+         dtDAL::MakeFunctor(task, &TaskActor::SetNotifyCompletedEvent),
+         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
+            (task, &TaskActor::GetNotifyCompletedEvent),
+         "Sets and gets the game event that will be sent when this task completes.",GROUPNAME));
+
+      // Notify Failed Event
+      AddProperty(new dtDAL::GameEventActorProperty(*this, 
+         TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED,
+         "Notify Failed Event",
+         dtDAL::MakeFunctor(task, &TaskActor::SetNotifyFailedEvent),
+         dtDAL::MakeFunctorRet<dtDAL::GameEvent* (TaskActor::*)(), TaskActor>
+            (task, &TaskActor::GetNotifyFailedEvent),
+         "Sets and gets the game event that will be sent when this task fails.",GROUPNAME));
 
       // REMOVE USELESS PROPERTIES - These properties really should not show in
       // STAGE and ought to be completely removed from the object completely.
@@ -500,5 +538,20 @@ namespace dtActors
       dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
       PopulateActorUpdate(*message);
       GetGameManager()->SendMessage(*updateMsg);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::SendGameEvent(dtDAL::GameEvent& gameEvent)
+   {
+      dtGame::GameManager* gm = GetGameManager();
+      if( gm != NULL )
+      {
+         dtCore::RefPtr<dtGame::GameEventMessage> eventMessage; 
+         gm->GetMessageFactory().CreateMessage( dtGame::MessageType::INFO_GAME_EVENT, eventMessage );
+
+         eventMessage->SetAboutActorId( GetId() );
+         eventMessage->SetGameEvent( gameEvent );
+         gm->SendMessage( *eventMessage );
+      }
    }
 }
