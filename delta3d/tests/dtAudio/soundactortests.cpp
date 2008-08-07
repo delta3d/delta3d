@@ -246,7 +246,7 @@ void SoundActorTests::TestTimedPlay()
       CPPUNIT_ASSERT_MESSAGE( "Sound should still not be playing yet.",
          ! sound->IsPlaying() );
 
-      TickSystem(61);
+      TickSystem(81);
       CPPUNIT_ASSERT_MESSAGE( "Sound should now be playing.",
          sound->IsPlaying() );
 
