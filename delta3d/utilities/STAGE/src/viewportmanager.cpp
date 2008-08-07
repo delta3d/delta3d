@@ -18,7 +18,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
-*/
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QWidget>
 #include <QtOpenGL/QGLWidget>
@@ -54,6 +54,8 @@ namespace dtEditQt
         shareMasterContext = true;
         masterViewport = NULL;
         masterScene = new dtCore::Scene();
+        mMasterView = new dtCore::View();
+        mMasterView->SetScene(masterScene.get());
         viewportOverlay = new ViewportOverlay();
         worldCamera = new Camera();
         inChangeTransaction = false;
@@ -84,13 +86,13 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ViewportManager::ViewportManager(const ViewportManager &rhs)
+    ViewportManager::ViewportManager(const ViewportManager& rhs)
     {
 
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ViewportManager &ViewportManager::operator=(const ViewportManager &rhs)
+    ViewportManager& ViewportManager::operator=(const ViewportManager& rhs)
     {
         return *this;
     }
@@ -102,8 +104,8 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    Viewport *ViewportManager::createViewport(const std::string &name,
-        ViewportType &type, QWidget *parent)
+    Viewport* ViewportManager::createViewport(const std::string& name,
+        ViewportType& type, QWidget* parent)
     {
         Viewport *vp = NULL;
 
@@ -136,7 +138,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ViewportManager &ViewportManager::GetInstance()
+    ViewportManager& ViewportManager::GetInstance()
     {
         if (ViewportManager::instance.get() == NULL)
             ViewportManager::instance = new ViewportManager();
@@ -144,8 +146,8 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    Viewport *ViewportManager::createViewportImpl(const std::string &name,
-        ViewportType &type, QWidget *parent, QGLWidget *shareWith)
+    Viewport* ViewportManager::createViewportImpl(const std::string& name,
+        ViewportType& type, QWidget* parent, QGLWidget* shareWith)
     {
         if (type == ViewportType::ORTHOGRAPHIC)
             return new OrthoViewport(name,parent,shareWith);
@@ -177,13 +179,13 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::clearMasterScene(
-            const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > &proxies)
+            const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies)
     {
         std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
 
         for (itor = proxies.begin(); itor != proxies.end(); ++itor)
         {
-            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->second.get());
+            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
             const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
             dtDAL::ActorProxyIcon *billBoard;
 
@@ -228,38 +230,22 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::EnablePaging(bool enable)
     {
+       dtCore::View* view = mMasterView.get();
        if (enable)
        {
-          osgDB::DatabasePager *databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
-          databasePager->setTargetFrameRate(60);
-          databasePager->registerPagedLODs(masterScene->GetSceneNode());
-
-
-          for(std::map<std::string, Viewport*>::iterator i = viewportList.begin(); i != viewportList.end();
-             ++i)
-          {
-             i->second->getSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
-
-             databasePager->setCompileGLObjectsForContextID(i->second->getSceneView()->getState()->getContextID(),true);
-          }
-          startTick = osg::Timer::instance()->tick();
-          isPagingEnabled = true;
-          LOG_INFO("Paging is enabled");
+          view->SetDatabasePager(new dtCore::DatabasePager);
        }
        else
        {
-          if(isPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
-          {
-             osgDB::Registry::instance()->getDatabasePager()->clear();
-             osgDB::Registry::instance()->setDatabasePager(NULL);
-             isPagingEnabled = false;
-             LOG_INFO("Paging is disabled");
-          }
-          else
-          {
-             LOG_INFO("Paging is already disabled.");
-          }
+          view->SetDatabasePager(NULL);
        }
+       isPagingEnabled = enable;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    dtCore::DatabasePager* ViewportManager::GetDatabasePager()
+    {
+       return mMasterView->GetDatabasePager();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -272,8 +258,8 @@ namespace dtEditQt
 
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
-            this->masterScene->RemoveDrawable(proxy->GetActor());
-            this->viewportOverlay->unSelect(proxy->GetActor());
+            masterScene->RemoveDrawable(proxy->GetActor());
+            viewportOverlay->unSelect(proxy->GetActor());
             if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
@@ -281,11 +267,11 @@ namespace dtEditQt
             else
             {
                 billBoard->LoadImages();
-                billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
+                billBoardIndex = masterScene->GetDrawableIndex(billBoard->GetDrawable());
+                if (billBoardIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
                 {
-                    this->masterScene->AddDrawable(billBoard->GetDrawable());
-                    this->viewportOverlay->select(billBoard->GetDrawable());
+                    masterScene->AddDrawable(billBoard->GetDrawable());
+                    viewportOverlay->select(billBoard->GetDrawable());
                 }
             }
         }
@@ -297,12 +283,12 @@ namespace dtEditQt
             }
             else
             {
-                this->viewportOverlay->unSelect(billBoard->GetDrawable());
-                this->masterScene->RemoveDrawable(billBoard->GetDrawable());
+                viewportOverlay->unSelect(billBoard->GetDrawable());
+                masterScene->RemoveDrawable(billBoard->GetDrawable());
             }
 
-            actorIndex = this->masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
+            actorIndex = masterScene->GetDrawableIndex(proxy->GetActor());
+            if (actorIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
             {
                 this->masterScene->AddDrawable(proxy->GetActor());
                 this->viewportOverlay->select(proxy->GetActor());
@@ -317,19 +303,19 @@ namespace dtEditQt
             else
             {
                 billBoard->LoadImages();
-                billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
+                billBoardIndex = masterScene->GetDrawableIndex(billBoard->GetDrawable());
+                if (billBoardIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
                 {
-                    this->masterScene->AddDrawable(billBoard->GetDrawable());
-                    this->viewportOverlay->select(billBoard->GetDrawable());
+                    masterScene->AddDrawable(billBoard->GetDrawable());
+                    viewportOverlay->select(billBoard->GetDrawable());
                 }
             }
 
-            actorIndex = this->masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
+            actorIndex = masterScene->GetDrawableIndex(proxy->GetActor());
+            if (actorIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
             {
-                this->masterScene->AddDrawable(proxy->GetActor());
-                this->viewportOverlay->select(proxy->GetActor());
+                masterScene->AddDrawable(proxy->GetActor());
+                viewportOverlay->select(proxy->GetActor());
             }
         }
         else
@@ -349,7 +335,7 @@ namespace dtEditQt
     {
        if (isPagingEnabled)
           EnablePaging(false);
-          
+
        masterScene->RemoveAllDrawables();
     }
 
@@ -358,10 +344,10 @@ namespace dtEditQt
     void ViewportManager::onActorProxyCreated(
             dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
-        dtCore::Scene *scene = this->masterScene.get();
-        dtDAL::ActorProxyIcon *billBoard = NULL;
+        dtCore::Scene* scene = this->masterScene.get();
+        dtDAL::ActorProxyIcon* billBoard = NULL;
 
-        const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+        const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
             billBoard = proxy->GetBillBoardIcon();
@@ -418,7 +404,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ViewportManager::placeProxyInFrontOfCamera(dtDAL::ActorProxy *proxy)
+    void ViewportManager::placeProxyInFrontOfCamera(dtDAL::ActorProxy* proxy)
     {
         //Get the current position and direction the camera is facing.
         osg::Vec3 pos = getWorldViewCamera()->getPosition();
@@ -426,9 +412,9 @@ namespace dtEditQt
 
         //If the object is a transformable (can have a position in the scene)
         //add it to the scene in front of the camera.
-        dtDAL::TransformableActorProxy *tProxy =
-                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
-        dtDAL::ActorProperty *prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+        dtDAL::TransformableActorProxy* tProxy =
+                dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+        dtDAL::ActorProperty* prop = proxy->GetProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
 
         if (tProxy != NULL && prop != NULL)
         {

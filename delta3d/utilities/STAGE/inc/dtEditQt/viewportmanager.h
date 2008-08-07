@@ -26,6 +26,7 @@
 #include <map>
 #include <osg/Referenced>
 #include <dtCore/scene.h>
+#include <dtCore/view.h>
 #include <dtCore/uniqueid.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
@@ -165,6 +166,9 @@ namespace dtEditQt
         /// Sets is database paging is enabled
         void EnablePaging(bool enable);
 
+        /// Returns if database paging is enabled
+        dtCore::DatabasePager* GetDatabasePager();
+
         dtCore::Timer_t GetStartTick() { return startTick; }
 
         void SetStartTick(unsigned int time) { startTick = time; }
@@ -250,6 +254,7 @@ namespace dtEditQt
         Viewport *masterViewport;
         dtCore::RefPtr<ViewportOverlay> viewportOverlay;
         dtCore::RefPtr<dtCore::Scene> masterScene;
+        dtCore::RefPtr<dtCore::View> mMasterView;
         dtCore::RefPtr<Camera> worldCamera;
         int numTextureUnits;
         bool inChangeTransaction, isPagingEnabled;

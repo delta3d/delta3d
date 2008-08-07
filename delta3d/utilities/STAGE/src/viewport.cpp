@@ -45,6 +45,8 @@
 #include <osgUtil/SceneView>
 
 #include <dtCore/scene.h>
+#include <dtCore/databasepager.h>
+#include <osgDB/DatabasePager>
 #include <dtCore/system.h>
 #include <dtCore/isector.h>
 
@@ -223,10 +225,12 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         if (osgDB::Registry::instance()->getDatabasePager()!= NULL)
+         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         if (dbp != NULL)
          {
-            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
-            osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
+            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
+            osgDBP->signalBeginFrame(frameStamp.get());
+            osgDBP->updateSceneGraph(frameStamp->getReferenceTime());
          }
       }
 
@@ -239,12 +243,15 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         if (osgDB::Registry::instance()->getDatabasePager()!= NULL)
+         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         if (dbp != NULL)
          {
-            osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
+            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
 
-            double cleanupTime = ViewportManager::GetInstance().getMasterScene()->GetPagingCleanup();
-            osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*sceneView->getState(), cleanupTime);
+            osgDBP->signalEndFrame();
+            //This magic number is the default amount of time that dtCore Scene USED to use.
+            double cleanupTime = 0.0025;
+            osgDBP->compileGLObjects(*sceneView->getState(), cleanupTime);
 
             sceneView->flushDeletedGLObjects(cleanupTime);
          }
