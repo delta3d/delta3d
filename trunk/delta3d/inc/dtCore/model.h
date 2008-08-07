@@ -49,7 +49,8 @@ namespace dtCore
           * @param xform The transform
           */
          void SetTransform(const dtCore::Transform& xform);
-         
+
+
          /**
           * Returns the transform of the model
           * @param xform The Transform to fill in
@@ -81,19 +82,20 @@ namespace dtCore
          void GetScale(osg::Vec3& modelScale) const;
 
          /**
-          *  Tells this object that the scale vector has been changed, so that it
-          *  can be reapplied (at great expense) during an update callback.
-          * This is called automatcally by SetModelScale and SetModelTransform, but 
+          * Tells this object that the scale vector has been changed, so that it
+          * can be reapplied. This operation can take a couple hundredths of a millisecond
+          * and is best not called every frame.
+          * This is called automatically by SetModelScale and SetModelTransform, but 
           * must be called explicitly if one modifies the model transform directly by calling
-          * #GetModelTransform().setMatrix();
+          * GetModelTransform().setMatrix();
           */
          void SetDirty();
 
       private:
+         void UpdateMatrixTransform(const dtCore::Transform &xform);
 
          dtCore::RefPtr<osg::MatrixTransform> mModelTransform;
          osg::Vec3 mScale;
-         dtCore::RefPtr<osg::NodeCallback> mUpdateCallback; 
    };
 }
 
