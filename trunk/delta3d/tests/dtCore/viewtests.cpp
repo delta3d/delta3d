@@ -45,13 +45,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
          cam->GetOSGCamera()->containsNode( scene->GetSceneNode()) );
    }
 
-   class TestScene : public dtCore::Scene
+   class TestSceneForViewTests : public dtCore::Scene
    {
    public:
-      TestScene() {};
+      TestSceneForViewTests() {};
       dtCore::DatabasePager* GetPager() {return GetDatabasePager();}
    };
-   
+
    ////////////////////////////////////////////////////////////////////////
    void ViewTests::TestPagerPropogation()
    {
@@ -60,7 +60,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
       CPPUNIT_ASSERT_MESSAGE("View should have a default DatabasePager",
                               view->GetDatabasePager() != NULL);
 
-      dtCore::RefPtr<TestScene> scene = new TestScene();
+      dtCore::RefPtr<TestSceneForViewTests> scene = new TestSceneForViewTests();
       CPPUNIT_ASSERT_MESSAGE("Scene should not have a DatabasePager until added to a View",
                               scene->GetPager() == NULL);
 
@@ -84,7 +84,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
    public:
       TestPager() {};
 
-      osgDB::DatabasePager::PagedLODList GetPagedLODList() 
+      osgDB::DatabasePager::PagedLODList GetPagedLODList()
       {
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
          return _pagedLODList;
@@ -98,13 +98,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
    class TestDrawable : public dtCore::DeltaDrawable
    {
    public:
-      TestDrawable() 
+      TestDrawable()
       {
          mNode = new osg::Group();
          mNode->addChild( new osg::PagedLOD() );
          mNode->addChild( new osg::PagedLOD() );
       }
-      
+
       const osg::Node *GetOSGNode(void) const  {return mNode.get();}
       osg::Node *GetOSGNode(void) {return mNode.get(); }
 
@@ -112,20 +112,20 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
       osg::ref_ptr<osg::Group> mNode;
 
    };
-   
+
 
    //////////////////////////////////////////////////////////////////////////
    void ViewTests::TestPagedLODRegistration()
    {
-      //Verify when a DeltaDrawable containing PagedLOD nodes gets 
+      //Verify when a DeltaDrawable containing PagedLOD nodes gets
       //added to the Scene, that the DatabasePager knows about the nodes.
       dtCore::RefPtr<dtCore::View> view = new dtCore::View();
 
-      osg::ref_ptr<TestPager> testPager = new TestPager();
+      dtCore::RefPtr<TestPager> testPager = new TestPager();
 
       dtCore::RefPtr<dtCore::DatabasePager> pager = new dtCore::DatabasePager( *testPager );
       view->SetDatabasePager( pager.get() );
-   
+
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
       view->SetScene( scene.get() );
 
@@ -134,5 +134,13 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ViewTests);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("SHould be 2",
                                     size_t(2),
                                     testPager->GetPagedLODList().size() );
+
+      dtCore::RefPtr<TestPager> testPager2 = new TestPager();
+      dtCore::RefPtr<dtCore::DatabasePager> pager2 = new dtCore::DatabasePager( *testPager2 );
+      view->SetDatabasePager( pager2.get() );
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Should be 2, and should have worked when setting the pager AFTER setting the scene.",
+                                    size_t(2),
+                                    testPager2->GetPagedLODList().size() );
    }
 }

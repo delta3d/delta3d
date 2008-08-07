@@ -32,10 +32,11 @@
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 
-class CoreTests : public CPPUNIT_NS::TestFixture 
+class CoreTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(CoreTests);
 
+      CPPUNIT_TEST(TestAssignToView);
       CPPUNIT_TEST(TestScene);
 
    CPPUNIT_TEST_SUITE_END();
@@ -44,6 +45,7 @@ class CoreTests : public CPPUNIT_NS::TestFixture
 
       void setUp();
       void tearDown();
+      void TestAssignToView();
       void TestScene();
 };
 
@@ -59,9 +61,36 @@ void CoreTests::tearDown()
 
 }
 
+class TestSceneForSceneTests : public dtCore::Scene
+{
+public:
+   TestSceneForSceneTests(const std::string& name = ""): Scene(name) {};
+   bool GetIsAssignedToView(dtCore::View& view) const { return IsAssignedToView(view); }
+};
+
+
+void CoreTests::TestAssignToView()
+{
+   dtCore::RefPtr<dtCore::View> view = new dtCore::View;
+   dtCore::RefPtr<TestSceneForSceneTests> scene = new TestSceneForSceneTests;
+
+   CPPUNIT_ASSERT(!scene->GetIsAssignedToView(*view));
+
+   // Add two drawables to test so that setting the database pager will run the code to re-add them to the
+   // pager.  I need a way to test if the drawables are actually added to the pager.
+   scene->AddDrawable(new dtCore::PointAxis());
+   scene->AddDrawable(new dtCore::Environment());
+
+   view->SetScene(scene.get());
+
+   CPPUNIT_ASSERT(scene->GetIsAssignedToView(*view));
+}
+
 void CoreTests::TestScene()
 {
-   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene; 
+   const std::string sceneName("ChickenMan");
+   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene(sceneName);
+   CPPUNIT_ASSERT_EQUAL(sceneName, scene->GetName());
 
    //test setting scene node
    dtCore::RefPtr<osg::Group> grp = new osg::Group();

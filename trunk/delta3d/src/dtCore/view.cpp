@@ -53,13 +53,13 @@ void dtCore::View::Ctor(bool useSceneLight)
 
    CreateKeyboardMouseHandler();
 
-   if (mOsgViewerView->getDatabasePager() )
+   if (mOsgViewerView->getDatabasePager() != NULL)
    {
-      SetDatabasePager( new DatabasePager(*mOsgViewerView->getDatabasePager()) );
+      SetDatabasePager(new DatabasePager(*mOsgViewerView->getDatabasePager()));
    }
    else
    {
-      SetDatabasePager( new DatabasePager() );
+      SetDatabasePager(new DatabasePager());
    }
 }
 
@@ -70,30 +70,30 @@ View::~View()
 }
 
 ////////////////////////////
-bool View::AddSlave( Camera* camera )
+bool View::AddSlave(Camera* camera)
 {
-   if( camera == NULL )
+   if (camera == NULL)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied dtCore::Camera is invalid", __FILE__, __LINE__);
    }
-   
-   if( camera->GetOSGCamera() == NULL )
+
+   if (camera->GetOSGCamera() == NULL)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied dtCore::Camera::GetOsgCamera() is invalid", __FILE__, __LINE__);
    }
-   
+
    mCameraSlave.insert(camera);
-   
-   return mOsgViewerView->addSlave(camera->GetOSGCamera()); 
+
+   return mOsgViewerView->addSlave(camera->GetOSGCamera());
 }
 ////////////////////////////
-bool View::RemoveSlave( Camera* camera )
+bool View::RemoveSlave(Camera* camera)
 {
    assert(camera);
    assert(camera->GetOSGCamera());
-   
+
    return mCameraSlave.erase(camera) > 0;
 }
 
@@ -101,9 +101,9 @@ bool View::RemoveSlave( Camera* camera )
 void View::SetCamera( Camera* camera )
 {
    if (mCamera == camera) return;
-   
+
    mCamera = camera;
-   
+
    if (mCamera.valid())
    {
       mOsgViewerView->setCamera(camera->GetOSGCamera());
@@ -112,8 +112,8 @@ void View::SetCamera( Camera* camera )
 }
 
 ////////////////////////////
-void View::SetScene(Scene *scene)
-{   
+void View::SetScene(Scene* scene)
+{
    if (mScene == scene) return;
 
    if (mScene.valid())
@@ -144,7 +144,7 @@ void View::SetMouse( Mouse* mouse )
    mKeyboardMouseHandler->SetMouse(mouse);
 }
 
-///////////////////// 
+/////////////////////
 void View::SetKeyboard( Keyboard* keyboard )
 {
    if( keyboard == 0 )
@@ -155,25 +155,25 @@ void View::SetKeyboard( Keyboard* keyboard )
 
    mKeyboardMouseHandler->SetKeyboard(keyboard);
 }
-///////////////////// 
-Keyboard* View::GetKeyboard() 
-{ 
+/////////////////////
+Keyboard* View::GetKeyboard()
+{
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL;
 }
 /////////////////////
-const Keyboard* View::GetKeyboard() const 
-{ 
+const Keyboard* View::GetKeyboard() const
+{
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL;
 }
 /////////////////////
-Mouse* View::GetMouse() 
-{ 
+Mouse* View::GetMouse()
+{
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL;
 }
 
 /////////////////////
-const Mouse* View::GetMouse() const 
-{ 
+const Mouse* View::GetMouse() const
+{
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL;
 }
 
@@ -184,7 +184,7 @@ void View::UpdateFromScene()
    mOsgViewerView->assignSceneDataToCameras();
 }
 
-///////////////////// 
+/////////////////////
 dtCore::KeyboardMouseHandler * View::CreateKeyboardMouseHandler()
 {
     mKeyboardMouseHandler = new dtCore::KeyboardMouseHandler(this);
@@ -202,8 +202,8 @@ bool View::GetMousePickPosition( osg::Vec3 &position, unsigned int traversalMask
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool View::GetPickPosition(osg::Vec3& intersectionPoint, 
-                           const osg::Vec2 &mousePos, 
+bool View::GetPickPosition(osg::Vec3& intersectionPoint,
+                           const osg::Vec2 &mousePos,
                            unsigned int traversalMask)
 {
    osgUtil::LineSegmentIntersector::Intersections hitList ;
@@ -248,7 +248,7 @@ bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Inters
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask) 
+dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 {
    const Mouse* mouse = GetMouse();
    if (mouse == NULL) {return NULL;}
@@ -258,7 +258,7 @@ dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
-   if (GetMouseIntersections(hitList, mouse->GetPosition(), traversalMask) == false) 
+   if (GetMouseIntersections(hitList, mouse->GetPosition(), traversalMask) == false)
    {
       return NULL;
    }
