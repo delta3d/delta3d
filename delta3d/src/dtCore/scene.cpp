@@ -31,6 +31,27 @@ using namespace dtUtil;
 namespace dtCore
 {
 
+// dTriIndex is a macro hack in delta for ODE < 0.10. For 0.10 it's a typedef, so this will only
+// exist for 0.10 and later.
+#ifndef dTriIndex
+class ODELifeCycle
+{
+public:
+	ODELifeCycle()
+	{
+		dInitODE2(0);
+	}
+
+	~ODELifeCycle()
+	{
+		dCloseODE();
+	}
+};
+
+// This statically starts and shuts ode down.  This is needed for ODE 0.10.
+static ODELifeCycle odeLifeCycle;
+#endif
+
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 /////////////////////////////////////////////
 // Replacement message handler for ODE
@@ -121,7 +142,7 @@ Scene::Scene( const std::string& name) : Base(name),
    mSceneNode->setName(name);
 
    InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
-      
+
    AddDrawable( skyLight );
    skyLight->SetEnabled( true );
 
@@ -198,10 +219,10 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
       newSceneNode->addChild(child);
    }
    mSceneNode->removeChildren(0, numChildren);
-   
+
    mSceneNode = newSceneNode;
    UpdateViewSet();
-   
+
    //now we need to remove and re-add all the drawables
    DrawableList dl = mAddedDrawables;
    RemoveAllDrawables();
@@ -211,7 +232,7 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    {
       AddDrawable((*iter).get());
    }
-   
+
 }
 /////////////////////////////////////////////
 void Scene::AddDrawable( DeltaDrawable *drawable )
@@ -575,13 +596,13 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 
                if( p1 != 0 || p2 != 0 )
                {
-                  dJointID joint = dJointCreateContact( scene->mWorldID, 
-                                                        scene->mContactJointGroupID, 
+                  dJointID joint = dJointCreateContact( scene->mWorldID,
+                                                        scene->mContactJointGroupID,
                                                         &contact );
-                  
-                  dJointAttach( joint, 
-                                p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,   
-                                p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );              
+
+                  dJointAttach( joint,
+                                p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
+                                p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );
                }
             }
          }
@@ -619,8 +640,8 @@ struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bo
 /////////////////////////////////////////////
 Light* Scene::GetLight( const std::string& name )
 {
-   LightVector::iterator found = std::find_if(  mLights.begin(), 
-                                                mLights.end(), 
+   LightVector::iterator found = std::find_if(  mLights.begin(),
+                                                mLights.end(),
                                                 std::bind2nd( HasName<Light>(), name ) );
 
    if( found != mLights.end() )
@@ -635,8 +656,8 @@ Light* Scene::GetLight( const std::string& name )
 /////////////////////////////////////////////
 const Light* Scene::GetLight( const std::string& name ) const
 {
-   LightVector::const_iterator found = std::find_if(  mLights.begin(), 
-                                                      mLights.end(), 
+   LightVector::const_iterator found = std::find_if(  mLights.begin(),
+                                                      mLights.end(),
                                                       std::bind2nd( HasName<Light>(), name ) );
 
    if( found != mLights.end() )
@@ -666,14 +687,14 @@ unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
 /////////////////////////////////////////////
 ///registers a light using the light number
 void Scene::RegisterLight( Light* light )
-{ 
+{
    mLights[ light->GetNumber() ] = light; //add to internal array of lights
 }
 /////////////////////////////////////////////
 ///unreferences the current light, by number, Note: does not erase
 void Scene::UnRegisterLight( Light* light )
-{ 
-   mLights[ light->GetNumber() ] = NULL; 
+{
+   mLights[ light->GetNumber() ] = NULL;
 }
 
 /////////////////////////////////////////////
@@ -695,7 +716,7 @@ void Scene::UseSceneLight( bool lightState )
 
 
 /////////////////////////////////////////////////////////////////////////////
-void Scene::RemoveView(dtCore::View& view) 
+void Scene::RemoveView(dtCore::View& view)
 {
    mViewSet.remove(&view);
 }
@@ -718,14 +739,46 @@ void Scene::UpdateViewSet()
          {
             (*it)->UpdateFromScene();
          }
-      }  
+      }
    }
 }
 
-//friend of dtCore::View
+/////////////////////////////////////////////////////////////////////////////
+bool Scene::IsAssignedToView(dtCore::View& view) const
+{
+   ViewSet::const_iterator it, end = mViewSet.end();
+   for (it = mViewSet.begin(); it != end; ++it)
+   {
+      if (it->get() == &view)
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+dtCore::DatabasePager* Scene::GetDatabasePager() const
+{
+   return mPager.get();
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void Scene::SetDatabasePager( dtCore::DatabasePager *pager )
 {
    mPager = pager;
+   if (mPager.valid())
+   {
+      //now we need to remove and re-add all the drawables
+      DrawableList dl = mAddedDrawables;
+      RemoveAllDrawables();
+
+      DrawableList::iterator iterEnd = dl.end();
+      for(DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
+      {
+         AddDrawable((*iter).get());
+      }
+   }
 }
 
 }
