@@ -120,20 +120,46 @@ namespace dtCore
 
    public:
 
-      ///Add a DeltaDrawable child
+      /**
+       * Add a child to this Transformable.  This will allow the child to be
+       * repositioned whenever the parent moves.  An optional offset may be applied to
+       * the child.  Any number of children may be added to a parent.
+       * The child's position in relation to the parent's will not change (ie: the
+       * child will *not* snap to the parent's position) unless the offset is
+       * overwritten using SetTransform() on the child.
+       *
+       * @param *child : The child to add to this Transformable
+       * @return : successfully added the child or not
+       * @see SetTransform()
+       * @see RemoveChild()
+       */
       virtual bool AddChild(DeltaDrawable* child);
 
-      ///Remove a DeltaDrawable child
+      /**
+       * Remove a child from this Transformable.  This will detach the child from its
+       * parent so that its free to be repositioned on its own.
+       *
+       * @param *child : The child Transformable to be removed
+       */
       virtual void RemoveChild(DeltaDrawable* child);
 
       /**
-       * Sets the Transform to reposition this Transformable. Note that if this
-       * function is overriden, then GetMatrix()->getMatrix() may return diffirent
-       * values.
+       * Set position/attitude of this Transformable using the supplied Transform.
+       * An optional coordinate system parameter may be supplied to specify whether
+       * the Transform is in relation to this Transformable's parent.
        *
-       * @param xform The value to set on this Transformable.
-       * @param cs The coordinate system of the returned Transform. For absolute,
-       * use ABS_CS, and for relative, us REL_CS.
+       * If the CoordSysEnum is ABS_CS,
+       * then the Transformable is positioned assuming
+       * absolute world coordinates and the Transformable parent/child relative
+       * position is recalculated.
+       * If the CoordSysEnum is REL_CS, then the Transformable is positioned relative
+       * to it's parent's Transform. (Note - if REL_CS is supplied and the Transformable
+       * does not have a parent, the Transform is assumed to be an absolute world
+       * coordinate.
+       *
+       * @param *xform : The new Transform to position this instance
+       * @param cs : Optional parameter describing the coordinate system of xform
+       *             Defaults to ABS_CS.
        */
       virtual void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS);
 
@@ -367,15 +393,30 @@ namespace dtCore
       bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
       /**
-       * Supply the Scene this Transformable has been added to. Normally this
-       * is done inside Scene::RegisterCollidable.
-       * @param scene The Scene to which this Transformable is being added to.
+       * This typically gets called from Scene::AddDrawable().
+       *
+       * This method perform the standard DeltaDrawable::AddedToScene() functionality
+       * then registers this Transformable object with the supplied Scene to create the
+       * internal physical properties.
+       *
+       * If the param scene is 0, this will unregister this Transformable from the
+       * previous parent Scene.
+       * If this Transformable already has a parent Scene, it will
+       * first remove itself from the old Scene (Scene::RemoveDrawable()), then
+       * re-register with the new Scene.
+       *
+       * @param scene The Scene this Transformable has been added to
        */
       virtual void AddedToScene(Scene* scene);
 
       /**
        * Set the category bits of this collision geom.
        * The defaults are listed in collisioncategorydefaults.h.
+       *
+       * Set the collide bits of this collision geom. If you want this geom to
+       * collide with a geom of category bit 00000010 for example, make sure these
+       * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
+       * comes in handy here. UNSIGNED_BIT(4) = 00000100
        */
       void SetCollisionCategoryBits(unsigned long bits);
 

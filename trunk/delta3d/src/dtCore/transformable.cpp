@@ -66,7 +66,7 @@ namespace dtCore
    class CollectParentPaths : public osg::NodeVisitor
    {
    public:
-      CollectParentPaths(osg::Node* haltTraversalAtNode=0) 
+      CollectParentPaths(osg::Node* haltTraversalAtNode=0)
          : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_PARENTS)
          , _haltTraversalAtNode(haltTraversalAtNode)
       {
@@ -91,6 +91,7 @@ namespace dtCore
    };
 }
 
+/////////////////////////////////////////////////////////////
 Transformable::Transformable(const std::string& name)
    : DeltaDrawable(name)
    , mGeomID(NULL)
@@ -109,6 +110,7 @@ Transformable::Transformable(const std::string& name)
    Ctor();
 }
 
+/////////////////////////////////////////////////////////////
 Transformable::Transformable(TransformableNode& node, const std::string& name)
    : DeltaDrawable(name)
    , mGeomID(NULL)
@@ -124,6 +126,7 @@ Transformable::Transformable(TransformableNode& node, const std::string& name)
    Ctor();
 }
 
+/////////////////////////////////////////////////////////////
 void Transformable::Ctor()
 {
    RegisterInstance(this);
@@ -142,6 +145,7 @@ void Transformable::Ctor()
    SetCollisionCollideBits(COLLISION_CATEGORY_MASK_ALL);
 }
 
+/////////////////////////////////////////////////////////////
 Transformable::~Transformable()
 {
    dGeomDestroy(mGeomID);
@@ -160,9 +164,19 @@ Transformable::~Transformable()
    DeregisterInstance(this);
 }
 
-osg::Node* Transformable::GetOSGNode() { return mNode.get(); }
-const osg::Node* Transformable::GetOSGNode() const { return mNode.get(); }
+/////////////////////////////////////////////////////////////
+osg::Node* Transformable::GetOSGNode()
+{
+   return mNode.get();
+}
 
+/////////////////////////////////////////////////////////////
+const osg::Node* Transformable::GetOSGNode() const
+{
+   return mNode.get();
+}
+
+/////////////////////////////////////////////////////////////
 void Transformable::ReplaceMatrixNode(TransformableNode* matrixTransform)
 {
    if (matrixTransform == NULL)
@@ -250,11 +264,7 @@ void Transformable::ReplaceMatrixNode(TransformableNode* matrixTransform)
    }
 }
 
-/** Calculates the world coordinate system matrix using the supplied node.
- * @param node : the node to calculate the world coordinate matrix from
- * @param wcMat : The supplied matrix to return with world coordinates
- * @return successfully or not
- */
+/////////////////////////////////////////////////////////////
 bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatrix)
 {
    if(node != NULL)
@@ -283,24 +293,7 @@ bool Transformable::GetAbsoluteMatrix(const osg::Node* node, osg::Matrix& wcMatr
    return false;
 }
 
-/**
- * Set position/attitude of this Transformable using the supplied Transform.
- * An optional coordinate system parameter may be supplied to specify whether
- * the Transform is in relation to this Transformable's parent.
- *
- * If the CoordSysEnum is ABS_CS,
- * then the Transformable is positioned assuming
- * absolute world coordinates and the Transformable parent/child relative
- * position is recalculated.
- * If the CoordSysEnum is REL_CS, then the Transformable is positioned relative
- * to it's parent's Transform. (Note - if REL_CS is supplied and the Transformable
- * does not have a parent, the Transform is assumed to be an absolute world
- * coordinate.
- *
- * @param *xform : The new Transform to position this instance
- * @param cs : Optional parameter describing the coordinate system of xform
- *             Defaults to ABS_CS.
- */
+////////////////////////////////////////////////////////////////////////////
 void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
 {
    osg::Matrix newMat;
@@ -339,13 +332,7 @@ void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
    PrePhysicsStepUpdate();
 }
 
-/**
- * Get the current Transform of this Transformable.
- *
- * @param *xform : The Transform to be filled in
- * @param cs : Optional parameter to select either the absolute world coordinate
- *             or the parent relative coordinate (default == ABS_CS)
- */
+////////////////////////////////////////////////////////////////////////////
 void Transformable::GetTransform(Transform& xform, CoordSysEnum cs) const
 {
    const TransformableNode* mt = GetMatrixNode();
@@ -375,19 +362,7 @@ void Transformable::SetMatrix(const osg::Matrix& mat)
    mNode->setMatrix(mat);
 }
 
-/**
- * Add a child to this Transformable.  This will allow the child to be
- * repositioned whenever the parent moves.  An optional offset may be applied to
- * the child.  Any number of children may be added to a parent.
- * The child's position in relation to the parent's will not change (ie: the
- * child will *not* snap to the parent's position) unless the offset is
- * overwritten using SetTransform() on the child.
- *
- * @param *child : The child to add to this Transformable
- * @return : successfully added the child or not
- * @see SetTransform()
- * @see RemoveChild()
- */
+////////////////////////////////////////////////////////////////////////////
 bool Transformable::AddChild(DeltaDrawable* child)
 {
    // Add the child's node to our's
@@ -402,18 +377,14 @@ bool Transformable::AddChild(DeltaDrawable* child)
    }
 }
 
-/**
- * Remove a child from this Transformable.  This will detach the child from its
- * parent so that its free to be repositioned on its own.
- *
- * @param *child : The child Transformable to be removed
- */
+////////////////////////////////////////////////////////////////////////////
 void Transformable::RemoveChild(DeltaDrawable* child)
 {
    GetMatrixNode()->removeChild(child->GetOSGNode());
    DeltaDrawable::RemoveChild(child);
 }
 
+////////////////////////////////////////////////////////////////////////////
 void Transformable::RenderProxyNode(const bool enable)
 {
    if(enable)
@@ -468,10 +439,11 @@ void Transformable::RenderProxyNode(const bool enable)
    mRenderProxyNode = enable;
 }
 
+////////////////////////////////////////////////////////////////////////////
 void Transformable::SetNormalRescaling(const bool enable)
 {
-   osg::StateAttribute::GLModeValue state;   
-   state = (enable) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;  
+   osg::StateAttribute::GLModeValue state;
+   state = (enable) ? osg::StateAttribute::ON : osg::StateAttribute::OFF;
 
    if(GetOSGNode() != NULL)
    {
@@ -479,6 +451,7 @@ void Transformable::SetNormalRescaling(const bool enable)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////
 bool Transformable::GetNormalRescaling() const
 {
    if(GetOSGNode() == NULL)
@@ -490,12 +463,7 @@ bool Transformable::GetNormalRescaling() const
    return (state & osg::StateAttribute::ON) ? true : false;
 }
 
-/**
-* Returns the type of collision geometry associated with this
-* object.
-*
-* @return the object's collision geometry type
-*/
+/////////////////////////////////////////////////////////////////////////////////
 Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
 {
    int geomClass = dGeomGetClass(mGeomID);
@@ -529,17 +497,7 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
    return &CollisionGeomType::NONE;
 }
 
-/**
-* Returns the dimensions of collision geometry associated with this
-* object.
-*
-* @param dimensions The dimenstions of the object's collision geometry.
-* What is filled into the vector is dependent on Collision type.
-* CUBE     : ( lx, ly, lz )
-* SPHERE   : ( radius )
-* CYLINDER : ( radius, length )
-* RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
-*/
+///////////////////////////////////////////////////////////////////////////////////////
 void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
 {
    dimensions.clear();
@@ -613,64 +571,32 @@ void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
    }
 }
 
-/**
- * Set the category bits of this collision geom. Here's the defaults:
- *
- * dtABC::ProximityTrigger  0
- *
- * dtCore::Camera:          1
- * dtCore::Compass:         2
- * dtCore::InfiniteTerrain: 3
- * dtCore::ISector:         4
- * dtCore::Object:          5
- * dtCore::ParticlSsystem:  6
- * dtCore::Physical:        7
- * dtCore::PointAxis:       8
- * dtCore::PositionalLight: 9
- * dtCore::SpotLight:       10
- * dtCore::Transformable:   11
- *
- * dtAudio::Listener:       13
- * dtAudio::Sound:          14
- * dtHLA::Entity:           15
- * dtTerrain::Terrain:      16
- *
- */
+///////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCategoryBits(unsigned long bits)
 {
    dGeomSetCategoryBits( mGeomID, bits );
 }
 
+////////////////////////////////////////////////////////////////////////
 unsigned long Transformable::GetCollisionCategoryBits() const
 {
    return dGeomGetCategoryBits(mGeomID);
 }
 
-/**
- * Set the collide bits of this collision geom. If you want this geom to
- * collide with a geom of category bit 00000010 for example, make sure these
- * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
- * comes in handy here. UNSIGNED_BIT(4) = 00000100
- */
+//////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCollideBits(unsigned long bits)
 {
    dGeomSetCollideBits( mGeomID, bits );
 }
 
+////////////////////////////////////////////////////////////////////////////////
 unsigned long Transformable::GetCollisionCollideBits() const
 {
    return dGeomGetCollideBits(mGeomID);
 }
 
 
-/**
-* Sets whether or not collisions detection will be performed.
-* Note: This does not handle collisions in any way, the user
-* is still responsible for implementing collision response
-* (or just use Physical).
-*
-* @param solid true if the Transformable is solid
-*/
+/////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionDetection(bool enabled)
 {
    if(mGeomID != 0)
@@ -701,12 +627,7 @@ void Transformable::SetCollisionDetection(bool enabled)
    }
 }
 
-/**
-* Gets whether or not collisions with other Transformables
-* will be detected.
-*
-* @return true if the Transformable is solid
-*/
+////////////////////////////////////////////////////////////////
 bool Transformable::GetCollisionDetection() const
 {
    if(mGeomID != 0)
@@ -717,12 +638,7 @@ bool Transformable::GetCollisionDetection() const
    return false;
 }
 
-/**
-* Sets this object's collision geometry to the specified ODE
-* geom.
-*
-* @param geom the new collision geom
-*/
+////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionGeom(dGeomID geom)
 {
    dGeomTransformSetGeom(mGeomID, geom);
@@ -733,12 +649,7 @@ void Transformable::SetCollisionGeom(dGeomID geom)
    PrePhysicsStepUpdate();
 }
 
-/**
-* Sets this object's collision geometry to a sphere with the
-* specified radius.
-*
-* @param radius the radius of the collision sphere
-*/
+////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionSphere(float radius)
 {
    mOriginalGeomID = dCreateSphere(0, radius);
@@ -839,32 +750,26 @@ public:
          tv3 = v3 * mMatrix;
 
       tv1[2] = 0;
-      if(tv1.length() > mRadius) 
+      if(tv1.length() > mRadius)
       {
          mRadius = tv1.length();
       }
 
       tv2[2] = 0;
-      if(tv2.length() > mRadius) 
+      if(tv2.length() > mRadius)
       {
          mRadius = tv2.length();
       }
 
       tv3[2] = 0;
-      if(tv2.length() > mRadius) 
+      if(tv2.length() > mRadius)
       {
          mRadius = tv3.length();
       }
    }
 };
 
-/**
-* Sets this object's collision geometry to a sphere with
-* radius derived from the specified OpenSceneGraph node.
-*
-* @param node the node from which to obtain the sphere radius
-* (if NULL, attempt to use own node)
-*/
+////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionSphere(osg::Node* node)
 {
    if(node == 0)
@@ -916,14 +821,7 @@ void Transformable::SetCollisionSphere(osg::Node* node)
    }
 }
 
-/**
-* Sets this object's collision geometry to a box with the
-* specified dimensions.
-*
-* @param lx the length of the box in the x direction
-* @param ly the length of the box in the y direction
-* @param lz the length of the box in the z direction
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(float lx, float ly, float lz)
 {
    mOriginalGeomID = dCreateBox(0, lx, ly, lz);
@@ -938,13 +836,7 @@ void Transformable::SetCollisionBox(float lx, float ly, float lz)
    PrePhysicsStepUpdate();
 }
 
-/**
-* Sets this object's collision geometry to a box with parameters
-* derived from the specified OpenSceneGraph node.
-*
-* @param node the node from which to obtain the box parameters
-* (if 0, attempt to use own node)
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(osg::Node* node)
 {
    if(node == 0)
@@ -1003,13 +895,7 @@ void Transformable::SetCollisionBox(osg::Node* node)
    }
 }
 
-/**
-* Sets this object's collision geometry to a capped cylinder
-* (oriented along the z axis) with the specified radius and length.
-*
-* @param radius the radius of the cylinder
-* @param length the length of the cylinder
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(float radius, float length)
 {
    mOriginalGeomID = dCreateCCylinder(0, radius, length);
@@ -1080,13 +966,7 @@ public:
    }
 };
 
-/**
-* Sets this object's collision geometry to a capped cylinder with
-* parameters derived from the given OpenSceneGraph node.
-*
-* @param node the node from which to obtain the cylinder parameters
-* (if NULL, attempt to use own node)
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 {
    if(node == 0)
@@ -1138,12 +1018,7 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
    }
 }
 
-/**
-* Sets this object's collision geometry to a ray (along the z axis)
-* with the specified length.
-*
-* @param length the length of the ray
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionRay(float length)
 {
    mOriginalGeomID = dCreateRay(0, length);
@@ -1233,13 +1108,7 @@ public:
    }
 };
 
-/**
-* Sets this object's collision geometry to a triangle mesh derived
-* from the given OpenSceneGraph node.
-*
-* @param node the node from which to obtain the mesh data
-* (if 0, attempt to use own node)
-*/
+/////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionMesh(osg::Node* node)
 {
    if(node == 0)
@@ -1303,9 +1172,7 @@ void Transformable::SetCollisionMesh(osg::Node* node)
    }
 }
 
-/**
-* Removes any collision geometry specified for this object.
-*/
+/////////////////////////////////////////////////////////////
 void Transformable::ClearCollisionGeometry()
 {
    SetCollisionDetection(false);
@@ -1325,12 +1192,7 @@ void Transformable::ClearCollisionGeometry()
    }
 }
 
-/**
-* Updates the state of this object just before a physical
-* simulation step.  Should only be called by dtCore::Scene.
-* The default implementation updates the state of the body
-* to reflect any user-applied transformation.
-*/
+/////////////////////////////////////////////////////////////
 void Transformable::PrePhysicsStepUpdate()
 {
    if (!GetCollisionDetection()) return;
@@ -1430,6 +1292,7 @@ void Transformable::PrePhysicsStepUpdate()
    }
 }
 
+/////////////////////////////////////////////////////////////
 void Transformable::RenderCollisionGeometry(bool enable)
 {
    TransformableNode *xform = this->GetMatrixNode();
@@ -1574,20 +1437,7 @@ void Transformable::RenderCollisionGeometry(bool enable)
    }
 }
 
-/** This typically gets called from Scene::AddDrawable().
-*
-* This method perform the standard DeltaDrawable::AddedToScene() functionality
-* then registers this Transformable object with the supplied Scene to create the
-* internal physical properties.
-*
-* If the param scene is 0, this will unregister this Transformable from the
-* previous parent Scene.
-* If this Transformable already has a parent Scene, it will
-* first remove itself from the old Scene (Scene::RemoveDrawable()), then
-* re-register with the new Scene.
-*
-* @param scene The Scene this Transformable has been added to
-*/
+/////////////////////////////////////////////////////////////
 void Transformable::AddedToScene(Scene* scene)
 {
    if(scene)
@@ -1612,6 +1462,7 @@ void Transformable::AddedToScene(Scene* scene)
    }
 }
 
+///////////////////////////////////////////////////////////////
 void Transformable::RemoveRenderedCollisionGeometry()
 {
    if(mGeomGeod.valid())
