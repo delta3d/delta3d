@@ -47,6 +47,8 @@
 
 #include <vector>
 
+#include "../dtGame/testcomponent.h"
+
 extern dtABC::Application& GetGlobalApplication();
 
 #ifdef DELTA_WIN32
@@ -77,9 +79,15 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
    public:
+
       void setUp();
       void tearDown();
 
+      // Helper Methods
+      int GetEventCount(const dtDAL::GameEvent& gameEvent);
+      bool SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy);
+
+      // Test Methods
       void TestTaskActorDefaultValues();
       void TestTaskSubTasks();
       void TestGroupPropertySubTasks();
@@ -95,12 +103,15 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
       void CreateParentChildProxies();
       dtDAL::GameEventManager *mEventMgr;
       dtCore::RefPtr<dtGame::GameManager> mGameManager;
+      dtCore::RefPtr<TestComponent> mTestComp;
       static const std::string mTestGameActorLibrary;
       static const std::string mTestActorLibrary;
       dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy1;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy2;
       dtCore::RefPtr<dtActors::TaskActorProxy> mChildProxy3;
+      dtCore::RefPtr<dtDAL::GameEvent> mNotifyCompletedEvent;
+      dtCore::RefPtr<dtDAL::GameEvent> mNotifyFailedEvent;
 };
 
 //Registers the fixture into the 'registry'
@@ -114,13 +125,26 @@ void TaskActorTests::setUp()
 {
    try
    {
+      // Setup the managers.
       mEventMgr = &dtDAL::GameEventManager::GetInstance();
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGameManager->LoadActorRegistry(mTestGameActorLibrary);
+
+      // Setup the Test Component.
+      mTestComp = new TestComponent("TestComponent");
+      mGameManager->AddComponent( *mTestComp, dtGame::GameManager::ComponentPriority::NORMAL );
+
+      // Start/restart the system.
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();
+
+      // Create some test events.
+      mNotifyCompletedEvent = new dtDAL::GameEvent("NotifyCompletedEvent");
+      mEventMgr->AddEvent(*mNotifyCompletedEvent);
+      mNotifyFailedEvent = new dtDAL::GameEvent("NotifyFailedEvent");
+      mEventMgr->AddEvent(*mNotifyFailedEvent);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -131,16 +155,62 @@ void TaskActorTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::tearDown()
 {
+   // Shutdown the system.
    dtCore::System::GetInstance().SetPause(false);
    dtCore::System::GetInstance().Stop();
+
+   // Clear the Game Manager.
    if(mGameManager.valid())
    {
       mGameManager->DeleteAllActors();
       mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
       mGameManager = NULL;
    }
+
+   // Clear all events
+   mNotifyCompletedEvent = NULL;
+   mNotifyFailedEvent = NULL;
    mEventMgr->ClearAllEvents();
    mEventMgr = NULL;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+int TaskActorTests::GetEventCount(const dtDAL::GameEvent& gameEvent)
+{
+   int total = 0;
+
+   typedef std::vector<dtCore::RefPtr<const dtGame::Message> > MessageList;
+   const MessageList& messageList = mTestComp->GetReceivedProcessMessages();
+
+   const dtDAL::GameEvent* curEvent = NULL;
+   MessageList::const_iterator curMessage = messageList.begin();
+   MessageList::const_iterator endMessageList = messageList.end();
+   for( ; curMessage != endMessageList; ++curMessage )
+   {
+      if( (*curMessage)->GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT )
+      {
+         curEvent = static_cast<const dtGame::GameEventMessage&>(*(*curMessage)).GetGameEvent();
+         if( curEvent->GetName() == gameEvent.GetName() )
+         {
+            ++total;
+         }
+      }
+   }
+
+   return total;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool TaskActorTests::SetNotifyEventsOnTask(dtActors::TaskActorProxy& taskProxy)
+{
+   dtActors::TaskActor* task = NULL;
+   taskProxy.GetActor( task );
+
+   task->SetNotifyCompletedEvent( mNotifyCompletedEvent.get() );
+   task->SetNotifyFailedEvent( mNotifyFailedEvent.get() );
+
+   return task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get()
+      && task->GetNotifyFailedEvent() == mNotifyFailedEvent.get();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -155,6 +225,8 @@ void TaskActorTests::TestTaskActorDefaultValues()
       dtCore::RefPtr<dtActors::TaskActorProxy> proxy;
       mGameManager->CreateActor(*taskActorType, proxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",proxy.valid());
+      dtActors::TaskActor* task = NULL;
+      proxy->GetActor( task );
 
       //Make sure the correct properties exist on the proxy.
       CPPUNIT_ASSERT_MESSAGE("Task actor should have a description property.",
@@ -186,6 +258,26 @@ void TaskActorTests::TestTaskActorDefaultValues()
 
       valueProp = static_cast<dtDAL::FloatActorProperty *>(proxy->GetProperty("Weight"));
       CPPUNIT_ASSERT_MESSAGE("Task weight should be 1.0.",valueProp->GetValue() == 1.0f);
+
+      // Test Notify Completed Event Property
+      dtDAL::GameEventActorProperty* eventProp = static_cast<dtDAL::GameEventActorProperty*>
+         (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_COMPLETED));
+      CPPUNIT_ASSERT_MESSAGE("Task Notify Completed Event should be NULL",
+         eventProp->GetValue() == NULL);
+      task->SetNotifyCompletedEvent( mNotifyCompletedEvent.get() );
+      CPPUNIT_ASSERT( eventProp->GetValue() == mNotifyCompletedEvent.get() );
+
+      // Test Notify Failed Event Property
+      eventProp = static_cast<dtDAL::GameEventActorProperty*>
+         (proxy->GetProperty(dtActors::TaskActorProxy::PROPERTY_EVENT_NOTIFY_FAILED));
+      CPPUNIT_ASSERT_MESSAGE("Task Notify Failed Event should be NULL",
+         eventProp->GetValue() == NULL);
+      task->SetNotifyFailedEvent( mNotifyFailedEvent.get() );
+      CPPUNIT_ASSERT( eventProp->GetValue() == mNotifyFailedEvent.get() );
+
+      // --- Ensure the task maintains two different events.
+      CPPUNIT_ASSERT( task->GetNotifyCompletedEvent() == mNotifyCompletedEvent.get() );
+      CPPUNIT_ASSERT( task->GetNotifyFailedEvent() == mNotifyFailedEvent.get() );
 
       dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
       CPPUNIT_ASSERT_MESSAGE("Complete should be false.", !actor->IsComplete());
@@ -455,24 +547,37 @@ void TaskActorTests::TestGameEventTaskActor()
 
       //Before we can listen for any game event messages, we have to register the event
       //with the event manager since other components rely on this behavior.
-      dtDAL::GameEvent *gameEvent = new dtDAL::GameEvent("TestGameEvent");
+      dtDAL::GameEvent* gameEvent = new dtDAL::GameEvent("TestGameEvent");
       mEventMgr->AddEvent(*gameEvent);
+      dtDAL::GameEvent* failEvent = new dtDAL::GameEvent("TestFailEvent");
+      mEventMgr->AddEvent(*failEvent);
 
-      //Set the game event property on the task.
+      // Set the game event property on the task.
+      dtDAL::GameEventActorProperty* prop = static_cast<dtDAL::GameEventActorProperty*>
+         (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_COMPLETE.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a GameEvent property.",
-                             eventTaskProxy->GetProperty("GameEvent") != NULL);
-      eventTaskProxy->GetProperty("GameEvent")->FromString(gameEvent->GetUniqueId().ToString());
+         prop != NULL);
 
-      dtDAL::GameEventActorProperty *prop =
-            static_cast<dtDAL::GameEventActorProperty*>(eventTaskProxy->GetProperty("GameEvent"));
-      dtDAL::GameEvent *toCheck = prop->GetValue();
-      CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",toCheck == gameEvent);
+      prop->FromString(gameEvent->GetUniqueId().ToString());
+      dtDAL::GameEvent* resultEvent = prop->GetValue();
+      CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",resultEvent == gameEvent);
 
-      //Set the minimum number of times the event should be fired.
+      // Set the fail game event property on the task.
+      prop = static_cast<dtDAL::GameEventActorProperty*>
+         (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_EVENT_FAIL.Get()));
+      CPPUNIT_ASSERT_MESSAGE("Game event task actors should have a FailGameEvent property.",
+         prop != NULL);
+
+      prop->FromString(failEvent->GetUniqueId().ToString());
+      resultEvent = prop->GetValue();
+      CPPUNIT_ASSERT_MESSAGE("Game event in property was not correct.",resultEvent == failEvent);
+
+      // Set the minimum number of times the event should be fired.
+      dtDAL::IntActorProperty* minProp = static_cast<dtDAL::IntActorProperty*>
+         (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actor should have a MinOccurances property.",
-                             eventTaskProxy->GetProperty("MinOccurances") != NULL);
-      dtDAL::IntActorProperty *minProp =
-            static_cast<dtDAL::IntActorProperty*>(eventTaskProxy->GetProperty("MinOccurances"));
+         minProp != NULL);
+         
       minProp->SetValue(5);
       CPPUNIT_ASSERT_MESSAGE("Game event min occurances should have been 5.",minProp->GetValue() == 5);
 
@@ -504,6 +609,23 @@ void TaskActorTests::TestGameEventTaskActor()
       //Make sure the complete time got marked properly...
       dtDAL::DoubleActorProperty *time = static_cast<dtDAL::DoubleActorProperty*>(eventTaskProxy->GetProperty("CompleteTime"));
       CPPUNIT_ASSERT_MESSAGE("Task complete time stamp was not correct.",time->GetValue() == currSimTime);
+
+      // Test failing by a fail event.
+      dtActors::TaskActorGameEvent* task = NULL;
+      eventTaskProxy->GetActor( task );
+      task->SetCompletedTimeStamp(-1);
+      task->SetComplete(false);
+      CPPUNIT_ASSERT( ! task->IsComplete() );
+      CPPUNIT_ASSERT( ! task->IsFailed() );
+
+      // --- Send the fail event.
+      eventMsg->SetGameEvent(*failEvent);
+      mGameManager->SendMessage(*eventMsg);
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT( ! task->IsComplete() );
+      CPPUNIT_ASSERT_MESSAGE("Game Event Task should fail when receiving a failable event.",
+         task->IsFailed() );
    }
    catch (const dtUtil::Exception &e)
    {
@@ -763,6 +885,9 @@ void TaskActorTests::TestFailedAndComplete()
 
       dtActors::TaskActor *actor = dynamic_cast<dtActors::TaskActor*>(proxy->GetActor());
 
+      // Add notify events to the root task.
+      CPPUNIT_ASSERT( SetNotifyEventsOnTask(*proxy) );
+
       double completeTime = actor->GetCompletedTimeStamp();
 
       /////  TEST SETTING TO FAIL
@@ -791,6 +916,14 @@ void TaskActorTests::TestFailedAndComplete()
 
       // Test Mutable
       CPPUNIT_ASSERT_MESSAGE("We are failed, so should not be mutable", !proxy->IsCurrentlyMutable());
+
+      // Ensure events were sent.
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE("Notify Completed Event should NOT have been sent.",
+         GetEventCount( *mNotifyCompletedEvent ) == 0 );
+      CPPUNIT_ASSERT_MESSAGE("Notify Failed Event should have been sent only once.",
+         GetEventCount( *mNotifyFailedEvent ) == 1 );
+      mTestComp->reset();
 
 
       /////  TEST SETTING TO COMPLETE
@@ -822,6 +955,14 @@ void TaskActorTests::TestFailedAndComplete()
 
       // Test Mutable
       CPPUNIT_ASSERT_MESSAGE("We are complete, so should not be mutable", !proxy->IsCurrentlyMutable());
+
+      // Ensure events were sent.
+      dtCore::System::GetInstance().Step();
+      CPPUNIT_ASSERT_MESSAGE("Notify Completed Event should have been sent only once.",
+         GetEventCount( *mNotifyCompletedEvent ) == 1 );
+      CPPUNIT_ASSERT_MESSAGE("Notify Failed Event should NOT have been sent.",
+         GetEventCount( *mNotifyFailedEvent ) == 0 );
+      mTestComp->reset();
 
       /// TEST the PARENT - CHILD behavior.
 

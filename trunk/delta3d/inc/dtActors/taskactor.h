@@ -26,6 +26,7 @@
 
 #include <dtUtil/mathdefines.h>
 
+#include <dtDAL/gameevent.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/actorproxyicon.h>
 
@@ -194,6 +195,30 @@ namespace dtActors
          void SetFailed(bool flag);
 
          /**
+          * Set the event to be fired when this task completes.
+          * @param gameEvent Event to be fired.
+          */
+         void SetNotifyCompletedEvent( dtDAL::GameEvent* gameEvent ) { mNotifyEventCompleted = gameEvent; }
+
+         /**
+          * @return Event to be fired when this task completes.
+          */
+         dtDAL::GameEvent* GetNotifyCompletedEvent() { return mNotifyEventCompleted.get(); }
+         const dtDAL::GameEvent* GetNotifyCompletedEvent() const { return mNotifyEventCompleted.get(); }
+
+         /**
+          * Set the event to be fired when this task fails.
+          * @param gameEvent Event to be fired.
+          */
+         void SetNotifyFailedEvent( dtDAL::GameEvent* gameEvent ) { mNotifyEventFailed = gameEvent; }
+
+         /**
+          * @return Event to be fired when this task fails.
+          */
+         dtDAL::GameEvent* GetNotifyFailedEvent() { return mNotifyEventFailed.get(); }
+         const dtDAL::GameEvent* GetNotifyFailedEvent() const { return mNotifyEventFailed.get(); }
+
+         /**
           * Convienence method to reset the properties of this task to their
           * default values.
           * @par
@@ -248,6 +273,8 @@ namespace dtActors
          bool mComplete; // mutually exclusive with mFailed
          bool mFailed; // mutually exclusive with mComplete
          bool mNotifyLMSOnUpdate;
+         dtCore::ObserverPtr<dtDAL::GameEvent> mNotifyEventCompleted;
+         dtCore::ObserverPtr<dtDAL::GameEvent> mNotifyEventFailed;
    };
 
    /**
@@ -257,6 +284,9 @@ namespace dtActors
    class DT_PLUGIN_EXPORT TaskActorProxy : public dtGame::GameActorProxy
    {
       public:
+         static const dtUtil::RefString CLASS_NAME;
+         static const dtUtil::RefString PROPERTY_EVENT_NOTIFY_COMPLETED;
+         static const dtUtil::RefString PROPERTY_EVENT_NOTIFY_FAILED;
 
          /**
           * Constructs the task actor proxy.
@@ -333,6 +363,14 @@ namespace dtActors
           *   called this method only once if a group of properties changes in one tick.
           */
          virtual void NotifyActorUpdate();
+
+         /**
+          * Convenience method for firing an event.
+          * This method requires this task to be contained in the Game Manager.
+          * @param gameEvent Event to be fired through the Game Manager via
+          *        a Game Event Message.
+          */
+         void SendGameEvent(dtDAL::GameEvent& gameEvent);
 
          /**
           * Gets a const pointer to the parent of this task.
