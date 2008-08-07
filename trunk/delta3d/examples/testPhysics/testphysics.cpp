@@ -214,11 +214,12 @@ protected:
                   RefPtr<Object> box = new Object("box");
                   box->LoadFile( "models/physics_crate.ive" );
 
-                  box->SetCollisionBox();
-                  box->SetTransform( GetStartTransform() );
-
                   float randomScale = RandFloat( 0.5f, 2.0f );
                   box->SetScale( osg::Vec3(randomScale, randomScale, randomScale) );
+
+                  box->SetCollisionBox();
+                  box->SetTransform( GetStartTransform() );
+                  //box->RenderCollisionGeometry();
 
                   double lx = 1.0;
                   double ly = 1.0;
@@ -251,6 +252,7 @@ protected:
 
                sphere->SetCollisionSphere();
                sphere->SetTransform( GetStartTransform() );
+               //sphere->RenderCollisionGeometry(true);
 
                double radius = 0.5;
 
@@ -280,6 +282,7 @@ protected:
 
                cyl->SetCollisionCappedCylinder();
                cyl->SetTransform( GetStartTransform() );
+               //cyl->RenderCollisionGeometry(true);
 
                double radius = 0.321; 
                double length = 1.0;
