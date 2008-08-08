@@ -1,6 +1,13 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
 #include <dtInspector/inspector.h>
+
+#include <dtCore/environment.h>
+#include <dtCore/globals.h>
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/refptr.h>
+
+#include <dtABC/application.h>
+#include <dtABC/weather.h>
 
 using namespace dtABC;
 using namespace dtCore;

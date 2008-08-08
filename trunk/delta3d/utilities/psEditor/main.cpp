@@ -1,6 +1,7 @@
-#include "dtCore/dt.h"
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
+#include <dtCore/compass.h>
 #include <dtCore/system.h>
 #include <dtCore/mouse.h>
 #include <dtUtil/matrixutil.h>

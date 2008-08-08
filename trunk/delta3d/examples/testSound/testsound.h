@@ -1,9 +1,8 @@
 #ifndef DELTA_TEST_SOUND_APP
 #define DELTA_TEST_SOUND_APP
 
-#include "dtCore/dt.h"
 #include "dtAudio/dtaudio.h"
-#include "dtABC/dtabc.h"
+#include <dtABC/application.h>
 
 
 

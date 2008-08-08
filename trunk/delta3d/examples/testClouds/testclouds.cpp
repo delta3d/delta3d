@@ -1,7 +1,17 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
 #include <dtInspector/inspector.h>
 #include <osgGA/GUIEventAdapter>
+
+#include <dtABC/application.h>
+#include <dtABC/weather.h>
+
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/clouddome.h>
+#include <dtCore/cloudplane.h>
+#include <dtCore/environment.h>
+#include <dtCore/refptr.h>
+
+#include <dtUtil/log.h>
 
 using namespace dtABC;
 using namespace dtCore;
