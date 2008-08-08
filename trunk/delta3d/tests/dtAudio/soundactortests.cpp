@@ -28,31 +28,17 @@
 #include <dtAudio/sound.h>
 
 #include <dtGame/gamemanager.h>
-#include <dtGame/basemessages.h>
 
-#include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
 
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
-#include <dtDAL/namedparameter.h>
-
-#include <dtUtil/stringutils.h>
 #include <dtABC/application.h>
-
-#include <vector>
 
 extern dtABC::Application& GetGlobalApplication();
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // TEST OBJECT
@@ -70,7 +56,7 @@ class SoundActorTests : public CPPUNIT_NS::TestFixture
       void tearDown();
 
       // Helper Methods
-      void TickSystem( int milliseconds );
+      void TickSystem(unsigned int milliseconds);
 
       // Test Methods
       void TestProperties();
@@ -135,12 +121,9 @@ void SoundActorTests::tearDown()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void SoundActorTests::TickSystem( int milliseconds )
+void SoundActorTests::TickSystem(unsigned int milliseconds)
 {
-   for(int i = 0; i < milliseconds; ++i)
-   {
-      SLEEP(1);
-   }
+   dtCore::AppSleep(milliseconds);
    dtCore::System::GetInstance().Step();
 }
 
@@ -235,20 +218,32 @@ void SoundActorTests::TestTimedPlay()
          ! sound->IsPlaying() );
 
       // Test adding to the game manager.
-      mProxy->SetOffsetTime( 0.1f );
+      const float offsetTime = 0.1f;
+      mProxy->SetOffsetTime(offsetTime);
       sound->SetLooping( true );
       mGameManager->AddActor( *mProxy, false, false );
-      dtCore::System::GetInstance().Step();
-      CPPUNIT_ASSERT_MESSAGE( "Sound should not be playing yet.",
-         ! sound->IsPlaying() );
 
+      dtCore::Timer timer;
+      dtCore::System::GetInstance().Step();
+      if (timer.ElapsedSeconds() < offsetTime)
+      {
+         CPPUNIT_ASSERT_MESSAGE("Sound should not be playing yet.",
+                                 sound->IsPlaying() == false );
+      }
+ 
       TickSystem(20);
-      CPPUNIT_ASSERT_MESSAGE( "Sound should still not be playing yet.",
-         ! sound->IsPlaying() );
+      if (timer.ElapsedSeconds() < offsetTime)
+      {
+         CPPUNIT_ASSERT_MESSAGE("Sound should still not be playing yet.",
+                                sound->IsPlaying() == false);
+      }
 
       TickSystem(81);
-      CPPUNIT_ASSERT_MESSAGE( "Sound should now be playing.",
-         sound->IsPlaying() );
+      if (timer.ElapsedSeconds() > offsetTime)
+      {
+         CPPUNIT_ASSERT_MESSAGE("Sound should now be playing.",
+                                sound->IsPlaying() == true);
+      }
 
       // --- Stop the sound
       sound->Stop();
@@ -288,3 +283,4 @@ void SoundActorTests::TestTimedPlay()
       CPPUNIT_FAIL(e.ToString());
    }
 }
+
