@@ -23,8 +23,8 @@ namespace dtCore
 
       /**
       * Sets the ODE body identifier associated with this object. Should
-      * only be called by dtCore::Scene. If you call this outside the 
-      * content of Scene be warning that any transformations you have 
+      * only be called by dtCore::Scene. If you call this outside the
+      * content of Scene be warning that any transformations you have
       * on bodyID will be removed.
       *
       * @param bodyID the new body identifier
@@ -83,13 +83,13 @@ namespace dtCore
       float GetMass() const;
 
       /**
-      * Set the body's position manually. 
+      * Set the body's position manually.
       * @note: SetBodyID() must be called before this method takes affect.
       */
       void SetPosition(const osg::Vec3& xyz);
 
       /**
-      * Set the body's rotation manually. 
+      * Set the body's rotation manually.
       * @note: SetBodyID() must be called before this method takes affect.
       */
       void SetRotation(const osg::Matrix& rot);
@@ -124,7 +124,7 @@ namespace dtCore
       */
       void GetInertiaTensor(osg::Matrix& dest) const;
 
-      /**      
+      /**
       * @return the Body's linear velocity
       */
       osg::Vec3 GetLinearVelocity() const;
@@ -169,7 +169,7 @@ namespace dtCore
 
    protected:
       virtual ~ODEBodyWrap();
-   	
+
    private:
       /**
       * The ODE body identifier.
