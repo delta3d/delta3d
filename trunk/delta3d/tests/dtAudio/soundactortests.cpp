@@ -210,7 +210,7 @@ void SoundActorTests::TestTimedPlay()
    try
    {
       // Test loading a sound.
-      mProxy->LoadFile( "Sounds/silence.wav" );
+      mProxy->LoadFile( dtCore::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav" );
       dtAudio::SoundActor* soundActor = NULL;
       mProxy->GetActor( soundActor );
       dtAudio::Sound* sound = soundActor->GetSound();
