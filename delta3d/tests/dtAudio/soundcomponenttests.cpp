@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Chris Rodgers
+ * Erik Johnson
  */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -30,19 +31,11 @@
 
 #include <dtGame/gamemanager.h>
 
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
-#include <dtUtil/stringutils.h>
-#include <dtABC/application.h>
-
 #include <vector>
-
-extern dtABC::Application& GetGlobalApplication();
 
 
 
@@ -93,7 +86,6 @@ void SoundComponentTests::setUp()
    {
       dtCore::Scene* scene = new dtCore::Scene();
       mGM = new dtGame::GameManager(*scene);
-      dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mGM->LoadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
 
       mSndActorType = mGM->FindActorType("dtcore.Environment","Sound Actor");
@@ -171,10 +163,11 @@ void SoundComponentTests::TestSoundManagement()
    try
    {
       using namespace dtAudio;
+      const std::string unitTestDataFilePath = dtCore::GetDeltaRootPath() + "/tests/data/";
 
-      const std::string testSoundFile("Sounds/silence.wav");
-      const std::string testSoundFile2("Sounds/silence2.wav");
-      const std::string fakeSoundFile("Sounds/FAKE.wav");
+      const std::string testSoundFile = unitTestDataFilePath + "Sounds/silence.wav";
+      const std::string testSoundFile2 = unitTestDataFilePath + "Sounds/silence2.wav";
+      const std::string fakeSoundFile("FAKE.wav");
       const std::string name1(testSoundFile);
       const std::string name2(testSoundFile2);
       const std::string name3("Sound_3");
@@ -367,7 +360,7 @@ void SoundComponentTests::TestSoundCommands()
    using namespace dtAudio;
    using namespace dtCore;
 
-   const std::string testSoundFile("Sounds/silence.wav");
+   const std::string testSoundFile = dtCore::GetDeltaRootPath() + "/tests/data/Sounds/silence.wav";
    const std::string name1("Sound_1");
    const std::string name2("Sound_2");
    const std::string name3("Sound_3");
