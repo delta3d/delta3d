@@ -133,9 +133,7 @@ Scene::Scene( const std::string& name) : Base(name),
    mUserNearCallbackData(0),
    mLights(MAX_LIGHTS),
    mRenderMode(POINT),
-   mRenderFace(FRONT),
-   mStartTick(0),
-   mFrameNum(0)
+   mRenderFace(FRONT)
 {
    RegisterInstance(this);
    SetName(name);
