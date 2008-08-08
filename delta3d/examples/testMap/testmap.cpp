@@ -2,8 +2,13 @@
 /// Eddie Johnson
 /// Chris Osborn
 
-#include <dtABC/dtabc.h>
-#include <dtCore/dt.h>
+#include <dtABC/application.h>
+#include <dtCore/walkmotionmodel.h>
+#include <dtCore/object.h>
+#include <dtCore/particlesystem.h>
+#include <dtCore/effectmanager.h>
+#include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtUtil/exception.h>

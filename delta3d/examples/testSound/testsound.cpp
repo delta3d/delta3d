@@ -1,7 +1,9 @@
 #include <cassert>
 
-#include "dtCore/dt.h"
 #include "testsound.h"
+#include <dtCore/keyboard.h>
+#include <dtCore/globals.h>
+#include <dtUtil/log.h>
 
 // namespaces
 using namespace   dtAudio;
