@@ -50,6 +50,12 @@ namespace dtCore
       double DeltaMicro( Timer_t t1, Timer_t t2 ) const;
       double DeltaNano( Timer_t t1, Timer_t t2 ) const;
 
+      double ElapsedSeconds() const;
+      double ElapsedMilliseconds() const;
+      double ElapsedMicroseconds() const;
+      double ElapsedNanoseconds() const;
+
+
       double GetSecondsPerTick() const;
 
    private:
