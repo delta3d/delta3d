@@ -500,9 +500,7 @@ float FPSMotionModel::GetFallingHeight() const
  */
 void FPSMotionModel::OnMessage(MessageData *data)
 {
-   if(GetTarget() != NULL &&
-      IsEnabled() && (mOperateWhenUnfocused || mMouse->GetHasFocus()) &&
-      data->message == "preframe")
+   if(IsCurrentlyActive() && data->message == "preframe")
    {
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
@@ -524,14 +522,24 @@ void FPSMotionModel::OnMessage(MessageData *data)
    }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+bool FPSMotionModel::IsCurrentlyActive()
+{
+   bool result = false;
 
+   result = GetTarget() != NULL && IsEnabled() && 
+      (mOperateWhenUnfocused || mMouse->GetHasFocus());
+
+   return result;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void FPSMotionModel::ShouldOperateWhenUnfocused(bool operate)
 {
    mOperateWhenUnfocused = operate;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);

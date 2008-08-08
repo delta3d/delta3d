@@ -376,6 +376,13 @@ namespace dtCore
           */
          void ShouldOperateWhenUnfocused(bool operate);
 
+         /**
+          * Checks that we are enabled, have a target, mouse has focus, etc... In other
+          * words, is this motion model currently doing it's job? Useful for subclasses...
+          * @return whether or not this is currently processing mouse/keyboard movement.
+          */
+         bool IsCurrentlyActive();
+
       private:
          
          /**
