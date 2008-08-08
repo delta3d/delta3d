@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////////
+// NOTE - This test is provided for historical reference. The ability to 
+// record and playback is provided via the AAR Record and Playback 
+// components in dtGame. See testAAR for a example of using this behavior.
+//////////////////////////////////////////////////////////////////////////////
+
 /** \author John K. Grant
   * \date August 26, 2005
   * \file testRecorder.cpp
