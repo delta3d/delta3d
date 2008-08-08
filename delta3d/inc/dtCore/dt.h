@@ -101,8 +101,17 @@ namespace dtCore
    #define DT_H_OSGDB_LIB  "osgDBd.lib"
    #define DT_H_OSGPARTICLE_LIB  "osgParticled.lib"
    #define DT_H_OSGUTIL_LIB "osgUtild.lib"
+
+// dTriIndex is a macro hack in delta for ODE < 0.10. For 0.10 it's a typedef, so this will only
+// exist for 0.10 and later.
+#ifndef dTriIndex
+   #define DT_H_ODE_LIB "ode_singled.lib"
+#else
    #define DT_H_ODE_LIB "oded.lib"
+#endif
+
    #define DT_H_OSGTEXT_LIB "osgTextd.lib"
+
 #else
    #ifndef DT_CORE_LIBRARY
       #define DT_H_DTCORE_LIB "dtCore.lib"
@@ -112,7 +121,13 @@ namespace dtCore
    #define DT_H_OSGDB_LIB  "osgDB.lib"
    #define DT_H_OSGPARTICLE_LIB  "osgParticle.lib"
    #define DT_H_OSGUTIL_LIB "osgUtil.lib"
+
+#ifndef dTriIndex
+   #define DT_H_ODE_LIB "ode_single.lib"
+#else
    #define DT_H_ODE_LIB "ode.lib"
+#endif
+
    #define DT_H_OSGTEXT_LIB "osgText.lib"
 #endif
 
