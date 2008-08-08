@@ -31,7 +31,6 @@
 #include <osg/Image>
 #include <osgDB/ReadFile>
 
-//#include <dtCore/timer.h>
 
 namespace dtCore
 {
