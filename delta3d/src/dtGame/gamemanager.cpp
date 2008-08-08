@@ -41,7 +41,6 @@
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
-#include <dtCore/timer.h>
 
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
