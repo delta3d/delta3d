@@ -27,7 +27,6 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
-#include <dtCore/timer.h>
 #include <dtCore/view.h>
 #include <dtCore/light.h>
 #include <dtCore/deltadrawable.h>
@@ -344,9 +343,6 @@ namespace dtCore
 
       Mode mRenderMode;
       Face mRenderFace;
-
-      Timer_t mStartTick;
-      unsigned int mFrameNum;
 
       ParticleSystemFreezer mFreezer;
 
