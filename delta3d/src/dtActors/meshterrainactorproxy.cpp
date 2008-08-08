@@ -21,58 +21,13 @@
 
 #include "dtActors/meshterrainactorproxy.h"
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actorproxyicon.h>
-
-#include <dtCore/object.h>
-
-#include <osg/NodeCallback>
-#include <osg/PagedLOD>
-#include <osg/io_utils>
-
-#include <iostream>
 
 using namespace dtCore;
 using namespace dtDAL;
 
 namespace dtActors
 {
-
-   class TestCullCallback: public osg::NodeCallback
-   {
-      public:
-
-         /** Callback method called by the NodeVisitor when visiting a node.*/
-         virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-         { 
-            std::cout << "traversing node " << node->className() << std::endl;
-
-            std::cout << nv->getEyePoint() << std::endl;
-
-            traverse(node,nv);
-         }
-   };
-
-   class TestNodeVisitor: public osg::NodeVisitor
-   {
-      public:
-
-         TestNodeVisitor(): osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-         {}
-
-         virtual void apply(osg::PagedLOD& node)
-         {
-            std::cout << "Traversing node " << node.className() << std::endl;            
-            std::cout << " Database path " << node.getDatabasePath() << std::endl; 
-
-            for (unsigned i = 0; i < node.getNumPriorityOffsets(); ++i)
-            {
-               std::cout << " Priority Offset " << i << " " << node.getPriorityOffset(i) << std::endl;
-            }
-
-            traverse(node);               
-         }
-   };
 
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -87,7 +42,6 @@ namespace dtActors
       const std::string &GROUPNAME = "Terrain";
       DeltaObjectActorProxy::BuildPropertyMap();
 
-      //Object *obj = static_cast<Object*>(GetActor());
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
             "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),
@@ -113,9 +67,6 @@ namespace dtActors
          return;
       }
 
-      //GetActor()->GetOSGNode()->setCullCallback(new TestCullCallback());
-      //dtCore::RefPtr<TestNodeVisitor> visitor = new TestNodeVisitor();
-      //GetActor()->GetOSGNode()->accept(*visitor);
 
       //We need this little hack to ensure that when a mesh is loaded, the collision
       //properties get updated properly.
