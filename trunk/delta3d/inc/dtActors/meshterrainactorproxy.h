@@ -23,7 +23,6 @@
 
 #include <dtDAL/plugin_export.h>
 #include <dtActors/deltaobjectactorproxy.h>
-#include <dtDAL/exceptionenum.h>
 #include <dtCore/object.h>
 
 namespace dtCore
