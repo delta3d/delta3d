@@ -2,7 +2,6 @@
 #include "packets.h"
 #include <osg/io_utils>
 #include <dtUtil/stringutils.h>
-#include <dtCore/scene.h>
 
 using namespace dtUtil;
 using namespace dtCore;

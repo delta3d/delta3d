@@ -2,7 +2,7 @@
 
 #include "testNetwork.h"
 #include <gnelib.h>
-
+#include <dtCore/globals.h>
 
 using namespace dtCore;
 

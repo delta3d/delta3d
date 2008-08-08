@@ -4,6 +4,7 @@
 #include <dtNet/netmgr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/object.h>
+#include <dtCore/scene.h>
 
 /** Deriving from NetMgr will allow use to overwrite some virtual methods.
   * We'll use these methods for controlling our network connections.

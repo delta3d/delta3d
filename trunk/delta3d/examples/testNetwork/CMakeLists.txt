@@ -14,3 +14,7 @@ LINK_WITH_VARIABLES( testNetwork
                      HAWKNL_LIBRARY
                      CURSES_LIBRARY
                    )
+                                   
+IF (WIN32)
+    TARGET_LINK_LIBRARIES(testNetwork wsock32)
+ENDIF (WIN32)

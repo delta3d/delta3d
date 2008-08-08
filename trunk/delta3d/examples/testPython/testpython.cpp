@@ -1,6 +1,11 @@
 #include <dtScript/scriptmanager.h>
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+
+#include <dtCore/globals.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/object.h>
+#include <dtCore/refptr.h>
+
+#include <dtABC/application.h>
 
 using namespace dtCore;
 using namespace dtABC;

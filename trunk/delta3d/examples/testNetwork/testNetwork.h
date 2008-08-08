@@ -1,8 +1,9 @@
 #ifndef DELTA_TestNetwork
 #define DELTA_TestNetwork
 
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+#include <dtABC/application.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/refptr.h>
 #include <dtNet/dtnet.h>
 
 #include "mynetwork.h"

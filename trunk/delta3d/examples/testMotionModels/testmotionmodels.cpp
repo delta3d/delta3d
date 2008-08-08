@@ -1,5 +1,19 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+#include <dtUtil/log.h>
+#include <dtCore/collisionmotionmodel.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/fpsmotionmodel.h>
+#include <dtCore/globals.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/object.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/refptr.h>
+#include <dtcore/rtsmotionmodel.h>
+#include <dtCore/scene.h>
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/walkmotionmodel.h>
+
+#include <dtABC/application.h>
 
 #include <CEGUI/elements/CEGUIRadioButton.h>
 #include <CEGUI/CEGUIExceptions.h>
