@@ -1,5 +1,6 @@
 #include "testNetwork.h"
 #include "packets.h"
+#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 using namespace dtABC;
