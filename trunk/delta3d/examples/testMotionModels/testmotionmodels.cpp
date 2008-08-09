@@ -29,7 +29,7 @@
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/refptr.h>
-#include <dtcore/rtsmotionmodel.h>
+#include <dtCore/rtsmotionmodel.h>
 #include <dtCore/scene.h>
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
