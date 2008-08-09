@@ -22,85 +22,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
+#include <dtAudio/soundcomponent.h>
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/audioactorregistry.h>
 #include <dtAudio/soundactorproxy.h>
-#include <dtAudio/soundcomponent.h>
+#include <dtAudio/soundinfo.h>
 #include <dtCore/globals.h>
 
 
 namespace dtAudio
 {
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND TYPE ENUMERATION CODE
-   /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(SoundType)
-   SoundType SoundType::SOUND_TYPE_DEFAULT("SOUND_TYPE_DEFAULT");
-   SoundType SoundType::SOUND_TYPE_MUSIC("SOUND_TYPE_MUSIC");
-   SoundType SoundType::SOUND_TYPE_UI_EFFECT("SOUND_TYPE_UI_EFFECT");
-   SoundType SoundType::SOUND_TYPE_VOICE("SOUND_TYPE_VOICE");
-   SoundType SoundType::SOUND_TYPE_WORLD_EFFECT("SOUND_TYPE_WORLD_EFFECT");
-
-   /////////////////////////////////////////////////////////////////////////////
-   SoundType::SoundType(const std::string &name)
-      : dtUtil::Enumeration(name)
-   {
-      AddInstance(this);
-   }
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND COMMAND ENUMERATION CODE
-   /////////////////////////////////////////////////////////////////////////////
-   IMPLEMENT_ENUM(SoundCommand)
-   SoundCommand SoundCommand::SOUND_COMMAND_REWIND("SOUND_COMMAND_REWIND");
-   SoundCommand SoundCommand::SOUND_COMMAND_PAUSE("SOUND_COMMAND_PAUSE");
-   SoundCommand SoundCommand::SOUND_COMMAND_PLAY("SOUND_COMMAND_PLAY");
-   SoundCommand SoundCommand::SOUND_COMMAND_STOP("SOUND_COMMAND_STOP");
-   
-   /////////////////////////////////////////////////////////////////////////////
-   SoundCommand::SoundCommand(const std::string &name)
-      : dtUtil::Enumeration(name)
-   {
-      AddInstance(this);
-   }
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND INFO CODE
-   /////////////////////////////////////////////////////////////////////////////
-   SoundInfo::SoundInfo( const dtAudio::SoundType& soundType, dtAudio::Sound& sound )
-      : mSoundType(soundType)
-      , mSound(&sound)
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   SoundInfo::~SoundInfo()
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const dtAudio::SoundType& SoundInfo::GetType() const
-   {
-      return mSoundType;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   dtAudio::Sound& SoundInfo::GetSound()
-   {
-      return *mSound;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   const dtAudio::Sound& SoundInfo::GetSound() const
-   {
-      return *mSound;
-   }
-
-
 
    /////////////////////////////////////////////////////////////////////////////
    // SOUND COMPONENT CODE
@@ -133,7 +64,8 @@ namespace dtAudio
 
       if( NULL == dtAudio::SoundType::GetValueForName( newSoundType.GetName() ) )
       {
-         dtAudio::SoundType::AddInstance( &newSoundType );
+         //dtAudio::SoundType::AddInstance( &newSoundType );
+         dtAudio::SoundType::AddNewType(newSoundType);
          success = true;
       }
 
@@ -186,7 +118,8 @@ namespace dtAudio
       SoundInfoMap::iterator foundIter = mSoundMap.find( soundName );
       if( foundIter != mSoundMap.end() )
       {
-         dtAudio::AudioManager::GetInstance().FreeSound( foundIter->second->mSound );
+         dtAudio::Sound *sound = &foundIter->second->GetSound();
+         dtAudio::AudioManager::GetInstance().FreeSound(sound);
          mSoundMap.erase( foundIter );
          success = true;
       }
@@ -201,7 +134,8 @@ namespace dtAudio
       SoundInfoMap::iterator endSoundInfoMap = mSoundMap.end();
       for( ; curSoundInfo != endSoundInfoMap; ++curSoundInfo )
       {
-         dtAudio::AudioManager::GetInstance().FreeSound( curSoundInfo->second->mSound );
+         dtAudio::Sound *sound = &curSoundInfo->second->GetSound();
+         dtAudio::AudioManager::GetInstance().FreeSound(sound);
       }
       mSoundMap.clear();
    }

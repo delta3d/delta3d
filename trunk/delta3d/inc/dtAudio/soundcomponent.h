@@ -18,6 +18,7 @@
  *
  * @author Chris Rodgers
  */
+
 #ifndef DELTA_SOUND_COMPONENT
 #define DELTA_SOUND_COMPONENT
 
@@ -25,9 +26,9 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtAudio/export.h>
-#include <dtGame/baseinputcomponent.h>
-#include <dtGame/baseinputcomponent.h>
-#include <dtUtil/enumeration.h>
+#include <dtAudio/soundtype.h>
+#include <dtAudio/soundcommand.h>
+#include <dtGame/gmcomponent.h>
 
 
 
@@ -37,84 +38,8 @@
 namespace dtAudio
 {
    class Sound;
-   class SoundActor;
    class SoundActorProxy;
-   class SoundComponent;
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND TYPE ENUMERATION CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_AUDIO_EXPORT SoundType : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(SoundType);
-
-      public:
-         static SoundType SOUND_TYPE_DEFAULT;
-         static SoundType SOUND_TYPE_MUSIC;
-         static SoundType SOUND_TYPE_UI_EFFECT;
-         static SoundType SOUND_TYPE_VOICE;
-         static SoundType SOUND_TYPE_WORLD_EFFECT;
-
-      protected:
-         SoundType(const std::string &name);
-
-         virtual ~SoundType(){}
-
-         friend dtAudio::SoundComponent;
-   };
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND COMMAND ENUMERATION CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_AUDIO_EXPORT SoundCommand : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(SoundCommand);
-
-      public:
-         static SoundCommand SOUND_COMMAND_REWIND;
-         static SoundCommand SOUND_COMMAND_PAUSE;
-         static SoundCommand SOUND_COMMAND_PLAY;
-         static SoundCommand SOUND_COMMAND_STOP;
-
-      protected:
-         SoundCommand(const std::string &name);
-
-         virtual ~SoundCommand(){}
-   };
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // SOUND INFO CODE
-   // This class creates the relationship between a sound and a sound type.
-   // It also handles play, stop and pause states that have been known to
-   // be problems with the dtAudio sound system; the system has no way of
-   // determining if a sound is playing, which is very bad.
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_AUDIO_EXPORT SoundInfo : public osg::Referenced
-   {
-      public:
-         SoundInfo( const dtAudio::SoundType& soundType, dtAudio::Sound& sound );
-
-         const dtAudio::SoundType& GetType() const;
-
-         dtAudio::Sound& GetSound();
-         const dtAudio::Sound& GetSound() const;
-
-      protected:
-         virtual ~SoundInfo();
-
-      private:
-         const dtAudio::SoundType& mSoundType;
-         dtAudio::Sound* mSound;
-
-         friend SoundComponent;
-   };
-
+   class SoundInfo;
 
 
    /////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/sound.h>
 #include <dtAudio/soundcomponent.h>
-
+#include <dtAudio/soundinfo.h>
 #include <dtGame/gamemanager.h>
 
 #include <dtCore/globals.h>
