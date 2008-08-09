@@ -14,11 +14,6 @@ namespace dtAudio
       AudioActorRegistry();
 
       virtual void RegisterActorTypes();
-
-   protected:
-
-   private:
    };
-
 }
 #endif // audioactorregistry_h__
