@@ -54,7 +54,6 @@
 
 #include <dtUtil/exception.h>
 
-#include <osg/Version>
 #include <sstream>
 
       // helper func that should be somewhere
