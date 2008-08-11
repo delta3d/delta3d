@@ -58,6 +58,10 @@
             <float defaultValue="10.0"/>
          </parameter>
 
+         <parameter name="Vec4Param">
+            <vec4 defaultValue="10.0 3.0 5.0 1.0"/>
+         </parameter>
+
          <parameter name="IntParam">
             <integer defaultValue="25"/>
          </parameter>
