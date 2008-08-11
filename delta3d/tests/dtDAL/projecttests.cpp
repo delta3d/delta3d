@@ -190,22 +190,28 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
 void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter)
 {
    for (unsigned tabs = 0; tabs < iter.level(); ++tabs)
+   {
       std::cout << "\t";
+   }
 
    std::cout << iter->getNodeText();
    if (!iter->isCategory())
+   {
       std::cout << " -- " << iter->getResource().GetResourceIdentifier();
-      else
-         std::cout << " -> " << iter->getFullCategory();
+   }
+   else
+   {
+      std::cout << " -> " << iter->getFullCategory();
 
-         std::cout << std::endl;
+      std::cout << std::endl;
 
-         for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+      for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
          i != iter.tree_ref().end();
-         ++i) {
-            printTree(i);
-
-         }
+         ++i)
+      {
+         printTree(i);
+      }
+   }
 }
 
 void ProjectTests::testReadonlyFailure()
