@@ -19,14 +19,15 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shaderxml.h"
-#include "dtCore/shadermanager.h"
-#include "dtCore/shaderprogram.h"
-#include "dtCore/shadergroup.h"
-#include "dtCore/shaderparamtexture2d.h"
-#include "dtCore/shaderparamfloat.h"
-#include "dtCore/shaderparamint.h"
-#include "dtCore/shaderparamoscillator.h"
+#include <dtCore/shaderxml.h>
+#include <dtCore/shadermanager.h>
+#include <dtCore/shaderprogram.h>
+#include <dtCore/shadergroup.h>
+#include <dtCore/shaderparamtexture2d.h>
+#include <dtCore/shaderparamfloat.h>
+#include <dtCore/shaderparamvec4.h>
+#include <dtCore/shaderparamint.h>
+#include <dtCore/shaderparamoscillator.h>
 
 #include <dtUtil/xercesutils.h>
 
@@ -73,6 +74,7 @@ namespace dtCore
 
    const std::string ShaderXML::FLOAT_ELEMENT("float");
    const std::string ShaderXML::INT_ELEMENT("integer");
+   const std::string ShaderXML::VEC4_ELEMENT("vec4");
    const std::string ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE("defaultValue");
 
    const std::string ShaderXML::OSCILLATOR_ELEMENT("oscillator");
@@ -300,17 +302,31 @@ namespace dtCore
          dtUtil::XMLStringConverter paramType(typeElement->getTagName());
          std::string toString = paramType.ToString();
          if (toString == ShaderXML::TEXTURE2D_ELEMENT)
+         {
             newParam = ParseTexture2DParameter(typeElement,paramName);
+         }
          else if (toString == ShaderXML::FLOAT_ELEMENT)
+         {
             newParam = ParseFloatParameter(typeElement,paramName);
+         }
+         else if (toString == ShaderXML::VEC4_ELEMENT)
+         {
+            newParam = ParseVec4Parameter(typeElement,paramName);
+         }
          else if (toString == ShaderXML::INT_ELEMENT)
+         {
             newParam = ParseIntParameter(typeElement,paramName);
+         }
          else if (toString == ShaderXML::OSCILLATOR_ELEMENT)
+         {
             newParam = ParseFloatTimerParameter(typeElement, paramName);
+         }
          else
+         {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
             "Invalid element found while parsing shader parameter: '"+toString+"'",
             __FILE__, __LINE__);
+         }
 
          // Set shared
          if (!isShared.empty())
@@ -444,6 +460,29 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseVec4Parameter(xercesc::DOMElement* vec4Elem,
+         const std::string& paramName)
+   {
+      dtCore::RefPtr<ShaderParamVec4> newParam = new ShaderParamVec4(paramName);
+
+      std::string value = GetElementAttribute(*vec4Elem, ShaderXML::PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE);
+      if (!value.empty())
+      {
+         std::istringstream ss;
+         osg::Vec4 defaultValue;
+         ss.str(value);
+         ss >> defaultValue.x();
+         ss >> defaultValue.y();
+         ss >> defaultValue.z();
+         ss >> defaultValue.w();
+         newParam->SetValue(defaultValue);
+      }
+
+      return static_cast<ShaderParameter*>(newParam.get());
+
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatTimerParameter(xercesc::DOMElement *timerElem,
       const std::string &paramName)
    {
@@ -451,7 +490,7 @@ namespace dtCore
       float tempValue;
       dtCore::RefPtr<ShaderParamOscillator> newParam = new ShaderParamOscillator(paramName);
 
-      // OFFSET 
+      // OFFSET
       valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_OFFSET);
       if (!valueString.empty())
       {
@@ -510,7 +549,7 @@ namespace dtCore
          ss.str(valueString);
          ss >> tempIntValue;
          newParam->SetCycleCountTotal(tempIntValue);
-      }      
+      }
 
       // TRIGGER
       valueString = GetElementAttribute(*timerElem, ShaderXML::OSCILLATOR_ATTRIB_TRIGGER);
@@ -527,11 +566,11 @@ namespace dtCore
          else
          {
             std::ostringstream error;
-            error << "Error parseing floattimer on parameter [" << paramName << 
+            error << "Error parseing floattimer on parameter [" << paramName <<
                "] for trigger attribute [" << valueString << "]. Should be 'auto' or 'manual'.";
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, error.str(), __FILE__, __LINE__);
-         }   
-      }      
+         }
+      }
 
       // USE REAL TIME
       valueString = GetElementAttribute(*timerElem,ShaderXML::OSCILLATOR_ATTRIB_USEREALTIME);
@@ -541,10 +580,10 @@ namespace dtCore
             newParam->SetUseRealTime(true);
          else if (valueString == "false")
             newParam->SetUseRealTime(false);
-         else 
+         else
          {
             std::ostringstream error;
-            error << "Error parsing floattimer on parameter [" << paramName << 
+            error << "Error parsing floattimer on parameter [" << paramName <<
                "] for userealtime attribute [" << valueString << "].  Should be 'true' or 'false'.";
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
          }
@@ -562,10 +601,10 @@ namespace dtCore
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::UPANDDOWN);
          else if (valueString == ShaderParamOscillator::OscillationType::DOWNANDUP.GetName())
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::DOWNANDUP);
-         else 
+         else
          {
             std::ostringstream error;
-            error << "Error parsing floattimer on parameter [" << paramName << 
+            error << "Error parsing floattimer on parameter [" << paramName <<
                "] for oscillation attribute [" << valueString << "].  Should be 'Up', 'Down', 'UpAndDown', or 'DownAndUp'.";
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
          }

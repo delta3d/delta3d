@@ -51,7 +51,7 @@ namespace dtCore
           * Parses the shader XML file.
           * @param fileName Full path to the xml file to parse.
           */
-         void ParseXML(const std::string &fileName);
+         void ParseXML(const std::string& fileName);
 
       private:
 
@@ -59,7 +59,7 @@ namespace dtCore
           * Builds a shader group from the specified DOM element.
           * @param shaderGroupElem The DOM element containing the shader group definition.
           */
-         void ParseShaderGroupElement(xercesc::DOMElement *shaderGroupElem);
+         void ParseShaderGroupElement(xercesc::DOMElement* shaderGroupElem);
 
          /**
           * Builds a shader object from the specified DOM element.
@@ -67,7 +67,7 @@ namespace dtCore
           * @param group The shader group to add the newly parsed shader to.
           * @return The new shader parsed from the XML DOM node.
           */
-         void ParseShaderElement(xercesc::DOMElement *shaderElem, ShaderGroup &group);
+         void ParseShaderElement(xercesc::DOMElement* shaderElem, ShaderGroup& group);
 
          /**
           * Parses a shader source element child of a shader.  A shader source element specifies
@@ -76,14 +76,14 @@ namespace dtCore
           * @param sourceElem The DOM element for the shader source.
           * @param shader The shader to append the source to.
           */
-         void ParseShaderSourceElement(xercesc::DOMElement *sourceElem, ShaderProgram &shader);
+         void ParseShaderSourceElement(xercesc::DOMElement* sourceElem, ShaderProgram& shader);
 
          /**
           * Parses a shader parameter from the definitions file.
           * @param paramElement DOM element containing the shader parameter.
           * @param shader The shader to add the newly parsed parameter to.
           */
-         void ParseParameterElement(xercesc::DOMElement *paramElement, ShaderProgram &shader);
+         void ParseParameterElement(xercesc::DOMElement* paramElement, ShaderProgram& shader);
 
          /**
           * Parses a shader parameter which represents a two dimensional texture.
@@ -91,8 +91,8 @@ namespace dtCore
           * @param paramName Name to assign to the parameter.
           * @return The newly constructed parameter.
           */
-         dtCore::RefPtr<ShaderParameter> ParseTexture2DParameter(xercesc::DOMElement *tex2DElem,
-               const std::string &paramName);
+         dtCore::RefPtr<ShaderParameter> ParseTexture2DParameter(xercesc::DOMElement* tex2DElem,
+               const std::string& paramName);
 
          /**
           * Parses a shader parameter which represents a floating point value.
@@ -100,18 +100,27 @@ namespace dtCore
           * @param paramName Name to assign to the parameter.
           * @return The newly constructed parameter.
           */
-         dtCore::RefPtr<ShaderParameter> ParseFloatParameter(xercesc::DOMElement *floatElem,
-               const std::string &paramName);
+         dtCore::RefPtr<ShaderParameter> ParseFloatParameter(xercesc::DOMElement* floatElem,
+               const std::string& paramName);
 
          /**
-          * Parses a shader parameter which represents an oscillating floating 
+          * Parses a shader parameter which represents a float vec4 value.
+          * @param vec4Elem The DOM element for the vec4 parameter.
+          * @param paramName Name to assign to the parameter.
+          * @return The newly constructed parameter.
+          */
+         dtCore::RefPtr<ShaderParameter> ParseVec4Parameter(xercesc::DOMElement* vec4Elem,
+               const std::string& paramName);
+
+         /**
+          * Parses a shader parameter which represents an oscillating floating
           * point timer value.
           * @param floatElem The DOM element for the float parameter.
           * @param paramName Name to assign to the parameter.
           * @return The newly constructed parameter.
           */
-         dtCore::RefPtr<ShaderParameter> ParseFloatTimerParameter(xercesc::DOMElement *timerElem,
-            const std::string &paramName);
+         dtCore::RefPtr<ShaderParameter> ParseFloatTimerParameter(xercesc::DOMElement* timerElem,
+            const std::string& paramName);
 
          /**
           * Parses a shader parameter which represents an integer value.
@@ -119,8 +128,8 @@ namespace dtCore
           * @param paramName Name to assign to the parameter.
           * @return The newly constructed parameter.
           */
-         dtCore::RefPtr<ShaderParameter> ParseIntParameter(xercesc::DOMElement *intElem,
-               const std::string &paramName);
+         dtCore::RefPtr<ShaderParameter> ParseIntParameter(xercesc::DOMElement* intElem,
+               const std::string& paramName);
 
          /**
           * Helper method to get the specified attribute from the XML DOM element.
@@ -129,21 +138,21 @@ namespace dtCore
           * @return The contents of the attribute.  An empty string is returned if
           *   the attribute could not be found.
           */
-         std::string GetElementAttribute(xercesc::DOMElement &element, const std::string &attribName);
+         std::string GetElementAttribute(xercesc::DOMElement& element, const std::string& attribName);
 
          /**
           * Simple helper method to get the texture address enumeration matching the specified string.
           * @param mode String to match to the appropriate address mode enumueration.
           * @return The matching enumeration or NULL if there was no match.
           */
-         const ShaderParamTexture::AddressMode *GetTextureAddressMode(const std::string &mode);
+         const ShaderParamTexture::AddressMode* GetTextureAddressMode(const std::string& mode);
 
          /**
           * Simple helper method to get the texture axis enumeration matching the specified string.
           * @param axis String to match to the appropriate axis enumueration.
           * @return The matching enumeration or NULL if there was no match.
           */
-         const ShaderParamTexture::TextureAxis *GetTextureAxis(const std::string &axis);
+         const ShaderParamTexture::TextureAxis* GetTextureAxis(const std::string& axis);
 
          //Elements and attributes found in the shader definitions XML file.
          static const std::string SHADERLIST_ELEMENT;
@@ -172,6 +181,7 @@ namespace dtCore
          static const std::string TEXTURE2D_WRAP_ATTRIBUTE_MODE;
 
          static const std::string FLOAT_ELEMENT;
+         static const std::string VEC4_ELEMENT;
          static const std::string INT_ELEMENT;
          static const std::string PARAM_ELEMENT_ATTRIBUTE_DEFAULTVALUE;
 
@@ -187,8 +197,8 @@ namespace dtCore
          static const std::string OSCILLATOR_ATTRIB_TRIGGER;
 
          //Disable the copy constructor and assignment operator.
-         ShaderXML(const ShaderXML &rhs) { }
-         ShaderXML &operator=(const ShaderXML &rhs) { return *this; }
+         ShaderXML(const ShaderXML& rhs) { }
+         ShaderXML& operator=(const ShaderXML& rhs) { return *this; }
    };
 }
 
