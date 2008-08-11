@@ -19,7 +19,7 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shaderparamint.h"
+#include <dtCore/shaderparamint.h>
 #include <osg/Uniform>
 #include <osg/StateSet>
 
@@ -40,7 +40,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamInt::AttachToRenderState(osg::StateSet &stateSet)
    {
-      osg::Uniform *intUniform = NULL;
+      osg::Uniform* intUniform = NULL;
 
       if (IsShared())
       {
@@ -69,10 +69,10 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamInt::Clone()
+   ShaderParameter* ShaderParamInt::Clone()
    {
-      ShaderParamInt *newParam;
-      
+      ShaderParamInt* newParam;
+
       // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
       if (IsShared())
          newParam = this;

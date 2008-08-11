@@ -22,13 +22,13 @@
 #ifndef DELTA_INTEGERSHADERPARAMETER
 #define DELTA_INTEGERSHADERPARAMETER
 
-#include "dtCore/export.h"
-#include "dtCore/shaderparameter.h"
+#include <dtCore/export.h>
+#include <dtCore/shaderparameter.h>
 
 namespace dtCore
 {
    /**
-    * This class is a shader parameter containing a single integer value.
+    *  This class is a shader parameter containing a single integer value.
     */
    class DT_CORE_EXPORT ShaderParamInt : public ShaderParameter
    {
@@ -76,7 +76,7 @@ namespace dtCore
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone();
+         virtual ShaderParameter* Clone();
 
       protected:
          virtual ~ShaderParamInt();
