@@ -10,7 +10,6 @@
 
 #include <dtUtil/log.h>
 
-#include <osg/Version>
 #include <osgViewer/View>
 #ifdef DELTA_WIN32
 #include <osgViewer/api/Win32/GraphicsWindowWin32>

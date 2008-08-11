@@ -30,7 +30,6 @@
 #include <dtUtil/exception.h>
 
 #include <osg/Group>
-#include <osg/Version>
 
 #include <stack>
 

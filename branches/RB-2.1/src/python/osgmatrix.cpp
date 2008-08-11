@@ -48,7 +48,6 @@
 #include <python/heldptr.h>
 #include <python/osgmath.h>
 
-#include <osg/Version>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 using namespace osg;
