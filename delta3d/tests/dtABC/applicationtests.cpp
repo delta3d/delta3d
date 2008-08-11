@@ -40,6 +40,7 @@
 #include <dtUtil/log.h>
 #include <osgDB/DatabasePager>
 #include <osgViewer/View>
+#include <osg/Version>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -461,8 +462,9 @@ namespace dtTest
 
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(100.0, pager->getTargetFrameRate(), 0.01);
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
-
+#endif
 
          //-------------------------------------
 
@@ -479,8 +481,10 @@ namespace dtTest
 //                  "set, should pickup the one from the system", 
 //                  system.GetFrameRate(), pager->getTargetFrameRate(), 0.01);
 
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MAX);
+#endif
 
          //-------------------------------------
 
@@ -494,8 +498,11 @@ namespace dtTest
          ///Check before deleting the pager.
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
+
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
+#endif
 
          // Destroying and re-creating the pager should not affect the settings because it should re-read them.
          // so we test that be deleting and recreating the pager after setting and reading the properties.
@@ -509,9 +516,11 @@ namespace dtTest
          ///Check after deleting the pager.
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_BUFFER_OBJECTS);
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
+
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
-
+#endif
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtCore::DatabasePager::DATABASE_PAGER_DRAWABLE_POLICY, "VertexArrays");
@@ -520,9 +529,10 @@ namespace dtTest
          app->ReadSystemProperties();
 
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_ARRAYS);
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_NOMINAL);
-
+#endif
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtCore::DatabasePager::DATABASE_PAGER_DRAWABLE_POLICY, "DoNotModify");
@@ -531,26 +541,31 @@ namespace dtTest
          app->ReadSystemProperties();
 
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
+
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_LOW);
-
+#endif
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtCore::DatabasePager::DATABASE_PAGER_THREAD_PRIORITY, "MIN");
 
          app->ReadSystemProperties();
 
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MIN);
-
+#endif
          //-------------------------------------
 
          app->SetConfigPropertyValue(dtCore::DatabasePager::DATABASE_PAGER_THREAD_PRIORITY, "DEFAULT");
 
          app->ReadSystemProperties();
 
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
          CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
+#endif
       }
       catch (...)
       {
