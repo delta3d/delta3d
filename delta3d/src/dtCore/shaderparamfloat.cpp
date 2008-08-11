@@ -19,17 +19,18 @@
  * Matthew W. Campbell, Curtiss Murphy
  */
 #include <prefix/dtcoreprefix-src.h>
-#include "dtCore/shaderparamfloat.h"
+#include <dtCore/shaderparamfloat.h>
 #include <osg/Uniform>
 #include <osg/StateSet>
 
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParamFloat::ShaderParamFloat(const std::string &name) : ShaderParameter(name)
+   ShaderParamFloat::ShaderParamFloat(const std::string& name)
+   : ShaderParameter(name)
+   , mValue(0.0f)
    {
       SetShared(false); // floats are probably not intended to be shared by default.
-      mValue = 0.0f;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +41,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamFloat::AttachToRenderState(osg::StateSet &stateSet)
    {
-      osg::Uniform *floatUniform = NULL;
+      osg::Uniform* floatUniform = NULL;
 
       if (IsShared())
       {
@@ -69,9 +70,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderParamFloat::Clone()
+   ShaderParameter* ShaderParamFloat::Clone()
    {
-      ShaderParamFloat *newParam;
+      ShaderParamFloat* newParam;
 
       // Shared params are shared at the pointer level, exactly the same. Non shared are new instances
       if (IsShared())
