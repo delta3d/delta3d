@@ -118,6 +118,8 @@ namespace dtExample
             {
                mCollision->setSelected(true);
             } 
+            break;
+
             case RTS:
             {
                mRTS->setSelected(true);

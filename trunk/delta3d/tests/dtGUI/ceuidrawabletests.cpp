@@ -35,6 +35,8 @@
 #include "guiapp.h"
 #include "guimanager.h"
 
+extern dtABC::Application& GetGlobalApplication();
+
 namespace dtTest
 {
    /// unit tests for dtGUI::CEUIDrawable
@@ -100,6 +102,10 @@ using namespace dtTest;
 void CEUIDrawableTests::TestInput()
 {
    // start an application with GUI support
+   //For some reason, OSG 2.6.0 requires this next line.  Unit
+   //test will run by itself, but will crash when run with other tests.
+   GetGlobalApplication().GetWindow()->GetOsgViewerGraphicsWindow()->makeCurrent();
+
    dtCore::RefPtr<dtTest::GUIApp> app( new dtTest::GUIApp() );
    app->GetWindow()->SetPosition(0, 0, 50, 50);
    app->Config();

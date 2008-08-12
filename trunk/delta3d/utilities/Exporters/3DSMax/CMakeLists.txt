@@ -77,6 +77,7 @@ LINK_WITH_VARIABLES( ${EXP_PRE}
                      OSG_LIBRARY
                      OSGGA_LIBRARY
                      OSGUTIL_LIBRARY
+                     OPENTHREADS_LIBRARY
                    )
                       
 TARGET_LINK_LIBRARIES( ${EXP_PRE}
