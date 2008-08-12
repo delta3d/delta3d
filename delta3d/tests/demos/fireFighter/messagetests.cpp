@@ -30,6 +30,8 @@
 #include <dtAudio/audiomanager.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/deltawin.h>
+
 #include <dtDAL/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
@@ -40,6 +42,9 @@
 #include <fireFighter/inputcomponent.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/macros.h>
+
+
+extern dtABC::Application& GetGlobalApplication();
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -76,6 +81,10 @@ CPPUNIT_TEST_SUITE_REGISTRATION(FireFighterMessageTests);
 void FireFighterMessageTests::setUp()
 {
    dtCore::System::GetInstance().Start();
+   //For some reason, OSG 2.6.0 requires this next line.  Unit
+   //test will run by itself, but will crash when run with other tests.
+   GetGlobalApplication().GetWindow()->GetOsgViewerGraphicsWindow()->makeCurrent();
+
    mApp = new dtABC::Application;
    mGM = new dtGame::GameManager(*mApp->GetScene());
    mGM->SetApplication(*mApp);
