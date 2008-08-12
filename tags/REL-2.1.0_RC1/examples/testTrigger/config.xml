@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../data/application.xsd">
+    <Window Name="testTrigger" X="100" Y="100" Width="640" Height="480" PixelDepth="24" RefreshRate="60" ShowCursor="1" FullScreen="0" ChangeDisplayResolution="0" />
+    <Scene Name="defaultScene" />
+    <Camera Name="defaultCam" WindowInstance="testTrigger" />
+    <View Name="defaultView" CameraInstance="defaultCam" SceneInstance="defaultScene"/>
+</Application>
