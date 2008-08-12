@@ -5,51 +5,42 @@
 # RTI_INCLUDE_DIR, where to find the headers
 # RTI_LIBRARIES, list of all required RTI libraries
 #
-# $RTIS_DIR is an environment variable that would
-# correspond to the ./configure --prefix=$RTIS_DIR
+# $RTI is an environment variable that would
+# correspond to the ./configure --prefix=$RTI
+# when building the RTI using autoconf.  It should point
+# to the directory containing include and lib
 #
 # Created by David Guthrie. 
 
-FIND_PATH(RTIS_ROOT_DIR include/1.3/RTI.hh
-                        $ENV{RTI})	
+FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
+                        PATHS $ENV{RTI} )	
 
 FIND_PATH(RTI_INCLUDE_DIR RTI.hh
-    $ENV{RTI}/include/1.3
-	${RTIS_ROOT_DIR}/include/1.3
+    ${RTIS_ROOT_DIR}/include/1.3
 )
 
 IF (APPLE)
   SET(PATHLIST 
-        $ENV{RTI}/lib/macintel_g++-4.0
-        $ENV{RTI}/lib/darwin_g++-4.0
-        $ENV{RTI}/lib/darwin_g++-3.3
-		${RTIS_ROOT_DIR}/lib/macintel_g++-4.0
-		${RTIS_ROOT_DIR}/lib/darwin_g++-4.0
-		${RTIS_ROOT_DIR}/lib/darwin_g++-3.3
+        ${RTIS_ROOT_DIR}/lib/macintel_g++-4.0
+        ${RTIS_ROOT_DIR}/lib/darwin_g++-4.0
+        ${RTIS_ROOT_DIR}/lib/darwin_g++-3.3
   )
 ELSE (APPLE)
   IF (UNIX)
      SET(PATHLIST 
-        $ENV{RTI}/lib/linux_g++-3.4
-        $ENV{RTI}/lib/linux_g++-4.0
-        $ENV{RTI}/lib/linux_g++-4.1
-        $ENV{RTI}/lib/linux_g++-4.2
-        $ENV{RTI}/lib/linux_g++-4.3
-		${RTIS_ROOT_DIR}/lib/linux_g++-3.4
-		${RTIS_ROOT_DIR}/lib/linux_g++-4.0
-		${RTIS_ROOT_DIR}/lib/linux_g++-4.1
-		${RTIS_ROOT_DIR}/lib/linux_g++-4.2
-		${RTIS_ROOT_DIR}/lib/linux_g++-4.3
+        ${RTIS_ROOT_DIR}/lib/linux_g++-3.4
+	${RTIS_ROOT_DIR}/lib/linux_g++-4.0
+        ${RTIS_ROOT_DIR}/lib/linux_g++-4.1
+        ${RTIS_ROOT_DIR}/lib/linux_g++-4.2
+        ${RTIS_ROOT_DIR}/lib/linux_g++-4.3
      )
   ENDIF (UNIX)
 ENDIF (APPLE)
 
 IF (WIN32)
      SET(PATHLIST 
-	    $ENV{RTI}/lib/winnt_vc++-8.0
-		${RTIS_ROOT_DIR}/lib/winnt_vc++-8.0
-        $ENV{RTI}/lib/winnt_vc++-7.1      
-		${RTIS_ROOT_DIR}/lib/winnt_vc++-7.1		
+	${RTIS_ROOT_DIR}/lib/winnt_vc++-8.0
+	${RTIS_ROOT_DIR}/lib/winnt_vc++-7.1		
      )
 ENDIF (WIN32)
 
