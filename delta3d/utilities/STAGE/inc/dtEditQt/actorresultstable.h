@@ -132,6 +132,11 @@ namespace dtEditQt
         void addProxy(dtCore::RefPtr<dtDAL::ActorProxy> myProxy, bool updateCount = true);
 
         /**
+         * Find the item in our table and update it's display columns.
+         */
+        void HandleProxyUpdated(dtCore::RefPtr<dtDAL::ActorProxy> proxy);
+
+       /**
          * Enable or disable the action buttons appropriately based 
          * on selection
          */

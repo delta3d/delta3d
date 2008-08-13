@@ -138,25 +138,25 @@ namespace dtEditQt
         if(!proxy->IsPlaceable())
            resultsTable->addProxy(proxy);
 
-        refreshAll();
+        //refreshAll();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
-        //if(!proxy->IsPlaceable())
-        refreshAll();
+       if(!proxy->IsPlaceable())
+          resultsTable->actorProxyAboutToBeDestroyed(proxy);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
     {
-       refreshAll();
+       resultsTable->HandleProxyUpdated(proxy);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
     {
-       refreshAll();
+       resultsTable->HandleProxyUpdated(proxy);
     }
 }
