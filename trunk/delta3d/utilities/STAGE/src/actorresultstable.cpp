@@ -223,6 +223,35 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+    {
+       if (table != NULL && proxy.valid()) 
+       {
+          QTreeWidgetItem *item;
+          int index = 0;
+
+          // Iterate through the items in our list and find a match. If we find the 
+          // matching proxy, then update it's 3 fields
+          while (NULL != (item = table->topLevelItem(index))) 
+          {
+             ActorResultsTreeItem *treeItem = static_cast<ActorResultsTreeItem *>(item);
+             if (proxy == treeItem->getProxy()) 
+             {
+                QString name(proxy->GetName().c_str());
+                QString type(proxy->GetActorType().GetName().c_str());
+                QString category(proxy->GetActorType().GetCategory().c_str());
+
+                treeItem->setText(0, name);
+                treeItem->setText(1, category);
+                treeItem->setText(2, type);
+             }
+
+             index ++;
+          }
+       }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     ActorResultsTreeItem *ActorResultsTable::getSelectedResultTreeWidget()
     {
         ActorResultsTreeItem *returnVal = NULL;
