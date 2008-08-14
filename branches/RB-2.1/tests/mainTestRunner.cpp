@@ -40,13 +40,14 @@
 
 #include <dtCore/timer.h>
 #include <dtCore/globals.h>
-#include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+
+#include "unittestapplication.h"
 
 #include <osg/GraphicsContext>
 
@@ -56,6 +57,8 @@
 #include <ctime>   
 
 static std::ostringstream mSlowTests;
+
+
 
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
 {
@@ -186,8 +189,7 @@ int main(int argc, char* argv[])
    //Set delta data.
    dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
 
-   GlobalApplication = new dtABC::Application("config.xml");
-   GlobalApplication->GetWindow()->SetPosition(0, 0, 50, 50);
+   GlobalApplication = new UnitTestApplication();
    GlobalApplication->Config();
 
    ///Reset the windowing system for osg to use an embedded one. 
