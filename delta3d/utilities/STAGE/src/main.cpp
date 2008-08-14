@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
+        //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
         
         //Now that everything is initialized, show the main window.
         //Construct the application...
