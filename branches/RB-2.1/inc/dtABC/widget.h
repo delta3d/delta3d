@@ -129,6 +129,13 @@ namespace dtABC
 
       bool     mIsInitialized;  ///<have we been fully initialized yet
 
+      /// @return the instance of the osgViewer::CompositeViewer
+      const osgViewer::CompositeViewer* GetCompositeViewer() const { return mCompositeViewer.get(); }
+
+      /// @return the instance of the osgViewer::CompositeViewer
+      osgViewer::CompositeViewer* GetCompositeViewer() { return mCompositeViewer.get(); }
+
+
    private:
       ///Advance a single frame cycle.
       inline   void           Step( void );
