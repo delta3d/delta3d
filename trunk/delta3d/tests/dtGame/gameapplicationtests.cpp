@@ -33,14 +33,11 @@
 #include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/globals.h>
-#include <dtCore/deltawin.h>
 #include <dtGame/gameapplication.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/defaultmessageprocessor.h>
 
 #include <cppunit/extensions/HelperMacros.h>
-
-extern dtABC::Application& GetGlobalApplication();
 
 class GameApplicationTests : public CPPUNIT_NS::TestFixture
 {
@@ -57,9 +54,6 @@ public:
 
    void setUp()
    {
-      //For some reason, OSG 2.6.0 requires this next line.  Unit
-      //test will run by itself, but will crash when run with other tests.
-      GetGlobalApplication().GetWindow()->GetOsgViewerGraphicsWindow()->makeCurrent();
       mGameApplication = new dtGame::GameApplication(0, NULL);
    }
    
