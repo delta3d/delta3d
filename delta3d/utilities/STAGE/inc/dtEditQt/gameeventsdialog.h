@@ -33,6 +33,9 @@
 #include <vector>
 
 #include <QtGui/QDialog>
+#include <QtGui/QWidget>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
 #include <dtDAL/actorproxy.h>
 
 class QTableWidget;
@@ -48,6 +51,28 @@ namespace dtDAL
 
 namespace dtEditQt
 {
+
+   /**
+   * @class EventTreeItem
+   * @brief This is a utility table that shows a list of actor Proxies and allows some 
+   * basic behavior on them such as select and goto.  
+   */
+   class EventTreeItem : public QTreeWidgetItem
+   {
+   public:
+      EventTreeItem(QTreeWidget *parent, dtDAL::GameEvent* gameEvent) 
+         : QTreeWidgetItem(parent), mGameEvent(gameEvent)
+      { }
+
+      virtual ~EventTreeItem() { }
+
+      dtDAL::GameEvent* GetEvent()  {  return mGameEvent;  }
+
+   private: 
+      dtDAL::GameEvent *mGameEvent;
+   };
+
+   ///////////////////////////////////////////////////////
    class GameEventsDialog : public QDialog
    {
       Q_OBJECT
@@ -59,7 +84,9 @@ namespace dtEditQt
          
          /// Destructor
          virtual ~GameEventsDialog();
-         
+ 
+         virtual EventTreeItem *GetSelectedEventTreeItem();
+
       signals:
          
          /// This signal enables the delete button
@@ -88,7 +115,8 @@ namespace dtEditQt
       private:
             
          /// The visible list of Events
-         QTableWidget *mGameEventView;
+         //QTableWidget *mGameEventView;
+         QTreeWidget *mGameEventView;
          
          /// Our buttons
          QPushButton *mEditGameEvent;
@@ -96,8 +124,8 @@ namespace dtEditQt
          
          // obtains the event names and descriptions from the map
          // and converts them to QT format
-         void GetGameEventList(std::vector<QTableWidgetItem*>& eventList, 
-            std::vector<QTableWidgetItem*>& eventDescs) const;
+         //void GetGameEventList(std::vector<QTableWidgetItem*>& eventList, 
+         //   std::vector<QTableWidgetItem*>& eventDescs) const;
 
 
          void RefreshGameEvents();

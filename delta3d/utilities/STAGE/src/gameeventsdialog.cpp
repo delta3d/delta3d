@@ -26,6 +26,7 @@
 *
 * David A. Guthrie
 * William E. Johnson II
+* Curtiss Murphy
 */
 
 #include <prefix/dtstageprefix-src.h>
@@ -66,18 +67,34 @@ using dtDAL::ActorProperty;
 
 namespace dtEditQt
 {
+   //////////////////////////////////////////////////////////////////
    GameEventsDialog::GameEventsDialog(QWidget *parent): QDialog(parent)
    {
       setWindowTitle(tr("Game Event Editor"));
       
       QGroupBox *groupBox = new QGroupBox(tr("Game Events"), this);
       QGridLayout *gridLayout = new QGridLayout(groupBox);      
-      
-      mGameEventView = new QTableWidget(groupBox);
+
+      mGameEventView = new QTreeWidget(groupBox);
+      //mGameEventView = new QTableWidget(groupBox);
       mGameEventView->setSelectionMode(QAbstractItemView::SingleSelection);
       mGameEventView->setSelectionBehavior(QAbstractItemView::SelectRows);
       mGameEventView->setAlternatingRowColors(true);
       mGameEventView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+      
+      mGameEventView->setRootIsDecorated(false);
+      mGameEventView->setSortingEnabled(true);
+
+      //mGameEventView->setRowCount(eventNames.size());
+      mGameEventView->setColumnCount(2);
+      mGameEventView->header()->setResizeMode(QHeaderView::Stretch);
+      mGameEventView->header()->setFixedHeight(20);
+
+      // set the headers
+      QStringList headerLabels;
+      headerLabels << "Event" << "Description";
+      mGameEventView->setHeaderLabels(headerLabels);
+      mGameEventView->header()->setClickable(true);
 
       gridLayout->addWidget(mGameEventView, 0, 0);
                   
@@ -101,12 +118,14 @@ namespace dtEditQt
       buttonLayout->addStretch(1);
       
       // make the connections
+      connect(mGameEventView, SIGNAL(itemSelectionChanged()), 
+         this, SLOT(EnableButtons()));
       connect(newEvent,         SIGNAL(clicked()),              this, SLOT(CreateNewGameEvent()));
       connect(mEditGameEvent,   SIGNAL(clicked()),              this, SLOT(EditGameEvent()));
       connect(mDeleteGameEvent, SIGNAL(clicked()),              this, SLOT(SpawnDeleteConfirmation()));
       connect(close,            SIGNAL(clicked()),              this, SLOT(close()));
       connect(this,             SIGNAL(GameEventSelected()),    this, SLOT(EnableButtons()));
-      connect(mGameEventView,   SIGNAL(itemSelectionChanged()), this, SLOT(EnableButtons()));
+      //connect(mGameEventView,   SIGNAL(itemSelectionChanged()), this, SLOT(EnableButtons()));
 
       QVBoxLayout *mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
@@ -119,37 +138,53 @@ namespace dtEditQt
       RefreshGameEvents();
    }
 
+   //////////////////////////////////////////////////////////////////
    GameEventsDialog::~GameEventsDialog()
    {
    }
                   
+   //////////////////////////////////////////////////////////////////
+   EventTreeItem *GameEventsDialog::GetSelectedEventTreeItem()
+   {
+      EventTreeItem *returnVal = NULL;
+
+      if (mGameEventView != NULL) 
+      {
+         QList<QTreeWidgetItem *> list = mGameEventView->selectedItems();
+
+         if (!list.isEmpty()) 
+         {
+            returnVal = dynamic_cast<EventTreeItem*>(list[0]);
+         }
+      }
+
+      return returnVal;
+   }
+
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::EditGameEvent()
    {
-      if (mGameEventView->currentItem() == NULL)
-         return;
-         
-      std::string eventNameToEdit = mGameEventView->currentItem()->text().toStdString();
-      
       Map& curMap = *EditorData::GetInstance().getCurrentMap();
-      GameEvent* eventToEdit = curMap.GetEventManager().FindEvent(eventNameToEdit);
 
-      if (eventToEdit == NULL)
+      EventTreeItem *selection = GetSelectedEventTreeItem();
+      if (selection == NULL) 
       {
-         LOG_ERROR("Event named \"" + eventNameToEdit + 
-            "\" does not exist in the Event Manager, but it was selected to edit.");
          return;
       }
+      GameEvent *eventToEdit = selection->GetEvent();
 
       GameEventDialog editDialog(this, *eventToEdit, false);
       if (editDialog.exec() == QDialog::Accepted) 
       {
          EditorEvents::GetInstance().emitGameEventEdited();
+         Map& curMap = *EditorData::GetInstance().getCurrentMap();
          curMap.SetModified(true);
          RefreshGameEvents();
          //select the event just edited.
       }
    }
 
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::CreateNewGameEvent()
    {
       dtCore::RefPtr<dtDAL::GameEvent> newEvent = new dtDAL::GameEvent();
@@ -165,23 +200,17 @@ namespace dtEditQt
       }
    }
    
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::SpawnDeleteConfirmation()
    {
-      if (mGameEventView->currentItem() == NULL)
-         return;
-         
       Map& curMap = *EditorData::GetInstance().getCurrentMap();
 
-      std::string eventNameToDelete = mGameEventView->currentItem()->text().toStdString();
-      
-      GameEvent* eventToDelete = curMap.GetEventManager().FindEvent(eventNameToDelete);
-      
-      if (eventToDelete == NULL)
+      EventTreeItem *selection = GetSelectedEventTreeItem();
+      if (selection == NULL) 
       {
-         LOG_ERROR("Event named \"" + eventNameToDelete + 
-            "\" does not exist in the Event Manager.");
          return;
       }
+      GameEvent *eventToDelete = selection->GetEvent();
       
       vector<dtCore::RefPtr<ActorProxy> > proxies;
       curMap.GetAllProxies(proxies);
@@ -232,77 +261,77 @@ namespace dtEditQt
       RefreshGameEvents();
    }
    
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::HandleFailure(const int code, const std::string &errorMsg)
    {
    }
    
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::EnableButtons()
    {
-      mDeleteGameEvent->setDisabled(false);
-      mEditGameEvent->setDisabled(false);
+      EventTreeItem *selection = GetSelectedEventTreeItem();
+      mDeleteGameEvent->setDisabled(selection == NULL);
+      mEditGameEvent->setDisabled(selection == NULL);
    }
    
+   //////////////////////////////////////////////////////////////////
    void GameEventsDialog::DisableButtons()
    {
-      mDeleteGameEvent->setDisabled(true);
-      mEditGameEvent->setDisabled(true);
+      EnableButtons();
    }
          
-   void GameEventsDialog::GetGameEventList(std::vector<QTableWidgetItem*>& eventList, 
-      std::vector<QTableWidgetItem*>& eventDescs) const
-   {
-      eventList.clear();
-      Map* currentMap = EditorData::GetInstance().getCurrentMap();
-      if (currentMap == NULL)
-         return;
-      
-      vector<GameEvent*> events;
-      currentMap->GetEventManager().GetAllEvents(events);
-      
-      for(unsigned int i = 0; i < events.size(); i++)
-      {
-         QTableWidgetItem *n = new QTableWidgetItem;
-         QTableWidgetItem *d = new QTableWidgetItem;
-
-         n->setText(tr(events[i]->GetName().c_str()));
-         d->setText(tr(events[i]->GetDescription().c_str()));
-
-         eventList.push_back(n);
-         eventDescs.push_back(d);
-      }
-   }
+   //////////////////////////////////////////////////////////////////
+   //Populate the list box with the current events.
+   //vector<QTableWidgetItem*> eventNames, eventDescs;
+   //GetGameEventList(eventNames, eventDescs);
+   //void GameEventsDialog::GetGameEventList(std::vector<QTableWidgetItem*>& eventList, 
+   //   std::vector<QTableWidgetItem*>& eventDescs) const
+   //{
+   //}
    
    void GameEventsDialog::RefreshGameEvents()
    {
-      //Populate the list box with the current events.
-      vector<QTableWidgetItem*> eventNames, eventDescs;
-      GetGameEventList(eventNames, eventDescs);
-      
-      mGameEventView->setRowCount(eventNames.size());
-      mGameEventView->setColumnCount(2);
-      mGameEventView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-      mGameEventView->horizontalHeader()->setFixedHeight(20);
-      mGameEventView->verticalHeader()->setHidden(true);
+      EventTreeItem *selectedItem = GetSelectedEventTreeItem();
+      Map* currentMap = EditorData::GetInstance().getCurrentMap();
+      if (currentMap == NULL)
+         return;
 
-      QStringList names;
-      names.push_back(tr("Event"));
-      names.push_back(tr("Description"));
-      mGameEventView->setHorizontalHeaderLabels(names);
+      // Clear out the current list
+      mGameEventView->clear();
 
-      names.clear();
+      vector<GameEvent*> events;
+      currentMap->GetEventManager().GetAllEvents(events);
 
-      for(unsigned int i = 0; i < eventNames.size(); ++i)
+      // For each event, create a new entry in our table with an event on it.
+      for(unsigned int i = 0; i < events.size(); i++)
       {
-         mGameEventView->setItem(i, 0, eventNames[i]);
-         mGameEventView->setItem(i, 1, eventDescs[i]);
-         names.push_back(tr(""));
-      }
-      mGameEventView->setVerticalHeaderLabels(names);
-      
-      if(mGameEventView->currentItem() == NULL)
-         DisableButtons();
-      else
-         mGameEventView->setItemSelected(mGameEventView->currentItem(), true);
+         QString name(events[i]->GetName().c_str());
+         QString description(events[i]->GetDescription().c_str());
 
+         // create the tree entry
+         EventTreeItem *item = new EventTreeItem(mGameEventView, events[i]);
+         item->setText(0, name);
+         item->setText(1, description);
+      }
+
+      // Reselect the previous selection, if we can.
+      if (selectedItem != NULL)
+      {
+         // loop through the new items and compare events - if same, then set selected
+         EventTreeItem *item;
+         int index = 0;
+         while (NULL != (item = (EventTreeItem *) mGameEventView->topLevelItem(index))) 
+         {
+            if (item->GetEvent() == selectedItem->GetEvent()) 
+            {
+               mGameEventView->setItemSelected(item, true);
+            }
+            index ++;
+         }
+
+      }
+
+      // Make sure we set our buttons appropriately
+      EnableButtons();
    }
 }

@@ -142,6 +142,12 @@ namespace dtEditQt
          */
         void doEnableButtons();
 
+        /**
+         * Manually loops through our table and unselects all items except the one passed in. 
+         * Yes, clearSelection() does that, but this method fixes glitches. See the method for details.
+         */
+        void UnselectAllItemsManually(QTreeWidgetItem* item);
+
     public slots:
         /**
          * Clear out the table.  Removes all entries.  
@@ -174,9 +180,12 @@ namespace dtEditQt
         //void currentItemChanged(QTreeWidgetItem *current, QTableWidgetItem *previous ) ;
 
         /**
-         * Traps the table double clicked event
+         * Traps the table double clicked event - causes a single select by unselecting other items.
+         -- can't be used because the itemdoubleclicked signal from Qt isn't found at runtime.
          */
-        //void itemDoubleClicked(QTreeWidgetItem * item, int column); 
+        //void OnItemDoubleClicked(QTreeWidgetItem * item); 
+
+        //void OnDoCurrentItemChanged(QTreeWidgetItem *test1, QTreeWidgetItem *test2);
 
         /**
          * Remove an item from our search results if it's about to be destroyed

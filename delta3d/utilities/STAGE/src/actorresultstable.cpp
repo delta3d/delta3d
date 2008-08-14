@@ -54,6 +54,7 @@
 namespace dtEditQt 
 {
 
+
     ///////////////////////////////////////////////////////////////////////////////
     ActorResultsTable::ActorResultsTable(bool showActions, bool showGoto, QWidget *parent)
         :QWidget(parent), showActions(showActions), showGoto(showGoto),
@@ -75,7 +76,7 @@ namespace dtEditQt
         //table->setOddRowColor(QColor(255, 255, 255));
         table->setRootIsDecorated(false);
         table->setSortingEnabled(true);
-        table->setSelectionMode(QTreeView::MultiSelection);
+        table->setSelectionMode(QTreeView::SingleSelection);//MultiSelection);
         table->setSelectionBehavior(QTreeView::SelectRows);
         // set the headers
         QStringList headerLabels;
@@ -139,8 +140,12 @@ namespace dtEditQt
 
         // connect all our signals
         connect(table, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
-        //connect(table, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
-        //    this, SLOT(itemDoubleClicked(QTreeWidgetItem *, int)));
+        //connect(table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, 
+        //   SLOT(OnItemDoubleClicked(QTreeWidgetItem *)));
+        // You can get the current item changed event, but none of the click or double click 
+        // or whatever signals can be found at runtime.
+        //connect(table, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+        //   this, SLOT(OnDoCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
         connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(clearAll()));
@@ -159,6 +164,12 @@ namespace dtEditQt
     ActorResultsTable::~ActorResultsTable()
     {
     }
+
+    //void ActorResultsTable::OnDoCurrentItemChanged(QTreeWidgetItem *test, QTreeWidgetItem *test2)    
+    //{
+    //   std::cout << "BOGUS TEST \n";
+    //}
+
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::updateResultsCount() 
@@ -296,16 +307,14 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    //void ActorResultsTable::itemDoubleClicked(QTreeWidgetItem *selectedItem, int column)
+    // Can't be used because the Qt itemDoubleClicked signal is not found at runtime.
+    //void ActorResultsTable::OnItemDoubleClicked(QTreeWidgetItem *selectedItem)
     //{
-    //    // get the proxy, wrap it in an osg_ptr, and stick it in a vector.
-    //    ActorResultsTreeItem *item = static_cast<ActorResultsTreeItem*>(selectedItem);
-    //    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyVector;
-    //    dtCore::RefPtr<dtDAL::ActorProxy> proxyPtr = item->getProxy();
-    //    proxyVector.push_back(proxyPtr);
-
-    //    // tell the world to select it
-    //    EditorEvents::GetInstance().emitActorsSelected(proxyVector);
+    //   // Also, protect from recursive issues.
+    //   recurseProtectEmitSelectionChanged = true;
+    //   UnselectAllItemsManually(selectedItem);
+    //   recurseProtectEmitSelectionChanged = false;
+    //   sendSelection();
     //}
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -394,8 +403,6 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::selectedActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
     {
-        QTreeWidgetItem *item;
-        int index = 0;
         //QTreeWidgetItem *currentItem = table->currentItem();
 
         if (!recurseProtectSendingSelection) 
@@ -405,27 +412,34 @@ namespace dtEditQt
             // not contain all the items, in which case the user is left in an ambiguous state
             // So, just clear our selection and prevent any possible confusion.  No actions can
             // occur with no selections, so...
-            //
+            
             // Also, protect from recursive issues.
             recurseProtectEmitSelectionChanged = true;
-
-            // clear any selections - Yes, there is a clearSelection() method, but that method also
-            // resets the current item, which causes wierd keyboard focus issues that will resend
-            // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
-            // the easiest thing to do was just unselect items one at a time.
-            while (NULL != (item = table->topLevelItem(index))) 
-            {
-                if (table->isItemSelected(item)) 
-                {
-                    table->setItemSelected(item, false);
-                }
-                index ++;
-            }
-
+            UnselectAllItemsManually(NULL);
             recurseProtectEmitSelectionChanged = false;
 
             doEnableButtons();
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ActorResultsTable::UnselectAllItemsManually(QTreeWidgetItem* keepSelectedItem)
+    {
+       QTreeWidgetItem *item;
+       int index = 0;
+
+       // clear any selections - Yes, there is a clearSelection() method, but that method also
+       // resets the current item, which causes wierd keyboard focus issues that will resend
+       // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
+       // the easiest thing to do was just unselect items one at a time.
+       while (NULL != (item = table->topLevelItem(index))) 
+       {
+          if (item != keepSelectedItem && table->isItemSelected(item)) 
+          {
+             table->setItemSelected(item, false);
+          }
+          index ++;
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
