@@ -15,7 +15,6 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
-                      ${DTDAL_LIBRARY}
                       ${DTABC_LIBRARY}
                      )
 IF(WIN32)
