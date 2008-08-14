@@ -84,6 +84,10 @@ namespace dtAnim
             
             mModelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
             CPPUNIT_ASSERT(!mModelPath.empty());
+
+            //For some reason, OSG 2.6.0 requires this next line.  Unit
+            //test will run by itself, but will crash when run with other tests.
+            GetGlobalApplication().GetWindow()->GetOsgViewerGraphicsWindow()->makeCurrent();
          }
          
          void tearDown()

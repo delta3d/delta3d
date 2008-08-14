@@ -67,12 +67,13 @@ AnimNodeBuilder::AnimNodeBuilder()
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 : mCreateFunc(pCreate)
-{
+{  
 }
 
 
 AnimNodeBuilder::~AnimNodeBuilder()
 {
+   
 }
 
 AnimNodeBuilder::CreateFunc& AnimNodeBuilder::GetCreate()
@@ -166,7 +167,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
    Array<CalIndex> indexArray(numIndices);
 
-   CalHardwareModel* hardwareModel = new CalHardwareModel( pWrapper->GetCalModel()->getCoreModel() );
+   CalHardwareModel* hardwareModel = pWrapper->GetOrCreateCalHardwareModel();
 
    osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
    GLuint vbo[2];
@@ -269,8 +270,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
-   pWrapper->EndRenderingQuery();
-
+   pWrapper->EndRenderingQuery();   
 
    return geode.get();
 }
