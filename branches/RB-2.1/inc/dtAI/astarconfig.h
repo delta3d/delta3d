@@ -54,11 +54,11 @@ namespace dtAI
             mMaxTime(std::numeric_limits<double>::max()),
             mMaxCost(std::numeric_limits<cost_type>::max()),
             mMaxDepth(std::numeric_limits<unsigned int>::max()),
+            mCheckClosedList(true),
             mStart(),
             mFinish(),
             mNodesExplored(0), 
-            mTimeSpent(0.0),
-            mCheckClosedList(true)
+            mTimeSpent(0.0)
          {
          }
 
