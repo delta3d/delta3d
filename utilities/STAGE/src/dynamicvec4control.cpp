@@ -68,19 +68,19 @@ namespace dtEditQt
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create W
-            wElement = new DynamicVectorElementControl(myVec4Property.get(), 0, "W");
+            wElement = new DynamicVectorElementControl(myVec4Property.get(), 3, "W");
             wElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(wElement);
             // create X
-            xElement = new DynamicVectorElementControl(myVec4Property.get(), 1, "X");
+            xElement = new DynamicVectorElementControl(myVec4Property.get(), 0, "X");
             xElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(xElement);
             // create Y
-            yElement = new DynamicVectorElementControl(myVec4Property.get(), 2, "Y");
+            yElement = new DynamicVectorElementControl(myVec4Property.get(), 1, "Y");
             yElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(yElement);
             // create Z
-            zElement = new DynamicVectorElementControl(myVec4Property.get(), 3, "Z");
+            zElement = new DynamicVectorElementControl(myVec4Property.get(), 2, "Z");
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         }
@@ -90,19 +90,19 @@ namespace dtEditQt
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create W
-            wElement = new DynamicVectorElementControl(myVec4fProperty.get(), 0, "W");
+            wElement = new DynamicVectorElementControl(myVec4fProperty.get(), 3, "W");
             wElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(wElement);
             // create X
-            xElement = new DynamicVectorElementControl(myVec4fProperty.get(), 1, "X");
+            xElement = new DynamicVectorElementControl(myVec4fProperty.get(), 0, "X");
             xElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(xElement);
             // create Y
-            yElement = new DynamicVectorElementControl(myVec4fProperty.get(), 2, "Y");
+            yElement = new DynamicVectorElementControl(myVec4fProperty.get(), 1, "Y");
             yElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(yElement);
             // create Z
-            zElement = new DynamicVectorElementControl(myVec4fProperty.get(), 3, "Z");
+            zElement = new DynamicVectorElementControl(myVec4fProperty.get(), 2, "Z");
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         } 
@@ -112,19 +112,19 @@ namespace dtEditQt
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create W
-            wElement = new DynamicVectorElementControl(myVec4dProperty.get(), 0, "W");
+            wElement = new DynamicVectorElementControl(myVec4dProperty.get(), 3, "W");
             wElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(wElement);
             // create X
-            xElement = new DynamicVectorElementControl(myVec4dProperty.get(), 1, "X");
+            xElement = new DynamicVectorElementControl(myVec4dProperty.get(), 0, "X");
             xElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(xElement);
             // create Y
-            yElement = new DynamicVectorElementControl(myVec4dProperty.get(), 2, "Y");
+            yElement = new DynamicVectorElementControl(myVec4dProperty.get(), 1, "Y");
             yElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(yElement);
             // create Z
-            zElement = new DynamicVectorElementControl(myVec4dProperty.get(), 3, "Z");
+            zElement = new DynamicVectorElementControl(myVec4dProperty.get(), 2, "Z");
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         } 
