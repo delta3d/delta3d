@@ -9,10 +9,11 @@
 namespace dtAnim
 {
    //////////////////////////////////////////////////////
-   Cal3DModelWrapper::Cal3DModelWrapper(CalModel *model):
-      mCalModel(model),
-      mRenderer(NULL),
-      mMixer(NULL)
+   Cal3DModelWrapper::Cal3DModelWrapper(CalModel *model)
+      : mCalModel(model)
+      , mRenderer(NULL)
+      , mMixer(NULL)
+      , mHardwareModel(NULL)
       {
          assert(mCalModel != NULL);
 
@@ -39,6 +40,7 @@ namespace dtAnim
    Cal3DModelWrapper::~Cal3DModelWrapper()
    {
       delete mCalModel;
+      delete mHardwareModel;
    }
 
    //////////////////////////////////////////////////////////////////
@@ -468,6 +470,16 @@ namespace dtAnim
    float Cal3DModelWrapper::GetAnimationTime()
    {
       return mMixer->getAnimationTime();
+   }
+
+   CalHardwareModel* Cal3DModelWrapper::GetOrCreateCalHardwareModel()
+   {
+      if (!mHardwareModel)
+      {
+         mHardwareModel = new CalHardwareModel(GetCalModel()->getCoreModel());
+      }
+
+      return mHardwareModel;
    }
 
 }

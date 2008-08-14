@@ -24,6 +24,7 @@
 
 #include <dtAnim/export.h>
 #include <cal3d/model.h>
+#include <cal3d/hardwaremodel.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/renderer.h>
 #include <cal3d/mixer.h>
@@ -283,13 +284,22 @@ namespace dtAnim
          /// @return the offset time used when playing looping animations.
          float GetAnimationTime();
 
+         /** Get the CAL3D CalHardwareModel representation for this CalModel.
+          *  Warning! This violates the protective services brought to you by the wrapper; use
+          *  with caution.
+          *  @return The hardware model represented by this CalModel
+          */
+         CalHardwareModel* GetOrCreateCalHardwareModel();
+
       protected:
          virtual ~Cal3DModelWrapper();
 
       private:
-         CalModel    *mCalModel;
-         CalRenderer *mRenderer;
-         CalMixer    *mMixer;
+         CalModel*    mCalModel;
+         CalRenderer* mRenderer;
+         CalMixer*    mMixer;
+
+         CalHardwareModel* mHardwareModel;
 
          typedef std::map<int, bool> MeshVisibilityMap;
          MeshVisibilityMap mMeshVisibility;
