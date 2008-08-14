@@ -43,8 +43,8 @@ void CEGUIConnectionManager::Connect(CEGUI::EventSet *pEventSet, const std::stri
     //register to map
     m_mapStaticToConnection[pNewSignature] = connection;
     //subscribe to receive an event if the destructor of the EventSet(e.g. CEGUIWindow) is called:
-    CEGUI::Window *pWindow;
-    if(pWindow = dynamic_cast<CEGUI::Window *>(pEventSet))
+    CEGUI::Window *pWindow = dynamic_cast<CEGUI::Window *>(pEventSet);
+    if(pWindow)
         pWindow->subscribeEvent(CEGUI::Window::EventDestructionStarted, CEGUI::Event::Subscriber(&CEGUIConnectionManager::OnCEGUIWindowDestruction, this) );
 
 }

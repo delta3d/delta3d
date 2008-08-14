@@ -326,7 +326,7 @@ void SystemTests::TestSimMode()
    mDummyNode->GetOSGNode()->setCullCallback(mDummyCallback.get());
 
    CPPUNIT_ASSERT_MESSAGE("System should be using default stages",
-      dtUtil::Bits::Has(System::STAGES_DEFAULT, System::GetInstance().GetSystemStages()) );
+      dtUtil::Bits::Has((System::SystemStageFlags) System::STAGES_DEFAULT, System::GetInstance().GetSystemStages()) );
 
    CPPUNIT_ASSERT(!mDummyCallback->mCallbackCalled);
    CPPUNIT_ASSERT(!mDummyNode->mDrawCalled);

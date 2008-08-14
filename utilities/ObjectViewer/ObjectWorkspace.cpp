@@ -32,9 +32,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
-  : mExitAct(NULL)
-  , mLoadShaderDefAction(NULL)
+  : mLoadShaderDefAction(NULL)
   , mLoadGeometryAction(NULL)
+  , mExitAct(NULL)
   , mGLWidget(NULL)
 {
    resize(1024, 768);
