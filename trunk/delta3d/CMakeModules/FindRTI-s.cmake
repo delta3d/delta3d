@@ -13,7 +13,7 @@
 # Created by David Guthrie. 
 
 FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
-                        PATHS $ENV{RTI} )	
+                        PATHS $ENV{RTI} $ENV{RTI_HOME} )	
 
 FIND_PATH(RTI_INCLUDE_DIR RTI.hh
     ${RTIS_ROOT_DIR}/include/1.3
