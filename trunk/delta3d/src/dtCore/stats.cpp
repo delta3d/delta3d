@@ -13,6 +13,7 @@ namespace dtCore
 {
 
    StatsHandler::StatsHandler(osgViewer::ViewerBase &viewer ):
+mViewer(&viewer),
 mStatsType(NO_STATS),
 mInitialized(false),
 mThreadingModel(osgViewer::ViewerBase::SingleThreaded),
@@ -20,8 +21,7 @@ mFrameRateChildNum(0),
 mViewerChildNum(0),
 mSceneChildNum(0),
 mNumBlocks(8),
-mBlockMultiplier(10000.0),
-mViewer(&viewer)
+mBlockMultiplier(10000.0)
 {
    mCamera = new osg::Camera;
    mCamera->setRenderer(new osgViewer::Renderer(mCamera.get()));

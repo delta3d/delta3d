@@ -210,7 +210,7 @@ protected:
             }
          }
       private:
-         dtCore::RefPtr<AngularMapProfile> mProfile;
+         AngularMapProfile* mProfile;
       };
 
       friend class UpdateViewCallback;
@@ -240,7 +240,7 @@ protected:
       class UpdateViewCallback: public osg::NodeCallback
       {
       public:
-         UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}
+         UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}       
 
          void operator()(osg::Node*, osg::NodeVisitor* nv)
          {            
@@ -256,13 +256,14 @@ protected:
             }
          }
       private:
-         dtCore::RefPtr<CubeMapProfile> mProfile;
+         CubeMapProfile* mProfile;
       };
 
       friend class UpdateViewCallback;
 
    public:
       CubeMapProfile();
+     
       void Config(osg::Group*);
       void SetTexture(SkyBoxSideEnum side, const std::string& filename);   
 

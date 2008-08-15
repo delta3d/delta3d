@@ -15,11 +15,10 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 TARGET_LINK_LIBRARIES(${LIB_NAME} 
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
-                      ${DTDAL_LIBRARY}
                       ${DTABC_LIBRARY}
                      )
 IF(WIN32)
-  TARGET_LINK_LIBRARIES(${LIB_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
+  TARGET_LINK_LIBRARIES(${LIB_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)
 ENDIF(WIN32)
                                               
 INCLUDE(ModuleInstall OPTIONAL)
