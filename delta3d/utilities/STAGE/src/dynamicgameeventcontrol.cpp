@@ -79,7 +79,7 @@ namespace dtEditQt
          if(myProperty->GetValue() != NULL)
             temporaryEditControl->setCurrentIndex(temporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
          else
-            temporaryEditControl->setCurrentIndex(temporaryEditControl->findText("None"));
+            temporaryEditControl->setCurrentIndex(temporaryEditControl->findText("<None>"));
       }
    }
 
@@ -96,7 +96,7 @@ namespace dtEditQt
          QString selection = temporaryEditControl->currentText();
          //int index = temporaryEditControl->findText(selection);
          std::string selectionString = selection.toStdString();
-         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "None";
+         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "<None>";
 
          // set our value to our object
          if (previousString != selectionString)
@@ -105,17 +105,18 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
             dtDAL::GameEvent *eventToSet = NULL;
-            std::vector<dtDAL::GameEvent*> events;
+            //std::vector<dtDAL::GameEvent*> events;
             dtDAL::Map &curMap = *EditorData::GetInstance().getCurrentMap();
-            curMap.GetEventManager().GetAllEvents(events);
-            for(unsigned int i = 0; i < events.size(); i++)
-            {
-               if(events[i]->GetName() == selectionString)
-               {  
-                  eventToSet = events[i];
-                  break;
-               }                  
-            }
+            //curMap.GetEventManager().GetAllEvents(events);
+            eventToSet = curMap.GetEventManager().FindEvent(selectionString);
+            //for(unsigned int i = 0; i < events.size(); i++)
+            //{
+            //   if(events[i]->GetName() == selectionString)
+            //   {  
+            //      eventToSet = events[i];
+            //      break;
+            //   }                  
+            //}
             myProperty->SetValue(eventToSet);
             dataChanged = true;
          }
@@ -145,11 +146,15 @@ namespace dtEditQt
       dtDAL::Map &map = *EditorData::GetInstance().getCurrentMap();
       map.GetEventManager().GetAllEvents(events);
 
-      // Insert the None option at the end of the list
-      temporaryEditControl->addItem(QString("None"));
-
+      QStringList sortedEventNames;
       for(unsigned int i = 0; i < events.size(); i++)
-         temporaryEditControl->addItem(QString(events[i]->GetName().c_str()));
+         sortedEventNames.append(QString(events[i]->GetName().c_str()));
+      sortedEventNames.sort();
+      // Insert the None option at the end of the list
+      QStringList listPlusNone;
+      listPlusNone.append(QString("<None>"));
+      listPlusNone += sortedEventNames;
+      temporaryEditControl->addItems(listPlusNone);
 
       connect(temporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
@@ -176,7 +181,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGameEventControl::getValueAsString()
    {
-      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("None");
+      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("<None>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////

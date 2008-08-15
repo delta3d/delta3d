@@ -81,7 +81,7 @@ namespace dtEditQt
          if(myProperty->GetValue() != NULL)
             mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
          else
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("None"));
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
       }
    }
 
@@ -96,9 +96,9 @@ namespace dtEditQt
 
          // Get the current selected string and the previously set string value
          QString selection = mTemporaryEditControl->currentText();
-         unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
+         //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
          std::string selectionString = selection.toStdString();
-         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "None";
+         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "<None>";
 
          // set our value to our object
          if (previousString != selectionString)
@@ -111,25 +111,20 @@ namespace dtEditQt
                throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
                "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             
+
+            // Find our matching proxy with this name - "<None>" ends up as NULl cause no match 
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
             GetActorProxies(proxies, myProperty->GetDesiredActorClass());
-
-            if (index == 0)
+            dtDAL::ActorProxy *proxy = NULL;
+            for(unsigned int i = 0; i < proxies.size(); i++)
             {
-               myProperty->SetValue(NULL);
-            }
-            else
-            {
-               if(index <= proxies.size())
+               if (proxies[i]->GetName().c_str() == selectionString)
                {
-                  dtDAL::ActorProxy *proxy = proxies[index - 1].get();
-                  myProperty->SetValue(proxy);
-               }
-               else
-               {
-                  myProperty->SetValue(NULL);
+                  proxy = proxies[i].get();
+                  break;
                }
             }
+            myProperty->SetValue(proxy);
 
             dataChanged = true;
          }
@@ -173,10 +168,17 @@ namespace dtEditQt
       GetActorProxies(names, myProperty->GetDesiredActorClass());
 
       // Insert the None option at the end of the list
-      mTemporaryEditControl->addItem(QString("None"));
-
+      QStringList sortedNames;
       for(unsigned int i = 0; i < names.size(); i++)
-         mTemporaryEditControl->addItem(QString(names[i]->GetName().c_str()));
+         sortedNames.append(QString(names[i]->GetName().c_str()));
+      sortedNames.sort();
+      // Insert the None option at the end of the list
+      QStringList listPlusNone;
+      listPlusNone.append(QString("<None>"));
+      listPlusNone += sortedNames;
+      mTemporaryEditControl->addItems(listPlusNone);
+      //mTemporaryEditControl->addItem(QString("<None>"));
+
 
       connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
@@ -210,7 +212,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getValueAsString()
    {
-      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("None");
+      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("<None>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////

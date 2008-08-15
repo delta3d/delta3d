@@ -471,6 +471,9 @@ namespace dtEditQt
         // Protect from recursive issues.
         recurseProtectEmitSelectionChanged = true;
 
+        // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
+        UnselectAllItemsManually(NULL);
+
         // duplicate the currently selected actors
         EditorActions::GetInstance().slotEditDuplicateActors();
 
