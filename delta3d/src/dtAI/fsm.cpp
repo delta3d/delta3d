@@ -25,15 +25,15 @@
 namespace dtAI
 {
    FSM::FSM()
-      : mFactory(0)
-      , mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
+      : mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
+      , mFactory(0)
    {     
       SetupDefaultFactory();
    }
 
    FSM::FSM(FactoryType* pFactory)
-      : mFactory(pFactory)
-      , mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
+      : mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
+      , mFactory(pFactory)
    {
 
    }

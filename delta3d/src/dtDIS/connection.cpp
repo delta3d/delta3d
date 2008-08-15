@@ -15,13 +15,13 @@ void Connection::Connect(unsigned int port, const char* host)
       return;
    }
 
-   if (nlSelectNetwork(NL_IP) == NL_INVALID)
+   if (nlSelectNetwork(NL_IP) == NL_FALSE)
    {
       LOG_ERROR("Can't select network type");
    }
 
    NLaddress  maddr;
-   if (nlStringToAddr(host, &maddr) == NL_INVALID )
+   if (nlStringToAddr(host, &maddr) == NL_FALSE )
    {
       std::ostringstream strm;
       strm << "Can't get address for : " + std::string(host) + ". "
