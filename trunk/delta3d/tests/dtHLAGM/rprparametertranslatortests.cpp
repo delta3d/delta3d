@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -115,6 +115,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestOutgoingWorldCoordinateDataTranslation);
       CPPUNIT_TEST(TestOutgoingMarkingTypeDataTranslation);
       CPPUNIT_TEST(TestOutgoingStringDataTranslation);
+      CPPUNIT_TEST(TestOutgoingOctetDataTranslation);
       CPPUNIT_TEST(TestOutgoingEulerAngleDataTranslation);
       CPPUNIT_TEST(TestOutgoingVectorDataTranslation);
       CPPUNIT_TEST(TestOutgoingAngularVectorDataTranslation);
@@ -130,6 +131,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestIncomingEntityTypeDataTranslation);
       CPPUNIT_TEST(TestIncomingStringToEnumDataTranslation);
       CPPUNIT_TEST(TestIncomingStringDataTranslation);
+      CPPUNIT_TEST(TestIncomingOctetDataTranslation);
       CPPUNIT_TEST(TestIncomingVelocityVectorDataTranslation);
       CPPUNIT_TEST(TestIncomingRTIIDStructToActorIdDataTranslation);
       CPPUNIT_TEST(TestIncomingRTIIDStructToStringDataTranslation);
@@ -302,12 +304,24 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
       void TestOutgoingStringDataTranslation()
       {
-         InternalTestOutgoingStringDataTranslation("01234");
-         InternalTestOutgoingStringDataTranslation("01234567890");
-         InternalTestOutgoingStringDataTranslation("012345678903234");
+         InternalTestOutgoingStringDataTranslation("01234", false);
+         InternalTestOutgoingStringDataTranslation("01234567890", false);
+         InternalTestOutgoingStringDataTranslation("012345678903234", false);
 
          dtCore::UniqueId testId;
          InternalTestOutgoingUniqueIdToStringDataTranslation(testId);
+      }
+
+      void TestOutgoingOctetDataTranslation()
+      {
+         InternalTestOutgoingStringDataTranslation("01234", true);
+         InternalTestOutgoingStringDataTranslation("01234567890", true);
+         std::string bigString;
+         bigString.append(dtHLAGM::RPRAttributeType::OCTET_TYPE.GetEncodedLength(), 'a');
+         InternalTestOutgoingStringDataTranslation(bigString, true);
+         //Too long
+         bigString.append(40, 'a');
+         InternalTestOutgoingStringDataTranslation(bigString, true);
       }
 
       void TestOutgoingEulerAngleDataTranslation()
@@ -937,10 +951,20 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          messageParameters.push_back(stringParam.get());
 
          const std::string testValue("bigTest");
+         const std::string testValueJunkAfterNull("bigTest\0test");
 
+         mParameterTranslator->MapToMessageParameters(testValueJunkAfterNull.c_str(), testValueJunkAfterNull.size(), messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The string should have been passed correctly, stopping at the NULL",
+                  testValue, stringParam->GetValue());
+
+         //clear the string to make sure the call isn't a no-op since the result should be the same
+         //as last time.
+         stringParam->SetValue("");
          mParameterTranslator->MapToMessageParameters(testValue.c_str(), testValue.size(), messageParameters, mMapping);
 
-         CPPUNIT_ASSERT_EQUAL(testValue, stringParam->GetValue());
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The string should have been passed correctly, stopping at the end of the buffer",
+                  testValue, stringParam->GetValue());
 
          dtCore::RefPtr<dtGame::ActorMessageParameter> actorParam = new dtGame::ActorMessageParameter("test");
          pd.SetGameType(actorParam->GetDataType());
@@ -951,6 +975,26 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          mParameterTranslator->MapToMessageParameters(testValue.c_str(), testValue.size(), messageParameters, mMapping);
 
          CPPUNIT_ASSERT_EQUAL(testValue, actorParam->GetValue().ToString());
+      }
+
+      void TestIncomingOctetDataTranslation()
+      {
+         std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+
+         dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
+         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::OCTET_TYPE);
+
+         dtHLAGM::OneToManyMapping::ParameterDefinition& pd = mMapping.GetParameterDefinitions()[0];
+         pd.SetGameType(stringParam->GetDataType());
+
+         messageParameters.push_back(stringParam.get());
+
+         const std::string testValue("bigTest\0test\0My Test Is very good \r\t\0 \0 \0");
+
+         mParameterTranslator->MapToMessageParameters(testValue.c_str(), testValue.size(), messageParameters, mMapping);
+
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The message should have passed, even with null value in tact.",
+                  testValue, stringParam->GetValue());
       }
 
       void TestIncomingDataTranslation()
@@ -1401,10 +1445,12 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          const std::string& expectedValue = testValue.substr(0, size - 1);
 
-         CPPUNIT_ASSERT_MESSAGE("The result should have been \"" + expectedValue + "\" but it is \"" + result + "\"", result == expectedValue);
+         CPPUNIT_ASSERT_MESSAGE("The result should have been \"" + expectedValue + "\" but it is \"" + result + "\"",
+                  result == expectedValue);
       }
 
-      void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue, const std::string& expectedValue, dtDAL::DataType& dataType)
+      void InternalTestOutgoingRTIIDTypeDataTranslation(const std::string& testValue,
+               const std::string& expectedValue, dtDAL::DataType& dataType)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
@@ -1430,11 +1476,11 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mParameterTranslator->DeallocateBuffer(buffer);
 
-         CPPUNIT_ASSERT_EQUAL(result, expectedValue);
+         CPPUNIT_ASSERT_EQUAL(expectedValue, result);
 
       }
 
-      void InternalTestOutgoingStringDataTranslation(const std::string& testValue)
+      void InternalTestOutgoingStringDataTranslation(const std::string& testValue, bool useOctet)
       {
          std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters;
 
@@ -1442,20 +1488,45 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          size_t size = 0;
 
          mMapping.GetParameterDefinitions()[0].SetGameType(dtDAL::DataType::STRING);
-         mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         if (useOctet)
+         {
+            mMapping.SetHLAType(dtHLAGM::RPRAttributeType::OCTET_TYPE);
+         }
+         else
+         {
+            mMapping.SetHLAType(dtHLAGM::RPRAttributeType::STRING_TYPE);
+         }
+
          dtCore::RefPtr<dtGame::StringMessageParameter> stringParam = new dtGame::StringMessageParameter("test");
          stringParam->SetValue(testValue);
          messageParameters.push_back(stringParam.get());
 
          TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
 
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should match the string length plus one.", testValue.size() + 1, size);
+         if (useOctet)
+         {
+            if (testValue.size() > dtHLAGM::RPRAttributeType::OCTET_TYPE.GetEncodedLength())
+            {
+               CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should be capped at the max length.",
+                        dtHLAGM::RPRAttributeType::OCTET_TYPE.GetEncodedLength(), size);
+            }
+            else
+            {
+               CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should match the string length.",
+                        testValue.size(), size);
+            }
+         }
+         else
+         {
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The size of the buffer should match the string length plus one.",
+                     testValue.size() + 1, size);
+         }
 
          std::string result;
          result.reserve(size);
          for (unsigned i = 0; i < size; ++i)
          {
-            if (buffer[i] == '\0')
+            if (buffer[i] == '\0' && !useOctet)
                break;
 
             result.append(1, buffer[i]);
@@ -1463,7 +1534,10 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
 
          mParameterTranslator->DeallocateBuffer(buffer);
 
-         CPPUNIT_ASSERT_EQUAL_MESSAGE("The result should have been \"" + testValue + "\" but it is \"" + result + "\"", testValue, result);
+         //This variable takes care of max size caps
+         const std::string testValueSub = testValue.substr(0, size);
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("The result should have been \"" + testValueSub + "\" but it is \"" + result + "\"",
+                  testValueSub, result);
       }
 
       void InternalTestOutgoingUniqueIdToStringDataTranslation(const dtCore::UniqueId& testValue)

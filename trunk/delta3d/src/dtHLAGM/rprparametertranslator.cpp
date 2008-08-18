@@ -52,6 +52,7 @@ namespace dtHLAGM
    const RPRAttributeType RPRAttributeType::EVENT_IDENTIFIER_TYPE("EVENT_IDENTIFIER_TYPE", 1, 5);
    const RPRAttributeType RPRAttributeType::MARKING_TYPE("MARKING_TYPE", 1, 12);
    const RPRAttributeType RPRAttributeType::MARKING_TYPE_32("MARKING_TYPE_32", 1, 32);
+   const RPRAttributeType RPRAttributeType::OCTET_TYPE("OCTET_TYPE", 1, 65535);
    const RPRAttributeType RPRAttributeType::STRING_TYPE("STRING_TYPE", 1, 128);
    const RPRAttributeType RPRAttributeType::ARTICULATED_PART_TYPE("ARTICULATED_PART_TYPE", 1, 512);
    const RPRAttributeType RPRAttributeType::RTI_OBJECT_ID_STRUCT_TYPE("RTI_OBJECT_ID_STRUCT_TYPE", 1, 128);
@@ -88,7 +89,7 @@ namespace dtHLAGM
       return dynamic_cast<const RPRAttributeType*>(&type) != NULL;
    }
 
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamsToSpatial(
       char* buffer,
@@ -138,10 +139,10 @@ namespace dtHLAGM
       //world coordinate
       if (parameters[2].valid())
       {
-         spatial.GetWorldCoordinate() = 
+         spatial.GetWorldCoordinate() =
             CoordConvertPositionParameter(*parameters[2]);
       }
-      
+
       if (parameters[3].valid())
       {
          spatial.GetOrientation() = osg::Vec3f(CoordConvertRotationParameter(*parameters[3]));
@@ -161,7 +162,7 @@ namespace dtHLAGM
       {
          spatial.GetAngularVelocity() = CoordConvertAngularVelocityParameter(*parameters[6]);
       }
-      
+
       maxSize = spatial.Encode(buffer, maxSize);
       if (maxSize == 0)
       {
@@ -216,11 +217,11 @@ namespace dtHLAGM
 
       return mCoordinates.ConvertToRemoteTranslation(position);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToWorldCoord(
-      char* buffer, 
-      const size_t maxSize, 
+      char* buffer,
+      const size_t maxSize,
       const dtGame::MessageParameter& parameter) const
    {
       WorldCoordinate wc = CoordConvertPositionParameter(parameter);
@@ -289,12 +290,12 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToEulerAngles(
-      char* buffer, 
-      const size_t maxSize, 
+      char* buffer,
+      const size_t maxSize,
       const dtGame::MessageParameter& parameter) const
    {
       EulerAngles eulerAngles = osg::Vec3f(CoordConvertRotationParameter(parameter));
-      
+
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -327,8 +328,8 @@ namespace dtHLAGM
       {
          const osg::Vec3f& preResult = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
          result = mCoordinates.GetOriginRotationMatrixInverse().preMult(preResult);
-      } 
-      else 
+      }
+      else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
@@ -340,8 +341,8 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToVelocityVector(
-      char* buffer, 
-      const size_t maxSize, 
+      char* buffer,
+      const size_t maxSize,
       const dtGame::MessageParameter& parameter) const
    {
       VelocityVector velocityVector = CoordConvertVelocityParameter(parameter);
@@ -361,8 +362,8 @@ namespace dtHLAGM
       else if (parameterDataType == dtDAL::DataType::VEC3F)
       {
          result = static_cast<const dtGame::Vec3fMessageParameter&>(parameter).GetValue();
-      } 
-      else 
+      }
+      else
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The incoming parameter \"%s\" is not of a supported type \"%s\" for conversion to \"%s\"",
@@ -378,12 +379,12 @@ namespace dtHLAGM
       const size_t maxSize,
       const dtGame::MessageParameter& parameter) const
    {
-      
+
       // USED FOR ANGULAR VELOCITY, ACCELERATION VECTOR, AND VELOCITY VECTOR
       VelocityVector velocityVector = CoordConvertAngularVelocityParameter(parameter);
       velocityVector.Encode(buffer);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToEntityType(
       char* buffer,
@@ -414,7 +415,7 @@ namespace dtHLAGM
                              parameter.GetName().c_str(), parameter.GetDataType().GetName().c_str(),
                              RPRAttributeType::VELOCITY_VECTOR_TYPE.GetName().c_str());
          return;
-      } 
+      }
 
       EntityType entityType;
       valueAsString >> entityType;
@@ -425,24 +426,40 @@ namespace dtHLAGM
    void RPRParameterTranslator::MapFromStringParamToCharArray(
          char* buffer,
          size_t& maxSize,
-         const dtGame::StringMessageParameter& parameter,
+         const std::string& parameterValue,
          const OneToManyMapping::ParameterDefinition& paramDef,
-         const dtDAL::DataType& parameterDataType) const
+         const dtDAL::DataType& parameterDataType,
+         bool addNullTerminator) const
    {
-      const std::string& parameterValue = parameter.GetValue();
-
       std::string value;
       if (parameterDataType == dtDAL::DataType::ENUMERATION)
+      {
          value = GetEnumValue(parameterValue, paramDef, false);
+      }
       else
+      {
          value = parameterValue;
+      }
 
+      size_t writeSize = value.size();
       //change the size of this parameter to match the actual string length.
-      maxSize = value.size() + 1;
+      // I have to check to see if value is equal to max size.  We can write straight to the end
+      // if we have no null terminator, but we have to leave a spot at the end for a null terminator
+      // if we need one.
+      if (maxSize == value.size() && addNullTerminator)
+      {
+         writeSize--;
+      }
+      else if (value.size() < maxSize)
+      {
+         maxSize = value.size();
+         if (addNullTerminator) { maxSize++; }
+      }
+
 
       for (unsigned i = 0; i < maxSize; ++i)
       {
-         if (i < value.size())
+         if (i < (writeSize))
          {
             buffer[i] = value[i];
          }
@@ -452,14 +469,14 @@ namespace dtHLAGM
             buffer[i] = '\0';
          }
       }
-      
+
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Mapped parameter to a string value.  The result with size \"%u\" is \"%s\".",
             maxSize, buffer);
-   
+
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromMessageParameters(char* buffer, size_t& maxSize,
       std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
@@ -499,7 +516,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
             "Warning, the Message Parameter DataType for \"%s\" is \"%s\", but the mapping configuration says it should be \"%s\"",
-            parameter.GetName().c_str(), parameterDataType.GetName().c_str(), 
+            parameter.GetName().c_str(), parameterDataType.GetName().c_str(),
             paramDef.GetGameType().GetName().c_str());
       }
 
@@ -589,30 +606,18 @@ namespace dtHLAGM
          eventIdentifier.SetEventIdentifier(static_cast<const dtGame::UnsignedShortIntMessageParameter&>(parameter).GetValue());
          eventIdentifier.Encode(buffer);
       }
-      else if (hlaType == RPRAttributeType::STRING_TYPE)
+      else if (hlaType == RPRAttributeType::STRING_TYPE ||
+               hlaType == RPRAttributeType::OCTET_TYPE)
       {
-         if (parameterDataType == dtDAL::DataType::STRING ||
-             parameterDataType == dtDAL::DataType::ENUMERATION)
-         {
-            MapFromStringParamToCharArray(buffer, maxSize, 
-                  static_cast<const dtGame::StringMessageParameter&>(parameter), 
-                  paramDef, parameterDataType);
-         }
-         else if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            const dtCore::UniqueId& value = static_cast<const dtGame::ActorMessageParameter&>(parameter).GetValue();
+         bool addNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
 
-            const std::string& stringValue = value.ToString();
-            for (unsigned i = 0; i < RPRAttributeType::STRING_TYPE.GetEncodedLength(); ++i)
-            {
-               if (i < stringValue.size())
-                  buffer[i] = stringValue[i];
-               else
-                  //zero anything after the string value.
-                  buffer[i] = '\0';
-            }
-            //change the size of this parameter to match the actual string length.
-            maxSize = stringValue.size() + 1;
+         if (parameterDataType == dtDAL::DataType::STRING ||
+             parameterDataType == dtDAL::DataType::ENUMERATION ||
+             parameterDataType == dtDAL::DataType::ACTOR)
+         {
+            MapFromStringParamToCharArray(buffer, maxSize,
+                  parameter.ToString(),
+                  paramDef, parameterDataType, addNullTerminator);
          }
          else
          {
@@ -708,9 +713,9 @@ namespace dtHLAGM
          else if (parameterDataType == dtDAL::DataType::STRING ||
                parameterDataType == dtDAL::DataType::ENUMERATION)
          {
-            MapFromStringParamToCharArray(buffer, maxSize, 
-                  static_cast<const dtGame::StringMessageParameter&>(parameter),
-                  paramDef, parameterDataType);
+            MapFromStringParamToCharArray(buffer, maxSize,
+                  parameter.ToString(),
+                  paramDef, parameterDataType, true);
          }
          else
          {
@@ -909,7 +914,7 @@ namespace dtHLAGM
 
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromWorldCoordToMessageParam(
-      const char* buffer, 
+      const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter) const
    {
@@ -921,12 +926,12 @@ namespace dtHLAGM
          "World coordinate has been decoded to %lf %lf %lf", wc.GetX(), wc.GetY(), wc.GetZ());
 
       CoordConvertWorldCoord(wc, parameter);
-      
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromEulerAnglesToMessageParam(
-      const char* buffer, 
+      const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter) const
    {
@@ -938,13 +943,13 @@ namespace dtHLAGM
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "The incoming euler angles are %lf %lf %lf",
             eulerAngles.GetPsi(), eulerAngles.GetTheta(), eulerAngles.GetPhi());
-            
+
       CoordConvertOrientation(eulerAngles, parameter);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromVelocityVectorToMessageParam(
-      const char* buffer, 
+      const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter) const
    {
@@ -954,10 +959,10 @@ namespace dtHLAGM
 
       CoordConvertVelocityVector(velocityVector, parameter);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromAngularVelocityVectorToMessageParam(
-      const char* buffer, 
+      const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter) const
    {
@@ -969,7 +974,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const std::string RPRParameterTranslator::GetEnumValue(const std::string& value, 
+   const std::string RPRParameterTranslator::GetEnumValue(const std::string& value,
       const OneToManyMapping::ParameterDefinition& paramDef, bool returnGameValue) const
    {
       std::string mappedValue;
@@ -990,9 +995,9 @@ namespace dtHLAGM
          {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "No mapping was specified for value \"%s\" for an enumeration on mapping for game parameter \"%s\". "
-               "Using game default value \"%s\".", 
-               value.c_str(), 
-               paramDef.GetGameName().c_str(), 
+               "Using game default value \"%s\".",
+               value.c_str(),
+               paramDef.GetGameName().c_str(),
                paramDef.GetDefaultValue().c_str());
          }
 
@@ -1004,43 +1009,44 @@ namespace dtHLAGM
          {
             return mappedValue;
          }
-      
+
          //so we want the HLA Value, but no value was mapped to the game default value.
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "No mapping to HLA was specified for the default value for an enumeration on mapping for game parameter \"%s\". "
-            "That is, the game default value is \"%s\", but no HLA value is mapped to that default", 
-            paramDef.GetGameName().c_str(), 
+            "That is, the game default value is \"%s\", but no HLA value is mapped to that default",
+            paramDef.GetGameName().c_str(),
             paramDef.GetDefaultValue().c_str());
-         
+
          return "";
       }
    }
 
    //////////////////////////c///////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromCharArrayToStringParam(
-         const char* buffer, const size_t size, 
-         dtGame::StringMessageParameter& parameter,
-         const OneToManyMapping::ParameterDefinition& paramDef) const
+         const char* buffer, const size_t size,
+         dtGame::MessageParameter& parameter,
+         const OneToManyMapping::ParameterDefinition& paramDef,
+         bool stopAtNullTerminator) const
    {
       std::string value;
       for (unsigned i = 0; i < size; ++i)
       {
          char c = buffer[i];
-         if (c == '\0')
+         if (c == '\0' && stopAtNullTerminator)
             break;
          value.append(1, c);
       }
-      
+
       if (parameter.GetDataType() == dtDAL::DataType::ENUMERATION)
          value = GetEnumValue(value, paramDef, true);
-      
-      parameter.SetValue(value);
+
+      parameter.FromString(value);
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromParamToArticulations(
-      char* buffer, 
-      size_t& maxSize, 
+      char* buffer,
+      size_t& maxSize,
       const dtGame::MessageParameter& parameter,
       const OneToManyMapping::ParameterDefinition& paramDef) const
    {
@@ -1066,7 +1072,7 @@ namespace dtHLAGM
          curGroupParam = static_cast<const dtGame::GroupMessageParameter*> (groupParamsList[i]);
 
          if( curGroupParam == NULL )
-         { 
+         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Outgoing articulation parameter does not have a valid grouping of sub parameters." );
             continue;
@@ -1083,13 +1089,13 @@ namespace dtHLAGM
             continue;
          }
 
-         // Capture message parameters in a new articulated parameter to be 
+         // Capture message parameters in a new articulated parameter to be
          // written to the buffer.
          ArticulatedParameter curArtParam;
 
          // Get the ArticulatedParameterChange value
          const dtGame::UnsignedIntMessageParameter* changeParam
-            = static_cast<const dtGame::UnsignedIntMessageParameter*> 
+            = static_cast<const dtGame::UnsignedIntMessageParameter*>
             (curGroupParam->GetParameter("Change"));
 
          if( changeParam != NULL )
@@ -1112,7 +1118,7 @@ namespace dtHLAGM
 
             // Get the station
             const dtGame::UnsignedIntMessageParameter* stationParam
-               = static_cast<const dtGame::UnsignedIntMessageParameter*> 
+               = static_cast<const dtGame::UnsignedIntMessageParameter*>
                (curGroupParam->GetParameter("Station"));
 
             if( stationParam != NULL )
@@ -1121,10 +1127,10 @@ namespace dtHLAGM
             }
 
             // Get the dis info
-            const dtGame::EnumMessageParameter* disParam 
+            const dtGame::EnumMessageParameter* disParam
                = static_cast<const dtGame::EnumMessageParameter*>
                (curGroupParam->GetParameter("DISInfo")); // Enum Param
-            
+
             if( disParam != NULL )
             {
                const std::string& value = GetEnumValue( disParam->GetValue(), paramDef, false );
@@ -1194,7 +1200,7 @@ namespace dtHLAGM
                // Get the Class
                if( curNamedParam->GetName() == "OurName" )
                {
-                  const dtGame::StringMessageParameter* classParam 
+                  const dtGame::StringMessageParameter* classParam
                      = static_cast<const dtGame::StringMessageParameter*> (curNamedParam); // Enum Param
 
                   // Capture the class value
@@ -1224,7 +1230,7 @@ namespace dtHLAGM
                // Get the value
                else if( curNamedParam->GetName() != "Change" ) // Change is the only other parameter (already captured)
                {
-                  const dtGame::FloatMessageParameter* floatParam 
+                  const dtGame::FloatMessageParameter* floatParam
                      = dynamic_cast<const dtGame::FloatMessageParameter*> (curNamedParam);
 
                   // Capture the float value
@@ -1243,64 +1249,64 @@ namespace dtHLAGM
                      //(Enumeration (Enumerator "PositionRate")     (Representation 2))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE )
                      { artParts.SetTypeMetric( 2 ); }
-                     
+
                      //(Enumeration (Enumerator "Extension")        (Representation 3))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION )
                      { artParts.SetTypeMetric( 3 ); }
-                     
+
                      //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE )
                      { artParts.SetTypeMetric( 4 ); }
-                     
+
                      //(Enumeration (Enumerator "X")                (Representation 5))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_X )
                      { artParts.SetTypeMetric( 5 ); }
-                     
+
                      //(Enumeration (Enumerator "XRate")            (Representation 6))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_XRATE )
                      { artParts.SetTypeMetric( 6 ); }
-                     
+
                      //(Enumeration (Enumerator "Y")                (Representation 7))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Y )
                      { artParts.SetTypeMetric( 7 ); }
-                     
+
                      //(Enumeration (Enumerator "YRate")            (Representation 8))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_YRATE )
                      { artParts.SetTypeMetric( 8 ); }
-                     
+
                      //(Enumeration (Enumerator "Z")                (Representation 9))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_Z )
                      { artParts.SetTypeMetric( 9 ); }
-                     
+
                      //(Enumeration (Enumerator "ZRate")            (Representation 10))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ZRATE )
                      { artParts.SetTypeMetric( 10 ); }
-                     
+
                      //(Enumeration (Enumerator "Azimuth")          (Representation 11))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTH )
                      { artParts.SetTypeMetric( 11 ); }
-                     
+
                      //(Enumeration (Enumerator "AzimuthRate")      (Representation 12))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_AZIMUTHRATE )
                      { artParts.SetTypeMetric( 12 ); }
-                     
+
                      //(Enumeration (Enumerator "Elevation")        (Representation 13))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATION )
                      { artParts.SetTypeMetric( 13 ); }
-                     
+
                      //(Enumeration (Enumerator "ElevationRate")    (Representation 14))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ELEVATIONRATE )
                      { artParts.SetTypeMetric( 14 ); }
-                     
+
                      //(Enumeration (Enumerator "Rotation")         (Representation 15))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATION )
                      { artParts.SetTypeMetric( 15 ); }
-                     
+
                      //(Enumeration (Enumerator "RotationRate")     (Representation 16))
                      else if( paramName == dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_ROTATIONRATE )
                      { artParts.SetTypeMetric( 16 ); }
                   }
-                  
+
                }
             }
          }
@@ -1309,7 +1315,7 @@ namespace dtHLAGM
          articulatedParams.push_back( curArtParam );
       }
 
-      
+
       // Go over each parameter, referencing its attach parent by index
       // and then write it to the buffer.
       ArticulatedParameter* curArtParam = NULL;
@@ -1327,7 +1333,7 @@ namespace dtHLAGM
             break;
          }
 
-         // Assign the index of the articulate parameter that 
+         // Assign the index of the articulate parameter that
          // is the parent of this articulate parameter (matched on class id).
          for( unsigned j = 0; j < paramCount; ++j )
          {
@@ -1346,7 +1352,7 @@ namespace dtHLAGM
       }
    }
 
-   
+
    /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapToMessageParameters(const char* buffer, size_t size,
       std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, const OneToManyMapping& mapping) const
@@ -1486,11 +1492,11 @@ namespace dtHLAGM
             if( parameterDataType == dtDAL::DataType::ENUMERATION )
             {
                std::string mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
-               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);  
+               static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mappedValue);
             }
             else // STRING
             {
-               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(stringValue.str());  
+               static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(stringValue.str());
             }
          }
          else
@@ -1501,33 +1507,24 @@ namespace dtHLAGM
                parameterDataType.GetName().c_str());
          }
       }
-      else if (hlaType == RPRAttributeType::STRING_TYPE)
+      else if (hlaType == RPRAttributeType::STRING_TYPE ||
+               hlaType == RPRAttributeType::OCTET_TYPE)
       {
+         bool stopAtNullTerminator = hlaType == RPRAttributeType::STRING_TYPE;
+
          if (parameterDataType == dtDAL::DataType::STRING ||
-             parameterDataType == dtDAL::DataType::ENUMERATION)
+             parameterDataType == dtDAL::DataType::ENUMERATION ||
+             parameterDataType == dtDAL::DataType::ACTOR)
          {
-            MapFromCharArrayToStringParam(buffer, size, 
-                  static_cast<dtGame::StringMessageParameter&>(parameter),
-                  paramDef);
-         }
-         else if (parameterDataType == dtDAL::DataType::ACTOR)
-         {
-            std::string value;
-            for (unsigned i = 0; i < size; ++i)
-            {
-               char c = buffer[i];
-               if (c == '\0')
-                  break;
-               value.append(1, c);
-            }
-            //}
-            static_cast<dtGame::ActorMessageParameter&>(parameter).SetValue(dtCore::UniqueId(value));
+            MapFromCharArrayToStringParam(buffer, size,
+                  parameter,
+                  paramDef, stopAtNullTerminator);
          }
          else
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Unable to map HLA type \"%s\" to \"%s\"",
-               RPRAttributeType::STRING_TYPE.GetName().c_str(),
+               hlaType.GetName().c_str(),
                parameterDataType.GetName().c_str());
          }
       }
@@ -1606,7 +1603,7 @@ namespace dtHLAGM
          else if (parameterDataType == dtDAL::DataType::STRING ||
                parameterDataType == dtDAL::DataType::ENUMERATION)
          {
-            MapFromCharArrayToStringParam(buffer, size, 
+            MapFromCharArrayToStringParam(buffer, size,
                   static_cast<dtGame::StringMessageParameter&>(parameter), paramDef);
          }
          else
@@ -1633,7 +1630,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
-   void RPRParameterTranslator::SetIntegerValue(unsigned value, dtGame::MessageParameter& parameter, 
+   void RPRParameterTranslator::SetIntegerValue(unsigned value, dtGame::MessageParameter& parameter,
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
       const dtDAL::DataType& parameterDataType = parameter.GetDataType();
@@ -1678,9 +1675,9 @@ namespace dtHLAGM
       {
          std::string mappedValue;
          std::ostringstream stringValue;
-         
+
          stringValue << unsigned(value);
-         
+
          mappedValue = GetEnumValue(stringValue.str(), paramDef, true);
 
          parameter.FromString(mappedValue);
@@ -1689,7 +1686,7 @@ namespace dtHLAGM
    }
 
    /////////////////////////////////////////////////////////////////////////////////////////
-   unsigned RPRParameterTranslator::GetIntegerValue(const dtGame::MessageParameter& parameter, 
+   unsigned RPRParameterTranslator::GetIntegerValue(const dtGame::MessageParameter& parameter,
       const OneToManyMapping& mapping, unsigned parameterDefIndex) const
    {
       const dtDAL::DataType& parameterDataType = parameter.GetDataType();
@@ -1753,10 +1750,10 @@ namespace dtHLAGM
 
 
 
-   
+
    /////////////////////////////////////////////////////////////////////////////////////////
    void RPRParameterTranslator::MapFromArticulationsToMessageParam(
-      const char* buffer, 
+      const char* buffer,
       const size_t size,
       dtGame::MessageParameter& parameter,
       const dtDAL::DataType& parameterDataType,
@@ -1773,7 +1770,7 @@ namespace dtHLAGM
       // ERROR CHECKING TO MAKE SURE SIZE IS CORRECT
       if(size % artParam.EncodedLength() != 0)
       {
-         // Log error they sent us bad data 
+         // Log error they sent us bad data
          if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
             "Received inaccurate data from hla in the articulated parts area, size is %d",
@@ -1810,7 +1807,7 @@ namespace dtHLAGM
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Station ID is = %d", 
+                  "Received inaccurate data from hla in the articulated parts area, Station ID is = %d",
                   (unsigned int)(*paramsIter).GetParameterValue().GetAttachedParts().GetStation());
             }
          }
@@ -1820,15 +1817,15 @@ namespace dtHLAGM
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Unknown Class type = %d", 
+                  "Received inaccurate data from hla in the articulated parts area, Unknown Class type = %d",
                   (unsigned int)curParamValue->GetArticulatedParts().GetClass());
             }
-            if((unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric() == 0 
+            if((unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric() == 0
                || (unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric() > 16)
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "Received inaccurate data from hla in the articulated parts area, Unknown Metric type = %d", 
+                  "Received inaccurate data from hla in the articulated parts area, Unknown Metric type = %d",
                   (unsigned int)curParamValue->GetArticulatedParts().GetTypeMetric());
             }
          }
@@ -1907,7 +1904,7 @@ namespace dtHLAGM
                //(Enumeration (Enumerator "Position")         (Representation 1))
             case 1:
                {
-                  newGroupParam->AddParameter( 
+                  newGroupParam->AddParameter(
                      *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITION, value) );
                }
                break;
@@ -1915,7 +1912,7 @@ namespace dtHLAGM
                //(Enumeration (Enumerator "PositionRate")     (Representation 2))
             case 2:
                {
-                  newGroupParam->AddParameter( 
+                  newGroupParam->AddParameter(
                      *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_POSITIONRATE, value) );
                }
                break;
@@ -1923,7 +1920,7 @@ namespace dtHLAGM
                //(Enumeration (Enumerator "Extension")        (Representation 3))
             case 3:
                {
-                  newGroupParam->AddParameter( 
+                  newGroupParam->AddParameter(
                      *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION, value) );
                }
                break;
@@ -1931,7 +1928,7 @@ namespace dtHLAGM
                //(Enumeration (Enumerator "ExtensionRate")    (Representation 4))
             case 4:
                {
-                  newGroupParam->AddParameter( 
+                  newGroupParam->AddParameter(
                      *new dtGame::FloatMessageParameter( dtGame::DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSIONRATE, value) );
                }
                break;
@@ -2043,12 +2040,12 @@ namespace dtHLAGM
 
             // we're done add to big group
             gParams->AddParameter( *newGroupParam );
-         }          
+         }
       }
    }
 
    //static
-   void RPRParameterTranslator::CopyMarkingTextToBuffer( const std::string &markingText, 
+   void RPRParameterTranslator::CopyMarkingTextToBuffer( const std::string &markingText,
                                                          char *buffer, size_t numChars )
    {
       //1 is ASCII
@@ -2063,7 +2060,7 @@ namespace dtHLAGM
    }
 
    //static
-   void RPRParameterTranslator::CopyBufferToMarkingText( const char *buffer, 
+   void RPRParameterTranslator::CopyBufferToMarkingText( const char *buffer,
                                                          std::string &markingText,
                                                          size_t numChars )
    {

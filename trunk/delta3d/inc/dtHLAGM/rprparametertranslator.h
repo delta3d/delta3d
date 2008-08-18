@@ -47,12 +47,12 @@ namespace dtHLAGM
 
       public:
 
-         /** 
+         /**
           * The RPR 2.0 spatial structure which provides the position, rotation, and all pertinent
           *  motion information to allow for deadreckoning.
           */
          static const RPRAttributeType SPATIAL_TYPE;
-         
+
          /**
           * A vector of three floats.  This is a world location and will be converted
           * with the coordinate converter.
@@ -69,7 +69,7 @@ namespace dtHLAGM
          static const RPRAttributeType VELOCITY_VECTOR_TYPE;
 
          /**
-          * Three double values specifying the angular velocity vector (rotational acceleration) 
+          * Three double values specifying the angular velocity vector (rotational acceleration)
           * in the coordinate system of the entity.  This will NOT be multiplied by the rotation offset.
           */
          static const RPRAttributeType ANGULAR_VELOCITY_VECTOR_TYPE;
@@ -107,13 +107,16 @@ namespace dtHLAGM
          ///A variable length string.
          static const RPRAttributeType STRING_TYPE;
 
+         /// A variable length block of bytes up to 65535 bytes.
+         static const RPRAttributeType OCTET_TYPE;
+
          ///A type for the articulation to be captured / sent
          static const RPRAttributeType ARTICULATED_PART_TYPE;
 
-         ///RTI string ID type used to identify a single federation entity, usually in firing and detonation events. 
+         ///RTI string ID type used to identify a single federation entity, usually in firing and detonation events.
          static const RPRAttributeType RTI_OBJECT_ID_STRUCT_TYPE;
-      
-         ///The time string passed to time tag 
+
+         ///The time string passed to time tag
          static const RPRAttributeType TIME_TAG_TYPE;
 
       private:
@@ -158,8 +161,8 @@ namespace dtHLAGM
           * @return the mapped value, the default if no mapping is found, or empty string if the default fails.
           */
          const std::string GetEnumValue(
-            const std::string& value, 
-            const OneToManyMapping::ParameterDefinition& paramDef, 
+            const std::string& value,
+            const OneToManyMapping::ParameterDefinition& paramDef,
             bool returnGameValue) const;
 
          void SetIntegerValue(unsigned value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
@@ -187,23 +190,23 @@ namespace dtHLAGM
             const OneToManyMapping& mapping) const;
 
          void MapFromParamToWorldCoord(
-            char* buffer, 
+            char* buffer,
             const size_t maxSize,
             const dtGame::MessageParameter& parameter) const;
-            
+
          void MapFromParamToEulerAngles(
-            char* buffer, 
+            char* buffer,
             const size_t maxSize,
             const dtGame::MessageParameter& parameter) const;
 
          void MapFromParamToVelocityVector(
-            char* buffer, 
+            char* buffer,
             const size_t maxSize,
             const dtGame::MessageParameter& parameter) const;
 
          void MapFromParamToAngularVelocityVector(
-            char* buffer, 
-            const size_t maxSize, 
+            char* buffer,
+            const size_t maxSize,
             const dtGame::MessageParameter& parameter) const;
 
          void MapFromParamToEntityType(
@@ -214,17 +217,18 @@ namespace dtHLAGM
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
          void MapFromParamToArticulations(
-            char* buffer, 
-            size_t& maxSize, 
+            char* buffer,
+            size_t& maxSize,
             const dtGame::MessageParameter& parameter,
             const OneToManyMapping::ParameterDefinition& paramDef) const;
 
          void MapFromStringParamToCharArray(
             char* buffer,
             size_t& maxSize,
-            const dtGame::StringMessageParameter& parameter,
+            const std::string& parameterValue,
             const OneToManyMapping::ParameterDefinition& paramDef,
-            const dtDAL::DataType& parameterDataType) const;
+            const dtDAL::DataType& parameterDataType,
+            bool addNullTerminator = true) const;
 
          void MapFromSpatialToMessageParams(
             const char* buffer,
@@ -233,33 +237,34 @@ namespace dtHLAGM
             const OneToManyMapping& mapping) const;
 
          void MapFromWorldCoordToMessageParam(
-            const char* buffer, 
+            const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter) const;
 
          void MapFromEulerAnglesToMessageParam(
-            const char* buffer, 
+            const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter) const;
-            
+
          void MapFromVelocityVectorToMessageParam(
-            const char* buffer, 
+            const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter) const;
 
          void MapFromAngularVelocityVectorToMessageParam(
-            const char* buffer, 
+            const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter) const;
 
          void MapFromCharArrayToStringParam(
-            const char* buffer, 
-            const size_t size, 
-            dtGame::StringMessageParameter& parameter,
-            const OneToManyMapping::ParameterDefinition& paramDef) const;
+            const char* buffer,
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const OneToManyMapping::ParameterDefinition& paramDef,
+            bool stopAtNullTerminator = true) const;
 
          void MapFromArticulationsToMessageParam(
-            const char* buffer, 
+            const char* buffer,
             const size_t size,
             dtGame::MessageParameter& parameter,
             const dtDAL::DataType& parameterDataType,
@@ -269,12 +274,12 @@ namespace dtHLAGM
 
          /**Copy numChars of markingText into buffer. Add trailing \0's if required.
            *Preface buffer with '1' to denote the text is "ASCII". **/
-         static void CopyMarkingTextToBuffer(const std::string &markingText, 
+         static void CopyMarkingTextToBuffer(const std::string &markingText,
                                              char *buffer,
                                              size_t numChars);
 
          ///Copy up to numChars of buffer into markingText.
-         static void CopyBufferToMarkingText(const char *buffer, 
+         static void CopyBufferToMarkingText(const char *buffer,
                                              std::string &markingText,
                                              size_t numChars);
    };
