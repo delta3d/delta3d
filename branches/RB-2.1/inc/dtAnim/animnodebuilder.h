@@ -53,10 +53,23 @@ namespace dtAnim
    class Cal3DModelData;
    class Array;
 
+/** Class used to generate the renderable geometry for an animated character.  This
+  * class makes use of a pointer to a function which will do the actual building
+  * of the geometry.  By default, AnimNodeBuilder will try to use the default
+  * CreateSoftware(), CreateHardware, or CreateNULL() methods.  Call SetCreate()
+  * to supply a custom create method.  
+  */
 class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
 public:
-   typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
+   
+   /** Prototype of the Create method.  Returns bool if create was successful, false
+     * otherwise.  
+     * @code bool MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
+     * @endcode
+     * @see CreateNode()
+     */
+   typedef dtUtil::Functor<bool, TYPELIST_2(osg::Geode&,Cal3DModelWrapper*)> CreateFunc;
 
    class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
    {
@@ -73,13 +86,28 @@ public:
 
    /// @return the create function
    CreateFunc& GetCreate();
+
+   /** Set a custom CreateFunc for the AnimNodeBuilder.  Function 
+     * must remove the temporary geometry and drawcallback supplied
+     * by CreateNode.
+     * @param pCreate : the custom create function.
+     */
    void SetCreate(const CreateFunc& pCreate);
 
+   /** Create the node that holds the animated character's geometry.  Will return
+     * a valid Node which contains temporary geometry.  Actual character geometry
+     * might not be present until the returned node is rendered in a Scene.
+     * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
+     * the geometry.
+     * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
+     * geometry is a osg::Geode which contains one osg::Drawable that has a Drawcallback
+     * assigned to it.
+     */
    dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
 
-   virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
-   virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
+   virtual bool CreateSoftware(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
+   virtual bool CreateHardware(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
+   virtual bool CreateNULL(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
    
 
    ///Does the hardware support hardware skinning?

@@ -38,6 +38,7 @@
 #include <osg/BoundingBox>
 #include <osg/Texture2D>
 #include <osg/GLExtensions>
+#include <osg/ShapeDrawable>
 
 #include <cal3d/hardwaremodel.h>
 
@@ -47,6 +48,31 @@
 namespace dtAnim
 {
 
+   ///Used to delay the building of the animated characters geometry until
+   ///it is first rendered, at which point a valid OpenGL context should be valid
+   class CreateGeometryDrawCallback : public osg::Drawable::DrawCallback
+   {
+   public:
+      CreateGeometryDrawCallback(osg::Geode& geode, AnimNodeBuilder::CreateFunc& func,
+                                 Cal3DModelWrapper* wrapper):
+         mGeode(&geode)
+         ,mCreateFunc(func)
+         ,mWrapper(wrapper)
+         {
+         };
+
+         ~CreateGeometryDrawCallback() {};
+
+         virtual void drawImplementation(osg::RenderInfo&, const osg::Drawable*) const
+         {
+             mCreateFunc(*mGeode, mWrapper);
+         }
+
+   private:
+      osg::ref_ptr<osg::Geode> mGeode;
+      AnimNodeBuilder::CreateFunc mCreateFunc;
+      Cal3DModelWrapper *mWrapper;
+   };
 
 
 AnimNodeBuilder::AnimNodeBuilder()
@@ -89,20 +115,38 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
 {
-   return mCreateFunc(pWrapper);
+   ///build a temporary rendered shape and assign a draw callback to it which
+   ///will postpone the creation of the real geometry until a valid openGL 
+   ///context is available.
+   osg::Geode* geode = new osg::Geode();
+   osg::Cylinder *shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 1.f, 2.f);
+   osg::ShapeDrawable *drawable = new osg::ShapeDrawable(shape);
+
+   CreateGeometryDrawCallback *callback = new CreateGeometryDrawCallback(*geode, mCreateFunc, pWrapper);
+
+   drawable->setDrawCallback(callback);
+   geode->addDrawable(drawable);
+   return geode;
 }
 
 
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
+bool AnimNodeBuilder::CreateSoftware(osg::Geode& geode, Cal3DModelWrapper* pWrapper)
 {
    if(pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
-      return NULL;
+      return false;
    }
 
-   osg::Geode* geode = new osg::Geode();
-   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
+   //remove existing callback and default geometry
+   osg::Drawable *defaultDrawable = geode.getDrawable(0);
+   if (defaultDrawable != NULL)
+   {
+      defaultDrawable->setDrawCallback(NULL);
+      geode.removeDrawable(defaultDrawable);
+   }
+
+   geode.setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
    if(pWrapper->BeginRenderingQuery()) 
    {
@@ -115,7 +159,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
          for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
          {
             dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
-            geode->addDrawable(submesh);
+            geode.addDrawable(submesh);
          }
       }
 
@@ -124,15 +168,15 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
 
    pWrapper->Update(0);
 
-   return geode;
+   return true;
 }
 
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
+bool AnimNodeBuilder::CreateHardware(osg::Geode& geode, Cal3DModelWrapper* pWrapper)
 {
    if(pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
-      return NULL;
+      return false;
    }
 
    Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
@@ -140,13 +184,18 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    if (modelData == NULL)
    {
       LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
-      return NULL;
+      return false;
    }
-   
+
+   //remove existing callback and default geometry
+   osg::Drawable *defaultDrawable = geode.getDrawable(0);
+   if (defaultDrawable != NULL)
+   {
+      defaultDrawable->setDrawCallback(NULL);
+      geode.removeDrawable(defaultDrawable);
+   }  
 
    static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
-
-   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
@@ -154,7 +203,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    if(pWrapper->BeginRenderingQuery() == false) 
    {
       LOG_ERROR("Can't begin the rendering query.");
-      return NULL;
+      return false;
    }
 
    int numVerts = 0;
@@ -224,7 +273,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          glExt->glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, numIndices * sizeof(CalIndex), (const void*) indexArray.mArray, GL_STATIC_DRAW_ARB);
       }
 
-      dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
+      dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, geode);
 
       /* Begin figure out if this open gl implementation uses [0] on array uniforms 
       * This seems to be an ATI/NVIDIA thing.  
@@ -256,10 +305,10 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
          HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel, 
                                                  boneTransformUniform, modelData->GetShaderMaxBones(),
                                                  meshCount, vbo[0], vbo[1]);
-         geode->addDrawable(drawable);
+         geode.addDrawable(drawable);
       }
 
-      geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
+      geode.setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
    }
    else
    {
@@ -272,16 +321,23 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
    pWrapper->EndRenderingQuery();   
 
-   return geode.get();
+   return true;
 }
 
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL( Cal3DModelWrapper* pWrapper )
+bool AnimNodeBuilder::CreateNULL(osg::Geode& geode, Cal3DModelWrapper* pWrapper)
 {
    UNREFERENCED_PARAMETER(pWrapper);
 
+   //remove existing callback and default geometry
+   osg::Drawable *defaultDrawable = geode.getDrawable(0);
+   if (defaultDrawable != NULL)
+   {
+      defaultDrawable->setDrawCallback(NULL);
+      geode.removeDrawable(defaultDrawable);
+   }
+
    //NULL create function.  Used if hardware and software create functions fail.
-   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
-   return geode.get();
+   return true;
 }
 
 
