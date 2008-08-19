@@ -70,9 +70,6 @@ namespace dtAnim
          {
             
             dtABC::Application& app = GetGlobalApplication();
-            mScene = app.GetScene();
-            mCamera = app.GetCamera();
-            mWin = app.GetWindow();
             
             dtCore::System::GetInstance().Config();
 
@@ -91,13 +88,33 @@ namespace dtAnim
             mHelper = NULL;
             mModelPath.clear();
 
-            mScene = NULL;
-            mCamera = NULL;
-            mWin = NULL;
-
             dtCore::System::GetInstance().Stop();
          }
          
+
+         //////////////////////////////////////////////////////////////////////////
+         class TestDrawable : public dtCore::DeltaDrawable
+         {
+         public:
+            TestDrawable(osg::Node &node):
+               mNode(&node)
+               {      
+               }
+
+               virtual osg::Node* GetOSGNode() {return mNode.get();}
+               virtual const osg::Node* GetOSGNode() const {return mNode.get();}
+
+         protected:         	
+            virtual ~TestDrawable()
+            {
+            }
+
+         private:
+            osg::ref_ptr<osg::Node> mNode;
+         };
+
+
+         //////////////////////////////////////////////////////////////////////////
          void TestBuildHardware()
          {
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
@@ -112,7 +129,24 @@ namespace dtAnim
             mHelper->LoadModel(mModelPath);
 
             osg::Node* node = mHelper->GetNode();
-            CheckGeode(dynamic_cast<osg::Geode*>(node), true);
+            dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
+            GetGlobalApplication().GetScene()->AddDrawable(drawable.get());
+
+            dtCore::System::GetInstance().Step();
+            dtCore::System::GetInstance().Step();
+
+            const osg::Group *group = node->asGroup();
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
+                                    group != NULL);
+            
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder group node doesn't have any children",
+                                    group->getNumChildren() > 0 );
+
+            const osg::Geode* geode = dynamic_cast<const osg::Geode*>(group->getChild(0));
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+                                    geode != NULL);
+
+            CheckGeode(geode, true);
             Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*mHelper->GetModelWrapper());
             CPPUNIT_ASSERT(modelData->GetVertexVBO() != 0);
             CPPUNIT_ASSERT(modelData->GetIndexVBO() != 0);
@@ -126,52 +160,77 @@ namespace dtAnim
                   secondModelData->GetVertexVBO(), modelData->GetVertexVBO());
             CPPUNIT_ASSERT_EQUAL_MESSAGE("The first and second hardware meshes should share VBO's", 
                   secondModelData->GetIndexVBO(), modelData->GetIndexVBO());
+
+            GetGlobalApplication().GetScene()->RemoveDrawable(drawable.get());
          }
          
+         ///////////////////////////////////////////////////////////////////////
          void TestBuildSoftware()
          {
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
             nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
             mHelper->LoadModel(mModelPath);
+            dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
 
-            CheckGeode(dynamic_cast<osg::Geode*>(mHelper->GetNode()), false);
+            dtCore::RefPtr<TestDrawable> drawable = new TestDrawable(*node);
+            GetGlobalApplication().GetScene()->AddDrawable(drawable.get());
+            dtCore::System::GetInstance().Step();
+            dtCore::System::GetInstance().Step();
+
+            const osg::Group *group = node->asGroup();
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder didn't generate a valid group node",
+                                    group != NULL);
+
+            const osg::Geode* geode = dynamic_cast<const osg::Geode*>(group->getChild(0));
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBuilder's first child isn't a Geode",
+                                    geode != NULL);
+
+            CheckGeode(geode, false);
             
+            GetGlobalApplication().GetScene()->RemoveDrawable(drawable.get());
          }
          
       private:
          
-         void CheckGeode(osg::Geode* toCheck, bool hardware)
+         void CheckGeode(const osg::Geode* toCheck, bool hardware)
          {
-            CPPUNIT_ASSERT(toCheck != NULL);
+            CPPUNIT_ASSERT_MESSAGE("AnimNodeBUilder didn't generate a valid node",
+                                    toCheck != NULL);
             CPPUNIT_ASSERT(toCheck->getNumDrawables() > 0);
+            
+            bool hasSubmesh = false;
             
             for (unsigned i = 0; i < toCheck->getNumDrawables(); ++i)
             {
-               osg::Drawable* draw = toCheck->getDrawable(i);
+               const osg::Drawable* draw = toCheck->getDrawable(i);
+
                if (hardware)
                {
-                  CPPUNIT_ASSERT_MESSAGE("the default geode should have only hardware submeshes", 
-                        dynamic_cast<dtAnim::HardwareSubmeshDrawable*>(draw) != NULL);
+                  hasSubmesh = dynamic_cast<const dtAnim::HardwareSubmeshDrawable*>(draw) != NULL;
                }
                else
                {
-                  CPPUNIT_ASSERT_MESSAGE("the default geode should have only software submeshes", 
-                        dynamic_cast<dtAnim::SubmeshDrawable*>(draw) != NULL);
+                  hasSubmesh = dynamic_cast<const dtAnim::SubmeshDrawable*>(draw) != NULL;
+               }
+
+               if (hasSubmesh)
+               {
+                  break;
                }
             }
-            AnimNodeBuilder::Cal3DBoundingSphereCalculator* sphereCallback = 
-               dynamic_cast<AnimNodeBuilder::Cal3DBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
+            
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("The Geode didn't have any of the anticipated Drawables",
+                                         true, hasSubmesh);
+
+
+            const AnimNodeBuilder::Cal3DBoundingSphereCalculator* sphereCallback = 
+               dynamic_cast<const AnimNodeBuilder::Cal3DBoundingSphereCalculator*>(toCheck->getComputeBoundingSphereCallback());
             CPPUNIT_ASSERT(sphereCallback != NULL);
          }
 
          
          std::string mModelPath;
          dtCore::RefPtr<dtAnim::AnimationHelper> mHelper;
-
-         dtCore::RefPtr<dtCore::Scene>          mScene;
-         dtCore::RefPtr<dtCore::Camera>         mCamera;
-         dtCore::RefPtr<dtCore::DeltaWin>       mWin;
-         dtCore::RefPtr<dtCore::View>           mView;
    };
 
    // Registers the fixture into the 'registry'
