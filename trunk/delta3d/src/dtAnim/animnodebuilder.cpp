@@ -38,6 +38,7 @@
 #include <osg/BoundingBox>
 #include <osg/Texture2D>
 #include <osg/GLExtensions>
+#include <osg/ShapeDrawable>
 
 #include <cal3d/hardwaremodel.h>
 
@@ -47,6 +48,75 @@
 namespace dtAnim
 {
 
+   ///Used to delay the building of the animated characters geometry until
+   ///it is first rendered, at which point a valid OpenGL context should be valid
+   class CreateGeometryDrawCallback : public osg::Drawable::DrawCallback
+   {
+   public:
+      CreateGeometryDrawCallback(AnimNodeBuilder::CreateFunc& func,
+         Cal3DModelWrapper* wrapper):
+         mCreatedNode(NULL)
+         ,mCreateFunc(func)
+         ,mWrapper(wrapper)
+      {
+      };
+
+      ~CreateGeometryDrawCallback() 
+      {
+      };
+
+      virtual void drawImplementation(osg::RenderInfo&, const osg::Drawable*) const
+      {
+         if (!mCreatedNode.valid())
+         {
+            CreateGeometryDrawCallback* const_this = const_cast<CreateGeometryDrawCallback*>( this );
+            const_this->mCreatedNode = mCreateFunc(mWrapper);
+         }
+      }
+
+      dtCore::RefPtr<osg::Node> mCreatedNode;
+
+   private:
+      AnimNodeBuilder::CreateFunc mCreateFunc;
+      Cal3DModelWrapper *mWrapper;
+   };
+
+   ///Used to grab the created geometry from the CreateGeometryDrawCallback
+   ///and add it as a child to the supplied Group
+   class UpdateCallback : public osg::NodeCallback
+   {
+   public:
+      UpdateCallback(CreateGeometryDrawCallback *callback,
+         osg::Group &group):
+         mCreateCB(callback)
+         ,mGroupToAddTo(&group) 
+      {
+      }
+
+      ~UpdateCallback()
+      {
+      }
+
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         //wait until the create draw-callback has a valid node created
+         if (mCreateCB->mCreatedNode.valid())
+         {
+            //then add it, remove the temp geometry, and remove this callback
+            mGroupToAddTo->addChild( mCreateCB->mCreatedNode.get() );                        
+            mGroupToAddTo->removeChild(0, 1);
+            mGroupToAddTo->setUpdateCallback(NULL);
+         }
+         else
+         {
+            traverse(node,nv);
+         }
+      }
+
+   private:
+      CreateGeometryDrawCallback *mCreateCB;
+      osg::ref_ptr<osg::Group> mGroupToAddTo;
+   };
 
 
 AnimNodeBuilder::AnimNodeBuilder()
@@ -89,7 +159,22 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
 {
-   return mCreateFunc(pWrapper);
+   ///Add a temporary rendered shape with a draw callback to a Group.  The callback
+   ///will postpone the creation of the real geometry until a valid openGL 
+   ///context is available.
+   CreateGeometryDrawCallback *createCallback = new CreateGeometryDrawCallback(mCreateFunc, pWrapper);
+   osg::Group* rootNode = new osg::Group();
+   rootNode->setUpdateCallback(new UpdateCallback(createCallback, *rootNode));
+
+   osg::Geode* defaultGeode = new osg::Geode();
+   osg::Cylinder *shape = new osg::Cylinder(osg::Vec3(0.f, 0.f, 0.f), 2.f, 4.f);
+   osg::ShapeDrawable *defaultDrawable = new osg::ShapeDrawable(shape);
+   defaultDrawable->setDrawCallback(createCallback);
+
+   defaultGeode->addDrawable(defaultDrawable);
+   rootNode->addChild(defaultGeode);
+
+   return rootNode;
 }
 
 
@@ -101,7 +186,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
       return NULL;
    }
 
-   osg::Geode* geode = new osg::Geode();
+   dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
+
    geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
    if(pWrapper->BeginRenderingQuery()) 
@@ -142,11 +228,10 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
       return NULL;
    }
-   
-
-   static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
+
+   static const std::string BONE_TRANSFORM_UNIFORM("boneTransforms");
 
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
@@ -272,16 +357,17 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
    pWrapper->EndRenderingQuery();   
 
-   return geode.get();
+   return geode;
 }
 
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL( Cal3DModelWrapper* pWrapper )
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(Cal3DModelWrapper* pWrapper)
 {
    UNREFERENCED_PARAMETER(pWrapper);
 
-   //NULL create function.  Used if hardware and software create functions fail.
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
-   return geode.get();
+
+   //NULL create function.  Used if hardware and software create functions fail.
+   return geode;
 }
 
 
