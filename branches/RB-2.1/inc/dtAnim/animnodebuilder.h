@@ -63,9 +63,9 @@ class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
 public:
    
-   /** Prototype of the Create method.  Returns bool if create was successful, false
-     * otherwise.  
-     * @code bool MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
+   /** Prototype of the Create method.  Returns the Node containing the animated
+     * character's geometry.
+     * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
      * @endcode
      * @see CreateNode()
      */
@@ -100,8 +100,8 @@ public:
      * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
      * the geometry.
      * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
-     * geometry is a osg::Geode which contains one osg::Drawable that has a Drawcallback
-     * assigned to it.
+     * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable 
+     * that has a Drawcallback assigned to it.
      */
    dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
 
