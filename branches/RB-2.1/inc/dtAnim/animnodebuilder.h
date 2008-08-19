@@ -69,7 +69,7 @@ public:
      * @endcode
      * @see CreateNode()
      */
-   typedef dtUtil::Functor<bool, TYPELIST_2(osg::Geode&,Cal3DModelWrapper*)> CreateFunc;
+   typedef dtUtil::Functor<dtCore::RefPtr<osg::Node>, TYPELIST_1(Cal3DModelWrapper*)> CreateFunc;
 
    class DT_ANIM_EXPORT Cal3DBoundingSphereCalculator : public osg::Node::ComputeBoundingSphereCallback
    {
@@ -105,9 +105,9 @@ public:
      */
    dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
 
-   virtual bool CreateSoftware(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
-   virtual bool CreateHardware(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
-   virtual bool CreateNULL(osg::Geode& geode, Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
    
 
    ///Does the hardware support hardware skinning?
