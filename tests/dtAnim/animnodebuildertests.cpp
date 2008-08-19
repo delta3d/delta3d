@@ -168,6 +168,12 @@ namespace dtAnim
          void TestBuildSoftware()
          {
             AnimNodeBuilder& nodeBuilder = Cal3DDatabase::GetInstance().GetNodeBuilder();
+
+            if (nodeBuilder.SupportsSoftware() == false)
+            {
+               return;
+            }
+
             nodeBuilder.SetCreate(AnimNodeBuilder::CreateFunc(&nodeBuilder, &AnimNodeBuilder::CreateSoftware));
             mHelper->LoadModel(mModelPath);
             dtCore::RefPtr<osg::Node> node = mHelper->GetNode();
