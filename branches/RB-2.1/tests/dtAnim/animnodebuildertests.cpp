@@ -67,10 +67,7 @@ namespace dtAnim
          }
 
          void setUp()
-         {
-            
-            dtABC::Application& app = GetGlobalApplication();
-            
+         {                        
             dtCore::System::GetInstance().Config();
 
             dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
