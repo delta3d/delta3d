@@ -32,7 +32,6 @@
 namespace CEGUI
 {
    class System;
-   class Renderer;
    class Window;
 }
 /// @endcond
@@ -55,7 +54,7 @@ namespace dtCore
 namespace dtGUI
 {
    class BaseScriptModule;
-   class Renderer;
+   class CEGUIRenderer;
    class CEGUIKeyboardListener;
    class CEGUIMouseListener;
 
@@ -92,8 +91,8 @@ namespace dtGUI
       CEGUI::System* GetUI() {return mUI;}
 
       ///Get a pointer to the underlying Renderer
-      dtGUI::Renderer* GetRenderer() {return mRenderer;}
-      const dtGUI::Renderer* GetRenderer() const {return mRenderer;}
+      dtGUI::CEGUIRenderer* GetRenderer() {return mRenderer;}
+      const dtGUI::CEGUIRenderer* GetRenderer() const {return mRenderer;}
 
       /// Attaches the Delta3D child's OSG graphics Node
       bool AddChild(dtCore::DeltaDrawable *child);
@@ -148,7 +147,7 @@ namespace dtGUI
       
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
 
-      Renderer* mRenderer; ///<The opengl renderer we're using
+      CEGUIRenderer* mRenderer; ///<The opengl renderer we're using
       dtGUI::BaseScriptModule* mScriptModule;
       dtCore::RefPtr<osg::Projection> mProjection;
       dtCore::RefPtr<osg::MatrixTransform> mTransform;
