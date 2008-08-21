@@ -10,10 +10,6 @@ using namespace dtInputPLIB;
 
 IMPLEMENT_MANAGEMENT_LAYER(Joystick)
 
-/**
- * The maximum number of joystick buttons.
- */
-const int maxJoystickButtons = 16;
 
 /**
  * Creates instances of Joystick corresponding to each
@@ -78,7 +74,7 @@ Joystick::Joystick(std::string name, jsJoystick* joystick) :
 {
    RegisterInstance(this);
 
-   for (int i=0; i<maxJoystickButtons;i++)
+   for (int i=0; i<mJoystick->getNumButtons();i++)
    {
       std::ostringstream buf;
 
@@ -113,17 +109,20 @@ Joystick::~Joystick()
  */
 void Joystick::Poll()
 {
-   int buttons, numAxes = mJoystick->getNumAxes();
+   const unsigned int numAxes = mJoystick->getNumAxes(); 
+   const unsigned int numButtons = mJoystick->getNumButtons();
+
+   int buttons;
    float *axes = new float[numAxes];
 
    mJoystick->read(&buttons, axes);
 
-   for (int i=0; i<maxJoystickButtons;i++)
+   for (unsigned int i=0; i<numButtons;i++)
    {
       GetButton(i)->SetState((buttons & (1 << i)) != 0);
    }
 
-   for (int j=0; j<numAxes;j++)
+   for (unsigned int j=0; j<numAxes;j++)
    {
       GetAxis(j)->SetState(axes[j]);
    }
