@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>mapone_playback</name>
+        <description>This map is used during playback. It has just the terrain in it. All other objects are created during the playback process. .</description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2006-04-17T12:09:25.0-06:00</createTimestamp>
+        <lastUpdateTimestamp>2006-06-22T21:33:27.0-05:00</lastUpdateTimestamp>
+        <editorVersion>1.1.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>TutorialLibrary</name>
+            <version></version>
+        </library>
+    </libraries>
+    <events>
+        <event>
+            <id>0e2800fa-be9f-4275-ab58-89bed75af2ad</id>
+            <name>SpeedBoost</name>
+            <description>Give the tank a small speed boost (+5) - this boost can exceed the speed cap.</description>
+        </event>
+        <event>
+            <id>253320d0-841f-4c71-ab09-4546e0632269</id>
+            <name>TestShaders</name>
+            <description>A test message to allow us to reset our shaders. Just example code for how to manipulate shaders.</description>
+        </event>
+        <event>
+            <id>541d83a1-748a-4957-93e1-048a157ae9f5</id>
+            <name>ToggleEngine</name>
+            <description>Toggles the tank engine on and off.</description>
+        </event>
+        <event>
+            <id>675b8c02-a753-4aaa-8274-9a7847a66fa5</id>
+            <name>TankFired</name>
+            <description>The tank fired a shot.  The blimps listen for this and check to see if they are the current target.  If so, they take damage, else they ignore.</description>
+        </event>
+        <event>
+            <id>e4082496-0afe-4398-a554-aa469e3c84ac</id>
+            <name>ResetStuff</name>
+            <description>Sort of restarts the level. Blimps come back alive, the tank goes back to home position, and you can blow em all up again!</description>
+        </event>
+    </events>
+    <actors>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>7c47d096-403b-4d72-8c97-666818541b25</id>
+            <name>Terrain</name>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>0.1000000014901161</float>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>3.699999</value1>
+                    <value2>0.000010</value2>
+                    <value3>0.000010</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>3.000000</value1>
+                    <value2>3.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.547338</value1>
+                    <value2>21.363609</value2>
+                    <value3>-16.299416</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes::terrain_simple.ive</resource>
+            </property>
+        </actor>
+    </actors>
+</map>
