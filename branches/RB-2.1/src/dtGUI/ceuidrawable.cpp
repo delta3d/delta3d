@@ -32,6 +32,7 @@
 #include <dtGUI/ceguikeyboardlistener.h>    // for member
 #include <dtGUI/basescriptmodule.h>
 #include <dtGUI/guiexceptionenum.h>
+#include <dtGUI/resourceprovider.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include <dtCore/deltawin.h>
@@ -64,7 +65,7 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win,
                            dtGUI::BaseScriptModule *sm):
    DeltaDrawable("CEUIDrawable"),
    mUI(NULL),
-   mRenderer(new dtGUI::Renderer()),
+   mRenderer(new dtGUI::CEGUIRenderer(0)),
    mScriptModule(sm),
    mProjection(new osg::Projection()),
    mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
@@ -113,14 +114,14 @@ void CEUIDrawable::Config()
             #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
             // CEGUI 0.5.0 introduces a "unified" constructor. 
             // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
-               new CEGUI::System(mRenderer, NULL, NULL, mScriptModule);          
+            new CEGUI::System(mRenderer, new dtGUI::ResourceProvider(), NULL, mScriptModule);          
             #else
                new CEGUI::System(mRenderer,mScriptModule);
             #endif // CEGUI 0.5.0
          }
          else
          {
-            new CEGUI::System(mRenderer);
+            new CEGUI::System(mRenderer, new dtGUI::ResourceProvider());
          }
       }
       catch(CEGUI::Exception &e)
@@ -347,6 +348,7 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderI
 
    state.setActiveTextureUnit(0);
    glEnable(GL_TEXTURE_2D);
+   reinterpret_cast<CEGUIRenderer *>(CEGUI::System::getSingleton().getRenderer())->SetGraphicsContext(state.getGraphicsContext());
 
    mUI->getSingletonPtr()->renderGUI();
    state.dirtyAllVertexArrays();
