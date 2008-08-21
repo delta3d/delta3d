@@ -33,6 +33,7 @@
 #include <dtGUI/basescriptmodule.h>
 #include <dtGUI/guiexceptionenum.h>
 #include <dtGUI/resourceprovider.h>
+#include <dtGUI/ceguirenderer.h>
 #include <dtCore/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include <dtCore/deltawin.h>
