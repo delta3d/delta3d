@@ -103,6 +103,10 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
   File .\${DELTA_BUILD_DIR}\bin\release\*.pyd
   
+  ;CMakeModules
+  SetOutPath "$INSTDIR\CMakeModules"
+  File /x .svn .\CMakeModules\*
+  
   ;data
   SetOutPath "$INSTDIR\data"
   File /r /x .svn .\data\*
