@@ -324,7 +324,7 @@ namespace dtCore
          else
          {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
-            "Invalid element found while parsing shader parameter: '"+toString+"'",
+            "Unknown parameter type element found: '"+toString+"'",
             __FILE__, __LINE__);
          }
 
