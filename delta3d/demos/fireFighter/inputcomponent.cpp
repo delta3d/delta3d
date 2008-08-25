@@ -173,6 +173,7 @@ void InputComponent::OnIntro()
 
 void InputComponent::OnGame()
 {  
+   GetGameManager()->GetApplication().GetMouse()->SetPosition(0.f, 0.f);
    GameLevelActor *gla = NULL; 
    IsActorInGameMap(gla);
    gla->SetCollisionMesh();
