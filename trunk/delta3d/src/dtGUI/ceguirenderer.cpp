@@ -102,7 +102,7 @@ void CEGUIRenderer::addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::
 {
    if (m_pGraphicsContext == NULL)
    {
-      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Warnings);
+      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Errors);
       return;
    }
 
@@ -431,7 +431,7 @@ void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, cons
 {
    if (m_pGraphicsContext == NULL)
    {
-      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Warnings);
+      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Errors);
       return;
    }
 

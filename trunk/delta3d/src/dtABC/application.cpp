@@ -48,6 +48,7 @@
 
 #include <osgViewer/Viewer>
 #include <osg/io_utils>
+#include <osg/Version>
 
 using namespace dtABC;
 XERCES_CPP_NAMESPACE_USE
@@ -99,6 +100,20 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin *wi
 void Application::Config()
 {
    BaseClass::Config();
+
+   //Temporary insurance policy.  If an application is expecting an openGL
+   //context outside of the draw, setting the following environment variable will
+   //keep a context valid throughout the whole frame.  This is a bit of a crutch
+   //for applications upgrading to OSG 2.6.0 that are crashing due to openGL 
+   //context issues.  Users should not rely on this.
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 6
+   char* deltaReleaseContext = getenv("DELTA_RELEASE_CONTEXT");
+   if (deltaReleaseContext)
+   {
+      GetCompositeViewer()->setReleaseContextAtEndOfFrameHint(false);
+   }
+#endif
+
    ReadSystemProperties();
 }
 
