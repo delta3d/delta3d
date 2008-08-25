@@ -22,6 +22,7 @@
 #include <CEGUI/CEGUIDynamicModule.h>
 #include <CEGUI/CEGUIBase.h>
 #include <CEGUI/CEGUITexture.h>
+#include <CEGUI/CEGUILogger.h>
 
 #define S_(X) #X
 #define STRINGIZE(X) S_(X)
@@ -99,6 +100,12 @@ CEGUIRenderer::~CEGUIRenderer(void)
  **************************************************************************/
 void CEGUIRenderer::addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours,  CEGUI::QuadSplitMode quam_split_mode)
 {
+   if (m_pGraphicsContext == NULL)
+   {
+      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Warnings);
+      return;
+   }
+
    // if not queuing, render directly (as in, right now!)
    if (!m_queueing)
    {
@@ -422,6 +429,12 @@ void CEGUIRenderer::sortQuads(void)
  **************************************************************************/
 void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours,  CEGUI::QuadSplitMode quam_split_mode)
 {
+   if (m_pGraphicsContext == NULL)
+   {
+      CEGUI::Logger::getSingleton().logEvent("dtGUI::CEGUIRenderer doesn't have a valid graphics context.", CEGUI::Warnings);
+      return;
+   }
+
    QuadInfo quad;
    quad.position.d_left	= dest_rect.d_left;
    quad.position.d_right	= dest_rect.d_right;
@@ -548,8 +561,8 @@ void CEGUIRenderer::setDisplaySize(const CEGUI::Size& sz)
    {
       m_display_area.setSize(sz);
 
-      /*CEGUI::EventArgs args;
-		fireEvent(EventDisplaySizeChanged, args, EventNamespace);**/
+      CEGUI::EventArgs args;
+		fireEvent(EventDisplaySizeChanged, args, EventNamespace);
    }
 }
 

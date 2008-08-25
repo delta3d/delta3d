@@ -28,6 +28,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
+#include <dtCore/scene.h>
 #include <dtDAL/project.h>
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
@@ -149,6 +150,11 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    gscm.SetOldState(GameState::STATE_UNKNOWN);
    gscm.SetNewState(GameState::STATE_MENU);
    gameManager.SendMessage(gscm);
+
+   app.GetScene()->SetPhysicsStepSize(0.01);
+   app.GetScene()->SetGravity(0.f, 0.f, -2.f);
+
+   app.GetWindow()->SetPosition(app.GetWindow()->GetPosition());
 }
 
 void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
