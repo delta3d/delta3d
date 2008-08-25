@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
@@ -101,21 +101,21 @@ namespace  dtDAL
 {
 
    /////////////////////////////////////////////////////////////////
-   Map* MapContentHandler::GetMap() 
-   { 
-      return mMap.get(); 
+   Map* MapContentHandler::GetMap()
+   {
+      return mMap.get();
    }
 
    /////////////////////////////////////////////////////////////////
-   const Map* MapContentHandler::GetMap() const 
-   { 
-      return mMap.get(); 
+   const Map* MapContentHandler::GetMap() const
+   {
+      return mMap.get();
    }
 
    /////////////////////////////////////////////////////////////////
-   void MapContentHandler::ClearMap() 
-   { 
-      mMap = NULL; 
+   void MapContentHandler::ClearMap()
+   {
+      mMap = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -130,11 +130,11 @@ namespace  dtDAL
       if (!result)
       {
          if ( (*mActorPropertyType == DataType::VEC2 && (mActorProperty->GetDataType() == DataType::VEC2D || mActorProperty->GetDataType() == DataType::VEC2F)) ||
-              (*mActorPropertyType == DataType::VEC3 && (mActorProperty->GetDataType() == DataType::VEC3D || mActorProperty->GetDataType() == DataType::VEC3F)) ||           
-              (*mActorPropertyType == DataType::VEC4 && (mActorProperty->GetDataType() == DataType::VEC4D || mActorProperty->GetDataType() == DataType::VEC4F)) )           
+              (*mActorPropertyType == DataType::VEC3 && (mActorProperty->GetDataType() == DataType::VEC3D || mActorProperty->GetDataType() == DataType::VEC3F)) ||
+              (*mActorPropertyType == DataType::VEC4 && (mActorProperty->GetDataType() == DataType::VEC4D || mActorProperty->GetDataType() == DataType::VEC4F)) )
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                "Problem differentiating between a osg::vecf/osg::vecd and a osg::vec. Correcting.");
+                                "Differentiating between a osg::vecf/osg::vecd and a osg::vec. Correcting.");
             mActorPropertyType = &mActorProperty->GetDataType();
             return true;
          }
@@ -267,7 +267,7 @@ namespace  dtDAL
                                 "Actor proxy is NULL, but code has entered the actor property section");
 
          }
-         if (mInGroupProperty) 
+         if (mInGroupProperty)
          {
             ParameterCharacters(chars);
          }
@@ -393,14 +393,14 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::CreateAndPushParameter()
    {
-      try 
+      try
       {
          NamedGroupParameter& gp = dynamic_cast<NamedGroupParameter&>(*mParameterStack.top());
          mParameterStack.push(gp.AddParameter(mParameterNameToCreate, *mParameterTypeToCreate));
          mParameterTypeToCreate = NULL;
          mParameterNameToCreate.clear();
       }
-      catch (const std::bad_cast&) 
+      catch (const std::bad_cast&)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Tried to add a new parameter \"%s\" with type \"%s\", but failed",
@@ -414,7 +414,7 @@ namespace  dtDAL
       xmlCharString& topEl = mElements.top();
       if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
       {
-         mParameterNameToCreate = dtUtil::XMLStringConverter(chars).ToString(); 
+         mParameterNameToCreate = dtUtil::XMLStringConverter(chars).ToString();
          if (mParameterNameToCreate.empty())
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 "In named parameter section, found a named parameter with an empty name.");
@@ -459,12 +459,10 @@ namespace  dtDAL
 
    /////////////////////////////////////////////////////////////////
    template <typename VecType>
-   void MapContentHandler::ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize, bool& complete)
+   void MapContentHandler::ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize)
    {
       xmlCharString& topEl = mElements.top();
 
-      complete = false;
-      
       char* endMarker;
       double value = strtod(dataValue.c_str(), &endMarker);
 
@@ -475,36 +473,26 @@ namespace  dtDAL
       else if (topEl == MapXMLConstants::ACTOR_VEC_2_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_G_ELEMENT)
       {
          vec[1] = value;
-         //Setting mActorPropertyType to NULL means this property is done being read.
-         if (vecSize == 2)
-            complete = true;
       }
       else if (vecSize >= 3 && (topEl == MapXMLConstants::ACTOR_VEC_3_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_B_ELEMENT))
       {
          vec[2] = value;
-         //Setting mActorPropertyType to NULL means this property is done being read.
-         if (vecSize == 3)
-            complete = true;
       }
       else if (vecSize == 4 && (topEl == MapXMLConstants::ACTOR_VEC_4_ELEMENT || topEl == MapXMLConstants::ACTOR_COLOR_A_ELEMENT))
       {
          vec[3] = value;
-         //Setting mActorPropertyType to NULL means this property is done being read.
-            complete = true;
       }
-      else 
+      else
       {
-         if (topEl == MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT || 
+         if (topEl == MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT ||
              topEl == MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT ||
              topEl == MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT ||
              topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT ||
              topEl == MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT)
             return;
-      
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Got an invalid element for a Vec%u: %s", unsigned(vecSize), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
-         //Try to end parsing to prevent getting in a bad state.
-         complete = true;
       }
    }
 
@@ -515,11 +503,7 @@ namespace  dtDAL
          return;
 
       xmlCharString& topEl = mElements.top();
-      
-      //This flag is used to know when all the items in an osg Vec# have been read
-      //so the actor property type can be set to NULL (which marks the end of parsing of a property)
-      bool vecComplete = false;
-      
+
       switch (mActorPropertyType->GetTypeId())
       {
          case DataType::FLOAT_ID:
@@ -534,11 +518,9 @@ namespace  dtDAL
             {
                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                    "Failed Setting value %s for property type %s named %s on actor named %s",
-                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(), 
+                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(),
                                    mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
             }
-   
-            mActorPropertyType = NULL;
             break;
          }
          case DataType::GAMEEVENT_ID:
@@ -551,11 +533,11 @@ namespace  dtDAL
                {
                   geProp.SetValue(e);
                }
-               else 
+               else
                {
                   geProp.SetValue(NULL);
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
-                                      "Game Event referenced in actor property %s on proxy of type \"%s\" was not found.", 
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                      "Game Event referenced in actor property %s on proxy of type \"%s\" was not found.",
                                       mActorProperty->GetName().c_str(), mActorProxy->GetActorType().GetFullName().c_str());
                }
             }
@@ -564,14 +546,13 @@ namespace  dtDAL
                geProp.SetValue(NULL);
             }
 
-            mActorPropertyType = NULL;
             break;
          }
          case DataType::VEC2_ID:
          {
             Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*mActorProperty);
             osg::Vec2 vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -579,7 +560,7 @@ namespace  dtDAL
          {
             Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*mActorProperty);
             osg::Vec2f vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -587,7 +568,7 @@ namespace  dtDAL
          {
             Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*mActorProperty);
             osg::Vec2d vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -595,7 +576,7 @@ namespace  dtDAL
          {
             Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*mActorProperty);
             osg::Vec3 vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -603,7 +584,7 @@ namespace  dtDAL
          {
             Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*mActorProperty);
             osg::Vec3f vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -611,7 +592,7 @@ namespace  dtDAL
          {
             Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*mActorProperty);
             osg::Vec3d vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -619,7 +600,7 @@ namespace  dtDAL
          {
             Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*mActorProperty);
             osg::Vec4 vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -627,7 +608,7 @@ namespace  dtDAL
          {
             Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*mActorProperty);
             osg::Vec4f vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -635,7 +616,7 @@ namespace  dtDAL
          {
             Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*mActorProperty);
             osg::Vec4d vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -643,7 +624,7 @@ namespace  dtDAL
          {
             ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*mActorProperty);
             osg::Vec4 vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -654,9 +635,8 @@ namespace  dtDAL
             if (!dataValue.empty() && dataValue != "NULL")
             {
                mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
-   
+
             }
-            mActorPropertyType = NULL;
             break;
          }
          case DataType::GROUP_ID:
@@ -698,20 +678,16 @@ namespace  dtDAL
                   {
                      p.SetValue(NULL);
                   }
-                  mActorPropertyType = NULL;
                }
             }
             else
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                   "DataType \"%s\" is not supported in the map loading code.  The data has been ignored.",
                   mActorPropertyType->GetName().c_str());
             }
          }
       }
-      
-      if (vecComplete)
-         mActorPropertyType = NULL;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -732,11 +708,9 @@ namespace  dtDAL
       ///Optimization
       if (topEl == MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT)
          return;
-      
+
       NamedParameter& np = *mParameterStack.top();
-      
-      bool vecComplete = false;
-      
+
       switch (np.GetDataType().GetTypeId())
       {
          case DataType::FLOAT_ID:
@@ -751,11 +725,9 @@ namespace  dtDAL
             {
                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                    "Failed Setting value \"%s\" for parameter type \"%s\" named \"%s\" on actor named \"%s\" in property \"%s\".",
-                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(), 
+                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(),
                                    mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
             }
-   
-            mParameterStack.pop();
             break;
          }
          case DataType::GAMEEVENT_ID:
@@ -768,13 +740,13 @@ namespace  dtDAL
                {
                   geParam.SetValue(dtCore::UniqueId(dataValue));
                }
-               else 
+               else
                {
                   geParam.SetValue(dtCore::UniqueId(""));
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                       "Game Event referenced in named parameter \"%s\" in property \"%s\" "
-                                      "proxy of type \"%s\" was not found.", 
-                                      np.GetName().c_str(), mActorProperty->GetName().c_str(), 
+                                      "proxy of type \"%s\" was not found.",
+                                      np.GetName().c_str(), mActorProperty->GetName().c_str(),
                                       mActorProxy->GetActorType().GetFullName().c_str());
                }
             }
@@ -782,15 +754,13 @@ namespace  dtDAL
             {
                geParam.SetValue(dtCore::UniqueId(""));
             }
-            
-            mParameterStack.pop();
             break;
          }
          case DataType::VEC2_ID:
          {
             NamedVec2Parameter& p = static_cast<NamedVec2Parameter&>(np);
             osg::Vec2 vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -798,7 +768,7 @@ namespace  dtDAL
          {
             NamedVec2fParameter& p = static_cast<NamedVec2fParameter&>(np);
             osg::Vec2f vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -806,7 +776,7 @@ namespace  dtDAL
          {
             NamedVec2dParameter& p = static_cast<NamedVec2dParameter&>(np);
             osg::Vec2d vec = p.GetValue();
-            ParseVec(dataValue, vec, 2, vecComplete);
+            ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
             break;
          }
@@ -814,7 +784,7 @@ namespace  dtDAL
          {
             NamedVec3Parameter& p = static_cast<NamedVec3Parameter&>(np);
             osg::Vec3 vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -822,7 +792,7 @@ namespace  dtDAL
          {
             NamedVec3fParameter& p = static_cast<NamedVec3fParameter&>(np);
             osg::Vec3f vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -830,7 +800,7 @@ namespace  dtDAL
          {
             NamedVec3dParameter& p = static_cast<NamedVec3dParameter&>(np);
             osg::Vec3d vec = p.GetValue();
-            ParseVec(dataValue, vec, 3, vecComplete);
+            ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
             break;
          }
@@ -838,7 +808,7 @@ namespace  dtDAL
          {
             NamedVec4Parameter& p = static_cast<NamedVec4Parameter&>(np);
             osg::Vec4 vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -846,7 +816,7 @@ namespace  dtDAL
          {
             NamedVec4fParameter& p = static_cast<NamedVec4fParameter&>(np);
             osg::Vec4f vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -854,7 +824,7 @@ namespace  dtDAL
          {
             NamedVec4dParameter& p = static_cast<NamedVec4dParameter&>(np);
             osg::Vec4d vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -862,7 +832,7 @@ namespace  dtDAL
          {
             NamedRGBAColorParameter& p = static_cast<NamedRGBAColorParameter&>(np);
             osg::Vec4 vec = p.GetValue();
-            ParseVec(dataValue, vec, 4, vecComplete);
+            ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
             break;
          }
@@ -874,7 +844,6 @@ namespace  dtDAL
             {
                static_cast<NamedActorParameter&>(np).SetValue(dtCore::UniqueId(dataValue));
             }
-            mParameterStack.pop();
             break;
          }
          case DataType::GROUP_ID:
@@ -886,7 +855,7 @@ namespace  dtDAL
             if (np.GetDataType().IsResource())
             {
                NamedResourceParameter& p = static_cast<NamedResourceParameter&>(np);
-               
+
                if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
                {
                   mDescriptorDisplayName = dataValue;
@@ -903,35 +872,32 @@ namespace  dtDAL
                   {
                      p.SetValue(NULL);
                   }
-                  mParameterStack.pop();
                }
             }
             else
             {
-               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__, 
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                   "DataType \"%s\" is not supported in the map loading code.  Ignoring parameter \"%s\".",
                   np.GetDataType().GetName().c_str(), np.GetName().c_str());
-               
+
             }
          }
       }
-      if (vecComplete)
-         mParameterStack.pop();
    }
 
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::startDocument()
    {
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, 
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Parsing Map Document Started.");
-         
+
       Reset();
       mMap = new Map("","");
    }
 
    /////////////////////////////////////////////////////////////////
-   DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname)
+   DataType* MapContentHandler::ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound)
    {
       if (XMLString::compareString(localname,
           MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT) == 0)
@@ -1014,13 +980,35 @@ namespace  dtDAL
          //Need the character contents to know the type, so this will be
          //handled later.
       }
-      else
+      else if (errorIfNotFound)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                              "Found property data element with name %s, but this does not map to a known type.\n",
                              dtUtil::XMLStringConverter(localname).c_str());
       }
       return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::NonEmptyDefaultWorkaround()
+   {
+      // We don't have control over what the string or actor
+      // property default value is, but if the data in the
+      // xml is empty string, no event is generated.  Thus,
+      // this preemptively set this string to "" so that
+      // empty data will work.
+      if (mActorPropertyType != NULL && !mActorProperty->IsReadOnly())
+      {
+         if (*mActorPropertyType == DataType::STRING
+                || *mActorPropertyType == DataType::ACTOR)
+         {
+            mActorProperty->FromString("");
+         }
+         else if (*mActorPropertyType == DataType::GAME_EVENT)
+         {
+            static_cast<GameEventActorProperty*>(mActorProperty.get())->SetValue(NULL);
+         }
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1056,8 +1044,10 @@ namespace  dtDAL
                      if (mActorPropertyType == NULL)
                      {
                         mActorPropertyType = ParsePropertyType(localname);
+
+                        NonEmptyDefaultWorkaround();
                      }
-                                          
+
                      if (mInGroupProperty)
                      {
                         if (!mParameterNameToCreate.empty())
@@ -1069,12 +1059,12 @@ namespace  dtDAL
                         }
                      }
                      else if (XMLString::compareString(localname,
-                                                       MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0) 
+                                                       MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
                      {
                          mInGroupProperty = true;
                          ClearParameterValues();
                          mParameterStack.push(new NamedGroupParameter(mActorProperty->GetName()));
-                         
+
                      }
                   }
                }
@@ -1256,7 +1246,7 @@ namespace  dtDAL
                mActorProperty = NULL;
                mActorPropertyType = NULL;
             }
-            else if (mInGroupProperty) 
+            else if (mInGroupProperty)
             {
                if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT) == 0)
                {
@@ -1269,13 +1259,40 @@ namespace  dtDAL
                {
                   dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(mParameterStack.top().get());
                   mParameterStack.pop();
-                  //The only way we know we have completed a group actor property is that the 
+                  //The only way we know we have completed a group actor property is that the
                   //stack of parameters has been emptied since they can nest infinitely.
                   if (mParameterStack.empty())
                   {
                      mInGroupProperty = false;
-                     mGroupParameters.insert(std::make_pair(mActorProxy->GetId(), 
+                     mGroupParameters.insert(std::make_pair(mActorProxy->GetId(),
                         std::make_pair(mActorProperty->GetName(), topParam)));
+                  }
+               }
+               else if (!mParameterStack.empty())
+               {
+                  // parse the end element into a data type to see if it's an end param element.
+                  dtDAL::DataType* d = ParsePropertyType(localname, false);
+                  // The parameter has ended, so pop.
+                  if (d != NULL)
+                  {
+                     mParameterStack.pop();
+                  }
+               }
+            }
+            else if (mInActorProperty)
+            {
+               if (mActorProperty != NULL)
+               {
+                  if (mActorPropertyType != NULL)
+                  {
+                     // parse the end element into a data type to see if it's an end property element.
+                     dtDAL::DataType* d = ParsePropertyType(localname, false);
+                     // The property has ended, so in case the property type has not
+                     // been unset, it is now.
+                     if (d != NULL)
+                     {
+                        mActorPropertyType = NULL;
+                     }
                   }
                }
             }
@@ -1289,7 +1306,7 @@ namespace  dtDAL
    {
       LinkActors();
       AssignGroupProperties();
-      
+
       if(!mEnvActorId.ToString().empty())
       {
          try
@@ -1298,21 +1315,21 @@ namespace  dtDAL
             if(!proxy.valid())
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "No environment actor was located in the map.");
                return;
             }
             else
             {
                if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "An environment actor was located in the map.");
             }
 
             IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
             if(ea == NULL)
             {
-               throw dtUtil::Exception(ExceptionEnum::InvalidActorException, 
+               throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
                   "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);
             }
             mMap->SetEnvironmentActor(proxy.get());
@@ -1322,7 +1339,7 @@ namespace  dtDAL
             LOG_ERROR("Exception caught: " + e.What());
             throw e;
          }
-         
+
       }
 
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
@@ -1376,7 +1393,7 @@ namespace  dtDAL
       mMissingLibraries.clear();
       mMissingActorTypes.clear();
    }
-   
+
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::Reset()
    {
@@ -1399,7 +1416,7 @@ namespace  dtDAL
       //This should NOT be done in the Actor Value because this should
       //be cleared at the start and finish of a document, not between each actor.
       mActorLinking.clear();
-      
+
       mGroupParameters.clear();
 
       resetErrors();
@@ -1426,11 +1443,11 @@ namespace  dtDAL
       mDescriptorDisplayName.clear();
 
       mInGroupProperty = false;
-      while (!mParameterStack.empty()) 
+      while (!mParameterStack.empty())
       {
          mParameterStack.pop();
       }
-      
+
       ClearParameterValues();
    }
 
@@ -1444,7 +1461,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::AssignGroupProperties()
    {
-      for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > >::iterator i 
+      for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> > >::iterator i
            = mGroupParameters.begin();
            i != mGroupParameters.end(); ++i)
       {
@@ -1460,7 +1477,7 @@ namespace  dtDAL
          std::pair<std::string, dtCore::RefPtr<dtDAL::NamedGroupParameter> >& data = i->second;
          std::string& propertyName = data.first;
          dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = data.second;
-         
+
          ActorProperty* property = proxyToModify->GetProperty(propertyName);
          if (property == NULL)
          {
@@ -1543,7 +1560,7 @@ namespace  dtDAL
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
-      
+
       mEnvActorId = "";
    }
 
