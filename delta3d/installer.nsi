@@ -94,12 +94,18 @@ Section "!Delta3D" Delta3DSection
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin"
   File .\${DELTA_BUILD_DIR}\bin\*.dll
   File /x *d.exe .\${DELTA_BUILD_DIR}\bin\*.exe
+  ;erg, special case for testHUD due to the end 'd' in the name
+  File .\${DELTA_BUILD_DIR}\bin\testHUD.exe
   File /nonfatal /x *d.dle .\.\${DELTA_BUILD_DIR}\bin\*.dle
   File /nonfatal /x *d.dlo .\.\${DELTA_BUILD_DIR}\bin\*.dlo
 
   ;bin\release : the Python bindinds
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\bin\release"
   File .\${DELTA_BUILD_DIR}\bin\release\*.pyd
+  
+  ;CMakeModules
+  SetOutPath "$INSTDIR\CMakeModules"
+  File /x .svn .\CMakeModules\*
   
   ;data
   SetOutPath "$INSTDIR\data"
