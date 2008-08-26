@@ -3,7 +3,7 @@ SET(LIB_NAME STAGE)
 
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/${LIB_NAME})
 file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")
-file(GLOB PROG_SOURCES "src/*.cpp")
+file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
