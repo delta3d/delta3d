@@ -521,6 +521,7 @@ namespace  dtDAL
                                    dataValue.c_str(), mActorPropertyType->GetName().c_str(),
                                    mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
             }
+            mActorPropertyType = NULL;
             break;
          }
          case DataType::GAMEEVENT_ID:
@@ -545,7 +546,7 @@ namespace  dtDAL
             {
                geProp.SetValue(NULL);
             }
-
+            mActorPropertyType = NULL;
             break;
          }
          case DataType::VEC2_ID:
@@ -637,6 +638,7 @@ namespace  dtDAL
                mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
 
             }
+            mActorPropertyType = NULL;
             break;
          }
          case DataType::GROUP_ID:
@@ -1044,8 +1046,6 @@ namespace  dtDAL
                      if (mActorPropertyType == NULL)
                      {
                         mActorPropertyType = ParsePropertyType(localname);
-
-                        NonEmptyDefaultWorkaround();
                      }
 
                      if (mInGroupProperty)
@@ -1291,6 +1291,9 @@ namespace  dtDAL
                      // been unset, it is now.
                      if (d != NULL)
                      {
+                        //This works here because the actor types referenced here all set
+                        // their property type to NULL when the value is set.
+                        NonEmptyDefaultWorkaround();
                         mActorPropertyType = NULL;
                      }
                   }
