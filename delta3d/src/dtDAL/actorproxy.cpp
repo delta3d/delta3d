@@ -97,28 +97,36 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    const dtCore::UniqueId& ActorProxy::GetId() const
    {
-      return GetActor()->GetUniqueId();
+      return GetActor() ? GetActor()->GetUniqueId() : dtCore::UniqueId();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetId(const dtCore::UniqueId& newId)
    {
-      GetActor()->SetUniqueId(newId);
+      if (GetActor())
+      {
+         GetActor()->SetUniqueId(newId);
+      }
    }
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
    const std::string& ActorProxy::GetName() const
    {
-      return GetActor()->GetName();
+      return GetActor() ? GetActor()->GetName() : "";
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetName(const std::string& name)
    {
-      GetActor()->SetName(name);
+      if (GetActor())
+      {
+         GetActor()->SetName(name);
+      }
       if (mBillBoardIcon.valid())
+      {
          mBillBoardIcon->GetDrawable()->SetName(name);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

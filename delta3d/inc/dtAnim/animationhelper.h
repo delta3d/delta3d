@@ -116,12 +116,12 @@ namespace dtAnim
          void ClearAll(float fadeOutTime);
 
          /**
-          * @return the osg::Geode() created by the builder on LoadModel
+          * @return the osg::Node created by the builder on LoadModel
           */
          osg::Node* GetNode();
 
          /**
-          * @return the osg::Geode() created by the builder on LoadModel
+          * @return the osg::Node created by the builder on LoadModel
           */
          const osg::Node* GetNode() const;
 

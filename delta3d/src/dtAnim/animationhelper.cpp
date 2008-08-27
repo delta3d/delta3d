@@ -48,11 +48,11 @@ const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 
    /////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
-: mGroundClamp(false)
-, mNode(NULL)
-, mAnimator(NULL)
-, mSequenceMixer(new SequenceMixer())
-, mAttachmentController(new AttachmentController())
+   : mGroundClamp(false)
+   , mNode(NULL)
+   , mAnimator(NULL)
+   , mSequenceMixer(new SequenceMixer())
+   , mAttachmentController(new AttachmentController())
 {
 }
 
@@ -64,7 +64,7 @@ AnimationHelper::~AnimationHelper()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationHelper::Update(float dt)
 {
-   if(mAnimator.valid())
+   if (mAnimator.valid())
    {
       mSequenceMixer->Update(dt);
       mAnimator->Update(dt);
@@ -77,7 +77,7 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
 {
    const Animatable* anim = mSequenceMixer->GetRegisteredAnimation(pAnim);
 
-   if(anim != NULL)
+   if (anim != NULL)
    {
       dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());      
       mSequenceMixer->PlayAnimation(clonedAnim.get());
