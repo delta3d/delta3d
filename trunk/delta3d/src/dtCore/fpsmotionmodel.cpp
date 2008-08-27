@@ -59,7 +59,9 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
                                  float maxTurnSpeed,
                                  float maxSidestepSpeed,
                                  float height,
-                                 float maxStepUpDist)
+                                 float maxStepUpDist,
+                                 bool useWASD,
+                                 bool useArrowKeys)
    : MotionModel("FPSMotionModel")
    , mWalkForwardBackwardAxis(0)
    , mTurnLeftRightAxis(0)
@@ -78,6 +80,8 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mFallingVec(0.f, 0.f, 0.f)
    , mFalling(false)
    , mInvertMouse(false)
+   , mUseWASD(useWASD)
+   , mUseArrowKeys(useArrowKeys)
    , mOperateWhenUnfocused(false)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
@@ -214,32 +218,71 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
       Axis *upDownMouseMovement = mDefaultInputDevice->AddAxis(
          "up/down mouse movement",
           new AxisToAxis(mouse->GetAxis(1)));
+      
 
-      Axis *forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
-         "s/w",
-          new ButtonsToAxis( keyboard->GetButton('s'), keyboard->GetButton('w') )
-      );
+      AxesToAxis* forwardBack = new AxesToAxis();
+      AxesToAxis* leftRight = new AxesToAxis();
 
-      Axis *forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
-         "S/W",
-          new ButtonsToAxis( keyboard->GetButton('S'), keyboard->GetButton('W') )
-       );
+      if(mUseWASD)
+      {
+         Axis *forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
+            "s/w",
+            new ButtonsToAxis( keyboard->GetButton('s'), keyboard->GetButton('w') )
+            );
 
-      Axis *sideStepAxis1 = mDefaultInputDevice->AddAxis(
-         "a/d",
-          new ButtonsToAxis( keyboard->GetButton('a'), keyboard->GetButton('d') )
-      );
+         Axis *forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
+            "S/W",
+            new ButtonsToAxis( keyboard->GetButton('S'), keyboard->GetButton('W') )
+            );
 
-      Axis *sideStepAxis2 = mDefaultInputDevice->AddAxis(
-         "A/D",
-          new ButtonsToAxis( keyboard->GetButton('A'), keyboard->GetButton('D') )
-      );
+         Axis *sideStepAxis1 = mDefaultInputDevice->AddAxis(
+            "a/d",
+            new ButtonsToAxis( keyboard->GetButton('a'), keyboard->GetButton('d') )
+            );
 
+         Axis *sideStepAxis2 = mDefaultInputDevice->AddAxis(
+            "A/D",
+            new ButtonsToAxis( keyboard->GetButton('A'), keyboard->GetButton('D') )
+            );
+
+         forwardBack->AddSourceAxis(forwardAndBackAxis1);
+         forwardBack->AddSourceAxis(forwardAndBackAxis2);
+         leftRight->AddSourceAxis(sideStepAxis1);
+         leftRight->AddSourceAxis(sideStepAxis2);
+      }
+
+      if(mUseArrowKeys)
+      {
+
+         Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
+            "arrow keys up/down",
+            new ButtonsToAxis(
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
+            )
+            );
+
+         Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
+            "arrow keys left/right",
+            new ButtonsToAxis(
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
+            )
+            );
+
+         forwardBack->AddSourceAxis(arrowKeysUpAndDown);
+         leftRight->AddSourceAxis(arrowKeysLeftAndRight);
+      }
 
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default walk forward/backward",
-         new AxesToAxis(forwardAndBackAxis1, forwardAndBackAxis2)
+         forwardBack
       );
+
+      mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
+         "default sidestep left/right",
+         leftRight
+         );
          
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
@@ -251,10 +294,6 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          new AxesToAxis(upDownMouseMovement)
       );
          
-      mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
-         "default sidestep left/right",
-         new AxesToAxis(sideStepAxis1, sideStepAxis2)
-      );
    }
    
    SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis);
@@ -540,10 +579,33 @@ void FPSMotionModel::ShouldOperateWhenUnfocused(bool operate)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+
+int numFrames = 0;
+int framesWithNonZeroMouse = 0;
+float totalTime = 0.0f;
+osg::Vec2 mousePos, lastMousePos;
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
+   lastMousePos = mousePos;
+   mousePos = mMouse->GetPosition();
+   osg::Vec2 diff = mousePos - lastMousePos;
+  
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
-   const bool mouse_has_moved = (std::abs(mLookLeftRightCtrl) > 0.0f || std::abs(mLookUpDownCtrl) > 0.0f);
+   const bool mouse_has_moved = (std::abs(diff[0]) > 0.0f || std::abs(diff[1]) > 0.0f);
+
+
+   ++numFrames;
+   if(mouse_has_moved) ++framesWithNonZeroMouse;
+   totalTime += deltaTime;
+
+   if(totalTime > 0.5f)
+   {
+    //  std::cout << "Num Frames: " << numFrames << ", Frames with mouse input: " << framesWithNonZeroMouse << std::endl;
+
+      totalTime = 0.0f;
+      framesWithNonZeroMouse = 0;
+      numFrames = 0;
+   }
 
    if(calc_new_heading_pitch && mouse_has_moved)
    {
@@ -552,8 +614,8 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       osg::Matrix rot;
       transform.GetRotation(rot);
-      float deltaZ = mLookLeftRightCtrl * mMaximumTurnSpeed;
-      float deltaX = mLookUpDownCtrl * mMaximumTurnSpeed;
+      float deltaZ = diff[0] * mMaximumTurnSpeed;
+      float deltaX = diff[1] * mMaximumTurnSpeed;
 
       osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
@@ -590,6 +652,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       GetTarget()->SetTransform(transform);
 
       mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
+      mousePos.set(0.0f, 0.0f);
    }
 }
 

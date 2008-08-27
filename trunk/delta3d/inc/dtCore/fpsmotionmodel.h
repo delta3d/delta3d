@@ -79,7 +79,9 @@ namespace dtCore
                            float maxTurnSpeed = 1.5f,
                            float maxSidestepSpeed = 5.0f,
                            float height = 2.0f,
-                           float maxStepUpDist = 1.0f);
+                           float maxStepUpDist = 1.0f,
+                           bool useWASD = true,
+                           bool useArrowKeys = false);
 
       protected:
 
@@ -478,6 +480,7 @@ namespace dtCore
          bool mFalling; ///<are we currently falling?
 
          bool mInvertMouse; //invert the nouse 
+         bool mUseWASD, mUseArrowKeys;
 
          bool mOperateWhenUnfocused; // should motion model operate when unfocused? Defaults to false
 
