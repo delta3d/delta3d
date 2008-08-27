@@ -149,6 +149,10 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper)
    {
+      if (!wrapper.GetCalModel())
+      {
+         return NULL;
+      }
       return Find(wrapper.GetCalModel()->getCoreModel());
    }
 

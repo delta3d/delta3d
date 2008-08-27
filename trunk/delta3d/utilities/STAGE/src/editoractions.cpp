@@ -1235,7 +1235,9 @@ namespace dtEditQt
    void EditorActions::slotFileRecentProject0()
    {
       if (saveCurrentMapChanges(true)== QMessageBox::Cancel)
+      {
          return;
+      }
 
       changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
 

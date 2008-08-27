@@ -590,7 +590,7 @@ namespace dtGame
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByType(type, toFill);
-               if(!toFill.empty())
+               if (!toFill.empty())
                {
                   proxy = dynamic_cast<ProxyType*>(toFill[0]);
                }

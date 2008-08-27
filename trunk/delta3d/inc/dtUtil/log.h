@@ -31,7 +31,7 @@
 
 namespace dtUtil 
 {
-    class DT_UTIL_EXPORT LogFile
+   class DT_UTIL_EXPORT LogFile
    {
    public:
       ///Change the name of the log file (defaults to "delta3d_log.html")
@@ -231,7 +231,6 @@ namespace dtUtil
         unsigned int mOutputStreamBit; ///<the current output stream option
         std::string mName;
     };
-
 }
 
 #endif
