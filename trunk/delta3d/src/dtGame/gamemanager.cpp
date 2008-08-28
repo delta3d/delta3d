@@ -898,7 +898,6 @@ namespace dtGame
             if (gap != NULL)
             {
                gap->SetGameManager(this);
-               gap->BuildInvokables();
             }
             else
                throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
@@ -1031,7 +1030,6 @@ namespace dtGame
          if(gap != NULL)
          {
             gap->SetGameManager(this);
-            gap->BuildInvokables();
          }
          return temp;
       }

@@ -66,6 +66,18 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
+   void ActorProxy::Init(const dtDAL::ActorType& actorType)
+   {
+      SetActorType(actorType);
+      CreateActor();
+      // These are called to make it validate that they aren't Null
+      // before proceeding.
+      GetActorType();
+      GetActor();
+      BuildPropertyMap();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetClassName(const std::string& name)
    {
       mClassName = name;
@@ -297,6 +309,25 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
+   static void CheckActorType(const dtDAL::ActorType* actorType)
+   {
+      if (actorType == NULL)
+      {
+         throw dtUtil::Exception("The ActorType on an ActorProxy is NULL.  The only way this could happen is "
+                  "if the actor was created with the new operator rather than via "
+                  "dtDAL::LibraryManager::GetInstance().CreateActorProxy().",
+                  __FILE__, __LINE__);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
+   const ActorType& ActorProxy::GetActorType() const
+   {
+      CheckActorType(mActorType.get());
+      return *mActorType;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
    const ActorProxy::RenderMode& ActorProxy::GetRenderMode()
    {
       return RenderMode::DRAW_ACTOR;
@@ -320,14 +351,29 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
+   static void CheckActor(const dtCore::DeltaDrawable* actor)
+   {
+      if (actor == NULL)
+      {
+         throw dtUtil::Exception("The Actor on an ActorProxy is NULL.  The only ways this could happen is "
+                  "if the actor was created with the new operator rather than via "
+                  "dtDAL::LibraryManager::GetInstance().CreateActorProxy "
+                  "or the CreateActor method on the proxy subclass did not call SetActor() with a valid actor.",
+                  __FILE__, __LINE__);
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* ActorProxy::GetActor()
    {
+      CheckActor(mActor.get());
       return mActor.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    const dtCore::DeltaDrawable* ActorProxy::GetActor() const
    {
+      CheckActor(mActor.get());
       return mActor.get();
    }
 
