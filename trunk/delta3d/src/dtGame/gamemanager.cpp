@@ -251,7 +251,9 @@ namespace dtGame
       else if (data->message == "pause")
       {
          if (!IsPaused())
+         {
             SetPaused(true);
+         }
 
          double* timeChange = (double*)data->userData;
          PreFrame(0.0, *timeChange);
