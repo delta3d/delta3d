@@ -83,10 +83,10 @@ namespace dtDAL
 
          std::set<std::string>* toFill;
    };
-   
+
    ///////////////////////////////////////////////////////////////////////////////////////
-   const std::set<std::string> ActorProxy::GetClassHierarchy() const 
-   { 
+   const std::set<std::string> ActorProxy::GetClassHierarchy() const
+   {
       RefStringInsert insertFunc;
       std::set<std::string> hierarchy;
       insertFunc.toFill = &hierarchy;
@@ -97,36 +97,28 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////////////
    const dtCore::UniqueId& ActorProxy::GetId() const
    {
-      return GetActor() ? GetActor()->GetUniqueId() : dtCore::UniqueId();
+      return GetActor()->GetUniqueId();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetId(const dtCore::UniqueId& newId)
    {
-      if (GetActor())
-      {
-         GetActor()->SetUniqueId(newId);
-      }
+      GetActor()->SetUniqueId(newId);
    }
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
    const std::string& ActorProxy::GetName() const
    {
-      return GetActor() ? GetActor()->GetName() : "";
+      return GetActor()->GetName();
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::SetName(const std::string& name)
    {
-      if (GetActor())
-      {
-         GetActor()->SetName(name);
-      }
+      GetActor()->SetName(name);
       if (mBillBoardIcon.valid())
-      {
          mBillBoardIcon->GetDrawable()->SetName(name);
-      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -168,8 +160,8 @@ namespace dtDAL
          }
       }
    }
-    
-    
+
+
    ///////////////////////////////////////////////////////////////////////////////////////
    const ActorProxy* ActorProxy::GetLinkedActor(const std::string& name) const
    {
@@ -194,7 +186,7 @@ namespace dtDAL
       else
       {
          //attempt to insert the value
-         std::pair<ActorProxyMapType::iterator, bool> result = 
+         std::pair<ActorProxyMapType::iterator, bool> result =
             mActorProxyMap.insert(std::make_pair(name, newValue));
          // result.second tells me if it was inserted
          if (!result.second)
@@ -210,7 +202,7 @@ namespace dtDAL
    {
       if(newProp == NULL)
       {
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
             "AddProperty cannot add a NULL property", __FILE__, __LINE__);
       }
 
@@ -266,7 +258,7 @@ namespace dtDAL
       else
          return itor->second.get();
    }
-    
+
    ///////////////////////////////////////////////////////////////////////////////////////
    const ActorProperty* ActorProxy::GetProperty(const std::string &name) const
    {
@@ -346,7 +338,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProxy> ActorProxy::Clone() 
+   dtCore::RefPtr<ActorProxy> ActorProxy::Clone()
    {
       std::ostringstream error;
 
@@ -392,7 +384,7 @@ namespace dtDAL
    }
 
    const bool ActorProxy::IsInSTAGE() const
-   { 
+   {
       return dtDAL::Project::GetInstance().GetEditMode();
    }
 }
