@@ -130,7 +130,9 @@ namespace dtDAL
    {
       GetActor()->SetName(name);
       if (mBillBoardIcon.valid())
+      {
          mBillBoardIcon->GetDrawable()->SetName(name);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
