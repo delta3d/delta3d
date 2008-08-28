@@ -74,7 +74,13 @@ Joystick::Joystick(std::string name, jsJoystick* joystick) :
 {
    RegisterInstance(this);
 
-   for (int i=0; i<mJoystick->getNumButtons();i++)
+#if defined(PLIB_MAJOR_VERSION) && PLIB_MAJOR_VERSION >= 1 && defined(PLIB_MINOR_VERSION) & PLIB_MINOR_VERSION >= 8 && defined(PLIB_TINY_VERSION) && PLIB_TINY_VERSION >=5
+   const unsigned int numButtons = mJoystick->getNumButtons();
+#else
+   const unsigned int numButtons = _JS_MAX_BUTTONS;
+#endif // PLIB_MAJOR_VERSION
+
+   for (unsigned int i=0; i<numButtons; i++)
    {
       std::ostringstream buf;
 
@@ -110,7 +116,12 @@ Joystick::~Joystick()
 void Joystick::Poll()
 {
    const unsigned int numAxes = mJoystick->getNumAxes(); 
+
+#if defined(PLIB_MAJOR_VERSION) && PLIB_MAJOR_VERSION >= 1 && defined(PLIB_MINOR_VERSION) & PLIB_MINOR_VERSION >= 8 && defined(PLIB_TINY_VERSION) && PLIB_TINY_VERSION >=5
    const unsigned int numButtons = mJoystick->getNumButtons();
+#else
+   const unsigned int numButtons = _JS_MAX_BUTTONS;
+#endif // PLIB_MAJOR_VERSION
 
    int buttons;
    float *axes = new float[numAxes];
