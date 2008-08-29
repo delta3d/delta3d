@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
@@ -41,7 +41,7 @@ namespace dtUtil
    class Log;
 }
 
-namespace dtDAL 
+namespace dtDAL
 {
    class ActorProxy;
    class ActorProperty;
@@ -52,7 +52,7 @@ namespace dtDAL
    class NamedParameter;
    class NamedGroupParameter;
    class DataType;
-   
+
    /**
     * @class MapContentHandler
     * @brief The SAX2 content handler for loading maps.
@@ -61,7 +61,7 @@ namespace dtDAL
                                           public xercesc::EntityResolver, public osg::Referenced
    {
       public:
-      
+
          ///Constructor
          MapContentHandler();
 
@@ -273,20 +273,22 @@ namespace dtDAL
          //Called from characters when the state says we are inside a parameter of a group actor property.
          void ParameterCharacters(const XMLCh* const chars);
          //parses the text data from the xml and stores it in the property.
-         void ParsePropertyData(std::string& dataValue);         
+         void ParsePropertyData(std::string& dataValue);
          //parses the text data from the xml and stores it in the property.
-         void ParseParameterData(std::string& dataValue);         
+         void ParseParameterData(std::string& dataValue);
          //parses one item out of the xml and stores it in the proper element of the osg Vec#.
          template <typename VecType>
-         void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize, bool& complete);
+         void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize);
          //processes the mActorLinking multimap to set ActorActorProperties.
          void LinkActors();
          //processes the mGroupProperties multimap to set GroupActorProperties.
          void AssignGroupProperties();
          //decides on a property's datatype base on the name of the element.
-         DataType* ParsePropertyType(const XMLCh* const localname);
+         DataType* ParsePropertyType(const XMLCh* const localname, bool errorIfNotFound = true);
          //Creates a named parameter based on the name and type last parsed and pushes it to the top of the stack.
          void CreateAndPushParameter();
+         // Workaround for properties where empty data would result in the property not being set.
+         void NonEmptyDefaultWorkaround();
    };
 }
 #endif
