@@ -1,8 +1,0 @@
-###########################
-#                         #
-# Delta3D Credits         #
-#                         #
-###########################
-
-See (http://delta3d.wiki.sourceforge.net/Contributors) for a list
-of the contributors who have helped make Delta3D what it is.
