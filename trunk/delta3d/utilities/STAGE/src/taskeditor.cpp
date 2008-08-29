@@ -61,7 +61,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    TaskEditor::TaskEditor(QWidget *parent) : QDialog(parent)
    {
-      dtUtil::Log::GetInstance("taskeditor.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
+      //dtUtil::Log::GetInstance("taskeditor.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
       QGroupBox   *group = new QGroupBox(tr("Tasks"));
       QGridLayout *grid  = new QGridLayout(group);
 
