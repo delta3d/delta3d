@@ -1,0 +1,41 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Event">
+		<xs:complexType>
+			<xs:attribute name="Type" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FromState">
+		<xs:complexType>
+			<xs:attribute name="Type" use="required"/>
+			<xs:attribute name="Name" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StartState">
+		<xs:complexType>
+			<xs:attribute name="Name" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ToState">
+		<xs:complexType>
+			<xs:attribute name="Type" use="required"/>
+			<xs:attribute name="Name" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Transition">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Event"/>
+				<xs:element ref="FromState"/>
+				<xs:element ref="ToState"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransitionList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Transition" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="StartState" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
