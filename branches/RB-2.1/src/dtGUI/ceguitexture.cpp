@@ -133,14 +133,16 @@ void CEGUITexture::ResizeToMinPOT(unsigned short usWidth, unsigned short usHeigh
     m_usOriginalWidth = usWidth;
     m_usOriginalHeight = usHeight;
 
-    unsigned int uiMax;
-    (usWidth>usHeight) ? uiMax=usWidth : uiMax=usHeight;
-    unsigned int uiPot = 1;
-    while(uiPot<uiMax) uiPot<<=1;
+ //   unsigned int uiMax;
+ //   (usWidth>usHeight) ? uiMax=usWidth : uiMax=usHeight;
+ //   unsigned int uiPot = 1;
+ //   while(uiPot<uiMax) uiPot<<=1;
 
-	unsigned char* pBuffer = new unsigned char[uiPot * uiPot * 4];
-    m_pTexture->setTextureSize(uiPot,uiPot);
-	delete[] pBuffer;
+	//unsigned char* pBuffer = new unsigned char[uiPot * uiPot * 4];
+ //   m_pTexture->setTextureSize(uiPot,uiPot);
+	//delete[] pBuffer;
+
+    m_pTexture->setTextureSize(m_usOriginalWidth, m_usOriginalHeight);
     updateCachedScaleValues();
 }
 
