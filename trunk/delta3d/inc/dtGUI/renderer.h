@@ -20,12 +20,18 @@
 
 #include <dtGUI/export.h>
 #include <CEGUI/CEGUIVersion.h>
-#ifdef __APPLE__
-#include <CEGUIOpenGLRenderer/openglrenderer.h>
-#elif defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
-#include <CEGUI/RendererModules/OpenGLGUIRenderer/openglrenderer.h>
+#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+   #ifdef __APPLE__
+      #include <CEGUIOpenGLRenderer/RendererModules/OpenGLGUIRenderer/openglrenderer.h>
+   #else
+      #include <CEGUI/RendererModules/OpenGLGUIRenderer/openglrenderer.h>
+   #endif
 #else
-#include <CEGUI/renderers/OpenGLGUIRenderer/openglrenderer.h>
+   #ifdef __APPLE__
+      #include <CEGUIOpenGLRenderer/openglrenderer.h>
+   #else
+      #include <CEGUI/renderers/OpenGLGUIRenderer/openglrenderer.h>
+   #endif
 #endif
 
 #ifdef APIENTRY

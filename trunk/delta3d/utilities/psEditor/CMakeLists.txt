@@ -2,7 +2,7 @@
 SET(LIB_NAME     psEditor)
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${LIB_NAME})
-file(GLOB PROG_SOURCES "*.cpp" "*.cxx" "*.h")
+file(GLOB PROG_SOURCES "*.cpp" "*.cxx" "*.h" "*.rc")
 list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
 ADD_EXECUTABLE(${LIB_NAME}
