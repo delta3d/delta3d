@@ -214,14 +214,12 @@ void TestAnimInput::TickLocal(float dt)
       
    if(mIsTurning)
    {
-      float angle = dt * mTurnRate * mTurnDirection;
-      osg::Quat quat(angle, up);
-      forward = quat * forward;
+      const float angle = dt * mTurnRate * mTurnDirection;
 
-      dtUtil::MatrixUtil::SetRow(mat, forward, 1);
-      mat.orthoNormalize(mat);
-      trans.Set(mat);
+      trans.GetRotation(mat);
+      trans.SetRotation(mat * osg::Matrix::rotate(angle, up));
    }
+
 
    if(mIsWalking)
    { 
