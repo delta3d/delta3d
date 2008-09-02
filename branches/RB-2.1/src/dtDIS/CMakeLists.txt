@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES( ${DIS_INCLUDE_DIR} ${HAWKNL_INCLUDE_DIR} )
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
-file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h" "${HEADER_PATH}/plugins/default/*.h" )
+file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h" "${HEADER_PATH}/plugins/default/*.h" "${HEADER_PATH}/*.inl")
 file(GLOB LIB_SOURCES "*.cpp" "plugins/default/*.cpp"  )
 list(REMOVE_ITEM LIB_SOURCES ${SOURCE_PATH}/precomp.cpp)
 
