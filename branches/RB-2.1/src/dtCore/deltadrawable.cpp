@@ -301,8 +301,10 @@ void DeltaDrawable::InsertSwitchNode()
 //////////////////////////////////////////////////////////////////////////
 void dtCore::DeltaDrawable::RemoveSwitchNode()
 {
-   osg::Switch *parentSwitch = dynamic_cast<osg::Switch*>(GetOSGNode()->getParent(0));
-   
+   osg::Node* node = GetOSGNode();
+   if (node == NULL) {return;}  //no geometry?
+
+   osg::Switch* parentSwitch = dynamic_cast<osg::Switch*>(node->getParent(0));   
    if (parentSwitch == NULL) {return;}
 
    //save off all parents of the Switch Node
