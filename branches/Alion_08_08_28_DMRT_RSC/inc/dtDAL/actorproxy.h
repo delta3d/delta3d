@@ -107,6 +107,19 @@ namespace dtDAL
          ActorProxy();
 
          /**
+          * Initializes the actor by calling
+          * CreateActor
+          * SetActorType
+          * BuildPropertyMap
+          *
+          * Subclasses may override this to do more init that needs to depend on the actor or properties
+          * but must happen before the creation is complete.
+          *
+          * This would be called from the constructor, but virtual methods may not be called from there.
+          */
+         virtual void Init(const dtDAL::ActorType& actorType);
+
+         /**
           * Gets the UniqueID object assigned to this actor proxy.
           * @return The UniqueID.
           */
@@ -156,7 +169,7 @@ namespace dtDAL
          const std::set<std::string> GetClassHierarchy() const;
 
          /**
-          * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.  
+          * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.
           * It should only be overridded by dtGame::GameActorProxy.
           * @return true if this proxy is an instance of dtGame::GameActorProxy
           */
@@ -178,7 +191,7 @@ namespace dtDAL
           * is not found.
           */
          ActorProperty* GetProperty(const std::string &name);
-         
+
          /**
           * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
           * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
@@ -261,15 +274,7 @@ namespace dtDAL
           *      The actor type is assigned to the proxy when it is created
           *      by the actor registry.
           */
-         const ActorType& GetActorType() const { return *mActorType.get(); }
-
-         /**
-          * Gets the actor type that represents this actor proxy.
-          * @note
-          *      The actor type is assigned to the proxy when it is created
-          *      by the actor registry.
-          */
-         //ActorType& GetActorType() { return *mActorType.get(); }
+         const ActorType& GetActorType() const;
 
          /**
           * Gets the actor who's properties are modeled by this proxy.
@@ -283,7 +288,7 @@ namespace dtDAL
          dtCore::DeltaDrawable* GetActor();
 
          /** Templated version of GetActor() that static casts the actor to the type passed in.
-          *  @note Make sure the supplied pointer is of the correct type which 
+          *  @note Make sure the supplied pointer is of the correct type which
           *  matches the proxy!
           * @code
           * dtCore::InfiniteLight *light;
@@ -295,7 +300,7 @@ namespace dtDAL
          {
             actorType = static_cast<TActorPtr>(GetActor());
          }
-         
+
          /**
           * Gets the actor who's properties are modeled by this proxy.
           * @note
@@ -433,12 +438,12 @@ namespace dtDAL
          void RemoveProperty(const std::string& nameToRemove);
 
       private:
-         typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType; 
+         typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
          typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
          typedef std::map<dtUtil::RefString, ResourceDescriptor> ResourceMapType;
          typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProxy> > ActorProxyMapType;
          typedef std::set<dtUtil::RefString> ClassHierarchyType;
-         
+
          ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
          dtCore::RefPtr<dtCore::DeltaDrawable> mActor;
 

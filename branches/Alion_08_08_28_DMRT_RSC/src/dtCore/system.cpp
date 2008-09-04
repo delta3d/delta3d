@@ -54,7 +54,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    System& System::GetInstance()
    {
-      if( !mInstanceFlag )
+      if (!mInstanceFlag)
       {
          mSystem = new System();
          mSystem->SetName("System");

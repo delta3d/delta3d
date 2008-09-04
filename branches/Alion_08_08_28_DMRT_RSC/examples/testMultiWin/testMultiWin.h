@@ -4,6 +4,7 @@
 // TestMultiWin.cpp : declares the interface of the application
 
 #include <dtABC/application.h>
+#include <dtCore/orbitmotionmodel.h>
 
 class TestMultiWin : public dtABC::Application
 {
@@ -22,6 +23,9 @@ class TestMultiWin : public dtABC::Application
       
       dtCore::RefPtr<dtCore::View> mView2;
       dtCore::RefPtr<dtCore::View> mView3;
+      dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion1;
+      dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion2;
+      dtCore::RefPtr<dtCore::OrbitMotionModel> mMotion3;
 };
 
 #endif // DELTA_testMultiWin

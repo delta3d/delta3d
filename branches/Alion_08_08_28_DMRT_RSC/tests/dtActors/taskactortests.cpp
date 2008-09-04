@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -311,10 +311,10 @@ void TaskActorTests::TestTaskSubTasks()
       dtCore::RefPtr<dtActors::TaskActorProxy> mParentProxy;
       mGameManager->CreateActor(*taskActorType, mParentProxy);
       mGameManager->AddActor(*mParentProxy, false, false);
-      
+
       CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", mParentProxy.valid());
 
-      std::vector<dtActors::TaskActorProxy* > children;      
+      std::vector<dtActors::TaskActorProxy* > children;
 
       //Create a bunch of actors and add them as children.
       for (unsigned i=0; i<25; i++)
@@ -324,7 +324,7 @@ void TaskActorTests::TestTaskSubTasks()
          mGameManager->CreateActor(*taskActorType, childProxy);
          CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.", childProxy.valid());
          mGameManager->AddActor(*childProxy,false, false);
-         
+
          children.push_back(childProxy.get());
 
          childProxy->SetName("ChildProxy" + dtUtil::ToString(i));
@@ -332,14 +332,14 @@ void TaskActorTests::TestTaskSubTasks()
       }
 
       mParentProxy->GetAllSubTasks(children);
-      CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.", 
+      CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.",
          children.size() == 25);
 
       dtDAL::GroupActorProperty* subTasksGroup = dynamic_cast<dtDAL::GroupActorProperty*>(mParentProxy->GetProperty("SubTasks"));
       CPPUNIT_ASSERT(subTasksGroup != NULL);
       dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam = subTasksGroup->GetValue();
       CPPUNIT_ASSERT(subTasksGroupParam.valid());
-   
+
       CPPUNIT_ASSERT_MESSAGE("Number of child tasks in the group property should be 25.", subTasksGroupParam->GetParameterCount() == 25);
       std::vector<dtDAL::NamedParameter*> subTaskActorIds;
       subTasksGroupParam->GetParameters(subTaskActorIds);
@@ -352,7 +352,7 @@ void TaskActorTests::TestTaskSubTasks()
             mParentProxy->FindSubTask(children[i]->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
             mParentProxy->FindSubTask(children[i]->GetName()) != NULL);
-         
+
          dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
          CPPUNIT_ASSERT_MESSAGE("The parameters in the subtasks group prop should all be NamedActorParameters.",
             subTaskActorParam != NULL);
@@ -369,7 +369,7 @@ void TaskActorTests::TestTaskSubTasks()
 
       std::vector<const dtActors::TaskActorProxy* > children2;
       mParentProxy->GetAllSubTasks(children2);
-      
+
       for (unsigned i = 0; i < children2.size(); i++)
       {
          mParentProxy->RemoveSubTask(children2[i]->GetGameActor().GetName());
@@ -379,17 +379,17 @@ void TaskActorTests::TestTaskSubTasks()
 
       CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",
          mParentProxy->GetSubTaskCount() == 0);
-      
+
       dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam2 = subTasksGroup->GetValue();
       CPPUNIT_ASSERT(subTasksGroupParam2.valid());
-      CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left when looking in the group property.", 
+      CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left when looking in the group property.",
          subTasksGroupParam2->GetParameterCount() == 0);
-      
+
       subTasksGroup->SetValue(*subTasksGroupParam);
       mParentProxy->GetAllSubTasks(children);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.",
          subTasksGroupParam->GetParameterCount(), (unsigned int) children.size());
-      
+
       for (unsigned i = 0; i < children.size(); i++)
       {
          dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
@@ -428,7 +428,7 @@ void TaskActorTests::CreateParentChildProxies()
 
    mGameManager->CreateActor(*taskActorType, mChildProxy3);
    CPPUNIT_ASSERT_MESSAGE("Could not create task actor proxy.",mChildProxy3.valid());
-   
+
    mGameManager->AddActor(*mParentProxy, false, false);
    mGameManager->AddActor(*mChildProxy1, false, false);
    mGameManager->AddActor(*mChildProxy2, false, false);
@@ -484,9 +484,9 @@ void TaskActorTests::TestGroupPropertySubTasks()
       dtDAL::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTasks");
       CPPUNIT_ASSERT(subTasksProp != NULL);
       CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtDAL::DataType::GROUP);
-      
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedValue = new dtDAL::NamedGroupParameter("SubTasks"); 
-      
+
+      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedValue = new dtDAL::NamedGroupParameter("SubTasks");
+
       dtCore::RefPtr<dtDAL::NamedActorParameter> temp;
       temp = new dtDAL::NamedActorParameter("0", mChildProxy1->GetId());
       expectedValue->AddParameter(*temp);
@@ -494,10 +494,10 @@ void TaskActorTests::TestGroupPropertySubTasks()
       expectedValue->AddParameter(*temp);
       temp = new dtDAL::NamedActorParameter("2", mChildProxy3->GetId());
       expectedValue->AddParameter(*temp);
-      
+
       dtDAL::GroupActorProperty* gap = static_cast<dtDAL::GroupActorProperty*>(subTasksProp);
       gap->SetValue(*expectedValue);
-      
+
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualValue = gap->GetValue();
       std::ostringstream ss;
       ss << "Setting the list of task children and then getting it should yield the same list: \nActual:\n";
@@ -507,33 +507,33 @@ void TaskActorTests::TestGroupPropertySubTasks()
       CPPUNIT_ASSERT_MESSAGE(ss.str(),
          *actualValue == *expectedValue);
 
-      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy1).", 
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy1).",
          mChildProxy1->GetParentTask() == mParentProxy.get());
-      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy2).", 
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy2).",
          mChildProxy2->GetParentTask() == mParentProxy.get());
-      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy3).", 
+      CPPUNIT_ASSERT_MESSAGE("Setting the parent of a proxy should set its parent pointer (mChildProxy3).",
          mChildProxy3->GetParentTask() == mParentProxy.get());
 
 
       ///Now change the value and make sure the removed one's don't have their parent's still set set.
-      expectedValue = new dtDAL::NamedGroupParameter("test"); 
-      
+      expectedValue = new dtDAL::NamedGroupParameter("test");
+
       temp = new dtDAL::NamedActorParameter("1", mChildProxy1->GetId());
       expectedValue->AddParameter(*temp);
       gap->SetValue(*expectedValue);
 
-      CPPUNIT_ASSERT_MESSAGE("Resetting the parent of a proxy should leave its parent pointer (mChildProxy1).", 
+      CPPUNIT_ASSERT_MESSAGE("Resetting the parent of a proxy should leave its parent pointer (mChildProxy1).",
          mChildProxy1->GetParentTask() == mParentProxy.get());
-      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy2) parent to NULL.", 
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy2) parent to NULL.",
          mChildProxy2->GetParentTask() == NULL);
-      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy3) parent to NULL.", 
+      CPPUNIT_ASSERT_MESSAGE("Changing the list of child proxies should set the removed proxy's (mChildProxy3) parent to NULL.",
          mChildProxy3->GetParentTask() == NULL);
 
    }
    catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
-   } 
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -584,7 +584,7 @@ void TaskActorTests::TestGameEventTaskActor()
          (eventTaskProxy->GetProperty(dtActors::TaskActorGameEventProxy::PROPERTY_MIN_OCCURANCES.Get()));
       CPPUNIT_ASSERT_MESSAGE("Game event task actor should have a MinOccurances property.",
          minProp != NULL);
-         
+
       minProp->SetValue(5);
       CPPUNIT_ASSERT_MESSAGE("Game event min occurances should have been 5.",minProp->GetValue() == 5);
 
@@ -765,7 +765,7 @@ void TaskActorTests::TestOrderedTaskActor()
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for ordered task.",orderedActorType.valid());
 
       //Create our test rollup task...
-      dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy; 
+      dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
       mGameManager->AddActor(*rollupTaskProxy,false,false);
@@ -881,7 +881,7 @@ void TaskActorTests::TestFailedAndComplete()
          mGameManager->FindActorType("dtcore.Tasks","Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",taskActorType.valid());
 
-      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType = 
+      dtCore::RefPtr<const dtDAL::ActorType> rollupActorType =
          mGameManager->FindActorType("dtcore.Tasks","Rollup Task Actor");
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type for rollup task.",rollupActorType.valid());
 
@@ -899,10 +899,10 @@ void TaskActorTests::TestFailedAndComplete()
 
       /////  TEST SETTING TO FAIL
 
-      // Basic setting to FAIL .  
+      // Basic setting to FAIL .
       actor->SetFailed(true);
       CPPUNIT_ASSERT_MESSAGE("Should be failed 1.", actor->IsFailed());
-      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to fail 1.", 
+      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to fail 1.",
          actor->GetCompletedTimeStamp() != completeTime);
       CPPUNIT_ASSERT_MESSAGE("Should not be complete 1.", !actor->IsComplete());
 
@@ -918,7 +918,7 @@ void TaskActorTests::TestFailedAndComplete()
       CPPUNIT_ASSERT_MESSAGE("Should be failed 3.", actor->IsFailed());
       CPPUNIT_ASSERT_MESSAGE("Should not be complete 3.", !actor->IsComplete());
       CPPUNIT_ASSERT_MESSAGE("Time stamp should not have changed 3.", actor->GetCompletedTimeStamp() == 992.589);
-      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a failed task should be denied", 
+      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a failed task should be denied",
          !proxy->RequestScoreChange(*proxy, *proxy));
 
       // Test Mutable
@@ -936,14 +936,14 @@ void TaskActorTests::TestFailedAndComplete()
       /////  TEST SETTING TO COMPLETE
 
       // RESET and test setting to Complete
-      actor->Reset(); 
+      actor->Reset();
       completeTime = actor->GetCompletedTimeStamp();
       actor->SetComplete(true);
       CPPUNIT_ASSERT_MESSAGE("Should be complete 4.", actor->IsComplete());
-      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to complete 4.", 
+      CPPUNIT_ASSERT_MESSAGE("TimeStamp should have changed when marked to complete 4.",
          actor->GetCompletedTimeStamp() != completeTime);
       CPPUNIT_ASSERT_MESSAGE("Should not be failed 4.", !actor->IsFailed());
-      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a complete task should be allowed", 
+      CPPUNIT_ASSERT_MESSAGE("A Score Change Request on a complete task should be allowed",
          proxy->RequestScoreChange(*proxy, *proxy));
 
       // Try to mark failed while already complete
@@ -974,7 +974,7 @@ void TaskActorTests::TestFailedAndComplete()
       /// TEST the PARENT - CHILD behavior.
 
       //Create our parent rollup task...
-      dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy; 
+      dtCore::RefPtr<dtActors::TaskActorProxy> rollupTaskProxy;
       mGameManager->CreateActor(*rollupActorType, rollupTaskProxy);
       CPPUNIT_ASSERT_MESSAGE("Could not create rollup task actor proxy.", rollupTaskProxy.valid());
       dtActors::TaskActor *parentActor;
@@ -983,12 +983,12 @@ void TaskActorTests::TestFailedAndComplete()
       rollupTaskProxy->AddSubTask(*proxy);
 
       // test a complete parent
-      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should be ok if parent is not failed.", 
+      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should be ok if parent is not failed.",
          proxy->RequestScoreChange(*proxy,*proxy));
 
       // Test a failed parent
       parentActor->SetFailed(true);
-      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should fail if parent is failed.", 
+      CPPUNIT_ASSERT_MESSAGE("RequestScoreChange should fail if parent is failed.",
          !proxy->RequestScoreChange(*proxy,*proxy));
 
       // Also, since we have a rollup task (below tests use ordered task), go ahead and test SetFailed().
@@ -1048,7 +1048,7 @@ void TaskActorTests::TestMutable()
 
       childActor1->Reset();
 
-      // Test mutable working on an ORDERED Task. 
+      // Test mutable working on an ORDERED Task.
       // Add child 1 and child 2, then try to manipulate 2 before setting 1.
       orderedTaskProxy->AddSubTask(*childProxy1);
       orderedTaskProxy->AddSubTask(*childProxy2);
@@ -1080,16 +1080,16 @@ void TaskActorTests::TestMutable()
       childActor2->Reset();
 
       bool result = childProxy1->IsCurrentlyMutable();
-      
+
       CPPUNIT_ASSERT_MESSAGE("A blocking ordered task should have a mutable first child", result);
 
       result = childProxy2->IsCurrentlyMutable();
       CPPUNIT_ASSERT_MESSAGE("A blocking ordered task should NOT have a mutable second child", !result);
 
       orderedTaskActor->SetFailureType(dtActors::TaskActorOrdered::FailureType::CAUSE_FAILURE);
-      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children", 
+      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children",
          childProxy1->IsCurrentlyMutable());
-      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children", 
+      CPPUNIT_ASSERT_MESSAGE("A failing ordered task should have mutable children",
          childProxy2->IsCurrentlyMutable());
    }
    catch (const dtUtil::Exception& e)
@@ -1172,10 +1172,10 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(!subTaskOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!subTaskTwo->IsCurrentlyMutable());
 
-   CPPUNIT_ASSERT_MESSAGE("The first event on the first task should be mutable by default", 
+   CPPUNIT_ASSERT_MESSAGE("The first event on the first task should be mutable by default",
       eventSubOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventSubTwo->IsCurrentlyMutable());
-   
+
    CPPUNIT_ASSERT(!eventOne->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventTwo->IsCurrentlyMutable());
    CPPUNIT_ASSERT(!eventThree->IsCurrentlyMutable());
@@ -1194,14 +1194,14 @@ void TaskActorTests::TestNestedMutable()
    CPPUNIT_ASSERT(eventSubActorTwo);
 
    eventSubActorOne->SetComplete(true);
-   CPPUNIT_ASSERT_MESSAGE("The second event of the first subtask should now be mutable", 
+   CPPUNIT_ASSERT_MESSAGE("The second event of the first subtask should now be mutable",
       eventSubTwo->IsCurrentlyMutable());
 
    eventSubActorTwo->SetComplete(true);
 
    taskActorOne->SetComplete(true);
 
-   CPPUNIT_ASSERT_MESSAGE("The first event should be mutable since the first subtask is completed", 
+   CPPUNIT_ASSERT_MESSAGE("The first event should be mutable since the first subtask is completed",
       eventOne->IsCurrentlyMutable());
 
    dtActors::TaskActorGameEvent *eventActorOne;
@@ -1222,18 +1222,18 @@ void TaskActorTests::TestNestedMutable()
 
    eventActorOne->SetComplete(true);
 
-   CPPUNIT_ASSERT_MESSAGE("The second event should be mutable since the first event is completed", 
+   CPPUNIT_ASSERT_MESSAGE("The second event should be mutable since the first event is completed",
       eventTwo->IsCurrentlyMutable());
 
    eventActorTwo->SetComplete(true);
 
    result = eventThree->IsCurrentlyMutable();
-   CPPUNIT_ASSERT_MESSAGE("The third event should be mutable since the second event is completed", 
+   CPPUNIT_ASSERT_MESSAGE("The third event should be mutable since the second event is completed",
       result);
 
    eventActorThree->SetComplete(true);
 
-   CPPUNIT_ASSERT_MESSAGE("The fourth event should be mutable since the third event is completed", 
+   CPPUNIT_ASSERT_MESSAGE("The fourth event should be mutable since the third event is completed",
       eventFour->IsCurrentlyMutable());
 }
 

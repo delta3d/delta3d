@@ -251,7 +251,9 @@ namespace dtGame
       else if (data->message == "pause")
       {
          if (!IsPaused())
+         {
             SetPaused(true);
+         }
 
          double* timeChange = (double*)data->userData;
          PreFrame(0.0, *timeChange);
@@ -898,7 +900,6 @@ namespace dtGame
             if (gap != NULL)
             {
                gap->SetGameManager(this);
-               gap->BuildInvokables();
             }
             else
                throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
@@ -1031,7 +1032,6 @@ namespace dtGame
          if(gap != NULL)
          {
             gap->SetGameManager(this);
-            gap->BuildInvokables();
          }
          return temp;
       }

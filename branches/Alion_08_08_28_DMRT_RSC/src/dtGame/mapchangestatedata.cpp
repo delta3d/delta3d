@@ -46,14 +46,14 @@ namespace dtGame
 
    ///////////////////////////////////////////////////////////////////////////////
    const MapChangeStateData::MapChangeState MapChangeStateData::MapChangeState::IDLE("IDLE");
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    MapChangeStateData::MapChangeStateData(GameManager& gm):
-      osg::Referenced(), mGameManager(&gm), mCurrentState(&MapChangeStateData::MapChangeState::IDLE), 
+      osg::Referenced(), mGameManager(&gm), mCurrentState(&MapChangeStateData::MapChangeState::IDLE),
       mAddBillboards(false)
    {
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::BeginMapChange(const MapChangeStateData::NameVector& oldMapNames, const MapChangeStateData::NameVector& newMapNames, bool addBillboards)
    {
@@ -88,12 +88,12 @@ namespace dtGame
                throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, msg, __FUNCTION__, __LINE__);
             }
          }
-         
+
          SendMapMessage(MessageType::INFO_MAP_CHANGE_BEGIN, mNewMapNames);
       }
-      
+
       //mark all actors for deletion.
-      //Does not send create messages when this object is not in IDLE state. 
+      //Does not send create messages when this object is not in IDLE state.
       mGameManager->DeleteAllActors(false);
 
       if (!mOldMapNames.empty())
@@ -101,9 +101,9 @@ namespace dtGame
          SendMapMessage(MessageType::INFO_MAP_UNLOAD_BEGIN, mOldMapNames);
       }
 
-      
+
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::CloseOldMaps()
    {
@@ -111,7 +111,7 @@ namespace dtGame
       {
          MapChangeStateData::NameVector::const_iterator i = mOldMapNames.begin();
          MapChangeStateData::NameVector::const_iterator end = mOldMapNames.end();
-   
+
          for (; i != end; ++i)
          {
             dtDAL::Map& oldMap = dtDAL::Project::GetInstance().GetMap(*i);
@@ -129,11 +129,11 @@ namespace dtGame
             }
             dtDAL::Project::GetInstance().CloseMap(oldMap, true);
          }
-         
+
          SendMapMessage(MessageType::INFO_MAP_UNLOADED, mOldMapNames);
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    bool MapChangeStateData::OpenNewMaps()
    {
@@ -142,11 +142,11 @@ namespace dtGame
       {
          MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
          MapChangeStateData::NameVector::const_iterator end = mNewMapNames.end();
-   
+
          for (; i != end; ++i)
          {
             //Make the map load.
-            try 
+            try
             {
                dtDAL::Project::GetInstance().GetMap(*i);
             }
@@ -179,7 +179,7 @@ namespace dtGame
       std::vector<dtDAL::GameEvent* > events;
       map.GetEventManager().GetAllEvents(events);
       dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
-      
+
       std::vector<dtDAL::GameEvent*>::const_iterator i = events.begin();
       std::vector<dtDAL::GameEvent*>::const_iterator iend = events.end();
       for (; i != iend; ++i)
@@ -190,9 +190,9 @@ namespace dtGame
 
       if (map.GetEnvironmentActor() != NULL)
       {
-         dtGame::IEnvGameActorProxy *eap = 
+         dtGame::IEnvGameActorProxy *eap =
             static_cast<dtGame::IEnvGameActorProxy*>(map.GetEnvironmentActor());
-         
+
          mGameManager->SetEnvironmentActor(eap);
       }
 
@@ -212,7 +212,6 @@ namespace dtGame
             if (gameProxy != NULL)
             {
                gameProxy->SetGameManager(mGameManager.get());
-               gameProxy->BuildInvokables();
                if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
                {
                   mGameManager->AddActorAsAPrototype(*gameProxy);
@@ -229,7 +228,7 @@ namespace dtGame
                   catch (const dtUtil::Exception& ex)
                   {
                      dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "An error occurred adding actor \"%s\" of type \"%s\".  The exception will follow.", 
+                           "An error occurred adding actor \"%s\" of type \"%s\".  The exception will follow.",
                            gameProxy->GetName().c_str(), gameProxy->GetActorType().GetFullName().c_str());
                      ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
                   }
@@ -249,7 +248,7 @@ namespace dtGame
          }
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::ContinueMapChange()
    {
@@ -263,11 +262,11 @@ namespace dtGame
       //This shouldn't be called, but it should definitely not do anything.
       if (*mCurrentState == MapChangeState::IDLE)
          return;
-      
+
       if (*mCurrentState == MapChangeState::UNLOAD)
       {
          CloseOldMaps();
-         
+
          if (OpenNewMaps())
          {
             mCurrentState = &MapChangeState::LOAD;
@@ -276,17 +275,17 @@ namespace dtGame
          {
             mCurrentState = &MapChangeState::IDLE;
          }
-      } 
+      }
       else if (mCurrentState == &MapChangeState::LOAD)
       {
          MapChangeStateData::NameVector::const_iterator i = mNewMapNames.begin();
          MapChangeStateData::NameVector::const_iterator iend = mNewMapNames.end();
-            
+
          for (; i != iend; ++i)
          {
             LoadSingleMapIntoGM(*i);
          }
-         
+
          // set the app to unpause so time stepping is correct
          mGameManager->SetPaused(false);
 
@@ -295,7 +294,7 @@ namespace dtGame
          mCurrentState = &MapChangeState::IDLE;
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::SendMapMessage(const MessageType& type, const MapChangeStateData::NameVector& names)
    {
@@ -305,5 +304,5 @@ namespace dtGame
 
       mGameManager->SendMessage(*mapMessage);
    }
-   
+
 }
