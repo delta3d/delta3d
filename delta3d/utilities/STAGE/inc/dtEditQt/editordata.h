@@ -126,7 +126,7 @@ namespace dtEditQt
        *
        * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
        * with empty strings.
-       * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource, setCharacterResource
+       * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource
        */
       void setCurrentTextureResource(const dtDAL::ResourceDescriptor selectedResource);
       
@@ -151,18 +151,7 @@ namespace dtEditQt
       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
       */
       void setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource);
-      
-      /**
-       * Sets the currently selected character resource.  This is called when the user is
-       * using the resource browser and is selecting resources.  It is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
-       * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
-       */
-      void setCurrentCharacterResource(const dtDAL::ResourceDescriptor selectedResource);
-      
+            
       /**
        * Sets the currently selected terrain resource.  This is called when the user is
        * using the resource browser and is selecting resources.  It is used by the
@@ -170,7 +159,7 @@ namespace dtEditQt
        *
        * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
        * with empty strings.
-       * @see setSoundResource, setMeshResource, setTextureResource, setCharacterResource
+       * @see setSoundResource, setMeshResource, setTextureResource
        */
       void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
       
@@ -221,18 +210,9 @@ namespace dtEditQt
        */
       dtDAL::ResourceDescriptor getCurrentParticleResource(){return this->particleResource;}
       
-      /**
-       * Gets the currently selected Character resource.  This is used by the
-       * property editor when the user selects 'Use Current'.
-       *
-       * @return The currently selected resource descriptor.  Check
-       * resource.getResourceIdentifier().empty() to see if it's actually none.
-       * @see setSoundResource, setMeshResource, setTextureResource
-       */
-      dtDAL::ResourceDescriptor getCurrentCharacterResource(){return this->characterResource;}
 
       /**
-      * Gets the currently selected Character resource.  This is used by the
+      * Gets the currently selected skeletal model resource.  This is used by the
       * property editor when the user selects 'Use Current'.
       *
       * @return The currently selected resource descriptor.  Check
@@ -242,7 +222,7 @@ namespace dtEditQt
       dtDAL::ResourceDescriptor getCurrentSkeletalModelResource(){return this->skeletalModelResource;}
       
       /**
-       * Gets the currently selected Character resource.  This is used by the
+       * Gets the currently selected terrain resource.  This is used by the
        * property editor when the user selects 'Use Current'.
        *
        * @return The currently selected resource descriptor.  Check
@@ -392,7 +372,6 @@ namespace dtEditQt
       dtDAL::ResourceDescriptor meshResource;
       dtDAL::ResourceDescriptor textureResource;
       dtDAL::ResourceDescriptor particleResource;
-      dtDAL::ResourceDescriptor characterResource;
       dtDAL::ResourceDescriptor terrainResource;
       dtDAL::ResourceDescriptor skeletalModelResource;
       

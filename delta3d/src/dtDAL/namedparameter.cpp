@@ -173,7 +173,6 @@ namespace dtDAL
          break;
       case dtDAL::DataType::STATICMESH_ID:
       case dtDAL::DataType::TEXTURE_ID:
-      case dtDAL::DataType::CHARACTER_ID:
       case dtDAL::DataType::TERRAIN_ID:
       case dtDAL::DataType::SOUND_ID:
       case dtDAL::DataType::PARTICLESYSTEM_ID:

@@ -186,11 +186,6 @@ namespace dtEditQt
       particleResource = newResource;
    }
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setCurrentCharacterResource(dtDAL::ResourceDescriptor newResource)
-   {
-      characterResource = newResource;
-   }
-   //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentTerrainResource(dtDAL::ResourceDescriptor newResource)
    {
       terrainResource = newResource;
