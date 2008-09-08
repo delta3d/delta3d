@@ -167,7 +167,8 @@ void DeltaDrawable::RenderProxyNode( bool enable )
 */
 void DeltaDrawable::AddedToScene( Scene *scene )
 {
-   //TODO Should DeltaDrawable remove itself from it's existing parent Scene?
+   if (mParentScene == scene) {return;} //nothing to do here.
+
    mParentScene = scene;
 
    for(  ChildList::iterator itr = mChildList.begin();
@@ -303,6 +304,8 @@ void dtCore::DeltaDrawable::RemoveSwitchNode()
 {
    osg::Node* node = GetOSGNode();
    if (node == NULL) {return;}  //no geometry?
+
+   if (node->getNumParents() == 0) {return;}  //no parents?  
 
    osg::Switch* parentSwitch = dynamic_cast<osg::Switch*>(node->getParent(0));   
    if (parentSwitch == NULL) {return;}
