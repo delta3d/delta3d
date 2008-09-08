@@ -785,12 +785,6 @@ void MapTests::TestMapSaveAndLoad()
         map->AddLibrary(mExampleLibraryName, "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
-#if 0 //!defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
-        dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "marine",
-            dtDAL::DataType::CHARACTER);
-#else
-        LOG_ERROR("RBody unit tests fail on windows, skipping");
-#endif
 
         dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", 
            DATA_DIR + "/models/terrain_simple.ive", "dirt", dtDAL::DataType::STATIC_MESH);
@@ -884,26 +878,6 @@ void MapTests::TestMapSaveAndLoad()
            eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin()+1)));
         else
            logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
-
-#if 0 //!defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
-        ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
-        dtDAL::ResourceActorProperty& rap = static_cast<dtDAL::ResourceActorProperty&>(*ap);
-
-         try {
-            rap.SetValue(&marineRD);
-
-            std::string marineStr = rap.GetStringValue();
-            rap.SetValue(NULL);
-            CPPUNIT_ASSERT(rap.GetValue() == NULL);
-            CPPUNIT_ASSERT(rap.SetStringValue(marineStr));
-            CPPUNIT_ASSERT(rap.GetValue() != NULL);
-            CPPUNIT_ASSERT(*rap.GetValue() == marineRD);
-         } catch(const rbody::config_error& ex) {
-            logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
-                marineRD.GetResourceIdentifier().c_str(), ex.what());
-            CPPUNIT_FAIL("Error setting marine mesh.");
-        }
-#endif
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
         static_cast<dtDAL::ResourceActorProperty*>(ap)->SetValue(&dirtRD);
@@ -1099,15 +1073,6 @@ void MapTests::TestMapSaveAndLoad()
            + " but it is " + eap->GetEnumValue().GetName(),
            eap->GetEnumValue() == **(eap->GetList().begin()+1));
 
-#if 0
-        ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
-        dtDAL::ResourceDescriptor* rdVal = ((dtDAL::ResourceActorProperty*)ap)->GetValue();
-        //testRD is declared in the setup section prior to the save and load.
-        if (rdVal == NULL)
-            CPPUNIT_FAIL("Character ResourceDescriptor should not be NULL.");
-        CPPUNIT_ASSERT_MESSAGE("The resource Descriptor does not match.  Value is :" + rdVal->GetResourceIdentifier(),
-            rdVal != NULL && *rdVal == marineRD);
-#endif
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
         dtDAL::ResourceDescriptor* rdMeshVal = static_cast<dtDAL::ResourceActorProperty*>(ap)->GetValue();

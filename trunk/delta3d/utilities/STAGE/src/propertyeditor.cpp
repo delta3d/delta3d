@@ -152,7 +152,6 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SOUND));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::STATIC_MESH));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TEXTURE));
-        //controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::CHARACTER));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TERRAIN));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::PARTICLE_SYSTEM));
         controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));

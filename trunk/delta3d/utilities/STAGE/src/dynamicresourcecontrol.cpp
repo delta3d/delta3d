@@ -142,10 +142,6 @@ namespace dtEditQt
             {
                 type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
             } 
-            else if (myProperty->GetDataType() == dtDAL::DataType::CHARACTER) 
-            {
-                type = dtDAL::DataType::CHARACTER.GetDisplayName().c_str();
-            }             
             else 
             {
                 type = "Unknown Type";
@@ -257,10 +253,6 @@ namespace dtEditQt
         else if (myProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM) 
         {
             return EditorData::GetInstance().getCurrentParticleResource();
-        } 
-        else if (myProperty->GetDataType() == dtDAL::DataType::CHARACTER) 
-        {
-            return EditorData::GetInstance().getCurrentCharacterResource();
         } 
         else if (myProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH) 
         {

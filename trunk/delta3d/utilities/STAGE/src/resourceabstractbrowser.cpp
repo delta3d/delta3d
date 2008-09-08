@@ -586,10 +586,6 @@ namespace dtEditQt
       {
          EditorData::GetInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
       }
-      else if(*resourceType == dtDAL::DataType::CHARACTER)
-      {
-         EditorData::GetInstance().setCurrentCharacterResource(dtDAL::ResourceDescriptor());
-      }
       else if(*resourceType == dtDAL::DataType::TERRAIN)
       {
          EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
@@ -617,10 +613,6 @@ namespace dtEditQt
       else if(*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
       {
          EditorData::GetInstance().setCurrentParticleResource(descriptor);
-      }
-      else if(*resourceType == dtDAL::DataType::CHARACTER)
-      {
-         EditorData::GetInstance().setCurrentCharacterResource(descriptor);
       }
       else if(*resourceType == dtDAL::DataType::TERRAIN)
       {
