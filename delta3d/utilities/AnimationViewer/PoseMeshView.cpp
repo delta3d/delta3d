@@ -393,7 +393,7 @@ void PoseMeshView::OnShowProperties()
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshView::OnPropertyDialogButtonPressed(QAbstractButton* pressedButton)
 {
-   QAbstractButton *applyButton = mPropertyContainer->buttonBox->button(QDialogButtonBox::Apply);
+   QAbstractButton* applyButton = mPropertyContainer->buttonBox->button(QDialogButtonBox::Apply);
    
    if (pressedButton == applyButton)
    {

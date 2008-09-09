@@ -76,8 +76,8 @@ Viewer::~Viewer()
 ////////////////////////////////////////////////////////////////////////////////
 osg::Geode* MakePlane()
 {
-   osg::Geode *geode = new osg::Geode();
-   osg::Box *box = new osg::Box( osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.05f);
+   osg::Geode* geode = new osg::Geode();
+   osg::Box* box = new osg::Box(osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.05f);
    osg::ShapeDrawable *shapeDrawable = new osg::ShapeDrawable(box);
 
    geode->addDrawable(shapeDrawable);
@@ -103,16 +103,16 @@ void Viewer::Config()
 
    //adjust the Camera position
    dtCore::Transform camPos;
-   osg::Vec3 camXYZ( 0.f, -5.f, 1.f );
-   osg::Vec3 lookAtXYZ ( 0.f, 0.f, 1.f );
-   osg::Vec3 upVec ( 0.f, 0.f, 1.f );
-   camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
+   osg::Vec3 camXYZ(0.f, -5.f, 1.f);
+   osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
+   osg::Vec3 upVec (0.f, 0.f, 1.f);
+   camPos.SetLookAt(camXYZ, lookAtXYZ, upVec);
 
-   GetCamera()->SetTransform( camPos );
+   GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   mMotion = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-   mMotion->SetTarget( GetCamera() );
+   mMotion = new OrbitMotionModel(GetKeyboard(), GetMouse());
+   mMotion->SetTarget(GetCamera());
    mMotion->SetDistance(5.f);
 
    Light *l = GetScene()->GetLight(0);
@@ -134,15 +134,15 @@ void Viewer::Config()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnLoadCharFile( const QString &filename )
+void Viewer::OnLoadCharFile(const QString& filename)
 {
-   LOG_DEBUG("Loading file: " + filename.toStdString() );
+   LOG_DEBUG("Loading file: " + filename.toStdString());
 
    QDir dir(filename);
    dir.cdUp();
 
-   SetDataFilePathList( dtCore::GetDataFilePathList() + ";" +
-                        dir.path().toStdString() + ";" );
+   SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
+                       dir.path().toStdString() + ";");
 
    // try to clean up the scene graph
    if (mCharacter.valid())
@@ -183,7 +183,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
                         .arg(e.getLineNumber())
                         .arg(msg);
 
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &msg );
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&msg);
       emit ErrorOccured(errorMsg);
       return;
    }
@@ -201,13 +201,13 @@ void Viewer::OnLoadCharFile( const QString &filename )
       unsigned int trackCount = wrapper->GetCoreAnimationTrackCount(animID);
       unsigned int keyframes = wrapper->GetCoreAnimationKeyframeCount(animID);
       float dur = wrapper->GetCoreAnimationDuration(animID);
-      emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur );
+      emit AnimationLoaded(animID, nameToSend, trackCount, keyframes, dur);
    }
 
    //get all data for the meshes and emit
    for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
    {
-      QString nameToSend = QString::fromStdString( wrapper->GetCoreMeshName(meshID) );
+      QString nameToSend = QString::fromStdString(wrapper->GetCoreMeshName(meshID));
       emit MeshLoaded(meshID, nameToSend);
    }
 
@@ -232,7 +232,7 @@ void Viewer::OnLoadCharFile( const QString &filename )
 
    CreateBoneBasisDisplay();
  
-   LOG_DEBUG("Done loading file: " + filename.toStdString() );
+   LOG_DEBUG("Done loading file: " + filename.toStdString());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -242,18 +242,19 @@ void Viewer::CreateBoneBasisDisplay()
    mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
 
    VectorHotSpot hotSpotList;
-   dtAnim::Cal3DModelWrapper *modelWrapper = mCharacter->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mCharacter->GetCal3DWrapper();
 
    std::vector<int> boneList;
    modelWrapper->GetCoreBoneChildrenIDs(0, boneList);
 
    std::vector<std::string> boneVec;
-   modelWrapper->GetCoreBoneNames( boneVec );
+   modelWrapper->GetCoreBoneNames(boneVec);
 
    //for every bone
    std::vector<std::string>::const_iterator boneNameIter = boneVec.begin();
-   std::vector<std::string>::const_iterator boneNameEnd = boneVec.end();
-   while( boneNameIter!=boneNameEnd )
+   std::vector<std::string>::const_iterator boneNameEnd  = boneVec.end();
+
+   while(boneNameIter!=boneNameEnd)
    {
       //create a HotSpot
       dtUtil::HotSpotDefinition hotSpotDefinition;
@@ -275,9 +276,9 @@ void Viewer::CreateBoneBasisDisplay()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnLoadPoseMeshFile( const std::string &filename )
+void Viewer::OnLoadPoseMeshFile(const std::string& filename)
 { 
-   dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
    assert(rapper);
 
    // Delete any previous data
@@ -304,9 +305,9 @@ void Viewer::OnLoadPoseMeshFile( const std::string &filename )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
+void Viewer::OnStartAnimation(unsigned int id, float weight, float delay)
 {
-   if( mCharacter.valid() )
+   if(mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->BlendCycle(id, weight, delay);
@@ -316,9 +317,9 @@ void Viewer::OnStartAnimation( unsigned int id, float weight, float delay )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnStopAnimation( unsigned int id, float delay )
+void Viewer::OnStopAnimation(unsigned int id, float delay)
 {
-   if( mCharacter.valid() )
+   if(mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ClearCycle(id, delay);
@@ -328,9 +329,9 @@ void Viewer::OnStopAnimation( unsigned int id, float delay )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
+void Viewer::OnStartAction(unsigned int id, float delayIn, float delayOut)
 {
-   if( mCharacter.valid() )
+   if(mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ExecuteAction(id, delayIn, delayOut);
@@ -338,7 +339,7 @@ void Viewer::OnStartAction( unsigned int id, float delayIn, float delayOut )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnLODScale_Changed( float scaleValue )
+void Viewer::OnLODScale_Changed(float scaleValue)
 {
    if (mCharacter.get())
    {
@@ -357,7 +358,7 @@ void Viewer::OnScaleFactorChanged(float scaleFactorValue)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-void Viewer::OnSpeedChanged( float speedFactor )
+void Viewer::OnSpeedChanged(float speedFactor)
 {
    dtCore::System::GetInstance().SetTimeScale(speedFactor);
 }
@@ -455,20 +456,23 @@ void Viewer::InitShadeDecorator()
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::InitWireDecorator()
 {
-   osg::StateSet *stateset = new osg::StateSet;
-   osg::PolygonOffset *polyOffset = new osg::PolygonOffset;
+   osg::StateSet* stateset = new osg::StateSet;
+
+   osg::PolygonOffset* polyOffset = new osg::PolygonOffset;
    polyOffset->setFactor(-1.0f);
    polyOffset->setUnits(-1.0f);
-   osg::PolygonMode *polyMode = new osg::PolygonMode;
+
+   osg::PolygonMode* polyMode = new osg::PolygonMode;
    polyMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+
    stateset->setAttributeAndModes(polyOffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    stateset->setAttributeAndModes(polyMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-   osg::Material *material = new osg::Material;
+   osg::Material* material = new osg::Material;
    stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
-   stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+   stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
    mWireDecorator->setStateSet(stateset);
 }
@@ -492,7 +496,7 @@ void Viewer::PostFrame(const double)
       std::vector<int>::iterator showItr = mMeshesToShow.begin();
       while (showItr != mMeshesToShow.end())
       {
-         mCharacter->GetCal3DWrapper()->ShowMesh( (*showItr) );
+         mCharacter->GetCal3DWrapper()->ShowMesh((*showItr));
 
          ++showItr;
       }
@@ -504,7 +508,7 @@ void Viewer::PostFrame(const double)
       std::vector<int>::iterator hideItr = mMeshesToHide.begin();
       while (hideItr != mMeshesToHide.end())
       {
-         mCharacter->GetCal3DWrapper()->HideMesh( (*hideItr) );
+         mCharacter->GetCal3DWrapper()->HideMesh((*hideItr));
          ++hideItr;
       }
 

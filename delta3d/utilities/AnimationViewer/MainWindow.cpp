@@ -74,6 +74,7 @@ MainWindow::MainWindow()
    mMaterialModel = new QStandardItemModel(this);
    mMaterialView = new QTableView(this);
    mMaterialView->setModel(mMaterialModel);
+
    {
       QStringList headers;
       headers << "ID" << "Name" << "Diffuse" << "Ambient" << "Specular" << "Shininess";
@@ -115,9 +116,9 @@ MainWindow::~MainWindow()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateMenus()
 {
-   QMenu *windowMenu = menuBar()->addMenu("&File");
-   QMenu *viewMenu   = menuBar()->addMenu("&View");
-   QMenu *toolBarMenu = viewMenu->addMenu("&Toolbars");
+   QMenu* windowMenu  = menuBar()->addMenu("&File");
+   QMenu* viewMenu    = menuBar()->addMenu("&View");
+   QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");
 
    QAction* toggleHardwareSkinning = viewMenu->addAction("Use Hardware Skinning");
    toggleHardwareSkinning->setCheckable(true);
@@ -126,10 +127,10 @@ void MainWindow::CreateMenus()
 
    windowMenu->addAction(mLoadCharAct);
 
-   QAction *toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
-   QAction *toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
+   QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
+   QAction* toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
    //QAction *toggleLightToolBarAction = toolBarMenu->addAction("Lighting toolbar");
-   QAction *toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
+   QAction* toggleScalingToolbarAction  = toolBarMenu->addAction("Scaling toolbar");
 
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
@@ -176,7 +177,7 @@ void MainWindow::CreateActions()
    }
 
    // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(this);
+   QActionGroup* actionGroup = new QActionGroup(this);
    actionGroup->setExclusive(true); 
 
    QIcon wireframeIcon(":/images/wireframe.png");
@@ -405,15 +406,15 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    QIcon modeBlendIcon(QPixmap(":/images/reticle.png"));
    QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));   
 
-   QToolBar *poseModesToolbar = new QToolBar;
+   QToolBar* poseModesToolbar = new QToolBar;
 
    // The actiongroup is used to make the action behave like radio buttons
-   QActionGroup *actionGroup = new QActionGroup(poseModesToolbar);
+   QActionGroup* actionGroup = new QActionGroup(poseModesToolbar);
    actionGroup->setExclusive(true); 
 
-   QAction *grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
-   QAction *pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");     
-   QAction *errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
+   QAction* grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
+   QAction* pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");     
+   QAction* errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
 
    poseModesToolbar->addAction(grabAction);
    poseModesToolbar->addAction(pickAction);
@@ -761,7 +762,7 @@ void MainWindow::OpenRecentFile()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnItemChanged(QTableWidgetItem *item)
+void MainWindow::OnItemChanged(QTableWidgetItem* item)
 {
    if (item->column() == 1 || item->column() == 2) 
    {

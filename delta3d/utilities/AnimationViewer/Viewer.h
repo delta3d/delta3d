@@ -49,8 +49,8 @@ public:
 
 public slots:
 
-   void OnLoadCharFile    (const QString &filename);
-   void OnLoadPoseMeshFile(const std::string &filename);
+   void OnLoadCharFile    (const QString& filename);
+   void OnLoadPoseMeshFile(const std::string& filename);
    void OnStartAnimation  (unsigned int id, float weight, float delay);
    void OnStopAnimation   (unsigned int id, float delay);
    void OnStartAction     (unsigned int id, float delayIn, float delayOut);  
@@ -71,26 +71,26 @@ public slots:
    void OnHideMesh(int meshID);
 
 signals:
-   void AnimationLoaded(unsigned int, const QString &, unsigned int trackCount,
+   void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
 
-   void MeshLoaded(int meshID, const QString &meshName);
+   void MeshLoaded(int meshID, const QString& meshName);
 
-   void PoseMeshLoaded(const dtAnim::PoseMesh &poseMesh);
+   void PoseMeshLoaded(const dtAnim::PoseMesh& poseMesh);
 
    void PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshes,
-                         dtAnim::CharDrawable *character);
+                         dtAnim::CharDrawable* character);
 
-   void MaterialLoaded(int materialID, const QString &name, 
-                       const QColor &diffuse, const QColor &ambient, const QColor &specular,
+   void MaterialLoaded(int materialID, const QString& name, 
+                       const QColor& diffuse, const QColor& ambient, const QColor& specular,
                        float shininess);
 
-   void ErrorOccured(const QString &msg);
+   void ErrorOccured(const QString& msg);
 
-   void BlendUpdate(const std::vector<float> &weightList);
+   void BlendUpdate(const std::vector<float>& weightList);
 
 protected:
-   virtual void PostFrame( const double deltaFrameTime );  
+   virtual void PostFrame(const double deltaFrameTime);  
 
 private:
   
@@ -110,7 +110,7 @@ private:
    dtCore::RefPtr<dtAnim::PoseMeshUtility>  mPoseUtility;
    dtCore::RefPtr<dtAnim::Cal3DDatabase>    mCalDatabase; ///<Need to keep this around since it holds our textures   
 
-   std::vector<dtAnim::PoseMesh*> *mPoseMeshes;
+   std::vector<dtAnim::PoseMesh*>* mPoseMeshes;
 
    void InitShadeDecorator();
    void InitWireDecorator();

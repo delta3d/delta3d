@@ -66,9 +66,9 @@ osg::Geometry* MakeLine(const osg::Vec3& beginPoint,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh &poseMesh,
-                           dtAnim::CharDrawable *model,
-                           QGraphicsItem *parent)
+PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
+                           dtAnim::CharDrawable* model,
+                           QGraphicsItem* parent)
   : QGraphicsItem(parent)
   , mPoseMesh(&poseMesh)
   , mModel(model)
@@ -225,7 +225,7 @@ void PoseMeshItem::RemoveBoneLinesFromScene()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle &targetTri)
+void PoseMeshItem::AddBoneLinesToScene(const dtAnim::PoseMesh::TargetTriangle& targetTri)
 {  
    // TODO - fix bone line rendering
    //osg::Geode *charGeode = dynamic_cast<osg::Geode*>(mModel->GetNode());
@@ -292,13 +292,13 @@ void PoseMeshItem::OnBlendUpdate()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshItem::sceneEvent(QEvent *event)
+bool PoseMeshItem::sceneEvent(QEvent* event)
 { 
    return QGraphicsItem::sceneEvent(event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {   
    if (!IsItemMovable())
    {
@@ -317,13 +317,13 @@ void PoseMeshItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void PoseMeshItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void PoseMeshItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
    if (!IsItemMovable() && (event->buttons() & Qt::LeftButton))
    {
@@ -351,7 +351,7 @@ void PoseMeshItem::BlendPosesFromItemCoordinates(float xCoord, float yCoord)
    // Only update the blend and position if we're in the mesh
    if (targetTri.mIsInside)
    { 
-      dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+      dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
       mMeshUtil->BlendPoses(mPoseMesh, modelWrapper, targetTri, 0.0f);
 
       if (mAreErrorSamplesDisplayed)
@@ -398,7 +398,7 @@ QPainterPath PoseMeshItem::shape() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
    UNREFERENCED_PARAMETER(widget);
    UNREFERENCED_PARAMETER(option);
@@ -422,7 +422,7 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
       PaintEdges(painter);
    }   
 
-   const dtAnim::PoseMesh::VertexVector &verts = mPoseMesh->GetVertices();
+   const dtAnim::PoseMesh::VertexVector& verts = mPoseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
@@ -473,7 +473,7 @@ void PoseMeshItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::PaintErrorSamples(QPainter *painter)
+void PoseMeshItem::PaintErrorSamples(QPainter* painter)
 {
    for (size_t sampleIndex = 0; sampleIndex < mSampleCollection.mSamples.size(); ++sampleIndex)
    {
@@ -491,7 +491,7 @@ void PoseMeshItem::PaintErrorSamples(QPainter *painter)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::PaintEdges(QPainter *painter)
+void PoseMeshItem::PaintEdges(QPainter* painter)
 {
    QPen trianglePenDefault;  
    trianglePenDefault.setWidth(2);
@@ -537,15 +537,15 @@ void PoseMeshItem::PaintEdges(QPainter *painter)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
+void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh& mesh)
 {
    typedef std::pair<dtAnim::PoseMesh::MeshIndexPair, int> VertIndexTriPair;
    typedef std::multimap<dtAnim::PoseMesh::MeshIndexPair, int> EdgeTriMap;
 
    EdgeTriMap edgeMap;
 
-   const dtAnim::PoseMesh::TriangleVector &triList = mesh.GetTriangles();
-   const dtAnim::PoseMesh::VertexVector &vertList = mesh.GetVertices();  
+   const dtAnim::PoseMesh::TriangleVector& triList = mesh.GetTriangles();
+   const dtAnim::PoseMesh::VertexVector& vertList = mesh.GetVertices();  
 
    std::vector<dtAnim::PoseMesh::MeshIndexPair> edgeSet;
 
@@ -600,8 +600,8 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
       
       assert(rangeStart != edgeMap.end());
 
-      dtAnim::PoseMesh::Vertex *vert0 = vertList[key.first];
-      dtAnim::PoseMesh::Vertex *vert1 = vertList[key.second];
+      dtAnim::PoseMesh::Vertex* vert0 = vertList[key.first];
+      dtAnim::PoseMesh::Vertex* vert1 = vertList[key.second];
 
       EdgeInfo newInfo;
       newInfo.first.rx()  = vert0->mData.x() * VERT_SCALE;
@@ -626,9 +626,9 @@ void PoseMeshItem::ExtractEdgesFromMesh(const dtAnim::PoseMesh &mesh)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
+void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh& mesh)
 { 
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    assert(modelWrapper);
 
    // Make sure no animations are applied
@@ -638,7 +638,7 @@ void PoseMeshItem::ExtractErrorFromMesh(const dtAnim::PoseMesh &mesh)
    // Nothing is blended now so remove character lines
    RemoveBoneLinesFromScene();
 
-   const dtAnim::PoseMesh::TriangleVector &triangleList = mesh.GetTriangles();
+   const dtAnim::PoseMesh::TriangleVector& triangleList = mesh.GetTriangles();
 
    // Sample points along a grid for every triangle
    for (size_t triIndex = 0; triIndex < triangleList.size(); ++triIndex)
@@ -717,9 +717,9 @@ bool PoseMeshItem::IsItemMovable()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
+float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
 {  
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    assert(modelWrapper);
 
    QPointF meshSpaceTrueValue;
@@ -763,15 +763,15 @@ float PoseMeshItem::GetErrorSample(const QPointF &samplePoint)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &targetTri,
-                                     osg::Vec3 &outTrueDirection,
-                                     osg::Vec3 &outBlendDirection)
+void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& targetTri,
+                                     osg::Vec3& outTrueDirection,
+                                     osg::Vec3& outBlendDirection)
 {
    dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
    osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
 
    // Get the direction that points forward for this pose mesh's bone
-   const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+   const osg::Vec3& nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
 
    // calculate a vector transformed by the rotation data.
    outBlendDirection = boneRotation * nativeBoneForward;   
@@ -794,10 +794,10 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle &tar
 
 ////////////////////////////////////////////////////////////////////////////////
 // Warning, this function is expensive! (and experimental)
-void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle &currentTargetTri, 
-                                           osg::Vec3 &outDirection)
+void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle& currentTargetTri, 
+                                           osg::Vec3& outDirection)
 {
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
 
    // Temp hack
    if (mPoseMesh->GetName() == "Poses_Gun")
@@ -866,7 +866,7 @@ QColor PoseMeshItem::GetErrorColor(float degreesOfError)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-QColor PoseMeshItem::GetErrorColor(const osg::Vec3 &first, const osg::Vec3 &second)
+QColor PoseMeshItem::GetErrorColor(const osg::Vec3& first, const osg::Vec3& second)
 {
    float firstDotSecond = first * second;
    dtUtil::Clamp(firstDotSecond, -1.0f, 1.0f);
@@ -920,7 +920,7 @@ void PoseMeshItem::UpdateItemBoundingRect()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle &tri, QRectF &outRect)
+void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle& tri, QRectF& outRect)
 {
    float left   = FLT_MAX;
    float right  = -FLT_MAX;
@@ -929,7 +929,7 @@ void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle &tri
 
    for (size_t vertIndex = 0; vertIndex < 3; ++vertIndex)
    {
-      const osg::Vec3 &vertex = tri.mVertices[vertIndex]->mData;
+      const osg::Vec3& vertex = tri.mVertices[vertIndex]->mData;
 
       float x = vertex.x();
       float y = vertex.y();
@@ -952,10 +952,10 @@ void PoseMeshItem::GetTriangleBoundingRect(const dtAnim::PoseMesh::Triangle &tri
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF &intersector, 
+bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF& intersector, 
                                                  const QLineF lines[3],
-                                                 QPointF &outLeftMost,
-                                                 QPointF &outRightMost)
+                                                 QPointF& outLeftMost,
+                                                 QPointF& outRightMost)
 {
    bool foundLeft  = false;
    bool foundRight = false;
@@ -992,11 +992,11 @@ bool PoseMeshItem::GetIntersectionBoundingPoints(const QLineF &intersector,
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::AssertZeroErrorAtVertices()
 {
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    modelWrapper->ClearAll();
    modelWrapper->Update(0.0f);
 
-   const dtAnim::PoseMesh::VertexVector &vertList = mPoseMesh->GetVertices();
+   const dtAnim::PoseMesh::VertexVector& vertList = mPoseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < vertList.size(); ++vertIndex)
    {
@@ -1069,7 +1069,7 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::AssertAzElConversion()
 {
-   dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
+   dtAnim::Cal3DModelWrapper* modelWrapper = mModel->GetCal3DWrapper();
    modelWrapper->ClearAll();
    modelWrapper->Update(0.0f);
 
