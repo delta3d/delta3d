@@ -139,5 +139,7 @@ private slots:
 
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);
+   void OnToggleFlipVertical();
+   void OnToggleFlipHorizontal();
 };
 #endif // DELTA_MainWindow
