@@ -1,5 +1,5 @@
-#ifndef Delta3DThread_h__
-#define Delta3DThread_h__
+#ifndef __DELTA3DTHREAD_H__
+#define __DELTA3DTHREAD_H__
 
 #include <QtCore/QThread>
 #include <QtCore/QTimer>
@@ -12,9 +12,9 @@ class Delta3DThread : public QThread
 {
    Q_OBJECT
 public:
-	Delta3DThread(QObject *parent=0);
+	Delta3DThread(QObject* parent=0);
 	~Delta3DThread();
-   void SetMainWindow(MainWindow *win) { mWin = win;}
+   void SetMainWindow(MainWindow* win) { mWin = win; }
    virtual void run();
 	
    dtCore::RefPtr<Viewer> mViewer;
@@ -22,7 +22,9 @@ public:
 protected:
 
 private:
+
    QTimer mTimer;
-   MainWindow *mWin;
+   MainWindow* mWin;
+
 };
-#endif // Delta3DThread_h__
+#endif // __DELTA3DTHREAD_H__

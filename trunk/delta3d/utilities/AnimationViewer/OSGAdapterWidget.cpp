@@ -116,11 +116,11 @@ namespace dtQt
 
 
    //////////////////////////////////////////////////////////////////////////////////
-   OSGAdapterWidget::OSGAdapterWidget(bool drawOnSeparateThread, QWidget * parent,
-            const QGLWidget * shareWidget, Qt::WindowFlags f):
-               QGLWidget(parent, shareWidget, f), 
-               mThreadGLContext(NULL),
-               mDrawOnSeparateThread(drawOnSeparateThread)
+   OSGAdapterWidget::OSGAdapterWidget(bool drawOnSeparateThread, QWidget* parent,
+                                      const QGLWidget* shareWidget, Qt::WindowFlags f)
+      : QGLWidget(parent, shareWidget, f)
+      , mThreadGLContext(NULL)
+      , mDrawOnSeparateThread(drawOnSeparateThread)
    {
       mTimer.setInterval(10);
       setAutoBufferSwap(!drawOnSeparateThread);
@@ -216,8 +216,11 @@ namespace dtQt
    void OSGAdapterWidget::paintGLImpl()
    {
       dtCore::System& system = dtCore::System::GetInstance();
+      
       if (system.IsRunning())
+      {
          system.StepWindow();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////////
@@ -225,13 +228,13 @@ namespace dtQt
    {
       if (mGraphicsWindow.valid())
       {
-         mGraphicsWindow->getEventQueue()->windowResize(0, 0, width, height );
+         mGraphicsWindow->getEventQueue()->windowResize(0, 0, width, height);
          mGraphicsWindow->resized(0,0,width,height);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::resizeGL( int width, int height )
+   void OSGAdapterWidget::resizeGL(int width, int height)
    {
       if (!mDrawOnSeparateThread)
       {
@@ -246,36 +249,36 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::keyPressEvent( QKeyEvent* event )
+   void OSGAdapterWidget::keyPressEvent(QKeyEvent* event)
    {
       if (mGraphicsWindow.valid())
       {
          int value = STATIC_KEY_MAP.remapKey(event);
-         mGraphicsWindow->getEventQueue()->keyPress( value );
+         mGraphicsWindow->getEventQueue()->keyPress(value);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::keyReleaseEvent( QKeyEvent* event )
+   void OSGAdapterWidget::keyReleaseEvent(QKeyEvent* event)
    {
       if (mGraphicsWindow.valid())
       {
          int value = STATIC_KEY_MAP.remapKey(event);
-         mGraphicsWindow->getEventQueue()->keyRelease( value );
+         mGraphicsWindow->getEventQueue()->keyRelease(value);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::mousePressEvent( QMouseEvent* event )
+   void OSGAdapterWidget::mousePressEvent(QMouseEvent* event)
    {
       int button = 0;
       switch(event->button())
       {
-         case(Qt::LeftButton): button = 1; break;
-         case(Qt::MidButton): button = 2; break;
+         case(Qt::LeftButton):  button = 1; break;
+         case(Qt::MidButton):   button = 2; break;
          case(Qt::RightButton): button = 3; break;
-         case(Qt::NoButton): button = 0; break;
-         default: button = 0; break;
+         case(Qt::NoButton):    button = 0; break;
+         default:               button = 0; break;
       }
       if (mGraphicsWindow.valid())
       {
@@ -284,16 +287,16 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::mouseReleaseEvent( QMouseEvent* event )
+   void OSGAdapterWidget::mouseReleaseEvent(QMouseEvent* event)
    {
       int button = 0;
       switch(event->button())
       {
-         case(Qt::LeftButton): button = 1; break;
-         case(Qt::MidButton): button = 2; break;
-         case (Qt::RightButton): button = 3; break;
-         case(Qt::NoButton): button = 0; break;
-         default: button = 0; break;
+         case(Qt::LeftButton):   button = 1; break;
+         case(Qt::MidButton):    button = 2; break;
+         case(Qt::RightButton):  button = 3; break;
+         case(Qt::NoButton):     button = 0; break;
+         default:                button = 0; break;
       }
 
       if (mGraphicsWindow.valid())
@@ -303,7 +306,7 @@ namespace dtQt
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   void OSGAdapterWidget::mouseMoveEvent( QMouseEvent* event )
+   void OSGAdapterWidget::mouseMoveEvent(QMouseEvent* event)
    {
       if (mGraphicsWindow.valid())
       {

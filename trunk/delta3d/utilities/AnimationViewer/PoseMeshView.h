@@ -46,7 +46,7 @@ public:
    void SetDisplayError(bool shouldDisplay);
 
    /// The item rect will constrain our view changed coordinates
-   void SetItemBoundingRect(const QRectF &itemRect){ mItemRect = itemRect; }
+   void SetItemBoundingRect(const QRectF& itemRect){ mItemRect = itemRect; }
 
    /// Return the percentage of the scene displayed
    float GetPercentVisible();
@@ -69,7 +69,7 @@ public slots:
 protected:
 
    PoseMeshScene* mScene;
-   PoseMeshItem * mLastItem;
+   PoseMeshItem*  mLastItem;
    QGraphicsItem* mDragItem;
 
    QPointF mCurrentTarget;
