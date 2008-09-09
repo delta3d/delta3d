@@ -3,6 +3,7 @@
 #include "PoseMeshView.h"
 #include "PoseMeshScene.h"
 #include "PoseMeshProperties.h"
+#include "PoseMeshItem.h"
 #include "OSGAdapterWidget.h"
 
 #include <osg/Geode> ///needed for the node builder
@@ -64,7 +65,7 @@ MainWindow::MainWindow()
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend";
-   mAnimListWidget->setHorizontalHeaderLabels(headers );    
+   mAnimListWidget->setHorizontalHeaderLabels(headers);    
 
    mMeshListWidget = new QListWidget(this);
    connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
@@ -72,7 +73,7 @@ MainWindow::MainWindow()
 
    mMaterialModel = new QStandardItemModel(this);
    mMaterialView = new QTableView(this);
-   mMaterialView->setModel( mMaterialModel );
+   mMaterialView->setModel(mMaterialModel);
    {
       QStringList headers;
       headers << "ID" << "Name" << "Diffuse" << "Ambient" << "Specular" << "Shininess";
@@ -143,9 +144,9 @@ void MainWindow::CreateMenus()
    connect(toggleLODScaleToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleLODScaleToolbar()));
    connect(toggleScalingToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleScalingToolbar()));
 
-   for (int i=0; i<5; ++i)
+   for (int actionIndex = 0; actionIndex < 5; ++actionIndex)
    {
-      windowMenu->addAction(mRecentFilesAct[i]);
+      windowMenu->addAction(mRecentFilesAct[actionIndex]);
    }
 
    menuBar()->addSeparator();
@@ -167,11 +168,11 @@ void MainWindow::CreateActions()
    mLoadCharAct->setStatusTip(tr("Open an existing character file."));
    connect(mLoadCharAct, SIGNAL(triggered()), this, SLOT(OnOpenCharFile()));
 
-   for (int i=0; i<5; i++)
+   for (int actionIndex = 0; actionIndex < 5; actionIndex++)
    {
-      mRecentFilesAct[i] = new QAction(this);
-      mRecentFilesAct[i]->setVisible(false);
-      connect(mRecentFilesAct[i], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
+      mRecentFilesAct[actionIndex] = new QAction(this);
+      mRecentFilesAct[actionIndex]->setVisible(false);
+      connect(mRecentFilesAct[actionIndex], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
    }
 
    // The actiongroup is used to make the action behave like radio buttons
@@ -200,13 +201,13 @@ void MainWindow::CreateActions()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::CreateToolbars()
 {
-   QDoubleSpinBox *lodScaleSpinner = new QDoubleSpinBox(this);
+   QDoubleSpinBox* lodScaleSpinner = new QDoubleSpinBox(this);
    lodScaleSpinner->setRange(0.01, 500.0);
    lodScaleSpinner->setSingleStep(0.01);
    lodScaleSpinner->setValue(1);
    lodScaleSpinner->setToolTip(tr("Level of Detail scale"));
 
-   QDoubleSpinBox *speedSpinner = new QDoubleSpinBox(this);
+   QDoubleSpinBox* speedSpinner = new QDoubleSpinBox(this);
    speedSpinner->setRange(0.0, 100.0);
    speedSpinner->setSingleStep(0.01);
    speedSpinner->setValue(1.0);
@@ -267,21 +268,18 @@ void MainWindow::DestroyPoseResources()
 void MainWindow::OnOpenCharFile()
 {
    QString filename = QFileDialog::getOpenFileName(this,
-      tr("Load Character File"),
-      ".",
-      tr("Characters (*.xml)") );
+      tr("Load Character File"), ".", tr("Characters (*.xml)") );
 
    if (!filename.isEmpty())
    {
       LoadCharFile(filename);
    }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::LoadCharFile( const QString &filename )
+void MainWindow::LoadCharFile(const QString& filename)
 {
-   if (dtUtil::FileUtils::GetInstance().FileExists( filename.toStdString() ))
+   if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
    {
       //mAnimListWidget->clear(); //note, this also removes the header items
       mMeshListWidget->clear();
@@ -294,7 +292,7 @@ void MainWindow::LoadCharFile( const QString &filename )
          mAnimListWidget->removeRow(0);
       }
 
-      while (mMaterialModel->rowCount() > 0 )
+      while (mMaterialModel->rowCount() > 0)
       {
          mMaterialModel->removeRow(0);
       }
@@ -302,63 +300,63 @@ void MainWindow::LoadCharFile( const QString &filename )
       // reset the scale spinbox
       mScaleFactorSpinner->setValue(1.0f);
 
-      emit FileToLoad( filename );
+      emit FileToLoad(filename);
 
-      SetCurrentFile( filename );
+      SetCurrentFile(filename);
 
       statusBar()->showMessage(tr("File loaded"), 2000);
    }
    else
    {
-      QString errorString = QString("File not found: %1").arg( filename );
-      QMessageBox::warning( this, "Warning", errorString, "&Ok" );
+      QString errorString = QString("File not found: %1").arg(filename);
+      QMessageBox::warning(this, "Warning", errorString, "&Ok");
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName, 
+void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName, 
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
 {
-   mAnimListWidget->insertRow( mAnimListWidget->rowCount() );
+   mAnimListWidget->insertRow(mAnimListWidget->rowCount());
 
    { //name
-      QTableWidgetItem *item = new QTableWidgetItem( animationName );
+      QTableWidgetItem* item = new QTableWidgetItem(animationName);
       item->setCheckState(Qt::Unchecked);
       item->setData(Qt::UserRole, id);
       item->setData(Qt::UserRole+1, trackCount);
       item->setData(Qt::UserRole+2, keyframes);
       item->setData(Qt::UserRole+3, duration);
       item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-      mAnimListWidget->setItem( id, 0, item );
+      mAnimListWidget->setItem(id, 0, item);
    } 
 
    { //weight
-      QTableWidgetItem *item = new QTableWidgetItem( tr("1.0") );
+      QTableWidgetItem* item = new QTableWidgetItem(tr("1.0"));
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
       mAnimListWidget->setItem( id, 1, item );
    }
 
    { //delay
-      QTableWidgetItem *item = new QTableWidgetItem( tr("0.0") );
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-      mAnimListWidget->setItem( id, 2, item );
+      mAnimListWidget->setItem(id, 2, item);
    }
 
    { //delay in
-      QTableWidgetItem *item = new QTableWidgetItem( tr("0.0") );
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-      mAnimListWidget->setItem( id, 3, item );
+      mAnimListWidget->setItem(id, 3, item);
    }
 
    { //delay out
-      QTableWidgetItem *item = new QTableWidgetItem( tr("0.0") );
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-      mAnimListWidget->setItem( id, 4, item );
+      mAnimListWidget->setItem(id, 4, item);
    }
 
    { //mixer blend
-      QProgressBar *mixerBlend = new QProgressBar;
+      QProgressBar* mixerBlend = new QProgressBar;
       mixerBlend->setMaximum(100);
       mixerBlend->setMinimum(0);
       mixerBlend->setValue(0);
@@ -370,11 +368,11 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString &animationName,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewMesh(int meshID, const QString &meshName)
+void MainWindow::OnNewMesh(int meshID, const QString& meshName)
 {
    QListWidgetItem *meshItem = new QListWidgetItem();
    meshItem->setText(meshName);
-   meshItem->setData( Qt::UserRole, meshID );
+   meshItem->setData(Qt::UserRole, meshID);
 
    meshItem->setFlags(Qt::ItemIsSelectable |
                       Qt::ItemIsUserCheckable |
@@ -386,8 +384,8 @@ void MainWindow::OnNewMesh(int meshID, const QString &meshName)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                                    dtAnim::CharDrawable *model)
+void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList, 
+                                    dtAnim::CharDrawable* model)
 {
    assert(!mPoseMeshScene);
    assert(!mPoseMeshViewer);
@@ -405,7 +403,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
    // Create icons for the mode toolbar
    QIcon modeGrabIcon(QPixmap(":/images/handIcon.png"));
    QIcon modeBlendIcon(QPixmap(":/images/reticle.png"));
-   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));
+   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));   
 
    QToolBar *poseModesToolbar = new QToolBar;
 
@@ -434,9 +432,13 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
    QIcon displayEdgesIcon(QPixmap(":/images/displayEdges.png"));
    QIcon displayErrorIcon(QPixmap(":/images/displayError.png"));
+   QIcon flipVerticalIcon(QPixmap(":/images/verticalFlip.png"));
+   QIcon flipHorizontalIcon(QPixmap(":/images/horizontalFlip.png"));
 
-   QAction *displayEdgesAction = poseModesToolbar->addAction(displayEdgesIcon, "Display Edges.");
-   QAction *displayErrorAction = poseModesToolbar->addAction(displayErrorIcon, "Display Error Samples.");
+   QAction* displayEdgesAction   = poseModesToolbar->addAction(displayEdgesIcon, "Display Edges.");
+   QAction* displayErrorAction   = poseModesToolbar->addAction(displayErrorIcon, "Display Error Samples.");
+   QAction* flipVerticalAction   = poseModesToolbar->addAction(flipVerticalIcon, "Flip the vertical axis.");
+   QAction* flipHorizontalAction = poseModesToolbar->addAction(flipHorizontalIcon, "Flip the horizontal axis.");
 
    displayEdgesAction->setCheckable(true);
    displayErrorAction->setCheckable(true);
@@ -471,6 +473,8 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 
    connect(displayEdgesAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayEdges(bool)));
    connect(displayErrorAction, SIGNAL(toggled(bool)), SLOT(OnToggleDisplayError(bool)));
+   connect(flipVerticalAction, SIGNAL(triggered()), SLOT(OnToggleFlipVertical()));
+   connect(flipHorizontalAction, SIGNAL(triggered()), SLOT(OnToggleFlipHorizontal()));
 
    for (size_t poseIndex = 0; poseIndex < poseMeshList.size(); ++poseIndex)
    {
@@ -486,37 +490,37 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMe
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewMaterial( int matID, const QString &name, 
-                               const QColor &diff, const QColor &amb, const QColor &spec,
-                               float shininess )
+void MainWindow::OnNewMaterial(int matID, const QString& name, 
+                               const QColor& diff, const QColor& amb, const QColor& spec,
+                               float shininess)
 {
    QString tooltip;
 
-   QStandardItem *idItem = new QStandardItem(QString::number(matID) );
+   QStandardItem* idItem = new QStandardItem(QString::number(matID));
    idItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-   QStandardItem *nameItem = new QStandardItem( name );
+   QStandardItem* nameItem = new QStandardItem(name);
    nameItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-   QStandardItem *diffItem = new QStandardItem( diff.name() );
+   QStandardItem* diffItem = new QStandardItem(diff.name());
    diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    diffItem->setData(diff, Qt::BackgroundRole);
    tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(diff.red()).arg(diff.green()).arg(diff.blue()).arg(diff.alpha());
    diffItem->setData( tooltip, Qt::ToolTipRole);
 
-   QStandardItem *ambItem = new QStandardItem( amb.name() );
+   QStandardItem* ambItem = new QStandardItem(amb.name());
    ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    ambItem->setData(amb, Qt::BackgroundRole);
    tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(amb.red()).arg(amb.green()).arg(amb.blue()).arg(amb.alpha());
    ambItem->setData( tooltip, Qt::ToolTipRole);
 
-   QStandardItem *specItem = new QStandardItem( spec.name() );
+   QStandardItem* specItem = new QStandardItem(spec.name());
    specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    specItem->setData(amb, Qt::BackgroundRole);
    tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(spec.red()).arg(spec.green()).arg(spec.blue()).arg(spec.alpha());
    specItem->setData( tooltip, Qt::ToolTipRole);
 
-   QStandardItem *shinItem = new QStandardItem( QString::number(shininess) );
+   QStandardItem* shinItem = new QStandardItem(QString::number(shininess));
    shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
    QList<QStandardItem*> items;
@@ -525,7 +529,7 @@ void MainWindow::OnNewMaterial( int matID, const QString &name,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
+void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
 {   
    if (weightList.size() != (size_t)mAnimListWidget->rowCount()) { return; }
 
@@ -534,7 +538,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
       // Show progress as a whole number
       float newValue = weightList[rowIndex] * 100.0f;
 
-      QProgressBar *meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
+      QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
       meter->setValue(newValue);      
 
       if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
@@ -574,7 +578,7 @@ void MainWindow::OnBlendUpdate(const std::vector<float> &weightList)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
+void MainWindow::OnAnimationClicked(QTableWidgetItem* item)
 {
    if (item->column() != 0) return;
 
@@ -594,7 +598,7 @@ void MainWindow::OnAnimationClicked( QTableWidgetItem *item )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnMeshActivated( QListWidgetItem *item )
+void MainWindow::OnMeshActivated(QListWidgetItem* item)
 {
    int meshID = item->data(Qt::UserRole).toInt();
 
@@ -635,7 +639,7 @@ void MainWindow::OnChangeScaleFactor()
 void MainWindow::OnToggleHardwareSkinning()
 {
    dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
-   QAction *action = qobject_cast<QAction*>(sender());
+   QAction* action = qobject_cast<QAction*>(sender());
    bool usingHardwareSkinning = action->isChecked();
 
    if (usingHardwareSkinning)
@@ -704,19 +708,23 @@ void MainWindow::UpdateRecentFileActions()
 
    int numRecentFiles = qMin(files.size(), 5);
 
-   for (int i = 0; i < numRecentFiles; ++i) {
-      QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName() );
-      mRecentFilesAct[i]->setText(text);
-      mRecentFilesAct[i]->setData(files[i]);
-      mRecentFilesAct[i]->setVisible(true);
+   for (int actionIndex = 0; actionIndex < numRecentFiles; ++actionIndex) 
+   {
+      QString text = tr("&%1 %2").arg(actionIndex + 1).arg(QFileInfo(files[actionIndex]).fileName());
+      mRecentFilesAct[actionIndex]->setText(text);
+      mRecentFilesAct[actionIndex]->setData(files[actionIndex]);
+      mRecentFilesAct[actionIndex]->setVisible(true);
    }
-   for (int j = numRecentFiles; j < 5; ++j)
-      mRecentFilesAct[j]->setVisible(false);
+
+   for (int fileIndex = numRecentFiles; fileIndex < 5; ++fileIndex)
+   {
+      mRecentFilesAct[fileIndex]->setVisible(false);
+   }
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::SetCurrentFile( const QString &filename )
+void MainWindow::SetCurrentFile(const QString& filename)
 {
    if (filename.isEmpty())
    {
@@ -744,19 +752,18 @@ void MainWindow::SetCurrentFile( const QString &filename )
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OpenRecentFile()
 {
-   QAction *action = qobject_cast<QAction*>(sender());
+   QAction* action = qobject_cast<QAction*>(sender());
 
    if (action)
    {
-      LoadCharFile( action->data().toString() );
+      LoadCharFile(action->data().toString());
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnItemChanged( QTableWidgetItem *item )
+void MainWindow::OnItemChanged(QTableWidgetItem *item)
 {
-   if (item->column() == 1 ||
-      item->column() == 2) 
+   if (item->column() == 1 || item->column() == 2) 
    {
       if (mAnimListWidget->item(item->row(),0)->checkState() == Qt::Checked)
       {
@@ -787,7 +794,7 @@ void MainWindow::OnStartAnimation(int row)
 
    if (mAnimListWidget->item(row,0))
    {
-      emit StartAnimation( mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), weight, delay );
+      emit StartAnimation(mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), weight, delay);
    }  
 }
 
@@ -801,15 +808,14 @@ void MainWindow::OnStopAnimation(int row)
       delay = mAnimListWidget->item(row, 2)->text().toFloat();
    }
 
-
    if (mAnimListWidget->item(row,0))
    {
-      emit StopAnimation( mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), delay );
+      emit StopAnimation(mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), delay);
    } 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnItemDoubleClicked(QTableWidgetItem *item)
+void MainWindow::OnItemDoubleClicked(QTableWidgetItem* item)
 {
    if (item->column() == 0)
    {
@@ -848,7 +854,41 @@ void MainWindow::OnToggleDisplayError(bool shouldDisplay)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnStartAction( int row )
+void MainWindow::OnToggleFlipVertical()
+{
+   static float verticalScalar = 1.0f;
+   verticalScalar *= -1.0f;
+
+   const std::vector<PoseMeshItem*>& itemList = mPoseMeshScene->GetPoseMeshItemList();
+
+   // Flip the +/- directions of the vertical axis
+   for (size_t itemIndex = 0; itemIndex < itemList.size(); ++itemIndex)
+   {
+      itemList[itemIndex]->SetVerticalScale(verticalScalar);
+   }
+
+   mPoseMeshScene->update();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnToggleFlipHorizontal()
+{
+   static float horizontalScalar = 1.0f;
+   horizontalScalar *= -1.0f;
+
+   const std::vector<PoseMeshItem*>& itemList = mPoseMeshScene->GetPoseMeshItemList();
+
+   // Flip the +/- directions of the horizontal axis
+   for (size_t itemIndex = 0; itemIndex < itemList.size(); ++itemIndex)
+   {
+      itemList[itemIndex]->SetHorizontalScale(horizontalScalar);
+   }
+
+   mPoseMeshScene->update();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnStartAction(int row)
 {
    float delayIn = 0.f;
    float delayOut = 0.f;
@@ -870,7 +910,7 @@ void MainWindow::OnStartAction( int row )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnDisplayError( const QString &msg )
+void MainWindow::OnDisplayError(const QString& msg)
 {
-   QMessageBox::warning(this, "AnimationViewer", msg );
+   QMessageBox::warning(this, "AnimationViewer", msg);
 }
