@@ -11,3 +11,7 @@ ADD_DEPENDENCIES( testPython
                    PyDtUtil
                    PyDtCore
                 )
+
+IF (MSVC)
+  SET(CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:python25_d") #ignore the auto-link library Python adds in
+ENDIF (MSVC)
