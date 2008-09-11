@@ -13,7 +13,8 @@
 #include <osg/Group>
 #include <osgViewer/View>
 
-#include <ode/ode.h>
+#include <ode/objects.h>
+#include <ode/collision.h>
 
 #include <dtCore/camera.h>
 #include <dtCore/infinitelight.h>
@@ -34,6 +35,9 @@ namespace dtCore
 // dTriIndex is a macro hack in delta for ODE < 0.10. For 0.10 it's a typedef, so this will only
 // exist for 0.10 and later.
 #ifndef dTriIndex
+
+#include <ode/odeinit.h>
+
 class ODELifeCycle
 {
 public:

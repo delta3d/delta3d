@@ -27,8 +27,7 @@
 #include <osg/Matrix>
 #include <dtCore/scene.h>
 
-#include <ode/ode.h>
-
+#include <ode/contact.h>
 #include <vector>
 
 namespace dtCore

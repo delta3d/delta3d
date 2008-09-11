@@ -23,6 +23,7 @@
 #include <dtCore/fpscollider.h>
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <ode/collision.h>
 
 namespace dtCore
 {

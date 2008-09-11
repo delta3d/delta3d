@@ -1,6 +1,6 @@
 
 
-#include <ode/ode.h>
+#include <ode/objects.h>
 #include <boost/python.hpp>
 
 #ifdef __GNUG__
