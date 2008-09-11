@@ -32,6 +32,7 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 
+const std::string Transformable::COLLISION_GEODE_ID("__DELTA3D_COLLISION_GEOMETRY__");
 
 ///////////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(Transformable::CollisionGeomType)
@@ -831,6 +832,7 @@ void Transformable::RenderCollisionGeometry(bool enable)
       }
 
       mGeomGeod = mGeomWrap->CreateRenderedCollisionGeometry();
+      mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
 
       xform->addChild(mGeomGeod.get());
 
