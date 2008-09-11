@@ -90,6 +90,9 @@ namespace dtCore
          ABS_CS  ///< The Transform coordinate system is absolute
       } ;
 
+      ///Used to identify the collision geometry node if RenderCollisionGeometry is
+      ///set to true.
+      static const std::string COLLISION_GEODE_ID;
 
       Transformable(const std::string& name = "Transformable");
 
