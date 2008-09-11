@@ -832,10 +832,13 @@ void Transformable::RenderCollisionGeometry(bool enable)
       }
 
       mGeomGeod = mGeomWrap->CreateRenderedCollisionGeometry();
-      mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
 
-      xform->addChild(mGeomGeod.get());
+      if (mGeomGeod.valid())
+      {
+         mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
 
+         xform->addChild(mGeomGeod.get());
+      }
    } //end if enabled==true
    else
    {
