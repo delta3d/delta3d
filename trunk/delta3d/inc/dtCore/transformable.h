@@ -441,13 +441,6 @@ namespace dtCore
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
-   protected:
-
-      /**
-       * The last geometry transform reported to ODE.
-       */
-      Transform mGeomTransform;
-
    private:
       void Ctor();
 

@@ -212,10 +212,11 @@ void Physical::PostPhysicsStepUpdate()
       newRotation(1,2) = rotation[9];
       newRotation(2,2) = rotation[10];
 
-      mGeomTransform.SetTranslation( position[0], position[1], position[2] );
-      mGeomTransform.SetRotation(newRotation);
+      dtCore::Transform newTransform;     
+      newTransform.SetTranslation(position[0], position[1], position[2]);
+      newTransform.SetRotation(newRotation);
 
-      this->SetTransform(mGeomTransform);
+      this->SetTransform(newTransform);
    }
 }
 
