@@ -1,5 +1,6 @@
 #include <dtCore/odegeomwrap.h>
 #include <dtCore/boundingboxvisitor.h>
+#include <dtCore/transform.h>
 #include <dtUtil/log.h>
 #include <ode/collision.h>
 #include <osg/TriangleFunctor>
@@ -807,4 +808,129 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
    return geode;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEGeomWrap::UpdateGeomTransform(const dtCore::Transform& newTransform)
+{
+   // If the supplied Transform is different than the current position
+   // and rotation of the Geom, then set the Geom to match.
+    
+   if (GetCollisionDetection() == false) {return;}
+
+   dtCore::Transform odeTransform;
+   GetGeomTransform(odeTransform);
+
+   if(!newTransform.EpsilonEquals(odeTransform))
+   {
+      osg::Matrix rotation;
+      osg::Vec3 position;
+
+      newTransform.GetTranslation(position);
+      newTransform.GetRotation(rotation);
+
+      // Set translation
+      dGeomSetPosition(GetGeomID(), position[0], position[1], position[2]);
+
+      // Set rotation
+      dMatrix3 dRot;
+
+      dRot[0] = rotation(0,0);
+      dRot[1] = rotation(1,0);
+      dRot[2] = rotation(2,0);
+
+      dRot[4] = rotation(0,1);
+      dRot[5] = rotation(1,1);
+      dRot[6] = rotation(2,1);
+
+      dRot[8] = rotation(0,2);
+      dRot[9] = rotation(1,2);
+      dRot[10] = rotation(2,2);
+
+      dGeomSetRotation(GetGeomID(), dRot);
+
+      int geomClass = dGeomGetClass(GetGeomID());
+      dGeomID id = GetGeomID();
+
+      while (geomClass == dGeomTransformClass)
+      {
+         id = dGeomTransformGetGeom(id);
+         if(id == 0)
+         {
+            return; // In case we haven't assigned a collision shape yet
+         }
+         geomClass = dGeomGetClass(id);
+      }
+
+
+      if(id)
+      {
+         switch(dGeomGetClass(id))
+         {
+         case dBoxClass:
+            {
+               dVector3 originalSide;
+               dGeomBoxGetLengths(GetOriginalGeomID(), originalSide);
+               dGeomBoxSetLengths(id, originalSide[0], originalSide[1], originalSide[2]);
+            }
+            break;
+         case dSphereClass:
+            {
+               dReal originalRadius = dGeomSphereGetRadius(GetOriginalGeomID());
+               dGeomSphereSetRadius(id, originalRadius);
+            }
+            break;
+         case dCCylinderClass:
+            {
+               dReal originalRadius, originalLength;
+               dGeomCCylinderGetParams(GetOriginalGeomID(), &originalRadius, &originalLength);
+
+               dGeomCCylinderSetParams(id, originalRadius, originalLength);
+            }
+            break;
+         case dRayClass:
+            {
+               dVector3 start, dir;
+               dReal originalLength = dGeomRayGetLength(GetOriginalGeomID());
+
+               dGeomRayGet(GetOriginalGeomID(), start, dir);
+
+               // Ignore x/y scaling, use z to scale ray
+               dGeomRaySetLength(id, originalLength);
+            }
+            break;
+         case dTriMeshClass:
+            {
+               SetCollisionMesh();
+            }
+            break;
+         default:
+            break;
+         }
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEGeomWrap::GetGeomTransform(dtCore::Transform& xform) const
+{
+   const dReal* position = dGeomGetPosition(GetGeomID());
+   const dReal* rotation = dGeomGetRotation(GetGeomID());
+
+   osg::Matrix newRotation;
+
+   newRotation(0,0) = rotation[0];
+   newRotation(1,0) = rotation[1];
+   newRotation(2,0) = rotation[2];
+
+   newRotation(0,1) = rotation[4];
+   newRotation(1,1) = rotation[5];
+   newRotation(2,1) = rotation[6];
+
+   newRotation(0,2) = rotation[8];
+   newRotation(1,2) = rotation[9];
+   newRotation(2,2) = rotation[10];
+
+   xform.SetTranslation( position[0], position[1], position[2] );
+   xform.SetRotation(newRotation);
 }

@@ -18,6 +18,8 @@ namespace osg
 
 namespace dtCore
 {
+   class Transform;
+
    /**
    * We need an enumeration to allow the user to set which type
    * of collision geometry to use.  The other properties in this
@@ -215,8 +217,27 @@ namespace dtCore
       unsigned long GetCollisionCollideBits() const;
 
 
+      /** Create a renderable shape to match the collision shape. 
+        * ODEGeomWrap does not maintain ownership of the returned 
+        * object.
+        * @return A renderable geometry node which matches the current
+        * collision geometry shape.
+        */
       dtCore::RefPtr<osg::Geode> CreateRenderedCollisionGeometry() const;
 
+      /** If needed, set the ODE Geom position and rotation to match the
+        * supplied Transform. If a Transformable's position or rotation is manually
+        * set, then this method should be called to keep the ODE Geom
+        * in sync.
+        * @param newTransform The potentially new position/rotation of the Transformable
+        */
+      void UpdateGeomTransform(const dtCore::Transform& newTransform);
+
+      /** Copy the ODE Geom's current rotation and translation into
+        * the supplied Transform.
+        * @param xform The Transform to copy the values into.
+        */
+      void GetGeomTransform(dtCore::Transform& xform) const;
 
    protected:
       virtual ~ODEGeomWrap();

@@ -19,7 +19,6 @@
 #include <osg/StateSet>
 #include <osg/Version> // For #ifdef
 
-#include <ode/collision.h>
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
 #include <osg/CameraNode>
@@ -713,101 +712,13 @@ void Transformable::ClearCollisionGeometry()
 /////////////////////////////////////////////////////////////
 void Transformable::PrePhysicsStepUpdate()
 {
-   if (!GetCollisionDetection()) return;
+   if (mGeomWrap->GetCollisionDetection() == false) {return;}
 
    Transform transform;
 
    this->GetTransform(transform, Transformable::ABS_CS);
 
-   if(!transform.EpsilonEquals(mGeomTransform))
-   {
-      mGeomTransform = transform;
-
-      osg::Matrix rotation;
-      osg::Vec3 position;
-
-      mGeomTransform.GetTranslation(position);
-      mGeomTransform.GetRotation(rotation);
-
-      // Set translation
-      dGeomSetPosition(mGeomWrap->GetGeomID(), position[0], position[1], position[2]);
-
-      // Set rotation
-      dMatrix3 dRot;
-
-      dRot[0] = rotation(0,0);
-      dRot[1] = rotation(1,0);
-      dRot[2] = rotation(2,0);
-
-      dRot[4] = rotation(0,1);
-      dRot[5] = rotation(1,1);
-      dRot[6] = rotation(2,1);
-
-      dRot[8] = rotation(0,2);
-      dRot[9] = rotation(1,2);
-      dRot[10] = rotation(2,2);
-
-      dGeomSetRotation(mGeomWrap->GetGeomID(), dRot);
-
-      int geomClass = dGeomGetClass(mGeomWrap->GetGeomID());
-      dGeomID id = mGeomWrap->GetGeomID();
-
-      while (geomClass == dGeomTransformClass)
-      {
-         id = dGeomTransformGetGeom(id);
-         if(id == 0)
-         {
-            return; // In case we haven't assigned a collision shape yet
-         }
-         geomClass = dGeomGetClass(id);
-      }
-
-      if(id)
-      {
-         switch(dGeomGetClass(id))
-         {
-         case dBoxClass:
-            {
-               dVector3 originalSide;
-               dGeomBoxGetLengths(mGeomWrap->GetOriginalGeomID(), originalSide);
-               dGeomBoxSetLengths(id, originalSide[0], originalSide[1], originalSide[2]);
-            }
-            break;
-         case dSphereClass:
-            {
-               dReal originalRadius = dGeomSphereGetRadius(mGeomWrap->GetOriginalGeomID());
-               dGeomSphereSetRadius(id, originalRadius);
-            }
-            break;
-         case dCCylinderClass:
-            {
-               dReal originalRadius, originalLength;
-               dGeomCCylinderGetParams(mGeomWrap->GetOriginalGeomID(), &originalRadius, &originalLength);
-
-               dGeomCCylinderSetParams(id, originalRadius, originalLength);
-            }
-            break;
-         case dRayClass:
-            {
-               dVector3 start, dir;
-               dReal originalLength = dGeomRayGetLength(mGeomWrap->GetOriginalGeomID());
-
-               dGeomRayGet(mGeomWrap->GetOriginalGeomID(), start, dir);
-
-               // Ignore x/y scaling, use z to scale ray
-               dGeomRaySetLength(id, originalLength);
-            }
-            break;
-         case dTriMeshClass:
-            {
-               SetCollisionMesh();
-            }
-            break;
-         default:
-            break;
-         }
-      }
-   }
+   mGeomWrap->UpdateGeomTransform(transform);
 }
 
 /////////////////////////////////////////////////////////////
