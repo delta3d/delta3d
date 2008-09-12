@@ -84,8 +84,6 @@ namespace dtCore
       osg::Node*        _haltTraversalAtNode;
       osg::NodePathList _nodePaths;
    };
-
-
 }
 
 /////////////////////////////////////////////////////////////
@@ -792,4 +790,14 @@ void Transformable::RemoveRenderedCollisionGeometry()
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+const ODEGeomWrap* Transformable::GetGeomWrapper() const
+{
+   return mGeomWrap.get();
+}
 
+//////////////////////////////////////////////////////////////////////////
+ODEGeomWrap* Transformable::GetGeomWrapper()
+{
+   return mGeomWrap.get();
+}

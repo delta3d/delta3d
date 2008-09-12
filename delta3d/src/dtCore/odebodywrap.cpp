@@ -1,4 +1,5 @@
 #include <dtCore/odebodywrap.h>
+#include <dtCore/transform.h>
 #include <ode/objects.h>
 
 dtCore::ODEBodyWrap::ODEBodyWrap()
@@ -260,3 +261,67 @@ void dtCore::ODEBodyWrap::ApplyRelTorque(const osg::Vec3& torque)
       dBodyAddRelTorque(GetBodyID(), torque.x(), torque.y(), torque.z());
    }
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::GetBodyTransform(dtCore::Transform& xform) const
+{
+   const dReal* position = dBodyGetPosition(GetBodyID());
+   const dReal* rotation = dBodyGetRotation(GetBodyID());
+
+   osg::Matrix newRotation;
+
+   newRotation(0,0) = rotation[0];
+   newRotation(1,0) = rotation[1];
+   newRotation(2,0) = rotation[2];
+
+   newRotation(0,1) = rotation[4];
+   newRotation(1,1) = rotation[5];
+   newRotation(2,1) = rotation[6];
+
+   newRotation(0,2) = rotation[8];
+   newRotation(1,2) = rotation[9];
+   newRotation(2,2) = rotation[10];
+
+   xform.SetTranslation( position[0], position[1], position[2] );
+   xform.SetRotation(newRotation);
+
+}
+
+
+void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransform)
+{
+   if (DynamicsEnabled() == false) {return;}
+
+   dtCore::Transform odeTransform;
+   GetBodyTransform(odeTransform);
+
+   if(!newTransform.EpsilonEquals(odeTransform))
+   {
+      osg::Matrix rotation;
+      osg::Vec3 position;
+
+      newTransform.GetTranslation(position);
+      newTransform.GetRotation(rotation);
+
+      // Set translation
+      dBodySetPosition(GetBodyID(), position[0], position[1], position[2]);
+
+      // Set rotation
+      dMatrix3 dRot;
+
+      dRot[0] = rotation(0,0);
+      dRot[1] = rotation(1,0);
+      dRot[2] = rotation(2,0);
+
+      dRot[4] = rotation(0,1);
+      dRot[5] = rotation(1,1);
+      dRot[6] = rotation(2,1);
+
+      dRot[8] = rotation(0,2);
+      dRot[9] = rotation(1,2);
+      dRot[10] = rotation(2,2);
+
+      dBodySetRotation(GetBodyID(), dRot);
+   }
+}
+

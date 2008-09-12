@@ -160,6 +160,14 @@ namespace dtCore
          void GetInertiaTensor(osg::Matrix& mat) const;
 
          /**
+         * Updates the state of this object just before a physical
+         * simulation step.  Should only be called by dtCore::Scene.
+         * The default implementation updates the state of the body
+         * to reflect any user-applied transformation.
+         */
+         virtual void PrePhysicsStepUpdate();
+
+         /**
           * Updates the state of this object just after a physical
           * simulation step.  Should only be called by dtCore::Scene.
           * The default implementation copies the new object
