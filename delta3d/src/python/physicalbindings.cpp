@@ -6,6 +6,7 @@
 #include <dtCore/physical.h>
 #include <osg/MatrixTransform>
 #include <ode/common.h>
+#include <ode/mass.h>
 
 using namespace boost::python;
 using namespace dtCore;
