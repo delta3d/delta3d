@@ -6,6 +6,7 @@
 #include <dtCore/odebodywrap.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <ode/collision.h>
+#include <ode/objects.h>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -185,6 +186,31 @@ void Physical::GetInertiaTensor(osg::Matrix& dest) const
    mBodyWrap->GetInertiaTensor(dest);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void Physical::PrePhysicsStepUpdate()
+{
+   //Check to see if we need to update the ODE body to match
+   //our current Transform.  This is in case the user set the Transform
+   //manually.  If the dynamics aren't enabled, then pass the call to 
+   //Transform in case it wants to do something.
+
+   if (mBodyWrap->DynamicsEnabled())
+   {
+      Transform transform;
+
+      this->GetTransform(transform, Transformable::ABS_CS);
+
+      //update the body with our current Transform
+      mBodyWrap->UpdateBodyTransform(transform);
+   }
+   else
+   {
+      //otherwise, collision detection might be enabled so let 
+      //Transformable do it's thing.
+      Transformable::PrePhysicsStepUpdate();
+   }
+}
+
 /**
  * Updates the state of this object just after a physical
  * simulation step.  Should only be called by dtCore::Scene.
@@ -195,8 +221,8 @@ void Physical::PostPhysicsStepUpdate()
 {  
    if( DynamicsEnabled() )
    {
-      const dReal* position = dGeomGetPosition(GetGeomID());
-      const dReal* rotation = dGeomGetRotation(GetGeomID());
+      const dReal* position = dBodyGetPosition(mBodyWrap->GetBodyID());
+      const dReal* rotation = dBodyGetRotation(mBodyWrap->GetBodyID());
 
       osg::Matrix newRotation;
 
@@ -227,3 +253,4 @@ void Physical::Ctor()
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PHYSICAL);
 }
+

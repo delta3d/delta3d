@@ -441,6 +441,18 @@ namespace dtCore
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
+      /** 
+       * Get the const internal ODE Geom wrapper object.
+       * @return The ODE Geom collision wrapper
+       */
+      const ODEGeomWrap* GetGeomWrapper() const;
+
+      /** 
+      * Get the internal ODE Geom wrapper object.
+      * @return The ODE Geom collision wrapper
+      */
+      ODEGeomWrap* GetGeomWrapper();
+
    private:
       void Ctor();
 
