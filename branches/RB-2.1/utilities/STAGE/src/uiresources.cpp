@@ -37,60 +37,60 @@ namespace dtEditQt
     {        
         UIResources::GPL_LICENSE_FILE = "gpl.txt";
         
-        ICON_FILE_NEW_MAP = dtCore::FindFileInPathList("icons/newmap_small.png");
-        ICON_FILE_OPEN_MAP = dtCore::FindFileInPathList("icons/openmap_small.png");
-        ICON_FILE_SAVE = dtCore::FindFileInPathList("icons/savemap_small.png");
+        ICON_FILE_NEW_MAP = ":/icons/newmap_small.png";
+        ICON_FILE_OPEN_MAP = ":/icons/openmap_small.png";
+        ICON_FILE_SAVE = ":/icons/savemap_small.png";
 
-        ICON_EDIT_DUPLICATE = dtCore::FindFileInPathList("icons/duplicate_small.png");
-        ICON_EDIT_DELETE = dtCore::FindFileInPathList("icons/trash_small.png");
-        ICON_GROUND_CLAMP = dtCore::FindFileInPathList("icons/groundclamp_small.png");
-        ICON_EDIT_UNDO = dtCore::FindFileInPathList("icons/undo.png");
-        ICON_EDIT_REDO = dtCore::FindFileInPathList("icons/redo.png");
+        ICON_EDIT_DUPLICATE = ":/icons/duplicate_small.png";
+        ICON_EDIT_DELETE = ":/icons/trash_small.png";
+        ICON_GROUND_CLAMP = ":/icons/groundclamp_small.png";
+        ICON_EDIT_UNDO = ":/icons/undo.png";
+        ICON_EDIT_REDO = ":/icons/redo.png";
 
-        ICON_TOOLMODE_CAMERA = dtCore::FindFileInPathList("icons/cameramode_small.png");
-        ICON_TOOLMODE_SELECT = dtCore::FindFileInPathList("icons/selectmode_small.png");
-        ICON_TOOLMODE_TRANSLATE = dtCore::FindFileInPathList("icons/translatemode_small.png");
-        ICON_TOOLMODE_ROTATE = dtCore::FindFileInPathList("icons/rotatemode_small.png");
+        ICON_TOOLMODE_CAMERA = ":/icons/cameramode_small.png";
+        ICON_TOOLMODE_SELECT = ":/icons/selectmode_small.png";
+        ICON_TOOLMODE_TRANSLATE = ":/icons/translatemode_small.png";
+        ICON_TOOLMODE_ROTATE = ":/icons/rotatemode_small.png";
 
-        ICON_VIEWMODE_TEXTURES = dtCore::FindFileInPathList("icons/texturemode_tiny.png");
-        ICON_VIEWMODE_LIGHTING = dtCore::FindFileInPathList("icons/lightingmode_tiny.png");
-        ICON_VIEWMODE_WIREFRAME = dtCore::FindFileInPathList("icons/wireframemode_tiny.png");
-        ICON_VIEWMODE_TEXTURES_AND_LIGHTING = dtCore::FindFileInPathList("icons/texturelightingmode_tiny.png");
+        ICON_VIEWMODE_TEXTURES = ":/icons/texturemode_tiny.png";
+        ICON_VIEWMODE_LIGHTING = ":/icons/lightingmode_tiny.png";
+        ICON_VIEWMODE_WIREFRAME = ":/icons/wireframemode_tiny.png";
+        ICON_VIEWMODE_TEXTURES_AND_LIGHTING = ":/icons/texturelightingmode_tiny.png";
 
-        ICON_TINY_FOLDER = dtCore::FindFileInPathList("icons/folder_tiny.png");
-        ICON_TINY_FOLDER_OPEN = dtCore::FindFileInPathList("icons/folderopen_tiny.png");
+        ICON_TINY_FOLDER = ":/icons/folder_tiny.png";
+        ICON_TINY_FOLDER_OPEN = ":/icons/folderopen_tiny.png";
 
-        LARGE_ICON_EDIT_DUPLICATE = dtCore::FindFileInPathList("icons/duplicate_large.png");
-        LARGE_ICON_EDIT_DELETE = dtCore::FindFileInPathList("icons/trash_large.png");
-        LARGE_ICON_EDIT_GOTO = dtCore::FindFileInPathList("icons/goto_large.png");
-        LARGE_ICON_EDIT_IMPORT = dtCore::FindFileInPathList("icons/import_large.png");
-        LARGE_ICON_EDIT_REFRESH = dtCore::FindFileInPathList("icons/refresh_large.png");
-        LARGE_ICON_EDIT_CATEGORY = dtCore::FindFileInPathList("icons/category_large.png");       
+        LARGE_ICON_EDIT_DUPLICATE = ":/icons/duplicate_large.png";
+        LARGE_ICON_EDIT_DELETE = ":/icons/trash_large.png";
+        LARGE_ICON_EDIT_GOTO = ":/icons/goto_large.png";
+        LARGE_ICON_EDIT_IMPORT = ":/icons/import_large.png";
+        LARGE_ICON_EDIT_REFRESH = ":/icons/refresh_large.png";
+        LARGE_ICON_EDIT_CATEGORY = ":/icons/category_large.png";       
 
-        ICON_SOUND_STOP = dtCore::FindFileInPathList("icons/stop_sound.png");
-        ICON_SOUND_PLAY = dtCore::FindFileInPathList("icons/play_sound.png");
+        ICON_SOUND_STOP = ":/icons/stop_sound.png";
+        ICON_SOUND_PLAY = ":/icons/play_sound.png";
 
-        ICON_EDITOR_SKELETAL_MESH   = dtCore::FindFileInPathList("icons/subeditor_skeletal.png");
-        ICON_EDITOR_PARTICLE_SYSTEM = dtCore::FindFileInPathList("icons/particle_tab.png");
-        ICON_EDITOR_VIEWER          = dtCore::FindFileInPathList("icons/viewer.png");       
+        ICON_EDITOR_SKELETAL_MESH   = ":/icons/subeditor_skeletal.png";
+        ICON_EDITOR_PARTICLE_SYSTEM = ":/icons/particle_tab.png";
+        ICON_EDITOR_VIEWER          = ":/icons/viewer.png";       
 
-        ICON_SOUND_RESOURCE = dtCore::FindFileInPathList("icons/sound_resource.png");
-        ICON_STATICMESH_RESOURCE = dtCore::FindFileInPathList("icons/staticmesh_resource.png");
-        ICON_CHARACTER_RESOURCE = dtCore::FindFileInPathList("icons/character_resource.png");
-        ICON_TEXTURE_RESOURCE = dtCore::FindFileInPathList("icons/texture_resource.png");
-        ICON_PARTICLE_RESOURCE = dtCore::FindFileInPathList("icons/particle_resource.png");
-        ICON_TERRAIN_RESOURCE = dtCore::FindFileInPathList("icons/terrain_resource.png");
+        ICON_SOUND_RESOURCE = ":/icons/sound_resource.png";
+        ICON_STATICMESH_RESOURCE = ":/icons/staticmesh_resource.png";
+        ICON_CHARACTER_RESOURCE = ":/icons/character_resource.png";
+        ICON_TEXTURE_RESOURCE = ":/icons/texture_resource.png";
+        ICON_PARTICLE_RESOURCE = ":/icons/particle_resource.png";
+        ICON_TERRAIN_RESOURCE = ":/icons/terrain_resource.png";
 
-        ICON_SOUND_TAB =dtCore::FindFileInPathList ("icons/sound_tab.png");
-        ICON_STATICMESH_TAB = dtCore::FindFileInPathList("icons/staticmesh_tab.png");
-        ICON_CHARACTER_TAB = dtCore::FindFileInPathList("icons/character_tab.png");
-        ICON_TEXTURE_TAB = dtCore::FindFileInPathList("icons/texture_tab.png");
-        ICON_PARTICLE_TAB = dtCore::FindFileInPathList("icons/particle_tab.png");
-        ICON_TERRAIN_TAB = dtCore::FindFileInPathList("icons/terrain_tab.png");
+        ICON_SOUND_TAB = ":/icons/sound_tab.png";
+        ICON_STATICMESH_TAB = ":/icons/staticmesh_tab.png";
+        ICON_CHARACTER_TAB = ":/icons/character_tab.png";
+        ICON_TEXTURE_TAB = ":/icons/texture_tab.png";
+        ICON_PARTICLE_TAB = ":/icons/particle_tab.png";
+        ICON_TERRAIN_TAB = ":/icons/terrain_tab.png";
 
-        ICON_ACTOR = dtCore::FindFileInPathList("icons/actor_icon.png");
-        SPLASH_SCREEN = dtCore::FindFileInPathList("icons/splash.png");
-        ICON_APPLICATION = dtCore::FindFileInPathList("icons/application_icon.png");
+        ICON_ACTOR = ":/icons/actor_icon.png";
+        SPLASH_SCREEN = ":/icons/splash.png";
+        ICON_APPLICATION = ":/icons/application_icon.png";
     }
 
     //STATIC VARS...
