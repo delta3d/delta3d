@@ -88,7 +88,7 @@ namespace dtEditQt
         * Recursive function to construct the tree
         * @param An iterator of a tree that contains ResourceTreeNode
         */
-        void recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator &iter, QIcon *resourceIcon = 0);
+        void recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator &iter, const QIcon &resourceIcon);
 
         /**
         * This returns a boolean if the current resource is in fact a resource

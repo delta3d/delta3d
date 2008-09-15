@@ -50,12 +50,12 @@ namespace dtEditQt
     SoundBrowser::SoundBrowser(dtDAL::DataType &type,QWidget *parent)
         : ResourceAbstractBrowser(&type,parent)
     {
-        sound = new QSound("");
+        sound = new QSound("",this);
 
         // This sets our resource icon that is visible on leaf nodes
-        resourceIcon = new QIcon();
-        resourceIcon->addPixmap(QPixmap(UIResources::ICON_SOUND_RESOURCE.c_str()));
-        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+        QIcon resourceIcon;
+        resourceIcon.addPixmap(QPixmap(UIResources::ICON_SOUND_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = resourceIcon;
 
         // setup the grid layouts
         grid = new QGridLayout(this);

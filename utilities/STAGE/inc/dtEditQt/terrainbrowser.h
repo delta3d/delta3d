@@ -38,7 +38,6 @@ class QGridLayout;
 class QPushButton;
 class QKeyEvent;
 class QContextMenuEvent;
-class QIcon;
 
 namespace dtEditQt {
     
@@ -77,10 +76,6 @@ namespace dtEditQt {
         
         // Layout Objects
         QGridLayout *grid;
-
-        // This sets the icon for our leaf nodes
-        QIcon *resourceIcon;
-
     };
 }
 #endif

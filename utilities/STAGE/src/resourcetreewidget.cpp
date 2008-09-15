@@ -74,12 +74,12 @@ namespace dtEditQt{
         return this->myResource;
     }
     ///////////////////////////////////////////////////////////////////////////////
-    void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QIcon *resourceIcon)
+    void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, const QIcon &resourceIcon)
     { 
         
-        QIcon *icon = new QIcon();
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
+        QIcon icon;
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
         for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
             i != iter.tree_ref().end();
@@ -96,7 +96,7 @@ namespace dtEditQt{
                 category->setCategoryName(QString(i->getNodeText().c_str()));
                 // iterate down the branch until we are finished with this node
                 category->recursivelyCreateResourceTree(i,resourceIcon);
-                category->setIcon(0,*icon);
+                category->setIcon(0,icon);
                 
             }
             else
@@ -105,7 +105,7 @@ namespace dtEditQt{
                 ResourceTreeWidget *innerNode = new ResourceTreeWidget(this,i->getResource());
                 innerNode->setText(0,QString(i->getNodeText().c_str()));
                 innerNode->setIfResource(true);
-                innerNode->setIcon(0,*resourceIcon);
+                innerNode->setIcon(0,resourceIcon);
             }
          }
     }
