@@ -208,7 +208,7 @@ namespace dtEditQt
         * @param QIcon resource icon for our leaf nodes
         * @param QWidget the parent of the widget
         */
-        virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent, QIcon *resourceIcon);
+        virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent, const QIcon &resourceIcon);
 
     protected:
     

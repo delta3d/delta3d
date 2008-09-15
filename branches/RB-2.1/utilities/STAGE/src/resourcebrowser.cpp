@@ -50,23 +50,23 @@ namespace dtEditQt
     {
         setWindowTitle(tr("Resources"));
         // container
-        tabC              = new TabContainer();
+        tabC              = new TabContainer(this);
 
         // tabs
-        tabMesh           = new TabWrapper();
-        tabSkeletal       = new TabWrapper();
-        tabSound          = new TabWrapper();
-        tabParticle       = new TabWrapper();
-        tabTexture        = new TabWrapper();
-        tabTerrain        = new TabWrapper();
+        tabMesh           = new TabWrapper(this);
+        tabSkeletal       = new TabWrapper(this);
+        tabSound          = new TabWrapper(this);
+        tabParticle       = new TabWrapper(this);
+        tabTexture        = new TabWrapper(this);
+        tabTerrain        = new TabWrapper(this);
 
         // widgets
-        meshWidget        = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH);
-        skeletalWidget    = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH);
-        soundWidget       = new SoundBrowser(dtDAL::DataType::SOUND);
-        particleWidget    = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM);
-        textureWidget     = new TextureBrowser(dtDAL::DataType::TEXTURE);
-        terrainWidget     = new TerrainBrowser(dtDAL::DataType::TERRAIN);
+        meshWidget        = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH,this);
+        skeletalWidget    = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH,this);
+        soundWidget       = new SoundBrowser(dtDAL::DataType::SOUND,this);
+        particleWidget    = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM,this);
+        textureWidget     = new TextureBrowser(dtDAL::DataType::TEXTURE,this);
+        terrainWidget     = new TerrainBrowser(dtDAL::DataType::TERRAIN,this);
 
         addTabs();
 

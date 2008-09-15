@@ -39,7 +39,6 @@ class QGridLayout;
 class QPushButton;
 class QKeyEvent;
 class QContextMenuEvent;
-class QIcon;
 
 namespace dtEditQt {
 
@@ -128,11 +127,9 @@ namespace dtEditQt {
 
         // Layout Objects
         QGridLayout *grid;
-
-        // Resource Icon - this is our leaf node icon
-        QIcon *resourceIcon;
     };
 }
 
 #endif
+
 

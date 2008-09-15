@@ -39,7 +39,6 @@ class QCheckBox;
 class QAction;
 class QMenu;
 class QContextMenuEvent;
-class QIcon;
 
 namespace dtCore 
 {
@@ -135,8 +134,6 @@ namespace dtEditQt
 
          // Actions
          QAction *setCreateAction;
-
-         QIcon *resourceIcon;
    };
 
 }

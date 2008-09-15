@@ -125,7 +125,7 @@ AudioManager::~AudioManager()
 
          // delete the sources
          alDeleteSources( mNumSources, mSource );
-         delete   mSource;
+         delete[]   mSource;
          CheckForError("alDeleteSources( mNumSources, mSource );", __FUNCTION__, __LINE__);
       }
 
