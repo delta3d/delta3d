@@ -42,22 +42,22 @@ namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
-    ActorTab::ActorTab(QWidget *parent)
+    ActorTab::ActorTab(QWidget *parent)  : QDockWidget(parent)
     {
         setWindowTitle(tr("Actors"));
 
         // container
-        tabC = new TabContainer();
+        tabC = new TabContainer(this);
 
         // tabs
-        tabActorBrowser = new TabWrapper();
-        tabActorSearch = new TabWrapper();
-        tabGlobalActor = new TabWrapper();
+        tabActorBrowser = new TabWrapper(this);
+        tabActorSearch = new TabWrapper(this);
+        tabGlobalActor = new TabWrapper(this);
 
         // widgets
-        actorBrowserWidget = new ActorBrowser();
-        actorSearchWidget = new ActorSearcher();
-        actorGlobalWidget = new ActorGlobalBrowser();
+        actorBrowserWidget = new ActorBrowser(this);
+        actorSearchWidget = new ActorSearcher(this);
+        actorGlobalWidget = new ActorGlobalBrowser(this);
 
         this->addTabs();
 

@@ -61,9 +61,9 @@ namespace dtEditQt
         : ResourceAbstractBrowser(&type,parent)
     {
         // This sets our resource icon that is visible on leaf nodes
-        resourceIcon = new QIcon();
-        resourceIcon->addPixmap(QPixmap(UIResources::ICON_TERRAIN_RESOURCE.c_str()));
-        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+        QIcon resourceIcon;
+        resourceIcon.addPixmap(QPixmap(UIResources::ICON_TERRAIN_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = resourceIcon;
 
         // setup right mouse click context menu
         createActions();

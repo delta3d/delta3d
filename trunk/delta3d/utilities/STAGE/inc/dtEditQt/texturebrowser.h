@@ -42,10 +42,8 @@ class QKeyEvent;
 class QContextMenuEvent;
 class QCheckBox;
 class QLabel;
-class QPixMap;
 class QScrollArea;
 class QLabel;
-class QIcon;
 
 namespace dtEditQt 
 {
@@ -131,7 +129,6 @@ namespace dtEditQt
 
         // Required for previewing textures
         QLabel *preview;
-        QPixmap *image;
         QScrollArea *scrollArea;
         QWidget *pixmapWrapper;
 
@@ -141,8 +138,6 @@ namespace dtEditQt
 
         // Buttons
         QPushButton *previewBtn;
-
-        QIcon *resourceIcon;
     };
 }
 

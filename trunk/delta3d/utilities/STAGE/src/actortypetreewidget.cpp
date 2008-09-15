@@ -52,12 +52,12 @@ namespace dtEditQt
         if (myActorType != NULL)
         {
             // This sets our actor icon
-            QIcon *actorIcon = new QIcon();
-            actorIcon->addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
+            QIcon actorIcon;
+            actorIcon.addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
 
             setText(0, myActorType->GetName().c_str());
             setToolTip(0, myActorType->GetDescription().c_str());
-            setIcon(0,*actorIcon);
+            setIcon(0,actorIcon);
         }
 
     }
@@ -73,11 +73,11 @@ namespace dtEditQt
         categorySegment = str;
         setText(0, categorySegment);
             
-        QIcon *icon = new QIcon();
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
+        QIcon icon;
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
-        setIcon(0,*icon);
+        setIcon(0,icon);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -91,11 +91,11 @@ namespace dtEditQt
         categorySegment = str;
         setText(0, categorySegment);
 
-        QIcon *icon = new QIcon();
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
-        icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
+        QIcon icon;
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
+        icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
-        setIcon(0,*icon);
+        setIcon(0,icon);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -67,9 +67,9 @@ namespace dtEditQt
     {
 
         // This sets our resource icon that is visible on leaf nodes
-        resourceIcon = new QIcon();
-        resourceIcon->addPixmap(QPixmap(UIResources::ICON_TEXTURE_RESOURCE.c_str()));
-        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+        QIcon resourceIcon;
+        resourceIcon.addPixmap(QPixmap(UIResources::ICON_TEXTURE_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = resourceIcon;
 
         QSplitter *splitter = new QSplitter(Qt::Vertical,this);
 
@@ -116,13 +116,12 @@ namespace dtEditQt
         QGroupBox *group = new QGroupBox(tr("Preview"));
         QHBoxLayout *hbox = new QHBoxLayout(group);
 
-        image = new QPixmap();
         scrollArea = new QScrollArea(group);
 
         pixmapWrapper = new QWidget(scrollArea);
         
         preview = new QLabel(pixmapWrapper);
-        preview->setPixmap(*image);
+        preview->setPixmap(QPixmap());
         preview->setShown(true);
         
         scrollArea->setWidget(pixmapWrapper);
@@ -211,11 +210,10 @@ namespace dtEditQt
                 scrollArea->setShown(true);
                 //Load the new file.
                 delete preview;
-                delete image;
-                image = new QPixmap();
-                image->load(file);
+                QPixmap image;
+                image.load(file);
                 preview = new QLabel(pixmapWrapper);
-                preview->setPixmap(*image);
+                preview->setPixmap(image);
                 preview->setShown(true);
 
                 pixmapWrapper->setMinimumSize(preview->sizeHint());
@@ -283,9 +281,7 @@ namespace dtEditQt
     {
         // When any item is selected, clear the texture
         delete preview;
-        delete image;
-        image = new QPixmap();
         preview = new QLabel(pixmapWrapper);
-        preview->setPixmap(*image);
+        preview->setPixmap(QPixmap());
     }
 }
