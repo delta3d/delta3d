@@ -44,16 +44,16 @@ public:
    ObjectWorkspace();
    ~ObjectWorkspace();
 
-   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget;     }
+   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
    QObject* GetResourceObject();          
 
-   virtual void dragEnterEvent(QDragEnterEvent *event);
-   virtual void dropEvent(QDropEvent *event);
+   virtual void dragEnterEvent(QDragEnterEvent* event);
+   virtual void dropEvent(QDropEvent* event);
    
 signals:
    void FileToLoad(const QString&);  
-   void LoadShaderDefinition(const QString &);
-   void ReloadShaderDefinition(const QString &);
+   void LoadShaderDefinition(const QString&);
+   void ReloadShaderDefinition(const QString&);
    
    void ToggleGrid(bool shouldShow);
 
@@ -71,7 +71,7 @@ private:
    void CreateShaderToolbarActions();
    void CreateToolbars();
    void UpdateResourceLists();
-   void LoadObjectFile(const QString &filename);
+   void LoadObjectFile(const QString& filename);
 
    // File menu
    QAction* mLoadShaderDefAction;
@@ -112,7 +112,7 @@ private slots:
    // File menu callbacks
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
-   void OnLoadGeometry(const std::string &fullName);
+   void OnLoadGeometry(const std::string& fullName);
    void OnChangeContext();
    
    void OnToggleGridClicked(bool toggledOn);

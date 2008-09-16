@@ -130,11 +130,11 @@ void ObjectViewer::Config()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadShaderFile(const QString &filename)
+void ObjectViewer::OnLoadShaderFile(const QString& filename)
 {
    try
    {
-      dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
       shaderManager.LoadShaderDefinitions(filename.toStdString());
 
       std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
@@ -147,7 +147,7 @@ void ObjectViewer::OnLoadShaderFile(const QString &filename)
          std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
          shaderGroupList[groupIndex]->GetAllShaders(programList);
 
-         const std::string &groupName = shaderGroupList[groupIndex]->GetName();
+         const std::string& groupName = shaderGroupList[groupIndex]->GetName();
 
          for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
          {
@@ -162,13 +162,13 @@ void ObjectViewer::OnLoadShaderFile(const QString &filename)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnReloadShaderFile(const QString &filename)
+void ObjectViewer::OnReloadShaderFile(const QString& filename)
 {
    dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions(filename.toStdString());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnLoadGeometryFile(const std::string &filename)
+void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
    // For now only allow 1 object
    if (mObject.valid())
@@ -212,11 +212,11 @@ void ObjectViewer::OnUnloadGeometryFile()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnApplyShader(const std::string &groupName, const std::string &programName)
+void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string& programName)
 {
-   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
 
-   dtCore::ShaderProgram *program = shaderManager.FindShaderPrototype(programName, groupName);
+   dtCore::ShaderProgram* program = shaderManager.FindShaderPrototype(programName, groupName);
    assert(program);
 
    shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
@@ -320,16 +320,16 @@ void ObjectViewer::OnEnterLightMode()
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitWireDecorator()
 {
-   osg::StateSet *stateset = new osg::StateSet;
-   osg::PolygonOffset *polyOffset = new osg::PolygonOffset;
+   osg::StateSet* stateset = new osg::StateSet;
+   osg::PolygonOffset* polyOffset = new osg::PolygonOffset;
    polyOffset->setFactor(-1.0f);
    polyOffset->setUnits(-1.0f);
-   osg::PolygonMode *polyMode = new osg::PolygonMode;
+   osg::PolygonMode* polyMode = new osg::PolygonMode;
    polyMode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
    stateset->setAttributeAndModes(polyOffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    stateset->setAttributeAndModes(polyMode, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-   osg::Material *material = new osg::Material;
+   osg::Material* material = new osg::Material;
    stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
