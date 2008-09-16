@@ -1,5 +1,5 @@
 varying vec3 vNormal;
-varying vec3 vLightDirection;
+varying vec3 vViewDir;
 varying float distance;
 varying vec3 vPos;
 
@@ -9,9 +9,8 @@ void main()
 {
    const float MAX_DISTANCE = 750.0;
 
-   // make normal and light dir in world space like the gl_vertex
-   vNormal = normalize(gl_Normal);
-   vLightDirection = normalize(vec3(gl_ModelViewMatrixInverse * gl_LightSource[0].position));   
+   // Get the normal vector in view space
+   vNormal = normalize(gl_NormalMatrix * gl_Normal);   
 
    //Pass the texture coordinate on through.
    gl_TexCoord[0] = gl_MultiTexCoord0;   
@@ -19,7 +18,10 @@ void main()
    //Calculate the distance from this vertex to the camera.
    vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
    vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
-   distance = length(ecPosition3);      
+   distance = length(ecPosition3);    
+
+   // Get the view direction in view space
+   vViewDir = -ecPosition.xyz;  
 
    //Compute the final vertex position in clip space.
    gl_Position = ftransform();  
