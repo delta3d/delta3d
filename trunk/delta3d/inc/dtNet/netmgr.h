@@ -1,22 +1,22 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-*/
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 #ifndef NETMGR_INCLUDED
 #define NETMGR_INCLUDED
 
@@ -27,15 +27,15 @@
 namespace dtNet
 {
 
-   /** This class is used as the base of all networking applications.  It 
+   /** This class is used as the base of all networking applications.  It
     *  handles creating a server or a client and provides a convenient place to
     *  implement application-specific functionality.
-    *  
+    *
     *  It can be used as-is, but it's anticipated that the end-user will derive
     *  from this class and override the virtual methods as needed.
     *
-    *  To use this class, create an instance and call InitializeGame(); this will 
-    *  setup the internals of the network.  Then call either SetupServer() or 
+    *  To use this class, create an instance and call InitializeGame(); this will
+    *  setup the internals of the network.  Then call either SetupServer() or
     *  SetupClient() to start the networking.  To end the networking, just call
     *  the Shutdown() method.
     *
@@ -52,30 +52,30 @@ namespace dtNet
       virtual ~NetMgr();
    public:
       ///Initialize the networking and game environment
-      void InitializeGame(const std::string &gameName, int gameVersion, const std::string &logFile );
+      void InitializeGame(const std::string& gameName, int gameVersion, const std::string& logFile);
 
       ///Setup and create a server
       bool SetupServer(int portNum);
 
       ///Setup and create a client to connect to the server
-      bool SetupClient(const std::string &host, int portNum );
+      bool SetupClient(const std::string& host, int portNum );
 
       ///Shutdown the networking
       void Shutdown();
 
       ///Send a packet to the given address
-      void SendPacket( const std::string &address, GNE::Packet &packet );
+      void SendPacket(const std::string& address, GNE::Packet& packet);
 
       ///Get the number of connections to the network
-      int GetNumConnections() const {return mConnections.size(); }
+      int GetNumConnections() const { return mConnections.size(); }
 
       ///Is this instance setup as a server?
-      bool GetIsServer() const {return mIsServer;}
+      bool GetIsServer() const { return mIsServer; }
 
       //////////////////////////////////////////////////////////////////////////
       /// virtual methods
       //////////////////////////////////////////////////////////////////////////
-      
+
       ///callback to signal a connection is successful
       virtual void OnListenSuccess();
 
@@ -123,7 +123,7 @@ namespace dtNet
       std::map<std::string, GNE::Connection*> mConnections;
 
       GNE::Mutex mMutex;
-   };  
+   };
 }
 
 #endif

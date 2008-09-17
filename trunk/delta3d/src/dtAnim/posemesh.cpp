@@ -22,7 +22,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
-   mBoneID = model->GetCoreBoneID( meshData.mBoneName );
+   mBoneID = model->GetCoreBoneID(meshData.mBoneName);
    assert(mBoneID != -1);
 
    // Store off the forward axis for this mesh
