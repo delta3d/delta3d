@@ -27,20 +27,20 @@ NetMgr::~NetMgr()
    GNE::ServerConnectionListener::closeAllListeners();
    GNE::Connection::disconnectAll();
    GNE::Timer::stopAll();
-   GNE::Thread::requestAllShutdown( GNE::Thread::USER ); 
+   GNE::Thread::requestAllShutdown( GNE::Thread::USER );
 }
 
 
 /** Initialize the network and setup the game parameters.  This method must be
  *  called before any other NetMgr methods.
- *  The supplied  game name and game version are used to during the connection process to 
+ *  The supplied  game name and game version are used to during the connection process to
  *  verify if the client/server match.
  *
  * @param gameName : the name of the network game
  * @param gameVersion : the version number of the game
  * @param logFile : a filename to log networking debug information
  */
-void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const std::string &logFile )
+void NetMgr::InitializeGame(const std::string& gameName, int gameVersion, const std::string& logFile)
 {
 
    if (GNE::initGNE(NL_IP, atexit) )
@@ -54,9 +54,9 @@ void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const 
 
    GNE::GNEProtocolVersionNumber num = GNE::getGNEProtocolVersion();
 
-   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,     
+   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
          "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
-   
+
 
    #ifdef _DEBUG
    GNE::initDebug(GNE::DLEVEL1 | GNE::DLEVEL2 | GNE::DLEVEL3 | GNE::DLEVEL4 | GNE::DLEVEL5, logFile.c_str());
@@ -194,7 +194,7 @@ void NetMgr::AddConnection(GNE::Connection *connection)
    mMutex.release();
 }
 
-/** Internal method used to remove an existing connection from the list.  If 
+/** Internal method used to remove an existing connection from the list.  If
  * the supplied connection is not in the list, it won't be removed.
  * @param connection : the connection to remove from the list
  */
@@ -203,7 +203,7 @@ void NetMgr::RemoveConnection(GNE::Connection *connection)
    mMutex.acquire();
 
    LOG_DEBUG("Removing connection from:" + connection->getRemoteAddress(true).toString() );
-   
+
    ConnectionIterator itr = mConnections.find(connection->getRemoteAddress(true).toString());
    if (itr != mConnections.end() )
    {
@@ -221,7 +221,7 @@ void NetMgr::RemoveConnection(GNE::Connection *connection)
  * @param packet : the GNE::Packet to send to the world
  * @see AddConnection()
  */
-void NetMgr::SendPacket( const std::string &address, GNE::Packet &packet )
+void NetMgr::SendPacket(const std::string& address, GNE::Packet& packet)
 {
    mMutex.acquire();
 
@@ -234,7 +234,7 @@ void NetMgr::SendPacket( const std::string &address, GNE::Packet &packet )
       ConnectionIterator conns = mConnections.begin();
       while (conns != mConnections.end())
       {
-         //This fails if a connection is broken. We need some error checking here.
+         // This fails if a connection is broken. We need some error checking here.
          (*conns).second->stream().writePacket(packet, true);
          ++conns;
       }
@@ -258,7 +258,7 @@ void NetMgr::OnListenFailure(const GNE::Error& error, const GNE::Address& from, 
    LOG_ERROR("onListenFailure")
 }
 
-/** 
+/**
  * @param conn : the GNE::Connection that was just disconnected
  */
 void NetMgr::OnDisconnect( GNE::Connection &conn)
@@ -266,7 +266,7 @@ void NetMgr::OnDisconnect( GNE::Connection &conn)
    LOG_DEBUG("onDisconnect");
 }
 
-/** 
+/**
  * @param conn : the GNE::Connetion that just exited
  */
 void NetMgr::OnExit( GNE::Connection &conn)
@@ -315,7 +315,7 @@ void NetMgr::OnReceive( GNE::Connection &conn)
    {
       int type = next->getType();
 
-      if(type == GNE::PingPacket::ID) 
+      if(type == GNE::PingPacket::ID)
       {
          GNE::PingPacket &ping = *((GNE::PingPacket*)next);
          if (ping.isRequest())
@@ -334,7 +334,7 @@ void NetMgr::OnReceive( GNE::Connection &conn)
    }
 }
 
-/** 
+/**
  * @param conn: The GNE::Connection that caused the failure
  * @param error : The error describing the failure
  */
@@ -343,7 +343,7 @@ void NetMgr::OnFailure( GNE::Connection &conn, const GNE::Error &error )
    LOG_DEBUG("onFailure");
 }
 
-/** 
+/**
 * @param conn: The GNE::Connection that caused the failure
 * @param error : The error describing the failure
 */
@@ -352,7 +352,7 @@ void NetMgr::OnError( GNE::Connection &conn, const GNE::Error &error)
    LOG_DEBUG("onError");
 }
 
-/** 
+/**
 * @param conn: The GNE::Connection that caused the failure
 * @param error : The error describing the failure
 */
