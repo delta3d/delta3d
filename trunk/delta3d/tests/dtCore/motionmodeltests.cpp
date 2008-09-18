@@ -27,6 +27,8 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/flymotionmodel.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
 
 using namespace dtCore;
 
@@ -62,6 +64,7 @@ class MotionModelTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(MotionModelTests);
    CPPUNIT_TEST(TestOribitMotionModelAxisStateClobbering);
    CPPUNIT_TEST(TestFlyMotionModelProperties);
+   CPPUNIT_TEST(TestFlyMotionModelOptions);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -71,6 +74,7 @@ public:
 
    void TestOribitMotionModelAxisStateClobbering();
    void TestFlyMotionModelProperties();
+   void TestFlyMotionModelOptions();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MotionModelTests);
@@ -146,4 +150,32 @@ void MotionModelTests::TestFlyMotionModelProperties()
 //   CPPUNIT_ASSERT( motionModelConst->GetUseSimTimeForSpeed());
 //   motionModel->SetUseSimTimeForSpeed( false );
 //   CPPUNIT_ASSERT( ! motionModelConst->GetUseSimTimeForSpeed() );
+}
+
+void MotionModelTests::TestFlyMotionModelOptions()
+{
+   using namespace dtCore;
+
+   RefPtr<Mouse> mouse = new Mouse();
+   RefPtr<Keyboard> kb = new Keyboard();
+   const unsigned int options = FlyMotionModel::OPTION_REQUIRE_MOUSE_DOWN |
+                                FlyMotionModel::OPTION_USE_SIMTIME_FOR_SPEED;
+
+   RefPtr<FlyMotionModel> motionModel = new FlyMotionModel(kb.get(),
+                                                           mouse.get(),                                                           
+                                                           options);
+
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("FlyMotionModel doesn't have the MOUSE_DOWN option",
+      true, motionModel->HasOption(FlyMotionModel::OPTION_REQUIRE_MOUSE_DOWN));
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("FlyMotionModel doesn't have the USE_SIMTIME option",
+      true, motionModel->HasOption(FlyMotionModel::OPTION_USE_SIMTIME_FOR_SPEED));
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("FlyMotionModel shouldn't have the RESET_MOUSE option",
+      false, motionModel->HasOption(FlyMotionModel::OPTION_RESET_MOUSE_CURSOR));
+
+   motionModel->SetUseSimTimeForSpeed(false);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("FlyMotionModel USE_SIMTIME option should be turned off",
+      false, motionModel->HasOption(FlyMotionModel::OPTION_USE_SIMTIME_FOR_SPEED));
 }

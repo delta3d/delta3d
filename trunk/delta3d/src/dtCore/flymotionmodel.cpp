@@ -15,29 +15,14 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h>
 #include <dtCore/keyboard.h>
+#include <dtUtil/bits.h>
 
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
 
-/**
- * Constructor.
- *
- * @param keyboard the keyboard instance, or 0 to
- * avoid creating default input mappings
- * @param mouse the mouse instance, or 0 to avoid
- * creating default input mappings
- * @param useSimTimeForSpeed true if the motion model should use the 
- * simulation time, which can be scaled, for motion or false if it   
- * should use the real time.
- * @param requireMouseDown true if the mouse button must be held
- * down for mouse motions to control the camera. (Default is true.)
- * @param resetMouseCursor true if the mouse cursor should reset to
- * the center of the scene each frame. (Default is false.)
- */
-FlyMotionModel::FlyMotionModel(Keyboard *keyboard,
-                               Mouse *mouse,                             
-                               BehaviorOptions options)
+//////////////////////////////////////////////////////////////////////////
+FlyMotionModel::FlyMotionModel(Keyboard *keyboard, Mouse *mouse, unsigned int options)
    : MotionModel("FlyMotionModel"),
      mLeftButtonUpDownMapping(NULL),
      mLeftButtonLeftRightMapping(NULL),
@@ -437,8 +422,14 @@ float FlyMotionModel::GetMaximumTurnSpeed() const
 
 void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
 {
-   unsigned int newOptions = (unsigned int)mOptions | (unsigned int)OPTION_USE_SIMTIME_FOR_SPEED;
-   mOptions = (BehaviorOptions)newOptions; 
+   if (useSimTimeForSpeed)
+   {
+      mOptions = dtUtil::Bits::Add(mOptions, OPTION_USE_SIMTIME_FOR_SPEED);
+   }
+   else
+   {
+      mOptions = dtUtil::Bits::Remove(mOptions, OPTION_USE_SIMTIME_FOR_SPEED);
+   }
 }
 
 /**
@@ -569,4 +560,10 @@ osg::Vec3 FlyMotionModel::Translate(const osg::Vec3 &xyz, double delta) const
    osg::Vec3 out = xyz + translation;
 
    return out;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool FlyMotionModel::HasOption(unsigned int option) const
+{
+   return dtUtil::Bits::Has(mOptions, option);
 }
