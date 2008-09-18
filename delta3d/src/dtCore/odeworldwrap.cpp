@@ -1,4 +1,4 @@
-#include <dtCore/ODEWorldWrap.h>
+#include <dtCore/odeworldwrap.h>
 #include <dtCore/transformable.h>
 #include <dtCore/physical.h>
 

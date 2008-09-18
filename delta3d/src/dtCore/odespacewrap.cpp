@@ -163,7 +163,7 @@ dSpaceID dtCore::ODESpaceWrap::GetSpaceID() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODESpaceWrap::SetDefaultCollisionCBFunc(CollisionCBFunc& func)
+void dtCore::ODESpaceWrap::SetDefaultCollisionCBFunc(const CollisionCBFunc& func)
 {
    mCollisionCBFunc = func;
 }

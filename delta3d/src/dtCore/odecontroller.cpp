@@ -56,10 +56,10 @@ static ODELifeCycle odeLifeCycle;
 
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODEController::ODEController(dtCore::Base *msgSender):
-mMsgSender(msgSender),
-mSpaceWrapper(NULL),
-mWorldWrapper(new ODEWorldWrap())
+dtCore::ODEController::ODEController(dtCore::Base *msgSender):mSpaceWrapper(NULL),
+mWorldWrapper(new ODEWorldWrap()),
+mPhysicsStepSize(0.0),
+mMsgSender(msgSender)
 {
    mSpaceWrapper = new ODESpaceWrap(mWorldWrapper.get());
 
@@ -67,10 +67,10 @@ mWorldWrapper(new ODEWorldWrap())
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODEController::ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base *msgSender):
-mMsgSender(msgSender),
-mSpaceWrapper(&spaceWrapper),
-mWorldWrapper(&worldWrap)
+dtCore::ODEController::ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base *msgSender):mSpaceWrapper(&spaceWrapper),
+mWorldWrapper(&worldWrap),
+mPhysicsStepSize(0.0),
+mMsgSender(msgSender)
 {
    Ctor();
 }
@@ -79,7 +79,7 @@ mWorldWrapper(&worldWrap)
 void dtCore::ODEController::Ctor()
 {
    //supply our method to be called when geoms actually collide
-   mSpaceWrapper->SetDefaultCollisionCBFunc(dtCore::ODESpaceWrap::CollisionCBFunc(this, &dtCore::ODEController::DefaultCBFunc));
+   mSpaceWrapper->SetDefaultCollisionCBFunc(dtCore::ODESpaceWrap::CollisionCBFunc(this, &ODEController::DefaultCBFunc));
 
    dSetMessageHandler(ODEMessageHandler);
    dSetDebugHandler(ODEDebugHandler);

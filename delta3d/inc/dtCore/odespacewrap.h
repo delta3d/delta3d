@@ -93,7 +93,7 @@ namespace dtCore
         * @param func A functor to be called when two geoms are actually colliding
         * @see CollisionCBFunc
         */
-      void SetDefaultCollisionCBFunc(CollisionCBFunc& func);
+      void SetDefaultCollisionCBFunc(const CollisionCBFunc& func);
 
       ///Get the ODE contact join group ID
       dJointGroupID GetContactJoinGroupID() const;
