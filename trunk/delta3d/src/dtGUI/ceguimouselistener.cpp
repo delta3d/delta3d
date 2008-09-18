@@ -111,5 +111,34 @@ bool CEGUIMouseListener::HandleMouseScrolled(const dtCore::Mouse* mouse, int del
 
 bool CEGUIMouseListener::HandleButtonClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
 {
-   return false;
+   CEGUI::System& system = CEGUI::System::getSingleton();
+   bool handled = false;
+   for (int i = 0; i < clickCount; ++i) 
+   {
+      switch(button)
+      {
+      case dtCore::Mouse::LeftButton:
+         {
+            handled = system.injectMouseButtonDown(CEGUI::LeftButton);
+            handled = system.injectMouseButtonUp(CEGUI::LeftButton);
+         }  break;
+
+      case dtCore::Mouse::RightButton:
+         {
+            handled = system.injectMouseButtonDown(CEGUI::RightButton);
+            handled = system.injectMouseButtonUp(CEGUI::RightButton);
+         }  break;
+
+      case dtCore::Mouse::MiddleButton:
+         {
+            handled = system.injectMouseButtonDown(CEGUI::MiddleButton);
+            handled = system.injectMouseButtonUp(CEGUI::MiddleButton);
+         }  break;
+
+      default:
+         break;
+      }
+   }
+
+   return handled;
 }
