@@ -61,8 +61,8 @@ namespace dtUtil
 
 namespace dtCore
 {
-   class Physical;
    class Transformable;
+   class ODEController;
 
    /**
    *  Scene: This class encapsulates the root of the delta scene graph
@@ -105,15 +105,28 @@ namespace dtCore
          FRONT_AND_BACK
       };
 
+      /**
+       * Default constructor.  Will create and use the default physics controller.
+       * @param name : Optional string used to name this particular Scene
+       */
       Scene(const std::string& name = "scene");
-//      Scene(dtCore::View * view, const std::string& name = "scene", bool useSceneLight = true);
+      
+      /**
+       * Scene constructor used to supply a custom physics controller, or NULL, to
+       * use for physics stepping.
+       * @param physicsController : The controller the Scene will use to manage the
+       * physics.  Can be NULL, if no controller is required.
+       * @param name : Optional string used to name this particular Scene
+       */
+      Scene (ODEController* physicsController, const std::string& name = "scene");
+
    protected:
 
       virtual ~Scene();
 
    public:
       ///Get a pointer to the internal scene node
-      osg::Group * GetSceneNode() { return (mSceneNode.get()); }
+      osg::Group* GetSceneNode() { return (mSceneNode.get()); }
 
       /*
       *  This function will remove all children of the current scene node,
@@ -153,18 +166,19 @@ namespace dtCore
       dJointGroupID GetContactJoinGroupID() const;
 
       ///Set the gravity vector
-      void SetGravity(const osg::Vec3& gravity);
+      void SetGravity(const osg::Vec3& gravity) const;
+
       ///Set the gravity vector
-      void SetGravity(float x, float y, float z) { SetGravity( osg::Vec3(x,y,z) ); }
+      void SetGravity(float x, float y, float z) const { SetGravity( osg::Vec3(x,y,z) ); }
 
       ///Get the gravity vector
-      void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
+      void GetGravity(osg::Vec3& vec) const;
 
       ///Get the gravity vector
-      osg::Vec3 GetGravity() const { return mGravity; }
+      osg::Vec3 GetGravity() const;
 
       ///Get the gravity vector
-      void GetGravity(float &x, float &y, float &z) const { x = mGravity[0]; y = mGravity[1]; z = mGravity[2]; }
+      void GetGravity(float &x, float &y, float &z) const;
 
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData *data);
@@ -179,7 +193,7 @@ namespace dtCore
       };
 
       ///Supply a user-defined collision callback to replace the internal one
-      void SetUserCollisionCallback( dNearCallback *func, void *data=0 );
+      void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
 
       /**
        * Get the step size of the physics.  The physics will
@@ -190,16 +204,16 @@ namespace dtCore
        * @return the step size in seconds
        * @see SetPhysicsStepSize()
        */
-      double GetPhysicsStepSize() const { return mPhysicsStepSize; }
+      double GetPhysicsStepSize() const;
 
       /// @see GetPhysicsStepSize()
-      void SetPhysicsStepSize( double stepSize = 0.0 ) { mPhysicsStepSize = stepSize; };
+      void SetPhysicsStepSize(double stepSize = 0.0 ) const;
 
       /// Register a Transformable with the Scene
-      void RegisterCollidable( Transformable* collidable );
+      void RegisterCollidable(Transformable* collidable) const;
 
       /// UnRegister a Transformable with the Scene
-      void UnRegisterCollidable( Transformable* collidable );
+      void UnRegisterCollidable(Transformable* collidable) const;
 
       /// Returns a pointer to the light specified by the param number
       Light* GetLight( const int number ) { return mLights[ number ].get(); }
@@ -310,27 +324,14 @@ namespace dtCore
       Scene& operator=( const Scene& );
       Scene( const Scene& );
 
-      ///ODE collision callback
-      static void NearCallback(void *data, dGeomID o1, dGeomID o2);
+      void Ctor();
 
+      ///The physics controller to use for physics integration (can be NULL)
+      dtCore::RefPtr<ODEController> mPhysicsController;
 
       void UpdateViewSet();
 
       RefPtr<osg::Group> mSceneNode; ///<This will be our Scene
-      dSpaceID mSpaceID;
-      dWorldID mWorldID;
-      osg::Vec3 mGravity;
-
-      ///<The time (seconds) for the physics time step.
-      ///<(default = 0.0, indicating to use the System deltaFrameTime )
-      double mPhysicsStepSize;
-
-      typedef std::vector< Transformable* > TransformableVector;
-      TransformableVector mCollidableContents; ///<The physical contents of the scene
-
-      dJointGroupID mContactJointGroupID; ///<The group that contains all contact joints
-      dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
-      void *mUserNearCallbackData; ///< pointer to user-supplied data
 
       typedef std::vector< RefPtr<Light> > LightVector;
       LightVector mLights; ///<Contains all light associated with this scene
