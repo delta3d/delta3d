@@ -31,6 +31,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
+#include <Qt/qurl.h>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
@@ -105,6 +106,9 @@ MainWindow::MainWindow()
    tabsDockWidget->setWidget(mTabs);
 
    addDockWidget(Qt::BottomDockWidgetArea, tabsDockWidget);
+
+   //accept drag & drop operations
+   setAcceptDrops(true);
 
 }
 
@@ -914,4 +918,32 @@ void MainWindow::OnStartAction(int row)
 void MainWindow::OnDisplayError(const QString& msg)
 {
    QMessageBox::warning(this, "AnimationViewer", msg);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+   //accept local file drops that have a .xml extension
+   if (event->mimeData()->hasUrls())
+   {
+      QList<QUrl> urls = event->mimeData()->urls();
+      if (urls[0].toLocalFile().toLower().endsWith(".xml"))
+      {
+         event->acceptProposedAction();
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::dropEvent(QDropEvent* event)
+{
+   QList<QUrl> urls = event->mimeData()->urls();
+   if (!urls.empty())
+   {
+      QString filename = urls[0].toLocalFile();
+
+      LoadCharFile(filename);
+
+      event->acceptProposedAction();
+   }
 }
