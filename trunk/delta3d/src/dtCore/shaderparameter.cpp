@@ -65,12 +65,12 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter::ShaderParameter(const std::string &name) : 
-      mIsDirty(false), 
-      mIsShared(true),
-      mVarName(name), 
-      mParentShader(NULL),
-      mUniform(NULL)
+   ShaderParameter::ShaderParameter(const std::string& name)
+      : mIsDirty(false)
+      , mIsShared(true)
+      , mVarName(name)
+      , mParentShader(NULL)
+      , mUniform(NULL)
    {
    }
 
@@ -84,23 +84,25 @@ namespace dtCore
    {
       mIsDirty = flag;
       if (mParentShader != NULL)
+      {
          mParentShader->SetDirty(flag);
+      }
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameter::SetParentShader(ShaderProgram *shader)
+   void ShaderParameter::SetParentShader(ShaderProgram* shader)
    {
       mParentShader = shader;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameter::SetUniformParam(osg::Uniform &uniform)
+   void ShaderParameter::SetUniformParam(osg::Uniform& uniform)
    {
       mUniform = &uniform;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderParameter::DetachFromRenderState(osg::StateSet &stateSet)
+   void ShaderParameter::DetachFromRenderState(osg::StateSet& stateSet)
    {
       stateSet.removeUniform(GetUniformParam());
    }

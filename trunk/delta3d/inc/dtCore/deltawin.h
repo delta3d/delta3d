@@ -125,17 +125,17 @@ namespace dtCore
        * @param y : The normalized window Y coordinate [-1.0..1.0]
        * @return bool : True if the screen pixel coords are valid
        */
-      bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y ) const;
-      bool CalcWindowCoords( const osg::Vec2 &pixel_xy, osg::Vec2 &window_xy ) const;
+      bool CalcWindowCoords(float pixel_x, float pixel_y, float& x, float& y) const;
+      bool CalcWindowCoords(const osg::Vec2& pixel_xy, osg::Vec2& window_xy) const;
 
       ///Draw the cursor or not
-      void ShowCursor( bool show = true );
+      void ShowCursor(bool show = true);
       
       ///Is the cursor being drawn or not?
       bool GetShowCursor() const { return mShowCursor; }
 
       ///Set the full screen mode.  If enabled, this will resize the window to fill the display and remove the window border.
-      void SetFullScreenMode( bool enable = true );
+      void SetFullScreenMode(bool enable = true);
   
       ///Is the window currently in fullscreen mode?
       bool GetFullScreenMode() const { return mIsFullScreen; }
@@ -143,7 +143,7 @@ namespace dtCore
       void KillGLWindow();
       
       ///The the title on the DeltaWin border
-      void SetWindowTitle( const std::string& title );
+      void SetWindowTitle(const std::string& title);
 
       const std::string GetWindowTitle() const;
       
@@ -163,8 +163,8 @@ namespace dtCore
        * @param width The width of the window
        * @param height The height of the window
        */
-      void SetPosition( int x, int y, int width, int height );
-      void SetPosition( const PositionSize& positionSize );
+      void SetPosition(int x, int y, int width, int height);
+      void SetPosition(const PositionSize& positionSize);
 
       ///Get the size and position of the DeltaWin
       void GetPosition( int& x, int& y, int& width, int& height );
