@@ -25,18 +25,14 @@ int main(int argc, char *argv[])
    win.show();
 
    thread->SetMainWindow(&win);
-   //thread->start();
    thread->run();
 
-   qapp.exec();
-
-   //thread->quit();
-   //thread->exit();
-
-   /*while (thread->isRunning())
+   if (argc >= 2)
    {
-      SLEEP(100);
-   }*/
+      win.LoadCharFile(QCoreApplication::arguments().at(1));
+   }
+
+   qapp.exec();
 
    delete thread;
 

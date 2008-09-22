@@ -305,10 +305,13 @@ void MainWindow::LoadCharFile(const QString& filename)
       // reset the scale spinbox
       mScaleFactorSpinner->setValue(1.0f);
 
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
       emit FileToLoad(filename);
 
       SetCurrentFile(filename);
 
+      QApplication::restoreOverrideCursor();
       statusBar()->showMessage(tr("File loaded"), 2000);
    }
    else
