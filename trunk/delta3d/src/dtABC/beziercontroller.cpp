@@ -220,9 +220,6 @@ bool BezierController::OnNextStep()
       ++mCurrentPoint;
    }
 
-   const PathPoint& p = (*mCurrentPoint).mPoint;
-   float currentTime = (*mCurrentPoint).mTime;
-
    //if we reached the end of the path
    //it means our time step was greater than
    //our path point resolution so we'll just stop 
@@ -234,10 +231,14 @@ bool BezierController::OnNextStep()
       return false;
    }
 
+   const PathPoint& p = (*mCurrentPoint).mPoint;
+   const float currentTime = (*mCurrentPoint).mTime;
+
+
    //else if our elapsed time is equal to the next points time
    //ie. the step for the controller = the step for the last BezierNode
    //then we just move to the next point
-   else if(std::abs(currentTime - mTotalTime) < 0.0001f)
+   if(std::abs(currentTime - mTotalTime) < 0.0001f)
    {
       StepObject(p);      
    }
