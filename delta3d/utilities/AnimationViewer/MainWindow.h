@@ -41,6 +41,8 @@ public:
 
    dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
 
+   void LoadCharFile(const QString& filename);
+
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
@@ -93,7 +95,6 @@ private:
    void DestroyPoseResources();
    void UpdateRecentFileActions();
    void SetCurrentFile(const QString& filename);
-   void LoadCharFile(const QString& filename);
    void OnStartAnimation(int row);
    void OnStopAnimation(int row);
    void OnStartAction(int row);
