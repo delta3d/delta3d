@@ -51,19 +51,19 @@ namespace dtDAL
       public:
          typedef dtUtil::Functor<void, TYPELIST_1(ActorProxy*)> SetFuncType;
          typedef dtUtil::Functor<dtCore::DeltaDrawable*, TYPELIST_0()> GetFuncType;
-         ActorActorProperty(ActorProxy &actorProxy,
+         ActorActorProperty(ActorProxy& actorProxy,
                            const dtUtil::RefString& name,
                            const dtUtil::RefString& label,
                            SetFuncType Set,
                            GetFuncType Get,
                            const dtUtil::RefString& desiredActorClass = "",
                            const dtUtil::RefString& desc = "",
-                           const dtUtil::RefString& groupName = "") :
-         ActorProperty(DataType::ACTOR, name, label, desc, groupName),
-            mProxy(&actorProxy),
-            SetPropFunctor(Set),
-            GetActorFunctor(Get),
-            mDesiredActorClass(desiredActorClass)
+                           const dtUtil::RefString& groupName = "") 
+            : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
+            , mProxy(&actorProxy)
+            , SetPropFunctor(Set)
+            , GetActorFunctor(Get)
+            , mDesiredActorClass(desiredActorClass)
             {
 
             }
@@ -136,7 +136,7 @@ namespace dtDAL
          const std::string& GetDesiredActorClass() const { return mDesiredActorClass; }
 
       private:
-         ActorProxy *mProxy;
+         ActorProxy* mProxy;
          SetFuncType SetPropFunctor;
          GetFuncType GetActorFunctor;
          dtUtil::RefString mDesiredActorClass;
@@ -151,19 +151,20 @@ namespace dtDAL
     */
    ////////////////////////////////////////////////////////////////////////////
    class DT_DAL_EXPORT GameEventActorProperty
-      : public GenericActorProperty<GameEvent *,GameEvent *>
+      : public GenericActorProperty<GameEvent*,GameEvent*>
    {
       public:
-         typedef GenericActorProperty<GameEvent *,GameEvent *> BaseClass;
+         typedef GenericActorProperty<GameEvent*,GameEvent*> BaseClass;
          typedef BaseClass::SetFuncType SetFuncType;
          typedef BaseClass::GetFuncType GetFuncType;
 
-         GameEventActorProperty(ActorProxy &actorProxy,
+         GameEventActorProperty(ActorProxy& actorProxy,
                                 const dtUtil::RefString& name, const dtUtil::RefString& label,
                                 SetFuncType set, GetFuncType get,
                                 const dtUtil::RefString& desc = "",
-                                const dtUtil::RefString& groupName = "") :
-            BaseClass(DataType::GAME_EVENT,name,label,set,get,desc,groupName), mProxy(&actorProxy)
+                                const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::GAME_EVENT, name, label, set, get, desc, groupName)
+            , mProxy(&actorProxy)
          {
          }
 
@@ -188,7 +189,7 @@ namespace dtDAL
 
       private:
 
-         ActorProxy *mProxy;
+         ActorProxy* mProxy;
    };
 
    ////////////////////////////////////////////////////////////////////////////
@@ -201,16 +202,16 @@ namespace dtDAL
       public:
          typedef dtUtil::Functor<void, TYPELIST_1(const std::string&)> SetFuncType;
 
-         ResourceActorProperty(ActorProxy &actorProxy,
-                              DataType &type,
-                              const dtUtil::RefString& name,
-                              const dtUtil::RefString& label,
-                              SetFuncType Set,
-                              const dtUtil::RefString& desc = "",
-                              const dtUtil::RefString& groupName = "") :
-         ActorProperty(type, name, label, desc, groupName),
-            mProxy(&actorProxy),
-            SetPropFunctor(Set)
+         ResourceActorProperty(ActorProxy& actorProxy,
+                               DataType& type,
+                               const dtUtil::RefString& name,
+                               const dtUtil::RefString& label,
+                               SetFuncType Set,
+                               const dtUtil::RefString& desc = "",
+                               const dtUtil::RefString& groupName = "")
+            : ActorProperty(type, name, label, desc, groupName)
+            , mProxy(&actorProxy)
+            , SetPropFunctor(Set)
             {
 
             }
@@ -238,7 +239,7 @@ namespace dtDAL
           * @param value the value to set or NULL to clear it.  The passed in pointer is
           * not stored.  The values are extracted and stored in a separate object.
           */
-         void SetValue(ResourceDescriptor *value);
+         void SetValue(ResourceDescriptor* value);
 
          /**
           * Gets the value of this property be calling the get functor
@@ -264,7 +265,7 @@ namespace dtDAL
          virtual const std::string ToString() const;
 
       private:
-         ActorProxy *mProxy;
+         ActorProxy* mProxy;
          SetFuncType SetPropFunctor;
       protected:
          virtual ~ResourceActorProperty() { }
@@ -284,8 +285,8 @@ namespace dtDAL
          
          FloatActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::FLOAT, name,label,set,get,desc,groupName)
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+         : BaseClass(DataType::FLOAT, name, label, set, get, desc, groupName)
          {
             SetNumberPrecision(8);
          }
@@ -323,8 +324,8 @@ namespace dtDAL
 
          DoubleActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::DOUBLE, name,label,set,get,desc,groupName) { }
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::DOUBLE, name, label, set, get, desc, groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -339,7 +340,7 @@ namespace dtDAL
           * @return a string version of the data.  This value can be used when calling FromString.
           * @see #FromString
           */
-         virtual const std::string ToString() const ;
+         virtual const std::string ToString() const;
 
       protected:
          virtual ~DoubleActorProperty() { }
@@ -358,9 +359,9 @@ namespace dtDAL
          typedef BaseClass::GetFuncType GetFuncType;
          
          IntActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
-                        SetFuncType set, GetFuncType get,
-                        const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::INT, name,label,set,get,desc,groupName) { }
+                          SetFuncType set, GetFuncType get,
+                          const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::INT, name, label, set, get, desc, groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -394,8 +395,8 @@ namespace dtDAL
 
          LongActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::LONGINT, name,label,set,get,desc,groupName) { }
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::LONGINT, name, label, set, get, desc, groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -433,8 +434,8 @@ namespace dtDAL
          StringActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
                            const dtUtil::RefString& desc = "",
-                           const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::STRING, name,label,set,get,desc,groupName)
+                           const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::STRING, name, label, set, get, desc, groupName)
          {
             mMaxLength = 0;
          }
@@ -457,7 +458,7 @@ namespace dtDAL
           * truncated if it is longer than the maximum length allowed.
           * @param str The new string value to set on this property.
           */
-         void SetValue(const std::string &str)
+         void SetValue(const std::string& str)
          {
             std::string newStr = str;
             if (mMaxLength != 0 && newStr.size() > mMaxLength)
@@ -500,8 +501,8 @@ namespace dtDAL
 
          BooleanActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                               SetFuncType set, GetFuncType get,
-                              const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::BOOLEAN, name,label,set,get,desc,groupName) { }
+                              const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::BOOLEAN, name, label, set, get, desc, groupName) { }
 
          /**
           * Sets the value of the property based on a string.
@@ -561,7 +562,7 @@ namespace dtDAL
           * @return true if it was successful in matching an name to a value.
           * @see Enumeration#getName
           */
-         virtual bool SetValueFromString(const std::string &name) = 0;
+         virtual bool SetValueFromString(const std::string& name) = 0;
 
          /**
           * This is a convenience method and enforces that only actor properties can implement this interface.
@@ -595,8 +596,8 @@ namespace dtDAL
 
          EnumActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::ENUMERATION, name,label,set,get,desc,groupName) { }
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::ENUMERATION, name, label, set, get, desc, groupName) { }
 
          ///@note this method exists to reconcile the two same-named methods on the superclases.
          DataType& GetPropertyType() const { return GenericActorProperty<T&,T&>::GetPropertyType(); }
@@ -611,7 +612,7 @@ namespace dtDAL
             return T::EnumerateType(); 
          }
 
-         virtual bool SetValueFromString(const std::string &name)
+         virtual bool SetValueFromString(const std::string& name)
          {
             dtUtil::Enumeration* e = T::GetValueForName(name);
             if (e != NULL)
@@ -671,8 +672,8 @@ namespace dtDAL
 
          Vec2ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC2, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC2, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -713,8 +714,8 @@ namespace dtDAL
 
          Vec2fActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC2F, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC2F, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -755,8 +756,8 @@ namespace dtDAL
 
          Vec2dActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC2D, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC2D, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -797,8 +798,8 @@ namespace dtDAL
 
          Vec3ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC3, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC3, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -838,8 +839,8 @@ namespace dtDAL
 
          Vec3fActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC3F, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC3F, name, label, set, get, desc, groupName) 
          {
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -879,8 +880,8 @@ namespace dtDAL
 
          Vec3dActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC3D, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(DataType::VEC3D, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -921,8 +922,8 @@ namespace dtDAL
          Vec4ActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
                            const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "", 
-                           dtDAL::DataType& type = DataType::VEC4) :
-         BaseClass(type, name,label,set,get,desc,groupName) 
+                           dtDAL::DataType& type = DataType::VEC4) 
+            : BaseClass(type, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -964,8 +965,8 @@ namespace dtDAL
 
          Vec4fActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC4F, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC4F, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -1006,8 +1007,8 @@ namespace dtDAL
 
          Vec4dActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                            SetFuncType set, GetFuncType get,
-                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(DataType::VEC4D, name,label,set,get,desc,groupName) 
+                           const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") 
+            : BaseClass(DataType::VEC4D, name, label, set, get, desc, groupName) 
          { 
             SetNumberPrecision(2 * sizeof(GetValue()[0]) + 1);
          }
@@ -1047,8 +1048,8 @@ namespace dtDAL
 
          ColorRgbaActorProperty(const dtUtil::RefString& name, const dtUtil::RefString& label,
                               SetFuncType set, GetFuncType get,
-                              const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "") :
-         BaseClass(name,label,set,get,desc,groupName, DataType::RGBACOLOR) { }
+                              const dtUtil::RefString& desc = "", const dtUtil::RefString& groupName = "")
+            : BaseClass(name, label, set, get, desc, groupName, DataType::RGBACOLOR) { }
 
          // This is a work around a bug in Visual Studio where the Unit Tests would fail at runtime because
          // it couldn't find these functions in this class, even though they are inherited.

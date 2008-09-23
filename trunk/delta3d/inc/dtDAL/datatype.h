@@ -227,7 +227,7 @@ namespace dtDAL
           * Gets a pretty name that can be used in the UI.
           * @return The pretty name
           */
-         const std::string &GetDisplayName() { return mDisplayName; }
+         const std::string& GetDisplayName() { return mDisplayName; }
 
          /**
           * Gets the id associated with this datatype
@@ -244,7 +244,8 @@ namespace dtDAL
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-         DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name)
+         DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0) 
+            : dtUtil::Enumeration(name)
          {
                AddInstance(this);
                mResource = resource;

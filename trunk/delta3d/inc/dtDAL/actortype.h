@@ -62,7 +62,7 @@ namespace dtDAL
           */
          struct RefPtrComp 
          {
-            bool operator()(const dtCore::RefPtr<const ActorType> &id1,const dtCore::RefPtr<const ActorType> &id2) const
+            bool operator()(const dtCore::RefPtr<const ActorType>& id1,const dtCore::RefPtr<const ActorType>& id2) const
             {
                return (*id1) < (*id2);
             }
@@ -71,11 +71,14 @@ namespace dtDAL
          /**
           * Constructs a new actor type object.
           */
-         ActorType(  const std::string &name, 
-                     const std::string &category="nocategory",
-                     const std::string &desc="", 
-                     const ActorType *parentType = NULL) : 
-            mName(name), mCategory(category), mDescription(desc), mParentType(parentType)
+         ActorType(const std::string& name, 
+                   const std::string& category="nocategory",
+                   const std::string& desc="", 
+                   const ActorType* parentType = NULL) 
+            : mName(name)
+            , mCategory(category)
+            , mDescription(desc)
+            , mParentType(parentType)
          {
             GenerateUniqueId();
          }
@@ -83,7 +86,7 @@ namespace dtDAL
          /**
           * Sets the name for this actor type.
           */
-         void SetName(const std::string &name) 
+         void SetName(const std::string& name) 
          {
             mName = name;
             GenerateUniqueId();
@@ -92,12 +95,12 @@ namespace dtDAL
          /**
           * Gets the name currently assigned to this actor type.
           */
-         const std::string &GetName() const { return mName; }
+         const std::string& GetName() const { return mName; }
 
          /**
           * Sets the category for this actor type.
           */
-         void SetCategory(const std::string &category) 
+         void SetCategory(const std::string& category) 
          {
             mCategory = category;
             GenerateUniqueId();
@@ -106,34 +109,34 @@ namespace dtDAL
          /**
           * Gets the category given to this actor type.
           */
-         const std::string &GetCategory() const { return mCategory; }
+         const std::string& GetCategory() const { return mCategory; }
 
          /**
           * Sets the description for this actor type.
           */
-         void SetDescription(const std::string &desc) { mDescription = desc; }
+         void SetDescription(const std::string& desc) { mDescription = desc; }
 
          /**
           * Gets the description given to this actor type.
           */
-         const std::string &GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const { return mDescription; }
 
          /**
           * Gets the uniqueId string which was generated for this actor type.
           */
-         const std::string &GetUniqueId() const { return mUniqueId; }
+         const std::string& GetUniqueId() const { return mUniqueId; }
             
          /**
           * Gets the parent or "super" type of this actor type.
           */
-         const ActorType *GetParentActorType() const { return mParentType.get(); }
+         const ActorType* GetParentActorType() const { return mParentType.get(); }
             
          /**
           * Based on this actor types super type hierarchy, this method determines whether
           * or not this type is a descendent or equal to the specified actor type.
           * @return True if a descendent or equal, false otherwise.
           */
-         bool InstanceOf(const ActorType &rhs) const;
+         bool InstanceOf(const ActorType& rhs) const;
 
          /**
           * Helper method which is the same as the other InstanceOf method, only this one
@@ -143,12 +146,12 @@ namespace dtDAL
           * @return True if a descendent or equal, false otherwise.
           * @see InstanceOf(const ActorType &rhs)
           */
-         bool InstanceOf(const std::string &category, const std::string &name) const;
+         bool InstanceOf(const std::string& category, const std::string& name) const;
             
          /**
           * Less-than comparison of the actor type's uniqueId strings.
           */
-         bool operator<(const ActorType &rhs) const
+         bool operator<(const ActorType& rhs) const
          {
             return (mUniqueId < rhs.mUniqueId);
          }
@@ -156,7 +159,7 @@ namespace dtDAL
          /**
           * Equality test of the actor type's uniqueId strings.
           */
-         bool operator==(const ActorType &rhs) const 
+         bool operator==(const ActorType& rhs) const 
          {
             return (mUniqueId == rhs.mUniqueId);
          }
@@ -164,7 +167,7 @@ namespace dtDAL
          /**
           * Inequality test of the actor type's uniqueId strings.
           */
-         bool operator!=(const ActorType &rhs) const 
+         bool operator!=(const ActorType& rhs) const 
          {
             return (mUniqueId != rhs.mUniqueId);
          }
@@ -205,7 +208,7 @@ namespace dtDAL
          const dtCore::RefPtr<const ActorType> mParentType;
 
          ///Provide a method for printing the actor type to a stream.
-         friend std::ostream& operator<<(std::ostream& os,const ActorType &actorType)
+         friend std::ostream& operator<<(std::ostream& os,const ActorType& actorType)
          {
             os << actorType.GetFullName();
             return os;
