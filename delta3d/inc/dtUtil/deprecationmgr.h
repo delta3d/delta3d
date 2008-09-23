@@ -25,8 +25,10 @@
 #if defined(DELTA_WIN32)
 // Identifier was truncated to '255' characters in the debug information
 #pragma warning( disable:4786 )
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef GetClassName
+#undef SendMessage
 #else
 #include <iostream>
 #include <csignal>

@@ -1,5 +1,6 @@
 #include <dtGUI/ceguirenderer.h>
 #include <dtGUI/ceguitexture.h>
+#include <dtUtil/macros.h>
 
 #if defined( __APPLE__ )
 #include <OpenGL/gl.h>
@@ -7,8 +8,11 @@
 //needed for something in CEGUI. weird.
 #include <CoreFoundation/CoreFoundation.h>
 #else /* __APPLE__ **/
-#if defined(_MSC_VER)
-#include <windows.h>
+#if defined(DELTA_WIN32)
+   #define WIN32_LEAN_AND_MEAN
+   #include <windows.h>
+   #undef GetClassName
+   #undef SendMessage
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>

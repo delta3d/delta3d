@@ -3,7 +3,10 @@
 #include <dtUtil/macros.h>
 
 #ifdef DELTA_WIN32
+   #define WIN32_LEAN_AND_MEAN
    #include <Windows.h>
+   #undef GetClassName
+   #undef SendMessage
    void dtCore::AppSleep(unsigned int milliseconds){Sleep(milliseconds);}
 #else
    #include <unistd.h>

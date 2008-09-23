@@ -33,6 +33,8 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#undef GetClassName
+#undef SendMessage
 
 #ifdef _MSC_VER
 #	pragma warning(pop)

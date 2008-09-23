@@ -2,9 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#include <dtUtil/macros.h>
+#if defined(DELTA_WIN32)
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef GetClassName
+#undef SendMessage
 
 using namespace dtCore;
 using namespace dtUtil;

@@ -33,6 +33,7 @@
 #include <dtHLAGM/ddmregiondata.h>
 
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/macros.h>
 #include <dtUtil/log.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/fileutils.h>
@@ -56,8 +57,7 @@
 #include <algorithm>
 
 
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-
+#if !defined(DELTA_WIN32)
    #if defined(__APPLE__)
       #include <sys/socket.h>
       #include <netinet/in.h>
@@ -81,9 +81,8 @@ typedef struct win_addr {
 } win_addr;
 
 #else
-
-typedef int socklen_t;
-
+   #include <WinSock.h>
+   typedef int socklen_t;
 #endif
 
 namespace dtHLAGM
