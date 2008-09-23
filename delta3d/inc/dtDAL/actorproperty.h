@@ -60,7 +60,7 @@ namespace dtDAL
           * @return Returns an enumeration of the data type that this property
           * represents.
           */
-         DataType& GetPropertyType() const { return GetDataType(); };
+         DataType& GetPropertyType() const { return GetDataType(); }
 
          /**
           * Assigns the value of this property the value contained in the
@@ -140,16 +140,16 @@ namespace dtDAL
           * property functionality comes from classes extending this one.
           */
          ActorProperty(dtDAL::DataType& dataType, 
-                     const dtUtil::RefString& name,
-                     const dtUtil::RefString& label,
-                     const dtUtil::RefString& desc,
-                     const dtUtil::RefString& groupName,
-                     bool  readOnly = false) :
-            AbstractParameter(dataType, name),
-            mLabel(label),
-            mDescription(desc),
-            mNumberPrecision(16),
-            mReadOnly(readOnly)
+                       const dtUtil::RefString& name,
+                       const dtUtil::RefString& label,
+                       const dtUtil::RefString& desc,
+                       const dtUtil::RefString& groupName,
+                       bool  readOnly = false) 
+               : AbstractParameter(dataType, name)
+               , mLabel(label)
+               , mDescription(desc)
+               , mNumberPrecision(16)
+               , mReadOnly(readOnly)
             {
                groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
             }

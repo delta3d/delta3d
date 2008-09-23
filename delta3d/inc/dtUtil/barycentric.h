@@ -24,6 +24,7 @@
 
 namespace dtUtil
 {
+   /////////////////////////////////////////////////////////////////////////////
    template<class V>
    V CalculateBarycentricCenter(const V& a,
                                 const V& b,
@@ -33,6 +34,7 @@ namespace dtUtil
    }
 
 
+   /////////////////////////////////////////////////////////////////////////////
    /// Transforms Cartesian data points into Barycentric coordinate systems.
    /// http://en.wikipedia.org/wiki/Barycentric_coordinates_%28mathematics%29
    template<class VecT>            // the 3D return type after transforming a data point into barycentric coords.
@@ -57,6 +59,8 @@ namespace dtUtil
    };
 
    // --- template implementation below --- //
+
+   /////////////////////////////////////////////////////////////////////////////
    template<class V>
    BarycentricSpace<V>::BarycentricSpace(const V& p1, const V& p2, const V& p3)
       : A(p1[0] - p3[0])
@@ -70,6 +74,7 @@ namespace dtUtil
       ///\todo correct for when the X difference is zero.
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    template<class V>
    V BarycentricSpace<V>::Transform(const V& p)
    {
