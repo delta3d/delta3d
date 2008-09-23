@@ -31,7 +31,7 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
-#include <Qt/qurl.h>
+#include <QtCore/QUrl>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
@@ -43,6 +43,7 @@
 MainWindow::MainWindow()
   : mExitAct(NULL)
   , mLoadCharAct(NULL)
+  , mScaleFactorSpinner(NULL)
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
   , mMaterialModel(NULL)
@@ -52,9 +53,8 @@ MainWindow::MainWindow()
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
   , mGLWidget(NULL)
-  , mScaleFactorSpinner(NULL)
 {
-   resize(800, 800);   
+   resize(800, 800);
 
    mAnimListWidget = new AnimationTableWidget(this);
    mAnimListWidget->setColumnCount(6);
@@ -66,7 +66,7 @@ MainWindow::MainWindow()
 
    QStringList headers;
    headers << "Name" << "Weight (L)" << "Delay (L)" << "Delay In (A)" << "Delay Out (A)" << "Mixer Blend";
-   mAnimListWidget->setHorizontalHeaderLabels(headers);    
+   mAnimListWidget->setHorizontalHeaderLabels(headers);
 
    mMeshListWidget = new QListWidget(this);
    connect(mMeshListWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(OnMeshActivated(QListWidgetItem*)));
@@ -85,12 +85,12 @@ MainWindow::MainWindow()
    CreateActions();
    CreateMenus();
    statusBar();
-   CreateToolbars();  
+   CreateToolbars();
 
    mTabs = new QTabWidget(this);
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
-   mTabs->addTab(mMaterialView, tr("Materials"));  
+   mTabs->addTab(mMaterialView, tr("Materials"));
 
    QWidget* glParent = new QWidget(this);
 
@@ -182,7 +182,7 @@ void MainWindow::CreateActions()
 
    // The actiongroup is used to make the action behave like radio buttons
    QActionGroup* actionGroup = new QActionGroup(this);
-   actionGroup->setExclusive(true); 
+   actionGroup->setExclusive(true);
 
    QIcon wireframeIcon(":/images/wireframe.png");
    QIcon shadedIcon(":/images/shaded.png");
@@ -191,12 +191,12 @@ void MainWindow::CreateActions()
 
    mWireframeAction  = actionGroup->addAction(wireframeIcon, "Wireframe");
    mShadedAction     = actionGroup->addAction(shadedIcon, "Shaded");
-   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");  
+   mShadedWireAction = actionGroup->addAction(shadedWireIcon, "Shaded Wireframe");
 
-   mBoneBasisAction = new QAction(boneBasisIcon, "Bone Orientation", NULL);     
+   mBoneBasisAction = new QAction(boneBasisIcon, "Bone Orientation", NULL);
 
    mWireframeAction->setCheckable(true);
-   mShadedAction->setCheckable(true); 
+   mShadedAction->setCheckable(true);
    mShadedWireAction->setCheckable(true);
    mBoneBasisAction->setCheckable(true);
 
@@ -247,13 +247,13 @@ void MainWindow::CreateToolbars()
    applyScaleFactorButton->adjustSize();
    applyScaleFactorButton->setToolTip(tr("Apply scale factor"));
    mScalingToolbar->addWidget(applyScaleFactorButton);
-   
+
    //QIcon diffuseIcon(":/images/diffuseLight.png");
    //QIcon pointLightIcon(":/images/pointLight.png");
 
    //mLightingToolbar->addAction(diffuseIcon, "Diffuse Light");
    //mLightingToolbar->addAction(pointLightIcon, "Point Light");
-  
+
    connect(lodScaleSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnLODScale_Changed(double)));
    connect(speedSpinner, SIGNAL(valueChanged(double)), this, SLOT(OnSpeedChanged(double)));
    connect(applyScaleFactorButton, SIGNAL(clicked()), this, SLOT(OnChangeScaleFactor()));
@@ -288,9 +288,9 @@ void MainWindow::LoadCharFile(const QString& filename)
    {
       //mAnimListWidget->clear(); //note, this also removes the header items
       mMeshListWidget->clear();
-      
+
       // Make sure we start fresh
-      DestroyPoseResources();  
+      DestroyPoseResources();
 
       while (mAnimListWidget->rowCount()>0)
       {
@@ -322,7 +322,7 @@ void MainWindow::LoadCharFile(const QString& filename)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName, 
+void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
                                 unsigned int trackCount, unsigned int keyframes,
                                 float duration)
 {
@@ -337,7 +337,7 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
       item->setData(Qt::UserRole+3, duration);
       item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
       mAnimListWidget->setItem(id, 0, item);
-   } 
+   }
 
    { //weight
       QTableWidgetItem* item = new QTableWidgetItem(tr("1.0"));
@@ -369,7 +369,7 @@ void MainWindow::OnNewAnimation(unsigned int id, const QString& animationName,
       mixerBlend->setMinimum(0);
       mixerBlend->setValue(0);
 
-      mAnimListWidget->setCellWidget(id, 5, mixerBlend);      
+      mAnimListWidget->setCellWidget(id, 5, mixerBlend);
    }
 
    mAnimListWidget->resizeColumnToContents(0);
@@ -388,11 +388,11 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName)
 
    meshItem->setCheckState(Qt::Checked);
 
-   mMeshListWidget->addItem(meshItem); 
+   mMeshListWidget->addItem(meshItem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList, 
+void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList,
                                     dtAnim::CharDrawable* model)
 {
    assert(!mPoseMeshScene);
@@ -400,42 +400,42 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    assert(!mPoseMeshProperties);
 
    mPoseMeshScene  = new PoseMeshScene(this);
-   mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);   
+   mPoseMeshViewer = new PoseMeshView(mPoseMeshScene, this);
 
    mPoseDock = new QDockWidget("Pose Mesh Viewer");
    mPoseDock->setWidget(mPoseMeshViewer);
 
    addDockWidget(Qt::RightDockWidgetArea, mPoseDock);
-   resize(1000, 800);     
+   resize(1000, 800);
 
    // Create icons for the mode toolbar
    QIcon modeGrabIcon(QPixmap(":/images/handIcon.png"));
    QIcon modeBlendIcon(QPixmap(":/images/reticle.png"));
-   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));   
+   QIcon modeErrorIcon(QPixmap(":/images/epsilon.png"));
 
    QToolBar* poseModesToolbar = new QToolBar;
 
    // The actiongroup is used to make the action behave like radio buttons
    QActionGroup* actionGroup = new QActionGroup(poseModesToolbar);
-   actionGroup->setExclusive(true); 
+   actionGroup->setExclusive(true);
 
    QAction* grabAction  = actionGroup->addAction(modeGrabIcon, "Click-drag mode.");
-   QAction* pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");     
+   QAction* pickAction  = actionGroup->addAction(modeBlendIcon, "Blend pick mode.");
    QAction* errorAction = actionGroup->addAction(modeErrorIcon, "Error pick mode.");
 
    poseModesToolbar->addAction(grabAction);
    poseModesToolbar->addAction(pickAction);
-   
+
    // Not full implemented so leave out
    //poseModesToolbar->addAction(errorAction);
 
    grabAction->setCheckable(true);
-   pickAction->setCheckable(true); 
+   pickAction->setCheckable(true);
    errorAction->setCheckable(true);
 
    pickAction->setChecked(true);
 
-   poseModesToolbar->addSeparator();  
+   poseModesToolbar->addSeparator();
    poseModesToolbar->addSeparator();
 
    QIcon displayEdgesIcon(QPixmap(":/images/displayEdges.png"));
@@ -456,25 +456,25 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    mPoseDock->setTitleBarWidget(poseModesToolbar);
 
    // Add the properties tab
-   mPoseMeshProperties = new PoseMeshProperties;     
-   
-   mTabs->addTab(mPoseMeshProperties, tr("IK"));   
+   mPoseMeshProperties = new PoseMeshProperties;
+
+   mTabs->addTab(mPoseMeshProperties, tr("IK"));
    mTabs->setCurrentWidget(mPoseMeshProperties);
 
    // Establish connections from the properties tab
-   connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)), 
+   connect(mPoseMeshProperties, SIGNAL(ViewPoseMesh(const std::string&)),
            mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
- 
+
    connect(mPoseMeshProperties, SIGNAL(PoseMeshStatusChanged(const std::string&, bool)),
            mPoseMeshScene, SLOT(OnPoseMeshStatusChanged(const std::string&, bool)));
 
    // Establish connections from the scene
-   connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)), 
+   connect(mPoseMeshScene, SIGNAL(ViewPoseMesh(const std::string&)),
            mPoseMeshViewer, SLOT(OnZoomToPoseMesh(const std::string&)));
 
    connect(mPoseMeshScene, SIGNAL(PoseMeshItemAdded(const PoseMeshItem*)),
            mPoseMeshProperties, SLOT(OnItemAdded(const PoseMeshItem*)));
-   
+
    connect(grabAction, SIGNAL(triggered()), this, SLOT(OnSelectModeGrab()));
    connect(pickAction, SIGNAL(triggered()), this, SLOT(OnSelectModeBlendPick()));
    connect(errorAction, SIGNAL(triggered()), this, SLOT(OnSelectModeErrorPick()));
@@ -490,7 +490,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
 
       // Add new pose mesh visualization and properties
       mPoseMeshScene->AddMesh(*newMesh, model);
-      mPoseMeshProperties->AddMesh(*newMesh, *model->GetCal3DWrapper());   
+      mPoseMeshProperties->AddMesh(*newMesh, *model->GetCal3DWrapper());
    }
 
    // Set the default mode
@@ -498,7 +498,7 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void MainWindow::OnNewMaterial(int matID, const QString& name, 
+void MainWindow::OnNewMaterial(int matID, const QString& name,
                                const QColor& diff, const QColor& amb, const QColor& spec,
                                float shininess)
 {
@@ -538,7 +538,7 @@ void MainWindow::OnNewMaterial(int matID, const QString& name,
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
-{   
+{
    if (weightList.size() != (size_t)mAnimListWidget->rowCount()) { return; }
 
    for (size_t rowIndex = 0; rowIndex < weightList.size(); ++rowIndex)
@@ -546,30 +546,30 @@ void MainWindow::OnBlendUpdate(const std::vector<float>& weightList)
       // Show progress as a whole number
       float newValue = weightList[rowIndex] * 100.0f;
 
-      QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);   
-      meter->setValue(newValue);      
+      QProgressBar* meter = (QProgressBar*)mAnimListWidget->cellWidget(rowIndex, 5);
+      meter->setValue(newValue);
 
       if (mAnimListWidget->item(rowIndex, 0)->checkState() == Qt::Checked)
-      {   
+      {
          // Update the weight display only when the box is checked
          // This will allow a user to manually enter a weight while unchecked
          disconnect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
          mAnimListWidget->item(rowIndex, 1)->setData(Qt::DisplayRole, QString("%1").arg(weightList[rowIndex]));
          connect(mAnimListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnItemChanged(QTableWidgetItem*)));
 
-         if (!newValue)         
+         if (!newValue)
          {
             // If animations were turned off from the pose mesh viewer
-            // mark them as turned off in the animation table           
-            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);            
+            // mark them as turned off in the animation table
+            mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Unchecked);
          }
       }
       else if (newValue)
       {
          // If animations were turned on from the pose mesh viewer
-         // mark them as turned on in the animation table         
-         mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);         
-      }      
+         // mark them as turned on in the animation table
+         mAnimListWidget->item(rowIndex, 0)->setCheckState(Qt::Checked);
+      }
    }
 
    // Allow the IK tab to update it's blend display if it exists
@@ -624,7 +624,7 @@ void MainWindow::OnMeshActivated(QListWidgetItem* item)
 
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnLODScale_Changed(double newValue)
-{   
+{
    emit LODScale_Changed(float(newValue));
 }
 
@@ -686,7 +686,7 @@ void MainWindow::OnToggleLODScaleToolbar()
    else
    {
       mLODScaleToolbar->hide();
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -699,7 +699,7 @@ void MainWindow::OnToggleScalingToolbar()
    else
    {
       mScalingToolbar->hide();
-   }   
+   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -716,7 +716,7 @@ void MainWindow::UpdateRecentFileActions()
 
    int numRecentFiles = qMin(files.size(), 5);
 
-   for (int actionIndex = 0; actionIndex < numRecentFiles; ++actionIndex) 
+   for (int actionIndex = 0; actionIndex < numRecentFiles; ++actionIndex)
    {
       QString text = tr("&%1 %2").arg(actionIndex + 1).arg(QFileInfo(files[actionIndex]).fileName());
       mRecentFilesAct[actionIndex]->setText(text);
@@ -771,7 +771,7 @@ void MainWindow::OpenRecentFile()
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnItemChanged(QTableWidgetItem* item)
 {
-   if (item->column() == 1 || item->column() == 2) 
+   if (item->column() == 1 || item->column() == 2)
    {
       if (mAnimListWidget->item(item->row(),0)->checkState() == Qt::Checked)
       {
@@ -803,7 +803,7 @@ void MainWindow::OnStartAnimation(int row)
    if (mAnimListWidget->item(row,0))
    {
       emit StartAnimation(mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), weight, delay);
-   }  
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -819,7 +819,7 @@ void MainWindow::OnStopAnimation(int row)
    if (mAnimListWidget->item(row,0))
    {
       emit StopAnimation(mAnimListWidget->item(row,0)->data(Qt::UserRole).toUInt(), delay);
-   } 
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
