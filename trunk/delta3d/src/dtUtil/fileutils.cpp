@@ -23,7 +23,10 @@
 
 
 #ifdef DELTA_WIN32
+#   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   undef GetClassName
+#   undef SendMessage
 #   include <direct.h>
 #   include <io.h>
 #   include <errno.h>

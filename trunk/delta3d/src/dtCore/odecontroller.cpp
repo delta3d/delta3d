@@ -56,7 +56,8 @@ static ODELifeCycle odeLifeCycle;
 
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODEController::ODEController(dtCore::Base *msgSender):mSpaceWrapper(NULL),
+dtCore::ODEController::ODEController(dtCore::Base *msgSender):
+mSpaceWrapper(NULL),
 mWorldWrapper(new ODEWorldWrap()),
 mPhysicsStepSize(0.0),
 mMsgSender(msgSender)
@@ -67,7 +68,8 @@ mMsgSender(msgSender)
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODEController::ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base *msgSender):mSpaceWrapper(&spaceWrapper),
+dtCore::ODEController::ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base *msgSender):
+mSpaceWrapper(&spaceWrapper),
 mWorldWrapper(&worldWrap),
 mPhysicsStepSize(0.0),
 mMsgSender(msgSender)
