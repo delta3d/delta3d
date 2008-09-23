@@ -205,8 +205,8 @@ void MyGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    // Allow the fly motion model to move the camera around independent of the tank.
    dtCore::FlyMotionModel *fmm = new dtCore::FlyMotionModel(app.GetKeyboard(), app.GetMouse(), 
-      dtCore::FlyMotionModel::BehaviorOptions (dtCore::FlyMotionModel::OPTION_USE_CURSOR_KEYS | 
-                                               dtCore::FlyMotionModel::OPTION_REQUIRE_MOUSE_DOWN) );
+                                                            dtCore::FlyMotionModel::OPTION_USE_CURSOR_KEYS | 
+                                                            dtCore::FlyMotionModel::OPTION_REQUIRE_MOUSE_DOWN );
    fmm->SetMaximumFlySpeed(15);
    fmm->SetTarget(app.GetCamera());
 
