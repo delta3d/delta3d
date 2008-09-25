@@ -128,4 +128,6 @@ void Delta3DThread::run()
    mTimer.start(10);
 
    //this->exec();
+
+   mWin->OnConfiged();
 }

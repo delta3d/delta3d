@@ -124,11 +124,8 @@ void MainWindow::CreateMenus()
    QMenu* viewMenu    = menuBar()->addMenu("&View");
    QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");
 
-   QAction* toggleHardwareSkinning = viewMenu->addAction("Use Hardware Skinning");
-   toggleHardwareSkinning->setCheckable(true);
-   toggleHardwareSkinning->setChecked(false);
-   connect(toggleHardwareSkinning, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
-
+   viewMenu->addAction(mHardwareSkinningAction);
+   
    windowMenu->addAction(mLoadCharAct);
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
@@ -201,6 +198,11 @@ void MainWindow::CreateActions()
    mBoneBasisAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
+
+   mHardwareSkinningAction = new QAction(tr("Use Hardware Skinning"), this);
+   mHardwareSkinningAction->setCheckable(true);
+   mHardwareSkinningAction->setChecked(false); //will get init'd properly when everything's up and running
+   connect(mHardwareSkinningAction, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -949,4 +951,23 @@ void MainWindow::dropEvent(QDropEvent* event)
 
       event->acceptProposedAction();
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool MainWindow::IsAnimNodeBuildingUsingHW() const
+{
+   //Not really a great way to see what method we're using.  A better way would
+   //be to query a hardware skinning object to see if its being used or something.
+   //This'll have to do for now.
+   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
+
+   return (nodeBuilder.SupportsHardware());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnConfiged()
+{
+   //theoretically, everything is in place, the window is rendering, openGL 
+   //context is valid, etc.
+   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
 }

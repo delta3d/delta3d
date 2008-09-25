@@ -87,6 +87,7 @@ public slots:
    void OnToggleScalingToolbar();
    void OnToggleLightingToolbar(); 
    void OnDisplayError(const QString& msg);
+   void OnConfiged(); ///<call when everything is up and running
 	
 private:
    void CreateMenus();
@@ -98,6 +99,7 @@ private:
    void OnStartAnimation(int row);
    void OnStopAnimation(int row);
    void OnStartAction(int row);
+   bool IsAnimNodeBuildingUsingHW() const;
 
    QAction* mExitAct;
    QAction* mLoadCharAct;
@@ -108,6 +110,7 @@ private:
    QAction* mBoneBasisAction;
    QAction* mDiffuseLightAction;
    QAction* mPointLightAction;
+   QAction* mHardwareSkinningAction;
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;
