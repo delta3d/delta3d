@@ -30,6 +30,7 @@
 #include <osg/Vec3>
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/log.h>
 #include <cal3d/hardwaremodel.h>
 #include <osg/CullFace>
 
@@ -124,25 +125,41 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, Cal
 
    ss->setAttributeAndModes(new osg::CullFace);
    
-   //get selected textures
-   std::vector<CalCoreMaterial::Map>& vectorMap = mHardwareModel->getVectorHardwareMesh()[mMeshID].pCoreMaterial->getVectorMap();
+   if (mHardwareModel == NULL) {return;}
 
-   std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
-   std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
-
-   for(int i = 0; iter != endIter; ++iter, ++i)
+   std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
+   if (mMeshID >= meshVec.size())
    {
-      osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
-      if(texture != NULL) 
-      {
-         ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
-      }
+      LOG_WARNING("MeshID isn't defined in the list of meshes");
+      return;
    }
 
+   CalHardwareModel::CalHardwareMesh &coreMesh = meshVec[mMeshID];
+
+   if (coreMesh.pCoreMaterial != NULL)
+   {
+      //get selected textures
+      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
+      std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
+      std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
+
+      for(int i = 0; iter != endIter; ++iter, ++i)
+      {
+         osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
+         if(texture != NULL) 
+         {
+            ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
+         }
+      }
+   }
+   else
+   {
+      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
+   }
 
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   setCullCallback(new SubmeshCullCallback(*mWrapper, mHardwareModel->getVectorHardwareMesh()[mMeshID].meshId));
+   setCullCallback(new SubmeshCullCallback(*mWrapper, coreMesh.meshId));
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 

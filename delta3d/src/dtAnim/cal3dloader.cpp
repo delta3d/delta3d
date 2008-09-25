@@ -98,13 +98,17 @@ namespace dtAnim
          {
             std::string filename = FindFileInPathList(path + (*matItr).mFileName);
 
-            if (!filename.empty())  
+            if (filename.empty())  
             {
-               coreModel->loadCoreMaterial( filename, (*matItr).mName);
+               LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
             }
             else
             {
-               LOG_ERROR("Can't find material file named:'" + path + (*matItr).mFileName + "'.");
+               int matID = coreModel->loadCoreMaterial( filename, (*matItr).mName);
+               if (matID < 0)
+               {
+                  LOG_ERROR("Material file failed to load:'" + path + (*matItr).mFileName + "'.");
+               }
             }
             ++matItr;
          }
