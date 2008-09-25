@@ -35,7 +35,12 @@
  *
  *                  14.10.2005 Boto: Added Use Alpha Channel to stateset helper.
  *
- *					22.6.2006 Anderegg: Added osg::Group and osgSim::DOFTransform support
+ *                  19.07.2006 Joran: Removed the StateSet::ENCLOSE_RENDERBIN_DETAILS 
+ *                  stuff, because it is removed from OSG.
+ *
+ *					22.06.2006 Anderegg: Added osg::Group and osgSim::DOFTransform support
+ *
+ *					08.01.2008 Joran: Also the name of point helpers will be exported.
  */
  
 #include "OSGExp.h"
@@ -232,13 +237,8 @@ void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t
 		case 2:
 			stateset->setRenderBinDetails(renderBinNum, std::string(renderBinName), osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			break;
-		case 3:
-            //apparently this has been removed from osg but is still supported as the default case, so this will still work
-            //even though it is commented out, and so we leave it as an option in the dialog box
-            //http://osgcvs.no-ip.org/osgarchiver/archives/August2006/0286.html
-            //B.Anderegg
-
-			//stateset->setRenderBinDetails(renderBinNum, std::string(renderBinName), osg::StateSet::ENCLOSE_RENDERBIN_DETAILS);
+        default:
+            stateset->setRenderBinDetails(renderBinNum, std::string(renderBinName), osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
 			break;
 		}
     }
@@ -663,7 +663,7 @@ osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(osg::Group* rootT
 				switcher->addChild(transform.get());
 				if(n < 9)
 				{
-					switcher->setChildValue(transform.get(), switchEnableChildren[n]);
+					switcher->setChildValue(transform.get(), switchEnableChildren[n]!=FALSE);
 				}
 			}
 		}// End for all geometry nodes.
@@ -882,13 +882,13 @@ void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* no
 			if(geomNode){
 				// Assert this is a shape node
 				ObjectState os = geomNode->EvalWorldState(t); 
-            if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID){//SHAPE_CLASS_ID ){
+				if(os.obj->SuperClassID() == SHAPE_CLASS_ID ){
 
 					// Get the absolute position of shape.
 					osg::Matrix mat = convertMat(geomNode->GetObjTMBeforeWSM(t));
 	
 					// Get shape geometry.
-					osg::ref_ptr<osg::Geode>  geode = createMeshGeometry(rootTransform, geomNode, os.obj, t);
+					osg::ref_ptr<osg::Geode>  geode = createShapeGeometry(rootTransform, geomNode, os.obj, t);
 
 					// Transform all vertices in shape geometry to absolute position
 					// and insert them into occluder.
@@ -1032,6 +1032,7 @@ osg::ref_ptr<osg::Node> OSGExp::traverseNode(osg::Group* rootTransform, INode* n
 osg::ref_ptr<osg::MatrixTransform> OSGExp::createPointFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
 {
     osg::MatrixTransform *matrixTransform=new osg::MatrixTransform;
+	matrixTransform->setName(node->GetName());
     matrixTransform->setDataVariance(osg::Object::STATIC);
     osg::Geode *geode=new osg::Geode;
     geode->setCullingActive(false);

@@ -25,6 +25,9 @@
  *	CREATED BY:		Rune Schmidt Jensen, rune@schmidt-jensen.com
  *
  *	HISTORY:		Created 11.02.2003
+ *
+ *                  28.06.2006 Joakim Simonsson: It is possible to 
+ *                  select all kind of nodes for LODHelpers
  */
 #include "OSGHelper.h"
 
@@ -122,27 +125,22 @@ static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDes
 	// must declare NUM_LOD_OBJECTS (5 params) of TYPE_INODE, or make
 	// an NODE_LISTBOX and implement all logic myself.
 	lod_node+0,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
-		//p_sclassID,		GEOMOBJECT_CLASS_ID, // Only allow geometry nodes.... why? banderegg
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE1,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,
 	lod_node+1,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
-		//p_sclassID,		GEOMOBJECT_CLASS_ID, // Only allow geometry nodes.... why? banderegg
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE2,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,
 	lod_node+2,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
-		//p_sclassID,		GEOMOBJECT_CLASS_ID, // Only allow geometry nodes.... why? banderegg
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE3,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,
 	lod_node+3,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
-		//p_sclassID,		GEOMOBJECT_CLASS_ID, // Only allow geometry nodes.... why? banderegg
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE4,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,		
 		end,
 	lod_node+4,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
-		//p_sclassID,		GEOMOBJECT_CLASS_ID, // Only allow geometry nodes.... why? banderegg
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE5,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,

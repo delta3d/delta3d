@@ -46,10 +46,15 @@
  *                  28.09.2005 Manu: Added animation support for groups.
  *
  *                  30.09.2005 Manu: Added dummy support.
+ *
+ *					02.10.2007 Farshid Lashkari: Texture memory usage improvements. When compressed
+ *					textures is turned on, textures will immediately be compressed and 
+ *					uncompressed data will be released during export.
+ *
+ *                  05.11.2007 Daniel Sjolie: Added useOriginalTextures Option
  */
 
 #include "OSGExp.h" 
-#include "osgconv.h"
 
 #include <osg/Version>
 #include <osgUtil/Optimizer> 
@@ -90,6 +95,7 @@ BOOL CALLBACK OptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam
 			CheckDlgButton(hWnd, IDC_WHITENTEXMAT,			options->getWhitenTexMat());
 			CheckDlgButton(hWnd, IDC_WHITENSELFILLUM,		options->getWhitenSelfIllum());
 			CheckDlgButton(hWnd, IDC_WRITETEXTURE,			options->getWriteTexture());
+			CheckDlgButton(hWnd, IDC_USE_ORIGINAL_TEXTURE_FILES,options->getUseOriginalTextureFiles());
 			CheckDlgButton(hWnd, IDC_SAVEFILE,				options->getSaveFile());
 			CheckDlgButton(hWnd, IDC_INCLUDEIMAGEDATA,		options->getIncludeImageDataInIveFile());
 			CheckDlgButton(hWnd, IDC_QUICKVIEW,				options->getQuickView());
@@ -153,6 +159,7 @@ BOOL CALLBACK OptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam, LPARAM lParam
 				options->setShowErrMsg				(IsDlgButtonChecked(hWnd, IDC_SHOWERRMSG));	
 				options->setUseIndices				(IsDlgButtonChecked(hWnd, IDC_USEINDICES));	
 				options->setExportParticles			(IsDlgButtonChecked(hWnd, IDC_PARTICLES));	
+				options->setUseOriginalTextureFiles	(IsDlgButtonChecked(hWnd, IDC_USE_ORIGINAL_TEXTURE_FILES));	
 				options->setTexFormatIndex			(SendDlgItemMessage(hWnd, IDC_TEXFORMAT, 
 																		CB_GETCURSEL ,0,0));
 				options->setTexCompIndex			(SendDlgItemMessage(hWnd, IDC_TEXCOMPRESSION, 
@@ -325,7 +332,7 @@ void OSGExp::ShowAbout(HWND hWnd){
 	typedef long INT_PTR, *PINT_PTR;
 	typedef unsigned long UINT_PTR, *PUINT_PTR;
   to
-	typedef int INT_PTR, *PINT_PTR;oh 
+	typedef int INT_PTR, *PINT_PTR;
 	typedef unsigned int UINT_PTR, *PUINT_PTR;
   (this worked for me!)
 
@@ -505,16 +512,6 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
 				osgDB::Registry::instance()->setOptions(opt);
 			}
 
-            // Compress textures if writing ive
-            if(MtlKeeper::getTexComp(_options) != osg::Texture::USE_IMAGE_DATA_FORMAT) {
-                if (_options->getExportExtension().compare(".ive")==0 
-                || _options->getExportExtension().compare(".IVE")==0)
-                {
-                    CompressTexturesVisitor ctv(MtlKeeper::getTexComp(_options));
-                    rootTransform->accept(ctv);
-                    ctv.compress();
-                }
-            }
 
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
             osgDB::ReaderWriter::WriteResult res = 
@@ -834,5 +831,6 @@ static OSGExpClassDesc OSGExpDesc;
 ClassDesc2* GetOSGExpDesc(){ 
 	return &OSGExpDesc; 
 }
+
 
 

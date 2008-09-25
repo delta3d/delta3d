@@ -23,6 +23,9 @@
  *	CREATED BY:		Rune Schmidt Jensen, rune@schmidt-jensen.com
  *
  *	HISTORY:		Created 03.02.2003
+ *					
+ *					24.09.2007 Farshid Lashkari: Fixed bug that would crash
+ *                  Max 9 when using the helpers.
  */
 
 #include "OSGHelper.h"

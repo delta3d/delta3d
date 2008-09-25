@@ -48,6 +48,7 @@
 #define IDC_USENODEMASK                 1029
 #define IDC_LIGHTING                    1030
 #define IDC_TURNOFFLIGHTING             1030
+#define IDC_USE_ORIGINAL_TEXTURE_FILES  1031
 #define IDC_NODEMASKVALUE               1032
 #define IDC_IPADDRESS2                  1033
 #define IDC_EXPOPACITYMAPS              1034

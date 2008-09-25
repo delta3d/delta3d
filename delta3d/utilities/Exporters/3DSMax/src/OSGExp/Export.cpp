@@ -71,6 +71,16 @@
  *                  20.01.2006 Joran: Fixed exporting of the StateSet Helper.
  *                  Because of shared stateset's, the stateset is explicitly
  *                  unshared when this helper is used.
+ *
+ *					27.09.2006 Farshid Lashkari: Geodes, offset transforms and
+ *					drawables will now be exported with a name.
+ *
+ *					03.10.2007 Nathan Hanish: Fix for normal generation with the
+ *					'use indices' flag set.
+ * 
+ *					08.01.2008: Farshid Lashkari: User modified normals are now 
+ *					correctly exported. Currently, this only works for 
+ *					non-indexed meshes.
  */
 
 #include <osg/Switch>
@@ -87,6 +97,7 @@
 #include "OSGExp.h"
 
 #include "simpobj.h" // SimpelParticle definition
+#include "MeshNormalSpec.h"
 
 /**
  * Create OSG drawables corresponding to the MAX geometry given in the node.
@@ -133,6 +144,11 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createGeomObject(osg::Group* rootTran
 	// Create mesh from information in the node.
 	osg::ref_ptr<osg::Geode> geode = createMultiMeshGeometry(rootTransform, node, obj, t);
 
+	// Set name of geode
+	if(!nodeTransform->getName().empty()) {
+		geode->setName(nodeTransform->getName() + "-GEODE");
+	}
+
 	// Set the node transformation
 	nodeTransform->setMatrix(nodeMat);
 
@@ -149,6 +165,11 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createGeomObject(osg::Group* rootTran
 	    objectTransform->setMatrix(objectMat);
 		// Set static datavariance for better performance
 		objectTransform->setDataVariance(osg::Object::STATIC);
+
+		// Set name of object-offset transform
+		if(!nodeTransform->getName().empty()) {
+			objectTransform->setName(nodeTransform->getName() + "-OFFSET");
+		}
 
 		// Use default node mask
 		if(_options->getUseDefaultNodeMaskValue())
@@ -346,8 +367,16 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createShapeObject(osg::Group* rootTra
 	// Set the node transformation
 	nodeTransform->setMatrix(nodeMat);
 
+	// Create geode
+	osg::ref_ptr<osg::Geode> geode = createShapeGeometry(rootTransform, node, obj, t);
+
+	// Set name of geode
+	if(!nodeTransform->getName().empty()) {
+		geode->setName(nodeTransform->getName() + "-GEODE");
+	}
+
 	// Create shape geometry.
-	nodeTransform->addChild(createShapeGeometry(rootTransform, node, obj, t).get());
+	nodeTransform->addChild(geode.get());
 	applyNodeMaskValue(node, t, nodeTransform.get());
 	return nodeTransform;
 }
@@ -425,8 +454,16 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createParticleSystemObject(osg::Group
 	// Set the node transformation
 	nodeTransform->setMatrix(nodeMat);
 
+	// Create geode
+	osg::ref_ptr<osg::Geode> geode = createParticleSystemGeometry(rootTransform, node, obj, t);
+
+	// Set name of geode
+	if(!nodeTransform->getName().empty()) {
+		geode->setName(nodeTransform->getName() + "-GEODE");
+	}
+
 	// Create particle geometry.
-	nodeTransform->addChild(createParticleSystemGeometry(rootTransform, node, obj, t).get());
+	nodeTransform->addChild(geode.get());
 	return nodeTransform;
 }
 
@@ -518,6 +555,23 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 	}
 	// Get mesh and build normals.
 	Mesh* mesh = &tri->GetMesh();
+
+	//Allocate RVertex array
+	mesh->checkNormals(TRUE);
+
+	// Break up the verts
+	BitArray vertsToBreak(mesh->numVerts);
+	vertsToBreak.ClearAll();
+	for(int v = 0; v < mesh->numVerts; v++)
+	{
+		if(mesh->getRVert(v).ern)
+		{
+			vertsToBreak.Set(v);
+		}
+	}
+	mesh->BreakVerts(vertsToBreak);
+
+	// Stuff the RVertex normals into the Mesh normals array
 	mesh->buildNormals();
 
 	// Get any assigned material.
@@ -539,7 +593,11 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 		tcindices[unit] = new osg::UShortArray();
 	}
 
-
+	// Set name of mesh to material name
+	if(maxMtl) {
+		geometry->setName( maxMtl->GetName() );
+	}
+	
 	geode->addDrawable(geometry.get());
 	// If there is generated any OSG stateset then assign it to the geometry.
 	if(stateset.get()){
@@ -857,6 +915,10 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 		state[i]    = new osg::StateSet();
 		geometry[i]->setStateSet(state[i].get());
 
+		// Set name of mesh to material name
+		if(material[i]) {
+			geometry[i]->setName( material[i]->GetName() );
+		}
 
 		// If there is generated any OSG stateset then set it to the i'th state.
 		osg::ref_ptr<osg::StateSet> stateset = _mtlList->getStateSet(material[i]);
@@ -1030,10 +1092,9 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 			
 			// Set vertex normals.
 			if(_options->getExportVertexNormals() && mesh->faces){
-				Face face = mesh->faces[j];
-				Point3 vn1 = getVertexNormal(mesh, j, mesh->getRVertPtr(face.getVert(vx1)));
-				Point3 vn2 = getVertexNormal(mesh, j, mesh->getRVertPtr(face.getVert(vx2)));
-				Point3 vn3 = getVertexNormal(mesh, j, mesh->getRVertPtr(face.getVert(vx3)));
+				Point3 vn1 = getVertexNormal(mesh, j, vx1);
+				Point3 vn2 = getVertexNormal(mesh, j, vx2);
+				Point3 vn3 = getVertexNormal(mesh, j, vx3);
 				(*normals[i])[f[i]*3  ].set(vn1.x, vn1.y, vn1.z);
 				(*normals[i])[f[i]*3+1].set(vn2.x, vn2.y, vn2.z);
 				(*normals[i])[f[i]*3+2].set(vn3.x, vn3.y, vn3.z);
@@ -1109,7 +1170,11 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 		// Add the geometry to a geode.
 		geode->addDrawable(geometry.get());
 
-	
+		// Set name of mesh to material name
+		if(node->GetMtl()) {
+			geometry->setName( node->GetMtl()->GetName() );
+		}
+
 		// If there is generated any OSG stateset then add it to the geometry.
 		osg::ref_ptr<osg::StateSet> stateset = _mtlList->getStateSet(node->GetMtl());
 		if(stateset.valid())
@@ -1317,6 +1382,11 @@ osg::ref_ptr<osg::Geode> OSGExp::createParticleSystemGeometry(osg::Group* rootTr
 		if(_options->getUseDefaultNodeMaskValue())
 			geode->setNodeMask(_options->getDefaultNodeMaskValue());
 
+		// Set name of mesh to material name
+		if(node->GetMtl()) {
+			ps->setName( node->GetMtl()->GetName() );
+		}
+
 		geode->addDrawable(ps);
 		return geode;
 	
@@ -1359,12 +1429,22 @@ TriObject* OSGExp::getTriObjectFromObject(Object* obj, TimeValue t, int &deleteI
 /**
  * Return a vertex normal.
  */
-Point3 OSGExp::getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv){
+Point3 OSGExp::getVertexNormal(Mesh* mesh, int faceNo, int vert){
 	Face* f = &mesh->faces[faceNo];
+	RVertex *rv = mesh->getRVertPtr(f->getVert(vert));
 	DWORD smGroup = f->smGroup;
 	int numNormals;
 	Point3 vertexNormal;
 	
+	//Check for explicit normals (i.e. Edit Normals modifier)
+	MeshNormalSpec* meshNorm = mesh->GetSpecifiedNormals();
+	if(meshNorm && meshNorm->GetNumFaces()) {
+		int normID = meshNorm->Face(faceNo).GetNormalID(vert);
+		if(meshNorm->GetNormalExplicit(normID)) {
+			return meshNorm->Normal(normID);
+		}
+	}
+
 	// Is normal specified
 	// SPCIFIED is not currently used, but may be used in future versions.
 	if (rv->rFlags & SPECIFIED_NORMAL) {
