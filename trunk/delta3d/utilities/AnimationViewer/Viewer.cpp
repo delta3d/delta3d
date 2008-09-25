@@ -162,6 +162,12 @@ void Viewer::OnLoadCharFile(const QString& filename)
    {
       // Create a new Cal3DWrapper
       dtCore::RefPtr<Cal3DModelWrapper> wrapper = mCalDatabase->Load(filename.toStdString());
+      if (wrapper.valid() == false)
+      {
+         emit ErrorOccured("Problem encountered loading file.  See log file.");
+         return;
+      }
+
       mCharacter = new CharDrawable(wrapper.get());  
       mAttachmentController = new dtAnim::AttachmentController;
 
