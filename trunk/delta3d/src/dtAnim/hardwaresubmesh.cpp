@@ -33,6 +33,7 @@
 #include <dtUtil/log.h>
 #include <cal3d/hardwaremodel.h>
 #include <osg/CullFace>
+#include <osg/BlendFunc>
 
 namespace dtAnim
 {
@@ -120,46 +121,16 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, Cal
    setUseVertexBufferObjects(true);
 
    osg::StateSet* ss = getOrCreateStateSet();
-
    ss->addUniform(mBoneTransforms.get());
-
    ss->setAttributeAndModes(new osg::CullFace);
-   
+ 
    if (mHardwareModel == NULL) {return;}
 
-   std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
-   if (mMeshID >= meshVec.size())
-   {
-      LOG_WARNING("MeshID isn't defined in the list of meshes");
-      return;
-   }
-
-   CalHardwareModel::CalHardwareMesh &coreMesh = meshVec[mMeshID];
-
-   if (coreMesh.pCoreMaterial != NULL)
-   {
-      //get selected textures
-      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
-      std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
-      std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
-
-      for(int i = 0; iter != endIter; ++iter, ++i)
-      {
-         osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
-         if(texture != NULL) 
-         {
-            ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
-         }
-      }
-   }
-   else
-   {
-      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
-   }
+   SetUpMaterial();  
 
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   setCullCallback(new SubmeshCullCallback(*mWrapper, coreMesh.meshId));
+   setCullCallback(new SubmeshCullCallback(*mWrapper, mMeshID));
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
@@ -225,6 +196,92 @@ osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, 
          mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void HardwareSubmeshDrawable::SetUpMaterial()
+{
+   if (!mWrapper.valid())
+   {
+      return;
+   }
+
+   osg::StateSet *ss = this->getOrCreateStateSet();
+
+   osg::Material *material = new osg::Material();
+   ss->setAttributeAndModes(material, osg::StateAttribute::ON);
+
+   osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+   ss->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+   ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+   if (mWrapper->BeginRenderingQuery() == false) {return;}
+   if (mWrapper->SelectMeshSubmesh(mMeshID,0) == false) {return;}
+
+   unsigned char meshColor[4];
+   osg::Vec4 materialColor;
+
+   // set the material ambient color
+   mWrapper->GetAmbientColor(&meshColor[0]);
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material diffuse color
+   mWrapper->GetDiffuseColor( &meshColor[0] );
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material specular color
+   mWrapper->GetSpecularColor(&meshColor[0]);
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material shininess factor
+   float shininess;
+   shininess = mWrapper->GetShininess();
+   material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+
+   std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
+   if (mMeshID >= meshVec.size())
+   {
+      LOG_WARNING("MeshID isn't defined in the list of meshes");
+      return;
+   }
+
+   CalHardwareModel::CalHardwareMesh &coreMesh = meshVec[mMeshID];
+
+   if (coreMesh.pCoreMaterial != NULL)
+   {
+      //get selected textures
+      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
+      std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
+      std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
+
+      for(int i = 0; iter != endIter; ++iter, ++i)
+      {
+         osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
+         if(texture != NULL) 
+         {
+            ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
+         }
+      }
+   }
+   else
+   {
+      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
+   }
+
+   mWrapper->EndRenderingQuery();
 }
 
 } //namespace dtAnim
