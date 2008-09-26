@@ -12,6 +12,7 @@
 #include <osg/Geometry>
 #include <osg/CullFace>
 #include <osg/Math>
+#include <osg/BlendFunc>
 
 #include <cassert>
 
@@ -162,8 +163,13 @@ namespace dtAnim
          if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
          {
             osg::Material *material = new osg::Material();
-            //material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
             set->setAttributeAndModes(material, osg::StateAttribute::ON);
+
+            osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            set->setMode(GL_BLEND, osg::StateAttribute::ON);
+            set->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+            set->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
             unsigned char meshColor[4];
             osg::Vec4 materialColor;
 
