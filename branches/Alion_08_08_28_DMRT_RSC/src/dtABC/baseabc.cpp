@@ -57,23 +57,23 @@ void BaseABC::Quit()
 }
 
 ////////////////////////////////////////////////
-void BaseABC::SetCamera(dtCore::Camera * camera) 
-{ 
+void BaseABC::SetCamera(dtCore::Camera * camera)
+{
    GetView()->SetCamera(camera);
 }
 
 ////////////////////////////////////////////////
-dtCore::DeltaWin* BaseABC::GetWindow() 
-{  
+dtCore::DeltaWin* BaseABC::GetWindow()
+{
    return mWindow.get();
 }
 
 ////////////////////////////////////////////////
 void BaseABC::SetWindow(dtCore::DeltaWin * win)
-{ 
+{
    mWindow = win;
    if (GetCamera() != NULL)
-      GetCamera()->SetWindow(win); 
+      GetCamera()->SetWindow(win);
 }
 
 ////////////////////////////////////////////////
@@ -112,7 +112,7 @@ void BaseABC::CreateInstances()
 {
     // create the camera
    assert( mViewList[0].get() );
-    
+
    mViewList[0]->SetCamera( new dtCore::Camera("defaultCam") );
    mViewList[0]->SetScene( new dtCore::Scene("defaultScene") );
 
@@ -123,7 +123,9 @@ void BaseABC::CreateInstances()
 ////////////////////////////////////////////////
 dtCore::View * BaseABC::CreateDefaultView()
 {
-   mViewList.push_back(new dtCore::View("defaultView"));
+   dtCore::RefPtr<dtCore::View> view = new dtCore::View("defaultView");
+   mViewList.reserve(1);
+   mViewList.push_back(view);
    return mViewList[0].get();
 }
 
@@ -146,7 +148,7 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
          atLeastOneEnabled = camera->GetEnabled() || atLeastOneEnabled;
       }
    }
-   
+
    map.FindProxies(proxies, "*", "dtcore", "View");
    for(  ActorProxyVector::iterator iter = proxies.begin();
          iter != proxies.end();
@@ -166,7 +168,7 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 
       LOG_INFO( "At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled." )
    }
-   
+
    dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );
 }
 

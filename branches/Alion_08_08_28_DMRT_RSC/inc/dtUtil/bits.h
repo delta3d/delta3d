@@ -47,25 +47,33 @@ namespace dtUtil
         * Bits::Has( accum, 7 ); //false
         * @endcode
         */
-      template < class N, class B > inline bool Has ( N number, B bits )
+      template < class N, class B > inline bool Has (N number, B bits)
       {
-         return ( ( number & bits ) == ( static_cast<N>(bits) ) );
+         return ((number & bits) == (static_cast<N>(bits)));
       }
 
       /**
         * Add the "bits" to "number".
+        * @code
+        * unsigned int accum = 1;
+        * accum = Bits::Add(accum, 7); //Has(accum, 1) and Has(accum, 7) == true
+        * @endcode
         */
-      template < class N, class B > inline N Add ( N number, B bits )
+      template < class N, class B > inline N Add (N number, B bits)
       {
-         return ( number | bits );
+         return (number | bits);
       }
 
-      //
-      //  Remove the "bits" from "number".
-      //
-      template < class N, class B > inline N Remove ( N number, B bits )
+      /**
+       * Remove the "bits" from "number".
+       * @code
+       * unsigned int accum = 3;
+       * accum = Bits::Remove(accum, 2); //Has(accum,3) == false, Has(accum,1) == true
+       * @endcode
+       */
+      template < class N, class B > inline N Remove (N number, B bits)
       {
-         return ( ( number & bits ) ? ( number ^ bits ) : number );
+         return ((number & bits) ? (number ^ bits) : number);
       }
 
       /**
@@ -77,9 +85,9 @@ namespace dtUtil
        * newBits = Bits::Toggle(accum, 1); //newBits = 3
        * @endcode
        */
-      template < class N, class B > inline N Toggle ( N number, B bits )
+      template < class N, class B > inline N Toggle (N number, B bits)
       {
-         return ( number ^ bits );
+         return (number ^ bits);
       }
 
    } //namespace Bits

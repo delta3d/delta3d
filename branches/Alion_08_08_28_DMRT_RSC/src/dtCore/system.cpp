@@ -249,9 +249,7 @@ namespace dtCore
       {
          // we tried a sleep here, but even passing 1 millisecond was to long.
          mAccumulateLastRealDt = true;
-#ifndef DELTA_WIN32
          AppSleep(1);
-#endif
          return;
       }
 

@@ -30,7 +30,7 @@ PoseMeshProperties::PoseMeshProperties()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::Cal3DModelWrapper &model)
+void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::Cal3DModelWrapper& model)
 {  
    // Tree depth 0
    // Create the tree item and set its defaults
@@ -40,9 +40,9 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::
    meshItem->setText(1, STRING_ENABLED);
 
    // Items at tree depth 1
-   QTreeWidgetItem *boneNameItem = new QTreeWidgetItem(meshItem);
-   QTreeWidgetItem *rootVertItem = new QTreeWidgetItem(meshItem); 
-   QTreeWidgetItem *stateItem    = new QTreeWidgetItem(meshItem);   
+   QTreeWidgetItem* boneNameItem = new QTreeWidgetItem(meshItem);
+   QTreeWidgetItem* rootVertItem = new QTreeWidgetItem(meshItem); 
+   QTreeWidgetItem* stateItem    = new QTreeWidgetItem(meshItem);   
 
    // Store which state widget corresponds to this posemesh
    mStatePropertyMap.insert(std::make_pair(&newMesh, stateItem));
@@ -62,13 +62,13 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::
       int animID = rawVerts[vertIndex]->mAnimID;
       osg::Vec3 rawData = rawVerts[vertIndex]->mData;
 
-      const std::string &animName = model.GetCoreAnimationName(animID);
+      const std::string& animName = model.GetCoreAnimationName(animID);
 
       // TODO add animation names
       QString dataString = QString("{ anim id = %1 }").arg(animID, 3);
       dataString.append( QString(", { data = [%1, %2] }").arg(rawData.x()).arg(rawData.y()));
 
-      QTreeWidgetItem *vertItem = new QTreeWidgetItem(rootVertItem);
+      QTreeWidgetItem* vertItem = new QTreeWidgetItem(rootVertItem);
       vertItem->setData(0, Qt::UserRole, QVariant(animID));
       vertItem->setText(0, QString("%1 - %2").arg(vertIndex).arg(animName.c_str()));
       vertItem->setText(1, dataString);    
@@ -80,8 +80,8 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::
    // Add the tree items for monitoring the current state of the meshes
    stateItem->setText(0, "State");
 
-   QTreeWidgetItem *meshAzimuthItem       = new QTreeWidgetItem(stateItem);
-   QTreeWidgetItem *meshElevationItem     = new QTreeWidgetItem(stateItem);  
+   QTreeWidgetItem* meshAzimuthItem   = new QTreeWidgetItem(stateItem);
+   QTreeWidgetItem* meshElevationItem = new QTreeWidgetItem(stateItem);  
 
    meshAzimuthItem->setText(0, "Posemesh Azimuth");
    meshElevationItem->setText(0, "Posemesh Elevation");  
@@ -93,14 +93,14 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnItemDoubleClicked(QTreeWidgetItem *item, int column)
+void PoseMeshProperties::OnItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
    UNREFERENCED_PARAMETER(column);
    emit ViewPoseMesh(item->text(0).toStdString());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnItemToggled(QTreeWidgetItem *item, int column)
+void PoseMeshProperties::OnItemToggled(QTreeWidgetItem* item, int column)
 {
    if (column == 0)
    {
@@ -121,7 +121,7 @@ void PoseMeshProperties::OnItemToggled(QTreeWidgetItem *item, int column)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem *item)
+void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem* item)
 {
    UNREFERENCED_PARAMETER(item);
 
@@ -131,7 +131,7 @@ void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem *item)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnBlendUpdate(const std::vector<float> &weightList)
+void PoseMeshProperties::OnBlendUpdate(const std::vector<float>& weightList)
 {
    for (size_t vertIndex = 0; vertIndex < mVertProperties.size(); ++vertIndex)
    {
@@ -143,7 +143,7 @@ void PoseMeshProperties::OnBlendUpdate(const std::vector<float> &weightList)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnItemAdded(const PoseMeshItem *meshItem)
+void PoseMeshProperties::OnItemAdded(const PoseMeshItem* meshItem)
 {
    // Register for update
    connect(meshItem, SIGNAL(NewItemBlend(const dtAnim::PoseMesh*, float, float)),
@@ -151,13 +151,13 @@ void PoseMeshProperties::OnItemAdded(const PoseMeshItem *meshItem)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void PoseMeshProperties::OnNewItemBlend(const dtAnim::PoseMesh *posemesh, float itemAzimuth, float itemElevation)
+void PoseMeshProperties::OnNewItemBlend(const dtAnim::PoseMesh* posemesh, float itemAzimuth, float itemElevation)
 {
    StatePropertyMap::iterator iter = mStatePropertyMap.find(posemesh);
 
    if (iter != mStatePropertyMap.end())
    {
-      QTreeWidgetItem *stateItem = iter->second;
+      QTreeWidgetItem* stateItem = iter->second;
       assert(stateItem->childCount() == 2);
 
       float azimuthDegrees   = osg::RadiansToDegrees(itemAzimuth);

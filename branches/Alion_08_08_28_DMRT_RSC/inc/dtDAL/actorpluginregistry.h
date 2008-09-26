@@ -49,8 +49,8 @@ namespace dtDAL
           * Constructs the registry.  Sets the name and description for
           * this registry.
           */
-         ActorPluginRegistry(const std::string &name,
-                           const std::string &desc = "") : mName(name), mDescription(desc)
+         ActorPluginRegistry(const std::string& name,
+                           const std::string& desc = "") : mName(name), mDescription(desc)
          {
             mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, ActorProxy, ActorType::RefPtrComp>;
          }
@@ -75,7 +75,7 @@ namespace dtDAL
           * Sets the name of this registry.
           * @param name Name to assign to the registry.
           */
-         void SetName(const std::string &name) { mName = name; }
+         void SetName(const std::string& name) { mName = name; }
          
          /**
           * Gets the name currently assigned to this registry.
@@ -96,7 +96,7 @@ namespace dtDAL
          /**
           * Gets a list of actor types that this registry supports.
           */
-         void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> > &actors);
+         void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actors);
 
          /**
           * Checks to see if this registry supports the given actor type.

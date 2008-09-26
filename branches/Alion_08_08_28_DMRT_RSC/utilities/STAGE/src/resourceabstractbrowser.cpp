@@ -82,7 +82,7 @@ namespace dtEditQt
       connect(tree,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(doubleClickEvent()));
    }
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceAbstractBrowser::buildResourceTree(dtDAL::DataType &type, QWidget *parent, QIcon *resourceIcon)
+   void ResourceAbstractBrowser::buildResourceTree(dtDAL::DataType &type, QWidget *parent, const QIcon &resourceIcon)
    {
       // make sure we have a valid type before we build the tree
       if(!type.GetDisplayName().empty())
@@ -92,16 +92,16 @@ namespace dtEditQt
 
          project.GetResourcesOfType(type,iterTree);
 
-         QIcon *icon = new QIcon();
-         icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
-         icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
+         QIcon icon;
+         icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
+         icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
          // construct our tree
          root = new ResourceTreeWidget(tree);
          root->setText(0,rootName);
          root->recursivelyCreateResourceTree(iterTree,resourceIcon);
          root->setIfResource(false);
-         root->setIcon(0,*icon);
+         root->setIcon(0,icon);
 
          selection = new ResourceTreeWidget();
          selection->setCategoryName(QString(type.GetName().c_str()));
@@ -183,7 +183,7 @@ namespace dtEditQt
       tree->clear();
 
       // rebuild the tree
-      buildResourceTree(*resourceType, getCurrentParent(), &resourceIcon);
+      buildResourceTree(*resourceType, getCurrentParent(), resourceIcon);
 
       // change the selection to the root to be nice
       tree->setCurrentItem(tree->topLevelItem(0));
@@ -586,10 +586,6 @@ namespace dtEditQt
       {
          EditorData::GetInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
       }
-      else if(*resourceType == dtDAL::DataType::CHARACTER)
-      {
-         EditorData::GetInstance().setCurrentCharacterResource(dtDAL::ResourceDescriptor());
-      }
       else if(*resourceType == dtDAL::DataType::TERRAIN)
       {
          EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
@@ -617,10 +613,6 @@ namespace dtEditQt
       else if(*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
       {
          EditorData::GetInstance().setCurrentParticleResource(descriptor);
-      }
-      else if(*resourceType == dtDAL::DataType::CHARACTER)
-      {
-         EditorData::GetInstance().setCurrentCharacterResource(descriptor);
       }
       else if(*resourceType == dtDAL::DataType::TERRAIN)
       {

@@ -273,6 +273,9 @@ Section Uninstall
 
   ;bin
   RMDir /r $INSTDIR\${DELTA_BUILD_DIR}
+  
+  ;CMakeModules
+  RMDIR /r $INSTDIR\CMakeModules
 
   ;data
   RMDIR /r $INSTDIR\data

@@ -40,7 +40,7 @@ class ProjectContextDialog: public QDialog
 public:
 
    /// Constructor
-   ProjectContextDialog(QWidget *parent = NULL);
+   ProjectContextDialog(QWidget* parent = NULL);
 
    /// Destructor
    virtual ~ProjectContextDialog();
@@ -55,8 +55,8 @@ public:
       void spawnFileBrowser();
 
 private:
-   QPushButton *applyButton;
-   QLineEdit   *pathEdit;
+   QPushButton* applyButton;
+   QLineEdit*   pathEdit;
 };
 
 #endif

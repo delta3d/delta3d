@@ -62,7 +62,6 @@ namespace dtDAL
    DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, STATICMESH_ID);
    DataType DataType::SKELETAL_MESH("SkeletalMeshes", "Skeletal Mesh", true, SKELETAL_MESH_ID);
    DataType DataType::TEXTURE("Textures", "Texture", true, TEXTURE_ID);
-   DataType DataType::CHARACTER("Characters", "Character", true, CHARACTER_ID);
    DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID);
    DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID);
    DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID);   

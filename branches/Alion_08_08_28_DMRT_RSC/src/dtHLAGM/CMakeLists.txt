@@ -38,7 +38,7 @@ INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
 IF (MSVC)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "/../../bin/")
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4290") #ignore the C4290 warning
 ENDIF (MSVC)

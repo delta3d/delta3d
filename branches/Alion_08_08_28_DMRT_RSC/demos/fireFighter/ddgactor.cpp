@@ -82,28 +82,28 @@ DDGActor::DDGActor(dtGame::GameActorProxy &proxy) :
 
    //port bow wake
    portBowWake = new dtCore::ParticleSystem;
-   portBowWake->LoadFile("Particles/BreakingWake.osg");
+   portBowWake->LoadFile("Particles/breakingWake.osg");
    position.Set(1.0f, -63.0f + deltaY, 0/*-5.5f + deltaZ*/, -40.0f, 0.0f, 0.0f);
    SetPortBowWake(portBowWake.get(), position);
    AddChild(portBowWake.get());
 
    //stbd bow wake
    stbdBowWake = new dtCore::ParticleSystem;
-   stbdBowWake->LoadFile("Particles/BreakingWake.osg");
+   stbdBowWake->LoadFile("Particles/breakingWake.osg");
    position.Set(-1.0f, -63.0f + deltaY, 0/*-5.5f + deltaZ*/, 40.0f, 0.0f, 0.0f);
    SetStbdBowWake(stbdBowWake.get(), position);
    AddChild(stbdBowWake.get());
 
    //port rooster tail
    portRooster = new dtCore::ParticleSystem;
-   portRooster->LoadFile("Particles/BreakingWake.osg");
+   portRooster->LoadFile("Particles/breakingWake.osg");
    position.Set(0.25f, 81.0f + deltaRoosterY, 0/*-4.5f + deltaZ*/, 45.0f, 0.0f, 0.0f);
    SetPortRooster(portRooster.get(), position);
    AddChild(portRooster.get());
 
    //stbd rooster tail
    stbdRooster = new dtCore::ParticleSystem;
-   stbdRooster->LoadFile("Particles/BreakingWake.osg");
+   stbdRooster->LoadFile("Particles/breakingWake.osg");
    position.Set(-0.25f, 81.0f + deltaRoosterY, 0/*-4.5f + deltaZ*/, -45.0f, 0.0f, 0.0f);
    SetStbdRooster(stbdRooster.get(), position);
    AddChild(stbdRooster.get());

@@ -1,4 +1,4 @@
-/* Copyright (C) Noel Llopis, 2001. 
+/* Copyright (C) Noel Llopis, 2001.
  * All rights reserved worldwide.
  *
  * This software is provided "as is" without express or implied
@@ -24,9 +24,11 @@
 
 #if defined(DELTA_WIN32)
 // Identifier was truncated to '255' characters in the debug information
-#pragma warning( disable:4786 )  
+#pragma warning( disable:4786 )
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef GetClassName
+#undef SendMessage
 #else
 #include <iostream>
 #include <csignal>
@@ -57,9 +59,9 @@ class DeprecationMgr
       return Instance;
    }
 
-	~DeprecationMgr ( void )
+	~DeprecationMgr()
    {
-      if ( !m_Functions.empty() )
+      if (!m_Functions.empty())
       {
 			#if defined(DELTA_WIN32)
          OutputDebugString( "*************************************************************\n" );
@@ -70,36 +72,36 @@ class DeprecationMgr
          #endif // defined(DELTA_WIN32)
 
          //char txt[255];
-         std::map<const char *, DeprecatedFunction>::iterator i;
-         for ( i=m_Functions.begin(); i!=m_Functions.end(); ++i )
+         std::map<const char*, DeprecatedFunction>::iterator i;
+         for (i = m_Functions.begin(); i != m_Functions.end(); ++i)
          {
-            DeprecatedFunction * pFunction = &((*i).second);
+            DeprecatedFunction* pFunction = &((*i).second);
 
             std::ostringstream oss;
-            oss << "- Function " << pFunction->OldFunctionName << " called from " << 
+            oss << "- Function " << pFunction->OldFunctionName << " called from " <<
                    pFunction->CalledFrom.size() << " different places.\n";
 
             /* sprintf ( txt, "- Function %s called from %u different places.\n",
-               pFunction->OldFunctionName, 
+               pFunction->OldFunctionName,
                (unsigned)pFunction->CalledFrom.size() ); */
 
             #if defined(DELTA_WIN32)
-            OutputDebugString(oss.str().c_str());         
+            OutputDebugString(oss.str().c_str());
 		      #else
 			   std::cout << oss.str();
             #endif // defined(DELTA_WIN32)
-				
+
             oss.str("");
             oss << "  Instead use " << pFunction->NewFunctionName << ".\n",
-            /* sprintf ( txt, "  Instead use %s.\n", 
+            /* sprintf ( txt, "  Instead use %s.\n",
                pFunction->NewFunctionName ); */
 
             #if defined(DELTA_WIN32)
-            OutputDebugString(oss.str().c_str());         
+            OutputDebugString(oss.str().c_str());
 		      #else
 			   std::cout << oss.str();
             #endif // defined(DELTA_WIN32)
-        
+
          }
 
 
@@ -113,7 +115,7 @@ class DeprecationMgr
       }
    }
 
-	bool AddDeprecatedFunction ( const char * OldFunctionName, 
+	bool AddDeprecatedFunction ( const char * OldFunctionName,
 								 const char * NewFunctionName,
 								 const void * FramePtr )
    {
@@ -128,10 +130,10 @@ class DeprecationMgr
       int CalledFrom = 0;
 
       std::signal(SIGSEGV,SIG_IGN);
-      
+
       if( pReturn )
          CalledFrom = *pReturn;
-      
+
       #endif //defined(DELTA_WIN32)
 
       // Check if this function was already listed as deprecated

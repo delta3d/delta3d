@@ -22,8 +22,6 @@
 #define DELTA_TRANSFORMABLE
 
 #include <ode/common.h>
-#include <ode/contact.h>
-#include <ode/collision_trimesh.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
@@ -34,10 +32,14 @@ namespace osg
    class MatrixTransform;
    class Geode;
 }
+
+struct dContact;
 /// @endcond
 
 namespace dtCore
 {
+   class ODEGeomWrap;
+
    /**
     * The Transformable class is the base class of anything that can move in the
     * virtual world and can be added to the Scene.
@@ -53,12 +55,15 @@ namespace dtCore
    class DT_CORE_EXPORT Transformable : public DeltaDrawable
    {
    public:
+
       /**
-       * We need an enumeration to allow the user to set which type
-       * of collision geometry to use.  The other properties in this
-       * proxy such as radius, length, etc. affect the current type
-       * of collision geometry.
-       */
+      * We need an enumeration to allow the user to set which type
+      * of collision geometry to use.  The other properties in this
+      * proxy such as radius, length, etc. affect the current type
+      * of collision geometry.
+      * Ideally, this enum shouldn't be here, but rather in the collision class.
+      * Its left here for backward compatibility.
+      */
       class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
       {
          DECLARE_ENUM(CollisionGeomType);
@@ -217,7 +222,7 @@ namespace dtCore
        *
        * @return the object's geometry identifier
        */
-      dGeomID GetGeomID() const { return mGeomID; }
+      dGeomID GetGeomID() const;
 
       /**
        * Returns the type of collision geometry associated with this
@@ -225,7 +230,7 @@ namespace dtCore
        *
        * @return the object's collision geometry type
        */
-      CollisionGeomType* GetCollisionGeomType() const;
+      Transformable::CollisionGeomType* GetCollisionGeomType() const;
 
       /**
        * Returns the dimensions of collision geometry associated with this
@@ -436,42 +441,23 @@ namespace dtCore
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
-   protected:
-
-      /**
-       * The last geometry transform reported to ODE.
+      /** 
+       * Get the const internal ODE Geom wrapper object.
+       * @return The ODE Geom collision wrapper
        */
-      Transform mGeomTransform;
+      const ODEGeomWrap* GetGeomWrapper() const;
+
+      /** 
+      * Get the internal ODE Geom wrapper object.
+      * @return The ODE Geom collision wrapper
+      */
+      ODEGeomWrap* GetGeomWrapper();
 
    private:
       void Ctor();
 
-      /**
-       * The ODE geometry identifier of the geometry transform.
-       */
-      dGeomID mGeomID;
+      dtCore::RefPtr<ODEGeomWrap> mGeomWrap;
 
-      /**
-       * The original geometry set in SetCollisionShape functions.
-       * The scale values in our matrix transform will be applied to
-       * this value to modify the shape of mGeomID.
-       */
-      dGeomID mOriginalGeomID;
-
-      /**
-       * The ODE triangle mesh data identifier, if any.
-       */
-      dTriMeshDataID mTriMeshDataID;
-
-      /**
-       * The heap-allocated array of mesh vertices.
-       */
-      dVector3* mMeshVertices;
-
-      /**
-       * The heap-allocated array of mesh indices.
-       */
-      int* mMeshIndices;
 
       /**
        *  Pointer to the collision geometry representation

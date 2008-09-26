@@ -13,15 +13,12 @@
 #include <osg/Group>
 #include <osgViewer/View>
 
-#include <ode/ode.h>
-
 #include <dtCore/camera.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/light.h>
-#include <dtCore/physical.h>
 #include <dtCore/system.h>
+#include <dtCore/odecontroller.h>
 
-#include <dtUtil/log.h>
 #include <dtUtil/configproperties.h>
 
 #include <cassert>
@@ -31,50 +28,9 @@ using namespace dtUtil;
 namespace dtCore
 {
 
-// dTriIndex is a macro hack in delta for ODE < 0.10. For 0.10 it's a typedef, so this will only
-// exist for 0.10 and later.
-#ifndef dTriIndex
-class ODELifeCycle
-{
-public:
-	ODELifeCycle()
-	{
-		dInitODE2(0);
-	}
 
-	~ODELifeCycle()
-	{
-		dCloseODE();
-	}
-};
-
-// This statically starts and shuts ode down.  This is needed for ODE 0.10.
-static ODELifeCycle odeLifeCycle;
-#endif
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
-/////////////////////////////////////////////
-// Replacement message handler for ODE
-extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
-{
-   Log::GetInstance().LogMessage(Log::LOG_INFO, __FILE__, msg, ap);
-}
-/////////////////////////////////////////////
-// Replacement debug handler for ODE
-extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
-{
-   Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
-
-   assert(false);
-}
-/////////////////////////////////////////////
-// Replacement error handler for ODE
-extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
-{
-   Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
-
-   assert(false);
-}
 /////////////////////////////////////////////
 Scene::ParticleSystemFreezer::ParticleSystemFreezer()
    : osg::NodeVisitor( TRAVERSE_ALL_CHILDREN ),
@@ -122,85 +78,58 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////
 Scene::Scene( const std::string& name) : Base(name),
+   mPhysicsController(NULL/*new ODEController()*/),
    mSceneNode(new osg::Group),
-   mSpaceID(0),
-   mWorldID(0),
-   mGravity(0.f, 0.f, 0.f),
-   mPhysicsStepSize(0.0),
-   mContactJointGroupID(0),
-   mUserNearCallback(0),
-   mUserNearCallbackData(0),
    mLights(MAX_LIGHTS),
    mRenderMode(POINT),
    mRenderFace(FRONT)
 {
-   RegisterInstance(this);
-   SetName(name);
-   mSceneNode->setName(name);
+   mPhysicsController = new ODEController(this);
+   Ctor();
+}
 
-   InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
-
-   AddDrawable( skyLight );
-   skyLight->SetEnabled( true );
-
-   mSpaceID = dHashSpaceCreate(0);
-   mWorldID = dWorldCreate();
-
-   //These are assigned in the CIL.  Do theses need to be
-   //assigned again?  Is something changing them or is it just a
-   //mistake?
-   mUserNearCallback = 0;
-   mUserNearCallbackData = 0;
-
-   dSpaceSetCleanup(mSpaceID, 0);
-
-   SetGravity(0.0f, 0.0f, -9.81f);
-
-   mContactJointGroupID = dJointGroupCreate(0);
-
-   dSetMessageHandler(ODEMessageHandler);
-   dSetDebugHandler(ODEDebugHandler);
-   dSetErrorHandler(ODEErrorHandler);
-
-   AddSender(&System::GetInstance());
-
-   //TODO set default render face, mode
+//////////////////////////////////////////////////////////////////////////
+Scene::Scene(dtCore::ODEController *physicsController, const std::string &name) : Base(name),
+   mPhysicsController(physicsController),
+   mSceneNode(new osg::Group),
+   mLights(MAX_LIGHTS),
+   mRenderMode(POINT),
+   mRenderFace(FRONT)
+{
+   Ctor();
 }
 
 /////////////////////////////////////////////
 Scene::~Scene()
 {
-   // Since we are going to destroy all the bodies in our world with dWorldDestroy,
-   // we must remove the references to the bodies associated with their default collision
-   // geoms. Otherwise destroying the world will leave the geoms references bad memory.
-   // This prevents a crash-on-exit in STAGE.
-   for(  TransformableVector::iterator iter = mCollidableContents.begin();
-         iter != mCollidableContents.end();
-         ++iter )
-   {
-      if( Physical* physical = dynamic_cast<Physical*>(*iter) )
-      {
-         if(physical != NULL)
-            physical->SetBodyID(0);
-      }
-   }
-
-   dWorldDestroy(mWorldID);
-   dJointGroupDestroy(mContactJointGroupID);
-
    // Remove the remaining DeltaDrawables from the Scene. This is redundant to help prevent
    // crash-on-exits. The "exit" message should have the same effect. This must be called
    // after the above code that destroys the ODE world.
    RemoveAllDrawables();
-
-   dSpaceDestroy(mSpaceID);
 
    DeregisterInstance(this);
 
    RemoveSender( &System::GetInstance() );
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+void Scene::Ctor()
+{
+   RegisterInstance(this);
+   mSceneNode->setName(GetName());
+
+   InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
+
+   AddDrawable( skyLight );
+   skyLight->SetEnabled( true );
+
+   AddSender(&System::GetInstance());
+
+   //TODO set default render face, mode
+}
 
 /////////////////////////////////////////////
 void Scene::SetSceneNode(osg::Group* newSceneNode)
@@ -336,46 +265,20 @@ void Scene::SetRenderState( Face face, Mode mode )
 
 
 /////////////////////////////////////////////
-void Scene::RegisterCollidable( Transformable* collidable )
+void Scene::RegisterCollidable(Transformable* collidable) const
 {
-   if( collidable == NULL )
+   if (mPhysicsController.valid())
    {
-      return;
+      mPhysicsController->RegisterCollidable(collidable);
    }
-
-   dSpaceAdd( mSpaceID, collidable->GetGeomID() );
-
-   dGeomSetData( collidable->GetGeomID(), collidable );
-
-   // This should probably be some sort of virtual function.
-   // Or perhaps RegisterPhysical can stick around and only do
-   // this.
-   if( Physical* physical = dynamic_cast<Physical*>(collidable) )
-   {
-      if(physical != NULL)
-         physical->SetBodyID( dBodyCreate( mWorldID ) );
-   }
-
-   mCollidableContents.push_back( collidable );
 }
-/////////////////////////////////////////////
-void Scene::UnRegisterCollidable( Transformable* collidable )
-{
-   dSpaceRemove( mSpaceID, collidable->GetGeomID() );
 
-   for(  TransformableVector::iterator it = mCollidableContents.begin();
-         it != mCollidableContents.end();
-         ++it)
+/////////////////////////////////////////////
+void Scene::UnRegisterCollidable(Transformable* collidable) const
+{
+   if (mPhysicsController.valid())
    {
-      if( *it == collidable )
-      {
-         if( Physical* physical = dynamic_cast<Physical*>(*it) )
-         {
-            physical->SetBodyID(0);
-         }
-         mCollidableContents.erase( it );
-         break;
-      }
+      mPhysicsController->UnRegisterCollidable(collidable);
    }
 }
 
@@ -414,29 +317,86 @@ float Scene::GetHeightOfTerrain( float x, float y )
    return HOT;
 }
 /////////////////////////////////////////////
-void Scene::SetGravity( const osg::Vec3& gravity )
+void Scene::SetGravity(const osg::Vec3& gravity) const
 {
-   mGravity.set(gravity);
-
-   dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
+   if (mPhysicsController.valid()) 
+   { 
+      mPhysicsController->SetGravity(gravity);
+   }
 }
+
+//////////////////////////////////////////////////////////////////////////
+void Scene::GetGravity(osg::Vec3& vec) const
+{
+   if (mPhysicsController.valid()) 
+   { 
+      vec = mPhysicsController->GetGravity();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Vec3 Scene::GetGravity() const
+{
+   if (mPhysicsController.valid()) 
+   { 
+      return mPhysicsController->GetGravity();
+   }
+   else
+   {
+      return osg::Vec3(0.f, 0.f, 0.f);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void Scene::GetGravity(float &x, float &y, float &z) const
+{
+   if (mPhysicsController.valid()) 
+   { 
+      osg::Vec3 grav = mPhysicsController->GetGravity();
+      x = grav[0]; y = grav[1]; z = grav[2];
+   }
+}
+
 /////////////////////////////////////////////
 // Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const
 {
-   return mSpaceID;
+   if (mPhysicsController.valid()) 
+   {
+      return mPhysicsController->GetSpaceID();
+   }
+   else
+   {
+      return 0;
+   }
 }
+
 /////////////////////////////////////////////
 // Get the ODE world ID
 dWorldID Scene::GetWorldID() const
 {
-   return mWorldID;
+   if (mPhysicsController.valid()) 
+   { 
+      return mPhysicsController->GetWorldID();
+   }
+   else
+   {
+      return 0;
+   }
 }
+
 /////////////////////////////////////////////
 // Get the ODE contact join group ID
 dJointGroupID Scene::GetContactJoinGroupID() const
 {
-   return mContactJointGroupID;
+   if (mPhysicsController.valid()) 
+   { 
+      return mPhysicsController->GetContactJoinGroupID();
+   }
+   else
+   {
+      return 0;
+   }
 }
 /////////////////////////////////////////////
 // Performs collision detection and updates physics
@@ -448,70 +408,10 @@ void Scene::OnMessage(MessageData *data)
    else if(data->message == "preframe")
    {
       double dt = *static_cast<double*>(data->userData);
-
-      bool usingDeltaStep = false;
-
-      // if step size is 0.0, use the deltaFrameTime instead
-      if( mPhysicsStepSize == 0.0 )
+      if (mPhysicsController.valid())
       {
-         SetPhysicsStepSize( dt );
-         usingDeltaStep = true;
+         mPhysicsController->Iterate(dt);
       }
-
-      const int numSteps = int(dt/mPhysicsStepSize);
-
-      TransformableVector::iterator it;
-
-      for(  it = mCollidableContents.begin();
-            it != mCollidableContents.end();
-            it++ )
-      {
-         (*it)->PrePhysicsStepUpdate();
-      }
-
-      for (int i=0; i<numSteps; i++)
-      {
-         if (mUserNearCallback)
-         {
-            dSpaceCollide(mSpaceID, mUserNearCallbackData, mUserNearCallback);
-         }
-         else
-         {
-            dSpaceCollide(mSpaceID, this, NearCallback);
-         }
-
-         dWorldQuickStep(mWorldID, mPhysicsStepSize);
-
-         dJointGroupEmpty(mContactJointGroupID);
-      }
-
-      double leftOver = dt - (numSteps * mPhysicsStepSize);
-
-      if(leftOver > 0.0)
-      {
-         if (mUserNearCallback)
-         {
-            dSpaceCollide(mSpaceID, mUserNearCallbackData, mUserNearCallback);
-         }
-         else
-         {
-            dSpaceCollide(mSpaceID, this, NearCallback);
-         }
-
-         dWorldStep(mWorldID, leftOver);
-
-         dJointGroupEmpty(mContactJointGroupID);
-      }
-
-      for(it = mCollidableContents.begin();
-          it != mCollidableContents.end();
-          it++)
-      {
-         (*it)->PostPhysicsStepUpdate();
-      }
-
-      if( usingDeltaStep ) //reset physics step size to 0.0 (i.e. use System step size)
-         SetPhysicsStepSize( 0.0 );
    }
    else if( data->message == "pause_start" )
    {
@@ -530,83 +430,6 @@ void Scene::OnMessage(MessageData *data)
       RemoveAllDrawables();
    }
 }
-/////////////////////////////////////////////
-// ODE collision callback
-void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
-{
-   if( data == 0 || o1 == 0 || o2 == 0 )
-   {
-      return;
-   }
-
-   Scene* scene = static_cast<Scene*>(data);
-
-   Transformable* c1 = static_cast<Transformable*>( dGeomGetData(o1) );
-   Transformable* c2 = static_cast<Transformable*>( dGeomGetData(o2) );
-
-   dContactGeom contactGeoms[8];
-
-   int numContacts = dCollide( o1, o2, 8, contactGeoms, sizeof(dContactGeom) );
-
-   if( numContacts > 0 && c1 != 0 && c2 != 0 )
-   {
-      CollisionData cd;
-
-      cd.mBodies[0] = c1;
-      cd.mBodies[1] = c2;
-
-      cd.mLocation.set(
-         contactGeoms[0].pos[0], contactGeoms[0].pos[1], contactGeoms[0].pos[2]
-      );
-
-      cd.mNormal.set(
-         contactGeoms[0].normal[0], contactGeoms[0].normal[1], contactGeoms[0].normal[2]
-      );
-
-      cd.mDepth = contactGeoms[0].depth;
-
-      scene->SendMessage("collision", &cd);
-
-      if( c1 != 0 || c2 != 0 )
-      {
-         dContact contact;
-
-         for( int i = 0; i < numContacts; i++ )
-         {
-            contact.surface.mode = dContactBounce;
-            contact.surface.mu = 1000.0;
-            contact.surface.bounce = 0.75;
-            contact.surface.bounce_vel = 0.001;
-
-            contact.geom = contactGeoms[i];
-
-            // Make sure to call these both, because in the case of
-            // Trigger, meaningful stuff happens even if the return
-            // is false.
-            bool contactResult1 = c1->FilterContact(&contact, c2);
-            bool contactResult2 = c2->FilterContact(&contact, c1);
-
-            if( contactResult1 && contactResult2 )
-            {
-               // All this also should be in a virtual function.
-               Physical* p1 = dynamic_cast<Physical*>(c1);
-               Physical* p2 = dynamic_cast<Physical*>(c2);
-
-               if( p1 != 0 || p2 != 0 )
-               {
-                  dJointID joint = dJointCreateContact( scene->mWorldID,
-                                                        scene->mContactJointGroupID,
-                                                        &contact );
-
-                  dJointAttach( joint,
-                                p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
-                                p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );
-               }
-            }
-         }
-      }
-   }
-}
 
 /////////////////////////////////////////////
 /** The supplied function will be used instead of the built-in collision
@@ -614,11 +437,14 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
  * @param func : The function to handle collision detection
  * @param data : A void pointer to user data.  This gets passed directly to func.
  */
-void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
+void Scene::SetUserCollisionCallback(dNearCallback* func, void* data) const
 {
-   mUserNearCallback = func;
-   mUserNearCallbackData = data;
+   if (mPhysicsController.valid())
+   {
+      mPhysicsController->SetUserCollisionCallback(func, data);
+   }
 }
+
 /////////////////////////////////////////////
 template< typename T >
 struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bool >
@@ -771,7 +597,26 @@ void Scene::SetDatabasePager( dtCore::DatabasePager *pager )
    }
 }
 
+double Scene::GetPhysicsStepSize() const
+{
+   if (mPhysicsController.valid())
+   {
+      return mPhysicsController->GetPhysicsStepSize();
+   }
+   else
+   {
+      return 0.0;
+   }
+}
+
+void Scene::SetPhysicsStepSize(double stepSize) const
+{
+   if (mPhysicsController.valid())
+   {
+      mPhysicsController->SetPhysicsStepSize(stepSize);
+   }
 }
 
 
+}
 

@@ -42,22 +42,22 @@
 
 #include <osgDB/FileNameUtils>
 
-ProjectContextDialog::ProjectContextDialog(QWidget *parent) : QDialog(parent)
+ProjectContextDialog::ProjectContextDialog(QWidget* parent) : QDialog(parent)
 {
-   QVBoxLayout *vLay   = new QVBoxLayout(this);
+   QVBoxLayout* vLay   = new QVBoxLayout(this);
    //vLay->setSizeConstraint(QLayout::SetMinimumSize);
 
    setWindowTitle(tr("Select a project context"));
 
-   QGroupBox   *group  = new QGroupBox(tr("Properties"),this);
-   QGridLayout *grid   = new QGridLayout(group);
-   QHBoxLayout *buttons= new QHBoxLayout;
-   QPushButton *select = new QPushButton(tr("..."),group);
-   QPushButton *cancel = new QPushButton(tr("Cancel"),this);
+   QGroupBox*   group  = new QGroupBox(tr("Properties"),this);
+   QGridLayout* grid   = new QGridLayout(group);
+   QHBoxLayout* buttons= new QHBoxLayout;
+   QPushButton* select = new QPushButton(tr("..."),group);
+   QPushButton* cancel = new QPushButton(tr("Cancel"),this);
    pathEdit            = new QLineEdit(group);
    applyButton         = new QPushButton(tr("Apply"),this);
 
-   QLabel      *desc   = new QLabel(tr("A project holds all related maps, files, and "
+   QLabel* desc = new QLabel(tr("A project holds all related maps, files, and "
       "resources.  Please select a directory where your project files will be "
       "stored."),group);
 

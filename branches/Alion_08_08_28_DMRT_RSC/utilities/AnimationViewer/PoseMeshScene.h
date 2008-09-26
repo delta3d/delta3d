@@ -30,6 +30,7 @@ public:
    void AddMesh(const dtAnim::PoseMesh &poseMesh, dtAnim::CharDrawable *model);   
 
    PoseMeshItem* GetPoseMeshItemByName(const std::string &name);
+   const std::vector<PoseMeshItem*>& GetPoseMeshItemList() { return mItemList; }
 
    void OnBlendUpdate();
 

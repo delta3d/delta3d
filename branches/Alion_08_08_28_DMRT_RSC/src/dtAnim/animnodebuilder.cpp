@@ -61,7 +61,7 @@ namespace dtAnim
       {
       };
 
-      ~CreateGeometryDrawCallback() 
+      ~CreateGeometryDrawCallback()
       {
       };
 
@@ -86,10 +86,9 @@ namespace dtAnim
    class UpdateCallback : public osg::NodeCallback
    {
    public:
-      UpdateCallback(CreateGeometryDrawCallback *callback,
-         osg::Group &group):
-         mCreateCB(callback)
-         ,mGroupToAddTo(&group) 
+      UpdateCallback(CreateGeometryDrawCallback *callback, osg::Group &group)
+         : mCreateCB(callback)
+         , mGroupToAddTo(&group)
       {
       }
 
@@ -103,7 +102,7 @@ namespace dtAnim
          if (mCreateCB->mCreatedNode.valid())
          {
             //then add it, remove the temp geometry, and remove this callback
-            mGroupToAddTo->addChild( mCreateCB->mCreatedNode.get() );                        
+            mGroupToAddTo->addChild( mCreateCB->mCreatedNode.get() );
             mGroupToAddTo->removeChild(0, 1);
             mGroupToAddTo->setUpdateCallback(NULL);
          }
@@ -131,19 +130,19 @@ AnimNodeBuilder::AnimNodeBuilder()
    }
    else
    {
-      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateNULL));     
+      SetCreate(CreateFunc(this, &AnimNodeBuilder::CreateNULL));
    }
 }
 
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 : mCreateFunc(pCreate)
-{  
+{
 }
 
 
 AnimNodeBuilder::~AnimNodeBuilder()
 {
-   
+
 }
 
 AnimNodeBuilder::CreateFunc& AnimNodeBuilder::GetCreate()
@@ -160,7 +159,7 @@ void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
 {
    ///Add a temporary rendered shape with a draw callback to a Group.  The callback
-   ///will postpone the creation of the real geometry until a valid openGL 
+   ///will postpone the creation of the real geometry until a valid openGL
    ///context is available.
    CreateGeometryDrawCallback* createCallback = new CreateGeometryDrawCallback(mCreateFunc, pWrapper);
    osg::Group* rootNode = new osg::Group();
@@ -180,7 +179,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
 
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
 {
-   if(pWrapper == NULL)
+   if (pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
       return NULL;
@@ -190,15 +189,15 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
 
    geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
 
-   if(pWrapper->BeginRenderingQuery()) 
+   if (pWrapper->BeginRenderingQuery())
    {
       int meshCount = pWrapper->GetMeshCount();
 
-      for(int meshId = 0; meshId < meshCount; meshId++) 
+      for (int meshId = 0; meshId < meshCount; meshId++)
       {
          int submeshCount = pWrapper->GetSubmeshCount(meshId);
 
-         for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+         for (int submeshId = 0; submeshId < submeshCount; submeshId++)
          {
             dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
             geode->addDrawable(submesh);
@@ -215,14 +214,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
 
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
 {
-   if(pWrapper == NULL)
+   if (pWrapper == NULL)
    {
       LOG_ERROR("Invalid parameter to CreateGeode.");
       return NULL;
    }
 
    Cal3DModelData* modelData = Cal3DDatabase::GetInstance().GetModelData(*pWrapper);
-   
+
    if (modelData == NULL)
    {
       LOG_ERROR("Model does not have model data.  Unable to create hardware submesh.");
@@ -236,7 +235,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    pWrapper->SetLODLevel(1);
    pWrapper->Update(0);
 
-   if(pWrapper->BeginRenderingQuery() == false) 
+   if (pWrapper->BeginRenderingQuery() == false)
    {
       LOG_ERROR("Can't begin the rendering query.");
       return NULL;
@@ -294,8 +293,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
    hardwareModel->setWeightBuffer(reinterpret_cast<char*>(vboVertexAttr + 10), strideBytes);
    hardwareModel->setMatrixIndexBuffer(reinterpret_cast<char*>(vboVertexAttr + 14), strideBytes);
-      
-   if(hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
+
+   if (hardwareModel->load(0, 0, modelData->GetShaderMaxBones()))
    {
 
       InvertTextureCoordinates(hardwareModel, stride, vboVertexAttr, modelData, indexArray);
@@ -311,8 +310,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 
       dtCore::ShaderProgram* shadProg = LoadShaders(*modelData, *geode);
 
-      /* Begin figure out if this open gl implementation uses [0] on array uniforms 
-      * This seems to be an ATI/NVIDIA thing.  
+      /* Begin figure out if this open gl implementation uses [0] on array uniforms
+      * This seems to be an ATI/NVIDIA thing.
       * This requires me to force the shader to compile.
       */
       osg::Program* prog = shadProg->GetShaderProgram();
@@ -326,7 +325,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       {
          if (uniformMap.find(boneTransformUniform + "[0]") == uniformMap.end())
          {
-            LOG_ERROR("Can't find uniform named \"" + boneTransformUniform 
+            LOG_ERROR("Can't find uniform named \"" + boneTransformUniform
                + "\" which is required for skinning.");
          }
          else
@@ -336,9 +335,9 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
       }
       // End check.
 
-      for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+      for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
       {
-         HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel, 
+         HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
                                                  boneTransformUniform, modelData->GetShaderMaxBones(),
                                                  meshCount, vbo[0], vbo[1]);
          geode->addDrawable(drawable);
@@ -355,7 +354,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 
-   pWrapper->EndRenderingQuery();   
+   pWrapper->EndRenderingQuery();
 
    return geode;
 }
@@ -386,13 +385,13 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
             shaderProgram = spGroup->FindShader(modelData.GetShaderName());
             if (shaderProgram == NULL)
             {
-               LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \"" 
+               LOG_ERROR("Shader program \"" + modelData.GetShaderName() + "\" from group \""
                      + modelData.GetShaderGroupName() + "\" was not found, using the default from the group.");
                shaderProgram = spGroup->GetDefaultShader();
-               
+
                if (shaderProgram == NULL)
                {
-                  LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
+                  LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName()
                         + "\" was not found, overriding to use the default group.");
                }
             }
@@ -402,13 +401,13 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
             shaderProgram = spGroup->GetDefaultShader();
             if (shaderProgram == NULL)
             {
-               LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName() 
+               LOG_ERROR("Shader Group \""  + modelData.GetShaderGroupName()
                      + "\" was not found, overriding to use the default group.");
             }
          }
       }
    }
-   
+
    //If no shader group is setup, create one.
    if (shaderProgram == NULL)
    {
@@ -436,7 +435,7 @@ AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Ca
 }
 
 osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
-{ 
+{
    CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
    osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
          calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
@@ -453,12 +452,12 @@ void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
 
    const int meshCount = model->getCoreMeshCount();
 
-   for(int meshId = 0; meshId < meshCount; meshId++) 
+   for (int meshId = 0; meshId < meshCount; meshId++)
    {
       CalCoreMesh* calMesh = model->getCoreMesh(meshId);
       int submeshCount = calMesh->getCoreSubmeshCount();
 
-      for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+      for (int submeshId = 0; submeshId < submeshCount; submeshId++)
       {
          CalCoreSubmesh* subMesh = calMesh->getCoreSubmesh(submeshId);
          numVerts += subMesh->getVertexCount();
@@ -473,7 +472,7 @@ void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel,
 {
    const int numVerts = hardwareModel->getTotalVertexCount();
    //invert texture coordinates.
-   for(unsigned i = 0; i < numVerts * stride; i += stride)
+   for (unsigned i = 0; i < numVerts * stride; i += stride)
    {
       for (unsigned j = 15; j < 18; ++j)
       {
@@ -487,13 +486,13 @@ void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel,
       vboVertexAttr[i + 9] = 1.0f - vboVertexAttr[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
    }
 
-   for(int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
+   for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
    {
       hardwareModel->selectHardwareMesh(meshCount);
 
-      for(int face = 0; face < hardwareModel->getFaceCount(); ++face) 
+      for (int face = 0; face < hardwareModel->getFaceCount(); ++face)
       {
-         for(int index = 0; index < 3; ++index)
+         for (int index = 0; index < 3; ++index)
          {
             indexArray[face * 3 + index + hardwareModel->getStartIndex()] += hardwareModel->getBaseVertexIndex();
          }
@@ -520,7 +519,7 @@ bool AnimNodeBuilder::SupportsVertexBuffers() const
 {
    //see if we can support vertex buffer objects
    osg::Drawable::getExtensions(0, true);
-   
+
    return (osg::isGLExtensionSupported(0, "GL_ARB_vertex_buffer_object"));
 }
 

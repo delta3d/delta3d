@@ -61,12 +61,12 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void TabContainer::addTab(TabWrapper *myTab, const std::string &tabResource)
     {
-        QIcon *tabIcon = new QIcon();
+        QIcon tabIcon;
         QString resource = tabResource.c_str();
-        tabIcon->addPixmap(QPixmap(resource));
+        tabIcon.addPixmap(QPixmap(resource));
 
         // add the tab to the container
-        tabC->addTab(myTab->getWidget(),*tabIcon, myTab->getName());
+        tabC->addTab(myTab->getWidget(),tabIcon, myTab->getName());
         
         // push the tab into a vector
         tabVector.push_back(myTab);

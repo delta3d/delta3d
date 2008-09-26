@@ -36,7 +36,6 @@ class QPushButton;
 class QKeyEvent;
 class QContextMenuEvent;
 class QCheckBox;
-class QIcon;
 
 namespace dtCore 
 {
@@ -156,9 +155,6 @@ namespace dtEditQt
       QAction *setCreateAction;
       QAction *setSGPreviewAction;
       QAction *setOSGDump;
-
-      // Resource Icon - this is our leaf node icon
-      QIcon *resourceIcon;
    };
 }
 

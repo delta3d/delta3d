@@ -26,16 +26,16 @@ public:
    void AddMesh(const dtAnim::PoseMesh &newMesh, const dtAnim::Cal3DModelWrapper &model);
 
 public slots:
-   void OnItemDoubleClicked(QTreeWidgetItem *item, int column);
-   void OnItemToggled(QTreeWidgetItem *item, int column);
-   void OnItemExpanded(QTreeWidgetItem *item);
-   void OnBlendUpdate(const std::vector<float> &weightList);
-   void OnItemAdded(const PoseMeshItem *meshItem);
-   void OnNewItemBlend(const dtAnim::PoseMesh *posemesh, float itemAzimuth, float itemElevation);
+   void OnItemDoubleClicked(QTreeWidgetItem* item, int column);
+   void OnItemToggled(QTreeWidgetItem* item, int column);
+   void OnItemExpanded(QTreeWidgetItem* item);
+   void OnBlendUpdate(const std::vector<float>& weightList);
+   void OnItemAdded(const PoseMeshItem* meshItem);
+   void OnNewItemBlend(const dtAnim::PoseMesh* posemesh, float itemAzimuth, float itemElevation);
 
 signals:
-   void ViewPoseMesh(const std::string &meshName);
-   void PoseMeshStatusChanged(const std::string &meshName, bool isEnabled);
+   void ViewPoseMesh(const std::string& meshName);
+   void PoseMeshStatusChanged(const std::string& meshName, bool isEnabled);
 
 private:  
 

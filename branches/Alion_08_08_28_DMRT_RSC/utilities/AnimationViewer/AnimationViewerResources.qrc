@@ -13,5 +13,7 @@
 	  <file>images/displayEdges.png</file>
 	  <file>images/displayError.png</file>
 	  <file>images/boneBasis.png</file>
+      <file>images/verticalFlip.png</file>
+      <file>images/horizontalFlip.png</file>
     </qresource>
 </RCC>

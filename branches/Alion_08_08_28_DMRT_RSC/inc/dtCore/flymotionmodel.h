@@ -46,37 +46,37 @@ namespace dtCore
 
       public:
 
+         ///Set of options to configure how FlyMotionModel behaves.
          enum BehaviorOptions
          {       
             OPTION_NONE                  = 0x0,
-            OPTION_USE_SIMTIME_FOR_SPEED = 0x1,
-            OPTION_REQUIRE_MOUSE_DOWN    = 0x2,
-            OPTION_RESET_MOUSE_CURSOR    = 0x4,
-            OPTION_USE_CURSOR_KEYS       = 0x8,
-            OPTION_DEFAULT               = OPTION_USE_SIMTIME_FOR_SPEED | OPTION_USE_CURSOR_KEYS | OPTION_REQUIRE_MOUSE_DOWN
 
-            /** OPTION_USE_SIMTIME_FOR_SPEED
-            * Indicates whether the fly motion model will use Sim Time
+            /** Indicates whether the FlyMotionModel will use Sim Time
             * or not (aka Real Time) for speed of movement and turn rotation
             */
+            OPTION_USE_SIMTIME_FOR_SPEED = 0x1,
 
-            /** OPTION_REQUIRE_MOUSE_DOWN
-            * Indicates whether the fly motion model will require the mouse
-            * button(s) depressed in order to control turn rotation (defaults
-            * to true)
+            /** Indicates whether the FlyMotionModel will require the mouse
+            * button(s) depressed in order to control turn rotation
             */
+            OPTION_REQUIRE_MOUSE_DOWN    = 0x2,
 
-            /** OPTION_RESET_MOUSE_CURSOR
-            * Indicates whether the fly motion model will reset the mouse
+            /** Indicates whether the FlyMotionModel will reset the mouse
             * cursor coordinates to the center of the screen each frame
-            * (defaults to false)
             */
+            OPTION_RESET_MOUSE_CURSOR    = 0x4,
 
-            /** OPTION_USE_CURSOR_KEYS
-            * Indicates whether the fly motion model will move the camera
+            /** Indicates whether the FlyMotionModel will move
             * in response to pressing the cursor keys.
-            * (defaults to true)
             */
+            OPTION_USE_CURSOR_KEYS       = 0x8,
+
+            /** Default setup of options (OPTION_USE_SIMTIME_FOR_SPEED,
+            *   OPTION_USE_CURSOR_KEYS, OPTION_REQUIRE_MOUSE_DOWN).
+            */
+            OPTION_DEFAULT               = OPTION_USE_SIMTIME_FOR_SPEED |
+                                           OPTION_USE_CURSOR_KEYS | 
+                                           OPTION_REQUIRE_MOUSE_DOWN
          };
 
          /**
@@ -86,17 +86,9 @@ namespace dtCore
           * avoid creating default input mappings
           * @param mouse the mouse instance, or NULL to avoid
           * creating default input mappings
-          * @param useSimTimeForSpeed true if the motion model should use the 
-          * simulation time, which can be scaled, for motion or false if it 
-          * should use the real time.
-          * @param requireMouseDown true if the mouse button must be held
-          * down for mouse motions to control the camera. (Default is true.)
-          * @param resetMouseCursor true if the mouse cursor should reset to
-          * the center of the scene each frame. (Default is false.)
+          * @param options : bitwise or of possible FlyMotionModel::BehaviorOptions.
           */
-         FlyMotionModel(Keyboard* keyboard = NULL,
-                        Mouse* mouse = NULL,                        
-                        BehaviorOptions options = OPTION_DEFAULT);
+         FlyMotionModel(Keyboard* keyboard = NULL, Mouse* mouse = NULL, unsigned int options = OPTION_DEFAULT);
 
       protected:
 
@@ -113,7 +105,7 @@ namespace dtCore
          *
          * @param option the option to query         
          */
-         bool HasOption(BehaviorOptions option) const { return (mOptions & option) > 0; }
+         bool HasOption(unsigned int option) const;
          
          /**
           * Sets the input axes to a set of default mappings for mouse
@@ -374,7 +366,7 @@ namespace dtCore
          * The bitwise combination of the types of behavior this
          * motion model will enforce
          */
-         BehaviorOptions mOptions;
+         unsigned int mOptions;
    };
 }
 

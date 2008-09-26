@@ -92,9 +92,9 @@ namespace dtEditQt
         EditorData::GetInstance().setMainWindow(this);
         
         // add the application icon
-        QIcon *icon = new QIcon();
-        icon->addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
-        setWindowIcon(*icon);
+        QIcon icon;
+        icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
+        setWindowIcon(icon);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -102,8 +102,8 @@ namespace dtEditQt
     {
         EditorActions &editorActions = EditorActions::GetInstance();
 
-        recentProjs = new QMenu(tr("Recent Projects"));
-        recentMaps  = new QMenu(tr("Recent Maps"));
+        recentProjs = new QMenu(tr("Recent Projects"),this);
+        recentMaps  = new QMenu(tr("Recent Maps"),this);
 
         recentProjs->addAction(editorActions.actionFileRecentProject0);
 

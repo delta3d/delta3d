@@ -78,9 +78,9 @@ namespace dtEditQt
    {
 
       // This sets our resource icon that is visible on leaf nodes
-      resourceIcon = new QIcon();
-      resourceIcon->addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+      QIcon resourceIcon;
+      resourceIcon.addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
+      ResourceAbstractBrowser::resourceIcon = resourceIcon;
 
       // create a new scene for the skeletal mesh viewport
       meshScene = new dtCore::Scene();

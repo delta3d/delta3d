@@ -95,7 +95,7 @@ namespace dtDAL
                static const RenderMode DRAW_AUTO;
 
             private:
-               RenderMode(const std::string &name) : Enumeration(name)
+               RenderMode(const std::string& name) : Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -156,7 +156,7 @@ namespace dtDAL
           * @param name The name of the object to check against
           * @return true if it is, false if not
           */
-         bool IsInstanceOf(const std::string &name) const
+         bool IsInstanceOf(const std::string& name) const
          {
             return mClassNameSet.find(name) != mClassNameSet.end();
          }
@@ -182,7 +182,7 @@ namespace dtDAL
           *      is added that who's name collides with another, the property
           *      is not added and an error message is logged.
           */
-         void AddProperty(ActorProperty *newProp);
+         void AddProperty(ActorProperty* newProp);
 
          /**
           * Gets a property of the requested name.
@@ -190,14 +190,14 @@ namespace dtDAL
           * @return A pointer to the property object or NULL if it
           * is not found.
           */
-         ActorProperty* GetProperty(const std::string &name);
+         ActorProperty* GetProperty(const std::string& name);
 
          /**
           * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
           * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
           */
          template<class PropertyType>
-         void GetProperty(const std::string &name, PropertyType*& property)
+         void GetProperty(const std::string& name, PropertyType*& property)
          {
             property = dynamic_cast<PropertyType*>(GetProperty(name));
          }
@@ -208,7 +208,7 @@ namespace dtDAL
           * @return A pointer to the property object or NULL if it
           * is not found.
           */
-         const ActorProperty* GetProperty(const std::string &name) const;
+         const ActorProperty* GetProperty(const std::string& name) const;
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
@@ -216,7 +216,7 @@ namespace dtDAL
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
-         ResourceDescriptor* GetResource(const std::string &name);
+         ResourceDescriptor* GetResource(const std::string& name);
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
@@ -224,14 +224,14 @@ namespace dtDAL
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
-         const ResourceDescriptor* GetResource(const std::string &name) const;
+         const ResourceDescriptor* GetResource(const std::string& name) const;
 
          /**
           * Sets a resource in the map
           * @param name The name of the resouce
           * @param source The pointer to resource descriptor
           */
-         void SetResource(const std::string &name, ResourceDescriptor *source);
+         void SetResource(const std::string& name, ResourceDescriptor* source);
 
          /**
           * Gets a property of the requested name.
@@ -239,7 +239,7 @@ namespace dtDAL
           * @return A pointer to the ActorProxy or NULL if it
           * is not found.
           */
-         const ActorProxy* GetLinkedActor(const std::string &name) const;
+         const ActorProxy* GetLinkedActor(const std::string& name) const;
 
          /**
           * Gets a property of the requested name.
@@ -247,7 +247,7 @@ namespace dtDAL
           * @return A pointer to the ActorProxy or NULL if it
           * is not found.
           */
-         ActorProxy* GetLinkedActor(const std::string &name);
+         ActorProxy* GetLinkedActor(const std::string& name);
 
          /**
           * Sets an actor proxy in the map
@@ -266,7 +266,7 @@ namespace dtDAL
           * Gets a const list of the properties currently registered for this
           * actor proxy.
           */
-         void GetPropertyList(std::vector<const ActorProperty *> &propList) const;
+         void GetPropertyList(std::vector<const ActorProperty *>& propList) const;
 
          /**
           * Gets the actor type that represents this actor proxy.
@@ -325,7 +325,7 @@ namespace dtDAL
           * @note This will only be rendered if the RenderMode is set to
           *  DRAW_BILLBOARD_ICON.
           */
-         virtual void SetBillBoardIcon(ActorProxyIcon *icon);
+         virtual void SetBillBoardIcon(ActorProxyIcon* icon);
 
          /**
           * Gets the billboard icon currently assigned to this actor proxy.
@@ -393,12 +393,12 @@ namespace dtDAL
           */
          friend class ActorPluginRegistry;
 
-         bool operator == (const ActorProxy &rhs) const
+         bool operator == (const ActorProxy& rhs) const
          {
             return GetId() == rhs.GetId();
          }
 
-         bool operator != (const ActorProxy &rhs) const
+         bool operator != (const ActorProxy& rhs) const
          {
             return !(*this == rhs);
          }
@@ -409,7 +409,7 @@ namespace dtDAL
           * Sets the actor on this proxy. This should be only called from subclasses
           * @param actor The actor to set
           */
-         void SetActor(dtCore::DeltaDrawable &actor);
+         void SetActor(dtCore::DeltaDrawable& actor);
 
          ///Keep the destructor protected since we use dtCore::RefPtr to
          ///track any object created.
@@ -424,7 +424,7 @@ namespace dtDAL
           * Set the class name
           * @param name The class name to set
           */
-         void SetClassName(const std::string &name);
+         void SetClassName(const std::string& name);
 
          /**
           * Each actor proxy may have a billboard associated with it.  Billboards
@@ -469,7 +469,7 @@ namespace dtDAL
          dtUtil::RefString mClassName;
 
          ///Simple method for setting the actor type.
-         void SetActorType(const ActorType &type);
+         void SetActorType(const ActorType& type);
 
          ///Hidden copy constructor.
          ActorProxy(const ActorProxy&);

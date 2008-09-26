@@ -555,14 +555,6 @@ void ProjectTests::testResources()
       //printTree(p.GetAllResources());
 
       dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
-      //p.GetResourcesOfType(dtDAL::DataType::CHARACTER, toFill);
-      //dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
-      //   findTreeNodeFromCategory(toFill, NULL, "");
-
-      //CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
-      //      + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
-
-      //Done with the marines
 
       p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);
       dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrainCategory =
@@ -687,8 +679,6 @@ void ProjectTests::testResources()
 
       p.RemoveResource(rd);
       p.RemoveResource(rd1);
-      //p.RemoveResource(marineRD);
-      //p.RemoveResource(marine2RD);
       p.RemoveResource(terrain1RD);
       p.RemoveResource(terrain2RD);
 
@@ -699,10 +689,6 @@ void ProjectTests::testResources()
             !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tea/money/pow.wav")));
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
             !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tee/cash/bang.wav")));
-      CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.FileExists(dtDAL::DataType::CHARACTER.GetName() + std::string("/marine.rbody")));
-      CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.FileExists(dtDAL::DataType::CHARACTER.GetName() + std::string("/marine/marine2.rbody")));
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
             !fileUtils.DirExists(dtDAL::DataType::TERRAIN.GetName() + std::string("/terrain2.3dst")));
       CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",

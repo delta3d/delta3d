@@ -1,14 +1,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/timer.h>
 #include <dtUtil/macros.h>
-
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   void dtCore::AppSleep(unsigned int milliseconds){Sleep(milliseconds);}
-#else
-   #include <unistd.h>
-   void dtCore::AppSleep(unsigned int milliseconds){usleep((milliseconds) * 1000);}
-#endif
+#include <OpenThreads/Thread>
 
 namespace dtCore
 {
@@ -90,6 +83,12 @@ double Timer::ElapsedMicroseconds() const
 double Timer::ElapsedNanoseconds() const
 {
    return mTimer.time_n();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void AppSleep(unsigned int milliseconds)
+{
+   OpenThreads::Thread::microSleep(milliseconds * 1000);
 }
 
 }//namespace dtCore

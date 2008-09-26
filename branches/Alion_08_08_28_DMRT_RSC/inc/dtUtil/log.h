@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
-*/
+ */
 #ifndef DELTA_LOG
 #define DELTA_LOG
 
@@ -29,7 +29,7 @@
 #include <dtCore/refptr.h>
 #include <dtUtil/export.h>
 
-namespace dtUtil 
+namespace dtUtil
 {
    class DT_UTIL_EXPORT LogFile
    {
@@ -39,18 +39,18 @@ namespace dtUtil
 
       ///Get the current filename of the log file.
       static const std::string GetFileName();
-      
-      /// change the title string used in HTML 
+
+      /// change the title string used in HTML
       /// defaults to "Delta 3D Engine Log File" or "Delta 3D Engine Log File (Debug Libs)"
       static void SetTitle(const std::string& title);
-      
+
       ///Get the current HTML title string.
       static const std::string& GetTitle();
    };
 
     /**
      * Helps making logging a little easier.  However, printf style
-    *   logging is desired, you cannot use this macro.
+     *   logging is desired, you cannot use this macro.
      */
      #define LOG_DEBUG(msg)\
         dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_DEBUG);
@@ -81,14 +81,14 @@ namespace dtUtil
 
      #define LOGN_ALWAYS(name, msg)\
         dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ALWAYS);
-    
+
    /**
      * Log class which the engine uses for all of its logging
      * needs.  The log file is formatted using html tags,
      * therefore, any browser should display the log without
      *  any problems.
      */
-    class DT_UTIL_EXPORT Log : public osg::Referenced 
+    class DT_UTIL_EXPORT Log : public osg::Referenced
     {
     public:
 
@@ -208,7 +208,7 @@ namespace dtUtil
 
         ///Get the currently defined output stream options
         unsigned int GetOutputStreamBit() const;
-        
+
         ///Returns the name of this logger.
         const std::string& GetName() const { return mName; }
 

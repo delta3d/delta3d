@@ -40,6 +40,12 @@ public:
    ~MainWindow();
 
    dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
+
+   void LoadCharFile(const QString& filename);
+
+protected:
+   virtual void dragEnterEvent(QDragEnterEvent* event);
+   virtual void dropEvent(QDropEvent* event);
    
 signals:
    void FileToLoad(const QString&);
@@ -56,22 +62,22 @@ signals:
    void HideMesh(int meshID);
 
 public slots:
-   void OnNewAnimation(unsigned int id, const QString &animationName, unsigned int trackCount,
+   void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
    
-   void OnNewMesh(int meshID, const QString &meshName);
+   void OnNewMesh(int meshID, const QString& meshName);
 
-   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*> &poseMeshList, 
-                           dtAnim::CharDrawable *model);   
+   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList, 
+                           dtAnim::CharDrawable* model);   
 
-   void OnNewMaterial(int matID, const QString &name,
-                      const QColor &diff, const QColor &amb, const QColor &spec,
-                      float shininess );
+   void OnNewMaterial(int matID, const QString& name,
+                      const QColor& diff, const QColor& amb, const QColor& spec,
+                      float shininess);
 
-   void OnBlendUpdate(const std::vector<float> &weightList);
+   void OnBlendUpdate(const std::vector<float>& weightList);
 
-   void OnAnimationClicked( QTableWidgetItem *item);
-   void OnMeshActivated( QListWidgetItem *item );
+   void OnAnimationClicked(QTableWidgetItem* item);
+   void OnMeshActivated(QListWidgetItem* item);
    void OnLODScale_Changed(double newValue);
    void OnSpeedChanged(double newValue);
    void OnChangeScaleFactor();
@@ -80,7 +86,7 @@ public slots:
    void OnToggleLODScaleToolbar();
    void OnToggleScalingToolbar();
    void OnToggleLightingToolbar(); 
-   void OnDisplayError( const QString &msg );
+   void OnDisplayError(const QString& msg);
 	
 private:
    void CreateMenus();
@@ -88,50 +94,49 @@ private:
    void CreateToolbars();
    void DestroyPoseResources();
    void UpdateRecentFileActions();
-   void SetCurrentFile( const QString &filename );
-   void LoadCharFile(const QString &filename);
+   void SetCurrentFile(const QString& filename);
    void OnStartAnimation(int row);
    void OnStopAnimation(int row);
-   void OnStartAction( int row );
+   void OnStartAction(int row);
 
-   QAction *mExitAct;
-   QAction *mLoadCharAct;
-   QAction *mRecentFilesAct[5];
-   QAction *mWireframeAction; 
-   QAction *mShadedAction;    
-   QAction *mShadedWireAction;
-   QAction *mBoneBasisAction;
-   QAction *mDiffuseLightAction;
-   QAction *mPointLightAction;
+   QAction* mExitAct;
+   QAction* mLoadCharAct;
+   QAction* mRecentFilesAct[5];
+   QAction* mWireframeAction; 
+   QAction* mShadedAction;    
+   QAction* mShadedWireAction;
+   QAction* mBoneBasisAction;
+   QAction* mDiffuseLightAction;
+   QAction* mPointLightAction;
 
-   QToolBar *mShadingToolbar;
-   QToolBar *mLightingToolbar;
-   QToolBar *mLODScaleToolbar;
-   QToolBar *mSpeedToolbar;
-   QToolBar *mScalingToolbar;
+   QToolBar* mShadingToolbar;
+   QToolBar* mLightingToolbar;
+   QToolBar* mLODScaleToolbar;
+   QToolBar* mSpeedToolbar;
+   QToolBar* mScalingToolbar;
 
-   QDoubleSpinBox *mScaleFactorSpinner;
+   QDoubleSpinBox* mScaleFactorSpinner;
 
-   QTabWidget  *mTabs;
+   QTabWidget* mTabs;
 
-   AnimationTableWidget *mAnimListWidget;
-   QListWidget          *mMeshListWidget;
+   AnimationTableWidget* mAnimListWidget;
+   QListWidget*          mMeshListWidget;
    
-   QStandardItemModel   *mMaterialModel; ///<Model for the character's materials
-   QTableView           *mMaterialView;  ///<View for the character's materials
+   QStandardItemModel* mMaterialModel; ///<Model for the character's materials
+   QTableView*         mMaterialView;  ///<View for the character's materials
 
-   QDockWidget          *mPoseDock;
-   PoseMeshView         *mPoseMeshViewer;
-   PoseMeshScene        *mPoseMeshScene;
-   PoseMeshProperties   *mPoseMeshProperties;
+   QDockWidget*        mPoseDock;
+   PoseMeshView*       mPoseMeshViewer;
+   PoseMeshScene*      mPoseMeshScene;
+   PoseMeshProperties* mPoseMeshProperties;
 
    dtQt::OSGAdapterWidget* mGLWidget;
 
 private slots:
    void OnOpenCharFile();
    void OpenRecentFile();
-   void OnItemChanged( QTableWidgetItem *item );
-   void OnItemDoubleClicked(QTableWidgetItem *item);
+   void OnItemChanged(QTableWidgetItem* item);
+   void OnItemDoubleClicked(QTableWidgetItem* item);
 
    void OnSelectModeGrab();
    void OnSelectModeBlendPick();
@@ -139,5 +144,7 @@ private slots:
 
    void OnToggleDisplayEdges(bool shouldDisplay);
    void OnToggleDisplayError(bool shouldDisplay);
+   void OnToggleFlipVertical();
+   void OnToggleFlipHorizontal();
 };
 #endif // DELTA_MainWindow

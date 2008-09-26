@@ -17,8 +17,8 @@ void initSceneBindings()
 
    float (Scene::*GetHeightOfTerrain1)( float x, float y ) = &Scene::GetHeightOfTerrain;
    
-   void (Scene::*SetGravity1)(const osg::Vec3&) = &Scene::SetGravity;
-   void (Scene::*SetGravity2)(float, float, float) = &Scene::SetGravity;
+   void (Scene::*SetGravity1)(const osg::Vec3&) const = &Scene::SetGravity;
+   void (Scene::*SetGravity2)(float, float, float) const = &Scene::SetGravity;
    
    void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float&, float&, float&) const = &Scene::GetGravity;

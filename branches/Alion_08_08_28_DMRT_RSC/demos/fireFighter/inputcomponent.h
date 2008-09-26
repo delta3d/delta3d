@@ -33,7 +33,6 @@ class PlayerActor;
 namespace dtCore
 {
    class CollisionMotionModel;
-   class FlyMotionModel;
 }
 
 namespace dtAudio

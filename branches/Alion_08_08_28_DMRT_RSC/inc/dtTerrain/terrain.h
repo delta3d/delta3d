@@ -35,6 +35,8 @@
 #include <dtTerrain/pagedterraintilefactory.h>
 #include <dtTerrain/terrain_export.h>
 
+#undef FindResource //due to some windows.h include which conflicts with dtTerrain::FindResource()
+
 /** 
  * An extensible library for rendering terrain databases.
  */

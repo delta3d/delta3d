@@ -120,27 +120,27 @@ namespace dtCore
           *    the name of the parameter must be the same as the desired uniform
           *    it is mapped to in order for the mapping to occur correctly.
           */
-         ShaderParameter(const std::string &name);
+         ShaderParameter(const std::string& name);
 
          /**
           * Gets the type of this shader parameter.
           * @return The enumeration defining the type of shader parameter a subclass
           *    of this one represents.
           */
-         virtual const ParamType &GetType() const = 0;
+         virtual const ParamType& GetType() const = 0;
 
          /**
           * Gets the name assigned to this shader parameter.
           * @return The name of this parameter.
           */
-         const std::string &GetName() const { return mVarName; }
+         const std::string& GetName() const { return mVarName; }
 
          /**
           * Each shader parameter should add whatever attributes and properties
           * specific to that parameter to the specified render state.
           * @param stateSet The render state to attach the parameter to.
           */
-         virtual void AttachToRenderState(osg::StateSet &stateSet) = 0;
+         virtual void AttachToRenderState(osg::StateSet& stateSet) = 0;
 
          /**
           * Each shader parameter has this chance to clean itself up from the
@@ -148,7 +148,7 @@ namespace dtCore
           * that it set when it was attached.
           * @param stateSet The render state to cleanup.
           */
-         virtual void DetachFromRenderState(osg::StateSet &stateSet);
+         virtual void DetachFromRenderState(osg::StateSet& stateSet);
 
          /**
           * Instructs the parameter to push and dirty state to the shader it is
@@ -198,7 +198,7 @@ namespace dtCore
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone() = 0;
+         virtual ShaderParameter* Clone() = 0;
 
       protected:
 
@@ -211,13 +211,13 @@ namespace dtCore
           * Sets the shader owning this shader parameter.
           * @param shader The shader owning this parameter.
           */
-        void SetParentShader(ShaderProgram *shader);
+        void SetParentShader(ShaderProgram* shader);
 
          /**
           * Gets the shader currently managing this shader parameter.
           * @return The parent shader.
           */
-         ShaderProgram *GetParentShader() const { return mParentShader; }
+         ShaderProgram* GetParentShader() const { return mParentShader; }
 
          /**
           * Sets the shader uniform parameter for this shader parameter.  Uniform parameters
@@ -229,19 +229,19 @@ namespace dtCore
           *   values depending on the complexity of the underlying data of a particular parameter
           *   implementation.
           */
-         void SetUniformParam(osg::Uniform &uniform);
+         void SetUniformParam(osg::Uniform& uniform);
 
          /**
           * Gets the uniform parameter currently bound to this shader parameter.
           * @return A pointer to the uniform or NULL if it does not exist.
           */
-         osg::Uniform *GetUniformParam() { return mUniform.get(); }
+         osg::Uniform* GetUniformParam() { return mUniform.get(); }
 
       private:
          bool mIsDirty;
          bool mIsShared; // Default is true. Indicates that when Cloning, it should simply return a copy of this param, not a new instance
          std::string mVarName;
-         ShaderProgram *mParentShader;
+         ShaderProgram* mParentShader;
          dtCore::RefPtr<osg::Uniform> mUniform;
 
          friend class ShaderProgram;
@@ -250,8 +250,8 @@ namespace dtCore
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will
          // cause compiler errors for missing calls to "ref".
-         ShaderParameter& operator=( const ShaderParameter& ); 
-         ShaderParameter( const ShaderParameter& );
+         ShaderParameter& operator=(const ShaderParameter&);
+         ShaderParameter(const ShaderParameter&);
    };
 }
 

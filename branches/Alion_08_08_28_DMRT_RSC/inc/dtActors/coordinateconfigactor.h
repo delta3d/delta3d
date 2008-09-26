@@ -50,59 +50,35 @@ namespace dtActors
          void SetOriginLocation(const osg::Vec3d &loc);
 
          /**
-          * Gets the origin location
+          * Gets the local coordinate origin location. This is applied to the local coordinates
+          * of any type after conversion and vice versa for the other conversion direction
           * @return The location
           */
          osg::Vec3d GetOriginLocation() const;
 
          /**
+          * Sets the local coordinate origin location. This is applied to the local coordinates
+          * of any type after conversion and vice versa for the other conversion direction
           * @return The origin location that will be used based on the configuration
           */
          osg::Vec3d GetCurrentOriginLocation() const;
 
          /**
-          * Sets the origin rotation
-          * @param hpr The rotation to set
-          */
-         void SetOriginRotation(const osg::Vec3 &hpr);
-
-         /**
-          * Gets the origin location
-          * @return The location
-          */
-         osg::Vec3 GetOriginRotation() const;
-
-         /**
-          * @return The origin rotation that will be used based on the configuration
-          */
-         osg::Vec3 GetCurrentOriginRotation() const;
-
-         /**
-          * Sets the geo origin rotation
-          * @param hpr The rotation to set
-          */
-         void SetGeoOriginRotation(const osg::Vec2d &latlon);
-
-         /**
-          * Gets the geo origin rotation as lat/lan
-          * @return The location
-          */
-         osg::Vec2d GetGeoOriginRotation() const;
-
-         /**
-          * Sets the geo origin in lat lon elevation
-          * @param hpr The rotation to set
+          * Sets the Origin Location using a lat lon in degrees and elevation.  It converts the values
+          * using lat lon to UTM, so this only makes sense for a UTM projection.  It will also set the UTM zone.
+          * @param latLonEle latitude, longitude, elevation.
           */
          void SetGeoOrigin(const osg::Vec3d &latLonEle);
 
          /**
-          * Gets the geo origin is lat lon elevation
+          * Gets the geo origin in lat lon (degrees) elevation
+          * @see SetGeoOrigin
           * @return The location
           */
          osg::Vec3d GetGeoOrigin() const;
 
          /**
-          * @return The geo origin converted back from the currently set origin data on 
+          * @return The geo origin converted back from the currently set origin data on
           *         the coordinate object.
           */
          osg::Vec3d GetConvertedGeoOrigin() const;
@@ -153,32 +129,41 @@ namespace dtActors
           * Gets the magnetic north offset of the coordinate set
           * @return The offset
           */
-         float GetMagneticNorthOffset() const;   
+         float GetMagneticNorthOffset() const;
 
          ///@return the UTM zone that outgoing UTM coordinates should assume.
          int GetUTMZone() const;
-         
+
          ///Set the UTM zone that outgoing UTM coordinates should assume.
          void SetUTMZone(int newZone);
 
+         /// Sets the lat lon origin in degrees to use with a flat earth projection.
+         void SetFlatEarthOrigin(const osg::Vec2d& origin);
+         /// @return the lat lon origin in degrees to use with a flat earth projection.
+         osg::Vec2d GetFlatEarthOrigin() const;
+
+         /**
+          * Sets if rotation should be converted from a different frame of reference or not.
+          * You want this to be true in most cases, but in some cases the rotation is in the same frame reference
+          * in both the local and remote data.
+          */
+         void SetApplyRotationConversionMatrix(bool doApply);
+
+         /**
+          * @return if rotation should be converted from a different frame of reference or not.
+          * You want this to be true in most cases, but in some cases the rotation is in the same frame reference
+          * in both the local and remote data.
+          */
+         bool GetApplyRotationConversionMatrix() const;
 
          /**
           * @return true if the Geo Origin property is considered to the be absolute and the regular
           *         origin is considered to be calculated.  False if the opposite is true.
           */
          bool UseGeoOrigin() const;
-         
+
          ///Sets if the GeoOrigin should be the method of setting the origin position.
          void SetUseGeoOrigin(bool which);
-
-         /**
-          * @return true if the Geo Origin Rotation property is considered to the be absolute and the regular
-          *         origin is considered to be calculated.  False if the opposite is true.
-          */
-         bool UseGeoOriginRotation() const;
-
-         ///Sets if the GeoOriginRotation should be the method of setting the origin position.
-         void SetUseGeoOriginRotation(bool which);
 
          const dtUtil::Coordinates& GetCoordinateConverter() const { return mCoordinates; }
 
@@ -190,13 +175,10 @@ namespace dtActors
       private:
 
          dtUtil::Coordinates mCoordinates;
-         osg::Vec2d mGeoOriginRotation;
          osg::Vec3d mGeoOrigin;
          bool mUseGeoOrigin;
-         bool mUseGeoOriginRotation;
 
          osg::Vec3d mOrigin;
-         osg::Vec3 mOriginRotation;
 
    };
 
@@ -218,13 +200,13 @@ namespace dtActors
           * render mode is RenderMode::DRAW_BILLBOARD_ICON.
           * @return a pointer to the icon
           */
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon(); 
+         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
          /**
           * Gets the current render mode for positional lights.
           * @return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
           */
-         virtual const ActorProxy::RenderMode& GetRenderMode() 
+         virtual const ActorProxy::RenderMode& GetRenderMode()
          {
             return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
          }

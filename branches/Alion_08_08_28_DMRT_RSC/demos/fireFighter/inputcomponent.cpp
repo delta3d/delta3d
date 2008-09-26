@@ -35,7 +35,6 @@
 #include <dtABC/application.h>
 #include <dtAudio/audiomanager.h>
 #include <dtCore/collisionmotionmodel.h>
-#include <dtCore/flymotionmodel.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>

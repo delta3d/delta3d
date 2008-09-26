@@ -54,7 +54,7 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-Delta3DThread::Delta3DThread(QObject *parent):
+Delta3DThread::Delta3DThread(QObject* parent):
 QThread(parent)
 {
 }
@@ -66,6 +66,7 @@ Delta3DThread::~Delta3DThread()
    {
       this->quit();
    }
+
    dtCore::System::GetInstance().Stop();
 }
 
@@ -93,7 +94,7 @@ void Delta3DThread::run()
    connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
 
    connect(mViewer.get(), SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
-                    mWin, SLOT(OnNewAnimation(unsigned int,const QString &,unsigned int,unsigned int,float)));
+           mWin, SLOT(OnNewAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
 
    connect(mViewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 

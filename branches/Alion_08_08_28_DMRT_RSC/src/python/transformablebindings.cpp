@@ -6,6 +6,7 @@
 #include <dtCore/transformable.h>
 #include <osg/MatrixTransform>
 #include <dtCore/scene.h>
+#include <ode/contact.h> //for dContact
 
 using namespace boost::python;
 using namespace dtCore;

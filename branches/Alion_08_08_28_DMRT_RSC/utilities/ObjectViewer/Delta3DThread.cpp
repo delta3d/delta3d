@@ -55,7 +55,7 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-Delta3DThread::Delta3DThread(QApplication *parent)
+Delta3DThread::Delta3DThread(QApplication* parent)
    : QThread(parent)
 {
    QStringList argList = parent->arguments();

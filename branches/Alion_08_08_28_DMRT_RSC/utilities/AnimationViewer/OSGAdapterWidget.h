@@ -44,8 +44,8 @@ namespace dtQt
 
       public:
 
-         OSGAdapterWidget(bool drawOnSeparateThread,  QWidget * parent = NULL, 
-                  const QGLWidget * shareWidget = NULL, Qt::WindowFlags f = NULL );
+         OSGAdapterWidget(bool drawOnSeparateThread,  QWidget* parent = NULL, 
+                          const QGLWidget* shareWidget = NULL, Qt::WindowFlags f = NULL);
 
          virtual ~OSGAdapterWidget();
 
@@ -69,14 +69,14 @@ namespace dtQt
 
          virtual void initializeGL();
 
-         virtual void resizeGL( int width, int height );
+         virtual void resizeGL( int width, int height);
          void resizeGLImpl(int width, int height);
 
-         virtual void keyPressEvent( QKeyEvent* event );
-         virtual void keyReleaseEvent( QKeyEvent* event );
-         virtual void mousePressEvent( QMouseEvent* event );
-         virtual void mouseReleaseEvent( QMouseEvent* event );
-         virtual void mouseMoveEvent( QMouseEvent* event );
+         virtual void keyPressEvent(QKeyEvent* event);
+         virtual void keyReleaseEvent(QKeyEvent* event);
+         virtual void mousePressEvent(QMouseEvent* event);
+         virtual void mouseReleaseEvent(QMouseEvent* event);
+         virtual void mouseMoveEvent(QMouseEvent* event);
 
          dtCore::RefPtr<osgViewer::GraphicsWindow> mGraphicsWindow;
 

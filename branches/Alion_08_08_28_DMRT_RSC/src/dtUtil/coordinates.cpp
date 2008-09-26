@@ -11,7 +11,115 @@
 #include <dtUtil/mathdefines.h>
 
 namespace dtUtil
-{     
+{
+   UTMParameters::UTMParameters()
+   {
+      TranMerc_a = 6378137.0;         /* Semi-major axis of ellipsoid i meters */
+      TranMerc_es = 0.0066943799901413800; /* Eccentricity (0.08181919084262188000) squared */
+
+      /* Isometeric to geodetic latitude parameters, default to WGS 84 */
+      TranMerc_ap = 6367449.1458008;
+      TranMerc_bp = 16038.508696861;
+      TranMerc_cp = 16.832613334334;
+      TranMerc_dp = 0.021984404273757;
+      TranMerc_ep = 3.1148371319283e-005;
+
+      /* Transverse_Mercator projection Parameters */
+      TranMerc_Origin_Lat = 0.0;           /* Latitude of origin in radians */
+      TranMerc_Origin_Long = 0.0;          /* Longitude of origin in radians */
+      TranMerc_False_Northing = 0.0;       /* False northing in meters */
+      TranMerc_False_Easting = 0.0;        /* False easting in meters */
+      TranMerc_Scale_Factor = 1.0;         /* Scale factor  */
+
+      /* Maximum variance for easting and northing values for WGS 84. */
+      TranMerc_Delta_Easting = 40000000.0;
+      TranMerc_Delta_Northing = 40000000.0;
+
+      /* Ellipsoid Parameters, default to WGS 84  */
+      TranMerc_f = Geocent_f;      /* Flattening of ellipsoid  */
+      TranMerc_ebs = 0.0067394967565869;   /* Second Eccentricity squared */
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void UTMParameters::CalcTransverseMercatorParameters(double a, double f, double Origin_Latitude,
+                                                     double Central_Meridian, double False_Easting,
+                                                     double False_Northing, double Scale_Factor)
+   { /* BEGIN Set_Tranverse_Mercator_Parameters */
+      double tn;        /* True Meridianal distance constant  */
+      double tn2;
+      double tn3;
+      double tn4;
+      double tn5;
+      double dummy_northing;
+      double TranMerc_b; /* Semi-minor axis of ellipsoid, in meters */
+
+      TranMerc_a = a;
+      TranMerc_f = f;
+      TranMerc_Origin_Lat = 0;
+      TranMerc_Origin_Long = 0;
+      TranMerc_False_Northing = 0;
+      TranMerc_False_Easting = 0;
+      TranMerc_Scale_Factor = 1;
+
+      /* Eccentricity Squared */
+      TranMerc_es = 2 * TranMerc_f - TranMerc_f * TranMerc_f;
+      /* Second Eccentricity Squared */
+      TranMerc_ebs = (1 / (1 - TranMerc_es)) - 1;
+
+      TranMerc_b = TranMerc_a * (1 - TranMerc_f);
+      /*True meridianal constants  */
+      tn = (TranMerc_a - TranMerc_b) / (TranMerc_a + TranMerc_b);
+      tn2 = tn * tn;
+      tn3 = tn2 * tn;
+      tn4 = tn3 * tn;
+      tn5 = tn4 * tn;
+
+      TranMerc_ap = TranMerc_a * (1.e0 - tn + 5.e0 * (tn2 - tn3)/4.e0
+                                  + 81.e0 * (tn4 - tn5)/64.e0 );
+      TranMerc_bp = 3.e0 * TranMerc_a * (tn - tn2 + 7.e0 * (tn3 - tn4)
+                                         /8.e0 + 55.e0 * tn5/64.e0 )/2.e0;
+      TranMerc_cp = 15.e0 * TranMerc_a * (tn2 - tn3 + 3.e0 * (tn4 - tn5 )/4.e0) /16.0;
+      TranMerc_dp = 35.e0 * TranMerc_a * (tn3 - tn4 + 11.e0 * tn5 / 16.e0) / 48.e0;
+      TranMerc_ep = 315.e0 * TranMerc_a * (tn4 - tn5) / 512.e0;
+      Coordinates::ConvertGeodeticToTransverseMercator(*this, MAX_LAT, MAX_DELTA_LONG, TranMerc_Delta_Easting,
+                                                       TranMerc_Delta_Northing);
+      Coordinates::ConvertGeodeticToTransverseMercator(*this, 0, MAX_DELTA_LONG, TranMerc_Delta_Easting,
+                                                       dummy_northing);
+      TranMerc_Origin_Lat = Origin_Latitude;
+      if (Central_Meridian > osg::PI)
+         Central_Meridian -= (2*osg::PI);
+      TranMerc_Origin_Long = Central_Meridian;
+      TranMerc_False_Northing = False_Northing;
+      TranMerc_False_Easting = False_Easting;
+      TranMerc_Scale_Factor = Scale_Factor;
+   }  /* END of Set_Transverse_Mercator_Parameters  */
+
+   /////////////////////////////////////////////////////////////////////////////
+   double UTMParameters::SPHTMD(double Latitude) const
+   {
+      return ((double) (TranMerc_ap * Latitude
+         - TranMerc_bp * sin(2.e0 * Latitude) + TranMerc_cp * sin(4.e0 * Latitude)
+         - TranMerc_dp * sin(6.e0 * Latitude) + TranMerc_ep * sin(8.e0 * Latitude)));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   double UTMParameters::SPHSN(double Latitude) const
+   {
+      return ((double) (TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   double UTMParameters::DENOM(double Latitude) const
+   {
+      return ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   double UTMParameters::SPHSR(double Latitude) const
+   {
+      return ((double) (TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
+   }
+
    IMPLEMENT_ENUM(IncomingCoordinateType)
    const IncomingCoordinateType IncomingCoordinateType::GEOCENTRIC("Geocentric");
    const IncomingCoordinateType IncomingCoordinateType::GEODETIC("Geodetic");
@@ -19,60 +127,36 @@ namespace dtUtil
 
    IMPLEMENT_ENUM(LocalCoordinateType)
    const LocalCoordinateType LocalCoordinateType::GLOBE("Globe");
-   const LocalCoordinateType LocalCoordinateType::CARTESIAN("Cartesian");
+   const LocalCoordinateType LocalCoordinateType::CARTESIAN_UTM("Cartesian UTM");
+   const LocalCoordinateType LocalCoordinateType::CARTESIAN_FLAT_EARTH("Cartesian Flat Earth");
 
    IMPLEMENT_ENUM(CoordinateConversionExceptionEnum)
    CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
 
    /////////////////////////////////////////////////////////////////////////////
-   Coordinates::Coordinates(): mLocalCoordinateType(&LocalCoordinateType::CARTESIAN), 
-      mIncomingCoordinateType(&IncomingCoordinateType::UTM), 
-      mZone(1), mGlobeRadius(0.0)
+   Coordinates::Coordinates()
+   : mLocalCoordinateType(&LocalCoordinateType::CARTESIAN_UTM)
+   , mIncomingCoordinateType(&IncomingCoordinateType::UTM)
+   , mZone(1)
+   , mGlobeRadius(0.0)
+   , mMagneticNorthOffset(0.0)
+   , mConvergence(0.0)
+   , mApplyRotationConversionMatrix(true)
+   , mRotationDirty(true)
    {
       mLogger = &Log::GetInstance("coordinates.cpp");
-      
-      mLocationOffset[0] = 0.0;
-      mLocationOffset[1] = 0.0;
-      mLocationOffset[2] = 0.0;
 
       mRotationOffset.makeIdentity();
       mRotationOffsetInverse.makeIdentity();
-
-      TranMerc_a = 6378137.0;         /* Semi-major axis of ellipsoid i meters */
-      TranMerc_es = 0.0066943799901413800; /* Eccentricity (0.08181919084262188000) squared */
-      
-      /* Isometeric to geodetic latitude parameters, default to WGS 84 */
-      TranMerc_ap = 6367449.1458008;
-      TranMerc_bp = 16038.508696861;
-      TranMerc_cp = 16.832613334334;
-      TranMerc_dp = 0.021984404273757;
-      TranMerc_ep = 3.1148371319283e-005;
-   
-      /* Transverse_Mercator projection Parameters */
-      TranMerc_Origin_Lat = 0.0;           /* Latitude of origin in radians */
-      TranMerc_Origin_Long = 0.0;          /* Longitude of origin in radians */
-      TranMerc_False_Northing = 0.0;       /* False northing in meters */
-      TranMerc_False_Easting = 0.0;        /* False easting in meters */
-      TranMerc_Scale_Factor = 1.0;         /* Scale factor  */
-      
-      /* Maximum variance for easting and northing values for WGS 84. */
-      TranMerc_Delta_Easting = 40000000.0;
-      TranMerc_Delta_Northing = 40000000.0;
-   
-      /* Ellipsoid Parameters, default to WGS 84  */
-      TranMerc_f = Geocent_f;      /* Flattening of ellipsoid  */
-      TranMerc_ebs = 0.0067394967565869;   /* Second Eccentricity squared */
-
-      mMagneticNorthOffset = 0.0f;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    Coordinates::~Coordinates()
-   {  
+   {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Coordinates& Coordinates::operator = (const Coordinates &rhs) 
+   Coordinates& Coordinates::operator = (const Coordinates &rhs)
    {
       if(this == &rhs)
          return *this;
@@ -80,30 +164,16 @@ namespace dtUtil
       mLogger                 = rhs.mLogger;
       mLocalCoordinateType    = rhs.mLocalCoordinateType;
       mIncomingCoordinateType = rhs.mIncomingCoordinateType;
-      TranMerc_a              = rhs.TranMerc_a;
-      TranMerc_es             = rhs.TranMerc_es;
-      TranMerc_ap             = rhs.TranMerc_ap;
-      TranMerc_bp             = rhs.TranMerc_bp;
-      TranMerc_cp             = rhs.TranMerc_cp;
-      TranMerc_dp             = rhs.TranMerc_dp;
-      TranMerc_ep             = rhs.TranMerc_ep;
-      TranMerc_Origin_Lat     = rhs.TranMerc_Origin_Lat;
-      TranMerc_Origin_Long    = rhs.TranMerc_Origin_Long;
-      TranMerc_False_Northing = rhs.TranMerc_False_Northing;
-      TranMerc_False_Easting  = rhs.TranMerc_False_Easting;
-      TranMerc_Scale_Factor   = rhs.TranMerc_Scale_Factor;
-      TranMerc_Delta_Easting  = rhs.TranMerc_Delta_Easting;
-      TranMerc_Delta_Northing = rhs.TranMerc_Delta_Northing;
-      TranMerc_f              = rhs.TranMerc_f;
-      TranMerc_ebs            = rhs.TranMerc_ebs;
       mZone                   = rhs.mZone;
       mGlobeRadius            = rhs.mGlobeRadius;
       mMagneticNorthOffset    = rhs.mMagneticNorthOffset;
 
-      memcpy(mLocationOffset, rhs.mLocationOffset, sizeof(double) * 3);
+      mLocalOffset            = rhs.mLocalOffset;
+      mFlatEarthOrigin         = rhs.mFlatEarthOrigin;
 
       mRotationOffset         = rhs.mRotationOffset;
       mRotationOffsetInverse  = rhs.mRotationOffsetInverse;
+      mApplyRotationConversionMatrix = rhs.mApplyRotationConversionMatrix;
 
       return *this;
    }
@@ -113,44 +183,12 @@ namespace dtUtil
    {
       if (this == &rhs)
          return true;
-      
+
       if(mLogger != rhs.mLogger)
          return false;
       if(mLocalCoordinateType != rhs.mLocalCoordinateType)
          return false;
       if(mIncomingCoordinateType != rhs.mIncomingCoordinateType)
-         return false;
-      if(TranMerc_a != rhs.TranMerc_a)
-         return false;
-      if(TranMerc_es != rhs.TranMerc_es)
-         return false;
-      if(TranMerc_ap != rhs.TranMerc_ap)
-         return false;
-      if(TranMerc_bp != rhs.TranMerc_bp)
-         return false;
-      if(TranMerc_cp != rhs.TranMerc_cp)
-         return false;
-      if(TranMerc_dp != rhs.TranMerc_dp)
-         return false;
-      if(TranMerc_ep != rhs.TranMerc_ep)
-         return false;
-      if(TranMerc_Origin_Lat != rhs.TranMerc_Origin_Lat)
-         return false;
-      if(TranMerc_Origin_Long != rhs.TranMerc_Origin_Long)
-         return false;
-      if(TranMerc_False_Northing != rhs.TranMerc_False_Northing)
-         return false;
-      if(TranMerc_False_Easting != rhs.TranMerc_False_Easting)
-         return false;
-      if(TranMerc_Scale_Factor != rhs.TranMerc_Scale_Factor)
-         return false;
-      if(TranMerc_Delta_Easting != rhs.TranMerc_Delta_Easting)
-         return false;
-      if(TranMerc_Delta_Northing != rhs.TranMerc_Delta_Northing)
-         return false;
-      if(TranMerc_f != rhs.TranMerc_f)
-         return false;
-      if(TranMerc_ebs != rhs.TranMerc_ebs)
          return false;
       if(mZone != rhs.mZone)
          return false;
@@ -159,9 +197,10 @@ namespace dtUtil
       if(mMagneticNorthOffset != rhs.mMagneticNorthOffset)
          return false;
 
-      if(mLocationOffset[0] != rhs.mLocationOffset[0] || 
-         mLocationOffset[1] != rhs.mLocationOffset[1] ||
-         mLocationOffset[2] != rhs.mLocationOffset[2])
+      if(!dtUtil::Equivalent(mLocalOffset, rhs.mLocalOffset, 0.0001))
+         return false;
+
+      if(!dtUtil::Equivalent(mFlatEarthOrigin, rhs.mFlatEarthOrigin, 0.0001))
          return false;
 
       if(mRotationOffset != rhs.mRotationOffset)
@@ -169,71 +208,128 @@ namespace dtUtil
       if(mRotationOffsetInverse != rhs.mRotationOffsetInverse)
          return false;
 
+      if(mApplyRotationConversionMatrix != rhs.mApplyRotationConversionMatrix)
+         return false;
+
       return true;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::SetGeoOrigin(double latitude, double longitude, double elevation)
+   void Coordinates::ReconfigureRotationMatrix()
+   {
+      if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC ||
+               *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+      {
+         if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH)
+         {
+            // The incoming origin is the lat lon that is the point of reference, so it should be
+            // good for this
+            CalculateLocalRotationMatrixLL(mFlatEarthOrigin[0], mFlatEarthOrigin[1]);
+         }
+         else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM)
+         {
+            double lat, lon;
+            //Use the configured utm zone, and local offset values to get a better approximation.
+            ConvertUTMToGeodetic(mZone, mLocalOffset.x(), mLocalOffset.y(), lat, lon);
+            CalculateLocalRotationMatrixLL(osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
+         }
+         else if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
+         {
+            mRotationOffset.makeIdentity();
+            mRotationOffsetInverse.makeIdentity();
+         }
+      }
+      else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
+      {
+         mRotationOffset.makeIdentity();
+         mRotationOffsetInverse.makeIdentity();
+      }
+
+      mRotationDirty = false;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetUTMLocalOffsetAsLatLon(const osg::Vec3d& lle)
    {
       unsigned zone;
       char nsZone, hemisphere;
 
+      double latitude = lle[0];
+      double longitude = lle[1];
+
       CalculateUTMZone(latitude, longitude, zone, nsZone);
       SetUTMZone(zone);
-      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude), 
-                           osg::DegreesToRadians(longitude), zone, hemisphere, mLocationOffset[0], mLocationOffset[1]);
+      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude),
+                           osg::DegreesToRadians(longitude), mZone, hemisphere, mLocalOffset[0], mLocalOffset[1]);
 
-      mLocationOffset[2] = elevation;
-      
+      mLocalOffset[2] = lle[2];
+      CalculateLocalRotationMatrixLL(latitude, longitude);
+      /// We just recomputed the rotation, so its not dirty.
+      mRotationDirty = false;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::SetOriginLocation(double x, double y, double z)
+   void Coordinates::SetLocalOffset(const osg::Vec3d& offset)
    {
-      mLocationOffset[0] = x;
-      mLocationOffset[1] = y;
-      mLocationOffset[2] = z;
-   }
-  
-   /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::GetOriginLocation(double& x, double& y, double& z) const
-   {
-      x = mLocationOffset[0];
-      y = mLocationOffset[1];
-      z = mLocationOffset[2];
+      mLocalOffset = offset;
+      mRotationDirty = true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::SetGeoOriginRotation(double latitude, double longitude)
+   void Coordinates::GetLocalOffset(osg::Vec3d& offset) const
    {
-      unsigned oldZone, zone;
-      double easting, northing;
-      char nsZone, hemisphere;
+      offset = mLocalOffset;
+   }
 
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetFlatEarthOrigin(const osg::Vec2d& origin)
+   {
+      mFlatEarthOrigin = origin;
+      mConvergence = CalculateConvergencParamForFlatEarth(origin[0]);
+      mRotationDirty = true;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::GetFlatEarthOrigin(osg::Vec2d& originOut) const
+   {
+      originOut = mFlatEarthOrigin;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetUTMZone(unsigned zone)
+   {
+      Clamp(zone, unsigned(1), unsigned(60));
+      mZone = zone;
+      mRotationDirty = true;
+   };
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::CalculateLocalRotationMatrixLL(double latitude, double longitude)
+   {
       double lat = osg::DegreesToRadians(latitude);
 
-      oldZone = GetUTMZone();
+//      unsigned zone;
+//      char nsZone;
+//      CalculateUTMZone(latitude, longitude, zone, nsZone);
+//      double Central_Meridian;
+//      if (zone >= 31)
+//        Central_Meridian = osg::DegreesToRadians(double(6 * zone - 183));
+//      else
+//        Central_Meridian = osg::DegreesToRadians(double(6 * zone + 177));
+//
+//      if (Central_Meridian > osg::PI)
+//        Central_Meridian -= (2.0 * osg::PI);
 
-      CalculateUTMZone(latitude, longitude, zone, nsZone);
-      SetUTMZone(zone);
-      //find the central lat and lon for the zone of the lat and lon given.
-      ConvertGeodeticToUTM(lat, osg::DegreesToRadians(longitude), 
-         zone, hemisphere, easting, northing);
-
-      SetUTMZone(oldZone);
-
-      double lon = TranMerc_Origin_Long;
+//      double lon = Central_Meridian;
+      double lon = osg::DegreesToRadians(longitude);
 
       double sin_lat = sin(lat);
       double cos_lat = cos(lat);
       double sin_lon = sin(lon);
       double cos_lon = cos(lon);
 
-      /* This matrix is used to convert from GCS to GCC.
-       * position_gcc = matrix * position_gcs + position_origin_in_gcc
-       */
       mRotationOffset.makeIdentity();
-      
+
       mRotationOffset(0,0) = -sin_lon;
       mRotationOffset(0,1) = -sin_lat * cos_lon;
       mRotationOffset(0,2) =  cos_lat * cos_lon;
@@ -248,41 +344,23 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::SetOriginRotation(float h, float p, float r)
-   {
-     dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r)); 
-     
-     mRotationOffsetInverse.invert(mRotationOffset);
-   }
-  
-   /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::GetOriginRotation(float& h, float& p, float& r) const
-   {
-      osg::Vec3 tmp;
-      dtUtil::MatrixUtil::MatrixToHpr(tmp, mRotationOffset);
-      h = tmp[0]; 
-      p = tmp[1]; 
-      r = tmp[2];
-   }
-   
-   /////////////////////////////////////////////////////////////////////////////
    const osg::Matrix& Coordinates::GetOriginRotationMatrix() const
    {
       return mRotationOffset;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    const osg::Matrix& Coordinates::GetOriginRotationMatrixInverse() const
    {
       return mRotationOffsetInverse;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetGlobeRadius(float radius)
    {
       mGlobeRadius = radius;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    float Coordinates::GetGlobeRadius() const
    {
@@ -298,9 +376,9 @@ namespace dtUtil
             "Converting coordinates.  Incoming coordinates are %lf, %lf, %lf.",
             loc[0], loc[1], loc[2]);
       }
-      
+
       osg::Vec3 position;
-            
+
       if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
@@ -314,76 +392,101 @@ namespace dtUtil
             LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC coordinates types are supported.");
          }
       }
-      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN)
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             double lat, lon, elevation, easting, northing;
-            unsigned zone;
             char hemisphere;
 
             ConvertGeocentricToGeodetic(loc[0], loc[1], loc[2],lat,lon,elevation);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Incoming lat lon: %lf, %lf", 
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Incoming lat lon: %lf, %lf",
                   osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
 
-            ConvertGeodeticToUTM(lat, lon, zone, hemisphere, easting, northing);
+            ConvertGeodeticToUTM(lat, lon, mZone, hemisphere, easting, northing);
 
-            double originX,originY,originZ;
-            GetOriginLocation(originX,originY,originZ);
-            position[0] = easting - originX;
-            position[1] = northing - originY;
-            position[2] = elevation - originZ;
-
-         }
-         else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
-         {
-            //This code is not yet unit tested
-            double easting, northing;
-            unsigned zone;
-            char hemisphere;
-
-            ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
-
-            double originX,originY,originZ;
-            GetOriginLocation(originX,originY,originZ);
-            position[0] = easting - originX;
-            position[1] = northing - originY;
-            position[2] = loc[2] - originZ;
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = easting - localOffset.x();
+            position[1] = northing - localOffset.y();
+            position[2] = elevation - localOffset.z();
 
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
             //This code is not yet unit tested
             double easting, northing;
-            unsigned zone;
             char hemisphere;
 
-            ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
+            ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), mZone, hemisphere, easting, northing);
 
-            double originX,originY,originZ;
-            GetOriginLocation(originX,originY,originZ);
-            position[0] = easting - originX;
-            position[1] = northing - originY;
-            position[2] = loc[2] - originZ;
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = easting - localOffset.x();
+            position[1] = northing - localOffset.y();
+            position[2] = loc[2] - localOffset.z();
 
          }
-         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM
-            || *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
          {
-            double originX, originY, originZ;
-            GetOriginLocation(originX, originY, originZ);
-            position[0] = loc[0] - originX;
-            position[1] = loc[1] - originY;
-            position[2] = loc[2] - originZ;
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = loc[0] - localOffset.x();
+            position[1] = loc[1] - localOffset.y();
+            position[2] = loc[2] - localOffset.z();
+         }
+      }
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH)
+      {
+         if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
+         {
+            double lat, lon, elevation;
+            ConvertGeocentricToGeodetic(loc[0], loc[1], loc[2],lat,lon,elevation);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Incoming lat lon: %lf, %lf",
+                  osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
+
+            osg::Vec3d xyz;
+            ConvertLatLonToFlatEarth(xyz, osg::Vec3d(osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon), elevation), mFlatEarthOrigin, mConvergence);
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = xyz.x() - localOffset.x();
+            position[1] = xyz.y() - localOffset.y();
+            position[2] = xyz.z() - localOffset.z();
+
+         }
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+         {
+            osg::Vec3d xyz;
+            ConvertLatLonToFlatEarth(xyz, loc, mFlatEarthOrigin, mConvergence);
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = xyz.x() - localOffset.x();
+            position[1] = xyz.y() - localOffset.y();
+            position[2] = xyz.z() - localOffset.z();
+         }
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
+         {
+            double lat, lon;
+            ConvertUTMToGeodetic(mZone, loc[0], loc[1], lat, lon);
+            osg::Vec3d xyz;
+            ConvertLatLonToFlatEarth(xyz, osg::Vec3d(osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon), loc[2]), mFlatEarthOrigin, mConvergence);
+
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            position[0] = xyz.x() - localOffset.x();
+            position[1] = xyz.y() - localOffset.y();
+            position[2] = xyz.z() - localOffset.z();
          }
       }
       else
       {
          LOGN_ERROR("coordinates.cpp", "Unsupported local coordinate mode: " + mLocalCoordinateType->GetName());
-      } 
-      
+      }
+
       for (unsigned i = 0; i < 3; ++i)
       {
          if (!IsFinite(position[i]))
@@ -399,6 +502,28 @@ namespace dtUtil
             position[0], position[1], position[2]);
       }
       return position;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   double Coordinates::CalculateConvergencParamForFlatEarth(double latitude)
+   {
+      return cos(latitude * M_PIl / 180.0);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::ConvertLatLonToFlatEarth(osg::Vec3d& xyz, const osg::Vec3d& lle, const osg::Vec2d& originll, double convergenceParam)
+   {
+      xyz[0] = (lle[1] - originll[1]) * METERS_PER_DEGREE * convergenceParam;
+      xyz[1] = (lle[0] - originll[0]) * METERS_PER_DEGREE;
+      xyz[2] = lle[2];
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::ConvertFlatEarthToLatLon(osg::Vec3d& lle, const osg::Vec3d& xyz, const osg::Vec2d& originll, double convergenceParam)
+   {
+      lle[0] = originll[0] + xyz[1]/METERS_PER_DEGREE/convergenceParam;
+      lle[1] = originll[1] + xyz[0]/METERS_PER_DEGREE;
+      lle[2] = xyz[2];
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -426,23 +551,23 @@ namespace dtUtil
             LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC coordinates types are supported.");
          }
       }
-      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN)
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             double lat, lon;
             double x, y, z;
 
-            double originX,originY,originZ;
-            GetOriginLocation(originX,originY,originZ);
-            
-            ConvertUTMToGeodetic(mZone, translation[0] + originX, translation[1] + originY, lat, lon);
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+
+            ConvertUTMToGeodetic(mZone, translation[0] + localOffset.x(), translation[1] + localOffset.y(), lat, lon);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Outgoing lat lon: %lf, %lf", 
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Outgoing lat lon: %lf, %lf",
                   osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
 
-            GeodeticToGeocentric(lat, lon, translation[2] + originZ, x, y, z);
+            GeodeticToGeocentric(lat, lon, translation[2] + localOffset.z(), x, y, z);
 
             remoteLoc[0] = x;
             remoteLoc[1] = y;
@@ -454,23 +579,85 @@ namespace dtUtil
             //This code is not yet unit tested
             double lat, lon;
 
-            double originX,originY,originZ;
-            GetOriginLocation(originX,originY,originZ);
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
 
-            ConvertUTMToGeodetic(mZone, translation[0] + originX, translation[1] + originY, lat, lon);
+            ConvertUTMToGeodetic(mZone, translation[0] + localOffset.x(), translation[1] + localOffset.y(), lat, lon);
 
             remoteLoc[0] = osg::RadiansToDegrees(lat);
             remoteLoc[1] = osg::RadiansToDegrees(lon);
-            remoteLoc[2] = translation[2] + originZ;
+            remoteLoc[2] = translation[2] + localOffset.z();
 
          }
          else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
          {
-            double originX, originY, originZ;
-            GetOriginLocation(originX, originY, originZ);
-            remoteLoc[0] = translation[0] + originX;
-            remoteLoc[1] = translation[1] + originY;
-            remoteLoc[2] = translation[2] + originZ;
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+            remoteLoc[0] = translation[0] + localOffset.x();
+            remoteLoc[1] = translation[1] + localOffset.y();
+            remoteLoc[2] = translation[2] + localOffset.z();
+         }
+      }
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH)
+      {
+         if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
+         {
+            osg::Vec3d lle;
+            double x, y, z;
+
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+
+            ConvertFlatEarthToLatLon(lle, translation + localOffset, mFlatEarthOrigin, mConvergence);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Outgoing lat lon: %lf, %lf",
+                  lle[0], lle[1]);
+
+            GeodeticToGeocentric(osg::DegreesToRadians(lle[0]), osg::DegreesToRadians(lle[1]), lle[2], x, y, z);
+
+            remoteLoc[0] = x;
+            remoteLoc[1] = y;
+            remoteLoc[2] = z;
+
+         }
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+         {
+            osg::Vec3d lle;
+
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+
+            ConvertFlatEarthToLatLon(lle, osg::Vec3d(translation + localOffset), mFlatEarthOrigin, mConvergence);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Outgoing lat lon: %lf, %lf",
+                  osg::RadiansToDegrees(lle[0]), osg::RadiansToDegrees(lle[1]));
+
+            remoteLoc[0] = lle[0];
+            remoteLoc[1] = lle[1];
+            remoteLoc[2] = lle[2];
+
+         }
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
+         {
+            osg::Vec3d lle;
+
+            osg::Vec3d localOffset;
+            GetLocalOffset(localOffset);
+
+            ConvertFlatEarthToLatLon(lle, osg::Vec3d(translation + localOffset), mFlatEarthOrigin, mConvergence);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Outgoing lat lon: %lf, %lf",
+                  osg::RadiansToDegrees(lle[0]), osg::RadiansToDegrees(lle[1]));
+
+            char hemisphere;
+            double easting, northing;
+            ConvertGeodeticToUTM(lle[0], lle[1], mZone, hemisphere, easting, northing);
+            remoteLoc[0] = easting;
+            remoteLoc[1] = northing;
+            remoteLoc[2] = lle[2];
          }
       }
       else
@@ -497,9 +684,14 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const osg::Vec3 Coordinates::ConvertToLocalRotation(double psi, double theta, double phi) const
+   const osg::Vec3 Coordinates::ConvertToLocalRotation(double psi, double theta, double phi)
    {
       osg::Matrix rotMat;
+
+      if (mRotationDirty)
+      {
+         ReconfigureRotationMatrix();
+      }
 
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
       {
@@ -521,9 +713,13 @@ namespace dtUtil
             LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC and GEODETIC coordinates types are supported.");
          }
       }
-      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN)
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM ||
+               *mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH)
       {
-         rotMat = osg::Matrix::inverse(rotMat) * GetOriginRotationMatrix();
+         if (mApplyRotationConversionMatrix)
+         {
+            rotMat = osg::Matrix::inverse(rotMat) * GetOriginRotationMatrix();
+         }
 
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
@@ -562,10 +758,15 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const osg::Vec3d Coordinates::ConvertToRemoteRotation(const osg::Vec3& hpr) const
+   const osg::Vec3d Coordinates::ConvertToRemoteRotation(const osg::Vec3& hpr)
    {
       osg::Matrix rotMat;
       MatrixUtil::HprToMatrix(rotMat, hpr);
+
+      if (mRotationDirty)
+      {
+         ReconfigureRotationMatrix();
+      }
 
       if (*mLocalCoordinateType == LocalCoordinateType::GLOBE)
       {
@@ -575,16 +776,17 @@ namespace dtUtil
          }
          else
          {
-            LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC and GEODETIC coordinates types are supported.");            
+            LOGN_ERROR("coordinates.cpp", "With local coordinates in globe mode, only GEOCENTRIC and GEODETIC coordinates types are supported.");
          }
       }
-      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN)
+      else if (*mLocalCoordinateType == LocalCoordinateType::CARTESIAN_UTM ||
+               *mLocalCoordinateType == LocalCoordinateType::CARTESIAN_FLAT_EARTH)
       {
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             ZFlop(rotMat);
          }
-         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM || 
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM ||
             *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
             //Do nothing
@@ -617,7 +819,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ZFlop(osg::Matrix& toFlop)
    {
-      toFlop.set(toFlop(1,0), toFlop(1,1), toFlop(1,2), toFlop(1,3), 
+      toFlop.set(toFlop(1,0), toFlop(1,1), toFlop(1,2), toFlop(1,3),
                  toFlop(0,0), toFlop(0,1), toFlop(0,2), toFlop(0,3),
                  -toFlop(2,0), -toFlop(2,1), -toFlop(2,2), toFlop(2,3),
                  toFlop(3,0), toFlop(3,1), toFlop(3,2), toFlop(3,3));
@@ -644,7 +846,7 @@ namespace dtUtil
       dst(2,1) = cos_theta * sin_phi;
       dst(2,2) = cos_theta * cos_phi;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::MatrixToEulers(const osg::Matrix& src, float& psi, float& theta, float& phi)
    {
@@ -686,7 +888,7 @@ namespace dtUtil
 
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GeocentricToGeodetic(double x, double y, double z,
-                                          double& latitude, double& longitude, 
+                                          double& latitude, double& longitude,
                                           double& elevation)
    {
       double p = sqrt(x*x + y*y),
@@ -702,17 +904,17 @@ namespace dtUtil
 
       longitude = atan2(y, x);
 
-      elevation = p/cos(latitude) - 
+      elevation = p/cos(latitude) -
         a/sqrt(1.0-esqu*pow(sin(latitude), 2.0));
 
       latitude = osg::RadiansToDegrees(latitude);
       longitude = osg::RadiansToDegrees(longitude);
    }
-  
+
 
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
-                                           unsigned& Zone, char& Hemisphere, double& Easting, double& Northing)
+                                           unsigned Zone, char& Hemisphere, double& Easting, double& Northing)
    {
       double Origin_Latitude = 0.0;
       double Central_Meridian = 0.0;
@@ -723,9 +925,6 @@ namespace dtUtil
       if (Longitude < 0)
         Longitude += (2*osg::PI) + 1.0e-10;
 
-      // Large terrains are based on one specific UTM zone, so this looks at the assigned zone
-      // and just uses it as law.
-      Zone = mZone;
       //char nsZone;
       //CalculateUTMZone(osg::RadiansToDegrees(Latitude), osg::RadiansToDegrees(Longitude), Zone, nsZone);
 
@@ -742,11 +941,12 @@ namespace dtUtil
       else
          Hemisphere = 'N';
 
-      SetTransverseMercatorParameters(Geocent_a, Geocent_f, Origin_Latitude,
+      UTMParameters params;
+      params.CalcTransverseMercatorParameters(Geocent_a, Geocent_f, Origin_Latitude,
                                       Central_Meridian, False_Easting, False_Northing, CentralMeridianScale);
-      ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
+      ConvertGeodeticToTransverseMercator(params, Latitude, Longitude, Easting, Northing);
    } /* END OF Convert_Geodetic_To_UTM */
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertUTMToGeodetic (unsigned zone, double easting, double northing, double& latitude, double& longitude)
    {
@@ -759,14 +959,14 @@ namespace dtUtil
       double cos_phai1;          /* cosine of latitude                      */
       double sin_phai1;          /* sine of latitude                        */
       double tan_phai1;          /* tangent of latitude                     */
-      
+
       /* Equations are taken from "Map Projections - A Working Manual" by
        * John Snyder, USGS Professional Paper 1395, Pages 63 and 64.
        */
-    
+
       double P1 =  1.0 - (Geocent_e2/4.0) - (3.0*Geocent_e2_2/64.0) - (5.0*Geocent_e2_3/256.0);
       double P2 = (3.0 * Geocent_ef/2.0) - (27.0 * Geocent_ef_3/32.0);
-      double P3 = (21.0 * Geocent_ef*Geocent_ef / 16.0 ) - (55.0 * Geocent_ef_4 / 32.0); 
+      double P3 = (21.0 * Geocent_ef*Geocent_ef / 16.0 ) - (55.0 * Geocent_ef_4 / 32.0);
       double P4 = 151.0 * Geocent_ef_3 / 96.0;
       double P5 = 1097.0 * Geocent_ef_4 / 512.0;
 
@@ -780,7 +980,7 @@ namespace dtUtil
       else
         adj_northing = northing;
 
-      /* Calculate longitude of the central meridian.  Zone is converted to an int in the calculation because 
+      /* Calculate longitude of the central meridian.  Zone is converted to an int in the calculation because
        * it is valid for the calculation to go below zero.
        */
       if ( zone < 31 )
@@ -828,7 +1028,7 @@ namespace dtUtil
       /* calculate the latitude, phai */
       P1 =   D2/2.0;
       P2 = ( D4/24.0  ) * ( 5.0 + 3.0*T + 10.0*C - 4.0*C2 - 9.0*Geocent_ep2) ;
-      P3 = ( D6/720.0 ) * (61.0 + 90.0*T + 298.0*C + 45.0*T2 - 
+      P3 = ( D6/720.0 ) * (61.0 + 90.0*T + 298.0*C + 45.0*T2 -
           252.0 * Geocent_ep2 - 3.0 * C2 );
       phai = phai1 - ( N * tan_phai1 / R ) * ( P1 - P2 + P3 );
 
@@ -849,18 +1049,18 @@ namespace dtUtil
       long Lat_Degrees = long(latitude);
       long Long_Degrees = long(longitude);
 
-      
+
       unsigned long zone;
-      
+
       if (longitude < 180.0)
         zone = long(31 + (longitude / 6.0));
       else
         zone = long((longitude / 6.0) - 29);
-      
+
       if (zone > 60)
         zone = 1;
 
-      /* UTM special cases */      
+      /* UTM special cases */
       if ((Lat_Degrees > 55) && (Lat_Degrees < 64) && (Long_Degrees > -1)
           && (Long_Degrees < 3))
         zone = 31;
@@ -875,9 +1075,9 @@ namespace dtUtil
         zone = 35;
       else if ((Lat_Degrees > 71) && (Long_Degrees > 32) && (Long_Degrees < 42))
         zone = 37;
-        
+
       ewZone = zone;
-      
+
 
       /* Calculate UTM zone letter (north-south direction) */
       if (latitude < 80.0)
@@ -890,9 +1090,9 @@ namespace dtUtil
             nsZone ++;
       }
       else /* 80 to 84 are also grid 'X' */
-         nsZone = 'X';     
+         nsZone = 'X';
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    const std::string Coordinates::ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
                                                    char northSouthZone, unsigned resolution) throw(dtUtil::Exception)
@@ -902,8 +1102,8 @@ namespace dtUtil
                                        'G', 'H', 'J', 'K', 'L', 'M',
                                        'N', 'P', 'Q', 'R', 'S', 'T',
                                        'U', 'V', 'W', 'X', 'Y', 'Z'};
-   
-       // Intermediate parameters needed to build milgrid string 
+
+       // Intermediate parameters needed to build milgrid string
        char    eastingLetter;
        char    northingLetter;
        char    formatString[20];
@@ -911,46 +1111,46 @@ namespace dtUtil
        double offset;
        int   eastingNum;
        int   northingNum;
-   
+
        //resolution must be 0-5
        if (resolution < 0 || resolution > 5)
-          throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                 "The resolution for the mgrs conversion must be between 0 and 5 inclusive.", __FILE__, __LINE__);            
+          throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
+                 "The resolution for the mgrs conversion must be between 0 and 5 inclusive.", __FILE__, __LINE__);
 
-       // Calculate east-west 100,000 km square grid designator       
-       // Note that origin repeats every 3 zones (18 degrees)         
+       // Calculate east-west 100,000 km square grid designator
+       // Note that origin repeats every 3 zones (18 degrees)
        // Note that the 8 results from there being 8*3 or 24 letters!
        int index = (((eastWestZone - 1) % 3) * 8) + (int)(easting / 100000) - 1;
        Clamp(index, 0, 23);
        eastingLetter = gridLetters[index];
-   
-       // Calculate north-south 100,000 km square grid designator        
-       // Note: origin alternates between even/odd UTM zones and repeats 
-       //       every 2,000,000 meters                                   
+
+       // Calculate north-south 100,000 km square grid designator
+       // Note: origin alternates between even/odd UTM zones and repeats
+       //       every 2,000,000 meters
        if (eastWestZone % 2)
          offset = fmod(northing, 2000000.0);
        else
          offset = fmod(northing + 500000.0, 2000000.0);
 
        index = (int)(offset / 100000.0);
-       Clamp(index, 0, 23);   
+       Clamp(index, 0, 23);
        northingLetter = gridLetters[index];
-   
+
        eastingNum  = (((long)easting)  % 100000) / resolutionDivisor[resolution];
        northingNum = (((long)northing) % 100000) / resolutionDivisor[resolution];
-   
+
        snprintf(formatString, 20, "%%02d%%c%%c%%c%%0%ud%%0%ud", resolution,
                resolution);
        snprintf(mgrsString, 255, formatString, eastWestZone, northSouthZone,
                eastingLetter, northingLetter, eastingNum, northingNum);
-       
+
        std::string result(mgrsString);
        trim(result);
        return result;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,      
+   void Coordinates::ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,
                                       const std::string& mgrs,
                                       unsigned& zone, double& easting, double& northing )
       throw(dtUtil::Exception)
@@ -962,7 +1162,7 @@ namespace dtUtil
 
       // Is it too long?
       if ( mgrs.length() > 15 )
-         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
                 "The MGRS string must be no longer that 12 digits.", __FILE__, __LINE__);
 
       std::string working;
@@ -971,7 +1171,7 @@ namespace dtUtil
          if (! (isdigit(mgrs[0]) &&
                 isdigit(mgrs[1]) &&
                 isalpha(mgrs[2]) ) )
-            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
                    "The string must begin with 2 digits followed by a letter.", __FILE__, __LINE__);
 
          zone = 10*(mgrs[0] - '0') + (mgrs[1] - '0');
@@ -983,20 +1183,20 @@ namespace dtUtil
          zone = defaultZone;
          z_char = defaultZoneLetter;
          working = mgrs;
-      } 
+      }
 
       // Are the first two characters letters?
       if (!(isalpha( working[0] ) && isalpha( working[1] )) )
-         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                "The intra-zone grid designations must be letters.", __FILE__, __LINE__);            
-         
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
+                "The intra-zone grid designations must be letters.", __FILE__, __LINE__);
+
 
       // Are the rest of the characters numbers?
       for( unsigned int i = 2; i < working.length(); i++ )
       {
          if (!isdigit(working[i]))
-            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                   "All characters following the zone designations must be digits.", __FILE__, __LINE__);            
+            throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
+                   "All characters following the zone designations must be digits.", __FILE__, __LINE__);
       }
 
       // Passed preliminary error checking, go ahead and parse the string
@@ -1010,8 +1210,8 @@ namespace dtUtil
       sprintf( control, "%%c%%c%%%ud%%%ud", unsigned(numLen), unsigned(numLen) );
       int sscanf_return = sscanf( working.c_str(), control, &e_char, &n_char, &e_num, &n_num );
       if (sscanf_return != 4)
-         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT, 
-                "Internal error when parsing input.  Check input syntax: " + mgrs, __FILE__, __LINE__);            
+         throw dtUtil::Exception(CoordinateConversionExceptionEnum::INVALID_INPUT,
+                "Internal error when parsing input.  Check input syntax: " + mgrs, __FILE__, __LINE__);
 
       // The string has passed error checking.
 
@@ -1179,7 +1379,7 @@ namespace dtUtil
       easting *= 100000;
       easting += e_num;
    }
-  
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertGeocentricToGeodetic (double x, double y, double z,
                                            double& phi, double& lambda, double& elevation)
@@ -1199,7 +1399,7 @@ namespace dtUtil
      double Sum;      /* numerator of cos(phi1) */
      int At_Pole;     /* indicates location is in polar region */
      double Geocent_b = Geocent_a * (1 - Geocent_f); /* Semi-minor axis of ellipsoid, in meters */
-     
+
      At_Pole = 0;
      if (x != 0.0)
      {
@@ -1232,7 +1432,7 @@ namespace dtUtil
               phi = osg::PI_2;
               elevation = -Geocent_b;
               return;
-           } 
+           }
         }
      }
      W2 = x*x + y*y;
@@ -1265,70 +1465,14 @@ namespace dtUtil
         phi = atan(Sin_p1 / Cos_p1);
      }
    } /* END OF Convert_Geocentric_To_Geodetic */
-  
+
    /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::SetTransverseMercatorParameters(double a, double f, double Origin_Latitude,
-                                                     double Central_Meridian, double False_Easting, 
-                                                     double False_Northing, double Scale_Factor) 
-   { /* BEGIN Set_Tranverse_Mercator_Parameters */
-      double tn;        /* True Meridianal distance constant  */
-      double tn2;
-      double tn3;
-      double tn4;
-      double tn5;
-      double dummy_northing;
-      double TranMerc_b; /* Semi-minor axis of ellipsoid, in meters */
-      
-      TranMerc_a = a;
-      TranMerc_f = f;
-      TranMerc_Origin_Lat = 0;
-      TranMerc_Origin_Long = 0;
-      TranMerc_False_Northing = 0;
-      TranMerc_False_Easting = 0; 
-      TranMerc_Scale_Factor = 1;
-      
-      /* Eccentricity Squared */
-      TranMerc_es = 2 * TranMerc_f - TranMerc_f * TranMerc_f;
-      /* Second Eccentricity Squared */
-      TranMerc_ebs = (1 / (1 - TranMerc_es)) - 1;
-      
-      TranMerc_b = TranMerc_a * (1 - TranMerc_f);    
-      /*True meridianal constants  */
-      tn = (TranMerc_a - TranMerc_b) / (TranMerc_a + TranMerc_b);
-      tn2 = tn * tn;
-      tn3 = tn2 * tn;
-      tn4 = tn3 * tn;
-      tn5 = tn4 * tn;
-      
-      TranMerc_ap = TranMerc_a * (1.e0 - tn + 5.e0 * (tn2 - tn3)/4.e0
-                                  + 81.e0 * (tn4 - tn5)/64.e0 );
-      TranMerc_bp = 3.e0 * TranMerc_a * (tn - tn2 + 7.e0 * (tn3 - tn4)
-                                         /8.e0 + 55.e0 * tn5/64.e0 )/2.e0;
-      TranMerc_cp = 15.e0 * TranMerc_a * (tn2 - tn3 + 3.e0 * (tn4 - tn5 )/4.e0) /16.0;
-      TranMerc_dp = 35.e0 * TranMerc_a * (tn3 - tn4 + 11.e0 * tn5 / 16.e0) / 48.e0;
-      TranMerc_ep = 315.e0 * TranMerc_a * (tn4 - tn5) / 512.e0;
-      ConvertGeodeticToTransverseMercator(MAX_LAT,
-                                          MAX_DELTA_LONG,
-                                          TranMerc_Delta_Easting,
-                                          TranMerc_Delta_Northing);
-      ConvertGeodeticToTransverseMercator(0,
-                                          MAX_DELTA_LONG,
-                                          TranMerc_Delta_Easting,
-                                          dummy_northing);
-      TranMerc_Origin_Lat = Origin_Latitude;
-      if (Central_Meridian > osg::PI)
-        Central_Meridian -= (2*osg::PI);
-      TranMerc_Origin_Long = Central_Meridian;
-      TranMerc_False_Northing = False_Northing;
-      TranMerc_False_Easting = False_Easting; 
-      TranMerc_Scale_Factor = Scale_Factor;
-   }  /* END of Set_Transverse_Mercator_Parameters  */
-  
-   /////////////////////////////////////////////////////////////////////////////
-   void Coordinates::ConvertGeodeticToTransverseMercator (double Latitude,
+   void Coordinates::ConvertGeodeticToTransverseMercator (const UTMParameters& params,
+                                                          double Latitude,
                                                           double Longitude,
                                                           double& Easting,
-                                                          double& Northing) const
+                                                          double& Northing
+                                                          )
    {      /* BEGIN Convert_Geodetic_To_Transverse_Mercator */
       double c;       /* Cosine of latitude                          */
       double c2;
@@ -1361,34 +1505,34 @@ namespace dtUtil
       double tmdo;    /* True Meridional distance for latitude of origin */
       double temp_Origin;
       double temp_Long;
-      
+
       if (Longitude > osg::PI)
         Longitude -= (2 * osg::PI);
-      if ((Longitude < (TranMerc_Origin_Long - MAX_DELTA_LONG))
-          || (Longitude > (TranMerc_Origin_Long + MAX_DELTA_LONG)))
+      if ((Longitude < (params.TranMerc_Origin_Long - MAX_DELTA_LONG))
+          || (Longitude > (params.TranMerc_Origin_Long + MAX_DELTA_LONG)))
       {
          if (Longitude < 0)
            temp_Long = Longitude + 2 * osg::PI;
          else
            temp_Long = Longitude;
-         if (TranMerc_Origin_Long < 0)
-           temp_Origin = TranMerc_Origin_Long + 2 * osg::PI;
+         if (params.TranMerc_Origin_Long < 0)
+           temp_Origin = params.TranMerc_Origin_Long + 2 * osg::PI;
          else
-           temp_Origin = TranMerc_Origin_Long;
+           temp_Origin = params.TranMerc_Origin_Long;
       }
-      
-      /* 
+
+      /*
        *  Delta Longitude
        */
-      dlam = Longitude - TranMerc_Origin_Long;
-      
+      dlam = Longitude - params.TranMerc_Origin_Long;
+
       if (dlam > osg::PI)
         dlam -= (2 * osg::PI);
       if (dlam < -osg::PI)
         dlam += (2 * osg::PI);
       if (std::abs(dlam) < 2.e-10)
         dlam = 0.0;
-      
+
       s = sin(Latitude);
       c = cos(Latitude);
       c2 = c * c;
@@ -1401,63 +1545,63 @@ namespace dtUtil
       tan4 = tan3 * t;
       tan5 = tan4 * t;
       tan6 = tan5 * t;
-      eta = TranMerc_ebs * c2;
+      eta = params.TranMerc_ebs * c2;
       eta2 = eta * eta;
       eta3 = eta2 * eta;
       eta4 = eta3 * eta;
-      
+
       /* radius of curvature in prime vertical */
-      sn = SPHSN(Latitude);
-      
+      sn = params.SPHSN(Latitude);
+
       /* True Meridianal Distances */
-      tmd = SPHTMD(Latitude);
-      
+      tmd = params.SPHTMD(Latitude);
+
       /*  Origin  */
-      tmdo = SPHTMD (TranMerc_Origin_Lat);
-      
+      tmdo = params.SPHTMD(params.TranMerc_Origin_Lat);
+
       /* northing */
-      t1 = (tmd - tmdo) * TranMerc_Scale_Factor;
-      t2 = sn * s * c * TranMerc_Scale_Factor/ 2.e0;
-      t3 = sn * s * c3 * TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta 
-                                                  + 4.e0 * eta2) /24.e0; 
-      
-      t4 = sn * s * c5 * TranMerc_Scale_Factor * (61.e0 - 58.e0 * tan2
+      t1 = (tmd - tmdo) * params.TranMerc_Scale_Factor;
+      t2 = sn * s * c * params.TranMerc_Scale_Factor/ 2.e0;
+      t3 = sn * s * c3 * params.TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta
+                                                  + 4.e0 * eta2) /24.e0;
+
+      t4 = sn * s * c5 * params.TranMerc_Scale_Factor * (61.e0 - 58.e0 * tan2
                                                   + tan4 + 270.e0 * eta - 330.e0 * tan2 * eta + 445.e0 * eta2
-                                                  + 324.e0 * eta3 -680.e0 * tan2 * eta2 + 88.e0 * eta4 
+                                                  + 324.e0 * eta3 -680.e0 * tan2 * eta2 + 88.e0 * eta4
                                                   -600.e0 * tan2 * eta3 - 192.e0 * tan2 * eta4) / 720.e0;
-      
-      t5 = sn * s * c7 * TranMerc_Scale_Factor * (1385.e0 - 3111.e0 * 
+
+      t5 = sn * s * c7 * params.TranMerc_Scale_Factor * (1385.e0 - 3111.e0 *
                                                   tan2 + 543.e0 * tan4 - tan6) / 40320.e0;
-      
-      Northing = TranMerc_False_Northing + t1 + pow(dlam,2.e0) * t2
+
+      Northing = params.TranMerc_False_Northing + t1 + pow(dlam,2.e0) * t2
         + pow(dlam,4.e0) * t3 + pow(dlam,6.e0) * t4
-        + pow(dlam,8.e0) * t5; 
-      
+        + pow(dlam,8.e0) * t5;
+
       /* Easting */
-      t6 = sn * c * TranMerc_Scale_Factor;
-      t7 = sn * c3 * TranMerc_Scale_Factor * (1.e0 - tan2 + eta ) /6.e0;
-      t8 = sn * c5 * TranMerc_Scale_Factor * (5.e0 - 18.e0 * tan2 + tan4
-                                              + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3 
+      t6 = sn * c * params.TranMerc_Scale_Factor;
+      t7 = sn * c3 * params.TranMerc_Scale_Factor * (1.e0 - tan2 + eta ) /6.e0;
+      t8 = sn * c5 * params.TranMerc_Scale_Factor * (5.e0 - 18.e0 * tan2 + tan4
+                                              + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3
                                               - 64.e0 * tan2 * eta2 - 24.e0 * tan2 * eta3 )/ 120.e0;
-      t9 = sn * c7 * TranMerc_Scale_Factor * ( 61.e0 - 479.e0 * tan2
+      t9 = sn * c7 * params.TranMerc_Scale_Factor * ( 61.e0 - 479.e0 * tan2
                                                + 179.e0 * tan4 - tan6 ) /5040.e0;
-      
-      Easting = TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7 
+
+      Easting = params.TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7
         + pow(dlam,5.e0) * t8 + pow(dlam,7.e0) * t9;
    } /* END OF Convert_Geodetic_To_Transverse_Mercator */
-  
-  
+
+
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::GeodeticToGeocentric(double phi, double lambda, double elevation,
                                           double& x, double& y, double& z)
    {
       double esqu = 2.0*Geocent_f - Geocent_f*Geocent_f;
       double n = Geocent_a/sqrt(1.0-esqu*pow(sin(phi), 2.0));
-      
+
       x = (n + elevation)*cos(phi)*cos(lambda);
-      
+
       y = (n + elevation)*cos(phi)*sin(lambda);
-      
+
       z = (n*(1.0-esqu) + elevation)*sin(phi);
    }
 
@@ -1485,11 +1629,11 @@ namespace dtUtil
       float lambda   = osg::DegreesToRadians(longitude);
       float phiMN    = float(osg::DegreesToRadians(MagneticNorthLatitude));
       float lambdaMN = float(osg::DegreesToRadians(MagneticNorthLongitude));
-      
+
       float ldiff    = lambdaMN - lambda;
       float cosPhiMN = cosf(phiMN);
 
-      return osg::RadiansToDegrees(atan2(cosPhiMN * sinf(ldiff), 
+      return osg::RadiansToDegrees(atan2(cosPhiMN * sinf(ldiff),
          (cosf(phi) * sinf(phiMN) - sinf(phi) * cosPhiMN * cosf(ldiff))));
    }
 
@@ -1510,7 +1654,7 @@ namespace dtUtil
       SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
       osg::Vec3d eastingNorthingElev = ConvertToRemoteTranslation(pos);
 
-      std::string milgrid = 
+      std::string milgrid =
          ConvertUTMToMGRS(eastingNorthingElev.x(), eastingNorthingElev.y(), ewZone, nsZone, 5);
 
       SetIncomingCoordinateType(oldType);
@@ -1524,7 +1668,7 @@ namespace dtUtil
       const dtUtil::IncomingCoordinateType &oldType = GetIncomingCoordinateType();
       unsigned int zone = 0;
       double easting =0, northing =0;
-      
+
       ConvertMGRSToUTM(0,0, mgrs, zone, easting, northing);
       SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
       osg::Vec3d tempVec3;

@@ -77,6 +77,11 @@ namespace dtEditQt
          PropertyEditor(QMainWindow * parent);
 
          /**
+          * Destructor
+          */
+         virtual ~PropertyEditor();
+
+         /**
           * Convenience method for making the property editor commit it changes.  There are
           * some cases where an event can fire than needs to current state of the actor properties, but
           * an edit is in process.  Calling this will clear the focus of the property editor to make it

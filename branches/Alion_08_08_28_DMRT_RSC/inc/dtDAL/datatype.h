@@ -40,7 +40,7 @@ namespace dtDAL
             ULONGINT_ID, SHORTINT_ID, USHORTINT_ID, STRING_ID, BOOLEAN_ID, 
             VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
-            STATICMESH_ID, TEXTURE_ID, CHARACTER_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
+            STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
             SKELETAL_MESH_ID 
          } ;
 
@@ -204,11 +204,6 @@ namespace dtDAL
          static DataType TEXTURE;
 
          /**
-          * A replicant body character
-          */
-         static DataType CHARACTER;
-
-         /**
           * Geometry, textures, etc that together should be used as a terrain.
           */
          static DataType TERRAIN;
@@ -232,7 +227,7 @@ namespace dtDAL
           * Gets a pretty name that can be used in the UI.
           * @return The pretty name
           */
-         const std::string &GetDisplayName() { return mDisplayName; }
+         const std::string& GetDisplayName() { return mDisplayName; }
 
          /**
           * Gets the id associated with this datatype
@@ -249,7 +244,8 @@ namespace dtDAL
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-         DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name)
+         DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0) 
+            : dtUtil::Enumeration(name)
          {
                AddInstance(this);
                mResource = resource;

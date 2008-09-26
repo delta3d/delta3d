@@ -83,13 +83,13 @@ namespace dtDAL
                   mNode = new osg::Group() ;
                }
 
-               virtual bool AddChild(dtCore::DeltaDrawable *child)
+               virtual bool AddChild(dtCore::DeltaDrawable* child)
                {
                   GetOSGNode()->asGroup()->addChild(child->GetOSGNode());
                   return dtCore::DeltaDrawable::AddChild(child);
                }
 
-               virtual void RemoveChild(dtCore::DeltaDrawable *child)
+               virtual void RemoveChild(dtCore::DeltaDrawable* child)
                {
                   GetOSGNode()->asGroup()->removeChild(child->GetOSGNode());
                   dtCore::DeltaDrawable::RemoveChild(child);
@@ -145,7 +145,7 @@ namespace dtDAL
                static const IconType WAYPOINT;
 
             protected:
-               IconType(const std::string &name) : Enumeration(name)
+               IconType(const std::string& name) : Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -163,7 +163,7 @@ namespace dtDAL
           * to the icon.
           * @param type Type of icon to create.  By default, IconType::GENERIC is used.
           */
-         ActorProxyIcon(const IconType &type = IconType::GENERIC);
+         ActorProxyIcon(const IconType& type = IconType::GENERIC);
 
          /**
          * Constructs a new actor proxy billboard icon using an optional config class
@@ -175,7 +175,7 @@ namespace dtDAL
           * Sets the icon type used by this proxy icon.
           * @param type
           */
-         void SetIconType(const IconType &type)
+         void SetIconType(const IconType& type)
          {
             mIconType = &type;
             CreateBillBoard();
@@ -193,12 +193,12 @@ namespace dtDAL
           */
          const dtCore::DeltaDrawable* GetDrawable() const;
 
-         bool OwnsDrawable(dtCore::DeltaDrawable *drawable) const;
+         bool OwnsDrawable(dtCore::DeltaDrawable* drawable) const;
 
-         void SetPosition(const osg::Vec3 &newPos);
-         void SetRotation(const osg::Matrix &rotMat);
-         void SetActorRotation(const osg::Vec3 &hpr);
-         void SetActorRotation(const osg::Matrix &mat);
+         void SetPosition(const osg::Vec3& newPos);
+         void SetRotation(const osg::Matrix& rotMat);
+         void SetActorRotation(const osg::Vec3& hpr);
+         void SetActorRotation(const osg::Matrix& mat);
          osg::Matrix GetActorRotation();
       protected:
          virtual ~ActorProxyIcon();
@@ -209,8 +209,8 @@ namespace dtDAL
           */
          void LoadImages();
       private:
-         ActorProxyIcon &operator=(const ActorProxyIcon &rhs);
-         ActorProxyIcon(const ActorProxyIcon &rhs);
+         ActorProxyIcon &operator=(const ActorProxyIcon& rhs);
+         ActorProxyIcon(const ActorProxyIcon& rhs);
 
          /**
           * Helper method which builds the billboard geometry.
@@ -221,7 +221,7 @@ namespace dtDAL
           * Creates a geometry node for drawing an arrow.
           * @return The geometry node.
           */
-         osg::Group *CreateOrientationArrow();
+         osg::Group* CreateOrientationArrow();
 
          /**
           * Checks the type of this billboard and loads the appropriate image.
@@ -236,11 +236,11 @@ namespace dtDAL
           * @param height Height of the quad.
           * @return A geometry node holding the quad's geometry.
           */
-         osg::Geometry* CreateGeom(const osg::Vec3 &corner, const osg::Vec3 &width,
-                                 const osg::Vec3 &height);
+         osg::Geometry* CreateGeom(const osg::Vec3& corner, const osg::Vec3& width,
+                                 const osg::Vec3& height);
 
          ///Type of the billboard icon.
-         const IconType *mIconType;
+         const IconType* mIconType;
 
          ///our custom config
          ActorProxyIconConfig mConfig;

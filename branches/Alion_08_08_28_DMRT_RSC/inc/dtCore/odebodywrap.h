@@ -12,6 +12,9 @@
 
 namespace dtCore
 {
+
+   class Transform;
+
    /** Wrapper around an ODE physics body.  To use, call SetBodyID() with
      * a non-zero ID - typically created from dCreateWorld().
      * Body is disabled by default. Call EnableDynamics() to toggle on/off.
@@ -166,6 +169,15 @@ namespace dtCore
       */
       void ApplyRelTorque(const osg::Vec3& torque);
 
+      void GetBodyTransform(dtCore::Transform& xform) const;
+
+      /** If needed, set the ODE Body position and rotation to match the
+      * supplied Transform. If a Physical's position or rotation is manually
+      * set, then this method should be called to keep the ODE Body
+      * in sync.
+      * @param newTransform The potentially new position/rotation of the Transformable
+      */
+      void UpdateBodyTransform(const dtCore::Transform& newTransform);
 
    protected:
       virtual ~ODEBodyWrap();
