@@ -499,43 +499,46 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    OnSelectModeBlendPick();
 }
 
+//////////////////////////////////////////////////////////////////////////
+QString MainWindow::MakeColorString(const QColor& color) const
+{
+   QString colorString;
+   colorString = tr("R:%1 G:%2 B:%3 A:%4").arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha());
+   return colorString;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewMaterial(int matID, const QString& name,
                                const QColor& diff, const QColor& amb, const QColor& spec,
                                float shininess)
 {
-   QString tooltip;
-
    QStandardItem* idItem = new QStandardItem(QString::number(matID));
    idItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
    QStandardItem* nameItem = new QStandardItem(name);
    nameItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-   QStandardItem* diffItem = new QStandardItem(diff.name());
+   QStandardItem* diffItem = new QStandardItem(MakeColorString(diff));
    diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    diffItem->setData(diff, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(diff.red()).arg(diff.green()).arg(diff.blue()).arg(diff.alpha());
-   diffItem->setData( tooltip, Qt::ToolTipRole);
-
-   QStandardItem* ambItem = new QStandardItem(amb.name());
+ 
+   QStandardItem* ambItem = new QStandardItem(MakeColorString(amb));
    ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    ambItem->setData(amb, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(amb.red()).arg(amb.green()).arg(amb.blue()).arg(amb.alpha());
-   ambItem->setData( tooltip, Qt::ToolTipRole);
-
-   QStandardItem* specItem = new QStandardItem(spec.name());
+ 
+   QStandardItem* specItem = new QStandardItem(MakeColorString(spec));
    specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    specItem->setData(amb, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(spec.red()).arg(spec.green()).arg(spec.blue()).arg(spec.alpha());
-   specItem->setData( tooltip, Qt::ToolTipRole);
-
+ 
    QStandardItem* shinItem = new QStandardItem(QString::number(shininess));
    shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
    QList<QStandardItem*> items;
    items << idItem << nameItem << diffItem << ambItem << specItem << shinItem;
    mMaterialModel->appendRow( items);
+
+   //resize the columns to fit the data width
+   mMaterialView->resizeColumnsToContents();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
