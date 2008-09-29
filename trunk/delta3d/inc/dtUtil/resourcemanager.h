@@ -41,11 +41,11 @@ class ResourceManager: public osg::Referenced
 //Data Structures
 ///////////////////////////////////////////////////////////////////////////////////
 public:
-	
+
    typedef std::pair<ResourceKey, dtCore::RefPtr<Resource> > ResourceHandle;
    typedef std::map<ResourceKey, dtCore::RefPtr<Resource> > ResourceMap;
-   typedef typename ResourceMap::iterator ResourceIterator;   
-   typedef typename ResourceMap::iterator ResourceConstIterator;   
+   typedef typename ResourceMap::iterator ResourceIterator;
+   typedef typename ResourceMap::iterator ResourceConstIterator;
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -53,126 +53,121 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////
 public:
 
-  ResourceManager()
-     : mLoader(0)
-  {}
+   ResourceManager()
+      : mLoader(0)
+   {}
 
 protected:
 
-  virtual ~ResourceManager()
-  {
-     FreeAll();
-  }
+   virtual ~ResourceManager()
+   {
+      FreeAll();
+   }
 
 public:
 
-  void FreeAll()
-  {
-    while(!mResource.empty())
-     {
-       ResourceIterator iter = mResource.begin();
-        mLoader->FreeResource((*iter).second.get());
-        mResource.erase(iter);
-     }
-  }
-
-  void SetResourceLoader(ResourceLoader<ResourceKey, Resource>* pLoader)
-  {
-     mLoader = pLoader; 
-  }
-
-  virtual void AddResource(const ResourceKey& pHandle, Resource* pResource)
-  {  
-     if(mResource.find(pHandle) == mResource.end())
-     {
-        mResource.insert(ResourceHandle(pHandle, pResource));
-     }
-     else
-     {
-        LOG_WARNING("Resource Handle: " + pHandle + " already exists in ResourceManager.");
-     }
-  }
-
-
-  virtual bool LoadResource(const ResourceKey& pHandle, const std::string& pFilename)
-  {
-     ResourceConstIterator iter = mResource.find(pHandle);
-     if(iter == mResource.end())
-     {
-        Resource* pResource = mLoader->LoadResource(pFilename);
-        if(pResource)
-        {
-           mResource.insert(ResourceHandle(pHandle, pResource));
-           return true;
-        }        
-     }
-     else
-     {
-        LOG_WARNING("Resource Handle: " + pHandle + " already exists in ResourceManager.");
-     }      
-
-     return false;
-  }
-
-  virtual void FreeResource(const ResourceKey& pHandle)
-  {
-     ResourceIterator iter = mResource.find(pHandle);
-     if(iter != mResource.end())
-     {
+   void FreeAll()
+   {
+      while (!mResource.empty())
+      {
+         ResourceIterator iter = mResource.begin();
          mLoader->FreeResource((*iter).second.get());
          mResource.erase(iter);
-     }
-     else
-     {
-        LOG_WARNING("Resource Handle: " + pHandle + " not found.");
-     }      
-  }
+      }
+   }
 
+   void SetResourceLoader(ResourceLoader<ResourceKey, Resource>* pLoader)
+   {
+      mLoader = pLoader;
+   }
 
-  Resource* GetResource(const ResourceKey& pHandle) 
-  {
-     ResourceConstIterator iter = mResource.find(pHandle);
-     if(iter != mResource.end())
-     {
-        return (*iter).second.get();
-     }
-     else
-     {
-        LOG_ERROR("Cannot find resource: " + pHandle);
-        return 0;
-     }
-  }
+   virtual void AddResource(const ResourceKey& pHandle, Resource* pResource)
+   {
+      if(mResource.find(pHandle) == mResource.end())
+      {
+         mResource.insert(ResourceHandle(pHandle, pResource));
+      }
+      else
+      {
+         LOG_WARNING("Resource Handle: " + pHandle + " already exists in ResourceManager.");
+      }
+   }
 
-  const Resource* GetResource(const ResourceKey& pHandle) const
-  {
-     ResourceConstIterator iter = mResource.find(pHandle);
-     if(iter != mResource.end())
-     {
-        return (*iter).second.get();
-     }
-     else
-     {
-        LOG_ERROR("Cannot find resource: " + pHandle);
-        return 0;
-     }
-  }
+   virtual bool LoadResource(const ResourceKey& pHandle, const std::string& pFilename)
+   {
+      ResourceConstIterator iter = mResource.find(pHandle);
+      if(iter == mResource.end())
+      {
+         Resource* pResource = mLoader->LoadResource(pFilename);
+         if(pResource)
+         {
+            mResource.insert(ResourceHandle(pHandle, pResource));
+            return true;
+         }
+      }
+      else
+      {
+         LOG_WARNING("Resource Handle: " + pHandle + " already exists in ResourceManager.");
+      }
 
-  ///todo add a clone to the loader and call it on copy
-  //Resource* CopyResource(const String& pHandle) const
-  //{
-  //}
+      return false;
+   }
 
+   virtual void FreeResource(const ResourceKey& pHandle)
+   {
+      ResourceIterator iter = mResource.find(pHandle);
+      if (iter != mResource.end())
+      {
+         mLoader->FreeResource((*iter).second.get());
+         mResource.erase(iter);
+      }
+      else
+      {
+         LOG_WARNING("Resource Handle: " + pHandle + " not found.");
+      }
+   }
+
+   Resource* GetResource(const ResourceKey& pHandle)
+   {
+      ResourceConstIterator iter = mResource.find(pHandle);
+      if (iter != mResource.end())
+      {
+         return (*iter).second.get();
+      }
+      else
+      {
+         LOG_ERROR("Cannot find resource: " + pHandle);
+         return 0;
+      }
+   }
+
+   const Resource* GetResource(const ResourceKey& pHandle) const
+   {
+      ResourceConstIterator iter = mResource.find(pHandle);
+      if (iter != mResource.end())
+      {
+         return (*iter).second.get();
+      }
+      else
+      {
+         LOG_ERROR("Cannot find resource: " + pHandle);
+         return 0;
+      }
+   }
+
+   ///todo add a clone to the loader and call it on copy
+   //Resource* CopyResource(const String& pHandle) const
+   //{
+   //}
 
 private:
-
    ResourceMap mResource;
    dtCore::RefPtr<ResourceLoader<ResourceKey, Resource> > mLoader;
-
 };
 
 
-}//namespace dtUtil
+} // namespace dtUtil
 
 
-#endif //__RESOURCEMANAGER_H__
+#endif // __RESOURCEMANAGER_H__
 

@@ -52,22 +52,22 @@ namespace dtAnim
    class Cal3DModelWrapper;
    class AnimNodeBuilder;
    class Cal3DDatabase;
-   
+
    /**
-    *  The AnimationHelper class is a utility class to simplify adding animation
-    *  to an articulated entity, it provides support for loading, rendering and
-    *  animating.  
+    * The AnimationHelper class is a utility class to simplify adding animation
+    * to an articulated entity, it provides support for loading, rendering and
+    * animating.
     *
-    * @usage The constructor takes an AnimNodeBuilder which will create an 
-    *        osg::Geode given a Cal3DModelWrapper.  The builder will be used to 
-    *        create the geode on LoadModel(), after that call GetGeode() and 
+    * @usage The constructor takes an AnimNodeBuilder which will create an
+    *        osg::Geode given a Cal3DModelWrapper.  The builder will be used to
+    *        create the geode on LoadModel(), after that call GetGeode() and
     *        add this as a child of your actor's osg::Node
     */
-   class	DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
+   class DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
    {
       public:
          static const std::string PROPERTY_SKELETAL_MESH;
-         
+
          /**
           * The constructor constructs a default AnimNodeBuilder, the Cal3DModelWrapper,
           * and AnimationController
@@ -146,26 +146,26 @@ namespace dtAnim
          const Cal3DModelWrapper* GetModelWrapper() const;
 
          /**
-          * @return The SequenceMixer used to play, clear, and register new 
+          * @return The SequenceMixer used to play, clear, and register new
           * animations
           */
          SequenceMixer& GetSequenceMixer();
 
          /**
-          * @return The SequenceMixer used to play, clear, and register new 
+          * @return The SequenceMixer used to play, clear, and register new
           * animations
           */
          const SequenceMixer& GetSequenceMixer() const;
 
          /**
-          * This function is used to create the proper actor properties for an 
-          * animated entity after calling this function the user must iterate 
+          * This function is used to create the proper actor properties for an
+          * animated entity after calling this function the user must iterate
           * through the vector and add each property to its proxy.
           *
           * @param the actor proxy
           * @param an empty vector to fill of actor properties
           */
-         virtual void GetActorProperties(dtDAL::ActorProxy& pProxy, 
+         virtual void GetActorProperties(dtDAL::ActorProxy& pProxy,
                std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector);
 
          /**
@@ -180,19 +180,19 @@ namespace dtAnim
          void SetGroundClamp(bool b);
 
          /**
-          * The animation helper has an attachment controller that moves the 
+          * The animation helper has an attachment controller that moves the
           * Transformable attachments to match up to the bones.
           * @return the currently assigned attachment controller.
           */
          AttachmentController& GetAttachmentController();
-         
+
          /**
           * Assigns a new AttachmentController.  One is created by default, so
           * this is provided to allow a developer to subclass the controller and
           * assign the new one to the helper.
           */
          void SetAttachmentController(AttachmentController& newController);
-         
+
       protected:
          virtual ~AnimationHelper();
 
@@ -206,7 +206,7 @@ namespace dtAnim
 
    };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_ANIMATIONHELPER_H__
 

@@ -2,8 +2,8 @@
 #define DT_GUI_SCRIPTMODULE_INCLUDE
 
 #if defined(_MSC_VER)
-#	pragma warning(push)
-#	pragma warning(disable : 4251)     // for "warning C4251: 'dtGUI::ScriptModule::mCallbacks' : class 'std::map<_Kty,_Ty>' needs to have dll-interface to be used by clients of class 'dtGUI::ScriptModule' "
+#   pragma warning(push)
+#   pragma warning(disable : 4251)     // for "warning C4251: 'dtGUI::ScriptModule::mCallbacks' : class 'std::map<_Kty,_Ty>' needs to have dll-interface to be used by clients of class 'dtGUI::ScriptModule' "
 #endif
 
 #include <dtGUI/basescriptmodule.h>   // for base class
@@ -29,7 +29,7 @@ namespace dtGUI
       ScriptModule();
       virtual ~ScriptModule();
 
-      /** 
+      /**
        * Add a static callback handler.
        * Example:
        * @code
@@ -39,7 +39,7 @@ namespace dtGUI
        *   static bool OnClick( const CEGUI::EventArgs &e );
        *   ...
        * }
-       * 
+       *
        *  ...
        *  mScriptModule->AddCallback("OnDoSomething", &OnClick);
        *  ...
@@ -49,8 +49,8 @@ namespace dtGUI
        */
       bool AddCallback(const std::string& name, STATIC_FUNCTION func);
 
-      /** 
-       * Add a non-static callback handler. 
+      /**
+       * Add a non-static callback handler.
        * Example:
        * @code
        * class App
@@ -60,7 +60,7 @@ namespace dtGUI
        *   bool OnClick( const CEGUI::EventArgs &e );
        *   ...
        * }
-       * 
+       *
        *  ...
        *  App *mApp = new App();
        *
@@ -70,13 +70,13 @@ namespace dtGUI
        * @endcode
        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
        * @param func is an instance of a function object to be called when the CEGUI::Event is activated.
-       * @attention An attempt was make an implemenation with the signature template<typename InstT> bool 
+       * @attention An attempt was make an implemenation with the signature template<typename InstT> bool
        * AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
        * but somehow creating the HandleFunctor intenal to the function caused some problems.
        */
       bool AddCallback(const std::string& name, const HandlerFunctor& callback);
 
-      /** 
+      /**
        * Returns the StaticRegistry.
        */
       const CallbackRegistry& GetRegistry() const { return mCallbacks; }
@@ -89,7 +89,7 @@ namespace dtGUI
 
       #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
       virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, const CEGUI::String& subscriber_name);
-      virtual CEGUI::Event::Connection	subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name);
+      virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name);
       #endif // CEGUI 0.5.0
 
    private:
@@ -99,7 +99,7 @@ namespace dtGUI
 }
 
 #if defined(_MSC_VER)
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #endif  // DT_GUI_SCRIPTMODULE_INCLUDE

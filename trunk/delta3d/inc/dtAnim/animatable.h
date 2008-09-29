@@ -34,10 +34,10 @@ namespace dtAnim
    class Cal3DModelWrapper;
 
    /**
-    *  This class is used to specify the base class of an object which has semantics for 
-    *  animating.  
+    * This class is used to specify the base class of an object which has semantics for
+    * animating.
     */
-   class	DT_ANIM_EXPORT Animatable: public osg::Referenced
+   class DT_ANIM_EXPORT Animatable: public osg::Referenced
    {
 
       public:
@@ -52,7 +52,7 @@ namespace dtAnim
       public:
 
          /**
-          * The start time is the time in seconds this animation will start playing 
+          * The start time is the time in seconds this animation will start playing
           * after it was added to an AnimationSequence.
           */
          float GetStartTime() const;
@@ -77,23 +77,23 @@ namespace dtAnim
          float GetElapsedTime() const;
 
          /**
-          *  The FadeIn time, is the amount of time takes for an animation to blend
-          *  linearally from a weight of 0 to the weight specified by BaseWeight
-          *  after the animation starts playing specified by StartTime.
+          * The FadeIn time, is the amount of time takes for an animation to blend
+          * linearally from a weight of 0 to the weight specified by BaseWeight
+          * after the animation starts playing specified by StartTime.
           */
-         float GetFadeIn() const; 
+         float GetFadeIn() const;
          void SetFadeIn(float f);
 
          /**
-          *  The FadeOut time is the amount of time it will take for an animation to
-          *  blend linearly from its BaseWeight to 0 after the EndTime.
+          * The FadeOut time is the amount of time it will take for an animation to
+          * blend linearly from its BaseWeight to 0 after the EndTime.
           */
          float GetFadeOut() const;
          void SetFadeOut(float f);
 
          /**
-          *  The BaseWeight specifies the weight of this animation without
-          *  being affected by blending.
+          * The BaseWeight specifies the weight of this animation without
+          * being affected by blending.
           */
          float GetBaseWeight() const;
          void SetBaseWeight(float f);
@@ -105,19 +105,19 @@ namespace dtAnim
          float GetCurrentWeight() const;
 
          /**
-          *  An animation is active if it is currently playing.
+          * An animation is active if it is currently playing.
           */
          bool IsActive() const;
 
          /**
-          *  The speed of an animation is the percentage relative to the actual speed
-          *  of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
+          * The speed of an animation is the percentage relative to the actual speed
+          * of playback.  It defaults to 1.0, a speed of 2.0 would play twice as fast.
           */
          float GetSpeed() const;
          void SetSpeed(float speed);
 
          /**
-          *  This flag specifies whether or not this animation has stopped playing
+          * This flag specifies whether or not this animation has stopped playing
           */
          bool ShouldPrune() const;
 
@@ -129,22 +129,22 @@ namespace dtAnim
          virtual void Prune() = 0;
 
          /**
-          *  This function is used to copy Animatables
+          * This function is used to copy Animatables
           */
          virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* modelWrapper) const = 0;
 
 
          /**
-          *  The virtual update, should be called every frame
+          * The virtual update, should be called every frame
           *
-          *  @param delta time
+          * @param delta time
           */
          virtual void Update(float dt) = 0;
 
          /**
           * ForceFadeOut will ignore the EndTime and automatically fade out
           * this animation over the time specified.
-          * 
+          *
           * @param the time to fade out over
           */
          virtual void ForceFadeOut(float time) = 0;
@@ -173,7 +173,7 @@ namespace dtAnim
 
          /**
           * When this flag is set the parent sequence will call Prune() at the end of its update
-          * and then delete this animation.  
+          * and then delete this animation.
           */
          void SetPrune(bool b);
 
@@ -183,7 +183,7 @@ namespace dtAnim
       private:
 
 
-         //user editable fields are: fade in, fade out, base weight, and speed
+         // user editable fields are: fade in, fade out, base weight, and speed
 
          float mSpeed;
          float mStartTime, mStartDelay, mEndTime;
@@ -198,7 +198,7 @@ namespace dtAnim
 
    };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_ANIMATABLE_H__
 

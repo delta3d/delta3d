@@ -19,82 +19,79 @@ namespace dtGUI
  */
 class DT_GUI_EXPORT CEGUITexture : public CEGUI::Texture
 {
-    public:
+public:
+   /********************************************************************************
+                              construction/destruction
+   ********************************************************************************/
+
+   CEGUITexture(CEGUI::Renderer *);
+
+   ~CEGUITexture();
 
 
 
-        /********************************************************************************
-                                    construction/destruction
-         ********************************************************************************/
+   /********************************************************************************
+                              DELTA-Interface
+   ********************************************************************************/
 
-        CEGUITexture(CEGUI::Renderer *);
+   ///set the osg-texture that'll be used
+   inline void SetOSGTexture(osg::Texture2D *pTexture) { if(pTexture) m_pTexture=pTexture; }
 
-        ~CEGUITexture();
+   ///get current osg-texture
+   inline osg::Texture2D *GetOSGTexture() { return m_pTexture.get(); }
 
+   ///get current osg-texture
+   inline const osg::Texture2D *GetOSGTexture() const { return m_pTexture.get(); }
 
+   ///get osg-texture-handle for a osg::GraphicsContext
+   unsigned int GetTextureID(osg::GraphicsContext *);
 
-        /********************************************************************************
-                                    DELTA-Interface
-         ********************************************************************************/
+   ///if set to true the CEGUIREnderer will flip y-coordinates
+   inline void SetFlipHorizontal(bool bX) { m_bFlipHorizontal=bX; }
 
-        ///set the osg-texture that'll be used
-        inline void SetOSGTexture(osg::Texture2D *pTexture) { if(pTexture) m_pTexture=pTexture; }
-
-        ///get current osg-texture
-        inline osg::Texture2D *GetOSGTexture() { return m_pTexture.get(); }
-
-        ///get current osg-texture
-        inline const osg::Texture2D *GetOSGTexture() const { return m_pTexture.get(); }
-
-        ///get osg-texture-handle for a osg::GraphicsContext
-        unsigned int GetTextureID(osg::GraphicsContext *);
-
-        ///if set to true the CEGUIREnderer will flip y-coordinates
-        inline void SetFlipHorizontal(bool bX) { m_bFlipHorizontal=bX; }
-
-        ///if true the CEGUIREnderer will flip y-coordinates
-        inline bool IsFlippedHorizontal() const { return m_bFlipHorizontal; }
+   ///if true the CEGUIREnderer will flip y-coordinates
+   inline bool IsFlippedHorizontal() const { return m_bFlipHorizontal; }
 
 
 
-        /********************************************************************************
-                                    CEGUI-Inteface
-         ********************************************************************************/
+   /********************************************************************************
+                              CEGUI-Inteface
+   ********************************************************************************/
 
-        ///get the original with of the texture (cegui-textures are automatically resized to pot)
-        virtual CEGUI::ushort getOriginalWidth(void) const;
+   ///get the original with of the texture (cegui-textures are automatically resized to pot)
+   virtual CEGUI::ushort getOriginalWidth(void) const;
 
-        ///get the original height of the texture (cegui-textures are automatically resized to pot)
-        virtual CEGUI::ushort getOriginalHeight(void) const;
+   ///get the original height of the texture (cegui-textures are automatically resized to pot)
+   virtual CEGUI::ushort getOriginalHeight(void) const;
 
-        virtual float getXScale(void) const { return m_fScaleX; } 
+   virtual float getXScale(void) const { return m_fScaleX; }
 
-        virtual float getYScale(void) const { return m_fScaleY; } 
+   virtual float getYScale(void) const { return m_fScaleY; }
 
-		virtual	CEGUI::ushort getWidth() const;
+   virtual   CEGUI::ushort getWidth() const;
 
-		virtual	CEGUI::ushort getHeight() const;
+   virtual   CEGUI::ushort getHeight() const;
 
-        virtual void loadFromFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
+   virtual void loadFromFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
 
-        virtual void loadFromMemory(const void* buffPtr, CEGUI::uint buffWidth, CEGUI::uint buffHeight, CEGUI::Texture::PixelFormat pixelFormat);
+   virtual void loadFromMemory(const void* buffPtr, CEGUI::uint buffWidth, CEGUI::uint buffHeight, CEGUI::Texture::PixelFormat pixelFormat);
 
-        void ResizeToMinPOT(unsigned short w, unsigned short h);
+   void ResizeToMinPOT(unsigned short w, unsigned short h);
 
-    private:
+private:
 
-        void updateCachedScaleValues();
+   void updateCachedScaleValues();
 
-        osg::ref_ptr<osg::Texture2D>              m_pTexture;
+   osg::ref_ptr<osg::Texture2D> m_pTexture;
 
-        float                                     m_fScaleX;
-        float                                     m_fScaleY;
+   float                        m_fScaleX;
+   float                        m_fScaleY;
 
-        unsigned short                            m_usOriginalWidth;
-        unsigned short                            m_usOriginalHeight;
-        bool                                      m_bFlipHorizontal;
+   unsigned short               m_usOriginalWidth;
+   unsigned short               m_usOriginalHeight;
+   bool                         m_bFlipHorizontal;
 };
 
-} //namespace dtGUI
+} // namespace dtGUI
 
-#endif //DTHUD_CEGUITEXTURE_H
+#endif // DTHUD_CEGUITEXTURE_H

@@ -56,11 +56,11 @@ namespace dtABC
          bool first_less( x.first < y.first );
          if( first_less )
             return true;
-         
+
          bool first_greater( y.first < x.first );
          if( first_greater )
             return false;
-         
+
          // else, key off the second element, and use the RefPtrWithNameCompare comparison
          RefPtrWithNameCompare<typename T::second_type> compare_them;
          return compare_them( x.second,y.second );
@@ -69,15 +69,15 @@ namespace dtABC
 
    /** \brief A class to manage State transitions due to an Event.
      *
-     * Controls the switching of modes by starting and stopping the different states.  
-     * When a new state is started Config is called and Shutdown is called before 
+     * Controls the switching of modes by starting and stopping the different states.
+     * When a new state is started Config is called and Shutdown is called before
      * switching. It derives from dtCore::Base
      * so that it can fire Events.
      */
    class DT_ABC_EXPORT StateManager : public dtCore::Base
    {
    public:
-       /** \brief An Event class specific to StateManager. 
+       /** \brief An Event class specific to StateManager.
          *
          * TransitionOccurredEvent is an Event which can be watched
          * by classes interested in such an Event.
@@ -131,7 +131,7 @@ namespace dtABC
          virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
          virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
          virtual void startDocument() {}
-         virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri) {}
+         virtual void startPrefixMapping(const XMLCh* const prefix,const XMLCh* const uri) {}
          virtual void endPrefixMapping(const XMLCh* const prefix) {}
          virtual void skippedEntity(const XMLCh* const name) {}
 
@@ -212,7 +212,7 @@ namespace dtABC
       bool AddState( State* state );
 
       /** Removes a State from the set of States and associated transitions from the TransitionMap.*/
-      bool RemoveState( State* state );  
+      bool RemoveState( State* state );
 
       /** Add a new transition to the map of transitions.*/
       bool AddTransition( const Event::Type* eventType, State* from, State* to );
@@ -264,7 +264,7 @@ namespace dtABC
       template<typename T>
       bool RegisterEvent( const Event::Type* eventType )
       {
-         return mEventFactory->template RegisterType<T>( eventType );     
+         return mEventFactory->template RegisterType<T>( eventType );
       }
 
       /** \brief Register a user defined, concrete State.

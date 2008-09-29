@@ -18,29 +18,30 @@
  *
  * Matthew W. Campbell
  */
+
 #ifndef DELTA_GAMEMANAGER_EXPORT
 #define DELTA_GAMEMANAGER_EXPORT
 
 /**
- * This is modeled from the DT_EXPORT macro found in dtCore/export.h.  
- * We define another due to conflicts with using the DT_EXPORT while  
+ * This is modeled from the DT_EXPORT macro found in dtCore/export.h.
+ * We define another due to conflicts with using the DT_EXPORT while
  * trying to import Delta3D symbols.  The DT_GAME_LIB macro should be used
  * in front of any classes that are to be exported from this library.
- * Also note that DT_GAME_LIBRARY should be defined in the compiler 
+ * Also note that DT_GAME_LIBRARY should be defined in the compiler
  * preprocessor #defines.
  */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
 #  ifdef DT_GAME_LIBRARY
 #    define DT_GAME_EXPORT __declspec(dllexport)
 #  else
-#	  define DT_GAME_EXPORT __declspec(dllimport)
-#	endif
+#     define DT_GAME_EXPORT __declspec(dllimport)
+#   endif
 #else
 #   ifdef DT_GAME_LIBRARY
 #      define DT_GAME_EXPORT __attribute__ ((visibility("default")))
 #   else
 #      define DT_GAME_EXPORT
-#   endif 
+#   endif
 #endif
 
 #endif

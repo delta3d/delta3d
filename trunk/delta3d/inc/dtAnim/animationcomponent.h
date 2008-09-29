@@ -46,7 +46,7 @@ namespace dtGame
 namespace dtAnim
 {
 
-class	DT_ANIM_EXPORT AnimationComponent: public dtGame::GMComponent
+class DT_ANIM_EXPORT AnimationComponent: public dtGame::GMComponent
 {
 public:
    typedef dtGame::GMComponent BaseClass;
@@ -55,7 +55,7 @@ public:
    typedef AnimCompMap::iterator AnimCompIter;
 
 public:
-   ///The default component name, used when looking it up on the GM.   
+   ///The default component name, used when looking it up on the GM.
    static const std::string DEFAULT_NAME;
 
    AnimationComponent(const std::string& name = DEFAULT_NAME);
@@ -105,21 +105,21 @@ public:
    ///changes the actor to use for the terrain.
    void SetTerrainActor(dtCore::Transformable* newTerrain);
 
-   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to.
    dtCore::Transformable* GetEyePointActor();
 
-   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
+   ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to.
    const dtCore::Transformable* GetEyePointActor() const;
 
    ///changes the actor to use for the terrain.
    void SetEyePointActor(dtCore::Transformable* newEyePointActor);
- 
+
 
 protected:
    virtual ~AnimationComponent();
 
    virtual void TickLocal(float dt);
-   //creates batches of isector queries
+   // creates batches of isector queries
    void GroundClamp();
 
 private:
@@ -131,7 +131,7 @@ private:
    dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
 };
 
-}//namespace dtGame
+} // namespace dtGame
 
 #endif // __DELTA_ANIMATIONCOMPONENT_H__
 

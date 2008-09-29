@@ -32,30 +32,30 @@ namespace dtAnim
    class Cal3DModelWrapper;
 
 /**
-*  AnimationChannel derives from Animatable and holds an AnimationWrapper, and 
-*  contains semantics for playing an animation using the Cal3DModelWrapper API.
+* AnimationChannel derives from Animatable and holds an AnimationWrapper, and
+* contains semantics for playing an animation using the Cal3DModelWrapper API.
 */
-class	DT_ANIM_EXPORT AnimationChannel: public Animatable
+class DT_ANIM_EXPORT AnimationChannel: public Animatable
 {
 
 public:
    /**
-    * If you use the default constructor you must call SetAnimation, 
+    * If you use the default constructor you must call SetAnimation,
     * and SetModel
     */
    AnimationChannel();
 
    /**
-   * @param the model wrapper used to play animations with
-   * @param the animation wrapper to specify which animation to play
-   */
+    * @param the model wrapper used to play animations with
+    * @param the animation wrapper to specify which animation to play
+    */
    AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper);
-   
+
 
    /**
-   * This function associates this channel with the supplied animation wrapper
-   * @param the animation wrapper this channel will play
-   */
+    * This function associates this channel with the supplied animation wrapper
+    * @param the animation wrapper this channel will play
+    */
    void SetAnimation(AnimationWrapper* pAnimation);
 
    AnimationWrapper* GetAnimation();
@@ -68,76 +68,76 @@ public:
    const Cal3DModelWrapper* GetModel() const;
 
    /**
-   * This function sets the model wrapper used to make the calls to play the animation.
-   * @param the associated model wrapper
-   */
+    * This function sets the model wrapper used to make the calls to play the animation.
+    * @param the associated model wrapper
+    */
    void SetModel(Cal3DModelWrapper* pWrapper);
 
    /**
-   * This function copies the animation channel
-   * @param
-   */
+    * This function copies the animation channel
+    * @param
+    */
    virtual dtCore::RefPtr<Animatable> Clone(Cal3DModelWrapper* wrapper) const;
 
    /**
-   *  If an animation is not looping then it will be considered an action
-   *  and the blend weights will be ignored.
-   */
+    * If an animation is not looping then it will be considered an action
+    * and the blend weights will be ignored.
+    */
    bool IsLooping() const;
    void SetLooping(bool b);
 
    /**
-   *  If an animation is an action it will play once and automatically delete itself
-   *  it will also be weighted to override all other conflicting animations.
-   */
+    * If an animation is an action it will play once and automatically delete itself
+    * it will also be weighted to override all other conflicting animations.
+    */
    bool IsAction() const;
    void SetAction(bool b);
 
    /**
-   *  The Max Duration will allow a user to set the amount of time this animation 
-   *  will play in seconds.
-   */
+    * The Max Duration will allow a user to set the amount of time this animation
+    * will play in seconds.
+    */
    float GetMaxDuration() const;
    void SetMaxDuration(float b);
 
    /**
-   * The per frame update function.
-   * @param delta time
-   */
+    * The per frame update function.
+    * @param delta time
+    */
    /*virtual*/ void Update(float dt);
 
    /**
-   * Recalculate is called on PlayAnimation()
-   * it calculates the start and end times of our animation
-   */
+    * Recalculate is called on PlayAnimation()
+    * it calculates the start and end times of our animation
+    */
    /*virtual*/ void Recalculate();
 
    /**
-   * Prune is called before the animation is deleted.
-   */
+    * Prune is called before the animation is deleted.
+    */
    /*virtual*/ void Prune();
-   
+
    /**
-   * ForceFadeOut will ignore the EndTime and automatically fade out
-   * this animation over the time specified.
-   * 
-   * @param the time to fade out over
-   */
+    * ForceFadeOut will ignore the EndTime and automatically fade out
+    * this animation over the time specified.
+    *
+    * @param the time to fade out over
+    */
    /*virtual*/ void ForceFadeOut(float time);
 
 protected:
    /*virtual*/ ~AnimationChannel();
 
    /**
-   * Copy Constructor
-   * Only clone should call this.
-   */
+    * Copy Constructor
+    * Only clone should call this.
+    */
    AnimationChannel(const AnimationChannel&);
 
    /**
-   * Operator Equal
-   * Hide this to prevent assigning
-   */
+    * Operator Equal
+    * Hide this to prevent assigning
+    */
    AnimationChannel& operator=(const AnimationChannel&);
 
 
@@ -146,14 +146,14 @@ private:
    bool mIsAction, mIsLooping;
    float mMaxDuration, mLastWeight;
 
-   //todo, verify holding a refptr to the model wrapper is ok
+   // todo, verify holding a refptr to the model wrapper is ok
    dtCore::RefPtr<Cal3DModelWrapper> mModelWrapper;
    dtCore::RefPtr<AnimationWrapper> mAnimationWrapper;
 
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_ANIMATIONCHANNEL_H__
 

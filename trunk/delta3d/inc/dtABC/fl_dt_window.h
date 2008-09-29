@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_FL_DT_WINDOW
 #define DELTA_FL_DT_WINDOW
@@ -24,10 +24,10 @@
 #include <cassert>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4311) // for warning C4311: 'type cast' : pointer truncation from 'void *const ' to 'long'
-#	pragma warning(disable : 4312) // for warning C4312: 'type cast' : conversion from 'long' to 'void *' of greater size
-#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4311) // for warning C4311: 'type cast' : pointer truncation from 'void *const ' to 'long'
+#   pragma warning(disable : 4312) // for warning C4312: 'type cast' : conversion from 'long' to 'void *' of greater size
+#   pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
 #endif
 
 #include <FL/Fl.H>
@@ -37,7 +37,7 @@
 #undef SendMessage
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #include <dtABC/widget.h>
@@ -139,9 +139,9 @@ public:
 
    /**
     * Fl_Window override to handle event's from FLTK.
-    * 
+    *
     * @param event a single event from FLTK
-    * 
+    *
     * @return non-zero on handled, zero on not handled
     */
    virtual int
@@ -164,7 +164,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-					T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -487,7 +487,7 @@ protected:
     * Static callback, repeatedly called when FLTK is idle.
     * Function casts void pointer to this object's type
     * then calls the overloaded (non-static) callback.
-    * 
+    *
     * @param data pointer to this object cast as void*
     */
    static   void
@@ -584,7 +584,7 @@ protected:
 
       ev.pos_x =  (ev.pos_x / ( float(Fl_Widget::w() - 1L) * 0.5f )) - 1.f;
       ev.pos_y = ((ev.pos_y / ( float(Fl_Widget::h() - 1L) * 0.5f )) - 1.f ) * -1.f;
-      
+
    }
 
 

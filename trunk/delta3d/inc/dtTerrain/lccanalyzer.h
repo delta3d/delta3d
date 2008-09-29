@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Teague Coonan
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Teague Coonan
+ */
 
 #ifndef _LCCANALYZER_H
 #define _LCCANALYZER_H
@@ -32,9 +32,9 @@
 
 namespace dtTerrain
 {
-   
+
    /**
-    * This enumeration identitifies the resources that are cached and managed by the 
+    * This enumeration identitifies the resources that are cached and managed by the
     * vegetation decorator layer.
     */
    class DT_TERRAIN_EXPORT LCCAnalyzerResourceName : public dtUtil::Enumeration
@@ -42,9 +42,9 @@ namespace dtTerrain
       DECLARE_ENUM(LCCAnalyzerResourceName);
       public:
 
-         static const LCCAnalyzerResourceName IMAGE_EXT;      
-         static const LCCAnalyzerResourceName BASE_LCC_COLOR; 
-         static const LCCAnalyzerResourceName WATER_MASK;          
+         static const LCCAnalyzerResourceName IMAGE_EXT;
+         static const LCCAnalyzerResourceName BASE_LCC_COLOR;
+         static const LCCAnalyzerResourceName WATER_MASK;
          static const LCCAnalyzerResourceName BASE_COLOR;
          static const LCCAnalyzerResourceName BASE_FILTER_NAME;
          static const LCCAnalyzerResourceName LCC_IMAGE_NAME;
@@ -52,14 +52,14 @@ namespace dtTerrain
          static const LCCAnalyzerResourceName REL_ELEV_IMAGE;
          static const LCCAnalyzerResourceName COMPOSITE_LCC_IMAGE;
          static const LCCAnalyzerResourceName SCENE_GRAPH;
-         
+
       protected:
          LCCAnalyzerResourceName(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
    };
-   
+
    /**
     * Defines the exceptions thrown by the lcc analyzer.
     */
@@ -67,22 +67,22 @@ namespace dtTerrain
    {
       DECLARE_ENUM(LCCAnalyzerException);
       public:
-      
-         ///Thrown if the user failed to enable caching.  Currently terrain data 
+
+         ///Thrown if the user failed to enable caching.  Currently terrain data
          ///caching must be enabled for the analyzer to work properly.
-         static LCCAnalyzerException INVALID_CACHE;   
-         
+         static LCCAnalyzerException INVALID_CACHE;
+
          ///Thrown if LCC analyzing occurs before valid geographical images are
          ///assigned to the analyzer.
-         static LCCAnalyzerException NO_VALID_GEO_IMAGES; 
-                  
+         static LCCAnalyzerException NO_VALID_GEO_IMAGES;
+
       protected:
          LCCAnalyzerException(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
    };
-   
+
    /**
     * The LCC Analyzer calculates LCC data for use in the
     * vegetation decorator.
@@ -90,7 +90,7 @@ namespace dtTerrain
    class DT_TERRAIN_EXPORT LCCAnalyzer
    {
    public:
-      
+
       /**
        * Constructor
        */
@@ -108,7 +108,7 @@ namespace dtTerrain
        * @param longitude the longitude of the terrain segment
        * @return the newly created image
        */
-      dtCore::RefPtr<osg::Image> MakeBaseLCCColor(const HeightField &hf, int latitude, 
+      dtCore::RefPtr<osg::Image> MakeBaseLCCColor(const HeightField &hf, int latitude,
          int longitude);
 
       /**
@@ -120,10 +120,10 @@ namespace dtTerrain
        * @param b Blue pixel color value with which to create the mask.
        * @return The mask image.
        */
-      dtCore::RefPtr<osg::Image> MakeLCCMask(const osg::Image &src_image, 
+      dtCore::RefPtr<osg::Image> MakeLCCMask(const osg::Image &src_image,
          unsigned char r, unsigned char g, unsigned char b);
 
-		/**
+      /**
        * Buggy "histogram" of an image by a particular LCC type.
        *
        * @param LCCbase the black/white LCC image of picked points of a particular LCC type
@@ -131,7 +131,7 @@ namespace dtTerrain
        * @param fileName the filename to save the histogram data
        * @param binsize the sampling size of the image (i.e. the delta height or slope).
        */
-      void LCCHistogram(const osg::Image &LCCbase, const osg::Image &image, 
+      void LCCHistogram(const osg::Image &LCCbase, const osg::Image &image,
          const std::string &fileName, int binsize);
 
       /**
@@ -146,18 +146,18 @@ namespace dtTerrain
       dtCore::RefPtr<osg::Image> MakeCombinedImage(
          dtTerrain::LCCType &l, const HeightField &hf, const osg::Image &f_image,
          const osg::Image &s_image, const osg::Image &r_image);
-         
+
       dtCore::RefPtr<osg::Image> GenerateBaseFilterImage(LCCType &type,
          const std::string &tileCachePath);
-         
+
       bool CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
          const std::string &tileCachePath);
-         
+
       void CheckSlopeAndElevationMaps(const HeightField &hf,
          const std::string &tileCachePath);
-         
+
       bool ProcessLCCData(const PagedTerrainTile &tile, LCCType &type);
-      
+
       void ComputeProbabilityMap(const HeightField &hf, LCCType &type,
          int latitude, int longitude, const std::string &tileCachePath);
 
@@ -173,7 +173,7 @@ namespace dtTerrain
          newImage.mFileName = fileName;
          mGeospecificLCCImages.push_back(newImage);
       }
-      
+
       /**
        * Checks the list of currently loaded images to see if the specified
        * image has already been loaded and processed.
@@ -181,29 +181,29 @@ namespace dtTerrain
        * @return True if already loaded, false otherwise.
        */
       bool IsGeoSpecificLCCImageLoaded(const std::string &fileName);
-      
+
       /**
        * Makes sure all the geospecific images that have been added to the
        * analyzer are loaded and ready for use in the LCC data processing.
        * @note If an image has already been loaded previously, it will not
        *    be reloaded.
        */
-      void LoadAllGeoSpecificImages();      
-      
+      void LoadAllGeoSpecificImages();
+
       /**
        * Gets whether or not inter-process images processed during
        * LCC analysis are saved for review.
        * @return True if images are saved, false otherwise.
        */
       bool OutputDebugImages() { return mOutputDebugImages; }
-      
+
       /**
        * Sets whether or not inter-process images processed during
        * LCC analysis are saved for review.
        * @param value True if images should be saved, false otherwise.
        */
       void SetOutputDebugImages(bool value) { mOutputDebugImages = value; }
-      
+
       /**
        * Sets the maximum size of the images constructed during LCC analysis.
        * @param newSize The size in pixels of the image.
@@ -212,13 +212,13 @@ namespace dtTerrain
        *    increase the time taken to generate the necessary data.
        */
       void SetMaxImageSize(unsigned int newSize) { mImageSize = newSize; }
-      
+
       /**
        * Gets the current maximum image size used during LCC analysis.
        * @return The current image size.
        */
       unsigned int GetImageSize() const { return mImageSize; }
-      
+
       /**
        * Clears all data cached in this analyzer.  This should be called before
        * processing a different tile or region.
@@ -230,15 +230,15 @@ namespace dtTerrain
          mRelativeElevationMap = NULL;
          mWaterMask = NULL;
       }
-            
+
    private:
       dtCore::RefPtr<osg::Image> mBaseLCCColorImage;
       dtCore::RefPtr<osg::Image> mSlopeMap;
       dtCore::RefPtr<osg::Image> mRelativeElevationMap;
       dtCore::RefPtr<osg::Image> mWaterMask;
       std::vector<ImageUtils::GeospecificImage> mGeospecificLCCImages;
-     
-      unsigned int mImageSize; 
+
+      unsigned int mImageSize;
       bool mOutputDebugImages;
    };
 }

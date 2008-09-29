@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg 03/08/2006
-*/
+ */
 
 #ifndef __DELTA__NPCSTATE_H__
 #define __DELTA__NPCSTATE_H__
@@ -37,10 +37,10 @@ namespace dtAI
 class DT_AI_EXPORT NPCState: public osg::Referenced
 {
    public:
-      
+
       typedef dtUtil::Enumeration Type;
       typedef std::list<osg::ref_ptr<dtUtil::Command<void> > > CommandList;
-      typedef dtUtil::Command<void>* CommandPtr; 
+      typedef dtUtil::Command<void>* CommandPtr;
       typedef dtUtil::Functor<void, TYPELIST_1(double)>  UpdateFunctor;
 
 
@@ -48,13 +48,13 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
       NPCState();
       NPCState(const Type* pType);
 
-      //the object factory doesn't allow creation with anything but 
+      //the object factory doesn't allow creation with anything but
       //a default constructor so we need a set type
-      void SetType(const Type* stateType); 
+      void SetType(const Type* stateType);
 
-      const Type* GetType() const;      
+      const Type* GetType() const;
       const std::string& GetName() const;
-      
+
       ///Executes the entry commands
       void OnEntry();
 
@@ -77,10 +77,10 @@ class DT_AI_EXPORT NPCState: public osg::Referenced
 
    private:
       void DefaultUpdateFunctor(double dt);
-      void ExecuteCommands(CommandList& pList);            
+      void ExecuteCommands(CommandList& pList);
 
       const Type* mType;
-   
+
       CommandList mOnStart;
       CommandList mOnFinish;
       UpdateFunctor mOnUpdate;
@@ -92,13 +92,13 @@ class DT_AI_EXPORT NPCStateTypes: public NPCState::Type
 {
    DECLARE_ENUM(NPCStateTypes);
 
-   public:      
+   public:
 
-      NPCStateTypes(const std::string& stateName);  	
+      NPCStateTypes(const std::string& stateName);
 
       static const NPCStateTypes   NPC_STATE_DEFAULT;
       static const NPCStateTypes   NPC_STATE_SPAWN;
-      static const NPCStateTypes   NPC_STATE_DIE;       
+      static const NPCStateTypes   NPC_STATE_DIE;
       static const NPCStateTypes   NPC_STATE_IDLE;
 
    protected:

@@ -14,11 +14,11 @@ namespace dtUtil
 
 
 namespace dtCore
-{ 
+{
 
    class DeltaDrawable;
 
-   /** Used to control how any potential page-able files are loaded.  
+   /** Used to control how any potential page-able files are loaded.
      * Currently based on the osgDB::DatabasePager which uses osg::PagedLOD
      * nodes.
      */
@@ -65,7 +65,7 @@ namespace dtCore
       * <br>
       * floating point in frames per second.
       * <br>
-      * The target frame rate.  The pager uses this to time certain operations.  
+      * The target frame rate.  The pager uses this to time certain operations.
       * If the system is set to use a fixed time step, the target frame rate is set to match the
       * fixed frame rate (SIM_FRAME_RATE). Otherwise, it defaults to 100.
       * Turning this number down can improve paging preformance somewhat.
@@ -158,7 +158,7 @@ namespace dtCore
 
    protected:
       virtual ~DatabasePager();
-   	
+
    private:
       osg::ref_ptr<osgDB::DatabasePager> mDatabasePager;
       dtUtil::ConfigProperties* mConfigProperties; ///<deprecated 06/30/08

@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #ifndef DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER
 #define DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER
 
@@ -46,7 +47,7 @@ namespace dtDAL {
           * @param type The filetype, whether a directory or file.
           * @return true if the file name refers to an rbody file.
           */
-		 virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const;
+         virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const;
 
          /**
           * Creates a resource descriptor based on the path to the resource.
@@ -98,14 +99,14 @@ namespace dtDAL {
          virtual const std::map<std::string, std::string>& GetFileFilters() const { return mFilters; }
 
          /**
-          * @return A short description of the type of resources this imports.  
+          * @return A short description of the type of resources this imports.
           *         This is set in the constructor.
           */
-         virtual const std::string& GetTypeHandlerDescription() const 
+         virtual const std::string& GetTypeHandlerDescription() const
          {
             return mDescription;
          }
-           
+
          /**
           * @return The DataType for this instance.
           */

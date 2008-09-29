@@ -32,24 +32,24 @@ namespace dtGame
    /**
     * @class Invokable
     * @brief An Invokable is a queriable method interface that can be added to a dtGame::GameActorProxy just
-    * as a dtDAL::ActorProperty represents a data value on the actor.  
+    * as a dtDAL::ActorProperty represents a data value on the actor.
     * Invoking the invokable requires a dtGame::Message as a parameter.  The actual code is executed by calling
-    * a Functor that takes 1 parameter, the message, and returns nothing.  The method must take a const Method reference. 
+    * a Functor that takes 1 parameter, the message, and returns nothing.  The method must take a const Method reference.
     * @see dtGame::Message
     */
    class DT_GAME_EXPORT Invokable : public osg::Referenced
    {
       public:
          typedef dtUtil::Functor<void, TYPELIST_1(const Message&)> InvokableFunc;
-      	Invokable(const std::string& name, InvokableFunc toInvoke);
-         
+         Invokable(const std::string& name, InvokableFunc toInvoke);
+
          /**
           * @return the name of this invokable.
           */
          const std::string& GetName() const { return mName; }
-         
+
          /**
-          * Invoke this.  
+          * Invoke this.
           * @param message the message to invoke.
           */
          void Invoke(const Message& message);
@@ -64,7 +64,7 @@ namespace dtGame
          Invokable(const Invokable& toCopy) {}
          Invokable& operator=(const Invokable& toAssign) { return *this; }
    };
-   
+
 }
 
 #endif /*DELTA_INVOKABLE*/

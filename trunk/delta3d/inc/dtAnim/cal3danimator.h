@@ -33,7 +33,7 @@ namespace dtAnim
 {
 
 
-class	DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
+class DT_ANIM_EXPORT Cal3DAnimator: public osg::Referenced
 {
 
 public:
@@ -47,7 +47,7 @@ public:
    ///Give the Animator a new Cal3DModelWrapper to operate on.
    void SetWrapper( Cal3DModelWrapper *wrapper );
 
-   //these are listed in the order in which they are called on update
+   // these are listed in the order in which they are called on update
    void SetPreDriver(ICal3DDriver* pDriver);
    ICal3DDriver* GetPreDriver() const {return mPreDriver.get(); }
 
@@ -86,7 +86,7 @@ private:
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_CAL3DANIMATOR_H__
 

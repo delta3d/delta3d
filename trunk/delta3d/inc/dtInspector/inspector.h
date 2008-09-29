@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_INSPECTOR
 #define DELTA_INSPECTOR
@@ -31,16 +31,16 @@
 #include <dtInspector/export.h>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
-#	pragma warning(disable : 4311) // for warning C4311: 'type cast' : pointer truncation from 'void *const ' to 'long'
-#	pragma warning(disable : 4312) // for warning C4312: 'type cast' : conversion from 'long' to 'void *' of greater size
+#   pragma warning(push)
+#   pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#   pragma warning(disable : 4311) // for warning C4311: 'type cast' : pointer truncation from 'void *const ' to 'long'
+#   pragma warning(disable : 4312) // for warning C4312: 'type cast' : conversion from 'long' to 'void *' of greater size
 #endif
 
 #include <dtInspector/gui_fltk.h>
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 /** The dtInspector namespace contains functionality to inspect Delta3D classes
@@ -50,7 +50,7 @@ namespace dtInspector
 {
    ///Creates and manages the UserInterface
 
-   /** This class creates and manages a 2D GUI that can interact dynamically with 
+   /** This class creates and manages a 2D GUI that can interact dynamically with
    * most dtCore instantiations.
    * Currently, Inspector must be instantiated after all other dtCore classes have been
    * created.  The interface will pickup all classes created at that point and
@@ -60,7 +60,7 @@ namespace dtInspector
    */
    class DT_INSPECTOR_EXPORT Inspector : public OpenThreads::Thread
    {
-   public:  
+   public:
       Inspector()
       {
          ui = new UserInterface();
@@ -76,7 +76,7 @@ namespace dtInspector
          else ui->MainWindow->hide();
       }
 
-      bool IsShown(void) 
+      bool IsShown(void)
       {
          if (ui->MainWindow->shown()) return true;
          else return false;
@@ -85,8 +85,8 @@ namespace dtInspector
    private:
 
       //not implemented by design
-      Inspector( const Inspector& rhs ); 
-      Inspector& operator= ( const Inspector& rhs ); 
+      Inspector(const Inspector& rhs);
+      Inspector& operator= (const Inspector& rhs);
 
       void Init(void)
       {
@@ -107,8 +107,8 @@ namespace dtInspector
          ui->SelectInstance();
       }
 
-      virtual void run() 
-      { 
+      virtual void run()
+      {
          //show the window until it closes, then quit the thread
          ui->MainWindow->show();
          Fl::run(); //blocking call
@@ -156,7 +156,7 @@ namespace dtInspector
    #endif
 
    #pragma comment(lib, _AUTOLIBNAME1)
-   
+
 #endif
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
