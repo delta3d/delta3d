@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -31,7 +31,7 @@
 #include <string>
 #include <map>
 
-///@cond 
+///@cond
 namespace osgViewer
 {
    class CompositeViewer;
@@ -50,16 +50,16 @@ namespace dtCore
 namespace dtABC
 {
    struct ApplicationConfigData;
-   
+
    ///Base generic Application class
 
    /** The Application class of the dtCore Application Base Class library
      * is the base level class for most applications.  It contains the basic
      * components required for applications.
      * An optional XML configuration file can be supplied on the constructor which
-     * contains the attributes for the internal DeltaWin, Camera, and Scene.  
+     * contains the attributes for the internal DeltaWin, Camera, and Scene.
      * A default Config File can be created by calling GenerateDefaultConfigFile().
-     * This file will contain the default parameters and can be edited, then 
+     * This file will contain the default parameters and can be edited, then
      * supplied to the constructor.
      *
      * Typical use:
@@ -67,7 +67,7 @@ namespace dtABC
      * Application *app = new Application("Mydatafile.xml");
      * app->Config();
      * app->Run();
-     * \endcode     
+     * \endcode
      */
    class DT_ABC_EXPORT Application : public dtABC::BaseABC, public dtUtil::ConfigProperties
    {
@@ -94,7 +94,7 @@ namespace dtABC
        * @see dtCore::System
        */
       static const std::string MAX_TIME_BETWEEN_DRAWS;
-      
+
       /**
        * Configuration property.
        * <br>
@@ -109,7 +109,7 @@ namespace dtABC
        */
       static const std::string USE_FIXED_TIME_STEP;
 
-      Application( const std::string& configFilename = "", dtCore::DeltaWin *win = NULL );
+      Application(const std::string& configFilename = "", dtCore::DeltaWin* win = NULL);
 
       ///Start the Application
       virtual void Run();
@@ -192,16 +192,16 @@ namespace dtABC
 
       /// @return a string value that is paired with the given name.  The default is returned if the property is not set.
       const std::string& GetConfigPropertyValue(const std::string& name, const std::string& defaultValue = "") const;
-      
+
       /// Sets the value of a given config property.
       void SetConfigPropertyValue(const std::string& name, const std::string& value);
 
       /// Removes a property with the given name
       void RemoveConfigPropertyValue(const std::string& name);
-      
+
       /// Add a view to the Viewer
       void AddView(dtCore::View &view);
-      
+
       /// Remove a view to the Viewer
       void RemoveView(dtCore::View &view);
 
@@ -211,7 +211,7 @@ namespace dtABC
    protected:
 
       virtual ~Application();
-      ///override for preframe 
+      ///override for preframe
       virtual  void  PreFrame( const double deltaSimTime );
 
       ///override for frame

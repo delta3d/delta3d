@@ -161,7 +161,7 @@ namespace dtNetGM
    void ServerNetworkComponent::SendInfoClientConnectedMessage(const dtGame::MachineInfo& machineInfo)
    {
       dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED);
-      MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (msg.get());
+      MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*>(msg.get());
       machineMsg->SetMachineInfo(machineInfo);
 
       // Send Info to all other clients

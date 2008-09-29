@@ -109,7 +109,7 @@ namespace dtNetGM
       /**
        * Disconnects the current connection
        */
-      void Disconnect(int waitTime= -1);
+      void Disconnect(int waitTime = -1);
 
       /**
        * Callback function for GNE::ConnectionListener

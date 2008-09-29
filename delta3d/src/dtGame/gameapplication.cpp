@@ -38,13 +38,13 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(int argc, char** argv): 
-   dtABC::Application("config.xml"),
-      mArgc(argc),
-      mArgv(argv),
-      mEntryPoint(NULL),
-      mCreateFunction(NULL),
-      mDestroyFunction(NULL)
+   GameApplication::GameApplication(int argc, char** argv)
+      : dtABC::Application("config.xml")
+      , mArgc(argc)
+      , mArgv(argv)
+      , mEntryPoint(NULL)
+      , mCreateFunction(NULL)
+      , mDestroyFunction(NULL)
    {
       RegisterInstance(this);
       GetKeyboard()->RemoveKeyboardListener(GetKeyboardListener());
@@ -64,7 +64,7 @@ namespace dtGame
          {
             mEntryPoint->OnShutdown(*this);
          }
-         catch(const dtUtil::Exception &e)
+         catch(const dtUtil::Exception& e)
          {
             e.LogException(dtUtil::Log::LOG_ALWAYS);
          }
@@ -73,7 +73,7 @@ namespace dtGame
             LOG_ALWAYS("Unknown exception caught in the destructor of GameApplication");
          }
       }
-      
+
       DeregisterInstance(this);
 
       GetScene()->RemoveAllDrawables();
@@ -96,7 +96,7 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    void GameApplication::Config()
-   {     
+   {
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
       std::string libName = GetGameLibraryName();
 
@@ -115,7 +115,7 @@ namespace dtGame
       {
          msg.str("");
          msg << "Unable to load game library " << libName;
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
             msg.str(), __FILE__, __LINE__);
       }
 
@@ -124,28 +124,28 @@ namespace dtGame
       createAddr = mEntryPointLib->FindSymbol("CreateGameEntryPoint");
       destroyAddr = mEntryPointLib->FindSymbol("DestroyGameEntryPoint");
 
-      //Make sure the plugin actually implemented these functions and they
-      //have been exported.
-      if(createAddr == NULL)
+      // Make sure the plugin actually implemented these functions and they
+      // have been exported.
+      if (createAddr == NULL)
       {
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"CreateGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
             msg.str(), __FILE__, __LINE__);
       }
 
-      if(destroyAddr == NULL)
+      if (destroyAddr == NULL)
       {
          msg.str("");
          msg << "Game libraries must implement the function " <<
                 " \"DestroyGameEntryPoint.\"";
-         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+         throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
             msg.str(), __FILE__, __LINE__);
       }
 
-      //Well we made it here so that means the plugin was loaded
-      //successfully and the create and destroy functions were found.
+      // Well we made it here so that means the plugin was loaded
+      // successfully and the create and destroy functions were found.
 
       #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 4)
       mCreateFunction  = (CreateEntryPointFn)createAddr;
@@ -160,7 +160,7 @@ namespace dtGame
       try
       {
          mGameManager = new dtGame::GameManager( *GetScene() );
-         if(mGameManager == NULL)
+         if (mGameManager == NULL)
          {
             msg.str("");
             msg << " " << " \"GameEntryPoint failed to create Game Manager.\"";
@@ -170,15 +170,15 @@ namespace dtGame
          mEntryPoint->Initialize(*this, mArgc, mArgv);
          Application::Config();
 
-         
+
          mGameManager->SetApplication(*this);
          mEntryPoint->OnStartup(*this);
       }
-      catch(const dtUtil::Exception& ex)
+      catch (const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR);
 
-         if(ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
+         if (ex.TypeEnum() == dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR)
          {
             exit(-1);
          }
@@ -187,11 +187,10 @@ namespace dtGame
             throw ex;
          }
       }
-
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void GameApplication::SetGameManager( dtGame::GameManager &gameManager )
+   void GameApplication::SetGameManager(dtGame::GameManager& gameManager)
    {
       mGameManager = &gameManager;
    }

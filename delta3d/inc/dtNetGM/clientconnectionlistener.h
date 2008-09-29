@@ -23,7 +23,7 @@
 #define DELTA_CLIENTCONNECTIONLISTENER
 
 #ifdef _MSC_VER
-   #pragma warning( disable:4276 )
+   #pragma warning(disable:4276)
 #endif
 
 #include <gnelib/ConnectionListener.h>
