@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell, Curtiss Murphy
  */
+
 #ifndef DELTA_TASKACTOR
 #define DELTA_TASKACTOR
 
@@ -32,7 +33,7 @@
 
 #include <vector>
 
-namespace dtDAL 
+namespace dtDAL
 {
    class NamedActorParameter;
    class NamedGroupParameter;
@@ -47,16 +48,16 @@ namespace dtActors
     * class should be extended by any classes wishing to provide specialized
     * task behavior.  Each task has general properties such as score, passing
     * score, etc.  In addition, all tasks have a parent child relationship thus
-    * facilitating the concept of nested tasks and task dependencies. 
-    * 
-    * All Task Actors are in one of 3 states:  IsComplete(), IsFailed(), or neither. 
-    * Generally, a Task can change it's score and other values until it becomes Complete or 
-    * Failed. At that point, it is no longer mutable and shouldn't change much.  
-    * The complete state is typically determined automatically - when a minimal 
-    * score is reached like when all child tasks are complete. The Failed stage 
-    * is typically set manually when you want to force a task to be failed. Sometimes a 
+    * facilitating the concept of nested tasks and task dependencies.
+    *
+    * All Task Actors are in one of 3 states:  IsComplete(), IsFailed(), or neither.
+    * Generally, a Task can change it's score and other values until it becomes Complete or
+    * Failed. At that point, it is no longer mutable and shouldn't change much.
+    * The complete state is typically determined automatically - when a minimal
+    * score is reached like when all child tasks are complete. The Failed stage
+    * is typically set manually when you want to force a task to be failed. Sometimes a
     * task will be marked Failed automatically based on parent or container task
-    * behaviors (such as a Ordered Failing task done out of order).  
+    * behaviors (such as a Ordered Failing task done out of order).
     * @see TaskActorGameEvent
     * @see TaskActorOrderedTask
     * @see TaskActorRollupTask
@@ -175,22 +176,22 @@ namespace dtActors
 
          /**
           * Gets the status of this task in terms of "failedness". Note that a task can never
-          * be both failed and complete - mutually exclusive. A failed task may or may 
+          * be both failed and complete - mutually exclusive. A failed task may or may
           * not affect it's parent. 'Failed' is unrelated to the task's score
           * @return True if this task has been failed, false otherwise.
-          * @note Being 'failed' does not have any direct bearing on the failed or score status 
-          *    of either our parent task or any of our children. 
+          * @note Being 'failed' does not have any direct bearing on the failed or score status
+          *    of either our parent task or any of our children.
           */
          bool IsFailed() const { return mFailed; }
 
          /**
           * Sets the status of this task to failed or not failed. Note that a task can never
-          * be both failed and complete - mutually exclusive. A failed task may or may 
-          * not affect it's parent. Setting Failed to true has no effect on score by design.  
+          * be both failed and complete - mutually exclusive. A failed task may or may
+          * not affect it's parent. Setting Failed to true has no effect on score by design.
           * Setting failed to true sets the completed time stamp.
           * @param flag True if this task should be marked failed, false otherwise.
-          * @note Being 'failed' does not have any direct bearing on the failed status 
-          *    of either our parent task or any of our children. Same with the score. 
+          * @note Being 'failed' does not have any direct bearing on the failed status
+          *    of either our parent task or any of our children. Same with the score.
           */
          void SetFailed(bool flag);
 
@@ -228,31 +229,31 @@ namespace dtActors
           *    Complete = false <br>
           *    Failed = false <br>
           *    Completed Time Stamp = -1.0 <br>
-		    *    NotifyLMSOnUpdate = false
+          *    NotifyLMSOnUpdate = false
           * @note Calling this method does not change the parent child task hierarchy
           *    if it exists.
           */
          virtual void Reset();
 
-   		/**
-   		 * Gets the value that determines if this task should notify
-   		 * a Learning Management System (LMS) when it is updated.
-   		 * @return True if this task should notify an LMS when it is updated, false
-   		 * otherwise.
-   		 * @note The actual notification of an LMS is handled by the
-   		 * TaskComponent class.
-   		 */
-   		bool GetNotifyLMSOnUpdate() const { return mNotifyLMSOnUpdate; }
-   
-   		/**
-   		 * Sets the value that determines if this task should notify
-   		 * a Learning Management System (LMS) when it is updated.
-   		 * @param flag True if this task should notify an LMS when it is updated, false
-   		 * otherwise.
-   		 * @note The actual notification of an LMS is handled by the
-   		 * TaskComponent class.
-   	    */
-   		void SetNotifyLMSOnUpdate(bool flag) { mNotifyLMSOnUpdate = flag; }
+         /**
+          * Gets the value that determines if this task should notify
+          * a Learning Management System (LMS) when it is updated.
+          * @return True if this task should notify an LMS when it is updated, false
+          * otherwise.
+          * @note The actual notification of an LMS is handled by the
+          * TaskComponent class.
+          */
+         bool GetNotifyLMSOnUpdate() const { return mNotifyLMSOnUpdate; }
+
+         /**
+          * Sets the value that determines if this task should notify
+          * a Learning Management System (LMS) when it is updated.
+          * @param flag True if this task should notify an LMS when it is updated, false
+          * otherwise.
+          * @note The actual notification of an LMS is handled by the
+          * TaskComponent class.
+          */
+         void SetNotifyLMSOnUpdate(bool flag) { mNotifyLMSOnUpdate = flag; }
 
       protected:
 
@@ -305,7 +306,7 @@ namespace dtActors
           */
          virtual void BuildInvokables();
 
-         ///Task actors are global actors, so they are not placeable. 
+         ///Task actors are global actors, so they are not placeable.
          virtual bool IsPlaceable() const { return false; };
 
          /**
@@ -338,20 +339,20 @@ namespace dtActors
          virtual void NotifyScoreChanged(const TaskActorProxy &childTask);
 
          /**
-          * Determines if conditions are right so that this Task could change it's 
+          * Determines if conditions are right so that this Task could change it's
           * IsComplete, IsFailed, or Score. This will typically mean that it is not already
           * Complete or Failed and that it's parent is not some sort of task (such as a blocking
           * ordered task) that would prevent change.
-          * @note This method is almost never used by the task actor itself. It is intended to 
-          *   support game behavior or changes to a user interface.  
-          */ 
+          * @note This method is almost never used by the task actor itself. It is intended to
+          *   support game behavior or changes to a user interface.
+          */
          virtual bool IsCurrentlyMutable();
 
-         /** 
-          * Similar to RequestScoreChange() except that in this case, there is no intent to 
-          * actually change the score. This is used by IsCurrentlyMutable() in order to 
+         /**
+          * Similar to RequestScoreChange() except that in this case, there is no intent to
+          * actually change the score. This is used by IsCurrentlyMutable() in order to
           * give a parent task a change to say that a child task is not in fact in a mutable state.
-          * Calling this method should have NO side effects whatsoever on either the parent or the child. 
+          * Calling this method should have NO side effects whatsoever on either the parent or the child.
           * @param childTask The child task in question.
           * @see RequestScoreChange
           */
@@ -430,7 +431,7 @@ namespace dtActors
           * Fills the specified vector with all of this task's direct children.
           */
          void GetAllSubTasks(std::vector<TaskActorProxy*>& toFill);
-         
+
          /**
           * Fills the specified vector with all of this task's direct children.
           */
@@ -496,7 +497,7 @@ namespace dtActors
           * @see dtDAL::NamedActorParameter
           */
          void SetSubTaskGroup(const dtDAL::NamedGroupParameter& subTasks);
-         
+
          /**
           * @return a new NamedGroupParameter containing NamedActorParameters with the ids of all the subtask proxies.
           * @see dtDAL::NamedGroupParameter

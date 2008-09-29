@@ -3,27 +3,26 @@
 
 #include "dtUtil/mathdefines.h"
 
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-* Bradley Anderegg
-*/
-
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ */
 
 namespace dtUtil
 {
@@ -36,28 +35,28 @@ namespace dtUtil
 template <class Real, class Vector>
 class Noise3
 {
-public: 
-	Noise3(unsigned int seed = 1023058);
-	~Noise3();
+public:
+   Noise3(unsigned int seed = 1023058);
+   ~Noise3();
 
-	void Reseed(unsigned int seed);
-	Real GetNoise(const Vector& vect_in);
-   
+   void Reseed(unsigned int seed);
+   Real GetNoise(const Vector& vect_in);
+
 private:
 
-	void BuildTable();
-	void BuildCoefs(const Vector& vect_in);
-	int Fold(const Vector& vect_in);
-	Real Interp(Real t);
-	
+   void BuildTable();
+   void BuildCoefs(const Vector& vect_in);
+   int Fold(const Vector& vect_in);
+   Real Interp(Real t);
+
 
    static const int TABLE_SIZE = 256;
 
    Vector   m_vCoef[8];
-   int		m_iCoef[8];
+   int      m_iCoef[8];
 
    int      m_iPerm[TABLE_SIZE * 2];
-	Vector   m_gTable[TABLE_SIZE];
+   Vector   m_gTable[TABLE_SIZE];
 };
 
 
@@ -99,7 +98,7 @@ void Noise3<Real, Vector>::BuildTable()
          m_gTable[i] = Vector(x,  y,  z);
          m_gTable[i].normalize();
       }
-      else 
+      else
       {
          --i;
       }
@@ -111,7 +110,7 @@ void Noise3<Real, Vector>::BuildTable()
       m_gTable[j] = m_gTable[num];
    }
 
-   //create a table of random permuations 
+   //create a table of random permuations
    for(int j = 0; j < TABLE_SIZE; ++j)
    {
       m_iPerm[j] = j;
@@ -181,7 +180,7 @@ int Noise3<Real, Vector>::Fold(const Vector& vect_in)
 template <class Real, class Vector>
 Real Noise3<Real, Vector>::Interp(Real t)
 {
-   return Real((Real(6.0) * pow(t, Real(5.0))) - (Real(15.0) * pow(t, Real(4.0))) + (Real(10.0) * pow(t, Real(3.0)))); 
+   return Real((Real(6.0) * pow(t, Real(5.0))) - (Real(15.0) * pow(t, Real(4.0))) + (Real(10.0) * pow(t, Real(3.0))));
 }
 
 

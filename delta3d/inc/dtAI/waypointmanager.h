@@ -50,7 +50,7 @@ namespace dtAI
     */
    class DT_AI_EXPORT WaypointManager: public dtCore::DeltaDrawable
    {
-      public:     
+      public:
 
          typedef std::map<WaypointID, Waypoint*> WaypointMap;
          typedef WaypointMap::iterator WaypointIterator;
@@ -58,7 +58,7 @@ namespace dtAI
       public:
 
          WaypointManager();
-      
+
       protected:
 
          ~WaypointManager();
@@ -70,7 +70,7 @@ namespace dtAI
         /**
          * Returns an instance to our static member
          */
-        static WaypointManager& GetInstance();   
+        static WaypointManager& GetInstance();
 
         /**
          * Copies waypoints into a vector and returns it by value
@@ -79,19 +79,19 @@ namespace dtAI
          * this function may be removed once the waypoint map is exported
          */
         std::vector<Waypoint*> CopyWaypointsIntoVector() const;
- 
+
         /**
          * returns an internal const reference to the waypoint mapping
          * of indexes to Waypoints
          */
-        const WaypointMap& GetWaypoints() const;    
+        const WaypointMap& GetWaypoints() const;
 
         /**
          * Formats and writes all waypoints out to an ostream
          */
         std::ostream& GetWaypoints(std::ostream& pStream);
 
-		  /**
+        /**
          * Returns a single waypoint by index
          */
         Waypoint* GetWaypoint(WaypointID id);
@@ -105,8 +105,8 @@ namespace dtAI
          * Given a scene we create a NavMesh
          * the scene is used for doing Isector tests
          * to test if pairs of waypoints are traversable.
-         * The NavMesh is created by connecting all pairs of 
-         * waypoints that are within the total average distance 
+         * The NavMesh is created by connecting all pairs of
+         * waypoints that are within the total average distance
          * between all two waypoints.
          */
         void CreateNavMesh(dtCore::Scene* pScene);
@@ -116,7 +116,7 @@ namespace dtAI
          * created after call to CreateNavMesh
          */
         NavMesh& GetNavMesh();
-        const NavMesh& GetNavMesh() const;         
+        const NavMesh& GetNavMesh() const;
 
         /**
          * Rendering functionality
@@ -132,10 +132,10 @@ namespace dtAI
          */
         void SetDrawNavMesh(bool pDraw, bool pDrawDetails);
         void SetNavMeshColor(const osg::Vec4& pColor);
-        void SetNavMeshSize(float pSize);         
+        void SetNavMeshSize(float pSize);
 
         /**
-         * Returns the WaypointDrawable 
+         * Returns the WaypointDrawable
          */
         const osg::Node* GetOSGNode() const;
         osg::Node* GetOSGNode();
@@ -150,17 +150,17 @@ namespace dtAI
          * Use this function to remove waypoints you have created
          */
         void RemoveWaypoint(WaypointID id);
-		 
-		  /**
+
+        /**
          * Adds a path segment to the navigation mesh
          */
         void AddPathSegment(WaypointID idFrom, WaypointID idTo);
 
         /**
-         * These are utility functions used by STAGE and dtDAL::Project         
+         * These are utility functions used by STAGE and dtDAL::Project
          */
         void AddWaypoint(WaypointActor &pWaypoint);
-        void RemoveWaypoint(const WaypointActor &pWaypoint);    
+        void RemoveWaypoint(const WaypointActor &pWaypoint);
         void MoveWaypoint(WaypointID id, const osg::Vec3& pPos);
 
         void OnMapLoad(const std::string& pWaypointFilename);
@@ -175,7 +175,7 @@ namespace dtAI
          * writes a new waypoint file, returns true if successful
          */
         bool WriteFile(const std::string& pFileToWrite);
-         
+
         /**
          * attempts to read a waypoint file, returns true if successful
          */
@@ -225,7 +225,7 @@ namespace dtAI
             META_Object(dtAI, WaypointManagerDrawable);
             WaypointManagerDrawable(const WaypointManagerDrawable& bd, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
             {
-               
+
             }
             WaypointManagerDrawable(){}
             WaypointManagerDrawable(WaypointManager* pHelper)
@@ -248,16 +248,16 @@ namespace dtAI
 
          //a flag to toggle drawing of the navmesh
          bool mDrawNavMesh;
-         
+
          //a flag to toggle drawing of the navmesh details, which for now
          //renders one way links in red
          bool mDrawNavMeshDetails;
 
          //this flag is set when we are reading so we dont try to draw
          //at the same time
-         bool mReadingFile;        
+         bool mReadingFile;
 
-         ///a lock obtained during loading of actors         
+         ///a lock obtained during loading of actors
          bool mLoadActorsLock;
 
          //waypoint drawing params
@@ -272,10 +272,10 @@ namespace dtAI
          osg::ref_ptr<osg::Geode> mDrawable;
 
          NavMesh mNavMesh;
-   
-   };   
 
-}//namespace 
+   };
+
+}//namespace
 
 
 #endif // __DELTA_WaypointManager_H__

@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * John K. Grant
  */
@@ -23,8 +23,8 @@
 #define DELTA_XERCES_UTILS_INC
 
 #if _MSC_VER
-#	 pragma warning(push)
-#   pragma warning(disable:4251)
+#  pragma warning(push)
+#  pragma warning(disable:4251)
 #endif
 
 #include <dtUtil/export.h>
@@ -43,7 +43,7 @@ namespace dtUtil
      * Utility methods for using strings, often for XML purposes.
      * This is a simple class that lets us do easy (though not terribly efficient)
      * trancoding of XMLCh data to local code page for display.  This code was take from
-     * the xerces-c 2.6 samples \n It's main reason for existing is to allow short and quick 
+     * the xerces-c 2.6 samples \n It's main reason for existing is to allow short and quick
      * translations for printing out debugging info.
      */
     class XMLStringConverter
@@ -154,7 +154,7 @@ namespace dtUtil
 }
 
 #if _MSC_VER
-#	 pragma warning(pop)
+#  pragma warning(pop)
 #endif
 
 #endif // DELTA_XERCES_UTILS_INC

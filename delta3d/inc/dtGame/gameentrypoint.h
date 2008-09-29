@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #ifndef DELTA_GAME_ENTRY_POINT
 #define DELTA_GAME_ENTRY_POINT
 
@@ -26,7 +27,7 @@
 #include <dtUtil/breakoverride.h>
 #include <dtGame/gamemanager.h>
 
-namespace dtCore 
+namespace dtCore
 {
    class Scene;
 }
@@ -38,7 +39,7 @@ namespace dtGame
 
    /**
     * @class GameEntryPoint
-    * A class for specifying the entry point into a Game so that the entire game can be defined in a 
+    * A class for specifying the entry point into a Game so that the entire game can be defined in a
     * Game library and loaded at runtime.  Typically, a derivative of this
     * class is compiled into a dynamic library, which gets loaded by a
     * dtGame::GameApplication instance.
@@ -46,7 +47,7 @@ namespace dtGame
     * Note: If a dtGame::GameApplication is used to load this as a dynamic
     * library, be sure to implement the two C functions as shown, typically
     * in the .cpp file:
-    * @code 
+    * @code
     * extern "C" API_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
     * {
     *   return new MyGameEntryPoint();
@@ -62,20 +63,20 @@ namespace dtGame
    class GameEntryPoint
    {
       public:
-      	
+
          GameEntryPoint() {}
-      	
-         /** 
+
+         /**
           * The destructor of the GameEntryPoint.
           */
-         virtual ~GameEntryPoint() 
+         virtual ~GameEntryPoint()
          {
          }
-         
+
          /**
           * Called to initialize the game application.  This gets called from the
           * dtGame::GameApplication::Config() method, but before
-          * dtABC::Application::Config().  This allows some defining of the 
+          * dtABC::Application::Config().  This allows some defining of the
           * default Camera and Window, such as setting up stencil buffers.
           * Note: If you want to replace the GameManager the GameApplication
           * uses, this is a good place to hand it off.
@@ -85,7 +86,7 @@ namespace dtGame
           * @see dtGame::GameApplication::SetGameManager()
           */
          virtual void Initialize(GameApplication& app, int argc, char **argv) { }
-                  
+
 
          /**
           * Called after all startup related code is run.  At this point, the
@@ -97,7 +98,7 @@ namespace dtGame
 
          /**
           * This is the notice to the GameEntryPoint that the application is
-          * quitting.  Perform any cleanup that needs to be done here.  
+          * quitting.  Perform any cleanup that needs to be done here.
           * @note This is called from the GameApplication destructor and is followed
           * by the GameEntryPoint destructor.
           */
@@ -108,7 +109,7 @@ namespace dtGame
          // Deprecated in version 1.5
          BREAK_OVERRIDE(OnStartup(dtGame::GameManager&));
          BREAK_OVERRIDE(OnShutdown(dtGame::GameManager&));
-         
+
          // Deprecated 10/02/07
          BREAK_OVERRIDE(OnStartup());
          BREAK_OVERRIDE(OnShutdown());

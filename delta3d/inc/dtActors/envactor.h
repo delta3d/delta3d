@@ -17,7 +17,7 @@ namespace dtActors
    {
    public:
       EnvActor( dtGame::GameActorProxy &proxy );
-   	  virtual ~EnvActor();
+      virtual ~EnvActor();
 
 
       /**
@@ -92,7 +92,7 @@ namespace dtActors
       bool GetSkyDomeEnable() const;
 
    protected:
-   	
+
    private:
       dtCore::RefPtr<dtCore::Environment> mEnv;
       dtCore::RefPtr<dtCore::SkyDome> mSkyDome;

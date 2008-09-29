@@ -1,22 +1,22 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg 01/17/2008
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg 01/17/2008
+ */
 
 #ifndef DELTA_SENSOR
 #define DELTA_SENSOR
@@ -28,7 +28,7 @@
 namespace dtAI
 {
    /**
-    *	A very simple utility with templated update, compare, and report functionality.
+    * A very simple utility with templated update, compare, and report functionality.
     * It's purpose is to serve a generic method of generating alerts for ai agents
     */
 
@@ -91,14 +91,14 @@ namespace dtAI
          }
 
          /**
-          *	This simple function is the basis of the Sensor
+          * This simple function is the basis of the Sensor
           */
          typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
          {
             typedef typename dtUtil::TypeTraits<Type1>::reference Traits1Ref;
             typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
             typedef typename dtUtil::TypeTraits<ReportData>::reference ReportTraitsRef;
-            
+
             dtUtil::EvaluateFunctor<EvaluateFunc1, Traits1Ref> eval1;
             eval1(mEval1, mElement1);
 
@@ -107,23 +107,23 @@ namespace dtAI
 
             CompareFunctor<CompareFunc, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
             if(genericCompare(mCompare, mReportData, mElement1, mElement2))
-            {               
+            {
                dtUtil::EvaluateFunctor<ReportFunc, ReportTraitsRef> invokeReport;
                invokeReport(mReport, mReportData);
             }
             return mReportData;
          }
          /**
-         * This function makes us play friendly with the generic functor interface
-         */         
+          * This function makes us play friendly with the generic functor interface
+          */
          typename dtUtil::TypeTraits<ReportData>::param_type operator()()
          {
             return Evaluate();
          }
 
          /**
-         * Allows sensor to work with SteeringBehavoir error handling
-         */
+          * Allows sensor to work with SteeringBehavoir error handling
+          */
          typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
          {
             return result = Evaluate();
@@ -175,6 +175,6 @@ namespace dtAI
 
    };
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // DELTA_SENSOR

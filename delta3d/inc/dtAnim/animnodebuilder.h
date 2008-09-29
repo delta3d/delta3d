@@ -27,7 +27,7 @@
 #include <dtUtil/functor.h>
 
 #include <osg/Referenced>
-#include <osg/Node> //needed for the bounding sphere callback
+#include <osg/Node> // needed for the bounding sphere callback
 
 #include <cal3d/global.h>
 
@@ -57,12 +57,12 @@ namespace dtAnim
   * class makes use of a pointer to a function which will do the actual building
   * of the geometry.  By default, AnimNodeBuilder will try to use the default
   * CreateSoftware(), CreateHardware, or CreateNULL() methods.  Call SetCreate()
-  * to supply a custom create method.  
+  * to supply a custom create method.
   */
-class	DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
+class DT_ANIM_EXPORT AnimNodeBuilder: public osg::Referenced
 {
 public:
-   
+
    /** Prototype of the Create method.  Returns the Node containing the animated
      * character's geometry.
      * @code dtCore::RefPtr<osg::Node> MyCreateFunc(osg::Geode& geode, Cal3DModelWrapper* wrapper);
@@ -75,19 +75,19 @@ public:
    {
       public:
          Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper);
-         
+
          /*virtual*/ osg::BoundingSphere computeBound(const osg::Node&) const;
       private:
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
    };
-   
+
    AnimNodeBuilder(); //creates default builder
    AnimNodeBuilder(const CreateFunc& pCreate); //uses custom builder
 
    /// @return the create function
    CreateFunc& GetCreate();
 
-   /** Set a custom CreateFunc for the AnimNodeBuilder.  Function 
+   /** Set a custom CreateFunc for the AnimNodeBuilder.  Function
      * must remove the temporary geometry and drawcallback supplied
      * by CreateNode.
      * @param pCreate : the custom create function.
@@ -100,7 +100,7 @@ public:
      * @param pWrapper : Pointer to the Cal3DModelWrapper to be used when building
      * the geometry.
      * @return : RefPtr of a osg::Node which will contain the renderable geometry.  Temporary
-     * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable 
+     * geometry is a osg::Group with a child osg::Geode which contains one osg::Drawable
      * that has a Drawcallback assigned to it.
      */
    dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
@@ -108,7 +108,7 @@ public:
    virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
-   
+
 
    ///Does the hardware support hardware skinning?
    bool SupportsHardware() const;
@@ -122,9 +122,9 @@ protected:
    virtual ~AnimNodeBuilder();
    AnimNodeBuilder(const AnimNodeBuilder&);
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
-   
+
    dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
-   
+
 private:
 
    template <typename T>
@@ -167,6 +167,6 @@ private:
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_ANIMNODEBUILDER_H__
