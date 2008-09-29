@@ -101,6 +101,9 @@ private:
    void OnStartAction(int row);
    bool IsAnimNodeBuildingUsingHW() const;
 
+   ///turns color into "R:rrr "G:ggg B:bbb A:aaa" format
+   QString MakeColorString(const QColor& color) const;
+
    QAction* mExitAct;
    QAction* mLoadCharAct;
    QAction* mRecentFilesAct[5];
