@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  */
+
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/isector.h>
 
@@ -38,28 +39,28 @@ namespace dtCore
 {
 
    IMPLEMENT_MANAGEMENT_LAYER(Isector)
-      
+
    ///////////////////////////////////////////////////////////////////////////////
    Isector::Isector(dtCore::Scene *scene) :
       mStart(0,0,0), mDirection(0,1,0), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
    {
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,dtCore::Scene *scene):
       mStart(start), mDirection(dir), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
    {
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end):
       mStart(start), mDirection(), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
    {
       mDirection = end-start;
       mLineLength = mDirection.length();
-   
+
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_ISECTOR);
    }
 
@@ -73,7 +74,7 @@ namespace dtCore
    {
       mScene = newScene;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void Isector::SetUseEyePoint(bool newValue)
    {
@@ -90,33 +91,33 @@ namespace dtCore
          #endif
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    bool Isector::GetUseEyePoint() const
    {
       return mIntersectVisitor.getLODSelectionMode() == osgUtil::IntersectVisitor::USE_SEGMENT_START_POINT_AS_EYE_POINT_FOR_LOD_LEVEL_SELECTION;
    }
-   
-   
+
+
    ///////////////////////////////////////////////////////////////////////////////
    bool Isector::Update()
    {
-      if( !mSceneRoot.valid() && mScene == NULL )
+      if ( !mSceneRoot.valid() && mScene == NULL )
       {
          return false;
       }
-   
+
       //Make sure our line segment is correct.
-      if(mUpdateLineSegment)
+      if (mUpdateLineSegment)
       {
          CalcLineSegment();
       }
-   
-      if(mSceneRoot.valid())
+
+      if (mSceneRoot.valid())
       {
          mSceneRoot->GetOSGNode()->accept(mIntersectVisitor);
       }
-      else if( mScene != NULL )
+      else if ( mScene != NULL )
       {
          mScene->GetSceneNode()->accept(mIntersectVisitor);
       }
@@ -124,8 +125,8 @@ namespace dtCore
       {
          return false;
       }
-   
-      if(mIntersectVisitor.hits())
+
+      if (mIntersectVisitor.hits())
       {
          mHitList = mIntersectVisitor.getHitList(mLineSegment.get());
          osg::NodePath &nodePath = mHitList[0].getNodePath();
@@ -138,39 +139,39 @@ namespace dtCore
          return false;
       }
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable *Isector::MapNodePathToDrawable(osg::NodePath &nodePath)
    {
-      if( ( !mSceneRoot.valid() && mScene == NULL ) || nodePath.empty() )
+      if ( ( !mSceneRoot.valid() && mScene == NULL ) || nodePath.empty() )
       {
          return NULL;
       }
-   
+
       std::set<osg::Node *> nodeCache;
       osg::NodePath::iterator itor;
       std::stack<dtCore::DeltaDrawable *> drawables;
-   
+
       //Create a cache of the nodepath for quicker lookups since we are doing
       //quite a few.
       for (itor = nodePath.begin(); itor != nodePath.end(); ++itor)
       {
          nodeCache.insert(*itor);
       }
-   
+
       //In order to find the DeltaDrawable we first check the drawables at the
       //top level of the scene.  Then, keep on going though the hierarchy, in order
-	  //to find the Delta Drawable deeper in the graph (the closest to the 
-	  //intersection point)
-	  dtCore::DeltaDrawable* pCurrClosest = NULL;
+     //to find the Delta Drawable deeper in the graph (the closest to the
+     //intersection point)
+     dtCore::DeltaDrawable* pCurrClosest = NULL;
 
-      if( mSceneRoot.valid() )
+      if ( mSceneRoot.valid() )
       {
          drawables.push(mSceneRoot.get());
       }
-      else if( mScene != NULL )
+      else if ( mScene != NULL )
       {
-         for( unsigned i = 0; i < mScene->GetNumberOfAddedDrawable(); ++i )
+         for ( unsigned i = 0; i < mScene->GetNumberOfAddedDrawable(); ++i )
          {
             drawables.push( mScene->GetDrawable( i ) );
          }
@@ -179,29 +180,29 @@ namespace dtCore
       {
          return NULL;
       }
-   
+
       while (!drawables.empty())
       {
          dtCore::DeltaDrawable *d = drawables.top();
          drawables.pop();
-   
+
          if (nodeCache.find(d->GetOSGNode()) != nodeCache.end())
-		 {
-			 // save the current result
-			 pCurrClosest = d;
-			 // iterate through the children
-			 drawables.empty();
-			 for (unsigned i = 0; i < d->GetNumChildren(); i++)
-			 {
-				 drawables.push(d->GetChild(i));
-			 }
-			 //return d;
-		 }
+       {
+          // save the current result
+          pCurrClosest = d;
+          // iterate through the children
+          drawables.empty();
+          for (unsigned i = 0; i < d->GetNumChildren(); i++)
+          {
+             drawables.push(d->GetChild(i));
+          }
+          //return d;
+       }
       }
-   
+
       return pCurrClosest;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void Isector::Reset()
    {
@@ -210,7 +211,7 @@ namespace dtCore
       mClosestDrawable = NULL;
       mHitList.clear();
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void Isector::CalcLineSegment()
    {
@@ -224,7 +225,7 @@ namespace dtCore
 
       //Make sure the current direction vector is normalized.
       mDirection.normalize();
-   
+
       //Since we are working with line segments, we need to convert our ray
       //representation to a finite line.
       osg::Vec3 endPoint = mStart + (mDirection*mLineLength);
@@ -237,9 +238,9 @@ namespace dtCore
 
       mUpdateLineSegment = false;
    }
-   
-   
-   
+
+
+
    /**
     * Get the intersected point since the last call to Update().
     *
@@ -249,28 +250,28 @@ namespace dtCore
    void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum ) const
    {
       if (pointNum >= GetNumberOfHits()) return;
-   
+
       xyz = mHitList[pointNum].getWorldIntersectPoint();
    }
-   
+
    ///Get the normal at the intersected point
    void Isector::GetHitPointNormal( osg::Vec3& normal, int pointNum ) const
    {
       if (pointNum >= GetNumberOfHits()) return;
-   
+
       normal = mHitList[pointNum].getWorldIntersectNormal();
    }
 
-   
-   /** 
-    * Get the number of items that were intersected by this Isector.  Note: 
+
+   /**
+    * Get the number of items that were intersected by this Isector.  Note:
     * Isector::Update() must be called prior to calling this method.
-    * 
+    *
     * @return The number of intersected items
     */
    int Isector::GetNumberOfHits() const
    {
       return mHitList.size();
    }
-   
+
 }

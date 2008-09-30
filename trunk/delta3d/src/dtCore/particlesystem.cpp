@@ -1,6 +1,7 @@
 // particlesystem.cpp: Implementation of the ParticleSystem class.
 //
 //////////////////////////////////////////////////////////////////////
+
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/collisioncategorydefaults.h>
@@ -26,34 +27,34 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(ParticleSystem)
 
 /**
-* A visitor class that applies a set of particle system parameters.
-*/
+ * A visitor class that applies a set of particle system parameters.
+ */
 class ParticleSystemParameterVisitor : public osg::NodeVisitor
 {
 public:
 
-	ParticleSystemParameterVisitor(bool enabled)
-		: osg::NodeVisitor(TRAVERSE_ALL_CHILDREN),
-		mEnabled(enabled)
-	{}
+   ParticleSystemParameterVisitor(bool enabled)
+      : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN),
+      mEnabled(enabled)
+   {}
 
-	virtual void apply(osg::Node& node)
-	{
-		osg::Node* nodePtr = &node;
+   virtual void apply(osg::Node& node)
+   {
+      osg::Node* nodePtr = &node;
 
-		if(osgParticle::Emitter* emitter =
-			dynamic_cast<osgParticle::Emitter*>(nodePtr))
-		{
-			emitter->setEnabled(mEnabled);
-		}
+      if (osgParticle::Emitter* emitter =
+         dynamic_cast<osgParticle::Emitter*>(nodePtr))
+      {
+         emitter->setEnabled(mEnabled);
+      }
 
-		traverse(node);
-	}
+      traverse(node);
+   }
 
 
 private:
 
-	bool mEnabled;
+   bool mEnabled;
 };
 
 
@@ -88,27 +89,27 @@ class psGeodeTransform : public osg::MatrixTransform
 public:
    class psGeodeTransformCallback : public osg::NodeCallback
    {
-	   //\NOTE: This is triggered once per camera which may
-	   // be inefficient, we may want to look into this later
-	   // to ensure this happens once per frame,
-	   // instead of once per camera per frame
+      //\NOTE: This is triggered once per camera which may
+      // be inefficient, we may want to look into this later
+      // to ensure this happens once per frame,
+      // instead of once per camera per frame
       virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
       {
-         if ( psGeodeTransform* ps = dynamic_cast<psGeodeTransform*>( node ) )
+         if (psGeodeTransform* ps = dynamic_cast<psGeodeTransform*>(node))
          {
             osg::NodePath fullNodePath = nv->getNodePath();
 
-            if( !fullNodePath.empty() )
+            if (!fullNodePath.empty())
             {
                fullNodePath.pop_back();
 
                #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
                // Luckily, this behavior is redundant with OSG 1.1
 
-               //if( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
+               //if ( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
                // This dynamic_cast should be much faster than constructing two strings and
                // comparing them
-               if(dynamic_cast<osg::CameraNode*>(fullNodePath[0]) != NULL)
+               if (dynamic_cast<osg::CameraNode*>(fullNodePath[0]) != NULL)
                {
                   fullNodePath = osg::NodePath( fullNodePath.begin()+1, fullNodePath.end() );
                }
@@ -124,7 +125,7 @@ public:
       }
    };
 
-   psGeodeTransform() {setUpdateCallback( new psGeodeTransformCallback() );}
+   psGeodeTransform() { setUpdateCallback(new psGeodeTransformCallback()); }
 
 };
 
@@ -134,14 +135,14 @@ public:
    findGeodeVisitor() : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
    {
    }
-   virtual void apply(osg::Geode &searchNode)
+   virtual void apply(osg::Geode& searchNode)
    {
        foundGeodeVector.push_back(&searchNode);
 
        traverse(searchNode);
    }
 
-   const std::vector<osg::Geode*> getGeodeVector() {return foundGeodeVector;}
+   const std::vector<osg::Geode*> getGeodeVector() { return foundGeodeVector; }
 
 protected:
    std::vector<osg::Geode*> foundGeodeVector;
@@ -170,8 +171,8 @@ public:
          ++itr)
       {
          // Pull particle out of group and place it into world space.
-         this->removeChild( *itr );
-         psGeodeXForm->addChild( *itr );
+         this->removeChild(*itr);
+         psGeodeXForm->addChild(*itr);
       }
 
    }
@@ -188,13 +189,13 @@ ParticleLayer::~ParticleLayer(){}
 /// Copy Constructor
 ParticleLayer::ParticleLayer(const ParticleLayer &copyLayer)
 {
-   mGeode            = copyLayer.mGeode;
-   mParticleSystem   = copyLayer.mParticleSystem;
-   mEmitterTransform = copyLayer.mEmitterTransform;
-   mModularEmitter   = copyLayer.mModularEmitter;
-   mProgram          = copyLayer.mProgram;
-   mLayerName        = copyLayer.mLayerName;
-   mProgTypeIsModular= copyLayer.mProgTypeIsModular;
+   mGeode             = copyLayer.mGeode;
+   mParticleSystem    = copyLayer.mParticleSystem;
+   mEmitterTransform  = copyLayer.mEmitterTransform;
+   mModularEmitter    = copyLayer.mModularEmitter;
+   mProgram           = copyLayer.mProgram;
+   mLayerName         = copyLayer.mLayerName;
+   mProgTypeIsModular = copyLayer.mProgTypeIsModular;
 }
 
 /// mutators for RefPtr Variables and string
@@ -205,7 +206,7 @@ void ParticleLayer::SetGeode(osg::Geode& geode)
 
 void ParticleLayer::SetParticleSystem(osgParticle::ParticleSystem& particleSystem)
 {
-   mParticleSystem  = &particleSystem;
+   mParticleSystem = &particleSystem;
 }
 
 void ParticleLayer::SetEmitterTransform(osg::MatrixTransform& matrixtransform)
@@ -215,7 +216,7 @@ void ParticleLayer::SetEmitterTransform(osg::MatrixTransform& matrixtransform)
 
 void ParticleLayer::SetModularEmitter(osgParticle::ModularEmitter& modularEmitter)
 {
-   mModularEmitter  = &modularEmitter;
+   mModularEmitter = &modularEmitter;
 }
 
 void ParticleLayer::SetProgram(osgParticle::Program& program)
@@ -281,7 +282,7 @@ const osgParticle::Program& ParticleLayer::GetProgram() const
 
 bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
 {
-   return (testLayer.mLayerName == mLayerName);
+   return testLayer.mLayerName == mLayerName;
 }
 
 /** This method will load the particle effect from a file.  The loaded particle
@@ -294,14 +295,14 @@ bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
   */
 osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 {
-   osg::Node *node = NULL;
+   osg::Node* node = NULL;
    node = Loadable::LoadFile(filename, false); //force it not to use cache
 
-   if(node != NULL)
+   if (node != NULL)
    {
       mLoadedFile = node;
 
-      if(GetMatrixNode()->getNumChildren() > 0)
+      if (GetMatrixNode()->getNumChildren() > 0)
       {
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
@@ -310,7 +311,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       // Set up all the particle layers
       SetupParticleLayers();
 
-      if( mParentRelative )
+      if (mParentRelative)
       {
          // Attach the particle system tree directly to the transform node.
          GetMatrixNode()->addChild((osg::Group*)mLoadedFile.get());
@@ -318,7 +319,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 
          // Modify the reference frame of both the emitter and programe
          // for each particle layer.
-         for(std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+         for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
             pLayerIter != mLayers.end(); ++pLayerIter)
          {
             // Set the emitter and program to run from the origin
@@ -329,13 +330,13 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       }
       else // Emit particles into world space
       {
-         particleSystemHelper *psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
+         particleSystemHelper* psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
 
          GetMatrixNode()->addChild(psh);
       }
 
       // Enable/disable particle system
-      ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
+      ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor(mEnabled);
       mLoadedFile->accept(pspv);
    }
    else
@@ -428,12 +429,12 @@ void ParticleSystem::SetupParticleLayers()
    //    we will bind the geode name to the whole struct with newly created var
    //    layer.mstrLayername
    //    Osg checks for the same particle system, instead of names
-   for(i=0;i<newParticleSystemGroup->getNumChildren();i++)
+   for (i = 0; i < newParticleSystemGroup->getNumChildren(); i++)
    {
       searchingNode = newParticleSystemGroup->getChild(i);
       ParticleLayer layer;
 
-      //if(dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
+      //if (dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
       //{
          // This is when you import multiple osg files in one system. This wont be done in
          // delta3d since it was set up where you can only load in 1 per system. Which
@@ -446,21 +447,21 @@ void ParticleSystem::SetupParticleLayers()
       //}
 
       // See if this is the particle system of the geode
-      osg::Geode *geode = dynamic_cast<osg::Geode*>(searchingNode);
-      if(geode != NULL)
+      osg::Geode* geode = dynamic_cast<osg::Geode*>(searchingNode);
+      if (geode != NULL)
       {
          // well its a geometry node.
          layer.SetGeode(*geode);
 
          // see if the geometry node has drawables that are the particle system
          // we are looking for
-         for(unsigned int j=0;j<layer.GetGeode().getNumDrawables();j++)
+         for (unsigned int j = 0; j < layer.GetGeode().getNumDrawables(); j++)
          {
             osg::Drawable* drawable    = layer.GetGeode().getDrawable(j);
 
             // seems like we found the particle system, continue on!
-            osgParticle::ParticleSystem *psDrawable = dynamic_cast<osgParticle::ParticleSystem*>(drawable);
-            if(psDrawable != NULL)
+            osgParticle::ParticleSystem* psDrawable = dynamic_cast<osgParticle::ParticleSystem*>(drawable);
+            if (psDrawable != NULL)
             {
                layer.SetParticleSystem(*psDrawable);
                layer.SetLayerName(layer.GetGeode().getName());
@@ -516,7 +517,8 @@ void ParticleSystem::SetupParticleLayers()
             // Go through the populated particle system list and see where this
             // belongs too.
             for (std::list<ParticleLayer>::iterator layerIter = mLayers.begin();
-                     layerIter != mLayers.end(); ++layerIter)
+                 layerIter != mLayers.end();
+                 ++layerIter)
             {
                // check for pointers, osg comparison
                if (&layerIter->GetParticleSystem() == newModularProgram->getParticleSystem())
@@ -559,11 +561,11 @@ void ParticleSystem::SetupParticleLayers()
  */
 ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
 {
-   for(std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+   for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
        pLayerIter != mLayers.end(); ++pLayerIter)
    {
       // check if the name is what they want, send it back
-      if(layerName == pLayerIter->GetLayerName())
+      if (layerName == pLayerIter->GetLayerName())
          return &(*pLayerIter);
    }
    return NULL;
@@ -571,12 +573,15 @@ ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
 
 const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName) const
 {
-   for(std::list<ParticleLayer>::const_iterator pLayerIter = mLayers.begin();
-      pLayerIter != mLayers.end(); ++pLayerIter)
+   for (std::list<ParticleLayer>::const_iterator pLayerIter = mLayers.begin();
+      pLayerIter != mLayers.end();
+      ++pLayerIter)
    {
       // check if the name is what they want, send it back
-      if(layerName == pLayerIter->GetLayerName())
+      if (layerName == pLayerIter->GetLayerName())
+      {
          return &(*pLayerIter);
+      }
    }
    return NULL;
 }
@@ -586,7 +591,7 @@ const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName
 * and set all the current layers to those of that
 * sent in
 */
-void ParticleSystem::SetAllLayers(const std::list<ParticleLayer> &layersToSet)
+void ParticleSystem::SetAllLayers(const std::list<ParticleLayer>& layersToSet)
 {
    mLayers = layersToSet;
 }
@@ -597,10 +602,10 @@ void ParticleSystem::SetAllLayers(const std::list<ParticleLayer> &layersToSet)
 */
 void ParticleSystem::SetSingleLayer(ParticleLayer& layerToSet)
 {
-   for(std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+   for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
        pLayerIter != mLayers.end(); ++pLayerIter)
    {
-      if(layerToSet.GetLayerName() == pLayerIter->GetLayerName())
+      if (layerToSet.GetLayerName() == pLayerIter->GetLayerName())
       {
          //set the layer to what they want.
          *pLayerIter = layerToSet;

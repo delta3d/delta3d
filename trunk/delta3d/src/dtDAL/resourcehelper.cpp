@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #include <prefix/dtdalprefix-src.h>
 #include <string>
 #include <sstream>
@@ -47,7 +48,7 @@ namespace dtDAL
       {
       }
 
-	  virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const
+      virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const
       {
          if (type != dtUtil::REGULAR_FILE)
             return false;
@@ -68,7 +69,7 @@ namespace dtDAL
                                                      const std::string& destCategoryPath) const
       {
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-		 dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+         dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
          if (ftype != dtUtil::REGULAR_FILE)
          {
@@ -211,7 +212,7 @@ namespace dtDAL
          //To work around a weird compiler bug...
          DataType* dt = const_cast<DataType*>(&resourceType);
 
-		 dtUtil::FileType fType = dtUtil::FileUtils::GetInstance().GetFileInfo(filePath).fileType;
+         dtUtil::FileType fType = dtUtil::FileUtils::GetInstance().GetFileInfo(filePath).fileType;
 
          if (fType == dtUtil::REGULAR_FILE && !ext.empty())
          {
@@ -257,7 +258,7 @@ namespace dtDAL
       }
       else
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
             "The datatype passed must be a resource type.", __FILE__, __LINE__);
       }
       return NULL;
@@ -336,7 +337,7 @@ namespace dtDAL
       }
       else
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
             "The datatype passed must be a resource type.", __FILE__, __LINE__);
       }
 
@@ -348,7 +349,7 @@ namespace dtDAL
       DataType* dt = const_cast<DataType*>(&handler.GetResourceType());
 
       if (!dt->IsResource())
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, 
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError,
          "The datatype of resource handlers must a resource type.", __FILE__, __LINE__);
 
       //get the map for the
@@ -509,7 +510,7 @@ namespace dtDAL
 
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-	  dtUtil::FileType ftype = fileUtils.GetFileInfo(pathToFile).fileType;
+      dtUtil::FileType ftype = fileUtils.GetFileInfo(pathToFile).fileType;
 
       if (ftype == dtUtil::FILE_NOT_FOUND)
       {
@@ -614,7 +615,7 @@ namespace dtDAL
          result = fileUtils.DirDelete(sofar, recursive);
          if (result && dataTypeTree != NULL)
          {
-            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor(*dataTypeTree, category);
+            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodefor (*dataTypeTree, category);
             if (treeIt != dataTypeTree->end())
                //get the tree above this one, and remove the iterator from it.
                treeIt.out().tree_ref().erase(treeIt);
@@ -629,7 +630,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
+   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodefor (
       dtUtil::tree<ResourceTreeNode>& resources, const std::string& id)
    {
 
@@ -678,7 +679,7 @@ namespace dtDAL
    dtUtil::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
                                                                          const std::string& category, dtUtil::tree<ResourceTreeNode>* parentTree) const
    {
-	   dtUtil::FileType ft = dtUtil::FileUtils::GetInstance().GetFileInfo(path).fileType;
+      dtUtil::FileType ft = dtUtil::FileUtils::GetInstance().GetFileInfo(path).fileType;
       if (ft == dtUtil::REGULAR_FILE)
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectResourceError, std::string("File: \"")
@@ -720,7 +721,7 @@ namespace dtDAL
    {
 
       //find the category node from that string.
-      dtUtil::tree<ResourceTreeNode>::iterator resIt = FindTreeNodeFor(resourceTree, resource.GetResourceIdentifier());
+      dtUtil::tree<ResourceTreeNode>::iterator resIt = FindTreeNodefor (resourceTree, resource.GetResourceIdentifier());
 
       if (resIt != resourceTree.end() && !resIt->isCategory())
       {
@@ -843,7 +844,7 @@ namespace dtDAL
       {
          fileUtils.PopDirectory();
          throw ex;
-         
+
       }
       fileUtils.PopDirectory();
    }

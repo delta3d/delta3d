@@ -47,11 +47,11 @@ SunlightShader::SunlightShader()
       "                                               \n"
       "   TEMP cos;                                         \n"
       "   DP3 cos.x, temp, dir;                          \n"
-      "   MUL cos.y, cos.x, cos.x;	# cos * cos           \n"
-      "   SUB cos.z, 1.0, cos.y;		# 1.0 - cos * cos       \n"
+      "   MUL cos.y, cos.x, cos.x;   # cos * cos           \n"
+      "   SUB cos.z, 1.0, cos.y;      # 1.0 - cos * cos       \n"
       "                                                      \n"
       "   TEMP ray;                                             \n"
-      "   MUL ray, cos.z, 0.0597;		# 3.0 / (16.0 * PI)  \n"
+      "   MUL ray, cos.z, 0.0597;      # 3.0 / (16.0 * PI)  \n"
       "   MUL ray, ray, betaRay;                            \n"
       "                                                     \n"
       "   TEMP mie;                                         \n"
@@ -60,24 +60,24 @@ SunlightShader::SunlightShader()
       "   POW mie.x, mie.x, cos.w;                          \n"
       "   RCP mie.x, mie.x;                                 \n"
       "   MUL mie, mie.x, greenstein.z;                      \n"
-      "   MUL mie, mie, 0.0796;		# 1.0 / (4.0 * PI)       \n"
+      "   MUL mie, mie, 0.0796;      # 1.0 / (4.0 * PI)       \n"
       "   MUL mie, mie, betaMie;                            \n"
       "                                                     \n"
       "   SUB temp, camera, xyz;                         \n"
       "   DP3 temp.w, temp, temp;                           \n"
       "   RSQ temp.w, temp.w;                               \n"
-      "   RCP temp.w, temp.w;		# distance to camera        \n"
+      "   RCP temp.w, temp.w;      # distance to camera        \n"
       "                                                     \n"
       "   TEMP fog;                                       \n"
       "   ADD fog, betaRay, betaMie;                         \n"
       "   MUL fog, fog, temp.w;                                \n"
-      "   MUL fog, fog, 0.693;	# ln(2.0)                  \n"
+      "   MUL fog, fog, 0.693;   # ln(2.0)                  \n"
       "                                                     \n"
       "   EX2 fog.x, -fog.x;                                \n"
       "   EX2 fog.y, -fog.y;                                \n"
       "   EX2 fog.z, -fog.z;                                \n"
       "                                                     \n"
-      "   SUB temp, 1.0, fog;		# 1.0 - fog                 \n"
+      "   SUB temp, 1.0, fog;      # 1.0 - fog                 \n"
       "                                                     \n"
       "   TEMP scattering;                                  \n"
       "   ADD scattering, ray, mie;                          \n"
@@ -120,12 +120,12 @@ SunlightShader::SunlightShader()
       "   ADD result.color, color, bc.x;  \n"
       "                                      \n"
       "   END  \n";
-   
+
    mTerrainFP->setFragmentProgram( data2 );
 
    lambda = osg::Vec3(1.0 / 650e-9,1.0 / 570e-9,1.0 / 475e-9);
 
-   for(int i = 0; i < 3; i++)
+   for (int i = 0; i < 3; i++)
    {
       lambda2[i] = lambda[i] * lambda[i];
       lambda4[i] = lambda2[i] * lambda2[i];
@@ -145,10 +145,10 @@ SunlightShader::~SunlightShader()
 {
 }
 
-/** Update the shader with new values. 
+/** Update the shader with new values.
   *
   *
-  *@param sunDir : The az/el of the sun in Degrees.  
+  *@param sunDir : The az/el of the sun in Degrees.
   *                sunDir[0] = az (0=north, 180=south)
   *                sunDir[1] = el (90=horizon, 0=zenith)
   *@param eyeXYZ : The Camera position (meters)
@@ -158,8 +158,8 @@ SunlightShader::~SunlightShader()
   *                  2.545e25 looks about right)
   */
 void SunlightShader::Update(  const osg::Vec2& sunDir,
-                              const osg::Vec3& eyeXYZ, 
-                              float turbidity, 
+                              const osg::Vec3& eyeXYZ,
+                              float turbidity,
                               float energy,
                               float molecules )
 {
