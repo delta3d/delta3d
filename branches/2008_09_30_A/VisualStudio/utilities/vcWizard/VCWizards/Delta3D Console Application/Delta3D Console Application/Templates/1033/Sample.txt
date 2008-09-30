@@ -1,0 +1,16 @@
+//////////////////////////////////////////////////////////////////
+// Sample.txt - this file shows how the wizard directives are used
+//////////////////////////////////////////////////////////////////
+
+[!if SAMPLE_CHECKBOX]
+You have checked the option 'Sample checkbox'
+[!endif]
+
+[!if SAMPLE_RADIO_OPTION1]
+You have checked the option 'Sample radio button option 1'
+[!else]
+You have checked the option 'Sample radio button option 2'
+[!endif]
+
+You have selected the following option from the sample list box:
+[!output SAMPLE_LISTBOX]
