@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #include <prefix/dtdalprefix-src.h>
 #include <cstdio>
 #include <cstdlib>
@@ -25,8 +26,8 @@
 #include <cmath>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
 #include <xercesc/util/XMLString.hpp>
@@ -37,7 +38,7 @@
 #include <xercesc/sax/SAXParseException.hpp>
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #include <osgDB/FileNameUtils>
@@ -215,7 +216,7 @@ namespace dtDAL
       {
          return NULL;
       }
-      
+
       return mHandler->GetMap();
    }
 
@@ -226,7 +227,7 @@ namespace dtDAL
       {
          return NULL;
       }
-      
+
       return mHandler->GetMap();
    }
 
@@ -234,7 +235,7 @@ namespace dtDAL
    MapParser::MapParser() :
       mHandler(new MapContentHandler()),
       mParsing(false)
-   { 
+   {
       mLogger = &dtUtil::Log::GetInstance(logName);
 
       mXercesParser = XMLReaderFactory::createXMLReader();
@@ -273,16 +274,16 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
 
-   const std::set<std::string>& MapParser::GetMissingActorTypes() 
-   { 
-      return mHandler->GetMissingActorTypes(); 
+   const std::set<std::string>& MapParser::GetMissingActorTypes()
+   {
+      return mHandler->GetMissingActorTypes();
    }
-   
+
    /////////////////////////////////////////////////////////////////
 
-   const std::vector<std::string>& MapParser::GetMissingLibraries() 
-   { 
-      return mHandler->GetMissingLibraries(); 
+   const std::vector<std::string>& MapParser::GetMissingLibraries()
+   {
+      return mHandler->GetMissingLibraries();
    }
 
    /////////////////////////////////////////////////////////////////
@@ -382,18 +383,18 @@ namespace dtDAL
       default:
          //LOG error
          return;
-      } 
+      }
 
       BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", vec[0]);
       AddCharacters(numberConversionBuffer);
       EndElement();
-      
+
       BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", vec[1]);
       AddCharacters(numberConversionBuffer);
       EndElement();
-      
+
       if (VecType::num_components > 2)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
@@ -401,7 +402,7 @@ namespace dtDAL
          AddCharacters(numberConversionBuffer);
          EndElement();
       }
-      
+
       if (VecType::num_components > 3)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
@@ -409,7 +410,7 @@ namespace dtDAL
          AddCharacters(numberConversionBuffer);
          EndElement();
       }
-      
+
       EndElement();
    }
 
@@ -438,7 +439,7 @@ namespace dtDAL
          BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
          AddCharacters(map.GetName());
          EndElement();
-         if(!map.GetPathNodeFileName().empty())
+         if (!map.GetPathNodeFileName().empty())
          {
             BeginElement(MapXMLConstants::WAYPOINT_FILENAME_ELEMENT);
             AddCharacters(map.GetPathNodeFileName());
@@ -518,7 +519,7 @@ namespace dtDAL
 
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
 
-         if(map.GetEnvironmentActor() != NULL)
+         if (map.GetEnvironmentActor() != NULL)
          {
             ActorProxy &proxy = *map.GetEnvironmentActor();
             BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
@@ -536,7 +537,7 @@ namespace dtDAL
 
             //ghost proxies arent saved
             //added 7/10/06 -banderegg
-            if(proxy.IsGhostProxy()) 
+            if (proxy.IsGhostProxy())
                continue;
 
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
@@ -564,9 +565,9 @@ namespace dtDAL
                const ActorProperty& property = *(*i);
 
                // If the property is read only, skip it
-               if(property.IsReadOnly())
+               if (property.IsReadOnly())
                   continue;
-                                 
+
                WriteProperty(property);
 
             }
@@ -605,7 +606,7 @@ namespace dtDAL
       const DataType& dataType = parameter.GetDataType();
 
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT);
-      
+
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
       AddCharacters(parameter.GetName());
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -663,11 +664,11 @@ namespace dtDAL
             BeginElement(MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT);
             std::vector<const NamedParameter*> parameters;
             static_cast<const NamedGroupParameter&>(parameter).GetParameters(parameters);
-            for (size_t i = 0; i < parameters.size(); ++i) 
+            for (size_t i = 0; i < parameters.size(); ++i)
             {
                WriteParameter(*parameters[i]);
             }
-            EndElement();                     
+            EndElement();
             break;
          }
          default:
@@ -712,22 +713,22 @@ namespace dtDAL
       osg::Vec4f val = holder.GetValue();
 
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT);
-      
+
       BeginElement(MapXMLConstants::ACTOR_COLOR_R_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", val[0]);
       AddCharacters(numberConversionBuffer);
       EndElement();
-      
+
       BeginElement(MapXMLConstants::ACTOR_COLOR_G_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", val[1]);
       AddCharacters(numberConversionBuffer);
       EndElement();
-      
+
       BeginElement(MapXMLConstants::ACTOR_COLOR_B_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", val[2]);
       AddCharacters(numberConversionBuffer);
       EndElement();
-   
+
       BeginElement(MapXMLConstants::ACTOR_COLOR_A_ELEMENT);
       snprintf(numberConversionBuffer, bufferMax, "%lf", val[3]);
       AddCharacters(numberConversionBuffer);
@@ -786,7 +787,7 @@ namespace dtDAL
       const DataType& propertyType = property.GetDataType();
 
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
-      
+
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
       AddCharacters(property.GetName());
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -885,7 +886,7 @@ namespace dtDAL
             }
          }
       }
-      
+
       //end property element
       EndElement();
    }
@@ -932,7 +933,7 @@ namespace dtDAL
       if (mElements.empty())
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Invalid end element when saving a map: ending with no beginning.");
-         
+
          indentCount = 0;
       }
       for (size_t x = 0; x < indentCount; x++)

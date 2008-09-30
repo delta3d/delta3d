@@ -42,7 +42,7 @@ namespace dtCore
 
          virtual void operator()(const osg::Camera &camera) const
          {
-            if(mTakeScreenShotNextFrame)
+            if (mTakeScreenShotNextFrame)
             {
                mTakeScreenShotNextFrame = false;
                osg::ref_ptr<osg::Image> image = new osg::Image;
@@ -134,10 +134,10 @@ namespace dtCore
    {
       std::string timeString = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
                                                           dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
-      for(unsigned int i = 0 ; i < timeString.length(); ++i)
+      for (unsigned int i = 0 ; i < timeString.length(); ++i)
       {
          char c = timeString[i];
-         if(c == '.'
+         if (c == '.'
             || c == ':'
             || c == '-')
          {
@@ -188,7 +188,7 @@ namespace dtCore
    void Camera::OnMessage( MessageData* data )
    {
 
-      if( data->message == "framesynch" )
+      if ( data->message == "framesynch" )
       {
          FrameSynch( *static_cast<const double*>(data->userData) );
       }
@@ -199,9 +199,9 @@ namespace dtCore
    {
       osg::CullSettings::ComputeNearFarMode osgMode;
 
-      switch(mode)
+      switch (mode)
       {
-      case NO_AUTO_NEAR_FAR: osgMode = osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR;	break;
+      case NO_AUTO_NEAR_FAR: osgMode = osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR; break;
       case BOUNDING_VOLUME_NEAR_FAR: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES; break;
       case PRIMITIVE_NEAR_FAR: osgMode = osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES; break;
 
@@ -215,7 +215,7 @@ namespace dtCore
    void Camera::FrameSynch( const double /*deltaFrameTime*/ )
    {
       // Only do our normal Camera stuff if it is enabled
-      if(GetEnabled() == false)
+      if (GetEnabled() == false)
       {
          return;
       }
@@ -233,7 +233,7 @@ namespace dtCore
       // use the top osg::CameraNode in our matrix calculations, otherwise it
       // will be applied twice. If this instance of dtCore::Camera is NOT in
       // a dtCore::Scene, we must apply the osg::CameraNode matrix here.
-      if( mAddedToSceneGraph )
+      if ( mAddedToSceneGraph )
       {
          // Find the transform in World coordinates, but leave out
          // the osg::CameraNode.
@@ -243,7 +243,7 @@ namespace dtCore
       {
          osg::NodePathList nodePathList = GetMatrixNode()->getParentalNodePaths();
 
-         if( !nodePathList.empty() )
+         if ( !nodePathList.empty() )
          {
             osg::NodePath nodePath = nodePathList[0];
 
@@ -428,7 +428,7 @@ namespace dtCore
 
       // If W is negative, flip the Z value to negative to
       // flag this point as being behind the camera view.
-      if( screenXYZ.w() < 0.0 )
+      if ( screenXYZ.w() < 0.0 )
       {
          outScreenPos.z() *= -1.0;
       }

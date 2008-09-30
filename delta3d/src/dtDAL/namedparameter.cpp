@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* @author David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @author David Guthrie
+ */
 
 #include <prefix/dtdalprefix-src.h>
 #include <string>
@@ -39,8 +39,8 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool NamedParameter::IsList() const 
-   { 
+   bool NamedParameter::IsList() const
+   {
       return mIsList;
    }
 
@@ -57,29 +57,29 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
          "] does not have an associated actor property type in SetFromProperty()", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
          "Message parameter[" + GetName() + "] of type[" + GetDataType().GetName() +
          "] does not have an associated actor property type in ApplyValueToProperty()", __FILE__, __LINE__);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedParameter::ValidatePropertyType(const dtDAL::ActorProperty &property) const 
+   void NamedParameter::ValidatePropertyType(const dtDAL::ActorProperty& property) const
    {
       if (property.GetDataType() != GetDataType())
       {
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
             "Actor Property [" + property.GetName() + "] with Data Type [" + property.GetDataType().GetName() +
-            "] does not match the Message Parameter [" + GetName() + 
+            "] does not match the Message Parameter [" + GetName() +
             "] with Data Type [" + GetDataType().GetName() + "]", __FILE__, __LINE__);
       }
    }
@@ -90,7 +90,7 @@ namespace dtDAL
    {
       dtCore::RefPtr<NamedParameter> param;
 
-      switch (type.GetTypeId()) 
+      switch (type.GetTypeId())
       {
       case dtDAL::DataType::CHAR_ID:
       case dtDAL::DataType::UCHAR_ID:
@@ -190,7 +190,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    void NamedParameter::WriteToLog(dtUtil::Log &logger, dtUtil::Log::LogMessageType level) const
    {
-      if(logger.IsLevelEnabled(level))
+      if (logger.IsLevelEnabled(level))
       {
          std::ostringstream oss("");
          oss << "Message Parameter is: \"" << GetName() << ".\" ";
@@ -207,14 +207,14 @@ namespace dtDAL
       NamedParameter(dtDAL::DataType::GROUP, name, false)
    {}
 
-   void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const 
+   void NamedGroupParameter::ToDataStream(dtUtil::DataStream& stream) const
    {
       // Write out the size of the list so we know how many times to loop in FromDataStream
       stream << (unsigned int)mParameterList.size();
 
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-      for(; i != end; ++i)
+      for (; i != end; ++i)
       {
          stream << i->second->GetDataType().GetTypeId();
          stream << i->second->GetName();
@@ -225,28 +225,28 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
 
-   void NamedGroupParameter::FromDataStream(dtUtil::DataStream& stream) 
+   void NamedGroupParameter::FromDataStream(dtUtil::DataStream& stream)
    {
       // Read in the size of the stream
       unsigned int size;
       stream >> size;
 
-      for(unsigned short int i = 0; i < size; i++)
+      for (unsigned short int i = 0; i < size; i++)
       {
          unsigned char id;
          stream >> id;
          dtDAL::DataType *type = NULL;
 
-         for(unsigned int j = 0; j < dtDAL::DataType::EnumerateType().size(); j++)
+         for (unsigned int j = 0; j < dtDAL::DataType::EnumerateType().size(); j++)
          {
             dtDAL::DataType* d = dtDAL::DataType::EnumerateType()[j];
-            if(d->GetTypeId() == id)
+            if (d->GetTypeId() == id)
             {
                type = d;
                break;
             }
          }
-         if(type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
+         if (type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
             throw dtUtil::Exception(ExceptionEnum::BaseException, "The datatype was not found in the stream", __FILE__, __LINE__);
 
          std::string name;
@@ -270,22 +270,22 @@ namespace dtDAL
          }
 
          param->FromDataStream(stream);
-      }      
+      }
    }
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedGroupParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
       const dtDAL::GroupActorProperty *gap = static_cast<const dtDAL::GroupActorProperty*>(&property);
-      if (gap->GetValue().valid()) 
+      if (gap->GetValue().valid())
       {
          CopyFrom(*gap->GetValue());
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   void NamedGroupParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -294,12 +294,12 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const std::string NamedGroupParameter::ToString() const 
+   const std::string NamedGroupParameter::ToString() const
    {
       std::string toFill;
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-      for(; i!= end; ++i)
+      for (; i!= end; ++i)
       {
          NamedParameter& param = *i->second;
          toFill.append(param.GetName());
@@ -321,7 +321,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool NamedGroupParameter::FromString(const std::string& value) 
+   bool NamedGroupParameter::FromString(const std::string& value)
    {
       std::istringstream iss(value);
 
@@ -338,7 +338,7 @@ namespace dtDAL
 
       dtDAL::DataType *type = dtDAL::DataType::GetValueForName(typeString);
 
-      if(type == NULL)
+      if (type == NULL)
          return false;
 
       // isList
@@ -347,7 +347,7 @@ namespace dtDAL
       // try and retrieve the parameter
       dtCore::RefPtr<NamedParameter> param = GetParameter(paramName);
 
-      if (param == NULL) 
+      if (param == NULL)
       { // add it if it does not exist
          if (isList)
          {
@@ -361,21 +361,21 @@ namespace dtDAL
       }
 
       param->FromString(paramValue);
-      return true; 
+      return true;
 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::CopyFrom(const NamedParameter& otherParam) 
+   void NamedGroupParameter::CopyFrom(const NamedParameter& otherParam)
    {
       if (otherParam.GetDataType() != GetDataType())
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
          "The msg parameter must be of type GROUP.", __FILE__, __LINE__);
 
       const NamedGroupParameter& gpm = static_cast<const NamedGroupParameter&>(otherParam);
 
       //wipe out any existing parameters.  It's easier to just recreate them.
-      mParameterList.clear(); 
+      mParameterList.clear();
 
       //copy parameters
       NamedGroupParameter::ParameterList::const_iterator i = gpm.mParameterList.begin();
@@ -395,7 +395,7 @@ namespace dtDAL
          if (newParameter == NULL)
             //This case should not happen, the method above should throw an exception if it doesn't work, but
             //this is a case of paranoid programming.
-            throw dtUtil::Exception(ExceptionEnum::BaseException, 
+            throw dtUtil::Exception(ExceptionEnum::BaseException,
             "Unable to create parameter of type " + i->second->GetDataType().GetName(),
             __FILE__, __LINE__);
 
@@ -404,8 +404,8 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NamedParameter* NamedGroupParameter::AddParameter(const dtUtil::RefString& name, 
-      dtDAL::DataType& type) 
+   NamedParameter* NamedGroupParameter::AddParameter(const dtUtil::RefString& name,
+      dtDAL::DataType& type)
    {
       dtCore::RefPtr<NamedParameter> param = NamedParameter::CreateFromType(type, name);
       if (param.valid())
@@ -430,7 +430,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::AddParameter(NamedParameter& newParam) 
+   void NamedGroupParameter::AddParameter(NamedParameter& newParam)
    {
       if (!mParameterList.insert(std::make_pair(newParam.GetName(), &newParam)).second)
          throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
@@ -439,38 +439,38 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name) 
+   NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name)
    {
       NamedGroupParameter::ParameterList::iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name) const 
+   const NamedParameter* NamedGroupParameter::GetParameter(const dtUtil::RefString& name) const
    {
       NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.find(name);
       return itor == mParameterList.end() ? NULL : itor->second.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::GetParameters(std::vector<NamedParameter*>& toFill) 
+   void NamedGroupParameter::GetParameters(std::vector<NamedParameter*>& toFill)
    {
       toFill.clear();
       toFill.reserve(mParameterList.size());
       NamedGroupParameter::ParameterList::iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::iterator end = mParameterList.end();
-      for(;i != end; ++i)
+      for (;i != end; ++i)
          toFill.push_back(i->second.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGroupParameter::GetParameters(std::vector<const NamedParameter*>& toFill) const 
+   void NamedGroupParameter::GetParameters(std::vector<const NamedParameter*>& toFill) const
    {
       toFill.clear();
       toFill.reserve(mParameterList.size());
       NamedGroupParameter::ParameterList::const_iterator i = mParameterList.begin();
       NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-      for(;i != end; ++i)
+      for (;i != end; ++i)
          toFill.push_back(i->second.get());
    }
 
@@ -486,7 +486,7 @@ namespace dtDAL
          NamedGroupParameter::ParameterList::const_iterator itor = mParameterList.begin();
          NamedGroupParameter::ParameterList::const_iterator itorComp = groupToCompare.mParameterList.begin();
          NamedGroupParameter::ParameterList::const_iterator end = mParameterList.end();
-         for(; itor != end; ++itor)
+         for (; itor != end; ++itor)
          {
             //spin through the props and return false if one is not equal.
             if (*itor->second != *itorComp->second)
@@ -570,7 +570,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedBooleanParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedBooleanParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -579,7 +579,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedBooleanParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedBooleanParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -630,8 +630,8 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedUnsignedIntParameter::NamedUnsignedIntParameter(const dtUtil::RefString& name,
-      unsigned int defaultValue,	 bool isList)  :
-         NamedPODParameter<unsigned int>(dtDAL::DataType::UINT, name,defaultValue,isList)
+      unsigned int defaultValue, bool isList)  :
+         NamedPODParameter<unsigned int>(dtDAL::DataType::UINT, name, defaultValue, isList)
    {
    }
 
@@ -642,7 +642,7 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   NamedIntParameter::NamedIntParameter(const dtUtil::RefString& name, int defaultValue,	bool isList) :
+   NamedIntParameter::NamedIntParameter(const dtUtil::RefString& name, int defaultValue, bool isList) :
    NamedPODParameter<int>(dtDAL::DataType::INT, name,defaultValue,isList)
    {
    }
@@ -653,7 +653,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedIntParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedIntParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -662,7 +662,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedIntParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedIntParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -697,7 +697,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedLongIntParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedLongIntParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -706,7 +706,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedLongIntParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedLongIntParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -728,7 +728,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedFloatParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedFloatParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -737,7 +737,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedFloatParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedFloatParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -758,7 +758,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedDoubleParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedDoubleParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -767,7 +767,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedDoubleParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedDoubleParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -783,8 +783,8 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   NamedStringParameter::NamedStringParameter(DataType& dataType, const dtUtil::RefString& name, 
-      const std::string& defaultValue, bool isList) : 
+   NamedStringParameter::NamedStringParameter(DataType& dataType, const dtUtil::RefString& name,
+      const std::string& defaultValue, bool isList) :
          NamedGenericParameter<std::string>(dataType, name, defaultValue, isList)
    {
    }
@@ -795,7 +795,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedStringParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedStringParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -804,7 +804,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedStringParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   void NamedStringParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -880,7 +880,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedEnumParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedEnumParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -888,7 +888,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedEnumParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedEnumParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -910,21 +910,21 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedActorParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedActorParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
       const dtDAL::ActorActorProperty *ap = static_cast<const dtDAL::ActorActorProperty*> (&property);
       if (ap->GetValue() == NULL)
          SetValue(dtCore::UniqueId(""));
-      else 
+      else
          SetValue(ap->GetValue()->GetId());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedActorParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedActorParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
-      throw dtUtil::Exception(ExceptionEnum::InvalidParameter, 
+      throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
          "Cannot call ApplyValueToProperty()on an ActorMessageParameter.  See the GameActor::ApplyActorUpdate() for an example of how to do this.",
          __FILE__, __LINE__);
    }
@@ -996,7 +996,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGameEventParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedGameEventParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1004,7 +1004,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedGameEventParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedGameEventParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1067,7 +1067,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec2Parameter::NamedVec2Parameter(const dtUtil::RefString& name,
-      const osg::Vec2& defaultValue, bool isList) : 
+      const osg::Vec2& defaultValue, bool isList) :
          NamedVecParameter<osg::Vec2>(dtDAL::DataType::VEC2, name,defaultValue,isList)
    {
    }
@@ -1078,7 +1078,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2Parameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec2Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1087,7 +1087,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2Parameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec2Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1098,7 +1098,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec2fParameter::NamedVec2fParameter(const dtUtil::RefString& name,
-      const osg::Vec2f& defaultValue, bool isList) : 
+      const osg::Vec2f& defaultValue, bool isList) :
          NamedVecParameter<osg::Vec2f>(dtDAL::DataType::VEC2F, name,defaultValue,isList)
    {
    }
@@ -1109,7 +1109,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2fParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec2fParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1118,7 +1118,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2fParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec2fParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1129,7 +1129,7 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec2dParameter::NamedVec2dParameter(const dtUtil::RefString& name,
-      const osg::Vec2d& defaultValue, bool isList) : 
+      const osg::Vec2d& defaultValue, bool isList) :
          NamedVecParameter<osg::Vec2d>(dtDAL::DataType::VEC2D, name, defaultValue, isList)
    {
    }
@@ -1140,7 +1140,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2dParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec2dParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1149,7 +1149,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec2dParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec2dParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1160,15 +1160,15 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec3Parameter::NamedVec3Parameter(const dtUtil::RefString& name,
-      const osg::Vec3& defaultValue, bool isList) : 
-         NamedVecParameter<osg::Vec3>(dtDAL::DataType::VEC3, name,defaultValue,isList)
+      const osg::Vec3& defaultValue, bool isList)
+      : NamedVecParameter<osg::Vec3>(dtDAL::DataType::VEC3, name, defaultValue, isList)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec3Parameter::NamedVec3Parameter(DataType& dataType, const dtUtil::RefString& name,
-      const osg::Vec3& defaultValue, bool isList) : 
-         NamedVecParameter<osg::Vec3>(dataType, name,defaultValue,isList)
+      const osg::Vec3& defaultValue, bool isList)
+      : NamedVecParameter<osg::Vec3>(dataType, name, defaultValue, isList)
    {
    }
 
@@ -1178,7 +1178,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3Parameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedVec3Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1187,7 +1187,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3Parameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec3Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1222,7 +1222,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3fParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec3fParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1231,7 +1231,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3fParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec3fParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1253,7 +1253,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3dParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec3dParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1262,7 +1262,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec3dParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec3dParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1291,7 +1291,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4Parameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec4Parameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1300,7 +1300,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4Parameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const
+   void NamedVec4Parameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1311,8 +1311,8 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedRGBAColorParameter::NamedRGBAColorParameter(const dtUtil::RefString& name,
-      const osg::Vec4& defaultValue, bool isList) : 
-         NamedVec4Parameter(dtDAL::DataType::RGBACOLOR, name,defaultValue,isList)
+      const osg::Vec4& defaultValue, bool isList)
+      : NamedVec4Parameter(dtDAL::DataType::RGBACOLOR, name, defaultValue, isList)
    {
    }
 
@@ -1324,8 +1324,8 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    NamedVec4fParameter::NamedVec4fParameter(const dtUtil::RefString& name,
-      const osg::Vec4f& defaultValue, bool isList) : 
-         NamedVecParameter<osg::Vec4f>(dtDAL::DataType::VEC4F, name,defaultValue,isList)
+      const osg::Vec4f& defaultValue, bool isList)
+      : NamedVecParameter<osg::Vec4f>(dtDAL::DataType::VEC4F, name, defaultValue, isList)
    {
    }
 
@@ -1335,7 +1335,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4fParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedVec4fParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1344,7 +1344,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4fParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec4fParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1366,7 +1366,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4dParameter::SetFromProperty(const dtDAL::ActorProperty &property)
+   void NamedVec4dParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1375,7 +1375,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedVec4dParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedVec4dParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1395,7 +1395,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::SetFromProperty(const dtDAL::ActorProperty &property) 
+   void NamedResourceParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
       ValidatePropertyType(property);
 
@@ -1404,7 +1404,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::ApplyValueToProperty(dtDAL::ActorProperty &property) const 
+   void NamedResourceParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
    {
       ValidatePropertyType(property);
 
@@ -1414,7 +1414,7 @@ namespace dtDAL
          dtDAL::ResourceDescriptor newValue(*GetValue());
          vap->SetValue(&newValue);
       }
-      else 
+      else
       {
          vap->SetValue(NULL);
       }
@@ -1667,7 +1667,7 @@ namespace dtDAL
          if (GetValue() != NULL && rpToCompare.GetValue() != NULL)
             return *GetValue() == *rpToCompare.GetValue();
          else
-            return GetValue() == rpToCompare.GetValue();            
+            return GetValue() == rpToCompare.GetValue();
       }
       return false;
    }

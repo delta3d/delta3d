@@ -40,8 +40,8 @@
 #include <dtUtil/xercesutils.h>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
 #include <xercesc/util/XMLString.hpp>
@@ -49,7 +49,7 @@
 #include <xercesc/sax/SAXParseException.hpp>
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #include <osg/Vec2f>
@@ -233,16 +233,16 @@ namespace  dtDAL
          }
          else if (mInActors)
          {
-            if(mInActor)
+            if (mInActor)
             {
-               if(!mIgnoreCurrentActor)
+               if (!mIgnoreCurrentActor)
                {
                   ActorCharacters(chars);
                }
             }
             else
             {
-               if(topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
+               if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
             }
          }
@@ -1310,27 +1310,27 @@ namespace  dtDAL
       LinkActors();
       AssignGroupProperties();
 
-      if(!mEnvActorId.ToString().empty())
+      if (!mEnvActorId.ToString().empty())
       {
          try
          {
             dtCore::RefPtr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
-            if(!proxy.valid())
+            if (!proxy.valid())
             {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "No environment actor was located in the map.");
                return;
             }
             else
             {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "An environment actor was located in the map.");
             }
 
             IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
-            if(ea == NULL)
+            if (ea == NULL)
             {
                throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
                   "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);

@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #include <prefix/dtdalprefix-src.h>
 #include <osgDB/FileNameUtils>
 #include <dtUtil/fileutils.h>
@@ -33,10 +34,10 @@ namespace dtDAL
                                                               const std::string& masterExtension,
                                                               const std::string& resourceDirectoryExtension,
                                                               const std::string& resourceDescription,
-                                                              std::vector<std::string> alternateMasterFiles):
-      mDataType(&dataType), mDescription(resourceDescription), 
-      mMasterFile(masterFile), mExtension(masterExtension),
-      mResourceDirectoryExtension(resourceDirectoryExtension)
+                                                              std::vector<std::string> alternateMasterFiles)
+      : mDataType(&dataType), mDescription(resourceDescription)
+      , mMasterFile(masterFile), mExtension(masterExtension)
+      , mResourceDirectoryExtension(resourceDirectoryExtension)
    {
       mFilters.insert(make_pair(masterFile, resourceDescription));
 
@@ -65,16 +66,16 @@ namespace dtDAL
       }
       else if (type == dtUtil::DIRECTORY)
       {
-         //quick short circuit for speed in the resource directory.
+         // quick short circuit for speed in the resource directory.
          if (osgDB::getFileExtension(path) == mResourceDirectoryExtension)
          {
             return true;
          }
 
-         //look for any of the possible master files.
+         // look for any of the possible master files.
          for (std::map<std::string, std::string>::const_iterator i = mFilters.begin(); i != mFilters.end(); ++i)
          {
-            //skip the extension
+            // skip the extension
             if (i->first == mResourceDirectoryExtension)
                continue;
 
@@ -111,7 +112,7 @@ namespace dtDAL
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-	  dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+      dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
       std::string mainSrcFileName;
       std::string dirToCopy;
@@ -128,7 +129,9 @@ namespace dtDAL
          {
             //skip the extension
             if (i->first == mResourceDirectoryExtension)
+            {
                continue;
+            }
 
             if (fileUtils.FileExists(srcPath + dtUtil::FileUtils::PATH_SEPARATOR + i->first))
             {
@@ -139,7 +142,7 @@ namespace dtDAL
          }
          if (mainSrcFileName.empty())
             throw dtUtil::Exception(dtDAL::ExceptionEnum::ProjectFileNotFound,
-                   std::string("No supported master file found in directory:\"") + 
+                   std::string("No supported master file found in directory:\"") +
                    srcPath + "\".", __FILE__, __LINE__);
          dirToCopy = srcPath;
       }
@@ -154,7 +157,7 @@ namespace dtDAL
       fileUtils.DirCopy(dirToCopy, destDir, false, true);
 
       //don't overwrite so that we can see if any errors occurred.
-      if (mainSrcFileName != mMasterFile && 
+      if (mainSrcFileName != mMasterFile &&
           //This will catch the case where the names differ only by case, but the
           //filesystem is not case sensitive.
           !fileUtils.FileExists(destDir + dtUtil::FileUtils::PATH_SEPARATOR + mMasterFile))

@@ -20,12 +20,12 @@ CollisionGeomType CollisionGeomType::RAY("RAY");
 CollisionGeomType CollisionGeomType::MESH("MESH");
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODEGeomWrap::ODEGeomWrap():
-  mGeomID(NULL)
-, mOriginalGeomID(NULL)
-, mTriMeshDataID(NULL)
-, mMeshVertices(NULL)
-, mMeshIndices(NULL)
+dtCore::ODEGeomWrap::ODEGeomWrap()
+   : mGeomID(NULL)
+   , mOriginalGeomID(NULL)
+   , mTriMeshDataID(NULL)
+   , mMeshVertices(NULL)
+   , mMeshIndices(NULL)
 {
    // Setup default collision geometry stuff.
    mGeomID = dCreateGeomTransform(0); //Add support for more spaces.
@@ -39,12 +39,12 @@ dtCore::ODEGeomWrap::~ODEGeomWrap()
 {
    dGeomDestroy(mGeomID);
 
-   if(mTriMeshDataID != NULL)
+   if (mTriMeshDataID != NULL)
    {
       dGeomTriMeshDataDestroy(mTriMeshDataID);
    }
 
-   if(mMeshVertices != NULL)
+   if (mMeshVertices != NULL)
    {
       delete[] mMeshVertices;
       delete[] mMeshIndices;
@@ -68,27 +68,27 @@ dtCore::CollisionGeomType* dtCore::ODEGeomWrap::GetCollisionGeomType() const
 {
    int geomClass = dGeomGetClass(mGeomID);
    dGeomID id = mGeomID;
-   while(geomClass == dGeomTransformClass && id != 0)
+   while (geomClass == dGeomTransformClass && id != 0)
    {
       id = dGeomTransformGetGeom(id);
 
-      if(id != 0)
+      if (id != 0)
       {
          geomClass = dGeomGetClass(id);
       }
    }
 
-   switch(geomClass)
+   switch (geomClass)
    {
-   case dSphereClass :
+   case dSphereClass:
       return &CollisionGeomType::SPHERE;
-   case dBoxClass	:
+   case dBoxClass:
       return &CollisionGeomType::CUBE;
-   case dCCylinderClass :
+   case dCCylinderClass:
       return &CollisionGeomType::CYLINDER;
-   case dRayClass	:
+   case dRayClass:
       return &CollisionGeomType::RAY;
-   case dTriMeshClass :
+   case dTriMeshClass:
       return &CollisionGeomType::MESH;
    default:
       break;
@@ -108,16 +108,16 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
    // return the type.
    int geomClass = dGeomGetClass(mGeomID);
    dGeomID id = mGeomID;
-   while(geomClass == dGeomTransformClass && id != 0)
+   while (geomClass == dGeomTransformClass && id != 0)
    {
       id = dGeomTransformGetGeom(id);
-      if(id != 0)
+      if (id != 0)
       {
          geomClass = dGeomGetClass(id);
       }
    }
 
-   switch(geomClass)
+   switch (geomClass)
    {
    case dSphereClass:
       {
@@ -130,7 +130,7 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
       {
          dVector3 sides;
          dGeomBoxGetLengths(id, sides);
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
          {
             dimensions.push_back(float(sides[i]));
          }
@@ -153,11 +153,11 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
          dGeomRayGet(id, start, dir);
 
          dimensions.push_back( length );
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
          {
             dimensions.push_back(float(start[i]));
          }
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
          {
             dimensions.push_back(float(dir[i]));
          }
@@ -173,24 +173,24 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionDetection(bool enabled)
 {
-   if(mGeomID != 0)
+   if (mGeomID != 0)
    {
       int geomClass = dGeomGetClass(mGeomID);
       dGeomID id = mGeomID;
-      while(geomClass == dGeomTransformClass && id != 0)
+      while (geomClass == dGeomTransformClass && id != 0)
       {
          id = dGeomTransformGetGeom(id);
-         if(id != 0)
+         if (id != 0)
          {
             geomClass = dGeomGetClass(id);
          }
       }
 
-      //If we get here then a collision shape has been found.
-      //Now we can enable/disable the GeomTransform at the top of the hierarchy.
-      //Disabling the collision geometry itself will not prevent the transform
-      //from colliding and still moving the collision hierarchy with it.
-      if(enabled)
+      // If we get here then a collision shape has been found.
+      // Now we can enable/disable the GeomTransform at the top of the hierarchy.
+      // Disabling the collision geometry itself will not prevent the transform
+      // from colliding and still moving the collision hierarchy with it.
+      if (enabled)
       {
          dGeomEnable(mGeomID);
       }
@@ -205,7 +205,7 @@ void dtCore::ODEGeomWrap::SetCollisionDetection(bool enabled)
 //////////////////////////////////////////////////////////////////////////
 bool dtCore::ODEGeomWrap::GetCollisionDetection() const
 {
-   if(mGeomID != 0)
+   if (mGeomID != 0)
    {
       return dGeomIsEnabled(mGeomID) == 1;
    }
@@ -232,9 +232,9 @@ void dtCore::ODEGeomWrap::SetCollisionSphere(float radius)
 }
 
 /**
-* A visitor that determines the parameters associated
-* with a node.
-*/
+ * A visitor that determines the parameters associated
+ * with a node.
+ */
 template< class T >
 class DrawableVisitor : public osg::NodeVisitor
 {
@@ -243,24 +243,24 @@ public:
    osg::TriangleFunctor<T> mFunctor;
 
    /**
-   * Constructor.
-   */
+    * Constructor.
+    */
    DrawableVisitor()
       : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
    {}
 
    /**
-   * Applies this visitor to a geode.
-   *
-   * @param node the geode to visit
-   */
+    * Applies this visitor to a geode.
+    *
+    * @param node the geode to visit
+    */
    virtual void apply(osg::Geode& node)
    {
-      for(unsigned int i=0;i < node.getNumDrawables(); i++)
+      for (unsigned int i=0;i < node.getNumDrawables(); i++)
       {
          osg::Drawable* d = node.getDrawable(i);
 
-         if(d->supports(mFunctor))
+         if (d->supports(mFunctor))
          {
             osg::NodePath nodePath = getNodePath();
 
@@ -282,8 +282,8 @@ public:
 
 
 /**
-* Determines the cylinder parameters
-*/
+ * Determines the cylinder parameters
+ */
 class SphereFunctor
 {
 public:
@@ -293,21 +293,21 @@ public:
    osg::Matrix mMatrix;
 
    /**
-   * Constructor.
-   */
+    * Constructor.
+    */
    SphereFunctor()
       : mRadius(0.0f)
    {}
 
    /**
-   * Called once for each visited triangle.
-   *
-   * @param v1 the triangle's first vertex
-   * @param v2 the triangle's second vertex
-   * @param v3 the triangle's third vertex
-   * @param treatVertexDataAsTemporary whether or not to treat the vertex data
-   * as temporary
-   */
+    * Called once for each visited triangle.
+    *
+    * @param v1 the triangle's first vertex
+    * @param v2 the triangle's second vertex
+    * @param v3 the triangle's third vertex
+    * @param treatVertexDataAsTemporary whether or not to treat the vertex data
+    * as temporary
+    */
    void operator()(const osg::Vec3& v1,
       const osg::Vec3& v2,
       const osg::Vec3& v3,
@@ -318,19 +318,19 @@ public:
          tv3 = v3 * mMatrix;
 
       tv1[2] = 0;
-      if(tv1.length() > mRadius)
+      if (tv1.length() > mRadius)
       {
          mRadius = tv1.length();
       }
 
       tv2[2] = 0;
-      if(tv2.length() > mRadius)
+      if (tv2.length() > mRadius)
       {
          mRadius = tv2.length();
       }
 
       tv3[2] = 0;
-      if(tv2.length() > mRadius)
+      if (tv2.length() > mRadius)
       {
          mRadius = tv3.length();
       }
@@ -341,14 +341,14 @@ public:
 void dtCore::ODEGeomWrap::SetCollisionSphere(osg::Node* node)
 {
 
-   if(node)
+   if (node)
    {
       DrawableVisitor<SphereFunctor> sv;
       node->accept(sv);
 
       //GetMatrixNode()->setMatrix(oldMatrix);
 
-      if(sv.mFunctor.mRadius > 0)
+      if (sv.mFunctor.mRadius > 0)
       {
          mOriginalGeomID = dCreateSphere(0, sv.mFunctor.mRadius);
          dGeomDisable( mOriginalGeomID );
@@ -378,7 +378,7 @@ void dtCore::ODEGeomWrap::SetCollisionBox(float lx, float ly, float lz)
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionBox(osg::Node* node)
 {
-   if(node != 0)
+   if (node != 0)
    {
 
       BoundingBoxVisitor bbv;
@@ -388,7 +388,7 @@ void dtCore::ODEGeomWrap::SetCollisionBox(osg::Node* node)
       float ly = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
       float lz = bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin();
 
-      if(lx > 0.0f && ly > 0.0f && lz > 0.0f)
+      if (lx > 0.0f && ly > 0.0f && lz > 0.0f)
       {
          dGeomID subTransformID = dCreateGeomTransform(0);
 
@@ -431,8 +431,8 @@ void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(float radius, float length)
 }
 
 /**
-* Determines the cylinder parameters
-*/
+ * Determines the cylinder parameters
+ */
 class CylinderFunctor
 {
 public:
@@ -442,21 +442,21 @@ public:
    osg::Matrix mMatrix;
 
    /**
-   * Constructor.
-   */
+    * Constructor.
+    */
    CylinderFunctor()
       : mMinZ(FLT_MAX), mMaxZ(-FLT_MAX), mRadius(0.0f)
    {}
 
    /**
-   * Called once for each visited triangle.
-   *
-   * @param v1 the triangle's first vertex
-   * @param v2 the triangle's second vertex
-   * @param v3 the triangle's third vertex
-   * @param treatVertexDataAsTemporary whether or not to treat the vertex data
-   * as temporary
-   */
+    * Called once for each visited triangle.
+    *
+    * @param v1 the triangle's first vertex
+    * @param v2 the triangle's second vertex
+    * @param v3 the triangle's third vertex
+    * @param treatVertexDataAsTemporary whether or not to treat the vertex data
+    * as temporary
+    */
    void operator()(const osg::Vec3& v1,
       const osg::Vec3& v2,
       const osg::Vec3& v3,
@@ -466,23 +466,23 @@ public:
          tv2 = v2*mMatrix,
          tv3 = v3*mMatrix;
 
-      if(tv1[2] < mMinZ) mMinZ = tv1[2];
-      else if(tv1[2] > mMaxZ) mMaxZ = tv1[2];
+      if (tv1[2] < mMinZ) mMinZ = tv1[2];
+      else if (tv1[2] > mMaxZ) mMaxZ = tv1[2];
 
-      if(tv2[2] < mMinZ) mMinZ = tv2[2];
-      else if(tv2[2] > mMaxZ) mMaxZ = tv2[2];
+      if (tv2[2] < mMinZ) mMinZ = tv2[2];
+      else if (tv2[2] > mMaxZ) mMaxZ = tv2[2];
 
-      if(tv3[2] < mMinZ) mMinZ = tv3[2];
-      else if(tv3[2] > mMaxZ) mMaxZ = tv3[2];
+      if (tv3[2] < mMinZ) mMinZ = tv3[2];
+      else if (tv3[2] > mMaxZ) mMaxZ = tv3[2];
 
       tv1[2] = 0;
-      if(tv1.length() > mRadius) mRadius = tv1.length();
+      if (tv1.length() > mRadius) { mRadius = tv1.length(); }
 
       tv2[2] = 0;
-      if(tv2.length() > mRadius) mRadius = tv2.length();
+      if (tv2.length() > mRadius) { mRadius = tv2.length(); }
 
       tv3[2] = 0;
-      if(tv2.length() > mRadius) mRadius = tv3.length();
+      if (tv2.length() > mRadius) { mRadius = tv3.length(); }
    }
 };
 
@@ -490,7 +490,7 @@ public:
 void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(osg::Node* node)
 {
 
-   if(node)
+   if (node)
    {
       DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
@@ -498,7 +498,7 @@ void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(osg::Node* node)
       float radius = cv.mFunctor.mRadius;
       float length = cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ;
 
-      if(radius > 0 && length > 0)
+      if (radius > 0 && length > 0)
       {
          dGeomID subTransformID = dCreateGeomTransform(0);
 
@@ -534,25 +534,25 @@ void dtCore::ODEGeomWrap::SetCollisionRay(float length)
 
 
 /**
-* A strided vertex for the ODE triangle mesh collision geometry.
-*/
+ * A strided vertex for the ODE triangle mesh collision geometry.
+ */
 struct StridedVertex
 {
    dVector3 Vertex;
 };
 
 /**
-* A strided triangle for the ODE triangle mesh collision geometry.
-*/
+ * A strided triangle for the ODE triangle mesh collision geometry.
+ */
 struct StridedTriangle
 {
    int Indices[3];
 };
 
 /**
-* Records visited triangles into an array suitable for passing
-* into ODE's triangle mesh collision detection class.
-*/
+ * Records visited triangles into an array suitable for passing
+ * into ODE's triangle mesh collision detection class.
+ */
 class TriangleRecorder
 {
 public:
@@ -564,14 +564,14 @@ public:
    osg::Matrix mMatrix;
 
    /**
-   * Called once for each visited triangle.
-   *
-   * @param v1 the triangle's first vertex
-   * @param v2 the triangle's second vertex
-   * @param v3 the triangle's third vertex
-   * @param treatVertexDataAsTemporary whether or not to treat the vertex data
-   * as temporary
-   */
+    * Called once for each visited triangle.
+    *
+    * @param v1 the triangle's first vertex
+    * @param v2 the triangle's second vertex
+    * @param v3 the triangle's third vertex
+    * @param treatVertexDataAsTemporary whether or not to treat the vertex data
+    * as temporary
+    */
    void operator()(const osg::Vec3& v1,
       const osg::Vec3& v2,
       const osg::Vec3& v3,
@@ -612,13 +612,13 @@ public:
 void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
 {
 
-   if(node)
+   if (node)
    {
       DrawableVisitor<TriangleRecorder> mv;
 
       node->accept(mv);
 
-      if(mMeshVertices != 0)
+      if (mMeshVertices != 0)
       {
          delete[] mMeshVertices;
          delete[] mMeshIndices;
@@ -627,14 +627,14 @@ void dtCore::ODEGeomWrap::SetCollisionMesh(osg::Node* node)
       mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
       mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
 
-      if(!mv.mFunctor.mVertices.empty())
+      if (!mv.mFunctor.mVertices.empty())
       {
          memcpy(mMeshVertices,
             &mv.mFunctor.mVertices[0],
             mv.mFunctor.mVertices.size()*sizeof(StridedVertex));
       }
 
-      if(!mv.mFunctor.mTriangles.empty())
+      if (!mv.mFunctor.mTriangles.empty())
       {
          memcpy(mMeshIndices,
             &mv.mFunctor.mTriangles[0],
@@ -702,13 +702,13 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
 
    osg::Matrix absMatrix;
 
-   while(geomClass == dGeomTransformClass)
+   while (geomClass == dGeomTransformClass)
    {
       id = dGeomTransformGetGeom(id);
 
       if (id == 0)
       {
-         return NULL; //in case we haven't assigned a collision shape yet
+         return NULL; // in case we haven't assigned a collision shape yet
       }
 
       geomClass = dGeomGetClass(id);
@@ -736,7 +736,7 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       absMatrix.postMult(tempMatrix);
    }
 
-   switch(dGeomGetClass(id))
+   switch (dGeomGetClass(id))
    {
    case dBoxClass:
       {
@@ -789,7 +789,7 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
       break;
    }
 
-   osg::Material *mat = new osg::Material();
+   osg::Material* mat = new osg::Material();
    mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 0.5f));
    mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 1.f));
    mat->setEmission(osg::Material::FRONT_AND_BACK,osg::Vec4(0.f,0.f,0.f, 1.f));
@@ -798,7 +798,7 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
    polyoffset->setFactor(-1.0f);
    polyoffset->setUnits(-1.0f);
 
-   osg::StateSet *ss = geode.get()->getOrCreateStateSet();
+   osg::StateSet* ss = geode.get()->getOrCreateStateSet();
    ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE |
       osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
    ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE |
@@ -815,13 +815,13 @@ void dtCore::ODEGeomWrap::UpdateGeomTransform(const dtCore::Transform& newTransf
 {
    // If the supplied Transform is different than the current position
    // and rotation of the Geom, then set the Geom to match.
-    
-   if (GetCollisionDetection() == false) {return;}
+
+   if (GetCollisionDetection() == false) { return; }
 
    dtCore::Transform odeTransform;
    GetGeomTransform(odeTransform);
 
-   if(!newTransform.EpsilonEquals(odeTransform))
+   if (!newTransform.EpsilonEquals(odeTransform))
    {
       osg::Matrix rotation;
       osg::Vec3 position;
@@ -855,7 +855,7 @@ void dtCore::ODEGeomWrap::UpdateGeomTransform(const dtCore::Transform& newTransf
       while (geomClass == dGeomTransformClass)
       {
          id = dGeomTransformGetGeom(id);
-         if(id == 0)
+         if (id == 0)
          {
             return; // In case we haven't assigned a collision shape yet
          }
@@ -863,9 +863,9 @@ void dtCore::ODEGeomWrap::UpdateGeomTransform(const dtCore::Transform& newTransf
       }
 
 
-      if(id)
+      if (id)
       {
-         switch(dGeomGetClass(id))
+         switch (dGeomGetClass(id))
          {
          case dBoxClass:
             {

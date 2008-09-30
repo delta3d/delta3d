@@ -18,6 +18,7 @@
  *
  * William E. Johnson II and David Guthrie
  */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
@@ -227,7 +228,7 @@ namespace dtGame
                }
                catch (const dtUtil::Exception&)
                {
-                  //hmm, someone should not have added a property already.
+                  // hmm, someone should not have added a property already.
                   update.GetUpdateParameter(property->GetName());
                }
             }
@@ -241,9 +242,11 @@ namespace dtGame
          {
             dtDAL::ActorProperty& property = *toFill[i];
 
-            //don't send read-only properties
+            // don't send read-only properties
             if (property.IsReadOnly())
+            {
                continue;
+            }
 
             try
             {
@@ -254,7 +257,7 @@ namespace dtGame
             }
             catch (const dtUtil::Exception&)
             {
-               //hmm, someone should not have added a property already.
+               // hmm, someone should not have added a property already.
                update.GetUpdateParameter(property.GetName());
             }
          }
@@ -288,7 +291,7 @@ namespace dtGame
       std::vector<const MessageParameter*> params;
       msg.GetUpdateParameters(params);
 
-      for(unsigned int i = 0; i < params.size(); ++i)
+      for (unsigned int i = 0; i < params.size(); ++i)
       {
          const dtDAL::DataType& paramType = params[i]->GetDataType();
 
@@ -331,7 +334,7 @@ namespace dtGame
          {
             dtDAL::ActorActorProperty *aap = static_cast<dtDAL::ActorActorProperty*>(property);
             const ActorMessageParameter* amp = static_cast<const ActorMessageParameter*>(params[i]);
-            if( GetGameManager() != NULL )
+            if ( GetGameManager() != NULL )
             {
                dtGame::GameActorProxy* valueProxy = GetGameManager()->FindGameActorById(amp->GetValue());
                aap->SetValue(valueProxy);
@@ -390,7 +393,7 @@ namespace dtGame
    {
       std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
          mInvokables.find(newInvokable.GetName());
-      if(itor != mInvokables.end())
+      if (itor != mInvokables.end())
       {
          std::ostringstream ss;
          ss << "Could not add new invokable " << newInvokable.GetName() << " because "
@@ -420,10 +423,14 @@ namespace dtGame
       std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
          mInvokables.find(name);
 
-      if(itor == mInvokables.end())
+      if (itor == mInvokables.end())
+      {
          return NULL;
+      }
       else
+      {
          return itor->second.get();
+      }
    }
 
    void GameActorProxy::GetInvokables(std::vector<Invokable*>& toFill)
@@ -432,7 +439,7 @@ namespace dtGame
       toFill.reserve(mInvokables.size());
 
       for (std::map<std::string,dtCore::RefPtr<Invokable> >::iterator i = mInvokables.begin();
-      i != mInvokables.end(); ++i)
+         i != mInvokables.end(); ++i)
       {
          toFill.push_back(i->second.get());
       }
@@ -444,7 +451,7 @@ namespace dtGame
       toFill.reserve(mInvokables.size());
 
       for (std::map<std::string,dtCore::RefPtr<Invokable> >::const_iterator i = mInvokables.begin();
-      i != mInvokables.end(); ++i)
+         i != mInvokables.end(); ++i)
       {
          toFill.push_back(i->second.get());
       }
@@ -456,7 +463,7 @@ namespace dtGame
       toFill.reserve(mMessageHandlers.size());
 
       for (std::multimap<const MessageType*, dtCore::RefPtr<Invokable> >::iterator i = mMessageHandlers.find(&type);
-      (i != mMessageHandlers.end()) && (*i->first == type); ++i)
+         (i != mMessageHandlers.end()) && (*i->first == type); ++i)
       {
          toFill.push_back(i->second.get());
       }
@@ -500,7 +507,9 @@ namespace dtGame
    {
       Invokable* invokable = GetInvokable(invokableName);
       if (invokable != NULL)
+      {
          mMessageHandlers.insert(std::make_pair(&type, invokable));
+      }
       else
       {
          std::ostringstream oss;
@@ -563,13 +572,13 @@ namespace dtGame
    void GameActorProxy::InvokeEnteredWorld()
    {
       /**
-      *	We will preform a check to make sure this actor actually is a GameActor
-      */
+       * We will preform a check to make sure this actor actually is a GameActor
+       */
 
       GameActor* ga = dynamic_cast<GameActor*>(GetActor());
-      if(ga == NULL)
+      if (ga == NULL)
       {
-         //throw exception
+         // throw exception
          throw dtUtil::Exception(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                   "ERROR: Actor has the type of a GameActor, but casting it to a GameActorProxy failed.", __FILE__, __LINE__);
       }

@@ -7,11 +7,12 @@
 //
 //    Copyright:      InterSense 2003 - All rights Reserved.
 //
-//                    
+//
 //==========================================================================================
+
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 
 #include "isense.h"
 
@@ -81,8 +82,8 @@ ISD_SYSTEM_CONFIG_FN  _ISD_GetTrackerConfig         = NULL;
 ISD_SYSTEM_CONFIG_FN  _ISD_SetTrackerConfig         = NULL;
 ISD_STATION_CONFIG_FN _ISD_GetStationConfig         = NULL;
 ISD_STATION_CONFIG_FN _ISD_SetStationConfig         = NULL;
-ISD_DATA_FN           _ISD_GetTrackingData          = NULL;   
-ISD_CAMERA_DATA_FN    _ISD_GetCameraData            = NULL;   
+ISD_DATA_FN           _ISD_GetTrackingData          = NULL;
+ISD_CAMERA_DATA_FN    _ISD_GetCameraData            = NULL;
 ISD_SCRIPT_FN         _ISD_SendScript               = NULL;
 ISD_COUNT_FN          _ISD_NumOpenTrackers          = NULL;
 ISD_RESET_HEADING_FN  _ISD_ResetHeading             = NULL;
@@ -104,7 +105,7 @@ ISD_QRY_RBUFFER_FN    _ISD_RingBufferQuery          = NULL;
 //==========================================================================================
 static DLL *ISD_LoadLib( void )
 {
-    if(hLib = dll_load( ISD_LIB_NAME ))
+    if (hLib = dll_load( ISD_LIB_NAME ))
     {
         _ISD_OpenTracker            = ( ISD_OPEN_FN )           dll_entrypoint( hLib, "ISD_OpenTracker" );
         _ISD_OpenAllTrackers        = ( ISD_OPEN_ALL_FN )       dll_entrypoint( hLib, "ISD_OpenAllTrackers" );
@@ -133,12 +134,12 @@ static DLL *ISD_LoadLib( void )
         _ISD_RingBufferStop         = ( ISD_RBUFFER_FN )        dll_entrypoint( hLib, "ISD_RingBufferStop" );
         _ISD_RingBufferQuery        = ( ISD_QRY_RBUFFER_FN )    dll_entrypoint( hLib, "ISD_RingBufferQuery" );
     }
-    
-    if( hLib == NULL )
+
+    if ( hLib == NULL )
     {
         printf("Could not load %s\n", ISD_LIB_NAME);
     }
-    
+
     return hLib;
 }
 
@@ -153,7 +154,7 @@ static void ISD_FreeLib( void )
     _ISD_SetTrackerConfig       = NULL;
     _ISD_GetStationConfig       = NULL;
     _ISD_SetStationConfig       = NULL;
-    _ISD_GetTrackingData        = NULL;  
+    _ISD_GetTrackingData        = NULL;
     _ISD_GetCameraData          = NULL;
     _ISD_SendScript             = NULL;
     _ISD_NumOpenTrackers        = NULL;
@@ -171,34 +172,34 @@ static void ISD_FreeLib( void )
     _ISD_RingBufferStart        = NULL;
     _ISD_RingBufferStop         = NULL;
     _ISD_RingBufferQuery        = NULL;
-    
-    if( hLib )
+
+    if ( hLib )
     {
-        dll_unload( hLib );  // free the dll 
+        dll_unload( hLib );  // free the dll
         hLib = NULL;
     }
 }
 
 
 //==========================================================================================
-DLLEXPORT ISD_TRACKER_HANDLE DLLENTRY 
-ISD_OpenTracker( 
-                Hwnd hParent, 
-                DWORD commPort, 
-                Bool infoScreen, 
-                Bool verbose 
+DLLEXPORT ISD_TRACKER_HANDLE DLLENTRY
+ISD_OpenTracker(
+                Hwnd hParent,
+                DWORD commPort,
+                Bool infoScreen,
+                Bool verbose
                 )
 {
-    if(!_ISD_OpenTracker) // this will be NULL if dll not loaded 
+    if (!_ISD_OpenTracker) // this will be NULL if dll not loaded
     {
-        if(!hLib) ISD_LoadLib();
-        
-        if(!hLib)  // failed to load dll 
+        if (!hLib) ISD_LoadLib();
+
+        if (!hLib)  // failed to load dll
         {
             return 0;
         }
     }
-    if(_ISD_OpenTracker)
+    if (_ISD_OpenTracker)
     {
         return((*_ISD_OpenTracker)( hParent, commPort, infoScreen, verbose ));
     }
@@ -207,24 +208,24 @@ ISD_OpenTracker(
 
 
 //==========================================================================================
-DLLEXPORT DWORD DLLENTRY 
-ISD_OpenAllTrackers( 
-                    Hwnd hParent, 
-                    ISD_TRACKER_HANDLE *handle, 
-                    Bool infoScreen, 
-                    Bool verbose 
+DLLEXPORT DWORD DLLENTRY
+ISD_OpenAllTrackers(
+                    Hwnd hParent,
+                    ISD_TRACKER_HANDLE *handle,
+                    Bool infoScreen,
+                    Bool verbose
                     )
 {
-    if( !_ISD_OpenAllTrackers ) // this will be NULL if dll not loaded 
+    if ( !_ISD_OpenAllTrackers ) // this will be NULL if dll not loaded
     {
-        if( !hLib ) ISD_LoadLib();
-        
-        if( !hLib )  // failed to load dll 
+        if ( !hLib ) ISD_LoadLib();
+
+        if ( !hLib )  // failed to load dll
         {
             return 0;
         }
     }
-    if( _ISD_OpenAllTrackers )
+    if ( _ISD_OpenAllTrackers )
     {
         return (*_ISD_OpenAllTrackers)( hParent, handle, infoScreen, verbose );
     }
@@ -233,20 +234,20 @@ ISD_OpenAllTrackers(
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
+DLLEXPORT Bool DLLENTRY
 ISD_CloseTracker( ISD_TRACKER_HANDLE handle )
 {
     Bool ret;
     WORD num;
-    
-    if( _ISD_CloseTracker )
+
+    if ( _ISD_CloseTracker )
     {
         ret = (*_ISD_CloseTracker)( handle );
-        
-        // if all trackers are closed the dll can be freed 
-        if( ISD_NumOpenTrackers( &num ) )
+
+        // if all trackers are closed the dll can be freed
+        if ( ISD_NumOpenTrackers( &num ) )
         {
-            if( num == 0 )
+            if ( num == 0 )
             {
                 ISD_FreeLib();
             }
@@ -258,45 +259,45 @@ ISD_CloseTracker( ISD_TRACKER_HANDLE handle )
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
+DLLEXPORT Bool DLLENTRY
 ISD_NumOpenTrackers( WORD *num )
 {
-    if( !_ISD_NumOpenTrackers ) return FALSE;
+    if ( !_ISD_NumOpenTrackers ) return FALSE;
     return (*_ISD_NumOpenTrackers)( num );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetCommInfo( 
-                ISD_TRACKER_HANDLE handle, 
-                ISD_TRACKER_INFO_TYPE *Tracker 
+DLLEXPORT Bool DLLENTRY
+ISD_GetCommInfo(
+                ISD_TRACKER_HANDLE handle,
+                ISD_TRACKER_INFO_TYPE *Tracker
                 )
 {
-    if( !_ISD_GetCommInfo ) return FALSE;
+    if ( !_ISD_GetCommInfo ) return FALSE;
     return (*_ISD_GetCommInfo)( handle, Tracker );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetTrackerConfig( 
-                     ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_GetTrackerConfig(
+                     ISD_TRACKER_HANDLE handle,
                      ISD_TRACKER_INFO_TYPE *Tracker,
-                     Bool verbose 
+                     Bool verbose
                      )
 {
-    if( !_ISD_GetTrackerConfig ) return FALSE;
+    if ( !_ISD_GetTrackerConfig ) return FALSE;
     return (*_ISD_GetTrackerConfig)( handle, Tracker, verbose );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_SetTrackerConfig( 
-                     ISD_TRACKER_HANDLE handle, 
-                     ISD_TRACKER_INFO_TYPE *Tracker, 
-                     Bool verbose 
+DLLEXPORT Bool DLLENTRY
+ISD_SetTrackerConfig(
+                     ISD_TRACKER_HANDLE handle,
+                     ISD_TRACKER_INFO_TYPE *Tracker,
+                     Bool verbose
                      )
 {
     if (!_ISD_SetTrackerConfig ) return FALSE;
@@ -305,200 +306,200 @@ ISD_SetTrackerConfig(
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_SetStationConfig( 
-                     ISD_TRACKER_HANDLE handle, 
-                     ISD_STATION_INFO_TYPE *Station, 
+DLLEXPORT Bool DLLENTRY
+ISD_SetStationConfig(
+                     ISD_TRACKER_HANDLE handle,
+                     ISD_STATION_INFO_TYPE *Station,
                      WORD stationNum,
-                     Bool verbose 
+                     Bool verbose
                      )
 {
-    if( !_ISD_SetStationConfig ) return FALSE;
+    if ( !_ISD_SetStationConfig ) return FALSE;
     return (*_ISD_SetStationConfig)( handle, Station, stationNum, verbose );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetStationConfig( 
-                     ISD_TRACKER_HANDLE handle, 
-                     ISD_STATION_INFO_TYPE *Station, 
-                     WORD stationNum, 
+DLLEXPORT Bool DLLENTRY
+ISD_GetStationConfig(
+                     ISD_TRACKER_HANDLE handle,
+                     ISD_STATION_INFO_TYPE *Station,
+                     WORD stationNum,
                      Bool verbose
                      )
 {
-    if( !_ISD_GetStationConfig ) return FALSE;
+    if ( !_ISD_GetStationConfig ) return FALSE;
     return (*_ISD_GetStationConfig)( handle, Station, stationNum, verbose );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetTrackingData( 
-            ISD_TRACKER_HANDLE handle, 
-            ISD_TRACKING_DATA_TYPE *Data 
+DLLEXPORT Bool DLLENTRY
+ISD_GetTrackingData(
+            ISD_TRACKER_HANDLE handle,
+            ISD_TRACKING_DATA_TYPE *Data
             )
 {
-    if( !_ISD_GetTrackingData ) return FALSE;
+    if ( !_ISD_GetTrackingData ) return FALSE;
     return (*_ISD_GetTrackingData)( handle, Data );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetCameraData( 
-                  ISD_TRACKER_HANDLE handle, 
-                  ISD_CAMERA_DATA_TYPE *Data 
+DLLEXPORT Bool DLLENTRY
+ISD_GetCameraData(
+                  ISD_TRACKER_HANDLE handle,
+                  ISD_CAMERA_DATA_TYPE *Data
                   )
 {
-    if( !_ISD_GetCameraData ) return FALSE;
+    if ( !_ISD_GetCameraData ) return FALSE;
     return (*_ISD_GetCameraData)( handle, Data );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_SendScript( 
-               ISD_TRACKER_HANDLE handle, 
-               char *script 
+DLLEXPORT Bool DLLENTRY
+ISD_SendScript(
+               ISD_TRACKER_HANDLE handle,
+               char *script
                )
 {
-    if( !_ISD_SendScript ) return FALSE;
+    if ( !_ISD_SendScript ) return FALSE;
     return (*_ISD_SendScript)( handle, script );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_ResetHeading( 
-                 ISD_TRACKER_HANDLE handle, 
-                 WORD stationNum 
+DLLEXPORT Bool DLLENTRY
+ISD_ResetHeading(
+                 ISD_TRACKER_HANDLE handle,
+                 WORD stationNum
                  )
 {
-    if( !_ISD_ResetHeading ) return FALSE;
+    if ( !_ISD_ResetHeading ) return FALSE;
     return (*_ISD_ResetHeading)( handle, stationNum );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_Boresight( 
-              ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_Boresight(
+              ISD_TRACKER_HANDLE handle,
               WORD stationNum,
               Bool set
               )
 {
-    if( !_ISD_Boresight ) return FALSE;
+    if ( !_ISD_Boresight ) return FALSE;
     return (*_ISD_Boresight)( handle, stationNum, set );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_BoresightReferenced( 
-                        ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_BoresightReferenced(
+                        ISD_TRACKER_HANDLE handle,
                         WORD stationNum,
-                        float yaw, 
+                        float yaw,
                         float pitch,
-                        float roll 
+                        float roll
                         )
 {
-    if( !_ISD_BoresightReferenced ) return FALSE;
+    if ( !_ISD_BoresightReferenced ) return FALSE;
     return (*_ISD_BoresightReferenced)( handle, stationNum, yaw, pitch, roll );
 }
 
 
 //==========================================================================================
-DLLEXPORT float DLLENTRY 
+DLLEXPORT float DLLENTRY
 ISD_GetTime( void )
 {
-    if( !_ISD_GetTime ) return 0.0f;
+    if ( !_ISD_GetTime ) return 0.0f;
     return (*_ISD_GetTime)();
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
+DLLEXPORT Bool DLLENTRY
 ISD_ConfigureFromFile(
-                      ISD_TRACKER_HANDLE handle, 
-                      char *path, 
-                      Bool verbose 
+                      ISD_TRACKER_HANDLE handle,
+                      char *path,
+                      Bool verbose
                       )
 {
-    if( !_ISD_ConfigureFromFile ) return FALSE;
+    if ( !_ISD_ConfigureFromFile ) return FALSE;
     return (*_ISD_ConfigureFromFile)( handle, path, verbose );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
+DLLEXPORT Bool DLLENTRY
 ISD_ConfigSave( ISD_TRACKER_HANDLE handle )
 {
-    if( !_ISD_ConfigSave ) return FALSE;
+    if ( !_ISD_ConfigSave ) return FALSE;
     return (*_ISD_ConfigSave)( handle );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_AuxOutput( 
-              ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_AuxOutput(
+              ISD_TRACKER_HANDLE handle,
               WORD stationID,
-              BYTE *AuxOutput, 
-              WORD length 
+              BYTE *AuxOutput,
+              WORD length
               )
 {
-    if( !_ISD_AuxOutput ) return FALSE;
+    if ( !_ISD_AuxOutput ) return FALSE;
     return (*_ISD_AuxOutput)( handle, stationID, AuxOutput, length );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_UdpBroadcastData( 
-                     ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_UdpBroadcastData(
+                     ISD_TRACKER_HANDLE handle,
                      DWORD port,
                      ISD_TRACKING_DATA_TYPE *trackerData,
                      ISD_CAMERA_DATA_TYPE *cameraData
                      )
 {
-    if( !_ISD_UdpBroadcastData ) return FALSE;
+    if ( !_ISD_UdpBroadcastData ) return FALSE;
     return (*_ISD_UdpBroadcastData)( handle, port, trackerData, cameraData );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetSystemHardwareInfo( 
-                          ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool DLLENTRY
+ISD_GetSystemHardwareInfo(
+                          ISD_TRACKER_HANDLE handle,
                           ISD_HARDWARE_INFO_TYPE *hwInfo
                           )
 {
-    if( !_ISD_GetSystemHardwareInfo ) return FALSE;
+    if ( !_ISD_GetSystemHardwareInfo ) return FALSE;
     return (*_ISD_GetSystemHardwareInfo)( handle, hwInfo );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool DLLENTRY 
-ISD_GetStationHardwareInfo( ISD_TRACKER_HANDLE handle, 
-                            ISD_STATION_HARDWARE_INFO_TYPE *info, 
-                            WORD stationNum ) 
+DLLEXPORT Bool DLLENTRY
+ISD_GetStationHardwareInfo( ISD_TRACKER_HANDLE handle,
+                            ISD_STATION_HARDWARE_INFO_TYPE *info,
+                            WORD stationNum )
 {
-    if( !_ISD_GetStationHardwareInfo ) return FALSE;
+    if ( !_ISD_GetStationHardwareInfo ) return FALSE;
     return (*_ISD_GetStationHardwareInfo)( handle, info, stationNum );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool ISD_RingBufferSetup( 
-                                   ISD_TRACKER_HANDLE handle, 
-                                   WORD stationID, 
-                                   ISD_STATION_DATA_TYPE *dataBuffer, 
-                                   DWORD samples 
+DLLEXPORT Bool ISD_RingBufferSetup(
+                                   ISD_TRACKER_HANDLE handle,
+                                   WORD stationID,
+                                   ISD_STATION_DATA_TYPE *dataBuffer,
+                                   DWORD samples
                                    )
 {
-    if( !_ISD_RingBufferSetup ) return FALSE;
+    if ( !_ISD_RingBufferSetup ) return FALSE;
     return (*_ISD_RingBufferSetup)( handle, stationID, dataBuffer, samples );
 }
 
@@ -509,7 +510,7 @@ DLLEXPORT Bool ISD_RingBufferStart(
                                    WORD stationID
                                    )
 {
-    if( !_ISD_RingBufferStart ) return FALSE;
+    if ( !_ISD_RingBufferStart ) return FALSE;
     return (*_ISD_RingBufferStart)( handle, stationID );
 }
 
@@ -520,21 +521,21 @@ DLLEXPORT Bool ISD_RingBufferStop(
                                   WORD stationID
                                   )
 {
-    if( !_ISD_RingBufferStop ) return FALSE;
+    if ( !_ISD_RingBufferStop ) return FALSE;
     return (*_ISD_RingBufferStop)( handle, stationID );
 }
 
 
 //==========================================================================================
-DLLEXPORT Bool ISD_RingBufferQuery( 
-                                   ISD_TRACKER_HANDLE handle, 
+DLLEXPORT Bool ISD_RingBufferQuery(
+                                   ISD_TRACKER_HANDLE handle,
                                    WORD stationID,
                                    ISD_STATION_DATA_TYPE *currentData,
                                    DWORD *head,
                                    DWORD *tail
                                    )
 {
-    if( !_ISD_RingBufferQuery ) return FALSE;
+    if ( !_ISD_RingBufferQuery ) return FALSE;
     return (*_ISD_RingBufferQuery)( handle, stationID, currentData, head, tail );
 }
 
@@ -542,51 +543,51 @@ DLLEXPORT Bool ISD_RingBufferQuery(
 static DLL_EP dll_entrypoint( DLL *dll, const char *name )
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-    
+
     FARPROC proc;
-    
+
     proc = GetProcAddress( (HMODULE) dll, (LPCSTR) name );
-    if( proc == NULL )
+    if ( proc == NULL )
     {
         printf( "Failed to load %s. Error code %d\n", name, GetLastError() );
     }
     return (DLL_EP) proc;
-    
+
 #else // UNIX
 
 #if defined LINUX  || defined SUN || defined MACOSX
-	void *handle = (void *) dll;
-	DLL_EP ep;
-	ep = (DLL_EP) dlsym(handle, name);
-	return ( dlerror() == 0 ) ? ep : (DLL_EP) NULL;
+   void *handle = (void *) dll;
+   DLL_EP ep;
+   ep = (DLL_EP) dlsym(handle, name);
+   return ( dlerror() == 0 ) ? ep : (DLL_EP) NULL;
 
 #elif defined HP || defined HPUX
-	shl_t handle = (shl_t) dll;
-	DLL_EP ep;
-	return shl_findsym(&handle, name, TYPE_PROCEDURE, &ep) == -1 ?
-		(DLL_EP) NULL : ep;
+   shl_t handle = (shl_t) dll;
+   DLL_EP ep;
+   return shl_findsym(&handle, name, TYPE_PROCEDURE, &ep) == -1 ?
+      (DLL_EP) NULL : ep;
 #else
 
-	void *handle = (void *) dll;
-	DLL_EP ep;
-	ep = (DLL_EP) dlsym(handle, name);
-	return ( dlerror() == 0 ) ? ep : (DLL_EP) NULL;
+   void *handle = (void *) dll;
+   DLL_EP ep;
+   ep = (DLL_EP) dlsym(handle, name);
+   return ( dlerror() == 0 ) ? ep : (DLL_EP) NULL;
 #endif
 #endif
-}	
+}
 
 
 //==========================================================================================
 static DLL *dll_load( const char *name )
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-    
+
     return (DLL *) LoadLibrary( name );
-    
+
 #else // UNIX
     char dllname[512];
     strcpy(dllname, name);
-    
+
 #if defined MACOSX
     strcat(dllname, ".dylib");
     return (DLL *) dlopen(dllname, RTLD_NOW);
@@ -610,12 +611,12 @@ static DLL *dll_load( const char *name )
 static void dll_unload( DLL *dll )
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-    
+
     HINSTANCE hInst = (HINSTANCE) dll;
     FreeLibrary( hInst );
-    
+
 #else // UNIX
-        
+
 #if defined(LINUX) || defined(MACOSX)
     void *handle = (void *) dll;
     dlclose( handle );
