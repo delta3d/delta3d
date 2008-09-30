@@ -615,7 +615,7 @@ namespace dtDAL
          result = fileUtils.DirDelete(sofar, recursive);
          if (result && dataTypeTree != NULL)
          {
-            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodefor (*dataTypeTree, category);
+            dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor (*dataTypeTree, category);
             if (treeIt != dataTypeTree->end())
                //get the tree above this one, and remove the iterator from it.
                treeIt.out().tree_ref().erase(treeIt);
@@ -630,7 +630,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodefor (
+   dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor (
       dtUtil::tree<ResourceTreeNode>& resources, const std::string& id)
    {
 
@@ -721,7 +721,7 @@ namespace dtDAL
    {
 
       //find the category node from that string.
-      dtUtil::tree<ResourceTreeNode>::iterator resIt = FindTreeNodefor (resourceTree, resource.GetResourceIdentifier());
+      dtUtil::tree<ResourceTreeNode>::iterator resIt = FindTreeNodeFor(resourceTree, resource.GetResourceIdentifier());
 
       if (resIt != resourceTree.end() && !resIt->isCategory())
       {
