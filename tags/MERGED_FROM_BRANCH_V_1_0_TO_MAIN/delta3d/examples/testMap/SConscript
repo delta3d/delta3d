@@ -1,6 +1,0 @@
-Import('*')
-
-srcs =  SGlob( '*.cpp' )
-deps =[ 'dtCore', 'dtDAL'] 
-
-BuildProgram( 'testMap', srcs, deps )

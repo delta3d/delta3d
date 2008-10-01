@@ -1,6 +1,0 @@
-Import('*')
-
-srcs = env.SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtAudio', 'dtUtil' ]
-
-env.BuildProgram( 'testAudio', srcs, deps )

@@ -1,7 +1,0 @@
-Import('*')
-
-testSrcs = ['testcharacters.cpp']
-
-testDeps = [ 'dtcore', 'dtabc', 'dtchar', 'dtutil' ]
-
-BuildProgram( 'testCharacters', testSrcs, testDeps )

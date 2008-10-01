@@ -1,7 +1,0 @@
-Import('*')
-
-dtVisSrcs = [ 'bspcullcallback.cpp' ]
-
-dtVisDeps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
-
-BuildLib( 'dtvis', dtVisSrcs, dtVisDeps, ['OSG_LIBRARY'] )

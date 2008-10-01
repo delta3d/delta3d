@@ -1,6 +1,0 @@
-﻿Windows Registry Editor Version 5.00
-
-[HKEY_LOCAL_MACHINE\SOFTWARE\NVIDIA Corporation\Global\OpenGL\Debug]
-"WriteProgramObjectAssembly"=dword:00000000
-"ShaderObjects"=dword:00000001
-
