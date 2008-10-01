@@ -128,6 +128,33 @@ namespace dtEditQt
    {
       timer->stop();
       delete timer;
+
+      if (mViewerProcess != NULL)
+      {
+         if (mViewerProcess->state() == QProcess::Running)
+         {
+            mViewerProcess->terminate();
+            mViewerProcess->waitForFinished();
+         }         
+      }
+
+      if (mSkeletalEditorProcess != NULL)
+      {
+         if (mSkeletalEditorProcess->state() == QProcess::Running)
+         {
+            mSkeletalEditorProcess->terminate();
+            mSkeletalEditorProcess->waitForFinished();
+         }         
+      }
+
+      if (mParticleEditorProcess != NULL)
+      {
+         if (mParticleEditorProcess->state() == QProcess::Running)
+         {
+            mParticleEditorProcess->terminate();
+            mParticleEditorProcess->waitForFinished();
+         }         
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -947,26 +974,24 @@ namespace dtEditQt
           mSkeletalEditorProcess = new QProcess(this);           
        }     
 
-       // Don't launch more than one copy of the editor
-       if (mSkeletalEditorProcess->state() != QProcess::Running)
-       {           
-          QString program = "AnimationViewer.exe";
-          QStringList arguments;
-
-          mSkeletalEditorProcess->start(program, arguments);     
-
-          QProcess::ProcessState state = mSkeletalEditorProcess->state();
-
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"), 
-                tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-
-          }
+       if (mSkeletalEditorProcess->state() == QProcess::Running)
+       {
+          // Don't launch more than one copy of the editor
+          return;
        }
-      
+
+       QString program = "AnimationViewer.exe";
+       QStringList arguments;
+
+       mSkeletalEditorProcess->start(program, arguments);     
+
+       // Our process should have started
+       if (mSkeletalEditorProcess->waitForStarted() == false)
+       {
+          QMessageBox::information(NULL, tr("Process Error"), 
+             tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
+             QMessageBox::Ok);
+       }     
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -978,24 +1003,23 @@ namespace dtEditQt
           mParticleEditorProcess = new QProcess(this);           
        }     
 
-       // Don't launch more than one copy of the editor
-       if (mParticleEditorProcess->state() != QProcess::Running)
-       {           
-          QString program = "psEditor.exe";
-          QStringList arguments;
+       if (mParticleEditorProcess->state() == QProcess::Running)
+       {
+          // Don't launch more than one copy of the editor
+          return;
+       }
 
-          mParticleEditorProcess->start(program, arguments);    
+       QString program = "psEditor.exe";
+       QStringList arguments;
 
-          QProcess::ProcessState state = mParticleEditorProcess->state();
+       mParticleEditorProcess->start(program, arguments);    
 
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"), 
-                tr("Unable to launch psEditor.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-
-          }
+       // Our process should have started
+       if (mParticleEditorProcess->waitForStarted() == false)
+       {
+          QMessageBox::information(NULL, tr("Process Error"), 
+             tr("Unable to launch psEditor.exe.  Make sure application exists."),
+             QMessageBox::Ok);
        }
     }
 
@@ -1008,24 +1032,23 @@ namespace dtEditQt
           mViewerProcess = new QProcess(this);           
        }     
 
-       // Don't launch more than one copy of the editor
-       if (mViewerProcess->state() != QProcess::Running)
-       {           
-          QString program = "viewer.exe";
-          QStringList arguments;
+       if (mViewerProcess->state() == QProcess::Running)
+       {
+          // Don't launch more than one copy of the editor
+          return;
+       }
 
-          mViewerProcess->start(program, arguments); 
+       QString program = "viewer.exe"; //TODO
+       QStringList arguments;
 
-          QProcess::ProcessState state = mViewerProcess->state();
+       mViewerProcess->start(program, arguments); 
 
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"), 
-                tr("Unable to launch Viewer.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-           
-          }
+       // Our process should have started
+       if (mViewerProcess->waitForStarted() == false)
+       {
+          QMessageBox::information(NULL, tr("Process Error"), 
+             tr("Unable to launch Viewer.exe.  Make sure application exists."),
+             QMessageBox::Ok);           
        }
     }    
 
