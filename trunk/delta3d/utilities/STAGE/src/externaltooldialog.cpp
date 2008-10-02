@@ -10,7 +10,6 @@ dtEditQt::ExternalToolDialog::ExternalToolDialog(QList<ExternalTool*> &tools, QW
 : QDialog(parent)
 , mTools(&tools)
 {
-   setWindowTitle(tr("External Tools"));
    ui.setupUi(this);
    
    ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -33,6 +32,7 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.titleEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.commandEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.commandButton, SIGNAL(clicked()), this, SLOT(OnFindCommandFile()));
+   connect(ui.argsEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
 }
 
 
@@ -106,6 +106,7 @@ void dtEditQt::ExternalToolDialog::OnToolSelectionChanged()
 
    ui.titleEdit->setText(tool->GetTitle());
    ui.commandEdit->setText(tool->GetCmd());
+   ui.argsEdit->setText(tool->GetArgs());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,6 +153,7 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
    currentItem->setText(ui.titleEdit->text());
    tool->SetTitle(ui.titleEdit->text());
    tool->SetCmd(ui.commandEdit->text());
+   tool->SetArgs(ui.argsEdit->text());
 
    ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
    

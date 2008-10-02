@@ -71,6 +71,7 @@ namespace dtEditQt
    const QString EditorSettings::EXTERNAL_TOOLS("ExternalTools");
    const QString EditorSettings::EXTERNAL_TOOL_TITLE("Title");
    const QString EditorSettings::EXTERNAL_TOOL_COMMAND("Command");
+   const QString EditorSettings::EXTERNAL_TOOL_ARGS("Arguments");
 
 
    ///////////////////////////////////////////////////////////////////////////////
