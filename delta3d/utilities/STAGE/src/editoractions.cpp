@@ -1510,6 +1510,7 @@ namespace dtEditQt
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
    void EditorActions::SlotNewExternalToolEditor()
    {
       //launch ext tool editor
@@ -1522,6 +1523,18 @@ namespace dtEditQt
          emit ExternalToolsModified(mTools);
       }
 
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const QList<ExternalTool*>& EditorActions::GetExternalTools() const
+   {
+      return mTools;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QList<ExternalTool*>& EditorActions::GetExternalTools()
+   {
+      return mTools;
    }
 }
 

@@ -92,6 +92,11 @@ namespace dtEditQt
         ///Current state of the main windows dockables and toolbars.
         static const QString MAINWIN_DOCK_STATE;
 
+        ///External tool labels
+        static const QString EXTERNAL_TOOLS;
+        static const QString EXTERNAL_TOOL_TITLE;
+        static const QString EXTERNAL_TOOL_COMMAND;
+
         /**
          * Constructs the settings object.  This reads the settings from disk if they
          * exist.

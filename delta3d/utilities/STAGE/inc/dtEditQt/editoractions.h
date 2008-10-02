@@ -101,6 +101,12 @@ namespace dtEditQt
           */
          bool deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap);
 
+         ///Get the container of ExternalTools, const-like
+         const QList<ExternalTool*>& GetExternalTools() const;
+
+         ///Get the container of ExternalTools in a modifiable kind of way.
+         QList<ExternalTool*>& GetExternalTools();
+
          /**
           * The actions for this class are public.  Essentially, this whole class is here
           * to create these, trap their events, and expose them.
