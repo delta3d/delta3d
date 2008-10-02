@@ -22,6 +22,9 @@ namespace dtEditQt
       void SetArgs(const QString &args);
       const QString& GetArgs() const;
 
+      void SetWorkingDir(const QString& dir);
+      QString GetWorkingDir() const;
+
       QAction* GetAction() const;
    
    protected slots:
