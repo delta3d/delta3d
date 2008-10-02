@@ -68,6 +68,11 @@ namespace dtEditQt
    const QString EditorSettings::SELECTION_COLOR("Selection_Color");
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
 
+   const QString EditorSettings::EXTERNAL_TOOLS("ExternalTools");
+   const QString EditorSettings::EXTERNAL_TOOL_TITLE("Title");
+   const QString EditorSettings::EXTERNAL_TOOL_COMMAND("Command");
+
+
    ///////////////////////////////////////////////////////////////////////////////
    EditorSettings::EditorSettings() :
       QSettings(QSettings::IniFormat, QSettings::UserScope,

@@ -57,6 +57,8 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
+#include <dtEditQt/externaltool.h>
+
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 
@@ -516,6 +518,23 @@ namespace dtEditQt
             }
         settings.endGroup();
 
+        //save the external tools
+        const QList<ExternalTool*> extTools = EditorActions::GetInstance().GetExternalTools();
+
+        settings.remove(EditorSettings::EXTERNAL_TOOLS); //remove old ones
+        settings.beginWriteArray(EditorSettings::EXTERNAL_TOOLS);
+        for (int toolIdx=0; toolIdx<extTools.size(); ++toolIdx)
+        {
+           if (extTools.at(toolIdx)->GetAction()->isVisible())
+           {
+              settings.setArrayIndex(toolIdx);
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
+           }
+        }
+        settings.endArray();
+
+
         //Save the recent projects unless the user does not wish to do so.
         if(!EditorData::GetInstance().getLoadLastProject())
             return;
@@ -767,6 +786,19 @@ namespace dtEditQt
             EditorData::GetInstance().setSelectionColor(color);
         }
         settings.endGroup();
+
+        //external tools
+        const int numExtTools = settings.beginReadArray(EditorSettings::EXTERNAL_TOOLS);
+        QList<ExternalTool*> &extTools = EditorActions::GetInstance().GetExternalTools();
+        for (int toolIdx=0; toolIdx<numExtTools; ++toolIdx)
+        {
+           settings.setArrayIndex(toolIdx);
+           ExternalTool* tool = extTools.at(toolIdx);
+           tool->SetTitle(settings.value(EditorSettings::EXTERNAL_TOOL_TITLE).toString());
+           tool->SetCmd(settings.value(EditorSettings::EXTERNAL_TOOL_COMMAND).toString());
+           tool->GetAction()->setVisible(true);
+        }
+        settings.endArray();
     }
 
 
