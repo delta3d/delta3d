@@ -24,6 +24,13 @@
    <layout class="QVBoxLayout" name="verticalLayout" >
     <item>
      <widget class="QPushButton" name="addButton" >
+      <property name="toolTip" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Add a new External Tool to the list&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
       <property name="text" >
        <string>Add</string>
       </property>
@@ -31,6 +38,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="deleteButton" >
+      <property name="toolTip" >
+       <string>Delete the selected external tool</string>
+      </property>
       <property name="text" >
        <string>Delete</string>
       </property>
@@ -38,6 +48,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="moveUpButton" >
+      <property name="toolTip" >
+       <string>Move the selected external tool up in the list</string>
+      </property>
       <property name="text" >
        <string>Move Up</string>
       </property>
@@ -45,6 +58,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="moveDownButton" >
+      <property name="toolTip" >
+       <string>Move the selected external tool down in the list</string>
+      </property>
       <property name="text" >
        <string>Move Down</string>
       </property>
@@ -96,7 +112,11 @@
      </widget>
     </item>
     <item row="0" column="1" >
-     <widget class="QLineEdit" name="titleEdit" />
+     <widget class="QLineEdit" name="titleEdit" >
+      <property name="toolTip" >
+       <string>The display name of this external tool.  Use a '&amp;' before a character to designate a keyboard shortcut (e.g., &amp;Browser)</string>
+      </property>
+     </widget>
     </item>
     <item row="1" column="0" >
      <widget class="QLabel" name="commandLabel" >
@@ -106,7 +126,11 @@
      </widget>
     </item>
     <item row="1" column="1" >
-     <widget class="QLineEdit" name="commandEdit" />
+     <widget class="QLineEdit" name="commandEdit" >
+      <property name="toolTip" >
+       <string>The command for the external tool to run</string>
+      </property>
+     </widget>
     </item>
     <item row="1" column="2" >
      <widget class="QToolButton" name="commandButton" >
@@ -123,7 +147,11 @@
      </widget>
     </item>
     <item row="2" column="1" >
-     <widget class="QLineEdit" name="argsEdit" />
+     <widget class="QLineEdit" name="argsEdit" >
+      <property name="toolTip" >
+       <string>Any command line arguments to pass to the external tool.  Seperate arguments with spaces.</string>
+      </property>
+     </widget>
     </item>
     <item row="3" column="0" >
      <widget class="QLabel" name="workingDirLabel" >
@@ -133,7 +161,11 @@
      </widget>
     </item>
     <item row="3" column="1" >
-     <widget class="QLineEdit" name="workingDirEdit" />
+     <widget class="QLineEdit" name="workingDirEdit" >
+      <property name="toolTip" >
+       <string>The working directory to run the external tool from</string>
+      </property>
+     </widget>
     </item>
     <item row="3" column="2" >
      <widget class="QToolButton" name="workingDirButton" >
@@ -145,6 +177,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>toolList</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>moveUpButton</tabstop>
+  <tabstop>moveDownButton</tabstop>
+  <tabstop>titleEdit</tabstop>
+  <tabstop>commandEdit</tabstop>
+  <tabstop>commandButton</tabstop>
+  <tabstop>argsEdit</tabstop>
+  <tabstop>workingDirEdit</tabstop>
+  <tabstop>workingDirButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
