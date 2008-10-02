@@ -523,11 +523,13 @@ namespace dtEditQt
 
         settings.remove(EditorSettings::EXTERNAL_TOOLS); //remove old ones
         settings.beginWriteArray(EditorSettings::EXTERNAL_TOOLS);
+        int savedIdx = 0;///<used to keep the external tools sorted correctly
         for (int toolIdx=0; toolIdx<extTools.size(); ++toolIdx)
         {
            if (extTools.at(toolIdx)->GetAction()->isVisible())
            {
-              settings.setArrayIndex(toolIdx);
+              settings.setArrayIndex(savedIdx);
+              savedIdx++;
               settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
               settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
               settings.setValue(EditorSettings::EXTERNAL_TOOL_ARGS, extTools.at(toolIdx)->GetArgs());

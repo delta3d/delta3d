@@ -21,6 +21,11 @@ dtEditQt::ExternalToolDialog::ExternalToolDialog(QList<ExternalTool*> &tools, QW
 
 dtEditQt::ExternalToolDialog::~ExternalToolDialog()
 {
+   while (ui.toolList->count() > 0)
+   {
+      QListWidgetItem* item = ui.toolList->takeItem(0);
+      delete item;
+   }
 }
 
 void dtEditQt::ExternalToolDialog::SetupConnections()
@@ -76,7 +81,27 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnRemoveTool()
 {
+   if (ui.toolList->currentItem() == NULL)
+   {
+      //nothing selected
+      return;
+   }
 
+   ExternalTool* tool = GetSelectedTool();
+   if (tool == NULL)
+   {
+      return;
+   }
+
+   ui.toolList->takeItem(ui.toolList->currentRow()); //remove it's widget
+   tool->GetAction()->setVisible(false); //turn off the QAction
+   SetOkButtonEnabled(true);
+   
+   //now select something that still exists.
+   if (ui.toolList->count() > 0)
+   {
+      ui.toolList->setCurrentItem(ui.toolList->item(0));
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
