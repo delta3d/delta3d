@@ -9,6 +9,7 @@ dtEditQt::ExternalTool::ExternalTool()
 :
  mAction(new QAction(NULL))
  , mCommand(QString())
+ , mArgs(QString())
  , mProcess(new QProcess())
 {
    mAction->setText("defaultTitle");
@@ -18,8 +19,6 @@ dtEditQt::ExternalTool::ExternalTool()
 //////////////////////////////////////////////////////////////////////////
 dtEditQt::ExternalTool::~ExternalTool()
 {
-   std::cout << "externalTool destructed:" << GetTitle().toStdString() << std::endl;
-
    if (mProcess->state() == QProcess::Running)
    {
       mProcess->terminate();
@@ -62,7 +61,7 @@ void dtEditQt::ExternalTool::OnStartTool()
    //spaces in the path.
    const QString withQuotes = QString("\"%1\"").arg(mCommand);
 
-   mProcess->start(withQuotes);
+   mProcess->start(withQuotes + " " + mArgs); //tack on any arguments
 
    if (mProcess->waitForStarted() == false)
    {
@@ -89,3 +88,17 @@ const QString& dtEditQt::ExternalTool::GetCmd() const
 {
    return mCommand;
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalTool::SetArgs(const QString &args)
+{
+   mArgs = args;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const QString& dtEditQt::ExternalTool::GetArgs() const
+{
+   return mArgs;
+}
+

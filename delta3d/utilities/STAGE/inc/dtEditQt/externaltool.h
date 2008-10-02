@@ -19,15 +19,19 @@ namespace dtEditQt
       void SetCmd(const QString& command);
       const QString& GetCmd() const;
 
+      void SetArgs(const QString &args);
+      const QString& GetArgs() const;
+
       QAction* GetAction() const;
    
    protected slots:
 
-         void OnStartTool();
+      void OnStartTool();
 
    private:
       QAction* mAction;
       QString mCommand;
+      QString mArgs;
       QProcess* mProcess;
    };
 }

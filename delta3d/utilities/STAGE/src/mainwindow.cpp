@@ -530,6 +530,7 @@ namespace dtEditQt
               settings.setArrayIndex(toolIdx);
               settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
               settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_ARGS, extTools.at(toolIdx)->GetArgs());
            }
         }
         settings.endArray();
@@ -796,6 +797,7 @@ namespace dtEditQt
            ExternalTool* tool = extTools.at(toolIdx);
            tool->SetTitle(settings.value(EditorSettings::EXTERNAL_TOOL_TITLE).toString());
            tool->SetCmd(settings.value(EditorSettings::EXTERNAL_TOOL_COMMAND).toString());
+           tool->SetArgs(settings.value(EditorSettings::EXTERNAL_TOOL_ARGS).toString());
            tool->GetAction()->setVisible(true);
         }
         settings.endArray();

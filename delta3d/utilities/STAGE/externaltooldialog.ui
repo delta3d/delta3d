@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>External Tools</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget" >
    <property name="geometry" >
