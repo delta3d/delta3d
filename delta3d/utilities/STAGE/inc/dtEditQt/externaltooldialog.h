@@ -27,6 +27,7 @@ namespace dtEditQt
       void OnApplyChanges();
       void OnToolModified();
       void OnStringChanged(const QString& text);
+      void OnFindCommandFile();
 
    private:
       void SetupConnections();

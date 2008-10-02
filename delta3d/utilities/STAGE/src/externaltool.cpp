@@ -1,5 +1,6 @@
 #include <dtEditQt/externaltool.h>
 #include <QtGui/QAction>
+#include <QtGui/QMessageBox>
 #include <QtCore/QProcess>
 #include <iostream>
 
@@ -57,14 +58,17 @@ void dtEditQt::ExternalTool::OnStartTool()
       return;
    }
 
-   mProcess->start(mCommand);
+   //Automatically surround the command with quotes, for those OS's that have
+   //spaces in the path.
+   const QString withQuotes = QString("\"%1\"").arg(mCommand);
+
+   mProcess->start(withQuotes);
 
    if (mProcess->waitForStarted() == false)
    {
-      std::cout << "failed starting: "<< GetTitle().toStdString() << " " << mCommand.toStdString() << std::endl;
+      QMessageBox::warning(NULL, tr("External Tool"), 
+                         tr("Failed to start tool.  Does file exist?\n") + mCommand);
    }
-   else
-      std::cout << GetTitle().toStdString() << " started" << std::endl;
 
 }
 
