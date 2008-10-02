@@ -44,6 +44,7 @@ namespace dtEditQt
    class PropertyEditor;
    class ActorTab;
    class ResourceBrowser;
+   class ExternalTool;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -183,6 +184,9 @@ namespace dtEditQt
          // aren't visible yet. 
          void setWindowMenuTabsChecked();
 
+         ///Time to refresh the Tools menu with the new list of external tools
+         void OnToolsModified(const QList<ExternalTool*>& tools);
+
       protected:
          /**
           * Called when the window receives the event to close itself.
@@ -199,6 +203,7 @@ namespace dtEditQt
          QMenu *helpMenu;
          QMenu *recentProjs;
          QMenu *recentMaps;
+         QMenu* mToolsMenu;
 
          QToolBar *fileToolBar;
          QToolBar *editToolBar;
