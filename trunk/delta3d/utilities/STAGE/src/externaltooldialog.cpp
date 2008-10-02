@@ -1,7 +1,6 @@
 #include <dtEditQt/externaltooldialog.h>
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
-#include <iostream>
 #include <cassert>
 
 using namespace dtEditQt;
@@ -38,6 +37,8 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.commandEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.commandButton, SIGNAL(clicked()), this, SLOT(OnFindCommandFile()));
    connect(ui.argsEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(ui.workingDirEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(ui.workingDirButton, SIGNAL(clicked()), this, SLOT(OnFindWorkingDir()));
 }
 
 
@@ -71,7 +72,6 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
    tool->GetAction()->setVisible(true);
 
    QListWidgetItem *item = new QListWidgetItem(tool->GetTitle(), ui.toolList);   
-   std::cout << "tool widgets in diag: " << ui.toolList->count() << std::endl;
    ui.toolList->setCurrentItem(item); //make it the currently selected item
    
    SetOkButtonEnabled(true);
@@ -115,7 +115,13 @@ void dtEditQt::ExternalToolDialog::PopulateToolsUI()
       {
          ui.toolList->addItem(mTools->at(toolIdx)->GetTitle());
       }
-   }   
+   }
+
+   //now select something that still exists.
+   if (ui.toolList->count() > 0)
+   {
+      ui.toolList->setCurrentItem(ui.toolList->item(0));
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -132,6 +138,7 @@ void dtEditQt::ExternalToolDialog::OnToolSelectionChanged()
    ui.titleEdit->setText(tool->GetTitle());
    ui.commandEdit->setText(tool->GetCmd());
    ui.argsEdit->setText(tool->GetArgs());
+   ui.workingDirEdit->setText(tool->GetWorkingDir());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -179,6 +186,7 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
    tool->SetTitle(ui.titleEdit->text());
    tool->SetCmd(ui.commandEdit->text());
    tool->SetArgs(ui.argsEdit->text());
+   tool->SetWorkingDir(ui.workingDirEdit->text());
 
    ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
    
@@ -244,6 +252,29 @@ void dtEditQt::ExternalToolDialog::OnFindCommandFile()
    {
       tool->SetCmd(filename);
       ui.commandEdit->setText(filename);
+      OnToolModified();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnFindWorkingDir()
+{
+   ExternalTool* tool = GetSelectedTool();
+
+   if (tool == NULL)
+   {
+      return;
+   }
+
+   //pop open a file dialog and query for a workingDir
+   const QString workingDir = QFileDialog::getExistingDirectory(this,
+                              tr("Get Directory"),
+                              tool->GetWorkingDir());
+
+   if (!workingDir.isEmpty())
+   {
+      tool->SetWorkingDir(workingDir);
+      ui.workingDirEdit->setText(workingDir);
       OnToolModified();
    }
 }

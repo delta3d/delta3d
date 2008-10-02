@@ -61,6 +61,8 @@ void dtEditQt::ExternalTool::OnStartTool()
    //spaces in the path.
    const QString withQuotes = QString("\"%1\"").arg(mCommand);
 
+   mProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+
    mProcess->start(withQuotes + " " + mArgs); //tack on any arguments
 
    if (mProcess->waitForStarted() == false)
@@ -102,3 +104,14 @@ const QString& dtEditQt::ExternalTool::GetArgs() const
    return mArgs;
 }
 
+//////////////////////////////////////////////////////////////////////////
+QString dtEditQt::ExternalTool::GetWorkingDir() const
+{
+   return mProcess->workingDirectory();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalTool::SetWorkingDir(const QString& dir)
+{
+   mProcess->setWorkingDirectory(dir);
+}
