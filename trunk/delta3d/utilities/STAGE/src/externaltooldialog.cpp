@@ -1,5 +1,6 @@
 #include <dtEditQt/externaltooldialog.h>
 #include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
 #include <iostream>
 #include <cassert>
 
@@ -31,6 +32,7 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()), this, SLOT(OnApplyChanges()));
    connect(ui.titleEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.commandEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(ui.commandButton, SIGNAL(clicked()), this, SLOT(OnFindCommandFile()));
 }
 
 
@@ -176,6 +178,7 @@ void dtEditQt::ExternalToolDialog::OnStringChanged(const QString& text)
    OnToolModified();
 }
 
+//////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::accept()
 {
    if (ui.buttonBox->button(QDialogButtonBox::Apply)->isEnabled())
@@ -186,10 +189,34 @@ void dtEditQt::ExternalToolDialog::accept()
    QDialog::accept();
 }
 
+//////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::SetModifyButtonsEnabled(bool enabled)
 {
    ui.addButton->setEnabled(enabled);
    ui.deleteButton->setEnabled(enabled);
    ui.moveDownButton->setEnabled(enabled);
    ui.moveUpButton->setEnabled(enabled);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnFindCommandFile()
+{
+   ExternalTool* tool = GetSelectedTool();
+
+   if (tool == NULL)
+   {
+      return;
+   }
+
+   //pop open a file dialog and query for a filename
+   const QString filename = QFileDialog::getOpenFileName(this,
+                     tr("Get File"),
+                     QFileInfo(tool->GetCmd()).path());
+
+   if (!filename.isEmpty())
+   {
+      tool->SetCmd(filename);
+      ui.commandEdit->setText(filename);
+      OnToolModified();
+   }
 }
