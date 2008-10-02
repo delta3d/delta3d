@@ -238,6 +238,9 @@ namespace dtEditQt
          // Action - launch the viewer
          QAction *actionLaunchViewer;
 
+         //Group of external tool QActions
+         QActionGroup *mExternalToolActionGroup;
+
       public slots:
 
          /**

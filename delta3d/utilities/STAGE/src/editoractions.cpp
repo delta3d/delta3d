@@ -96,6 +96,7 @@ namespace dtEditQt
       , mSkeletalEditorProcess(NULL)
       , mParticleEditorProcess(NULL)
       , mViewerProcess(NULL)
+      , mExternalToolActionGroup(new QActionGroup(NULL))
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
@@ -164,6 +165,8 @@ namespace dtEditQt
          ExternalTool* tool = mTools.takeFirst();
          delete tool;
       }
+
+      delete mExternalToolActionGroup;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -389,6 +392,16 @@ namespace dtEditQt
       actionAddTool = new QAction(tr("&Add Tool..."), this);
       actionAddTool->setStatusTip(tr("Add a new external tool"));
       connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
+
+      //create a finite number of ExternalTool's which can be used and add them
+      //to an QActionGroup for reference
+      for (int i = 0; i < 10; i++)
+      {
+         ExternalTool* tool = new ExternalTool();
+         tool->GetAction()->setVisible(false);
+         mExternalToolActionGroup->addAction(tool->GetAction());
+         mTools.push_back(tool);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
