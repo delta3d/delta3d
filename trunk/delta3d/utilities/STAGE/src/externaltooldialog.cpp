@@ -1,5 +1,7 @@
 #include <dtEditQt/externaltooldialog.h>
+#include <QtGui/QMessageBox>
 #include <iostream>
+#include <cassert>
 
 using namespace dtEditQt;
 
@@ -35,14 +37,34 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnNewTool()
 {
-   ExternalTool *tool = new ExternalTool();
-   //TODO generate default name
+   ExternalTool *tool = NULL;
 
-   mTools->push_back(tool);
+   //find the first ExternalTool that has a non-visible QAction.  We'll edit that one.
+   for (int toolIdx=0; toolIdx<mTools->size(); toolIdx++)
+   {
+      if (mTools->at(toolIdx)->GetAction()->isVisible() == false)
+      {
+         tool = mTools->at(toolIdx);
+         break;
+      }
+   }
 
-   QListWidgetItem *item = new QListWidgetItem(tool->GetTitle());
-   
-   ui.toolList->addItem(item);
+   if (tool == NULL)
+   {
+      //no ExternalTools are available for editing.  We must have reached
+      //the max.
+      QMessageBox::information(this, tr("Tools"), 
+                              tr("Maximum number of external tools reached.  Try deleting tools not used."));
+      return;
+   }
+
+   assert(tool);   
+
+   //mTools->push_back(tool);
+   tool->GetAction()->setVisible(true);
+
+   QListWidgetItem *item = new QListWidgetItem(tool->GetTitle(), ui.toolList);   
+   std::cout << "tool widgets in diag: " << ui.toolList->count() << std::endl;
    ui.toolList->setCurrentItem(item); //make it the currently selected item
    
    SetOkButtonEnabled(true);
@@ -60,8 +82,12 @@ void dtEditQt::ExternalToolDialog::PopulateToolsUI()
 {
    for (int toolIdx=0; toolIdx<mTools->size(); toolIdx++)
    {
-      QListWidgetItem *item = new QListWidgetItem(ui.toolList);
-      item->setText(mTools->at(toolIdx)->GetTitle());
+      //if the QAction is visible, that means its already been created and ready to edit.
+      //Otherwise, don't create an item for the ExternalTool
+      if (mTools->at(toolIdx)->GetAction()->isVisible())
+      {
+         ui.toolList->addItem(mTools->at(toolIdx)->GetTitle());
+      }
    }   
 }
 
@@ -110,12 +136,14 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
    if (currentItem == NULL)
    {
       //nothing selected
+      assert(currentItem);
       return;
    }
 
    ExternalTool* tool = GetSelectedTool();
    if (tool == NULL)
    {
+      assert(tool);
       return;
    }
 
