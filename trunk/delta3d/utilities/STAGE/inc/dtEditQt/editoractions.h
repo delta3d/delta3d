@@ -107,6 +107,8 @@ namespace dtEditQt
          ///Get the container of ExternalTools in a modifiable kind of way.
          QList<ExternalTool*>& GetExternalTools();
 
+         const QList<QAction*> GetExternalToolActions() const;
+
          /**
           * The actions for this class are public.  Essentially, this whole class is here
           * to create these, trap their events, and expose them.
@@ -406,7 +408,7 @@ namespace dtEditQt
          void slotLaunchDeltaViewer();
 
 signals:
-         void ExternalToolsModified(const QList<ExternalTool*>&);
+         void ExternalToolsModified(const QList<QAction*>&);
 
       protected:
          /**

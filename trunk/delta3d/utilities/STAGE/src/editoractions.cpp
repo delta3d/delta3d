@@ -1520,9 +1520,8 @@ namespace dtEditQt
       if (retCode == QDialog::Accepted)
       {
          //notify the world
-         emit ExternalToolsModified(mTools);
+         emit ExternalToolsModified(GetExternalToolActions());
       }
-
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -1535,6 +1534,18 @@ namespace dtEditQt
    QList<ExternalTool*>& EditorActions::GetExternalTools()
    {
       return mTools;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const QList<QAction*> EditorActions::GetExternalToolActions() const
+   {
+      QList<QAction*> actions;
+      for (int i=0; i<mTools.size(); ++i)
+      {
+         actions.push_back(mTools.at(i)->GetAction());
+      }
+
+      return actions;
    }
 }
 

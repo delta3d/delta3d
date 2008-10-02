@@ -183,6 +183,9 @@ namespace dtEditQt
          // aren't visible yet. 
          void setWindowMenuTabsChecked();
 
+         void RebuildToolsMenu(const QList<QAction*>& actions);
+
+
       protected:
          /**
           * Called when the window receives the event to close itself.

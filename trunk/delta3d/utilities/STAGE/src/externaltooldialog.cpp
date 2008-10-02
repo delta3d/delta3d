@@ -39,6 +39,8 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.argsEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.workingDirEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.workingDirButton, SIGNAL(clicked()), this, SLOT(OnFindWorkingDir()));
+   connect(ui.moveDownButton, SIGNAL(clicked()), this, SLOT(OnMoveToolDown()));
+   connect(ui.moveUpButton, SIGNAL(clicked()), this, SLOT(OnMoveToolUp()));
 }
 
 
@@ -68,10 +70,13 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
 
    assert(tool);   
 
-   //mTools->push_back(tool);
    tool->GetAction()->setVisible(true);
+   tool->SetTitle("DefaultTitle");
+   tool->SetCmd("");
+   tool->SetArgs("");
+   tool->SetWorkingDir("");
 
-   QListWidgetItem *item = new QListWidgetItem(tool->GetTitle(), ui.toolList);   
+   QListWidgetItem *item = new QListWidgetItem(tool->GetTitle(), ui.toolList);
    ui.toolList->setCurrentItem(item); //make it the currently selected item
    
    SetOkButtonEnabled(true);
@@ -95,6 +100,10 @@ void dtEditQt::ExternalToolDialog::OnRemoveTool()
 
    ui.toolList->takeItem(ui.toolList->currentRow()); //remove it's widget
    tool->GetAction()->setVisible(false); //turn off the QAction
+   tool->SetTitle("");
+   tool->SetCmd("");
+   tool->SetArgs("");
+   tool->SetWorkingDir("");
    SetOkButtonEnabled(true);
    
    //now select something that still exists.
@@ -277,4 +286,58 @@ void dtEditQt::ExternalToolDialog::OnFindWorkingDir()
       ui.workingDirEdit->setText(workingDir);
       OnToolModified();
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnMoveToolDown()
+{
+   QListWidgetItem *currentItem = ui.toolList->currentItem();
+   if (currentItem == NULL)
+   {
+      //nothing selected
+      assert(currentItem);
+      return;
+   }
+
+   const int currentRow = ui.toolList->row(currentItem);
+   if (currentRow == ui.toolList->count()-1)
+   { 
+      //already at end of list
+      return;
+   }
+
+   currentItem = ui.toolList->takeItem(currentRow);
+   ui.toolList->insertItem(currentRow+1, currentItem);
+
+   mTools->swap(currentRow, currentRow+1);
+   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+
+   ui.toolList->setCurrentItem(currentItem); //reselect the item
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnMoveToolUp()
+{
+   QListWidgetItem *currentItem = ui.toolList->currentItem();
+   if (currentItem == NULL)
+   {
+      //nothing selected
+      assert(currentItem);
+      return;
+   }
+
+   const int currentRow = ui.toolList->row(currentItem);
+   if (currentRow == 0)
+   { 
+      //already at top of list
+      return;
+   }
+
+   currentItem = ui.toolList->takeItem(currentRow);
+   ui.toolList->insertItem(currentRow-1, currentItem);
+
+   mTools->swap(currentRow, currentRow-1);
+   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+
+   ui.toolList->setCurrentItem(currentItem); //reselect the item
 }

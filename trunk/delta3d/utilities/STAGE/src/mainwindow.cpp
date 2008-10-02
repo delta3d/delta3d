@@ -154,13 +154,8 @@ namespace dtEditQt
         windowMenu->addAction(editorActions.actionWindowsResetWindows);
 
         mToolsMenu = menuBar()->addMenu(tr("&Tools"));
-        const QList<QAction*> toolActions = editorActions.mExternalToolActionGroup->actions();
-        for (int toolIdx=0; toolIdx<toolActions.size(); ++toolIdx)
-        {
-           mToolsMenu->addAction(toolActions[toolIdx]);
-        }
-        mToolsMenu->addSeparator();
-        mToolsMenu->addAction(editorActions.actionAddTool);
+
+        RebuildToolsMenu(editorActions.GetExternalToolActions());
 
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(editorActions.actionHelpAboutEditor);
@@ -702,6 +697,9 @@ namespace dtEditQt
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+
+        connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<QAction*>&)),
+                this, SLOT(RebuildToolsMenu(const QList<QAction*>&)));
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -977,4 +975,17 @@ namespace dtEditQt
         QApplication::restoreOverrideCursor();
     }
 
+    
+    //////////////////////////////////////////////////////////////////////////
+    void MainWindow::RebuildToolsMenu(const QList<QAction*>& actions)
+    {
+       mToolsMenu->clear();
+       for (int toolIdx=0; toolIdx<actions.size(); ++toolIdx)
+       {
+          mToolsMenu->addAction(actions[toolIdx]);
+       }
+
+       mToolsMenu->addSeparator();
+       mToolsMenu->addAction(EditorActions::GetInstance().actionAddTool);
+    }
 }
