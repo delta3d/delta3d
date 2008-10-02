@@ -59,6 +59,7 @@ namespace dtDAL
 
 namespace dtEditQt 
 {
+   class ExternalTool;
 
    /**
     * This class holds all the UI QActions.  It has a list of the actions that are
@@ -219,6 +220,9 @@ namespace dtEditQt
          // Since mode tools are mutually exclusive, add them to a group..
          QActionGroup *modeToolsGroup;
 
+         // Add a new external tool
+         QAction *actionAddTool;
+
          // Action - Help - About Delta Level Editor
          QAction *actionHelpAboutEditor;
 
@@ -348,6 +352,9 @@ namespace dtEditQt
           */
          void slotFileRecentMap0();
 
+         ///Open the New External Tool editor window
+         void SlotNewExternalToolEditor();
+
          /**
           * Slot - Help - About Editor. Spawns the editor about box.
           */
@@ -388,6 +395,9 @@ namespace dtEditQt
 
          // Launches the delta viewer
          void slotLaunchDeltaViewer();
+
+signals:
+         void ExternalToolsModified(const QList<ExternalTool*>&);
 
       protected:
          /**
@@ -432,6 +442,7 @@ namespace dtEditQt
          void setupFileActions();
          void setupEditActions();
          void setupSelectionActions();
+         void SetupToolsActions();
          void setupHelpActions();
          void setupWindowActions();
          void setupSubeditorActions();
@@ -447,6 +458,9 @@ namespace dtEditQt
          QProcess *mSkeletalEditorProcess;  
          QProcess *mParticleEditorProcess; 
          QProcess *mViewerProcess;  
+
+         QList<ExternalTool*> mTools;      
+
    };
 }
 

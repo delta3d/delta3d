@@ -57,6 +57,7 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
+#include <dtEditQt/externaltool.h>
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 
@@ -151,9 +152,14 @@ namespace dtEditQt
         windowMenu->addSeparator();
         windowMenu->addAction(editorActions.actionWindowsResetWindows);
 
+        mToolsMenu = menuBar()->addMenu(tr("&Tools"));
+        mToolsMenu->addAction(editorActions.actionAddTool);
+
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(editorActions.actionHelpAboutEditor);
         helpMenu->addAction(editorActions.actionHelpAboutQT);
+
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -668,6 +674,9 @@ namespace dtEditQt
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+
+        connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<ExternalTool*>&)), 
+                this, SLOT(OnToolsModified(const QList<ExternalTool*>&)));
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -928,4 +937,20 @@ namespace dtEditQt
         QApplication::restoreOverrideCursor();
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    void MainWindow::OnToolsModified(const QList<ExternalTool*>& tools)
+    {
+       //remove all previous actions from the Tools menu
+       mToolsMenu->clear();
+
+       //add in the new tools
+       for (int toolIdx=0; toolIdx<tools.size(); toolIdx++)
+       {
+          mToolsMenu->addAction(tools[toolIdx]->GetAction());
+       }
+
+       //tack on our always present action
+       EditorActions &editorActions = EditorActions::GetInstance();
+       mToolsMenu->addAction(editorActions.actionAddTool);
+    }
 }

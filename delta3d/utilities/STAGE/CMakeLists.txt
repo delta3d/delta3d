@@ -8,16 +8,19 @@ list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/src/precomp.cpp)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
                                   ${CAL3D_INCLUDE_DIR} #for dtAnim
+                                  ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                                   )
 
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES stage.qrc)
+QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui)
 
 ADD_EXECUTABLE(${LIB_NAME}
     ${PROG_HEADERS}
     ${PROG_SOURCES}
     ${MOC_SOURCES}
     ${RCC_SOURCES}
+    ${UI_SOURCES}
 )
 
 LINK_WITH_VARIABLES(${LIB_NAME}

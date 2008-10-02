@@ -67,6 +67,8 @@
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/taskeditor.h>
+#include <dtEditQt/externaltooldialog.h>
+#include <dtEditQt/externaltool.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -100,6 +102,7 @@ namespace dtEditQt
       setupEditActions();
       setupSelectionActions();
       setupWindowActions();
+      SetupToolsActions();
       setupHelpActions();
       setupRecentItems();
       setupSubeditorActions();
@@ -154,6 +157,12 @@ namespace dtEditQt
             mParticleEditorProcess->terminate();
             mParticleEditorProcess->waitForFinished();
          }         
+      }
+
+      while (mTools.size() > 0)
+      {
+         ExternalTool* tool = mTools.takeFirst();
+         delete tool;
       }
    }
 
@@ -372,6 +381,14 @@ namespace dtEditQt
       actionWindowsResetWindows = new QAction(tr("Reset Docking Windows"), this);
       actionWindowsResetWindows->setShortcut(tr("Ctrl+R"));
       actionWindowsResetWindows->setStatusTip(tr("Restores the docking windows to a default state"));
+   }
+
+//////////////////////////////////////////////////////////////////////////
+   void EditorActions::SetupToolsActions()
+   {
+      actionAddTool = new QAction(tr("&Add Tool..."), this);
+      actionAddTool->setStatusTip(tr("Add a new external tool"));
+      connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1478,6 +1495,20 @@ namespace dtEditQt
          slotRestartAutosave();
          return result; //Return the users response.
       }
+   }
+
+   void EditorActions::SlotNewExternalToolEditor()
+   {
+      //launch ext tool editor
+      ExternalToolDialog dialog(mTools);
+      int retCode = dialog.exec();
+
+      if (retCode == QDialog::Accepted)
+      {
+         //notify the world
+         emit ExternalToolsModified(mTools);
+      }
+
    }
 }
 
