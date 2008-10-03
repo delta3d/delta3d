@@ -60,15 +60,6 @@ namespace dtEditQt
           */
          MainWindow();
 
-         /**
-          * Overloaded so that the context menu is not displayed.  By default, the MainWindow
-          * displays a right-click menu when the right mouse button is clicked.  Unfortunantly,
-          * this causes problems for other right mouse button behavior.
-          * @todo
-          *  Allow application wide right click menu when mouse is only over certain
-          *  widgets.
-          */
-         QMenu *createPopupMenu() { return NULL; }
 
          /**
           * Adds custom library paths as specified by the user settings
