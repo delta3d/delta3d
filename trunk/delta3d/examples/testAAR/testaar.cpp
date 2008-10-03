@@ -1,31 +1,32 @@
 /* -*-c++-*-
-* testAAR - testaar (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Christopher DuBuc
-* William E. Johnson II
-*/
+ * testAAR - testaar (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Christopher DuBuc
+ * William E. Johnson II
+ */
+
 #include "testaar.h"
 #include "testaarmessagetypes.h"
 #include "testaarmessageprocessor.h"
@@ -62,9 +63,9 @@ extern "C" TEST_AAR_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* en
 }
 
 //////////////////////////////////////////////////////////////////////////
-TestAAR::TestAAR() :  
-   mLmsComponent(new dtLMS::LmsComponent("TestAARLmsComponent")), 
-   mUseLMS(false)
+TestAAR::TestAAR()
+   : mLmsComponent(new dtLMS::LmsComponent("TestAARLmsComponent"))
+   , mUseLMS(false)
 {
    
 }
@@ -72,14 +73,14 @@ TestAAR::TestAAR() :
 //////////////////////////////////////////////////////////////////////////
 TestAAR::~TestAAR()
 {
-   if(mUseLMS && mLmsComponent.valid())
+   if (mUseLMS && mLmsComponent.valid())
    {
       mLmsComponent->DisconnectFromLms();
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char **argv)
+void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 {
    ParseCommandLineOptions(argc, argv);
    srand((unsigned int)(time(0)));
@@ -110,12 +111,12 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    {
       dtDAL::Project::GetInstance().SetContext(context, true);
    }
-   catch (dtUtil::Exception &e)
+   catch (dtUtil::Exception& e)
    {
       LOG_ERROR("Can't find the project context: " + e.What());
    }
    
-   dtGame::GameManager &gameManager = *app.GetGameManager();
+   dtGame::GameManager& gameManager = *app.GetGameManager();
 
    // Add Component - Input Component
    dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");
@@ -144,7 +145,7 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    gameManager.DebugStatisticsTurnOn(false, false, 5);
    gameManager.SendMessage(*gameManager.GetMessageFactory().CreateMessage(TestAARMessageType::RESET));
 
-   if(mUseLMS)
+   if (mUseLMS)
    {
       try
       {
@@ -159,7 +160,7 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    }
 }
 
-void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
+void TestAAR::ParseCommandLineOptions(int argc, char** argv) const
 {
    osg::ArgumentParser argParser(&argc, argv);
 
@@ -169,12 +170,12 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
    argParser.getApplicationUsage()->addCommandLineOption("-d", "The datapath to be used for the application");
 
    int lms;
-   if(argParser.read("-lms", lms))
+   if (argParser.read("-lms", lms))
    {
       mUseLMS = (lms == 1) ? true : false;
    }
 
-   if(argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
+   if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
       argParser.getApplicationUsage()->write(std::cerr);
       throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
@@ -183,7 +184,7 @@ void TestAAR::ParseCommandLineOptions(int argc, char **argv) const
 
 
    argParser.reportRemainingOptionsAsUnrecognized();
-   if(argParser.errors())
+   if (argParser.errors())
    {
       argParser.writeErrorMessages(std::cout);
       throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 

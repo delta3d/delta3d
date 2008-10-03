@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* testAAR - testaarhud (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Curtiss Murphy
-*/
+ * testAAR - testaarhud (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Curtiss Murphy
+ */
 
 #include "testaarhud.h"
 #include "testaarexceptionenum.h"
@@ -55,62 +55,62 @@ HUDState HUDState::MAXIMUM("MAXIMUM");
 HUDState HUDState::NONE("NONE");
 
 //////////////////////////////////////////////////////////////////////////
-TestAARHUD::TestAARHUD(dtCore::DeltaWin &win,
-                       dtCore::Keyboard &keyboard,
-                       dtCore::Mouse &mouse,
-                       dtGame::LogController &logController, 
-                       dtGame::TaskComponent &taskComponent,
-                       dtGame::ServerLoggerComponent &serverLogger)
- : dtGame::GMComponent("TestAARHUD"),
-   mHUDState(&HUDState::MINIMAL),
-   mLastHUDStateBeforeHelp(&HUDState::MINIMAL),
-   mLogController(&logController),
-   mTaskComponent(&taskComponent),
-   mServerLoggerComponent(&serverLogger),
-   mWin(&win),
-   mMainWindow(NULL),
-   mGUI(NULL),
-   mHUDOverlay(NULL),
-   mHelpOverlay(NULL),
-   mStateText(NULL),
-   mSimTimeText(NULL),
-   mSpeedFactorText(NULL),
-   mNumMessagesText(NULL),
-   mRecordDurationText(NULL),
-   mNumTagsText(NULL),
-   mLastTagText(NULL),
-   mNumFramesText(NULL),
-   mLastFrameText(NULL),
-   mCurLogText(NULL),
-   mCurMapText(NULL),
-   mFirstTipText(NULL),
-   mSecondTipText(NULL),
-   mHelpTipText(NULL),
-   mHelp1Text(NULL),
-   mHelp2Text(NULL),
-   mHelp3Text(NULL),
-   mHelp4Text(NULL),
-   mHelp5Text(NULL),
-   mHelp6Text(NULL),
-   mHelp7Text(NULL),
-   mHelp8Text(NULL),
-   mHelp9Text(NULL),
-   mHelp10Text(NULL),
-   mHelp11Text(NULL),
-   mHelp12Text(NULL),
-   mHelp13Text(NULL),
-   mHelp14Text(NULL),
-   mHelp15Text(NULL),
-   mHelp16Text(NULL),
-   mHelp17Text(NULL),
-   mHelp18Text(NULL),
-   mHelp19Text(NULL),
-   mTasksHeaderText(NULL),
-   mTaskTextList(),
-   mRightTextXOffset(180.0f),
-   mTextYTopOffset(10.0f),
-   mTextYSeparation(2.0f),
-   mTextHeight(20.0f)
+TestAARHUD::TestAARHUD(dtCore::DeltaWin& win,
+                       dtCore::Keyboard& keyboard,
+                       dtCore::Mouse& mouse,
+                       dtGame::LogController& logController, 
+                       dtGame::TaskComponent& taskComponent,
+                       dtGame::ServerLoggerComponent& serverLogger)
+   : dtGame::GMComponent("TestAARHUD")
+   , mHUDState(&HUDState::MINIMAL)
+   , mLastHUDStateBeforeHelp(&HUDState::MINIMAL)
+   , mLogController(&logController)
+   , mTaskComponent(&taskComponent)
+   , mServerLoggerComponent(&serverLogger)
+   , mWin(&win)
+   , mMainWindow(NULL)
+   , mGUI(NULL)
+   , mHUDOverlay(NULL)
+   , mHelpOverlay(NULL)
+   , mStateText(NULL)
+   , mSimTimeText(NULL)
+   , mSpeedFactorText(NULL)
+   , mNumMessagesText(NULL)
+   , mRecordDurationText(NULL)
+   , mNumTagsText(NULL)
+   , mLastTagText(NULL)
+   , mNumFramesText(NULL)
+   , mLastFrameText(NULL)
+   , mCurLogText(NULL)
+   , mCurMapText(NULL)
+   , mFirstTipText(NULL)
+   , mSecondTipText(NULL)
+   , mHelpTipText(NULL)
+   , mHelp1Text(NULL)
+   , mHelp2Text(NULL)
+   , mHelp3Text(NULL)
+   , mHelp4Text(NULL)
+   , mHelp5Text(NULL)
+   , mHelp6Text(NULL)
+   , mHelp7Text(NULL)
+   , mHelp8Text(NULL)
+   , mHelp9Text(NULL)
+   , mHelp10Text(NULL)
+   , mHelp11Text(NULL)
+   , mHelp12Text(NULL)
+   , mHelp13Text(NULL)
+   , mHelp14Text(NULL)
+   , mHelp15Text(NULL)
+   , mHelp16Text(NULL)
+   , mHelp17Text(NULL)
+   , mHelp18Text(NULL)
+   , mHelp19Text(NULL)
+   , mTasksHeaderText(NULL)
+   , mTaskTextList()
+   , mRightTextXOffset(180.0f)
+   , mTextYTopOffset(10.0f)
+   , mTextYSeparation(2.0f)
+   , mTextHeight(20.0f)
 {
    SetupGUI(win, keyboard, mouse);
 }
@@ -135,9 +135,9 @@ void TestAARHUD::ProcessMessage(const dtGame::Message& message)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::SetupGUI(dtCore::DeltaWin &win,
-                          dtCore::Keyboard &keyboard,
-                          dtCore::Mouse &mouse)
+void TestAARHUD::SetupGUI(dtCore::DeltaWin& win,
+                          dtCore::Keyboard& keyboard,
+                          dtCore::Mouse& mouse)
 {
    char clin[HUDCONTROLMAXTEXTSIZE]; // general buffer to print
    float curYPos;
@@ -151,7 +151,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin &win,
 
       std::string scheme = "gui/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
-      if(path.empty())
+      if (path.empty())
       {
          throw dtUtil::Exception(ARRHUDException::INIT_ERROR,
             "Failed to find the scheme file.", __FILE__, __LINE__);
@@ -162,7 +162,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin &win,
       CEGUI::SchemeManager::getSingleton().loadScheme(path);
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
-      CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
       CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
       CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
@@ -322,7 +322,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin &win,
 
       // Note - don't forget to add the cegui drawable to the scene after this method, or you get nothing.
    }
-   catch(CEGUI::Exception &e)
+   catch (CEGUI::Exception& e)
    {
       std::ostringstream oss;
       oss << "CEGUI while setting up AAR GUI: " << e.getMessage().c_str();
@@ -344,11 +344,17 @@ void TestAARHUD::TickHUD()
 
       // Playback State
       if (dtGame::LogStateEnumeration::LOGGER_STATE_IDLE == mLogController->GetLastKnownStatus().GetStateEnum())
+      {
          UpdateStaticText(mStateText, "IDLE", 1.0f, 1.0f, 1.0f);
+      }
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK == mLogController->GetLastKnownStatus().GetStateEnum())
+      {
          UpdateStaticText(mStateText, "PLAYBACK", 0.1f, 1.0f, 0.1f);
+      }
       else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
+      {
          UpdateStaticText(mStateText, "RECORD", 1.0f, 0.1f, 0.1f);
+      }
 
       // Sim Time
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "SimTime: %.2f", GetGameManager()->GetSimulationTime());
@@ -363,7 +369,9 @@ void TestAARHUD::TickHUD()
          UpdateStaticText(mSpeedFactorText, clin, 1.0f, 1.0f, 1.0f, w - mRightTextXOffset, curYPos);
       }
       else
+      {
          UpdateStaticText(mSpeedFactorText, "Speed: *Paused*", 1.0f, 0.1f, 0.1f, w - mRightTextXOffset, curYPos);
+      }
 
       UpdateMediumDetailData();
       UpdateHighDetailData((int)(w - mRightTextXOffset), curYPos);
@@ -383,7 +391,7 @@ void TestAARHUD::UpdateMediumDetailData()
       mTaskComponent->GetTopLevelTasks(tasks);
 
       // start our recursive method on each top level task
-      for(unsigned int i = 0; i < tasks.size(); i ++)
+      for (unsigned int i = 0; i < tasks.size(); i ++)
       {
          dtActors::TaskActorProxy *taskProxy =
             dynamic_cast<dtActors::TaskActorProxy *> (tasks[i].get());
@@ -391,20 +399,26 @@ void TestAARHUD::UpdateMediumDetailData()
       }
 
       // blank out any of our placeholder task text controls that were left over
-      for (int i = numAdded; i < (int) mTaskTextList.size(); i ++)
+      for (int i = numAdded; i < (int)mTaskTextList.size(); i ++)
+      {
          UpdateStaticText(mTaskTextList[i], "");
+      }
 
       // update our task header
       snprintf(clin, HUDCONTROLMAXTEXTSIZE, "Tasks (%i of %i):", numComplete, numAdded);
       if (numComplete < numAdded)
+      {
          UpdateStaticText(mTasksHeaderText, clin, 1.0f, 1.0f, 1.0f);
+      }
       else
+      {
          UpdateStaticText(mTasksHeaderText, clin, 0.1f, 1.0f, 0.1f);
+      }
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
+void TestAARHUD::UpdateHighDetailData(int baseWidth, float& curYPos)
 {
    if (*mHUDState == HUDState::MAXIMUM)
    {
@@ -444,7 +458,9 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
             }
          }
          else
+         {
             snprintf(lastTagStr, HUDCONTROLMAXTEXTSIZE, " (----)");
+         }
 
          // FRAMES - num frames and last frame
          const std::vector<dtGame::LogKeyframe> frames = mLogController->GetLastKnownKeyframeList();
@@ -462,7 +478,9 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
             }
          }
          else
+         {
             snprintf(lastFrameStr, HUDCONTROLMAXTEXTSIZE, " (----)");
+         }
       }
 
       // Num Messages
@@ -504,8 +522,8 @@ void TestAARHUD::UpdateHighDetailData(int baseWidth, float &curYPos)
 }
 
 //////////////////////////////////////////////////////////////////////////
-int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
-                                    const dtActors::TaskActorProxy *taskProxy, int &numCompleted)
+int TestAARHUD::RecursivelyAddTasks(const std::string& indent, int curIndex,
+                                    const dtActors::TaskActorProxy* taskProxy, int& numCompleted)
 {
    char clin[HUDCONTROLMAXTEXTSIZE];
    int totalNumAdded = 0;
@@ -513,7 +531,7 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
    if (curIndex < (int) mTaskTextList.size())
    {
       // update the text for this task
-      const dtActors::TaskActor *task = dynamic_cast<const dtActors::TaskActor *> (&(taskProxy->GetGameActor()));
+      const dtActors::TaskActor* task = dynamic_cast<const dtActors::TaskActor*>(&(taskProxy->GetGameActor()));
       if (task->IsComplete())
       {
          numCompleted ++;
@@ -532,12 +550,12 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
       totalNumAdded += 1;
 
       // recurse for each child
-      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > &children = taskProxy->GetAllSubTasks();
+      const std::vector< dtCore::RefPtr<dtActors::TaskActorProxy> >& children = taskProxy->GetAllSubTasks();
       if (!children.empty())
       {
-         for (int i = 0; i < (int) children.size(); i ++)
+         for (int i = 0; i < (int)children.size(); i ++)
          {
-            const dtActors::TaskActorProxy *childProxy = dynamic_cast<const dtActors::TaskActorProxy *> (children[i].get());
+            const dtActors::TaskActorProxy* childProxy = dynamic_cast<const dtActors::TaskActorProxy *> (children[i].get());
             totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
          }
       }
@@ -547,7 +565,7 @@ int TestAARHUD::RecursivelyAddTasks(const std::string &indent, int curIndex,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
+void TestAARHUD::UpdateStaticText(CEGUI::Window* textControl, char* newText,
                                     float red, float green, float blue, float x, float y)
 {
    if (textControl != NULL)
@@ -577,7 +595,7 @@ void TestAARHUD::UpdateStaticText(CEGUI::Window *textControl, char *newText,
 }
 
 //////////////////////////////////////////////////////////////////////////
-HUDState & TestAARHUD::CycleToNextHUDState()
+HUDState& TestAARHUD::CycleToNextHUDState()
 {
    if (*mHUDState == HUDState::MINIMAL) // MINIMAL - go to MEDIUM
    {
@@ -621,7 +639,7 @@ HUDState & TestAARHUD::CycleToNextHUDState()
 //////////////////////////////////////////////////////////////////////////
 void TestAARHUD::UpdateState()
 {
-   if(*mHUDState == HUDState::HELP)
+   if (*mHUDState == HUDState::HELP)
    {
       mHUDOverlay->hide();
       mHelpOverlay->show();
@@ -631,7 +649,7 @@ void TestAARHUD::UpdateState()
       mHUDOverlay->show();
       mHelpOverlay->hide();
 
-      if(*mHUDState == HUDState::MINIMAL)
+      if (*mHUDState == HUDState::MINIMAL)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -649,9 +667,11 @@ void TestAARHUD::UpdateState()
 
          mTasksHeaderText->hide();
          for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         {
             mTaskTextList[i]->hide();
+         }
       }
-      else if(*mHUDState == HUDState::MEDIUM)
+      else if (*mHUDState == HUDState::MEDIUM)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -668,10 +688,12 @@ void TestAARHUD::UpdateState()
          mCurMapText->hide();
 
          mTasksHeaderText->show();
-         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         {
             mTaskTextList[i]->show();
+         }
       }
-      else if(*mHUDState == HUDState::MAXIMUM)
+      else if (*mHUDState == HUDState::MAXIMUM)
       {
          mStateText->show();
          mSimTimeText->show();
@@ -688,8 +710,10 @@ void TestAARHUD::UpdateState()
          mCurMapText->show();
 
          mTasksHeaderText->show();
-         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         {
             mTaskTextList[i]->show();
+         }
       }
       else // if (*mHUDState == HUDState::NONE)
       {
@@ -708,17 +732,19 @@ void TestAARHUD::UpdateState()
          mCurMapText->hide();
 
          mTasksHeaderText->hide();
-         for(unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         for (unsigned int i = 0; i < mTaskTextList.size(); i ++)
+         {
             mTaskTextList[i]->hide();
+         }
       }
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
-CEGUI::Window * TestAARHUD::CreateText(const std::string &name, CEGUI::Window *parent, const std::string &text,
+CEGUI::Window* TestAARHUD::CreateText(const std::string& name, CEGUI::Window* parent, const std::string& text,
                                  float x, float y, float width, float height)
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
    CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);

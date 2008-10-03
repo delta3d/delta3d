@@ -1,31 +1,32 @@
 /* -*-c++-*-
-* testAAR - testaarinput (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Christopher DuBuc
-* William E. Johnson II
-*/
+ * testAAR - testaarinput (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Christopher DuBuc
+ * William E. Johnson II
+ */
+
 #include "testaarinput.h"
 #include "testaarmessagetypes.h"
 #include "testaarmessageprocessor.h"
@@ -46,12 +47,12 @@
 #include <dtDAL/gameevent.h>
 
 ////////////////////////////////////////////////////////////////////
-TestAARInput::TestAARInput(const std::string &name, dtGame::LogController &logCtrl, TestAARHUD &hudComp) :
-   dtGame::BaseInputComponent(name),
-   mKeyIsPressed(false), 
-   mSimSpeedFactor(1.0), 
-   mHudGUI(&hudComp), 
-   mLogController(&logCtrl)
+TestAARInput::TestAARInput(const std::string& name, dtGame::LogController& logCtrl, TestAARHUD& hudComp)
+   : dtGame::BaseInputComponent(name)
+   , mKeyIsPressed(false)
+   , mSimSpeedFactor(1.0)
+   , mHudGUI(&hudComp)
+   , mLogController(&logCtrl)
 {
   
 }
@@ -63,12 +64,12 @@ TestAARInput::~TestAARInput()
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
+bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
 {
    std::ostringstream ss;
    bool handled = true;
    
-   switch(key)
+   switch (key)
    {
       case ' ':
       {
@@ -97,7 +98,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 
       case '1':
       {
-         if(mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+         if (mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
             GetGameManager()->SendMessage(*GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::RESET));
          }
@@ -118,7 +119,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
       case '3':
       {
          //Going from idle mode to playback mode so we need to remove the player..
-         if(mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
+         if (mLogController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
          {
             GetGameManager()->DeleteAllActors();
             dtCore::System::GetInstance().Step();
@@ -134,8 +135,10 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
       case osgGA::GUIEventAdapter::KEY_KP_Subtract:
       {
          mSimSpeedFactor = mSimSpeedFactor * 0.9f;
-         if(mSimSpeedFactor < 0.10f)
+         if (mSimSpeedFactor < 0.10f)
+         {
             mSimSpeedFactor = 0.10f;
+         }
          else
          {
             ss << "Decreasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
@@ -152,8 +155,10 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
       case '+':
       {
          mSimSpeedFactor = mSimSpeedFactor * 1.20f;
-         if(mSimSpeedFactor > 10.0f)
+         if (mSimSpeedFactor > 10.0f)
+         {
             mSimSpeedFactor = 10.0f;
+         }
          else
          {
             ss << "Increasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
@@ -173,7 +178,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 
       case 'b':
       {
-         if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+         if (mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
             dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PLACE_ACTOR);
             GetGameManager()->SendMessage(*msg);
@@ -183,7 +188,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 
       case 'g':
       {
-         if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+         if (mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
          {
             dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PLACE_IGNORED_ACTOR);
             GetGameManager()->SendMessage(*msg);
@@ -233,10 +238,14 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 
       case osgGA::GUIEventAdapter::KEY_F1:
       {
-         if(mHudGUI->GetHUDState() == HUDState::HELP)
+         if (mHudGUI->GetHUDState() == HUDState::HELP)
+         {
             mHudGUI->CycleToNextHUDState(); // already in help, so toggle it off
+         }
          else
+         {
             mHudGUI->SetHUDState(HUDState::HELP);
+         }
       }
       break;
 
@@ -277,8 +286,10 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
       break;
    };
 
-   if(!handled)
+   if (!handled)
+   {
       return GetGameManager()->GetApplication().KeyPressed(keyBoard, key);
+   }
 
    return handled;
 }
@@ -288,7 +299,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
 
-   switch(key)
+   switch (key)
    {
       case 'i':
       case 'k':
@@ -315,9 +326,9 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARInput::FireEvent(dtDAL::GameEvent &event)
+void TestAARInput::FireEvent(dtDAL::GameEvent& event)
 {
-   if(mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+   if (mLogController->GetLastKnownStatus().GetStateEnum() != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
    {
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
       GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);
@@ -330,8 +341,8 @@ void TestAARInput::FireEvent(dtDAL::GameEvent &event)
 //////////////////////////////////////////////////////////////////////////
 void TestAARInput::GotoPreviousKeyframe()
 {
-   const std::vector<dtGame::LogKeyframe> &frames = mLogController->GetLastKnownKeyframeList();
-   const dtGame::LogKeyframe *prevFrame = NULL;
+   const std::vector<dtGame::LogKeyframe>& frames = mLogController->GetLastKnownKeyframeList();
+   const dtGame::LogKeyframe* prevFrame = NULL;
 
    for (unsigned int i = 0; i < frames.size(); i ++)
    {
@@ -358,8 +369,8 @@ void TestAARInput::GotoPreviousKeyframe()
 //////////////////////////////////////////////////////////////////////////
 void TestAARInput::GotoNextKeyframe()
 {
-   const std::vector<dtGame::LogKeyframe> &frames = mLogController->GetLastKnownKeyframeList();
-   const dtGame::LogKeyframe *nextFrame = NULL;
+   const std::vector<dtGame::LogKeyframe>& frames = mLogController->GetLastKnownKeyframeList();
+   const dtGame::LogKeyframe* nextFrame = NULL;
 
    for (unsigned int i = 0; i < frames.size(); i ++)
    {
@@ -414,25 +425,29 @@ void TestAARInput::InsertKeyFrame()
 ////////////////////////////////////////////////////////////////////////
 void TestAARInput::ProcessMessage(const dtGame::Message& message)
 {
-   const dtGame::MessageType &type = message.GetMessageType();
+   const dtGame::MessageType& type = message.GetMessageType();
    
-   if(type == dtGame::MessageType::INFO_ACTOR_DELETED)
+   if (type == dtGame::MessageType::INFO_ACTOR_DELETED)
    {
-      if(mPlayer != NULL && message.GetAboutActorId() == mPlayer->GetId())
+      if (mPlayer != NULL && message.GetAboutActorId() == mPlayer->GetId())
+      {
          mPlayer = NULL;
+      }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////
-void TestAARInput::SendPlayerUpdateMsg(const std::string &paramName, const float value)
+void TestAARInput::SendPlayerUpdateMsg(const std::string& paramName, const float value)
 {
-   if(mPlayer == NULL)
+   if (mPlayer == NULL)
+   {
       return;
+   }
 
    dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-   dtGame::ActorUpdateMessage &aum = static_cast<dtGame::ActorUpdateMessage&>(*msg);
+   dtGame::ActorUpdateMessage& aum = static_cast<dtGame::ActorUpdateMessage&>(*msg);
    aum.SetAboutActorId(mPlayer->GetId());
-   dtGame::MessageParameter *mp = aum.AddUpdateParameter(paramName, dtDAL::DataType::FLOAT);
+   dtGame::MessageParameter* mp = aum.AddUpdateParameter(paramName, dtDAL::DataType::FLOAT);
    static_cast<dtGame::FloatMessageParameter*>(mp)->SetValue(value);
    GetGameManager()->SendMessage(aum);
 }
