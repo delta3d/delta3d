@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* testAAR - testaarmessageprocessor (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II
-*/
+ * testAAR - testaarmessageprocessor (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ */
+
 #include "testaarmessageprocessor.h"
 #include "testaarhud.h"
 #include "testaarmessagetypes.h"
@@ -57,14 +58,14 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
-TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent &lmsComp, 
-                                                       dtGame::LogController &logCtrl, 
-                                                       dtGame::ServerLoggerComponent &srvrCtrl) 
- : mLogController(&logCtrl),
-   mLmsComponent(&lmsComp), 
-   mLastAutoRequestStatus(0.0),
-   mServerLogger(&srvrCtrl),
-   mPlayer(NULL)
+TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent& lmsComp, 
+                                                 dtGame::LogController& logCtrl, 
+                                                 dtGame::ServerLoggerComponent& srvrCtrl) 
+   : mLogController(&logCtrl)
+   , mLmsComponent(&lmsComp)
+   , mLastAutoRequestStatus(0.0)
+   , mServerLogger(&srvrCtrl)
+   , mPlayer(NULL)
 {
 }
 
@@ -72,48 +73,52 @@ TestAARMessageProcessor::~TestAARMessageProcessor()
 {
 }
 
-void TestAARMessageProcessor::ProcessMessage(const dtGame::Message &msg)
+void TestAARMessageProcessor::ProcessMessage(const dtGame::Message& msg)
 {
-   const dtGame::MessageType &type = msg.GetMessageType();
+   const dtGame::MessageType& type = msg.GetMessageType();
 
-   if(type == dtGame::MessageType::TICK_LOCAL)
+   if (type == dtGame::MessageType::TICK_LOCAL)
    {
-      const dtGame::TickMessage &tick = static_cast<const dtGame::TickMessage&>(msg);
+      const dtGame::TickMessage& tick = static_cast<const dtGame::TickMessage&>(msg);
       PreFrame(tick.GetDeltaSimTime());
    }
-   else if(type == dtGame::MessageType::INFO_ACTOR_DELETED)
+   else if (type == dtGame::MessageType::INFO_ACTOR_DELETED)
    {
-      if(mPlayer != NULL && msg.GetAboutActorId() == mPlayer->GetId())
+      if (mPlayer != NULL && msg.GetAboutActorId() == mPlayer->GetId())
+      {
          mPlayer = NULL;
+      }
    }
-   else if(type == TestAARMessageType::PLACE_ACTOR)
+   else if (type == TestAARMessageType::PLACE_ACTOR)
    {
       PlaceActor();
    }
-   else if(type == TestAARMessageType::PLACE_IGNORED_ACTOR)
+   else if (type == TestAARMessageType::PLACE_IGNORED_ACTOR)
    {
       PlaceActor(true);
    }
-   else if(type == TestAARMessageType::RESET)
+   else if (type == TestAARMessageType::RESET)
    {
       GetGameManager()->ChangeMap("testAAR");
    }
-   else if(type == TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES)
+   else if (type == TestAARMessageType::REQUEST_ALL_CONTROLLER_UPDATES)
    {
       RequestAllControllerUpdates();
    }
-   else if(type == TestAARMessageType::PRINT_TASKS)
+   else if (type == TestAARMessageType::PRINT_TASKS)
    {
       PrintTasks();
    }
-   else if(type == TestAARMessageType::UPDATE_TASK_CAMERA)
+   else if (type == TestAARMessageType::UPDATE_TASK_CAMERA)
    {
       UpdateTaskCamera();
    }
-   else if(type == dtGame::MessageType::INFO_ACTOR_UPDATED)
+   else if (type == dtGame::MessageType::INFO_ACTOR_UPDATED)
    {
-      if(mPlayer != NULL && msg.GetAboutActorId() == mPlayer->GetId())
+      if (mPlayer != NULL && msg.GetAboutActorId() == mPlayer->GetId())
+      {
          UpdatePlayerActor(static_cast<const dtGame::ActorUpdateMessage&>(msg));
+      }
    }
    else if (type == dtGame::MessageType::INFO_MAP_CHANGED)
    {
@@ -134,15 +139,17 @@ void TestAARMessageProcessor::OnAddedToGM()
 
 //////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<dtGame::GameActorProxy> 
-TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName, 
-                                                 float velocity, 
-                                                 float turnRate, 
-                                                 bool bSetLocation,
-                                                 bool ignoreRecording)
+TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName, 
+                                              float velocity, 
+                                              float turnRate, 
+                                              bool bSetLocation,
+                                              bool ignoreRecording)
 {
    if (mLogController->GetLastKnownStatus().GetStateEnum() ==
       dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK)
+   {
       return NULL;
+   }
 
    float xScale = 0.0f, yScale = 0.0f, zScale = 0.0f;
    float xRot = 0.0f, yRot = 0.0f, zRot = 0.0f;
@@ -164,8 +171,8 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
 
       // set initial random rotation (X = pitch, Y = roll, Z = yaw) for non rotating objects
       // don't change rotating objects cause the movement will follow the rotation, which may
-      // look wierd.
-      if(turnRate == 0.0f)
+      // look weird.
+      if (turnRate == 0.0f)
       {
          xRot = dtUtil::RandFloat(-5.0f, 5.0f);
          yRot = dtUtil::RandFloat(-5.0f, 5.0f);
@@ -182,11 +189,11 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
    GetGameManager()->AddActor(*object,false,false);
 
    // set mesh, velocity, and turn rate
-   dtDAL::StringActorProperty *prop = static_cast<dtDAL::StringActorProperty *>(object->GetProperty("mesh"));
+   dtDAL::StringActorProperty* prop = static_cast<dtDAL::StringActorProperty *>(object->GetProperty("mesh"));
    prop->SetValue(meshName);
-   dtDAL::FloatActorProperty *velocityProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("velocity"));
+   dtDAL::FloatActorProperty* velocityProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("velocity"));
    velocityProp->SetValue(velocity);
-   dtDAL::FloatActorProperty *turnRateProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("turnrate"));
+   dtDAL::FloatActorProperty* turnRateProp = static_cast<dtDAL::FloatActorProperty *>(object->GetProperty("turnrate"));
    turnRateProp->SetValue(turnRate);
 
    return object;
@@ -195,17 +202,21 @@ TestAARMessageProcessor::CreateNewMovingActor(const std::string &meshName,
 //////////////////////////////////////////////////////////////////////////
 void TestAARMessageProcessor::PlaceActor(bool ignored)
 {
-   float turn,velocity;
-   float chance,chance2;
+   float turn, velocity;
+   float chance, chance2;
    dtCore::RefPtr<dtGame::GameActorProxy> obj;
 
    turn = dtUtil::RandFloat(-0.60f, 0.60f);
    if (turn < 0.1f && turn > -0.1f)
+   {
       turn = 0.1f;
+   }
 
    velocity = dtUtil::RandFloat(-12.0f, 12.0f);
    if (velocity < 0.5f && velocity > -0.5f)
+   {
       velocity = 0.0f;
+   }
 
    chance = dtUtil::RandFloat(0.0, 1.0f);
 
@@ -213,14 +224,16 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
    // the intersection with the ground. (Performance bug..)
    chance2 = dtUtil::RandFloat(0.0f, 1.0f);
    if (chance2 <= 0.75f)
+   {
       velocity = 0.0f;
+   }
 
    std::string path;
 
    if (ignored)
    {
       path = dtCore::FindFileInPathList("models/ignore_me.ive");
-      if(!path.empty())
+      if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
       }
@@ -232,7 +245,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
    else if (chance <= 0.5f)
    {
       path = dtCore::FindFileInPathList("models/physics_crate.ive");
-      if(!path.empty())
+      if (!path.empty())
       {
          obj = CreateNewMovingActor(path,velocity,turn,true,ignored);
       }
@@ -262,7 +275,7 @@ void TestAARMessageProcessor::PlaceActor(bool ignored)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus &newStatus)
+void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus& newStatus)
 {
    static bool isFirstPlayback = true;
 
@@ -270,7 +283,9 @@ void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus &newStatu
    mLastAutoRequestStatus = GetGameManager()->GetSimulationTime();
 
    if (newStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE)
+   {
       isFirstPlayback = true;
+   }
 
    //The following is a great big hack due to the fact that we do not yet
    //support the task hierarchy as actor properties.  Since the task hierarchy
@@ -283,25 +298,25 @@ void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus &newStatu
    {
       isFirstPlayback = false;
 
-      dtActors::TaskActorProxy *placeObjects =
+      dtActors::TaskActorProxy* placeObjects =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Place Objects (Ordered)"));
 
-      dtActors::TaskActorProxy *movePlayerRollup =
+      dtActors::TaskActorProxy* movePlayerRollup =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move the Player (Rollup)"));
 
-      dtActors::TaskActorProxy *movePlayerLeft =
+      dtActors::TaskActorProxy* movePlayerLeft =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Turn Player Left"));
 
-      dtActors::TaskActorProxy *movePlayerRight =
+      dtActors::TaskActorProxy* movePlayerRight =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Turn Player Right"));
 
-      dtActors::TaskActorProxy *movePlayerForward =
+      dtActors::TaskActorProxy* movePlayerForward =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move Player Forward"));
 
-      dtActors::TaskActorProxy *movePlayerBack =
+      dtActors::TaskActorProxy* movePlayerBack =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Move Player Back"));
 
-      dtActors::TaskActorProxy *drop5Boxes =
+      dtActors::TaskActorProxy* drop5Boxes =
          static_cast<dtActors::TaskActorProxy*>(mLmsComponent->GetTaskByName("Drop 5 boxes"));
 
       //Recreate the hierarchy...
@@ -319,15 +334,15 @@ void TestAARMessageProcessor::OnReceivedStatus(const dtGame::LogStatus &newStatu
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::OnReceivedRejection(const dtGame::Message &newMessage)
+void TestAARMessageProcessor::OnReceivedRejection(const dtGame::Message& newMessage)
 {
-   const dtGame::ServerMessageRejected &rejMsg = static_cast<const dtGame::ServerMessageRejected &>(newMessage);
+   const dtGame::ServerMessageRejected& rejMsg = static_cast<const dtGame::ServerMessageRejected&>(newMessage);
 
    std::ostringstream ss;
    ss << "## REJECTION RECEIVED ##: Reason[" << rejMsg.GetCause() << "]...";
    std::cout << ss.str() << std::endl;
 
-   const dtGame::Message *causeMsg = rejMsg.GetCausingMessage();
+   const dtGame::Message* causeMsg = rejMsg.GetCausingMessage();
    if (causeMsg != NULL)
    {
       ss.str("");
@@ -374,7 +389,7 @@ void TestAARMessageProcessor::Reset()
    // setup terrain
    dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object();
    std::string path = dtCore::FindFileInPathList("models/terrain_simple.ive");
-   if(path.empty())
+   if (path.empty())
    {
       LOG_ERROR("Failed to find the terrain model.");
    }
@@ -389,9 +404,9 @@ void TestAARMessageProcessor::Reset()
    mPlayer = dynamic_cast<dtGame::GameActorProxy*>(player.get());
    GetGameManager()->AddActor(*mPlayer, false, false);
 
-   dtDAL::StringActorProperty *prop = static_cast<dtDAL::StringActorProperty*>(mPlayer->GetProperty("mesh"));
+   dtDAL::StringActorProperty* prop = static_cast<dtDAL::StringActorProperty*>(mPlayer->GetProperty("mesh"));
    path = dtCore::FindFileInPathList("models/physics_happy_sphere.ive");
-   if(!path.empty())
+   if (!path.empty())
    {
       prop->SetValue(path);
    }
@@ -400,8 +415,8 @@ void TestAARMessageProcessor::Reset()
       LOG_ERROR("Failed to find the physics_happy_sphere file.");
    }
 
-   dtGame::GMComponent *gmc = GetGameManager()->GetComponentByName("TestInputComponent");
-   if(gmc != NULL)
+   dtGame::GMComponent* gmc = GetGameManager()->GetComponentByName("TestInputComponent");
+   if (gmc != NULL)
    {
       static_cast<TestAARInput*>(gmc)->SetPlayerActor(*mPlayer);
    }
@@ -416,7 +431,7 @@ void TestAARMessageProcessor::Reset()
       return;      
    }
 
-   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy *>(toFill[0]);
+   mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy*>(toFill[0]);
    if (mTaskMoveCameraProxy == NULL)
    {
       LOG_ERROR("The \"Move Camera\" actor was found but it is not a task.  The application will likely fail.");
@@ -429,15 +444,17 @@ void TestAARMessageProcessor::Reset()
 void TestAARMessageProcessor::PrintTasks()
 {
    std::ostringstream printer;
-   std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
-   std::vector<dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor;
+   std::vector< dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
 
    printer << "Number of Top Level Tasks: " << mLmsComponent->GetNumTopLevelTasks() <<
       " Total Number of Tasks: " << mLmsComponent->GetNumTasks();
 
    mLmsComponent->GetAllTasks(tasks);
    printer << std::endl << "Task List:" << std::endl;
-   for (itor=tasks.begin(); itor!=tasks.end(); ++itor)
+
+   for (std::vector< dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor = tasks.begin();
+        itor != tasks.end();
+        ++itor)
    {
       printer << "\tTask Name: " << (*itor)->GetName() <<
          " Complete: " << (*itor)->GetProperty("Complete")->ToString() << std::endl;
@@ -447,7 +464,7 @@ void TestAARMessageProcessor::PrintTasks()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::OnReceivedTags(const std::vector<dtGame::LogTag> &newTagList)
+void TestAARMessageProcessor::OnReceivedTags(const std::vector<dtGame::LogTag>& newTagList)
 {
    // left this cruft in for debugging
    //std::ostringstream ss;
@@ -456,7 +473,7 @@ void TestAARMessageProcessor::OnReceivedTags(const std::vector<dtGame::LogTag> &
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::OnReceivedKeyframes(const std::vector<dtGame::LogKeyframe> &newKeyframesList)
+void TestAARMessageProcessor::OnReceivedKeyframes(const std::vector<dtGame::LogKeyframe>& newKeyframesList)
 {
    // left this cruft in for debugging...
    //std::ostringstream ss;
@@ -474,7 +491,7 @@ void TestAARMessageProcessor::UpdateTaskCamera()
          mTaskMoveCamera->SetScore(1.0);
          mTaskMoveCamera->SetComplete(true);
 
-         dtActors::TaskActorProxy &proxy =
+         dtActors::TaskActorProxy& proxy =
             static_cast<dtActors::TaskActorProxy&>(mTaskMoveCamera->GetGameActorProxy());
          proxy.NotifyActorUpdate();
       }
@@ -482,20 +499,26 @@ void TestAARMessageProcessor::UpdateTaskCamera()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void TestAARMessageProcessor::UpdatePlayerActor(const dtGame::ActorUpdateMessage &aum)
+void TestAARMessageProcessor::UpdatePlayerActor(const dtGame::ActorUpdateMessage& aum)
 {
-   dtDAL::ActorProxy *gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
-   if(gap != mPlayer)
+   dtDAL::ActorProxy* gap = GetGameManager()->FindActorById(aum.GetAboutActorId());
+   if (gap != mPlayer)
+   {
       return;
+   }
 
-   dtDAL::FloatActorProperty *playerVelocity = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("velocity"));
-   dtDAL::FloatActorProperty *playerTurnRate = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("turnrate"));
+   dtDAL::FloatActorProperty* playerVelocity = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("velocity"));
+   dtDAL::FloatActorProperty* playerTurnRate = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("turnrate"));
  
-   const dtGame::MessageParameter *mp = aum.GetUpdateParameter("Velocity");
-   if(mp != NULL)
+   const dtGame::MessageParameter* mp = aum.GetUpdateParameter("Velocity");
+   if (mp != NULL)
+   {
       playerVelocity->SetValue(static_cast<const dtGame::FloatMessageParameter*>(mp)->GetValue());
+   }
 
    mp = aum.GetUpdateParameter("Turn Rate");
-   if(mp != NULL)
+   if (mp != NULL)
+   {
       playerTurnRate->SetValue(static_cast<const dtGame::FloatMessageParameter*>(mp)->GetValue());
+   }
 }
