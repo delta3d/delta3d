@@ -155,8 +155,6 @@ namespace dtEditQt
 
         mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
-        RebuildToolsMenu(editorActions.GetExternalToolActions());
-
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(editorActions.actionHelpAboutEditor);
         helpMenu->addAction(editorActions.actionHelpAboutQT);
@@ -209,7 +207,13 @@ namespace dtEditQt
         subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);  
         subeditorToolBar->addAction(EditorActions::GetInstance().actionEditParticleSystem);  
         subeditorToolBar->addAction(EditorActions::GetInstance().actionLaunchViewer);  
-        addToolBar(subeditorToolBar);    
+        addToolBar(subeditorToolBar);
+
+        mExternalToolsToolBar = new QToolBar(this);
+        mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
+        mExternalToolsToolBar->setWindowTitle(tr("External Tools ToolBar"));
+        addToolBar(mExternalToolsToolBar);
+        RebuildToolsMenu(EditorActions::GetInstance().GetExternalToolActions());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -980,9 +984,11 @@ namespace dtEditQt
     void MainWindow::RebuildToolsMenu(const QList<QAction*>& actions)
     {
        mToolsMenu->clear();
+       mExternalToolsToolBar->clear();
        for (int toolIdx=0; toolIdx<actions.size(); ++toolIdx)
        {
           mToolsMenu->addAction(actions[toolIdx]);
+          mExternalToolsToolBar->addAction(actions[toolIdx]);
        }
 
        mToolsMenu->addSeparator();
