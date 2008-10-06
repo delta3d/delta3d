@@ -13,6 +13,7 @@ dtEditQt::ExternalToolDialog::ExternalToolDialog(QList<ExternalTool*> &tools, QW
    
    ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
    ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+   ui.extensionWidget->setVisible(false);
 
    SetupConnections();
    PopulateToolsUI();
@@ -41,6 +42,8 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.workingDirButton, SIGNAL(clicked()), this, SLOT(OnFindWorkingDir()));
    connect(ui.moveDownButton, SIGNAL(clicked()), this, SLOT(OnMoveToolDown()));
    connect(ui.moveUpButton, SIGNAL(clicked()), this, SLOT(OnMoveToolUp()));
+   connect(ui.iconFileEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(ui.iconDirButton, SIGNAL(clicked()), this, SLOT(OnFindIconFile()));
 }
 
 
@@ -70,11 +73,8 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
 
    assert(tool);   
 
+   ResetTool(*tool);
    tool->GetAction()->setVisible(true);
-   tool->SetTitle("DefaultTitle");
-   tool->SetCmd("");
-   tool->SetArgs("");
-   tool->SetWorkingDir("");
 
    QListWidgetItem *item = new QListWidgetItem(tool->GetTitle(), ui.toolList);
    ui.toolList->setCurrentItem(item); //make it the currently selected item
@@ -99,11 +99,8 @@ void dtEditQt::ExternalToolDialog::OnRemoveTool()
    }
 
    ui.toolList->takeItem(ui.toolList->currentRow()); //remove it's widget
+   ResetTool(*tool);
    tool->GetAction()->setVisible(false); //turn off the QAction
-   tool->SetTitle("");
-   tool->SetCmd("");
-   tool->SetArgs("");
-   tool->SetWorkingDir("");
    SetOkButtonEnabled(true);
    
    //now select something that still exists.
@@ -122,7 +119,10 @@ void dtEditQt::ExternalToolDialog::PopulateToolsUI()
       //Otherwise, don't create an item for the ExternalTool
       if (mTools->at(toolIdx)->GetAction()->isVisible())
       {
-         ui.toolList->addItem(mTools->at(toolIdx)->GetTitle());
+         QListWidgetItem *item = new QListWidgetItem(mTools->at(toolIdx)->GetTitle(),
+                                                     ui.toolList);
+         item->setIcon(QIcon(mTools->at(toolIdx)->GetIcon()));
+         ui.toolList->addItem(item);
       }
    }
 
@@ -148,6 +148,7 @@ void dtEditQt::ExternalToolDialog::OnToolSelectionChanged()
    ui.commandEdit->setText(tool->GetCmd());
    ui.argsEdit->setText(tool->GetArgs());
    ui.workingDirEdit->setText(tool->GetWorkingDir());
+   ui.iconFileEdit->setText(tool->GetIcon());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -192,10 +193,12 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
    }
 
    currentItem->setText(ui.titleEdit->text());
+   currentItem->setIcon(QIcon(ui.iconFileEdit->text()));
    tool->SetTitle(ui.titleEdit->text());
    tool->SetCmd(ui.commandEdit->text());
    tool->SetArgs(ui.argsEdit->text());
    tool->SetWorkingDir(ui.workingDirEdit->text());
+   tool->SetIcon(ui.iconFileEdit->text());
 
    ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
    
@@ -289,6 +292,29 @@ void dtEditQt::ExternalToolDialog::OnFindWorkingDir()
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnFindIconFile()
+{
+   ExternalTool* tool = GetSelectedTool();
+
+   if (tool == NULL)
+   {
+      return;
+   }
+
+   //pop open a file dialog and query for an icon file
+   const QString iconFile = QFileDialog::getOpenFileName(this,
+                                 tr("Get Icon file"),
+                                 QFileInfo(tool->GetIcon()).path());
+
+   if (!iconFile.isEmpty())
+   {
+      tool->SetIcon(iconFile);
+      ui.iconFileEdit->setText(iconFile);
+      OnToolModified();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnMoveToolDown()
 {
    QListWidgetItem *currentItem = ui.toolList->currentItem();
@@ -341,3 +367,14 @@ void dtEditQt::ExternalToolDialog::OnMoveToolUp()
 
    ui.toolList->setCurrentItem(currentItem); //reselect the item
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::ResetTool(ExternalTool& tool) const
+{
+   tool.SetTitle("");
+   tool.SetCmd("");
+   tool.SetArgs("");
+   tool.SetWorkingDir("");
+   tool.SetIcon("");
+}
+
