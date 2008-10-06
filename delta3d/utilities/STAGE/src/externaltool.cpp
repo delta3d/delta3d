@@ -10,6 +10,7 @@ dtEditQt::ExternalTool::ExternalTool()
  mAction(new QAction(NULL))
  , mCommand(QString())
  , mArgs(QString())
+ , mIconFilename(QString())
  , mProcess(new QProcess())
 {
    mAction->setText("defaultTitle");
@@ -114,4 +115,17 @@ QString dtEditQt::ExternalTool::GetWorkingDir() const
 void dtEditQt::ExternalTool::SetWorkingDir(const QString& dir)
 {
    mProcess->setWorkingDirectory(dir);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalTool::SetIcon(const QString& iconFilename)
+{
+   mIconFilename = iconFilename;
+   GetAction()->setIcon(QIcon(mIconFilename));
+}
+
+//////////////////////////////////////////////////////////////////////////
+const QString& dtEditQt::ExternalTool::GetIcon() const
+{
+   return mIconFilename;
 }

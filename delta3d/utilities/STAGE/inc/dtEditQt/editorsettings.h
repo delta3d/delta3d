@@ -98,6 +98,7 @@ namespace dtEditQt
         static const QString EXTERNAL_TOOL_COMMAND;
         static const QString EXTERNAL_TOOL_ARGS;
         static const QString EXTERNAL_TOOL_WORKING_DIR;
+        static const QString EXTERNAL_TOOL_ICON;
 
         /**
          * Constructs the settings object.  This reads the settings from disk if they

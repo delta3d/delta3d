@@ -29,6 +29,7 @@ namespace dtEditQt
       void OnStringChanged(const QString& text);
       void OnFindCommandFile();
       void OnFindWorkingDir();
+      void OnFindIconFile();
       void OnMoveToolDown();
       void OnMoveToolUp();
 
@@ -38,7 +39,8 @@ namespace dtEditQt
       ExternalTool* GetSelectedTool() const;
       void SetOkButtonEnabled(bool enabled);
       void SetModifyButtonsEnabled(bool enabled);
-      
+      void ResetTool(ExternalTool& tool) const;
+
       Ui::ExternalToolDiag ui;
 
       QList<ExternalTool*> *mTools;      

@@ -25,6 +25,9 @@ namespace dtEditQt
       void SetWorkingDir(const QString& dir);
       QString GetWorkingDir() const;
 
+      void SetIcon(const QString& iconFilename);
+      const QString& GetIcon() const;
+
       QAction* GetAction() const;
    
    protected slots:
@@ -35,6 +38,7 @@ namespace dtEditQt
       QAction* mAction;
       QString mCommand;
       QString mArgs;
+      QString mIconFilename;
       QProcess* mProcess;
    };
 }
