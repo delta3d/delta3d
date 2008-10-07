@@ -35,7 +35,7 @@ namespace dtEditQt
 {
     void UIResources::staticInitialize()
     {        
-        UIResources::GPL_LICENSE_FILE = "gpl.txt";
+        UIResources::GPL_LICENSE_FILE = ":gpl.txt";
         
         ICON_FILE_NEW_MAP = ":/icons/newmap_small.png";
         ICON_FILE_OPEN_MAP = ":/icons/openmap_small.png";
