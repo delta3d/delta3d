@@ -275,11 +275,11 @@ void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
       //in relative coords
 
       //if this has a parent
-      if(GetParent())
+      if (!GetOSGNode()->getParents().empty())
       {
          //get the parent's world position
          osg::Matrix parentMat;
-         GetAbsoluteMatrix(GetParent()->GetOSGNode(), parentMat);
+         GetAbsoluteMatrix(GetOSGNode()->getParent(0), parentMat);
 
          //calc the difference between xform and the parent's world position
          //child * parent^-1
