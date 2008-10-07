@@ -44,7 +44,6 @@ class QListWidgetItem;
 class QListWidget;
 class QDialog;
 class QTimer;
-class QProcess;
 
 namespace dtCore
 {
@@ -54,7 +53,6 @@ namespace dtCore
 namespace dtDAL
 {
    class Map;
-   class ActorProxy;
 }
 
 namespace dtEditQt 
@@ -237,15 +235,6 @@ namespace dtEditQt
          // Action - Help - About QT
          QAction *actionHelpAboutQT;
 
-         // Action - edit skeletal mesh
-         QAction *actionEditSkeletalMesh;
-
-         // Action - edit particle systems
-         QAction *actionEditParticleSystem;
-
-         // Action - launch the viewer
-         QAction *actionLaunchViewer;
-
          //Group of external tool QActions
          QActionGroup *mExternalToolActionGroup;
 
@@ -398,15 +387,6 @@ namespace dtEditQt
 
          void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
-         // Launches the "animation viewer"
-         void slotLaunchSkeletalMeshEditor();
-
-         // Launches the particle editor
-         void slotLaunchParticleEditor();
-
-         // Launches the delta viewer
-         void slotLaunchDeltaViewer();
-
 signals:
          void ExternalToolsModified(const QList<QAction*>&);
 
@@ -456,7 +436,6 @@ signals:
          void SetupToolsActions();
          void setupHelpActions();
          void setupWindowActions();
-         void setupSubeditorActions();
 
          QTimer *timer;
          std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
@@ -465,10 +444,6 @@ signals:
          static dtCore::RefPtr<EditorActions> instance;
 
          dtCore::RefPtr<dtCore::Isector> mIsector;
-
-         QProcess *mSkeletalEditorProcess;  
-         QProcess *mParticleEditorProcess; 
-         QProcess *mViewerProcess;  
 
          QList<ExternalTool*> mTools;      
 

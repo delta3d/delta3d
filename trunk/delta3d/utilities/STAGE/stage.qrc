@@ -22,7 +22,7 @@
       <file>icons/newmap_small.png</file>
       <file>icons/openmap_small.png</file>
       <file>icons/particle_resource.png</file>
-      <file>icons/particle_tab.png</file>
+      <file>icons/particle.ico</file>
       <file>icons/play_sound.png</file>
       <file>icons/redo.png</file>
       <file>icons/refresh_large.png</file>
@@ -49,7 +49,7 @@
       <file>icons/trash_large.png</file>
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>
-      <file>icons/viewer.png</file>
+      <file>icons/viewer.ico</file>
       <file>icons/wireframemode_tiny.png</file>
     </qresource>
 </RCC>

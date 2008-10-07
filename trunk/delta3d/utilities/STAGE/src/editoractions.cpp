@@ -25,25 +25,18 @@
 * circumstances in which the U. S. Government may have rights in the software.
 *
 * Curtiss Murphy
+* R. Erik Johnson
 */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/editoractions.h>
 
-#include <QtGui/QApplication>
 #include <QtGui/QAction>
 #include <QtGui/QIcon>
 #include <QtGui/QActionGroup>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
 #include <QtGui/QTextEdit>
-#include <QtCore/QSettings>
 #include <QtCore/QTimer>
-#include <QtCore/QProcess>
 
 #include <osgDB/FileNameUtils>
 
@@ -93,9 +86,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions() 
       : mIsector(new dtCore::Isector)
-      , mSkeletalEditorProcess(NULL)
-      , mParticleEditorProcess(NULL)
-      , mViewerProcess(NULL)
       , mExternalToolActionGroup(new QActionGroup(NULL))
    {
       LOG_INFO("Initializing Editor Actions.");
@@ -106,7 +96,6 @@ namespace dtEditQt
       SetupToolsActions();
       setupHelpActions();
       setupRecentItems();
-      setupSubeditorActions();
 
       saveMilliSeconds = 300000;
       wasCancelled = false;
@@ -132,33 +121,6 @@ namespace dtEditQt
    {
       timer->stop();
       delete timer;
-
-      if (mViewerProcess != NULL)
-      {
-         if (mViewerProcess->state() == QProcess::Running)
-         {
-            mViewerProcess->terminate();
-            mViewerProcess->waitForFinished();
-         }         
-      }
-
-      if (mSkeletalEditorProcess != NULL)
-      {
-         if (mSkeletalEditorProcess->state() == QProcess::Running)
-         {
-            mSkeletalEditorProcess->terminate();
-            mSkeletalEditorProcess->waitForFinished();
-         }         
-      }
-
-      if (mParticleEditorProcess != NULL)
-      {
-         if (mParticleEditorProcess->state() == QProcess::Running)
-         {
-            mParticleEditorProcess->terminate();
-            mParticleEditorProcess->waitForFinished();
-         }         
-      }
 
       while (mTools.size() > 0)
       {
@@ -343,22 +305,6 @@ namespace dtEditQt
       actionSelectionRotateActor->setStatusTip(tr("Use this tool to rotate the current actor selection."));
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::setupSubeditorActions()
-   {
-      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);           
-      actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
-      //actionEditSkeletalMesh->setDisabled(true);
-      connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
-
-      actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);       
-      actionEditParticleSystem->setStatusTip(tr("Launches the particle system editor."));
-      connect(actionEditParticleSystem, SIGNAL(triggered()), this, SLOT(slotLaunchParticleEditor()));
-
-      actionLaunchViewer = new QAction(QIcon(UIResources::ICON_EDITOR_VIEWER.c_str()),tr("&Launch Delta3D Model Viewer"), modeToolsGroup);       
-      actionLaunchViewer->setStatusTip(tr("Launches the model viewer."));
-      connect(actionLaunchViewer, SIGNAL(triggered()), this, SLOT(slotLaunchDeltaViewer()));
-   }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupWindowActions()
@@ -389,8 +335,8 @@ namespace dtEditQt
 //////////////////////////////////////////////////////////////////////////
    void EditorActions::SetupToolsActions()
    {
-      actionAddTool = new QAction(tr("&Add Tool..."), this);
-      actionAddTool->setStatusTip(tr("Add a new external tool"));
+      actionAddTool = new QAction(tr("&External Tools..."), this);
+      actionAddTool->setStatusTip(tr("Add/edit external tools"));
       connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
 
       //create a finite number of ExternalTool's which can be used and add them
@@ -994,94 +940,6 @@ namespace dtEditQt
          }
       }
    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchSkeletalMeshEditor()
-    {       
-       // Create a new process if we don't already have one
-       if (!mSkeletalEditorProcess)
-       {
-          mSkeletalEditorProcess = new QProcess(this);           
-       }     
-
-       if (mSkeletalEditorProcess->state() == QProcess::Running)
-       {
-          // Don't launch more than one copy of the editor
-          return;
-       }
-
-       QString program = "AnimationViewer.exe";
-       QStringList arguments;
-
-       mSkeletalEditorProcess->start(program, arguments);     
-
-       // Our process should have started
-       if (mSkeletalEditorProcess->waitForStarted() == false)
-       {
-          QMessageBox::information(NULL, tr("Process Error"), 
-             tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
-             QMessageBox::Ok);
-       }     
-    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchParticleEditor()
-    {
-       // Create a new process if we don't already have one
-       if (!mParticleEditorProcess)
-       {
-          mParticleEditorProcess = new QProcess(this);           
-       }     
-
-       if (mParticleEditorProcess->state() == QProcess::Running)
-       {
-          // Don't launch more than one copy of the editor
-          return;
-       }
-
-       QString program = "psEditor.exe";
-       QStringList arguments;
-
-       mParticleEditorProcess->start(program, arguments);    
-
-       // Our process should have started
-       if (mParticleEditorProcess->waitForStarted() == false)
-       {
-          QMessageBox::information(NULL, tr("Process Error"), 
-             tr("Unable to launch psEditor.exe.  Make sure application exists."),
-             QMessageBox::Ok);
-       }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchDeltaViewer()
-    {
-       // Create a new process if we don't already have one
-       if (!mViewerProcess)
-       {
-          mViewerProcess = new QProcess(this);           
-       }     
-
-       if (mViewerProcess->state() == QProcess::Running)
-       {
-          // Don't launch more than one copy of the editor
-          return;
-       }
-
-       QString program = "viewer.exe"; //TODO
-       QStringList arguments;
-
-       mViewerProcess->start(program, arguments); 
-
-       // Our process should have started
-       if (mViewerProcess->waitForStarted() == false)
-       {
-          QMessageBox::information(NULL, tr("Process Error"), 
-             tr("Unable to launch Viewer.exe.  Make sure application exists."),
-             QMessageBox::Ok);           
-       }
-    }    
-
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUndo()
    {

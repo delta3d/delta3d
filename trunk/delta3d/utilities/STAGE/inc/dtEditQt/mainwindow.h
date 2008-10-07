@@ -199,7 +199,6 @@ namespace dtEditQt
          QToolBar *editToolBar;
          QToolBar *undoToolBar;
          QToolBar *selectionToolBar;
-         QToolBar *subeditorToolBar;
          QToolBar *mExternalToolsToolBar;
 
          PerspectiveViewport *perspView;

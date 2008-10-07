@@ -1,4 +1,5 @@
 #include <dtEditQt/externaltooldialog.h>
+#include <dtEditQt/uiresources.h>
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
 #include <cassert>
@@ -21,11 +22,8 @@ dtEditQt::ExternalToolDialog::ExternalToolDialog(QList<ExternalTool*> &tools, QW
 
 dtEditQt::ExternalToolDialog::~ExternalToolDialog()
 {
-   while (ui.toolList->count() > 0)
-   {
-      QListWidgetItem* item = ui.toolList->takeItem(0);
-      delete item;
-   }
+   DeleteToolWidgets();
+
 }
 
 void dtEditQt::ExternalToolDialog::SetupConnections()
@@ -44,6 +42,7 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.moveUpButton, SIGNAL(clicked()), this, SLOT(OnMoveToolUp()));
    connect(ui.iconFileEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.iconDirButton, SIGNAL(clicked()), this, SLOT(OnFindIconFile()));
+   connect(ui.resetButton, SIGNAL(clicked()), this, SLOT(OnResetToDefaultTools()));
 }
 
 
@@ -181,14 +180,12 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
    if (currentItem == NULL)
    {
       //nothing selected
-      assert(currentItem);
       return;
    }
 
    ExternalTool* tool = GetSelectedTool();
    if (tool == NULL)
    {
-      assert(tool);
       return;
    }
 
@@ -371,10 +368,103 @@ void dtEditQt::ExternalToolDialog::OnMoveToolUp()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::ResetTool(ExternalTool& tool) const
 {
-   tool.SetTitle("");
+   tool.SetTitle("Unnamed");
    tool.SetCmd("");
    tool.SetArgs("");
    tool.SetWorkingDir("");
    tool.SetIcon("");
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnResetToDefaultTools()
+{
+   QMessageBox::StandardButton b = QMessageBox::question(this, tr("Reset External Tools?"),
+      tr("Delete existing external tool configurations and add default tools?"),
+      QMessageBox::Yes|QMessageBox::No);
+
+   if (b == QMessageBox::Yes)
+   {
+      ClearAndAddDefaultDelta3DTools();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::ClearAndAddDefaultDelta3DTools()
+{
+   for (int toolIdx=0; toolIdx<mTools->size(); ++toolIdx)
+   {
+      ExternalTool *tool = mTools->at(toolIdx); 
+      ResetTool(*tool);
+      tool->GetAction()->setVisible(false);
+   }
+
+   DeleteToolWidgets(); //delete the widgets representing the external tools in the list
+
+   {//Viewer
+      ExternalTool* viewer = mTools->at(0);
+      viewer->SetTitle(tr("Viewer"));
+      viewer->SetCmd(FindDelta3DTool("Viewer"));
+      viewer->SetIcon(QString::fromStdString(UIResources::ICON_EDITOR_VIEWER));
+      viewer->GetAction()->setVisible(true);
+   }
+
+   {//animation viewer
+      ExternalTool* animViewer = mTools->at(1);
+      animViewer->SetTitle(tr("Animation Viewer"));
+      animViewer->SetCmd(FindDelta3DTool("AnimationViewer"));
+      animViewer->SetIcon(QString::fromStdString(UIResources::ICON_EDITOR_SKELETAL_MESH));
+      animViewer->GetAction()->setVisible(true);
+   }
+
+   {//particle system editor
+      ExternalTool* psEditor = mTools->at(2);
+      psEditor->SetTitle(tr("Particle Editor"));
+      psEditor->SetCmd(FindDelta3DTool("psEditor"));
+      psEditor->SetIcon(QString::fromStdString(UIResources::ICON_EDITOR_PARTICLE_SYSTEM));
+      psEditor->GetAction()->setVisible(true);
+   }
+
+   {//game start
+      ExternalTool* gameStart = mTools->at(3);
+      gameStart->SetTitle(tr("GameStart"));
+      gameStart->SetCmd(FindDelta3DTool("GameStart"));
+      gameStart->SetIcon(QString::fromStdString(UIResources::ICON_APPLICATION));
+      gameStart->GetAction()->setVisible(true);
+   }
+
+   PopulateToolsUI(); //refresh the UI list
+   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::DeleteToolWidgets()
+{
+   while (ui.toolList->count() > 0)
+   {
+      QListWidgetItem* item = ui.toolList->takeItem(0);
+      delete item;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+QString dtEditQt::ExternalToolDialog::FindDelta3DTool(const QString& baseName) const
+{
+#ifdef Q_WS_WIN
+   QString ext(".exe");
+#else
+   QString ext("");
+#endif
+
+   QString fullPath(QCoreApplication::applicationDirPath() + "/" + baseName + ext);
+
+   QFileInfo tool(fullPath);
+   if (tool.exists() && tool.isExecutable())
+   {
+      return tool.absoluteFilePath();
+   }
+   else
+   {
+      return baseName;
+   }
 }
 
