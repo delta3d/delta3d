@@ -1,5 +1,6 @@
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/uiresources.h>
+#include <dtEditQt/externaltoolargeditor.h>
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
 #include <cassert>
@@ -36,6 +37,7 @@ void dtEditQt::ExternalToolDialog::SetupConnections()
    connect(ui.commandEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.commandButton, SIGNAL(clicked()), this, SLOT(OnFindCommandFile()));
    connect(ui.argsEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(ui.argsButton, SIGNAL(clicked()), this, SLOT(OnEditArgs()));
    connect(ui.workingDirEdit, SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
    connect(ui.workingDirButton, SIGNAL(clicked()), this, SLOT(OnFindWorkingDir()));
    connect(ui.moveDownButton, SIGNAL(clicked()), this, SLOT(OnMoveToolDown()));
@@ -468,3 +470,28 @@ QString dtEditQt::ExternalToolDialog::FindDelta3DTool(const QString& baseName) c
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalToolDialog::OnEditArgs()
+{
+   ExternalTool* tool = GetSelectedTool();
+   if (tool == NULL)
+   {
+      return;
+   }
+
+   //show arg editor dialog
+   ExternalToolArgEditor diag(tool->GetArgParsers(), tool->GetArgs(), this);
+   int retCode = diag.exec();
+
+   if (retCode == QDialog::Accepted)
+   {
+      //get arg text from dialog
+      const QString args = diag.GetArgs();
+
+      //set the args on tool, argsEdit
+      tool->SetArgs(args);
+      ui.argsEdit->setText(args);
+
+      SetOkButtonEnabled(true);
+   }   
+}

@@ -33,6 +33,7 @@ namespace dtEditQt
       void OnMoveToolDown();
       void OnMoveToolUp();
       void OnResetToDefaultTools();
+      void OnEditArgs();
 
    private:
       void SetupConnections();

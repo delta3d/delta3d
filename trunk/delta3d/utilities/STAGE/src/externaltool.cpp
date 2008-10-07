@@ -1,4 +1,5 @@
 #include <dtEditQt/externaltool.h>
+#include <dtEditQt/externaltoolargparser.h>
 #include <QtGui/QAction>
 #include <QtGui/QMessageBox>
 #include <QtCore/QProcess>
@@ -29,6 +30,8 @@ dtEditQt::ExternalTool::~ExternalTool()
          mProcess->kill(); //really?
       }
    }
+
+   mArgParserContainer.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,7 +67,7 @@ void dtEditQt::ExternalTool::OnStartTool()
 
    mProcess->setProcessChannelMode(QProcess::ForwardedChannels);
 
-   mProcess->start(withQuotes + " " + mArgs); //tack on any arguments
+   mProcess->start(withQuotes + " " + ExpandArguments(mArgs)); //tack on any arguments
 
    if (mProcess->waitForStarted() == false)
    {
@@ -128,4 +131,30 @@ void dtEditQt::ExternalTool::SetIcon(const QString& iconFilename)
 const QString& dtEditQt::ExternalTool::GetIcon() const
 {
    return mIconFilename;
+}
+
+//////////////////////////////////////////////////////////////////////////
+QString dtEditQt::ExternalTool::ExpandArguments(const QString& args) const
+{
+   QString expandedArgs(args);
+  
+   QListIterator<const ExternalToolArgParser*> i(mArgParserContainer);
+   while (i.hasNext())
+   {
+      expandedArgs = i.next()->ExpandArguments(expandedArgs);
+   }
+
+   return expandedArgs;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtEditQt::ExternalTool::SetArgParsers(const QList<const ExternalToolArgParser*>& parsers)
+{
+   mArgParserContainer = parsers;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const QList<const dtEditQt::ExternalToolArgParser*>& dtEditQt::ExternalTool::GetArgParsers() const
+{
+   return mArgParserContainer;
 }

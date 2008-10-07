@@ -62,6 +62,7 @@
 #include <dtEditQt/taskeditor.h>
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/externaltool.h>
+#include <dtEditQt/externaltoolargparsers.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -129,6 +130,12 @@ namespace dtEditQt
       }
 
       delete mExternalToolActionGroup;
+      
+      while (mExternalToolArgParsers.size() > 0)
+      {
+         const ExternalToolArgParser* parser = mExternalToolArgParsers.takeFirst();
+         delete parser;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -339,12 +346,16 @@ namespace dtEditQt
       actionAddTool->setStatusTip(tr("Add/edit external tools"));
       connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
 
+      mExternalToolArgParsers.push_back(new CurrentContextArgParser());
+      mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
+
       //create a finite number of ExternalTool's which can be used and add them
       //to an QActionGroup for reference
       for (int i = 0; i < 10; i++)
       {
          ExternalTool* tool = new ExternalTool();
          tool->GetAction()->setVisible(false);
+         tool->SetArgParsers(mExternalToolArgParsers);
          mExternalToolActionGroup->addAction(tool->GetAction());
          mTools.push_back(tool);
       }

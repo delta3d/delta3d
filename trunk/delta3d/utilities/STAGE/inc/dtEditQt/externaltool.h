@@ -7,12 +7,16 @@ class QProcess;
 
 namespace dtEditQt 
 {
+   class ExternalToolArgParser;
+
+   ///Definition of an external application.
    class ExternalTool : public QObject
    {
       Q_OBJECT
    public:
       ExternalTool();
       ~ExternalTool();
+
       void SetTitle(const QString& title);
       QString GetTitle() const;
 
@@ -29,17 +33,23 @@ namespace dtEditQt
       const QString& GetIcon() const;
 
       QAction* GetAction() const;
+
+      void SetArgParsers(const QList<const ExternalToolArgParser*>& parsers);
+
+      const QList<const dtEditQt::ExternalToolArgParser*>& GetArgParsers() const;
    
    protected slots:
 
       void OnStartTool();
 
    private:
+      QString ExpandArguments(const QString& args) const;
       QAction* mAction;
       QString mCommand;
       QString mArgs;
       QString mIconFilename;
       QProcess* mProcess;
+      QList<const ExternalToolArgParser*> mArgParserContainer;
    };
 }
 
