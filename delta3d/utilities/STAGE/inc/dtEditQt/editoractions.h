@@ -58,6 +58,7 @@ namespace dtDAL
 namespace dtEditQt 
 {
    class ExternalTool;
+   class ExternalToolArgParser;
 
    /**
     * This class holds all the UI QActions.  It has a list of the actions that are
@@ -446,6 +447,7 @@ signals:
          dtCore::RefPtr<dtCore::Isector> mIsector;
 
          QList<ExternalTool*> mTools;      
+         QList<const ExternalToolArgParser*> mExternalToolArgParsers;
 
    };
 }
