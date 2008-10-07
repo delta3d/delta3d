@@ -32,6 +32,7 @@ namespace dtEditQt
       void OnFindIconFile();
       void OnMoveToolDown();
       void OnMoveToolUp();
+      void OnResetToDefaultTools();
 
    private:
       void SetupConnections();
@@ -40,6 +41,14 @@ namespace dtEditQt
       void SetOkButtonEnabled(bool enabled);
       void SetModifyButtonsEnabled(bool enabled);
       void ResetTool(ExternalTool& tool) const;
+      void ClearAndAddDefaultDelta3DTools();
+      void DeleteToolWidgets();
+
+      /** Try to find an executable file, assuming it is located in the same folder
+        * as this application.
+        * @return full path to executable if found, or the baseName if not found.
+        */
+      QString FindDelta3DTool(const QString& baseName) const;
 
       Ui::ExternalToolDiag ui;
 

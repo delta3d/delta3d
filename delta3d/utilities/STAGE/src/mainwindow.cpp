@@ -158,8 +158,6 @@ namespace dtEditQt
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(editorActions.actionHelpAboutEditor);
         helpMenu->addAction(editorActions.actionHelpAboutQT);
-
-
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -200,14 +198,6 @@ namespace dtEditQt
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionTranslateActor);
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
         addToolBar(selectionToolBar);
-
-        subeditorToolBar = new QToolBar(this);
-        subeditorToolBar->setObjectName("SubeditorToolBar");
-        subeditorToolBar->setWindowTitle(tr("Subeditor Toolbar"));
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);  
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditParticleSystem);  
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionLaunchViewer);  
-        addToolBar(subeditorToolBar);
 
         mExternalToolsToolBar = new QToolBar(this);
         mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");

@@ -31,7 +31,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Add a new External Tool to the list&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
        </property>
        <property name="text" >
-        <string>Add</string>
+        <string>&amp;Add</string>
        </property>
       </widget>
      </item>
@@ -41,7 +41,7 @@ p, li { white-space: pre-wrap; }
         <string>Delete the selected external tool</string>
        </property>
        <property name="text" >
-        <string>Delete</string>
+        <string>&amp;Delete</string>
        </property>
       </widget>
      </item>
@@ -51,7 +51,7 @@ p, li { white-space: pre-wrap; }
         <string>Move the selected external tool up in the list</string>
        </property>
        <property name="text" >
-        <string>Move Up</string>
+        <string>Move &amp;Up</string>
        </property>
       </widget>
      </item>
@@ -61,7 +61,17 @@ p, li { white-space: pre-wrap; }
         <string>Move the selected external tool down in the list</string>
        </property>
        <property name="text" >
-        <string>Move Down</string>
+        <string>Move &amp;Down</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="resetButton" >
+       <property name="toolTip" >
+        <string>Delete existing tool configurations and add in the Delta3D default external tools.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Reset...</string>
        </property>
       </widget>
      </item>

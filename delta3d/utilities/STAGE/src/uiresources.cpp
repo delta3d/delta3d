@@ -71,8 +71,8 @@ namespace dtEditQt
         ICON_SOUND_PLAY = ":/icons/play_sound.png";
 
         ICON_EDITOR_SKELETAL_MESH   = ":/icons/subeditor_skeletal.png";
-        ICON_EDITOR_PARTICLE_SYSTEM = ":/icons/particle_tab.png";
-        ICON_EDITOR_VIEWER          = ":/icons/viewer.png";       
+        ICON_EDITOR_PARTICLE_SYSTEM = ":/icons/particle.ico";
+        ICON_EDITOR_VIEWER          = ":/icons/viewer.ico";       
 
         ICON_SOUND_RESOURCE = ":/icons/sound_resource.png";
         ICON_STATICMESH_RESOURCE = ":/icons/staticmesh_resource.png";
