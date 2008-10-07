@@ -348,6 +348,9 @@ namespace dtEditQt
 
       mExternalToolArgParsers.push_back(new CurrentContextArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
+      mExternalToolArgParsers.push_back(new CurrentMeshArgParser());
+      mExternalToolArgParsers.push_back(new CurrentParticleSystemArgParser());
+      mExternalToolArgParsers.push_back(new CurrentSkeletonArgParser());
 
       //create a finite number of ExternalTool's which can be used and add them
       //to an QActionGroup for reference

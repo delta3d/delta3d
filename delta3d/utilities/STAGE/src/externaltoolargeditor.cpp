@@ -11,10 +11,12 @@ dtEditQt::ExternalToolArgEditor::ExternalToolArgEditor(const QList<const Externa
    ui.argEdit->setText(args);
 
    for (int parserIdx=0; parserIdx<parsers.size(); ++parserIdx)
-   {
+   {     
       QListWidgetItem* item = new QListWidgetItem(ui.parserList);
-      item->setText(parsers.at(parserIdx)->GetVariableText());
-      item->setData(Qt::UserRole, parsers.at(parserIdx)->GetDescription());
+      const ExternalToolArgParser* p = parsers.at(parserIdx);
+      item->setText(p->GetVariableText());//set the text of the item to be the variable
+      item->setData(Qt::UserRole, p->GetDescription()); //store the description for later
+      item->setToolTip(p->ExpandArguments(p->GetVariableText())); //tooltip the expanded variable
    }
  
    connect(ui.parserList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), 
