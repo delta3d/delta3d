@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  */
+
 #ifndef DELTA_ACTORPROPERTY
 #define DELTA_ACTORPROPERTY
 
@@ -113,7 +114,7 @@ namespace dtDAL
          const std::string& GetGroupName() const { return mGroupName; }
 
          /**
-          * Sets the precision of floating point number as they are 
+          * Sets the precision of floating point number as they are
           * converted to and from string values.
           * @param precision The amount of numeric percision.
           * @note This value defaults to 16.
@@ -139,20 +140,20 @@ namespace dtDAL
           * Constructs the actor property.  This is protected since the real
           * property functionality comes from classes extending this one.
           */
-         ActorProperty(dtDAL::DataType& dataType, 
+         ActorProperty(dtDAL::DataType& dataType,
                        const dtUtil::RefString& name,
                        const dtUtil::RefString& label,
                        const dtUtil::RefString& desc,
                        const dtUtil::RefString& groupName,
-                       bool  readOnly = false) 
-               : AbstractParameter(dataType, name)
-               , mLabel(label)
-               , mDescription(desc)
-               , mNumberPrecision(16)
-               , mReadOnly(readOnly)
-            {
-               groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
-            }
+                       bool  readOnly = false)
+            : AbstractParameter(dataType, name)
+            , mLabel(label)
+            , mDescription(desc)
+            , mNumberPrecision(16)
+            , mReadOnly(readOnly)
+         {
+            groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
+         }
 
          /// The name of the property's group
          dtUtil::RefString mGroupName;
@@ -169,7 +170,7 @@ namespace dtDAL
 
          ///Description of what the property represents.
          dtUtil::RefString mDescription;
-           
+
          ///the precision used for floating point numbers when doing a GetStringValue and SetStringValue
          unsigned int mNumberPrecision;
 
