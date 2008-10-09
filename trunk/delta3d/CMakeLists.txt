@@ -1,3 +1,97 @@
+MACRO(ADD_DELTA3D_SUBFOLDERS)
+	#optional external dependencies
+	IF (BUILD_ANIM)  
+	  FIND_PACKAGE(Cal3d)   #for dtAnim
+	  ADD_SUBDIRECTORY(src/dtAnim)
+	  SET(DTANIM_AVAILABLE "YES")
+	ENDIF (BUILD_ANIM)
+
+	IF (BUILD_AUDIO)
+	  FIND_PACKAGE(OpenAL)  #for dtAudio
+	  ADD_SUBDIRECTORY(src/dtAudio)
+	  SET(DTAUDIO_AVAILABLE "YES")
+	ENDIF (BUILD_AUDIO)
+
+	IF (BUILD_BINDINGS) 
+	  FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
+	  FIND_PACKAGE(PythonLibs) #for Python bindings
+	  ADD_SUBDIRECTORY(src/python)
+	  ADD_SUBDIRECTORY(src/dtScript)
+	ENDIF (BUILD_BINDINGS)
+
+	IF (BUILD_DIS)  
+	  FIND_PACKAGE(DIS)     #for dtDIS
+	  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM, dtDIS
+	  ADD_SUBDIRECTORY(src/dtDIS)
+	  SET(DTDIS_AVAILABLE "YES")
+	ENDIF (BUILD_DIS)  
+
+	IF (BUILD_GUI)  
+	  FIND_PACKAGE(CEGUI)   #for dtGUI
+	  SET(DTGUI_AVAILABLE "YES")
+	  ADD_SUBDIRECTORY(src/dtGUI)
+	ENDIF (BUILD_GUI) 
+
+	IF (BUILD_HLA)
+	   if (USE_RTIS)
+		  FIND_PACKAGE(RTI-s) #for dtHLAGM
+	   else (USE_RTIS)
+		  if (USE_CERTI)
+			 FIND_PACKAGE(RTICERTI REQUIRED)
+		  else (USE_CERTI)
+				MESSAGE("No HLA RTI selected, choose USE_CERTI or USE_RTIS")
+		  endif (USE_CERTI)
+	   endif (USE_RTIS)
+	  
+	   ADD_SUBDIRECTORY(src/dtHLAGM)
+	   SET(DTHLAGM_AVAILABLE "YES")
+	endif (BUILD_HLA)
+
+
+	IF (BUILD_PLIB)
+	  FIND_PACKAGE(PLIB) #for dtInputPLIB
+	  ADD_SUBDIRECTORY(src/dtInputPLIB)
+	ENDIF(BUILD_PLIB)
+
+	IF (BUILD_NET)
+	  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM
+	  FIND_PACKAGE(GNE)     #for dtNet, dtNetGM
+	  FIND_PACKAGE(Boost)   #for dtNet, dtNetGM, Python bindings
+	  ADD_SUBDIRECTORY(src/dtNet)
+	  ADD_SUBDIRECTORY(src/dtNetGM)
+	  SET(DTNET_AVAILABLE "YES")
+	  SET(DTNETGM_AVAILABLE "YES")
+	ENDIF (BUILD_NET)  
+
+	IF (BUILD_TERRAIN)
+	  FIND_PACKAGE(GDAL)    #for dtTerrain
+	  ADD_SUBDIRECTORY(src/dtTerrain)
+	  SET(DTTERRAIN_AVAILABLE "YES")
+	ENDIF (BUILD_TERRAIN)
+
+	IF (BUILD_TESTS)
+	  OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
+
+	  FIND_PACKAGE(CPPUNIT) #for unit tests
+	  ADD_SUBDIRECTORY(tests)
+	ENDIF (BUILD_TESTS)
+
+	ADD_SUBDIRECTORY(src/dtActors)
+	ADD_SUBDIRECTORY(src/dtUtil)
+	ADD_SUBDIRECTORY(src/dtCore)
+	ADD_SUBDIRECTORY(src/dtAI)
+	ADD_SUBDIRECTORY(src/dtABC)
+	ADD_SUBDIRECTORY(src/dtDAL)
+	ADD_SUBDIRECTORY(src/dtGame)
+	ADD_SUBDIRECTORY(src/dtInspector)
+	ADD_SUBDIRECTORY(src/dtInputISense)
+	ADD_SUBDIRECTORY(src/dtLMS)
+
+	ADD_SUBDIRECTORY(demos)
+	ADD_SUBDIRECTORY(examples)
+	ADD_SUBDIRECTORY(utilities)
+ENDMACRO(ADD_DELTA3D_SUBFOLDERS)
+
 IF(WIN32)
     CMAKE_MINIMUM_REQUIRED(VERSION 2.4.6 FATAL_ERROR)
 ELSE(WIN32)
@@ -174,83 +268,6 @@ INCLUDE_DIRECTORIES(
 )
 
 
-#optional external dependencies
-IF (BUILD_ANIM)  
-  FIND_PACKAGE(Cal3d)   #for dtAnim
-  ADD_SUBDIRECTORY(src/dtAnim)
-  SET(DTANIM_AVAILABLE "YES")
-ENDIF (BUILD_ANIM)
-
-IF (BUILD_AUDIO)
-  FIND_PACKAGE(OpenAL)  #for dtAudio
-  ADD_SUBDIRECTORY(src/dtAudio)
-  SET(DTAUDIO_AVAILABLE "YES")
-ENDIF (BUILD_AUDIO)
-
-IF (BUILD_BINDINGS) 
-  FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
-  FIND_PACKAGE(PythonLibs) #for Python bindings
-  ADD_SUBDIRECTORY(src/python)
-  ADD_SUBDIRECTORY(src/dtScript)
-ENDIF (BUILD_BINDINGS)
-
-IF (BUILD_DIS)  
-  FIND_PACKAGE(DIS)     #for dtDIS
-  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM, dtDIS
-  ADD_SUBDIRECTORY(src/dtDIS)
-  SET(DTDIS_AVAILABLE "YES")
-ENDIF (BUILD_DIS)  
-
-IF (BUILD_GUI)  
-  FIND_PACKAGE(CEGUI)   #for dtGUI
-  SET(DTGUI_AVAILABLE "YES")
-  ADD_SUBDIRECTORY(src/dtGUI)
-ENDIF (BUILD_GUI) 
-
-IF (BUILD_HLA)
-   if (USE_RTIS)
-      FIND_PACKAGE(RTI-s) #for dtHLAGM
-   else (USE_RTIS)
-      if (USE_CERTI)
-         FIND_PACKAGE(RTICERTI REQUIRED)
-      else (USE_CERTI)
-            MESSAGE("No HLA RTI selected, choose USE_CERTI or USE_RTIS")
-      endif (USE_CERTI)
-   endif (USE_RTIS)
-  
-   ADD_SUBDIRECTORY(src/dtHLAGM)
-   SET(DTHLAGM_AVAILABLE "YES")
-endif (BUILD_HLA)
-
-
-IF (BUILD_PLIB)
-  FIND_PACKAGE(PLIB) #for dtInputPLIB
-  ADD_SUBDIRECTORY(src/dtInputPLIB)
-ENDIF(BUILD_PLIB)
-
-IF (BUILD_NET)
-  FIND_PACKAGE(HAWKNL)  #for dtNet, dtNetGM
-  FIND_PACKAGE(GNE)     #for dtNet, dtNetGM
-  FIND_PACKAGE(Boost)   #for dtNet, dtNetGM, Python bindings
-  ADD_SUBDIRECTORY(src/dtNet)
-  ADD_SUBDIRECTORY(src/dtNetGM)
-  SET(DTNET_AVAILABLE "YES")
-  SET(DTNETGM_AVAILABLE "YES")
-ENDIF (BUILD_NET)  
-
-IF (BUILD_TERRAIN)
-  FIND_PACKAGE(GDAL)    #for dtTerrain
-  ADD_SUBDIRECTORY(src/dtTerrain)
-  SET(DTTERRAIN_AVAILABLE "YES")
-ENDIF (BUILD_TERRAIN)
-
-IF (BUILD_TESTS)
-  OPTION(AUTO_RUN_TESTS "Automatically runs the unit tests upon successful compile and link" ON)
-
-  FIND_PACKAGE(CPPUNIT) #for unit tests
-  ADD_SUBDIRECTORY(tests)
-ENDIF (BUILD_TESTS)
-
 
 SET(QT_USE_QTOPENGL "true")
 FIND_PACKAGE(Qt4)     #for STAGE, AnimationViewer, ObjectViewer
@@ -322,20 +339,7 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} CACHE STRING "You may add additiona
 # This is unofficial so this may be removed or changed at anytime.
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "(EXPERIMENTAL) You may add additional search paths here. Use ; to separate multiple paths.")
 
-ADD_SUBDIRECTORY(src/dtActors)
-ADD_SUBDIRECTORY(src/dtUtil)
-ADD_SUBDIRECTORY(src/dtCore)
-ADD_SUBDIRECTORY(src/dtAI)
-ADD_SUBDIRECTORY(src/dtABC)
-ADD_SUBDIRECTORY(src/dtDAL)
-ADD_SUBDIRECTORY(src/dtGame)
-ADD_SUBDIRECTORY(src/dtInspector)
-ADD_SUBDIRECTORY(src/dtInputISense)
-ADD_SUBDIRECTORY(src/dtLMS)
 
-ADD_SUBDIRECTORY(demos)
-ADD_SUBDIRECTORY(examples)
-ADD_SUBDIRECTORY(utilities)
 
 
 # This is for an advanced option to give aggressive warnings 
@@ -433,6 +437,7 @@ ENDIF(DELTA3D_AGGRESSIVE_WARNING_FLAGS)
 #    SET(DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE 1 CACHE INTERNAL "Flag to track whether this is the first time running CMake or if CMake has been configured before")
 #ENDIF(NOT DELTA3D_CONFIG_HAS_BEEN_RUN_BEFORE)
 
+ADD_DELTA3D_SUBFOLDERS()
 
 #-----------------------------------------------------------------------------
 ### uninstall target
