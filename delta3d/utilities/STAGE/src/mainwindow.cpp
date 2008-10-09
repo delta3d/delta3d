@@ -252,6 +252,9 @@ namespace dtEditQt
         QSplitter *hSplit  = new QSplitter(Qt::Vertical); //Split top-bottom
         QSplitter *vSplit1 = new QSplitter(hSplit); //Split for top and front views
         QSplitter *vSplit2 = new QSplitter(hSplit); //Split for 3d and side views
+        mSplitters.push_back(hSplit);
+        mSplitters.push_back(vSplit1);
+        mSplitters.push_back(vSplit2);
 
         //Create the actual viewport objects..
         this->perspView = (PerspectiveViewport *)vpMgr.createViewport("Perspective View",
@@ -352,6 +355,8 @@ namespace dtEditQt
         addDockWidget(Qt::LeftDockWidgetArea,  propertyWindow);
         addDockWidget(Qt::LeftDockWidgetArea,  actorTab);
         addDockWidget(Qt::RightDockWidgetArea, resourceBrowser);
+
+        ResetSplitters();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -473,6 +478,16 @@ namespace dtEditQt
             settings.setValue(EditorSettings::MAINWIN_DOCK_STATE,saveState(EditorSettings::MAINWIN_DOCK_STATE_ID));
             settings.setValue(EditorSettings::MAINWIN_GEOMETRY, saveGeometry());
         settings.endGroup();
+
+        //splitter data
+        settings.remove(EditorSettings::SPLITTER_GROUP);
+        settings.beginWriteArray(EditorSettings::SPLITTER_GROUP);
+        for (int s=0; s<mSplitters.size(); ++s)
+        {
+           settings.setArrayIndex(s);
+           settings.setValue(EditorSettings::SPLITTER_SIZE, mSplitters.at(s)->saveState() );
+        }
+        settings.endArray();
 
         //Save the general preferences...
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
@@ -730,6 +745,15 @@ namespace dtEditQt
            restoreGeometry(state);
         }
         settings.endGroup();
+
+        //restore splitter positions
+        const int numSplitters = settings.beginReadArray(EditorSettings::SPLITTER_GROUP);
+        for (int s=0; s<mSplitters.size(); ++s)
+        {
+           settings.setArrayIndex(s);
+           mSplitters.at(s)->restoreState(settings.value(EditorSettings::SPLITTER_SIZE).toByteArray());
+        }
+        settings.endArray();
         
         //Now check for the general preferences...
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
@@ -985,5 +1009,29 @@ namespace dtEditQt
 
        mToolsMenu->addSeparator();
        mToolsMenu->addAction(EditorActions::GetInstance().actionAddTool);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    void MainWindow::ResetSplitters()
+    {
+       //funny little logic to set the splitter's children's sizes so that they
+       //are equally distributed across the window
+       for (int splitterIdx=0; splitterIdx<mSplitters.size(); ++splitterIdx)
+       {
+          QList<int> sizes = mSplitters.at(splitterIdx)->sizes();
+          int total = 0;
+          for (int i=0; i<sizes.size(); ++i)
+          {
+             total += sizes.at(i);
+          }
+
+          QList<int> newSizes;
+          for (int i=0; i<sizes.size(); ++i)
+          {
+             newSizes.push_back(total/sizes.size());
+          }
+
+          mSplitters.at(splitterIdx)->setSizes(newSizes);
+       }
     }
 }

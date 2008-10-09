@@ -43,6 +43,9 @@ namespace dtEditQt
    const int EditorSettings::MAINWIN_DOCK_STATE_ID = 0;
    const QString EditorSettings::MAINWIN_DOCK_STATE("MainWindow_DockState");
 
+   const QString EditorSettings::SPLITTER_GROUP("Splitters");
+   const QString EditorSettings::SPLITTER_SIZE("Splitter");
+
    const QString EditorSettings::RECENT_PROJECTS("Recently_Loaded_Projects");
    const QString EditorSettings::RECENT_MAPS("Recently_Loaded_Maps");
 

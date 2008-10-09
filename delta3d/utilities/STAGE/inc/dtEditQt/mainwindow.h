@@ -36,6 +36,8 @@
 #include <dtDAL/map.h>
 #include <dtEditQt/typedefs.h>
 
+class QSplitter;
+
 namespace dtEditQt 
 {
 
@@ -212,6 +214,7 @@ namespace dtEditQt
          ResourceBrowser *resourceBrowser;
 
          QWidget *mainViewportParent;
+         QList<QSplitter*> mSplitters;
 
          /**
           * Connects the signals and slots the main window needs.
@@ -251,6 +254,12 @@ namespace dtEditQt
          QWidget *setupViewports();
 
          void checkAndLoadBackup(const std::string &str);
+
+         /** 
+           * Reset the splitters to equally divide the screen.
+           */
+         void ResetSplitters();
+
 
          friend class EditorActions;
    };
