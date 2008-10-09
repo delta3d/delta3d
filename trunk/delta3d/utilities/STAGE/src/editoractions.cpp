@@ -334,9 +334,9 @@ namespace dtEditQt
       actionWindowsResourceBrowser->setCheckable(true);
       actionWindowsResourceBrowser->setChecked(true);
 
-      actionWindowsResetWindows = new QAction(tr("Reset Docking Windows"), this);
+      actionWindowsResetWindows = new QAction(tr("Reset Windows"), this);
       actionWindowsResetWindows->setShortcut(tr("Ctrl+R"));
-      actionWindowsResetWindows->setStatusTip(tr("Restores the docking windows to a default state"));
+      actionWindowsResetWindows->setStatusTip(tr("Restores the windows to a default state"));
    }
 
 //////////////////////////////////////////////////////////////////////////
