@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #ifndef DELTA_ABSTRACT_PARAMETER
 #define DELTA_ABSTRACT_PARAMETER
 
@@ -27,7 +28,7 @@
 namespace dtDAL
 {
    class DataType;
-   
+
    /**
     * @class AbstractParameter
     * @brief a common base class for actor property and named parameter, especially helpful in the load/save process.
@@ -36,9 +37,9 @@ namespace dtDAL
    class AbstractParameter : public osg::Referenced
    {
       public:
-         
+
          AbstractParameter(DataType& dataType, const dtUtil::RefString& name):
-            mDataType(dataType), mName(name) 
+            mDataType(dataType), mName(name)
          {}
 
          ///@return the type of this parameter.
