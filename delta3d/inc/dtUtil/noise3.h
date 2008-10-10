@@ -1,8 +1,3 @@
-#ifndef __NOISE_3_H__
-#define __NOISE_3_H__
-
-#include "dtUtil/mathdefines.h"
-
 /*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2005 MOVES Institute
@@ -23,6 +18,11 @@
  *
  * Bradley Anderegg
  */
+
+#ifndef __NOISE_3_H__
+#define __NOISE_3_H__
+
+#include "dtUtil/mathdefines.h"
 
 namespace dtUtil
 {
@@ -87,13 +87,13 @@ void Noise3<Real, Vector>::Reseed(unsigned int pSeed)
 template <class Real, class Vector>
 void Noise3<Real, Vector>::BuildTable()
 {
-   for(int i = 0; i < TABLE_SIZE; i++)
+   for (int i = 0; i < TABLE_SIZE; i++)
    {
       Real x = 1 - ( 2.0f * dtUtil::RandPercent() );
       Real y = 1 - ( 2.0f * dtUtil::RandPercent() );
       Real z = 1 - ( 2.0f * dtUtil::RandPercent() );
 
-      if(((x * x) + (y * y) + (z * z)) < 1.0f)
+      if (((x * x) + (y * y) + (z * z)) < 1.0f)
       {
          m_gTable[i] = Vector(x,  y,  z);
          m_gTable[i].normalize();
@@ -104,20 +104,20 @@ void Noise3<Real, Vector>::BuildTable()
       }
    }
 
-   for(int j = 0; j < TABLE_SIZE; j++)
+   for (int j = 0; j < TABLE_SIZE; j++)
    {
       int num = dtUtil::RandRange(0, TABLE_SIZE - 1);
       m_gTable[j] = m_gTable[num];
    }
 
    //create a table of random permuations
-   for(int j = 0; j < TABLE_SIZE; ++j)
+   for (int j = 0; j < TABLE_SIZE; ++j)
    {
       m_iPerm[j] = j;
    }
 
 
-   for(int j = 0; j < TABLE_SIZE; ++j)
+   for (int j = 0; j < TABLE_SIZE; ++j)
    {
       int r = dtUtil::RandRange(0, TABLE_SIZE - 1);
       int temp = m_iPerm[j];
@@ -126,7 +126,7 @@ void Noise3<Real, Vector>::BuildTable()
    }
 
    //duplicate this table for speed
-   for(int k = TABLE_SIZE; k < TABLE_SIZE * 2; ++k)
+   for (int k = TABLE_SIZE; k < TABLE_SIZE * 2; ++k)
    {
       m_iPerm[k] = m_iPerm[k - TABLE_SIZE];
    }
@@ -158,7 +158,7 @@ void Noise3<Real, Vector>::BuildCoefs(const Vector& vect_in)
    m_vCoef[6] = Vector(iX, iY1, iZ1);
    m_vCoef[7] = Vector(iX1, iY1, iZ1);
 
-   for(int i = 0; i < 8; i++)
+   for (int i = 0; i < 8; i++)
    {
       m_iCoef[i] = Fold(m_vCoef[i]);
    }
@@ -191,7 +191,7 @@ Real Noise3<Real, Vector>::GetNoise(const Vector& vect_in)
 
    Real gradientValues[8];
 
-   for(int i = 0; i < 8; i++)
+   for (int i = 0; i < 8; i++)
    {
       gradientValues[i] = (vect_in - m_vCoef[i]) * m_gTable[m_iCoef[i]];
    }

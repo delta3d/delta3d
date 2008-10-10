@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 /** @file
   * Utility methods for using strings.
@@ -49,24 +49,24 @@ namespace dtUtil
    public:
       //The predicate should evaluate to true when applied to a separator.
       static void tokenize(std::vector<std::string> &tokens,
-                           const std::string &stringToParse, 
+                           const std::string &stringToParse,
                            const Pred &predFxn = Pred());
    };
 
    //The predicate should evaluate to true when applied to a separator.
    template <class Pred>
    inline void StringTokenizer<Pred>::tokenize(std::vector<std::string> &tokens,
-                                               const std::string &stringToParse, 
+                                               const std::string &stringToParse,
                                                const Pred &predFxn)
    {
       //First clear the results std::vector
       tokens.clear();
       std::string::const_iterator it = stringToParse.begin();
       std::string::const_iterator itTokenEnd = stringToParse.begin();
-      while(it != stringToParse.end())
+      while (it != stringToParse.end())
       {
          //Eat separators
-         if(predFxn(*it))
+         if (predFxn(*it))
          {
             it++;
          }
@@ -75,7 +75,7 @@ namespace dtUtil
             //Find next token
             itTokenEnd = std::find_if(it, stringToParse.end(), predFxn);
             //Append token to result
-            if(it < itTokenEnd)
+            if (it < itTokenEnd)
             {
                tokens.push_back(std::string(it, itTokenEnd));
             }
@@ -133,16 +133,16 @@ namespace dtUtil
    */
    inline const std::string& trim(std::string& toTrim)
    {
-      if( toTrim.empty() )
+      if (toTrim.empty())
       {
          return toTrim;
       }
 
       // TODO: All this code should be replaced with STL algorithms
-      
-      for( std::string::iterator i = toTrim.begin(); i != toTrim.end(); )
+
+      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();)
       {
-         if( isspace(*i) )
+         if (isspace(*i))
          {
             i = toTrim.erase(i);
          }
@@ -152,12 +152,14 @@ namespace dtUtil
          }
       }
 
-      if(toTrim.empty())
+      if (toTrim.empty())
+      {
          return toTrim;
+      }
 
       for (int i = (int)(toTrim.size() - 1); i >= 0; --i)
       {
-         if( isspace(toTrim[i]) )
+         if (isspace(toTrim[i]))
          {
             //we can just erase from the end because
             //it will shorted the part of the string already covered by the loop.
@@ -267,7 +269,7 @@ namespace dtUtil
    bool DT_UTIL_EXPORT ToType<bool>(const std::string& u);
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
-   
+
    /// @return a string with text as an int value padded to the size specified.
    void DT_UTIL_EXPORT MakeIndexString(unsigned index, std::string& toFill, unsigned paddedLength = 4);
 

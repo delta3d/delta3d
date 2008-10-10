@@ -1,24 +1,22 @@
-
 /*
-* Delta3D Open Source Game and Simulation Engine
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg 01/17/2008
-*/
-
+ * Delta3D Open Source Game and Simulation Engine
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg 01/17/2008
+ */
 
 #ifndef DELTA_TEMPLATE_UTILITY
 #define DELTA_TEMPLATE_UTILITY
@@ -29,7 +27,7 @@ namespace dtUtil
 {
 
    /**
-    * This odd functor is actually useful for supplying a default 
+    * This odd functor is actually useful for supplying a default
     * template parameter when a functors is expected
     */
    template<typename Ret, typename T>
@@ -42,7 +40,7 @@ namespace dtUtil
    };
 
    /**
-    * This odd functor is actually useful for supplying a default 
+    * This odd functor is actually useful for supplying a default
     * template parameter when a functors is expected
     */
    template<typename Ret = void>
@@ -54,8 +52,8 @@ namespace dtUtil
       }
    };
 
-   //This functor uses partial template specialization to invoke a 
-   //functor or first class object generically when the templated 
+   //This functor uses partial template specialization to invoke a
+   //functor or first class object generically when the templated
    //functor type requires no specific traits.
    template <typename FunctorType, typename ArgType, typename RetType = void>
    struct EvaluateFunctor
@@ -104,7 +102,7 @@ namespace dtUtil
          dtUtil::EvaluateFunctor<CompareHandler, EvalResultTT, bool> eval;
          EvaluateResult result;
 
-         if(eval(dataType.first, result))
+         if (eval(dataType.first, result))
          {
             dtUtil::EvaluateFunctor<InvokeHandler, EvaluateResult> triggerHandler;
             triggerHandler(dataType.second, result);
@@ -119,7 +117,7 @@ namespace dtUtil
    //   void operator()(std::pair<CompareHandler, InvokeHandler>& dataType)
    //   {
    //      dtUtil::EvaluateFunctor<CompareHandler, bool> eval;
-   //      if(eval(dataType.first))
+   //      if (eval(dataType.first))
    //      {
    //         dtUtil::EvaluateFunctor<InvokeHandler, void> triggerHandler;
    //         triggerHandler(dataType.second);
