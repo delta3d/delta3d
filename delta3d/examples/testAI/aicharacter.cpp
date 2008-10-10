@@ -1,27 +1,27 @@
 /* -*-c++-*-
-* testAI - aicharacter (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2004-2006 MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* Bradley Anderegg 06/29/2006
-*/
+ * testAI - aicharacter (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2004-2006 MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bradley Anderegg 06/29/2006
+ */
 
 #include "aicharacter.h"
 #include <dtAI/astarconfig.h>
@@ -40,7 +40,7 @@
 * A quick functor that will be used with for_each to render
 * all waypoints in the list to green
 */
-struct funcRenderGreen 
+struct funcRenderGreen
 {
    template<class _WayIter>
    void operator()(const _WayIter& pWaypoint) const
@@ -60,14 +60,14 @@ namespace dtAI
       , mWaypointPath()
       , mAStar()
       , mScene(pScene)
-   {      
-      mCharacter->SetGroundClamp(pScene, 0.0f);     
+   {
+      mCharacter->SetGroundClamp(pScene, 0.0f);
 
       SetPosition(pWaypoint);
 
       pScene->AddDrawable(mCharacter.get());
    }
-   
+
    AICharacter::~AICharacter()
    {
    }
@@ -78,22 +78,22 @@ namespace dtAI
       mat(3,0) = pWaypoint->GetPosition()[0];
       mat(3,1) = pWaypoint->GetPosition()[1];
       mat(3,2) = pWaypoint->GetPosition()[2] + 3.5f;
-      
+
       mCharacter->GetMatrixNode()->setMatrix(mat);
    }
 
    bool AICharacter::FindPathAndGoToWaypoint(const Waypoint* pWaypoint)
-   {      
+   {
       //to use AStar, we call reset with the two points we want to path between
       mAStar.Reset(mCurrentWaypoint, pWaypoint);
-      
+
       //a single call to find path should return PATH_FOUND if no constraints are given
       //and if a path exists
       PathFindResult pHasPath = mAStar.FindPath();
 
-      if(pHasPath != NO_PATH)
+      if (pHasPath != NO_PATH)
       {
-         //copy the resulting path 
+         //copy the resulting path
          mWaypointPath = mAStar.GetPath();
 
          //loop through the path and turn everything to render green
@@ -103,7 +103,7 @@ namespace dtAI
          pWaypoint->SetRenderFlag(Waypoint::RENDER_RED);
 
          return true;
-      }      
+      }
 
       //we could not path to that point
       return false;
@@ -115,10 +115,10 @@ namespace dtAI
    }
 
    void AICharacter::GoToWaypoint(float dt, const Waypoint* pWaypoint)
-   {  
+   {
       //simple... just rotate to the waypoint over time and set a
       //positive velocity to go there
-      mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);            
+      mCharacter->RotateToPoint(pWaypoint->GetPosition(), dt * 3.0f);
 
       //osg::Vec3 pVector = pWaypoint->GetPosition() - GetPosition();
 
@@ -126,14 +126,14 @@ namespace dtAI
 
       //float dir = std::abs(osg::RadiansToDegrees(atan2(pVector[0], -pVector[1])) - mCharacter->GetRotation());
 
-      //while(dir >= 360.0f) dir -= 360.0f;
+      //while (dir >= 360.0f) dir -= 360.0f;
 
       //std::cout << dir << std::endl;
-      //if(dir < 5.0f)
+      //if (dir < 5.0f)
       //{
       mCharacter->SetSpeed(-float(mSpeed));
 
-      if(!mCharacter->IsAnimationPlaying("Walk"))
+      if (!mCharacter->IsAnimationPlaying("Walk"))
       {
          mCharacter->ClearAllAnimations(0.5f);
          mCharacter->PlayAnimation("Walk");
@@ -147,14 +147,14 @@ namespace dtAI
 
    osg::Vec3 AICharacter::GetPosition() const
    {
-     osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();  
+     osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
      osg::Vec3 pos(mat(3, 0), mat(3, 1), mat(3, 2));
      return pos;
    }
 
    osg::Vec3 AICharacter::GetForward() const
    {
-      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();  
+      osg::Matrix mat = mCharacter->GetMatrixNode()->getMatrix();
       osg::Vec3 forward(mat(1, 0), mat(1, 1), mat(1, 2));
       return forward;
    }
@@ -168,24 +168,24 @@ namespace dtAI
 
       float distToX = std::abs(pos[0] - wayPos[0]);
       float distToY = std::abs(pos[1] - wayPos[1]);
-	  if(mWaypointPath.size() == 1)
-	  {
-		  return (distToX < 0.1f && distToY < 0.1f);
-	  }
-	  else
-	  {
-		  return (distToX < 1.0f && distToY < 1.0f);
-	  }
+      if (mWaypointPath.size() == 1)
+      {
+         return (distToX < 0.1f && distToY < 0.1f);
+      }
+      else
+      {
+         return (distToX < 1.0f && distToY < 1.0f);
+      }
    }
 
-   
+
    void AICharacter::Update(float dt)
    {
       //if we have waypoints to goto
-      if(!mWaypointPath.empty())  
+      if (!mWaypointPath.empty())
       {
          //if we have gotten to the current waypoint
-         if(AmAtWaypoint(mWaypointPath.front()))
+         if (AmAtWaypoint(mWaypointPath.front()))
          {
             //set it as the current waypoint
             //meaning the last valid waypoint we visited
@@ -197,7 +197,7 @@ namespace dtAI
          }
 
          //if we have another waypoint to goto, goto it
-         if(!mWaypointPath.empty())
+         if (!mWaypointPath.empty())
          {
             ApplyStringPulling();
             GoToWaypoint(dt, mWaypointPath.front());
@@ -206,7 +206,7 @@ namespace dtAI
          else
          {
             mCharacter->SetSpeed(0);
-            if(!mCharacter->IsAnimationPlaying("Idle"))
+            if (!mCharacter->IsAnimationPlaying("Idle"))
             {
                mCharacter->ClearAllAnimations(0.5f);
                mCharacter->PlayAnimation("Idle");
@@ -219,11 +219,11 @@ namespace dtAI
 
    void AICharacter::ApplyStringPulling()
    {
-      if(mWaypointPath.size() < 2) return;
+      if (mWaypointPath.size() < 2) return;
 
       dtCore::RefPtr<dtCore::Isector> pIsector = new dtCore::Isector(mScene.get());
-      do 
-      {         
+      do
+      {
          pIsector->Reset();
          //osg::Vec3 vec = mWaypointPath.front()->GetPosition() - GetPosition();
          //vec.normalize();
@@ -233,14 +233,14 @@ namespace dtAI
          pIsector->SetEndPosition(pNextWaypoint->GetPosition());// - vec);
 
          //if there is a path between the two points
-         if(!pIsector->Update())
+         if (!pIsector->Update())
          {
             mWaypointPath.front()->SetRenderFlag(Waypoint::RENDER_BLUE);
-            mWaypointPath.pop_front();               
+            mWaypointPath.pop_front();
          }
-         else break;         
+         else break;
       }
-      while(mWaypointPath.size() > 2);
+      while (mWaypointPath.size() > 2);
    }
 
 
