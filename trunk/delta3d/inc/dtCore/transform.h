@@ -26,6 +26,8 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 
+#include <dtUtil/deprecationmgr.h>
+
 namespace dtCore
 {
    ////A class that represents a position and attitude in 3D space
@@ -34,9 +36,9 @@ namespace dtCore
    {
    public:
       
-      Transform(  float tx = 0.0f, float ty = 0.0f, float tz = 0.0f, 
-                  float h = 0.0f, float p = 0.0f, float r = 0.0f);
-      Transform( const Transform& that );
+      Transform(float tx = 0.0f, float ty = 0.0f, float tz = 0.0f,
+                float h = 0.0f, float p = 0.0f, float r = 0.0f);
+      Transform(const Transform& that);
       virtual ~Transform();
 
       /// Overwrites this transform with an identity matrix
@@ -56,80 +58,80 @@ namespace dtCore
       void SetRow(unsigned index, const osg::Vec4& row);
 
       ///Set both translation and rotation methods
-      virtual void Set( float tx, float ty, float tz, 
-                        float h, float p, float r); 
+      virtual void Set(float tx, float ty, float tz,
+                       float h, float p, float r);
       ///Set both translation and rotation methods
-      virtual void Set( const osg::Vec3& xyz, const osg::Vec3& hprRotation);
+      virtual void Set(const osg::Vec3& xyz, const osg::Vec3& hprRotation);
       ///Set both translation and rotation methods
-      virtual void Set( const osg::Vec3& xyz, const osg::Quat& quat);
+      virtual void Set(const osg::Vec3& xyz, const osg::Quat& quat);
       ///Set both translation and rotation methods
-      virtual void Set( const osg::Vec3& xyz, const osg::Matrix& rotation);
+      virtual void Set(const osg::Vec3& xyz, const osg::Matrix& rotation);
       ///Set both translation and rotation methods
-      virtual void Set( const osg::Matrix& mat );
+      virtual void Set(const osg::Matrix& mat );
 
       ///Set only translation methods
-      virtual void SetTranslation( float tx, float ty, float tz ) { SetTranslation(osg::Vec3(tx, ty, tz)); }
+      virtual void SetTranslation(float tx, float ty, float tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
       ///Set only translation methods
-      virtual void SetTranslation( const osg::Vec3f& xyz ) { mTransform.setTrans( xyz ); }
+      virtual void SetTranslation(const osg::Vec3f& xyz) { mTransform.setTrans( xyz ); }
       ///Set only translation methods
-      virtual void SetTranslation( const osg::Vec3d& xyz ) { mTransform.setTrans( xyz ); }
+      virtual void SetTranslation(const osg::Vec3d& xyz) { mTransform.setTrans( xyz ); }
 
       /// adjusts the translation by the given vector
-      void Move( const osg::Vec3f& distance );
+      void Move(const osg::Vec3f& distance);
       /// adjusts the translation by the given vector
-      void Move( const osg::Vec3d& distance );
+      void Move(const osg::Vec3d& distance);
 
       /**
        * Set the rotation using heading, pitch, roll (in degrees)
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation( float h, float p, float r ) { SetRotation( osg::Vec3( h, p, r ) ); }
+      virtual void SetRotation(float h, float p, float r) { SetRotation(osg::Vec3(h, p, r)); }
 
       /**
        * Set the rotation using heading, pitch, roll (in degrees)
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation( const osg::Vec3& hpr );
+      virtual void SetRotation(const osg::Vec3& hpr);
 
       /**
        * Set the rotation using a quaternion 
        * This will wipe out any scale assigned to the matrix.
        */
-      virtual void SetRotation( const osg::Quat& quat ) { mTransform.setRotate(quat); }
+      virtual void SetRotation(const osg::Quat& quat) { mTransform.setRotate(quat); }
 
       /**
        * Set the rotation using a matrix.  Only the 3x3 portion will be used.
        */
-      virtual void SetRotation( const osg::Matrix& rotation );
+      virtual void SetRotation(const osg::Matrix& rotation);
 
       ///Get translation and rotation methods
-      void Get( float& tx, float& ty, float& tz, float& h, float& p, float& r) const;
+      void Get(float& tx, float& ty, float& tz, float& h, float& p, float& r) const;
       ///Get translation and rotation methods
-      void Get( osg::Vec3& xyz, osg::Matrix& rotation) const;
+      void Get(osg::Vec3& xyz, osg::Matrix& rotation) const;
       ///Get translation and rotation methods
-      void Get( osg::Vec3& xyz, osg::Vec3& hpr) const;
+      void Get(osg::Vec3& xyz, osg::Vec3& hpr) const;
       ///Get translation and rotation methods
-      void Get( osg::Vec3& xyz, osg::Quat& quat) const;
+      void Get(osg::Vec3& xyz, osg::Quat& quat) const;
       ///Get translation and rotation methods
-      void Get( osg::Matrix& matrix ) const; 
+      void Get(osg::Matrix& matrix) const;
 
       ///Get only translation methods
-      void GetTranslation( osg::Vec3f& translation ) const { translation.set( mTransform.getTrans() ); }
+      void GetTranslation(osg::Vec3f& translation) const { translation.set(mTransform.getTrans()); }
       ///Get only translation methods
-      void GetTranslation( osg::Vec3d& translation ) const { translation.set( mTransform.getTrans() ); }
+      void GetTranslation(osg::Vec3d& translation) const { translation.set(mTransform.getTrans()); }
       ///Get only translation methods
-      void GetTranslation( float& tx, float& ty, float& tz ) const;
+      void GetTranslation(float& tx, float& ty, float& tz) const;
       ///Get only translation methods
       const osg::Vec3 GetTranslation() const { return mTransform.getTrans(); }
 
       ///Get only rotation methods
-      void GetRotation( float& h, float& p, float& r ) const;
+      void GetRotation(float& h, float& p, float& r) const;
       ///Get only rotation methods
-      void GetRotation( osg::Vec3& hpr ) const;
+      void GetRotation(osg::Vec3& hpr) const;
       ///Get only rotation methods
-      void GetRotation( osg::Quat& quat ) const { quat = mTransform.getRotate(); }
+      void GetRotation(osg::Quat& quat) const { quat = mTransform.getRotate(); }
       ///Get only rotation methods
-      void GetRotation( osg::Matrix& rotation ) const;
+      void GetRotation(osg::Matrix& rotation) const;
 
       /// calculates the scale using a polar decomposition.
       void CalcScale(osg::Vec3f& scale) const;
@@ -161,16 +163,43 @@ namespace dtCore
        */
       void Rescale(const osg::Vec3f& scale);
 
-      ///sets this matrix to be used for to set the camera  view
-      void SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec );  
-      ///sets this matrix to be used for to set the camera  view    
-      void SetLookAt(   float posX, float posY, float posZ,
-                        float lookAtX, float lookAtY, float lookAtZ,
-                        float upVecX, float upVecY, float upVecZ );
+      ///sets this matrix to be used for setting an object's orientation
+      void SetLookAt(const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec)
+      {
+         DEPRECATE("void SetLookAt(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)",
+                   "void SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)");
+
+         SetOrientation(xyz, lookAtXyz, upVec);
+      }
+
+      ///sets this matrix to be used for setting an object's orientation
+      void SetLookAt(float posX, float posY, float posZ,
+                     float lookAtX, float lookAtY, float lookAtZ,
+                     float upVecX, float upVecY, float upVecZ)
+      {
+         DEPRECATE("void SetLookAt(float posX, float posY, float posZ, float lookAtX, float lookAtY,"
+                   "float lookAtZ, float upVecX, float upVecY, float upVecZ)",
+                   "void SetOrientation(float posX, float posY, float posZ, float lookAtX, float lookAtY,"
+                   "float lookAtZ, float upVecX, float upVecY, float upVecZ)");
+
+         SetOrientation(posX, posY, posZ, lookAtX, lookAtY, lookAtZ, upVecX, upVecY, upVecZ);
+      }
+
+      ///sets this matrix to be used for setting an object's orientation
+      void SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);
+
+      ///sets this matrix to be used for setting an object's orientation
+      void SetOrientation(float posX, float posY, float posZ,
+                          float lookAtX, float lookAtY, float lookAtZ,
+                          float upVecX, float upVecY, float upVecZ);
+
+      ///gets the contents of the matrix as the basis vectors that make up it's rows
+      void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
 
       ///checks to see if the param transform is within epsilon of this transform
       ///slightly more sophisticated as using operator ==
-      bool EpsilonEquals( const Transform& transform, float epsilon = 0.0001f ) const;
+      /// todo fix epsilon (does not equal 0.0001f)
+      bool EpsilonEquals(const Transform& transform, float epsilon = 0.0001f) const;
 
       Transform & operator=(const Transform &);
       bool        operator==(const Transform &);
