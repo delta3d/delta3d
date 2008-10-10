@@ -93,7 +93,8 @@ namespace dtUtil
        * of object types.
        */
       void RemoveType(UniqueIdType id) {
-         if (this->objectTypeMap.erase(id) != 1) {
+         if (this->objectTypeMap.erase(id) != 1)
+         {
             std::ostringstream ss;
             ss << "ID " << id << " cannot be removed because it does not exist.";
             //LOG_WARNING(ss.str());
@@ -105,18 +106,24 @@ namespace dtUtil
        * @param id The type of object to check for.
        * @return True if the type is supported, false otherwise.
        */
-      bool IsTypeSupported(UniqueIdType id) const {
+      bool IsTypeSupported(UniqueIdType id) const
+      {
          ObjTypeItorConst itor(this->objectTypeMap.find(id));
          if (itor != this->objectTypeMap.end())
+         {
             return true;
+         }
          else
+         {
             return false;
+         }
       }
 
       /**
        * Gets a list of types that this factory knows how to create.
        */
-      void GetSupportedTypes(std::vector<UniqueIdType> &types) const {
+      void GetSupportedTypes(std::vector<UniqueIdType> &types) const
+      {
          types.clear();
          for (ObjTypeItorConst itor=this->objectTypeMap.begin();
             itor != this->objectTypeMap.end(); ++itor)

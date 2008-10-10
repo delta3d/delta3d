@@ -89,7 +89,7 @@ Real Fractal<Real, Vector, Noise>::FBM(Vector vect_in, int octaves, Real freq, R
    Real total = 0.0f;
    Real amplitude = 1.0f;
 
-   for(int i = 0; i < octaves; i++)
+   for (int i = 0; i < octaves; i++)
    {
       total += GetNoise(vect_in * freq) * amplitude;
       freq *= lacunarity;
@@ -107,7 +107,7 @@ Real Fractal<Real, Vector, Noise>::Turbulence(Vector vect_in, int octaves, Real 
    Real total = 0.0f;
    Real amplitude = 1.0f;
 
-   for(int i = 0; i < octaves; i++)
+   for (int i = 0; i < octaves; i++)
    {
       total += amplitude * std::abs(GetNoise(vect_in * freq));
       freq *= lacunarity;
@@ -136,7 +136,7 @@ Real Fractal<Real, Vector, Noise>::RigidMultiFractal(Vector vect_in, int octaves
    Real signal = 0.0f;
    Real weight = 1.0;
 
-   for(int i = 0; i < octaves; i++)
+   for (int i = 0; i < octaves; i++)
    {
       signal = weight * (offset - std::abs(GetNoise(vect_in)));
       weight = signal * gain;
@@ -161,7 +161,7 @@ Real Fractal<Real, Vector, Noise>::HeteroFractal(Vector vect_in, int octaves, Re
    Real amplitude = 1.0f;
    Real signal = 0.0f;
 
-   for(int i = 0; i < octaves; i++)
+   for (int i = 0; i < octaves; i++)
    {
       signal = amplitude * (GetNoise(vect_in) + offset);
 
@@ -185,7 +185,7 @@ Real Fractal<Real, Vector, Noise>::IslandFractal(Vector vect_in, int octaves /* 
    Real total = 0.0f;
    Real pers = 1.0f;
 
-   for(int i = 0; i < octaves; i++)
+   for (int i = 0; i < octaves; i++)
    {
       total += GetNoise(vect_in * freq) * pers;
 

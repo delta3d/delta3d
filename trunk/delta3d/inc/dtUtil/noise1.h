@@ -1,8 +1,3 @@
-#ifndef __NOISE_1_H__
-#define __NOISE_1_H__
-
-#include "dtUtil/mathdefines.h"
-
 /*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2005 MOVES Institute
@@ -23,6 +18,11 @@
  *
  * Bradley Anderegg
  */
+
+#ifndef __NOISE_1_H__
+#define __NOISE_1_H__
+
+#include "dtUtil/mathdefines.h"
 
 namespace dtUtil
 {
@@ -92,19 +92,19 @@ void Noise1<Real, Vector>::Reseed(unsigned int pSeed)
 template <class Real, class Vector>
 void Noise1<Real, Vector>::BuildTable()
 {
-   for(int i = 0; i < TABLE_SIZE; i++)
+   for (int i = 0; i < TABLE_SIZE; i++)
    {
       m_gTable[i] = 1.0f - ( 2.0f * dtUtil::RandPercent() );
    }
 
 
    //create a table of random permuations
-   for(int j = 0; j < TABLE_SIZE; ++j)
+   for (int j = 0; j < TABLE_SIZE; ++j)
    {
       m_iPerm[j] = j;
    }
 
-   for(int j = 0; j < TABLE_SIZE; ++j)
+   for (int j = 0; j < TABLE_SIZE; ++j)
    {
       int r = dtUtil::RandRange(0, TABLE_SIZE - 1);
       int temp = m_iPerm[j];
@@ -113,7 +113,7 @@ void Noise1<Real, Vector>::BuildTable()
    }
 
    //duplicate this table for speed
-   for(int k = TABLE_SIZE; k < TABLE_SIZE * 2; ++k)
+   for (int k = TABLE_SIZE; k < TABLE_SIZE * 2; ++k)
    {
       m_iPerm[k] = m_iPerm[k - TABLE_SIZE];
    }
@@ -129,7 +129,7 @@ void Noise1<Real, Vector>::BuildCoefs(const Vector vect_in)
    m_vCoef[0] = Real(iX);
    m_vCoef[1] = Real(iX1);
 
-   for(int i = 0; i < 2; ++i)
+   for (int i = 0; i < 2; ++i)
    {
       m_iCoef[i] = Fold(m_vCoef[i]);
    }
@@ -161,7 +161,7 @@ Real Noise1<Real, Vector>::GetNoise(const Vector vect_in)
 
    Real gradientValues[2];
 
-   for(int i = 0; i < 2; i++)
+   for (int i = 0; i < 2; i++)
    {
       gradientValues[i] = (vect_in - m_vCoef[i]) * m_gTable[m_iCoef[i]];
    }

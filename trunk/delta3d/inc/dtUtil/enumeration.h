@@ -50,7 +50,7 @@ namespace dtUtil
        */
       const std::string& GetName() const
       {
-         return this->mName;
+         return mName;
       }
 
       /**
@@ -84,25 +84,25 @@ namespace dtUtil
        */
       bool operator==(const std::string& rhs) const
       {
-         return this->mName == rhs;
+         return mName == rhs;
       }
 
       ///Overloaded inequality test for this enumeration's string value.
       bool operator!=(const std::string& rhs) const
       {
-         return this->mName != rhs;
+         return mName != rhs;
       }
 
       ///Overloaded less than test for this enumeration's string value.
       bool operator<(const std::string& rhs) const
       {
-         return this->mName < rhs;
+         return mName < rhs;
       }
 
       ///Overloaded greater than test for this enumeration's string value.
       bool operator>(const std::string& rhs) const
       {
-         return this->mName > rhs;
+         return mName > rhs;
       }
 
       /**
@@ -133,8 +133,8 @@ namespace dtUtil
        *      enumerated.
        */
       Enumeration(const std::string& name)
+         : mName(name)
       {
-         this->mName = name;
       }
 
    private:
@@ -181,9 +181,9 @@ public:                                                 \
    \
    static EnumType* GetValueForName(const std::string& name) \
    {                                                  \
-      for(unsigned i = 0; i < mInstances.size(); i++) \
+      for (unsigned i = 0; i < mInstances.size(); i++) \
       {                                      \
-         if(name == mInstances[i]->GetName()) \
+         if (name == mInstances[i]->GetName()) \
          {                                   \
             return mInstances[i];              \
          }                                     \

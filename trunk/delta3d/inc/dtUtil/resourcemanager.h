@@ -83,7 +83,7 @@ public:
 
    virtual void AddResource(const ResourceKey& pHandle, Resource* pResource)
    {
-      if(mResource.find(pHandle) == mResource.end())
+      if (mResource.find(pHandle) == mResource.end())
       {
          mResource.insert(ResourceHandle(pHandle, pResource));
       }
@@ -96,10 +96,10 @@ public:
    virtual bool LoadResource(const ResourceKey& pHandle, const std::string& pFilename)
    {
       ResourceConstIterator iter = mResource.find(pHandle);
-      if(iter == mResource.end())
+      if (iter == mResource.end())
       {
          Resource* pResource = mLoader->LoadResource(pFilename);
-         if(pResource)
+         if (pResource)
          {
             mResource.insert(ResourceHandle(pHandle, pResource));
             return true;
