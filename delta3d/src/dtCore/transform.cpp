@@ -274,7 +274,7 @@ namespace dtCore
    } 
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)
+   void Transform::Set(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)
    {
       osg::Vec3 x,y,z;
 
@@ -294,15 +294,15 @@ namespace dtCore
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Transform::SetOrientation(float posX, float posY, float posZ,
-                                  float lookAtX, float lookAtY, float lookAtZ,
-                                  float upVecX, float upVecY, float upVecZ)
+   void Transform::Set(float posX, float posY, float posZ,
+                       float lookAtX, float lookAtY, float lookAtZ,
+                       float upVecX, float upVecY, float upVecZ)
    {
-      osg::Vec3 xyz( posX, posY, posZ );
-      osg::Vec3 lookAt( lookAtX, lookAtY, lookAtZ );
-      osg::Vec3 upVec( upVecX, upVecY, upVecZ );
+      osg::Vec3 xyz(posX, posY, posZ);
+      osg::Vec3 lookAt(lookAtX, lookAtY, lookAtZ);
+      osg::Vec3 upVec(upVecX, upVecY, upVecZ);
 
-      SetOrientation( xyz, lookAt, upVec );
+      Set(xyz, lookAt, upVec);
    }
 
    /////////////////////////////////////////////////////////////////////////////
