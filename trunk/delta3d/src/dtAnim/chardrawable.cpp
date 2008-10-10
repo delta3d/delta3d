@@ -69,12 +69,12 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
 /** Will delete all existing drawables added to the geode, then add in a whole
   * new set.
   */
-void CharDrawable::RebuildSubmeshes()
+osg::Node* CharDrawable::RebuildSubmeshes()
 {
    GetMatrixNode()->removeChild(mNode.get());
-   dtCore::RefPtr<osg::Node> newNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(mAnimator->GetWrapper());
-   GetMatrixNode()->addChild(newNode.get());
-   mNode = newNode;
+   mNode = Cal3DDatabase::GetInstance().GetNodeBuilder().CreateNode(mAnimator->GetWrapper());
+   GetMatrixNode()->addChild(mNode.get());
+   return mNode.get();
 }
 
 void CharDrawable::SetCal3DWrapper(Cal3DModelWrapper* wrapper)
