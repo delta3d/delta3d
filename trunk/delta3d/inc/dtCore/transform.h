@@ -69,6 +69,14 @@ namespace dtCore
       ///Set both translation and rotation methods
       virtual void Set(const osg::Matrix& mat );
 
+      ///Set both translation and rotation using target(lookat) and position
+      void Set(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);
+
+      ///Set both translation and rotation using target(lookat) and position
+      void Set(float posX, float posY, float posZ,
+               float lookAtX, float lookAtY, float lookAtZ,
+               float upVecX, float upVecY, float upVecZ);
+
       ///Set only translation methods
       virtual void SetTranslation(float tx, float ty, float tz) { SetTranslation(osg::Vec3(tx, ty, tz)); }
       ///Set only translation methods
@@ -133,6 +141,9 @@ namespace dtCore
       ///Get only rotation methods
       void GetRotation(osg::Matrix& rotation) const;
 
+      ///gets the contents of the matrix as the basis vectors that make up it's rows
+      void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
+
       /// calculates the scale using a polar decomposition.
       void CalcScale(osg::Vec3f& scale) const;
       /// calculates the scale using a polar decomposition.
@@ -169,7 +180,7 @@ namespace dtCore
          DEPRECATE("void SetLookAt(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)",
                    "void SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)");
 
-         SetOrientation(xyz, lookAtXyz, upVec);
+         Set(xyz, lookAtXyz, upVec);
       }
 
       ///sets this matrix to be used for setting an object's orientation
@@ -182,19 +193,8 @@ namespace dtCore
                    "void SetOrientation(float posX, float posY, float posZ, float lookAtX, float lookAtY,"
                    "float lookAtZ, float upVecX, float upVecY, float upVecZ)");
 
-         SetOrientation(posX, posY, posZ, lookAtX, lookAtY, lookAtZ, upVecX, upVecY, upVecZ);
-      }
-
-      ///sets this matrix to be used for setting an object's orientation
-      void SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);
-
-      ///sets this matrix to be used for setting an object's orientation
-      void SetOrientation(float posX, float posY, float posZ,
-                          float lookAtX, float lookAtY, float lookAtZ,
-                          float upVecX, float upVecY, float upVecZ);
-
-      ///gets the contents of the matrix as the basis vectors that make up it's rows
-      void GetOrientation(osg::Vec3& right, osg::Vec3& up, osg::Vec3& forward);
+         Set(posX, posY, posZ, lookAtX, lookAtY, lookAtZ, upVecX, upVecY, upVecZ);
+      }           
 
       ///checks to see if the param transform is within epsilon of this transform
       ///slightly more sophisticated as using operator ==
