@@ -53,17 +53,21 @@ namespace dtABC
       bool operator()(const T& x, const T& y) const
       {
          // try to use the first element
-         bool first_less( x.first < y.first );
-         if( first_less )
+         bool first_less(x.first < y.first);
+         if (first_less)
+         {
             return true;
+         }
 
-         bool first_greater( y.first < x.first );
-         if( first_greater )
+         bool first_greater(y.first < x.first);
+         if (first_greater)
+         {
             return false;
+         }
 
          // else, key off the second element, and use the RefPtrWithNameCompare comparison
          RefPtrWithNameCompare<typename T::second_type> compare_them;
-         return compare_them( x.second,y.second );
+         return compare_them(x.second,y.second);
       }
    };
 
@@ -85,8 +89,10 @@ namespace dtABC
        class TransitionOccurredEvent : public dtABC::Event
        {
        public:
-          TransitionOccurredEvent(State* from, State* to) : dtABC::Event(&StateManager::EventType::TRANSITION_OCCURRED),
-             mFrom(from), mTo(to)
+          TransitionOccurredEvent(State* from, State* to)
+             : dtABC::Event(&StateManager::EventType::TRANSITION_OCCURRED)
+             , mFrom(from)
+             , mTo(to)
           {
           }
 
@@ -112,8 +118,8 @@ namespace dtABC
 
    private:
       /** A class to handle XML elements from the SAX parser.
-         * It is used when ParseFile is called.
-         */
+        * It is used when ParseFile is called.
+        */
       template< typename ET, typename ST >
       class TransitionHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
       {
@@ -149,7 +155,7 @@ namespace dtABC
 
             if (elementName == "Transition")
             {
-               mManager->AddTransition( mEventType, mFromState.get(), mToState.get() );
+               mManager->AddTransition(mEventType, mFromState.get(), mToState.get());
             }
 
             XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&ename);
@@ -171,13 +177,13 @@ namespace dtABC
       typedef dtCore::RefPtr<dtABC::State> StatePtr;
 
       /** \brief a convenience typedef.*/
-      typedef std::pair< const dtABC::Event::Type*, StatePtr > EventStatePtrPair;
+      typedef std::pair<const dtABC::Event::Type*, StatePtr> EventStatePtrPair;
 
       /** An ObjectFactory used to create concrete instances of user-defined Events.*/
-      typedef dtUtil::ObjectFactory< const dtABC::Event::Type*, dtABC::Event > EventFactory;
+      typedef dtUtil::ObjectFactory<const dtABC::Event::Type*, dtABC::Event> EventFactory;
 
       /** An ObjectFactory used to create concrete instances of user-defined States.*/
-      typedef dtUtil::ObjectFactory< const dtABC::State::Type*, dtABC::State > StateFactory;
+      typedef dtUtil::ObjectFactory<const dtABC::State::Type*, dtABC::State> StateFactory;
 
       /** The set of unique States.*/
       typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StatePtrSet;
@@ -188,16 +194,16 @@ namespace dtABC
       typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> > TransitionMap;
 
       /** Overloaded for desired actions to occur before drawing.*/
-      void PreFrame( const double deltaFrameTime );
+      void PreFrame(const double deltaFrameTime);
 
       /** Overloaded for desired actions to occur during drawing.*/
-      void Frame( const double deltaFrameTime );
+      void Frame(const double deltaFrameTime);
 
       /** Overloaded for desired actions to occur during drawing.*/
-      void PostFrame( const double deltaFrameTime );
+      void PostFrame(const double deltaFrameTime);
 
       /** Overloaded to handle messages.*/
-      void OnMessage( MessageData* data );
+      void OnMessage(MessageData* data);
 
       /** Loads an XML file specifying State Transitions.
         * The parser will add transitions to this StateManager instance, based on the XML file.
@@ -205,26 +211,26 @@ namespace dtABC
         *
         * @param filename is the complete file path.
         */
-      template< typename EventT, typename StateT>
-      bool Load(const std::string& filename );
+      template<typename EventT, typename StateT>
+      bool Load(const std::string& filename);
 
       /** Add a new State to the set of States.*/
-      bool AddState( State* state );
+      bool AddState(State* state);
 
       /** Removes a State from the set of States and associated transitions from the TransitionMap.*/
-      bool RemoveState( State* state );
+      bool RemoveState(State* state);
 
       /** Add a new transition to the map of transitions.*/
-      bool AddTransition( const Event::Type* eventType, State* from, State* to );
+      bool AddTransition(const Event::Type* eventType, State* from, State* to);
 
       /** Remove a transition from the map of transitions.*/
-      bool RemoveTransition( const Event::Type* eventType, State* from, State* to );
+      bool RemoveTransition(const Event::Type* eventType, State* from, State* to);
 
       /** Return a non-const State by specifying the name.*/
-      State* GetState( const std::string& name );
+      State* GetState(const std::string& name);
 
       /** Return a const State by specifying its name.*/
-      const State* GetState( const std::string& name ) const;
+      const State* GetState(const std::string& name) const;
 
       /** Clear the set of States.*/
       void RemoveAllStates();
@@ -254,7 +260,7 @@ namespace dtABC
       const State* GetCurrentState() const;
 
       /** Forces the given State to now be the 'current' State.*/
-      void MakeCurrent( State* state );
+      void MakeCurrent(State* state);
 
       /** \brief Register a user defined, concrete Event.
         * Register the user defined Event so that the EventFactory can create such an Event, especially when needed for XML loading.
@@ -262,9 +268,9 @@ namespace dtABC
         * @param eventType is the user defined unique identifier for to Event being registered.
         */
       template<typename T>
-      bool RegisterEvent( const Event::Type* eventType )
+      bool RegisterEvent(const Event::Type* eventType)
       {
-         return mEventFactory->template RegisterType<T>( eventType );
+         return mEventFactory->template RegisterType<T>(eventType);
       }
 
       /** \brief Register a user defined, concrete State.
@@ -273,9 +279,9 @@ namespace dtABC
         * @param stateType is the user defined unique identifier for to State being registered.
         */
       template<typename T>
-      bool RegisterState( const State::Type* stateType )
+      bool RegisterState(const State::Type* stateType)
       {
-         return mStateFactory->template RegisterType<T>( stateType );
+         return mStateFactory->template RegisterType<T>(stateType);
       }
 
       /** Return the non-const instance of the StateFactory.*/
@@ -305,8 +311,8 @@ namespace dtABC
         * @param filename is the file path pointing to the XML file containing State Transitions.
         * \sa StateManager::Load
         */
-      template< typename EventT, typename StateT >
-      bool ParseFile(const std::string& filename );
+      template<typename EventT, typename StateT>
+      bool ParseFile(const std::string& filename);
 
    private:
       dtCore::RefPtr<State>        mCurrentState;  /// The handle to the current State.
@@ -318,8 +324,8 @@ namespace dtABC
       dtCore::RefPtr<StateFactory> mStateFactory;  /// the ObjectFactory of States.
    };
 
-   template< typename EventT, typename StateT >
-   bool StateManager::Load(const std::string& filename )
+   template<typename EventT, typename StateT>
+   bool StateManager::Load(const std::string& filename)
    {
       std::string fullFileName = dtCore::FindFileInPathList(filename);
       if (fullFileName.empty())
@@ -330,8 +336,8 @@ namespace dtABC
       return ParseFile<EventT,StateT>(fullFileName);
    }
 
-   template< typename EventT, typename StateT >
-   bool StateManager::ParseFile(const std::string& filename )
+   template<typename EventT, typename StateT>
+   bool StateManager::ParseFile(const std::string& filename)
    {
       typedef TransitionHandler<EventT,StateT> XMLElementHandler;  // a convenience typedef
       XMLElementHandler handler(this);                             // the element handler
@@ -340,18 +346,18 @@ namespace dtABC
       return parser.Parse(filename, handler, "transitionlist.xsd");
    }
 
-   template< typename T1, typename T2 >
+   template<typename T1, typename T2>
    void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const uri,
-                                                      const XMLCh* const localname,
-                                                      const XMLCh* const qname,
-                                                      const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+                                                             const XMLCh* const localname,
+                                                             const XMLCh* const qname,
+                                                             const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
    {
       char* elementName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname);
       std::string ename(elementName);
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &elementName );
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&elementName);
 
       dtUtil::AttributeSearch attrsearch;
-      dtUtil::AttributeSearch::ResultMap results = attrsearch( attrs );
+      dtUtil::AttributeSearch::ResultMap results = attrsearch(attrs);
 
       dtUtil::AttributeSearch::ResultMap::iterator typeiter = results.find("Type");
       dtUtil::AttributeSearch::ResultMap::iterator nameiter = results.find("Name");
@@ -360,53 +366,53 @@ namespace dtABC
       {
          LOG_INFO("Found a State Transition XML element.")
       }
-      else if(ename == "Event")
+      else if (ename == "Event")
       {
-         if( typeiter != results.end() )
+         if (typeiter != results.end())
          {
-            mEventType = EventType::GetValueForName( (*typeiter).second );
+            mEventType = EventType::GetValueForName((*typeiter).second);
          }
          else
          {
             LOG_ERROR("Transition file not structured properly at Event, "+ename+", requires Type attributes.")
          }
       }
-      else if(ename == "FromState")
+      else if (ename == "FromState")
       {
-         if( (typeiter==results.end()) || (nameiter==results.end()) )
+         if ((typeiter==results.end()) || (nameiter==results.end()))
          {
             LOG_ERROR("Transition file not structured properly at State, "+ename+", requires Type and Name attributes.")
          }
 
          std::string stateType("default"), stateName("default");
-         if( typeiter != results.end() )
+         if (typeiter != results.end())
          {
             stateType = (*typeiter).second;
          }
-         if( nameiter != results.end() )
+         if (nameiter != results.end())
          {
             stateName = (*nameiter).second;
          }
 
          //Do a check to see if a State exists with the same name and type name
          //If it does, use it, otherwise create a new State
-         State *s = mManager->GetState( stateName );
-         if ( s == 0)
+         State *s = mManager->GetState(stateName);
+         if (s == 0)
          {
             dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
-            mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+            mFromState = sf->CreateObject(StateType::GetValueForName(stateType));
          }
-         else if ( s->GetType()->GetName() != stateType )
+         else if (s->GetType()->GetName() != stateType)
          {
             dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
-            mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+            mFromState = sf->CreateObject(StateType::GetValueForName(stateType));
          }
          else
          {
             mFromState = s;
          }
 
-         if( mFromState.valid() )
+         if (mFromState.valid())
          {
             mFromState->SetName(stateName);
          }
@@ -415,42 +421,42 @@ namespace dtABC
             LOG_WARNING(std::string("Loading can't create FromState, ") + stateType)
          }
       }
-      else if(ename == "ToState")
+      else if (ename == "ToState")
       {
-         if( (typeiter==results.end()) || (nameiter==results.end()) )
+         if ((typeiter==results.end()) || (nameiter==results.end()))
          {
             LOG_ERROR("Transition file not structured properly at State, "+ename+", requires Type and Name attributes.")
          }
 
          std::string stateType("default"), stateName("default");
-         if( typeiter != results.end() )
+         if (typeiter != results.end())
          {
             stateType = (*typeiter).second;
          }
-         if( nameiter != results.end() )
+         if (nameiter != results.end())
          {
             stateName = (*nameiter).second;
          }
 
          //Do a check to see if a State exists with the same name and type name
          //If it does, use it, otherwise create a new State
-         State *s = mManager->GetState( stateName );
-         if ( s == 0)
+         State *s = mManager->GetState(stateName);
+         if (s == 0)
          {
             dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
-            mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+            mToState = sf->CreateObject(StateType::GetValueForName(stateType));
          }
-         else if ( s->GetType()->GetName() != stateType )
+         else if (s->GetType()->GetName() != stateType)
          {
             dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
-            mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+            mToState = sf->CreateObject(StateType::GetValueForName(stateType));
          }
          else
          {
             mToState = s;
          }
 
-         if( mToState.valid() )
+         if (mToState.valid())
          {
             mToState->SetName(stateName);
          }
@@ -459,10 +465,10 @@ namespace dtABC
             LOG_WARNING(std::string("StateManager Load() can't create ToState, ") + stateType)
          }
       }
-      else if(ename == "StartState")
+      else if (ename == "StartState")
       {
          std::string stateName("default");
-         if( nameiter != results.end() )
+         if (nameiter != results.end())
          {
             stateName = (*nameiter).second;
          }
@@ -470,7 +476,7 @@ namespace dtABC
          {
             LOG_ERROR("Transition file not structured properly at Start State, "+ename+", requires a Name attribute.")
          }
-         mManager->MakeCurrent( mManager->GetState(stateName) );
+         mManager->MakeCurrent(mManager->GetState(stateName));
       }
    }
 
