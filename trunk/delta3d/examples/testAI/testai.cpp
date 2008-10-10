@@ -37,7 +37,7 @@ TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilenam
    , mCharacter(0)
 {
    //Generating a default config file if there isn't one already
-   if( !dtUtil::FileUtils::GetInstance().FileExists( configFilename ) ) 
+   if ( !dtUtil::FileUtils::GetInstance().FileExists( configFilename ) )
    {
       GenerateDefaultConfigFile();
    }
@@ -46,15 +46,15 @@ TestAI::TestAI(const std::string& pMapFilename, const std::string& configFilenam
 
 TestAI::~TestAI()
 {
-  
+
 }
-   
+
 void TestAI::Config()
 {
    Application::Config();
 
    //initialize the Waypoint Helper
-   WaypointManager::GetInstance();   
+   WaypointManager::GetInstance();
    GetScene()->AddDrawable(&WaypointManager::GetInstance());
 
    LoadDemoMap(mMapFilename);
@@ -64,7 +64,7 @@ void TestAI::Config()
 
    //by default we wont draw the navmesh
    mDrawNavMesh = false;
-   WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);         
+   WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);
 
    //set camera offset
    dtCore::Transform trans;
@@ -75,7 +75,7 @@ void TestAI::Config()
    //this is needed so OSG knows which camera can generate events
    GetCamera()->GetOSGCamera()->setAllowEventFocus(true);
 
-   //create overhead camera and disable it by default   
+   //create overhead camera and disable it by default
    dtCore::View *overheadView = new dtCore::View("overhead view");
    overheadView->SetScene( GetScene() );
    AddView( *overheadView );
@@ -96,7 +96,7 @@ void TestAI::Config()
 
    //get the first waypoint to spawn the character at
    const WaypointManager::WaypointMap& pContainer = WaypointManager::GetInstance().GetWaypoints();
-   if(pContainer.empty())
+   if (pContainer.empty())
    {
       LOG_ERROR("Map '" + mMapFilename + "' does not have any valid waypoints");
       exit(1);
@@ -105,7 +105,7 @@ void TestAI::Config()
    const Waypoint* pWaypoint = (*iter).second;
 
    //spawn our character
-	mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);    
+   mCharacter = new dtAI::AICharacter(GetScene(), pWaypoint, "demoMap/SkeletalMeshes/marine.xml", 3);
 
    //add the two Cameras as children so they get moved along with the character
    mCharacter->GetCharacter()->AddChild( GetCamera() );
@@ -119,12 +119,12 @@ void TestAI::Config()
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 {
-  
-   switch( key )
+
+   switch ( key )
    {
       case ' ':
       {
-         if(GetCamera()->GetEnabled())
+         if (GetCamera()->GetEnabled())
          {
             GetCamera()->SetEnabled(false);
             mOverheadCamera->SetEnabled(true);
@@ -138,15 +138,15 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
       }
 
       case 'n':
-         {            
+         {
             mDrawNavMesh = !mDrawNavMesh;
-            WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);            
+            WaypointManager::GetInstance().SetDrawNavMesh(mDrawNavMesh, true);
             return true;
          }
 
       case 'a':
          {
-            if(mOverheadCamera->GetEnabled())
+            if (mOverheadCamera->GetEnabled())
             {
                mCameraOffset(3,2) -= 1.0f;
                mCameraOffset(3,1) -= 15.5f / 100.0f;
@@ -157,7 +157,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 
       case 'z':
          {
-            if(mOverheadCamera->GetEnabled())
+            if (mOverheadCamera->GetEnabled())
             {
                mCameraOffset(3,2) += 1.0f;
                mCameraOffset(3,1) += 15.5f / 100.0f;
@@ -167,7 +167,7 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          }
 
       case osgGA::GUIEventAdapter::KEY_Escape:
-         {            
+         {
             Quit();
             return true;
          }
@@ -182,12 +182,12 @@ void TestAI::PreFrame( const double deltaFrameTime )
 {
    mCharacter->Update(float(deltaFrameTime));
 
-   if(mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
+   if (mCharacter->GetCurrentWaypoint() == mCurrentWaypoint)
    {
       //send the character to a random waypoint
       WaypointManager::WaypointMap::size_type pNumWaypoints = WaypointManager::GetInstance().GetWaypoints().size() - 1;
-      unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));      
-      GoToWaypoint(pWaypointNum);           
+      unsigned pWaypointNum = dtUtil::RandRange(0U, unsigned(pNumWaypoints));
+      GoToWaypoint(pWaypointNum);
    }
 }
 
@@ -216,28 +216,24 @@ bool TestAI::GoToWaypoint(int pWaypointNum)
 {
    //loop through the waypoints and send our character to the one
    //whose index is pWaypointNum in the WaypointMap contained within WaypointManager
-   const WaypointManager::WaypointMap& pWaypoints = WaypointManager::GetInstance().GetWaypoints(); 
+   const WaypointManager::WaypointMap& pWaypoints = WaypointManager::GetInstance().GetWaypoints();
    WaypointManager::WaypointMap::const_iterator iter = pWaypoints.begin();
    WaypointManager::WaypointMap::const_iterator endOfMap = pWaypoints.end();
 
    bool pHasPath = false;
 
-   int i = 0;
-   while(iter != endOfMap)
+   for (int i = 0; iter != endOfMap; ++i, ++iter)
    {
-      if(i == pWaypointNum)
+      if (i == pWaypointNum)
       {
          pHasPath = mCharacter->FindPathAndGoToWaypoint((*iter).second);
-         if(pHasPath)
+         if (pHasPath)
          {
             mCurrentWaypoint = (*iter).second;
             return true;
          }
          break;
       }
-
-      ++i;   
-      ++iter;
    }
    return false;
 }
