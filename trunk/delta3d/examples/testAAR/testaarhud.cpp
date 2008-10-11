@@ -565,13 +565,13 @@ int TestAARHUD::RecursivelyAddTasks(const std::string& indent, int curIndex,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void TestAARHUD::UpdateStaticText(CEGUI::Window* textControl, char* newText,
+void TestAARHUD::UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
                                     float red, float green, float blue, float x, float y)
 {
    if (textControl != NULL)
    {
       // text and color
-      if (newText != NULL && textControl->getText() != std::string(newText))
+      if (!newText.empty() && textControl->getText() != newText)
       {
          textControl->setText(newText);
          if (red >= 0.00 && blue >= 0.0 && green >= 0.0)

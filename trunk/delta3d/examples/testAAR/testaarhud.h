@@ -150,7 +150,7 @@ class TEST_AAR_EXPORT TestAARHUD : public dtGame::GMComponent
        * Check to see if the data changed.  The default values for color and position
        * won't do anything since they use a color and position < 0.
        */
-      void UpdateStaticText(CEGUI::Window* textControl, char* newText,
+      void UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
          float red = -1.0f, float green = -1.0f, float blue = -1.0f, float x = -1.0f, float y = -1.0f);
 
    private:
