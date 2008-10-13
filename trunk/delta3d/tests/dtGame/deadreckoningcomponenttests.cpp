@@ -42,12 +42,14 @@
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
 #include <dtCore/nodecollector.h>
+#include <dtCore/batchisector.h>
 
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h> 
 #include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/deadreckoningcomponent.h>
+#include <dtGame/defaultgroundclamper.h>
 
 #include <dtABC/application.h>
 
@@ -91,10 +93,19 @@ namespace dtGame
          }   
 
          /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool DoGetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
+         bool DoGetClosestHit(dtGame::GameActorProxy& proxy, dtCore::BatchIsector::SingleISector& single, float pointz,
                   osg::Vec3& hit, osg::Vec3& normal)
          {
-            return GetGroundClamper().GetClosestHit(single, pointz, hit, normal);
+            bool success = false;
+            
+            dtGame::DefaultGroundClamper* defaultClamper
+               = dynamic_cast<DefaultGroundClamper*>(&GetGroundClamper());
+            if( defaultClamper != NULL )
+            {
+               success = defaultClamper->GetClosestHit(proxy, single, pointz, hit, normal);
+            }
+
+            return success;
          }
 
          void DoArticulationPublic(dtGame::DeadReckoningHelper& helper, 
@@ -645,7 +656,7 @@ namespace dtGame
 
             dtCore::Transform xform;
 
-            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
@@ -673,7 +684,7 @@ namespace dtGame
             xform.SetRotation(helper->GetLastKnownRotation());
             helper->ClearUpdated();
 
-            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform,
                   &dtUtil::Log::GetInstance(), groundClampingType);
 
@@ -967,11 +978,11 @@ namespace dtGame
             helper->SetFlying(flying);
 
             dtCore::Transform xform;
-            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
                   &dtUtil::Log::GetInstance(), groundClampingType);
             
-            CPPUNIT_ASSERT((*groundClampingType == GroundClamper::GroundClampingType::NONE) == flying);
+            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampingType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
          }
 
@@ -985,11 +996,11 @@ namespace dtGame
             helper->SetFlying(flying);
 
             dtCore::Transform xform;
-            GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
+            BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
             bool wasTransformed = helper->DoDR(mTestGameActor->GetGameActor(), xform, 
                   &dtUtil::Log::GetInstance(), groundClampingType);
             
-            CPPUNIT_ASSERT((*groundClampingType == GroundClamper::GroundClampingType::NONE) == flying);
+            CPPUNIT_ASSERT((*groundClampingType == BaseGroundClamper::GroundClampingType::NONE) == flying);
             CPPUNIT_ASSERT(wasTransformed);
 
             osg::Vec3 trans;

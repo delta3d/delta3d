@@ -33,7 +33,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
-#include <dtGame/groundclamper.h>
+#include <dtGame/defaultgroundclamper.h>
 
 #include <osgSim/DOFTransform>
 
@@ -44,7 +44,7 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////
    DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name),
-      mGroundClamper(new GroundClamper), mForceClampInterval(3.0f), mArticSmoothTime(0.5f)
+      mGroundClamper(new DefaultGroundClamper), mForceClampInterval(3.0f), mArticSmoothTime(0.5f)
    {
       mLogger = &dtUtil::Log::GetInstance("deadreckoningcomponent.cpp");
    }
@@ -124,13 +124,19 @@ namespace dtGame
    }
    
    //////////////////////////////////////////////////////////////////////
-   GroundClamper& DeadReckoningComponent::GetGroundClamper()
+   void DeadReckoningComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
+   {
+      mGroundClamper = &clamper;
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   BaseGroundClamper& DeadReckoningComponent::GetGroundClamper()
    {
       return *mGroundClamper;
    }
 
    //////////////////////////////////////////////////////////////////////
-   const GroundClamper& DeadReckoningComponent::GetGroundClamper() const
+   const BaseGroundClamper& DeadReckoningComponent::GetGroundClamper() const
    {
       return *mGroundClamper;
    }
@@ -166,6 +172,11 @@ namespace dtGame
             toRegister.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
             helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
             helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
+
+            // DEBUG:
+            osg::Vec3 pos;
+            xform.GetTranslation( pos );
+            std::cout << "\n\tDR setting trans to: " << pos.z() << "\n\n";
          }
       }
 
@@ -305,7 +316,7 @@ namespace dtGame
             helper.SetRotationCurrentSmoothingTime( 0.0 );
 
          //actual dead reckoning code moved into the helper..
-         GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
+         BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
          bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
          //Only actually ground clamp and move remote ones.
@@ -318,8 +329,8 @@ namespace dtGame
             // we should clamp.
             // The clamping also applies the transform when the clamping type is none.
             // force clamp is silly when using intermittent because it's already running intermittently.
-            if (bTransformChanged || *groundClampingType == GroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET
-                  || (bForceClamp && *groundClampingType != GroundClamper::GroundClampingType::NONE))
+            if (bTransformChanged || *groundClampingType == BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET
+                  || (bForceClamp && *groundClampingType != BaseGroundClamper::GroundClampingType::NONE))
             {
                //we could probably group these queries together...
                mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
@@ -344,7 +355,7 @@ namespace dtGame
       }
 
       //Make sure the last of them ran.
-      mGroundClamper->RunClampBatch();
+      mGroundClamper->FinishUp();
    }
 
    void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,

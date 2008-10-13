@@ -124,12 +124,15 @@ namespace dtGame
          void SetArticulationSmoothTime( float smoothTime );
 
          float GetArticulationSmoothTime() const { return mArticSmoothTime; }
+
+         /// Set the ground clamper responsible for clamping animated objects.
+         void SetGroundClamper( dtGame::BaseGroundClamper& clamper );
          
          /// @return the ground clamping utility class
-         const GroundClamper& GetGroundClamper() const;
+         const BaseGroundClamper& GetGroundClamper() const;
 
          /// @return the ground clamping utility class
-         GroundClamper& GetGroundClamper();
+         BaseGroundClamper& GetGroundClamper();
          
       protected:
          virtual ~DeadReckoningComponent();
@@ -150,7 +153,7 @@ namespace dtGame
          bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged);
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
-         dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
+         dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
          
          dtUtil::Log* mLogger;
 
