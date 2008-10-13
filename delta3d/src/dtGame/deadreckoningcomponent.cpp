@@ -172,11 +172,6 @@ namespace dtGame
             toRegister.GetGameActor().SetTransform(xform, dtCore::Transformable::REL_CS);
             helper.SetTranslationBeforeLastUpdate( helper.GetLastKnownTranslation() );
             helper.SetRotationBeforeLastUpdate( helper.GetLastKnownRotationByQuaternion() );
-
-            // DEBUG:
-            osg::Vec3 pos;
-            xform.GetTranslation( pos );
-            std::cout << "\n\tDR setting trans to: " << pos.z() << "\n\n";
          }
       }
 
