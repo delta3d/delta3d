@@ -30,7 +30,7 @@
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
-#include <dtGame/groundclamper.h>
+#include <dtGame/basegroundclamper.h>
 
 namespace dtDAL
 {
@@ -145,7 +145,7 @@ namespace dtGame
           * @return Return true if you think you changed the Transform, false if you did not.
           */
          virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform, 
-                  dtUtil::Log* pLogger, GroundClamper::GroundClampingType*& gcType);
+                  dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType);
 
          /**
           * This is a utility function to make it easier to have a dead reckoned actor.  The actor

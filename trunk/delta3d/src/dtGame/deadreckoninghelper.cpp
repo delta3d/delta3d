@@ -470,15 +470,15 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, 
-         dtUtil::Log* pLogger, GroundClamper::GroundClampingType*& gcType)
+         dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType)
    {         
       bool returnValue = false; // indicates we changed the transform
       if (IsFlying())
-         gcType = &GroundClamper::GroundClampingType::NONE;
+         gcType = &BaseGroundClamper::GroundClampingType::NONE;
       else if (GetGroundClampingData().GetAdjustRotationToGround())
-         gcType = &GroundClamper::GroundClampingType::RANGED;
+         gcType = &BaseGroundClamper::GroundClampingType::RANGED;
       else
-         gcType = &GroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
+         gcType = &BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET;
 
       if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
       {
