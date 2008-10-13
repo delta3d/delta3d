@@ -34,7 +34,7 @@
 #include <dtGame/gameactor.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
-#include <dtGame/groundclamper.h>
+#include <dtGame/defaultgroundclamper.h>
 
 #include <dtUtil/log.h>
 
@@ -47,7 +47,7 @@ const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 AnimationComponent::AnimationComponent(const std::string& name)
 : BaseClass(name)
 , mRegisteredActors()
-, mGroundClamper(new dtGame::GroundClamper)
+, mGroundClamper(new dtGame::DefaultGroundClamper)
 {
    mGroundClamper->SetHighResGroundClampingRange(0.01);
    mGroundClamper->SetLowResGroundClampingRange(0.1);
@@ -175,6 +175,24 @@ void AnimationComponent::SetEyePointActor(dtCore::Transformable* newEyePointActo
    mGroundClamper->SetEyePointActor(newEyePointActor);
 }
 
+//////////////////////////////////////////////////////////////////////
+void AnimationComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
+{
+   mGroundClamper = &clamper;
+}
+
+//////////////////////////////////////////////////////////////////////
+dtGame::BaseGroundClamper& AnimationComponent::GetGroundClamper()
+{
+   return *mGroundClamper;
+}
+
+//////////////////////////////////////////////////////////////////////
+const dtGame::BaseGroundClamper& AnimationComponent::GetGroundClamper() const
+{
+   return *mGroundClamper;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationComponent::GroundClamp()
 {
@@ -199,12 +217,12 @@ void AnimationComponent::GroundClamp()
                dtCore::Transform xform;
                pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
 
-               mGroundClamper->ClampToGround(dtGame::GroundClamper::GroundClampingType::RANGED,
+               mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampingType::RANGED,
                         0.0, xform, *pProxy, gcData);
             }//if
          }//for
 
-         mGroundClamper->RunClampBatch();
+         mGroundClamper->FinishUp();
       }//while
    }//if
 }
