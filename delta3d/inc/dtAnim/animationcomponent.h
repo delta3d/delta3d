@@ -40,7 +40,7 @@ namespace dtGame
    class Message;
    class TickMessage;
    class GameActorProxy;
-   class GroundClamper;
+   class BaseGroundClamper;
 }
 
 namespace dtAnim
@@ -114,6 +114,13 @@ public:
    ///changes the actor to use for the terrain.
    void SetEyePointActor(dtCore::Transformable* newEyePointActor);
 
+   /// Set the ground clamper responsible for clamping animated objects.
+   void SetGroundClamper( dtGame::BaseGroundClamper& clamper );
+
+   /// Get the ground clamper responsible for clamping animated objects.
+   dtGame::BaseGroundClamper& GetGroundClamper();
+   const dtGame::BaseGroundClamper& GetGroundClamper() const;
+
 
 protected:
    virtual ~AnimationComponent();
@@ -128,7 +135,7 @@ private:
 
    AnimCompMap mRegisteredActors;
 
-   dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
+   dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
 };
 
 } // namespace dtGame
