@@ -1,27 +1,27 @@
 /* -*-c++-*-
-* testShaders - testshaders (.h & .cpp) - Using 'The MIT License'
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * testShaders - testshaders (.h & .cpp) - Using 'The MIT License'
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 //////////////////////////////////////////////////////////////////////////////
-// NOTE - This test is provided for historical reference. The ability to 
+// NOTE - This test is provided for historical reference. The ability to
 // use shaders is now provided via the ShaderManager functionality. This is used
 // in a variety of examples, demos and test apps. See Tutorial Library.
 //////////////////////////////////////////////////////////////////////////////
@@ -45,8 +45,8 @@ class TestShadersApp : public Application
 {
 
 public:
-   TestShadersApp( const std::string& configFilename = "testshadersconfig.xml" )
-      : Application( configFilename )
+   TestShadersApp(const std::string& configFilename = "testshadersconfig.xml")
+      : Application(configFilename)
    {
       mTotalTime = 0.0f;
 
@@ -84,7 +84,7 @@ public:
       dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
       dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestShader", "TestShader");
 
-      if(sp != NULL)
+      if (sp != NULL)
       {
          sm.AssignShaderFromPrototype(*sp, *mObject->GetOSGNode());
          mEnabled = true;
@@ -106,11 +106,11 @@ public:
          this->Quit();
          verdict = true;
       }
-      else if(key == osgGA::GUIEventAdapter::KEY_Space)
+      else if (key == osgGA::GUIEventAdapter::KEY_Space)
       {
-         //osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet(); 
+         //osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet();
 
-         if(mEnabled)
+         if (mEnabled)
          {
             DisableShaders();
          }
@@ -138,19 +138,19 @@ public:
 
 private:
 
-   RefPtr<dtCore::Object>                    mObject;
+   RefPtr<dtCore::Object> mObject;
 
-   float                                     mTotalTime;
-   bool                                      mEnabled;
+   float                  mTotalTime;
+   bool                   mEnabled;
 
-   DeltaWin::Resolution                      mRes;
+   DeltaWin::Resolution   mRes;
 };
 
 int main(int argc, char* argv[])
 {
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/testShaders");
 
