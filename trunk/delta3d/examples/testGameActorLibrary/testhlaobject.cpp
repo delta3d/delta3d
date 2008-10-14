@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* testGameActorLibrary - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* David A. Guthrie
-*/
+ * testGameActorLibrary - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David A. Guthrie
+ */
+
 #include <iostream>
 #include "testhlaobject.h"
 #include <dtDAL/enginepropertytypes.h>
@@ -37,26 +38,26 @@ TestHLAObjectProxy::TestHLAObjectProxy()
    SetClassName("TestHLAObject");
 }
 
-TestHLAObjectProxy::~TestHLAObjectProxy() 
+TestHLAObjectProxy::~TestHLAObjectProxy()
 {
 }
 
 void TestHLAObjectProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
-   
-   TestHLAObject *actor = dynamic_cast<TestHLAObject*> (GetActor());
-   if(actor == NULL)
+
+   TestHLAObject* actor = dynamic_cast<TestHLAObject*> (GetActor());
+   if (actor == NULL)
    {
       throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type TestHLAObject", __FILE__, __LINE__);
    }
-   
+
    AddProperty(
       new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
                                     dtDAL::MakeFunctor(*actor, &TestHLAObject::SetLastKnownTranslation),
                                     dtDAL::MakeFunctorRet(*actor, &TestHLAObject::GetLastKnownTranslation),
                                     "The last known correct position of this actor.  Used for remote actors only.", ""));
-   
+
    AddProperty(
       new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
                                     dtDAL::MakeFunctor(*this, &TestHLAObjectProxy::SetLastKnownRotation),
@@ -69,11 +70,11 @@ void TestHLAObjectProxy::BuildPropertyMap()
                                             "The general amount of damage sustained by the object.", ""));
 
    AddProperty(
-               new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH, 
+               new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
                                                 "Mesh", "Mesh",
                                                 dtDAL::MakeFunctor(*actor, &TestHLAObject::TestLoadTheMesh),
                                                 "", ""));
-   
+
 }
 
 void TestHLAObjectProxy::BuildInvokables()
@@ -86,23 +87,27 @@ void TestHLAObjectProxy::CreateActor()
    SetActor(*new TestHLAObject(*this));
 }
 
-void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3 &vec)
+void TestHLAObjectProxy::SetLastKnownRotation(const osg::Vec3& vec)
 {
-   TestHLAObject *e = dynamic_cast<TestHLAObject*> (GetActor());
-   if(e == NULL)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+   TestHLAObject* e = dynamic_cast<TestHLAObject*> (GetActor());
+   if (e == NULL)
+   {
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
-   
+   }
+
    e->SetLastKnownRotation(osg::Vec3(vec.z(), vec.x(), vec.y()));
 }
 
 osg::Vec3 TestHLAObjectProxy::GetLastKnownRotation() const
 {
-   const TestHLAObject *e = dynamic_cast<const TestHLAObject*> (GetActor());
-   if(e == NULL)
-      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException, 
+   const TestHLAObject* e = dynamic_cast<const TestHLAObject*> (GetActor());
+   if (e == NULL)
+   {
+      throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
       "Actor should be type TestHLAObject", __FILE__, __LINE__);
-   
+   }
+
    const osg::Vec3& result = e->GetLastKnownRotation();
    return osg::Vec3(result.y(), result.z(), result.x());
 }
@@ -126,14 +131,14 @@ TestHLAObject::~TestHLAObject()
 
 }
 
-void TestHLAObject::SetDamageState(TestHLAObject::DamageStateEnum &damageState)
+void TestHLAObject::SetDamageState(TestHLAObject::DamageStateEnum& damageState)
 {
    mDamageState = &damageState;
 }
 
 TestHLAObject::DamageStateEnum& TestHLAObject::GetDamageState() const
 {
-   return *mDamageState;   
+   return *mDamageState;
 }
 
 void TestHLAObject::SetLastKnownTranslation(const osg::Vec3& vec)

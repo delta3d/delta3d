@@ -30,10 +30,9 @@ static int KBUTTON3 = 0xAAAC;
 class TestInputApp* app;
 
 /**
-* The input test application.
-*/
-class TestInputApp : public Application,
-   public InputMapperCallback
+ * The input test application.
+ */
+class TestInputApp : public Application, public InputMapperCallback
 {
 
 public:
@@ -41,69 +40,69 @@ public:
    /**
    * Constructor.
    */
-   TestInputApp( const std::string& configFile = "config.xml" )
-      : Application( configFile ),
-      mGUILoaded(false)
+   TestInputApp(const std::string& configFile = "config.xml")
+      : Application(configFile)
+      , mGUILoaded(false)
    {
       mKeyboardAxisInputDevice = new LogicalInputDevice;
 
       mKeyboardAxisInputDevice->AddAxis(
          "w/s",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton('w'),
-         GetKeyboard()->GetButton('s')
+            GetKeyboard()->GetButton('w'),
+            GetKeyboard()->GetButton('s')
          )
-         );
+      );
 
       mKeyboardAxisInputDevice->AddAxis(
          "a/d",
          new ButtonsToAxis(
-         GetKeyboard()->GetButton('a'),
-         GetKeyboard()->GetButton('d')
+            GetKeyboard()->GetButton('a'),
+            GetKeyboard()->GetButton('d')
          )
-         );
+      );
 
       mApplicationInputDevice = new LogicalInputDevice;
 
       mApplicationInputDevice->AddButton(
-         "action 1", 
+         "action 1",
          GetKeyboard()->GetButton('1'),
          KBUTTON1
-         );
+      );
 
       mApplicationInputDevice->AddButton(
          "action 2",
          GetKeyboard()->GetButton('2'),
          KBUTTON2
-         );
+      );
 
       mApplicationInputDevice->AddButton(
          "action 3",
          GetKeyboard()->GetButton('3'),
          KBUTTON3
-         );
+      );
 
       mApplicationInputDevice->AddAxis(
          "axis 1",
          mKeyboardAxisInputDevice->AddAxis(
-         "up/down",
-         new ButtonsToAxis(
-         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Up),
-         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Down)
+            "up/down",
+            new ButtonsToAxis(
+               GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Up),
+               GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Down)
+            )
          )
-         )
-         );
+      );
 
       mApplicationInputDevice->AddAxis(
          "axis 2",
          mKeyboardAxisInputDevice->AddAxis(
-         "left/right",
-         new ButtonsToAxis(
-         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Left),
-         GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Right)
+            "left/right",
+            new ButtonsToAxis(
+               GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+               GetKeyboard()->GetButton(osgGA::GUIEventAdapter::KEY_Right)
+            )
          )
-         )
-         );
+      );
 
       mInputMapper = new InputMapper;
 
@@ -113,7 +112,7 @@ public:
 
       dtInputPLIB::Joystick::CreateInstances();
 
-      for(int i=0;i<dtInputPLIB::Joystick::GetInstanceCount();i++)
+      for (int i = 0; i < dtInputPLIB::Joystick::GetInstanceCount(); i++)
       {
          mInputMapper->AddDevice(dtInputPLIB::Joystick::GetInstance(i));
       }
@@ -127,8 +126,8 @@ protected:
 
 public:
    /**
-   * Configures the application.
-   */
+    * Configures the application.
+    */
    virtual void Config()
    {
       Application::Config();
@@ -137,7 +136,7 @@ public:
 
       GetWindow()->GetPosition(x, y, w, h);
 
-      mUIDrawable = new dtGUI::CEUIDrawable( GetWindow(),GetKeyboard(), GetMouse() );
+      mUIDrawable = new dtGUI::CEUIDrawable(GetWindow(),GetKeyboard(), GetMouse());
 
       try
       {
@@ -149,9 +148,9 @@ public:
 
          CEGUI::Window* sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", "root_wnd");
          CEGUI::System::getSingleton().setGUISheet(sheet);
-          
+
          std::string gui = dtCore::FindFileInPathList("gui.xml");
-         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().loadWindowLayout(gui);
+         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().loadWindowLayout(gui);
          if (w != NULL)
          {
             mGUILoaded = true;
@@ -160,23 +159,23 @@ public:
 
       }
       // catch to prevent exit (errors will be logged).
-      catch(CEGUI::Exception &e)
+      catch(CEGUI::Exception& e)
       {
          Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
             "CEGUI::%s", e.getMessage().c_str() );
       }
 
 
-      if(!mGUILoaded)  return;
-       
-      CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+      if (!mGUILoaded) { return; }
+
+      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
       wm->getWindow("Action 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
       wm->getWindow("Action 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
       wm->getWindow("Action 3 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
       wm->getWindow("Axis 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
       wm->getWindow("Axis 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
 
-      GetScene()->AddDrawable( mUIDrawable.get() );
+      GetScene()->AddDrawable(mUIDrawable.get());
    }
 
    bool IsGUILoaded()
@@ -185,19 +184,19 @@ public:
    }
 
    /**
-   * Notifies the listener that the button mapping acquisition has
-   * completed.
-   *
-   * @param mapping the newly acquired button mapping, or NULL if
-   * the user canceled the acquisition
-   */
+    * Notifies the listener that the button mapping acquisition has
+    * completed.
+    *
+    * @param mapping the newly acquired button mapping, or NULL if
+    * the user canceled the acquisition
+    */
    virtual void ButtonMappingAcquired(ButtonMapping* mapping)
    {
       LogicalButton* button = static_cast<LogicalButton*>(mApplicationInputDevice->GetButton(mButtonIndex));
 
       button->SetMapping(mapping);
 
-      if( ButtonToButton* b2b = dynamic_cast<ButtonToButton*>(mapping) )
+      if ( ButtonToButton* b2b = dynamic_cast<ButtonToButton*>(mapping) )
       {
          CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mButtonName);
 
@@ -206,21 +205,21 @@ public:
    }
 
    /**
-   * Notifies the listener that the axis mapping acquisition has
-   * completed.
-   *
-   * @param mapping the newly acquired axis mapping, or NULL if
-   * the user canceled the acquisition
-   */
+    * Notifies the listener that the axis mapping acquisition has
+    * completed.
+    *
+    * @param mapping the newly acquired axis mapping, or NULL if
+    * the user canceled the acquisition
+    */
    virtual void AxisMappingAcquired(AxisMapping* mapping)
    {
       LogicalAxis* axis = static_cast<LogicalAxis*>(mApplicationInputDevice->GetAxis(mAxisIndex));
 
       axis->SetMapping(mapping);
 
-      if( AxisToAxis* a2a = dynamic_cast<AxisToAxis*>(mapping) )
+      if (AxisToAxis* a2a = dynamic_cast<AxisToAxis*>(mapping))
       {
-         CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mAxisName);
+         CEGUI::Window* b = CEGUI::WindowManager::getSingleton().getWindow(mAxisName);
 
          b->setText(a2a->GetSourceAxis()->GetDescription().c_str());
       }
@@ -230,16 +229,16 @@ public:
 protected:
 
    /**
-   * Pre-frame callback.
-   *
-   * @param deltaFrameTime the amount of time elapsed since the last frame
-   */
+    * Pre-frame callback.
+    *
+    * @param deltaFrameTime the amount of time elapsed since the last frame
+    */
    virtual void PreFrame(const double deltaFrameTime)
    {
       dtInputPLIB::Joystick::PollInstances();
 
       {
-         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
+         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
          if (mApplicationInputDevice->GetButton(KBUTTON1)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -251,7 +250,7 @@ protected:
       }
 
       {
-         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
+         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
          if (mApplicationInputDevice->GetButton(KBUTTON2)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -263,7 +262,7 @@ protected:
       }
 
       {
-         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
+         CEGUI::Window* w = CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
          if (mApplicationInputDevice->GetButton(KBUTTON3)->GetState())
          {
             w->setProperty("BackgroundColours", "tl:FFFF0000 tr:FFFF0000 bl:FFFF0000 br:FFFF0000" );
@@ -275,27 +274,27 @@ protected:
       }
 
 
-      CEGUI::ProgressBar *bar1 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider"));
-      bar1->setProgress( (mApplicationInputDevice->GetAxis(0)->GetState()+1.f)*0.5f);
+      CEGUI::ProgressBar* bar1 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider"));
+      bar1->setProgress((mApplicationInputDevice->GetAxis(0)->GetState() + 1.f) * 0.5f);
 
 
-      CEGUI::ProgressBar *bar2 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider"));
-      bar2->setProgress( (mApplicationInputDevice->GetAxis(1)->GetState()+1.f)*0.5f );
+      CEGUI::ProgressBar* bar2 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider"));
+      bar2->setProgress((mApplicationInputDevice->GetAxis(1)->GetState() + 1.f) * 0.5f);
 
    }
 
    /**
-   * GUI callback handler.
-   */
+    * GUI callback handler.
+    */
    static bool CallbackHandler(const CEGUI::EventArgs& e)
    {
       CEGUI::Window* w = static_cast<const CEGUI::WindowEventArgs&>(e).window;
-      
-      switch( w->getID() )
+
+      switch (w->getID())
       {
       case 1: // Action 1
 
-         if(app->mInputMapper->AcquireButtonMapping(app))
+         if (app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
             app->mButtonIndex = KBUTTON1;
@@ -304,7 +303,7 @@ protected:
          break;
 
       case 2: // Action 2
-         if(app->mInputMapper->AcquireButtonMapping(app))
+         if (app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
             app->mButtonIndex = KBUTTON2;
@@ -313,7 +312,7 @@ protected:
          break;
 
       case 3: // Action 3
-         if(app->mInputMapper->AcquireButtonMapping(app))
+         if (app->mInputMapper->AcquireButtonMapping(app))
          {
             w->setText("waiting for input");
             app->mButtonIndex = KBUTTON3;
@@ -322,7 +321,7 @@ protected:
          break;
 
       case 4: // Axis 1
-         if(app->mInputMapper->AcquireAxisMapping(app))
+         if (app->mInputMapper->AcquireAxisMapping(app))
          {
             w->setText("waiting for input");
             app->mAxisIndex = 0;
@@ -331,7 +330,7 @@ protected:
          break;
 
       case 5: // Axis 2
-         if(app->mInputMapper->AcquireAxisMapping(app))
+         if (app->mInputMapper->AcquireAxisMapping(app))
          {
             w->setText("waiting for input");
             app->mAxisIndex = 1;
@@ -341,45 +340,45 @@ protected:
       }
 
       return false;
-   }   
+   }
 
 
 
 private:
 
    /**
-   * The application input device.
-   */
+    * The application input device.
+    */
    RefPtr<LogicalInputDevice> mApplicationInputDevice;
 
    /**
-   * The keyboard axis input device.
-   */
+    * The keyboard axis input device.
+    */
    RefPtr<LogicalInputDevice> mKeyboardAxisInputDevice;
 
    /**
-   * The input mapper.
-   */
+    * The input mapper.
+    */
    RefPtr<InputMapper> mInputMapper;
 
    /**
-   * The user interface.
-   */
+    * The user interface.
+    */
    RefPtr<dtGUI::CEUIDrawable> mUIDrawable;
 
    /**
-   * The index of the button/axis being mapped.
-   */
+    * The index of the button/axis being mapped.
+    */
    int mButtonIndex, mAxisIndex;
    std::string mButtonName, mAxisName;
    bool mGUILoaded;
 
 };
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
@@ -387,11 +386,11 @@ int main( int argc, char **argv )
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/looknfeel;" +
                                dtCore::GetDeltaRootPath() + "/examples/testInput");
 
-   app = new TestInputApp( "config.xml" );
+   app = new TestInputApp("config.xml");
 
    app->Config();
 
-   if(!app->IsGUILoaded())
+   if (!app->IsGUILoaded())
    {
       return 0;
    }

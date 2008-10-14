@@ -1,25 +1,26 @@
 /* -*-c++-*-
-* testBumpMap - cubevertices (.h & .cpp) - Using 'The MIT License'
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
-#ifndef __CUBE_VERTICES_H__ 
+ * testBumpMap - cubevertices (.h & .cpp) - Using 'The MIT License'
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#ifndef __CUBE_VERTICES_H__
 #define __CUBE_VERTICES_H__
 
 #include <osg/ref_ptr>
@@ -29,18 +30,18 @@
 /*
    Cube Vertices
 
-   DESC: This data structure encapsulates the data required to generate 
+   DESC: This data structure encapsulates the data required to generate
             tangent space on the GPU for one cube
 
    NOTE: Each vertex has a normal, 3 verts, and 3 texture coordinates
-            where the two additional verts and tex coords are from the 
+            where the two additional verts and tex coords are from the
             opposite and adjacent vertices and the standard triangle.
 
          As a side note, one may notice this data to be very repetitive.
             And although I could have done this by offsetting indices and
             modding them to wrap back around, I decided to list them by hand
             for the sake of the demo.  This will show better what is happening
-            to the user. In practice I recommend just offsetting the indices of 
+            to the user. In practice I recommend just offsetting the indices of
             the original vert and tex coord list.
 
 
@@ -51,20 +52,20 @@ typedef struct _CV_
 
 public:
 
-	_CV_();
+   _CV_();
 
-	 osg::ref_ptr<osg::Vec3Array> mVerts;
-	 osg::ref_ptr<osg::Vec3Array> mVerts2;
-	 osg::ref_ptr<osg::Vec3Array> mVerts3;
+    osg::ref_ptr<osg::Vec3Array> mVerts;
+    osg::ref_ptr<osg::Vec3Array> mVerts2;
+    osg::ref_ptr<osg::Vec3Array> mVerts3;
 
-	 osg::ref_ptr<osg::Vec3Array> mNormals;
+    osg::ref_ptr<osg::Vec3Array> mNormals;
 
-	 osg::ref_ptr<osg::Vec2Array> mTexCoords;
-	 osg::ref_ptr<osg::Vec2Array> mTexCoords2;
-	 osg::ref_ptr<osg::Vec2Array> mTexCoords3;
+    osg::ref_ptr<osg::Vec2Array> mTexCoords;
+    osg::ref_ptr<osg::Vec2Array> mTexCoords2;
+    osg::ref_ptr<osg::Vec2Array> mTexCoords3;
 
-	 float mTexRepeat;
-	 float mSize;
+    float mTexRepeat;
+    float mSize;
 
 } CubeVertices;
 
@@ -75,16 +76,16 @@ public:
 _CV_::_CV_()
 {
 
-	mTexRepeat = 1.0f;
-	mSize = 1000.0f;
+   mTexRepeat = 1.0f;
+   mSize = 1000.0f;
 
-	mVerts = new osg::Vec3Array(36);
-	mVerts2 = new osg::Vec3Array(36);
-	mVerts3 = new osg::Vec3Array(36);
-	mNormals = new osg::Vec3Array(36);
-	mTexCoords = new osg::Vec2Array(36);
-	mTexCoords2 = new osg::Vec2Array(36);
-	mTexCoords3 = new osg::Vec2Array(36);
+   mVerts = new osg::Vec3Array(36);
+   mVerts2 = new osg::Vec3Array(36);
+   mVerts3 = new osg::Vec3Array(36);
+   mNormals = new osg::Vec3Array(36);
+   mTexCoords = new osg::Vec2Array(36);
+   mTexCoords2 = new osg::Vec2Array(36);
+   mTexCoords3 = new osg::Vec2Array(36);
 
 //////////////////////////////////////////////////////////////////////////
 //Verts 1
@@ -231,7 +232,7 @@ _CV_::_CV_()
    (*mVerts3)[13].set (-mSize, mSize, -mSize);
    (*mVerts3)[14].set (-mSize, mSize, mSize);
 
-   (*mVerts3)[15].set (-mSize, -mSize, mSize	);
+   (*mVerts3)[15].set (-mSize, -mSize, mSize   );
    (*mVerts3)[16].set (-mSize, -mSize, -mSize);
    (*mVerts3)[17].set (-mSize, mSize, -mSize);
 
@@ -395,7 +396,7 @@ _CV_::_CV_()
 
 
 //top
-   
+
    (*mTexCoords2)[6].set (mTexRepeat, -mTexRepeat);
    (*mTexCoords2)[7].set (-mTexRepeat, mTexRepeat);
    (*mTexCoords2)[8].set (-mTexRepeat, -mTexRepeat);
@@ -413,8 +414,8 @@ _CV_::_CV_()
    (*mTexCoords2)[15].set (mTexRepeat, -mTexRepeat);
    (*mTexCoords2)[16].set (-mTexRepeat, mTexRepeat);
    (*mTexCoords2)[17].set (-mTexRepeat, -mTexRepeat);
-   
-   
+
+
 //right
    (*mTexCoords2)[18].set (-mTexRepeat, -mTexRepeat);
    (*mTexCoords2)[19].set (mTexRepeat, -mTexRepeat);
@@ -451,10 +452,10 @@ _CV_::_CV_()
    (*mTexCoords3)[0].set (-mTexRepeat, -mTexRepeat);
    (*mTexCoords3)[1].set (mTexRepeat, mTexRepeat);
    (*mTexCoords3)[2].set (-mTexRepeat, mTexRepeat);
-  
+
    (*mTexCoords3)[3].set (-mTexRepeat, -mTexRepeat);
    (*mTexCoords3)[4].set (mTexRepeat, -mTexRepeat);
-   (*mTexCoords3)[5].set (mTexRepeat, mTexRepeat);   
+   (*mTexCoords3)[5].set (mTexRepeat, mTexRepeat);
 
 
 //top
@@ -466,17 +467,17 @@ _CV_::_CV_()
    (*mTexCoords3)[9].set (-mTexRepeat, mTexRepeat);
    (*mTexCoords3)[10].set (mTexRepeat, -mTexRepeat);
    (*mTexCoords3)[11].set (mTexRepeat, mTexRepeat);
-  
+
 
 //left
    (*mTexCoords3)[12].set (-mTexRepeat, mTexRepeat);
    (*mTexCoords3)[13].set (mTexRepeat, -mTexRepeat);
    (*mTexCoords3)[14].set (mTexRepeat, mTexRepeat);
-   
+
    (*mTexCoords3)[15].set (-mTexRepeat, mTexRepeat);
    (*mTexCoords3)[16].set (-mTexRepeat, -mTexRepeat);
    (*mTexCoords3)[17].set (mTexRepeat, -mTexRepeat);
-   
+
 
 //right
    (*mTexCoords3)[18].set (mTexRepeat, -mTexRepeat);
