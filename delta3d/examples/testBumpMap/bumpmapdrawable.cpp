@@ -20,23 +20,23 @@ BumpMapDrawable::~BumpMapDrawable()
 void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& pEyePos)
 {
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
-   ss->getUniform( "lightPos" )->set( osg::Vec4(pLightPos[0], pLightPos[1], pLightPos[2], 0.0f));
-   ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[2], pEyePos[2], 0.0f));
+   ss->getUniform("lightPos")->set(osg::Vec4(pLightPos[0], pLightPos[1], pLightPos[2], 0.0f));
+   ss->getUniform("eyePosition")->set(osg::Vec4(pEyePos[0], pEyePos[2], pEyePos[2], 0.0f));
 }
 
 void BumpMapDrawable::SetWireframe(bool pWireframe)
 {
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
 
-   if(pWireframe)
+   if (pWireframe)
    {
-      osg::PolygonMode *polymode = new osg::PolygonMode;
+      osg::PolygonMode* polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
       ss->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
    }
    else
    {
-      osg::PolygonMode *polymode = new osg::PolygonMode;
+      osg::PolygonMode* polymode = new osg::PolygonMode;
       polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
       ss->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
    }
@@ -75,10 +75,10 @@ void BumpMapDrawable::CreateGeometry()
    mGeometry->setTexCoordArray(4, mData.mTexCoords3.get());
 
    //create indices
-   RefPtr<osg::IntArray> indices = 
+   RefPtr<osg::IntArray> indices =
       new osg::IntArray(36);
 
-   for(int i = 0; i < 36; ++i)
+   for (int i = 0; i < 36; ++i)
    {
       (*indices)[i] = i;
    }
@@ -93,13 +93,12 @@ void BumpMapDrawable::CreateGeometry()
    mGeometry->setTexCoordIndices(3, indices.get());
    mGeometry->setTexCoordIndices(4, indices.get());
 
-   mGeometry->addPrimitiveSet( new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 36) );
+   mGeometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::TRIANGLES, 0, 36));
 
    mGeometry->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
 
    mGeode->addDrawable(mGeometry.get());
    mGeode->setName("BumpMapCube");
-
 }
 
 void BumpMapDrawable::EnableShaders()
@@ -110,10 +109,10 @@ void BumpMapDrawable::EnableShaders()
 
    //set up textures
    std::string filename = osgDB::findDataFile("/textures/sheetmetal.tga");
-   RefPtr<osg::Image> img1 = osgDB::readImageFile( filename );
+   RefPtr<osg::Image> img1 = osgDB::readImageFile(filename);
 
    filename = osgDB::findDataFile("textures/delta3d_logo_normal_map.tga");
-   RefPtr<osg::Image> img2 = osgDB::readImageFile( filename );
+   RefPtr<osg::Image> img2 = osgDB::readImageFile(filename);
 
 
    RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -131,21 +130,20 @@ void BumpMapDrawable::EnableShaders()
    ss->setTextureMode(0, GL_TEXTURE_2D, GL_TRUE);
    ss->setTextureMode(1, GL_TEXTURE_2D, GL_TRUE);
 
-
    //load the shader file
    mProg = new osg::Program;
 
-   RefPtr<osg::Shader> bumpMapVert = new osg::Shader( osg::Shader::VERTEX );
-   RefPtr<osg::Shader> bumpMapFrag = new osg::Shader( osg::Shader::FRAGMENT );
+   RefPtr<osg::Shader> bumpMapVert = new osg::Shader(osg::Shader::VERTEX);
+   RefPtr<osg::Shader> bumpMapFrag = new osg::Shader(osg::Shader::FRAGMENT);
 
-   mProg->addShader( bumpMapVert.get() );
-   mProg->addShader( bumpMapFrag.get() );
+   mProg->addShader(bumpMapVert.get());
+   mProg->addShader(bumpMapFrag.get());
 
    filename = osgDB::findDataFile("/shaders/bumpmap.vert");
-   bumpMapVert->loadShaderSourceFromFile( filename );
+   bumpMapVert->loadShaderSourceFromFile(filename);
 
    filename = osgDB::findDataFile("/shaders/bumpmap.frag");
-   bumpMapFrag->loadShaderSourceFromFile( filename );
+   bumpMapFrag->loadShaderSourceFromFile(filename);
 
    mLightPos = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "lightPos");
    mLightPos->set(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -165,5 +163,5 @@ void BumpMapDrawable::EnableShaders()
    unTex2->set(1);
    ss->addUniform(unTex2.get());
 
-   ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
+   ss->setAttributeAndModes(mProg.get(), osg::StateAttribute::ON);
 }
