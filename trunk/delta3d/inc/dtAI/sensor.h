@@ -62,117 +62,114 @@ namespace dtAI
 
    protected:
       ~SensorBase(){}
-
    };
 
 
    template <typename Type1, typename Type2, typename EvaluateFunc1, typename EvaluateFunc2, typename CompareFunc, typename ReportFunc, typename ReportData>
    class Sensor: public SensorBase<ReportData>
    {
-      public:
-         Sensor(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt):
-            mElement1(t1),
-            mElement2(t2),
-            mEval1(eval1),
-            mEval2(eval2),
-            mReport(rpt),
-            mCompare(cmp)
+   public:
+      Sensor(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt)
+         : mElement1(t1)
+         , mElement2(t2)
+         , mEval1(eval1)
+         , mEval2(eval2)
+         , mReport(rpt)
+         , mCompare(cmp)
+      {
+      }
+
+      void Set(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt)
+      {
+         mElement1 = t1;
+         mElement2 = t2;
+         mEval1    = eval1;
+         mEval2    = eval2;
+         mCompare  = cmp;
+         mReport   = rpt;
+      }
+
+      /**
+       * This simple function is the basis of the Sensor
+       */
+      typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
+      {
+         typedef typename dtUtil::TypeTraits<Type1>::reference Traits1Ref;
+         typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
+         typedef typename dtUtil::TypeTraits<ReportData>::reference ReportTraitsRef;
+
+         dtUtil::EvaluateFunctor<EvaluateFunc1, Traits1Ref> eval1;
+         eval1(mEval1, mElement1);
+
+         dtUtil::EvaluateFunctor<EvaluateFunc2, Traits2Ref> eval2;
+         eval2(mEval2, mElement2);
+
+         CompareFunctor<CompareFunc, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
+         if (genericCompare(mCompare, mReportData, mElement1, mElement2))
          {
+            dtUtil::EvaluateFunctor<ReportFunc, ReportTraitsRef> invokeReport;
+            invokeReport(mReport, mReportData);
          }
+         return mReportData;
+      }
+      /**
+       * This function makes us play friendly with the generic functor interface
+       */
+      typename dtUtil::TypeTraits<ReportData>::param_type operator()()
+      {
+         return Evaluate();
+      }
 
-         void Set(Type1 t1, Type2 t2, EvaluateFunc1 eval1, EvaluateFunc2 eval2, CompareFunc cmp, ReportFunc rpt)
-         {
-            mElement1 = t1;
-            mElement2 = t2;
-            mEval1 = eval1;
-            mEval2 = eval2;
-            mCompare = cmp;
-            mReport = rpt;
-         }
+      /**
+       * Allows sensor to work with SteeringBehavoir error handling
+       */
+      typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
+      {
+         return result = Evaluate();
+      }
 
-         /**
-          * This simple function is the basis of the Sensor
-          */
-         typename dtUtil::TypeTraits<ReportData>::param_type Evaluate()
-         {
-            typedef typename dtUtil::TypeTraits<Type1>::reference Traits1Ref;
-            typedef typename dtUtil::TypeTraits<Type2>::reference Traits2Ref;
-            typedef typename dtUtil::TypeTraits<ReportData>::reference ReportTraitsRef;
+      typename dtUtil::TypeTraits<Type1>::return_type GetFirstElement()
+      {
+         return mElement1;
+      }
 
-            dtUtil::EvaluateFunctor<EvaluateFunc1, Traits1Ref> eval1;
-            eval1(mEval1, mElement1);
+      typename dtUtil::TypeTraits<Type2>::return_type GetSecondElement()
+      {
+         return mElement2;
+      }
 
-            dtUtil::EvaluateFunctor<EvaluateFunc2, Traits2Ref> eval2;
-            eval2(mEval2, mElement2);
+      typename dtUtil::TypeTraits<ReportData>::return_type GetReportData()
+      {
+         return mReportData;
+      }
 
-            CompareFunctor<CompareFunc, ReportTraitsRef, Traits1Ref, Traits2Ref> genericCompare;
-            if(genericCompare(mCompare, mReportData, mElement1, mElement2))
-            {
-               dtUtil::EvaluateFunctor<ReportFunc, ReportTraitsRef> invokeReport;
-               invokeReport(mReport, mReportData);
-            }
-            return mReportData;
-         }
-         /**
-          * This function makes us play friendly with the generic functor interface
-          */
-         typename dtUtil::TypeTraits<ReportData>::param_type operator()()
-         {
-            return Evaluate();
-         }
+      typename dtUtil::TypeTraits<Type1>::const_return_type GetFirstElement() const
+      {
+         return mElement1;
+      }
 
-         /**
-          * Allows sensor to work with SteeringBehavoir error handling
-          */
-         typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
-         {
-            return result = Evaluate();
-         }
+      typename dtUtil::TypeTraits<Type2>::const_return_type GetSecondElement() const
+      {
+         return mElement2;
+      }
 
-         typename dtUtil::TypeTraits<Type1>::return_type GetFirstElement()
-         {
-            return mElement1;
-         }
-
-         typename dtUtil::TypeTraits<Type2>::return_type GetSecondElement()
-         {
-            return mElement2;
-         }
-
-         typename dtUtil::TypeTraits<ReportData>::return_type GetReportData()
-         {
-            return mReportData;
-         }
-
-         typename dtUtil::TypeTraits<Type1>::const_return_type GetFirstElement() const
-         {
-            return mElement1;
-         }
-
-         typename dtUtil::TypeTraits<Type2>::const_return_type GetSecondElement() const
-         {
-            return mElement2;
-         }
-
-         typename dtUtil::TypeTraits<ReportData>::const_return_type GetReportData() const
-         {
-            return mReportData;
-         }
-
+      typename dtUtil::TypeTraits<ReportData>::const_return_type GetReportData() const
+      {
+         return mReportData;
+      }
 
    protected:
-         /*virtual*/ ~Sensor(){}
+      /*virtual*/ ~Sensor(){}
 
-         Type1 mElement1;
-         Type2 mElement2;
-         EvaluateFunc1 mEval1;
-         EvaluateFunc2 mEval2;
+      Type1 mElement1;
+      Type2 mElement2;
+      EvaluateFunc1 mEval1;
+      EvaluateFunc2 mEval2;
 
-         ReportFunc mReport;
-         ReportData mReportData;
+      ReportFunc mReport;
+      ReportData mReportData;
 
-         CompareFunc mCompare;
-
+      CompareFunc mCompare;
    };
 
 } // namespace dtAI

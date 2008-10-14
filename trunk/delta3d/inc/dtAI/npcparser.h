@@ -37,37 +37,37 @@ namespace dtAI
    class DT_AI_EXPORT NPCParser
    {
       public:
-   
+
          NPCParser();
          virtual ~NPCParser();
-         
+
          bool LoadScript(const std::string& pFilename, BaseNPC* pNPC);
 
 
       private:
 
          //internal datatypes
-         
+
          enum ParamType{ PARAM_BOOL = 0, PARAM_INT};
 
          struct Param
          {
-            Param(bool b): mType(PARAM_BOOL){mBool = b;}
-            Param(int i): mType(PARAM_INT){mInt = i;}
+            Param(bool b): mType(PARAM_BOOL) {mBool = b;}
+            Param(int i): mType(PARAM_INT) {mInt = i;}
 
             Param& operator=(const Param& pIn)
             {
-               if(pIn.mType == PARAM_BOOL)
+               if (pIn.mType == PARAM_BOOL)
                {
                   mType = PARAM_BOOL;
                   mBool = pIn.mBool;
                }
-               else if(pIn.mType == PARAM_INT)
+               else if (pIn.mType == PARAM_INT)
                {
                   mType = PARAM_INT;
                   mInt = pIn.mInt;
                }
-               
+
                return *this;
             }
 
@@ -128,6 +128,6 @@ namespace dtAI
          std::string mCurrentTask;
          std::ifstream mFileStream;
    };
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_NPCPARSER_H__

@@ -32,10 +32,10 @@ namespace dtAI
     *
     * @brief This class is the base node type for AStar, it holds the cost of the path
     *        the actual data type, and a pointer to its parent for bookkeeping.
-    *       
+    *
     * @usage Derive this class and implement the pure virtual begin() and end() functions
     *        which should return iterators of type _IterType and support operator++ to iterate
-    *        through the data types that this data type can get to.  
+    *        through the data types that this data type can get to.
     *
     * @see AStar.h
     */
@@ -43,20 +43,27 @@ namespace dtAI
    class AStarNode
    {
       public:
-         typedef _DataType data_type;         
-         typedef _CostType cost_type;                        
-         typedef _IterType iterator;         
+         typedef _DataType data_type;
+         typedef _CostType cost_type;
+         typedef _IterType iterator;
          typedef _NodeType node_type;
          typedef AStarNode<_NodeType, _DataType, _IterType, _CostType> BaseType;
 
-      public:   
-         AStarNode(node_type* pParent, data_type pData, cost_type pGn, cost_type pHn): mData(pData), mCostToNode(pGn), mCostToGoal(pHn), mParent(pParent), mDepth(0)
+      public:
+         AStarNode(node_type* pParent, data_type pData, cost_type pGn, cost_type pHn)
+            : mData(pData)
+            , mCostToNode(pGn)
+            , mCostToGoal(pHn)
+            , mParent(pParent)
+            , mDepth(0)
          {
             if (pParent)
+            {
                mDepth = pParent->GetDepth() + 1;
+            }
          }
          virtual ~AStarNode(){}
-          
+
          /**
          * equality is based on the class data_type's operator ==
          */
@@ -78,8 +85,8 @@ namespace dtAI
             cost_type myCost = mCostToNode + mCostToGoal;
             cost_type otherCost = pType.GetCostToNode() + pType.GetCostToGoal();
             //check if they are equivalent first
-            if(dtUtil::Equivalent(myCost, otherCost)) return false;
-            else return  myCost < otherCost;
+            if (dtUtil::Equivalent(myCost, otherCost)) { return false; }
+            else { return myCost < otherCost; }
          }
 
          node_type *GetParent() { return mParent; }
@@ -122,11 +129,11 @@ namespace dtAI
          cost_type mCostToNode;
          cost_type mCostToGoal;
 
-         node_type* mParent;   
+         node_type* mParent;
 
          unsigned int mDepth;
    };
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_ASTARNODE_H__

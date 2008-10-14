@@ -199,7 +199,7 @@ namespace dtActors
           * Set the event to be fired when this task completes.
           * @param gameEvent Event to be fired.
           */
-         void SetNotifyCompletedEvent( dtDAL::GameEvent* gameEvent ) { mNotifyEventCompleted = gameEvent; }
+         void SetNotifyCompletedEvent(dtDAL::GameEvent* gameEvent) { mNotifyEventCompleted = gameEvent; }
 
          /**
           * @return Event to be fired when this task completes.
@@ -377,13 +377,13 @@ namespace dtActors
           * Gets a const pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         const TaskActorProxy *GetParentTask() const { return mParentTaskProxy; }
+         const TaskActorProxy* GetParentTask() const { return mParentTaskProxy; }
 
          /**
           * Gets a pointer to the parent of this task.
           * @return The parent task or NULL if this task is not a subtask of another.
           */
-         TaskActorProxy *GetParentTask() { return mParentTaskProxy; }
+         TaskActorProxy* GetParentTask() { return mParentTaskProxy; }
 
          /**
           * Adds a new sub task to this task.  If the subtask is already a subtask
@@ -410,14 +410,14 @@ namespace dtActors
           * @param name The name of the child task to find.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy *FindSubTask(const std::string &name);
+         TaskActorProxy* FindSubTask(const std::string &name);
 
          /**
           * Searches this task's list of sub tasks for the specified child.
           * @param id The unique id of the task to search for.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy *FindSubTask(const dtCore::UniqueId &id);
+         TaskActorProxy* FindSubTask(const dtCore::UniqueId &id);
 
          /**
           * @return A const list of sub tasks owned by this task.
@@ -467,7 +467,7 @@ namespace dtActors
           */
          virtual dtDAL::ActorProxyIcon* GetBillBoardIcon()
          {
-            if(!mBillBoardIcon.valid())
+            if (!mBillBoardIcon.valid())
             {
                mBillBoardIcon =
                   new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
@@ -525,14 +525,14 @@ namespace dtActors
           * Sets the parent task to this one.  Called when a subtask is added.
           * @param The parent task.
           */
-         void SetParentTaskProxy(TaskActorProxy *parent) { mParentTaskProxy = parent; }
+         void SetParentTaskProxy(TaskActorProxy* parent) { mParentTaskProxy = parent; }
 
       private:
 
-         //Parent task if this task is a subtask of another.
-         TaskActorProxy *mParentTaskProxy;
+         // Parent task if this task is a subtask of another.
+         TaskActorProxy* mParentTaskProxy;
 
-         //List of subtasks or child tasks of this task.
+         // List of subtasks or child tasks of this task.
          std::vector<dtCore::RefPtr<TaskActorProxy> > mSubTaskProxies;
    };
 
