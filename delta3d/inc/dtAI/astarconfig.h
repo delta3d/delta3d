@@ -44,28 +44,28 @@ namespace dtAI
          typedef _CostType cost_type;
          typedef _ContainerType container;
 
-         AStarConfig():
-            mResult(),
-            mTotalCost(0),
-            mTotalNodesExplored(0),
-            mTotalTime(0.0),
-            mNumIterations(0),
-            mMaxNodesExplored(std::numeric_limits<unsigned int>::max()),
-            mMaxTime(std::numeric_limits<double>::max()),
-            mMaxCost(std::numeric_limits<cost_type>::max()),
-            mMaxDepth(std::numeric_limits<unsigned int>::max()),
-            mCheckClosedList(true),
-            mStart(),
-            mFinish(),
-            mNodesExplored(0), 
-            mTimeSpent(0.0)
+         AStarConfig()
+            : mResult()
+            , mTotalCost(0)
+            , mTotalNodesExplored(0)
+            , mTotalTime(0.0)
+            , mNumIterations(0)
+            , mMaxNodesExplored(std::numeric_limits<unsigned int>::max())
+            , mMaxTime(std::numeric_limits<double>::max())
+            , mMaxCost(std::numeric_limits<cost_type>::max())
+            , mMaxDepth(std::numeric_limits<unsigned int>::max())
+            , mCheckClosedList(true)
+            , mStart()
+            , mFinish()
+            , mNodesExplored(0)
+            , mTimeSpent(0.0)
          {
          }
 
-         AStarConfig(data_type pFrom, data_type pTo):
-         mMaxNodesExplored(std::numeric_limits<unsigned int>::max()),
-            mMaxCost(std::numeric_limits<cost_type>::max()),
-            mMaxTime(std::numeric_limits<double>::max())
+         AStarConfig(data_type pFrom, data_type pTo)
+            : mMaxNodesExplored(std::numeric_limits<unsigned int>::max())
+            , mMaxCost(std::numeric_limits<cost_type>::max())
+            , mMaxTime(std::numeric_limits<double>::max())
          {
             Reset(pFrom, pTo);
          }
@@ -100,30 +100,30 @@ namespace dtAI
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
          void Reset(data_type pFrom, data_type pTo)
          {
-            mStart = pFrom;
+            mStart              = pFrom;
             mFinish.clear();
             mFinish.push_back(pTo);
             mResult.clear();
-            mTotalCost = 0;
-            mNumIterations = 0;
-            mNodesExplored = 0;
-            mTimeSpent = 0;
+            mTotalCost          = 0;
+            mNumIterations      = 0;
+            mNodesExplored      = 0;
+            mTimeSpent          = 0;
             mTotalNodesExplored = 0;
-            mTotalTime = 0;
+            mTotalTime          = 0;
          }
 
          void Reset(data_type pFrom, const std::vector<data_type>& pTo)
          {
-            mStart = pFrom;
+            mStart              = pFrom;
             mFinish.clear();
-            mFinish = pTo;
+            mFinish             = pTo;
             mResult.clear();
-            mTotalCost = 0;
-            mNumIterations = 0;
-            mNodesExplored = 0;
-            mTimeSpent = 0;
+            mTotalCost          = 0;
+            mNumIterations      = 0;
+            mNodesExplored      = 0;
+            mTimeSpent          = 0;
             mTotalNodesExplored = 0;
-            mTotalTime = 0;
+            mTotalTime          = 0;
          }
 
 
@@ -132,9 +132,9 @@ namespace dtAI
             typename std::vector<data_type>::const_iterator iter = mFinish.begin();
             typename std::vector<data_type>::const_iterator endOfList = mFinish.end();
 
-            while(iter != endOfList)
+            while (iter != endOfList)
             {
-               if(pTest == (*iter))
+               if (pTest == (*iter))
                {
                   return true;
                }
@@ -161,11 +161,11 @@ namespace dtAI
 
          //these are for book keeping during a single iteration
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
-         unsigned int mNodesExplored;         
+         unsigned int mNodesExplored;
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
          double mTimeSpent;
-   
+
    };
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_ASTARCONFIG_H__
