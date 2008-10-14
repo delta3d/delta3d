@@ -1,23 +1,23 @@
-/* -*-c++-*- 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- *Bradley Anderegg
-*/
+ * Bradley Anderegg
+ */
 
 #ifndef DELTA_SKYBOX
 #define DELTA_SKYBOX
@@ -49,35 +49,36 @@ namespace dtCore
    ///A six-sided textured cube to represent distant scenery
 
    /** The SkyBox is an Environmental Effect that is very useful in certain
-   * applications.  Essentially, its a large 6-sided cube with the Camera
-   * centered in the middle.  Each side of the cube has a texture applied to
-   * it representing far away scenery (sky, clouds, buildings, hills, etc.).
-   * To use this class, create an instance of it, pass in the texture filenames
-   * using SetTextureFilename(),
-   * then add it to a Environment using Environment::AddEffect().  The terms
-   * "front", "right", etc. map to compass headings.  For example, front is 
-   * north, right is east, top is up.
-   *
-   * The resolution of the textures should be based on the screen resolution
-   * and the field of view ( texRes = screenRes / tan(fov/2) ) for a
-   * texel per pixel correlation.
-   * \code
-   SkyBox *box = new SkyBox("skyBox");
-   box->SetTexture( SkyBox::SKYBOX_FRONT, "front.bmp");
-   box->SetTexture( SkyBox::SKYBOX_BACK, "back.bmp");
-   ...
-   Environment *env = new Environment("myEnv");
-   env->AddEffect( box );
-   * \endcode
-   *
-   * Typically, this would be the only environmental effect added to the
-   * Environment.  Adding fog, sun, and clouds typically make things look a 
-   * little weird.
-   */
+    * applications.  Essentially, its a large 6-sided cube with the Camera
+    * centered in the middle.  Each side of the cube has a texture applied to
+    * it representing far away scenery (sky, clouds, buildings, hills, etc.).
+    * To use this class, create an instance of it, pass in the texture filenames
+    * using SetTextureFilename(),
+    * then add it to a Environment using Environment::AddEffect().  The terms
+    * "front", "right", etc. map to compass headings.  For example, front is
+    * north, right is east, top is up.
+    *
+    * The resolution of the textures should be based on the screen resolution
+    * and the field of view ( texRes = screenRes / tan(fov/2) ) for a
+    * texel per pixel correlation.
+    * \code
+      SkyBox *box = new SkyBox("skyBox");
+      box->SetTexture( SkyBox::SKYBOX_FRONT, "front.bmp");
+      box->SetTexture( SkyBox::SKYBOX_BACK, "back.bmp");
+      ...
+      Environment *env = new Environment("myEnv");
+      env->AddEffect( box );
+    * \endcode
+    *
+    * Typically, this would be the only environmental effect added to the
+    * Environment.  Adding fog, sun, and clouds typically make things look a
+    * little weird.
+    */
 class DT_CORE_EXPORT SkyBox : public EnvEffect
 {
 protected:
    class RenderProfile;
+
 private:
    DECLARE_MANAGEMENT_LAYER(SkyBox)
 
@@ -103,11 +104,11 @@ public:
    //if RenderProfileEnum is set to RP_ANGULAR_MAP, this is irrelevant
    //and ignores the side
    */
-       enum SkyBoxSideEnum
-       {
+   enum SkyBoxSideEnum
+   {
       SKYBOX_FRONT = 0,
       SKYBOX_RIGHT,
-      SKYBOX_BACK,      
+      SKYBOX_BACK,
       SKYBOX_LEFT,
       SKYBOX_TOP,
       SKYBOX_BOTTOM
@@ -116,12 +117,13 @@ public:
    class ConfigCallback: public osg::NodeCallback
    {
    public:
-      ConfigCallback(SkyBox* mp):mSkyBox(mp){}
+      ConfigCallback(SkyBox* mp) : mSkyBox(mp) {}
 
       void operator()(osg::Node*, osg::NodeVisitor* nv)
-      {            
+      {
          mSkyBox->Config();
       }
+
    private:
       SkyBox* mSkyBox; ///< Weak pointer to SkyBox to prevent circular reference
    };
@@ -129,24 +131,24 @@ public:
    friend class ConfigCallback;
 
 public:
-   SkyBox(  const std::string& name="SkyBox", 
-            RenderProfileEnum pRenderProfile = RP_DEFAULT );
+   SkyBox(const std::string& name="SkyBox",
+          RenderProfileEnum pRenderProfile = RP_DEFAULT);
+
 protected:
    virtual ~SkyBox();
 
 public:
    /// Must override this to supply the repainting routine
-   virtual void Repaint(   const osg::Vec3& skyColor, 
-                           const osg::Vec3& fogColor,
-                           double sunAngle, 
-                           double sunAzimuth,
-                           double visibility );
+   virtual void Repaint(const osg::Vec3& skyColor,
+                        const osg::Vec3& fogColor,
+                        double sunAngle,
+                        double sunAzimuth,
+                        double visibility);
 
    /// Set the texture for this side of the skybox
    void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
 protected:
-   
    virtual void Config();
    virtual void CheckHardware();
    virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
@@ -154,7 +156,7 @@ protected:
    RenderProfileEnum mRenderProfilePreference;
    bool mSupportedProfiles[RP_COUNT];
    dtCore::RefPtr<RenderProfile> mRenderProfile;
-   
+
    bool mInitializedTextures;
    std::string mTexList[6];
    bool mTexPreSetList[6];
@@ -174,7 +176,7 @@ protected:
 
       SkyBoxDrawable(){setUseDisplayList(false);}
 
-      /*virtual*/ void drawImplementation(osg::RenderInfo & renderInfo) const;
+      /*virtual*/ void drawImplementation(osg::RenderInfo& renderInfo) const;
    };
 
    ///a base class to allow the user to choose different ways
@@ -183,7 +185,7 @@ protected:
    {
    public:
       virtual void Config(osg::Group*) = 0;
-      virtual void SetTexture(SkyBoxSideEnum side, const std::string& filename) = 0;   
+      virtual void SetTexture(SkyBoxSideEnum side, const std::string& filename) = 0;
    };
 
    ///this class will use an angular map or light probe
@@ -197,13 +199,13 @@ protected:
          UpdateViewCallback(AngularMapProfile* mp):mProfile(mp){}
 
          void operator()(osg::Node*, osg::NodeVisitor* nv)
-         {            
+         {
             osgUtil::CullVisitor* cullVisitor = dynamic_cast<osgUtil::CullVisitor*>(nv);
-            if(cullVisitor != NULL)
+            if (cullVisitor != NULL)
             {
-               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage(); 
+               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage();
                osg::Camera* cn = rs->getCamera();
-               if(cn)
+               if (cn)
                {
                   mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
                }
@@ -219,16 +221,16 @@ protected:
       AngularMapProfile();
 
       void Config(osg::Group*);
-      void SetTexture(SkyBoxSideEnum side, const std::string& filename);   
+      void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
    protected:
 
       void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
-      dtCore::RefPtr<osg::Geode>            mGeode;
-      dtCore::RefPtr<osg::Texture2D>      mAngularMap;
-      dtCore::RefPtr<osg::Program>         mProgram;
-      dtCore::RefPtr<osg::Uniform>         mInverseModelViewProjMatrix;
+      dtCore::RefPtr<osg::Geode>     mGeode;
+      dtCore::RefPtr<osg::Texture2D> mAngularMap;
+      dtCore::RefPtr<osg::Program>   mProgram;
+      dtCore::RefPtr<osg::Uniform>   mInverseModelViewProjMatrix;
 
    };
 
@@ -240,16 +242,16 @@ protected:
       class UpdateViewCallback: public osg::NodeCallback
       {
       public:
-         UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}       
+         UpdateViewCallback(CubeMapProfile* mp):mProfile(mp){}
 
          void operator()(osg::Node*, osg::NodeVisitor* nv)
-         {            
+         {
             osgUtil::CullVisitor* cullVisitor = dynamic_cast<osgUtil::CullVisitor*>(nv);
-            if(cullVisitor != NULL)
+            if (cullVisitor != NULL)
             {
-               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage(); 
+               osgUtil::RenderStage* rs = cullVisitor->getCurrentRenderBin()->getStage();
                osg::Camera* cn = rs->getCamera();
-               if(cn)
+               if (cn)
                {
                   mProfile->UpdateViewMatrix(cn->getViewMatrix(), cn->getProjectionMatrix());
                }
@@ -263,17 +265,17 @@ protected:
 
    public:
       CubeMapProfile();
-     
+
       void Config(osg::Group*);
-      void SetTexture(SkyBoxSideEnum side, const std::string& filename);   
+      void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
    protected:
       void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
-      dtCore::RefPtr<osg::Geode>            mGeode;
-      dtCore::RefPtr<osg::TextureCubeMap>   mCubeMap;
-      dtCore::RefPtr<osg::Program>         mProgram;
-      dtCore::RefPtr<osg::Uniform>         mInverseModelViewProjMatrix;
+      dtCore::RefPtr<osg::Geode>          mGeode;
+      dtCore::RefPtr<osg::TextureCubeMap> mCubeMap;
+      dtCore::RefPtr<osg::Program>        mProgram;
+      dtCore::RefPtr<osg::Uniform>        mInverseModelViewProjMatrix;
    };
 
    ///this render profile will render the skybox as usual with the
@@ -294,7 +296,7 @@ protected:
       dtCore::RefPtr<dtCore::MoveEarthySkyWithEyePointTransform> mXform;
       dtCore::RefPtr<osg::Texture2D> mTextureList[6];
    };
-   
+
 };
 
 }
