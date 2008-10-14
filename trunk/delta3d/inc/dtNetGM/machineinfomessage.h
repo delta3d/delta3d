@@ -18,6 +18,7 @@
  *
  * @author Pjotr van Amerongen
  */
+
 #ifndef DELTA_MACHINEINFOMESSAGE
 #define DELTA_MACHINEINFOMESSAGE
 
