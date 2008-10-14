@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -50,11 +50,11 @@ namespace dtCore
           * Constructor.
           *
           * @param name the instance name
-          * @param textureImage An image to apply to the terrain.  The appearance 
-          * of this texture will be effected by HighColor and LowColor 
+          * @param textureImage An image to apply to the terrain.  The appearance
+          * of this texture will be effected by HighColor and LowColor
           */
          InfiniteTerrain(const std::string& name = "infiniteTerrain",
-                  osg::Image* textureImage = 0);
+                         osg::Image* textureImage = 0);
 
       protected:
 
@@ -115,7 +115,7 @@ namespace dtCore
 
          /**
           * Sets the vertical scale, which affects the feature
-          * amplitude. (def = 25.0) 
+          * amplitude. (def = 25.0)
           *
           * @param verticalScale the new vertical scale
           */
@@ -184,7 +184,7 @@ namespace dtCore
          /**
           * We want we collision to happen by default with this class.
           */
-         virtual bool FilterContact( dContact* contact, Transformable* collider ) { return true; }
+         virtual bool FilterContact(dContact* contact, Transformable* collider) { return true; }
 
          /**
           * Given pointOne and pointTwo, both in world space and with all coordinates
@@ -200,8 +200,7 @@ namespace dtCore
           * pointTwo and false if the view is blocked.
           * @see SetLineOfSightSpacing()
           */
-         bool IsClearLineOfSight( const osg::Vec3& pointOne,
-                  const osg::Vec3& pointTwo );
+         bool IsClearLineOfSight(const osg::Vec3& pointOne, const osg::Vec3& pointTwo);
 
          /**
           * Set the stepping distance to sample points for the line of sight calculation (meters).
@@ -212,18 +211,18 @@ namespace dtCore
          float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
          /**
-          * Set the color used for low areas of the terrain.  
+          * Set the color used for low areas of the terrain.
           *
           * @param rgb The colour (0..255, 0..255, 0..255) of the low areas.
           */
-         void SetMinColor(const osg::Vec3 &rgb);
+         void SetMinColor(const osg::Vec3& rgb);
 
          /**
-          * Set the color used for high areas of the terrain.  
+          * Set the color used for high areas of the terrain.
           *
           * @param rgb The colour (0..255, 0..255, 0..255) of the high areas.
           */
-         void SetMaxColor(const osg::Vec3 &rgb);
+         void SetMaxColor(const osg::Vec3& rgb);
 
       private:
 
@@ -246,16 +245,15 @@ namespace dtCore
           * @param skip the distance between contact geoms in the array
           * @return the number of contact points generated
           */
-         static int Collider(dGeomID o1, dGeomID o2, int flags,
-                  dContactGeom* contact, int skip);
+         static int Collider(dGeomID o1, dGeomID o2, int flags, dContactGeom* contact, int skip);
 
          /**
           * A Helper function for Collider to detect collision with terrain and a sphere
-          *  
+          *
           * @param it the the pointer to the infinite terrain we want to collide with
           * @param pCenter the center of the sphere
           * @param pRadius the radius of the sphere
-          * @param pContact the ode contact point to fill 
+          * @param pContact the ode contact point to fill
           * @return whether or not a collision occured
           */
          static bool CollideSphere(InfiniteTerrain* it, const osg::Vec3& pCenter, float pRadius, dContactGeom* pContact);
@@ -347,8 +345,8 @@ namespace dtCore
 
             bool operator<(const Segment& segment) const
             {
-               if(mX < segment.mX) return true;
-               else if(mX > segment.mX) return false;
+               if (mX < segment.mX) return true;
+               else if (mX > segment.mX) return false;
                else return (mY < segment.mY);
             }
          };

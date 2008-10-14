@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_RECORDER
 #define DELTA_RECORDER
@@ -119,7 +119,7 @@ namespace dtCore
         */
       void AddSource(RecordableType* source)
       {
-         if( mState == Recording || mState == Playing )
+         if (mState == Recording || mState == Playing)
          {
             LOG_WARNING("Recorder does not support adding new sources while recording or playing");
          }
@@ -137,18 +137,18 @@ namespace dtCore
         */
       void RemoveSource(RecordableType* source)
       {
-         if( mState == Recording || mState == Playing )
+         if (mState == Recording || mState == Playing)
          {
             LOG_WARNING("Recorder does not support removing sources while recording or playing");
          }
          else
          {
             mKeyFrames.clear();
-            for( typename RecordablePtrContainer::iterator i = mSources.begin();
+            for (typename RecordablePtrContainer::iterator i = mSources.begin();
                  i != mSources.end();
-                 ++i )
+                 ++i)
             {
-               if( *i == source )
+               if ( *i == source )
                {
                   mSources.erase(i);
                }
@@ -168,7 +168,7 @@ namespace dtCore
          sourcedata.reserve( mSources.size() );
          typename RecordablePtrContainer::iterator iter = mSources.begin();
          typename RecordablePtrContainer::iterator enditer = mSources.end();
-         while( iter != enditer )
+         while (iter != enditer)
          {
             // orders framedata the same as sources are ordered in the source container
             sourcedata.push_back( (*iter)->CreateFrameData() );
@@ -191,7 +191,7 @@ namespace dtCore
         */
       void Stop()
       {
-         if(mState == Recording)
+         if (mState == Recording)
          {
             mDeltaTime = mClock.Tick();
          }
@@ -223,7 +223,7 @@ namespace dtCore
 
          typename KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
          typename KeyFrameContainer::iterator kfend = mKeyFrames.end();
-         while( kfiter != kfend )
+         while (kfiter != kfend)
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement( FRAME );
 
@@ -232,7 +232,7 @@ namespace dtCore
 
             typename RecordablePtrContainer::iterator srciter = mSources.begin();
             typename RecordablePtrContainer::iterator srcend = mSources.end();
-            while( srciter != srcend )
+            while (srciter != srcend)
             {
                // assumes an equal number of framedata iterators for source iterators
                FrameDataType *fdt = (*fditer).get();
@@ -249,12 +249,12 @@ namespace dtCore
             frameelement->setAttribute( TIMECODE , TIMESTAMP );
             XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMESTAMP );
 
-            root->appendChild( frameelement );
+            root->appendChild(frameelement);
             ++kfiter;
          }
 
          // write out the file
-         writer->WriteFile( filename );
+         writer->WriteFile(filename);
 
          // clean up memory
          XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMECODE );
@@ -272,8 +272,8 @@ namespace dtCore
       void LoadFile(const std::string& filename)
       {
          // check to see if the file exits
-         std::string file = dtCore::FindFileInPathList( filename );
-         if( file.empty() )
+         std::string file = dtCore::FindFileInPathList(filename);
+         if (file.empty())
          {
             LOG_WARNING("The file, " + filename + " was not found.")
             return;
@@ -284,14 +284,14 @@ namespace dtCore
          dtUtil::XercesErrorHandler ehandler;
 
          XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser parser;
-         parser.setErrorHandler( &ehandler );
-         parser.parse( file.c_str() );
+         parser.setErrorHandler(&ehandler);
+         parser.parse(file.c_str());
 
          XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = parser.getDocument();
 
          typedef dtUtil::KeyFrameDecoder<RecordableType,FrameDataType> SourceDecoder;
          SourceDecoder decoder(mSources,mKeyFrames);
-         decoder.Walk( doc );
+         decoder.Walk(doc);
       }
 
       /**
@@ -301,11 +301,11 @@ namespace dtCore
         */
       virtual void OnMessage(dtCore::Base::MessageData *data)
       {
-         switch( mState )
+         switch (mState)
          {
          case Recording:
             {
-               if( data->message == "postframe" )
+               if (data->message == "postframe")
                {
                   mDeltaTime = mClock.Tick();
                   double timeCode = mClock.DeltaSec(mStartTime, mDeltaTime);
@@ -314,22 +314,22 @@ namespace dtCore
                   sourcedata.reserve( mSources.size() );
                   typename RecordablePtrContainer::iterator iter = mSources.begin();
                   typename RecordablePtrContainer::iterator enditer = mSources.end();
-                  while( iter != enditer )
+                  while (iter != enditer)
                   {
                      // orders framedata the same as sources
-                     sourcedata.push_back( (*iter)->CreateFrameData() );
+                     sourcedata.push_back((*iter)->CreateFrameData());
                      iter++;
                   }
-                  mKeyFrames.push_back( KeyFrame(timeCode,sourcedata) );
+                  mKeyFrames.push_back(KeyFrame(timeCode,sourcedata));
                }
             } break;
 
             // for now, this just plays a frame-by-frame playback, no time stamp interpolation for FrameData
          case Playing:
             {
-               if( data->message == "preframe" )
+               if (data->message == "preframe")
                {
-                  if( mKeyFrameIter != mKeyFrames.end() )
+                  if (mKeyFrameIter != mKeyFrames.end())
                   {
                      // key frame stuff
                      //double timecode = (*mKeyFrameIter).first;
@@ -338,7 +338,7 @@ namespace dtCore
                      // sources
                      typename RecordablePtrContainer::iterator srciter = mSources.begin();
                      typename RecordablePtrContainer::iterator srcend = mSources.end();
-                     while( srciter != srcend )
+                     while (srciter != srcend)
                      {
                         // assumes sources are ordered the same as framedata
                         (*srciter)->UseFrameData( (*framedataiter).get() );
