@@ -24,7 +24,7 @@ public:
                               construction/destruction
    ********************************************************************************/
 
-   CEGUITexture(CEGUI::Renderer *);
+   CEGUITexture(CEGUI::Renderer*);
 
    ~CEGUITexture();
 
@@ -35,16 +35,16 @@ public:
    ********************************************************************************/
 
    ///set the osg-texture that'll be used
-   inline void SetOSGTexture(osg::Texture2D *pTexture) { if(pTexture) m_pTexture=pTexture; }
+   inline void SetOSGTexture(osg::Texture2D* pTexture) { if (pTexture) { m_pTexture = pTexture; } }
 
    ///get current osg-texture
-   inline osg::Texture2D *GetOSGTexture() { return m_pTexture.get(); }
+   inline osg::Texture2D* GetOSGTexture() { return m_pTexture.get(); }
 
    ///get current osg-texture
-   inline const osg::Texture2D *GetOSGTexture() const { return m_pTexture.get(); }
+   inline const osg::Texture2D* GetOSGTexture() const { return m_pTexture.get(); }
 
    ///get osg-texture-handle for a osg::GraphicsContext
-   unsigned int GetTextureID(osg::GraphicsContext *);
+   unsigned int GetTextureID(osg::GraphicsContext*);
 
    ///if set to true the CEGUIREnderer will flip y-coordinates
    inline void SetFlipHorizontal(bool bX) { m_bFlipHorizontal=bX; }
