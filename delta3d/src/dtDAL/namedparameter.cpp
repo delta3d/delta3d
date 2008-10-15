@@ -224,9 +224,10 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-
-   void NamedGroupParameter::FromDataStream(dtUtil::DataStream& stream)
+   bool NamedGroupParameter::FromDataStream(dtUtil::DataStream& stream)
    {
+      bool okay = true;
+
       // Read in the size of the stream
       unsigned int size;
       stream >> size;
@@ -235,7 +236,7 @@ namespace dtDAL
       {
          unsigned char id;
          stream >> id;
-         dtDAL::DataType *type = NULL;
+         dtDAL::DataType* type = NULL;
 
          for (unsigned int j = 0; j < dtDAL::DataType::EnumerateType().size(); j++)
          {
@@ -247,12 +248,15 @@ namespace dtDAL
             }
          }
          if (type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
+         {
             throw dtUtil::Exception(ExceptionEnum::BaseException, "The datatype was not found in the stream", __FILE__, __LINE__);
+            okay = false;
+         }
 
          std::string name;
          stream >> name;
 
-         bool  isList;
+         bool isList;
          stream >> isList;
 
          dtCore::RefPtr<NamedParameter> param = GetParameter(name);
@@ -269,9 +273,12 @@ namespace dtDAL
             }
          }
 
-         param->FromDataStream(stream);
+         okay = okay && param->FromDataStream(stream);
       }
+
+      return okay;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void NamedGroupParameter::SetFromProperty(const dtDAL::ActorProperty& property)
    {
@@ -1449,8 +1456,10 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void NamedResourceParameter::FromDataStream(dtUtil::DataStream &stream)
+   bool NamedResourceParameter::FromDataStream(dtUtil::DataStream &stream)
    {
+      bool okay = true;
+
       std::string resourceId;
       std::string resourceDisplayName;
 
@@ -1473,6 +1482,8 @@ namespace dtDAL
          stream >> resourceDisplayName;
          mDescriptor = dtDAL::ResourceDescriptor(resourceDisplayName, resourceId);
       }
+
+      return okay;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
