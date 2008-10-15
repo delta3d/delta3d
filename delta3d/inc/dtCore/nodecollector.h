@@ -135,7 +135,7 @@ namespace dtCore
        * @param name A String that represents the name of the node you are looking for
        * @return A CONST pointer to the node you were looking for or NULL if the node was not found
        */
-      const osg::Switch* Getswitch (const std::string& name) const;
+      const osg::Switch* GetSwitch(const std::string& name) const;
 
       /**
        * Function that is used to request a CONST pointer to a Geode Node
@@ -174,7 +174,7 @@ namespace dtCore
        * @param name A String that represents the name of the node you are looking for
        * @return A pointer to the node you were looking for or NULL if the node was not found
        */
-      osg::Switch* Getswitch (const std::string& name);
+      osg::Switch* GetSwitch(const std::string& name);
 
       /**
        * Function that is used to request a CONST pointer to a Geode Node
@@ -232,13 +232,13 @@ namespace dtCore
        * @param name A String that represents the name of the Node
        * @param node The Switch Node that you wish to add to the map
        */
-      void Addswitch (const std::string& name, osg::Switch& node);
+      void AddSwitch(const std::string& name, osg::Switch& node);
 
       /**
        * Function that is used to remove a Switch Node to the Switch Node map
        * @param name A String that represents the name of the Node
        */
-      void Removeswitch (const std::string& name);
+      void RemoveSwitch(const std::string& name);
 
       /**
        * Function that is used to add a Geode Node to the Geode Node map
@@ -296,25 +296,25 @@ namespace dtCore
        * Function that returns a Group map
        * @return A map with the names of Group Nodes and osg Group Nodes
        */
-      NodeCollector::GroupNodeMap& GetGroupNodeMap() ;
+      NodeCollector::GroupNodeMap& GetGroupNodeMap();
 
       /**
        * Function that returns a Transform map
        * @return A map with the names of Transform Nodes and osg Transform Nodesa
        */
-      NodeCollector::TransformNodeMap& GetTransformNodeMap() ;
+      NodeCollector::TransformNodeMap& GetTransformNodeMap();
 
       /**
        * Function that returns a MatrixTransform map
        * @return A map with the names of MatrixTransform Nodes and osg MatrixTransform Nodes
        */
-      NodeCollector::MatrixTransformNodeMap& GetMatrixTransformNodeMap() ;
+      NodeCollector::MatrixTransformNodeMap& GetMatrixTransformNodeMap();
 
       /**
        * Function that returns a Switch map
        * @return A map with the names of Switch Nodes and osg Switch Nodes
        */
-      NodeCollector::SwitchNodeMap& GetSwitchNodeMap() ;
+      NodeCollector::SwitchNodeMap& GetSwitchNodeMap();
 
       /**
        * Function that returns a Geode map
