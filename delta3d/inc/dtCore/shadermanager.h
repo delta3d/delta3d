@@ -67,7 +67,7 @@ namespace dtCore
          static ShaderException DUPLICATE_SHADER_PARAMETER_FOUND;
 
       private:
-         ShaderException(const std::string &name) : dtUtil::Enumeration(name)
+         ShaderException(const std::string& name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
@@ -125,7 +125,7 @@ namespace dtCore
           * Gets the single global instance of this class.
           * @return The singleton instance.
           */
-         static ShaderManager &GetInstance()
+         static ShaderManager& GetInstance()
          {
             if (mInstance == NULL)
             {
@@ -150,21 +150,21 @@ namespace dtCore
           * @note An exception is thrown if the specified shader group does not have a unique
           *    name.
           */
-         void AddShaderGroupPrototype(ShaderGroup &shaderGroup);
+         void AddShaderGroupPrototype(ShaderGroup& shaderGroup);
 
          /**
           * Removes the shader group prototype with the specified name from the manager.
           * @param name The name of the shader group prototype to remove.  If the shader group 
           *    prototype cannot be found in the manager's list this method is a no-op.
           */
-         void RemoveShaderGroupPrototype(const std::string &name);
+         void RemoveShaderGroupPrototype(const std::string& name);
 
          /**
           * Removes the specified shader group prototype from the manager.
           * @param shaderGroup The shader group prototype to remove.  If this shader group is not 
           *    currently being managed, this method is a no-op.
           */
-         void RemoveShaderGroupPrototype(const ShaderGroup &shaderGroup);
+         void RemoveShaderGroupPrototype(const ShaderGroup& shaderGroup);
 
          /**
           * Searches the shader manager for the specified shader group prototype. The returned value
@@ -173,7 +173,7 @@ namespace dtCore
           * @param name Name of the shader group prototype to find.
           * @return A const pointer to the shader group prototype or NULL if it could not be found.
           */
-         const ShaderGroup *FindShaderGroupPrototype(const std::string &name) const;
+         const ShaderGroup* FindShaderGroupPrototype(const std::string& name) const;
 
          /**
           * Searches the shader manager for the specified shader group prototype. The returned value
@@ -184,7 +184,7 @@ namespace dtCore
           * @param name Name of the shader group prototype to find.
           * @return A pointer to the shader group prototype or NULL if it could not be found.
           */
-         ShaderGroup *FindShaderGroupPrototype(const std::string &name);
+         ShaderGroup* FindShaderGroupPrototype(const std::string& name);
 
          /**
           * Fills the specified vector with all the shader group prototypes currently in the
@@ -192,7 +192,7 @@ namespace dtCore
           * @param toFill The vector with which to fill with shader groups.  Note, the
           *   vector is cleared before it is filled.
           */
-         void GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill);
+         void GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> >& toFill);
 
          /**
           * Gets the specified shader prototype from the manager.
@@ -204,7 +204,7 @@ namespace dtCore
           * @note For performance reasons, this method should be called with a shader
           *    group specified.
           */
-         const ShaderProgram *FindShaderPrototype(const std::string &name, const std::string &groupName="") const;
+         const ShaderProgram* FindShaderPrototype(const std::string& name, const std::string& groupName="") const;
 
          /**
           * Gets the specified shader prototype from the manager. Changing the returned prototype will 
@@ -218,7 +218,7 @@ namespace dtCore
           * @note For performance reasons, this method should be called with a shader
           *    group specified.
           */
-         ShaderProgram *FindShaderPrototype(const std::string &name, const std::string &groupName="");
+         ShaderProgram* FindShaderPrototype(const std::string& name, const std::string& groupName="");
 
          /**
           * Clones a new instance of the passed in shader prototype and its parameters. It then assigns 
@@ -232,7 +232,7 @@ namespace dtCore
           * @return the unique instance of this shader for this node.  If you plan
           * to modify any parameters of the shader, then you should hold onto this.
           */
-         dtCore::ShaderProgram *AssignShaderFromPrototype(const dtCore::ShaderProgram &shader, osg::Node &node);
+         dtCore::ShaderProgram* AssignShaderFromPrototype(const dtCore::ShaderProgram& shader, osg::Node& node);
 
          /**
           * Use this if you no longer want the shader assigned to the node. It will attempt to
@@ -242,7 +242,7 @@ namespace dtCore
           * previously called AssignShaderFromPrototype(). If the node is unassigned, it is a NO-OP.
           * @param node The node you previously called AssignShaderFromPrototype() on.
           */
-         void UnassignShaderFromNode(osg::Node &node); 
+         void UnassignShaderFromNode(osg::Node& node); 
 
          /**
           * Gets the number of shader prototypes currently managed by the shader manager.  This 
@@ -272,7 +272,7 @@ namespace dtCore
           *    in the manager.  If true, the shaders loaded from the shader file will
           *    be added to the list of shaders already in the manager. (true by default).
           */
-         void LoadShaderDefinitions(const std::string &fileName, bool merge=true);
+         void LoadShaderDefinitions(const std::string& fileName, bool merge = true);
 
          /**
           * This method is kind of weird and should be used ONLY for testing. It 
@@ -285,13 +285,13 @@ namespace dtCore
           * THIS METHOD DURING REAL GAME PLAY. 
           * @param fileName The XML file containing the shader definitions. Merge is not supported
           */
-         void ReloadAndReassignShaderDefinitions(const std::string &fileName);
+         void ReloadAndReassignShaderDefinitions(const std::string& fileName);
 
          /**
           * Called when a message is sent from one of this classes message signalers.
           * @param msgData Data pertaining to the particular message sent.
           */
-         void OnMessage(dtCore::Base::MessageData *msgData);
+         void OnMessage(dtCore::Base::MessageData* msgData);
 
          /**
           * Attempts to find an active shader instance for this node. Active shaders are 
@@ -301,7 +301,7 @@ namespace dtCore
           * @param node The node that was previously used with AssignShaderFromPrototype()
           * @return The unique shader instance for this node. NULL if none found for this node.
           */
-         dtCore::ShaderProgram *GetShaderInstanceForNode(osg::Node *node);
+         dtCore::ShaderProgram* GetShaderInstanceForNode(osg::Node* node);
 
       protected:
 
@@ -318,7 +318,7 @@ namespace dtCore
           * shader.  If none are found, a new cache entry is created.
           * @param shader The shader to resolve.
           */
-         void ResolveShaderPrograms(ShaderProgram &shader, const std::string &groupName);
+         void ResolveShaderPrograms(ShaderProgram& shader, const std::string& groupName);
 
          /**
           * Internal helper method which searches for a shader prototype in the shader manager.
@@ -328,13 +328,13 @@ namespace dtCore
           * @param groupName Name of the group containing the shader.  If this is empty
           *    the first shader with the specified name is returned.
           */
-         const ShaderProgram *InternalFindShader(const std::string &shaderName, const std::string &groupName) const;
+         const ShaderProgram *InternalFindShader(const std::string& shaderName, const std::string& groupName) const;
 
          /**
           * Finds and removes any entries in the active shader list that are assigned to this node. 
           * @param node The node we are looking for.
           */
-         void RemoveShaderFromActiveNodeList(osg::Node *node);
+         void RemoveShaderFromActiveNodeList(osg::Node* node);
 
       private:
 
@@ -362,8 +362,8 @@ namespace dtCore
           */
          virtual ~ShaderManager();
 
-         ShaderManager(const ShaderManager &) { }
-         ShaderManager &operator=(const ShaderManager &) { return *this; }
+         ShaderManager(const ShaderManager&) { }
+         ShaderManager &operator=(const ShaderManager&) { return *this; }
 
          ///Single instance of this class.
          static dtCore::RefPtr<ShaderManager> mInstance;
