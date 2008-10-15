@@ -372,10 +372,12 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void LogGetKeyframeListMessage::FromString(const std::string &source)
+   bool LogGetKeyframeListMessage::FromString(const std::string& source)
    {
-      Message::FromString(source);
+      bool okay = true;
+      okay = okay && Message::FromString(source);
       UpdateInternalKeyframeList();
+      return okay;
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -383,28 +385,28 @@ namespace dtGame
    {
       //The keyframe list is actually broken up into parallel arrays with are
       //stored as message parameters.
-      StringMessageParameter *nameParam =
+      StringMessageParameter* nameParam =
          static_cast<StringMessageParameter*>(GetParameter("Name"));
-      StringMessageParameter *descParam =
+      StringMessageParameter* descParam =
          static_cast<StringMessageParameter*>(GetParameter("Description"));
-      ActorMessageParameter *idParam =
+      ActorMessageParameter* idParam =
          static_cast<ActorMessageParameter*>(GetParameter("UniqueId"));
-      ActorMessageParameter *tagIdParam =
+      ActorMessageParameter* tagIdParam =
          static_cast<ActorMessageParameter*>(GetParameter("TagUniqueId"));
-      StringMessageParameter *mapParam =
+      StringMessageParameter* mapParam =
          static_cast<StringMessageParameter*>(GetParameter("ActiveMap"));
-      DoubleMessageParameter *simTimeParam =
+      DoubleMessageParameter* simTimeParam =
          static_cast<DoubleMessageParameter*>(GetParameter("SimTime"));
-      LongIntMessageParameter *logFileOffsetParam =
+      LongIntMessageParameter* logFileOffsetParam =
          static_cast<LongIntMessageParameter*>(GetParameter("LogFileOffset"));
 
-      std::vector<std::string> &nameList = nameParam->GetValueList();
-      std::vector<std::string> &descList = descParam->GetValueList();
-      std::vector<std::string> &mapList = mapParam->GetValueList();
-      std::vector<double> &simTimeList = simTimeParam->GetValueList();
-      std::vector<dtCore::UniqueId> &idList = idParam->GetValueList();
-      std::vector<dtCore::UniqueId> &tagIdList = tagIdParam->GetValueList();
-      std::vector<long> &logFileOffsetList = logFileOffsetParam->GetValueList();
+      std::vector<std::string>& nameList = nameParam->GetValueList();
+      std::vector<std::string>& descList = descParam->GetValueList();
+      std::vector<std::string>& mapList = mapParam->GetValueList();
+      std::vector<double>& simTimeList = simTimeParam->GetValueList();
+      std::vector<dtCore::UniqueId>& idList = idParam->GetValueList();
+      std::vector<dtCore::UniqueId>& tagIdList = tagIdParam->GetValueList();
+      std::vector<long>& logFileOffsetList = logFileOffsetParam->GetValueList();
 
       if (nameList.size() != descList.size() ||
           nameList.size() != mapList.size() ||
@@ -460,10 +462,12 @@ namespace dtGame
    }
    
    //////////////////////////////////////////////////////////////////////////
-   void LogGetTagListMessage::FromString(const std::string &source)
+   bool LogGetTagListMessage::FromString(const std::string &source)
    {
-      Message::FromString(source);
+      bool okay = true;
+      okay = okay && Message::FromString(source);
       UpdateInternalTagList();
+      return okay;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -582,15 +586,19 @@ namespace dtGame
       AddParameter(new StringMessageParameter("FailureReason"));
    }
 
-   void LogGetKeyframeListMessage::FromDataStream(dtUtil::DataStream &stream)
+   bool LogGetKeyframeListMessage::FromDataStream(dtUtil::DataStream &stream)
    {
-      Message::FromDataStream(stream);
+      bool okay = true;
+      okay = okay && Message::FromDataStream(stream);
       UpdateInternalKeyframeList();
+      return okay;
    }
 
-   void LogGetTagListMessage::FromDataStream(dtUtil::DataStream &stream)
+   bool LogGetTagListMessage::FromDataStream(dtUtil::DataStream &stream)
    {
-      Message::FromDataStream(stream);
+      bool okay = true;
+      okay = okay && Message::FromDataStream(stream);
       UpdateInternalTagList();
+      return okay;
    }
 }

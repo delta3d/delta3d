@@ -67,7 +67,7 @@ namespace dtDAL
 
          virtual void ToDataStream(dtUtil::DataStream& stream) const = 0;
 
-         virtual void FromDataStream(dtUtil::DataStream& stream) = 0;
+         virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
 
          /**
           * @param otherParam the message parameter to make this one match.
@@ -150,7 +150,7 @@ namespace dtDAL
 
          virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
-         virtual void FromDataStream(dtUtil::DataStream& stream);
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          virtual const std::string ToString() const;
 
@@ -389,8 +389,10 @@ namespace dtDAL
             }
          }
 
-         inline virtual void FromDataStream(dtUtil::DataStream& stream)
+         inline virtual bool FromDataStream(dtUtil::DataStream& stream)
          {
+            bool okay = true;
+
             if (IsList())
             {
                mValueList->clear();
@@ -408,6 +410,8 @@ namespace dtDAL
             {
                stream >> mValue;
             }
+
+            return okay;
          }
 
          virtual const std::string ToString() const { return std::string(); }
@@ -1021,7 +1025,7 @@ namespace dtDAL
 
          virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
-         virtual void FromDataStream(dtUtil::DataStream& stream);
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          virtual const std::string ToString() const;
 
