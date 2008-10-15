@@ -176,6 +176,9 @@ namespace dtEditQt
          // Action - Edit - Goto Actor
          QAction *actionEditGotoActor;
 
+         // Action - Goto position
+         QAction *actionGetGotoPosition;
+
          // Action - Edit - Undo
          QAction *actionEditUndo;
 
@@ -387,6 +390,9 @@ namespace dtEditQt
          void slotSelectedActors(ActorProxyRefPtrVector &actors);
 
          void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
+
+         void slotGetGotoPosition();
+
 
 signals:
          void ExternalToolsModified(const QList<QAction*>&);

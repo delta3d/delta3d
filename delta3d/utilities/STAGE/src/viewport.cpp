@@ -444,6 +444,16 @@ namespace dtEditQt
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void Viewport::onGotoPosition(double x, double y, double z)
+   {
+      Camera* cam = getCamera();
+      if (cam != NULL)
+      {
+         cam->setPosition(osg::Vec3(x,y,z));
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::trapMouseCursor()
    {
@@ -574,6 +584,7 @@ namespace dtEditQt
       connect(ga.actionSelectionRotateActor, SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
+      connect(&ge, SIGNAL(gotoPosition(double,double,double)), this, SLOT(onGotoPosition(double,double,double)));
       connect(&ge, SIGNAL(beginChangeTransaction()), this, SLOT(onBeginChangeTransaction()));
       connect(&ge, SIGNAL(endChangeTransaction()), this, SLOT(onEndChangeTransaction()));
    }

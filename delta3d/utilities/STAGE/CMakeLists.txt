@@ -13,7 +13,7 @@ INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc ${QT_INCLUDE_DIR}
 
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
 QT4_ADD_RESOURCES(RCC_SOURCES stage.qrc)
-QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui)
+QT4_WRAP_UI(UI_SOURCES externaltooldialog.ui externaltoolargeditor.ui positiondialog.ui)
 
 ADD_EXECUTABLE(${LIB_NAME}
     ${PROG_HEADERS}

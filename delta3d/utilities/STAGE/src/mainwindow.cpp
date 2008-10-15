@@ -134,6 +134,8 @@ namespace dtEditQt
         editMenu->addAction(editorActions.actionEditGroundClampActors);
         editMenu->addAction(editorActions.actionEditGotoActor);
         editMenu->addSeparator();
+        editMenu->addAction(editorActions.actionGetGotoPosition);
+        editMenu->addSeparator();
         editMenu->addAction(editorActions.actionEditMapProperties);
         editMenu->addAction(editorActions.actionEditMapLibraries);
         editMenu->addAction(editorActions.actionEditMapEvents);
