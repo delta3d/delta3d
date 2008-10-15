@@ -63,6 +63,7 @@
 #include <dtEditQt/externaltooldialog.h>
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparsers.h>
+#include "ui_positiondialog.h"
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -266,6 +267,10 @@ namespace dtEditQt
             tr("Goto Actor"), this);
       actionEditGotoActor->setStatusTip(tr("Places the camera at the selected actor."));
       connect(actionEditGotoActor, SIGNAL(triggered()), this, SLOT(slotEditGotoActor()));
+
+      actionGetGotoPosition = new QAction(tr("Go&to Position..."), this);
+      actionGetGotoPosition->setStatusTip(tr("Move all cameras to desired position."));
+      connect(actionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
 
       // Edit - Undo
       actionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"),this);
@@ -1386,7 +1391,7 @@ namespace dtEditQt
    void EditorActions::SlotNewExternalToolEditor()
    {
       //launch ext tool editor
-      ExternalToolDialog dialog(mTools);
+      ExternalToolDialog dialog(mTools, EditorData::GetInstance().getMainWindow());
       int retCode = dialog.exec();
 
       if (retCode == QDialog::Accepted)
@@ -1419,6 +1424,26 @@ namespace dtEditQt
 
       return actions;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotGetGotoPosition()
+   {
+      //display dialog
+      QDialog *dialog = new QDialog(EditorData::GetInstance().getMainWindow());
+      Ui::PositionDialog ui;
+      ui.setupUi(dialog);
+      int retCode = dialog->exec();
+
+      //if OK
+      if (retCode == QDialog::Accepted)
+      {
+         //emit new position to move cameras to
+         EditorEvents::GetInstance().emitGotoPosition(ui.xSpinBox->value(), ui.ySpinBox->value(), ui.zSpinBox->value());
+      }
+
+      delete dialog;
+   }
+
 }
 
 
