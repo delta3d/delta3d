@@ -36,6 +36,7 @@ void initOrbitMotionModelBindings();
 void initCollisionMotionModelBindings();
 void initViewBindings();
 void initRTSMotionModelBindings();
+void initODEBodyWrapBindings();
 
 
 //#ifndef WIN32
@@ -137,4 +138,6 @@ BOOST_PYTHON_MODULE(PyDtCore)
 
    initViewBindings();
    initRTSMotionModelBindings();
+
+   initODEBodyWrapBindings();
 }
