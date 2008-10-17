@@ -51,7 +51,8 @@ SET(TARGET_SRC
   motionmodelbindings.cpp
   mousebindings.cpp   
   objectbindings.cpp
-  odebindings.cpp   
+  odebindings.cpp
+  odebodywrapbindings.cpp
   orbitmotionmodelbindings.cpp        
   osgmath.cpp           
   osgmatrix.cpp           
