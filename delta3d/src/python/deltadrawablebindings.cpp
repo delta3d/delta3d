@@ -81,5 +81,7 @@ void initDeltaDrawableBindings()
       .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads())
       .def("Emancipate", &DeltaDrawable::Emancipate)
       .def("GetBoundingSphere", &DeltaDrawable::GetBoundingSphere)
+      .def("SetActive", &DeltaDrawable::SetActive)
+      .def("GetActive", &DeltaDrawable::GetActive)
       ;
 }
