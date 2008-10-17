@@ -172,7 +172,20 @@ BUILD_PYTHON_BINDING(${DAL_BINDINGS}
                      ${DTDAL_LIBRARY}
                     )
 
+################
+SET(ANIM_BINDINGS "PyDtAnim")
 
+SET(TARGET_SRC 
+  dtanimbindings.cpp
+  characterwrapperbindings.cpp
+)
+
+SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
+
+BUILD_PYTHON_BINDING(${ANIM_BINDINGS} 
+                     ${DTANIM_LIBRARY}
+                    )
+                    
 ################
 
 IF(BUILD_PLIB)
