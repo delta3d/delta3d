@@ -181,6 +181,8 @@ namespace dtUtil
          ///the terrain is flattened using a UTM projection
          static const LocalCoordinateType CARTESIAN_UTM;
 
+         ///Obsolete, don't use.  It will convert to CARTESIAN_UTM.
+         static const LocalCoordinateType CARTESIAN;
       private:
          LocalCoordinateType(const std::string& name): dtUtil::Enumeration(name)
          {
@@ -274,17 +276,11 @@ namespace dtUtil
 
          const IncomingCoordinateType& GetIncomingCoordinateType() const { return *mIncomingCoordinateType; }
 
-         void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType)
-         {
-            mIncomingCoordinateType = &incomingCoordType;
-         }
+         void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType);
 
          const LocalCoordinateType& GetLocalCoordinateType() const { return *mLocalCoordinateType; }
 
-         void SetLocalCoordinateType(const LocalCoordinateType& localCoordType)
-         {
-            mLocalCoordinateType = &localCoordType;
-         }
+         void SetLocalCoordinateType(const LocalCoordinateType& localCoordType);
 
          /**
           * Sets the globe radius for globe local coordinates.

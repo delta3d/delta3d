@@ -129,6 +129,7 @@ namespace dtUtil
    const LocalCoordinateType LocalCoordinateType::GLOBE("Globe");
    const LocalCoordinateType LocalCoordinateType::CARTESIAN_UTM("Cartesian UTM");
    const LocalCoordinateType LocalCoordinateType::CARTESIAN_FLAT_EARTH("Cartesian Flat Earth");
+   const LocalCoordinateType LocalCoordinateType::CARTESIAN("Cartesian");
 
    IMPLEMENT_ENUM(CoordinateConversionExceptionEnum)
    CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
@@ -379,6 +380,27 @@ namespace dtUtil
    const osg::Matrix& Coordinates::GetOriginRotationMatrixInverse() const
    {
       return mRotationOffsetInverse;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType)
+   {
+      mIncomingCoordinateType = &incomingCoordType;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void Coordinates::SetLocalCoordinateType(const LocalCoordinateType& localCoordType)
+   {
+      if (localCoordType == LocalCoordinateType::CARTESIAN)
+      {
+         LOGN_ERROR("coordinates.cpp", "Setting LocalCoordinateType to CARTESIAN_UTM,"
+                  " CARTESIAN was passed in, but it is replaced by CARTESIAN_UTM.")
+         mLocalCoordinateType = &LocalCoordinateType::CARTESIAN_UTM;
+      }
+      else
+      {
+         mLocalCoordinateType = &localCoordType;
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

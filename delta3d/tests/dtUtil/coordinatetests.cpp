@@ -200,6 +200,10 @@ void CoordinateTests::TestConfigure()
    converter->SetLocalCoordinateType(dtUtil::LocalCoordinateType::GLOBE);
    CPPUNIT_ASSERT(converter->GetLocalCoordinateType() == dtUtil::LocalCoordinateType::GLOBE);
 
+   converter->SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN);
+   CPPUNIT_ASSERT_MESSAGE("The obsolete CARTESIAN should convert to CARTESIAN_UTM",
+            converter->GetLocalCoordinateType() == dtUtil::LocalCoordinateType::CARTESIAN_UTM);
+
    converter->SetGlobeRadius(20.34f);
    CPPUNIT_ASSERT(converter->GetGlobeRadius() == 20.34f);
 
@@ -360,7 +364,7 @@ void CoordinateTests::TestGeodeticToCartesianFlatEarthConversions()
       std::ostringstream ss;
       ss << "Expected: " << testLoc << ", Actual: " << resultBack;
 
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 1e-1));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 1e-4));
 
       ss.str("");
       ss << "Expected: " << testRot << ", Actual: " << resultRotBack;
@@ -389,7 +393,7 @@ void CoordinateTests::TestGeodeticToCartesianFlatEarthConversions()
       std::ostringstream ss;
       ss << "Expected: " << testLoc << ", Actual: " << resultBack;
 
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 25000.0));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 0.01));
 
       ss.str("");
       ss << "Expected: " << testRot << ", Actual: " << resultRotBack;
