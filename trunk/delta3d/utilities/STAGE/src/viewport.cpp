@@ -136,16 +136,16 @@ namespace dtEditQt
       //First, remove the old scene, then add the new one.
       if (this->sceneView.valid())
       {
-         if (this->scene != NULL)
+         if (this->mScene != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(), scene->GetSceneNode());
+            this->rootNodeGroup->replaceChild(this->mScene->GetSceneNode(), scene->GetSceneNode());
          }
          else
          {
             this->rootNodeGroup->addChild(scene->GetSceneNode());
          }
 
-         this->scene = scene;
+         this->mScene = scene;
          //this->scene->GetSceneNode()->setStateSet(this->globalStateSet.get());
       }
    }
@@ -199,7 +199,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()
    {
-      if (!this->sceneView.valid() || !this->scene.valid() || !this->camera.valid())
+      if (!this->sceneView.valid() || !this->mScene.valid() || !this->camera.valid())
          return;
 
       renderFrame();
@@ -232,12 +232,11 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
          if (dbp != NULL)
          {
-            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
-            osgDBP->signalBeginFrame(frameStamp.get());
-            osgDBP->updateSceneGraph(frameStamp->getReferenceTime());
+            dbp->SignalBeginFrame(frameStamp.get());
+            dbp->UpdateSceneGraph(frameStamp->getReferenceTime());
          }
       }
 
@@ -250,15 +249,13 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
          if (dbp != NULL)
          {
-            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
-
-            osgDBP->signalEndFrame();
+            dbp->SignalEndFrame();
             //This magic number is the default amount of time that dtCore Scene USED to use.
             double cleanupTime = 0.0025;
-            osgDBP->compileGLObjects(*sceneView->getState(), cleanupTime);
+            dbp->CompileGLObjects(*sceneView->getState(), cleanupTime);
 
             sceneView->flushDeletedGLObjects(cleanupTime);
          }
@@ -325,7 +322,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::pick(int x, int y)
    {
-      if (!this->scene.valid())
+      if (!this->mScene.valid())
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
                "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
 

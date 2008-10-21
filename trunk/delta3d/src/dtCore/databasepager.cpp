@@ -175,3 +175,27 @@ double dtCore::DatabasePager::GetTargetFrameRate() const
 {
    return mDatabasePager->getTargetFrameRate();
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::SignalBeginFrame(const osg::FrameStamp* framestamp) const
+{
+   mDatabasePager->signalBeginFrame(framestamp);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::SignalEndFrame() const
+{
+   mDatabasePager->signalEndFrame();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::UpdateSceneGraph(double currentFrameTime) const
+{
+   mDatabasePager->updateSceneGraph(currentFrameTime);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::CompileGLObjects(osg::State& state, double& availableTime) const
+{
+   mDatabasePager->compileGLObjects(state, availableTime);
+}

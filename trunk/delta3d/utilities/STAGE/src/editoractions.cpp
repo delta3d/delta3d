@@ -250,13 +250,6 @@ namespace dtEditQt
       actionEditGroundClampActors->setStatusTip(tr("Moves the currently selected actors' Z value to be in line with whatever is below them."));
       connect(actionEditGroundClampActors, SIGNAL(triggered()), this, SLOT(slotEditGroundClampActors()));
 
-      // Edit - Toggle terrain paging.
-      actionToggleTerrainPaging = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
-            tr("&Toggle Paging"),this);
-      actionToggleTerrainPaging->setShortcut(tr("Ctrl+T"));
-      actionToggleTerrainPaging->setStatusTip(tr("Turns off or on terrain paging."));
-      connect(actionToggleTerrainPaging, SIGNAL(triggered()), this, SLOT(slotToggleTerrainPaging()));
-
       // Edit - Task Editor
       actionEditTaskEditor = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
             tr("Tas&k Editor"),this);
@@ -1033,14 +1026,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotToggleTerrainPaging()
-   {
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-         ViewportManager::GetInstance().EnablePaging(false);
-      else
-         ViewportManager::GetInstance().EnablePaging(true);
-   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditGotoActor()
@@ -1235,8 +1221,6 @@ namespace dtEditQt
          {
             EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
             dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
-            if (ViewportManager::GetInstance().IsPagingEnabled())
-            ViewportManager::GetInstance().EnablePaging(false);
             EditorEvents::GetInstance().emitMapLibraryRemoved();
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -1309,10 +1293,6 @@ namespace dtEditQt
       //Update the editor state to reflect the changes.
       EditorData::GetInstance().setCurrentMap(newMap);
       EditorEvents::GetInstance().emitCurrentMapChanged();
-
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-         ViewportManager::GetInstance().EnablePaging(false);
-      ViewportManager::GetInstance().EnablePaging(true);
 
       //Now that we have changed maps, clear the current selection.
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;

@@ -60,13 +60,12 @@ namespace dtEditQt
     {
         shareMasterContext = true;
         masterViewport = NULL;
-        masterScene = new dtCore::Scene();
+        mMasterScene = new dtCore::Scene();
         mMasterView = new dtCore::View();
-        mMasterView->SetScene(masterScene.get());
+        mMasterView->SetScene(mMasterScene.get());
         viewportOverlay = new ViewportOverlay();
         worldCamera = new Camera();
         inChangeTransaction = false;
-        isPagingEnabled = false;
         startTick = 0;
 
         EditorEvents* editorEvents = &EditorEvents::GetInstance();
@@ -139,7 +138,7 @@ namespace dtEditQt
             return NULL;
         }
 
-        vp->setScene(this->masterScene.get());
+        vp->setScene(this->mMasterScene.get());
         this->viewportList[vp->getName()] = vp;
         return vp;
     }
@@ -180,7 +179,7 @@ namespace dtEditQt
         std::map<std::string,Viewport *>::iterator itor;
         for (itor = this->viewportList.begin(); itor!=this->viewportList.end(); ++itor) {
             if (itor->second->getAutoSceneUpdate())
-                itor->second->setScene(this->masterScene.get());
+                itor->second->setScene(this->mMasterScene.get());
         }
     }
 
@@ -200,22 +199,20 @@ namespace dtEditQt
             {
                 billBoard = proxy->GetBillBoardIcon();
                 if (billBoard != NULL)
-                    this->masterScene->RemoveDrawable(billBoard->GetDrawable());
+                    this->mMasterScene->RemoveDrawable(billBoard->GetDrawable());
             }
             else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
             {
-                this->masterScene->RemoveDrawable(proxy->GetActor());
+                this->mMasterScene->RemoveDrawable(proxy->GetActor());
             }
             else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
                 billBoard = proxy->GetBillBoardIcon();
                 if (billBoard != NULL)
-                    this->masterScene->RemoveDrawable(billBoard->GetDrawable());
-                this->masterScene->RemoveDrawable(proxy->GetActor());
+                    this->mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+                this->mMasterScene->RemoveDrawable(proxy->GetActor());
             }
         }
-        if (isPagingEnabled)
-           EnablePaging(false);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -234,23 +231,9 @@ namespace dtEditQt
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ViewportManager::EnablePaging(bool enable)
-    {
-       dtCore::View* view = mMasterView.get();
-       if (enable)
-       {
-          view->SetDatabasePager(new dtCore::DatabasePager);
-       }
-       else
-       {
-          view->SetDatabasePager(NULL);
-       }
-       isPagingEnabled = enable;
-    }
 
     ///////////////////////////////////////////////////////////////////////////////
-    dtCore::DatabasePager* ViewportManager::GetDatabasePager()
+    dtCore::DatabasePager* ViewportManager::GetDatabasePager() const
     {
        return mMasterView->GetDatabasePager();
     }
@@ -265,7 +248,7 @@ namespace dtEditQt
 
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
-            masterScene->RemoveDrawable(proxy->GetActor());
+            mMasterScene->RemoveDrawable(proxy->GetActor());
             viewportOverlay->unSelect(proxy->GetActor());
             if (billBoard == NULL)
             {
@@ -274,10 +257,10 @@ namespace dtEditQt
             else
             {
                 billBoard->LoadImages();
-                billBoardIndex = masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
+                billBoardIndex = mMasterScene->GetDrawableIndex(billBoard->GetDrawable());
+                if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
                 {
-                    masterScene->AddDrawable(billBoard->GetDrawable());
+                    mMasterScene->AddDrawable(billBoard->GetDrawable());
                     viewportOverlay->select(billBoard->GetDrawable());
                 }
             }
@@ -291,13 +274,13 @@ namespace dtEditQt
             else
             {
                 viewportOverlay->unSelect(billBoard->GetDrawable());
-                masterScene->RemoveDrawable(billBoard->GetDrawable());
+                mMasterScene->RemoveDrawable(billBoard->GetDrawable());
             }
 
-            actorIndex = masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
+            actorIndex = mMasterScene->GetDrawableIndex(proxy->GetActor());
+            if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
-                this->masterScene->AddDrawable(proxy->GetActor());
+                this->mMasterScene->AddDrawable(proxy->GetActor());
                 this->viewportOverlay->select(proxy->GetActor());
             }
         }
@@ -310,18 +293,18 @@ namespace dtEditQt
             else
             {
                 billBoard->LoadImages();
-                billBoardIndex = masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
+                billBoardIndex = mMasterScene->GetDrawableIndex(billBoard->GetDrawable());
+                if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
                 {
-                    masterScene->AddDrawable(billBoard->GetDrawable());
+                    mMasterScene->AddDrawable(billBoard->GetDrawable());
                     viewportOverlay->select(billBoard->GetDrawable());
                 }
             }
 
-            actorIndex = masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)masterScene->GetNumberOfAddedDrawable())
+            actorIndex = mMasterScene->GetDrawableIndex(proxy->GetActor());
+            if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
-                masterScene->AddDrawable(proxy->GetActor());
+                mMasterScene->AddDrawable(proxy->GetActor());
                 viewportOverlay->select(proxy->GetActor());
             }
         }
@@ -340,10 +323,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::onEditorShutDown()
     {
-       if (isPagingEnabled)
-          EnablePaging(false);
-
-       masterScene->RemoveAllDrawables();
+       mMasterScene->RemoveAllDrawables();
     }
 
 
@@ -351,7 +331,7 @@ namespace dtEditQt
     void ViewportManager::onActorProxyCreated(
             dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
-        dtCore::Scene* scene = this->masterScene.get();
+        dtCore::Scene* scene = this->mMasterScene.get();
         dtDAL::ActorProxyIcon* billBoard = NULL;
 
         const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
@@ -467,4 +447,16 @@ namespace dtEditQt
         refreshAllViewports();
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    bool ViewportManager::IsPagingEnabled() const
+    {
+       if (mMasterView->GetDatabasePager() != NULL)
+       {
+          return true;
+       }
+       else
+       {
+          return false;
+       }
+    }
 }

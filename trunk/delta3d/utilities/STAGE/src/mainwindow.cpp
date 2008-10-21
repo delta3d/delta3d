@@ -181,7 +181,6 @@ namespace dtEditQt
         editToolBar->addAction(EditorActions::GetInstance().actionEditDeleteActor);
         editToolBar->addAction(EditorActions::GetInstance().actionEditGotoActor);
         editToolBar->addAction(EditorActions::GetInstance().actionEditGroundClampActors);
-        editToolBar->addAction(EditorActions::GetInstance().actionToggleTerrainPaging);
         //editToolBar->addAction(EditorActions::GetInstance().actionEditTaskEditor);
         addToolBar(editToolBar);
 
