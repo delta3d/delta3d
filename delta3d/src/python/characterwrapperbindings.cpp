@@ -1,5 +1,6 @@
 #include <python/dtpython.h>
 #include <dtAnim/characterwrapper.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtAnim;
