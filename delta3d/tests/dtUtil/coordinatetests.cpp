@@ -249,7 +249,7 @@ void CoordinateTests::TestUTMLocalOffsetAsLatLon()
    osg::Vec3d actual;
    converter->GetLocalOffset(actual);
 
-   char hemisphere;
+   char hemisphere = 'n';
    osg::Vec3d expected;
 
    CPPUNIT_ASSERT_EQUAL(50U, converter->GetUTMZone());
