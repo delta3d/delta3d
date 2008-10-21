@@ -103,7 +103,7 @@ namespace dtEditQt
          * @return A pointer to the master scene.
          */
         dtCore::Scene *getMasterScene() {
-            return this->masterScene.get();
+            return this->mMasterScene.get();
         }
 
         /**
@@ -168,13 +168,10 @@ namespace dtEditQt
         }
 
         /// Returns if database paging is enabled
-        bool IsPagingEnabled() const { return isPagingEnabled; }
-
-        /// Sets is database paging is enabled
-        void EnablePaging(bool enable);
+        bool IsPagingEnabled() const;
 
         /// Returns if database paging is enabled
-        dtCore::DatabasePager* GetDatabasePager();
+        dtCore::DatabasePager* GetDatabasePager() const;
 
         dtCore::Timer_t GetStartTick() { return startTick; }
 
@@ -260,11 +257,11 @@ namespace dtEditQt
         std::map<std::string,Viewport*> viewportList;
         Viewport *masterViewport;
         dtCore::RefPtr<ViewportOverlay> viewportOverlay;
-        dtCore::RefPtr<dtCore::Scene> masterScene;
+        dtCore::RefPtr<dtCore::Scene> mMasterScene;
         dtCore::RefPtr<dtCore::View> mMasterView;
         dtCore::RefPtr<Camera> worldCamera;
         int numTextureUnits;
-        bool inChangeTransaction, isPagingEnabled;
+        bool inChangeTransaction;
         dtCore::Timer_t startTick;
     };
 }

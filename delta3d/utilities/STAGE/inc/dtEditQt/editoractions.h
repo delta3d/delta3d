@@ -170,9 +170,6 @@ namespace dtEditQt
          // Action - Edit Clamp actors to ground.
          QAction *actionEditGroundClampActors;
 
-         // Action - Turns terrain paging off and on.
-         QAction *actionToggleTerrainPaging;
-
          // Action - Edit - Goto Actor
          QAction *actionEditGotoActor;
 
@@ -296,10 +293,6 @@ namespace dtEditQt
           */
          void slotEditGroundClampActors();
 
-         /**
-          * Slot - Edit - Toggle terrain paging.
-          */
-         void slotToggleTerrainPaging();
 
          /**
           * Slot - Edit - Task Editor

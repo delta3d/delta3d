@@ -155,6 +155,30 @@ namespace dtCore
       */
       double GetTargetFrameRate() const;
 
+      /** 
+      * Tell the database pager that a new frame has begun.  This will
+      * put the thread to sleep so the CPU can work on the
+      * rendering.
+      * @see SignalEndFrame()
+      */
+      virtual void SignalBeginFrame(const osg::FrameStamp* framestamp) const;      
+
+      /** 
+      * Tell the database pager that the frame has ended.  This will
+      * wake up the thread for work, now that the other threads are idle.
+      */
+      virtual void SignalEndFrame() const;
+
+      /** Merge changes to the scene graph.  Note: Must only be called
+      * from the single thread update phase.
+      */
+      virtual void UpdateSceneGraph(double currentFrameTime) const;
+
+      /** 
+      * Compile the rendering objects.  Should only be called from the 
+      * draw thread and requires a valid OpenGL context
+      */
+      virtual void CompileGLObjects(osg::State& state, double& availableTime) const;
 
    protected:
       virtual ~DatabasePager();
