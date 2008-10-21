@@ -66,15 +66,18 @@ namespace dtUtil
         /**
          * @return the XMLCh string as a char*
          */
-        const char* c_str()
+        const char* c_str() const
         {
             if (mLocalForm == NULL)
+            {
                return "";
+            }
 
             return mLocalForm;
         }
 
-        const std::string ToString() { return std::string(c_str()); }
+        const std::string ToString() const { return std::string(c_str()); }
+
     private :
         char* mLocalForm;
         XMLStringConverter(const XMLStringConverter&) {}

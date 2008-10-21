@@ -203,7 +203,7 @@ namespace dtGame
       {
          dtDAL::ActorProxy& aProxy = *proxies[i];
          // Ensure that we don't try and add the environment actor
-         if(map.GetEnvironmentActor() == &aProxy)
+         if (map.GetEnvironmentActor() == &aProxy)
             continue;
 
          if (aProxy.IsGameActorProxy())
@@ -212,7 +212,7 @@ namespace dtGame
             if (gameProxy != NULL)
             {
                gameProxy->SetGameManager(mGameManager.get());
-               if(gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
+               if (gameProxy->GetInitialOwnership() == GameActorProxy::Ownership::PROTOTYPE)
                {
                   mGameManager->AddActorAsAPrototype(*gameProxy);
                }
