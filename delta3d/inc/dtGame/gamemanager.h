@@ -181,7 +181,7 @@ namespace dtGame
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindPrototypesByName(name, toFill);
-               if(!toFill.empty())
+               if (!toFill.empty())
                {
                   proxy = dynamic_cast<ProxyType*>(toFill[0]);
                }
@@ -567,7 +567,7 @@ namespace dtGame
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByName(name, toFill);
-               if(!toFill.empty())
+               if (!toFill.empty())
                {
                   proxy = dynamic_cast<ProxyType*>(toFill[0]);
                }

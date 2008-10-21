@@ -62,7 +62,7 @@ namespace dtGame
    IMPLEMENT_ENUM(DeadReckoningHelper::UpdateMode);
    DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::AUTO("AUTO");
    DeadReckoningHelper::UpdateMode DeadReckoningHelper::UpdateMode::CALCULATE_ONLY("CALCULATE_ONLY");
-   DeadReckoningHelper::UpdateMode 
+   DeadReckoningHelper::UpdateMode
       DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR("CALCULATE_AND_MOVE_ACTOR");
 
    //////////////////////////////////////////////////////////////////////
@@ -72,11 +72,11 @@ namespace dtGame
       mLastRotationUpdatedTime(0.0),
       mTimeUntilForceClamp(0.0f),
       mAverageTimeBetweenTranslationUpdates(0.0f),
-      mAverageTimeBetweenRotationUpdates(0.0f), 
+      mAverageTimeBetweenRotationUpdates(0.0f),
       mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS),
       mMaxRotationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_ROT),
       mTranslationCurrentSmoothingTime(0.0f),
-      mRotationCurrentSmoothingTime(0.0f), 
+      mRotationCurrentSmoothingTime(0.0f),
       mTranslationEndSmoothingTime(0.0f),
       mRotationEndSmoothingTime(0.0f),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
@@ -168,7 +168,7 @@ namespace dtGame
          mRotationUpdated = true;
          mUpdated = true;
       }
-      else 
+      else
       {
          dtCore::Transform xform;
          xform.SetRotation(vec);
@@ -217,7 +217,7 @@ namespace dtGame
       {
          double w = sqrt (mAngularVelocityVector[0]*mAngularVelocityVector[0]+
                        mAngularVelocityVector[1]*mAngularVelocityVector[1]+
-                       mAngularVelocityVector[2]*mAngularVelocityVector[2]); 
+                       mAngularVelocityVector[2]*mAngularVelocityVector[2]);
 
          double omega00 = 0;
          double omega01 = -mAngularVelocityVector[2];
@@ -239,7 +239,7 @@ namespace dtGame
          double ww02 = mAngularVelocityVector[0]*mAngularVelocityVector[2];
          double ww03 = 0;
 
-         double ww10 = mAngularVelocityVector[1]*mAngularVelocityVector[0];  
+         double ww10 = mAngularVelocityVector[1]*mAngularVelocityVector[0];
          double ww11 = mAngularVelocityVector[1]*mAngularVelocityVector[1];
          double ww12 = mAngularVelocityVector[1]*mAngularVelocityVector[2];
          double ww13 = 0;
@@ -273,7 +273,7 @@ namespace dtGame
    void DeadReckoningHelper::SetLastTranslationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
-      mAverageTimeBetweenTranslationUpdates = 0.5f * (float(newUpdatedTime - mLastTranslationUpdatedTime) + mAverageTimeBetweenTranslationUpdates); 
+      mAverageTimeBetweenTranslationUpdates = 0.5f * (float(newUpdatedTime - mLastTranslationUpdatedTime) + mAverageTimeBetweenTranslationUpdates);
       mLastTranslationUpdatedTime = newUpdatedTime;
    }
 
@@ -281,19 +281,19 @@ namespace dtGame
    void DeadReckoningHelper::SetLastRotationUpdatedTime(double newUpdatedTime)
    {
       //the average of the last average and the current time since an update.
-      mAverageTimeBetweenRotationUpdates = 0.5f * (float(newUpdatedTime - mLastRotationUpdatedTime) + mAverageTimeBetweenRotationUpdates); 
+      mAverageTimeBetweenRotationUpdates = 0.5f * (float(newUpdatedTime - mLastRotationUpdatedTime) + mAverageTimeBetweenRotationUpdates);
       mLastRotationUpdatedTime = newUpdatedTime;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetModelDimensions(const osg::Vec3& newDimensions) 
+   void DeadReckoningHelper::SetModelDimensions(const osg::Vec3& newDimensions)
    {
       mGroundClampingData.SetModelDimensions(newDimensions);
       SetUseModelDimensions(true);
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position, 
+   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position,
          const osg::Vec3& rateOverTime)
    {
       dtCore::RefPtr<DeadReckoningDOF> toAdd = new DeadReckoningDOF();
@@ -305,20 +305,22 @@ namespace dtGame
       toAdd->mStartLocation.set( position );
 
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iter;
-      for(iter = mDeadReckonDOFS.begin(); iter != mDeadReckonDOFS.end(); ++iter)
+      for (iter = mDeadReckonDOFS.begin(); iter != mDeadReckonDOFS.end(); ++iter)
       {
          // does the linking of the object to ADD, so we add the next pointer and validate it
          // no matter what the dead reckon dof gets pushed onto the list at the end
          // of the function.
-         if((*iter)->mName == DofName)
+         if ((*iter)->mName == DofName)
          {
             bool HadToIter = false;
             DeadReckoningDOF* GetDOFBeforeNULL = (*iter).get();
 
-            while(GetDOFBeforeNULL != NULL)
+            while (GetDOFBeforeNULL != NULL)
             {
-               if(GetDOFBeforeNULL->mNext == NULL)
+               if (GetDOFBeforeNULL->mNext == NULL)
+               {
                   break;
+               }
                GetDOFBeforeNULL = GetDOFBeforeNULL->mNext;
                HadToIter = true;
             }
@@ -354,7 +356,7 @@ namespace dtGame
 
    private:
       const std::string& mName;
-   };   
+   };
 
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::RemoveAllDRDOFByName(const std::string& removeName)
@@ -366,10 +368,10 @@ namespace dtGame
    void DeadReckoningHelper::RemoveDRDOF(DeadReckoningDOF &obj)
    {
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iterDOF;
-      for(iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
+      for (iterDOF = mDeadReckonDOFS.begin();iterDOF != mDeadReckonDOFS.end(); ++iterDOF)
       {
          // If the same pointer or the values match, then remove this object from the list.
-         if( &obj == *iterDOF 
+         if ( &obj == *iterDOF
             || (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
             && (obj.mName          == (*iterDOF)->mName)
             && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
@@ -385,10 +387,10 @@ namespace dtGame
    void DeadReckoningHelper::RemoveDRDOF(std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator &iter)
    {
       // if theres more after it
-      if((*iter)->mNext != NULL)
+      if ((*iter)->mNext != NULL)
       {
          // if its in the middle of two objects
-         if((*iter)->mPrev != NULL)
+         if ((*iter)->mPrev != NULL)
          {
             (*iter)->mPrev->mNext = (*iter)->mNext;
             (*iter)->mNext->mPrev = (*iter)->mPrev;
@@ -400,7 +402,7 @@ namespace dtGame
          }
       }
       // if there is more before it
-      else if((*iter)->mPrev != NULL)
+      else if ((*iter)->mPrev != NULL)
       {
          // its last
         (*iter)->mPrev->mNext = NULL;
@@ -413,7 +415,7 @@ namespace dtGame
       mDeadReckonDOFS.erase(iter);
       return;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::GetActorProperties(std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
    {
@@ -452,26 +454,26 @@ namespace dtGame
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::IsFlying),
          "Flags if the dead-reckoning code should not make this actor follow the ground as it moves."));
 
-      pFillVector.push_back(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset", 
-         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetGroundOffset), 
-         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset), 
+      pFillVector.push_back(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset",
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetGroundOffset),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset),
          "Sets the offset from the ground this entity should have.  This only matters if it is not flying."));
 
-      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions", 
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetModelDimensions), 
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetModelDimensionsByCopy), 
+      pFillVector.push_back(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
+            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetModelDimensions),
+            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetModelDimensionsByCopy),
             "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code."));
 
-      pFillVector.push_back(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions", 
-            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetUseModelDimensions), 
-            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::UseModelDimensions), 
+      pFillVector.push_back(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
+            dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetUseModelDimensions),
+            dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::UseModelDimensions),
             "Should the DR Component use the currently set model dimension values when ground clamping?"));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform, 
+   bool DeadReckoningHelper::DoDR(GameActor& gameActor, dtCore::Transform& xform,
          dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType)
-   {         
+   {
       bool returnValue = false; // indicates we changed the transform
       if (IsFlying())
          gcType = &BaseGroundClamper::GroundClampingType::NONE;
@@ -484,7 +486,7 @@ namespace dtGame
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "Dead Reckoning Algorithm set to NONE, "
                   "setting the transform to match the actor's current position.");
          }
@@ -512,7 +514,7 @@ namespace dtGame
       if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << "Dead Reckoning actor as STATIC.  New position is " <<  mLastTranslation  
+         ss << "Dead Reckoning actor as STATIC.  New position is " <<  mLastTranslation
             << ".  New Rotation is " << mLastRotation << ".";
          pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
@@ -542,13 +544,13 @@ namespace dtGame
       osg::Vec3 unclampedTranslation = pos;
 
       // removed because the transform is now initialized to the
-      // the current DR'd position. 
+      // the current DR'd position.
       //if (!mFlying)
       //   unclampedTranslation.z() = mLastTranslation.z();
 
       //avoid the sqrtf by using length2.
       //we went to see if all this dr and ground clamping stuff has to be done.
-      if ( IsUpdated() || 
+      if ( IsUpdated() ||
          mLastTranslation != unclampedTranslation ||
          !mRotationResolved ||
          mVelocityVector.length2() > 1e-2f ||
@@ -569,8 +571,8 @@ namespace dtGame
             {
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " got an update " << std::endl
-                  << "      Rotation \"" << mLastRotation  << "\" " << std::endl 
-                  << "      Position \"" << mLastTranslation << "\" " << std::endl 
+                  << "      Rotation \"" << mLastRotation  << "\" " << std::endl
+                  << "      Position \"" << mLastTranslation << "\" " << std::endl
                   << "Tag Time \"" << mLastTimeTag << "\"";
                pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
             }
@@ -584,7 +586,7 @@ namespace dtGame
          xform.SetTranslation(pos);
 
          returnValue = true;
-      } 
+      }
       else
       {
          if (pLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -600,12 +602,12 @@ namespace dtGame
       // ROTATION
       if (GetMaxRotationSmoothingTime() < mAverageTimeBetweenRotationUpdates)
          mRotationEndSmoothingTime = GetMaxRotationSmoothingTime();
-      else 
+      else
          mRotationEndSmoothingTime = mAverageTimeBetweenRotationUpdates;
 
       // For angular acceleration, do a similar compare
-      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION && 
-         (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) < 
+      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION &&
+         (mAngularVelocityVector.length2() * (mRotationEndSmoothingTime * mRotationEndSmoothingTime)) <
             0.1 * ((mLastQuatRotation-mCurrentDeadReckonedRotation).length2()))
       {
          mRotationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenRotationUpdates);
@@ -614,12 +616,12 @@ namespace dtGame
       // TRANSLATION
       if (GetMaxTranslationSmoothingTime() < mAverageTimeBetweenTranslationUpdates)
          mTranslationEndSmoothingTime = GetMaxTranslationSmoothingTime();
-      else 
+      else
          mTranslationEndSmoothingTime = mAverageTimeBetweenTranslationUpdates;
 
       osg::Vec3 pos;
       xform.GetTranslation(pos);
-      
+
       //If the player could not possible get to the new position in 10 seconds
       //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
       if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
@@ -630,7 +632,7 @@ namespace dtGame
    void DeadReckoningHelper::DeadReckonTheRotation(dtCore::Transform &xform)
    {
       osg::Quat newRot;
-      osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last. 
+      osg::Quat drQuat = mLastQuatRotation; // velocity only just uses the last.
       bool isRotationChangedByAccel = false;
       osg::Quat startRotation = mRotQuatBeforeLastUpdate;
 
@@ -639,7 +641,7 @@ namespace dtGame
 
          // For vel and Accel, we use the angular velocity to compute a dead reckoning matrix to slerp to
          // assuming that we have an angular velocity at all...
-         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION && 
+         if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION &&
             mAngularVelocityVector.length2() < 1e-6)
          {
             // if we're here, we had some sort of change, however small
@@ -658,10 +660,10 @@ namespace dtGame
             // Previous DR'ed rotation - same, but uses where we were before the last update, so we can smooth it out...
             startRotation = angularRotAsQuat * mRotQuatBeforeLastUpdate; // The current DR'ed rotation
 
-            // New hpr computation 
+            // New hpr computation
             //osg::Matrix drRot = angularRotation * mLastRotationMatrix;
             //////dtUtil::MatrixUtil::Print(mComputedAngularRotationMatrix);
-            // Compute change in rotation as quaternion representation 
+            // Compute change in rotation as quaternion representation
             //drRot.get(drQuat);
             //osg::Quat rotationChange = drQuat - mLastQuatRotation;
             //isRotationChangedByAccel = rotationChange.length2() > 1e-6;
@@ -669,7 +671,7 @@ namespace dtGame
             //startRotation = mRotQuatBeforeLastUpdate + rotationChange;
          }
 
-         // If there is a difference in the rotations and we still have time to smooth, then 
+         // If there is a difference in the rotations and we still have time to smooth, then
          // slerp between the two quats: 1) the old rotation plus the expected change using angular
          //    velocity and 2) the desired new rotation
          if ((mRotationEndSmoothingTime > 0.0f) && (mRotationCurrentSmoothingTime <  mRotationEndSmoothingTime))
@@ -704,7 +706,7 @@ namespace dtGame
          positionChange = mVelocityVector * mTranslationCurrentSmoothingTime +
             ((mAccelerationVector * 0.5f) * (mTranslationCurrentSmoothingTime * mTranslationCurrentSmoothingTime));
       }
-      
+
       osg::Vec3 drPos = mLastTranslation + positionChange;
 
       // If we still have time left in our smoothing, then
@@ -720,7 +722,7 @@ namespace dtGame
          {
             std::ostringstream ss;
             ss << "Actor \"" << gameActor.GetUniqueId() << " - " << gameActor.GetName() << "\" has pos " << "\"" << pos << "\"";
-            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
+            pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
       }
       else // Out of time or no move, so just set it.
@@ -737,7 +739,7 @@ namespace dtGame
             << "\"" << drPos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"\n";
          ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
             << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"";
-         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());               
+         pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
    }
 
@@ -745,7 +747,7 @@ namespace dtGame
    void DeadReckoningHelper::LogDeadReckonStarted(osg::Vec3 &unclampedTranslation, osg::Matrix& rot, dtUtil::Log* pLogger)
    {
       std::ostringstream ss;
-      ss << "Actor passed optimization checks: fully dead-reckoning actor.\n" 
+      ss << "Actor passed optimization checks: fully dead-reckoning actor.\n"
          << "  IsFlying():                           " << IsFlying() << std::endl
          << "  mLastTranslation:                     " << mLastTranslation << std::endl
          << "  unclampedTranslation:                 " << unclampedTranslation << std::endl

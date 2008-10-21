@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/basemessages.h>
 #include <dtDAL/gameeventmanager.h>
@@ -233,16 +234,16 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
-   void GameEventMessage::SetGameEvent(dtDAL::GameEvent &event)
+   void GameEventMessage::SetGameEvent(const dtDAL::GameEvent& event)
    {
-      GameEventMessageParameter *mp = static_cast<GameEventMessageParameter*>(GetParameter("GameEvent"));
+      GameEventMessageParameter* mp = static_cast<GameEventMessageParameter*>(GetParameter("GameEvent"));
       mp->SetValue(event.GetUniqueId());
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   const dtDAL::GameEvent *GameEventMessage::GetGameEvent() const
+   const dtDAL::GameEvent* GameEventMessage::GetGameEvent() const
    {
-      const GameEventMessageParameter *mp = static_cast<const GameEventMessageParameter*>(GetParameter("GameEvent"));
+      const GameEventMessageParameter* mp = static_cast<const GameEventMessageParameter*>(GetParameter("GameEvent"));
       const dtCore::UniqueId id = mp->GetValue();
 
       //Need to look up in the event manager for the specified event.

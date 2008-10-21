@@ -357,7 +357,7 @@ namespace dtGame
                                                const dtGame::GameActor& gameActor,
                                                const dtGame::TickMessage& tickMessage) const
    {
-      if( helper.GetNodeCollector() == NULL )
+      if ( helper.GetNodeCollector() == NULL )
       {
          return;
       }
@@ -366,7 +366,7 @@ namespace dtGame
       std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
 
       std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator iterDOF = containerDOFs.begin();
-      for(; iterDOF != endDOF; ++iterDOF)
+      for (; iterDOF != endDOF; ++iterDOF)
       {
          (*iterDOF)->mUpdate = false;
       }
@@ -376,10 +376,10 @@ namespace dtGame
       // so the latest stops should be used because they contain the latest data.
       std::vector<DeadReckoningHelper::DeadReckoningDOF*> deletableDRDOFs;
       iterDOF = containerDOFs.begin();
-      while(iterDOF != endDOF)
+      while (iterDOF != endDOF)
       {
          // an element is a middle man if there are 3 in the chain (ie current->next->next != NULL).
-         if((*iterDOF)->mNext != NULL && (*iterDOF)->mNext->mNext != NULL)
+         if ((*iterDOF)->mNext != NULL && (*iterDOF)->mNext->mNext != NULL)
          {
             // delete the current
             deletableDRDOFs.push_back(iterDOF->get());
@@ -389,7 +389,7 @@ namespace dtGame
 
       // Now delete all stops that are unneeded.
       unsigned limit = deletableDRDOFs.size();
-      for( unsigned i = 0; i < limit; ++i )
+      for ( unsigned i = 0; i < limit; ++i )
       {
          helper.RemoveDRDOF(*deletableDRDOFs[i]);
       }
@@ -397,22 +397,22 @@ namespace dtGame
 
 
       iterDOF = containerDOFs.begin();
-      while(iterDOF != endDOF)
+      while (iterDOF != endDOF)
       {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
 
          // Only process the first DR stop in the chain so that subsequent 
          // stops will be used as blending targets.
-         if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
+         if (currentDOF->mPrev == NULL && !currentDOF->mUpdate)
          {
             currentDOF->mCurrentTime += tickMessage.GetDeltaSimTime();
             currentDOF->mUpdate = true;
 
             // Smooth time has completed, and this has more in its chain
-            if( currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime )
+            if ( currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime )
             {
                osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if( ptr )
+               if ( ptr )
                {
                   currentDOF->mNext->mStartLocation = ptr->getCurrentHPR();
                }
@@ -427,10 +427,10 @@ namespace dtGame
 
 
             // there is something in the chain
-            if(currentDOF->mNext != NULL)
+            if (currentDOF->mNext != NULL)
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if( dofTransform != NULL )
+               if ( dofTransform != NULL )
                {
                   DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation,
                      currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime);

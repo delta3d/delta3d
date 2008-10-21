@@ -18,6 +18,7 @@
  *
  * David Guthrie, Chris Rodgers
  */
+
 #ifndef DELTA_BASEGROUNDCLAMPER
 #define DELTA_BASEGROUNDCLAMPER
 

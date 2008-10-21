@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_MESSAGETYPE
 #define DELTA_MESSAGETYPE
 
@@ -130,13 +131,13 @@ namespace dtGame
           * Sets the category of this message type
           * @param The new category
           */
-         void SetCategory(const std::string &newCategory) { mCategory = newCategory; }
+         void SetCategory(const std::string& newCategory) { mCategory = newCategory; }
 
          /**
           * Sets the description of this message type
           * @param The new description
           */
-         void SetDescription(const std::string &newDescription) { mDescription = newDescription; }
+         void SetDescription(const std::string& newDescription) { mDescription = newDescription; }
 
       protected:
 

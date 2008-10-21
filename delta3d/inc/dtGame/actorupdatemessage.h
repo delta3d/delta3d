@@ -130,18 +130,18 @@ namespace dtGame
          const dtDAL::NamedParameter* GetUpdateParameter(const std::string &name) const;
 
          /** 
-          * Retrieves the dtDAL::NamedParameters that have been previously added to this
+          * Retrieves the MessageParameters that have been previously added to this
           * ActorUpdateMessage internal GroupMessageParameter.
-          * @param toFill The vector to fill with the dtDAL::NamedParameters
+          * @param toFill The vector to fill with the MessageParameters
           * @note The "update parameters" are stored in an internal GroupMessageParameter and
           * will not be returned when calling ActorUpdateMessage::GetParameter().
           */
-         void GetUpdateParameters(std::vector<dtDAL::NamedParameter*> &toFill);
+         void GetUpdateParameters(std::vector<MessageParameter*> &toFill);
 
          /** 
-          * Retrieves the dtDAL::NamedParameters that have been previously added to this
+          * Retrieves the MessageParameters that have been previously added to this
           * ActorUpdateMessage internal GroupMessageParameter.
-          * @param toFill The vector to fill with the const dtDAL::NamedParameters
+          * @param toFill The vector to fill with the const MessageParameters
           * @note The "update parameters" are stored in an internal GroupMessageParameter and
           * will not be returned when calling ActorUpdateMessage::GetParameter().
           */

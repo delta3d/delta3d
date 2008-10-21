@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/messagetype.h>
 
@@ -143,8 +144,11 @@ namespace dtGame
 
    //////////////////////////////////////////////////////////////////////////////////////
    MessageType::MessageType(const std::string& name, const std::string& category,
-               const std::string& description, const unsigned short id) :
-               dtUtil::Enumeration(name), mCategory(category), mDescription(description), mId(id)
+               const std::string& description, const unsigned short id)
+      : dtUtil::Enumeration(name)
+      , mCategory(category)
+      , mDescription(description)
+      , mId(id)
    {
       AddInstance(this);
    }
