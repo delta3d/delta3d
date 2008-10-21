@@ -449,6 +449,8 @@ namespace dtEditQt
       {
          cam->setPosition(osg::Vec3(x,y,z));
       }
+
+      refresh(); //manually redraw the viewport to show new position
    }
 
    ///////////////////////////////////////////////////////////////////////////////

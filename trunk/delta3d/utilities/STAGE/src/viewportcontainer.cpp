@@ -36,6 +36,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QFrame>
+#include <QtGui/QLineEdit>
+#include <QtGui/QDoubleValidator>
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewport.h"
 #include "dtEditQt/viewportmanager.h"
@@ -88,6 +90,15 @@ namespace dtEditQt
         //Manually call the slot the first time the viewport is set so the state
         //of the actions are set properly.
         onViewportRenderStyleChanged();
+
+        //listen for when the camera moves
+        connect(viewPort->getCamera(), SIGNAL(PositionMoved(double,double,double)),
+                this, SLOT(OnCameraMoved(double,double,double)));
+
+        //update the widgets manually to get them initialized
+        OnCameraMoved(viewPort->getCamera()->getPosition().x(),
+                      viewPort->getCamera()->getPosition().y(),
+                      viewPort->getCamera()->getPosition().z());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -168,8 +179,10 @@ namespace dtEditQt
         QFont labelFont = this->viewportTitle->font();
         labelFont.setBold(true);
         this->viewportTitle->setFont(labelFont);
-
         layout->addWidget(this->viewportTitle);
+
+        SetupPositionWidgets(layout);
+
         layout->addStretch(1);
         layout->addLayout(buttonLayout);
 
@@ -315,4 +328,49 @@ namespace dtEditQt
         }
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::OnCameraMoved(double x, double y, double z)
+    {
+       mPositionEditWidgets.at(0)->setText(QString::number(x, 'f', 2));
+       mPositionEditWidgets.at(1)->setText(QString::number(y, 'f', 2));
+       mPositionEditWidgets.at(2)->setText(QString::number(z, 'f', 2)); 
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::OnNewPositionEntered()
+    {
+      this->viewPort->onGotoPosition(mPositionEditWidgets.at(0)->text().toDouble(),
+                                     mPositionEditWidgets.at(1)->text().toDouble(),
+                                     mPositionEditWidgets.at(2)->text().toDouble());
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::SetupPositionWidgets(QBoxLayout* layout)
+    {
+       const double minValue = -99999.99;
+       const double maxValue = 99999.99;
+
+       QLineEdit *editX = new QLineEdit(this);
+       editX->setToolTip(tr("X"));
+       editX->setValidator(new QDoubleValidator(minValue, maxValue, 2, editX));
+       mPositionEditWidgets.push_back(editX);
+
+       QLineEdit *editY = new QLineEdit(this);
+       editY->setToolTip(tr("Y"));
+       editY->setValidator(new QDoubleValidator(minValue, maxValue, 2, editY));
+       mPositionEditWidgets.push_back(editY);
+
+       QLineEdit *editZ = new QLineEdit(this);
+       editZ->setToolTip(tr("Z"));
+       editZ->setValidator(new QDoubleValidator(minValue, maxValue, 2, editZ));
+       mPositionEditWidgets.push_back(editZ);
+
+       layout->addWidget(editX);
+       layout->addWidget(editY);
+       layout->addWidget(editZ);
+
+       connect(editX, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
+       connect(editY, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
+       connect(editZ, SIGNAL(editingFinished()), this, SLOT(OnNewPositionEntered()));
+    }
 }
