@@ -58,6 +58,7 @@ namespace dtEditQt
     {
         this->position = pos;
         this->updateWorldViewMatrix = true;
+        emit PositionMoved(pos.x(), pos.y(), pos.z());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -65,6 +66,7 @@ namespace dtEditQt
     {
         this->position += relPos;
         this->updateWorldViewMatrix = true;
+        emit PositionMoved(position.x(), position.y(), position.z());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
