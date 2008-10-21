@@ -26,8 +26,8 @@ void initViewBindings()
    Mouse* (View::*GetMouse1)() = &View::GetMouse;
    const Mouse* (View::*GetMouse2)() const = &View::GetMouse;
 
-   class_<View, bases<Base>, dtCore::RefPtr<View>, boost::noncopyable>("View", init<optional<const std::string&,bool>>())
-      .def(init<osgViewer::View*,optional<const std::string&,bool>>())
+   class_<View, bases<Base>, dtCore::RefPtr<View>, boost::noncopyable>("View", init<optional<const std::string&,bool> >())
+      .def(init<osgViewer::View*,optional<const std::string&,bool> >())
       .def("SetFrameBin", &View::SetFrameBin)
       .def("GetFrameBin", &View::GetFrameBin)
       .def("AddSlave", &View::AddSlave)
