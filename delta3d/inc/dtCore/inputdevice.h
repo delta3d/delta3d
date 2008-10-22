@@ -55,177 +55,193 @@ namespace dtCore
       typedef std::map< int, dtCore::RefPtr<Button> > ButtonMap;
       typedef std::vector< dtCore::RefPtr<Axis> > AxisVector;
 
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         InputDevice(const std::string& name = "InputDevice");
+      /**
+       * Constructor.
+       *
+       * @param name the instance name
+       */
+      InputDevice(const std::string& name = "InputDevice");
 
-      protected:
+   protected:
 
-         /**
-          * Destructor.
-          */
-         virtual ~InputDevice();
+      /**
+       * Destructor.
+       */
+      virtual ~InputDevice();
 
-      public:
+   public:
 
-         /**
-          * Returns the number of features (buttons, axes, etc.) contained in 
-          * this device.
-          *
-          * @return the number of features contained in this device
-          */
-         int GetFeatureCount() const;
+      /**
+       * Returns the number of features (buttons, axes, etc.) contained in 
+       * this device.
+       *
+       * @return the number of features contained in this device
+       */
+      int GetFeatureCount() const;
 
-         /**
-          * Returns a pointer to the specified feature.
-          *
-          * @param index the index of the desired feature
-          * @return a pointer to the feature
-          */
-         InputDeviceFeature* GetFeature(int index);
+      /**
+       * Returns a pointer to the specified feature.
+       *
+       * @param index the index of the desired feature
+       * @return a pointer to the feature
+       */
+      InputDeviceFeature* GetFeature(int index);
 
-         /**
-          * Returns the number of features (buttons, axes, etc.) contained in 
-          * this device.
-          *
-          * @return the number of features contained in this device
-          */
-         int GetButtonCount() const;
+      /**
+       * Returns the number of features (buttons, axes, etc.) contained in 
+       * this device.
+       *
+       * @return the number of features contained in this device
+       */
+      int GetButtonCount() const;
 
-         /**
-          * Returns a pointer to the specified feature.
-          *
-          * @param index the index of the desired feature
-          * @return a pointer to the feature
-          */
-         Button* GetButton(int index);
-         const Button* GetButton(int index) const;
+      /**
+       * Returns a pointer to the specified feature.
+       *
+       * @param index the index of the desired feature
+       * @return a pointer to the feature
+       */
+      Button* GetButton(int index);
+      const Button* GetButton(int index) const;
 
-         /**
-          * Returns the number of features (buttons, axes, etc.) contained in 
-          * this device.
-          *
-          * @return the number of features contained in this device
-          */
-         int GetAxisCount() const;
+      /**
+       * Get the index in the array of buttons for given button.
+       *
+       * @param button the button whose index is to be found
+       * @return the index of given button if valid, else -1
+       */
+      int GetButtonIndex(const Button* button) const;
 
-         /**
-          * Returns a pointer to the specified feature.
-          *
-          * @param index the index of the desired feature
-          * @return a pointer to the feature
-          */
-         Axis* GetAxis(int index);
-         const Axis* GetAxis(int index) const;
+      /**
+       * Returns the number of features (buttons, axes, etc.) contained in 
+       * this device.
+       *
+       * @return the number of features contained in this device
+       */
+      int GetAxisCount() const;
 
-         /**
-          * Adds a button listener.
-          *
-          * @param buttonListener a pointer to the listener to add
-          */
-         void AddButtonListener(ButtonListener* buttonListener);
+      /**
+       * Returns a pointer to the specified feature.
+       *
+       * @param index the index of the desired feature
+       * @return a pointer to the feature
+       */
+      Axis* GetAxis(int index);
+      const Axis* GetAxis(int index) const;
 
-         /**
-          * Removes a button listener.
-          *
-          * @param buttonListener a pointer to the listener to remove
-          */
-         void RemoveButtonListener(ButtonListener* buttonListener);
-         
-         /**
-          * Adds an axis listener.
-          *
-          * @param axisListener a pointer to the listener to add
-          */
-         void AddAxisListener(AxisListener* axisListener);
+      /**
+       * Get the index in the array of axes for given button.
+       *
+       * @param axis the axis whose index is to be found
+       * @return the index of given axis if valid, else -1
+       */
+      int GetAxisIndex(const Axis* axis) const;
 
-         /**
-          * Removes an axis listener.
-          *
-          * @param axisListener a pointer to the listener to remove
-          */
-         void RemoveAxisListener(AxisListener* axisListener);
+      /**
+       * Adds a button listener.
+       *
+       * @param buttonListener a pointer to the listener to add
+       */
+      void AddButtonListener(ButtonListener* buttonListener);
 
-         /// Adds a feature to this device.
-         /// @param feature a pointer to the feature to add
-         bool AddFeature(InputDeviceFeature* feature);
+      /**
+       * Removes a button listener.
+       *
+       * @param buttonListener a pointer to the listener to remove
+       */
+      void RemoveButtonListener(ButtonListener* buttonListener);
+      
+      /**
+       * Adds an axis listener.
+       *
+       * @param axisListener a pointer to the listener to add
+       */
+      void AddAxisListener(AxisListener* axisListener);
 
-         /// Removes a feature from this device.
-         /// @param feature a pointer to the feature to remove
-         void RemoveFeature(InputDeviceFeature* feature);
+      /**
+       * Removes an axis listener.
+       *
+       * @param axisListener a pointer to the listener to remove
+       */
+      void RemoveAxisListener(AxisListener* axisListener);
 
-         const ButtonMap& GetButtons() const { return mButtons; }
-         ButtonMap& GetButtons() { return mButtons; }
+      /// Adds a feature to this device.
+      /// @param feature a pointer to the feature to add
+      bool AddFeature(InputDeviceFeature* feature);
 
-         const AxisVector& GetAxes() const { return mAxes; }
-         AxisVector& GetAxes() { return mAxes; }
+      /// Removes a feature from this device.
+      /// @param feature a pointer to the feature to remove
+      void RemoveFeature(InputDeviceFeature* feature);
 
-      private:
-         FeatureVector mFeatures;  ///< The list of features.
-         ButtonMap mButtons;  ///< The list of buttons.
-         AxisVector mAxes;  ///< The list of axes.
+      const ButtonMap& GetButtons() const { return mButtons; }
+      ButtonMap& GetButtons() { return mButtons; }
 
-         typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
-         typedef std::list<AxisListener*> AxisListenerList;     ///< A container of AxisListeners.
+      const AxisVector& GetAxes() const { return mAxes; }
+      AxisVector& GetAxes() { return mAxes; }
 
-         ButtonListenerList mButtonListeners;  ///< The container of ButtonListeners.
-         AxisListenerList mAxisListeners;      ///< The container of AxisListeners.
+   private:
+      FeatureVector mFeatures;  ///< The list of features.
+      ButtonMap mButtons;  ///< The list of buttons.
+      AxisVector mAxes;  ///< The list of axes.
+
+      typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
+      typedef std::list<AxisListener*> AxisListenerList;     ///< A container of AxisListeners.
+
+      ButtonListenerList mButtonListeners;  ///< The container of ButtonListeners.
+      AxisListenerList mAxisListeners;      ///< The container of AxisListeners.
    };
 
 
    /// The base class of all input device features: buttons, axes, etc.
    class DT_CORE_EXPORT InputDeviceFeature : public osg::Referenced
    {
-      public:
+   public:
 
-         /**
-          * Constructor.
-          *
-          * @param owner the owner of this feature
-          * @param description a description of this feature
-          */
-         InputDeviceFeature(InputDevice* owner, const std::string& description);
+      /**
+       * Constructor.
+       *
+       * @param owner the owner of this feature
+       * @param description a description of this feature
+       */
+      InputDeviceFeature(InputDevice* owner, const std::string& description);
 
-      protected:
+   protected:
 
-         /**
-          * Destructor.
-          */
-         virtual ~InputDeviceFeature() = 0;
+      /**
+       * Destructor.
+       */
+      virtual ~InputDeviceFeature() = 0;
 
-      public:
+   public:
 
-         /**
-          * Returns a pointer to the owner of this feature.
-          *
-          * @return a pointer to the owner of this feature
-          */
-         InputDevice* GetOwner() const;
+      /**
+       * Returns a pointer to the owner of this feature.
+       *
+       * @return a pointer to the owner of this feature
+       */
+      InputDevice* GetOwner() const;
 
-         /**
-          * Sets the description of this feature.
-          *
-          * @param description the new description
-          */
-         void SetDescription(const std::string& description);
+      /**
+       * Sets the description of this feature.
+       *
+       * @param description the new description
+       */
+      void SetDescription(const std::string& description);
 
-         /**
-          * Returns a description of this feature.
-          *
-          * @return a description of this feature
-          */
-         std::string GetDescription() const;
+      /**
+       * Returns a description of this feature.
+       *
+       * @return a description of this feature
+       */
+      std::string GetDescription() const;
 
-      private:
+   private:
 
-         /// The owner of this feature.
-         InputDevice* mOwner;
+      /// The owner of this feature.
+      InputDevice* mOwner;
 
-         /// A description of this feature.
-         std::string mDescription;
+      /// A description of this feature.
+      std::string mDescription;
    };
 
 
@@ -235,68 +251,69 @@ namespace dtCore
    public:
       typedef std::list<ButtonListener*> ButtonListenerList;  ///< A container of ButtonListeners
       
-         /**
-          * Constructor.
-          *
-          * @param owner the owner of this button
-          * @param description a description of this button
-          */
-         Button(InputDevice* owner, const std::string& description);
-         /**
-          * Constructor.
-          *
-          * @param owner the owner of this button
-          * @param symbole the symbole of this button
-          * @param description a description of this button
-          */
-         Button(InputDevice* owner, int symbole, const std::string& description);
+      /**
+       * Constructor.
+       *
+       * @param owner the owner of this button
+       * @param description a description of this button
+       */
+      Button(InputDevice* owner, const std::string& description);
 
-      protected:
+      /**
+       * Constructor.
+       *
+       * @param owner the owner of this button
+       * @param symbole the symbole of this button
+       * @param description a description of this button
+       */
+      Button(InputDevice* owner, int symbole, const std::string& description);
 
-         virtual ~Button() {}
+   protected:
 
-      public:
-         /// Sets the state of this button.
-         /// @param state the new state
-         /// @return The result of the listeners
-         bool SetState(bool state);
+      virtual ~Button() {}
 
-         /**
-          * Returns the current state of this button.
-          *
-          * @return true if this button is pressed, false
-          * otherwise
-          */
-         bool GetState() const;
+   public:
+      /// Sets the state of this button.
+      /// @param state the new state
+      /// @return The result of the listeners
+      bool SetState(bool state);
 
-         /**
-          * Returns the symbole of this button.
-          */
-         int GetSymbol() const;
-         
-         /**
-          * Adds a button listener.
-          *
-          * @param buttonListener a pointer to the listener to add
-          */
-         void AddButtonListener(ButtonListener* buttonListener);
+      /**
+       * Returns the current state of this button.
+       *
+       * @return true if this button is pressed, false
+       * otherwise
+       */
+      bool GetState() const;
 
-         /**
-          * Removes a button listener.
-          *
-          * @param buttonListener a pointer to the listener to remove
-          */
-         void RemoveButtonListener(ButtonListener* buttonListener);
+      /**
+       * Returns the symbole of this button.
+       */
+      int GetSymbol() const;
+      
+      /**
+       * Adds a button listener.
+       *
+       * @param buttonListener a pointer to the listener to add
+       */
+      void AddButtonListener(ButtonListener* buttonListener);
 
-         /// Inserts the listener into the list at a position BEFORE pos.
-         void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
+      /**
+       * Removes a button listener.
+       *
+       * @param buttonListener a pointer to the listener to remove
+       */
+      void RemoveButtonListener(ButtonListener* buttonListener);
 
-         const ButtonListenerList& GetListeners() const { return mButtonListeners; }
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
 
-      private:
-         bool mState;  ///< The state of this button.
-         int mSymbol;  ///< The symbol of this button.
-         ButtonListenerList mButtonListeners;  ///< Listeners to this button.
+      const ButtonListenerList& GetListeners() const { return mButtonListeners; }
+
+   private:
+      bool mState;  ///< The state of this button.
+      int mSymbol;  ///< The symbol of this button.
+      ButtonListenerList mButtonListeners;  ///< Listeners to this button.
    };
 
 
@@ -317,61 +334,61 @@ namespace dtCore
    /// Axes are features with double-valued state.
    class DT_CORE_EXPORT Axis : public InputDeviceFeature
    {
-      public:
-         typedef std::list<AxisListener*> AxisListenerList;
+   public:
+      typedef std::list<AxisListener*> AxisListenerList;
 
-         /**
-          * Constructor.
-          *
-          * @param owner the owner of this axis
-          * @param description a description of this axis
-          */
-         Axis(InputDevice* owner, const std::string& description);
+      /**
+       * Constructor.
+       *
+       * @param owner the owner of this axis
+       * @param description a description of this axis
+       */
+      Axis(InputDevice* owner, const std::string& description);
 
-      protected:
+   protected:
 
-         virtual ~Axis() {}
+      virtual ~Axis() {}
 
-      public:
+   public:
 
-         /**
-          * Sets the state of this axis.  The delta value is used to
-          * indicate stateless motion, such as mouse scrolling.
-          *
-          * @param state the new state
-          * @param delta the optional delta value
-          */
-         bool SetState(double state, double delta = 0.0);
+      /**
+       * Sets the state of this axis.  The delta value is used to
+       * indicate stateless motion, such as mouse scrolling.
+       *
+       * @param state the new state
+       * @param delta the optional delta value
+       */
+      bool SetState(double state, double delta = 0.0);
 
-         /**
-          * Returns the current state of this axis.
-          *
-          * @return the current state of this axis
-          */
-         double GetState() const;
+      /**
+       * Returns the current state of this axis.
+       *
+       * @return the current state of this axis
+       */
+      double GetState() const;
 
-         /**
-          * Adds an axis listener.
-          *
-          * @param axisListener a pointer to the listener to add
-          */
-         void AddAxisListener(AxisListener* axisListener);
+      /**
+       * Adds an axis listener.
+       *
+       * @param axisListener a pointer to the listener to add
+       */
+      void AddAxisListener(AxisListener* axisListener);
 
-         /**
-          * Removes an axis listener.
-          *
-          * @param axisListener a pointer to the listener to remove
-          */
-         void RemoveAxisListener(AxisListener* axisListener);
+      /**
+       * Removes an axis listener.
+       *
+       * @param axisListener a pointer to the listener to remove
+       */
+      void RemoveAxisListener(AxisListener* axisListener);
 
-         const AxisListenerList& GetListeners() const { return mAxisListeners; }
+      const AxisListenerList& GetListeners() const { return mAxisListeners; }
 
-         /// Inserts the listener into the list at a position BEFORE pos.
-         void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
 
-      private:
-         double mState;  ///< The state of this axis.
-         AxisListenerList mAxisListeners;  ///< Listeners to this axis.
+   private:
+      double mState;  ///< The state of this axis.
+      AxisListenerList mAxisListeners;  ///< Listeners to this axis.
    };
 
    /// An interface for objects interested in changes to axes.
@@ -382,13 +399,13 @@ namespace dtCore
       virtual ~AxisListener() {}
 
       /**
-      * Called when an axis' state has changed.
-      *
-      * @param axis the changed axis
-      * @param oldState the old state of the axis
-      * @param newState the new state of the axis
-      * @param delta a delta value indicating stateless motion
-      */
+       * Called when an axis' state has changed.
+       *
+       * @param axis the changed axis
+       * @param oldState the old state of the axis
+       * @param newState the new state of the axis
+       * @param delta a delta value indicating stateless motion
+       */
       virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)=0;
    };
 }
