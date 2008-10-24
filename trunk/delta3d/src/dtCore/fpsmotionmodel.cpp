@@ -30,15 +30,15 @@ namespace dtCore
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
 
 
-FPSMotionModel::FPSAxisListener::FPSAxisListener(const SetFunctor& setFunc):
-mSetFunctor(setFunc)
+FPSMotionModel::FPSAxisListener::FPSAxisListener(const SetFunctor& setFunc)
+   : mSetFunctor(setFunc)
 {
 }
 
 ///When the axis changes, just call the functor with the new values
 bool FPSMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
-                                                       double oldState, 
-                                                       double newState, 
+                                                       double oldState,
+                                                       double newState,
                                                        double delta)
 {
    return mSetFunctor(newState, delta);
@@ -53,24 +53,25 @@ bool FPSMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
  * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
  */
-FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
-                                 Mouse* mouse,
-                                 float maxWalkSpeed,
-                                 float maxTurnSpeed,
-                                 float maxSidestepSpeed,
-                                 float height,
-                                 float maxStepUpDist,
-                                 bool useWASD,
-                                 bool useArrowKeys)
+FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
+                               Mouse* mouse,
+                               float maxWalkSpeed,
+                               float maxTurnSpeed,
+                               float maxSidestepSpeed,
+                               float height,
+                               float maxStepUpDist,
+                               bool useWASD,
+                               bool useArrowKeys)
    : MotionModel("FPSMotionModel")
-   , mWalkForwardBackwardAxis(0)
-   , mTurnLeftRightAxis(0)
-   , mLookUpDownAxis(0)
-   , mSidestepLeftRightAxis(0)
-   , mSidestepListener(0)
-   , mForwardBackwardListener(0)
-   , mLookLeftRightListener(0)
-   , mLookUpDownListener(0)
+   , mpDebugger(NULL)
+   , mWalkForwardBackwardAxis(NULL)
+   , mTurnLeftRightAxis(NULL)
+   , mLookUpDownAxis(NULL)
+   , mSidestepLeftRightAxis(NULL)
+   , mSidestepListener(NULL)
+   , mForwardBackwardListener(NULL)
+   , mLookLeftRightListener(NULL)
+   , mLookUpDownListener(NULL)
    , mMaximumWalkSpeed(maxWalkSpeed)
    , mMaximumTurnSpeed(maxTurnSpeed)
    , mMaximumSidestepSpeed(maxSidestepSpeed)
@@ -90,10 +91,10 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    , mUseMouseButtons(false) // default behavior is NOT to require mouse down to look
 {
    RegisterInstance(this);
-   
-   //setup some axis listeners with functors 
+
+   //setup some axis listeners with functors
    FPSAxisListener::SetFunctor fbFunc(this, &FPSMotionModel::OnForwardBackwardChanged);
-   FPSAxisListener::SetFunctor sideStepFunc(this, &FPSMotionModel::OnSidestepChanged);  
+   FPSAxisListener::SetFunctor sideStepFunc(this, &FPSMotionModel::OnSidestepChanged);
    FPSAxisListener::SetFunctor lookLeftRightFunc(this, &FPSMotionModel::OnLookLeftRightChanged);
    FPSAxisListener::SetFunctor lookUpDownFunc(this, &FPSMotionModel::OnLookUpDownChanged);
 
@@ -102,13 +103,13 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    mSidestepListener        = new FPSAxisListener( sideStepFunc );
    mForwardBackwardListener = new FPSAxisListener( fbFunc );
 
-   if(keyboard != NULL && mouse != NULL)
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
-   
+
    AddSender(&System::GetInstance());
-   
+
    mMouse    = mouse;
    mKeyboard = keyboard;
 
@@ -124,15 +125,26 @@ FPSMotionModel::~FPSMotionModel()
 {
    RemoveSender(&System::GetInstance());
 
-   mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
-   mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
-   mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
-   mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
-
-   delete mLookUpDownListener;
-   delete mLookLeftRightListener;
-   delete mSidestepListener;
-   delete mForwardBackwardListener;
+   if (mLookUpDownAxis.get())
+   {
+      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+      delete mLookUpDownListener;
+   }
+   if (mTurnLeftRightAxis.get())
+   {
+      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+      delete mLookLeftRightListener;
+   }
+   if (mSidestepLeftRightAxis.get())
+   {
+      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+      delete mSidestepListener;
+   }
+   if (mWalkForwardBackwardAxis.get())
+   {
+      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+      delete mForwardBackwardListener;
+   }
 
    mIsector->SetScene(0);
 
@@ -144,10 +156,10 @@ FPSMotionModel::~FPSMotionModel()
  *
  * @param scene the active scene
  */
-void FPSMotionModel::SetScene(Scene *scene)
+void FPSMotionModel::SetScene(Scene* scene)
 {
    mScene = scene;
-   mIsector->SetScene( mScene.get() );
+   mIsector->SetScene(mScene.get());
 }
 
 /**
@@ -178,21 +190,45 @@ dtCore::Isector* FPSMotionModel::GetISector() const
 */
 void FPSMotionModel::SetEnabled(bool enabled)
 {
-   if(enabled && !MotionModel::IsEnabled())
+   if (enabled && !MotionModel::IsEnabled())
    {
       mMouse->SetPosition(0.0f,0.0f);
 
-      mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
-      mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
-      mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
-      mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+      if (mLookUpDownAxis.valid())
+      {
+         mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+      }
+      if (mTurnLeftRightAxis.valid())
+      {
+         mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+      }
+      if (mSidestepLeftRightAxis.valid())
+      {
+         mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+      }
+      if (mWalkForwardBackwardAxis.valid())
+      {
+         mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+      }
    }
    if (!enabled && MotionModel::IsEnabled())
    {
-      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
-      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
-      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
-      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+      if (mLookUpDownAxis.valid())
+      {
+         mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+      }
+      if (mTurnLeftRightAxis.valid())
+      {
+         mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+      }
+      if (mSidestepLeftRightAxis.valid())
+      {
+         mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+      }
+      if (mWalkForwardBackwardAxis.valid())
+      {
+         mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+      }
    }
 
    MotionModel::SetEnabled(enabled);
@@ -205,42 +241,42 @@ void FPSMotionModel::SetEnabled(bool enabled)
  * @param keyboard the keyboard instance
  * @param mouse the mouse instance
  */
-void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
+void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(!mDefaultInputDevice.valid()) //if(mDefaultInputDevice.get() == 0)
+   if (!mDefaultInputDevice.valid()) //if (mDefaultInputDevice.get() == 0)
    {
       mDefaultInputDevice = new LogicalInputDevice("FPSLogicalInputDevice");
 
-      Axis *leftRightMouseMovement = mDefaultInputDevice->AddAxis(
+      Axis* leftRightMouseMovement = mDefaultInputDevice->AddAxis(
          "left/right mouse movement",
           new AxisToAxis(mouse->GetAxis(0)));
 
-      Axis *upDownMouseMovement = mDefaultInputDevice->AddAxis(
+      Axis* upDownMouseMovement = mDefaultInputDevice->AddAxis(
          "up/down mouse movement",
           new AxisToAxis(mouse->GetAxis(1)));
-      
+
 
       AxesToAxis* forwardBack = new AxesToAxis();
       AxesToAxis* leftRight = new AxesToAxis();
 
-      if(mUseWASD)
+      if (mUseWASD)
       {
-         Axis *forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
+         Axis* forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
             "s/w",
             new ButtonsToAxis( keyboard->GetButton('s'), keyboard->GetButton('w') )
             );
 
-         Axis *forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
+         Axis* forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
             "S/W",
             new ButtonsToAxis( keyboard->GetButton('S'), keyboard->GetButton('W') )
             );
 
-         Axis *sideStepAxis1 = mDefaultInputDevice->AddAxis(
+         Axis* sideStepAxis1 = mDefaultInputDevice->AddAxis(
             "a/d",
             new ButtonsToAxis( keyboard->GetButton('a'), keyboard->GetButton('d') )
             );
 
-         Axis *sideStepAxis2 = mDefaultInputDevice->AddAxis(
+         Axis* sideStepAxis2 = mDefaultInputDevice->AddAxis(
             "A/D",
             new ButtonsToAxis( keyboard->GetButton('A'), keyboard->GetButton('D') )
             );
@@ -251,7 +287,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          leftRight->AddSourceAxis(sideStepAxis2);
       }
 
-      if(mUseArrowKeys)
+      if (mUseArrowKeys)
       {
 
          Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
@@ -283,7 +319,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          "default sidestep left/right",
          leftRight
          );
-         
+
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
          new AxesToAxis(leftRightMouseMovement)
@@ -293,34 +329,37 @@ void FPSMotionModel::SetDefaultMappings(Keyboard *keyboard, Mouse *mouse)
          "default look up/down",
          new AxesToAxis(upDownMouseMovement)
       );
-         
+
    }
-   
-   SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis);
-      
-   SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis);
-   
-   SetLookUpDownAxis(mDefaultLookUpDownAxis);
-         
-   SetSidestepLeftRightAxis(mDefaultSidestepLeftRightAxis);
+
+   SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis.get());
+
+   SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis.get());
+
+   SetLookUpDownAxis(mDefaultLookUpDownAxis.get());
+
+   SetSidestepLeftRightAxis(mDefaultSidestepLeftRightAxis.get());
 }
-         
+
 /**
  * Sets the axis that moves the target forwards (for positive
  * values) or backwards (for negative values).
  *
  * @param walkForwardBackwardAxis the new forward/backward axis
  */
-void FPSMotionModel::SetWalkForwardBackwardAxis(Axis *walkForwardBackwardAxis)
+void FPSMotionModel::SetWalkForwardBackwardAxis(Axis* walkForwardBackwardAxis)
 {
-   if (mWalkForwardBackwardAxis) 
+   if (mWalkForwardBackwardAxis.valid())
    {
       mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
    }
 
    mWalkForwardBackwardAxis = walkForwardBackwardAxis;
 
-   mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+   if (mWalkForwardBackwardAxis.valid())
+   {
+      mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
+   }
 }
 
 /**
@@ -331,7 +370,7 @@ void FPSMotionModel::SetWalkForwardBackwardAxis(Axis *walkForwardBackwardAxis)
  */
 Axis* FPSMotionModel::GetWalkForwardBackwardAxis()
 {
-   return mWalkForwardBackwardAxis;
+   return mWalkForwardBackwardAxis.get();
 }
 
 /**
@@ -340,16 +379,19 @@ Axis* FPSMotionModel::GetWalkForwardBackwardAxis()
  *
  * @param turnLeftRightAxis the new turn left/right axis
  */
-void FPSMotionModel::SetTurnLeftRightAxis(Axis *turnLeftRightAxis)
+void FPSMotionModel::SetTurnLeftRightAxis(Axis* turnLeftRightAxis)
 {
-   if (mTurnLeftRightAxis)
+   if (mTurnLeftRightAxis.valid())
    {
       mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
    }
 
-   mTurnLeftRightAxis = turnLeftRightAxis;  
+   mTurnLeftRightAxis = turnLeftRightAxis;
 
-   mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+   if (mTurnLeftRightAxis.valid())
+   {
+      mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
+   }
 }
 
 /**
@@ -360,7 +402,7 @@ void FPSMotionModel::SetTurnLeftRightAxis(Axis *turnLeftRightAxis)
  */
 Axis* FPSMotionModel::GetTurnLeftRightAxis()
 {
-   return mTurnLeftRightAxis;
+   return mTurnLeftRightAxis.get();
 }
 
 /**
@@ -369,16 +411,19 @@ Axis* FPSMotionModel::GetTurnLeftRightAxis()
  *
  * @param lookUpDownAxis the new look up/down axis
  */
-void FPSMotionModel::SetLookUpDownAxis(Axis *lookUpDownAxis)
+void FPSMotionModel::SetLookUpDownAxis(Axis* lookUpDownAxis)
 {
-   if (mLookUpDownAxis != NULL)
+   if (mLookUpDownAxis.valid())
    {
       mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
    }
 
-   mLookUpDownAxis = lookUpDownAxis;  
+   mLookUpDownAxis = lookUpDownAxis;
 
-   mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+   if (mLookUpDownAxis.valid())
+   {
+      mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
+   }
 }
 
 /**
@@ -389,7 +434,7 @@ void FPSMotionModel::SetLookUpDownAxis(Axis *lookUpDownAxis)
  */
 Axis* FPSMotionModel::GetLookUpDownAxis()
 {
-   return mLookUpDownAxis;
+   return mLookUpDownAxis.get();
 }
 
 /**
@@ -398,16 +443,19 @@ Axis* FPSMotionModel::GetLookUpDownAxis()
  *
  * @param sidestepLeftRightAxis the new sidestep left/right axis
  */
-void FPSMotionModel::SetSidestepLeftRightAxis(Axis *sidestepLeftRightAxis)
+void FPSMotionModel::SetSidestepLeftRightAxis(Axis* sidestepLeftRightAxis)
 {
-   if (mSidestepLeftRightAxis != NULL)
+   if (mSidestepLeftRightAxis.valid())
    {
       mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
    }
 
    mSidestepLeftRightAxis = sidestepLeftRightAxis;
 
-   mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+   if (mSidestepLeftRightAxis.valid())
+   {
+      mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
+   }
 }
 
 /**
@@ -418,7 +466,7 @@ void FPSMotionModel::SetSidestepLeftRightAxis(Axis *sidestepLeftRightAxis)
  */
 Axis* FPSMotionModel::GetSidestepLeftRightAxis()
 {
-   return mSidestepLeftRightAxis;
+   return mSidestepLeftRightAxis.get();
 }
 
 /**
@@ -524,7 +572,7 @@ float FPSMotionModel::GetMaximumStepUpDistance()
 {
    return mMaximumStepUpDistance;
 }
-         
+
 
 float FPSMotionModel::GetFallingHeight() const
 {
@@ -537,9 +585,9 @@ float FPSMotionModel::GetFallingHeight() const
  *
  * @param data the message data
  */
-void FPSMotionModel::OnMessage(MessageData *data)
+void FPSMotionModel::OnMessage(MessageData* data)
 {
-   if(IsCurrentlyActive() && data->message == "preframe")
+   if (IsCurrentlyActive() && data->message == "preframe")
    {
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
@@ -566,7 +614,7 @@ bool FPSMotionModel::IsCurrentlyActive()
 {
    bool result = false;
 
-   result = GetTarget() != NULL && IsEnabled() && 
+   result = GetTarget() != NULL && IsEnabled() &&
       (mOperateWhenUnfocused || mMouse->GetHasFocus());
 
    return result;
@@ -579,35 +627,61 @@ void FPSMotionModel::ShouldOperateWhenUnfocused(bool operate)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+class FPSMotionModel::FPSMotionModelDebugger
+{
+public:
+   FPSMotionModelDebugger()
+      : mNumFrames(0)
+      , mFramesWithNonZeroMouse(0)
+      , mTotalTime(0.0f)
+   {
+      // nada
+   }
 
-int numFrames = 0;
-int framesWithNonZeroMouse = 0;
-float totalTime = 0.0f;
-osg::Vec2 mousePos, lastMousePos;
+   void Update(const double deltaTime, bool mouse_has_moved)
+   {
+      ++mNumFrames;
+      if (mouse_has_moved) { ++mFramesWithNonZeroMouse; }
+      mTotalTime += deltaTime;
+
+      if (mTotalTime > 0.5f)
+      {
+         std::cout << "Num Frames: " << mNumFrames << ", Frames with mouse input: " << mFramesWithNonZeroMouse << std::endl;
+
+         mTotalTime = 0.0f;
+         mFramesWithNonZeroMouse = 0;
+         mNumFrames = 0;
+      }
+   }
+
+private:
+   int mNumFrames;
+   int mFramesWithNonZeroMouse;
+   float mTotalTime;
+};
+
+/////////////////////////////////////////////////////////////////////////////
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
-   lastMousePos = mousePos;
-   mousePos = mMouse->GetPosition();
-   osg::Vec2 diff = mousePos - lastMousePos;
-  
+   osg::Vec2 diff(0.0f, 0.0f);
+   if (GetTurnLeftRightAxis())
+   {
+      diff.x() = GetTurnLeftRightAxis()->GetState();
+   }
+   if (GetLookUpDownAxis())
+   {
+      diff.y() = GetLookUpDownAxis()->GetState();
+   }
+
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
    const bool mouse_has_moved = (std::abs(diff[0]) > 0.0f || std::abs(diff[1]) > 0.0f);
 
-
-   ++numFrames;
-   if(mouse_has_moved) ++framesWithNonZeroMouse;
-   totalTime += deltaTime;
-
-   if(totalTime > 0.5f)
+   if (mpDebugger)
    {
-    //  std::cout << "Num Frames: " << numFrames << ", Frames with mouse input: " << framesWithNonZeroMouse << std::endl;
-
-      totalTime = 0.0f;
-      framesWithNonZeroMouse = 0;
-      numFrames = 0;
+      mpDebugger->Update(deltaTime, mouse_has_moved);
    }
 
-   if(calc_new_heading_pitch && mouse_has_moved)
+   if (calc_new_heading_pitch && mouse_has_moved)
    {
       Transform transform;
       GetTarget()->GetTransform(transform);
@@ -620,8 +694,8 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
       osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
-      
-      if(mInvertMouse)
+
+      if (mInvertMouse)
       {
          deltaX = -deltaX;
       }
@@ -635,7 +709,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       //TODO- use the normalized opposite of the scene's gravity vector
       upVector = osg::Vec3(0.0f, 0.0f, 1.0f);
-       
+
       rightVector = forwardVector ^ upVector;
       upVector = rightVector ^ forwardVector;
 
@@ -652,7 +726,6 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       GetTarget()->SetTransform(transform);
 
       mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
-      mousePos.set(0.0f, 0.0f);
    }
 }
 
@@ -675,15 +748,15 @@ void FPSMotionModel::PerformTranslation(const double deltaTime)
 
    // calculate x/y delta
    osg::Vec3 translation(transForward + transRight);
-   translation.normalize();   
+   translation.normalize();
    translation *= mMaximumWalkSpeed;
 
    // integration step
    newXYZ = xyz + translation * deltaTime;
 
    // apply collision detection/response
-   if(mScene.valid())
-   {         
+   if (mScene.valid())
+   {
       // ground clamp if required
       AdjustElevation(newXYZ, deltaTime);
    }
@@ -724,7 +797,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
    const float targetHeight = hot + mHeightAboveTerrain;
 
    //if we're too high off the terrain, then let gravity take over
-   if( (xyz[2]-targetHeight) > mFallingHeight)
+   if ( (xyz[2]-targetHeight) > mFallingHeight)
    {
       mFalling = true;
    }
@@ -739,7 +812,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
       mFallingVec += gravityVec * deltaFrameTime;
 
       //modify our position using the falling vector
-      xyz += mFallingVec * deltaFrameTime;    
+      xyz += mFallingVec * deltaFrameTime;
 
       //make sure didn't fall below the terrain
       if (xyz[2] <= targetHeight)
@@ -752,7 +825,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
    }
 
    //otherwise, lets clamp to the terrain
-   else 
+   else
    {
       mFallingVec.set(0.f, 0.f, 0.f);
       xyz[2] = targetHeight;

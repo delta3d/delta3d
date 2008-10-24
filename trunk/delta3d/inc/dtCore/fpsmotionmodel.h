@@ -73,15 +73,15 @@ namespace dtCore
           * @param height the height above the terrain at which we stand
           * @param maxStepUpDist the maximum distance we can step up to higher terrain
           */
-         FPSMotionModel(   Keyboard* keyboard = 0,
-                           Mouse* mouse = 0,
-                           float maxWalkSpeed = 5.0f,
-                           float maxTurnSpeed = 1.5f,
-                           float maxSidestepSpeed = 5.0f,
-                           float height = 2.0f,
-                           float maxStepUpDist = 1.0f,
-                           bool useWASD = true,
-                           bool useArrowKeys = false);
+         FPSMotionModel(Keyboard* keyboard = 0,
+                        Mouse* mouse = 0,
+                        float maxWalkSpeed = 5.0f,
+                        float maxTurnSpeed = 1.5f,
+                        float maxSidestepSpeed = 5.0f,
+                        float height = 2.0f,
+                        float maxStepUpDist = 1.0f,
+                        bool useWASD = true,
+                        bool useArrowKeys = false);
 
       protected:
 
@@ -388,6 +388,8 @@ namespace dtCore
          bool IsCurrentlyActive();
 
       private:
+         class FPSMotionModelDebugger; // private inner class used for debugging
+         FPSMotionModelDebugger *mpDebugger; // private inner object used for debugging
 
          /**
           * A reference to the Scene, used for ground following.
@@ -402,47 +404,47 @@ namespace dtCore
          /**
           * The default walk forward/backward axis.
           */
-         LogicalAxis* mDefaultWalkForwardBackwardAxis;
+         dtCore::RefPtr<LogicalAxis> mDefaultWalkForwardBackwardAxis;
 
          /**
           * The default turn left/right axis.
           */
-         LogicalAxis* mDefaultTurnLeftRightAxis;
+         dtCore::RefPtr<LogicalAxis> mDefaultTurnLeftRightAxis;
 
          /**
           * The default look up/down axis.
           */
-         LogicalAxis* mDefaultLookUpDownAxis;
+         dtCore::RefPtr<LogicalAxis> mDefaultLookUpDownAxis;
 
          /**
           * The default sidestep left/right axis.
           */
-         LogicalAxis* mDefaultSidestepLeftRightAxis;
+         dtCore::RefPtr<LogicalAxis> mDefaultSidestepLeftRightAxis;
 
          /**
           * The axis that moves the target forwards or backwards.
           */
-         Axis* mWalkForwardBackwardAxis;
+         dtCore::RefPtr<Axis> mWalkForwardBackwardAxis;
 
          /**
           * The axis that turns the target to the left or right.
           */
-         Axis* mTurnLeftRightAxis;
+         dtCore::RefPtr<Axis> mTurnLeftRightAxis;
 
          /**
           * The axis that looks up or down.
           */
-         Axis* mLookUpDownAxis;
+         dtCore::RefPtr<Axis> mLookUpDownAxis;
 
          /**
           * The axis that sidesteps the target left or right.
           */
-         Axis* mSidestepLeftRightAxis;
+         dtCore::RefPtr<Axis> mSidestepLeftRightAxis;
 
-         FPSAxisListener *mSidestepListener;       ///<Side step Axis listener
-         FPSAxisListener *mForwardBackwardListener;///<Forward/back Axis listener
-         FPSAxisListener *mLookLeftRightListener;  ///<LeftRight Axis listener
-         FPSAxisListener *mLookUpDownListener;     ///<Up/Down Axis listener
+         FPSAxisListener* mSidestepListener;       ///<Side step Axis listener
+         FPSAxisListener* mForwardBackwardListener;///<Forward/back Axis listener
+         FPSAxisListener* mLookLeftRightListener;  ///<LeftRight Axis listener
+         FPSAxisListener* mLookUpDownListener;     ///<Up/Down Axis listener
 
          /**
           * The maximum walk speed (meters per second).
