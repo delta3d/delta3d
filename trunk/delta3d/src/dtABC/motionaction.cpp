@@ -7,10 +7,10 @@
 namespace dtABC
 {
 
-  
+
 MotionAction::MotionAction()
 {
-   
+
 }
 
 MotionAction::~MotionAction()
@@ -24,7 +24,7 @@ void MotionAction::SetParentAndRelation(dtCore::Transformable* pParent, PARENT_R
    mParentRelation = pRelation;
 
    dtCore::Transform trans;
-   
+
    mParent->GetTransform(trans);
    trans.GetTranslation(mInitialParentPos);
 }
@@ -33,7 +33,7 @@ void MotionAction::SetParentAndRelation(dtCore::Transformable* pParent, PARENT_R
 void MotionAction::SetParent(dtCore::Transformable* pParent)
 {
    mParent = pParent;
-   if(mParent.valid())
+   if (mParent.valid())
    {
       dtCore::Transform trans;
       mParent->GetTransform(trans);
@@ -57,10 +57,10 @@ void MotionAction::StepObject(const PathPoint& cp)
    osg::Matrix pTransform;
    pTransform.makeScale(osg::Vec3(1.0f, 1.0f, 1.0f));
 
-   switch(mParentRelation)
+   switch (mParentRelation)
    {
    case TRACK_PARENT:
-      {  
+      {
          dtCore::Transform trans;
          osg::Vec3 parentPos;
 
@@ -102,8 +102,8 @@ void MotionAction::StepObject(const PathPoint& cp)
 
          newPos = cp.GetPosition() + (parentPos - mInitialParentPos);
 
-         pTransform.makeRotate(cp.GetOrientation());              
-         SetTrack(parentPos - newPos, pTransform);           
+         pTransform.makeRotate(cp.GetOrientation());
+         SetTrack(parentPos - newPos, pTransform);
 
          dtUtil::MatrixUtil::SetRow(pTransform, newPos, 3);
 

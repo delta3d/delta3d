@@ -7,11 +7,11 @@ namespace dtABC
 {
 
 Action::Action()
-   : mTimeStep(0.0f),
-   mTotalTime(0.0f),
-   mAccumTime(0.0f),
-   mIsRunning(false),
-   mTickOncePerFrame(false)
+   : mTimeStep(0.0f)
+   , mTotalTime(0.0f)
+   , mAccumTime(0.0f)
+   , mIsRunning(false)
+   , mTickOncePerFrame(false)
 {
    AddSender(&dtCore::System::GetInstance());
 }
@@ -23,12 +23,12 @@ Action::~Action()
 
 void Action::Start()
 {
-   //we cannot be started after we are already running
-   if(mIsRunning) return;
+   // we cannot be started after we are already running
+   if (mIsRunning) { return; }
 
    mTotalTime = 0.0f;
    mAccumTime = 0.0f;
-   if(mTimeStep < 0.000001f) mTimeStep = float(1.0 / 60.0);
+   if (mTimeStep < 0.000001f) { mTimeStep = float(1.0 / 60.0); }
    OnStart();
    mIsRunning = true;
 }
@@ -46,22 +46,22 @@ void Action::UnPause()
 }
 
 
-void Action::OnMessage( MessageData* data )
+void Action::OnMessage(MessageData* data)
 {
-   if( data->message == "preframe" )
+   if (data->message == "preframe")
    {
-      Update(*(double*)data->userData );
+      Update(*(double*)data->userData);
    }
 }
 
 
 void Action::Update(double dt)
 {
-   if(mIsRunning)
+   if (mIsRunning)
    {
-      if( mTickOncePerFrame )
+      if (mTickOncePerFrame)
       {
-         if( ! OnNextStep() )
+         if (!OnNextStep())
          {
             mIsRunning = false;
          }
@@ -71,9 +71,9 @@ void Action::Update(double dt)
          mTotalTime += dt;
          mAccumTime += dt;
 
-         while(mAccumTime >= mTimeStep && mIsRunning)
+         while (mAccumTime >= mTimeStep && mIsRunning)
          {
-            if( ! OnNextStep() )
+            if (!OnNextStep())
             {
                mIsRunning = false;
             }
@@ -85,5 +85,5 @@ void Action::Update(double dt)
 
 }
 
-}//namespace dtABC
+} // namespace dtABC
 

@@ -23,14 +23,14 @@ IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
  * Constructors
  */
 ////////////////////////////////////////////////
-BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :
-   Base(name)
+BaseABC::BaseABC(const std::string& name /*= "BaseABC"*/)
+   : Base(name)
 {
    RegisterInstance(this);
 
-   System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
-   AddSender( sys );
+   System* sys = &dtCore::System::GetInstance();
+   assert(sys);
+   AddSender(sys);
    CreateDefaultView();
 }
 
@@ -38,14 +38,14 @@ BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
-   RemoveSender( &dtCore::System::GetInstance() );
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
 ////////////////////////////////////////////////
 void BaseABC::Config()
 {
-   System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
+   System* sys = &dtCore::System::GetInstance();
+   assert(sys);
 
    sys->Config();
 }
@@ -57,53 +57,55 @@ void BaseABC::Quit()
 }
 
 ////////////////////////////////////////////////
-void BaseABC::SetCamera(dtCore::Camera * camera) 
-{ 
+void BaseABC::SetCamera(dtCore::Camera* camera)
+{
    GetView()->SetCamera(camera);
 }
 
 ////////////////////////////////////////////////
-dtCore::DeltaWin* BaseABC::GetWindow() 
-{  
+dtCore::DeltaWin* BaseABC::GetWindow()
+{
    return mWindow.get();
 }
 
 ////////////////////////////////////////////////
-void BaseABC::SetWindow(dtCore::DeltaWin * win)
-{ 
+void BaseABC::SetWindow(dtCore::DeltaWin* win)
+{
    mWindow = win;
    if (GetCamera() != NULL)
-      GetCamera()->SetWindow(win); 
-}
-
-////////////////////////////////////////////////
-void BaseABC::AddDrawable( DeltaDrawable* obj )
-{
-   assert( obj );
-   GetScene()->AddDrawable( obj );
-}
-
-////////////////////////////////////////////////
-void BaseABC::RemoveDrawable( DeltaDrawable* obj )
-{
-   assert( obj );
-   GetScene()->RemoveDrawable( obj );
-}
-
-////////////////////////////////////////////////
-void BaseABC::OnMessage( MessageData* data )
-{
-   if( data->message == "preframe" )
    {
-      PreFrame( *static_cast<const double*>(data->userData) );
+      GetCamera()->SetWindow(win);
    }
-   else if( data->message == "frame" )
+}
+
+////////////////////////////////////////////////
+void BaseABC::AddDrawable(DeltaDrawable* obj)
+{
+   assert(obj);
+   GetScene()->AddDrawable(obj);
+}
+
+////////////////////////////////////////////////
+void BaseABC::RemoveDrawable(DeltaDrawable* obj)
+{
+   assert(obj);
+   GetScene()->RemoveDrawable(obj);
+}
+
+////////////////////////////////////////////////
+void BaseABC::OnMessage(MessageData* data)
+{
+   if (data->message == "preframe")
    {
-      Frame( *static_cast<const double*>(data->userData) );
+      PreFrame(*static_cast<const double*>(data->userData));
    }
-   else if( data->message == "postframe" )
+   else if (data->message == "frame")
    {
-      PostFrame( *static_cast<const double*>(data->userData) );
+      Frame(*static_cast<const double*>(data->userData));
+   }
+   else if (data->message == "postframe")
+   {
+      PostFrame(*static_cast<const double*>(data->userData));
    }
 }
 
@@ -111,10 +113,10 @@ void BaseABC::OnMessage( MessageData* data )
 void BaseABC::CreateInstances()
 {
     // create the camera
-   assert( mViewList[0].get() );
-    
-   mViewList[0]->SetCamera( new dtCore::Camera("defaultCam") );
-   mViewList[0]->SetScene( new dtCore::Scene("defaultScene") );
+   assert(mViewList[0].get());
+
+   mViewList[0]->SetCamera(new dtCore::Camera("defaultCam"));
+   mViewList[0]->SetScene(new dtCore::Scene("defaultScene"));
 
    GetKeyboard()->SetName("defaultKeyboard");
    GetMouse()->SetName("defaultMouse");
@@ -130,50 +132,50 @@ dtCore::View * BaseABC::CreateDefaultView()
 ////////////////////////////////////////////////
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 {
-   typedef std::vector< dtCore::RefPtr< dtDAL::ActorProxy > > ActorProxyVector;
+   typedef std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyVector;
    ActorProxyVector proxies;
    map.FindProxies(proxies, "*", "dtcore", "Camera");
 
    bool atLeastOneEnabled(false);
-   for(  ActorProxyVector::iterator iter = proxies.begin();
-         iter != proxies.end();
-         iter++ )
+   for (ActorProxyVector::iterator iter = proxies.begin();
+        iter != proxies.end();
+        iter++)
    {
-      if( dtCore::Camera* camera = dynamic_cast< dtCore::Camera* >( (*iter)->GetActor() ) )
+      if (dtCore::Camera* camera = dynamic_cast<dtCore::Camera*>((*iter)->GetActor()))
       {
-         camera->SetWindow( GetWindow() );
+         camera->SetWindow(GetWindow());
 
          atLeastOneEnabled = camera->GetEnabled() || atLeastOneEnabled;
       }
    }
-   
+
    map.FindProxies(proxies, "*", "dtcore", "View");
-   for(  ActorProxyVector::iterator iter = proxies.begin();
-         iter != proxies.end();
-         iter++ )
+   for (ActorProxyVector::iterator iter = proxies.begin();
+        iter != proxies.end();
+        iter++)
    {
-      if( dtCore::View* view = dynamic_cast< dtCore::View* >( (*iter)->GetActor() ) )
+      if (dtCore::View* view = dynamic_cast<dtCore::View*>((*iter)->GetActor()))
       {
-          view->SetScene( GetScene() );
+          view->SetScene(GetScene());
       }
    }
 
-   if( atLeastOneEnabled )
+   if (atLeastOneEnabled)
    {
       //At least one Camera from the map is enabled,
       //therefore let's disable our default BaseABC Camera
       GetCamera()->SetEnabled(false);
 
-      LOG_INFO( "At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled." )
+      LOG_INFO("At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled.")
    }
-   
-   dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );
+
+   dtDAL::Project::GetInstance().LoadMapIntoScene(map, *GetScene(), addBillBoards);
 }
 
 ////////////////////////////////////////////////
-dtDAL::Map& BaseABC::LoadMap( const std::string& name, bool addBillBoards)
+dtDAL::Map& BaseABC::LoadMap(const std::string& name, bool addBillBoards)
 {
    dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
-   LoadMap( map, addBillBoards );
+   LoadMap(map, addBillBoards);
    return map;
 }

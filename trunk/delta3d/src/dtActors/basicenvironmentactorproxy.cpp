@@ -99,7 +99,7 @@ namespace dtActors
    void BasicEnvironmentActorProxy::BuildInvokables()
    {
       //BasicEnvironmentActor *env = static_cast<BasicEnvironmentActor*>(GetActor());
- 
+
       dtGame::GameActorProxy::BuildInvokables();
    }
 
@@ -152,12 +152,12 @@ namespace dtActors
    BasicEnvironmentActor::WindTypeEnum BasicEnvironmentActor::WindTypeEnum::WIND_SEVERE("Wind Severe", dtABC::Weather::WIND_SEVERE);
    BasicEnvironmentActor::WindTypeEnum BasicEnvironmentActor::WindTypeEnum::WIND_HEAVY("Wind Heavy", dtABC::Weather::WIND_HEAVY);
 
-   BasicEnvironmentActor::BasicEnvironmentActor(dtGame::GameActorProxy &proxy) :
-      dtGame::IEnvGameActor(proxy),
-      mIsCloudPlaneEnabled(false),
-      mWeather(new dtABC::Weather),
-      mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f)),
-      mWeatherTheme(dtABC::Weather::THEME_CLEAR)
+   BasicEnvironmentActor::BasicEnvironmentActor(dtGame::GameActorProxy &proxy)
+      : dtGame::IEnvGameActor(proxy)
+      , mIsCloudPlaneEnabled(false)
+      , mWeather(new dtABC::Weather)
+      , mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
+      , mWeatherTheme(dtABC::Weather::THEME_CLEAR)
    {
       AddChild(mWeather->GetEnvironment());
       EnableFog(false);
@@ -168,36 +168,40 @@ namespace dtActors
    {
    }
 
-   void BasicEnvironmentActor::AddActor(dtCore::DeltaDrawable &dd)
+   void BasicEnvironmentActor::AddActor(dtCore::DeltaDrawable& dd)
    {
       mWeather->GetEnvironment()->AddChild(&dd);
    }
 
-   void BasicEnvironmentActor::RemoveActor(dtCore::DeltaDrawable &dd)
+   void BasicEnvironmentActor::RemoveActor(dtCore::DeltaDrawable& dd)
    {
       mWeather->GetEnvironment()->RemoveChild(&dd);
    }
 
-   bool BasicEnvironmentActor::ContainsActor(dtCore::DeltaDrawable &dd) const
+   bool BasicEnvironmentActor::ContainsActor(dtCore::DeltaDrawable& dd) const
    {
       return mWeather->GetEnvironment()->GetChildIndex(&dd) < mWeather->GetEnvironment()->GetNumChildren();
    }
 
    void BasicEnvironmentActor::RemoveAllActors()
    {
-      while(mWeather->GetEnvironment()->GetNumChildren() > 0)
+      while (mWeather->GetEnvironment()->GetNumChildren() > 0)
+      {
          mWeather->GetEnvironment()->RemoveChild(mWeather->GetEnvironment()->GetChild(0));
+      }
    }
 
-   void BasicEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*> &vec)
+   void BasicEnvironmentActor::GetAllActors(std::vector<dtCore::DeltaDrawable*>& vec)
    {
       vec.clear();
 
-      for(unsigned int i = 0; i < mWeather->GetEnvironment()->GetNumChildren(); i++)
+      for (unsigned int i = 0; i < mWeather->GetEnvironment()->GetNumChildren(); i++)
+      {
          vec.push_back(mWeather->GetEnvironment()->GetChild(i));
+      }
    }
 
-   void BasicEnvironmentActor::GetTimeAndDate(unsigned &year, unsigned &month, unsigned &day, unsigned &hour, unsigned &min, unsigned &sec) const
+   void BasicEnvironmentActor::GetTimeAndDate(unsigned& year, unsigned& month, unsigned& day, unsigned& hour, unsigned& min, unsigned& sec) const
    {
       mWeather->GetEnvironment()->GetDateTime(year, month, day, hour, min, sec);
    }
@@ -213,16 +217,20 @@ namespace dtActors
       return mWeather->GetEnvironment()->GetNumChildren();
    }
 
-   void BasicEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDate)
+   void BasicEnvironmentActor::SetTimeAndDateString(const std::string& timeAndDate)
    {
-      if(timeAndDate.empty())
+      if (timeAndDate.empty())
+      {
          return;
+      }
 
       // The time is stored in the universal format of:
       // yyyy-mm-ddThh:min:ss-some number
       // So we need to use a delimeter to ensure that we don't choke on the seperators
-      if(!ValidateUTCString(timeAndDate))
+      if (!ValidateUTCString(timeAndDate))
+      {
          LOG_ERROR("The input time and date string: " + timeAndDate + " was not formatted correctly. The correct format is: yyyy-mm-ddThh:mm:ss. Ignoring.");
+      }
    }
 
    std::string BasicEnvironmentActor::GetCurrentTimeAndDateString() const
@@ -242,51 +250,82 @@ namespace dtActors
       unsigned year, month, day, hour, min, sec;
       GetTimeAndDate(year, month, day, hour, min, sec);
       oss << year << '-';
-      if(month < 10)
+      if (month < 10)
+      {
          oss << '0' << month << '-';
+      }
       else
+      {
          oss << month << '-';
+      }
 
-      if(day < 10)
+      if (day < 10)
+      {
          oss << '0' << day << 'T';
+      }
       else
+      {
          oss << day << 'T';
+      }
 
-      if(hour < 10)
+      if (hour < 10)
+      {
          oss << '0' << hour << ':';
+      }
       else
+      {
          oss << hour << ':';
+      }
 
-      if(min < 10)
+      if (min < 10)
+      {
          oss << '0' << min << ':';
+      }
       else
+      {
          oss << min << ':';
+      }
 
-      if(sec < 10)
+      if (sec < 10)
+      {
          oss << '0' << sec;
+      }
       else
+      {
          oss << sec;
+      }
 
       return oss.str();
    }
 
    void BasicEnvironmentActor::EnableCloudPlane(bool enable)
    {
-      /*if( enable == false && mIsCloudPlaneEnabled )
+      /*if (enable == false && mIsCloudPlaneEnabled)
+      {
          mWeatherTheme = mWeather->GetTheme();
+      }
 
       mIsCloudPlaneEnabled = enable;
 
-      if(mIsCloudPlaneEnabled)
+      if (mIsCloudPlaneEnabled)
+      {
          mWeather->SetTheme(mWeatherTheme);
+      }
       else
-         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);*/
+      {
+         mWeather->SetTheme(dtABC::Weather::THEME_CLEAR);
+      }
+      */
       mIsCloudPlaneEnabled = enable;
 
-      if(mIsCloudPlaneEnabled)
+      if (mIsCloudPlaneEnabled)
+      {
          mWeather->GetEnvironment()->AddEffect(mCloudPlane.get());
+      }
       else
+      {
          mWeather->GetEnvironment()->RemEffect(mCloudPlane.get());
+      }
    }
 
    bool BasicEnvironmentActor::IsCloudPlaneEnabled() const
@@ -301,7 +340,7 @@ namespace dtActors
 
    bool BasicEnvironmentActor::IsFogEnabled() const
    {
-      return mWeather->GetEnvironment()->GetFogEnable(); 
+      return mWeather->GetEnvironment()->GetFogEnable();
    }
 
    void BasicEnvironmentActor::SetWeatherVisibility(BasicEnvironmentActor::VisibilityTypeEnum &visibility)
@@ -311,56 +350,62 @@ namespace dtActors
 
    BasicEnvironmentActor::VisibilityTypeEnum& BasicEnvironmentActor::GetWeatherVisibility()
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::VisibilityTypeEnum &v = *BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType()[i];
+         BasicEnvironmentActor::VisibilityTypeEnum& v = *BasicEnvironmentActor::VisibilityTypeEnum::EnumerateType()[i];
 
-         if(mWeather->GetBasicVisibilityType() == v.GetEnumValue())
+         if (mWeather->GetBasicVisibilityType() == v.GetEnumValue())
+         {
             return v;
+         }
       }
       return BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED;
    }
 
-   void BasicEnvironmentActor::SetWeatherTheme(BasicEnvironmentActor::WeatherThemeEnum &theme)
+   void BasicEnvironmentActor::SetWeatherTheme(BasicEnvironmentActor::WeatherThemeEnum& theme)
    {
       mWeather->SetTheme(theme.GetEnumValue());
    }
 
    BasicEnvironmentActor::WeatherThemeEnum& BasicEnvironmentActor::GetWeatherTheme()
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::WeatherThemeEnum::Enumerate().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::WeatherThemeEnum::Enumerate().size(); i++)
       {
-         BasicEnvironmentActor::WeatherThemeEnum &v = *BasicEnvironmentActor::WeatherThemeEnum::EnumerateType()[i];
+         BasicEnvironmentActor::WeatherThemeEnum& v = *BasicEnvironmentActor::WeatherThemeEnum::EnumerateType()[i];
 
-         if(mWeather->GetTheme() == v.GetEnumValue())
+         if (mWeather->GetTheme() == v.GetEnumValue())
+         {
             return v;
+         }
       }
       return BasicEnvironmentActor::WeatherThemeEnum::THEME_CUSTOM;
    }
 
-   void BasicEnvironmentActor::SetTimePeriodAndSeason(BasicEnvironmentActor::TimePeriodEnum &time, BasicEnvironmentActor::SeasonEnum &season)
+   void BasicEnvironmentActor::SetTimePeriodAndSeason(BasicEnvironmentActor::TimePeriodEnum& time, BasicEnvironmentActor::SeasonEnum& season)
    {
       mWeather->SetTimePeriodAndSeason(time.GetEnumValue(), season.GetEnumValue());
    }
 
-   void BasicEnvironmentActor::SetWindType(BasicEnvironmentActor::WindTypeEnum &windType)
+   void BasicEnvironmentActor::SetWindType(BasicEnvironmentActor::WindTypeEnum& windType)
    {
       mWeather->SetBasicWindType(windType.GetEnumValue());
    }
 
    BasicEnvironmentActor::WindTypeEnum& BasicEnvironmentActor::GetWindType()
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::WindTypeEnum::EnumerateType().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::WindTypeEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::WindTypeEnum &v = *BasicEnvironmentActor::WindTypeEnum::EnumerateType()[i];
+         BasicEnvironmentActor::WindTypeEnum& v = *BasicEnvironmentActor::WindTypeEnum::EnumerateType()[i];
 
-         if(mWeather->GetBasicWindType() == v.GetEnumValue())
+         if (mWeather->GetBasicWindType() == v.GetEnumValue())
+         {
             return v;
+         }
       }
       return BasicEnvironmentActor::WindTypeEnum::WIND_NONE;
    }
 
-   void BasicEnvironmentActor::SetSkyColor(const osg::Vec4 &color)
+   void BasicEnvironmentActor::SetSkyColor(const osg::Vec4& color)
    {
       osg::Vec3 tempColor(color[0], color[1], color[2]);
       mWeather->GetEnvironment()->SetSkyColor(tempColor);
@@ -383,7 +428,7 @@ namespace dtActors
       return mWeather->GetRateOfChange();
    }
 
-   void BasicEnvironmentActor::SetTimePeriod(TimePeriodEnum &period)
+   void BasicEnvironmentActor::SetTimePeriod(TimePeriodEnum& period)
    {
       dtABC::Weather::Season s;
       dtABC::Weather::TimePeriod p;
@@ -393,21 +438,23 @@ namespace dtActors
 
    BasicEnvironmentActor::TimePeriodEnum& BasicEnvironmentActor::GetTimePeriod() const
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::TimePeriodEnum::EnumerateType().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::TimePeriodEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::TimePeriodEnum &v = *BasicEnvironmentActor::TimePeriodEnum::EnumerateType()[i];
+         BasicEnvironmentActor::TimePeriodEnum& v = *BasicEnvironmentActor::TimePeriodEnum::EnumerateType()[i];
 
          dtABC::Weather::TimePeriod p;
          dtABC::Weather::Season s;
          mWeather->GetTimePeriodAndSeason(&p, &s);
 
-         if(p == v.GetEnumValue())
+         if (p == v.GetEnumValue())
+         {
             return v;
+         }
       }
       return BasicEnvironmentActor::TimePeriodEnum::TIME_DAY;
    }
 
-   void BasicEnvironmentActor::SetSeason(SeasonEnum &season)
+   void BasicEnvironmentActor::SetSeason(SeasonEnum& season)
    {
       dtABC::Weather::TimePeriod p;
       dtABC::Weather::Season s;
@@ -417,87 +464,113 @@ namespace dtActors
 
    BasicEnvironmentActor::SeasonEnum& BasicEnvironmentActor::GetSeason() const
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::SeasonEnum::EnumerateType().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::SeasonEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::SeasonEnum &v = *BasicEnvironmentActor::SeasonEnum::EnumerateType()[i];
+         BasicEnvironmentActor::SeasonEnum& v = *BasicEnvironmentActor::SeasonEnum::EnumerateType()[i];
 
          dtABC::Weather::TimePeriod p;
          dtABC::Weather::Season s;
          mWeather->GetTimePeriodAndSeason(&p, &s);
 
-         if(s == v.GetEnumValue())
+         if (s == v.GetEnumValue())
+         {
             return v;
+         }
       }
       return BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER;
    }
 
-   void BasicEnvironmentActor::SetCloudCover(CloudCoverEnum &clouds)
+   void BasicEnvironmentActor::SetCloudCover(CloudCoverEnum& clouds)
    {
       mWeather->SetBasicCloudType(clouds.GetEnumValue());
    }
 
    BasicEnvironmentActor::CloudCoverEnum& BasicEnvironmentActor::GetCloudCover() const
    {
-      for(unsigned int i = 0; i < BasicEnvironmentActor::CloudCoverEnum::EnumerateType().size(); i++)
+      for (unsigned int i = 0; i < BasicEnvironmentActor::CloudCoverEnum::EnumerateType().size(); i++)
       {
-         BasicEnvironmentActor::CloudCoverEnum &currentCloud = 
-            *BasicEnvironmentActor::CloudCoverEnum::EnumerateType()[i];  
-         
-         if(mWeather->GetBasicCloudType() == currentCloud.GetEnumValue())
+         BasicEnvironmentActor::CloudCoverEnum& currentCloud =
+            *BasicEnvironmentActor::CloudCoverEnum::EnumerateType()[i];
+
+         if (mWeather->GetBasicCloudType() == currentCloud.GetEnumValue())
+         {
             return currentCloud;
+         }
       }
       return BasicEnvironmentActor::CloudCoverEnum::CLEAR;
    }
 
-   bool BasicEnvironmentActor::ValidateUTCString(const std::string &str)
+   bool BasicEnvironmentActor::ValidateUTCString(const std::string& str)
    {
       std::istringstream iss(str);
       int year, month, day, hour, min, sec;
       char delimeter;
 
       iss >> year;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> delimeter;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> month;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> delimeter;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> day;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> delimeter;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> hour;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> delimeter;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> min;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> delimeter;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       iss >> sec;
-      if(iss.fail())
+      if (iss.fail())
+      {
          return false;
+      }
 
       SetTimeAndDate(year, month, day, hour, min, sec);
       return true;
