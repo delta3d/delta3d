@@ -32,14 +32,14 @@ IMPLEMENT_MANAGEMENT_LAYER(OrbitMotionModel)
  */
 OrbitMotionModel::OrbitMotionModel(Keyboard* keyboard,
                                    Mouse* mouse)
-   : MotionModel("OrbitMotionModel"),
-     mAngularRate(90.0f),
-     mLinearRate(1.0f),
-     mDistance(100.0f)
+   : MotionModel("OrbitMotionModel")
+   , mAngularRate(90.0f)
+   , mLinearRate(1.0f)
+   , mDistance(100.0f)
 {
    RegisterInstance(this);
-   
-   if(keyboard != NULL && mouse != NULL)
+
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -55,7 +55,7 @@ OrbitMotionModel::~OrbitMotionModel()
    SetDistanceAxis(NULL);
    SetLeftRightTranslationAxis(NULL);
    SetUpDownTranslationAxis(NULL);
-   
+
    DeregisterInstance(this);
 }
 
@@ -68,30 +68,30 @@ OrbitMotionModel::~OrbitMotionModel()
  */
 void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(!mDefaultInputDevice.valid())
+   if (!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
-      
+
       mLeftButtonUpDownMapping = new ButtonAxisToAxis(   mouse->GetButton(Mouse::LeftButton),
                                                          mouse->GetAxis(1) );
       mDefaultElevationAxis = mDefaultInputDevice->AddAxis( "left mouse button up/down",
                                                             mLeftButtonUpDownMapping.get() );
-    
+
       mLeftButtonLeftRightMapping = new ButtonAxisToAxis(   mouse->GetButton(Mouse::LeftButton),
                                                             mouse->GetAxis(0) );
       mDefaultAzimuthAxis = mDefaultInputDevice->AddAxis(   "left mouse button left/right",
                                                             mLeftButtonLeftRightMapping.get() );
-   
+
       mMiddleButtonUpDownMapping = new ButtonAxisToAxis( mouse->GetButton(Mouse::MiddleButton),
                                                          mouse->GetAxis(1) );
-      mDefaultDistanceAxis = mDefaultInputDevice->AddAxis(  "middle mouse button left/right",
+      mDefaultDistanceAxis = mDefaultInputDevice->AddAxis(  "middle mouse button up/down",
                                                             mMiddleButtonUpDownMapping.get() );
 
       mRightButtonUpDownMapping = new ButtonAxisToAxis(  mouse->GetButton(Mouse::RightButton),
                                                          mouse->GetAxis(1) );
       mDefaultUpDownTranslationAxis = mDefaultInputDevice->AddAxis(  "right mouse button up/down",
                                                                      mRightButtonUpDownMapping.get() );
-      
+
       mRightButtonLeftRightMapping = new ButtonAxisToAxis(  mouse->GetButton(Mouse::RightButton),
                                                             mouse->GetAxis(0) );
       mDefaultLeftRightTranslationAxis = mDefaultInputDevice->AddAxis(  "right mouse button left/right",
@@ -101,28 +101,28 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mMiddleButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::MiddleButton));
       mMiddleButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
    }
-   
+
    SetAzimuthAxis(mDefaultAzimuthAxis.get());
-      
+
    SetElevationAxis(mDefaultElevationAxis.get());
-   
+
    SetDistanceAxis(mDefaultDistanceAxis.get());
-   
+
    SetLeftRightTranslationAxis(mDefaultLeftRightTranslationAxis.get());
-   
+
    SetUpDownTranslationAxis(mDefaultUpDownTranslationAxis.get());
 }
 
@@ -133,14 +133,14 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
  */
 void OrbitMotionModel::SetAzimuthAxis(Axis* azimuthAxis)
 {
-   if(mAzimuthAxis.valid())
+   if (mAzimuthAxis.valid())
    {
       mAzimuthAxis->RemoveAxisListener(this);
    }
-   
+
    mAzimuthAxis = azimuthAxis;
-   
-   if(mAzimuthAxis.valid())
+
+   if (mAzimuthAxis.valid())
    {
       mAzimuthAxis->AddAxisListener(this);
    }
@@ -163,14 +163,14 @@ Axis* OrbitMotionModel::GetAzimuthAxis()
  */
 void OrbitMotionModel::SetElevationAxis(Axis* elevationAxis)
 {
-   if(mElevationAxis.valid())
+   if (mElevationAxis.valid())
    {
       mElevationAxis->RemoveAxisListener(this);
    }
-   
+
    mElevationAxis = elevationAxis;
-   
-   if(mElevationAxis != 0)
+
+   if (mElevationAxis != 0)
    {
       mElevationAxis->AddAxisListener(this);
    }
@@ -193,14 +193,14 @@ Axis* OrbitMotionModel::GetElevationAxis()
  */
 void OrbitMotionModel::SetDistanceAxis(Axis* distanceAxis)
 {
-   if(mDistanceAxis != 0)
+   if (mDistanceAxis != 0)
    {
       mDistanceAxis->RemoveAxisListener(this);
    }
-   
+
    mDistanceAxis = distanceAxis;
-   
-   if(mDistanceAxis != 0)
+
+   if (mDistanceAxis != 0)
    {
       mDistanceAxis->AddAxisListener(this);
    }
@@ -223,14 +223,14 @@ Axis* OrbitMotionModel::GetDistanceAxis()
  */
 void OrbitMotionModel::SetLeftRightTranslationAxis(Axis* leftRightTranslationAxis)
 {
-   if(mLeftRightTranslationAxis != 0)
+   if (mLeftRightTranslationAxis != 0)
    {
       mLeftRightTranslationAxis->RemoveAxisListener(this);
    }
-   
+
    mLeftRightTranslationAxis = leftRightTranslationAxis;
-   
-   if(mLeftRightTranslationAxis != 0)
+
+   if (mLeftRightTranslationAxis != 0)
    {
       mLeftRightTranslationAxis->AddAxisListener(this);
    }
@@ -253,14 +253,14 @@ Axis* OrbitMotionModel::GetLeftRightTranslationAxis()
  */
 void OrbitMotionModel::SetUpDownTranslationAxis(Axis* upDownTranslationAxis)
 {
-   if(mUpDownTranslationAxis != 0)
+   if (mUpDownTranslationAxis != 0)
    {
       mUpDownTranslationAxis->RemoveAxisListener(this);
    }
-   
+
    mUpDownTranslationAxis = upDownTranslationAxis;
-   
-   if(mUpDownTranslationAxis != 0)
+
+   if (mUpDownTranslationAxis != 0)
    {
       mUpDownTranslationAxis->AddAxisListener(this);
    }
@@ -414,87 +414,87 @@ void OrbitMotionModel::SetFocalPoint(const osg::Vec3f &point)
  * @param delta a delta value indicating stateless motion
  */
 bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
-                                        double oldState, 
-                                        double newState, 
+                                        double oldState,
+                                        double newState,
                                         double delta)
 {
-   if(GetTarget() != 0 && IsEnabled())
+   if (GetTarget() != 0 && IsEnabled())
    {
       Transform transform;
-      
+
       GetTarget()->GetTransform(transform);
-      
+
       osg::Vec3 xyz, hpr;
-      
+
       transform.Get(xyz, hpr);
-      
-      if(axis == mAzimuthAxis.get())
+
+      if (axis == mAzimuthAxis.get())
       {
          osg::Vec3 focus( 0.0f, mDistance, 0.0f );
-         
+
          osg::Matrix mat;
-         
+
          transform.Get(mat);
-         
+
          dtUtil::MatrixUtil::TransformVec3(focus, mat);
-         
+
          hpr[0] -= float(delta * mAngularRate);
-         
+
          osg::Vec3 offset( 0.0f, -mDistance, 0.0f );
-         
+
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
 
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
       }
-      else if(axis == mElevationAxis.get())
+      else if (axis == mElevationAxis.get())
       {
          osg::Vec3 focus( 0.0f, mDistance, 0.0f );
-         
+
          osg::Matrix mat;
-         
+
          transform.Get(mat);
-         
+
          dtUtil::MatrixUtil::TransformVec3(focus, mat);
-         
+
          hpr[1] += float(delta * mAngularRate);
-         
-         if(hpr[1] < -89.9f)
+
+         if (hpr[1] < -89.9f)
          {
             hpr[1] = -89.9f;
          }
-         else if(hpr[1] > 89.9f)
+         else if (hpr[1] > 89.9f)
          {
             hpr[1] = 89.9;
          }
-         
+
          osg::Vec3 offset ( 0.0f, -mDistance, 0.0f );
-         
+
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
-         
+
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
       }
-      else if(axis == mDistanceAxis.get())
+      else if (axis == mDistanceAxis.get())
       {
          float distDelta = -float(delta * mDistance * mLinearRate);
-         
-         if(mDistance + distDelta < 1.0f)
+
+         if (mDistance + distDelta < 1.0f)
          {
             distDelta = 1.0f - mDistance;
          }
-         
+
          osg::Vec3 translation ( 0.0f, -distDelta, 0.0f );
-         
+
          osg::Matrix mat;
-         
+
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
-         
+
          translation = osg::Matrix::transform3x3(translation, mat);
 
          xyz += translation;
-         
+
          mDistance += distDelta;
       }
-      else if(axis == mLeftRightTranslationAxis.get())
+      else if (axis == mLeftRightTranslationAxis.get())
       {
          osg::Vec3 translation
          (
@@ -502,35 +502,35 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
             0.0f,
             0.0f
          );
-         
+
          osg::Matrix mat;
-         
+
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
-         
+
          translation = osg::Matrix::transform3x3(translation, mat);
-         
+
          xyz += translation;
       }
-      else if(axis == mUpDownTranslationAxis.get())
+      else if (axis == mUpDownTranslationAxis.get())
       {
-         osg::Vec3 translation 
+         osg::Vec3 translation
          (
             0.0f,
             0.0f,
             -float(delta * mDistance * mLinearRate)
          );
-         
+
          osg::Matrix mat;
-         
+
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
-         
+
          translation = osg::Matrix::transform3x3(translation, mat);
-         
+
          xyz += translation;
       }
-      
+
       transform.Set(xyz, hpr);
-      
+
       GetTarget()->SetTransform(transform);
 
       return true;
@@ -539,4 +539,4 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
    return false;
 }
 
-}
+} // namespace dtCore
