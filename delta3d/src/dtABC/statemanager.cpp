@@ -10,36 +10,37 @@ StateManager::EventType::~EventType() {}
 const StateManager::EventType StateManager::EventType::TRANSITION_OCCURRED("TRANSITION_OCCURRED");
 
 // StateManager implementation
-StateManager::StateManager() : dtCore::Base("StateManager"),
-   mCurrentState(0),
-   mLastEvent(0),
-   mStates(),
-   mTransitions(),
-   mSwitch(false),
-   mEventFactory(new EventFactory()),
-   mStateFactory(new StateFactory())
+StateManager::StateManager()
+   : dtCore::Base("StateManager")
+   , mCurrentState(0)
+   , mLastEvent(0)
+   , mStates()
+   , mTransitions()
+   , mSwitch(false)
+   , mEventFactory(new EventFactory())
+   , mStateFactory(new StateFactory())
 {
-   AddSender( &dtCore::System::GetInstance() );
+   AddSender(&dtCore::System::GetInstance());
 }
 
 StateManager::~StateManager()
 {
 }
 
-void StateManager::PreFrame( const double deltaFrameTime )
+void StateManager::PreFrame(const double deltaFrameTime)
 {
-   if( mSwitch ) //switch modes between frames
+   if (mSwitch) //switch modes between frames
    {
-      if( mLastEvent.valid() )
+      if (mLastEvent.valid())
       {
          const Event::Type* eventtype = mLastEvent->GetType();
-         TransitionMap::key_type key( eventtype , mCurrentState.get() );
-         TransitionMap::iterator iter = mTransitions.find( key );
+         TransitionMap::key_type key(eventtype, mCurrentState.get());
+         TransitionMap::iterator iter = mTransitions.find(key);
 
-         if( iter != mTransitions.end() )
+         if (iter != mTransitions.end())
          {
             State* to = (*iter).second.get();
-            TransitionOccurredEvent* event = new TransitionOccurredEvent( mCurrentState.get(), to );
+            TransitionOccurredEvent* event = new TransitionOccurredEvent(mCurrentState.get(), to);
             mCurrentState->Shutdown();
             MakeCurrent( to );
             mSwitch = false;
@@ -48,56 +49,56 @@ void StateManager::PreFrame( const double deltaFrameTime )
       }
    }
 
-   if( mCurrentState.valid() )
+   if (mCurrentState.valid())
    {
-      mCurrentState->PreFrame( deltaFrameTime );
+      mCurrentState->PreFrame(deltaFrameTime);
    }
 }
 
-void StateManager::Frame( const double deltaFrameTime )
+void StateManager::Frame(const double deltaFrameTime)
 {
-   if( mCurrentState.valid() )
+   if (mCurrentState.valid())
    {
-      mCurrentState->Frame( deltaFrameTime );
+      mCurrentState->Frame(deltaFrameTime);
    }
 }
 
-void StateManager::PostFrame( const double deltaFrameTime )
+void StateManager::PostFrame(const double deltaFrameTime)
 {
-   if( mCurrentState.valid() )
+   if (mCurrentState.valid())
    {
-      mCurrentState->PostFrame( deltaFrameTime );
+      mCurrentState->PostFrame(deltaFrameTime);
    }
 }
 
-/** Pass the "preframe", "frame", and "postframe" to the current State.  If 
+/** Pass the "preframe", "frame", and "postframe" to the current State.  If
   * the message is an "event", then:
   *  -if the message is from a State, rebroadcast it.
   *  -if the Event is in the transition table, process the transition
   *  -otherwise, pass the Event to the current State
   */
-void StateManager::OnMessage( MessageData* data )
+void StateManager::OnMessage(MessageData* data)
 {
-   if( data->message == "preframe" )
+   if (data->message == "preframe")
    {
-      const double delta = *static_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData);
       PreFrame(delta);
    }
-   else if( data->message == "frame" )
+   else if (data->message == "frame")
    {
-      const double delta = *static_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData);
       Frame(delta);
    }
-   else if( data->message == "postframe" )
+   else if (data->message == "postframe")
    {
-      const double delta = *static_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData);
       PostFrame(delta);
    }
-   else if( data->message == "event" )
+   else if (data->message == "event")
    {
-      Event* event = static_cast<Event*>( data->userData );
+      Event* event = static_cast<Event*>(data->userData);
 
-      //We don't want to have the State cause a transition directly.  
+      //We don't want to have the State cause a transition directly.
       if (IS_A(data->sender, State*))
       {
          //Note: This should never happen as States don't send "events".
@@ -106,7 +107,7 @@ void StateManager::OnMessage( MessageData* data )
          SendMessage("event", static_cast<void*>(event));
       }
       //if the event/current state pair is in our list of transitions...
-      else if( mTransitions.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransitions.end() )
+      else if (mTransitions.find(std::make_pair(event->GetType(), mCurrentState)) != mTransitions.end())
       {
          //then switch it up!
          mLastEvent = event;
@@ -115,28 +116,28 @@ void StateManager::OnMessage( MessageData* data )
       else
       {
          //pass it to the current state
-         State *state = GetCurrentState();
-         if (state!=0)
+         State* state = GetCurrentState();
+         if (state != 0)
          {
-            state->HandleEvent( event );
+            state->HandleEvent(event);
          }
       }
    }
 }
 
 /** Insert the supplied State in to the internal list of States.  Also
-   *  add the State as a message Sender to the StateManager.
-   */
-bool StateManager::AddState( State* state )
+  *  add the State as a message Sender to the StateManager.
+  */
+bool StateManager::AddState(State* state)
 {
-   if( !state )
+   if (!state)
    {
       return false;
    }
 
-   //if we are are not already in the set of states...
-   if( mStates.insert(state).second )
-   {             
+   // if we are are not already in the set of states...
+   if (mStates.insert(state).second)
+   {
       //AddSender(state); States should not communicate directly with the StateManager
       return true;
    }
@@ -144,21 +145,21 @@ bool StateManager::AddState( State* state )
    return false;
 }
 
-bool StateManager::RemoveState( State* state )
+bool StateManager::RemoveState(State* state)
 {
-   if( !state )
+   if (!state)
    {
       return false;
    }
 
    //if we are already in the set of states...
-   if( mStates.erase(state) != 0 )
+   if (mStates.erase(state) != 0)
    {
-      state->RemoveSender(this); //remove us as a sender
+      state->RemoveSender(this); // remove us as a sender
       //RemoveSender(state);   States should not communicate directly with the StateManager
 
-      //remove transition to and from the remove state
-      for( TransitionMap::iterator iter = mTransitions.begin(); iter != mTransitions.end(); )
+      // remove transition to and from the remove state
+      for (TransitionMap::iterator iter = mTransitions.begin(); iter != mTransitions.end();)
       {
          EventStatePtrPair pair = (*iter).first;
 
@@ -166,7 +167,7 @@ bool StateManager::RemoveState( State* state )
          State* to = (*iter).second.get();
 
          //if "from" or "to" states equal the removed state, ditch the transition
-         if( from == state || to == state )
+         if (from == state || to == state)
          {
             mTransitions.erase(iter++);
          }
@@ -188,24 +189,24 @@ void StateManager::RemoveAllStates()
    mTransitions.clear();
 }
 
-State* StateManager::GetState( const std::string& name )
+State* StateManager::GetState(const std::string& name)
 {
-   for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+   for (StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++)
    {
-      if( (*iter)->GetName() == name )
+      if ((*iter)->GetName() == name)
       {
-         return const_cast<State*>( (*iter).get() );
+         return const_cast<State*>((*iter).get());
       }
    }
 
    return 0;
 }
 
-const State* StateManager::GetState( const std::string& name ) const
+const State* StateManager::GetState(const std::string& name) const
 {
-   for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+   for (StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++)
    {
-      if( (*iter)->GetName() == name )
+      if ((*iter)->GetName() == name)
       {
          return (*iter).get();
       }
@@ -215,9 +216,9 @@ const State* StateManager::GetState( const std::string& name ) const
 }
 
 // Returns true if a transition was successfully added.
-bool StateManager::AddTransition( const Event::Type* eventType, State* from, State* to )
+bool StateManager::AddTransition(const Event::Type* eventType, State* from, State* to)
 {
-   if( !eventType || !from || !to )
+   if (!eventType || !from || !to)
    {
       return false;
    }
@@ -227,41 +228,43 @@ bool StateManager::AddTransition( const Event::Type* eventType, State* from, Sta
    AddState(to);
 
    // checking the set of States
-   State* realFrom = GetState( from->GetName() );
-   if( !realFrom )
+   State* realFrom = GetState(from->GetName());
+   if (!realFrom)
    {
       realFrom = from;
    }
 
-   State* realTo = GetState( to->GetName() );
-   if( !realTo )
+   State* realTo = GetState(to->GetName());
+   if (!realTo)
    {
       realTo = to;
    }
 
    // checking the transition map's keys
-   TransitionMap::key_type key( eventType, realFrom );
-   std::pair<TransitionMap::iterator,bool> returnpair = mTransitions.insert( TransitionMap::value_type( key , realTo ) );
+   TransitionMap::key_type key(eventType, realFrom);
+   std::pair<TransitionMap::iterator,bool> returnpair = mTransitions.insert(TransitionMap::value_type(key, realTo));
    return returnpair.second;
 }
 
-bool StateManager::RemoveTransition( const Event::Type* eventType, State* from, State* to )
+bool StateManager::RemoveTransition(const Event::Type* eventType, State* from, State* to)
 {
-   if( !eventType || !from || !to )
+   if (!eventType || !from || !to)
    {
       return false;
    }
 
    // Returns true if any elements were removed from the EventMap
-   TransitionMap::key_type key( eventType, from );
+   TransitionMap::key_type key(eventType, from);
 
    // if key is in map...
-   TransitionMap::iterator iter( mTransitions.find(key) );
-   if( iter != mTransitions.end() )
+   TransitionMap::iterator iter(mTransitions.find(key));
+   if (iter != mTransitions.end())
    {
-      //and if key maps to "to"
-      if( iter->second == to )
+      // and if key maps to "to"
+      if (iter->second == to)
+      {
          return mTransitions.erase(key) > 0;
+      }
    }
 
    return false;
@@ -270,11 +273,13 @@ bool StateManager::RemoveTransition( const Event::Type* eventType, State* from, 
 unsigned int StateManager::GetNumOfEvents(const State* from) const
 {
    unsigned int counter(0);
-   for(TransitionMap::const_iterator iter=mTransitions.begin(); iter!=mTransitions.end(); iter++)
+   for (TransitionMap::const_iterator iter=mTransitions.begin(); iter!=mTransitions.end(); iter++)
    {
       const TransitionMap::key_type::second_type state = (*iter).first.second;
-      if( state == from )
+      if (state == from)
+      {
          counter++;
+      }
    }
    return counter;
 }
@@ -282,24 +287,25 @@ unsigned int StateManager::GetNumOfEvents(const State* from) const
 void StateManager::GetEvents(const State* from, std::vector<const Event::Type*>& events)
 {
    /**
-   * Be sure to have correctly resized @param Events before calling this function
-   * with the GetNumOfEvents member function.
-   * \sa GetNumOfEvents
-   */
+    * Be sure to have correctly resized @param Events before calling this function
+    * with the GetNumOfEvents member function.
+    * \sa GetNumOfEvents
+    */
    unsigned int counter(0);
-   for(TransitionMap::const_iterator iter=mTransitions.begin(); iter!=mTransitions.end(); iter++)
+   for (TransitionMap::const_iterator iter = mTransitions.begin(); iter != mTransitions.end(); iter++)
    {
       const TransitionMap::key_type::second_type state = (*iter).first.second;
-      if( state == from )
+      if (state == from)
       {
-         if( events.size() > counter )
+         if (events.size() > counter)
+         {
             events[counter++] = (*iter).first.first;
+         }
          // else throw exception?
       }
    }
 
-   if( events.size() != counter )
-      assert( 0 );
+   assert(events.size() == counter);
 }
 
 State* StateManager::GetCurrentState()
@@ -312,14 +318,14 @@ const State* StateManager::GetCurrentState() const
    return mCurrentState.get();
 }
 
-void StateManager::MakeCurrent( State* state )
+void StateManager::MakeCurrent(State* state)
 {
    mCurrentState = state;
-   
-   if( mCurrentState.valid() )
+
+   if (mCurrentState.valid())
    {
       //immediately pass the event to the new current state
-      mCurrentState->HandleEvent( mLastEvent.get() );
+      mCurrentState->HandleEvent(mLastEvent.get());
    }
 }
 
@@ -329,8 +335,8 @@ void StateManager::PrintStates() const
 
    //iterate over all states
    unsigned int counter(0);
-   for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-      LOG_ALWAYS("State[" + dtUtil::ToString(counter++) + "]=" + (*iter)->GetName() )
+   for (StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++)
+      LOG_ALWAYS("State[" + dtUtil::ToString(counter++) + "]=" + (*iter)->GetName())
 }
 
 void StateManager::PrintTransitions() const
@@ -339,6 +345,8 @@ void StateManager::PrintTransitions() const
 
    //iterate over all states
    unsigned int counter(0);
-   for( TransitionMap::const_iterator iter = mTransitions.begin(); iter != mTransitions.end(); iter++ )
-      LOG_ALWAYS("Transition[" + dtUtil::ToString( counter++ ) + "]=<" + (*iter).first.first->GetName() + "," + (*iter).first.second->GetName() + "> : " + (*iter).second->GetName() )
+   for (TransitionMap::const_iterator iter = mTransitions.begin(); iter != mTransitions.end(); iter++)
+   {
+      LOG_ALWAYS("Transition[" + dtUtil::ToString(counter++) + "]=<" + (*iter).first.first->GetName() + "," + (*iter).first.second->GetName() + "> : " + (*iter).second->GetName())
+   }
 }

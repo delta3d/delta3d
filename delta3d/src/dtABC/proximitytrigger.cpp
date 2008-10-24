@@ -9,10 +9,10 @@ using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER(ProximityTrigger)
 
-ProximityTrigger::ProximityTrigger( const std::string& name )
-   :  Transformable(name),
-      mTrigger( new Trigger("InternalProximityTrigger") ),
-      mLastTraversalNumber(0)
+ProximityTrigger::ProximityTrigger(const std::string& name)
+   : Transformable(name)
+   , mTrigger(new Trigger("InternalProximityTrigger"))
+   , mLastTraversalNumber(0)
 {
    RegisterInstance(this);
 
@@ -30,7 +30,7 @@ ProximityTrigger::ProximityTrigger( const std::string& name )
    GetOSGNode()->setUpdateCallback( new NodeCallback(this) );
 }
 
-bool ProximityTrigger::FilterContact( dContact* contact, Transformable* collider )
+bool ProximityTrigger::FilterContact(dContact* contact, Transformable* collider)
 {
    // If the difference between our last known traversal number and the
    // traversal number set on the last collision with this transformable
@@ -38,7 +38,7 @@ bool ProximityTrigger::FilterContact( dContact* contact, Transformable* collider
    //
    // In other words, only fire the trigger if this particular collider is
    // entering the ProximityTrigger.
-   if( mLastTraversalNumber - mTraversalNumberMap[collider] > 1 )
+   if (mLastTraversalNumber - mTraversalNumberMap[collider] > 1)
    {
       mTrigger->Fire();
    }
@@ -49,5 +49,3 @@ bool ProximityTrigger::FilterContact( dContact* contact, Transformable* collider
    //in Scene. The dynamic_cast in there would filter it out anyways, but still...
    return false;
 }
-
-

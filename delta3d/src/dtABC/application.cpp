@@ -1,20 +1,20 @@
-/* -*-c++-*- 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * John K. Grant
  */
@@ -60,10 +60,10 @@ const std::string Application::MAX_TIME_BETWEEN_DRAWS("System.MaxTimeBetweenDraw
 const std::string Application::USE_FIXED_TIME_STEP("System.UseFixedTimeStep");
 
 ///////////////////////////////////////////////////////////////////////////////
-Application::Application(const std::string& configFilename, dtCore::DeltaWin *win) 
-:  BaseClass("Application"),
-   mKeyboardListener(new dtCore::GenericKeyboardListener()),
-   mMouseListener( new dtCore::GenericMouseListener() )
+Application::Application(const std::string& configFilename, dtCore::DeltaWin* win)
+   : BaseClass("Application")
+   , mKeyboardListener(new dtCore::GenericKeyboardListener())
+   , mMouseListener(new dtCore::GenericMouseListener())
 {
    RegisterInstance(this);
 
@@ -80,16 +80,16 @@ Application::Application(const std::string& configFilename, dtCore::DeltaWin *wi
 
    CreateInstances(); //create default Viewer View
 
-   mStats = new dtCore::StatsHandler( *mCompositeViewer );
+   mStats = new dtCore::StatsHandler(*mCompositeViewer);
 
-   if( !configFilename.empty() )
+   if (!configFilename.empty())
    {
       std::string foundPath = dtCore::FindFileInPathList(configFilename);
-      if( foundPath.empty() )
+      if (foundPath.empty())
       {
          LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
       }
-      else if( !ParseConfigFile( foundPath ) )
+      else if (!ParseConfigFile(foundPath))
       {
          LOG_WARNING("Application: Error loading config file, using defaults instead.");
       }
@@ -104,7 +104,7 @@ void Application::Config()
    //Temporary insurance policy.  If an application is expecting an openGL
    //context outside of the draw, setting the following environment variable will
    //keep a context valid throughout the whole frame.  This is a bit of a crutch
-   //for applications upgrading to OSG 2.6.0 that are crashing due to openGL 
+   //for applications upgrading to OSG 2.6.0 that are crashing due to openGL
    //context issues.  Users should not rely on this.
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 6
    char* deltaReleaseContext = getenv("DELTA_RELEASE_CONTEXT");
@@ -124,16 +124,16 @@ void Application::ReadSystemProperties()
 
    value = GetConfigPropertyValue(SIM_FRAME_RATE);
 
-   if(!value.empty())
+   if (!value.empty())
    {
       double simFrameRate = dtUtil::ToDouble(value);
       dtCore::System::GetInstance().SetFrameRate(simFrameRate);
    }
-   
+
    value.clear();
 
    value = GetConfigPropertyValue(MAX_TIME_BETWEEN_DRAWS);
-   if(!value.empty())
+   if (!value.empty())
    {
       double timeBetween = dtUtil::ToDouble(value);
       dtCore::System::GetInstance().SetMaxTimeBetweenDraws(timeBetween);
@@ -142,7 +142,7 @@ void Application::ReadSystemProperties()
    value.clear();
 
    value = GetConfigPropertyValue(USE_FIXED_TIME_STEP);
-   if(!value.empty())
+   if (!value.empty())
    {
       bool useFixed = dtUtil::ToType<bool>(value);
       dtCore::System::GetInstance().SetUseFixedTimeStep(useFixed);
@@ -156,7 +156,7 @@ void Application::ReadSystemProperties()
 
 ///////////////////////////////////////////////////////////////////////////////
 Application::~Application()
-{  
+{
    mCompositeViewer = NULL;
    delete mStats;
    DeregisterInstance(this);
@@ -169,22 +169,22 @@ void Application::Run()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::PreFrame( const double deltaSimTime )
+void Application::PreFrame(const double deltaSimTime)
 {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::Frame( const double deltaSimTime )
+void Application::Frame(const double deltaSimTime)
 {
    // NOTE: The new version OSG (2.2) relies on absolute frame time
    // to update drawables; especially particle systems.
    // The time delta will be ignored here and the absolute simulation
    // time passed to the OSG scene updater.
-   mCompositeViewer->frame( dtCore::System::GetInstance().GetSimTimeSinceStartup() );
+   mCompositeViewer->frame(dtCore::System::GetInstance().GetSimTimeSinceStartup());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::PostFrame( const double deltaSimTime )
+void Application::PostFrame(const double deltaSimTime)
 {
 }
 
@@ -215,63 +215,63 @@ bool Application::KeyReleased(const dtCore::Keyboard* keyboard, int kc)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonPressed( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button )
+bool Application::MouseButtonPressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonReleased( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button )
+bool Application::MouseButtonReleased(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonDoubleClicked( const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount )
+bool Application::MouseButtonDoubleClicked(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseMoved( const dtCore::Mouse* mouse, float x, float y )
+bool Application::MouseMoved(const dtCore::Mouse* mouse, float x, float y)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseDragged( const dtCore::Mouse* mouse, float x, float y )
+bool Application::MouseDragged(const dtCore::Mouse* mouse, float x, float y)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseScrolled( const dtCore::Mouse* mouse, int delta )
+bool Application::MouseScrolled(const dtCore::Mouse* mouse, int delta)
 {
    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Application::CreateInstances(const std::string& name, int x, int y, int width, 
-                                  int height, bool cursor, bool fullScreen )
+void Application::CreateInstances(const std::string& name, int x, int y, int width,
+                                  int height, bool cursor, bool fullScreen)
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
    //overwritten using a config file
    BaseClass::CreateInstances();
-   
+
    if (mWindow == NULL)
    {
-       mWindow = new dtCore::DeltaWin( name, x, y, width, height, cursor, fullScreen );
+       mWindow = new dtCore::DeltaWin(name, x, y, width, height, cursor, fullScreen);
    }
 
-   GetCamera()->SetWindow( mWindow.get() );
+   GetCamera()->SetWindow(mWindow.get());
 
    mCompositeViewer = new osgViewer::CompositeViewer;
 //   mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
-   
-   GetKeyboard()->AddKeyboardListener( mKeyboardListener.get() );
-   GetMouse()->AddMouseListener( mMouseListener.get() );
+
+   GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
+   GetMouse()->AddMouseListener(mMouseListener.get());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ bool Application::ParseConfigFile(const std::string& file)
    {
       LOG_ERROR("The Application config file, " + file + ", wasn't parsed correctly.");
       return(false);
-   } 
+   }
 
    AppXMLApplicator applicator;
    bool applied_well = applicator(handler.mConfigData, this);
@@ -333,9 +333,9 @@ bool Application::ParseConfigFile(const std::string& file)
 ///////////////////////////////////////////////////////////////////////////////
 std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& filename)
 {
-   std::string existingfile = dtCore::FindFileInPathList( filename );
+   std::string existingfile = dtCore::FindFileInPathList(filename);
 
-   if( !existingfile.empty() )
+   if (!existingfile.empty())
    {
       LOG_WARNING("Can't generate new configuration file: file already exists: " + existingfile);
       return existingfile;
@@ -343,10 +343,10 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
 
    // write out a new file
    ApplicationConfigWriter writer;
-   writer( filename, GetDefaultConfigData());
+   writer(filename, GetDefaultConfigData());
 
    // return the resource path to the new file
-   return dtCore::FindFileInPathList( filename );
+   return dtCore::FindFileInPathList(filename);
 }
 
 
@@ -373,7 +373,7 @@ ApplicationConfigData Application::GetDefaultConfigData()
    data.SCENE_NAME = "defaultScene";
    data.WINDOW_NAME = "defaultWin";
    data.VIEW_NAME = "defaultView";
-   
+
    data.SCENE_INSTANCE = "defaultScene";
    data.WINDOW_INSTANCE = "defaultWin";
    data.CAMERA_INSTANCE = "defaultCam";
@@ -400,7 +400,7 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       dtCore::View* view = app->GetView();
       if (view != NULL)
       {
-         view->SetName( data.VIEW_NAME );
+         view->SetName(data.VIEW_NAME);
       }
    }
 
@@ -410,7 +410,7 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       dtCore::Scene* scene = app->GetScene();
       if (scene != NULL)
       {
-         scene->SetName( data.SCENE_NAME );
+         scene->SetName(data.SCENE_NAME);
       }
    }
 
@@ -420,7 +420,7 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       dtCore::Camera* camera = app->GetCamera();
       if (camera != NULL)
       {
-         camera->SetName( data.CAMERA_NAME );
+         camera->SetName(data.CAMERA_NAME);
       }
    }
 
@@ -431,7 +431,7 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       i != data.LOG_LEVELS.end(); ++i)
    {
       dtUtil::Log& logger = dtUtil::Log::GetInstance(i->first);
-      
+
       logger.SetLogLevel(logger.GetLogLevelForString(i->second));
    }
 
@@ -455,34 +455,34 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
    // "title". However, this would break the expectation of users with previously written
    // configuration files. Maybe we could do an automatically update whenver a config file
    // without the "title" attribute is passed to Application. See Case 722 -osb
-   dwin->SetWindowTitle( data.WINDOW_NAME );
-   dwin->SetName( data.WINDOW_NAME ); // Perhaps a different parameter is needed for this?
+   dwin->SetWindowTitle(data.WINDOW_NAME);
+   dwin->SetName(data.WINDOW_NAME); // Perhaps a different parameter is needed for this?
 
-   dwin->SetPosition( data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height );
-   dwin->ShowCursor( data.SHOW_CURSOR );
-   dwin->SetFullScreenMode( data.FULL_SCREEN );
-   
+   dwin->SetPosition(data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height);
+   dwin->ShowCursor(data.SHOW_CURSOR);
+   dwin->SetFullScreenMode(data.FULL_SCREEN);
+
    // change the resolution if needed and valid
-   if( data.CHANGE_RESOLUTION )
+   if (data.CHANGE_RESOLUTION)
    {
-      if( dwin->IsValidResolution( data.RESOLUTION ) )
+      if (dwin->IsValidResolution(data.RESOLUTION))
       {
-         dwin->ChangeScreenResolution( data.RESOLUTION );
+         dwin->ChangeScreenResolution(data.RESOLUTION);
       }
    }
-   
+
    bool valid = true; //optimistic
-   
+
    // connect the camera, scene, and window
    // since they might not be the same as the app's instances, we will use the instance management layer
-   dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
-   dtCore::Camera *camera = dtCore::Camera::GetInstance( data.CAMERA_INSTANCE );
-   dtCore::View *view = dtCore::View::GetInstance( data.VIEW_NAME );
-   dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
+   dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance(data.WINDOW_INSTANCE);
+   dtCore::Camera* camera = dtCore::Camera::GetInstance(data.CAMERA_INSTANCE);
+   dtCore::View* view = dtCore::View::GetInstance(data.VIEW_NAME);
+   dtCore::Scene* sinst = dtCore::Scene::GetInstance(data.SCENE_INSTANCE);
 
-   if( (win != NULL) && (camera != NULL) )
+   if ((win != NULL) && (camera != NULL))
    {
-      camera->SetWindow( win );
+      camera->SetWindow(win);
    }
    else
    {
@@ -490,19 +490,19 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
       valid = false;
    }
 
-   if( (camera != NULL) && (view != NULL) )
+   if ((camera != NULL) && (view != NULL))
    {
-      view->SetCamera( camera );
+      view->SetCamera(camera);
    }
    else
    {
        LOG_WARNING("Application:Can't find instance of Camera, " + data.CAMERA_INSTANCE );
        valid = false;
    }
-   
-   if( (sinst != NULL) && (view != NULL) )
+
+   if ((sinst != NULL) && (view != NULL))
    {
-      view->SetScene( sinst );
+      view->SetScene(sinst);
    }
    else
    {
@@ -519,7 +519,7 @@ void Application::AddView(dtCore::View &view)
    {
       mCompositeViewer = new osgViewer::CompositeViewer;
    }
-   
+
    mCompositeViewer->addView(view.GetOsgViewerView());
    mViewList.push_back(&view);
 }

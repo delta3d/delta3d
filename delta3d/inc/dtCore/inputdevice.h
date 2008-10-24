@@ -130,7 +130,7 @@ namespace dtCore
       const Axis* GetAxis(int index) const;
 
       /**
-       * Get the index in the array of axes for given button.
+       * Get the index in the array of axes for given axis.
        *
        * @param axis the axis whose index is to be found
        * @return the index of given axis if valid, else -1

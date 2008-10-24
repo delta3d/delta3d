@@ -18,6 +18,7 @@
  *
  * Curtiss Murphy
  */
+
 #ifndef DELTA_BASEINPUTCOMPONENT
 #define DELTA_BASEINPUTCOMPONENT
 

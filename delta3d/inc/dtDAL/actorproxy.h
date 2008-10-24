@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  */
+
 #ifndef DELTA_ACTORPROXY
 #define DELTA_ACTORPROXY
 

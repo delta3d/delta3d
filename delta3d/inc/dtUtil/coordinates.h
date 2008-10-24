@@ -606,7 +606,7 @@ namespace dtUtil
       public:
 
          Coordinates& operator = (const Coordinates &rhs);
-         bool operator == (const Coordinates &rhs);
+         bool operator == (const Coordinates &rhs) const;
          Coordinates(const Coordinates &rhs) { *this = rhs; }
    };
 }
