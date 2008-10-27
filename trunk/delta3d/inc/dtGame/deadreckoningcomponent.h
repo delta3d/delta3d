@@ -107,18 +107,6 @@ namespace dtGame
          void SetEyePointActor(dtCore::Transformable* newEyePointActor);
 
          /**
-          * Typically actors are only ground clamped when their positions are updated
-          * but with this time, the actors are reclamped every so often in case LOD's have changed
-          * on the terrain.
-          * 
-          * @param newTime the new time in seconds.  It defaults to 3.  Setting it to 0 disables force clamping.
-          */
-         void SetForceClampInterval(float newTime) { mForceClampInterval = newTime; }
-
-         /// @return the interval at which entities will be re-clamped.
-         float GetForceClampInterval() const { return mForceClampInterval; }
-
-         /**
           * Set the time over which this component should smooth articulations between two DR DOF targets.
           */
          void SetArticulationSmoothTime( float smoothTime );
@@ -149,15 +137,10 @@ namespace dtGame
          /// modifies the scene graph node by predicting the articulation data.
          void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
 
-         /// @return true if the entity should be force clamped based on saved values.
-         bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged);
-
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
          dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
          
          dtUtil::Log* mLogger;
-
-         float mForceClampInterval;
 
          float mArticSmoothTime;
 

@@ -43,8 +43,10 @@ namespace dtGame
    const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name),
-      mGroundClamper(new DefaultGroundClamper), mForceClampInterval(3.0f), mArticSmoothTime(0.5f)
+   DeadReckoningComponent::DeadReckoningComponent(const std::string& name)
+      : dtGame::GMComponent(name)
+      , mGroundClamper(new DefaultGroundClamper)
+      , mArticSmoothTime(0.5f)
    {
       mLogger = &dtUtil::Log::GetInstance("deadreckoningcomponent.cpp");
    }
@@ -223,33 +225,6 @@ namespace dtGame
       return itor != mRegisteredActors.end();
    }
 
-
-   //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningComponent::ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
-   {
-      bool bForceClamp = false;
-      if (mForceClampInterval > 0)
-      {
-         float newForceClampInterval = helper.GetTimeUntilForceClamp() - deltaRealTime;
-         if (bTransformChanged)
-         {
-            newForceClampInterval = mForceClampInterval;
-         }
-         else
-         {
-            bForceClamp = newForceClampInterval < 0;
-
-            // reset the force clamp time if the transformed, which means it will be clamped anyway
-            // or the timer has elapsed
-            if (bForceClamp)
-               newForceClampInterval = mForceClampInterval;
-         }
-         
-         helper.SetTimeUntilForceClamp(newForceClampInterval);
-      }
-      return bForceClamp;
-   }
-
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::TickRemote(const dtGame::TickMessage& tickMessage)
    {
@@ -261,7 +236,9 @@ namespace dtGame
 
          dtGame::GameActorProxy* gameActorProxy = GetGameManager()->FindGameActorById(i->first);
          if (gameActorProxy == NULL)
+         {
             continue;
+         }
 
          dtGame::GameActor& gameActor = gameActorProxy->GetGameActor();
          DeadReckoningHelper& helper = *i->second;
@@ -280,20 +257,23 @@ namespace dtGame
          xform.SetTranslation(helper.GetCurrentDeadReckonedTranslation());
          xform.SetRotation(helper.GetCurrentDeadReckonedRotation());
 
+         // Get the current time delta.
+         float simTimeDelta = tickMessage.GetDeltaSimTime();
+
          if (helper.IsUpdated())
          {
             //Pretend we were updated on the last tick so we have time delta to work with
             //when calculating movement.
             if ( helper.IsTranslationUpdated() )
             {
-               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta);
                //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
                helper.SetTranslationCurrentSmoothingTime( 0.0 );
             }
 
             if ( helper.IsRotationUpdated() )
             {
-               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta );
                //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
                helper.SetRotationCurrentSmoothingTime( 0.0 );
                helper.SetRotationResolved( false );
@@ -301,55 +281,56 @@ namespace dtGame
          }
 
          //We want to do this every time.
-         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
-         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
+         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + simTimeDelta );
+         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + simTimeDelta );
 
          //make sure it's greater than 0 in case of time being set.
          if (helper.GetTranslationCurrentSmoothingTime() < 0.0) 
+         {
             helper.SetTranslationCurrentSmoothingTime( 0.0 );
+         }
          if (helper.GetRotationCurrentSmoothingTime() < 0.0) 
+         {
             helper.SetRotationCurrentSmoothingTime( 0.0 );
+         }
 
-         //actual dead reckoning code moved into the helper..
+         // Actual dead reckoning code moved into the helper..
          BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
-         bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
+         bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
-         //Only actually ground clamp and move remote ones.
+
+         // Only ground clamp and move remote objects.
          if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
-            bool bForceClamp = ShouldForceClamp(helper, tickMessage.GetDeltaRealTime(), bTransformChanged);
-            
-            // if the actor moved, it's time to force clamp, or we are using intermittent, 
-            // we should clamp.
-            // The clamping also applies the transform when the clamping type is none.
-            // force clamp is silly when using intermittent because it's already running intermittently.
-            if (bTransformChanged || *groundClampingType == BaseGroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET
-                  || (bForceClamp && *groundClampingType != BaseGroundClamper::GroundClampingType::NONE))
-            {
-               //we could probably group these queries together...
-               mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
-                        xform, gameActor.GetGameActorProxy(), helper.GetGroundClampingData());
+            // Get the object's velocity for the current frame.
+            osg::Vec3 velocity( helper.GetVelocityVector() + helper.GetAccelerationVector() * simTimeDelta );
 
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  std::ostringstream ss;
-                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                     << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                        ss.str().c_str());
-               }
+            // Call the ground clamper for the current object.
+            // The ground clamper should be smart enough to know
+            // what to do with the supplied values.
+            mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
+                     xform, gameActor.GetGameActorProxy(),
+                     helper.GetGroundClampingData(), transformChanged, velocity);
+
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
+                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                     ss.str().c_str());
             }
          }
 
          DoArticulation(helper, gameActor, tickMessage);
 
-         //clear the updated flag.
+         // Clear the updated flag.
          helper.ClearUpdated();
       }
 
-      //Make sure the last of them ran.
+      // Make sure all remaining queued objects for batch clamping are clamped.
       mGroundClamper->FinishUp();
    }
 
