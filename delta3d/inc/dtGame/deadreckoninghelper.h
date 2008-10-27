@@ -329,9 +329,6 @@ namespace dtGame
          /// Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
          void SetLastRotationUpdatedTime(double newUpdatedTime);
 
-         float GetTimeUntilForceClamp() const { return mTimeUntilForceClamp; }
-         void SetTimeUntilForceClamp(float newTime) { mTimeUntilForceClamp = newTime; }
-
          /// @return The node collector for this helper or NULL none has been set.
          dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
 
@@ -431,8 +428,6 @@ namespace dtGame
          ///the simulation time this was last updated.
          double mLastTranslationUpdatedTime;
          double mLastRotationUpdatedTime;
-
-         float mTimeUntilForceClamp;
 
          ///This should be fairly clear.
          float mAverageTimeBetweenTranslationUpdates;

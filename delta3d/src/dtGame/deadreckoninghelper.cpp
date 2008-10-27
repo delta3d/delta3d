@@ -70,7 +70,6 @@ namespace dtGame
       mLastTimeTag(0.0),
       mLastTranslationUpdatedTime(0.0),
       mLastRotationUpdatedTime(0.0),
-      mTimeUntilForceClamp(0.0f),
       mAverageTimeBetweenTranslationUpdates(0.0f),
       mAverageTimeBetweenRotationUpdates(0.0f),
       mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS),
