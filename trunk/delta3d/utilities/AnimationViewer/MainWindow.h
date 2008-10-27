@@ -22,7 +22,7 @@ class QDoubleSpinBox;
 
 namespace dtQt
 {
-   class OSGAdapterWidget; 
+   class OSGAdapterWidget;
 }
 
 namespace dtAnim
@@ -46,7 +46,7 @@ public:
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
-   
+
 signals:
    void FileToLoad(const QString&);
    void StartAnimation(unsigned int, float, float);
@@ -64,11 +64,11 @@ signals:
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
-   
+
    void OnNewMesh(int meshID, const QString& meshName);
 
-   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList, 
-                           dtAnim::CharDrawable* model);   
+   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList,
+                           dtAnim::CharDrawable* model);
 
    void OnNewMaterial(int matID, const QString& name,
                       const QColor& diff, const QColor& amb, const QColor& spec,
@@ -85,10 +85,10 @@ public slots:
    void OnToggleShadingToolbar();
    void OnToggleLODScaleToolbar();
    void OnToggleScalingToolbar();
-   void OnToggleLightingToolbar(); 
+   void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);
    void OnConfiged(); ///<call when everything is up and running
-	
+
 private:
    void CreateMenus();
    void CreateActions();
@@ -107,8 +107,8 @@ private:
    QAction* mExitAct;
    QAction* mLoadCharAct;
    QAction* mRecentFilesAct[5];
-   QAction* mWireframeAction; 
-   QAction* mShadedAction;    
+   QAction* mWireframeAction;
+   QAction* mShadedAction;
    QAction* mShadedWireAction;
    QAction* mBoneBasisAction;
    QAction* mDiffuseLightAction;
@@ -127,7 +127,7 @@ private:
 
    AnimationTableWidget* mAnimListWidget;
    QListWidget*          mMeshListWidget;
-   
+
    QStandardItemModel* mMaterialModel; ///<Model for the character's materials
    QTableView*         mMaterialView;  ///<View for the character's materials
 

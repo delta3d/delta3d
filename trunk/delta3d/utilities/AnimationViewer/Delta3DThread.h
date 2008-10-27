@@ -12,13 +12,13 @@ class Delta3DThread : public QThread
 {
    Q_OBJECT
 public:
-	Delta3DThread(QObject* parent=0);
-	~Delta3DThread();
+   Delta3DThread(QObject* parent=0);
+   ~Delta3DThread();
    void SetMainWindow(MainWindow* win) { mWin = win; }
    virtual void run();
-	
+
    dtCore::RefPtr<Viewer> mViewer;
-   
+
 protected:
 
 private:
