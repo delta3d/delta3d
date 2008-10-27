@@ -41,9 +41,9 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
 
 
 #Not Sure if this is needed
-#IF(WIN32)
+#IF (WIN32)
 #TARGET_LINK_LIBRARIES(${LIB_NAME} User32 Gdi32 shell32 Advapi32 ole32 )
-#ENDIF(WIN32)
+#ENDIF (WIN32)
 
 INCLUDE(ModuleInstall OPTIONAL)
 

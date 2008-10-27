@@ -62,10 +62,10 @@ using namespace dtAnim;
 
 ////////////////////////////////////////////////////////////////////////////////
 Viewer::Viewer()
-: mCalDatabase(&Cal3DDatabase::GetInstance())
-, mPoseMeshes(NULL)
+   : mCalDatabase(&Cal3DDatabase::GetInstance())
+   , mPoseMeshes(NULL)
 {
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);   
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ osg::Geode* MakePlane()
 {
    osg::Geode* geode = new osg::Geode();
    osg::Box* box = new osg::Box(osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.05f);
-   osg::ShapeDrawable *shapeDrawable = new osg::ShapeDrawable(box);
+   osg::ShapeDrawable* shapeDrawable = new osg::ShapeDrawable(box);
 
    geode->addDrawable(shapeDrawable);
 
@@ -92,7 +92,7 @@ void Viewer::Config()
    GetCompositeViewer()->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
    //osg::Camera* camera = GetCamera()->GetOSGCamera();
    //camera->setViewport(new osg::Viewport(0,0,mGLWidget->width(),mGLWidget->height()));
-   //camera->setProjectionMatrixAsPerspective(30.0f, 
+   //camera->setProjectionMatrixAsPerspective(30.0f,
    //         static_cast<double>(mGLWidget->width())/static_cast<double>(mGLWidget->height()), 1.0f, 10000.0f);
 
    std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
@@ -115,17 +115,17 @@ void Viewer::Config()
    mMotion->SetTarget(GetCamera());
    mMotion->SetDistance(5.f);
 
-   Light *l = GetScene()->GetLight(0);
-   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
-   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
-  
+   Light* l = GetScene()->GetLight(0);
+   l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);
+   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
+
    GetScene()->GetSceneNode()->addChild(MakePlane());
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
    mBoneBasisGroup = new osg::Group;
-  
-   InitWireDecorator(); 
+
+   InitWireDecorator();
    InitShadeDecorator();
 
    OnSetShaded();
@@ -150,9 +150,9 @@ void Viewer::OnLoadCharFile(const QString& filename)
       mShadeDecorator->removeChild(mCharacter->GetOSGNode());
       mWireDecorator->removeChild(mCharacter->GetOSGNode());
       mCharacter = NULL;
-   }  
+   }
 
-   //wipe out any previously loaded characters. This will ensure we can 
+   //wipe out any previously loaded characters. This will ensure we can
    //reload the same file (which might have been modified).
    mCalDatabase->TruncateDatabase();
    mCalDatabase->PurgeLoaderCaches();
@@ -168,11 +168,11 @@ void Viewer::OnLoadCharFile(const QString& filename)
          return;
       }
 
-      mCharacter = new CharDrawable(wrapper.get());  
+      mCharacter = new CharDrawable(wrapper.get());
       mAttachmentController = new dtAnim::AttachmentController;
 
       // Retrieve the data to check for the inclusion of an IK pose mesh file
-      dtAnim::Cal3DModelData *modelData = mCalDatabase->GetModelData(*wrapper.get());
+      dtAnim::Cal3DModelData* modelData = mCalDatabase->GetModelData(*wrapper.get());
 
       if (!modelData->GetPoseMeshFilename().empty())
       {
@@ -211,14 +211,14 @@ void Viewer::OnLoadCharFile(const QString& filename)
    }
 
    //get all data for the meshes and emit
-   for (int meshID=0; meshID<wrapper->GetCoreMeshCount(); meshID++)
+   for (int meshID = 0; meshID < wrapper->GetCoreMeshCount(); ++meshID)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMeshName(meshID));
       emit MeshLoaded(meshID, nameToSend);
    }
 
    //get all material data and emit
-   for (int matID=0; matID<wrapper->GetCoreMaterialCount(); matID++)
+   for (int matID = 0; matID < wrapper->GetCoreMaterialCount(); matID++)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMaterialName(matID));
 
@@ -237,14 +237,14 @@ void Viewer::OnLoadCharFile(const QString& filename)
    }
 
    CreateBoneBasisDisplay();
- 
+
    LOG_DEBUG("Done loading file: " + filename.toStdString());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::CreateBoneBasisDisplay()
 {
-   // Destroy any previous held point axes and start fresh  
+   // Destroy any previous held point axes and start fresh
    mBoneBasisGroup->removeChildren(0, mBoneBasisGroup->getNumChildren());
 
    VectorHotSpot hotSpotList;
@@ -260,7 +260,7 @@ void Viewer::CreateBoneBasisDisplay()
    std::vector<std::string>::const_iterator boneNameIter = boneVec.begin();
    std::vector<std::string>::const_iterator boneNameEnd  = boneVec.end();
 
-   while(boneNameIter!=boneNameEnd)
+   while (boneNameIter!=boneNameEnd)
    {
       //create a HotSpot
       dtUtil::HotSpotDefinition hotSpotDefinition;
@@ -268,7 +268,7 @@ void Viewer::CreateBoneBasisDisplay()
       hotSpotDefinition.mParentName = *boneNameIter;
 
       //Create the axis geometry
-      dtCore::PointAxis *axis = new dtCore::PointAxis();
+      dtCore::PointAxis* axis = new dtCore::PointAxis();
       axis->SetLength(dtCore::PointAxis::X, 0.025f);
       axis->SetLength(dtCore::PointAxis::Y, 0.025f);
       axis->SetLength(dtCore::PointAxis::Z, 0.025f);
@@ -283,7 +283,7 @@ void Viewer::CreateBoneBasisDisplay()
 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnLoadPoseMeshFile(const std::string& filename)
-{ 
+{
    dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
    assert(rapper);
 
@@ -313,7 +313,7 @@ void Viewer::OnLoadPoseMeshFile(const std::string& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStartAnimation(unsigned int id, float weight, float delay)
 {
-   if(mCharacter.valid())
+   if (mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->BlendCycle(id, weight, delay);
@@ -325,7 +325,7 @@ void Viewer::OnStartAnimation(unsigned int id, float weight, float delay)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStopAnimation(unsigned int id, float delay)
 {
-   if(mCharacter.valid())
+   if (mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ClearCycle(id, delay);
@@ -337,7 +337,7 @@ void Viewer::OnStopAnimation(unsigned int id, float delay)
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnStartAction(unsigned int id, float delayIn, float delayOut)
 {
-   if(mCharacter.valid())
+   if (mCharacter.valid())
    {
       Cal3DModelWrapper* wrapper = mCharacter->GetCal3DWrapper();
       wrapper->ExecuteAction(id, delayIn, delayOut);
@@ -407,15 +407,15 @@ void Viewer::OnSetBoneBasisDisplay(bool shouldDisplay)
    else
    {
       GetScene()->GetSceneNode()->removeChild(mBoneBasisGroup.get());
-   }  
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::OnTimeout()
 {
    if (mCharacter.valid())
-   {   
-      dtAnim::Cal3DModelWrapper *rapper = mCharacter->GetCal3DWrapper();
+   {
+      dtAnim::Cal3DModelWrapper* rapper = mCharacter->GetCal3DWrapper();
       assert(rapper);
 
       mAttachmentController->Update(*rapper);
@@ -428,32 +428,32 @@ void Viewer::OnTimeout()
 
       while (animItr != animVec.end())
       {
-         CalAnimation *anim = *(animItr);
+         CalAnimation* anim = *(animItr);
          float weight = 0.f;
 
          if (anim!=NULL)
          {
-            weight = anim->getWeight();  
+            weight = anim->getWeight();
          }
 
          weightList.push_back(weight);
-        
-         ++animItr;
-      }   
 
-      emit BlendUpdate(weightList);   
+         ++animItr;
+      }
+
+      emit BlendUpdate(weightList);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Viewer::InitShadeDecorator()
 {
-   //osg::StateSet *stateset = new osg::StateSet;  
-   //osg::PolygonMode *polyMode = new osg::PolygonMode;
+   //osg::StateSet* stateset = new osg::StateSet;
+   //osg::PolygonMode* polyMode = new osg::PolygonMode;
    //polyMode->setMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
    //
-   //osg::Material *material = new osg::Material;
-   //stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);  
+   //osg::Material* material = new osg::Material;
+   //stateset->setAttributeAndModes(material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    //stateset->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
    //mShadeDecorator->setStateSet(stateset);
