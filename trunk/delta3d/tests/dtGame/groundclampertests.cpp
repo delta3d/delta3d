@@ -330,8 +330,11 @@ namespace dtGame
 
             osg::Vec3 point, normal;
 
+            // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
+            GroundClampingData data;
+
             CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.", 
-                     !mGroundClamper->GetClosestHit(*mTestGameActor, *single, 0.03, point, normal));
+                     !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
             osgUtil::Hit hit;
             hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
@@ -345,7 +348,7 @@ namespace dtGame
             single->SetHitList(hitList);
             
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mGroundClamper->GetClosestHit(*mTestGameActor, *single, 0.03, point, normal));
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -356,7 +359,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
             
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mGroundClamper->GetClosestHit(*mTestGameActor, *single, 3.4, point, normal));
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 3.4, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -367,7 +370,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
 
             CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
-                     mGroundClamper->GetClosestHit(*mTestGameActor, *single, 5.0, point, normal));
+                     mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
@@ -501,8 +504,11 @@ namespace dtGame
             osg::Vec3 resultPoint;
             osg::Vec3 resultNormal(testNormal);
 
+            // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
+            GroundClampingData data;
+
             CPPUNIT_ASSERT_MESSAGE( "Current Default Ground Clamper implementation should not return any improvised point & normal from GetMissingHit.",
-               ! mGroundClamper->GetMissingHit(*mTestGameActor, 3.0f, testPoint, testNormal ) );
+               ! mGroundClamper->GetMissingHit(*mTestGameActor, data, 3.0f, testPoint, testNormal ) );
             CPPUNIT_ASSERT( testPoint == resultPoint );
             CPPUNIT_ASSERT( testNormal == resultNormal );
          }
@@ -601,9 +607,12 @@ namespace dtGame
             CPPUNIT_ASSERT( resultPoints[1].z() != resultPoints[2].z() );
             CPPUNIT_ASSERT( resultPoints[2].z() != resultPoints[0].z() );
 
+            // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
+            GroundClampingData data;
+
             // Test the method.
             dtCore::Transform xform; // Satisfy the method parameters.
-            mGroundClamper->GetSurfacePoints(*mTestGameActor, xform, testPoints);
+            mGroundClamper->GetSurfacePoints(*mTestGameActor, data, xform, testPoints);
             // --- Verify the resulting points.
             CPPUNIT_ASSERT( IsEqual(resultPoints[0], testPoints[0]) );
             CPPUNIT_ASSERT( IsEqual(resultPoints[1], testPoints[1]) );
