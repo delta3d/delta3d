@@ -218,7 +218,7 @@ void AnimationComponent::GroundClamp()
                pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
 
                mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampingType::RANGED,
-                        0.0, xform, *pProxy, gcData);
+                        0.0, xform, *pProxy, gcData, true);
             }//if
          }//for
 
