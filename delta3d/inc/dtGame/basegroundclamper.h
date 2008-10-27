@@ -210,9 +210,13 @@ namespace dtGame
           * @param xform Current absolute transform of the actor.
           * @param proxy Actor to be clamped and is passed in case collision geometry is needed.
           * @param data Ground Clamping Data containing clamping options.
+          * @param transformChanged Flag to help the clamper to determine if it should perform a clamp or not.
+          * @param velocity The transformable's instantaneous velocity for the current frame.
           */
          virtual void ClampToGround(GroundClampingType& type, double currentTime, dtCore::Transform& xform,
-            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data) = 0;
+            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            bool transformChanged = false,
+            const osg::Vec3& velocity = osg::Vec3()) = 0;
 
          /**
           * Override this method to handle any cleanup after ground clamping has been completed.
