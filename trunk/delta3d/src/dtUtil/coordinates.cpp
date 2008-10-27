@@ -182,7 +182,7 @@ namespace dtUtil
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Coordinates::operator == (const Coordinates &rhs)
+   bool Coordinates::operator == (const Coordinates& rhs) const
    {
       if (this == &rhs)
          return true;
@@ -445,7 +445,6 @@ namespace dtUtil
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             double lat, lon, elevation, easting, northing;
-            char hemisphere;
 
             ConvertGeocentricToGeodetic(loc[0], loc[1], loc[2],lat,lon,elevation);
 
