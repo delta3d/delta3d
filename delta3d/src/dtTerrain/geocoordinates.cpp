@@ -200,14 +200,14 @@ namespace dtTerrain
       pt.z() = mAltitude;
    }
 
-   std::string GeoCoordinates::ToString()
+   std::string GeoCoordinates::ToString() const
    {
       std::ostringstream ost;
       ost << "GeoCoord(" << GetLatitude() << ", " << GetLongitude() << ", " << GetAltitude() << ")";
       return ost.str();
    }
 
-   std::string GeoCoordinates::ToStringAll()
+   std::string GeoCoordinates::ToStringAll() const
    {
       std::ostringstream ost;
       ost << "GeoCoord(geo: " << GetLatitude() << ", " << GetLongitude() << ", " << GetAltitude() << 
