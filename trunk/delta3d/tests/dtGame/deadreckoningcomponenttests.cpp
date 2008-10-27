@@ -80,12 +80,7 @@ namespace dtGame
          const osg::Vec3& GetLastUsedEyePoint() const
          {
             return GetGroundClamper().GetLastEyePoint();
-         }     
-
-         bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
-         {
-            return BaseClass::ShouldForceClamp(helper, deltaRealTime, bTransformChanged);
-         }     
+         }
          
          void InternalCalcTotSmoothingSteps(DeadReckoningHelper& helper, const dtCore::Transform& xform)
          {
@@ -93,7 +88,7 @@ namespace dtGame
          }   
 
          /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool DoGetClosestHit(dtGame::GameActorProxy& proxy, dtCore::BatchIsector::SingleISector& single, float pointz,
+         bool DoGetClosestHit(dtGame::GameActorProxy& proxy, GroundClampingData& data, dtCore::BatchIsector::SingleISector& single, float pointz,
                   osg::Vec3& hit, osg::Vec3& normal)
          {
             bool success = false;
@@ -102,7 +97,7 @@ namespace dtGame
                = dynamic_cast<DefaultGroundClamper*>(&GetGroundClamper());
             if( defaultClamper != NULL )
             {
-               success = defaultClamper->GetClosestHit(proxy, single, pointz, hit, normal);
+               success = defaultClamper->GetClosestHit(proxy, data, single, pointz, hit, normal);
             }
 
             return success;
@@ -165,8 +160,6 @@ namespace dtGame
          CPPUNIT_TEST(TestDoDRVelocityAccelNoMotion);
          CPPUNIT_TEST(TestDoDRStatic);
          CPPUNIT_TEST(TestDoDRNoDR);
-         CPPUNIT_TEST(TestForceClampProperty);
-         CPPUNIT_TEST(TestShouldForceClamp);
          
       CPPUNIT_TEST_SUITE_END();
    
@@ -227,7 +220,6 @@ namespace dtGame
                dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT);
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 
                dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_POS);
-            CPPUNIT_ASSERT(helper->GetTimeUntilForceClamp() == 0.0f);
             CPPUNIT_ASSERT(helper->GetAdjustRotationToGround());
             CPPUNIT_ASSERT(helper->GetNodeCollector() == NULL);
          }
@@ -326,9 +318,6 @@ namespace dtGame
             
             CPPUNIT_ASSERT(helper->GetNodeCollector() == nodeCollector.get());
 
-            helper->SetTimeUntilForceClamp(6.7f);
-            CPPUNIT_ASSERT_EQUAL(6.7f, helper->GetTimeUntilForceClamp());
-
             helper->SetAdjustRotationToGround(false);
             CPPUNIT_ASSERT(!helper->GetAdjustRotationToGround());
          }
@@ -397,34 +386,6 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("The eye point actor should have been deleted on the map unload.",
                mDeadReckoningComponent->GetEyePointActor() == NULL);
 
-         }
-
-         void TestShouldForceClamp()
-         {
-            //set the interval to make sure the code respects it.
-            mDeadReckoningComponent->SetForceClampInterval(8.0f);
-
-            dtCore::RefPtr<DeadReckoningHelper> helper = new DeadReckoningHelper;
-            helper->SetTimeUntilForceClamp(3.0);
-            CPPUNIT_ASSERT(!mDeadReckoningComponent->ShouldForceClamp(*helper, 1.0f, false));
-            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The force clamp timer should not have expired, but it should decrement by 1.0 second.",
-                  2.0f, helper->GetTimeUntilForceClamp(), 0.001f);
-            CPPUNIT_ASSERT(!mDeadReckoningComponent->ShouldForceClamp(*helper, 3.0f, true));
-            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("If the actor hase been translated, the force clamp time should reset and no force should happe", 
-                  mDeadReckoningComponent->GetForceClampInterval(), helper->GetTimeUntilForceClamp(), 0.001f);
-
-            //Force the time to expire by just over the force clamp time so it will be guaranteed to return true.
-            CPPUNIT_ASSERT(mDeadReckoningComponent->ShouldForceClamp(*helper, mDeadReckoningComponent->GetForceClampInterval() + 0.1, false));
-            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The time should reset on a force clamp.", 
-                  mDeadReckoningComponent->GetForceClampInterval(), helper->GetTimeUntilForceClamp(), 0.001f);
-         }
-
-         void TestForceClampProperty()
-         {
-            CPPUNIT_ASSERT_EQUAL(3.0f, mDeadReckoningComponent->GetForceClampInterval());
-            float value = 10.0f;
-            mDeadReckoningComponent->SetForceClampInterval(value);
-            CPPUNIT_ASSERT_EQUAL(value, mDeadReckoningComponent->GetForceClampInterval());
          }
 
          void TestActorRegistration()
