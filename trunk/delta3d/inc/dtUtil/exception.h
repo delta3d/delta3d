@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  */
+
 #ifndef DELTA_EXCEPTION
 #define DELTA_EXCEPTION
 
@@ -39,7 +40,8 @@ namespace dtUtil
 
       protected:
 
-         BaseExceptionType(const std::string &name) : dtUtil::Enumeration(name)
+         BaseExceptionType(const std::string& name)
+            : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
@@ -51,7 +53,7 @@ namespace dtUtil
     * logs them for you.  However, applications using the dtDAL module
     * should excercise proper exception handling.
     */
-   class DT_UTIL_EXPORT Exception 
+   class DT_UTIL_EXPORT Exception
    {
       public:
 
@@ -63,7 +65,7 @@ namespace dtUtil
           *  @param linenum - Line number in the file from which the
           *  exception was thrown.
           */
-         Exception(Enumeration &type, const std::string &message, const std::string &filename,
+         Exception(Enumeration& type, const std::string& message, const std::string& filename,
                unsigned int linenum);
 
          /**
@@ -73,7 +75,7 @@ namespace dtUtil
           *  @param linenum - Line number in the file from which the
           *  exception was thrown.
           */
-         Exception(const std::string &message, const std::string &filename,
+         Exception(const std::string& message, const std::string& filename,
                unsigned int linenum);
 
          /*
@@ -111,7 +113,7 @@ namespace dtUtil
          /**
           * Prints the exception to the console.
           */
-         void Print();
+         void Print() const;
 
          /**
           * logs the exception to the default logger.
@@ -134,7 +136,7 @@ namespace dtUtil
          void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const;
 
       protected:
-         Enumeration &mType;
+         Enumeration& mType;
          std::string mMessage, mFileName;
          unsigned int mLineNum;
    };
