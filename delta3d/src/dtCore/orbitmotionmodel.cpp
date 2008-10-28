@@ -170,7 +170,7 @@ void OrbitMotionModel::SetElevationAxis(Axis* elevationAxis)
 
    mElevationAxis = elevationAxis;
 
-   if (mElevationAxis != 0)
+   if (mElevationAxis.valid())
    {
       mElevationAxis->AddAxisListener(this);
    }
@@ -193,14 +193,14 @@ Axis* OrbitMotionModel::GetElevationAxis()
  */
 void OrbitMotionModel::SetDistanceAxis(Axis* distanceAxis)
 {
-   if (mDistanceAxis != 0)
+   if (mDistanceAxis.valid())
    {
       mDistanceAxis->RemoveAxisListener(this);
    }
 
    mDistanceAxis = distanceAxis;
 
-   if (mDistanceAxis != 0)
+   if (mDistanceAxis.valid())
    {
       mDistanceAxis->AddAxisListener(this);
    }
@@ -223,14 +223,14 @@ Axis* OrbitMotionModel::GetDistanceAxis()
  */
 void OrbitMotionModel::SetLeftRightTranslationAxis(Axis* leftRightTranslationAxis)
 {
-   if (mLeftRightTranslationAxis != 0)
+   if (mLeftRightTranslationAxis.valid())
    {
       mLeftRightTranslationAxis->RemoveAxisListener(this);
    }
 
    mLeftRightTranslationAxis = leftRightTranslationAxis;
 
-   if (mLeftRightTranslationAxis != 0)
+   if (mLeftRightTranslationAxis.valid())
    {
       mLeftRightTranslationAxis->AddAxisListener(this);
    }
@@ -253,14 +253,14 @@ Axis* OrbitMotionModel::GetLeftRightTranslationAxis()
  */
 void OrbitMotionModel::SetUpDownTranslationAxis(Axis* upDownTranslationAxis)
 {
-   if (mUpDownTranslationAxis != 0)
+   if (mUpDownTranslationAxis.valid())
    {
       mUpDownTranslationAxis->RemoveAxisListener(this);
    }
 
    mUpDownTranslationAxis = upDownTranslationAxis;
 
-   if (mUpDownTranslationAxis != 0)
+   if (mUpDownTranslationAxis.valid())
    {
       mUpDownTranslationAxis->AddAxisListener(this);
    }
