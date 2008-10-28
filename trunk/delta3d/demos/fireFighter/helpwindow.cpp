@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * @author William E. Johnson II
  */
+
 #include <fireFighter/helpwindow.h>
 #include <fireFighter/exception.h>
 
@@ -28,16 +29,16 @@
 
 #include <CEGUI.h>
 
-HelpWindow::HelpWindow(CEGUI::Window *mainWindow) : 
-   mIsEnabled(false),
-   mOverlay(NULL), 
-   mHeaderText(NULL), 
-   mBinocsText(NULL), 
-   mLRFText(NULL), 
-   mCompassText(NULL), 
-   mGPSText(NULL),
-   mToggleFullScreen(NULL),
-   mMagnifyModels(NULL)
+HelpWindow::HelpWindow(CEGUI::Window* mainWindow)
+   : mIsEnabled(false)
+   , mOverlay(NULL)
+   , mHeaderText(NULL)
+   , mBinocsText(NULL)
+   , mLRFText(NULL)
+   , mCompassText(NULL)
+   , mGPSText(NULL)
+   , mToggleFullScreen(NULL)
+   , mMagnifyModels(NULL)
 {
    mMainWindow = NULL;
    InitGui(mainWindow);
@@ -53,7 +54,7 @@ HelpWindow::~HelpWindow()
    mOverlay->removeChildWindow(mToggleFullScreen);
    mOverlay->removeChildWindow(mMagnifyModels);
 
-   if(mMainWindow != NULL)
+   if (mMainWindow != NULL)
    {
       mMainWindow->removeChildWindow(mOverlay);
    }
@@ -75,16 +76,16 @@ void HelpWindow::Enable(bool enable)
    mIsEnabled ? mOverlay->show() : mOverlay->hide();
 }
 
-void HelpWindow::InitGui(CEGUI::Window *mainWindow)
+void HelpWindow::InitGui(CEGUI::Window* mainWindow)
 {
    try
    {
       mMainWindow = mainWindow;
-      CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
       mOverlay = static_cast<CEGUI::FrameWindow*>(wm->createWindow("WindowsLook/FrameWindow", "help_window"));
       mOverlay->setProperty("AlwaysOnTop", "True");
-     
-      if(mMainWindow != NULL)
+
+      if (mMainWindow != NULL)
       {
          mMainWindow->addChildWindow(mOverlay);
       }
@@ -96,7 +97,7 @@ void HelpWindow::InitGui(CEGUI::Window *mainWindow)
       mGPSText          = wm->createWindow("WindowsLook/StaticText", "gps_helptext");
       mToggleFullScreen = wm->createWindow("WindowsLook/StaticText", "fullscreen_helptext");
       mMagnifyModels    = wm->createWindow("WindowsLook/StaticText", "magnifiy_helptext");
-      
+
       mOverlay->addChildWindow(mHeaderText);
       mOverlay->addChildWindow(mBinocsText);
       mOverlay->addChildWindow(mLRFText);
@@ -178,7 +179,7 @@ void HelpWindow::InitGui(CEGUI::Window *mainWindow)
 
       Enable(false);
    }
-   catch(const CEGUI::Exception &e) 
+   catch(const CEGUI::Exception& e)
    {
       std::ostringstream oss;
       oss << "CEGUI exception caught: " << e.getMessage().c_str();

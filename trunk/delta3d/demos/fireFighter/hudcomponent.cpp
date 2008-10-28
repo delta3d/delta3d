@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/hudcomponent.h>
 #include <fireFighter/messagetype.h>
 #include <fireFighter/messages.h>
@@ -47,69 +48,69 @@ using dtCore::RefPtr;
 
 const std::string HUDComponent::NAME = "HUDComponent";
 
-HUDComponent::HUDComponent(dtCore::DeltaWin &win,
-                           dtCore::Keyboard &keyboard,
-                           dtCore::Mouse &mouse,
-                           const std::string &name) : 
-   dtGame::GMComponent(name), 
-   mStartWithObjectives(NULL), 
-   mStart(NULL), 
-   mQuit(NULL), 
-   mReturnToMenu(NULL), 
-   mMainWindow(NULL), 
-   mWindowBackground(NULL), 
-   mHUDBackground(NULL),
-   mDebriefBackground(NULL),
-   mIntroBackground(NULL),
-   mGameItemImage(NULL), 
-   mFireSuitIcon(NULL), 
-   mFireHoseIcon(NULL), 
-   mSCBAIcon(NULL),
-   mInventoryUseFireSuitIcon(NULL),
-   mInventoryUseFireHoseIcon(NULL),
-   mInventoryUseSCBAIcon(NULL),
-   mInventorySelectIcon(NULL), 
-   mTargetIcon(NULL), 
-   mAppHeader(NULL),
-   mDebriefHeaderText(NULL),
-   mIntroText(NULL),
-   mShowObjectives(true), 
-   mCurrentState(&GameState::STATE_UNKNOWN), 
-   mFireSuitIconPos(cegui_reldim(0.525f), cegui_reldim(0.8f)), 
-   mFireHoseIconPos(cegui_reldim(0.688f), cegui_reldim(0.8f)), 
-   mSCBAIconPos(cegui_reldim(0.85f), cegui_reldim(0.8f)), 
-   mTasksHeaderText(NULL), 
-   mNumTasks(11), 
-   mMissionCompletedText(NULL), 
-   mMissionFailedText(NULL), 
-   mMissionComplete(false), 
-   mMissionFailed(false), 
-   mFailedProxy(NULL), 
-   mCompleteOrFail(NULL), 
-   mFailReason(NULL), 
-   mHUDOverlay(NULL)
+HUDComponent::HUDComponent(dtCore::DeltaWin& win,
+                           dtCore::Keyboard& keyboard,
+                           dtCore::Mouse& mouse,
+                           const std::string& name)
+   : dtGame::GMComponent(name)
+   , mStartWithObjectives(NULL)
+   , mStart(NULL)
+   , mQuit(NULL)
+   , mReturnToMenu(NULL)
+   , mMainWindow(NULL)
+   , mWindowBackground(NULL)
+   , mHUDBackground(NULL)
+   , mDebriefBackground(NULL)
+   , mIntroBackground(NULL)
+   , mGameItemImage(NULL)
+   , mFireSuitIcon(NULL)
+   , mFireHoseIcon(NULL)
+   , mSCBAIcon(NULL)
+   , mInventoryUseFireSuitIcon(NULL)
+   , mInventoryUseFireHoseIcon(NULL)
+   , mInventoryUseSCBAIcon(NULL)
+   , mInventorySelectIcon(NULL)
+   , mTargetIcon(NULL)
+   , mAppHeader(NULL)
+   , mDebriefHeaderText(NULL)
+   , mIntroText(NULL)
+   , mShowObjectives(true)
+   , mCurrentState(&GameState::STATE_UNKNOWN)
+   , mFireSuitIconPos(cegui_reldim(0.525f), cegui_reldim(0.8f))
+   , mFireHoseIconPos(cegui_reldim(0.688f), cegui_reldim(0.8f))
+   , mSCBAIconPos(cegui_reldim(0.85f), cegui_reldim(0.8f))
+   , mTasksHeaderText(NULL)
+   , mNumTasks(11)
+   , mMissionCompletedText(NULL)
+   , mMissionFailedText(NULL)
+   , mMissionComplete(false)
+   , mMissionFailed(false)
+   , mFailedProxy(NULL)
+   , mCompleteOrFail(NULL)
+   , mFailReason(NULL)
+   , mHUDOverlay(NULL)
 {
    SetupGUI(win, keyboard, mouse);
 }
 
 HUDComponent::~HUDComponent()
 {
-  
+
 }
 
-void HUDComponent::SetupGUI(dtCore::DeltaWin &win,
-                            dtCore::Keyboard &keyboard,
-                            dtCore::Mouse &mouse)
+void HUDComponent::SetupGUI(dtCore::DeltaWin& win,
+                            dtCore::Keyboard& keyboard,
+                            dtCore::Mouse& mouse)
 {
    mGUI = new dtGUI::CEUIDrawable(&win, &keyboard, &mouse);
- 
-   try 
+
+   try
    {
       std::string scheme = "CEGUI/schemes/WindowsLook.scheme";
       std::string path = dtCore::FindFileInPathList(scheme);
-      if(path.empty())
+      if (path.empty())
       {
-         throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION, 
+         throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION,
             "Failed to find the scheme file.", __FILE__, __LINE__);
       }
 
@@ -118,19 +119,19 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin &win,
       CEGUI::SchemeManager::getSingleton().loadScheme(path);
       dtUtil::FileUtils::GetInstance().PopDirectory();
 
-      CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+      CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
       CEGUI::System::getSingleton().setDefaultFont("DejaVuSans-10");
       mMainWindow = wm->createWindow("DefaultGUISheet", "root");
       CEGUI::System::getSingleton().setGUISheet(mMainWindow);
-   
+
       BuildMainMenu();
       BuildIntroMenu();
       BuildHUD();
       BuildEndMenu();
    }
-   catch(const CEGUI::Exception &e)
+   catch(const CEGUI::Exception& e)
    {
-      throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION, e.getMessage().c_str(), 
+      throw dtUtil::Exception(ExceptionEnum::CEGUI_EXCEPTION, e.getMessage().c_str(),
          __FILE__, __LINE__);
    }
 }
@@ -140,83 +141,89 @@ void HUDComponent::OnAddedToGM()
    GetGameManager()->GetApplication().AddDrawable(mGUI.get());
 }
 
-void HUDComponent::ProcessMessage(const dtGame::Message &msg)
+void HUDComponent::ProcessMessage(const dtGame::Message& msg)
 {
-   if(msg.GetMessageType() == MessageType::GAME_STATE_CHANGED)
+   if (msg.GetMessageType() == MessageType::GAME_STATE_CHANGED)
    {
-      const GameStateChangedMessage &gscm = static_cast<const GameStateChangedMessage&>(msg);
+      const GameStateChangedMessage& gscm = static_cast<const GameStateChangedMessage&>(msg);
       mCurrentState = &gscm.GetNewState();
       Refresh();
    }
-   else if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   else if (msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       GetGameManager()->GetApplication().AddDrawable(mGUI.get());
    }
-   else if(msg.GetMessageType() == MessageType::ITEM_INTERSECTED)
+   else if (msg.GetMessageType() == MessageType::ITEM_INTERSECTED)
    {
-      if(!msg.GetAboutActorId().ToString().empty())
+      if (!msg.GetAboutActorId().ToString().empty())
       {
-         dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-         if(dynamic_cast<FireActor*>(proxy->GetActor()) == NULL)
+         dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+         if (dynamic_cast<FireActor*>(proxy->GetActor()) == NULL)
+         {
             ShowGameItemImage();
+         }
          else
+         {
             HideGameItemImage();
+         }
       }
       else
       {
          HideGameItemImage();
       }
    }
-   else if(msg.GetMessageType() == MessageType::ITEM_ACQUIRED)
+   else if (msg.GetMessageType() == MessageType::ITEM_ACQUIRED)
    {
-      dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       AddItemToHUD(dynamic_cast<GameItemActor*>(proxy->GetActor()));
    }
-   else if(msg.GetMessageType() == MessageType::ITEM_SELECTED)
+   else if (msg.GetMessageType() == MessageType::ITEM_SELECTED)
    {
-      dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetSelectedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
    }
-   else if(msg.GetMessageType() == MessageType::ITEM_ACTIVATED)
+   else if (msg.GetMessageType() == MessageType::ITEM_ACTIVATED)
    {
-      dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetActivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
       UpdateHUDBackground();
    }
-   else if(msg.GetMessageType() == MessageType::ITEM_DEACTIVATED)
+   else if (msg.GetMessageType() == MessageType::ITEM_DEACTIVATED)
    {
-      dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+      dtGame::GameActorProxy* proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       SetDeactivatedItem(dynamic_cast<GameItemActor*>(proxy->GetActor()));
       UpdateHUDBackground();
    }
-   else if(msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   else if (msg.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      if(*mCurrentState == GameState::STATE_RUNNING)
+      if (*mCurrentState == GameState::STATE_RUNNING)
       {
          UpdateMediumDetailData(mHUDBackground);
       }
-      else if(*mCurrentState == GameState::STATE_DEBRIEF)
+      else if (*mCurrentState == GameState::STATE_DEBRIEF)
+      {
          RefreshDebriefScreen();
+      }
    }
-   else if(msg.GetMessageType() == MessageType::MISSION_COMPLETE)
+   else if (msg.GetMessageType() == MessageType::MISSION_COMPLETE)
    {
       mMissionComplete = true;
       mMissionFailed = false;
       Refresh();
    }
-   else if(msg.GetMessageType() == MessageType::MISSION_FAILED)
+   else if (msg.GetMessageType() == MessageType::MISSION_FAILED)
    {
       mMissionFailed = true;
       mMissionComplete = false;
       GetGameManager()->FindActorById(msg.GetAboutActorId(), mFailedProxy);
       Refresh();
    }
-   else if(msg.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   else if (msg.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
    {
       mHelpWindow->Enable(true);
       ShowMouse(true);
    }
-   else if(msg.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   else if (msg.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
    {
       mHelpWindow->Enable(false);
       ShowMouse(false);
@@ -234,12 +241,16 @@ void HUDComponent::ShowHUD()
 {
    HideMenus();
    ShowMouse(false);
-   
+
    mHUDBackground->show();
-   if(mMissionComplete)
+   if (mMissionComplete)
+   {
       mMissionCompletedText->show();
-   else if(mMissionFailed)
+   }
+   else if (mMissionFailed)
+   {
       mMissionFailedText->show();
+   }
 }
 
 void HUDComponent::ShowEndMenu()
@@ -276,7 +287,7 @@ void HUDComponent::HideMenus()
 
 void HUDComponent::BuildMainMenu()
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
    //CEGUI::System::getSingleton().getDefaultFont()->setProperty("PointSize", "14");
 
    mWindowBackground = wm->createWindow("WindowsLook/StaticImage", "MenuBackgroundImage");
@@ -329,7 +340,7 @@ void HUDComponent::BuildMainMenu()
 
 void HUDComponent::BuildHUD()
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
 
    mHUDBackground = wm->createWindow("WindowsLook/StaticImage", "HUDBackgroundImage");
    mMainWindow->addChildWindow(mHUDBackground);
@@ -453,12 +464,12 @@ void HUDComponent::BuildHUD()
    float mTextHeight   = 25.0f;
    float taskTextWidth = 500.0f;
 
-   mTasksHeaderText = CreateText("Task Header", mHUDOverlay, "Tasks:", 
+   mTasksHeaderText = CreateText("Task Header", mHUDOverlay, "Tasks:",
       4, curYPos, taskTextWidth - 2, mTextHeight + 2);
 
    curYPos += 2;
 
-   for(unsigned int i = 0; i < mNumTasks; i++)
+   for (unsigned int i = 0; i < mNumTasks; i++)
    {
       std::ostringstream oss;
       oss << "Task " << i;
@@ -469,14 +480,14 @@ void HUDComponent::BuildHUD()
       mTaskTextList.push_back(text);
       text->hide();
    }
-  
+
    mHUDBackground->hide();
 }
 
 void HUDComponent::BuildEndMenu()
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
-   
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
+
    mDebriefBackground = wm->createWindow("WindowsLook/StaticImage", "DebriefBackgroundImage");
    mMainWindow->addChildWindow(mDebriefBackground);
    mDebriefBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
@@ -526,7 +537,7 @@ void HUDComponent::BuildEndMenu()
 
    curYPos += 2;
 
-   for(unsigned int i = 0; i < mNumTasks; i++)
+   for (unsigned int i = 0; i < mNumTasks; i++)
    {
       std::ostringstream oss;
       oss << "Debrief Task " << i;
@@ -537,14 +548,14 @@ void HUDComponent::BuildEndMenu()
       mDebriefList.push_back(text);
       text->hide();
    }
-   
+
    mDebriefBackground->hide();
-} 
+}
 
 void HUDComponent::BuildIntroMenu()
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
-   
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
+
    mIntroBackground = wm->createWindow("WindowsLook/StaticImage", "IntroBackgroundImage");
    mMainWindow->addChildWindow(mIntroBackground);
    mIntroBackground->setPosition(CEGUI::UVector2(cegui_reldim(0.0f), cegui_reldim(0.0f)));
@@ -565,15 +576,15 @@ void HUDComponent::BuildIntroMenu()
    mIntroBackground->hide();
 }
 
-bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs &e)
+bool HUDComponent::OnStartWithObjectives(const CEGUI::EventArgs& e)
 {
    mShowObjectives = true;
    SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
-   
+
    return true;
 }
 
-bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
+bool HUDComponent::OnStart(const CEGUI::EventArgs& e)
 {
    mShowObjectives = false;
    SendGameStateChangedMessage(GameState::STATE_MENU, GameState::STATE_INTRO);
@@ -581,29 +592,29 @@ bool HUDComponent::OnStart(const CEGUI::EventArgs &e)
    return true;
 }
 
-bool HUDComponent::OnQuit(const CEGUI::EventArgs &e)
+bool HUDComponent::OnQuit(const CEGUI::EventArgs& e)
 {
    GetGameManager()->GetApplication().Quit();
    return true;
 }
 
-bool HUDComponent::OnReturnToMenu(const CEGUI::EventArgs &e)
+bool HUDComponent::OnReturnToMenu(const CEGUI::EventArgs& e)
 {
    SendGameStateChangedMessage(GameState::STATE_DEBRIEF, GameState::STATE_MENU);
    return true;
 }
 
-bool HUDComponent::OnHelpWindowClosed(const CEGUI::EventArgs &e)
+bool HUDComponent::OnHelpWindowClosed(const CEGUI::EventArgs& e)
 {
    RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_CLOSED);
    GetGameManager()->SendMessage(*msg);
    return true;
 }
 
-void HUDComponent::SendGameStateChangedMessage(GameState &oldState, GameState &newState)
+void HUDComponent::SendGameStateChangedMessage(GameState& oldState, GameState& newState)
 {
    RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
-   GameStateChangedMessage &gscm = static_cast<GameStateChangedMessage&>(*msg);
+   GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(oldState);
    gscm.SetNewState(newState);
    LOG_ALWAYS("Changing game state to: " + newState.GetName());
@@ -612,23 +623,23 @@ void HUDComponent::SendGameStateChangedMessage(GameState &oldState, GameState &n
 
 void HUDComponent::Refresh()
 {
-   if(*mCurrentState == GameState::STATE_MENU)
+   if (*mCurrentState == GameState::STATE_MENU)
    {
       ShowMainMenu();
    }
-   else if(*mCurrentState == GameState::STATE_INTRO)
+   else if (*mCurrentState == GameState::STATE_INTRO)
    {
       ShowIntroMenu();
    }
-   else if(*mCurrentState == GameState::STATE_RUNNING)
+   else if (*mCurrentState == GameState::STATE_RUNNING)
    {
       ShowHUD();
    }
-   else if(*mCurrentState == GameState::STATE_DEBRIEF)
+   else if (*mCurrentState == GameState::STATE_DEBRIEF)
    {
       ShowEndMenu();
-   } 
-   else 
+   }
+   else
    {
       LOG_ERROR("Cannot switch to invalid state:" + mCurrentState->GetName());
    }
@@ -639,24 +650,24 @@ void HUDComponent::ShowMouse(bool enable)
    GetGameManager()->GetApplication().GetWindow()->ShowCursor(enable);
 }
 
-void HUDComponent::AddItemToHUD(GameItemActor *item)
+void HUDComponent::AddItemToHUD(GameItemActor* item)
 {
-   if(dynamic_cast<FireSuitActor*>(item) != NULL)
+   if (dynamic_cast<FireSuitActor*>(item) != NULL)
    {
       mFireSuitIcon->show();
    }
-   else if(dynamic_cast<FireHoseActor*>(item) != NULL)
+   else if (dynamic_cast<FireHoseActor*>(item) != NULL)
    {
       mFireHoseIcon->show();
    }
-   else if(dynamic_cast<SCBAActor*>(item) != NULL)
+   else if (dynamic_cast<SCBAActor*>(item) != NULL)
    {
       mSCBAIcon->show();
    }
- 
+
    // Since we now have items in the HUD, show the select icon
    static bool hackIsFirstTime = true;
-   if(hackIsFirstTime)
+   if (hackIsFirstTime)
    {
       SetSelectedItem(item);
       hackIsFirstTime = false;
@@ -664,17 +675,17 @@ void HUDComponent::AddItemToHUD(GameItemActor *item)
    mInventorySelectIcon->show();
 }
 
-void HUDComponent::SetSelectedItem(GameItemActor *item)
+void HUDComponent::SetSelectedItem(GameItemActor* item)
 {
-   if(dynamic_cast<FireSuitActor*>(item) != NULL)
+   if (dynamic_cast<FireSuitActor*>(item) != NULL)
    {
       mInventorySelectIcon->setPosition(CEGUI::UVector2(mFireSuitIconPos.d_x, mFireSuitIconPos.d_y - cegui_reldim(0.025f)));
    }
-   else if(dynamic_cast<FireHoseActor*>(item) != NULL)
+   else if (dynamic_cast<FireHoseActor*>(item) != NULL)
    {
       mInventorySelectIcon->setPosition(CEGUI::UVector2(mFireHoseIconPos.d_x, mFireHoseIconPos.d_y - cegui_reldim(0.025f)));
    }
-   else if(dynamic_cast<SCBAActor*>(item) != NULL)
+   else if (dynamic_cast<SCBAActor*>(item) != NULL)
    {
       mInventorySelectIcon->setPosition(CEGUI::UVector2(mSCBAIconPos.d_x, mSCBAIconPos.d_y - cegui_reldim(0.025f)));
    }
@@ -684,87 +695,95 @@ void HUDComponent::SetSelectedItem(GameItemActor *item)
    }
 }
 
-void HUDComponent::SetActivatedItem(GameItemActor *item)
+void HUDComponent::SetActivatedItem(GameItemActor* item)
 {
-   if(dynamic_cast<FireSuitActor*>(item) != NULL)
+   if (dynamic_cast<FireSuitActor*>(item) != NULL)
    {
       mInventoryUseFireSuitIcon->show();
    }
-   else if(dynamic_cast<FireHoseActor*>(item) != NULL)
+   else if (dynamic_cast<FireHoseActor*>(item) != NULL)
    {
       mInventoryUseFireHoseIcon->show();
    }
-   else if(dynamic_cast<SCBAActor*>(item) != NULL)
+   else if (dynamic_cast<SCBAActor*>(item) != NULL)
    {
       mInventoryUseSCBAIcon->show();
    }
-   else 
+   else
    {
       LOG_ERROR("Could not set the activated item. Unable to cast the parameter");
    }
 }
 
-void HUDComponent::SetDeactivatedItem(GameItemActor *item)
+void HUDComponent::SetDeactivatedItem(GameItemActor* item)
 {
-   if(dynamic_cast<FireSuitActor*>(item) != NULL)
+   if (dynamic_cast<FireSuitActor*>(item) != NULL)
    {
       mInventoryUseFireSuitIcon->hide();
    }
-   else if(dynamic_cast<FireHoseActor*>(item) != NULL)
+   else if (dynamic_cast<FireHoseActor*>(item) != NULL)
    {
       mInventoryUseFireHoseIcon->hide();
    }
-   else if(dynamic_cast<SCBAActor*>(item) != NULL)
+   else if (dynamic_cast<SCBAActor*>(item) != NULL)
    {
       mInventoryUseSCBAIcon->hide();
    }
-   else 
+   else
    {
       LOG_ERROR("Could not set the deactivated item. Unable to cast the parameter");
    }
 }
 
-void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
+void HUDComponent::UpdateMediumDetailData(CEGUI::Window* parent)
 {
-   if(parent->isVisible())
+   if (parent->isVisible())
    {
       std::ostringstream oss;
       std::vector<dtCore::RefPtr<dtGame::GameActorProxy> > tasks;
       unsigned int numAdded = 0;
       unsigned int numComplete = 0;
 
-      dtGame::GMComponent *comp = GetGameManager()->GetComponentByName("LMSComponent");
-      dtGame::TaskComponent *mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
-      
-      if(mTaskComponent)
+      dtGame::GMComponent* comp = GetGameManager()->GetComponentByName("LMSComponent");
+      dtGame::TaskComponent* mTaskComponent = static_cast<dtGame::TaskComponent*>(comp);
+
+      if (mTaskComponent)
       {
          mTaskComponent->GetTopLevelTasks(tasks);
 
          // start our recursive method on each top level task
-         for(unsigned int i = 0; i < tasks.size(); i++)
+         for (unsigned int i = 0; i < tasks.size(); i++)
          {
-            dtActors::TaskActorProxy *taskProxy = static_cast<dtActors::TaskActorProxy*>(tasks[i].get());
+            dtActors::TaskActorProxy* taskProxy = static_cast<dtActors::TaskActorProxy*>(tasks[i].get());
             numAdded += RecursivelyAddTasks("", numAdded, taskProxy, numComplete, parent);
          }
 
          // blank out any of our placeholder task text controls that were left over
-         if(parent == mHUDBackground)
+         if (parent == mHUDBackground)
          {
-            for(unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+            for (unsigned int i = numAdded; i < mTaskTextList.size(); i++)
+            {
                UpdateStaticText(mTaskTextList[i], "");
+            }
          }
          else
          {
-            for(unsigned int i = numAdded; i < mDebriefList.size(); i++)
+            for (unsigned int i = numAdded; i < mDebriefList.size(); i++)
+            {
                UpdateStaticText(mDebriefList[i], "");
+            }
          }
 
          // update our task header
          oss << "Tasks (" << numComplete << " of " << numAdded << ")";
-         if(numComplete < numAdded)
+         if (numComplete < numAdded)
+         {
             UpdateStaticText(mTasksHeaderText, oss.str(), 1.0f, 1.0f, 1.0f);
+         }
          else
+         {
             UpdateStaticText(mTasksHeaderText, oss.str(), 0.0f, 1.0f, 0.0f);
+         }
       }
       else
       {
@@ -773,75 +792,89 @@ void HUDComponent::UpdateMediumDetailData(CEGUI::Window *parent)
    }
 }
 
-unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent, 
+unsigned int HUDComponent::RecursivelyAddTasks(const std::string& indent,
                                                unsigned int curIndex,
-                                               const dtActors::TaskActorProxy *taskProxy, 
-                                               unsigned int &numCompleted, 
-                                               CEGUI::Window *parent)
+                                               const dtActors::TaskActorProxy* taskProxy,
+                                               unsigned int& numCompleted,
+                                               CEGUI::Window* parent)
 {
    std::ostringstream oss;
    oss.setf(std::ios_base::fixed, std::ios_base::floatfield);
    oss.precision(2);
 
    unsigned int totalNumAdded = 0;
-   if(curIndex < mTaskTextList.size())
+   if (curIndex < mTaskTextList.size())
    {
       // update the text for this task
-      const dtActors::TaskActor *task = static_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
-      if(task->IsComplete())
+      const dtActors::TaskActor* task = static_cast<const dtActors::TaskActor*>(taskProxy->GetActor());
+      if (task->IsComplete())
       {
          numCompleted++;
 
-         const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
-         if(tage != NULL)
+         const dtActors::TaskActorGameEvent* tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
+         if (tage != NULL)
          {
-            const dtDAL::GameEvent *event = tage->GetGameEvent();
-            oss << indent << event->GetDescription();
-         }
-         else
-            oss << indent << task->GetDescription();
-         
-         if(parent == mHUDBackground)
-            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
-         else
-            UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
-      }
-      else
-      {
-         const dtActors::TaskActorGameEvent *tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
-         if(tage != NULL)
-         {
-            const dtDAL::GameEvent *event = tage->GetGameEvent();
+            const dtDAL::GameEvent* event = tage->GetGameEvent();
             oss << indent << event->GetDescription();
          }
          else
             oss << indent << task->GetDescription();
 
-         if(parent == mHUDBackground)
+         if (parent == mHUDBackground)
          {
-            if(&task->GetGameActorProxy() == mFailedProxy)
-               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
-            else
-               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+            UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
          }
          else
          {
-            if(&task->GetGameActorProxy() == mFailedProxy)
-               UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+            UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 0.0f, 1.0f, 0.0f);
+         }
+      }
+      else
+      {
+         const dtActors::TaskActorGameEvent* tage = dynamic_cast<const dtActors::TaskActorGameEvent*>(task);
+         if (tage != NULL)
+         {
+            const dtDAL::GameEvent* event = tage->GetGameEvent();
+            oss << indent << event->GetDescription();
+         }
+         else
+         {
+            oss << indent << task->GetDescription();
+         }
+
+         if (parent == mHUDBackground)
+         {
+            if (&task->GetGameActorProxy() == mFailedProxy)
+            {
+               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+            }
             else
+            {
+               UpdateStaticText(mTaskTextList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+            }
+         }
+         else
+         {
+            if (&task->GetGameActorProxy() == mFailedProxy)
+            {
+               UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 1.0f, 0.0f, 0.0f);
+            }
+            else
+            {
                UpdateStaticText(mDebriefList[curIndex + totalNumAdded], oss.str(), 1.0f, 1.0f, 1.0f);
+            }
          }
       }
 
       totalNumAdded++;
 
       // recurse for each child
-      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> > &children = taskProxy->GetAllSubTasks();
-      if(!children.empty())
+      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> >& children = taskProxy->GetAllSubTasks();
+      if (!children.empty())
       {
-         for(unsigned int i = 0; i < children.size(); i++)
+         for (unsigned int i = 0; i < children.size(); i++)
          {
-            const dtActors::TaskActorProxy *childProxy = static_cast<const dtActors::TaskActorProxy*>(children[i].get());
+            const dtActors::TaskActorProxy* childProxy = static_cast<const dtActors::TaskActorProxy*>(children[i].get());
             totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted, parent);
          }
       }
@@ -850,55 +883,67 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string &indent,
    return totalNumAdded;
 }
 
-void HUDComponent::UpdateStaticText(CEGUI::Window *textControl, const std::string &newText,
+void HUDComponent::UpdateStaticText(CEGUI::Window* textControl, const std::string& newText,
                                     float red, float green, float blue, float x, float y)
 {
-   
-   if(textControl != NULL)
+
+   if (textControl != NULL)
    {
       // text and color
-      if(!newText.empty())
+      if (!newText.empty())
       {
-         if(textControl->getText() != newText)
+         if (textControl->getText() != newText)
+         {
             textControl->setText(newText);
-         if(red >= 0.0f && blue >= 0.0f && green >= 0.0f)
+         }
+         if (red >= 0.0f && blue >= 0.0f && green >= 0.0f)
+         {
             textControl->setProperty("TextColours", CEGUI::PropertyHelper::colourToString(CEGUI::colour(red, green, blue)));
+         }
       }
       // position
-      if(x > 0.0f && y > 0.0f)
+      if (x > 0.0f && y > 0.0f)
       {
          CEGUI::UVector2 position = textControl->getPosition();
          CEGUI::UVector2 newPos(cegui_reldim(x), cegui_reldim(y));
-         if(position != newPos)
-            textControl->setPosition(newPos);
-      }
-      if(*mCurrentState == GameState::STATE_RUNNING) 
-      {
-         if(mHUDBackground->isVisible())
+         if (position != newPos)
          {
-            if(mShowObjectives)
-               textControl->show(); 
-            else
-               textControl->hide();
+            textControl->setPosition(newPos);
          }
-      }   
+      }
+      if (*mCurrentState == GameState::STATE_RUNNING)
+      {
+         if (mHUDBackground->isVisible())
+         {
+            if (mShowObjectives)
+            {
+               textControl->show();
+            }
+            else
+            {
+               textControl->hide();
+            }
+         }
+      }
       else
       {
-         if(mDebriefBackground->isVisible())
+         if (mDebriefBackground->isVisible())
+         {
             textControl->show();
+         }
       }
    }
 }
 
-CEGUI::Window* HUDComponent::CreateText(const std::string &name, 
-                                        CEGUI::Window *parent, 
-                                        const std::string &text,
+CEGUI::Window* HUDComponent::CreateText(const std::string& name,
+                                        CEGUI::Window* parent,
+                                        const std::string& text,
                                         float x, float y, float width, float height)
 {
-   CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+   CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
-   CEGUI::Window *result = wm->createWindow("WindowsLook/StaticText", name);
+   CEGUI::Window* result = wm->createWindow("WindowsLook/StaticText", name);
    parent->addChildWindow(result);
    result->setText(text);
    result->setPosition(CEGUI::UVector2(cegui_absdim(x), cegui_absdim(y)));
@@ -914,27 +959,27 @@ CEGUI::Window* HUDComponent::CreateText(const std::string &name,
 void HUDComponent::RefreshDebriefScreen()
 {
    mCompleteOrFail->setText(mMissionComplete ? "Mission Completed" : "Mission Failed");
-   mCompleteOrFail->setProperty("TextColours", mMissionComplete ? 
-      CEGUI::PropertyHelper::colourToString(CEGUI::colour(0.0f, 1.0f, 0.0f)) : 
+   mCompleteOrFail->setProperty("TextColours", mMissionComplete ?
+      CEGUI::PropertyHelper::colourToString(CEGUI::colour(0.0f, 1.0f, 0.0f)) :
       CEGUI::PropertyHelper::colourToString(CEGUI::colour(1.0f, 0.0f, 0.0f)));
-   
+
    UpdateMediumDetailData(mDebriefBackground);
 }
 
 void HUDComponent::UpdateHUDBackground()
 {
-   bool scbaActive = mInventoryUseSCBAIcon->isVisible(), 
+   bool scbaActive = mInventoryUseSCBAIcon->isVisible(),
         hoseActive = mInventoryUseFireHoseIcon->isVisible();
-  
-   if(scbaActive && hoseActive)
+
+   if (scbaActive && hoseActive)
    {
       mHUDBackground->setProperty("Image", "set:HUD_SCBA_FirehoseImage image:HUD_SCBA_FirehoseImage");
    }
-   else if(scbaActive)
+   else if (scbaActive)
    {
       mHUDBackground->setProperty("Image", "set:HUD_SCBAImage image:HUD_SCBAImage");
    }
-   else if(hoseActive)
+   else if (hoseActive)
    {
       mHUDBackground->setProperty("Image", "set:HUD_FirehoseImage image:HUD_FirehoseImage");
    }

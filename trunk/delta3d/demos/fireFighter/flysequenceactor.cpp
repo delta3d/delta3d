@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/flysequenceactor.h>
 #include <fireFighter/playeractor.h>
 #include <fireFighter/messages.h>
@@ -57,7 +58,7 @@ void FlySequenceActorProxy::BuildInvokables()
 
 dtDAL::ActorProxyIcon* FlySequenceActorProxy::GetBillBoardIcon()
 {
-   if(!mBillBoardIcon.valid())
+   if (!mBillBoardIcon.valid())
    {
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
    }
@@ -70,31 +71,31 @@ void FlySequenceActorProxy::OnEnteredWorld()
 }
 
 ///////////////////////////////////////////////////////////
-FlySequenceActor::FlySequenceActor(dtGame::GameActorProxy &proxy) : 
-   dtGame::GameActor(proxy), 
-   lookAt(0.0f, 0.0f, 100.0f),
-   up(0.0f, 0.0f, 1.0f),
-   wayptArray(NULL),
-   speed(0.4), 
-   delta(speed * 0.95),
-   prevWaypoint(0), 
-   mFlyBy(true), 
-   mPlayer(NULL)
+FlySequenceActor::FlySequenceActor(dtGame::GameActorProxy& proxy)
+   : dtGame::GameActor(proxy)
+   , lookAt(0.0f, 0.0f, 100.0f)
+   , up(0.0f, 0.0f, 1.0f)
+   , wayptArray(NULL)
+   , speed(0.4)
+   , delta(speed * 0.95)
+   , prevWaypoint(0)
+   , mFlyBy(true)
+   , mPlayer(NULL)
 {
-   
+
 }
 
 FlySequenceActor::~FlySequenceActor()
 {
    mPlayer = NULL;
-   if(snd != NULL)
+   if (snd != NULL)
    {
       snd->UnloadFile();
-      dtAudio::Sound *sound = snd.release();
+      dtAudio::Sound* sound = snd.release();
       dtAudio::AudioManager::GetInstance().FreeSound(sound);
       snd = NULL;
    }
-   if(wayptArray != NULL)
+   if (wayptArray != NULL)
    {
       delete [] wayptArray;
       wayptArray = NULL;
@@ -105,7 +106,7 @@ void FlySequenceActor::OnEnteredWorld()
 {
    std::string waypointsFile = dtCore::FindFileInPathList("waypoints.txt");
    std::ifstream input(waypointsFile.c_str());
-   if(!input.is_open())
+   if (!input.is_open())
    {
       LOG_ERROR("Could not open waypoints.txt - Creating single waypoint at the origin");
       numWaypoints = 1;
@@ -114,13 +115,15 @@ void FlySequenceActor::OnEnteredWorld()
       wayptArray[0].y = 0.0;
       wayptArray[0].z = 0.0;
    }
-   else 
+   else
    {
       input >> numWaypoints;
       wayptArray = new Waypoint[numWaypoints];
       int i = 0;
       while (input >> wayptArray[i].x >> wayptArray[i].y >> wayptArray[i].z)
+      {
          i++;
+      }
 
       input.close();
    }
@@ -130,17 +133,19 @@ void FlySequenceActor::OnEnteredWorld()
    snd->SetLooping(false);
 }
 
-void FlySequenceActor::TickLocal(const dtGame::Message &msg)
+void FlySequenceActor::TickLocal(const dtGame::Message& msg)
 {
-   if(mPlayer == NULL)
-      return;
-
-   if(mFlyBy)
+   if (mPlayer == NULL)
    {
-      if(CompareCameraToWaypoint(actPos, wayptArray[prevWaypoint + 1], delta))
-      {     
+      return;
+   }
+
+   if (mFlyBy)
+   {
+      if (CompareCameraToWaypoint(actPos, wayptArray[prevWaypoint + 1], delta))
+      {
          // If completed transit of ship, exit
-         if(++prevWaypoint == numWaypoints - 1)
+         if (++prevWaypoint == numWaypoints - 1)
          {
             StopFlying();
          }
@@ -151,9 +156,9 @@ void FlySequenceActor::TickLocal(const dtGame::Message &msg)
          actPos[2] = wayptArray[prevWaypoint].z;
 
          ComputeDirTravel(wayptArray[prevWaypoint + 1], wayptArray[prevWaypoint]);
-      } 
-      else 
-      { 
+      }
+      else
+      {
          // Verify movement not too great to miss way point
          double vel = speed * static_cast<const dtGame::TickMessage&>(msg).GetDeltaSimTime() * 100.0;
          vel > delta ? vel = delta : vel = vel;
@@ -170,7 +175,7 @@ void FlySequenceActor::TickLocal(const dtGame::Message &msg)
 
       pos.SetLookAt(camPos, lookAt, up);
       mPlayer->SetTransform(pos);
-   } 
+   }
 }
 
 void FlySequenceActor::StartFlying()
@@ -184,11 +189,11 @@ void FlySequenceActor::StartFlying()
    camPos[2] = actPos[2] = wayptArray[0].z;
 
    // If only one waypoint, don't move
-   if(numWaypoints > 1)
+   if (numWaypoints > 1)
    {
       ComputeDirTravel(wayptArray[prevWaypoint + 1], wayptArray[prevWaypoint]);
    }
-   else 
+   else
    {
       dirOfTransit[0] = 0.0;
       dirOfTransit[1] = 0.0;
@@ -209,22 +214,22 @@ void FlySequenceActor::StopFlying()
 
    mFlyBy = false;
 
-   if(snd != NULL && snd->IsPlaying())
+   if (snd != NULL && snd->IsPlaying())
    {
       snd->Stop();
    }
 
    GetGameActorProxy().UnregisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 
-   dtGame::MessageFactory &mf = GetGameActorProxy().GetGameManager()->GetMessageFactory();
+   dtGame::MessageFactory& mf = GetGameActorProxy().GetGameManager()->GetMessageFactory();
    dtCore::RefPtr<dtGame::Message> msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
-   GameStateChangedMessage &gscm = static_cast<GameStateChangedMessage&>(*msg);
+   GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(GameState::STATE_INTRO);
    gscm.SetNewState(GameState::STATE_RUNNING);
    GetGameActorProxy().GetGameManager()->SendMessage(gscm);
 }
 
-void FlySequenceActor::ComputeDirTravel(const Waypoint &next, const Waypoint &prev)
+void FlySequenceActor::ComputeDirTravel(const Waypoint& next, const Waypoint& prev)
 {
    dirOfTransit[0] = next.x - prev.x;
    dirOfTransit[1] = next.y - prev.y;
@@ -236,21 +241,33 @@ void FlySequenceActor::ComputeDirTravel(const Waypoint &next, const Waypoint &pr
    dirOfTransit[2] /= length;
 }
 
-bool FlySequenceActor::CompareCameraToWaypoint(const double* cam, const Waypoint &wp, float delta)
+bool FlySequenceActor::CompareCameraToWaypoint(const double* cam, const Waypoint& wp, float delta)
 {
-   if ((cam[0] + delta) < wp.x) 
+   if ((cam[0] + delta) < wp.x)
+   {
       return false;
-   if ((wp.x + delta) < cam[0]) 
+   }
+   if ((wp.x + delta) < cam[0])
+   {
       return false;
-   if ((cam[1] + delta) < wp.y) 
+   }
+   if ((cam[1] + delta) < wp.y)
+   {
       return false;
-   if ((wp.y + delta) < cam[1]) 
+   }
+   if ((wp.y + delta) < cam[1])
+   {
       return false;
-   if ((cam[2] + delta) < wp.z) 
+   }
+   if ((cam[2] + delta) < wp.z)
+   {
       return false;
-   if ((wp.z + delta) < cam[2]) 
+   }
+   if ((wp.z + delta) < cam[2])
+   {
       return false;
-   
+   }
+
    return true;
 }
 
@@ -267,7 +284,7 @@ void FlySequenceActor::ResetCameraPath()
    {
       ComputeDirTravel(wayptArray[prevWaypoint + 1], wayptArray[prevWaypoint]);
    }
-   else 
+   else
    {
       dirOfTransit[0] = 0.0;
       dirOfTransit[1] = 0.0;

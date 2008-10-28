@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * William E. Johnson II
  */
+
 #ifndef DELTA_FIRE_FIGHTER_DDG_ACTOR
 #define DELTA_FIRE_FIGHTER_DDG_ACTOR
 
@@ -41,18 +42,18 @@ class FIRE_FIGHTER_EXPORT DDGActor : public ShipActor, public dtCore::Loadable
    public:
 
       /// Constructor
-      DDGActor(dtGame::GameActorProxy &proxy);
+      DDGActor(dtGame::GameActorProxy& proxy);
 
       /**
-       * The following functions were taken entirely from the 
-       * original version of the fire fighter game and changed only 
+       * The following functions were taken entirely from the
+       * original version of the fire fighter game and changed only
        * for compatibility with the new API as to preserve functionality
        */
       virtual void SetModelPosition();
 
-      void SetForwardStack(dtCore::ParticleSystem *tForwardStack, dtCore::Transform tForwardStackPosition);
+      void SetForwardStack(dtCore::ParticleSystem* tForwardStack, dtCore::Transform tForwardStackPosition);
 
-      void SetAfterStack(dtCore::ParticleSystem *tAfterStack, dtCore::Transform tAfterStackPosition);
+      void SetAfterStack(dtCore::ParticleSystem* tAfterStack, dtCore::Transform tAfterStackPosition);
 
       void EngageForwardStack();
 
@@ -62,17 +63,17 @@ class FIRE_FIGHTER_EXPORT DDGActor : public ShipActor, public dtCore::Loadable
 
       void DisengageAfterStack();
 
-      void SetStackSound(dtAudio::Sound *tStackSound, dtCore::Transform tStackSoundPosition);
+      void SetStackSound(dtAudio::Sound* tStackSound, const dtCore::Transform& tStackSoundPosition);
 
       void PlayStackSound();
 
       void StopStackSound();
 
-      void LoadFile(const std::string &fileName);
+      void LoadFile(const std::string& fileName);
 
    protected:
-      
-      bool CheckStack(dtCore::ParticleSystem *stack, bool stackEngaged);
+
+      bool CheckStack(dtCore::ParticleSystem* stack, bool stackEngaged);
 
       dtCore::RefPtr<dtCore::ParticleSystem> forwardStack;
       dtCore::RefPtr<dtCore::ParticleSystem> afterStack;
