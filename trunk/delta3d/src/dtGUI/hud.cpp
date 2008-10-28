@@ -46,6 +46,7 @@ std::string HUD::FilePath=std::string("./data/gui/");
  ********************************************************************************/
 IMPLEMENT_MANAGEMENT_LAYER(HUD)
 
+////////////////////////////////////////////////////////////////////////////////
 HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore::Mouse* pObservedMouse, const std::string& sName)
    : dtCore::Base(sName)
    , m_Viewport(0,0,0,0)
@@ -53,10 +54,10 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
    , m_pKeyboard(0)
    , m_pMouse(0)
 {
-   m_pMouseListener = new dtGUI::CEGUIMouseListener(this);
+   m_pMouseListener    = new dtGUI::CEGUIMouseListener(this);
    m_pKeyboardListener = new dtGUI::CEGUIKeyboardListener(this);
 
-   AddSender( &dtCore::System::GetInstance() );
+   AddSender(&dtCore::System::GetInstance());
    RegisterInstance(this);
 
    _SetupInternalGraph();
@@ -69,6 +70,7 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
    _SetupDefaultUI();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 HUD::HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore::Mouse* pObservedMouse, const std::string& sName)
    : dtCore::Base(sName)
    , m_Viewport(0,0,0,0)
@@ -92,17 +94,21 @@ HUD::HUD(dtCore::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtC
    _SetupDefaultUI();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 HUD::~HUD()
 {
    m_pRootsheet->destroy();
+
    if (m_pCamera.valid())
    {
       m_pCamera->removeChild(m_pInternalGraph);
    }
+
    DeregisterInstance(this);
-   RemoveSender( &dtCore::System::GetInstance() );
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 std::string GetCEGUIPrefix(CEGUI::Window* win)
 {
    assert(win != NULL);
@@ -111,9 +117,9 @@ std::string GetCEGUIPrefix(CEGUI::Window* win)
 #else
    return (std::string());
 #endif
-
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::GetWidget(const std::string& sWidgetName, const std::string& sPrefix)
 {
    CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
@@ -125,6 +131,7 @@ Widget* HUD::GetWidget(const std::string& sWidgetName, const std::string& sPrefi
    return wm->getWindow(GetCEGUIPrefix(m_pRootsheet) + sPrefix + sWidgetName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::CreateWidget(const std::string& sWidgetTypeName, const std::string& sWidgetName, const std::string& sPrefix)
 {
    MakeCurrent();
@@ -138,6 +145,7 @@ Widget* HUD::CreateWidget(const std::string& sWidgetTypeName, const std::string&
    return pNewWidget;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeName, const std::string& sWidgetName, const std::string& sPrefix)
 {
    MakeCurrent();
@@ -146,6 +154,7 @@ Widget* HUD::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeN
    return pNewWidget;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::LoadLayout(Widget* pParentWidget, const std::string& sFileName, const std::string& sPrefix)
 {
    Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout( sFileName, GetCEGUIPrefix(m_pRootsheet) + sPrefix );
@@ -153,16 +162,19 @@ Widget* HUD::LoadLayout(Widget* pParentWidget, const std::string& sFileName, con
    return pNewLayout;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::LoadLayout(const std::string& sFileName, const std::string& sPrefix)
 {
    return LoadLayout(m_pRootsheet, sFileName, sPrefix);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const std::string HUD::GetPrefix() const
 {
    return GetCEGUIPrefix(m_pRootsheet);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::_SetupDefaultUI()
 {
    //create&setup defaults:
@@ -200,6 +212,7 @@ void HUD::_SetupDefaultUI()
 #endif
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::SetCamera(osg::Camera* pTargetCamera)
 {
    // if this was already a child of another camera remove itself from there:
@@ -209,7 +222,7 @@ void HUD::SetCamera(osg::Camera* pTargetCamera)
    }
 
    // set ("parent") camera
-   m_pCamera=pTargetCamera;
+   m_pCamera = pTargetCamera;
 
    // that'll force the camera to draw this gui via the HUDDrawable-object
    if (pTargetCamera)
@@ -218,6 +231,7 @@ void HUD::SetCamera(osg::Camera* pTargetCamera)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::_SetupInternalGraph()
 {
    m_pInternalGraph = new osg::Geode();
@@ -227,11 +241,12 @@ void HUD::_SetupInternalGraph()
    m_pInternalGraph->getOrCreateStateSet()->setRenderBinDetails(11, "RenderBin");
    m_pInternalGraph->getOrCreateStateSet()->setMode(GL_BLEND, osg::StateAttribute::ON);
    m_pInternalGraph->getOrCreateStateSet()->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
-   m_pInternalGraph->getOrCreateStateSet()->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
+   m_pInternalGraph->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-   m_pInternalGraph->addDrawable( new HUDDrawable(this) );
+   m_pInternalGraph->addDrawable(new HUDDrawable(this));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::_SetupSystemAndRenderer()
 {
    if (!CEGUI::System::getSingletonPtr())
@@ -262,6 +277,7 @@ void HUD::_SetupSystemAndRenderer()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::_CheckCamera()
 {
    // if we have valid setup, check if camera-viewport fits cegui-rendering-size
@@ -284,6 +300,7 @@ void HUD::_CheckCamera()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::SetMouse(dtCore::Mouse* pObservedMouse)
 {
    if (m_pMouse.valid())
@@ -306,6 +323,7 @@ void HUD::SetMouse(dtCore::Mouse* pObservedMouse)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::SetKeyboard(dtCore::Keyboard* pObservedKeyboard)
 {
    if (m_pKeyboard.valid())
@@ -328,6 +346,7 @@ void HUD::SetKeyboard(dtCore::Keyboard* pObservedKeyboard)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::OnMessage(dtCore::Base::MessageData* data)
 {
    if (data->message == "preframe")
@@ -341,6 +360,7 @@ void HUD::OnMessage(dtCore::Base::MessageData* data)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::MakeCurrent() const
 {
    CEGUI::System& system = CEGUI::System::getSingleton();
@@ -365,6 +385,7 @@ void HUD::MakeCurrent() const
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::Texture2D* HUD::GetOrCreateOSGTexture(const std::string& sWidgetName)
 {
    Widget* pWidget = GetWidget(sWidgetName);
@@ -425,53 +446,63 @@ osg::Texture2D* HUD::GetOrCreateOSGTexture(const std::string& sWidgetName)
 /********************************************************************************
                       HUD-static-wrappers
  ********************************************************************************/
+
+////////////////////////////////////////////////////////////////////////////////
 void HUD::LoadScheme(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
    CEGUI::SchemeManager::getSingleton().loadScheme(sFileName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::UnloadScheme(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
    CEGUI::SchemeManager::getSingleton().unloadScheme(sFileName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::UnloadAllSchemes()
 {
    _SetupSystemAndRenderer();
    CEGUI::SchemeManager::getSingleton().unloadAllSchemes();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::CreateFont(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
    CEGUI::FontManager::getSingleton().createFont(sFileName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::DestroyFont(const std::string& sFileName)
 {
    _SetupSystemAndRenderer();
    CEGUI::FontManager::getSingleton().destroyFont(sFileName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::DestroyAllFonts()
 {
    _SetupSystemAndRenderer();
    CEGUI::FontManager::getSingleton().destroyAllFonts();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::SetMouseCursor(const std::string &sImagesetName, const std::string &sImageName)
 {
    _SetupSystemAndRenderer();
    CEGUI::System::getSingletonPtr()->setDefaultMouseCursor(sImagesetName, sImageName);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HUD::SetFilePath(const std::string& sPath)
 {
    FilePath = sPath;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const std::string& HUD::GetFilePath()
 {
    return FilePath;
@@ -480,11 +511,14 @@ const std::string& HUD::GetFilePath()
 /********************************************************************************
                       HUD::HUDDrawable-implementation
  ********************************************************************************/
+
+////////////////////////////////////////////////////////////////////////////////
 HUD::HUDDrawable::HUDDrawable(const HUD::HUDDrawable& drawable, const osg::CopyOp& copyop)
    : m_pGUI(drawable.m_pGUI)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 HUD::HUDDrawable::HUDDrawable(HUD* gui)
    : m_pGUI(gui)
 {
@@ -492,27 +526,29 @@ HUD::HUDDrawable::HUDDrawable(HUD* gui)
    setUseDisplayList(false);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 HUD::HUDDrawable::~HUDDrawable()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::Object* HUD::HUDDrawable::cloneType() const
 {
    return new HUDDrawable(m_pGUI);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::Object* HUD::HUDDrawable::clone(const osg::CopyOp& copyop) const
 {
    return new HUDDrawable(*this, copyop);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void HUD::HUDDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
    // tell the UI to update and to render
    if (!m_pGUI) { return; }
    if (!m_pGUI->m_pCamera.valid()) { return; }
-
 
    osg::State& state = *renderInfo.getState();
 
@@ -526,3 +562,5 @@ void HUD::HUDDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 
    CEGUI::System::getSingletonPtr()->renderGUI();
 }
+
+////////////////////////////////////////////////////////////////////////////////
