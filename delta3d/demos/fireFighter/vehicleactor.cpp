@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/vehicleactor.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
@@ -38,10 +39,10 @@ void VehicleActorProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   VehicleActor &va = static_cast<VehicleActor&>(GetGameActor());
-   AddProperty(new dtDAL::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem", 
-      dtDAL::MakeFunctor(va, &VehicleActor::SetCoordSys), 
-      dtDAL::MakeFunctorRet(va, &VehicleActor::GetCoordSys), 
+   VehicleActor& va = static_cast<VehicleActor&>(GetGameActor());
+   AddProperty(new dtDAL::EnumActorProperty<VehicleActor::CoordSys>("CoordinateSystem", "CoordinateSystem",
+      dtDAL::MakeFunctor(va, &VehicleActor::SetCoordSys),
+      dtDAL::MakeFunctorRet(va, &VehicleActor::GetCoordSys),
       "Sets the coordinate system"));
 }
 
@@ -52,7 +53,7 @@ void VehicleActorProxy::BuildInvokables()
 
 dtDAL::ActorProxyIcon* VehicleActorProxy::GetBillBoardIcon()
 {
-   if(!mBillBoardIcon.valid())
+   if (!mBillBoardIcon.valid())
    {
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
    }
@@ -64,10 +65,10 @@ IMPLEMENT_ENUM(VehicleActor::CoordSys);
 VehicleActor::CoordSys VehicleActor::CoordSys::SYS_ABS("ABS");
 VehicleActor::CoordSys VehicleActor::CoordSys::SYS_REL("REL");
 
-VehicleActor::VehicleActor(dtGame::GameActorProxy &proxy) : 
-   dtGame::GameActor(proxy), 
-   mEngineRunning(true), 
-   mCoordSys(&VehicleActor::CoordSys::SYS_REL)
+VehicleActor::VehicleActor(dtGame::GameActorProxy &proxy)
+   : dtGame::GameActor(proxy)
+   , mEngineRunning(true)
+   , mCoordSys(&VehicleActor::CoordSys::SYS_REL)
 {
 
 }
@@ -87,7 +88,7 @@ void VehicleActor::ShutDownEngines()
    mEngineRunning = false;
 }
 
-void VehicleActor::SetCoordSys(VehicleActor::CoordSys &sys)
+void VehicleActor::SetCoordSys(VehicleActor::CoordSys& sys)
 {
    mCoordSys = &sys;
 }

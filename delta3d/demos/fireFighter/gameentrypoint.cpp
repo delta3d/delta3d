@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/gameentrypoint.h>
 #include <fireFighter/messages.h>
 #include <fireFighter/messagetype.h>
@@ -60,7 +61,7 @@ FireFighterGameEntryPoint::~FireFighterGameEntryPoint()
    dtAudio::AudioManager::Destroy();
 }
 
-void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char **argv)
+void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 {
    // Parse the command line options
    osg::ArgumentParser parser(&argc, argv);
@@ -68,21 +69,21 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    parser.getApplicationUsage()->addCommandLineOption("-h or --help","Display command line options");
    parser.getApplicationUsage()->addCommandLineOption("--useLms", "Pass 1 to indicate you wish to communicate with an external LMS, or 0 to ignore.");
 
-   if(parser.read("-h") || parser.read("--help"))
+   if (parser.read("-h") || parser.read("--help"))
    {
       parser.getApplicationUsage()->write(std::cerr);
-      throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.", 
+      throw dtUtil::Exception(ExceptionEnum::COMMAND_LINE_EXCEPTION, "Command Line Error.",
          __FILE__, __LINE__);
    }
 
    int commandLineParam = 0;
-   if(parser.read("--useLMS", commandLineParam))
+   if (parser.read("--useLMS", commandLineParam))
    {
-      mUseLMS = commandLineParam ? true : false; 
+      mUseLMS = commandLineParam ? true : false;
    }
 
    parser.reportRemainingOptionsAsUnrecognized();
-   if(parser.errors())
+   if (parser.errors())
    {
       std::ostringstream oss;
       parser.writeErrorMessages(oss);
@@ -94,7 +95,7 @@ void FireFighterGameEntryPoint::Initialize(dtGame::GameApplication& app, int arg
    app.GetWindow()->SetWindowTitle("Fire Fighter Application");
 
    dtDAL::Project::GetInstance().SetContext("demos/fireFighter/FireFighterProject");
-   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + 
+   dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
       dtDAL::Project::GetInstance().GetContext() + "/CEGUI");
 }
 
@@ -130,13 +131,13 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
    gameManager.AddComponent(*mLmsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
 
    // Connect to the LMS
-   if(mUseLMS)
+   if (mUseLMS)
    {
       try
       {
          mLmsComponent->ConnectToLms();
       }
-      catch(const dtUtil::Exception &e) 
+      catch(const dtUtil::Exception& e)
       {
          // Failed to connect to the LMS, log the exception and continue with
          // the game as normal.
@@ -146,7 +147,7 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 
    // Send the message to switch to the menu
    RefPtr<dtGame::Message> msg = gameManager.GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
-   GameStateChangedMessage &gscm = static_cast<GameStateChangedMessage&>(*msg);
+   GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(GameState::STATE_UNKNOWN);
    gscm.SetNewState(GameState::STATE_MENU);
    gameManager.SendMessage(gscm);
@@ -158,12 +159,12 @@ void FireFighterGameEntryPoint::OnStartup(dtGame::GameApplication& app)
 }
 
 void FireFighterGameEntryPoint::OnShutdown(dtGame::GameApplication& app)
-{  
-   if(mUseLMS && mLmsComponent.valid())
+{
+   if (mUseLMS && mLmsComponent.valid())
    {
       mLmsComponent->DisconnectFromLms();
    }
-   
+
    dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap("GameMap");
    dtDAL::Project::GetInstance().CloseMap(map, true);
 

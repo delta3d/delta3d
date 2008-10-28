@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/inputcomponent.h>
 #include <fireFighter/messagetype.h>
 #include <fireFighter/messages.h>
@@ -56,21 +57,21 @@ using dtCore::RefPtr;
 
 const std::string InputComponent::NAME = "InputComponent";
 
-InputComponent::InputComponent(const std::string &name) : 
-   dtGame::BaseInputComponent(name), 
-   mCurrentState(&GameState::STATE_UNKNOWN), 
-   mPlayer(NULL),
-   mMotionModel(NULL), 
-   mBellSound(NULL), 
-   mDebriefSound(NULL),
-   mWalkSound(NULL), 
-   mRunSound(NULL), 
-   mCrouchSound(NULL),
-   mCurrentIntersectedItem(NULL), 
-   mRadius(0.1f), 
-   mTheta(0.10f),
-   mK(0.40f), 
-   mTasksSetup(false)
+InputComponent::InputComponent(const std::string& name)
+   : dtGame::BaseInputComponent(name)
+   , mCurrentState(&GameState::STATE_UNKNOWN)
+   , mPlayer(NULL)
+   , mMotionModel(NULL)
+   , mBellSound(NULL)
+   , mDebriefSound(NULL)
+   , mWalkSound(NULL)
+   , mRunSound(NULL)
+   , mCrouchSound(NULL)
+   , mCurrentIntersectedItem(NULL)
+   , mRadius(0.1f)
+   , mTheta(0.10f)
+   , mK(0.40f)
+   , mTasksSetup(false)
 {
 
 }
@@ -79,24 +80,24 @@ InputComponent::~InputComponent()
 {
 }
 
-void InputComponent::ProcessMessage(const dtGame::Message &message)
+void InputComponent::ProcessMessage(const dtGame::Message& message)
 {
-   if(message.GetMessageType() == MessageType::GAME_STATE_CHANGED)
+   if (message.GetMessageType() == MessageType::GAME_STATE_CHANGED)
    {
       mCurrentState = &(static_cast<const GameStateChangedMessage&>(message)).GetNewState();
-      if(*mCurrentState == GameState::STATE_MENU)
+      if (*mCurrentState == GameState::STATE_MENU)
       {
          OnMenu();
       }
-      else if(*mCurrentState == GameState::STATE_INTRO)
+      else if (*mCurrentState == GameState::STATE_INTRO)
       {
          GetGameManager()->ChangeMap("IntroMap");
       }
-      else if(*mCurrentState == GameState::STATE_RUNNING)
+      else if (*mCurrentState == GameState::STATE_RUNNING)
       {
          GetGameManager()->ChangeMap("GameMap");
       }
-      else if(*mCurrentState == GameState::STATE_DEBRIEF)
+      else if (*mCurrentState == GameState::STATE_DEBRIEF)
       {
          OnDebrief();
       }
@@ -105,10 +106,10 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
          LOG_ERROR("Received a state changed message of: " + mCurrentState->GetName());
       }
    }
-   else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
       // New map was loaded, we now need to find the player actor
-      // Also need to emancipate the camera from its soon to be 
+      // Also need to emancipate the camera from its soon to be
       // invalid parent
       GetGameManager()->GetApplication().GetCamera()->SetParent(NULL);
       mPlayer = NULL;
@@ -116,28 +117,38 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
 
       mPlayer->AddChild(GetGameManager()->GetApplication().GetCamera());
 
-      if(*mCurrentState == GameState::STATE_INTRO)
+      if (*mCurrentState == GameState::STATE_INTRO)
+      {
          OnIntro();
-      else if(*mCurrentState == GameState::STATE_RUNNING)
+      }
+      else if (*mCurrentState == GameState::STATE_RUNNING)
+      {
          OnGame();
+      }
    }
-   else if(message.GetMessageType() == MessageType::ITEM_INTERSECTED)
+   else if (message.GetMessageType() == MessageType::ITEM_INTERSECTED)
    {
-      if(!message.GetAboutActorId().ToString().empty())
+      if (!message.GetAboutActorId().ToString().empty())
+      {
          mCurrentIntersectedItem = dynamic_cast<GameItemActor*>(GetGameManager()->FindGameActorById(message.GetAboutActorId())->GetActor());
+      }
       else
+      {
          mCurrentIntersectedItem = NULL;
+      }
    }
-   else if(message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+   else if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      if(*mCurrentState == GameState::STATE_RUNNING)
+      if (*mCurrentState == GameState::STATE_RUNNING)
+      {
          ProcessTasks();
+      }
    }
-   else if(message.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
+   else if (message.GetMessageType() == MessageType::HELP_WINDOW_OPENED)
    {
       mMotionModel->SetTarget(NULL);
    }
-   else if(message.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
+   else if (message.GetMessageType() == MessageType::HELP_WINDOW_CLOSED)
    {
       mMotionModel->SetTarget(mPlayer);
    }
@@ -145,22 +156,22 @@ void InputComponent::ProcessMessage(const dtGame::Message &message)
 
 void InputComponent::OnIntro()
 {
-   if(mMotionModel != NULL)
+   if (mMotionModel != NULL)
    {
       mMotionModel->SetTarget(NULL);
    }
 
    // Turn off the scene light and use the light maps/shadow maps
-   dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
+   dtCore::Camera& camera = *GetGameManager()->GetApplication().GetCamera();
    GetGameManager()->GetApplication().GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
-   osg::StateSet *globalState = camera.GetOSGCamera()->getOrCreateStateSet();
+   osg::StateSet* globalState = camera.GetOSGCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
    std::vector<dtGame::GameActorProxy*> proxies;
    GetGameManager()->GetAllGameActors(proxies);
-   FlySequenceActor *fsa = NULL;
+   FlySequenceActor* fsa = NULL;
    IsActorInGameMap(fsa, false);
-   if(fsa == NULL)
+   if (fsa == NULL)
    {
       LOG_ALWAYS("Failed to find the fly sequence actor in the intro map. Skipping intro");
       SendGameStateChangedMessage(GameState::STATE_INTRO, GameState::STATE_RUNNING);
@@ -171,22 +182,22 @@ void InputComponent::OnIntro()
 }
 
 void InputComponent::OnGame()
-{  
+{
    GetGameManager()->GetApplication().GetMouse()->SetPosition(0.f, 0.f);
-   GameLevelActor *gla = NULL; 
+   GameLevelActor* gla = NULL;
    IsActorInGameMap(gla);
    gla->SetCollisionMesh();
 
    dtCore::Transform xform;
    mPlayer->GetTransform(xform);
 
-   if(!mMotionModel.valid())
+   if (!mMotionModel.valid())
    {
       osg::Vec3 pos;
       xform.GetTranslation(pos);
-      mMotionModel = new dtCore::CollisionMotionModel(pos.z(), 
-         mRadius, mK, mTheta, &GetGameManager()->GetScene(),  
-         GetGameManager()->GetApplication().GetKeyboard(), 
+      mMotionModel = new dtCore::CollisionMotionModel(pos.z(),
+         mRadius, mK, mTheta, &GetGameManager()->GetScene(),
+         GetGameManager()->GetApplication().GetKeyboard(),
          GetGameManager()->GetApplication().GetMouse());
 
       mMotionModel->SetUseMouseButtons(false);
@@ -195,28 +206,36 @@ void InputComponent::OnGame()
    mMotionModel->SetTarget(mPlayer);
 
    // Turn off the scene light and use the light maps/shadow maps
-   dtCore::Camera &camera = *GetGameManager()->GetApplication().GetCamera();
+   dtCore::Camera& camera = *GetGameManager()->GetApplication().GetCamera();
    GetGameManager()->GetApplication().GetView()->GetOsgViewerView()->setLightingMode(osg::View::NO_LIGHT);
-   osg::StateSet *globalState = camera.GetOSGCamera()->getOrCreateStateSet();
+   osg::StateSet* globalState = camera.GetOSGCamera()->getOrCreateStateSet();
    globalState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-      
+
    SetupTasks();
 
-   if(mBellSound == NULL)
+   if (mBellSound == NULL)
+   {
       mBellSound = dtAudio::AudioManager::GetInstance().NewSound();
+   }
    mBellSound->LoadFile("Sounds/bellAndAnnouncement.wav");
    mBellSound->Play();
 
-   if(mWalkSound == NULL)
+   if (mWalkSound == NULL)
+   {
       mWalkSound = dtAudio::AudioManager::GetInstance().NewSound();
+   }
    mWalkSound->LoadFile("Sounds/walk.wav");
 
-   if(mRunSound == NULL)
+   if (mRunSound == NULL)
+   {
       mRunSound = dtAudio::AudioManager::GetInstance().NewSound();
+   }
    mRunSound->LoadFile("Sounds/running.wav");
 
-   if(mCrouchSound == NULL)
+   if (mCrouchSound == NULL)
+   {
       mCrouchSound = dtAudio::AudioManager::GetInstance().NewSound();
+   }
    mCrouchSound->LoadFile("Sounds/walkingCrouched.wav");
 }
 
@@ -224,11 +243,15 @@ void InputComponent::OnDebrief()
 {
    StopSounds();
 
-   if(mMotionModel != NULL)
+   if (mMotionModel != NULL)
+   {
       mMotionModel->SetTarget(NULL);
+   }
 
-   if(mDebriefSound == NULL)
+   if (mDebriefSound == NULL)
+   {
       mDebriefSound = dtAudio::AudioManager::GetInstance().NewSound();
+   }
    mDebriefSound->LoadFile("Sounds/anchorsAweigh.wav");
    mDebriefSound->Play();
 }
@@ -236,8 +259,10 @@ void InputComponent::OnDebrief()
 void InputComponent::OnMenu()
 {
    StopSounds();
-   if(mMotionModel != NULL)
+   if (mMotionModel != NULL)
+   {
       mMotionModel->SetTarget(NULL);
+   }
 }
 
 bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -245,17 +270,17 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
    bool handled = true;
    bool isGameRunning = (*mCurrentState == GameState::STATE_RUNNING);
 
-   switch(key)
+   switch (key)
    {
       case 'w':
       case 'a':
       case 's':
       case 'd':
       {
-         if(isGameRunning)
+         if (isGameRunning)
          {
             // We are crouched
-            if(mPlayer->IsCrouched())
+            if (mPlayer->IsCrouched())
             {
                // Get the crouched height of the player and update the motion model
                dtCore::Transform xform;
@@ -270,12 +295,12 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
             else
             {
                dtABC::Application& app = GetGameManager()->GetApplication();
-               // Run 
-               if(app.GetKeyboard()->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L))
+               // Run
+               if (app.GetKeyboard()->GetKeyState(osgGA::GUIEventAdapter::KEY_Shift_L))
                {
                   mMotionModel->SetMaximumWalkSpeed(6.0f);
                   mRunSound->Play();
-               }   
+               }
                // Walk
                else
                {
@@ -292,26 +317,30 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
          }
       }
       break;
-      
+
       case 'f':
       {
-         if(isGameRunning)
+         if (isGameRunning)
          {
-            if(mCurrentIntersectedItem != NULL)
+            if (mCurrentIntersectedItem != NULL)
             {
                // If it is collectable, pick it up
                // Else, activate it
-               if(mCurrentIntersectedItem->IsCollectable())
+               if (mCurrentIntersectedItem->IsCollectable())
                {
                   mPlayer->AddItemToInventory(*mCurrentIntersectedItem);
-               }   
+               }
                else
                {
                   // Special case. The hatch actor can be opened or closed
-                  if(dynamic_cast<HatchActor*>(mCurrentIntersectedItem) != NULL)
+                  if (dynamic_cast<HatchActor*>(mCurrentIntersectedItem) != NULL)
+                  {
                      mCurrentIntersectedItem->Activate(!mCurrentIntersectedItem->IsActivated());
+                  }
                   else
+                  {
                      mCurrentIntersectedItem->Activate(true);
+                  }
                }
             }
          }
@@ -320,32 +349,40 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 
       case 'm':
       {
-         if(isGameRunning)
+         if (isGameRunning)
+         {
             SendGameStateChangedMessage(*mCurrentState, GameState::STATE_DEBRIEF);
+         }
       }
       break;
 
       /*case 'c':
       {
-         if(isGameRunning)
+         if (isGameRunning)
+         {
             mPlayer->SetIsCrouched(!mPlayer->IsCrouched());
+         }
       }
       break;*/
 
       case '[':
       {
-         if(isGameRunning)
+         if (isGameRunning)
+         {
             mPlayer->UpdateSelectedItem(true);
+         }
       }
       break;
 
       case ']':
       {
-         if(isGameRunning)
+         if (isGameRunning)
+         {
             mPlayer->UpdateSelectedItem(false);
+         }
       }
       break;
-      
+
       case '8':
       {
          dtCore::Transform playerXform;
@@ -368,7 +405,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 
       case 'n':
       {
-         if(*mCurrentState == GameState::STATE_INTRO)
+         if (*mCurrentState == GameState::STATE_INTRO)
          {
             SendGameStateChangedMessage(GameState::STATE_INTRO, GameState::STATE_RUNNING);
          }
@@ -381,7 +418,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 
       case osgGA::GUIEventAdapter::KEY_F1:
       {
-         if(isGameRunning)
+         if (isGameRunning)
          {
             RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::HELP_WINDOW_OPENED);
             GetGameManager()->SendMessage(*msg);
@@ -391,7 +428,7 @@ bool InputComponent::HandleKeyPressed(const dtCore::Keyboard* keyboard, int key)
 
       case osgGA::GUIEventAdapter::KEY_Escape:
       {
-         if(isGameRunning)
+         if (isGameRunning)
          {
             SendGameStateChangedMessage(GameState::STATE_RUNNING, GameState::STATE_MENU);
          }
@@ -416,21 +453,27 @@ bool InputComponent::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key
 {
    bool handled = true;
 
-   switch(key)
+   switch (key)
    {
       case 'w':
       case 'a':
       case 's':
       case 'd':
       {
-         if(*mCurrentState == GameState::STATE_RUNNING)
+         if (*mCurrentState == GameState::STATE_RUNNING)
          {
-            if(mCrouchSound != NULL && mCrouchSound->IsPlaying())
+            if (mCrouchSound != NULL && mCrouchSound->IsPlaying())
+            {
                mCrouchSound->Stop();
-            if(mWalkSound != NULL && mWalkSound->IsPlaying())
+            }
+            if (mWalkSound != NULL && mWalkSound->IsPlaying())
+            {
                mWalkSound->Stop();
-            if(mRunSound != NULL && mRunSound->IsPlaying())
+            }
+            if (mRunSound != NULL && mRunSound->IsPlaying())
+            {
                mRunSound->Stop();
+            }
          }
          default:
             handled = false;
@@ -442,29 +485,31 @@ bool InputComponent::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key
    return handled;
 }
 
-bool InputComponent::HandleButtonPressed(const dtCore::Mouse* mouse, 
+bool InputComponent::HandleButtonPressed(const dtCore::Mouse* mouse,
                                          dtCore::Mouse::MouseButton button)
 {
    bool handled = true;
-   switch(button)
+   switch (button)
    {
       case dtCore::Mouse::LeftButton:
       {
-         if(*mCurrentState == GameState::STATE_RUNNING)
+         if (*mCurrentState == GameState::STATE_RUNNING)
          {
-            if(mPlayer->GetCurrentItem() != NULL)
+            if (mPlayer->GetCurrentItem() != NULL)
             {
                // Unlike the other game items, the fire hose only stays activated
                // while the mouse key is down. The other items stay activated until
                // the mouse is clicked again.
-               if(dynamic_cast<FireHoseActor*>(mPlayer->GetCurrentItem()) != NULL)
+               if (dynamic_cast<FireHoseActor*>(mPlayer->GetCurrentItem()) != NULL)
+               {
                   mPlayer->UseSelectedItem(true);
+               }
                else
                {
                   mPlayer->UseSelectedItem(!mPlayer->GetCurrentItem()->IsActivated());
                }
             }
-         } 
+         }
       }
       break;
 
@@ -475,23 +520,25 @@ bool InputComponent::HandleButtonPressed(const dtCore::Mouse* mouse,
    return handled;
 }
 
-bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse, 
+bool InputComponent::HandleButtonReleased(const dtCore::Mouse* mouse,
                                          dtCore::Mouse::MouseButton button)
 {
    bool handled = true;
-   switch(button)
+   switch (button)
    {
       case dtCore::Mouse::LeftButton:
       {
-         if(*mCurrentState == GameState::STATE_RUNNING)
+         if (*mCurrentState == GameState::STATE_RUNNING)
          {
             // Unlike the other game items, the fire hose only stays activated
             // while the mouse key is down. The other items stay activated until
             // the mouse is clicked again.
-            if(mPlayer->GetCurrentItem() != NULL)
+            if (mPlayer->GetCurrentItem() != NULL)
             {
-               if(dynamic_cast<FireHoseActor*>(mPlayer->GetCurrentItem()) != NULL)
+               if (dynamic_cast<FireHoseActor*>(mPlayer->GetCurrentItem()) != NULL)
+               {
                   mPlayer->UseSelectedItem(false);
+               }
             }
          }
       }
@@ -514,10 +561,10 @@ void InputComponent::UpdateCollider(float newHeight)
    //mMotionModel->GetFPSCollider().SetDimensions(newHeight, mRadius, mK, mTheta);
 }
 
-void InputComponent::SendGameStateChangedMessage(GameState &oldState, GameState &newState)
+void InputComponent::SendGameStateChangedMessage(GameState& oldState, GameState& newState)
 {
    RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::GAME_STATE_CHANGED);
-   GameStateChangedMessage &gscm = static_cast<GameStateChangedMessage&>(*msg);
+   GameStateChangedMessage& gscm = static_cast<GameStateChangedMessage&>(*msg);
    gscm.SetOldState(oldState);
    gscm.SetNewState(newState);
    LOG_ALWAYS("Changing game state to: " + newState.GetName());
@@ -526,28 +573,40 @@ void InputComponent::SendGameStateChangedMessage(GameState &oldState, GameState 
 
 void InputComponent::StopSounds()
 {
-   if(mBellSound != NULL && mBellSound->IsPlaying())
+   if (mBellSound != NULL && mBellSound->IsPlaying())
+   {
       mBellSound->Stop();
-   
-   if(mDebriefSound != NULL && mDebriefSound->IsPlaying())
-      mDebriefSound->Stop();
-   
-   if(mWalkSound != NULL && mWalkSound->IsPlaying())
-      mWalkSound->Stop();
-   
-   if(mRunSound != NULL && mRunSound->IsPlaying())
-      mRunSound->Stop();
-   
-   if(mCrouchSound != NULL && mCrouchSound->IsPlaying())
-      mCrouchSound->Stop();
+   }
 
-   if(mPlayer != NULL)
+   if (mDebriefSound != NULL && mDebriefSound->IsPlaying())
+   {
+      mDebriefSound->Stop();
+   }
+
+   if (mWalkSound != NULL && mWalkSound->IsPlaying())
+   {
+      mWalkSound->Stop();
+   }
+
+   if (mRunSound != NULL && mRunSound->IsPlaying())
+   {
+      mRunSound->Stop();
+   }
+
+   if (mCrouchSound != NULL && mCrouchSound->IsPlaying())
+   {
+      mCrouchSound->Stop();
+   }
+
+   if (mPlayer != NULL)
+   {
       mPlayer->StopAllSounds();
+   }
 }
 
 void InputComponent::SetupTasks()
 {
-   dtGame::GameManager &mgr = *GetGameManager();
+   dtGame::GameManager& mgr = *GetGameManager();
    std::vector<dtDAL::ActorProxy*> proxies;
 
    ///////////////////////// Mission Task /////////////////////////////////////
@@ -560,13 +619,15 @@ void InputComponent::SetupTasks()
 
 void InputComponent::ProcessTasks()
 {
-   if(!mTasksSetup)
+   if (!mTasksSetup)
+   {
       return;
+   }
 
    // Mission completed?
-   if(mMission->GetScore() == mMission->GetPassingScore())
+   if (mMission->GetScore() == mMission->GetPassingScore())
    {
-      RefPtr<dtGame::Message> msg = 
+      RefPtr<dtGame::Message> msg =
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_COMPLETE);
 
       msg->SetAboutActorId(mMission->GetId());
@@ -576,24 +637,24 @@ void InputComponent::ProcessTasks()
 
    // Mission failed?
    // Process the subtasks
-   const std::vector<RefPtr<dtActors::TaskActorProxy> > &tasks = mMission->GetAllSubTasks();
-   for(unsigned int i = 0; i < tasks.size(); i++)
+   const std::vector<RefPtr<dtActors::TaskActorProxy> >& tasks = mMission->GetAllSubTasks();
+   for (unsigned int i = 0; i < tasks.size(); i++)
    {
       // Ensure this subtask isn't another parent task
-      const dtActors::TaskActorOrderedProxy *orderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(tasks[i].get());
-      if(orderedTask != NULL)
+      const dtActors::TaskActorOrderedProxy* orderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(tasks[i].get());
+      if (orderedTask != NULL)
       {
-         const dtActors::TaskActorProxy *failedTask = orderedTask->GetFailingTaskProxy();
+         const dtActors::TaskActorProxy* failedTask = orderedTask->GetFailingTaskProxy();
          // Failure
-         if(failedTask != NULL)
+         if (failedTask != NULL)
          {
-            const dtActors::TaskActorOrderedProxy *failedOrderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(failedTask);
-            if(failedOrderedTask != NULL)
+            const dtActors::TaskActorOrderedProxy* failedOrderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(failedTask);
+            if (failedOrderedTask != NULL)
             {
-               const dtActors::TaskActorProxy *failedChildTask = failedOrderedTask->GetFailingTaskProxy();
-               if(failedChildTask != NULL)
+               const dtActors::TaskActorProxy* failedChildTask = failedOrderedTask->GetFailingTaskProxy();
+               if (failedChildTask != NULL)
                {
-                  RefPtr<dtGame::Message> msg = 
+                  RefPtr<dtGame::Message> msg =
                      GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
 
                   msg->SetAboutActorId(failedChildTask->GetId());
@@ -602,7 +663,7 @@ void InputComponent::ProcessTasks()
             }
             else
             {
-               RefPtr<dtGame::Message> msg = 
+               RefPtr<dtGame::Message> msg =
                   GetGameManager()->GetMessageFactory().CreateMessage(MessageType::MISSION_FAILED);
 
                msg->SetAboutActorId(failedTask->GetId());
@@ -618,9 +679,9 @@ void InputComponent::OnRemovedFromGM()
    //assuming this is our cue to clean up after ourself
    dtAudio::AudioManager &mgr = dtAudio::AudioManager::GetInstance();
 
-   if(mBellSound != NULL)    mgr.FreeSound(mBellSound);
-   if(mDebriefSound != NULL) mgr.FreeSound(mDebriefSound);
-   if(mWalkSound != NULL)    mgr.FreeSound(mWalkSound);
-   if(mRunSound != NULL)     mgr.FreeSound(mRunSound);
-   if(mCrouchSound != NULL)  mgr.FreeSound(mCrouchSound);
+   if (mBellSound != NULL)    { mgr.FreeSound(mBellSound);    }
+   if (mDebriefSound != NULL) { mgr.FreeSound(mDebriefSound); }
+   if (mWalkSound != NULL)    { mgr.FreeSound(mWalkSound);    }
+   if (mRunSound != NULL)     { mgr.FreeSound(mRunSound);     }
+   if (mCrouchSound != NULL)  { mgr.FreeSound(mCrouchSound);  }
 }

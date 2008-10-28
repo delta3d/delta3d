@@ -1,4 +1,4 @@
-/* -*-c++-*- 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/playeractor.h>
 #include <fireFighter/gameitemactor.h>
 #include <fireFighter/messagetype.h>
@@ -41,7 +42,7 @@
 using dtCore::RefPtr;
 
 //////////////////////////////////////////////////////////////
-PlayerActorProxy::PlayerActorProxy() 
+PlayerActorProxy::PlayerActorProxy()
 {
 
 }
@@ -62,8 +63,8 @@ void PlayerActorProxy::BuildInvokables()
 }
 
 dtDAL::ActorProxyIcon* PlayerActorProxy::GetBillBoardIcon()
-{ 
-   if(!mBillBoardIcon.valid())
+{
+   if (!mBillBoardIcon.valid())
    {
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
    }
@@ -74,18 +75,20 @@ void PlayerActorProxy::OnRemovedFromWorld()
 {
    PlayerActor &pa = static_cast<PlayerActor&>(GetGameActor());
 
-   if(dtAudio::AudioManager::GetInstance().IsInitialized() && pa.mFireHoseSound != NULL)
+   if (dtAudio::AudioManager::GetInstance().IsInitialized() && pa.mFireHoseSound != NULL)
+   {
       dtAudio::AudioManager::GetInstance().FreeSound(pa.mFireHoseSound);
+   }
 }
 
 //////////////////////////////////////////////////////////////
-PlayerActor::PlayerActor(dtGame::GameActorProxy &proxy) :
-   dtGame::GameActor(proxy),
-   mIsector(new dtCore::Isector), 
-   mIsCrouched(false), 
-   mFireHose(new dtCore::ParticleSystem), 
-   mFireHoseSound(dtAudio::AudioManager::GetInstance().NewSound()),
-   mLastIntersectedMessage("__InitialID__")
+PlayerActor::PlayerActor(dtGame::GameActorProxy& proxy)
+   : dtGame::GameActor(proxy)
+   , mIsector(new dtCore::Isector)
+   , mIsCrouched(false)
+   , mFireHose(new dtCore::ParticleSystem)
+   , mFireHoseSound(dtAudio::AudioManager::GetInstance().NewSound())
+   , mLastIntersectedMessage("__InitialID__")
 {
    AddChild(mFireHose.get());
    AddChild(mFireHoseSound);
@@ -112,39 +115,39 @@ void PlayerActor::OnEnteredWorld()
    xform.SetTranslation(pos);
    mIsector->SetTransform(xform);
 
-   dtGame::Invokable *listenInvoke = new dtGame::Invokable("ListenForTickMessages", 
+   dtGame::Invokable* listenInvoke = new dtGame::Invokable("ListenForTickMessages",
       dtDAL::MakeFunctor(*this, &PlayerActor::ListenForTickMessages));
 
    GetGameActorProxy().AddInvokable(*listenInvoke);
 
    GetGameActorProxy().RegisterForMessages(MessageType::GAME_STATE_CHANGED, "ListenForTickMessages");
-   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
       dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 }
 
-void PlayerActor::TickLocal(const dtGame::Message &tickMessage)
+void PlayerActor::TickLocal(const dtGame::Message& tickMessage)
 {
-   const dtGame::TickMessage &msg = static_cast<const dtGame::TickMessage&>(tickMessage);
+   const dtGame::TickMessage& msg = static_cast<const dtGame::TickMessage&>(tickMessage);
    ComputeSceneIntersections(msg.GetDeltaSimTime());
 }
 
-void PlayerActor::AddItemToInventory(GameItemActor &item)
+void PlayerActor::AddItemToInventory(GameItemActor& item)
 {
-   if(!item.IsCollectable())
+   if (!item.IsCollectable())
    {
-      std::string error("Failed to add the item " + item.GetName() + 
+      std::string error("Failed to add the item " + item.GetName() +
          " to the inventory because it is not collectable");
 
       LOG_ERROR(error.c_str());
       return;
    }
 
-   if(!IsItemInInventory(item))
+   if (!IsItemInInventory(item))
    {
       // Hack to ensure our iterator gets set. Since the inventory is empty
       // We know this only happens once and now set the iterator to the first
-      // item in the map. 
-      if(mInventory.empty())
+      // item in the map.
+      if (mInventory.empty())
       {
          mInventory.insert(std::make_pair(item.GetItemIndex(), &item));
          mSelectedItem = mInventory.begin();
@@ -156,8 +159,8 @@ void PlayerActor::AddItemToInventory(GameItemActor &item)
 
       // Since we need to always have the fire hose with the player, if the
       // new item acquired is the fire hose, add as a child to the player
-      FireHoseActor *fha = dynamic_cast<FireHoseActor*>(&item);
-      if(fha != NULL)
+      FireHoseActor* fha = dynamic_cast<FireHoseActor*>(&item);
+      if (fha != NULL)
       {
          mFireHose->LoadFile(fha->GetStreamFilename().c_str());
          mFireHoseSound->LoadFile(fha->GetItemUseSnd().c_str());
@@ -179,24 +182,24 @@ void PlayerActor::AddItemToInventory(GameItemActor &item)
          mFireHose->SetTransform(xform, REL_CS);
 
          // Acquired the fire hose, fire the event
-         const std::string &name = "AcquireFireHose";
+         const std::string& name = "AcquireFireHose";
 
-         dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-         if(event == NULL)
+         dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+         if (event == NULL)
          {
             throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
          }
 
-         dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-         RefPtr<dtGame::Message> msg = 
+         dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+         RefPtr<dtGame::Message> msg =
             mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
-         dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+         dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
          gem.SetGameEvent(*event);
          mgr.SendMessage(gem);
-      } 
-      
-      // Play the added to inventory sound and send out a message 
+      }
+
+      // Play the added to inventory sound and send out a message
       item.PlayInventoryAddSnd();
       RefPtr<dtGame::Message> msg = GetGameActorProxy().GetGameManager()->GetMessageFactory().CreateMessage(MessageType::ITEM_ACQUIRED);
       msg->SetAboutActorId(item.GetUniqueId());
@@ -211,11 +214,13 @@ bool PlayerActor::IsItemInInventory(GameItemActor &item) const
 
 bool PlayerActor::IsItemInInventory(const std::string &itemName) const
 {
-   for(std::map<int, RefPtr<GameItemActor> >::const_iterator i = mInventory.begin(); 
+   for (std::map<int, RefPtr<GameItemActor> >::const_iterator i = mInventory.begin();
        i != mInventory.end(); ++i)
    {
-      if(i->second->GetName() == itemName)
+      if (i->second->GetName() == itemName)
+      {
          return true;
+      }
    }
 
    return false;
@@ -223,15 +228,15 @@ bool PlayerActor::IsItemInInventory(const std::string &itemName) const
 
 void PlayerActor::UseSelectedItem(bool use)
 {
-   if(mInventory.empty())
+   if (mInventory.empty())
    {
       LOG_ERROR("The inventory is empty. No items can be used.");
       return;
    }
 
    // Special case. See above comments about the Fire Hose Actor
-   FireHoseActor *fha = dynamic_cast<FireHoseActor*>(mSelectedItem->second.get());
-   if(fha != NULL)
+   FireHoseActor* fha = dynamic_cast<FireHoseActor*>(mSelectedItem->second.get());
+   if (fha != NULL)
    {
       mFireHose->SetEnabled(use);
       use ? mFireHoseSound->Play() : mFireHoseSound->Stop();
@@ -248,23 +253,23 @@ void PlayerActor::UseSelectedItem(bool use)
 
 void PlayerActor::UpdateSelectedItem(bool toTheLeft)
 {
-   if(mInventory.empty())
+   if (mInventory.empty())
    {
       LOG_ERROR("The inventory is empty. No items can be updated.");
       return;
    }
 
-   if(!toTheLeft)
+   if (!toTheLeft)
    {
       std::map<int, RefPtr<GameItemActor> >::iterator oldItem = mSelectedItem++;
-      if(mSelectedItem == mInventory.end())
+      if (mSelectedItem == mInventory.end())
       {
          mSelectedItem = oldItem;
       }
    }
    else
    {
-      if(mSelectedItem != mInventory.begin())
+      if (mSelectedItem != mInventory.begin())
       {
          mSelectedItem--;
       }
@@ -292,31 +297,31 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
    mIsector->SetEndPosition(pos + at);
 
    // On collision
-   if(mIsector->Update())
+   if (mIsector->Update())
    {
-      dtCore::DeltaDrawable *dd = mIsector->GetClosestDeltaDrawable();
-      if(dd == NULL)
+      dtCore::DeltaDrawable* dd = mIsector->GetClosestDeltaDrawable();
+      if (dd == NULL)
       {
          SendItemIntersectedMessage(dtCore::UniqueId(""));
          return;
       }
 
-      // Check for a collision with the fire hose spray versus the wall 
+      // Check for a collision with the fire hose spray versus the wall
       // or fire
-      if(mFireHose->IsEnabled())
+      if (mFireHose->IsEnabled())
       {
          // Check for collision with the fire
-         FireActor *fa = dynamic_cast<FireActor*>(dd);
-         if(fa != NULL)
+         FireActor* fa = dynamic_cast<FireActor*>(dd);
+         if (fa != NULL)
          {
             fa->DecreaseIntensity(deltaSimTime);
          }
       }
 
-      // Check for collision with a game item and send a message to show the 
+      // Check for collision with a game item and send a message to show the
       // hand or not
-      GameItemActor *gia = dynamic_cast<GameItemActor*>(dd);
-      if(gia == NULL)
+      GameItemActor* gia = dynamic_cast<GameItemActor*>(dd);
+      if (gia == NULL)
       {
          SendItemIntersectedMessage(dtCore::UniqueId(""));
          return;
@@ -336,37 +341,39 @@ void PlayerActor::ComputeSceneIntersections(const float deltaSimTime)
 
 void PlayerActor::StopAllSounds()
 {
-   for(std::map<int, RefPtr<GameItemActor> >::iterator i = mInventory.begin(); 
+   for (std::map<int, RefPtr<GameItemActor> >::iterator i = mInventory.begin();
        i != mInventory.end(); ++i)
    {
-      if(i->second->IsActivated())
+      if (i->second->IsActivated())
+      {
          i->second->Activate(false);
+      }
    }
 }
 
-void PlayerActor::ListenForTickMessages(const dtGame::Message &msg)
+void PlayerActor::ListenForTickMessages(const dtGame::Message& msg)
 {
-   const GameStateChangedMessage &gscm = static_cast<const GameStateChangedMessage&>(msg);
-   
-   if(gscm.GetNewState() == GameState::STATE_RUNNING)
-   { 
-      //GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+   const GameStateChangedMessage& gscm = static_cast<const GameStateChangedMessage&>(msg);
+
+   if (gscm.GetNewState() == GameState::STATE_RUNNING)
+   {
+      //GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
       //   dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    }
-   else if(gscm.GetNewState() == GameState::STATE_DEBRIEF || 
+   else if (gscm.GetNewState() == GameState::STATE_DEBRIEF ||
            gscm.GetNewState() == GameState::STATE_MENU)
    {
-      GetGameActorProxy().UnregisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+      GetGameActorProxy().UnregisterForMessages(dtGame::MessageType::TICK_LOCAL,
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    }
 }
 
-void PlayerActor::SendItemIntersectedMessage(const dtCore::UniqueId &id)
+void PlayerActor::SendItemIntersectedMessage(const dtCore::UniqueId& id)
 {
    if (mLastIntersectedMessage != id)
    {
       mLastIntersectedMessage = id;
-      dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+      dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
       RefPtr<dtGame::Message> msg = mgr.GetMessageFactory().CreateMessage(MessageType::ITEM_INTERSECTED);
 
       msg->SetAboutActorId(id);
@@ -375,14 +382,14 @@ void PlayerActor::SendItemIntersectedMessage(const dtCore::UniqueId &id)
 }
 
 void PlayerActor::SetIsCrouched(bool crouch)
-{ 
+{
    mIsCrouched = crouch;
 
    dtCore::Transform xform;
    GetTransform(xform);
    osg::Vec3 pos;
    xform.GetTranslation(pos);
-   mIsCrouched ? pos.z() /= 2.0 : pos.z() *= 2.0; 
+   mIsCrouched ? pos.z() /= 2.0 : pos.z() *= 2.0;
    xform.SetTranslation(pos);
    SetTransform(xform);
 }

@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_FIRE_FIGHTER_SHIP_ACTOR
 #define DELTA_FIRE_FIGHTER_SHIP_ACTOR
 
@@ -45,24 +46,24 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
 
          public:
 
-            static ThrottlePosition BACK_EMERGENCY; //max astern speed
-            static ThrottlePosition BACK_FULL;		//~-15 knots
-            static ThrottlePosition BACK_TWO_THIRDS;	//~-10 knots
-            static ThrottlePosition BACK_ONE_THIRD;	//~-5 knots ordered
-            static ThrottlePosition STOP;			//zero knots ordered
-            static ThrottlePosition AHEAD_ONE_THIRD;	//~5 knots ordered
-            static ThrottlePosition AHEAD_TWO_THIRDS;	//~10 knots ordered
-            static ThrottlePosition AHEAD_STANDARD;	//~15 knots ordered
-            static ThrottlePosition AHEAD_FULL;		//~20 knots ordered
-            static ThrottlePosition AHEAD_FLANK;		//max ahead speed
-         
+            static ThrottlePosition BACK_EMERGENCY;   //max astern speed
+            static ThrottlePosition BACK_FULL;        //~-15 knots
+            static ThrottlePosition BACK_TWO_THIRDS;  //~-10 knots
+            static ThrottlePosition BACK_ONE_THIRD;   //~-5 knots ordered
+            static ThrottlePosition STOP;             //zero knots ordered
+            static ThrottlePosition AHEAD_ONE_THIRD;  //~5 knots ordered
+            static ThrottlePosition AHEAD_TWO_THIRDS; //~10 knots ordered
+            static ThrottlePosition AHEAD_STANDARD;   //~15 knots ordered
+            static ThrottlePosition AHEAD_FULL;       //~20 knots ordered
+            static ThrottlePosition AHEAD_FLANK;      //max ahead speed
+
             int GetValue() { return mCValue; }
 
          private:
 
-            ThrottlePosition(const std::string &name, 
-                             const int cValue) : 
-               dtUtil::Enumeration(name), 
+            ThrottlePosition(const std::string &name,
+                             const int cValue) :
+               dtUtil::Enumeration(name),
                mCValue(cValue)
             {
                AddInstance(this);
@@ -100,26 +101,26 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
 
       void StopWakeSound();
 
-      void GetCoordinates(float &x, float &y);
+      void GetCoordinates(float& x, float& y);
 
       float GetHeading();
 
       float GetCourse();
 
       /*
-      * Setting course will change the course immediately.  If a realistic
-      * course adjustment is desired, set the desired rudder angle and
-      * monitor the course until the proper course is achieved.
-      */
+       * Setting course will change the course immediately.  If a realistic
+       * course adjustment is desired, set the desired rudder angle and
+       * monitor the course until the proper course is achieved.
+       */
       void SetCourse(float crs);
 
       float GetSpeed();
 
       /*
-      * Setting speed will change the speed immediately.  If a realistic
-      * speed adjustment is desired, set the desired throttle position and
-      * the speed will eventually change to the proper position.
-      */
+       * Setting speed will change the speed immediately.  If a realistic
+       * speed adjustment is desired, set the desired throttle position and
+       * the speed will eventually change to the proper position.
+       */
       void SetSpeed(float spd);
 
       float GetMaxAheadSpeed();
@@ -131,12 +132,12 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
       void SetMaxAsternSpeed(float maxAstnSpd);
 
       /*
-      * Desired speed in knots.  Ensures the desiredSpeed is within max
-      * ahead and max astern values.
-      */
+       * Desired speed in knots.  Ensures the desiredSpeed is within max
+       * ahead and max astern values.
+       */
       void SetDesiredThrottlePosition(float desiredSpeed);
 
-      void SetDesiredThrottlePosition(ThrottlePosition &bell);
+      void SetDesiredThrottlePosition(ThrottlePosition& bell);
 
       float GetThrottlePosition();
 
@@ -165,20 +166,20 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
       void Update(float elapsedTime);
 
       /*
-      * The Tactical Diameter is the diameter a ship can turn within (once 
-      * heeled) at 15 knots speed with 15 degrees rudder ordered.  All other
-      * speed/rudder combinations will be derived from this number.  1000 
-      * yards is a reasonable default as it is used for Naval multi-ship 
-      * maneuvers.
-      */
+       * The Tactical Diameter is the diameter a ship can turn within (once
+       * heeled) at 15 knots speed with 15 degrees rudder ordered.  All other
+       * speed/rudder combinations will be derived from this number.  1000
+       * yards is a reasonable default as it is used for Naval multi-ship
+       * maneuvers.
+       */
       void SetTacticalDiameter(float diameter = 1000.0f);
 
       /*
-      * Adjusted Tactical Diameter is a function of speed and ruddeer angle.
-      * The adjustment is based on the graph of the function f(x) = x/(x^2).
-      * It is a loose approximation of the effects of speed and rudder angle
-      * on the tactical diameter.
-      */
+       * Adjusted Tactical Diameter is a function of speed and ruddeer angle.
+       * The adjustment is based on the graph of the function f(x) = x/(x^2).
+       * It is a loose approximation of the effects of speed and rudder angle
+       * on the tactical diameter.
+       */
       float GetAdjustedTacticalDiameter();
 
       void SetDisplacement(float tonnage);
@@ -227,24 +228,24 @@ class FIRE_FIGHTER_EXPORT ShipActor : public VehicleActor
       dtCore::RefPtr<dtAudio::Sound> wakeSound;
       dtCore::Transform wakeSoundPosition;
       dtCore::Transform position;
-      float course;				//0 <= degrees < 360, absolute course
-      float heading;				//0 <= degrees < 360, absolute ship's head
-      float maxAheadSpeed;		//knots
-      float maxAsternSpeed;		//knots
-      float speed;				//knots, actual speed
-      float desiredThrottle;		//knots, desired throttle
-      float throttle;				//knots, answered throttle 
-      float throttleRate;			//knots/second, (engine spool)
-      float maxRudderAngle;		//degrees (+/-)
-      float effRudderAngle;		//degrees (+/-), considers momentum of ship
-      float rudderAngle;			//degrees, actual rudder angle
-      float desiredRudderAngle;	//degrees
-      float rudderSwingRate;		//degrees/second, movement of rudder
-      float tacticalDiameter;		//yards
-      float heel;					//degrees
-      float displacement;			//tons
-      float shaftHP;				//shaft horsepower
-      float heelFactor;			//heeling tendency, 0..1
+      float course;             //0 <= degrees < 360, absolute course
+      float heading;            //0 <= degrees < 360, absolute ship's head
+      float maxAheadSpeed;      //knots
+      float maxAsternSpeed;     //knots
+      float speed;              //knots, actual speed
+      float desiredThrottle;    //knots, desired throttle
+      float throttle;           //knots, answered throttle
+      float throttleRate;       //knots/second, (engine spool)
+      float maxRudderAngle;     //degrees (+/-)
+      float effRudderAngle;     //degrees (+/-), considers momentum of ship
+      float rudderAngle;        //degrees, actual rudder angle
+      float desiredRudderAngle; //degrees
+      float rudderSwingRate;    //degrees/second, movement of rudder
+      float tacticalDiameter;   //yards
+      float heel;               //degrees
+      float displacement;       //tons
+      float shaftHP;            //shaft horsepower
+      float heelFactor;         //heeling tendency, 0..1
 
    protected:
 

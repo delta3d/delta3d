@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/gamelevelactor.h>
 #include <fireFighter/messagetype.h>
 #include <fireFighter/messages.h>
@@ -45,11 +46,11 @@ void GameLevelActorProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
 
-   GameLevelActor &gla = static_cast<GameLevelActor&>(GetGameActor());
+   GameLevelActor& gla = static_cast<GameLevelActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH, 
-      "Model", "Model", 
-      dtDAL::MakeFunctor(gla, &GameLevelActor::LoadFile), 
+   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+      "Model", "Model",
+      dtDAL::MakeFunctor(gla, &GameLevelActor::LoadFile),
       "Loads the model file for the level"));
 }
 
@@ -60,7 +61,7 @@ void GameLevelActorProxy::BuildInvokables()
 
 dtDAL::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
 {
-   if(!mBillBoardIcon.valid())
+   if (!mBillBoardIcon.valid())
    {
       mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
    }
@@ -69,8 +70,8 @@ dtDAL::ActorProxyIcon* GameLevelActorProxy::GetBillBoardIcon()
 
 void GameLevelActorProxy::OnEnteredWorld()
 {
-   dtGame::Invokable *invoke = new dtGame::Invokable("ResetCollisionMesh", 
-      dtDAL::MakeFunctor(static_cast<GameLevelActor&>(GetGameActor()), 
+   dtGame::Invokable* invoke = new dtGame::Invokable("ResetCollisionMesh",
+      dtDAL::MakeFunctor(static_cast<GameLevelActor&>(GetGameActor()),
       &GameLevelActor::ResetCollisionMesh));
 
    AddInvokable(*invoke);
@@ -80,24 +81,26 @@ void GameLevelActorProxy::OnEnteredWorld()
 }
 
 /////////////////////////////////////////////////////////////////
-GameLevelActor::GameLevelActor(dtGame::GameActorProxy &proxy) :
-   dtGame::GameActor(proxy), 
-   mAmbientSound(NULL)
+GameLevelActor::GameLevelActor(dtGame::GameActorProxy& proxy)
+   : dtGame::GameActor(proxy)
+   , mAmbientSound(NULL)
 {
 
 }
 
 GameLevelActor::~GameLevelActor()
 {
-   if(mAmbientSound != NULL)
+   if (mAmbientSound != NULL)
+   {
       dtAudio::AudioManager::GetInstance().FreeSound(mAmbientSound);
+   }
 }
 
 void GameLevelActor::OnEnteredWorld()
 {
    dtGame::GameActor::OnEnteredWorld();
 
-   dtGame::Invokable *invoke = new dtGame::Invokable("StopSounds", 
+   dtGame::Invokable* invoke = new dtGame::Invokable("StopSounds",
       dtDAL::MakeFunctor(*this, &GameLevelActor::StopSounds));
 
    GetGameActorProxy().AddInvokable(*invoke);
@@ -110,21 +113,23 @@ void GameLevelActor::OnEnteredWorld()
    mAmbientSound->Play();
 }
 
-void GameLevelActor::StopSounds(const dtGame::Message &msg)
+void GameLevelActor::StopSounds(const dtGame::Message& msg)
 {
-   const GameStateChangedMessage &gscm = static_cast<const GameStateChangedMessage&>(msg);
-   if(gscm.GetNewState() == GameState::STATE_MENU   || 
+   const GameStateChangedMessage& gscm = static_cast<const GameStateChangedMessage&>(msg);
+   if (gscm.GetNewState() == GameState::STATE_MENU   ||
       gscm.GetNewState() == GameState::STATE_DEBRIEF)
    {
-      if(mAmbientSound != NULL && mAmbientSound->IsPlaying())
+      if (mAmbientSound != NULL && mAmbientSound->IsPlaying())
+      {
          mAmbientSound->Stop();
+      }
    }
 }
 
-void GameLevelActor::LoadFile(const std::string &filename)
+void GameLevelActor::LoadFile(const std::string& filename)
 {
-   osg::Node *node = dtCore::Loadable::LoadFile(filename);
-   if(node == NULL)
+   osg::Node* node = dtCore::Loadable::LoadFile(filename);
+   if (node == NULL)
    {
       LOG_ERROR("Failed to load the game level file: " + filename);
       return;
@@ -133,12 +138,14 @@ void GameLevelActor::LoadFile(const std::string &filename)
    GetMatrixNode()->addChild(node);
 }
 
-void GameLevelActor::ResetCollisionMesh(const dtGame::Message &msg)
+void GameLevelActor::ResetCollisionMesh(const dtGame::Message& msg)
 {
-   dtGame::GameActorProxy *gap = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
-   HatchActor *ha = dynamic_cast<HatchActor*>(&gap->GetGameActor());
-   if(ha == NULL)
+   dtGame::GameActorProxy* gap = GetGameActorProxy().GetGameManager()->FindGameActorById(msg.GetAboutActorId());
+   HatchActor* ha = dynamic_cast<HatchActor*>(&gap->GetGameActor());
+   if (ha == NULL)
+   {
       return;
+   }
 
    SetCollisionMesh();
 }

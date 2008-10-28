@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/shipactor.h>
 #include <fireFighter/utilityfunctions.h>
 #include <dtAudio/sound.h>
@@ -59,28 +60,28 @@ ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_STANDARD("AHEAD_S
 ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_FULL("AHEAD_FULL",  8);
 ShipActor::ThrottlePosition ShipActor::ThrottlePosition::AHEAD_FLANK("AHEAD_FLANK", 9);
 
-ShipActor::ShipActor(dtGame::GameActorProxy &proxy) :
-   VehicleActor(proxy), 
-   shaftEngaged(true),
-   position(0.0f, 0.0f, 100.0f),
-   course(0.0f),
-   heading(0.0f),
-   maxAheadSpeed(30.0f),
-   maxAsternSpeed(-20.0f),
-   speed(0.0f),
-   desiredThrottle(0.0f),
-   throttle(0.0f),
-   throttleRate(3.0f),
-   maxRudderAngle(37.0f),
-   effRudderAngle(.0f),
-   rudderAngle(0.0f),
-   desiredRudderAngle(0.0f),
-   rudderSwingRate(6.0f),
-   tacticalDiameter(1000.0f),
-   heel(0.0f),
-   displacement(8300.0f),
-   shaftHP(100000.0f),
-   heelFactor(0.5f)
+ShipActor::ShipActor(dtGame::GameActorProxy &proxy)
+   : VehicleActor(proxy)
+   , shaftEngaged(true)
+   , position(0.0f, 0.0f, 100.0f)
+   , course(0.0f)
+   , heading(0.0f)
+   , maxAheadSpeed(30.0f)
+   , maxAsternSpeed(-20.0f)
+   , speed(0.0f)
+   , desiredThrottle(0.0f)
+   , throttle(0.0f)
+   , throttleRate(3.0f)
+   , maxRudderAngle(37.0f)
+   , effRudderAngle(.0f)
+   , rudderAngle(0.0f)
+   , desiredRudderAngle(0.0f)
+   , rudderSwingRate(6.0f)
+   , tacticalDiameter(1000.0f)
+   , heel(0.0f)
+   , displacement(8300.0f)
+   , shaftHP(100000.0f)
+   , heelFactor(0.5f)
 {
 
 }
@@ -92,7 +93,7 @@ ShipActor::~ShipActor()
 
 void ShipActor::TimeUpdate(double deltaTime)
 {
-   if(mEngineRunning)
+   if (mEngineRunning)
    {
       dtCore::Transform tempPos;
       GetTransform(tempPos);
@@ -109,33 +110,33 @@ void ShipActor::SetModelPosition()
 
    float speedOffset = 3.5f * GetSpeed() / GetMaxAheadSpeed();
 
-   if(CheckWake(portWake.get()))
+   if (CheckWake(portWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portWakePosition);
       portWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdWake.get()))
+   if (CheckWake(stbdWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdWakePosition);
       stbdWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(portBowWake.get()))
+   if (CheckWake(portBowWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portBowWakePosition);
       AdjustZ(&tempPos, speedOffset, true);
       portBowWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdBowWake.get()))
+   if (CheckWake(stbdBowWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdBowWakePosition);
       AdjustZ(&tempPos, speedOffset, true);
       stbdBowWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(portRooster.get()))
+   if (CheckWake(portRooster.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portRoosterPosition);
       AdjustZ(&tempPos, 1.2f * speedOffset, true);
@@ -143,37 +144,43 @@ void ShipActor::SetModelPosition()
       portRooster->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdRooster.get()))
+   if (CheckWake(stbdRooster.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdRoosterPosition);
       AdjustZ(&tempPos, 1.2f * speedOffset, true);
       AdjustX(&tempPos, GetHeel() / -9.0f, true);
       stbdRooster->SetTransform(tempPos);
    }
-   
+
    newPos = GetPosition();
    SetTransform(newPos, *mCoordSys == ShipActor::CoordSys::SYS_ABS ? ABS_CS : REL_CS);
 }
 
 bool ShipActor::CheckWake(dtCore::ParticleSystem* wake)
 {
-   if(wake != NULL)
+   if (wake != NULL)
    {
-      if(wake->IsEnabled())
+      if (wake->IsEnabled())
       {
-         if(!mEngineRunning || !shaftEngaged)
+         if (!mEngineRunning || !shaftEngaged)
+         {
             wake->SetEnabled(false);
+         }
       }
       else
       {
-         if(mEngineRunning && shaftEngaged)
+         if (mEngineRunning && shaftEngaged)
+         {
             wake->SetEnabled(true);
+         }
       }
 
       return wake->IsEnabled();
    }
    else
+   {
       return false;
+   }
 }
 
 void ShipActor::SetPortWake(dtCore::ParticleSystem* wake, dtCore::Transform wakePosition)
@@ -245,7 +252,7 @@ void ShipActor::StopWakeSound()
    wakeSound->Stop();
 }
 
-void ShipActor::GetCoordinates(float &x, float &y)
+void ShipActor::GetCoordinates(float& x, float& y)
 {
    float z;
    position.GetTranslation(x, y, z);
@@ -280,12 +287,18 @@ void ShipActor::SetSpeed(float spd)
    if (spd < maxAheadSpeed)
    {
       if (spd > maxAsternSpeed)
+      {
          speed = spd;
+      }
       else
+      {
          speed = maxAsternSpeed;
+      }
    }
    else
+   {
       speed = maxAheadSpeed;
+   }
 
    desiredThrottle = speed;
    throttle = speed;
@@ -316,12 +329,18 @@ void ShipActor::SetDesiredThrottlePosition(float desiredSpeed)
    if (desiredSpeed < maxAheadSpeed)
    {
       if (desiredSpeed > maxAsternSpeed)
+      {
          desiredThrottle = desiredSpeed;
+      }
       else
+      {
          desiredThrottle = maxAsternSpeed;
+      }
    }
    else
+   {
       desiredThrottle = maxAheadSpeed;
+   }
 }
 
 void ShipActor::SetDesiredThrottlePosition(ShipActor::ThrottlePosition &bell)
@@ -329,14 +348,18 @@ void ShipActor::SetDesiredThrottlePosition(ShipActor::ThrottlePosition &bell)
    float desiredSpeed = 0.0f;
 
    if (bell == ShipActor::ThrottlePosition::BACK_EMERGENCY)
+   {
       desiredSpeed = maxAsternSpeed;
+   }
    else if (bell == ShipActor::ThrottlePosition::AHEAD_FLANK)
+   {
       desiredSpeed = maxAheadSpeed;
+   }
    else
    {
       // The old version of this code uses a C style enum in which using the expression
-      // bell - 1 would give you the item before you in the enum. To work around this, 
-      // I passed the C value into the constructor of the ThrottlePosition enumeration so that it 
+      // bell - 1 would give you the item before you in the enum. To work around this,
+      // I passed the C value into the constructor of the ThrottlePosition enumeration so that it
       // can be used here, as you cannot subtract 1 from a dtUtil::Enumeration
 
       // /*Old version*/ desiredSpeed = ((bell - 1) * 5.0f) - 15.0f; //convert the bell into knots
@@ -374,11 +397,17 @@ void ShipActor::SetPosition(dtCore::Transform newPosition)
 void ShipActor::SetDesiredRudderAngle(float rudder)
 {
    if (rudder > maxRudderAngle)
+   {
       desiredRudderAngle = maxRudderAngle;
+   }
    else if (rudder < (-1 * maxRudderAngle))
+   {
       desiredRudderAngle = -1 * maxRudderAngle;
+   }
    else
+   {
       desiredRudderAngle = rudder;
+   }
 }
 
 void ShipActor::SetMaxRudderAngle(float maxRudder)
@@ -439,7 +468,9 @@ void ShipActor::UpdateRudder(float elapsedTime)
             {
                rudderAngle += rudderSwingRate * elapsedTime;
                if (rudderAngle > desiredRudderAngle)
+               {
                   rudderAngle = desiredRudderAngle;
+               }
             }
 
             //rudder too far right
@@ -447,7 +478,9 @@ void ShipActor::UpdateRudder(float elapsedTime)
             {
                rudderAngle -= rudderSwingRate * elapsedTime;
                if (rudderAngle < desiredRudderAngle)
+               {
                   rudderAngle = desiredRudderAngle;
+               }
             }
          }
 
@@ -456,7 +489,9 @@ void ShipActor::UpdateRudder(float elapsedTime)
          {
             rudderAngle += rudderSwingRate * elapsedTime;
             if (rudderAngle > desiredRudderAngle)
+            {
                rudderAngle = desiredRudderAngle;
+            }
          }
       }
 
@@ -473,7 +508,9 @@ void ShipActor::UpdateRudder(float elapsedTime)
             {
                rudderAngle -= rudderSwingRate * elapsedTime;
                if (rudderAngle < desiredRudderAngle)
+               {
                   rudderAngle = desiredRudderAngle;
+               }
             }
 
             //rudder too far left
@@ -481,7 +518,9 @@ void ShipActor::UpdateRudder(float elapsedTime)
             {
                rudderAngle += rudderSwingRate * elapsedTime;
                if (rudderAngle > desiredRudderAngle)
+               {
                   rudderAngle = desiredRudderAngle;
+               }
             }
          }
 
@@ -490,24 +529,30 @@ void ShipActor::UpdateRudder(float elapsedTime)
          {
             rudderAngle -= rudderSwingRate * elapsedTime;
             if (rudderAngle < desiredRudderAngle)
+            {
                rudderAngle = desiredRudderAngle;
+            }
          }
       }
 
       //handle rudder amidship order
-      else 
+      else
       {
          if (rudderAngle > 0.0f)
          {
             rudderAngle -= rudderSwingRate * elapsedTime;
             if (rudderAngle < desiredRudderAngle)
+            {
                rudderAngle = desiredRudderAngle;
+            }
          }
          else
          {
             rudderAngle += rudderSwingRate * elapsedTime;
             if (rudderAngle > desiredRudderAngle)
+            {
                rudderAngle = desiredRudderAngle;
+            }
          }
       }
    }
@@ -521,13 +566,17 @@ void ShipActor::UpdateThrottle(float elapsedTime)
       {
          throttle += throttleRate * elapsedTime;
          if (throttle > desiredThrottle)
+         {
             throttle = desiredThrottle;
+         }
       }
       else
       {
          throttle -= throttleRate * elapsedTime;
          if (throttle < desiredThrottle)
+         {
             throttle = desiredThrottle;
+         }
       }
    }
 }
@@ -542,12 +591,12 @@ void ShipActor::UpdateEffRudderAndHeel(float elapsedTime)
    //update effective rudder angle
    if (rudderAngle > effRudderAngle)
    {
-      effRudderAngle += (std::abs(rudderAngle - effRudderAngle)) 
+      effRudderAngle += (std::abs(rudderAngle - effRudderAngle))
          / log(displacement) * elapsedTime;
    }
    else if (rudderAngle < effRudderAngle)
    {
-      effRudderAngle -= (std::abs(rudderAngle - effRudderAngle)) 
+      effRudderAngle -= (std::abs(rudderAngle - effRudderAngle))
          / log(displacement) * elapsedTime;
    }
 
@@ -558,10 +607,14 @@ void ShipActor::UpdateEffRudderAndHeel(float elapsedTime)
 
       //heel to side opposite the turn
       if (effRudderAngle < 0.0f)
+      {
          heel *= -1.0f;
+      }
    }
    else
+   {
       heel = 0.0f;
+   }
 }
 
 void ShipActor::UpdateCourse(float elapsedTime)
@@ -572,17 +625,25 @@ void ShipActor::UpdateCourse(float elapsedTime)
          / (GetAdjustedTacticalDiameter() * osg::PI) * elapsedTime;
 
       if (effRudderAngle > 0.0f)
+      {
          course += deltaCourse;
+      }
       else
+      {
          course -= deltaCourse;
+      }
    }
 
    //keep in range: 0 <= course < 360.0f
    while (course >= 360.0f)
+   {
       course -= 360.0f;
+   }
 
    while (course < .0f)
+   {
       course += 360.0f;
+   }
 }
 
 void ShipActor::UpdatePosition(float elapsedTime)
@@ -614,14 +675,18 @@ float ShipActor::GetAdjustedTacticalDiameter()
 
    //check for sufficient water flow over rudder
    if (absSpeed < 3.0f)
+   {
       return 30000.0f;
+   }
 
    float factor = (15.0f / absSpeed) * std::abs(effRudderAngle);
 
    adjTacDia = (tacticalDiameter * 15.0f * factor) / (factor * factor);
 
    if (adjTacDia > 30000.0f)
+   {
       adjTacDia = 30000.0f;
+   }
 
    return adjTacDia;
 }
