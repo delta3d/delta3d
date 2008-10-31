@@ -1,22 +1,22 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2008 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 
 #ifndef DELTA_OBJECTWORKSPACE
 #define DELTA_OBJECTWORKSPACE
@@ -31,7 +31,7 @@ class QToolBar;
 
 namespace dtQt
 {
-   class OSGAdapterWidget; 
+   class OSGAdapterWidget;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,24 +45,24 @@ public:
    ~ObjectWorkspace();
 
    dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
-   QObject* GetResourceObject();          
+   QObject* GetResourceObject();
 
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
-   
+
 signals:
-   void FileToLoad(const QString&);  
+   void FileToLoad(const QString&);
    void LoadShaderDefinition(const QString&);
    void ReloadShaderDefinition(const QString&);
-   
+
    void ToggleGrid(bool shouldShow);
 
 public slots:
-   
-   void OnInitialization(); 
-   void OnToggleShadingToolbar(); 
-   void OnRecompileClicked(); 
-	
+
+   void OnInitialization();
+   void OnToggleShadingToolbar();
+   void OnRecompileClicked();
+
 private:
    void CreateMenus();
    void CreateFileMenuActions();
@@ -82,10 +82,10 @@ private:
    // Mode Toolbar
    QAction* mObjectModeAction;
    QAction* mLightModeAction;
-  
+
    // Display Toolbar
-   QAction* mWireframeAction; 
-   QAction* mShadedAction;    
+   QAction* mWireframeAction;
+   QAction* mShadedAction;
    QAction* mShadedWireAction;
    QAction* mGridAction;
    QAction* mDiffuseLightAction;
@@ -96,9 +96,9 @@ private:
    QAction* mOpenVertexShaderAction;
    QAction* mOpenFragmentShaderAction;
 
-   QToolBar* mDisplayToolbar;    
+   QToolBar* mDisplayToolbar;
    QToolBar* mShaderToolbar;
-   QToolBar* mModeToolbar;  
+   QToolBar* mModeToolbar;
 
    ResourceDock* mResourceDock;
 
@@ -107,14 +107,14 @@ private:
 
    dtQt::OSGAdapterWidget* mGLWidget;
 
-private slots:  
+private slots:
 
    // File menu callbacks
    void OnLoadShaderDefinition();
    void OnLoadGeometry();
    void OnLoadGeometry(const std::string& fullName);
    void OnChangeContext();
-   
+
    void OnToggleGridClicked(bool toggledOn);
 
    std::string GetContextPathFromUser();

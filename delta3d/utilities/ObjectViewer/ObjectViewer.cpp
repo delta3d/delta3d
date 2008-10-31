@@ -85,9 +85,9 @@ void ObjectViewer::Config()
    mModelMotion->SetTarget(GetCamera());
    mModelMotion->SetDistance(5.f);
 
-   dtCore::Light *l = GetScene()->GetLight(0);
-   l->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);  
-   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f); 
+   dtCore::Light* l = GetScene()->GetLight(0);
+   l->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
+   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
    l->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
 
    // Infinite lights must start here, point light from the postive y axis
@@ -97,13 +97,13 @@ void ObjectViewer::Config()
    mShadeDecorator = new osg::Group;
 
    mLightArrow = new dtCore::Object;
-   mLightArrow->LoadFile("models/LightArrow.ive");     
+   mLightArrow->LoadFile("models/LightArrow.ive");
 
    dtCore::Transform lightArrowTransform;
    lightArrowTransform.SetTranslation(0.0f, 0.0f, 0.0f);
 
    mLightArrowTransformable = new dtCore::Transformable;
-   mLightArrowTransformable->AddChild(mLightArrow.get()); 
+   mLightArrowTransformable->AddChild(mLightArrow.get());
    mLightArrowTransformable->AddChild(l);
 
    mLightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
@@ -117,8 +117,8 @@ void ObjectViewer::Config()
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
 
    GetScene()->AddDrawable(mLightArrowTransformable.get());
-  
-   InitWireDecorator(); 
+
+   InitWireDecorator();
    InitGridPlanes();
 
    OnSetShaded();
@@ -140,7 +140,7 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
       std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
       shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
 
-      // Emit all shader groups and their individual shaders      
+      // Emit all shader groups and their individual shaders
       {
          size_t groupIndex = shaderGroupList.size() - 1;
 
@@ -155,10 +155,10 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
          }
       }
    }
-   catch (dtUtil::Exception &e)
+   catch (dtUtil::Exception& e)
    {
       QMessageBox::critical(NULL, "Error", e.ToString().c_str());
-   }   
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -176,32 +176,32 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
       OnUnloadGeometryFile();
    }
 
-   mObject = new dtCore::Object; 
+   mObject = new dtCore::Object;
    mObject->LoadFile(filename);
 
    // set up the ObjectViewer's scene graph
    mShadeDecorator->addChild(mObject->GetOSGNode());
    mWireDecorator->addChild(mObject->GetOSGNode());
 
-   osg::Vec3 center;   
+   osg::Vec3 center;
 
    if (mObject.valid())
    {
       float radius;
-      mObject->GetBoundingSphere(&center, &radius); 
+      mObject->GetBoundingSphere(&center, &radius);
 
       mLightMotion->SetDistance(radius * 0.5f);
-      mLightMotion->SetFocalPoint(center); 
+      mLightMotion->SetFocalPoint(center);
 
       // Adust the size of the light arrow
       float arrowScale = radius * 0.5f;
       mLightArrow->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-   }   
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnUnloadGeometryFile()
-{   
+{
    if (mObject.valid())
    {
       mShadeDecorator->removeChild(mObject->GetOSGNode());
@@ -220,7 +220,7 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    assert(program);
 
    shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnRemoveShader()
@@ -267,53 +267,53 @@ void ObjectViewer::OnToggleGrid(bool shouldDisplay)
    else
    {
       mUnShadedScene->removeChild(mGridGeode.get());
-   }  
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnAddLight(int id)
 {
-   //dtCore::Light *l = GetScene()->GetLight(0);
-   //l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);  
-   //l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);  
+   //dtCore::Light* l = GetScene()->GetLight(0);
+   //l->SetAmbient(0.7f, 0.7f, 0.7f, 1.f);
+   //l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetAmbient(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
-   light->SetAmbient(color);  
+   light->SetAmbient(color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetDiffuse(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
-   light->SetDiffuse(color);  
+   light->SetDiffuse(color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
-   light->SetSpecular(color);  
+   light->SetSpecular(color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterObjectMode()
 {
    mModelMotion->SetEnabled(true);
-   mLightMotion->SetEnabled(false);   
+   mLightMotion->SetEnabled(false);
 
    mLightArrow->SetActive(false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterLightMode()
-{  
+{
    mModelMotion->SetEnabled(false);
-   mLightMotion->SetEnabled(true);  
-   
+   mLightMotion->SetEnabled(true);
+
    mLightArrow->SetActive(true);
 }
 
@@ -350,13 +350,13 @@ void ObjectViewer::InitGridPlanes()
    osg::Vec3 verts[numVerts];
    int indx(0L);
 
-   for(int ii(0L); ii < GRID_LINE_COUNT; ii++)
+   for (int ii(0L); ii < GRID_LINE_COUNT; ii++)
    {
       verts[indx++].set( -length + ii * GRID_LINE_SPACING,  length, 0.0f);
       verts[indx++].set( -length + ii * GRID_LINE_SPACING, -length, 0.0f);
    }
 
-   for( int ii(0L); ii < GRID_LINE_COUNT; ii++ )
+   for ( int ii(0L); ii < GRID_LINE_COUNT; ii++ )
    {
       verts[indx++].set(  length, -length + ii * GRID_LINE_SPACING, 0.0f);
       verts[indx++].set( -length, -length + ii * GRID_LINE_SPACING, 0.0f);
@@ -372,7 +372,7 @@ void ObjectViewer::InitGridPlanes()
    mGridGeode = new osg::Geode;
 
    mGridGeode->addDrawable(geometry);
-   mGridGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);   
+   mGridGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
