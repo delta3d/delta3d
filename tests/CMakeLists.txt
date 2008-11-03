@@ -72,7 +72,6 @@ TARGET_LINK_LIBRARIES( ${PROG_NAME}
 IF(DTDIS_AVAILABLE)
    TARGET_LINK_LIBRARIES(${PROG_NAME}
                          ${DTDIS_LIBRARY}
-                         ${DIS_LIBRARY}
                         )
 ENDIF(DTDIS_AVAILABLE)
 
