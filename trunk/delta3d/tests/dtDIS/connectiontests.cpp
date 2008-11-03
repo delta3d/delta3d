@@ -60,7 +60,7 @@ void ConnectionTests::TestConnection()
    unsigned int inport( 1258 );
    std::string host("234.235.236.237");
    DIS::Endian endian(DIS::BIG);
-   unsigned int mtu(1500);
+   const unsigned int mtu(1500);
 
    dtDIS::Connection discon;
    discon.Connect( inport , host.c_str() );
@@ -78,8 +78,9 @@ void ConnectionTests::TestConnection()
    discon.Send( &(outbuf[0]), outbuf.size() );
 
    // read from the port
-   char ibuffer[1500];    /// needs to be the same as mtu
-   discon.Receive( ibuffer , mtu );
+   char ibuffer[mtu];    /// needs to be the same as mtu
+   const size_t r = discon.Receive( ibuffer , mtu );
+	 CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of bytes read. If 0, check your firewall settings.", outbuf.size(), r);
 
    // check to know if the same data was found in the socket
    DIS::DataStream inbuf(endian);
