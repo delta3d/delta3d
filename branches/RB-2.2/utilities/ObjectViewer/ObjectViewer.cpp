@@ -72,7 +72,7 @@ void ObjectViewer::Config()
    osg::Vec3 camXYZ(0.f, -5.f, 1.f);
    osg::Vec3 lookAtXYZ (0.f, 0.f, 1.f);
    osg::Vec3 upVec (0.f, 0.f, 1.f);
-   camPos.SetLookAt(camXYZ, lookAtXYZ, upVec);
+   camPos.Set(camXYZ, lookAtXYZ, upVec);
 
    GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
