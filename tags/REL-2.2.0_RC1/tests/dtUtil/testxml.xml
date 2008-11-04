@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?> 
+<TopLevel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="testxsd.xsd">
+	<Elem1 Elem1Attr1="Elem1Attr1Value" />
+	<Elem2 Elem2Attr1="Elem2Attr1Value" />
+</TopLevel>

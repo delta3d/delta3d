@@ -1,0 +1,307 @@
+<ui version="4.0" >
+ <class>ExternalToolDiag</class>
+ <widget class="QDialog" name="ExternalToolDiag" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>427</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>External Tools</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_3" >
+   <property name="sizeConstraint" >
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QListWidget" name="toolList" />
+   </item>
+   <item row="0" column="1" >
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QPushButton" name="addButton" >
+       <property name="toolTip" >
+        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:8pt;">Add a new External Tool to the list&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="text" >
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteButton" >
+       <property name="toolTip" >
+        <string>Delete the selected external tool</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="moveUpButton" >
+       <property name="toolTip" >
+        <string>Move the selected external tool up in the list</string>
+       </property>
+       <property name="text" >
+        <string>Move &amp;Up</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="moveDownButton" >
+       <property name="toolTip" >
+        <string>Move the selected external tool down in the list</string>
+       </property>
+       <property name="text" >
+        <string>Move &amp;Down</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="resetButton" >
+       <property name="toolTip" >
+        <string>Delete existing tool configurations and add in the Delta3D default external tools.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Reset...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="moreButton" >
+       <property name="toolTip" >
+        <string>Display more configurable options.</string>
+       </property>
+       <property name="text" >
+        <string>&amp;More</string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="titleLabel" >
+       <property name="text" >
+        <string>Title:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLineEdit" name="titleEdit" >
+       <property name="toolTip" >
+        <string>The display name of this external tool.  Use a '&amp;' before a character to designate a keyboard shortcut (e.g., &amp;Browser)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="commandLabel" >
+       <property name="text" >
+        <string>Command:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QLineEdit" name="commandEdit" >
+       <property name="toolTip" >
+        <string>The command for the external tool to run</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" >
+      <widget class="QToolButton" name="commandButton" >
+       <property name="text" >
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QWidget" native="1" name="extensionWidget" >
+     <layout class="QGridLayout" name="gridLayout_2" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <item row="0" column="0" colspan="2" >
+       <widget class="QLabel" name="argsLabel" >
+        <property name="text" >
+         <string>Args:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLineEdit" name="argsEdit" >
+        <property name="toolTip" >
+         <string>Any command line arguments to pass to the external tool.  Seperate arguments with spaces.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QLabel" name="workingDirLabel" >
+        <property name="text" >
+         <string>Working Directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLineEdit" name="workingDirEdit" >
+        <property name="toolTip" >
+         <string>The working directory to run the external tool from</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" >
+       <widget class="QToolButton" name="workingDirButton" >
+        <property name="text" >
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="iconFileLabel" >
+        <property name="text" >
+         <string>Icon File:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2" >
+       <widget class="QLineEdit" name="iconFileEdit" >
+        <property name="toolTip" >
+         <string>The filename of the optional icon file to use for this tool</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3" >
+       <widget class="QToolButton" name="iconDirButton" >
+        <property name="text" >
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" >
+       <widget class="QToolButton" name="argsButton" >
+        <property name="text" >
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>toolList</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>moveUpButton</tabstop>
+  <tabstop>moveDownButton</tabstop>
+  <tabstop>titleEdit</tabstop>
+  <tabstop>commandEdit</tabstop>
+  <tabstop>commandButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ExternalToolDiag</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>257</x>
+     <y>393</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ExternalToolDiag</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>325</x>
+     <y>393</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>extensionWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>361</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>373</x>
+     <y>332</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,124 @@
+<ui version="4.0" >
+ <class>PositionDialog</class>
+ <widget class="QDialog" name="PositionDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>202</width>
+    <height>94</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Enter Position</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>X:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Y:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QDoubleSpinBox" name="ySpinBox" >
+       <property name="minimum" >
+        <double>-9999999.990000000223517</double>
+       </property>
+       <property name="maximum" >
+        <double>9999999.990000000223517</double>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>Z:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QDoubleSpinBox" name="zSpinBox" >
+       <property name="minimum" >
+        <double>-9999999.990000000223517</double>
+       </property>
+       <property name="maximum" >
+        <double>9999999.990000000223517</double>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QDoubleSpinBox" name="xSpinBox" >
+       <property name="minimum" >
+        <double>-9999999.990000000223517</double>
+       </property>
+       <property name="maximum" >
+        <double>9999999.990000000223517</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>xSpinBox</tabstop>
+  <tabstop>ySpinBox</tabstop>
+  <tabstop>zSpinBox</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PositionDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>PositionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
