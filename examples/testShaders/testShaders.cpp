@@ -82,7 +82,7 @@ public:
    void EnableShaders()
    {
       dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-      dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestShader", "TestShader");
+      dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestShader", "DemoShaders");
 
       if (sp != NULL)
       {
