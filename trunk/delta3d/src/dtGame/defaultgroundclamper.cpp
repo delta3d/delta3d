@@ -24,10 +24,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtgameprefix-src.h>
 #include <dtCore/batchisector.h>
-#include <dtUtil/boundingshapeutils.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtUtil/log.h>
+#include <dtUtil/boundingshapeutils.h>
 #include <osg/io_utils>
 #include <osg/Matrix>
 #include <cmath>
