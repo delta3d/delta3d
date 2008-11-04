@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include <prefix/dtgameprefix-src.h>
 #include <dtCore/batchisector.h>
-#include <dtCore/boundingboxvisitor.h>
+#include <dtUtil/boundingshapeutils.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtGame/defaultgroundclamper.h>
 #include <dtUtil/log.h>
@@ -87,7 +87,7 @@ namespace dtGame
       osg::Matrix oldMatrix = actor->GetMatrix();
       actor->SetMatrix( osg::Matrix::identity() );
 
-      dtCore::BoundingBoxVisitor bbv;
+      dtUtil::BoundingBoxVisitor bbv;
       actor->GetOSGNode()->accept(bbv);
 
       actor->SetMatrix(oldMatrix);

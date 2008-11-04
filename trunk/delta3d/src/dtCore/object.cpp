@@ -6,9 +6,9 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/boundingboxvisitor.h>
 #include <dtCore/collisioncategorydefaults.h>
 
+#include <dtUtil/boundingshapeutils.h>
 #include <dtUtil/polardecomp.h>
 
 #include <osgDB/ReadFile>
@@ -81,7 +81,7 @@ namespace dtCore
          //and the top transform which undo's any offsets
          if( mRecenterGeometry )
          {
-            BoundingBoxVisitor bbv;
+            dtUtil::BoundingBoxVisitor bbv;
             node->accept(bbv);
 
             osg::Matrix tempMat;
