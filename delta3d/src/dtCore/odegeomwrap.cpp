@@ -1,6 +1,6 @@
 #include <dtCore/odegeomwrap.h>
-#include <dtCore/boundingboxvisitor.h>
 #include <dtCore/transform.h>
+#include <dtUtil/boundingshapeutils.h>
 #include <dtUtil/log.h>
 #include <ode/collision.h>
 #include <osg/TriangleFunctor>
@@ -381,7 +381,7 @@ void dtCore::ODEGeomWrap::SetCollisionBox(osg::Node* node)
    if (node != 0)
    {
 
-      BoundingBoxVisitor bbv;
+      dtUtil::BoundingBoxVisitor bbv;
       node->accept(bbv);
 
       float lx = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
