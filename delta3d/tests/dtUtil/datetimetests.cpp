@@ -117,12 +117,13 @@ namespace dtUtil
       DateTime dt_gmt(DateTime::TimeOrigin::GMT_TIME);
       DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);  
 
-      dt_local.SetGMTOffset(dt_local.GetGMTOffset(), true);
 
       time_t curr;
       tm local;
       time(&curr);
       local=*(localtime(&curr));
+
+      dt_local.SetGMTOffset(dt_local.GetGMTOffset(), local.tm_isdst ? true : false);
 
       DateTime dt_test;
       dt_test.SetTime(local);
