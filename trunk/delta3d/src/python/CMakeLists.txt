@@ -55,7 +55,8 @@ SET(TARGET_SRC
   odebodywrapbindings.cpp
   orbitmotionmodelbindings.cpp        
   osgmath.cpp           
-  osgmatrix.cpp           
+  osgmatrix.cpp
+  osgnodebindings.cpp
   osgvec2.cpp             
   osgvec3.cpp
   osgvec4.cpp                        
@@ -66,6 +67,8 @@ SET(TARGET_SRC
   recorderbindings.cpp   
   rtsmotionmodelbindings.cpp
   scenebindings.cpp      
+  shadermanagerbindings.cpp
+  shaderprogrambindings.cpp
   skyboxbindings.cpp       
   skydomebindings.cpp      
   spotlightbindings.cpp    
