@@ -24,29 +24,27 @@
 #include <osg/NodeVisitor>
 #include <osg/BoundingBox>
 #include <osg/Geode>
-#include <osg/MatrixTransform>
-#include <osg/Version>
 
 #include <dtUtil/boundingshapeutils.h>
 #include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
+   ///Deprecated 11/3/08.  Use dtUtil::BoundingBoxVisitor instead
    class BoundingBoxVisitor : public osg::NodeVisitor
    {
    public:
 
-      BoundingBoxVisitor()
+      ///Deprecated 11/3/08
+      BoundingBoxVisitor() : 
+         osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+
       {
          DEPRECATE("dtCore::BoundingBoxVisitor()", "dtUtil::BoundingBoxVisitor()");
          mBoxVisitor = new dtUtil::BoundingBoxVisitor;
       }
 
-      /**
-      * Visits the specified geode.
-      *
-      * @param node the geode to visit
-      */
+      ///Deprecated 11/3/08
       virtual void apply(osg::Geode& node)
       {
          DEPRECATE("dtCore::BoundingBoxVisitor::apply(osg::Geode& node)",
@@ -59,9 +57,6 @@ namespace dtCore
 
       dtCore::RefPtr<dtUtil::BoundingBoxVisitor> mBoxVisitor;
 
-      /**
-      * The aggregate bounding box.
-      */
       osg::BoundingBox mBoundingBox;
    };
 
