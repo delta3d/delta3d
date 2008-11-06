@@ -173,7 +173,7 @@ void FlySequenceActor::TickLocal(const dtGame::Message& msg)
       camPos[1] = actPos[1];
       camPos[2] = actPos[2];
 
-      pos.SetLookAt(camPos, lookAt, up);
+      pos.Set(camPos, lookAt, up);
       mPlayer->SetTransform(pos);
    }
 }
@@ -200,7 +200,7 @@ void FlySequenceActor::StartFlying()
       dirOfTransit[2] = 0.0;
    }
 
-   pos.SetLookAt(camPos, lookAt, up);
+   pos.Set(camPos, lookAt, up);
    mPlayer->SetTransform(pos);
 
    mFlyBy = true;
@@ -299,7 +299,7 @@ void FlySequenceActor::ResetCameraPath()
    up[1] = 0.0f;
    up[2] = 1.0f;
 
-   pos.SetLookAt(camPos, lookAt, up);
+   pos.Set(camPos, lookAt, up);
    mPlayer->SetTransform(pos);
 
    mFlyBy = true;

@@ -675,7 +675,7 @@ TestAudioApp::SetUpCamera()
    osg::Vec3   up     (0.f,     0.f,   1.f);
 
    Transform   xform;
-   xform.SetLookAt(pos, lookat, up);
+   xform.Set(pos, lookat, up);
 
    float dist((lookat - pos).length());
 

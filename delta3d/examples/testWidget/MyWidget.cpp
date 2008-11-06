@@ -127,7 +127,7 @@ void MyWidget::ObjectLoaded(dtCore::Object* obj)
    osg::Vec3 up(0.f, 0.f, 1.f);
 
    Transform pos(0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
-   pos.SetLookAt(eye, targ, up);
+   pos.Set(eye, targ, up);
 
    GetCamera()->SetTransform(pos);
    mMotionModel->SetDistance((targ - eye).length());
