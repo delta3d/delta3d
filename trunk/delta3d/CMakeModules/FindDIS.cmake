@@ -28,13 +28,13 @@ FIND_PATH(DIS_INCLUDE_DIR DIS/Pdu.h
 )
 
 FIND_PATH(DIS_CPPUTILS_INCLUDE_DIR DIS/DataStream.h
-		${DIS_INCLUDE_DIR}/../CppUtils
+    ${DIS_INCLUDE_DIR}/../CppUtils
     ${DIS_DIR}/include
     $ENV{DIS_DIR}/include
     $ENV{DIS_DIR}
     ${DELTA3D_EXT_DIR}/inc
     $ENV{DELTA_ROOT}/ext/inc
-    $ENV{DELTA_ROOT}/../open-dis/cpp
+    $ENV{DELTA_ROOT}/../open-dis/CppUtils
     ~/Library/Frameworks
     /Library/Frameworks
     /sw/include # Fink
@@ -50,11 +50,13 @@ MACRO(FIND_DIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
 FIND_LIBRARY(${MYLIBRARY}
     NAMES ${MYLIBRARYNAME}
     PATHS
+    ${DIS_INCLUDE_DIR}/../bin
     ${DIS_DIR}/lib
     $ENV{DIS_DIR}/lib
     $ENV{DIS_DIR}
     ${DELTA3D_EXT_DIR}/lib
     $ENV{DELTA_ROOT}/ext/lib
+    $ENV{DELTA_ROOT}/../open-dis/bin
     ~/Library/Frameworks
     /Library/Frameworks
     /sw/lib
@@ -63,7 +65,6 @@ FIND_LIBRARY(${MYLIBRARY}
     /opt/lib
     [HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session\ Manager\\Environment;OSG_ROOT]/lib
     /usr/freeware/lib64
-		/home/mw1/src/open-dis/bin
 )
 ENDMACRO(FIND_DIS_LIBRARY MYLIBRARY MYLIBRARYNAME)
 

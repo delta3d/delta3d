@@ -19,6 +19,8 @@ void initTransformBindings()
    void (Transform::*Set2)(const osg::Vec3&, const osg::Vec3&) = &Transform::Set;
    void (Transform::*Set3)(const osg::Vec3&, const osg::Matrix&) = &Transform::Set;
    void (Transform::*Set4)(const osg::Matrix&) = &Transform::Set;
+   void (Transform::*Set5)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&) = &Transform::Set;          //"look at"
+   void (Transform::*Set6)(float, float, float, float, float, float, float, float, float) = &Transform::Set; //"look at"
    void (Transform::*SetTranslation1)(float, float, float) = &Transform::SetTranslation;
    void (Transform::*SetTranslation2)(const osg::Vec3&) = &Transform::SetTranslation;
    void (Transform::*SetRotation1)(float, float, float) = &Transform::SetRotation;
@@ -34,14 +36,14 @@ void initTransformBindings()
    void (Transform::*GetRotation2)(osg::Matrix&) const = &Transform::GetRotation;
    void (Transform::*GetRotation3)(osg::Quat&) const = &Transform::GetRotation;
 
-   void (Transform::*SetLookAt1)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&) = &Transform::SetLookAt;
-   void (Transform::*SetLookAt2)(float, float, float, float, float, float, float, float, float) = &Transform::SetLookAt;
 
    class_<Transform>("Transform", init<optional<float, float, float, float, float, float> >())
       .def("Set", Set1)
       .def("Set", Set2)
       .def("Set", Set3)
       .def("Set", Set4)
+      .def("Set", Set5)
+      .def("Set", Set6)
       .def("SetTranslation", SetTranslation1)
       .def("SetTranslation", SetTranslation2)
       .def("SetRotation", SetRotation1)
@@ -55,7 +57,5 @@ void initTransformBindings()
       .def("GetRotation", GetRotation1)
       .def("GetRotation", GetRotation2)
       .def("GetRotation", GetRotation3)
-      .def("SetLookAt", SetLookAt1)
-      .def("SetLookAt", SetLookAt2)
       .def("EpsilonEquals", &Transform::EpsilonEquals, EE_overloads());
 }
