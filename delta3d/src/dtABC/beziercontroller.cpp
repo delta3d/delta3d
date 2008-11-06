@@ -11,6 +11,7 @@ namespace dtABC
 
 const std::string BezierController::BEZIER_CONTROLLER_GEODE_ID("__DELTA3D_BEZIER_CONTROLLER__");
 
+////////////////////////////////////////////////////////////////////////////////
 BezierController::BezierController()
 {
    mLastPathPoint = NULL;
@@ -28,11 +29,13 @@ BezierController::BezierController()
    mNode = new osg::Group;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 BezierController::~BezierController()
 {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::CreatePath()
 {
    if (!mStartNode || !mStartNode->GetNext())
@@ -63,12 +66,17 @@ void BezierController::CreatePath()
       {
          //note this is simplified through extending PathPointConverter
          //which has an implicit conversion from a dtCore::Transformable to a PathPoint
-         MakeSegment(elapsedTime, j * multiply, pCurrentNode->GetPathPoint(), pCurrentNode->GetExit()->GetPathPoint(), pNextNode->GetEntry()->GetPathPoint(), pNextNode->GetPathPoint());
+         MakeSegment(elapsedTime,
+                     j * multiply, pCurrentNode->GetPathPoint(),
+                     pCurrentNode->GetExit()->GetPathPoint(),
+                     pNextNode->GetEntry()->GetPathPoint(),
+                     pNextNode->GetPathPoint());
 
          elapsedTime += dt;
       }
 
       pCurrentNode = pNextNode;
+
       if (pCurrentNode->GetNext())
       {
          pNextNode = pCurrentNode->GetNext()->GetBezierInterface();
@@ -80,18 +88,36 @@ void BezierController::CreatePath()
    }
 
    mPathChanged = true;
-
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void BezierController::ResetIterators()
+{
+   // Reset our iterators for the new list
+   mLastPathPoint = NULL;
+   mCurrentPoint  = mPath.begin();
+   mEndPoint      = mPath.end();
 
+   if (mPath.size() > 2)
+   {
+      StepObject((*mCurrentPoint).mPoint);
+      mLastPathPoint = &(*mCurrentPoint);
+      ++mCurrentPoint;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::MakeSegment(float time, float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4)
 {
-
    osg::Vec3 pos, tangent;
 
    for (int i = 0; i < 3; ++i)
    {
-      pos[i] = (BlendFunction(inc,0) * p1.GetPosition()[i]) + (BlendFunction(inc,1) * p2.GetPosition()[i]) + (BlendFunction(inc,2) * p3.GetPosition()[i]) + (BlendFunction(inc,3) * p4.GetPosition()[i]);
+      pos[i] = (BlendFunction(inc,0) * p1.GetPosition()[i]) +
+               (BlendFunction(inc,1) * p2.GetPosition()[i]) +
+               (BlendFunction(inc,2) * p3.GetPosition()[i]) +
+               (BlendFunction(inc,3) * p4.GetPosition()[i]);
+
       //tangent[i] = (TangentFunction(inc,1) * p2.GetPosition()[i]) + (TangentFunction(inc,2) * p3.GetPosition()[i]) + (TangentFunction(inc,3) * p4.GetPosition()[i]);
    }
 
@@ -106,7 +132,7 @@ void BezierController::MakeSegment(float time, float inc, const PathPoint& p1, c
    mPath.push_back(pd);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 float BezierController::BlendFunction(float t, int index)
 {
    float result = 0.0f;
@@ -137,8 +163,7 @@ float BezierController::BlendFunction(float t, int index)
    return result;
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 float BezierController::TangentFunction(float t, int index)
 {
    float result = 0.0f;
@@ -165,10 +190,9 @@ float BezierController::TangentFunction(float t, int index)
    return result;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::CheckCreatePath()
 {
-
    bool shouldCreatePath = false;
 
    CurveNode* current = mStartNode.get();
@@ -189,10 +213,11 @@ void BezierController::CheckCreatePath()
    if (shouldCreatePath)
    {
       CreatePath();
+      ResetIterators();
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::RenderProxyNode(bool pEnable)
 {
   mRenderGeode = pEnable;
@@ -206,11 +231,10 @@ void BezierController::RenderProxyNode(bool pEnable)
   }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 bool BezierController::OnNextStep()
 {
    if (!mLastPathPoint) { return false; }
-
 
    while (mCurrentPoint != mEndPoint && mTotalTime > (*mCurrentPoint).mTime)
    {
@@ -218,7 +242,7 @@ bool BezierController::OnNextStep()
       ++mCurrentPoint;
    }
 
-   //if we reached the end of the path
+   //if we reached the end of the path0
    //it means our time step was greater than
    //our path point resolution so we'll just stop
    //at the last valid path point
@@ -276,47 +300,33 @@ bool BezierController::OnNextStep()
    return true;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::SetStartNode(BezierNode* pStart)
 {
    mStartNode = pStart;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::OnStart()
 {
    CreatePath();
-   mLastPathPoint = NULL;
-
-   mCurrentPoint = mPath.begin();
-   mEndPoint = mPath.end();
-
-   if (mPath.size() > 2)
-   {
-      StepObject((*mCurrentPoint).mPoint);
-      mLastPathPoint = &(*mCurrentPoint);
-      ++mCurrentPoint;
-   }
+   ResetIterators();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::OnPause()
 {
-
-
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void BezierController::OnUnPause()
 {
-
-
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 //our drawable
 void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo& /*renderInfo*/) const
 {
-
    mController->CheckCreatePath();
 
    //we must maintain a copy of the path
@@ -336,7 +346,6 @@ void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo& /
    std::list<PathData>::const_iterator endOfList = mPath.end();
 
    glLineWidth(3.0f);
-
 
    glBegin(GL_LINES);
 
@@ -359,6 +368,6 @@ void BezierController::BezierPathDrawable::drawImplementation(osg::RenderInfo& /
    glEnd();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 
 } // namespace dtABC
