@@ -175,7 +175,7 @@ namespace dtAudio
     void SoundActorProxy::BuildPropertyMap()
     {
         const dtUtil::RefString &GROUPNAME = "Sound";
-        TransformableActorProxy::BuildPropertyMap();
+        GameActorProxy::BuildPropertyMap();
 
         Sound *sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
         
