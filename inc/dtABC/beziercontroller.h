@@ -37,7 +37,6 @@ namespace dtABC
 
 class DT_ABC_EXPORT BezierController: public MotionAction
 {
-
 public:
 
    struct PathData
@@ -59,16 +58,16 @@ private:
          mController = bd.GetController();
       }
 
-      BezierPathDrawable(){setUseDisplayList(false);}
+      BezierPathDrawable() { setUseDisplayList(false); }
       
 
-      /*virtual*/ void drawImplementation(osg::RenderInfo &renderInfo) const;
-      void SetPath(BezierController* pPath){mController = pPath;}
-      BezierController* GetController()const{return mController;}
+      /*virtual*/ void drawImplementation(osg::RenderInfo& renderInfo) const;
+      void SetPath(BezierController* pPath)  { mController = pPath; }
+      BezierController* GetController()const { return mController; }
    
    private:
-      BezierController*                     mController;
-      mutable std::list<PathData>           mPath;
+      BezierController*           mController;
+      mutable std::list<PathData> mPath;
    };
 
    friend class BezierPathDrawable;
@@ -80,12 +79,12 @@ public:
 
    BezierController();
    
-   BezierNode* GetStartNode() {return mStartNode.get();}
-   const BezierNode* GetStartNode() const {return mStartNode.get();}
+   BezierNode* GetStartNode() { return mStartNode.get(); }
+   const BezierNode* GetStartNode() const { return mStartNode.get(); }
    void SetStartNode(BezierNode* pStart);
 
    /*virtual*/ void RenderProxyNode(bool enable);
-   bool GetRenderProxyNode(){return mRenderGeode;}
+   bool GetRenderProxyNode() { return mRenderGeode; }
    
    /***
    * Creates the path using the start node to traverse the curve
@@ -96,14 +95,12 @@ public:
 
    void CheckCreatePath();
 
-   void GetCopyPath(std::list<PathData>& pPathIn) const{pPathIn = mPath;}
-
+   void GetCopyPath(std::list<PathData>& pPathIn) const { pPathIn = mPath; }
  
 protected:
    ~BezierController();
    BezierController(const BezierController&); //not implemented by design
    BezierController operator =(const BezierController&); //not implemented by design
-
 
    /*virtual*/ bool OnNextStep();
    /*virtual*/ void OnStart();
@@ -111,39 +108,32 @@ protected:
    /*virtual*/ void OnUnPause();
    /*virtual*/ void OnRestart();
 
-
 private:
 
    bool GetPathChanged() const{return mPathChanged;}
    void SetPathChanged(bool b){mPathChanged = b;}
 
+   void ResetIterators();
 
    void MakeSegment(float time, float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4);
    float BlendFunction(float t, int index);
    float TangentFunction(float t, int index);
 
+   bool                                mRenderGeode;
+   bool                                mPathChanged;
+   dtCore::RefPtr<BezierNode>          mStartNode;
+   dtCore::RefPtr<osg::Geode>          mGeode;
 
+   dtCore::RefPtr<BezierPathDrawable>  mDrawable;
 
-   bool                                      mRenderGeode;
-   bool                                      mPathChanged;
-   dtCore::RefPtr<BezierNode>                mStartNode;
-   dtCore::RefPtr<osg::Geode>                mGeode;
-
-   dtCore::RefPtr<BezierPathDrawable>        mDrawable;
-
-   const PathData*                          mLastPathPoint;
-   std::list<PathData>                      mPath;
-   std::list<PathData>::const_iterator      mCurrentPoint;
-   std::list<PathData>::const_iterator      mEndPoint;
-
+   const PathData*                     mLastPathPoint;
+   std::list<PathData>                 mPath;
+   std::list<PathData>::const_iterator mCurrentPoint;
+   std::list<PathData>::const_iterator mEndPoint;
 };
 
 
-
 } //namespace dtABC
-
-
-
 
 #endif //__BEZIER_CONTROLLER_H__
 
