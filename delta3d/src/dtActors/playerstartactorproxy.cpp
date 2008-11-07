@@ -45,7 +45,7 @@ namespace dtActors
    dtDAL::ActorProxyIcon* PlayerStartActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
 
       return mBillBoardIcon.get();
    }
