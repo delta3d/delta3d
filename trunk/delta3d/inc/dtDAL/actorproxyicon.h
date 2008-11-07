@@ -23,6 +23,7 @@
 
 #include <map>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtCore/deltadrawable.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
@@ -152,34 +153,22 @@ namespace dtDAL
          };
 
          /**
-          * Initializes the paths to the billboard image files.
-          * @note Called from LibraryManager.
-          */
-         static void staticInitialize();
-
-         /**
-          * Constructs a new actor proxy billboard icon.  This creates the
-          * necessary scene geometry and attaches the appropriate image
-          * to the icon.
-          * @param type Type of icon to create.  By default, IconType::GENERIC is used.
-          */
-         ActorProxyIcon(const IconType& type = IconType::GENERIC);
+         * Constructs a new actor proxy billboard icon.  This creates the
+         * necessary scene geometry and attaches the appropriate image
+         * to the icon.
+         * @param iconImageFilename The filename of the image to load.
+         */
+         ActorProxyIcon(const std::string& iconImageFilename);
 
          /**
          * Constructs a new actor proxy billboard icon using an optional config class
          * meant to be extendable to allow various options.
+         * @param iconImageFilename The filename of the image to load.
+         * @param pConfig The configuration to use
          */
-         ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig);
+         ActorProxyIcon(const std::string& iconImageFilename, 
+                        const ActorProxyIconConfig& pConfig);
 
-         /**
-          * Sets the icon type used by this proxy icon.
-          * @param type
-          */
-         void SetIconType(const IconType& type)
-         {
-            mIconType = &type;
-            CreateBillBoard();
-         }
 
          /**
           * Gets the Delta3D drawable for this proxy icon.
@@ -200,6 +189,48 @@ namespace dtDAL
          void SetActorRotation(const osg::Vec3& hpr);
          void SetActorRotation(const osg::Matrix& mat);
          osg::Matrix GetActorRotation();
+
+
+         ///Deprecated 11/6/08          
+         ActorProxyIcon(const IconType& type = IconType::GENERIC)
+            : mIconStateSet(0),
+            mConeStateSet(0),
+            mCylinderStateSet(0)
+         {
+            DEPRECATE("ActorProxyIcon(const IconType& type = IconType::GENERIC)",
+                      "ActorProxyIcon(const std::string& iconImageFilename)");
+
+            mIconNode = NULL;
+            mIconImageFile = GetImageFilename(type);
+            //just use a default config
+            CreateBillBoard();
+         }
+
+         ///Deprecated 11/6/08
+         ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
+            : mIconStateSet(0)
+            , mConeStateSet(0)
+            , mCylinderStateSet(0)
+         {
+            DEPRECATE("ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)",
+                      "ActorProxyIcon(const std::string& iconImageFilename, const ActorProxyIconConfig& pConfig)");
+
+            mIconNode = NULL;
+            mConfig = pConfig;
+            mIconImageFile = GetImageFilename(type);
+            CreateBillBoard();
+         }
+
+         ///Deprecated 11/6/08
+         void SetIconType(const IconType& type)
+         {
+            DEPRECATE("void SetIconType(const IconType& type)",
+                      "n/a");
+
+            mIconImageFile = GetImageFilename(type);
+            CreateBillBoard();
+         }
+
       protected:
          virtual ~ActorProxyIcon();
 
@@ -237,10 +268,13 @@ namespace dtDAL
           * @return A geometry node holding the quad's geometry.
           */
          osg::Geometry* CreateGeom(const osg::Vec3& corner, const osg::Vec3& width,
-                                 const osg::Vec3& height);
+                                   const osg::Vec3& height);
 
-         ///Type of the billboard icon.
-         const IconType* mIconType;
+         ///Little helper utility.  Should be removed when IconType gets removed. DEPRECATE me.
+         const std::string& GetImageFilename(const IconType& iconType) const; 
+
+         ///The filename of the icon image
+         std::string mIconImageFile;
 
          ///our custom config
          ActorProxyIconConfig mConfig;
