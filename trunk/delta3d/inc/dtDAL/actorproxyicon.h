@@ -25,6 +25,7 @@
 #include <dtUtil/enumeration.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/transformable.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osg/Vec3>
@@ -32,10 +33,6 @@
 #include <osg/Group>
 #include "dtDAL/export.h"
 
-namespace dtCore
-{
-   class Transformable;
-}
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
