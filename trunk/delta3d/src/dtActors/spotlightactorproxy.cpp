@@ -64,7 +64,7 @@ namespace dtActors
     {
        if( !mBillBoardIcon.valid() )
        {
-          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::LIGHT);
+          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
        }
 
        return mBillBoardIcon.get();
