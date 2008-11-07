@@ -117,8 +117,7 @@ namespace dtActors
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon =
-            new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon("billboards/bezierontrolpoint.png");
       }
 
       return mBillBoardIcon.get();
