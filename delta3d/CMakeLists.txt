@@ -257,14 +257,15 @@ IF (NOT WIN32 AND NOT APPLE)
   FIND_PACKAGE(UUID REQUIRED) 
 ENDIF (NOT WIN32 AND NOT APPLE)
 
-# Make the headers visible to everything
+# Make the required external dependency headers visible to everything
 INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/inc
     ${OPENGL_INCLUDE_DIR}
     ${OPENTHREADS_INCLUDE_DIR}
     ${OSG_INCLUDE_DIR}
     ${ODE_INCLUDE_DIR}
-    ${XERCES_INCLUDE_DIR}  
+    ${XERCES_INCLUDE_DIR}
+    ${FLTK_INCLUDE_DIR}
 )
 
 
