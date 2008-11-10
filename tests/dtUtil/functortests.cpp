@@ -34,7 +34,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Math>
 
-#include <string>
+#include <cstring>
 
 using namespace dtUtil;
 

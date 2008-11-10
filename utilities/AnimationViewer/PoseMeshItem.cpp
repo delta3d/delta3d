@@ -27,7 +27,7 @@
 #include <osg/Vec4>
 
 #include <cassert>
-#include <limits>
+#include <climits>
 
 //temp
 #include <sstream>
