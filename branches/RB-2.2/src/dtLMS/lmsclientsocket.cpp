@@ -27,7 +27,7 @@
 #include <ctime>
 #include <sstream>
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 
 #if !defined (WIN32) && defined (_WIN32) && !defined (__WIN32__)
