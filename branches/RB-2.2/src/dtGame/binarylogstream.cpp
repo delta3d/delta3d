@@ -31,7 +31,7 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <string>
+#include <cstring>
 
 using dtUtil::DataStream;
 
