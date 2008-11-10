@@ -1,5 +1,6 @@
 #include <dtABC/motionaction.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/log.h>
 #include <dtABC/pathpoint.h>
 #include <dtCore/scene.h>
 #include <osg/MatrixTransform>
@@ -9,6 +10,7 @@ namespace dtABC
 
 
 MotionAction::MotionAction()
+: mParentRelation(NO_RELATION)
 {
 
 }
@@ -56,6 +58,12 @@ void MotionAction::StepObject(const PathPoint& cp)
 {
    osg::Matrix pTransform;
    pTransform.makeScale(osg::Vec3(1.0f, 1.0f, 1.0f));
+
+   if (!mParent.valid() && mParentRelation != NO_RELATION)
+   {
+      LOGN_ERROR("motionaction.cpp", "Motion Action has no parent, and the parent relation set to something other than NO_RELATION, so stepping won't work.");
+      return;
+   }
 
    switch (mParentRelation)
    {
