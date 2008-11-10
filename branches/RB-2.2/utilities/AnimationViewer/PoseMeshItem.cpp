@@ -27,6 +27,7 @@
 #include <osg/Vec4>
 
 #include <assert.h>
+#include <limits.h>
 
 //temp
 #include <sstream>
