@@ -173,6 +173,7 @@ namespace dtUtil
 
       mLocalOffset            = rhs.mLocalOffset;
       mFlatEarthOrigin         = rhs.mFlatEarthOrigin;
+      mConvergence            = rhs.mConvergence;
 
       mRotationOffset         = rhs.mRotationOffset;
       mRotationOffsetInverse  = rhs.mRotationOffsetInverse;
@@ -206,6 +207,9 @@ namespace dtUtil
          return false;
 
       if(!dtUtil::Equivalent(mFlatEarthOrigin, rhs.mFlatEarthOrigin, 0.0001))
+         return false;
+
+      if(!osg::equivalent(mConvergence, rhs.mConvergence, 0.0001))
          return false;
 
       if(mRotationOffset != rhs.mRotationOffset)
