@@ -37,7 +37,7 @@
 #include <osgDB/FileNameUtils>
 #include <iostream>
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 
 //======================================

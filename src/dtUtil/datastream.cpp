@@ -23,7 +23,7 @@
 #include <osg/Endian>
 #include <dtUtil/exception.h>
 #include <dtUtil/datastream.h>
-#include <string.h>
+#include <string>
 
 namespace dtUtil
 {

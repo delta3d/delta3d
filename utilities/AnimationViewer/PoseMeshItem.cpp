@@ -26,8 +26,8 @@
 #include <osg/Geode>
 #include <osg/Vec4>
 
-#include <assert.h>
-#include <limits.h>
+#include <cassert>
+#include <limits>
 
 //temp
 #include <sstream>
