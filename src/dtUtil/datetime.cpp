@@ -2,6 +2,7 @@
 #include <dtUtil/datetime.h>
 #include <dtUtil/macros.h>
 #include <cmath>
+#include <string.h>
 
 namespace dtUtil
 {

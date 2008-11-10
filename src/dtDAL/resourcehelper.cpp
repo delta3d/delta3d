@@ -639,7 +639,7 @@ namespace dtDAL
 
       std::string currentCategory;
 
-      dtUtil::tree<ResourceTreeNode>::iterator ti = resources.tree_iterator();
+      dtUtil::tree<ResourceTreeNode>::iterator ti = resources.get_tree_iterator();
 
       for (std::vector<std::string>::iterator i = tokens.begin(); i != tokens.end(); ++i)
       {
@@ -652,11 +652,17 @@ namespace dtDAL
          std::string oldCategory = currentCategory;
 
          if (i != tokens.begin())
+         {
             if (currentCategory == "")
+            {
                currentCategory += *i;
+            }
             else
+            {
                currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
-
+            }
+         }
+         
          dtUtil::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory));
 
          //if it hasn't been found, check to see if the current node represents a non-category

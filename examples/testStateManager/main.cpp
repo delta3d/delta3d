@@ -34,7 +34,7 @@ void Usage()
    std::cout << "Using defaults instead" << std::endl;
 }
 
-int main(unsigned int argc, char* argv[])
+int main(int argc, char* argv[])
 {
    dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
                                 dtCore::GetDeltaRootPath() + "/examples/testStateManager" + ";" );
