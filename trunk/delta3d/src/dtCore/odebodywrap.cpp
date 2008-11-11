@@ -187,6 +187,15 @@ void dtCore::ODEBodyWrap::GetInertiaTensor(osg::Matrix& dest) const
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetLinearVelocity(const osg::Vec3& newVelocity) 
+{  
+   if (GetBodyID() != 0)
+   {
+      dBodySetLinearVel(GetBodyID(), newVelocity.x(), newVelocity.y(), newVelocity.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 osg::Vec3 dtCore::ODEBodyWrap::GetLinearVelocity() const
 {
    osg::Vec3 velVec;

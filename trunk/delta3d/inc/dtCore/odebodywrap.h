@@ -130,6 +130,11 @@ namespace dtCore
       void GetInertiaTensor(osg::Matrix& dest) const;
 
       /**
+      * @return the Body's linear velocity
+      */
+      void SetLinearVelocity(const osg::Vec3& newVelocity);
+
+      /**
        * @return the Body's linear velocity
        */
       osg::Vec3 GetLinearVelocity() const;
