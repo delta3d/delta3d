@@ -43,7 +43,6 @@ public:
    {
       PathPoint mPoint;
       float mTime;
-
    };
 
 private:
@@ -79,7 +78,7 @@ public:
 
    BezierController();
    
-   BezierNode* GetStartNode() { return mStartNode.get(); }
+   BezierNode* GetStartNode()             { return mStartNode.get(); }
    const BezierNode* GetStartNode() const { return mStartNode.get(); }
    void SetStartNode(BezierNode* pStart);
 
@@ -96,6 +95,8 @@ public:
    void CheckCreatePath();
 
    void GetCopyPath(std::list<PathData>& pPathIn) const { pPathIn = mPath; }
+
+   void SetLooping(bool shouldLoop) { mShouldLoop = shouldLoop; }
  
 protected:
    ~BezierController();
@@ -110,17 +111,24 @@ protected:
 
 private:
 
-   bool GetPathChanged() const{return mPathChanged;}
-   void SetPathChanged(bool b){mPathChanged = b;}
+   bool GetPathChanged() const { return mPathChanged; }
+   void SetPathChanged(bool b) { mPathChanged = b; }
 
    void ResetIterators();
 
-   void MakeSegment(float time, float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4);
+   void MakeSegment(float time, 
+                    float inc, 
+                    const PathPoint& p1,
+                    const PathPoint& p2,
+                    const PathPoint& p3,
+                    const PathPoint& p4);
+
    float BlendFunction(float t, int index);
    float TangentFunction(float t, int index);
 
    bool                                mRenderGeode;
    bool                                mPathChanged;
+   bool                                mShouldLoop;
    dtCore::RefPtr<BezierNode>          mStartNode;
    dtCore::RefPtr<osg::Geode>          mGeode;
 

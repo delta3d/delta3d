@@ -13,15 +13,17 @@ const std::string BezierController::BEZIER_CONTROLLER_GEODE_ID("__DELTA3D_BEZIER
 
 ////////////////////////////////////////////////////////////////////////////////
 BezierController::BezierController()
-{
-   mLastPathPoint = NULL;
-   mPathChanged = false;
-
+   : mShouldLoop(false)
+   , mLastPathPoint(NULL)
+   , mPathChanged(false)
+{  
    mDrawable = new BezierPathDrawable;
    mDrawable->SetPath(this);
+
    mGeode = new osg::Geode();
    mGeode->setName(BEZIER_CONTROLLER_GEODE_ID);
    mGeode->addDrawable(mDrawable.get());
+
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
    mRenderGeode = false;
@@ -60,7 +62,11 @@ void BezierController::CreatePath()
       float totalTime = pCurrentNode->GetTimeToNext();
       float multiply = 1.0f / totalTime;
 
-      if (dt < 0.000001f) dt = 0.05f;
+      // Magical Epsilon
+      if (dt < 0.000001f)
+      {
+         dt = 0.05f;
+      }
 
       for (float j = 0.0f; j < totalTime; j+= dt)
       {
@@ -107,7 +113,12 @@ void BezierController::ResetIterators()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void BezierController::MakeSegment(float time, float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4)
+void BezierController::MakeSegment(float time, 
+                                   float inc,
+                                   const PathPoint& p1,
+                                   const PathPoint& p2,
+                                   const PathPoint& p3,
+                                   const PathPoint& p4)
 {
    osg::Vec3 pos, tangent;
 
@@ -249,13 +260,24 @@ bool BezierController::OnNextStep()
    if (mCurrentPoint == mEndPoint)
    {
       StepObject(mLastPathPoint->mPoint);
+
       mPath.clear();
+
+      if (mShouldLoop)
+      {
+         // This needs to be false in order to restart
+         mIsRunning = false;
+
+         // Restart from the beginning
+         Start();        
+         return true;
+      }
+
       return false;
    }
 
    const PathPoint& p = (*mCurrentPoint).mPoint;
    const float currentTime = (*mCurrentPoint).mTime;
-
 
    //else if our elapsed time is equal to the next points time
    //ie. the step for the controller = the step for the last BezierNode
