@@ -13,6 +13,7 @@
 #include <osg/Shader>
 #include <osg/Texture3D>
 #include <osgDB/ReadFile>
+#include <climits>
 
 using namespace dtCore;
 using namespace dtUtil;

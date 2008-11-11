@@ -37,6 +37,9 @@
 #include <osgDB/FileNameUtils>
 #include <iostream>
 
+#include <cstring>
+#include <cstdlib>
+
 //======================================
 // OPTIONS CLASS FUNCTIONS
 //======================================

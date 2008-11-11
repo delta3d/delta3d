@@ -34,6 +34,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Math>
 
+#include <cstring>
+
 using namespace dtUtil;
 
 static int f0def() { return 0; }
