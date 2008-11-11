@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>TestAnim</name>
+        <description></description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2007-05-10T16:08:18.0-05:00</createTimestamp>
+        <lastUpdateTimestamp>2007-05-16T15:54:37.0-05:00</lastUpdateTimestamp>
+        <editorVersion>1.3.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries></libraries>
+    <actors>
+        <actor>
+            <type>dtcore.Lights.Infinite Light</type>
+            <id>6729376f-a271-4794-b263-a68f2f663d31</id>
+            <name>defaultInfiniteLight</name>
+            <property>
+                <name>Enable</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>LightNum</name>
+                <integer>0</integer>
+            </property>
+            <property>
+                <name>Lighting Mode</name>
+                <enumerated>GLOBAL</enumerated>
+            </property>
+            <property>
+                <name>Ambient</name>
+                <colorRGBA>
+                    <valueR>0.509804</valueR>
+                    <valueG>0.509804</valueG>
+                    <valueB>0.509804</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Diffuse</name>
+                <colorRGBA>
+                    <valueR>0.800000</valueR>
+                    <valueG>0.800000</valueG>
+                    <valueB>0.800000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Specular</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Direction</name>
+                <vec3>
+                    <value1>75.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>179.999985</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtanim.AnimationGameActor</type>
+            <id>e39619c2-a9a1-4ad0-a973-a82a1a87d6a9</id>
+            <name>CharacterEntity</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>-0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-180.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-1.967511</value1>
+                    <value2>33.840588</value2>
+                    <value3>6.299999</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>Skeletal Mesh</name>
+                <resourceType>SkeletalMeshes</resourceType>
+                <resourceDisplayName>SkeletalMeshes:marine.xml</resourceDisplayName>
+                <resource>SkeletalMeshes:marine.xml</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Static Mesh</type>
+            <id>e6b14232-fbd0-4ffe-b2b2-75ea9df9d5a8</id>
+            <name>GroundActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>19.999998</value2>
+                    <value3>-0.000001</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Scale</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>1.000000</value2>
+                    <value3>1.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>MESH</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>static mesh</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>terrain_simple.ive</resourceDisplayName>
+                <resource>StaticMeshes:terrain_simple.ive</resource>
+            </property>
+        </actor>
+    </actors>
+</map>

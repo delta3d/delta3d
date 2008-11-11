@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+    <header>
+        <name>IntroMap</name>
+        <description>This is the intro map for the revised Fire Fighter application. </description>
+        <author></author>
+        <comment></comment>
+        <copyright></copyright>
+        <createTimestamp>2006-10-11T11:21:57.0-05:00</createTimestamp>
+        <lastUpdateTimestamp>2008-08-19T13:53:36-08:00</lastUpdateTimestamp>
+        <editorVersion>2.1.0</editorVersion>
+        <schemaVersion>1.0</schemaVersion>
+    </header>
+    <libraries>
+        <library>
+            <name>fireFighter</name>
+            <version></version>
+        </library>
+    </libraries>
+    <actors>
+        <actor>
+            <type>FlySequence.FlySequence</type>
+            <id>1c1ad7ea-2432-4ab6-9071-2f5147e4f07c</id>
+            <name>Physical</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-0.809600</value1>
+                    <value2>-46.540710</value2>
+                    <value3>15.300002</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+        </actor>
+        <actor>
+            <type>DDGActor.DDGActor</type>
+            <id>1f5b083f-5760-42d8-ab64-517de6d5220d</id>
+            <name>DDGActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>100.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+            <property>
+                <name>CoordinateSystem</name>
+                <enumerated>REL</enumerated>
+            </property>
+            <property>
+                <name>Model</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes:ddg:ddg-51.ive</resourceDisplayName>
+                <resource>StaticMeshes:ddg:ddg-51.ive</resource>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Lights.Positional Light</type>
+            <id>2b187b2b-0153-424a-b591-8c88e2080ab5</id>
+            <name>defaultPositonalLight</name>
+            <property>
+                <name>Enable</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>LightNum</name>
+                <integer>0</integer>
+            </property>
+            <property>
+                <name>Lighting Mode</name>
+                <enumerated>GLOBAL</enumerated>
+            </property>
+            <property>
+                <name>Ambient</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Diffuse</name>
+                <colorRGBA>
+                    <valueR>0.800000</valueR>
+                    <valueG>0.800000</valueG>
+                    <valueB>0.800000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Specular</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>-0.600008</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>64.209076</value1>
+                    <value2>63.431984</value2>
+                    <value3>470.200226</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>0.400000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>PlayerActor.PlayerActor</type>
+            <id>583d7ca4-675a-4ac7-8fda-56ab049d7b3d</id>
+            <name>PlayerActor</name>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Enable Dynamics</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Mass</name>
+                <float>4.1887903</float>
+            </property>
+            <property>
+                <name>Center of Gravity</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Initial Ownership</name>
+                <enumerated>Server Local</enumerated>
+            </property>
+            <property>
+                <name>ShaderGroup</name>
+                <string>
+            </string>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Lights.Infinite Light</type>
+            <id>598e9cc0-f872-4d5b-af51-cc6f60ca15a7</id>
+            <name>defaultInfiniteLight</name>
+            <property>
+                <name>Enable</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>LightNum</name>
+                <integer>0</integer>
+            </property>
+            <property>
+                <name>Lighting Mode</name>
+                <enumerated>GLOBAL</enumerated>
+            </property>
+            <property>
+                <name>Ambient</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Diffuse</name>
+                <colorRGBA>
+                    <valueR>0.800000</valueR>
+                    <valueG>0.800000</valueG>
+                    <valueB>0.800000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Specular</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Direction</name>
+                <vec3>
+                    <value1>90.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000019</value3>
+                </vec3>
+            </property>
+        </actor>
+        <actor>
+            <type>dtcore.Lights.Positional Light</type>
+            <id>f643cb57-db90-494f-ab38-a379790a7140</id>
+            <name>defaultPositonalLight</name>
+            <property>
+                <name>Enable</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>LightNum</name>
+                <integer>1</integer>
+            </property>
+            <property>
+                <name>Lighting Mode</name>
+                <enumerated>GLOBAL</enumerated>
+            </property>
+            <property>
+                <name>Ambient</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Diffuse</name>
+                <colorRGBA>
+                    <valueR>0.800000</valueR>
+                    <valueG>0.800000</valueG>
+                    <valueB>0.800000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Specular</name>
+                <colorRGBA>
+                    <valueR>0.050000</valueR>
+                    <valueG>0.050000</valueG>
+                    <valueB>0.050000</valueB>
+                    <valueA>1.000000</valueA>
+                </colorRGBA>
+            </property>
+            <property>
+                <name>Rotation</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>1.700000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Translation</name>
+                <vec3>
+                    <value1>-7.162359</value1>
+                    <value2>-83.986008</value2>
+                    <value3>133.899979</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Attenuation</name>
+                <vec3>
+                    <value1>1.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+        </actor>
+    </actors>
+</map>
