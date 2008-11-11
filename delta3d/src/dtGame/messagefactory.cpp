@@ -26,6 +26,8 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtCore/refptr.h>
 
+#include <typeinfo>
+
 namespace dtGame
 {
    IMPLEMENT_ENUM(MessageFactory::MessageFactoryException);

@@ -38,7 +38,7 @@
 #include <dtUtil/log.h>
 #include <dtCore/globals.h>
 
-int main(unsigned int argc, char* argv[])
+int main(int argc, char* argv[])
 {
    dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";" );
    dtCore::RefPtr<TestRecorder> app = new TestRecorder( "config.xml" );

@@ -21,6 +21,8 @@
 
 #include <prefix/dtdalprefix-src.h>
 
+#include <typeinfo>
+
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
