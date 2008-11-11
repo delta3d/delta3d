@@ -114,6 +114,8 @@ void SoundActorTests::setUp()
 ///////////////////////////////////////////////////////////////////////////////
 void SoundActorTests::tearDown()
 {
+   mProxy = NULL;
+
    dtCore::System::GetInstance().SetPause(false);
    dtCore::System::GetInstance().Stop();
 

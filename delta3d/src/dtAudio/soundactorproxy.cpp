@@ -118,7 +118,9 @@ namespace dtAudio
          if(snd != NULL)
          {
             if(snd->GetFilename())
+            {
                snd->UnloadFile();
+            }
          }
     }
 
@@ -142,6 +144,8 @@ namespace dtAudio
        if( sound != NULL )
        {
           sound->Stop();
+
+          GetGameManager()->ClearTimer(SoundActorProxy::TIMER_NAME.Get(), this);
        }
     }
 
@@ -333,7 +337,9 @@ namespace dtAudio
         Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         if(!fileName.empty())
+        {
             snd->LoadFile(fileName.c_str());
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

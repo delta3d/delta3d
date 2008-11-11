@@ -115,6 +115,7 @@ void SoundComponentTests::tearDown()
       dtCore::System::GetInstance().Stop();
 
       mSndProxyArray.clear();
+      mSndComp = NULL;
 
       mGM->DeleteAllActors();
       mGM->UnloadActorRegistry(LIBRARY_TEST_GAME_ACTOR);
