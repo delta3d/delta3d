@@ -1339,16 +1339,47 @@ void AudioManager::UnloadSound( SoundObj* snd )
    const char* file(static_cast<Sound*>(snd)->GetFilename());
 
    if ( file == NULL )
+   {
       return;
+   }
 
    snd->Buffer(0);
 
    BufferData* bd = mBufferMap[file];
 
    if ( bd == NULL )
+   {
       return;
+   }
 
    bd->use--;
+
+   // If the buffer is not being used by any other sound object...
+   if( bd->use == 0 )
+   {
+      ALuint src = snd->Source();
+      if ( alIsSource( src ) && snd->IsInitialized() )
+      {
+         // ...free the source before attempting to unload
+         // the sound file, which will subsequently attempt
+         // to delete the buffer. This will ensure the sound
+         // source is properly stopped and reset before the
+         // sound buffer is deleted.
+         FreeSource( snd );
+
+         // NOTE: Stop commands for the sound will not be
+         // processed until the next call to Frame. This is
+         // VERY bad if the sound is told to stop and unload on
+         // on the same frame; in this case the sound will not
+         // be stopped when it is attempted to be unloaded.
+         //
+         // NOTE: Deleting the buffer will fail if the sound
+         // source is still playing and thus result in a very
+         // sound memory leak and potentially mess up the
+         // the use of the sources for sounds; sources that
+         // should have been freed will essentially become locked.
+      }
+   }
 
    UnloadFile( file );
    CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
@@ -1423,7 +1454,9 @@ void AudioManager::PlaySound( SoundObj* snd )
    // bind the buffer to the source
    alSourcei( src, AL_BUFFER, buf );
    if (CheckForError("AudioManager: alSourcei(AL_BUFFER) error", __FUNCTION__, __LINE__))
+   {
       return;
+   }
 
    // set looping flag
    alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
