@@ -338,6 +338,7 @@ namespace dtGame
       }
 
       OrientTransformToSurfacePoints(xform, rotation, position, points);
+      runtimeData.SetLastClampedRotation( rotation );
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -468,6 +469,7 @@ namespace dtGame
             {
                normal.normalize();
                OrientTransform(xform, rotation, hp, normal);
+               runtimeData.SetLastClampedRotation( rotation );
             }
             else
             {
@@ -482,10 +484,11 @@ namespace dtGame
             {
                runtimeData.SetLastClampedOffset(hp.z() - singlePoint.z());
 
-               if (gcData->GetAdjustRotationToGround())
+               if(gcData->GetAdjustRotationToGround())
                {
                   normal.normalize();
                   OrientTransform(xform, rotation, hp, normal);
+                  runtimeData.SetLastClampedRotation( rotation );
                }
                else
                {
@@ -514,6 +517,14 @@ namespace dtGame
       // Get or create the Runtime Data and make sure it exists for any subsequent methods
       // that expect it to be in the Ground Clamping Data.
       RuntimeData& runtimeData = GetOrCreateRuntimeData(data);
+
+      // Use the last clamped rotation only if the transformation has been flagged
+      // not to change. Dead Reckoning Helpers set the alter rotation every frame
+      // which causes a twitch bug if the following code does not exist.
+      if( ! transformChanged )
+      {
+         xform.SetRotation( runtimeData.GetLastClampedRotation() );
+      }
 
       // Determine if a different clamp type should be used based on the object and
       // other factors such as transform change or velocity.
