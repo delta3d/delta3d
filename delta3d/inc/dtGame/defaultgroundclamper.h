@@ -102,6 +102,24 @@ namespace dtGame
                   return mLastClampedTime;
                }
 
+               /**
+                * Set the last matrix that was used to orient the object
+                * during clamping.
+                */
+               void SetLastClampedRotation( const osg::Matrix& rotation )
+               {
+                  mLastClampRotation = rotation;
+               }
+
+               /**
+                * Get the last matrix that was used to orient the object
+                * during clamping.
+                */
+               const osg::Matrix& GetLastClampedRotation()
+               {
+                  return mLastClampRotation;
+               }
+
             protected:
                virtual ~RuntimeData()
                {
@@ -111,6 +129,7 @@ namespace dtGame
 
                float mLastClampedOffset;
                double mLastClampedTime;
+               osg::Matrix mLastClampRotation;
          };
 
          DefaultGroundClamper();
