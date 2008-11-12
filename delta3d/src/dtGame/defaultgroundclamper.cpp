@@ -518,14 +518,6 @@ namespace dtGame
       // that expect it to be in the Ground Clamping Data.
       RuntimeData& runtimeData = GetOrCreateRuntimeData(data);
 
-      // Use the last clamped rotation only if the transformation has been flagged
-      // not to change. Dead Reckoning Helpers set the alter rotation every frame
-      // which causes a twitch bug if the following code does not exist.
-      if( ! transformChanged )
-      {
-         xform.SetRotation( runtimeData.GetLastClampedRotation() );
-      }
-
       // Determine if a different clamp type should be used based on the object and
       // other factors such as transform change or velocity.
       DefaultGroundClamper::GroundClampingType* clampType
@@ -538,6 +530,14 @@ namespace dtGame
          actor->SetTransform(xform, dtCore::Transformable::REL_CS);
 
          return;
+      }
+
+      // Use the last clamped rotation only if the transformation has been flagged
+      // not to change. Dead Reckoning Helpers set the alter rotation every frame
+      // which causes a twitch bug if the following code does not exist.
+      if( ! transformChanged )
+      {
+         xform.SetRotation( runtimeData.GetLastClampedRotation() );
       }
 
       dtUtil::Log& logger = GetLogger();
