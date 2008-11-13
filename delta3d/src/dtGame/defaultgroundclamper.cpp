@@ -151,9 +151,9 @@ namespace dtGame
             modelDimensions[0], modelDimensions[1], modelDimensions[2]);
       }
 
-      outPoints[0].set(0.0f, modelDimensions[1] / 2, 0.0f);
-      outPoints[1].set(modelDimensions[0] / 2, -(modelDimensions[1] / 2), 0.0f);
-      outPoints[2].set(-(modelDimensions[0] / 2), -(modelDimensions[1] / 2), 0.0f);
+      outPoints[0].set(0.0f, modelDimensions[1] / 2.0, 0.0f);
+      outPoints[1].set(modelDimensions[0] / 2.0, -(modelDimensions[1] / 2.0), 0.0f);
+      outPoints[2].set(-(modelDimensions[0] / 2.0), -(modelDimensions[1] / 2.0), 0.0f);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -192,10 +192,6 @@ namespace dtGame
    void DefaultGroundClamper::GetSurfacePoints( const dtDAL::TransformableActorProxy& proxy,
       GroundClampingData& data, const dtCore::Transform& xform, osg::Vec3 inOutPoints[3] )
    {
-      //must use the updated matrix in xform for the ground-clamp start position.
-      osg::Matrix actorMatrix;
-      xform.Get(actorMatrix);
-
       dtUtil::Log& logger = GetLogger();
       bool debugEnabled = logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG);
 
@@ -206,8 +202,7 @@ namespace dtGame
       {
          dtCore::BatchIsector::SingleISector& single = mTripleIsector->EnableAndGetISector(i);
 
-         //convert point to absolute space.
-         inOutPoints[i] = inOutPoints[i] * actorMatrix;
+         // The input point should be in world space.
          const osg::Vec3& singlePoint = inOutPoints[i];
 
          if (osg::isNaN(singlePoint.x()) || osg::isNaN(singlePoint.y()) || osg::isNaN(singlePoint.z()))
@@ -305,6 +300,13 @@ namespace dtGame
       // Get the 3 surface points based on the actors bounding box.
       osg::Vec3 points[3];
       GetActorDetectionPoints(proxy, data, points);
+
+      // Convert points from actor-relative space to world space.
+      osg::Matrix transformMatrix;
+      xform.Get(transformMatrix);
+      points[0] = points[0] * transformMatrix;
+      points[1] = points[1] * transformMatrix;
+      points[2] = points[2] * transformMatrix;
 
       GetSurfacePoints(proxy, data, xform, points);
 
