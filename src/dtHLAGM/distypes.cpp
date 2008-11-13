@@ -20,6 +20,7 @@
  * David Guthrie
  */
 
+#include <string>
 #include <dtHLAGM/distypes.h>
 #include <osg/Endian>
 #include <dtHLAGM/rprparametertranslator.h>
@@ -437,11 +438,11 @@ namespace dtHLAGM
     */
    bool EntityType::IsEqual( const EntityType& other ) const
    {
-      return this == &other ||
-         mKind == other.mKind && mDomain == other.mDomain &&
-         mCountry == other.mCountry && mCategory == other.mCategory &&
-         mSubcategory == other.mSubcategory && mSpecific == other.mSpecific &&
-         mExtra == other.mExtra;
+      return (this == &other) ||
+         (mKind == other.mKind && mDomain == other.mDomain &&
+          mCountry == other.mCountry && mCategory == other.mCategory &&
+          mSubcategory == other.mSubcategory && mSpecific == other.mSpecific &&
+          mExtra == other.mExtra);
    }
 
    std::ostream& operator << (std::ostream &o, const EntityType &et)
@@ -1110,7 +1111,7 @@ namespace dtHLAGM
    bool ArticulatedParts::IsEqual( const ArticulatedParts& other ) const
    {
       return this == &other ||
-         mValue == other.mValue && mClass == other.mClass && mTypeMetric == other.mTypeMetric;
+         (mValue == other.mValue && mClass == other.mClass && mTypeMetric == other.mTypeMetric);
    }
 
    /**
@@ -1219,7 +1220,7 @@ namespace dtHLAGM
    bool AttachedParts::IsEqual( const AttachedParts& other ) const
    {
       return this == &other ||
-         mStation == other.mStation && mStoreType.IsEqual( other.mStoreType );
+         (mStation == other.mStation && mStoreType.IsEqual( other.mStoreType ));
    }
 
    /**
@@ -1393,10 +1394,10 @@ namespace dtHLAGM
    bool ParameterValue::IsEqual( const ParameterValue& other ) const
    {
       return this == &other
-         || mArticulatedParameterType == other.mArticulatedParameterType
+         || ( mArticulatedParameterType == other.mArticulatedParameterType
          && (  ( mArticulatedParameterType == AttachedPart && mAttachedParts.IsEqual( other.mAttachedParts ) )
             || ( mArticulatedParameterType == ArticulatedPart && mArticulatedParts.IsEqual( other.mArticulatedParts ) )
-            );
+            ) );
    }
 
    /**
@@ -1564,9 +1565,9 @@ namespace dtHLAGM
    bool ArticulatedParameter::IsEqual( const ArticulatedParameter& other ) const
    {
       return this == &other ||
-         mArticulatedParameterChange == other.mArticulatedParameterChange &&
-         mPartAttachedTo == other.mPartAttachedTo &&
-         mParameterValue.IsEqual( other.mParameterValue );
+         (mArticulatedParameterChange == other.mArticulatedParameterChange &&
+          mPartAttachedTo == other.mPartAttachedTo &&
+          mParameterValue.IsEqual( other.mParameterValue ));
    }
 
    /**

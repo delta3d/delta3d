@@ -371,10 +371,10 @@ namespace dtGame
       {
          // If the same pointer or the values match, then remove this object from the list.
          if ( &obj == *iterDOF
-            || (obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
+            ||((obj.mCurrentTime   == (*iterDOF)->mCurrentTime)
             && (obj.mName          == (*iterDOF)->mName)
             && (obj.mRateOverTime  == (*iterDOF)->mRateOverTime)
-            && (obj.mStartLocation == (*iterDOF)->mStartLocation))
+            && (obj.mStartLocation == (*iterDOF)->mStartLocation)))
          {
             RemoveDRDOF(iterDOF);
             return;
