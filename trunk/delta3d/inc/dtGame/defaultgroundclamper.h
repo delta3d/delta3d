@@ -200,7 +200,7 @@ namespace dtGame
           * @param proxy Actor that owns the specified transform.
           * @param data Ground Clamping Data associated with the proxy.
           * @param xform Transform that has the location and rotation in world space.
-          * @param inOutPoints IN: detection points relative to the transform.
+          * @param inOutPoints IN: detection points in world space.
           *                    OUT: surface points.
           */
          virtual void GetSurfacePoints( const dtDAL::TransformableActorProxy& proxy,
