@@ -28,6 +28,8 @@
 #include <dtHLAGM/attributetype.h>
 #include <dtGame/messageparameter.h>
 
+#include <cstring>
+
 namespace dtHLAGM
 {
    class OneToManyMapping;

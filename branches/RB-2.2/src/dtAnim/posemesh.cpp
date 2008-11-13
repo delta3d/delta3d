@@ -336,7 +336,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
    if (triangleID == -1)
    {
       osg::Vec3 closestPoint;
-      int closestTriangleID;
+      int closestTriangleID = 0;
 
       osg::Vec3 refPoint(azimuth, elevation, 0);
       float minDistance = FLT_MAX;
