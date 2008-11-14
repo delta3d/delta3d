@@ -1,22 +1,22 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2008 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-*/
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 
 #ifndef DELTA_MotionModelRTS_h__
 #define DELTA_MotionModelRTS_h__
@@ -42,39 +42,39 @@ namespace dtCore
    class DT_CORE_EXPORT RTSMotionModel : public dtCore::OrbitMotionModel
    {
    public:
-      RTSMotionModel( dtCore::Keyboard *keyboard
-                     , dtCore::Mouse *mouse
-                     , bool useSimTimeForSpeed = false ) ;
+      RTSMotionModel(dtCore::Keyboard* keyboard,
+                     dtCore::Mouse* mouse,
+                     bool useSimTimeForSpeed = false);
 
       /**
-      * Called when an axis' state has changed.
-      *
-      * @param axis the changed axis
-      * @param oldState the old state of the axis
-      * @param newState the new state of the axis
-      * @param delta a delta value indicating stateless motion
-      * @return If the 
-      */
+       * Called when an axis' state has changed.
+       *
+       * @param axis the changed axis
+       * @param oldState the old state of the axis
+       * @param newState the new state of the axis
+       * @param delta a delta value indicating stateless motion
+       * @return If the
+       */
       virtual bool AxisStateChanged(const dtCore::Axis* axis,
                                     double oldState,
                                     double newState,
                                     double delta);
 
       /**
-      * Message handler callback.
-      *
-      * @param data the message data
-      */
-      virtual void OnMessage( MessageData *data ) ;
+       * Message handler callback.
+       *
+       * @param data the message data
+       */
+      virtual void OnMessage(MessageData* data);
 
-      void SetTerrain(dtCore::DeltaDrawable *terrain) { mTerrainDrawable = terrain; }
+      void SetTerrain(dtCore::DeltaDrawable* terrain) { mTerrainDrawable = terrain; }
 
    private:
       dtCore::RefPtr<dtCore::DeltaDrawable> mTerrainDrawable;
       bool mUseSimTimeForSpeed;
    };
-}
+} // namespace dtCore
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // DELTA_MotionModelRTS
+#endif // DELTA_MotionModelRTS_h__

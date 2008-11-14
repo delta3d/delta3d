@@ -19,6 +19,7 @@
  * William E. Johnson II
  * Bradley Anderegg
  */
+
 #ifndef DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
 #define DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
 
@@ -43,13 +44,13 @@ namespace dtActors
          }
 
          /**
-           * Builds the properties associated with this actor proxy
-           */
+          * Builds the properties associated with this actor proxy
+          */
          void BuildPropertyMap();
 
          /**
-         * Cameras can be placed in a scene
-         */
+          * Cameras can be placed in a scene
+          */
          virtual bool IsPlaceable() const { return true; }
 
 
@@ -57,7 +58,7 @@ namespace dtActors
           * Sets the bezier node of this actor proxy
           * @param node The proxy that contains the node
           */
-         void SetBezierNode(ActorProxy *node);
+         void SetBezierNode(ActorProxy* node);
 
          /**
           * Gets the bezier node of this actor proxy
@@ -66,12 +67,12 @@ namespace dtActors
          dtCore::DeltaDrawable* GetBezierNode();
 
 
-         dtDAL::ActorProxyIcon * GetBillBoardIcon();
+         dtDAL::ActorProxyIcon* GetBillBoardIcon();
          const dtDAL::ActorProxy::RenderMode& GetRenderMode();
 
-         /*virtual*/ void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
-         /*virtual*/ void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
-         /*virtual*/ void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
+         /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
+         /*virtual*/ void OnTranslation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
 
       protected:
          /// Destructor
@@ -85,6 +86,6 @@ namespace dtActors
 
          static int mNumControlPoints;
     };
-}
+} // namespace dtActors
 
-#endif
+#endif // DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY

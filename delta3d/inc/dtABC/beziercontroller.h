@@ -1,3 +1,24 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ */
+
 #ifndef __BEZIER_CONTROLLER_H__
 #define __BEZIER_CONTROLLER_H__
 
@@ -10,27 +31,6 @@
 #include "pathpoint.h"
 #include "beziernode.h"
 #include "motionaction.h"
-
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-* Bradley Anderegg
-*/
 
 namespace dtABC
 {
@@ -46,11 +46,11 @@ public:
    };
 
 private:
-   
+
    class BezierPathDrawable: public osg::Drawable
    {
    public:
-      
+
       META_Object(dtABC, BezierPathDrawable);
       BezierPathDrawable(const BezierPathDrawable& bd, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
       {
@@ -58,12 +58,12 @@ private:
       }
 
       BezierPathDrawable() { setUseDisplayList(false); }
-      
+
 
       /*virtual*/ void drawImplementation(osg::RenderInfo& renderInfo) const;
       void SetPath(BezierController* pPath)  { mController = pPath; }
       BezierController* GetController()const { return mController; }
-   
+
    private:
       BezierController*           mController;
       mutable std::list<PathData> mPath;
@@ -77,19 +77,19 @@ public:
    static const std::string BEZIER_CONTROLLER_GEODE_ID;
 
    BezierController();
-   
+
    BezierNode* GetStartNode()             { return mStartNode.get(); }
    const BezierNode* GetStartNode() const { return mStartNode.get(); }
    void SetStartNode(BezierNode* pStart);
 
    /*virtual*/ void RenderProxyNode(bool enable);
    bool GetRenderProxyNode() { return mRenderGeode; }
-   
+
    /***
-   * Creates the path using the start node to traverse the curve
-   * the time step and time between nodes is encapsulated by the 
-   * BezierNodes
-   */
+    * Creates the path using the start node to traverse the curve
+    * the time step and time between nodes is encapsulated by the
+    * BezierNodes
+    */
    virtual void CreatePath();
 
    void CheckCreatePath();
@@ -97,7 +97,7 @@ public:
    void GetCopyPath(std::list<PathData>& pPathIn) const { pPathIn = mPath; }
 
    void SetLooping(bool shouldLoop) { mShouldLoop = shouldLoop; }
- 
+
 protected:
    ~BezierController();
    BezierController(const BezierController&); //not implemented by design
@@ -116,8 +116,8 @@ private:
 
    void ResetIterators();
 
-   void MakeSegment(float time, 
-                    float inc, 
+   void MakeSegment(float time,
+                    float inc,
                     const PathPoint& p1,
                     const PathPoint& p2,
                     const PathPoint& p3,
@@ -141,7 +141,7 @@ private:
 };
 
 
-} //namespace dtABC
+} // namespace dtABC
 
 #endif //__BEZIER_CONTROLLER_H__
 

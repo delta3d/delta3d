@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell, William E. Johnson II, and David Guthrie
  */
+
 #ifndef DELTA_GAMEMANANGER
 #define DELTA_GAMEMANANGER
 
@@ -87,8 +88,8 @@ namespace dtGame
          static const std::string CONFIG_STATISTICS_OUTPUT_FILE;
 
          typedef std::vector<std::string> NameVector;
-         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
-         typedef std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
+         typedef std::map< dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > GameActorMap;
+         typedef std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > ActorMap;
 
          class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
          {
@@ -113,7 +114,9 @@ namespace dtGame
                unsigned int GetOrderId() const { return mOrderId; }
 
             protected:
-               ComponentPriority(const std::string& name, unsigned int orderId) : Enumeration(name), mOrderId(orderId)
+               ComponentPriority(const std::string& name, unsigned int orderId)
+                  : Enumeration(name)
+                  , mOrderId(orderId)
                {
                   AddInstance(this);
                }
@@ -206,7 +209,7 @@ namespace dtGame
             template <typename T>
             void FindPrototypeByID(const dtCore::UniqueId& uniqueID, dtCore::RefPtr<T>& proxy)
             {
-               dtDAL::ActorProxy *tempProxy = FindPrototypeByID(uniqueID);
+               dtDAL::ActorProxy* tempProxy = FindPrototypeByID(uniqueID);
                proxy = dynamic_cast<T*>(tempProxy);
             }
 
@@ -350,7 +353,7 @@ namespace dtGame
              * Sets an environment actor on the game manager
              * @param envActor The environment actor to set
              */
-            void SetEnvironmentActor(IEnvGameActorProxy *envActor);
+            void SetEnvironmentActor(IEnvGameActorProxy* envActor);
 
             /**
              * Gets the environment actor on the game manager
@@ -563,7 +566,7 @@ namespace dtGame
              * @param The proxy to cast
              */
             template <class ProxyType>
-            void FindActorByName(const std::string& name, ProxyType *&proxy) const
+            void FindActorByName(const std::string& name, ProxyType*& proxy) const
             {
                std::vector<dtDAL::ActorProxy*> toFill;
                FindActorsByName(name, toFill);
@@ -725,7 +728,7 @@ namespace dtGame
              * @param proxy The proxy this timer is associated with or NULL if the timer
              *    was registered as a "global" timer.
              */
-            void ClearTimer(const std::string& name, const GameActorProxy *proxy);
+            void ClearTimer(const std::string& name, const GameActorProxy* proxy);
 
             /**
              * Accessor to the scene member of the class
@@ -1037,7 +1040,9 @@ namespace dtGame
                bool operator < (const TimerInfo& rhs) const
                {
                   if (time == rhs.time)
+                  {
                      return this <& rhs;
+                  }
                   return time < rhs.time;
                }
             };
@@ -1076,7 +1081,7 @@ namespace dtGame
 
             /// Does the work of ClearTimer for each of the timer info sets.
             void ClearTimerSingleSet(std::set<TimerInfo>& timerSet,
-                     const std::string& name, const GameActorProxy *proxy);
+                     const std::string& name, const GameActorProxy* proxy);
 
             /**
              * Private helper method to process the timers. This is called from PreFrame
@@ -1096,13 +1101,13 @@ namespace dtGame
              * Private helper method to send an environment changed message
              * @param envActor The about actor of the message
              */
-            void SendEnvironmentChangedMessage(IEnvGameActorProxy *envActor);
+            void SendEnvironmentChangedMessage(IEnvGameActorProxy* envActor);
 
             template <typename MapType, typename KeyType>
             void CheckForDuplicateRegistration(const KeyType& type, const std::string& typeName,
                      GameActorProxy& proxy, const std::string& invokableName, MapType& mapToCheck);
 
-            dtCore::RefPtr<MachineInfo>            mMachineInfo;
+            dtCore::RefPtr<MachineInfo>         mMachineInfo;
             dtCore::RefPtr<IEnvGameActorProxy>  mEnvironment;
 
             GameActorMap mGameActorProxyMap;
@@ -1110,8 +1115,8 @@ namespace dtGame
             GameActorMap mPrototypeActors;
 
             std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
-            //These are used during changing the map so that
-            //the map code can modify game manager with some control.
+            // These are used during changing the map so that
+            // the map code can modify game manager with some control.
             bool mSendCreatesAndDeletes;
             bool mAddActorsToScene;
 
@@ -1151,6 +1156,6 @@ namespace dtGame
             bool mRemoveGameEventsOnMapChange;
    };
 
-}
+} // namespace dtGame
 
-#endif
+#endif // DELTA_GAMEMANANGER
