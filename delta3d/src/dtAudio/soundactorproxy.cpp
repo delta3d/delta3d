@@ -391,7 +391,7 @@ namespace dtAudio
     {
        if(mRandomSoundEffect)
        {
-          offsetSeconds += float(dtUtil::RandRange(mMinRandomTime, mMaxRandomTime));
+          offsetSeconds += float(dtUtil::RandFloat(mMinRandomTime, mMaxRandomTime));
        }
 
        GetGameManager()->SetTimer(SoundActorProxy::TIMER_NAME.Get(), this, offsetSeconds);

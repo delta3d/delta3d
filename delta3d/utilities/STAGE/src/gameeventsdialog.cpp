@@ -164,8 +164,6 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////
    void GameEventsDialog::EditGameEvent()
    {
-      Map& curMap = *EditorData::GetInstance().getCurrentMap();
-
       EventTreeItem *selection = GetSelectedEventTreeItem();
       if (selection == NULL) 
       {
