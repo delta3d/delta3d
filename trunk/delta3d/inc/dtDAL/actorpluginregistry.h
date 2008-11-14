@@ -18,6 +18,7 @@
  *
  * Matthew W. Campbell
  */
+
 #ifndef DELTA_ACTOR_PLUGIN_REGISTRY
 #define DELTA_ACTOR_PLUGIN_REGISTRY
 
@@ -29,7 +30,6 @@
 
 namespace dtDAL
 {
-
    /**
     * The ActorPluginRegistry is the base class that developers extend to
     * build their own registries.  Its main purpose is to serve as an
@@ -49,8 +49,9 @@ namespace dtDAL
           * Constructs the registry.  Sets the name and description for
           * this registry.
           */
-         ActorPluginRegistry(const std::string& name,
-                           const std::string& desc = "") : mName(name), mDescription(desc)
+         ActorPluginRegistry(const std::string& name, const std::string& desc = "")
+            : mName(name)
+            , mDescription(desc)
          {
             mActorFactory = new dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>, ActorProxy, ActorType::RefPtrComp>;
          }
@@ -58,7 +59,7 @@ namespace dtDAL
          /**
           * Empty destructor. This class is not reference counted since we need
           * to manually free pointers to the registry objects from their
-          * corresponding dynamic library, therefore, we need access to the 
+          * corresponding dynamic library, therefore, we need access to the
           * object's destructor.
           */
          virtual ~ActorPluginRegistry() { }
@@ -70,13 +71,13 @@ namespace dtDAL
           * registry object it contains.
           */
          virtual void RegisterActorTypes() = 0;
-         
+
          /**
           * Sets the name of this registry.
           * @param name Name to assign to the registry.
           */
          void SetName(const std::string& name) { mName = name; }
-         
+
          /**
           * Gets the name currently assigned to this registry.
           */
@@ -86,7 +87,7 @@ namespace dtDAL
           * Sets the description for this registry.
           * @param desc Couple sentence description for this actor registry.
           */
-         void SetDescription(const std::string &desc) { mDescription = desc; }
+         void SetDescription(const std::string& desc) { mDescription = desc; }
 
          /**
           * Gets the description of this registry.
@@ -124,8 +125,8 @@ namespace dtDAL
           * @see ObjectFactory
           */
          dtCore::RefPtr<dtUtil::ObjectFactory<dtCore::RefPtr<const ActorType>,
-            ActorProxy,ActorType::RefPtrComp> > mActorFactory;
+            ActorProxy, ActorType::RefPtrComp> > mActorFactory;
    };
-}
+} // namespace dtDAL
 
-#endif
+#endif // DELTA_ACTOR_PLUGIN_REGISTRY

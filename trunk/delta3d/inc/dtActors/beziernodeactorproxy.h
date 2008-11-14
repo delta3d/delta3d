@@ -19,6 +19,7 @@
  * William E. Johnson II
  * Bradley Anderegg
  */
+
 #ifndef DELTA_BEZIER_NODE_ACTOR_PROXY
 #define DELTA_BEZIER_NODE_ACTOR_PROXY
 
@@ -43,13 +44,13 @@ namespace dtActors
          }
 
          /**
-           * Builds the properties associated with this proxy
-           */
+          * Builds the properties associated with this proxy
+          */
          virtual void BuildPropertyMap();
 
          /**
-         * Cameras can be placed in a scene
-         */
+          * Cameras can be placed in a scene
+          */
          virtual bool IsPlaceable() const { return true; }
 
 
@@ -57,25 +58,25 @@ namespace dtActors
           * Sets the bezier control point on enter for this proxy's actor
           * @param controlPoint The entry controlPoint to set
           */
-         void SetBezierEntryControlPoint(ActorProxy *controlPoint);
+         void SetBezierEntryControlPoint(ActorProxy* controlPoint);
 
          /**
-         * Sets the bezier control point on exit for this proxy's actor
-         * @param controlPoint The exit controlPoint to set
-         */
-         void SetBezierExitControlPoint(ActorProxy *controlPoint);
+          * Sets the bezier control point on exit for this proxy's actor
+          * @param controlPoint The exit controlPoint to set
+          */
+         void SetBezierExitControlPoint(ActorProxy* controlPoint);
 
          /**
           * Sets the next bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetNextBezierNode(ActorProxy *node);
+         void SetNextBezierNode(ActorProxy* node);
 
          /**
           * Sets the previous bezier node on this proxy's actor
           * @param node The node to set
           */
-         void SetPreviousBezierNode(ActorProxy *node);
+         void SetPreviousBezierNode(ActorProxy* node);
 
          /**
           * Gets the next node on this proxy's actor
@@ -101,14 +102,14 @@ namespace dtActors
          */
          dtCore::DeltaDrawable* GetBezierExitControlPoint();
 
-         dtDAL::ActorProxyIcon * GetBillBoardIcon();
+         dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
 
          const dtDAL::ActorProxy::RenderMode& GetRenderMode();
 
-         /*virtual*/ void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
-         /*virtual*/ void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
-         /*virtual*/ void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnScale(const osg::Vec3& oldValue, const osg::Vec3& newValue);
+         /*virtual*/ void OnRotation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
+         /*virtual*/ void OnTranslation(const osg::Vec3& oldValue, const osg::Vec3& newValue);
 
 
 
@@ -118,12 +119,12 @@ namespace dtActors
          virtual ~BezierNodeActorProxy()
          {
          }
-      
+
          /// Creates the actor that this proxy abstracts
          virtual void CreateActor();
 
          static int mNumNodes;
    };
-}
+} // namespace dtActors
 
-#endif
+#endif // DELTA_BEZIER_NODE_ACTOR_PROXY
