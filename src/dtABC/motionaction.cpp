@@ -10,7 +10,8 @@ namespace dtABC
 
 
 MotionAction::MotionAction()
-: mParentRelation(NO_RELATION)
+   : mParentRelation(NO_RELATION)
+   , mTargetObject(NULL)
 {
 
 }
@@ -130,7 +131,10 @@ void MotionAction::StepObject(const PathPoint& cp)
 
    osg::Matrix local;
    mLocalTransform.Get(local);
-   mTargetObject->GetMatrixNode()->setMatrix(local * pTransform);
+   if (mTargetObject.valid())
+   {
+      mTargetObject->GetMatrixNode()->setMatrix(local * pTransform);
+   }
 }
 
 
