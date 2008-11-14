@@ -193,6 +193,30 @@ namespace dtCore
        */
       void UpdateBodyTransform(const dtCore::Transform& newTransform);
 
+      /**
+      * Returns the value below which this object will "sleep"
+      * @return The current sleep threshold
+      */
+      float GetAutoDisableLinearThreshold() const;
+
+      /**
+      * Sets the value below which the object will "sleep" 
+      * @param threshold The new sleep threshold
+      */
+      void SetAutoDisableLinearThreshold(float threshold);
+
+      /**
+      * Returns the value below which this object will "sleep"
+      * @return The current sleep threshold
+      */
+      float GetAutoDisableAngularThreshold() const;
+
+      /**
+      * Sets the value below which the object will "sleep" 
+      * @param threshold The new sleep threshold
+      */
+      void SetAutoDisableAngularThreshold(float threshold);
+
    protected:
       virtual ~ODEBodyWrap();
 
