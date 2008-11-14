@@ -296,7 +296,7 @@ void dtCore::ODEBodyWrap::GetBodyTransform(dtCore::Transform& xform) const
 
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransform)
 {
    if (DynamicsEnabled() == false) {return;}
@@ -333,4 +333,47 @@ void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransf
       dBodySetRotation(GetBodyID(), dRot);
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAutoDisableLinearThreshold() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableLinearThreshold(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableLinearThreshold(float threshold)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableLinearThreshold(GetBodyID(), threshold);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAutoDisableAngularThreshold() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableAngularThreshold(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableAngularThreshold(float threshold)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableAngularThreshold(GetBodyID(), threshold);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 
