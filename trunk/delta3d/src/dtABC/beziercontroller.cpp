@@ -13,9 +13,10 @@ const std::string BezierController::BEZIER_CONTROLLER_GEODE_ID("__DELTA3D_BEZIER
 
 ////////////////////////////////////////////////////////////////////////////////
 BezierController::BezierController()
-   : mShouldLoop(false)
-   , mLastPathPoint(NULL)
+   : mRenderGeode(false)
    , mPathChanged(false)
+   , mShouldLoop(false)
+   , mLastPathPoint(NULL)
 {  
    mDrawable = new BezierPathDrawable;
    mDrawable->SetPath(this);
@@ -26,7 +27,6 @@ BezierController::BezierController()
 
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-   mRenderGeode = false;
 
    mNode = new osg::Group;
 }
