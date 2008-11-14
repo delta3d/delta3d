@@ -87,8 +87,8 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions() 
-      : mIsector(new dtCore::Isector)
-      , mExternalToolActionGroup(new QActionGroup(NULL))
+      : mExternalToolActionGroup(new QActionGroup(NULL))
+      , mIsector(new dtCore::Isector)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
