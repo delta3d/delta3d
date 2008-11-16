@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -44,7 +44,7 @@
 #include <dtCore/system.h>
 
 #include <dtGame/basemessages.h>
-#include <dtGame/gamemanager.h> 
+#include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/defaultgroundclamper.h>
@@ -148,10 +148,10 @@ namespace dtGame
          float mOffset;
    };
 
-   class GroundClamperTests : public CPPUNIT_NS::TestFixture 
+   class GroundClamperTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(GroundClamperTests);
-   
+
          CPPUNIT_TEST(TestTerrainProperty);
          CPPUNIT_TEST(TestEyePointProperty);
          CPPUNIT_TEST(TestIntermittentProperties);
@@ -169,11 +169,11 @@ namespace dtGame
          CPPUNIT_TEST(TestClampThreePoint);
          CPPUNIT_TEST(TestClampIntermittent);
          CPPUNIT_TEST(TestClampTransformUnchanged);
-         
+
       CPPUNIT_TEST_SUITE_END();
-   
+
       public:
-   
+
          ///////////////////////////////////////////////////////////////////////
          void setUp()
          {
@@ -277,19 +277,19 @@ namespace dtGame
             mGroundClamper->SetIntermittentGroundClampingSmoothingTime(40.0f);
             CPPUNIT_ASSERT_EQUAL(40.0f, mGroundClamper->GetIntermittentGroundClampingSmoothingTime());
          }
-         
+
          ///////////////////////////////////////////////////////////////////////
          void TestTerrainProperty()
          {
             CPPUNIT_ASSERT(mGroundClamper->GetTerrainActor() == NULL);
             CPPUNIT_ASSERT( ! mGroundClamper->HasValidSurface() );
-            
+
             mGM->AddActor(*mTestGameActor, false, false);
             dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
 
             mGroundClamper->SetTerrainActor(terrain);
 
-            CPPUNIT_ASSERT_MESSAGE("The terrain should be set.", 
+            CPPUNIT_ASSERT_MESSAGE("The terrain should be set.",
                      mGroundClamper->GetTerrainActor() == terrain);
             CPPUNIT_ASSERT( mGroundClamper->HasValidSurface() );
          }
@@ -310,14 +310,14 @@ namespace dtGame
 
             mGroundClamper->SetEyePointActor(eyePointActor);
 
-            CPPUNIT_ASSERT_MESSAGE("The eye point actor should be set.", 
+            CPPUNIT_ASSERT_MESSAGE("The eye point actor should be set.",
                      mGroundClamper->GetEyePointActor() == eyePointActor);
 
             mGroundClamper->UpdateEyePoint();
-            CPPUNIT_ASSERT_EQUAL(expectedEyePoint, 
+            CPPUNIT_ASSERT_EQUAL(expectedEyePoint,
                      mGroundClamper->GetLastEyePoint());
          }
-         
+
          ///////////////////////////////////////////////////////////////////////
          void TestHighResClampProperty()
          {
@@ -339,7 +339,7 @@ namespace dtGame
          ///////////////////////////////////////////////////////////////////////
          void TestClampToNearest()
          {
-            dtCore::RefPtr<dtCore::BatchIsector::SingleISector> single = 
+            dtCore::RefPtr<dtCore::BatchIsector::SingleISector> single =
                new dtCore::BatchIsector::SingleISector(0);
             osgUtil::IntersectVisitor::HitList hitList;
 
@@ -348,7 +348,7 @@ namespace dtGame
             // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
             GroundClampingData data;
 
-            CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.", 
+            CPPUNIT_ASSERT_MESSAGE("No nearest hit should have been found if no hits exist.",
                      !mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
             osgUtil::Hit hit;
@@ -361,19 +361,19 @@ namespace dtGame
             hitList.push_back(hit);
 
             single->SetHitList(hitList);
-            
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 0.03, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(4.0f, point.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, point.z(), 0.001);
-            
+
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.x(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.z(), 0.001);
-            
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 3.4, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
@@ -384,7 +384,7 @@ namespace dtGame
             CPPUNIT_ASSERT_DOUBLES_EQUAL(1.0f, normal.y(), 0.001);
             CPPUNIT_ASSERT_DOUBLES_EQUAL(0.0f, normal.z(), 0.001);
 
-            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.", 
+            CPPUNIT_ASSERT_MESSAGE("A nearest hit should have been found.",
                      mGroundClamper->GetClosestHit(*mTestGameActor, data, *single, 5.0, point, normal));
 
             CPPUNIT_ASSERT_DOUBLES_EQUAL(3.0f, point.x(), 0.001);
@@ -454,7 +454,7 @@ namespace dtGame
 
             // Rotation
             osg::Matrix mtx;
-            mtx.set( 
+            mtx.set(
                1.0f, 2.0f, 3.0f, 4.0f,
                5.0f, 6.0f, 6.0f, 8.0f,
                9.0f, 1.0f, 2.0f, 3.0f,
@@ -759,7 +759,7 @@ namespace dtGame
             clampDifference = (resultPositionA - positionA).z();
             CPPUNIT_ASSERT( clampDifference != 0.0f );
             CPPUNIT_ASSERT_DOUBLES_EQUAL( clampDifference, runtimeData->GetLastClampedOffset(), errorTolerance );
-            
+
             // --- Test at point B.
             xform.SetTranslation(positionB);
             actor->SetTransform(xform);
@@ -939,7 +939,7 @@ namespace dtGame
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped.
-            float errorThreshold = 0.05;
+            float errorThreshold = 0.1;
             osg::Matrix rotation;
             actor->GetTransform(xform);
             xform.GetTranslation(pos);
@@ -1002,5 +1002,5 @@ namespace dtGame
    CPPUNIT_TEST_SUITE_REGISTRATION(GroundClamperTests);
 
    const std::string GroundClamperTests::mTestGameActorRegistry("testGameActorLibrary");
-   
+
 }
