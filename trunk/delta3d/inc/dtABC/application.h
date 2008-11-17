@@ -205,6 +205,9 @@ namespace dtABC
       /// Remove a view to the Viewer
       void RemoveView(dtCore::View &view);
 
+      // Checks to see if a view is added the application.
+      bool ContainsView(dtCore::View &view);
+
       ///Cycle through the statistics modes
       void SetNextStatisticsType();
 
