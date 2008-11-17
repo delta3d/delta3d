@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -32,6 +32,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtUtil/functor.h>
 #include <dtABC/application.h>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -49,6 +50,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_TEST(TestPerspective);
          CPPUNIT_TEST(TestFrustum);
          CPPUNIT_TEST(TestEnabled);
+         CPPUNIT_TEST(TestFrameSyncCallbacks);
          CPPUNIT_TEST(TestSettingTheCullingMode);
          CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
          CPPUNIT_TEST(TestOnScreen);
@@ -57,14 +59,23 @@ class CameraTests : public CPPUNIT_NS::TestFixture
 
    public:
 
-      void setUp() {}
+      void setUp()
+      {
+         mCalledCallback = false;
+         mCamerasThatCalled.clear();
+         dtCore::System::GetInstance().Start();
+      }
 
       void tearDown()
       {
+         dtCore::System::GetInstance().Stop();
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
          if (fileUtils.DirExists(SCREEN_SHOT_DIR))
             fileUtils.DirDelete(SCREEN_SHOT_DIR, true);
+
+         mCalledCallback = false;
+         mCamerasThatCalled.clear();
       }
 
       void TestSaveScreenShot();
@@ -72,6 +83,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestFrustum();
       void TestSupplyingOSGCameraToConstructor();
       void TestEnabled();
+      void TestFrameSyncCallbacks();
       void TestSettingTheCullingMode();
 
       void TestOnScreen()
@@ -100,7 +112,10 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       }
 
    private:
+      void TestCallback(dtCore::Camera& camera);
       static const std::string SCREEN_SHOT_DIR;
+      bool mCalledCallback;
+      std::vector<dtCore::Camera*> mCamerasThatCalled;
 };
 
 const std::string CameraTests::SCREEN_SHOT_DIR("TestScreenShot");
@@ -233,7 +248,53 @@ void CameraTests::TestEnabled()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Node mask should be what it was set to before being disabled",
       nodeMask, cam->GetOSGCamera()->getNodeMask());
+
+   cam->SetEnabled(false);
 }
+
+void CameraTests::TestCallback(dtCore::Camera& camera)
+{
+   mCalledCallback = true;
+   mCamerasThatCalled.push_back(&camera);
+}
+
+void CameraTests::TestFrameSyncCallbacks()
+{
+   dtCore::RefPtr<osg::Referenced> testKeyObject = new osg::Referenced;
+   using namespace dtCore;
+   RefPtr<Camera> cam = new Camera();
+   Camera::AddFrameSyncCallback(*testKeyObject, Camera::FrameSyncCallback(this, &CameraTests::TestCallback));
+
+   CPPUNIT_ASSERT(!mCalledCallback);
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT(mCalledCallback);
+   CPPUNIT_ASSERT_MESSAGE("The new camera should have fired the callback.",
+            std::find(mCamerasThatCalled.begin(), mCamerasThatCalled.end(), cam.get()) != mCamerasThatCalled.end());
+
+   mCalledCallback = false;
+   mCamerasThatCalled.clear();
+
+   Camera::RemoveFrameSyncCallback(*testKeyObject);
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("The callback should have been removed", !mCalledCallback);
+
+   mCalledCallback = false;
+   mCamerasThatCalled.clear();
+   Camera::AddFrameSyncCallback(*testKeyObject, Camera::FrameSyncCallback(this, &CameraTests::TestCallback));
+   cam->SetEnabled(false);
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("The camera was disabled, it should not have fired the callback",
+            std::find(mCamerasThatCalled.begin(), mCamerasThatCalled.end(), cam.get()) == mCamerasThatCalled.end());
+   cam->SetEnabled(true);
+
+   mCalledCallback = false;
+   mCamerasThatCalled.clear();
+   testKeyObject = NULL;
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("The callback should have not been called backs the key object was deleted.", !mCalledCallback);
+
+}
+
 
 void CameraTests::TestSettingTheCullingMode()
 {

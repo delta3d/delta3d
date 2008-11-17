@@ -12,6 +12,7 @@
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
+#include <dtUtil/functor.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -26,6 +27,9 @@ using namespace dtUtil;
 
 namespace dtCore
 {
+
+   typedef std::vector<std::pair<dtCore::ObserverPtr<osg::Referenced>, Camera::FrameSyncCallback > > CallbackListType;
+   static CallbackListType staticFrameSyncCallbacks;
 
    class ScreenShotCallback : public osg::Camera::DrawCallback
    {
@@ -211,15 +215,9 @@ namespace dtCore
       GetOSGCamera()->setComputeNearFarMode(osgMode);
    }
 
-   //////////////////////////////////////////
-   void Camera::FrameSynch( const double /*deltaFrameTime*/ )
+   //////////////////////////////////////////////////////////////
+   void Camera::UpdateViewMatrixFromTransform()
    {
-      // Only do our normal Camera stuff if it is enabled
-      if (GetEnabled() == false)
-      {
-         return;
-      }
-
       //Get our Camera's position, up vector, and look-at vector and pass them
       //to the Producer Camera
       osg::Matrix mat = GetMatrixNode()->getMatrix();
@@ -281,6 +279,18 @@ namespace dtCore
                     s[2], u[2], F[2], 0.0,
                     s*eye, u*eye, F*eye, 1.0);
       mOsgCamera->setViewMatrix(m);
+   }
+
+   //////////////////////////////////////////
+   void Camera::FrameSynch( const double /*deltaFrameTime*/ )
+   {
+      // Only do our normal Camera stuff if it is enabled
+      if (GetEnabled() == false)
+      {
+         return;
+      }
+      UpdateViewMatrixFromTransform();
+      CallFrameSyncCallbacks();
    }
 
 
@@ -456,7 +466,7 @@ namespace dtCore
          osgViewer::GraphicsWindow * gw = mWindow->GetOsgViewerGraphicsWindow();
          mOsgCamera->setGraphicsContext(gw);
 
-         const osg::GraphicsContext::Traits * traits = gw->getTraits();
+         const osg::GraphicsContext::Traits* traits = gw->getTraits();
 
          double fovy, aspectRatio, zNear, zFar;
          mOsgCamera->getProjectionMatrixAsPerspective(fovy, aspectRatio, zNear, zFar);
@@ -488,6 +498,57 @@ namespace dtCore
          mOsgCamera->setDrawBuffer(buffer);
          mOsgCamera->setReadBuffer(buffer);
       }
+   }
+
+   //////////////////////////////////////////
+   class CameraCallbackHandler
+   {
+   public:
+      CameraCallbackHandler(const osg::Referenced* keyObject, dtCore::Camera* camera = NULL, bool callCallback = false)
+      : mKeyObject(keyObject)
+      , mCamera(camera)
+      , mCallCallback(callCallback)
+      {
+
+      }
+
+      bool operator()(CallbackListType::value_type& item)
+      {
+         if (mCallCallback && mCamera != NULL && item.first.valid())
+         {
+            item.second(*mCamera);
+         }
+
+         return item.first == mKeyObject;
+      }
+
+      const osg::Referenced* mKeyObject;
+      dtCore::Camera* mCamera;
+      bool mCallCallback;
+
+   };
+
+   //////////////////////////////////////////
+   void Camera::CallFrameSyncCallbacks()
+   {
+      staticFrameSyncCallbacks.erase(
+               std::remove_if(staticFrameSyncCallbacks.begin(), staticFrameSyncCallbacks.end(), CameraCallbackHandler(NULL, this, true)),
+               staticFrameSyncCallbacks.end());
+   }
+
+   //////////////////////////////////////////
+   void Camera::AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback)
+   {
+      staticFrameSyncCallbacks.push_back(std::make_pair(&keyObject, callback));
+   }
+
+
+   //////////////////////////////////////////
+   void Camera::RemoveFrameSyncCallback(osg::Referenced& keyObject)
+   {
+      staticFrameSyncCallbacks.erase(
+               std::remove_if(staticFrameSyncCallbacks.begin(), staticFrameSyncCallbacks.end(), CameraCallbackHandler(&keyObject)),
+               staticFrameSyncCallbacks.end());
    }
 
 }
