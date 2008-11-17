@@ -26,12 +26,18 @@
 //////////////////////////////////////////////////////////////////////
 
 
+#include <dtUtil/generic.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 #include <osg/Vec4>
 
 #include <osg/Camera>
 
+namespace dtUtil
+{
+   template <typename R, class TList, unsigned int size>
+   class Functor;
+}
 
 namespace dtCore
 {
@@ -59,8 +65,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Camera)
 
    public:
-
-
 
       Camera(const std::string& name = "camera");
       Camera(osg::Camera& osgCamera, const std::string& name = "camera");
@@ -204,6 +208,13 @@ namespace dtCore
       bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;
 
       //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
+
+      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> FrameSyncCallback;
+      static void AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback);
+      static void RemoveFrameSyncCallback(osg::Referenced& keyObject);
+
+      // Updates the view matrix via the transformed position.  This is called from FrameSynch.
+      void UpdateViewMatrixFromTransform();
    protected:
 
       ///Override for FrameSynch
@@ -214,6 +225,8 @@ namespace dtCore
       /// @param data the message to receive
       virtual void OnMessage( MessageData *data );
 
+      /// Call all of the static frame sync callbacks using this camera.
+      void CallFrameSyncCallbacks();
 
    private:
 
