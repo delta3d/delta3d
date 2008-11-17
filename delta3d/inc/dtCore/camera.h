@@ -210,6 +210,20 @@ namespace dtCore
       //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
 
       typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> FrameSyncCallback;
+      /**
+       * Adds a callback that fires whenever the this camera is updated on FrameSync.  This makes it easy to
+       * add code that will add camera specific uniforms, or do operations in screen space since the camera will be in its
+       * final state prior to rendering.
+       *
+       * An example call from inside class "A" with a method with signature "void OnCameraSync(Camera& camera)" would be:
+       *
+       * Camera::AddFrameSyncCallback(this, FrameSyncCallback(this, &A::OnCameraSync))
+       *
+       * @param keyObject this object will be held onto with an observer pointer.
+       *                  When this object is deleted, the callback will be removed.
+       *                  It's also handy when removing callbacks directly.
+       * @param callback a functor to call. See the typedef above FrameSyncCallback.
+       */
       static void AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback);
       static void RemoveFrameSyncCallback(osg::Referenced& keyObject);
 
