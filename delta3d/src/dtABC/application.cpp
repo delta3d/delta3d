@@ -267,7 +267,8 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
    GetCamera()->SetWindow(mWindow.get());
 
    mCompositeViewer = new osgViewer::CompositeViewer;
-//   mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::SingleThreaded);
+   //mCompositeViewer->setThreadingModel(osgViewer::CompositeViewer::DrawThreadPerContext);
+   mCompositeViewer->setUpThreading();
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
 
    GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
@@ -522,6 +523,13 @@ void Application::AddView(dtCore::View &view)
 
    mCompositeViewer->addView(view.GetOsgViewerView());
    mViewList.push_back(&view);
+}
+
+////////////////////////////////////////////////////////
+bool Application::ContainsView(dtCore::View &view)
+{
+   ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), &view);
+   return it != mViewList.end();
 }
 
 ////////////////////////////////////////////////////////
