@@ -1,30 +1,30 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2007-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* David Guthrie, Chris Rodgers
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2007-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David Guthrie, Chris Rodgers
+ */
 
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -74,7 +74,7 @@ namespace dtGame
          {
          }
 
-         void SetPointOffset( float offset )
+         void SetPointOffset(float offset)
          {
             mOffset = offset;
          }
@@ -112,7 +112,7 @@ namespace dtGame
          {
             BaseClass::FinalizeSurfacePoints(proxy, data, inOutPoints);
 
-            if( mOffset != 0.0f )
+            if (mOffset != 0.0f)
             {
                inOutPoints[0].z() += mOffset;
                inOutPoints[1].z() += mOffset;
@@ -197,7 +197,7 @@ namespace dtGame
          {
             dtCore::System::GetInstance().Stop();
 
-            if(mGM.valid())
+            if (mGM.valid())
             {
                mTestGameActor = NULL;
                mGM->DeleteAllActors(true);
@@ -207,11 +207,11 @@ namespace dtGame
          }
 
          ///////////////////////////////////////////////////////////////////////
-         bool CompareMatrices( const osg::Matrix& a, const osg::Matrix& b, float errorThreshold )
+         bool CompareMatrices(const osg::Matrix& a, const osg::Matrix& b, float errorThreshold)
          {
-            for( int i = 0; i < 16; ++i )
+            for (int i = 0; i < 16; ++i)
             {
-               if( dtUtil::Abs(a.ptr()[i] - b.ptr()[i]) > errorThreshold )
+               if (dtUtil::Abs(a.ptr()[i] - b.ptr()[i]) > errorThreshold)
                {
                   return false;
                }
@@ -220,8 +220,8 @@ namespace dtGame
          }
 
          ///////////////////////////////////////////////////////////////////////
-         void CreateTestTerrain( dtCore::RefPtr<dtActors::InfiniteTerrainActorProxy>& outProxy,
-            dtCore::InfiniteTerrain*& outTerrain )
+         void CreateTestTerrain(dtCore::RefPtr<dtActors::InfiniteTerrainActorProxy>& outProxy,
+            dtCore::InfiniteTerrain*& outTerrain)
          {
             mGM->CreateActor(*dtActors::EngineActorRegistry::INFINITE_TERRAIN_ACTOR_TYPE, outProxy);
             CPPUNIT_ASSERT_MESSAGE("Game Manager must be able create an Infinite Terrain Actor.",
@@ -243,21 +243,21 @@ namespace dtGame
          }
 
          ///////////////////////////////////////////////////////////////////////
-         bool IsEqual( const osg::Vec3& result, const osg::Vec3& testValue, float errorTolerance = 0.00001f )
+         bool IsEqual(const osg::Vec3& result, const osg::Vec3& testValue, float errorTolerance = 0.00001f)
          {
             return dtUtil::Abs(result.x() - testValue.x()) < errorTolerance
-               && dtUtil::Abs(result.y() - testValue.y()) < errorTolerance
-               && dtUtil::Abs(result.z() - testValue.z()) < errorTolerance;
+               &&  dtUtil::Abs(result.y() - testValue.y()) < errorTolerance
+               &&  dtUtil::Abs(result.z() - testValue.z()) < errorTolerance;
          }
 
          ///////////////////////////////////////////////////////////////////////
-         bool IsEqual( const osg::Matrix& result, const osg::Matrix& testValue, float errorTolerance = 0.00001f )
+         bool IsEqual(const osg::Matrix& result, const osg::Matrix& testValue, float errorTolerance = 0.00001f)
          {
             bool success = true;
-            for( int i = 0; i < 16; ++i )
+            for (int i = 0; i < 16; ++i)
             {
                // Did the match fail?
-               if( dtUtil::Abs(result.ptr()[i] - testValue.ptr()[i]) > errorTolerance )
+               if (dtUtil::Abs(result.ptr()[i] - testValue.ptr()[i]) > errorTolerance)
                {
                   success = false;
                   break;
@@ -282,7 +282,7 @@ namespace dtGame
          void TestTerrainProperty()
          {
             CPPUNIT_ASSERT(mGroundClamper->GetTerrainActor() == NULL);
-            CPPUNIT_ASSERT( ! mGroundClamper->HasValidSurface() );
+            CPPUNIT_ASSERT(!mGroundClamper->HasValidSurface());
 
             mGM->AddActor(*mTestGameActor, false, false);
             dtCore::Transformable* terrain = &mTestGameActor->GetGameActor();
@@ -291,7 +291,7 @@ namespace dtGame
 
             CPPUNIT_ASSERT_MESSAGE("The terrain should be set.",
                      mGroundClamper->GetTerrainActor() == terrain);
-            CPPUNIT_ASSERT( mGroundClamper->HasValidSurface() );
+            CPPUNIT_ASSERT(mGroundClamper->HasValidSurface());
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -353,11 +353,11 @@ namespace dtGame
 
             osgUtil::Hit hit;
             hit._intersectNormal = osg::Vec3(0.0f, 0.0f, 1.0f);
-            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 1.0f);
+            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 1.0f);
             hitList.push_back(hit);
 
             hit._intersectNormal = osg::Vec3(0.0f, 1.0f, 0.0f);
-            hit._intersectPoint = osg::Vec3(3.0f, 4.0f, 4.0f);
+            hit._intersectPoint  = osg::Vec3(3.0f, 4.0f, 4.0f);
             hitList.push_back(hit);
 
             single->SetHitList(hitList);
@@ -405,35 +405,35 @@ namespace dtGame
 
             // Verify that the current test Ground Clamping Data does not
             // contain any Runtime Data.
-            CPPUNIT_ASSERT( clampData.GetUserData() == NULL );
+            CPPUNIT_ASSERT(clampData.GetUserData() == NULL);
             clampData.SetUserData(runtimeData.get());
-            CPPUNIT_ASSERT( clampData.GetUserData() == runtimeData.get() );
+            CPPUNIT_ASSERT(clampData.GetUserData() == runtimeData.get());
 
             // Ensure that the ground clamper can return the existing runtime data
             // contained within the ground clamp data.
             mGroundClamper->GetOrCreateRuntimeData(clampData);
-            CPPUNIT_ASSERT( clampData.GetUserData() != NULL );
-            CPPUNIT_ASSERT( clampData.GetUserData() == runtimeData.get() );
+            CPPUNIT_ASSERT(clampData.GetUserData() != NULL);
+            CPPUNIT_ASSERT(clampData.GetUserData() == runtimeData.get());
 
             // Ensure that the ground clamper can create runtime data as need.
             clampData.SetUserData(NULL);
-            CPPUNIT_ASSERT( clampData.GetUserData() == NULL );
+            CPPUNIT_ASSERT(clampData.GetUserData() == NULL);
             // --- Capture the new data.
             runtimeData = &mGroundClamper->GetOrCreateRuntimeData(clampData);
-            CPPUNIT_ASSERT( clampData.GetUserData() != NULL );
-            CPPUNIT_ASSERT( clampData.GetUserData() == runtimeData.get() );
+            CPPUNIT_ASSERT(clampData.GetUserData() != NULL);
+            CPPUNIT_ASSERT(clampData.GetUserData() == runtimeData.get());
 
             // Test the clamper's ability to replace runtime clamp data with
             // runtime data class type expected of the Base Ground Clamper's
             // extending sub-class, such as Default Ground Clamper.
             dtCore::RefPtr<osg::Node> testUserData = new osg::Node();
             clampData.SetUserData(testUserData.get());
-            CPPUNIT_ASSERT( clampData.GetUserData() == testUserData.get() );
+            CPPUNIT_ASSERT(clampData.GetUserData() == testUserData.get());
             // --- Capture the new data.
             runtimeData = &mGroundClamper->GetOrCreateRuntimeData(clampData);
-            CPPUNIT_ASSERT( clampData.GetUserData() != NULL );
-            CPPUNIT_ASSERT( clampData.GetUserData() != testUserData.get() );
-            CPPUNIT_ASSERT( clampData.GetUserData() == runtimeData.get() );
+            CPPUNIT_ASSERT(clampData.GetUserData() != NULL);
+            CPPUNIT_ASSERT(clampData.GetUserData() != testUserData.get());
+            CPPUNIT_ASSERT(clampData.GetUserData() == runtimeData.get());
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -443,14 +443,14 @@ namespace dtGame
                = new DefaultGroundClamper::RuntimeData;
 
             // Time
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedTime() == 0.0f );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedTime() == 0.0f);
             runtimeData->SetLastClampedTime( 98.765f );
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedTime() == 98.765f );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedTime() == 98.765f);
 
             // Offset
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedOffset() == 0.0f );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedOffset() == 0.0f);
             runtimeData->SetLastClampedOffset( 1.234f );
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedOffset() == 1.234f );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedOffset() == 1.234f);
 
             // Rotation
             osg::Matrix mtx;
@@ -458,10 +458,10 @@ namespace dtGame
                1.0f, 2.0f, 3.0f, 4.0f,
                5.0f, 6.0f, 6.0f, 8.0f,
                9.0f, 1.0f, 2.0f, 3.0f,
-               4.0f, 5.0f, 6.0f, 7.0f );
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedRotation() == osg::Matrix() );
+               4.0f, 5.0f, 6.0f, 7.0f);
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedRotation() == osg::Matrix());
             runtimeData->SetLastClampedRotation( mtx );
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedRotation() == mtx );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedRotation() == mtx);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -485,16 +485,16 @@ namespace dtGame
             testXform.GetRotation(testRotation);
             testXform.SetTranslation(testPosition);
 
-            mGroundClamper->OrientTransform( resultXform, testRotation, testPosition, testNormal );
+            mGroundClamper->OrientTransform(resultXform, testRotation, testPosition, testNormal);
 
             // Test the final transformation.
             resultXform.GetRotation(resultRotation);
             resultXform.GetRotation(resultHpr);
             resultXform.GetTranslation(resultPosition);
 
-            CPPUNIT_ASSERT( IsEqual( resultPosition, testPosition ) );
-            CPPUNIT_ASSERT( IsEqual( resultHpr, testHpr ) );
-            CPPUNIT_ASSERT( IsEqual( resultRotation, testRotation ) );
+            CPPUNIT_ASSERT(IsEqual(resultPosition, testPosition));
+            CPPUNIT_ASSERT(IsEqual(resultHpr, testHpr));
+            CPPUNIT_ASSERT(IsEqual(resultRotation, testRotation));
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -502,16 +502,16 @@ namespace dtGame
          {
             // Predict the clamping normal.
             osg::Vec3 points[3];
-            points[0].set(0.0f,10.0f,5.0f);
-            points[1].set(10.0f,0.0f,-5.0f);
-            points[2].set(-10.0f,0.0f,-5.0f);
+            points[0].set(  0.0f,10.0f, 5.0f);
+            points[1].set( 10.0f, 0.0f,-5.0f);
+            points[2].set(-10.0f, 0.0f,-5.0f);
             osg::Vec3 ab = points[0] - points[2];
             osg::Vec3 ac = points[0] - points[1];
             osg::Vec3 testNormal = ab ^ ac;
             testNormal.normalize();
 
             // Prepare the transform position and orientation.
-            osg::Vec3 testPosition(20.0f,-40.0f,10.0f);
+            osg::Vec3 testPosition(20.0f, -40.0f, 10.0f);
             osg::Vec3 resultPosition;
             osg::Vec3 testHpr(0.0f, 45.0f, 0.0f);
             osg::Vec3 resultHpr;
@@ -525,7 +525,7 @@ namespace dtGame
             testXform.GetRotation(testRotation);
             testXform.SetTranslation(testPosition);
 
-            mGroundClamper->OrientTransformToSurfacePoints( resultXform, testRotation, testPosition, points );
+            mGroundClamper->OrientTransformToSurfacePoints(resultXform, testRotation, testPosition, points);
 
             // Test the final transformation.
             resultXform.GetRotation(resultRotation);
@@ -533,10 +533,10 @@ namespace dtGame
             resultXform.GetTranslation(resultPosition);
             osg::Vec3 resultNormal(resultRotation.ptr()[8],resultRotation.ptr()[9],resultRotation.ptr()[10]);
 
-            CPPUNIT_ASSERT( IsEqual( resultPosition, testPosition ) );
-            CPPUNIT_ASSERT( IsEqual( resultNormal, testNormal ) );
-            CPPUNIT_ASSERT( IsEqual( resultHpr, testHpr ) );
-            CPPUNIT_ASSERT( IsEqual( resultRotation, testRotation ) );
+            CPPUNIT_ASSERT(IsEqual(resultPosition, testPosition));
+            CPPUNIT_ASSERT(IsEqual(resultNormal, testNormal));
+            CPPUNIT_ASSERT(IsEqual(resultHpr, testHpr));
+            CPPUNIT_ASSERT(IsEqual(resultRotation, testRotation));
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -550,10 +550,10 @@ namespace dtGame
             // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
             GroundClampingData data;
 
-            CPPUNIT_ASSERT_MESSAGE( "Current Default Ground Clamper implementation should not return any improvised point & normal from GetMissingHit.",
-               ! mGroundClamper->GetMissingHit(*mTestGameActor, data, 3.0f, testPoint, testNormal ) );
-            CPPUNIT_ASSERT( testPoint == resultPoint );
-            CPPUNIT_ASSERT( testNormal == resultNormal );
+            CPPUNIT_ASSERT_MESSAGE("Current Default Ground Clamper implementation should not return any improvised point & normal from GetMissingHit.",
+               !mGroundClamper->GetMissingHit(*mTestGameActor, data, 3.0f, testPoint, testNormal));
+            CPPUNIT_ASSERT(testPoint == resultPoint);
+            CPPUNIT_ASSERT(testNormal == resultNormal);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -565,14 +565,14 @@ namespace dtGame
             osg::Vec3 resultDetectPoints[3];
             GroundClampingData clampData;
 
-            clampData.SetUseModelDimensions( false );
-            CPPUNIT_ASSERT( ! clampData.UseModelDimensions() );
-            clampData.SetUseModelDimensions( true );
-            CPPUNIT_ASSERT( clampData.UseModelDimensions() );
+            clampData.SetUseModelDimensions(false);
+            CPPUNIT_ASSERT(!clampData.UseModelDimensions());
+            clampData.SetUseModelDimensions(true);
+            CPPUNIT_ASSERT(clampData.UseModelDimensions());
 
-            CPPUNIT_ASSERT( clampData.GetModelDimensions() == resultDimensions );
-            clampData.SetModelDimensions( testDimensions );
-            CPPUNIT_ASSERT( clampData.GetModelDimensions() == testDimensions );
+            CPPUNIT_ASSERT(clampData.GetModelDimensions() == resultDimensions);
+            clampData.SetModelDimensions(testDimensions);
+            CPPUNIT_ASSERT(clampData.GetModelDimensions() == testDimensions);
 
             /* The GetActorDetectionPoints method's dimension calculation:
                outPoints[0].set(0.0f, modelDimensions[1] / 2, 0.0f);
@@ -586,8 +586,8 @@ namespace dtGame
 
             // Position and orient the actor.
             dtCore::Transformable* actor = NULL;
-            mTestGameActor->GetActor( actor );
-            CPPUNIT_ASSERT( actor != NULL );
+            mTestGameActor->GetActor(actor);
+            CPPUNIT_ASSERT(actor != NULL);
 
             osg::Vec3 testPosition(-98.7, 6.54f, -12.3f);
             osg::Vec3 testHPR(30.0f, -60.0f, 45.0f);
@@ -601,23 +601,23 @@ namespace dtGame
 
             // Test access to the actor's detection points.
             // --- With model dimensions already set.
-            mGroundClamper->GetActorDetectionPoints( *mTestGameActor, clampData, testDetectPoints );
+            mGroundClamper->GetActorDetectionPoints(*mTestGameActor, clampData, testDetectPoints);
 
             // --- Ensure the set dimensions did not change.
-            CPPUNIT_ASSERT( clampData.GetModelDimensions() == testDimensions );
+            CPPUNIT_ASSERT(clampData.GetModelDimensions() == testDimensions);
 
             // --- Verify the points have been set as expected.
-            CPPUNIT_ASSERT( resultDetectPoints[0] == testDetectPoints[0] );
-            CPPUNIT_ASSERT( resultDetectPoints[1] == testDetectPoints[1] );
-            CPPUNIT_ASSERT( resultDetectPoints[2] == testDetectPoints[2] );
+            CPPUNIT_ASSERT(resultDetectPoints[0] == testDetectPoints[0]);
+            CPPUNIT_ASSERT(resultDetectPoints[1] == testDetectPoints[1]);
+            CPPUNIT_ASSERT(resultDetectPoints[2] == testDetectPoints[2]);
 
             // --- Ensure the actor position and orientation
             //     have not been modified unexpectedly.
             actor->GetTransform(xform);
             xform.GetTranslation(testPosition);
             xform.GetRotation(testHPR);
-            CPPUNIT_ASSERT( resultPosition == testPosition );
-            CPPUNIT_ASSERT( IsEqual(resultHPR, testHPR) );
+            CPPUNIT_ASSERT(resultPosition == testPosition);
+            CPPUNIT_ASSERT(IsEqual(resultHPR, testHPR));
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -641,14 +641,14 @@ namespace dtGame
             resultPoints[2].set(testPoints[2]);
 
             // Determine the terrain heights at various points.
-            resultPoints[0].z() = terrain->GetHeight( testPoints[0].x(), testPoints[0].y() );
-            resultPoints[1].z() = terrain->GetHeight( testPoints[1].x(), testPoints[1].y() );
-            resultPoints[2].z() = terrain->GetHeight( testPoints[2].x(), testPoints[2].y() );
+            resultPoints[0].z() = terrain->GetHeight(testPoints[0].x(), testPoints[0].y());
+            resultPoints[1].z() = terrain->GetHeight(testPoints[1].x(), testPoints[1].y());
+            resultPoints[2].z() = terrain->GetHeight(testPoints[2].x(), testPoints[2].y());
 
             // Ensure terrain height variation.
-            CPPUNIT_ASSERT( resultPoints[0].z() != resultPoints[1].z() );
-            CPPUNIT_ASSERT( resultPoints[1].z() != resultPoints[2].z() );
-            CPPUNIT_ASSERT( resultPoints[2].z() != resultPoints[0].z() );
+            CPPUNIT_ASSERT(resultPoints[0].z() != resultPoints[1].z());
+            CPPUNIT_ASSERT(resultPoints[1].z() != resultPoints[2].z());
+            CPPUNIT_ASSERT(resultPoints[2].z() != resultPoints[0].z());
 
             // Declare a Ground Clamp Data to satisfy the GetClosestHit method.
             GroundClampingData data;
@@ -657,9 +657,9 @@ namespace dtGame
             dtCore::Transform xform; // Satisfy the method parameters.
             mGroundClamper->GetSurfacePoints(*mTestGameActor, data, xform, testPoints);
             // --- Verify the resulting points.
-            CPPUNIT_ASSERT( IsEqual(resultPoints[0], testPoints[0]) );
-            CPPUNIT_ASSERT( IsEqual(resultPoints[1], testPoints[1]) );
-            CPPUNIT_ASSERT( IsEqual(resultPoints[2], testPoints[2]) );
+            CPPUNIT_ASSERT(IsEqual(resultPoints[0], testPoints[0]));
+            CPPUNIT_ASSERT(IsEqual(resultPoints[1], testPoints[1]));
+            CPPUNIT_ASSERT(IsEqual(resultPoints[2], testPoints[2]));
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -681,14 +681,14 @@ namespace dtGame
 
             // Verify that the test sub-class of Default Ground Clamper has no
             // point offset value before performing the Finalize Surface Point tests.
-            CPPUNIT_ASSERT( mGroundClamper->GetPointOffset() == 0.0f );
+            CPPUNIT_ASSERT(mGroundClamper->GetPointOffset() == 0.0f);
 
             // Test the default implementation. Nothing should happen.
             mGroundClamper->FinalizeSurfacePoints(
                *mTestGameActor, clampData, testSurfacePoints);
-            CPPUNIT_ASSERT( resultSurfacePoints[0] == testSurfacePoints[0] );
-            CPPUNIT_ASSERT( resultSurfacePoints[1] == testSurfacePoints[1] );
-            CPPUNIT_ASSERT( resultSurfacePoints[2] == testSurfacePoints[2] );
+            CPPUNIT_ASSERT(resultSurfacePoints[0] == testSurfacePoints[0]);
+            CPPUNIT_ASSERT(resultSurfacePoints[1] == testSurfacePoints[1]);
+            CPPUNIT_ASSERT(resultSurfacePoints[2] == testSurfacePoints[2]);
 
             // Test testing sub-class implementation. Offset should be applied.
             resultSurfacePoints[0].z() += testOffset;
@@ -699,9 +699,9 @@ namespace dtGame
             mGroundClamper->FinalizeSurfacePoints(
                *mTestGameActor, clampData, testSurfacePoints);
 
-            CPPUNIT_ASSERT( resultSurfacePoints[0] == testSurfacePoints[0] );
-            CPPUNIT_ASSERT( resultSurfacePoints[1] == testSurfacePoints[1] );
-            CPPUNIT_ASSERT( resultSurfacePoints[2] == testSurfacePoints[2] );
+            CPPUNIT_ASSERT(resultSurfacePoints[0] == testSurfacePoints[0]);
+            CPPUNIT_ASSERT(resultSurfacePoints[1] == testSurfacePoints[1]);
+            CPPUNIT_ASSERT(resultSurfacePoints[2] == testSurfacePoints[2]);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -715,8 +715,8 @@ namespace dtGame
 
             // Create Ground Clamping Data to work with.
             GroundClampingData clampData;
-            CPPUNIT_ASSERT_MESSAGE( "Ground Clamping Data should not have user data by default",
-               clampData.GetUserData() == NULL );
+            CPPUNIT_ASSERT_MESSAGE("Ground Clamping Data should not have user data by default",
+               clampData.GetUserData() == NULL);
             // --- Setup the data.
             osg::Vec3 modelDimensions(3.0f, 4.0f, 5.0f);
             clampData.SetModelDimensions(modelDimensions);
@@ -727,9 +727,9 @@ namespace dtGame
             // calling method ClampToGround.
             DefaultGroundClamper::RuntimeData* runtimeData
                = &mGroundClamper->GetOrCreateRuntimeData(clampData);
-            CPPUNIT_ASSERT_MESSAGE( "Ground Clamping Data should have new runtime user data assigned to it.",
-               clampData.GetUserData() != NULL );
-            CPPUNIT_ASSERT( runtimeData != NULL );
+            CPPUNIT_ASSERT_MESSAGE("Ground Clamping Data should have new runtime user data assigned to it.",
+               clampData.GetUserData() != NULL);
+            CPPUNIT_ASSERT(runtimeData != NULL);
 
             // Position the actor.
             osg::Vec3 positionA(34.21f, -65.78f, 0.0f);
@@ -742,10 +742,10 @@ namespace dtGame
             actor->GetTransform(xform);
 
             // Track the clamping difference.
-            float terrainHeight = 0.0f;
+            float terrainHeight   = 0.0f;
             float clampDifference = 0.0f;
-            float errorTolerance = 0.0001f;
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedOffset() == 0.0f );
+            float errorTolerance  = 0.0001f;
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedOffset() == 0.0f);
 
             // check clamping at 2 points.
             // --- Test at point A.
@@ -757,8 +757,8 @@ namespace dtGame
 
             // --- Check the clamping difference.
             clampDifference = (resultPositionA - positionA).z();
-            CPPUNIT_ASSERT( clampDifference != 0.0f );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( clampDifference, runtimeData->GetLastClampedOffset(), errorTolerance );
+            CPPUNIT_ASSERT(clampDifference != 0.0f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(clampDifference, runtimeData->GetLastClampedOffset(), errorTolerance);
 
             // --- Test at point B.
             xform.SetTranslation(positionB);
@@ -769,8 +769,8 @@ namespace dtGame
 
             // --- Check the clamping difference.
             clampDifference = (resultPositionB - positionB).z();
-            CPPUNIT_ASSERT( clampDifference != 0.0f );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( clampDifference, runtimeData->GetLastClampedOffset(), errorTolerance );
+            CPPUNIT_ASSERT(clampDifference != 0.0f);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(clampDifference, runtimeData->GetLastClampedOffset(), errorTolerance);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -778,7 +778,7 @@ namespace dtGame
          {
             // Create time variables.
             float clampTimeStep = 0.5f;
-            float currentTime = 0.0f;
+            float currentTime   = 0.0f;
             mGroundClamper->SetIntermittentGroundClampingTimeDelta(clampTimeStep);
 
             // Create more than one test actor.
@@ -786,8 +786,8 @@ namespace dtGame
             dtCore::RefPtr<GameActorProxy> proxy2;
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy1);
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy2);
-            CPPUNIT_ASSERT( proxy1.valid() );
-            CPPUNIT_ASSERT( proxy2.valid() );
+            CPPUNIT_ASSERT(proxy1.valid());
+            CPPUNIT_ASSERT(proxy2.valid());
             // --- Get the newly created actors.
             dtCore::Transformable* actor1 = NULL;
             dtCore::Transformable* actor2 = NULL;
@@ -812,7 +812,7 @@ namespace dtGame
             resultPos1.z() = terrain->GetHeight(resultPos1.x(), resultPos1.y(), true);
             resultPos2.z() = terrain->GetHeight(resultPos2.x(), resultPos2.y(), true);
             // --- Ensure variable heights.
-            CPPUNIT_ASSERT( resultPos1.z() != resultPos2.z() );
+            CPPUNIT_ASSERT(resultPos1.z() != resultPos2.z());
 
             // Set actor positions.
             xform1.SetTranslation(pos1);
@@ -842,12 +842,12 @@ namespace dtGame
             actor2->GetTransform(xform2);
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
-            CPPUNIT_ASSERT( pos1.z() == 0.0f );
-            CPPUNIT_ASSERT( pos2.z() == 0.0f );
+            CPPUNIT_ASSERT(pos1.z() == 0.0f);
+            CPPUNIT_ASSERT(pos2.z() == 0.0f);
             // --- Ensure nothing is in the batch.
-            CPPUNIT_ASSERT( mGroundClamper->GetClampBatchSize() == 0 );
-            CPPUNIT_ASSERT( runtimeData1->GetLastClampedTime() == 0.0f );
-            CPPUNIT_ASSERT( runtimeData2->GetLastClampedTime() == 0.0f );
+            CPPUNIT_ASSERT(mGroundClamper->GetClampBatchSize() == 0);
+            CPPUNIT_ASSERT(runtimeData1->GetLastClampedTime() == 0.0f);
+            CPPUNIT_ASSERT(runtimeData2->GetLastClampedTime() == 0.0f);
 
             // Trigger batch insertion by a time change.
             currentTime += clampTimeStep;
@@ -861,15 +861,15 @@ namespace dtGame
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
             // NOTE: The clamping should not have triggered yet.
-            CPPUNIT_ASSERT( pos1.z() == 0.0f );
-            CPPUNIT_ASSERT( pos2.z() == 0.0f );
+            CPPUNIT_ASSERT(pos1.z() == 0.0f);
+            CPPUNIT_ASSERT(pos2.z() == 0.0f);
             // --- Ensure both actors have been added to the batch.
-            CPPUNIT_ASSERT( mGroundClamper->GetClampBatchSize() == 2 );
+            CPPUNIT_ASSERT(mGroundClamper->GetClampBatchSize() == 2);
             // NOTE: Makes sure modifications to time variables in this test do
             // not cause a bad time value comparison.
-            CPPUNIT_ASSERT( currentTime != 0.0f );
-            CPPUNIT_ASSERT( runtimeData1->GetLastClampedTime() == currentTime );
-            CPPUNIT_ASSERT( runtimeData2->GetLastClampedTime() == currentTime );
+            CPPUNIT_ASSERT(currentTime != 0.0f);
+            CPPUNIT_ASSERT(runtimeData1->GetLastClampedTime() == currentTime);
+            CPPUNIT_ASSERT(runtimeData2->GetLastClampedTime() == currentTime);
 
             // Test batch clamping via a call to FinishUp, which subsequently
             // calls RunClampBatch. This method may be called from other components,
@@ -877,17 +877,17 @@ namespace dtGame
             mGroundClamper->FinishUp();
             // --- The batch should have been cleared after performing the whole
             //     clamp batch operation.
-            CPPUNIT_ASSERT( mGroundClamper->GetClampBatchSize() == 0 );
+            CPPUNIT_ASSERT(mGroundClamper->GetClampBatchSize() == 0);
             // --- Get the actor positions.
             actor1->GetTransform(xform1);
             actor2->GetTransform(xform2);
             xform1.GetTranslation(pos1);
             xform2.GetTranslation(pos2);
-            CPPUNIT_ASSERT( pos1.z() != 0.0f );
-            CPPUNIT_ASSERT( pos2.z() != 0.0f );
+            CPPUNIT_ASSERT(pos1.z() != 0.0f);
+            CPPUNIT_ASSERT(pos2.z() != 0.0f);
             float errorTolerance = 0.1f;
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos1.z(), pos1.z(), errorTolerance );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos2.z(), pos2.z(), errorTolerance );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos1.z(), pos1.z(), errorTolerance);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos2.z(), pos2.z(), errorTolerance);
          }
 
          ///////////////////////////////////////////////////////////////////////
@@ -900,7 +900,7 @@ namespace dtGame
             dtCore::Transform xform;
             dtCore::RefPtr<GameActorProxy> proxy;
             mGM->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxy);
-            CPPUNIT_ASSERT( proxy.valid() );
+            CPPUNIT_ASSERT(proxy.valid());
             // --- Get the newly created actors.
             dtCore::Transformable* actor = NULL;
             proxy->GetActor(actor);
@@ -912,7 +912,7 @@ namespace dtGame
             mGroundClamper->SetTerrainActor(terrain);
 
             // Get the terrain height
-            osg::Vec3 pos( 12.34f, -54.76f, 10.9f );
+            osg::Vec3 pos(12.34f, -54.76f, 10.9f);
             osg::Vec3 resultPos(pos);
             resultPos.z() = terrain->GetHeight(pos.x(), pos.y(), true);
 
@@ -921,12 +921,12 @@ namespace dtGame
             actor->SetTransform(xform);
             actor->GetTransform(xform);
             xform.GetTranslation(pos);
-            CPPUNIT_ASSERT( pos != resultPos );
+            CPPUNIT_ASSERT(pos != resultPos);
 
             // Clamp the actor, with transform flagged as changed for the first time.
             osg::Vec3 clampPos;
             osg::Matrix clampRotation;
-            CPPUNIT_ASSERT( runtimeData->GetLastClampedRotation() == clampRotation );
+            CPPUNIT_ASSERT(runtimeData->GetLastClampedRotation() == clampRotation);
             double curTime = 5.0;
             dtGame::GroundClampingData data;
             dtGame::BaseGroundClamper::GroundClampingType* clampType
@@ -934,8 +934,8 @@ namespace dtGame
             data.SetUserData(runtimeData.get());
             data.SetAdjustRotationToGround(true);
 
-            mGroundClamper->ClampToGround( *clampType, curTime,
-               xform, *proxy, data, true );
+            mGroundClamper->ClampToGround(*clampType, curTime,
+               xform, *proxy, data, true);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped.
@@ -944,51 +944,51 @@ namespace dtGame
             actor->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.x(), pos.x(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.y(), pos.y(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.z(), pos.z(), errorThreshold );
-            CPPUNIT_ASSERT( CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold) );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.y(), pos.y(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.z(), pos.z(), errorThreshold);
+            CPPUNIT_ASSERT(CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold));
             osg::Matrix lastClampRotation(rotation);
 
             // Clamp again without the transform flagged as changed.
-            rotation.makeRotate( 30.0f, osg::Vec3(0.0f,0.0f,1.0f));
+            rotation.makeRotate(30.0f, osg::Vec3(0.0f,0.0f,1.0f));
             xform.SetRotation(rotation);
             actor->SetTransform(xform);
             osg::Matrix forcedRotation(rotation);
             curTime += 5.0;
-            mGroundClamper->ClampToGround( *clampType, curTime,
-               xform, *proxy, data, false );
+            mGroundClamper->ClampToGround(*clampType, curTime,
+               xform, *proxy, data, false);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped, but the transform unchanged.
             actor->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.x(), pos.x(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.y(), pos.y(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.z(), pos.z(), errorThreshold );
-            CPPUNIT_ASSERT( ! CompareMatrices(runtimeData->GetLastClampedRotation(), forcedRotation, errorThreshold) );
-            CPPUNIT_ASSERT( CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold) );
-            CPPUNIT_ASSERT( CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold) );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.y(), pos.y(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.z(), pos.z(), errorThreshold);
+            CPPUNIT_ASSERT(!CompareMatrices(runtimeData->GetLastClampedRotation(), forcedRotation, errorThreshold));
+            CPPUNIT_ASSERT(CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold));
+            CPPUNIT_ASSERT(CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold));
             lastClampRotation.set(rotation);
 
             // Clamp again with the transform flagged as changed, to ensure the clamper is not broken.
             curTime += 5.0;
             xform.SetRotation(forcedRotation);
             actor->SetTransform(xform);
-            mGroundClamper->ClampToGround( *clampType, curTime,
-               xform, *proxy, data, true );
+            mGroundClamper->ClampToGround(*clampType, curTime,
+               xform, *proxy, data, true);
             mGroundClamper->FinishUp();
 
             // Verify that the actor is now clamped, with the transform changed to the forced rotation.
             actor->GetTransform(xform);
             xform.GetTranslation(pos);
             xform.GetRotation(rotation);
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.x(), pos.x(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.y(), pos.y(), errorThreshold );
-            CPPUNIT_ASSERT_DOUBLES_EQUAL( resultPos.z(), pos.z(), errorThreshold );
-            CPPUNIT_ASSERT( ! CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold) );
-            CPPUNIT_ASSERT( CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold) );
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.x(), pos.x(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.y(), pos.y(), errorThreshold);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(resultPos.z(), pos.z(), errorThreshold);
+            CPPUNIT_ASSERT(!CompareMatrices(runtimeData->GetLastClampedRotation(), lastClampRotation, errorThreshold));
+            CPPUNIT_ASSERT(CompareMatrices(runtimeData->GetLastClampedRotation(), rotation, errorThreshold));
          }
 
       private:
