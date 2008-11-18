@@ -217,6 +217,30 @@ namespace dtCore
       */
       void SetAutoDisableAngularThreshold(float threshold);
 
+      /**
+      * Returns the linear motion damping value used for this body
+      * @return The current linear damping value
+      */
+      float GetLinearDamping() const;
+
+      /**
+      * Sets the linear motion damping value used for this body
+      * @param scale The linear damping value to use
+      */
+      void SetLinearDamping(float scale);
+
+      /**
+      * Returns the angular motion damping value used for this body
+      * @return The current angular damping value
+      */
+      float GetAngularDamping() const;
+
+      /**
+      * Sets the angular motion damping value used for this body
+      * @param scale The angular damping value to use
+      */
+      void SetAngularDamping(float scale);
+
    protected:
       virtual ~ODEBodyWrap();
 
