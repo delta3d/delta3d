@@ -60,7 +60,7 @@ namespace dtCore
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
 
-      // Loop through our active nodes and clear currently preassigned shaders. 
+      // Loop through our active nodes and clear currently preassigned shaders.
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {
          if (mActiveNodeList[i].nodeWeakReference.valid())
@@ -105,7 +105,7 @@ namespace dtCore
             if (mActiveNodeList[i].shaderInstance->IsDirty())
                mActiveNodeList[i].shaderInstance->Update();
          }
-         else 
+         else
          {
             // If the weak reference is NULL, then remove the item from our active list.
             mActiveNodeList.erase(mActiveNodeList.begin() + i);
@@ -121,8 +121,8 @@ namespace dtCore
 
       //Do not allow shader groups with the same name...
       if (itor != mShaderGroups.end())
-         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADERGROUP_FOUND, 
-         "Shader groups must have unique names.  The conflicting name is \"" + 
+         throw dtUtil::Exception(ShaderException::DUPLICATE_SHADERGROUP_FOUND,
+         "Shader groups must have unique names.  The conflicting name is \"" +
          shaderGroup.GetName() + "\".", __FILE__, __LINE__);
 
       //Before we insert the group, we need to check our program cache and update it
@@ -242,7 +242,7 @@ namespace dtCore
       // Try to find the node in the active node list.
       for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
       {
-         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+         if (mActiveNodeList[i].nodeWeakReference.valid() &&
             mActiveNodeList[i].nodeWeakReference.get() == node)
          {
             return mActiveNodeList[i].shaderInstance.get();
@@ -259,7 +259,7 @@ namespace dtCore
       // find any instances of weak references to this node and remove it from the active list.
       for (int i = mActiveNodeList.size() - 1; i >= 0 && node != NULL; i--)
       {
-         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+         if (mActiveNodeList[i].nodeWeakReference.valid() &&
             mActiveNodeList[i].nodeWeakReference.get() == node)
          {
             mActiveNodeList.erase(mActiveNodeList.begin() + i);
@@ -278,7 +278,7 @@ namespace dtCore
       // find any instances of weak references to this node and remove it from the active list.
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {
-         if (mActiveNodeList[i].nodeWeakReference.valid() && 
+         if (mActiveNodeList[i].nodeWeakReference.valid() &&
             mActiveNodeList[i].nodeWeakReference.get() == &node)
          {
             // clean up the parameters effects to the stateset
@@ -291,7 +291,7 @@ namespace dtCore
          }
       }
 
-      // Remove all references to this node.  Call the method for safety to eliminate any possible 
+      // Remove all references to this node.  Call the method for safety to eliminate any possible
       // chance that there is more than one (not sure how that could happen). .
       RemoveShaderFromActiveNodeList(&node);
    }
@@ -300,11 +300,11 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::ShaderProgram *ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram &templateShader, osg::Node &node)
    {
-      // If this node is already assigned to a shader, remove it from our active list. 
+      // If this node is already assigned to a shader, remove it from our active list.
       RemoveShaderFromActiveNodeList(&node);
 
       // create a duplicate of the shader prototype.  The group and shaders that you use to find
-      // are simply prototypes that we use to create unique instances for each node. 
+      // are simply prototypes that we use to create unique instances for each node.
       dtCore::RefPtr<dtCore::ShaderProgram> newShader = templateShader.Clone();
 
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
@@ -344,7 +344,7 @@ namespace dtCore
    {
       //Shader cache entries are keyed by a combination of the source to the
       //vertex shader and the source to the fragment shader.
-      
+
       std::string cacheKey = shader.GetVertexCacheKey() + ":" + shader.GetFragmentCacheKey();
 
       std::map<std::string,ShaderCacheEntry>::iterator itor =
@@ -374,12 +374,13 @@ namespace dtCore
          // Load and set the vertex shader - note, this is not required
          //path = dtCore::FindFileInPathList(shader.GetVertexShaders());
          path = dtCore::FindFileInPathList(*vertexShaderIterator);
-         if (!path.empty()) 
+         if (!path.empty())
          {
             vertexShader = new osg::Shader(osg::Shader::VERTEX);
             if (!vertexShader->loadShaderSourceFromFile(path))
                throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading vertex shader file: " +
                   *vertexShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+            vertexShader->setName(*vertexShaderIterator);
             program->addShader(vertexShader.get());
          }
          vertexShaderIterator++;
@@ -392,17 +393,19 @@ namespace dtCore
          // Load and set the fragment shader - note, this is not required
          //path = dtCore::FindFileInPathList(shader.GetFragmentShaders());
          path = dtCore::FindFileInPathList(*fragmentShaderIterator);
-         if (!path.empty()) 
+         if (!path.empty())
          {
             fragmentShader = new osg::Shader(osg::Shader::FRAGMENT);
             if (!fragmentShader->loadShaderSourceFromFile(path))
                throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading fragment shader file: " +
                   *fragmentShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+            fragmentShader->setName(*fragmentShaderIterator);
             program->addShader(fragmentShader.get());
          }
          fragmentShaderIterator++;
       }
 
+      program->setName(shader.GetName());
       shader.SetGLSLProgram(*program);
 
       //Put a new entry in the cache...
@@ -421,7 +424,7 @@ namespace dtCore
       std::vector<ActiveNodeEntry> mCopiedNodeList;
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator groupItor;
 
-      // Loop through our active nodes and make a copy of each one. 
+      // Loop through our active nodes and make a copy of each one.
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
       {
          ActiveNodeEntry activeNode;
@@ -436,8 +439,8 @@ namespace dtCore
       // Reload our file
       LoadShaderDefinitions(fileName, false);
 
-      // Now, the tricky part. Loop through all our previous nodes and try to 
-      // find a match to the new shader. If we find one, reassign it. 
+      // Now, the tricky part. Loop through all our previous nodes and try to
+      // find a match to the new shader. If we find one, reassign it.
       for (int i = mCopiedNodeList.size() - 1; i >= 0; i--)
       {
          bool bFoundMatch = false;
@@ -470,8 +473,8 @@ namespace dtCore
          }
          else
          {
-            LOG_ERROR("Error reloading shader[" + mCopiedNodeList[i].shaderInstance->GetName() + 
-               "]. No exact match was found in the cache for the full key[" + oldCacheKey + 
+            LOG_ERROR("Error reloading shader[" + mCopiedNodeList[i].shaderInstance->GetName() +
+               "]. No exact match was found in the cache for the full key[" + oldCacheKey +
                "]. Cannot reapply shader so this node will have no shader!");
          }
       }
@@ -491,12 +494,12 @@ namespace dtCore
          LOG_WARNING("Could not find shader definitions file: " + fileName);
          return;
       }
-      
+
       LOG_INFO("Loading Shader Definitions file: " + fileName);
 
       if (!merge)
          Clear();
-      
+
       try
       {
          parser.ParseXML(path);

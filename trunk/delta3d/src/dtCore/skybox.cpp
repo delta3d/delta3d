@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Bradley Anderegg
  */
@@ -84,7 +84,7 @@ void SkyBox::Config()
       }
    }
 
-   mRenderProfile->Config(GetOSGNode()->asGroup());    
+   mRenderProfile->Config(GetOSGNode()->asGroup());
 }
 
 
@@ -98,13 +98,13 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
          {
             if(mSupportedProfiles[RP_CUBE_MAP])
             {
-               mRenderProfile = new SkyBox::CubeMapProfile();   
+               mRenderProfile = new SkyBox::CubeMapProfile();
                return;
             }
             else
             {
-               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-                  "The SkyBox RenderProfile selected is not available for your hardware" );   
+               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__,
+                  "The SkyBox RenderProfile selected is not available for your hardware" );
             }
          }
 
@@ -112,13 +112,13 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
          {
             if(mSupportedProfiles[RP_ANGULAR_MAP])
             {
-               mRenderProfile = new SkyBox::AngularMapProfile();   
+               mRenderProfile = new SkyBox::AngularMapProfile();
                return;
             }
             else
             {
-               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
-                  "The SkyBox RenderProfile selected is not available for your hardware" );   
+               Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__,
+                  "The SkyBox RenderProfile selected is not available for your hardware" );
             }
          }
 
@@ -126,20 +126,20 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
          {
             if(mSupportedProfiles[RP_CUBE_MAP])
             {
-               mRenderProfile = new SkyBox::CubeMapProfile();   
+               mRenderProfile = new SkyBox::CubeMapProfile();
                return;
             }
             else
             {
-               mRenderProfile = new SkyBox::FixedFunctionProfile();   
+               mRenderProfile = new SkyBox::FixedFunctionProfile();
             }
 
-         } 
+         }
 
       default:
          {
-            mRenderProfile = new SkyBox::FixedFunctionProfile();   
-            return;   
+            mRenderProfile = new SkyBox::FixedFunctionProfile();
+            return;
          }
    }
 
@@ -151,7 +151,7 @@ void SkyBox::CheckHardware()
 
    //this should always be supported
    mSupportedProfiles[RP_FIXED_FUNCTION] = true;
-   
+
    if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") && osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
    {
       mSupportedProfiles[RP_CUBE_MAP] = true;
@@ -160,7 +160,7 @@ void SkyBox::CheckHardware()
    {
       mSupportedProfiles[RP_CUBE_MAP] = false;
    }
-   
+
    if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
    {
         mSupportedProfiles[RP_ANGULAR_MAP] = true;
@@ -187,9 +187,9 @@ void SkyBox::SetTexture(SkyBoxSideEnum side, const std::string& filename)
    }
 }
 
-void SkyBox::Repaint(   const osg::Vec3& skyColor, 
+void SkyBox::Repaint(   const osg::Vec3& skyColor,
                         const osg::Vec3& fogColor,
-                        double sunAngle, 
+                        double sunAngle,
                         double sunAzimuth,
                         double visibility )
 {
@@ -203,7 +203,7 @@ void SkyBox::Repaint(   const osg::Vec3& skyColor,
 SkyBox::AngularMapProfile::AngularMapProfile()
 {
    mGeode = new osg::Geode();
-   mAngularMap = new osg::Texture2D();   
+   mAngularMap = new osg::Texture2D();
    mGeode->addDrawable(new SkyBox::SkyBoxDrawable());
 }
 
@@ -214,7 +214,7 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 
    osg::Depth* depth = new osg::Depth;
    depth->setFunction(osg::Depth::ALWAYS);
-   depth->setRange(1.0,1.0);   
+   depth->setRange(1.0,1.0);
    ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
 
@@ -260,7 +260,7 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
    {
       LOG_ERROR("Can not find the SkyBox shader file: AngularMapSkyBox.vert");
    }
-    
+
    if (fragFile.empty())
    {
       LOG_ERROR("Can not find the SkyBox shader file: AngularMapSkyBox.frag");
@@ -269,6 +269,8 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
    vertShader->loadShaderSourceFromFile(vertFile);
    fragShader->loadShaderSourceFromFile(fragFile);
 
+   vertShader->setName("SkyBox angular map vertex shader");
+   fragShader->setName("SkyBox angular map fragment shader");
 
    mProgram->addShader(vertShader.get());
    mProgram->addShader(fragShader.get());
@@ -282,7 +284,7 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 
    ss->setAttributeAndModes(mProgram.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED);
 
-   mGeode->setCullCallback(new AngularMapProfile::UpdateViewCallback(this));   
+   mGeode->setCullCallback(new AngularMapProfile::UpdateViewCallback(this));
 
 }
 
@@ -292,7 +294,7 @@ void SkyBox::AngularMapProfile::SetTexture(SkyBoxSideEnum side, const std::strin
    osg::Image *newImage = osgDB::readImageFile(filename);
    if (newImage == 0)
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__,
          "Can't load texture file '%s'.",filename.c_str() );
    }
    mAngularMap->setImage(newImage);
@@ -323,23 +325,23 @@ SkyBox::CubeMapProfile::CubeMapProfile()
 
 
 void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
-{   
+{
 
    mCubeMap->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
    mCubeMap->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
    mCubeMap->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
    mCubeMap->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
-   mCubeMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);   
+   mCubeMap->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
    mCubeMap->setUnRefImageDataAfterApply(true);
 
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
 
-   ss->setTextureAttributeAndModes(0, mCubeMap.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON); 
+   ss->setTextureAttributeAndModes(0, mCubeMap.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
 
    osg::Depth* depth = new osg::Depth;
    depth->setFunction(osg::Depth::ALWAYS);
-   depth->setRange(1.0,1.0);   
+   depth->setRange(1.0,1.0);
    ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
 
 
@@ -368,6 +370,9 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
    mProgram = new osg::Program;
    dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
    dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+
+   vertShader->setName("SkyBox cube map vertex shader");
+   fragShader->setName("SkyBox cube map fragment shader");
 
    mProgram->addShader(vertShader.get());
    mProgram->addShader(fragShader.get());
@@ -407,7 +412,7 @@ void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& 
    osg::Image *newImage = osgDB::readImageFile(filename);
    if (newImage == 0)
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__,
          "Can't load texture file '%s'.",filename.c_str() );
    }
 
@@ -450,7 +455,7 @@ void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& 
          {
             break;
          }
-   
+
    }
 
    mCubeMap->setImage(newSide, newImage);
@@ -461,9 +466,9 @@ void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& 
 void SkyBox::CubeMapProfile::UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat)
 {
 
-   osg::Matrix proj = projMat;       
+   osg::Matrix proj = projMat;
 
-   proj.invert(proj);     
+   proj.invert(proj);
 
    //these should be opposite but aren't always
    //do to precision issues
@@ -486,7 +491,7 @@ SkyBox::FixedFunctionProfile::FixedFunctionProfile()
 }
 
 
-/** Private method that actually creates the SkyBox geometry.  It is assumed 
+/** Private method that actually creates the SkyBox geometry.  It is assumed
  *  that the textures have already been assigned.
  */
 void dtCore::SkyBox::FixedFunctionProfile::Config(osg::Group* pNode)
@@ -501,13 +506,13 @@ void dtCore::SkyBox::FixedFunctionProfile::Config(osg::Group* pNode)
    clearNode->setRequiresClear(false); //Sky eliminates need for clearing
    clearNode->addChild(mXform.get());
    pNode->addChild(clearNode);
- 
+
 }
 
 /** Make the box and load the textures */
 osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
 {
-   
+
    float mX = 100.0f;
    float mY = 100.0f;
    float mZ = 100.0f;
@@ -596,13 +601,13 @@ osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
       // clear the depth to the far plane.
       osg::Depth* depth = new osg::Depth;
       depth->setFunction(osg::Depth::ALWAYS);
-      depth->setRange(1.0,1.0);   
+      depth->setRange(1.0,1.0);
       dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
       dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
       dstate->setMode(GL_LIGHTING,osg::StateAttribute::PROTECTED |
          osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
       dstate->setRenderBinDetails(-2,"RenderBin");
-      
+
       mTextureList[side]->setUnRefImageDataAfterApply(true);
       mTextureList[side]->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
       mTextureList[side]->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
@@ -626,7 +631,7 @@ void dtCore::SkyBox::FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum sid
    osg::Image *newImage = osgDB::readImageFile(filename);
    if (newImage == 0)
    {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__,
          "Can't load texture file '%s'.",filename.c_str() );
    }
 
