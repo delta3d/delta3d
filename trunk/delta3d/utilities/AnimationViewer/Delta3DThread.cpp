@@ -124,6 +124,10 @@ void Delta3DThread::run()
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mBoneBasisAction, SIGNAL(toggled(bool)), mViewer.get(), SLOT(OnSetBoneBasisDisplay(bool)));
 
+   connect(mViewer.get(), SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), mWin, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
+   connect(mWin, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer.get(), SLOT(OnMorphChanged(int,int,int,float)));
+
+
    dtCore::System::GetInstance().Start();
    mTimer.start(10);
 

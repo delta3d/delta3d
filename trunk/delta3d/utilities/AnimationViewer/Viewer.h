@@ -70,11 +70,15 @@ public slots:
    /// Hide the mesh on CalModel from view
    void OnHideMesh(int meshID);
 
+   void OnMorphChanged(int meshID, int subMeshID, int morphID, float weight);
+
 signals:
    void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
 
    void MeshLoaded(int meshID, const QString& meshName);
+
+   void SubMorphTargetLoaded(int meshID, int subMeshID, int morphID, const QString& morphName);
 
    void PoseMeshLoaded(const dtAnim::PoseMesh& poseMesh);
 

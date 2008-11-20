@@ -82,6 +82,19 @@ MainWindow::MainWindow()
       mMaterialModel->setHorizontalHeaderLabels(headers);
    }
 
+
+   mSubMorphTargetListWidget = new QTableWidget(this);
+   mSubMorphTargetListWidget->setColumnCount(4);
+   mSubMorphTargetListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+   {
+      QStringList headers;
+      headers << "MeshID" << "SubMeshID" << "MorphName" << "Weight";
+      mSubMorphTargetListWidget->setHorizontalHeaderLabels(headers);
+   }
+
+   connect(mSubMorphTargetListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnSubMorphChanged(QTableWidgetItem*)));
+
+
    CreateActions();
    CreateMenus();
    statusBar();
@@ -91,6 +104,7 @@ MainWindow::MainWindow()
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
    mTabs->addTab(mMaterialView, tr("Materials"));
+   mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
 
    QWidget* glParent = new QWidget(this);
 
@@ -299,6 +313,11 @@ void MainWindow::LoadCharFile(const QString& filename)
          mAnimListWidget->removeRow(0);
       }
 
+      while (mSubMorphTargetListWidget->rowCount()>0)
+      {
+         mSubMorphTargetListWidget->removeRow(0);
+      }
+
       while (mMaterialModel->rowCount() > 0)
       {
          mMaterialModel->removeRow(0);
@@ -391,6 +410,44 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName)
    meshItem->setCheckState(Qt::Checked);
 
    mMeshListWidget->addItem(meshItem);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnNewSubMorphTarget(int meshID, int subMeshID,
+                                     int morphID, const QString& morphName)
+{
+   mSubMorphTargetListWidget->insertRow(mSubMorphTargetListWidget->rowCount());
+   { //meshID
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(meshID));
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 0, item);
+   }
+
+   { //submeshid
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(subMeshID));
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 1, item);
+   }
+
+   { //name
+      QTableWidgetItem* item = new QTableWidgetItem(morphName);
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 2, item);
+   }
+
+   { //weight
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem( morphID, 3, item );
+   }
+
+   mSubMorphTargetListWidget->resizeColumnToContents(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -973,4 +1030,19 @@ void MainWindow::OnConfiged()
    //theoretically, everything is in place, the window is rendering, openGL 
    //context is valid, etc.
    mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSubMorphChanged(QTableWidgetItem* item)
+{
+   if (item->column() == 3) //the "weight" column
+   {
+      const float weight = item->text().toFloat();
+      const int morphID = item->row();
+
+      const int meshID = mSubMorphTargetListWidget->item(item->row(), 0)->text().toInt();
+      const int subMeshID = mSubMorphTargetListWidget->item(item->row(), 1)->text().toInt();
+
+      emit SubMorphTargetChanged(meshID, subMeshID, morphID, weight);
+   }
 }
