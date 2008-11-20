@@ -48,6 +48,9 @@
 #include <osgViewer/CompositeViewer>
 
 #include <cal3d/animation.h>
+#include <cal3d/coresubmorphtarget.h>
+#include <cal3d/mesh.h>
+#include <cal3d/submesh.h>
 
 #include <dtAnim/hotspotdriver.h>
 #include <dtCore/hotspotattachment.h>
@@ -215,6 +218,17 @@ void Viewer::OnLoadCharFile(const QString& filename)
    {
       QString nameToSend = QString::fromStdString(wrapper->GetCoreMeshName(meshID));
       emit MeshLoaded(meshID, nameToSend);
+
+      const std::vector<CalCoreSubmesh *> subMeshVec = wrapper->GetCalModel()->getCoreModel()->getCoreMesh(meshID)->getVectorCoreSubmesh();
+      for (size_t subMeshID = 0; subMeshID < subMeshVec.size(); ++subMeshID)
+      {
+         const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
+         for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
+         {
+            QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+            emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);           
+         }
+      }
    }
 
    //get all material data and emit
@@ -522,5 +536,17 @@ void Viewer::PostFrame(const double)
    }
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight)
+{
+   CalMesh* mesh = mCharacter->GetCal3DWrapper()->GetCalModel()->getMesh(meshID);
+   if (mesh)
+   {
+      CalSubmesh *subMesh = mesh->getSubmesh(subMeshID);
+      if (subMesh)
+      {
+         subMesh->setMorphTargetWeight(morphID, weight);
+      }
+   }
+}
 

@@ -9,6 +9,7 @@ class QToolBar;
 class AnimationTableWidget;
 class QListWidget;
 class QListWidgetItem;
+class QTableWidget;
 class QGraphicsView;
 class QGraphicsScene;
 class QTabWidget;
@@ -61,11 +62,17 @@ signals:
    /// Hide the mesh on CalModel from view
    void HideMesh(int meshID);
 
+   void SubMorphTargetChanged(int meshID, int subMeshID,
+                              int morphID, float weight);
+
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
 
    void OnNewMesh(int meshID, const QString& meshName);
+
+   void OnNewSubMorphTarget(int meshID, int subMeshID, 
+                            int morphID, const QString& morphName);
 
    void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList,
                            dtAnim::CharDrawable* model);
@@ -127,6 +134,7 @@ private:
 
    AnimationTableWidget* mAnimListWidget;
    QListWidget*          mMeshListWidget;
+   QTableWidget*         mSubMorphTargetListWidget;
 
    QStandardItemModel* mMaterialModel; ///<Model for the character's materials
    QTableView*         mMaterialView;  ///<View for the character's materials
@@ -152,5 +160,7 @@ private slots:
    void OnToggleDisplayError(bool shouldDisplay);
    void OnToggleFlipVertical();
    void OnToggleFlipHorizontal();
+
+   void OnSubMorphChanged(QTableWidgetItem* item);
 };
 #endif // DELTA_MainWindow
