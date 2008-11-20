@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="DISEntityMap">
+        <xsd:complexType>
+            <xsd:choice maxOccurs="unbounded">
+                <xsd:element name="Mapping">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="EntityType">
+                                <xsd:complexType>
+                                    <xsd:sequence maxOccurs="unbounded">
+                                        <xsd:element name="EntityKind" type="xsd:unsignedByte" minOccurs="0"/>
+                                        <xsd:element name="Domain" type="xsd:unsignedByte" minOccurs="0"/>
+                                        <xsd:element name="Country" type="xsd:unsignedShort" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:unsignedByte" minOccurs="0"/>
+                                        <xsd:element name="Subcategory" type="xsd:unsignedByte" minOccurs="0"/>
+                                        <xsd:element name="Specific" type="xsd:unsignedByte" minOccurs="0"/>
+                                        <xsd:element name="Extra" type="xsd:unsignedByte" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="ActorData">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="ActorType">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string"/>
+                                                    <xsd:element name="Category" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Resource">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Descriptor" maxOccurs="unbounded" type="xsd:string"/>
+                                                    <xsd:element name="ActorProperty" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
