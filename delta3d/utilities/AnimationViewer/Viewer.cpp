@@ -225,7 +225,8 @@ void Viewer::OnLoadCharFile(const QString& filename)
          const std::vector<CalCoreSubMorphTarget *> morphVec = subMeshVec[subMeshID]->getVectorCoreSubMorphTarget();
          for (size_t morphID = 0; morphID < morphVec.size(); ++morphID)
          {
-            QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+            //TODO QString nameToSend = QString::fromStdString(morphVec[morphID]->name());
+            QString nameToSend = QString::number(morphID);
             emit SubMorphTargetLoaded(meshID, subMeshID, morphID, nameToSend);           
          }
       }
