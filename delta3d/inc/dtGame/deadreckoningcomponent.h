@@ -125,17 +125,43 @@ namespace dtGame
       protected:
          virtual ~DeadReckoningComponent();
 
-         /// apply the articulation support
-         /// @param helper the instance containing the articulation data.
-         /// @param gameActor the instance to be articulated.
-         /// @param tickMessage the time data to be used when interpolating.
-         void DoArticulation(dtGame::DeadReckoningHelper& helper, const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage) const;
+         /**
+          * Apply the articulation support
+          * @param helper the instance containing the articulation data.
+          * @param gameActor the instance to be articulated.
+          * @param tickMessage the time data to be used when interpolating.
+          */
+         void DoArticulation(dtGame::DeadReckoningHelper& helper,
+            const dtGame::GameActor& gameActor,
+            const dtGame::TickMessage& tickMessage) const;
 
-         /// modifies the scene graph node by smoothing the articulation data.
-         void DoArticulationSmooth(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& nextLocation, float currentTimeStep) const;
+         /**
+          * Move the articulation DOF between the current position and next
+          * position over a certain time step.
+          * @param dofxform DOF transform for the current articulation.
+          * @param currLocation Current positional or rotational value on the DOF.
+          * @param nextLocation The target positional or rotational value of the DOF.
+          * @param simTimeDelta Simulation time step for the current frame.
+          * @param isPositionChange Flag to differentiate the data from rotational to
+          *        positional DOF value modifications. Most articulations are rotational.
+          */
+         void DoArticulationSmooth(osgSim::DOFTransform& dofxform,
+            const osg::Vec3& currLocation, const osg::Vec3& nextLocation,
+            float simTimeDelta, bool isPositionChange = false) const;
 
-         /// modifies the scene graph node by predicting the articulation data.
-         void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
+         /**
+          * Move the articulation DOF from the current position to the next
+          * based on the rate of movement and simulation time step.
+          * @param dofxform DOF transform for the current articulation.
+          * @param currLocation Current positional or rotational value on the DOF.
+          * @param currentRate Rate of change in the DOF value per second.
+          * @param simTimeDelta Simulation time step for the current frame.
+          * @param isPositionChange Flag to differentiate the data from rotational to
+          *        positional DOF value modifications. Most articulations are rotational.
+          */
+         void DoArticulationPrediction(osgSim::DOFTransform& dofxform,
+            const osg::Vec3& currLocation, const osg::Vec3& currentRate,
+            float simTimeDelta, bool isPositional = false) const;
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
          dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
