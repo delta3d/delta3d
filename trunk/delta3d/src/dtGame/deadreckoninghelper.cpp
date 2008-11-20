@@ -292,16 +292,19 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position,
-         const osg::Vec3& rateOverTime)
+   void DeadReckoningHelper::AddToDeadReckonDOF(const std::string &dofName,
+      const osg::Vec3& position,
+      const osg::Vec3& rateOverTime,
+      const std::string& metricName)
    {
-      dtCore::RefPtr<DeadReckoningDOF> toAdd = new DeadReckoningDOF();
-      toAdd->mNext = NULL;
-      toAdd->mPrev = NULL;
-      toAdd->mName = DofName;
-      toAdd->mCurrentTime = 0;
-      toAdd->mRateOverTime.set( rateOverTime );
-      toAdd->mStartLocation.set( position );
+      dtCore::RefPtr<DeadReckoningDOF> newDOF = new DeadReckoningDOF();
+      newDOF->mNext = NULL;
+      newDOF->mPrev = NULL;
+      newDOF->mName = dofName;
+      newDOF->mMetricName = metricName;
+      newDOF->mCurrentTime = 0;
+      newDOF->mRateOverTime.set( rateOverTime );
+      newDOF->mStartLocation.set( position );
 
       std::list<dtCore::RefPtr<DeadReckoningDOF> >::iterator iter;
       for (iter = mDeadReckonDOFS.begin(); iter != mDeadReckonDOFS.end(); ++iter)
@@ -309,33 +312,31 @@ namespace dtGame
          // does the linking of the object to ADD, so we add the next pointer and validate it
          // no matter what the dead reckon dof gets pushed onto the list at the end
          // of the function.
-         if ((*iter)->mName == DofName)
+         if((*iter)->mName == dofName)
          {
-            bool HadToIter = false;
-            DeadReckoningDOF* GetDOFBeforeNULL = (*iter).get();
+            DeadReckoningDOF* currentDOF = (*iter).get();
 
-            while (GetDOFBeforeNULL != NULL)
+            while(currentDOF != NULL)
             {
-               if (GetDOFBeforeNULL->mNext == NULL)
+               if(currentDOF->mNext == NULL)
                {
                   break;
                }
-               GetDOFBeforeNULL = GetDOFBeforeNULL->mNext;
-               HadToIter = true;
+               currentDOF = currentDOF->mNext;
             }
 
-            toAdd->mPrev = GetDOFBeforeNULL;
-            toAdd->mNext = NULL;
+            newDOF->mPrev = currentDOF;
+            newDOF->mNext = NULL;
 
-            GetDOFBeforeNULL->mCurrentTime = 0;
-            GetDOFBeforeNULL->mNext = toAdd.get();
-            GetDOFBeforeNULL->mStartLocation = mDOFDeadReckoning->GetDOFTransform(GetDOFBeforeNULL->mName)->getCurrentHPR();
+            currentDOF->mCurrentTime = 0;
+            currentDOF->mNext = newDOF.get();
+            currentDOF->mStartLocation = mDOFDeadReckoning->GetDOFTransform(currentDOF->mName)->getCurrentHPR();
 
             break;
          }
       }
 
-      mDeadReckonDOFS.push_back(toAdd);
+      mDeadReckonDOFS.push_back(newDOF);
    }
 
    //////////////////////////////////////////////////////////////////////

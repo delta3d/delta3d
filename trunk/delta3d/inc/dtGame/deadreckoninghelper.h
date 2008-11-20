@@ -102,6 +102,7 @@ namespace dtGame
             public:
                // dof has a name
                std::string mName;
+               std::string mMetricName;
 
                // rate at which it needs to move in xyz direction
                osg::Vec3 mRateOverTime;
@@ -341,7 +342,8 @@ namespace dtGame
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move 
-         void AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position, const osg::Vec3& rateOverTime);
+         void AddToDeadReckonDOF(const std::string &dofName, const osg::Vec3& position,
+            const osg::Vec3& rateOverTime, const std::string& metricName = "");
 
          ///@return the rough average amount of time between rotation updates.  This is based on values sent to SetLastRotationUpdatedTime.
          double GetAverageTimeBetweenRotationUpdates() const { return mAverageTimeBetweenRotationUpdates; };

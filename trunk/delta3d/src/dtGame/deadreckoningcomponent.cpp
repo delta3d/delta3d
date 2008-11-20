@@ -300,7 +300,7 @@ namespace dtGame
 
 
          // Only ground clamp and move remote objects.
-         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             // Get the object's velocity for the current frame.
@@ -313,7 +313,7 @@ namespace dtGame
                      xform, gameActor.GetGameActorProxy(),
                      helper.GetGroundClampingData(), transformChanged, velocity);
 
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
@@ -338,16 +338,17 @@ namespace dtGame
                                                const dtGame::GameActor& gameActor,
                                                const dtGame::TickMessage& tickMessage) const
    {
-      if ( helper.GetNodeCollector() == NULL )
+      if(helper.GetNodeCollector() == NULL)
       {
          return;
       }
 
-      const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >& containerDOFs = helper.GetDeadReckoningDOFs();
-      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
+      typedef std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > DRDOFArray;
 
-      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator iterDOF = containerDOFs.begin();
-      for (; iterDOF != endDOF; ++iterDOF)
+      const DRDOFArray& containerDOFs = helper.GetDeadReckoningDOFs();
+      DRDOFArray::const_iterator endDOF = containerDOFs.end();
+      DRDOFArray::const_iterator iterDOF = containerDOFs.begin();
+      for(; iterDOF != endDOF; ++iterDOF)
       {
          (*iterDOF)->mUpdate = false;
       }
@@ -357,10 +358,10 @@ namespace dtGame
       // so the latest stops should be used because they contain the latest data.
       std::vector<DeadReckoningHelper::DeadReckoningDOF*> deletableDRDOFs;
       iterDOF = containerDOFs.begin();
-      while (iterDOF != endDOF)
+      while(iterDOF != endDOF)
       {
          // an element is a middle man if there are 3 in the chain (ie current->next->next != NULL).
-         if ((*iterDOF)->mNext != NULL && (*iterDOF)->mNext->mNext != NULL)
+         if((*iterDOF)->mNext != NULL && (*iterDOF)->mNext->mNext != NULL)
          {
             // delete the current
             deletableDRDOFs.push_back(iterDOF->get());
@@ -370,7 +371,7 @@ namespace dtGame
 
       // Now delete all stops that are unneeded.
       unsigned limit = deletableDRDOFs.size();
-      for ( unsigned i = 0; i < limit; ++i )
+      for(unsigned i = 0; i < limit; ++i)
       {
          helper.RemoveDRDOF(*deletableDRDOFs[i]);
       }
@@ -378,22 +379,22 @@ namespace dtGame
 
 
       iterDOF = containerDOFs.begin();
-      while (iterDOF != endDOF)
+      while(iterDOF != endDOF)
       {
          DeadReckoningHelper::DeadReckoningDOF *currentDOF = (*iterDOF).get();
 
          // Only process the first DR stop in the chain so that subsequent 
          // stops will be used as blending targets.
-         if (currentDOF->mPrev == NULL && !currentDOF->mUpdate)
+         if(currentDOF->mPrev == NULL && !currentDOF->mUpdate)
          {
             currentDOF->mCurrentTime += tickMessage.GetDeltaSimTime();
             currentDOF->mUpdate = true;
 
             // Smooth time has completed, and this has more in its chain
-            if ( currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime )
+            if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime)
             {
                osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if ( ptr )
+               if(ptr != NULL)
                {
                   currentDOF->mNext->mStartLocation = ptr->getCurrentHPR();
                }
@@ -408,13 +409,15 @@ namespace dtGame
 
 
             // there is something in the chain
-            if (currentDOF->mNext != NULL)
+            bool isPositional = currentDOF->mMetricName == DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION;
+            if(currentDOF->mNext != NULL)
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if ( dofTransform != NULL )
+               if(dofTransform != NULL)
                {
                   DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation,
-                     currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime);
+                     currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime,
+                     isPositional);
                   // NOTE: The division by mArticSmoothTime counter balances the mArticSmoothTime check
                   // in the previous code block that attempts to remove the first DR stop. If the time
                   // was not magnified by the reciprocal of mArticSmoothTime, then the smoothing would
@@ -436,10 +439,10 @@ namespace dtGame
             else
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if (dofTransform != NULL)
+               if(dofTransform != NULL)
                {
                   DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation,
-                     currentDOF->mRateOverTime, currentDOF->mCurrentTime);
+                     currentDOF->mRateOverTime, currentDOF->mCurrentTime, isPositional);
                }
             }
          }
@@ -448,45 +451,51 @@ namespace dtGame
    } // end function DoArticulation
 
    void DeadReckoningComponent::DoArticulationSmooth(osgSim::DOFTransform& dofxform,
-                                                     const osg::Vec3& currLocation,
-                                                     const osg::Vec3& nextLocation,
-                                                     float currentTimeStep) const
+      const osg::Vec3& currLocation, const osg::Vec3& nextLocation,
+      float simTimeDelta, bool isPositionChange) const
    {
-      osg::Vec3 NewDistance = (nextLocation - currLocation);
-
-      for (int i = 0; i < 3; ++i)
+      if(isPositionChange)
       {
-         while (NewDistance[i] > osg::PI)
-            NewDistance[i] -= 2 * osg::PI;
-         while (NewDistance[i] < -osg::PI)
-            NewDistance[i] += 2 * osg::PI;
+         osg::Vec3 curPos( dofxform.getCurrentTranslate() );
+         dofxform.updateCurrentTranslate(curPos
+            + ((nextLocation - curPos) * simTimeDelta));
       }
-
-      osg::Vec3 RateOverTime = (NewDistance * currentTimeStep);
-
-      osg::Vec3 result(currLocation[0] + RateOverTime[0],
-                       currLocation[1] + RateOverTime[1],
-                       currLocation[2] + RateOverTime[2]);
-
-      for (int i = 0; i < 3; ++i)
+      else
       {
-         while (result[i] > 2 * osg::PI)
-            result[i] -= 2 * osg::PI;
+         osg::Vec3 newDistance = (nextLocation - currLocation);
 
-         while (result[i] < 0)
-            result[i] += 2 * osg::PI;
+         for(int i = 0; i < 3; ++i)
+         {
+            while(newDistance[i] > osg::PI)
+               newDistance[i] -= 2 * osg::PI;
+            while(newDistance[i] < -osg::PI)
+               newDistance[i] += 2 * osg::PI;
+         }
+
+         osg::Vec3 result(currLocation + (newDistance * simTimeDelta));
+
+         for(int i = 0; i < 3; ++i)
+         {
+            while(result[i] > 2 * osg::PI)
+               result[i] -= 2 * osg::PI;
+
+            while(result[i] < 0)
+               result[i] += 2 * osg::PI;
+         }
+
+         dofxform.updateCurrentHPR(result);
       }
-
-      dofxform.updateCurrentHPR(result);
    } // end function DoArticulationSmooth
 
-   void DeadReckoningComponent::DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const
+   void DeadReckoningComponent::DoArticulationPrediction(osgSim::DOFTransform& dofxform,
+      const osg::Vec3& currLocation, const osg::Vec3& currentRate,
+      float simTimeDelta, bool isPositional) const
    {
-      osg::Vec3 result( currLocation[0] + (currentTimeStep * currentRate[0]),
-                        currLocation[1] + (currentTimeStep * currentRate[1]),
-                        currLocation[2] + (currentTimeStep * currentRate[2]));
-
-      dofxform.updateCurrentHPR(result);
+      if( ! isPositional )
+      {
+         osg::Vec3 result(currLocation + (currentRate * simTimeDelta));
+         dofxform.updateCurrentHPR(result);
+      }
    } // end function DoArticulationPrediction
 
    void DeadReckoningComponent::SetArticulationSmoothTime( float smoothTime )
