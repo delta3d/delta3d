@@ -131,6 +131,7 @@ IF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
           ${RTIS_LIBRARY}
        )
     endif (NOT RTIS_SINGLE_LIBRARY)    
-    
+ELSE(RTIS_LIBRARY AND RTI_INCLUDE_DIR) 
+    MESSAGE("Unable to Find RTI-s.  Try setting the cmake variable RTI_ROOT_DIR to the directory that contains include and lib/bin, or set the environment variable RTI_HOME.")
 ENDIF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
 
