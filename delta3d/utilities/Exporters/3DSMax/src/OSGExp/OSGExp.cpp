@@ -513,13 +513,13 @@ int	OSGExp::DoExport(const TCHAR *name, ExpInterface *ei,
 			}
 
 
-#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
+//#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 4
             osgDB::ReaderWriter::WriteResult res = 
                osgDB::Registry::instance()->writeNode(*rootTransform, filename, NULL);
-#else
+/*#else
             osgDB::ReaderWriter::WriteResult res = 
                osgDB::Registry::instance()->writeNode(*rootTransform, filename);
-#endif
+#endif*/
 
 			if(res.error() && _options->getShowErrMsg()){
 				static TCHAR szBuffer[256];

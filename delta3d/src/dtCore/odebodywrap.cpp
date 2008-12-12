@@ -375,45 +375,5 @@ void dtCore::ODEBodyWrap::SetAutoDisableAngularThreshold(float threshold)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-float dtCore::ODEBodyWrap::GetLinearDamping() const
-{
-   if (GetBodyID() != 0)
-   {
-      return dBodyGetLinearDamping(GetBodyID());
-   }
-
-   return -1.0f;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetLinearDamping(float scale)
-{
-   if (GetBodyID() != 0)
-   {
-      dBodySetLinearDamping(GetBodyID(), scale);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-float dtCore::ODEBodyWrap::GetAngularDamping() const
-{
-   if (GetBodyID() != 0)
-   {
-      return dBodyGetAngularDamping(GetBodyID());
-   }
-
-   return -1.0f;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetAngularDamping(float scale)
-{
-   if (GetBodyID() != 0)
-   {
-      dBodySetAngularDamping(GetBodyID(), scale);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 
 
