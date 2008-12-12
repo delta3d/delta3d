@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="testCEG" >
+        <Property Name="InheritsAlpha" Value="True" />
+        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="WindowsLook/StaticImage" Name="Panel 1" >
+            <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+            <Window Type="WindowsLook/StaticText" Name="Delta_3D" >
+                <Property Name="Text" Value="Delta 3D" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="HorzCentred" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.2,0},{0.3,0},{0.8,0},{0.5,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="WindowsLook/Editbox" Name="EditBox" >
+                <Property Name="Text" Value="Editable text box" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.3,0},{0.55,0},{0.7,0},{0.65,0}}" />
+            </Window>
+            <Window Type="WindowsLook/HorizontalScrollbar" Name="slider1" >
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.12,0},{0.1,0},{0.8,0},{0.15,0}}" />
+                <Property Name="DocumentSize" Value="256.0" />
+                <Property Name="PageSize" Value="16.0" />
+                <Property Name="StepSize" Value="1.0" />
+                <Property Name="OverlapSize" Value="1.0" />
+                <Property Name="ScrollPosition" Value="255.0" />
+                <Event Name="ScrollPosChanged" Function="sliderHandler" />
+            </Window>
+            <Window Type="WindowsLook/Button" Name="QuitButton" >
+                <Property Name="Text" Value="Exit" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.4,0},{0.7,0},{0.6,0},{0.8,0}}" />
+                  <Event Name="Clicked" Function="quitHandler" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

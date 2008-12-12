@@ -1,0 +1,34 @@
+NPC HungryPerson
+[
+
+WorldState [HasRecipe(false), HasGroceries(false), HasFood(false), Hungry(true) ]
+
+operator CallGrandma
+	 preconds []
+	 interrupts []
+	 effects [ HasRecipe(true) ]
+	 cost 1
+
+operator GoToStore
+	 preconds [ HasRecipe(true) ]
+	 interrupts []
+	 effects [ HasGroceries(true) ]
+	 cost 1
+	 
+operator Cook
+	 preconds [ HasRecipe(true), HasGroceries(true) ]
+	 interrupts []
+	 effects [ HasFood(true) ]
+	 cost 1	 
+
+operator Eat
+	 preconds [ HasFood(true) ]
+	 interrupts []
+	 effects [ Hungry(false) ]
+	 cost 1	 
+	 
+
+Goals [ Hungry(4, false) ]	 
+
+]
+	  
