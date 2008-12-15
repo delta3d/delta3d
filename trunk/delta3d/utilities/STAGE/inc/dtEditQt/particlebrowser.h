@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -40,23 +40,23 @@ class QAction;
 class QMenu;
 class QContextMenuEvent;
 
-namespace dtCore 
+namespace dtCore
 {
    class Scene;
    class Object;
 }
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
    class PerspectiveViewport;
    class ViewportContainer;
-   class Camera;
+   class StageCamera;
 
    /**
     * @class ParticleBrowser
     * @brief Lists and previews available particle effects
-    */  
+    */
    class ParticleBrowser : public ResourceAbstractBrowser
    {
       Q_OBJECT
@@ -71,7 +71,7 @@ namespace dtEditQt
          virtual ~ParticleBrowser();
 
          /**
-          * Derived from our abstract base class. When a tree selection changes 
+          * Derived from our abstract base class. When a tree selection changes
           * this method will be called. This will handle our context sensitive buttons
           * so we know when to enable/disable menu items
           */
@@ -126,7 +126,7 @@ namespace dtEditQt
          ViewportContainer *container;
          PerspectiveViewport *perspView;
          dtCore::RefPtr<dtCore::Scene> particleScene;
-         dtCore::RefPtr<Camera> camera;
+         dtCore::RefPtr<StageCamera> camera;
          dtCore::RefPtr<dtCore::Object> previewObject;
 
          // Layout Objects

@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -28,7 +28,7 @@
 */
 #include <prefix/dtstageprefix-src.h>
 #include <osg/Math>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
@@ -38,7 +38,7 @@ namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
-    Camera::Camera()
+    StageCamera::StageCamera()
     {
         this->updateProjectionMatrix = true;
         this->updateWorldViewMatrix = true;
@@ -54,7 +54,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::setPosition(const osg::Vec3 &pos)
+    void StageCamera::setPosition(const osg::Vec3 &pos)
     {
         this->position = pos;
         this->updateWorldViewMatrix = true;
@@ -62,15 +62,14 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::move(const osg::Vec3 &relPos)
+    void StageCamera::move(const osg::Vec3 &relPos)
     {
         this->position += relPos;
         this->updateWorldViewMatrix = true;
-        emit PositionMoved(position.x(), position.y(), position.z());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::pitch(double degrees)
+    void StageCamera::pitch(double degrees)
     {
         osg::Quat q;
         q.makeRotate(osg::DegreesToRadians(-degrees),getRightDir());
@@ -84,7 +83,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::yaw(double degrees)
+    void StageCamera::yaw(double degrees)
     {
         osg::Quat q;
         q.makeRotate(osg::DegreesToRadians(-degrees),osg::Vec3(0,0,1));
@@ -98,7 +97,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::roll(double degrees)
+    void StageCamera::roll(double degrees)
     {
         osg::Quat q;
         q.makeRotate(osg::DegreesToRadians(-degrees),getViewDir());
@@ -112,7 +111,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::makeOrtho(double left, double right, double bottom, double top,
+    void StageCamera::makeOrtho(double left, double right, double bottom, double top,
                         double nearZ, double farZ)
     {
         this->orthoLeft = left;
@@ -126,7 +125,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::makePerspective(double fovY, double aspect, double nearZ, double farZ)
+    void StageCamera::makePerspective(double fovY, double aspect, double nearZ, double farZ)
     {
         this->fovY = fovY;
         this->aspectRatio = aspect;
@@ -137,59 +136,59 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::setNearClipPlane(double value)
+    void StageCamera::setNearClipPlane(double value)
     {
         this->zNear = value;
         this->updateProjectionMatrix = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::setFarClipPlane(double value)
+    void StageCamera::setFarClipPlane(double value)
     {
         this->zFar = value;
         this->updateProjectionMatrix = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::setAspectRatio(double ratio)
+    void StageCamera::setAspectRatio(double ratio)
     {
         this->aspectRatio = ratio;
         this->updateProjectionMatrix = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::Vec3 Camera::getViewDir() const
+    osg::Vec3 StageCamera::getViewDir() const
     {
         return this->orientation.conj() * osg::Vec3(0,0,-1);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::Vec3 Camera::getUpDir() const
+    osg::Vec3 StageCamera::getUpDir() const
     {
         return this->orientation.conj() * osg::Vec3(0,1,0);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::Vec3 Camera::getRightDir() const
+    osg::Vec3 StageCamera::getRightDir() const
     {
         return this->orientation.conj() * osg::Vec3(1,0,0);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::rotate(const osg::Quat &q)
+    void StageCamera::rotate(const osg::Quat &q)
     {
         this->orientation = q*this->orientation;
         this->updateWorldViewMatrix = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::resetRotation()
+    void StageCamera::resetRotation()
     {
         this->orientation = osg::Quat(osg::DegreesToRadians(-90.0),osg::Vec3(1,0,0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::Quat Camera::getOrientation() const
+    osg::Quat StageCamera::getOrientation() const
     {
         osg::Quat q;
         q.makeRotate(osg::DegreesToRadians(90.0),getRightDir());
@@ -198,7 +197,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::zoom(double amount)
+    void StageCamera::zoom(double amount)
     {
         this->zoomFactor *= amount;
         if (this->zoomFactor < 0.0001)
@@ -207,7 +206,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::update()
+    void StageCamera::update()
     {
         getProjectionMatrix();
         getWorldViewMatrix();
@@ -215,7 +214,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    const osg::Matrix &Camera::getProjectionMatrix()
+    const osg::Matrix &StageCamera::getProjectionMatrix()
     {
         if (this->updateProjectionMatrix) {
             if (this->projType == PERSPECTIVE) {
@@ -237,7 +236,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    const osg::Matrix &Camera::getWorldViewMatrix()
+    const osg::Matrix &StageCamera::getWorldViewMatrix()
     {
         if (this->updateWorldViewMatrix) {
             this->worldViewMat = osg::Matrix::translate(-this->position) *
@@ -249,7 +248,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::getOrthoParams(double &left, double &right, double &bottom, double &top,
+    void StageCamera::getOrthoParams(double &left, double &right, double &bottom, double &top,
             double &nearZ, double &farZ)
     {
         left = this->orthoLeft/this->zoomFactor;
@@ -261,7 +260,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::attachActorProxy(dtDAL::TransformableActorProxy *proxy)
+    void StageCamera::attachActorProxy(dtDAL::TransformableActorProxy *proxy)
     {
         ActorAttachment toAttach;
         const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
@@ -285,15 +284,15 @@ namespace dtEditQt
                 LOG_ERROR("Proxy " + proxy->GetName() + " is using billboard render"
                     " mode but does not have a valid billboard.");
                 return;
-            }            
+            }
         }
         else
         {
             dtCore::Transformable *transformable =
                 dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
 
-            if (transformable != NULL) {            
-                dtCore::Transform tx;                
+            if (transformable != NULL) {
+                dtCore::Transform tx;
                 osg::Vec3 tPos;
 
                 transformable->GetTransform(tx);
@@ -310,13 +309,13 @@ namespace dtEditQt
                 LOG_ERROR("Unable to attach proxy to camera.  Actor is not a transformable.");
                 return;
             }
-        }                
+        }
 
         this->attachedProxies.push_back(toAttach);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::detachActorProxy(dtDAL::TransformableActorProxy *proxy)
+    void StageCamera::detachActorProxy(dtDAL::TransformableActorProxy *proxy)
     {
         std::list<ActorAttachment>::iterator itor;
         for (itor=this->attachedProxies.begin(); itor!=this->attachedProxies.end(); ++itor)
@@ -330,13 +329,13 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::removeAllActorAttachments()
+    void StageCamera::removeAllActorAttachments()
     {
         this->attachedProxies.clear();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::updateActorAttachments()
+    void StageCamera::updateActorAttachments()
     {
         if (this->attachedProxies.empty())
             return;
@@ -361,7 +360,7 @@ namespace dtEditQt
             tPos += this->position;
 
             tProxy->SetTranslation(tPos);
-            tProxy->SetRotationFromMatrix(newRotationMat);         
+            tProxy->SetRotationFromMatrix(newRotationMat);
         }
     }
 }

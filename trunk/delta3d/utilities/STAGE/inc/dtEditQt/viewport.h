@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -42,7 +42,7 @@
 #include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
@@ -289,7 +289,7 @@ namespace dtEditQt
          * from which the current scene is rendered.
          * @param cam The new camera to use.
          */
-        void setCamera(Camera *cam) {
+        void setCamera(StageCamera *cam) {
             this->camera = cam;
         }
 
@@ -297,7 +297,7 @@ namespace dtEditQt
          * Gets this viewport's camera.
          * @return
          */
-        Camera *getCamera() {
+        StageCamera *getCamera() {
             return this->camera.get();
         }
 
@@ -434,7 +434,7 @@ namespace dtEditQt
 
         void SetRedrawContinuously(bool contRedraw);
         bool GetRedrawContinuously() const { return mRedrawContinuously; }
-         
+
         /**
          * Returns the underlying scene view that is attached to this viewport.
          * @return
@@ -503,8 +503,8 @@ namespace dtEditQt
          * mouse buttons.  Based on the current mode, the camera is updated.
          */
         void mouseMoveEvent(QMouseEvent *e);
-   
-        /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need. 
+
+        /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need.
         virtual void onMouseMoveEvent(QMouseEvent *e, float dx, float dy) = 0;
 
         /// Overridden to adjust the update interval when focus is received
@@ -519,7 +519,7 @@ namespace dtEditQt
          *  This is not created by this viewport.  It must be created by
          *  classes extending the base viewport.
          */
-        dtCore::RefPtr<Camera> camera;
+        dtCore::RefPtr<StageCamera> camera;
 
         /**
          * Tracks whether we are currently in a batch change transaction
@@ -551,7 +551,7 @@ namespace dtEditQt
 
         QPoint lastMouseUpdateLocation;
         QTimer mTimer;
-         
+
         // holds the original values of translation and/or rotation.  This should
         // be set in BeginEdit and cleared in EndEdit
         std::map<std::string,std::vector<std::string> > selectedActorOrigValues;

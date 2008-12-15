@@ -448,7 +448,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////
    void Viewport::onGotoPosition(double x, double y, double z)
    {
-      Camera* cam = getCamera();
+      StageCamera* cam = getCamera();
       if (cam != NULL)
       {
          cam->setPosition(osg::Vec3(x,y,z));

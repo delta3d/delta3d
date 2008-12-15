@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -38,7 +38,7 @@
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/editorevents.h>
 
 namespace dtEditQt
@@ -64,7 +64,7 @@ namespace dtEditQt
         mMasterView = new dtCore::View();
         mMasterView->SetScene(mMasterScene.get());
         viewportOverlay = new ViewportOverlay();
-        worldCamera = new Camera();
+        worldCamera = new StageCamera();
         inChangeTransaction = false;
         startTick = 0;
 
