@@ -48,7 +48,7 @@
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/uiresources.h>
 
 #include <dtDAL/project.h>
@@ -82,7 +82,7 @@ namespace dtEditQt
         meshScene = new dtCore::Scene();
         previewObject = new dtCore::Object();
         meshScene->AddDrawable(previewObject.get());
-        camera = new Camera();
+        camera = new StageCamera();
         camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
         QSplitter *splitter = new QSplitter(Qt::Vertical,this);
@@ -282,7 +282,7 @@ namespace dtEditQt
                 previewObject->LoadFile(file.toStdString());
                 previewObject->RecenterGeometryUponLoad();
                 perspView->refresh();
-                
+
                 SetCameraLookAt(*camera, *previewObject);
 
                 perspView->refresh();
@@ -447,12 +447,12 @@ namespace dtEditQt
 
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
          osg::Node *node = obj->LoadFile(fileName);
-         
+
          // If the file was successfully loaded, continue
          if (node)
          {
             dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
-            
+
             text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
             text->setText( tr(nodepo->CollectNodeData(*node).c_str()) );
 

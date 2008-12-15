@@ -49,7 +49,7 @@
 #include <dtEditQt/libraryeditor.h>
 #include <dtEditQt/librarypathseditor.h>
 #include <dtEditQt/gameeventsdialog.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/mapdialog.h>
 #include <dtEditQt/dialogmapproperties.h>
@@ -718,7 +718,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList &selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-      Camera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
+      StageCamera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
 
       //Make sure we have valid data.
       if (!currMap.valid())

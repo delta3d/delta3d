@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -38,11 +38,11 @@
 #include <QtGui/QFrame>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include "dtEditQt/viewportcontainer.h"
-#include "dtEditQt/viewport.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/orthoviewport.h"
-#include "dtEditQt/uiresources.h"
+#include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/viewport.h>
+#include <dtEditQt/viewportmanager.h>
+#include <dtEditQt/orthoviewport.h>
+#include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
 {
@@ -333,7 +333,7 @@ namespace dtEditQt
     {
        mPositionEditWidgets.at(0)->setText(QString::number(x, 'f', 2));
        mPositionEditWidgets.at(1)->setText(QString::number(y, 'f', 2));
-       mPositionEditWidgets.at(2)->setText(QString::number(z, 'f', 2)); 
+       mPositionEditWidgets.at(2)->setText(QString::number(z, 'f', 2));
     }
 
     //////////////////////////////////////////////////////////////////////////

@@ -37,22 +37,22 @@ class QKeyEvent;
 class QContextMenuEvent;
 class QCheckBox;
 
-namespace dtCore 
+namespace dtCore
 {
    class Scene;
    class Object;
 }
 
-namespace dtEditQt 
+namespace dtEditQt
 {
    class PerspectiveViewport;
    class ViewportContainer;
-   class Camera;
+   class StageCamera;
 
    /**
    * @class SkeletalMeshBrowser
-   * @brief Lists and previews skeletal meshes available to a project 
-   */  
+   * @brief Lists and previews skeletal meshes available to a project
+   */
    class SkeletalMeshBrowser : public ResourceAbstractBrowser
    {
       Q_OBJECT
@@ -68,7 +68,7 @@ namespace dtEditQt
       virtual ~SkeletalMeshBrowser();
 
       /**
-      * Derived from our abstract base class. When a tree selection changes 
+      * Derived from our abstract base class. When a tree selection changes
       * this method will be called. This will handle our context sensitive buttons
       * so we know when to preview a skeletal mesh
       */
@@ -76,10 +76,10 @@ namespace dtEditQt
 
    public slots:
 
-      /// Display currently selected mesh      
+      /// Display currently selected mesh
       void displaySelection();
 
-      /// Handle the event when the checkbox is selected, preview selected item.   
+      /// Handle the event when the checkbox is selected, preview selected item.
       void checkBoxSelected();
 
       /// Handles the event when the user creates a selected actor
@@ -93,7 +93,7 @@ namespace dtEditQt
 
    protected:
       /**
-      * Added an event filter to capture keyboard events sent to the tree widget 
+      * Added an event filter to capture keyboard events sent to the tree widget
       * so we can trap the enter key and play sounds. All other events are
       * passed on to the parent. This has been overridden from the base abstract
       * class to provide browser specific functionality.
@@ -110,8 +110,8 @@ namespace dtEditQt
       void createActions();
 
       /**
-      * Determines whether a skeletal mesh should be loaded 
-      * based on whether an appropriate actor is selected.  
+      * Determines whether a skeletal mesh should be loaded
+      * based on whether an appropriate actor is selected.
       */
       void loadMesh();
 
@@ -139,7 +139,7 @@ namespace dtEditQt
       ViewportContainer *container;
       PerspectiveViewport *perspView;
       dtCore::RefPtr<dtCore::Scene> meshScene;
-      dtCore::RefPtr<Camera> camera;
+      dtCore::RefPtr<StageCamera> camera;
       dtCore::RefPtr<dtCore::Object> previewObject;
 
       // Layout Objects

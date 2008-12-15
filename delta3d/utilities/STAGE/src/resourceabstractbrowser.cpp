@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -44,7 +44,7 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/uiresources.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 
 #include <dtCore/transformable.h>
 
@@ -317,7 +317,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ResourceAbstractBrowser::SetCameraLookAt(dtEditQt::Camera& camera, dtCore::Transformable& transformableToView)
+   void ResourceAbstractBrowser::SetCameraLookAt(dtEditQt::StageCamera& camera, dtCore::Transformable& transformableToView)
    {
       //Now we need to get the bounding volume to determine the extents
       //of the new static mesh.  If the extents are within a reasonable
