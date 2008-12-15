@@ -23,6 +23,7 @@
 #include <dtCore/shadermanager.h>
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shadergroup.h>
+#include <dtCore/shaderparamtexture1d.h>
 #include <dtCore/shaderparamtexture2d.h>
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/shaderparamvec4.h>
@@ -63,6 +64,14 @@ namespace dtCore
    const std::string ShaderXML::PARAMETER_ELEMENT("parameter");
    const std::string ShaderXML::PARAMETER_ATTRIBUTE_NAME("name");
    const std::string ShaderXML::PARAMETER_ATTRIBUTE_SHARED("shared");
+
+   const std::string ShaderXML::TEXTURE1D_ELEMENT("texture1D");
+   const std::string ShaderXML::TEXTURE1D_ATTRIBUTE_TEXUNIT("textureUnit");
+   const std::string ShaderXML::TEXTURE1D_SOURCE_ELEMENT("source");
+   const std::string ShaderXML::TEXTURE1D_SOURCE_ATTRIBUTE_TYPE("type");
+   const std::string ShaderXML::TEXTURE1D_WRAP_ELEMENT("wrap");
+   const std::string ShaderXML::TEXTURE1D_WRAP_ATTRIBUTE_AXIS("axis");
+   const std::string ShaderXML::TEXTURE1D_WRAP_ATTRIBUTE_MODE("mode");
 
    const std::string ShaderXML::TEXTURE2D_ELEMENT("texture2D");
    const std::string ShaderXML::TEXTURE2D_ATTRIBUTE_TEXUNIT("textureUnit");
@@ -303,23 +312,27 @@ namespace dtCore
          std::string toString = paramType.ToString();
          if (toString == ShaderXML::TEXTURE2D_ELEMENT)
          {
-            newParam = ParseTexture2DParameter(typeElement,paramName);
+            newParam = ParseTexture2DParameter(typeElement, paramName);
          }
          else if (toString == ShaderXML::FLOAT_ELEMENT)
          {
-            newParam = ParseFloatParameter(typeElement,paramName);
+            newParam = ParseFloatParameter(typeElement, paramName);
          }
          else if (toString == ShaderXML::VEC4_ELEMENT)
          {
-            newParam = ParseVec4Parameter(typeElement,paramName);
+            newParam = ParseVec4Parameter(typeElement, paramName);
          }
          else if (toString == ShaderXML::INT_ELEMENT)
          {
-            newParam = ParseIntParameter(typeElement,paramName);
+            newParam = ParseIntParameter(typeElement, paramName);
          }
          else if (toString == ShaderXML::OSCILLATOR_ELEMENT)
          {
             newParam = ParseFloatTimerParameter(typeElement, paramName);
+         }
+         else if (toString == ShaderXML::TEXTURE1D_ELEMENT)
+         {
+            newParam = ParseTexture1DParameter(typeElement, paramName);
          }
          else
          {
@@ -346,15 +359,15 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture2DParameter(
-         xercesc::DOMElement *tex2DElem, const std::string &paramName)
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture1DParameter(
+      xercesc::DOMElement* tex1DElem, const std::string& paramName)
    {
-      //First get the texture unit attribute from the element.
-      dtCore::RefPtr<ShaderParamTexture2D> newParam = new ShaderParamTexture2D(paramName);
-      xercesc::DOMNodeList *children = tex2DElem->getChildNodes();
+      // First get the texture unit attribute from the element.
+      dtCore::RefPtr<ShaderParamTexture1D> newParam = new ShaderParamTexture1D(paramName);
+      xercesc::DOMNodeList* children = tex1DElem->getChildNodes();
 
-      //Get the integer for the texture unit.
-      std::string texUnitString = GetElementAttribute(*tex2DElem,ShaderXML::TEXTURE2D_ATTRIBUTE_TEXUNIT);
+      // Get the integer for the texture unit.
+      std::string texUnitString = GetElementAttribute(*tex1DElem, ShaderXML::TEXTURE1D_ATTRIBUTE_TEXUNIT);
       if (!texUnitString.empty())
       {
          std::istringstream ss;
@@ -365,16 +378,123 @@ namespace dtCore
       }
 
       //Now parse the individual child elements of the 2D texture element.
-      for (XMLSize_t i=0; i<children->getLength(); i++)
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
       {
-         xercesc::DOMNode *node = children->item(i);
+         xercesc::DOMNode* node = children->item(i);
 
          if (node == NULL)
+         {
             continue;
+         }
          if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
             continue;
+         }
 
-         xercesc::DOMElement *texElement = static_cast<xercesc::DOMElement *>(node);
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
+
+         dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
+         std::string elemName = elemNameConverter.ToString();
+         if (elemName == ShaderXML::TEXTURE1D_SOURCE_ELEMENT)
+         {
+            // Source elements have a type attribute that specify whether or not the
+            // texture source is to come from an image file or from some source generated
+            // elsewhere.
+            std::string sourceType = GetElementAttribute(*texElement,
+               ShaderXML::TEXTURE1D_SOURCE_ATTRIBUTE_TYPE);
+
+            if (sourceType == ShaderParamTexture::TextureSourceType::IMAGE.GetName())
+            {
+               xercesc::DOMNodeList* children = texElement->getChildNodes();
+               if (children->getLength() != 1 ||
+                  children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+               }
+
+               xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
+
+               dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
+               newParam->SetTexture(fileConverter.ToString());
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::IMAGE);
+            }
+            else if (sourceType == ShaderParamTexture::TextureSourceType::AUTO.GetName())
+            {
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::AUTO);
+            }
+            else
+            {
+               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture1D source type.", __FILE__, __LINE__);
+            }
+         }
+         else if (elemName == ShaderXML::TEXTURE1D_WRAP_ELEMENT)
+         {
+            std::string axis = GetElementAttribute(*texElement,ShaderXML::TEXTURE1D_WRAP_ATTRIBUTE_AXIS);
+            std::string mode = GetElementAttribute(*texElement,ShaderXML::TEXTURE1D_WRAP_ATTRIBUTE_MODE);
+
+            if (!axis.empty() && !mode.empty())
+            {
+               const ShaderParamTexture::AddressMode* wrapMode = GetTextureAddressMode(mode);
+               const ShaderParamTexture::TextureAxis* texAxis  = GetTextureAxis(axis);
+
+               if (wrapMode == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, "Invalid address mode of: " + mode +
+                     " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+               if (texAxis == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, "Invalid texture axis: " + axis +
+                     " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+
+               newParam->SetAddressMode(*texAxis, *wrapMode);
+            }
+         }
+         else
+         {
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+               "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
+         }
+      }
+
+      return static_cast<ShaderParameter *>(newParam.get());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture2DParameter(
+         xercesc::DOMElement* tex2DElem, const std::string& paramName)
+   {
+      //First get the texture unit attribute from the element.
+      dtCore::RefPtr<ShaderParamTexture2D> newParam = new ShaderParamTexture2D(paramName);
+      xercesc::DOMNodeList* children = tex2DElem->getChildNodes();
+
+      //Get the integer for the texture unit.
+      std::string texUnitString = GetElementAttribute(*tex2DElem, ShaderXML::TEXTURE2D_ATTRIBUTE_TEXUNIT);
+      if (!texUnitString.empty())
+      {
+         std::istringstream ss;
+         unsigned int texUnit;
+         ss.str(texUnitString);
+         ss >> texUnit;
+         newParam->SetTextureUnit(texUnit);
+      }
+
+      //Now parse the individual child elements of the 2D texture element.
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
+      {
+         xercesc::DOMNode* node = children->item(i);
+
+         if (node == NULL)
+         {
+            continue;
+         }
+         if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
+            continue;
+         }
+
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
 
          dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
          std::string elemName = elemNameConverter.ToString();
@@ -388,14 +508,14 @@ namespace dtCore
 
             if (sourceType == ShaderParamTexture::TextureSourceType::IMAGE.GetName())
             {
-               xercesc::DOMNodeList *children = texElement->getChildNodes();
+               xercesc::DOMNodeList* children = texElement->getChildNodes();
                if (children->getLength() != 1 ||
                   children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
                {
                   throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
                }
 
-               xercesc::DOMText *file = static_cast<xercesc::DOMText *>(children->item(0));
+               xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
 
                dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
                newParam->SetTexture(fileConverter.ToString());
@@ -417,17 +537,21 @@ namespace dtCore
 
             if (!axis.empty() && !mode.empty())
             {
-               const ShaderParamTexture::AddressMode *wrapMode = GetTextureAddressMode(mode);
-               const ShaderParamTexture::TextureAxis *texAxis = GetTextureAxis(axis);
+               const ShaderParamTexture::AddressMode* wrapMode = GetTextureAddressMode(mode);
+               const ShaderParamTexture::TextureAxis* texAxis = GetTextureAxis(axis);
 
                if (wrapMode == NULL)
+               {
                   throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
                if (texAxis == NULL)
+               {
                   throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
                         " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
 
-               newParam->SetAddressMode(*texAxis,*wrapMode);
+               newParam->SetAddressMode(*texAxis, *wrapMode);
             }
          }
          else
