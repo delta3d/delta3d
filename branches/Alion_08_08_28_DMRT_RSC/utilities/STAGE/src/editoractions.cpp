@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -56,7 +56,7 @@
 #include <dtEditQt/libraryeditor.h>
 #include <dtEditQt/librarypathseditor.h>
 #include <dtEditQt/gameeventsdialog.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/mapdialog.h>
 #include <dtEditQt/dialogmapproperties.h>
@@ -89,7 +89,7 @@ namespace dtEditQt
    dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorActions::EditorActions() 
+   EditorActions::EditorActions()
       : mIsector(new dtCore::Isector)
       , mSkeletalEditorProcess(NULL)
       , mParticleEditorProcess(NULL)
@@ -307,16 +307,16 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupSubeditorActions()
    {
-      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);           
+      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);
       actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
       //actionEditSkeletalMesh->setDisabled(true);
       connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
 
-      actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);       
+      actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);
       actionEditParticleSystem->setStatusTip(tr("Launches the particle system editor."));
       connect(actionEditParticleSystem, SIGNAL(triggered()), this, SLOT(slotLaunchParticleEditor()));
 
-      actionLaunchViewer = new QAction(QIcon(UIResources::ICON_EDITOR_VIEWER.c_str()),tr("&Launch Delta3D Model Viewer"), modeToolsGroup);       
+      actionLaunchViewer = new QAction(QIcon(UIResources::ICON_EDITOR_VIEWER.c_str()),tr("&Launch Delta3D Model Viewer"), modeToolsGroup);
       actionLaunchViewer->setStatusTip(tr("Launches the model viewer."));
       connect(actionLaunchViewer, SIGNAL(triggered()), this, SLOT(slotLaunchDeltaViewer()));
    }
@@ -703,7 +703,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList &selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       dtCore::Scene *scene = ViewportManager::GetInstance().getMasterScene();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-      Camera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
+      StageCamera *worldCam = ViewportManager::GetInstance().getWorldViewCamera();
 
       //Make sure we have valid data.
       if (!currMap.valid())
@@ -737,7 +737,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
       itor = selection.begin();
       itorEnd = selection.end();
-      
+
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
       for (; itor!=itorEnd; ++itor)
       {
@@ -767,12 +767,12 @@ namespace dtEditQt
                *tProxy =dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
          if (tProxy != NULL)
             oldPosition = tProxy->GetTranslation();
-   
+
          //Add the new proxy to the map and send out a create event.
          currMap->AddProxy(*proxy);
-   
+
          EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-   
+
          //Move the newly duplicated actor to where it is supposed to go.
          if (tProxy != NULL)
             tProxy->SetTranslation(oldPosition+offset);
@@ -940,33 +940,33 @@ namespace dtEditQt
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotLaunchSkeletalMeshEditor()
-    {       
+    {
        // Create a new process if we don't already have one
        if (!mSkeletalEditorProcess)
        {
-          mSkeletalEditorProcess = new QProcess(this);           
-       }     
+          mSkeletalEditorProcess = new QProcess(this);
+       }
 
        // Don't launch more than one copy of the editor
        if (mSkeletalEditorProcess->state() != QProcess::Running)
-       {           
+       {
           QString program = "AnimationViewer.exe";
           QStringList arguments;
 
-          mSkeletalEditorProcess->start(program, arguments);     
+          mSkeletalEditorProcess->start(program, arguments);
 
           QProcess::ProcessState state = mSkeletalEditorProcess->state();
 
           // Our process should have started
           if (state == QProcess::NotRunning)
           {
-             QMessageBox::information(NULL, tr("Process Error"), 
+             QMessageBox::information(NULL, tr("Process Error"),
                 tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
                 QMessageBox::Ok);
 
           }
        }
-      
+
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -975,23 +975,23 @@ namespace dtEditQt
        // Create a new process if we don't already have one
        if (!mParticleEditorProcess)
        {
-          mParticleEditorProcess = new QProcess(this);           
-       }     
+          mParticleEditorProcess = new QProcess(this);
+       }
 
        // Don't launch more than one copy of the editor
        if (mParticleEditorProcess->state() != QProcess::Running)
-       {           
+       {
           QString program = "psEditor.exe";
           QStringList arguments;
 
-          mParticleEditorProcess->start(program, arguments);    
+          mParticleEditorProcess->start(program, arguments);
 
           QProcess::ProcessState state = mParticleEditorProcess->state();
 
           // Our process should have started
           if (state == QProcess::NotRunning)
           {
-             QMessageBox::information(NULL, tr("Process Error"), 
+             QMessageBox::information(NULL, tr("Process Error"),
                 tr("Unable to launch psEditor.exe.  Make sure application exists."),
                 QMessageBox::Ok);
 
@@ -1005,29 +1005,29 @@ namespace dtEditQt
        // Create a new process if we don't already have one
        if (!mViewerProcess)
        {
-          mViewerProcess = new QProcess(this);           
-       }     
+          mViewerProcess = new QProcess(this);
+       }
 
        // Don't launch more than one copy of the editor
        if (mViewerProcess->state() != QProcess::Running)
-       {           
+       {
           QString program = "viewer.exe";
           QStringList arguments;
 
-          mViewerProcess->start(program, arguments); 
+          mViewerProcess->start(program, arguments);
 
           QProcess::ProcessState state = mViewerProcess->state();
 
           // Our process should have started
           if (state == QProcess::NotRunning)
           {
-             QMessageBox::information(NULL, tr("Process Error"), 
+             QMessageBox::information(NULL, tr("Process Error"),
                 tr("Unable to launch Viewer.exe.  Make sure application exists."),
                 QMessageBox::Ok);
-           
+
           }
        }
-    }    
+    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUndo()

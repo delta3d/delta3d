@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -49,7 +49,7 @@ namespace dtEditQt
 
     class Viewport;
     class ViewportOverlay;
-    class Camera;
+    class StageCamera;
 
     /**
      * The viewport manager is responsible for managing all of the viewports in a given scene.
@@ -94,15 +94,15 @@ namespace dtEditQt
          * @param parent Parent widget in which the newly created viewport will reside.
          * @return The newly created viewport.
          */
-        Viewport *createViewport(const std::string &name, ViewportType &type,
-            QWidget *parent = NULL);
+        Viewport* createViewport(const std::string &name, ViewportType &type,
+            QWidget* parent = NULL);
 
         /**
          * Gets a handle to the master scene.  Once the handle is retrieved, use it to
          * add/remove objects from the scene.
          * @return A pointer to the master scene.
          */
-        dtCore::Scene *getMasterScene() {
+        dtCore::Scene* getMasterScene() {
             return this->masterScene.get();
         }
 
@@ -111,7 +111,7 @@ namespace dtEditQt
          * the world view camera to render its scene.
          * @return A pointer to the world view camera.
          */
-        Camera *getWorldViewCamera() {
+        StageCamera* getWorldViewCamera() {
             return this->worldCamera.get();
         }
 
@@ -119,7 +119,7 @@ namespace dtEditQt
          * Moves an actor such that it is placed in from of the world view camera.
          * @param proxy The proxy to place.
          */
-        void placeProxyInFrontOfCamera(dtDAL::ActorProxy *proxy);
+        void placeProxyInFrontOfCamera(dtDAL::ActorProxy* proxy);
 
         /**
          * Gets the instance of an overlay object that should be shared between viewports.
@@ -128,7 +128,7 @@ namespace dtEditQt
          * in all viewports.
          * @return ViewportOverlay
          */
-        ViewportOverlay *getViewportOverlay() {
+        ViewportOverlay* getViewportOverlay() {
             return this->viewportOverlay.get();
         }
 
@@ -250,19 +250,19 @@ namespace dtEditQt
          * @param shareWith OpenGL context to share with or NULL if no sharing.
          * @return The newly created viewport.
          */
-        Viewport *createViewportImpl(const std::string &name, ViewportType &type,
-            QWidget *parent, QGLWidget *shareWith);
+        Viewport* createViewportImpl(const std::string &name, ViewportType &type,
+            QWidget* parent, QGLWidget* shareWith);
 
     private:
         static dtCore::RefPtr<ViewportManager> instance;
 
         bool shareMasterContext;
         std::map<std::string,Viewport*> viewportList;
-        Viewport *masterViewport;
+        Viewport* masterViewport;
         dtCore::RefPtr<ViewportOverlay> viewportOverlay;
         dtCore::RefPtr<dtCore::Scene> masterScene;
         dtCore::RefPtr<dtCore::View> mMasterView;
-        dtCore::RefPtr<Camera> worldCamera;
+        dtCore::RefPtr<StageCamera> worldCamera;
         int numTextureUnits;
         bool inChangeTransaction, isPagingEnabled;
         dtCore::Timer_t startTick;

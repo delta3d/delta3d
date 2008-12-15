@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -43,7 +43,7 @@ namespace dtEditQt
      * The camera class provides a view into the scene.  It supports orthographic
      * and perspective views.
      */
-    class Camera : public osg::Referenced
+    class StageCamera : public osg::Referenced
     {
     public:
 
@@ -53,7 +53,7 @@ namespace dtEditQt
          *  The default camera is set to perspective projection with aspect ratio=1.3, FovY=90,
          *  near clipping plane=1, far clipping plane=10000
          */
-        Camera();
+        StageCamera();
 
         /**
          * Sets the position of the camera to the position specfied in world coordinates.
@@ -285,7 +285,7 @@ namespace dtEditQt
          * Empty destructor.
          * @return
          */
-        virtual ~Camera() { }
+        virtual ~StageCamera() { }
 
     private:
        /**

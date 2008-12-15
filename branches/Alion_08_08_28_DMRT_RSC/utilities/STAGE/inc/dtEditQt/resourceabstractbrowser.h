@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -63,7 +63,7 @@ namespace dtDAL
 namespace dtEditQt
 {
 
-    class Camera;
+    class StageCamera;
     class ResourceTreeWidget;
     class ResourceTree;
 
@@ -174,7 +174,7 @@ namespace dtEditQt
         void deleteSelected();
         void createCategory();
         void refreshSelected();
-        void importSelected();       
+        void importSelected();
 
     public slots:
         /**
@@ -211,14 +211,14 @@ namespace dtEditQt
         virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent, const QIcon &resourceIcon);
 
     protected:
-    
+
        /**
-        * Sets the camera to look at the given transformable based on the bounding sphere.  
+        * Sets the camera to look at the given transformable based on the bounding sphere.
         * @param camera The camera to position.
         * @param transformableToView the transformable actor to look at.
         */
-       static void SetCameraLookAt(dtEditQt::Camera& camera, dtCore::Transformable& transformableToView);
-      
+       static void SetCameraLookAt(dtEditQt::StageCamera& camera, dtCore::Transformable& transformableToView);
+
         /**
         * Overridden to ensure the right-click menu only appears when right clicking
         * on the tree widget.
@@ -262,7 +262,7 @@ namespace dtEditQt
         QPushButton *categoryBtn;
         QPushButton *importBtn;
         QPushButton *deleteBtn;
-        QPushButton *refreshBtn;       
+        QPushButton *refreshBtn;
 
         // Context Menu Objects
         QMenu *contextMenu;

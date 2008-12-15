@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -66,7 +66,7 @@ namespace dtEditQt
         QGLWidget *shareWith) :
             Viewport(ViewportManager::ViewportType::ORTHOGRAPHIC,name,parent,shareWith)
     {
-        this->camera = new Camera();
+        this->camera = new StageCamera();
         this->currentMode = &OrthoViewport::InteractionModeExt::NOTHING;
         setViewType(OrthoViewType::TOP,false);
     }
@@ -97,18 +97,18 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::setViewType(const OrthoViewType &type, bool refreshView)
     {
-        if (type == OrthoViewType::TOP) 
+        if (type == OrthoViewType::TOP)
         {
             this->viewType = &OrthoViewType::TOP;
             getCamera()->resetRotation();
             getCamera()->pitch(-90);
         }
-        else if (type == OrthoViewType::FRONT) 
+        else if (type == OrthoViewType::FRONT)
         {
             this->viewType = &OrthoViewType::FRONT;
             getCamera()->resetRotation();
         }
-        else if (type == OrthoViewType::SIDE) 
+        else if (type == OrthoViewType::SIDE)
         {
             this->viewType = &OrthoViewType::SIDE;
             getCamera()->resetRotation();

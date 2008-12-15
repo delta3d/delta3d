@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -60,7 +60,7 @@
 #include <dtEditQt/resourcetreewidget.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/uiresources.h>
 
 namespace dtEditQt
@@ -80,7 +80,7 @@ namespace dtEditQt
         particleScene = new dtCore::Scene();
         previewObject = new dtCore::Object();
         particleScene->AddDrawable(previewObject.get());
-        camera = new Camera();
+        camera = new StageCamera();
         camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
         // setup right mouse click context menu
@@ -222,7 +222,7 @@ namespace dtEditQt
             SetCameraLookAt(*camera, *c);
         }
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     void ParticleBrowser::checkBoxSelected()
     {

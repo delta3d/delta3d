@@ -52,7 +52,7 @@
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/viewportmanager.h>
-#include <dtEditQt/camera.h>
+#include <dtEditQt/stagecamera.h>
 #include <dtEditQt/uiresources.h>
 
 #include <dtDAL/project.h>
@@ -86,7 +86,7 @@ namespace dtEditQt
       meshScene = new dtCore::Scene();
       previewObject = new dtCore::Object();
       meshScene->AddDrawable(previewObject.get());
-      camera = new Camera();
+      camera = new StageCamera();
       camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
       QSplitter *splitter = new QSplitter(Qt::Vertical,this);
@@ -513,7 +513,7 @@ namespace dtEditQt
 
             connect(close, SIGNAL(clicked()), &dlg, SLOT(close()));
             dlg.exec();
-         }         
+         }
       }
    }
 }

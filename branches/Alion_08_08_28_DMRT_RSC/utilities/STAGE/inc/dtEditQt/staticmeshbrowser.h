@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -40,22 +40,22 @@ class QKeyEvent;
 class QContextMenuEvent;
 class QCheckBox;
 
-namespace dtCore 
+namespace dtCore
 {
     class Scene;
     class Object;
 }
 
-namespace dtEditQt 
+namespace dtEditQt
 {
     class PerspectiveViewport;
     class ViewportContainer;
-    class Camera;
+    class StageCamera;
 
     /**
     * @class StaticMeshBrowser
-    * @brief Lists and previews static meshes available to a project 
-    */  
+    * @brief Lists and previews static meshes available to a project
+    */
     class StaticMeshBrowser : public ResourceAbstractBrowser
     {
         Q_OBJECT
@@ -71,7 +71,7 @@ namespace dtEditQt
         virtual ~StaticMeshBrowser();
 
         /**
-        * Derived from our abstract base class. When a tree selection changes 
+        * Derived from our abstract base class. When a tree selection changes
         * this method will be called. This will handle our context sensitive buttons
         * so we know when to preview a static mesh
         */
@@ -106,7 +106,7 @@ namespace dtEditQt
 
     protected:
         /**
-        * Added an event filter to capture keyboard events sent to the tree widget 
+        * Added an event filter to capture keyboard events sent to the tree widget
         * so we can trap the enter key and play sounds. All other events are
         * passed on to the parent. This has been overridden from the base abstract
         * class to provide browser specific functionality.
@@ -125,10 +125,10 @@ namespace dtEditQt
         * Overridden function to create our own actions for this browser
         */
         void createActions();
-        
+
         /**
-        * Determines whether a static mesh should be loaded 
-        * based on whether an appropriate actor is selected.  
+        * Determines whether a static mesh should be loaded
+        * based on whether an appropriate actor is selected.
         */
         void loadMesh();
 
@@ -143,20 +143,20 @@ namespace dtEditQt
         * @return QGroupBox layout widget
         */
         QGroupBox *listGroup();
-        
+
         /**
         * This defines the layout for the static mesh preview
         * @return QGroupBox layout widget
         */
         QGroupBox *previewGroup();
-        
+
         void doubleClickEvent();
 
         // Viewports
         ViewportContainer *container;
         PerspectiveViewport *perspView;
         dtCore::RefPtr<dtCore::Scene> meshScene;
-        dtCore::RefPtr<Camera> camera;
+        dtCore::RefPtr<StageCamera> camera;
         dtCore::RefPtr<dtCore::Object> previewObject;
 
         // Layout Objects
