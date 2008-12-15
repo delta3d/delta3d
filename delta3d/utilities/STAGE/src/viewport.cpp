@@ -236,7 +236,11 @@ namespace dtEditQt
          if (dbp != NULL)
          {
             dbp->SignalBeginFrame(frameStamp.get());
+#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
             dbp->UpdateSceneGraph(frameStamp->getReferenceTime());
+#else
+            dbp->UpdateSceneGraph(frameStamp);
+#endif
          }
       }
 

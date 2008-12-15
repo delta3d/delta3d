@@ -4,6 +4,7 @@
 #include <dtCore/export.h>
 #include <dtCore/base.h>
 
+#include <osg/Version>
 #include <osgDB/DatabasePager>
 #include <osg/ref_ptr>
 
@@ -172,7 +173,11 @@ namespace dtCore
       /** Merge changes to the scene graph.  Note: Must only be called
       * from the single thread update phase.
       */
+#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
       virtual void UpdateSceneGraph(double currentFrameTime) const;
+#else
+      virtual void UpdateSceneGraph(const osg::FrameStamp* framestamp) const;
+#endif
 
       /** 
       * Compile the rendering objects.  Should only be called from the 
