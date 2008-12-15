@@ -86,6 +86,15 @@ namespace dtCore
          void ParseParameterElement(xercesc::DOMElement* paramElement, ShaderProgram& shader);
 
          /**
+          * Parses a shader parameter which represents a one dimensional texture.
+          * @param tex1DElement The DOM element for the texture parameter.
+          * @param paramName Name to assign to the parameter.
+          * @return The newly constructed parameter.
+          */
+         dtCore::RefPtr<ShaderParameter> ParseTexture1DParameter(xercesc::DOMElement* tex1DElem,
+            const std::string& paramName);
+
+         /**
           * Parses a shader parameter which represents a two dimensional texture.
           * @param tex2DElement The DOM element for the texture parameter.
           * @param paramName Name to assign to the parameter.
@@ -171,6 +180,14 @@ namespace dtCore
          static const std::string PARAMETER_ELEMENT;
          static const std::string PARAMETER_ATTRIBUTE_NAME;
          static const std::string PARAMETER_ATTRIBUTE_SHARED;
+
+         static const std::string TEXTURE1D_ELEMENT;
+         static const std::string TEXTURE1D_ATTRIBUTE_TEXUNIT;
+         static const std::string TEXTURE1D_SOURCE_ELEMENT;
+         static const std::string TEXTURE1D_SOURCE_ATTRIBUTE_TYPE;
+         static const std::string TEXTURE1D_WRAP_ELEMENT;
+         static const std::string TEXTURE1D_WRAP_ATTRIBUTE_AXIS;
+         static const std::string TEXTURE1D_WRAP_ATTRIBUTE_MODE;
 
          static const std::string TEXTURE2D_ELEMENT;
          static const std::string TEXTURE2D_ATTRIBUTE_TEXUNIT;
