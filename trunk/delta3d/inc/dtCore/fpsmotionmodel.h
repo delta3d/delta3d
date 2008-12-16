@@ -487,6 +487,7 @@ namespace dtCore
          bool mUseWASD, mUseArrowKeys;
 
          bool mOperateWhenUnfocused; // should motion model operate when unfocused? Defaults to false
+         bool mShouldResetMouse;
 
          dtCore::RefPtr<Mouse>    mMouse;
          dtCore::RefPtr<Keyboard> mKeyboard;

@@ -84,6 +84,7 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    , mUseWASD(useWASD)
    , mUseArrowKeys(useArrowKeys)
    , mOperateWhenUnfocused(false)
+   , mShouldResetMouse(true)
    , mForwardBackCtrl(0.f)
    , mSidestepCtrl(0.f)
    , mLookLeftRightCtrl(0.f)
@@ -617,6 +618,12 @@ bool FPSMotionModel::IsCurrentlyActive()
    result = GetTarget() != NULL && IsEnabled() &&
       (mOperateWhenUnfocused || mMouse->GetHasFocus());
 
+   // Flag the mouse to be reset if the motion model is not currently active.
+   if (!result)
+   {
+      mShouldResetMouse = true;
+   }
+
    return result;
 }
 
@@ -664,18 +671,49 @@ private:
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    osg::Vec2 diff(0.0f, 0.0f);
-   if (GetTurnLeftRightAxis())
+
+   if (!mShouldResetMouse)
    {
-      diff.x() = GetTurnLeftRightAxis()->GetState();
+      if (GetTurnLeftRightAxis())
+      {
+         diff.x() = GetTurnLeftRightAxis()->GetState();
+      }
+      if (GetLookUpDownAxis())
+      {
+         diff.y() = GetLookUpDownAxis()->GetState();
+      }
    }
-   if (GetLookUpDownAxis())
+   // If the mouse needs to be reset (eg. the motion model has just become active)
+   // then we need to reset the mouse to ensure the camera does not pop to a different angle.
+   else if (IsCurrentlyActive())
    {
-      diff.y() = GetLookUpDownAxis()->GetState();
+      // This is a really ugly hack that I hate!
+      // Since the OSG mouse does not update its position from 0,0 until the
+      // mouse first enters a valid viewport area, there is no way
+      // to tell if the mouse is currently on the screen.
+      // If the mouse is not in a valid camera view, setting its position
+      // does nothing.  Therefore, I set the position to a value
+      // other than its default position 0,0 and then check the position to be sure
+      // the mouse was actually moved.
+      mMouse->SetPosition(0.1f,0.0f);
+
+      osg::Vec2 mousePosition = mMouse->GetPosition();
+
+      // If the mouse has moved to my custom position, that means
+      // the mouse is within a valid camera view area.
+      // It is now that I need to reset the mouse so
+      // the view camera does not pop to another angle during a focus change.
+      if( mousePosition.x() == 0.1f && mousePosition.y() == 0.0f )
+      {
+         mShouldResetMouse = false;
+         mMouse->SetPosition(0.0f, 0.0f);
+      }
    }
 
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
    const bool mouse_has_moved = (std::abs(diff[0]) > 0.0f || std::abs(diff[1]) > 0.0f);
 
+   // Once a new mouse movement has been triggered, we no longer need to reset the mouse.
    if (mpDebugger)
    {
       mpDebugger->Update(deltaTime, mouse_has_moved);
