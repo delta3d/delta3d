@@ -30,7 +30,7 @@
 namespace dtAnim
 {
 
-class	DT_ANIM_EXPORT PhysiqueDriver: public ICal3DDriver
+class DT_ANIM_EXPORT PhysiqueDriver: public ICal3DDriver
 {
 
 public:
@@ -40,7 +40,7 @@ public:
    void SetWrapper(Cal3DModelWrapper*);
 
 protected:
-      virtual ~PhysiqueDriver();
+   virtual ~PhysiqueDriver();
 
 private:
 
@@ -48,7 +48,7 @@ private:
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_PHYSIQUEDRIVER_H__
 

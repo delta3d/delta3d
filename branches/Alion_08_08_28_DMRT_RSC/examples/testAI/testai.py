@@ -3,7 +3,7 @@ from PyDtCore import *
 from PyDtAI import *
 from PyDtABC import *
 from PyDtDAL import *
-from PyDtChar import *
+from PyDtAnim import *
 
 import sys
 import math
@@ -11,16 +11,17 @@ import random
 
 class AICharacter:
    
-   def __init__(self, scene, camera, waypoint, filename, speed):
-      self.mCharacter = Character("AICharacter")
-      self.mCharacter.LoadFile(filename)
+   def __init__(self, scene, camera, waypoint, filename, speed): 
+      self.mSpeed = speed
+      self.mCharacter = CharacterWrapper("demoMap/SkeletalMeshes/marine.xml")
       self.mCurrentWaypoint = waypoint
+      self.mAStar = WaypointAStar()
+      self.mScene = scene
+      self.mCharacter.SetGroundClamp(scene, 0.0)
       self.SetPosition(self.mCurrentWaypoint)
       scene.AddDrawable(self.mCharacter)
+      
       self.mCharacter.AddChild(camera)
-      self.mAStar = WaypointAStar()
-      self.mSpeed = speed
-      self.mScene = scene
 
    def SetPosition(self, waypoint):
       trans = Transform()
@@ -44,8 +45,11 @@ class AICharacter:
       return True
 
    def GoToWaypoint(self, dt, waypoint):
-      self.mCharacter.RotateCharacterToPoint(waypoint.GetPosition(), dt)
-      self.mCharacter.SetVelocity(self.mSpeed)
+      self.mCharacter.RotateToPoint(waypoint.GetPosition(), dt * 3.0)
+      self.mCharacter.SetSpeed(-self.mSpeed)
+      if not self.mCharacter.IsAnimationPlaying("Walk"):
+        self.mCharacter.ClearAllAnimations(0.5)
+        self.mCharacter.PlayAnimation("Walk")
 
    def GetPosition(self):
       trans = Transform()
@@ -79,14 +83,13 @@ class AICharacter:
             self.ApplyStringPulling()
             self.GoToWaypoint(dt, self.mWaypointPath[0])
          else:
-            self.mCharacter.SetVelocity(0)
+            self.mCharacter.SetSpeed(0)
+      self.mCharacter.Update(dt)
          
 class TestAI(Application):
 
    def Config(self) :
-      
-      contextName = GetDeltaDataPathList() + "/demoMap"
-      
+      contextName = GetDeltaRootPath()+"/examples/data/demoMap";
       Project.GetInstance().SetContext(contextName)
       myMap = Project.GetInstance().GetMap("TesttownLt")
       self.LoadMap(myMap)
@@ -104,10 +107,17 @@ class TestAI(Application):
       self.GetCamera().SetTransform(trans)
 
       #create overhead camera
+      overheadView = View("overhead view")
+      overheadView.SetScene( self.GetScene() )
+      overheadView.SetKeyboard( self.GetView().GetKeyboard() )
+      overheadView.SetMouse( self.GetView().GetMouse() )
+
+      self.AddView( overheadView )
+  
       self.mOverheadCamera = Camera()
-      self.mOverheadCamera.SetScene(self.GetScene())
       self.mOverheadCamera.SetWindow(self.GetWindow())
       self.mOverheadCamera.SetEnabled(0)
+      overheadView.SetCamera( self.mOverheadCamera )
       trans.SetTranslation(-1.0, 5.0, 100.0)
       trans.SetRotation(90.0, 270.0, 0.0)
       
@@ -121,27 +131,27 @@ class TestAI(Application):
       self.character.FindPathAndGoToWaypoint(self.mWaypoint)
 
    def PreFrame(self, deltaFrameTime) :      
-      if self.character.GetCurrentWaypoint().GetPosition() == self.mWaypoint.GetPosition():
+      if self.character.GetCurrentWaypoint().GetID() == self.mWaypoint.GetID():
           foundPathB = False
           while not foundPathB:
              self.mWaypoint = random.choice(self.mWaypointList)
              foundPathB = self.character.FindPathAndGoToWaypoint(self.mWaypoint)
       self.character.Update(deltaFrameTime)
-
-   def KeyPressed( self, keyboard, key, character ) :
+        
+   def KeyPressed( self, keyboard, key ) :
       verdict = 0
-      if key is KeyboardKey.Key_space :            
+      if key == int(KeyboardKey.KEY_Space) :            
          self.mOverheadCamera.SetEnabled(not self.mOverheadCamera.GetEnabled())
          self.GetCamera().SetEnabled(not self.GetCamera().GetEnabled())               
          verdict = 1
-      elif key is KeyboardKey.Key_N :
+      elif key == ord('N'):
          WaypointManager.GetInstance().SetDrawNavMesh(not self.mDrawNavMesh, 1)
          self.mDrawNavMesh = not self.mDrawNavMesh
          verdict = 1
-      elif key is KeyboardKey.Key_Escape :
+      elif key == int(KeyboardKey.KEY_Escape): 
          self.Quit()
          verdict = 1
-      elif key is KeyboardKey.Key_A :
+      elif key == ord('A'): 
          if self.mOverheadCamera.GetEnabled():
             trans = Transform()
             self.mOverheadCamera.GetTransform(trans)
@@ -152,7 +162,7 @@ class TestAI(Application):
             trans.SetTranslation(vec)
             self.mOverheadCamera.SetTransform(trans)
             verdict = 1
-      elif key is KeyboardKey.Key_Z :
+      elif key == ord('Z'): 
          if self.mOverheadCamera.GetEnabled():
             trans = Transform()
             self.mOverheadCamera.GetTransform(trans)

@@ -17,7 +17,8 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell
-*/
+ */
+
 #ifndef DELTA_DATATYPES
 #define DELTA_DATATYPES
 
@@ -27,22 +28,22 @@
 namespace dtDAL
 {
    /**
-   * The DataType class is an enumeration representing the different datatypes
-   * that are supported by the Delta3D engine.
-   */
+    * The DataType class is an enumeration representing the different datatypes
+    * that are supported by the Delta3D engine.
+    */
    class DT_DAL_EXPORT DataType : public dtUtil::Enumeration
    {
       DECLARE_ENUM(DataType);
       public:
-         enum DataTypeId 
+         enum DataTypeId
          {
-            UNKNOWN_ID = 0, CHAR_ID, UCHAR_ID, FLOAT_ID, DOUBLE_ID, INT_ID, UINT_ID, LONGINT_ID, 
-            ULONGINT_ID, SHORTINT_ID, USHORTINT_ID, STRING_ID, BOOLEAN_ID, 
+            UNKNOWN_ID = 0, CHAR_ID, UCHAR_ID, FLOAT_ID, DOUBLE_ID, INT_ID, UINT_ID, LONGINT_ID,
+            ULONGINT_ID, SHORTINT_ID, USHORTINT_ID, STRING_ID, BOOLEAN_ID,
             VEC4_ID, VEC3_ID, VEC2_ID, VEC4F_ID, VEC3F_ID, VEC2F_ID, VEC4D_ID, VEC3D_ID, VEC2D_ID,
             RGBCOLOR_ID, RGBACOLOR_ID, GROUP_ID, ACTOR_ID, ENUMERATION_ID, GAMEEVENT_ID,
             STATICMESH_ID, TEXTURE_ID, TERRAIN_ID, SOUND_ID, PARTICLESYSTEM_ID,
-            SKELETAL_MESH_ID 
-         } ;
+            SKELETAL_MESH_ID
+         };
 
          /**
           * Data type used to represent an unknown type.  For example, the GenericActorProperty
@@ -197,7 +198,7 @@ namespace dtDAL
           * A Skeletal Mesh
           */
          static DataType SKELETAL_MESH;
-         
+
          /**
           * A texture resource
           */
@@ -216,7 +217,7 @@ namespace dtDAL
          /**
           * A Particle System resource
           */
-         static DataType PARTICLE_SYSTEM;         
+         static DataType PARTICLE_SYSTEM;
 
          /**
           * @return true if this datatype represents a resource
@@ -244,13 +245,13 @@ namespace dtDAL
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-         DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0) 
+         DataType(const std::string& name, const std::string& displayName, bool resource = false, unsigned char id = 0)
             : dtUtil::Enumeration(name)
          {
-               AddInstance(this);
-               mResource = resource;
-               mDisplayName = displayName;
-               mId = id;
+            AddInstance(this);
+            mResource = resource;
+            mDisplayName = displayName;
+            mId = id;
          }
 
          bool mResource;
@@ -259,4 +260,4 @@ namespace dtDAL
    };
 }
 
-#endif //DELTA_DATATYPES
+#endif // DELTA_DATATYPES

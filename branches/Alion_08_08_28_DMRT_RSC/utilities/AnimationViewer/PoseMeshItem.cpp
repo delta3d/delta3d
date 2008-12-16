@@ -26,7 +26,8 @@
 #include <osg/Geode>
 #include <osg/Vec4>
 
-#include <assert.h>
+#include <cassert>
+#include <climits>
 
 //temp
 #include <sstream>
@@ -80,9 +81,9 @@ PoseMeshItem::PoseMeshItem(const dtAnim::PoseMesh& poseMesh,
   , mAreEdgesDisplayed(true)
   , mErrorMinimum(0.0f)
   , mErrorMaximum(7.5f)
-  , mShouldRecomputeError(false)
   , mScaleHoriz(1.0f)
   , mScaleVert(1.0f)
+  , mShouldRecomputeError(false)
 {
    assert(mModel);
 

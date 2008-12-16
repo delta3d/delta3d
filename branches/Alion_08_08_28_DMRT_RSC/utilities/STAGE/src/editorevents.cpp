@@ -69,6 +69,12 @@ namespace dtEditQt
       emit gotoActor(actor);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitGotoPosition(double x, double y, double z)
+   {
+      emit EditorEvents::gotoPosition(x, y, z);
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
    {
@@ -239,5 +245,6 @@ namespace dtEditQt
          EditorEvents::instance = new EditorEvents();
       return *(EditorEvents::instance.get());
    }
+
 
 }

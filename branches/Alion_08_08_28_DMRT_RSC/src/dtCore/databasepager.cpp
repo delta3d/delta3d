@@ -175,3 +175,34 @@ double dtCore::DatabasePager::GetTargetFrameRate() const
 {
    return mDatabasePager->getTargetFrameRate();
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::SignalBeginFrame(const osg::FrameStamp* framestamp) const
+{
+   mDatabasePager->signalBeginFrame(framestamp);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::SignalEndFrame() const
+{
+   mDatabasePager->signalEndFrame();
+}
+
+//////////////////////////////////////////////////////////////////////////
+#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
+void dtCore::DatabasePager::UpdateSceneGraph(double currentFrameTime) const
+{
+   mDatabasePager->updateSceneGraph(currentFrameTime);
+}
+#else
+void dtCore::DatabasePager::UpdateSceneGraph(const osg::FrameStamp* framestamp) const
+{
+   mDatabasePager->updateSceneGraph(*framestamp);
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DatabasePager::CompileGLObjects(osg::State& state, double& availableTime) const
+{
+   mDatabasePager->compileGLObjects(state, availableTime);
+}

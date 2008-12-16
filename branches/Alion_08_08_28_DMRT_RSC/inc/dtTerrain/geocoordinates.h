@@ -210,14 +210,14 @@ namespace dtTerrain
           *    methods, the origin in cartesian space is calculated and cached
           *    as required.
           */
-         const osg::Vec3 &GetCartesianPoint();
-         void GetCartesianPoint( osg::Vec3& point ); 
+         const osg::Vec3& GetCartesianPoint();
+         void GetCartesianPoint(osg::Vec3& point); 
         
-         static void SetOrigin(const GeoCoordinates &geoOrigin);
-         static void GetOrigin(GeoCoordinates &geoOrigin);
+         static void SetOrigin(const GeoCoordinates& geoOrigin);
+         static void GetOrigin(GeoCoordinates& geoOrigin);
 
-         std::string ToString(); // GeoCoord(lat,long,alt)
-         std::string ToStringAll(); // GeoCoord(geo: lat,long,alt cart:x,y,z)
+         std::string ToString() const; // GeoCoord(lat,long,alt)
+         std::string ToStringAll() const; // GeoCoord(geo: lat,long,alt cart:x,y,z)
 
       protected:
       

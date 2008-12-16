@@ -1,7 +1,7 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
  * Copyright 2008, Alion Science and Technology
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
@@ -18,6 +18,7 @@
  *
  * David Guthrie 02/04/2008
  */
+
 #ifndef DELTA_DISTANCE_SENSOR
 #define DELTA_DISTANCE_SENSOR
 
@@ -39,9 +40,9 @@ namespace dtAI
    class CompareDistanceFunc
    {
       public:
-         
+
          CompareDistanceFunc(ReportData minDistanceToReport):
-            mCallbackDistance2(minDistanceToReport * minDistanceToReport)
+            mCallbackDistance2(minDistanceToReport* minDistanceToReport)
          {}
 
          bool operator()(ReportData& distance2, const VecType& first, const VecType& second)
@@ -73,8 +74,8 @@ namespace dtAI
       private:
          ReportData mCallbackDistance2;
    };
-   
-   template <typename EvaluateFunc1, typename EvaluateFunc2, 
+
+   template <typename EvaluateFunc1, typename EvaluateFunc2,
       typename ReportFunc, typename ReportData = float, typename VecType = osg::Vec3>
    class DistanceSensor : public Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2,
          CompareDistanceFunc<ReportData, VecType>, ReportFunc, ReportData>
@@ -84,11 +85,11 @@ namespace dtAI
          typedef Sensor<VecType, VecType, EvaluateFunc1, EvaluateFunc2,
             CompareDistanceFunc<ReportData, VecType>, ReportFunc, ReportData> BaseClass;
 
-         DistanceSensor(EvaluateFunc1 eval1, EvaluateFunc2 eval2, ReportData callbackDistance, ReportFunc rpt) : 
-                     BaseClass(VecType(), VecType(), eval1, eval2, 
-                              CompareDistanceFunc<ReportData, VecType>(callbackDistance) , rpt)
-                     {
-                     }
+         DistanceSensor(EvaluateFunc1 eval1, EvaluateFunc2 eval2, ReportData callbackDistance, ReportFunc rpt)
+            : BaseClass(VecType(), VecType(), eval1, eval2,
+                        CompareDistanceFunc<ReportData, VecType>(callbackDistance) , rpt)
+         {
+         }
 
          virtual ~DistanceSensor() {}
 
@@ -135,6 +136,7 @@ namespace dtAI
             mTransformable->GetTransform(xform, mFrameOfRef);
             xform.GetTranslation(vec);
          }
+
       private:
          dtCore::RefPtr<const dtCore::Transformable> mTransformable;
          dtCore::Transformable::CoordSysEnum mFrameOfRef;
@@ -144,8 +146,8 @@ namespace dtAI
    class EvaluateMatrixPosition
    {
       public:
-         EvaluateMatrixPosition(const osg::MatrixTransform& transform):
-                     mTransform(&transform)
+         EvaluateMatrixPosition(const osg::MatrixTransform& transform)
+            : mTransform(&transform)
          {}
 
          void operator()(VecType& vec)
@@ -153,7 +155,7 @@ namespace dtAI
             osg::Matrix m;
             osg::NodePathList nodePathList = mTransform->getParentalNodePaths();
 
-            if( !nodePathList.empty() )
+            if ( !nodePathList.empty() )
             {
                osg::NodePath nodePath = nodePathList[0];
                m.set( osg::computeLocalToWorld(nodePath) );
@@ -165,7 +167,7 @@ namespace dtAI
 
             vec = m.getTrans();
          }
-         
+
       private:
          dtCore::RefPtr<const osg::MatrixTransform> mTransform;
    };
@@ -174,8 +176,8 @@ namespace dtAI
    class EvaluateVec3
    {
       public:
-         EvaluateVec3(const VecType& sourceVec):
-                     mVec(sourceVec)
+         EvaluateVec3(const VecType& sourceVec)
+            : mVec(sourceVec)
          {}
 
          void operator()(VecType& vec)
@@ -187,4 +189,4 @@ namespace dtAI
    };
 }
 
-#endif /*DISTANCESENSOR_H_*/
+#endif // DISTANCESENSOR_H_

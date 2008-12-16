@@ -26,6 +26,7 @@
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/environmentactor.h>
+#include <cstring>
 
 namespace dtDAL 
 {

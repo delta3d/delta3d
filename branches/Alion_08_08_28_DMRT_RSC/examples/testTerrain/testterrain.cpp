@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* testTerrain - testterrain (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Matthew W. Campbell
-*/
+ * testTerrain - testterrain (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Matthew W. Campbell
+ */
+
 #include <osg/ApplicationUsage>
 #include <osg/ArgumentParser>
 
@@ -57,32 +58,33 @@
 #include <osg/Version>
 #include <sstream>
 
-      // helper func that should be somewhere
-   std::string vec3dToString(const osg::Vec3d &pt)
-   {
-      std::ostringstream ost;
-      ost << "Vec3d("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
-      return ost.str();
-   }
+// helper func that should be somewhere
+std::string vec3dToString(const osg::Vec3d& pt)
+{
+   std::ostringstream ost;
+   ost << "Vec3d("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
+   return ost.str();
+}
 
-   // helper func that should be somewhere
-   std::string vec3ToString(const osg::Vec3 &pt)
-   {
-      std::ostringstream ost;
-      ost << "Vec3 ("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
-      return ost.str();
-   }
+// helper func that should be somewhere
+std::string vec3ToString(const osg::Vec3& pt)
+{
+   std::ostringstream ost;
+   ost << "Vec3 ("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
+   return ost.str();
+}
 
 class TestTerrainApp : public dtABC::Application
 {
 public:
 
    //////////////////////////////////////////////////////////////////////////
-   TestTerrainApp() : dtABC::Application("config.xml"),
-      mTerrainClamp(false),
-      mFlyFast(false)
+   TestTerrainApp()
+      : dtABC::Application("config.xml")
+      , mTerrainClamp(false)
+      , mFlyFast(false)
    {
-      GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&TestTerrainApp::KeyReleased));
+      GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this, &TestTerrainApp::KeyReleased));
    }
 
 protected:
@@ -94,8 +96,8 @@ public:
    //////////////////////////////////////////////////////////////////////////
    void CreateTerrain()
    {
-     //Before we load any resources, lets set our origin to correlate to the data we
-      //are loading.
+      // Before we load any resources, lets set our origin to correlate to the data we
+      // are loading.
       dtCore::Transform tx;
       dtTerrain::GeoCoordinates coords;
       osg::Vec3d pos;
@@ -131,54 +133,54 @@ public:
 
       coords.SetAltitude(1000.0);
       coords.GetCartesianPoint(posV3);
-      tx.SetTranslation(posV3); 
+      tx.SetTranslation(posV3);
       LOG_DEBUG("SetCam: "+vec3ToString(posV3));
 
       //std::cout << "Camera Pos = " <<  pos.x() << ", " << pos.y() << ", " << pos.z() << std::endl;
-      GetCamera()->SetTransform(tx);         
+      GetCamera()->SetTransform(tx);
 
       // Set up a motion model so we can move the camera
       mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
       mMotionModel->SetMaximumFlySpeed(1200.0f);
-      mMotionModel->SetTarget(GetCamera());         
+      mMotionModel->SetTarget(GetCamera());
 
       GetCamera()->GetOSGCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
       GetCamera()->SetPerspectiveParams(60.0f, 1.33, 1, 120000.0f);
-      GetCamera()->SetProjectionResizePolicy(osg::Camera::HORIZONTAL);         
+      GetCamera()->SetProjectionResizePolicy(osg::Camera::HORIZONTAL);
 
-      //Create our terrain and add a reader and renderer to it.
+      // Create our terrain and add a reader and renderer to it.
       mTerrain = new dtTerrain::Terrain();
       mTerrain->SetCachePath(mCachePath);
-      mTerrain->AddResourcePath(mResourcePath);      
+      mTerrain->AddResourcePath(mResourcePath);
 
-      //Create the terrain reader...
-      dtTerrain::DTEDTerrainReader *reader = new dtTerrain::DTEDTerrainReader();
+      // Create the terrain reader...
+      dtTerrain::DTEDTerrainReader* reader = new dtTerrain::DTEDTerrainReader();
       switch (mDTEDLevel)
       {
-         case 0:
-            reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::ZERO);
-            break;
-            
-         case 1:
-            reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::ONE);
-            break;
-            
-         case 2:
-            reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::TWO);
-            break;
-            
-         default:
-            std::cout << "Unsupported DTED level." << std::endl;
-            exit(1);
+      case 0:
+         reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::ZERO);
+         break;
+
+      case 1:
+         reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::ONE);
+         break;
+
+      case 2:
+         reader->SetDTEDLevel(dtTerrain::DTEDTerrainReader::DTEDLevelEnum::TWO);
+         break;
+
+      default:
+         std::cout << "Unsupported DTED level." << std::endl;
+         exit(1);
       };
 
       //Create the terrain renderer...
-      mRenderer = new dtTerrain::SoarXTerrainRenderer();      
-            
+      mRenderer = new dtTerrain::SoarXTerrainRenderer();
+
       //Connect our reader and renderer to the terrain.
-      mTerrain->SetDataReader(reader);         
-      mTerrain->SetDataRenderer(mRenderer.get());        
-         
+      mTerrain->SetDataReader(reader);
+      mTerrain->SetDataRenderer(mRenderer.get());
+
 
       //Add a decorator to generate a base texture for the terrain.
       mColorMapDecorator = new dtTerrain::ColorMapDecorator();
@@ -186,8 +188,8 @@ public:
 
       // Add the vegetation decorator layer if enabled.
       if (mEnableVegetation)
-      {        
-         mLCCType = CreateLCCType();  
+      {
+         mLCCType = CreateLCCType();
          mVeg = new dtTerrain::VegetationDecorator;
 
          // Add the LCCTypes
@@ -206,26 +208,25 @@ public:
          // Add the vegetation decoration layer to our terrain
          mTerrain->AddDecorationLayer(mVeg.get());
       }
-      
+
       if (!mGeoDrapePath.empty())
       {
          //Create a decorator used to drape a geotiff over the terrain.
-         dtTerrain::GeoTiffDecorator *geoTiffDecorator = new dtTerrain::GeoTiffDecorator();
+         dtTerrain::GeoTiffDecorator* geoTiffDecorator = new dtTerrain::GeoTiffDecorator();
          geoTiffDecorator->AddGeoSpecificImage(mGeoDrapePath);
          mTerrain->AddDecorationLayer(geoTiffDecorator);
       }
 
-      dtABC::Weather *weather = new dtABC::Weather();
+      dtABC::Weather* weather = new dtABC::Weather();
       weather->SetTheme(dtABC::Weather::THEME_FAIR);
-      
+
       mEnvironment = weather->GetEnvironment();
       mEnvironment->SetDateTime(2005,3,7,14,0,0);
-     
+
       mEnvironment->AddChild(mTerrain.get());
       mRenderer->SetEnableFog(true);
 
       GetScene()->AddDrawable(mEnvironment.get());
-
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -265,7 +266,7 @@ public:
       industrial.AddModel("models/industry0.ive");
       industrial.AddModel("models/industry1.ive");
       industrial.AddModel("models/industry2.ive");
-      
+
       dtTerrain::LCCType deciduous(41,"deciduous");
       deciduous.SetRGB(134,200,127);
       deciduous.SetSlope(0,50,1);
@@ -292,7 +293,7 @@ public:
       forest.SetElevation(10,1280,1);
       forest.SetRelativeElevation(15,73,1);
       forest.SetAspect(255);
-      forest.AddModel("models/Grape_oregon_4_1.flt/Grape_oregon_4_1.flt",2.5);        
+      forest.AddModel("models/Grape_oregon_4_1.flt/Grape_oregon_4_1.flt",2.5);
       forest.AddModel("models/Maple_silver_alone_21_1.flt/Maple_silver_alone_21_1.flt",2.5);
 
       dtTerrain::LCCType shrubland(51,"shrubland");
@@ -317,8 +318,8 @@ public:
       return LCCType;
    }
 
-   ////////////////////////////////////////////////////////////////////////// 
-   virtual bool KeyPressed(const dtCore::Keyboard *keyBoard, int key)
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool KeyPressed(const dtCore::Keyboard* keyBoard, int key)
    {
       bool verdict(false);
       static bool wireFrame = false;
@@ -332,9 +333,13 @@ public:
       case osgGA::GUIEventAdapter::KEY_Space:
          wireFrame = !wireFrame;
          if (wireFrame)
+         {
             GetScene()->SetRenderState(dtCore::Scene::FRONT_AND_BACK, dtCore::Scene::LINE);
+         }
          else
+         {
             GetScene()->SetRenderState(dtCore::Scene::FRONT, dtCore::Scene::FILL);
+         }
 
          verdict = true;
          break;
@@ -344,24 +349,28 @@ public:
          if (!mTerrainClamp)
          {
             if (mFlyFast)
+            {
                mMotionModel->SetMaximumFlySpeed(4500);
+            }
             else
+            {
                mMotionModel->SetMaximumFlySpeed(1200);
+            }
          }
          else
          {
             mMotionModel->SetMaximumFlySpeed(128);
-         }         
+         }
 
          verdict = true;
          break;
-               
+
       case 'f':
          mFlyFast = true;
          mMotionModel->SetMaximumFlySpeed(2500);
 
          verdict = true;
-         break;     
+         break;
       default:
          verdict = dtABC::Application::KeyPressed(keyBoard,key);
          break;
@@ -394,41 +403,41 @@ public:
    {
       static const float PLAYER_HEIGHT = 32.0f;
       std::ostringstream ss;
-      
-      //Check for some keys and adjust the terrain rendering parameters as 
+
+      //Check for some keys and adjust the terrain rendering parameters as
       //neccessary.
-      if(GetKeyboard()->GetKeyState('-'))
+      if (GetKeyboard()->GetKeyState('-'))
       {
          mRenderer->SetThreshold(float(mRenderer->GetThreshold()) - deltaFrameTime*5.0f);
          ss.str("");
          ss << "Threshold decreased to: " << mRenderer->GetThreshold();
          LOG_INFO(ss.str());
       }
-      
-      if(GetKeyboard()->GetKeyState('='))
+
+      if (GetKeyboard()->GetKeyState('='))
       {
          mRenderer->SetThreshold(float(mRenderer->GetThreshold()) + deltaFrameTime*5.0f);
          ss.str("");
          ss << "Threshold increased to: " << mRenderer->GetThreshold();
          LOG_INFO(ss.str());
       }
-      
-      if(GetKeyboard()->GetKeyState(']'))
+
+      if (GetKeyboard()->GetKeyState(']'))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) - deltaFrameTime*5.0f);
          ss.str("");
          ss << "Detail Multiplier decreased to: " << mRenderer->GetDetailMultiplier();
          LOG_INFO(ss.str());
       }
-      
-      if(GetKeyboard()->GetKeyState('['))
+
+      if (GetKeyboard()->GetKeyState('['))
       {
          mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) + deltaFrameTime*5.0f);
          ss.str("");
          ss << "Detail Multiplier increased to: " << mRenderer->GetDetailMultiplier();
          LOG_INFO(ss.str());
       }
-      
+
       //Ground clamp our camera...
       if (mTerrainClamp)
       {
@@ -436,8 +445,8 @@ public:
          GetCamera()->GetTransform(tx);
 
          osg::Vec3 trans;
-         tx.GetTranslation(trans);         
-         trans.z() = mTerrain->GetHeight(trans.x(),trans.y()) + PLAYER_HEIGHT;         
+         tx.GetTranslation(trans);
+         trans.z() = mTerrain->GetHeight(trans.x(),trans.y()) + PLAYER_HEIGHT;
          tx.SetTranslation(trans);
 //         GetCamera()->SetTransform(tx);
       }
@@ -450,25 +459,25 @@ public:
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void SetResourcePath(const std::string path)
+   void SetResourcePath(const std::string& path)
    {
       mResourcePath = path;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void SetGeospecificPath(const std::string path)
+   void SetGeospecificPath(const std::string& path)
    {
       mGeospecificPath = path;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
-   void SetGeospecificDrapePath(const std::string &path)
+   void SetGeospecificDrapePath(const std::string& path)
    {
       mGeoDrapePath = path;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
-   void SetEnableVegetation(bool flag) 
+   void SetEnableVegetation(bool flag)
    {
       mEnableVegetation = flag;
    }
@@ -510,21 +519,21 @@ private:
 
    // Vegetation Decorator
    dtCore::RefPtr<dtTerrain::VegetationDecorator> mVeg;
-   
+
    // Texture decorator mapping height values to color values.
    dtCore::RefPtr<dtTerrain::ColorMapDecorator> mColorMapDecorator;
-   
+
    dtCore::RefPtr<dtTerrain::SoarXTerrainRenderer> mRenderer;
 
    // LCC Types
-   std::vector<dtTerrain::LCCType> mLCCType;  
+   std::vector<dtTerrain::LCCType> mLCCType;
 
    // Resource Path
    std::string mResourcePath;
 
    // Geospecific Data Path
    std::string mGeospecificPath;
-   
+
    std::string mGeoDrapePath;
 
    // Cache Path
@@ -536,28 +545,28 @@ private:
    double mLatitude;
    double mLongitude;
 
-   bool mTerrainClamp;
-   bool mFlyFast;
-   bool mSkyBoxEnable;
+   bool  mTerrainClamp;
+   bool  mFlyFast;
+   bool  mSkyBoxEnable;
    float mFogNear;
-   bool mEnableVegetation;
+   bool  mEnableVegetation;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
       dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
       dtCore::GetDeltaRootPath() + "/examples/testTerrain" + ";");
 
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
    dtCore::RefPtr<TestTerrainApp> app;
-   
+
    // use an ArgumentParser object to manage the program arguments.
-   osg::ArgumentParser arguments(&argc,argv);
+   osg::ArgumentParser arguments(&argc, argv);
 
    // set up the usage document, in case we need to print out how to use this program.
    arguments.getApplicationUsage()->setApplicationName(arguments.getApplicationName());
@@ -587,16 +596,16 @@ int main(int argc, char **argv)
    bool vegetation(false);
    std::string geospecific;
    std::string drapeImagePath;
-   
+
    if (arguments.argc()<=1)
    {
-      level = 0;
-      latitude = 36.96;
-      longitude = -121.96;
-      cachePath = "cache";
+      level        = 0;
+      latitude     = 36.96;
+      longitude    = -121.96;
+      cachePath    = "cache";
       resourcePath = "dted/level0";
-      vegetation = false;
-      geospecific = "";
+      vegetation   = false;
+      geospecific  = "";
    }
    else
    {
@@ -633,7 +642,7 @@ int main(int argc, char **argv)
       app->Config();
       app->Run();
    }
-   catch (dtUtil::Exception &ex)
+   catch (dtUtil::Exception& ex)
    {
       std::cout << ex.What() << std::endl;
    }

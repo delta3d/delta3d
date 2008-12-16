@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/hatchactor.h>
 #include <fireFighter/gamelevelactor.h>
 #include <fireFighter/entityactorregistry.h>
@@ -33,21 +34,21 @@
 
 using dtCore::RefPtr;
 
-static osg::Node* FindNamedNode(const std::string &searchName, osg::Node *currNode)
+static osg::Node* FindNamedNode(const std::string& searchName, osg::Node* currNode)
 {
-   osg::Group *currGroup = NULL;
-   osg::Node  *foundNode = NULL;
+   osg::Group* currGroup = NULL;
+   osg::Node*  foundNode = NULL;
 
    // check to see if we have a valid (non-NULL) node.
    // if we do have a null node, return NULL.
-   if(currNode == NULL)
+   if (currNode == NULL)
    {
       return NULL;
    }
 
-   // We have a valid node, check to see if this is the node we 
+   // We have a valid node, check to see if this is the node we
    // are looking for. If so, return the current node.
-   if(currNode->getName() == searchName)
+   if (currNode->getName() == searchName)
    {
       return currNode;
    }
@@ -60,19 +61,21 @@ static osg::Node* FindNamedNode(const std::string &searchName, osg::Node *currNo
    // If we check all of the children and have not found the node,
    // return NULL
    currGroup = currNode->asGroup(); // returns NULL if not a group.
-   if(currGroup != NULL) 
+   if (currGroup != NULL)
    {
-      for(unsigned int i = 0; i < currGroup->getNumChildren(); i++)
-      {     
+      for (unsigned int i = 0; i < currGroup->getNumChildren(); i++)
+      {
          foundNode = FindNamedNode(searchName, currGroup->getChild(i));
-         if(foundNode != NULL)
+         if (foundNode != NULL)
+         {
             return foundNode; // found a match!
+         }
       }
       return NULL; // We have checked each child node - no match found.
    }
-   else 
+   else
    {
-      return NULL; // leaf node, no match 
+      return NULL; // leaf node, no match
    }
 }
 
@@ -99,10 +102,10 @@ void HatchActorProxy::BuildInvokables()
 
 ////////////////////////////////////////////////
 
-HatchActor::HatchActor(dtGame::GameActorProxy &proxy) : 
-   GameItemActor(proxy), 
-   mHatchNode(NULL), 
-   mGameMapLoaded(false)
+HatchActor::HatchActor(dtGame::GameActorProxy& proxy)
+   : GameItemActor(proxy)
+   , mHatchNode(NULL)
+   , mGameMapLoaded(false)
 {
 
 }
@@ -116,7 +119,7 @@ void HatchActor::OnEnteredWorld()
 {
    GameItemActor::OnEnteredWorld();
 
-   dtGame::Invokable *invoke = new dtGame::Invokable("MapLoaded", 
+   dtGame::Invokable* invoke = new dtGame::Invokable("MapLoaded",
       dtDAL::MakeFunctor(*this, &HatchActor::OnMapLoaded));
 
    GetGameActorProxy().AddInvokable(*invoke);
@@ -130,102 +133,110 @@ void HatchActor::Activate(bool enable)
    GameItemActor::Activate(enable);
 
    // If we are in STAGE, we have a NULL game manager. So peace out of here
-   if(GetGameActorProxy().IsInSTAGE())
+   if (GetGameActorProxy().IsInSTAGE())
+   {
       return;
+   }
 
-   if(mHatchNode != NULL)
+   if (mHatchNode != NULL)
    {
       // Open or close the door
       osg::Matrix rotMat;
       const float deg = IsActivated() ? -105.0f : 105.0f;
-    
+
       rotMat.makeRotate(
          osg::DegreesToRadians(0.0f), osg::Vec3(1.0f, 0.0f, 0.0f),
          osg::DegreesToRadians(0.0f), osg::Vec3(0.0f, 1.0f, 0.0f),
          osg::DegreesToRadians(deg),  osg::Vec3(0.0f, 0.0f, 1.0f));
-         
+
       mHatchNode->preMult(rotMat);
    }
 
-   if(mGameMapLoaded && !IsActivated())
+   if (mGameMapLoaded && !IsActivated())
+   {
       PlayItemUseSnd();
+   }
 
    // Special case. Since Activate(bool) is a property that is utilized in
    // STAGE, this function is called once on startup to initialize the
    // properties. When this happens, the game manager has not be initialized
-   // or something. It comes back with a weird memory address and outright 
+   // or something. It comes back with a weird memory address and outright
    // crashes. This doesn't occur in other versions of Activate(bool) because
    // the base class version does not send a message. That behavior is handled
-   // in the player class. 
-   if(mGameMapLoaded)
+   // in the player class.
+   if (mGameMapLoaded)
    {
-      dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
+      dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
 
-      RefPtr<dtGame::Message> msg = 
-         mgr.GetMessageFactory().CreateMessage(enable ? MessageType::ITEM_ACTIVATED : 
+      RefPtr<dtGame::Message> msg =
+         mgr.GetMessageFactory().CreateMessage(enable ? MessageType::ITEM_ACTIVATED :
                                                         MessageType::ITEM_DEACTIVATED);
 
       msg->SetAboutActorId(GetUniqueId());
       mgr.SendMessage(*msg);
    }
 
-   const std::string &name = "OpenHatch";
+   const std::string& name = "OpenHatch";
 
    // No event, peace out
-   if(!IsActivated())
+   if (!IsActivated())
+   {
       return;
+   }
 
-   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-   if(event == NULL)
+   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   RefPtr<dtGame::Message> msg = 
+   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
-   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
    gem.SetGameEvent(*event);
    mgr.SendMessage(gem);
 }
 
-void HatchActor::OnMapLoaded(const dtGame::Message &msg)
+void HatchActor::OnMapLoaded(const dtGame::Message& msg)
 {
-   if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   if (msg.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
    {
-      const dtGame::MapMessage &mlm = static_cast<const dtGame::MapMessage&>(msg);
+      const dtGame::MapMessage& mlm = static_cast<const dtGame::MapMessage&>(msg);
       std::vector<std::string> mapNames;
       mlm.GetMapNames(mapNames);
-      if(!mapNames.empty() && mapNames[0] == "GameMap")
+      if (!mapNames.empty() && mapNames[0] == "GameMap")
       {
          mGameMapLoaded = true;
          // Find the game level actor and search with its node
          std::vector<dtDAL::ActorProxy*> proxies;
          GetGameActorProxy().GetGameManager()->FindActorsByType(*EntityActorRegistry::TYPE_GAME_LEVEL_ACTOR, proxies);
-         GameLevelActor *gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
-         if(gla == NULL)
+         GameLevelActor* gla = dynamic_cast<GameLevelActor*>(proxies[0]->GetActor());
+         if (gla == NULL)
          {
             LOG_ERROR("Failed to find the game level actor in the map. Unable to open or close the hatch door");
          }
          else
          {
-            osg::Node *hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
+            osg::Node* hatchNode = FindNamedNode("HatchEngr", gla->GetOSGNode());
             mHatchNode = dynamic_cast<osg::MatrixTransform*>(hatchNode);
-            if(mHatchNode == NULL)
+            if (mHatchNode == NULL)
             {
                LOG_ERROR("Failed to find the hatch node in the game level.");
             }
          }
       }
    }
-   else if(msg.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
+   else if (msg.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
    {
-      const dtGame::MapMessage &mlm = static_cast<const dtGame::MapMessage&>(msg);
+      const dtGame::MapMessage& mlm = static_cast<const dtGame::MapMessage&>(msg);
       std::vector<std::string> mapNames;
       mlm.GetMapNames(mapNames);
-      if(!mapNames.empty() && mapNames[0] == "GameMap")
+      if (!mapNames.empty() && mapNames[0] == "GameMap")
+      {
          mGameMapLoaded = false;
+      }
    }
    else
    {

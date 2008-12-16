@@ -265,7 +265,7 @@ namespace dtEditQt
          * @return A pointer to the scene.
          */
         dtCore::Scene *getScene() {
-            return this->scene.get();
+            return this->mScene.get();
         }
 
         /**
@@ -381,6 +381,8 @@ namespace dtEditQt
 
         ///Moves the camera such that the actor is clearly visible.
         void onGotoActor(ActorProxyRefPtr proxy);
+
+        void onGotoPosition(double x, double y, double z);
 
         // starts a larger transaction to prevent excessive refreshes
         void onBeginChangeTransaction();
@@ -555,7 +557,7 @@ namespace dtEditQt
         std::map<std::string,std::vector<std::string> > selectedActorOrigValues;
 
         dtCore::RefPtr<ViewportOverlay> overlay;
-        dtCore::RefPtr<dtCore::Scene> scene;
+        dtCore::RefPtr<dtCore::Scene> mScene;
         osg::ref_ptr<osg::FrameStamp> frameStamp;
         osg::ref_ptr<osgUtil::SceneView> sceneView;
         osg::ref_ptr<osg::StateSet> globalStateSet;

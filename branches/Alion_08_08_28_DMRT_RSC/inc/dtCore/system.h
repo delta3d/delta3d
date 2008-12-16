@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_SYSTEM
 #define DELTA_SYSTEM
@@ -209,10 +209,10 @@ namespace dtCore
       double GetSimulationTime() const;
 
       /**
-      *	@note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.
-      *          it starts at 0 and goes up in seconds.  This time cannot be changed but does scale
-      *          with the simulation time.
-      */
+       * @note SimTimeSinceStartup is reflective of the total amount of time that has been simulated.
+       *       it starts at 0 and goes up in seconds.  This time cannot be changed but does scale
+       *       with the simulation time.
+       */
       double GetSimTimeSinceStartup() const;
 
       /**

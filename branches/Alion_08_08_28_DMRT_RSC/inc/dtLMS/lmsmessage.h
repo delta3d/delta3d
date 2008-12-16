@@ -18,6 +18,7 @@
  *
  * @author Christopher DuBuc
  */
+
 #ifndef DELTA_LMS_MESSAGE
 #define DELTA_LMS_MESSAGE
 
@@ -28,87 +29,87 @@ namespace dtLMS
 {
    class LmsMessageType;
 
-	/**
-	* This class is used to encapsulate an LMS message that is sent to or received from
-	* an LMS. It provides several overloaded constructors to make it easy to create the
-	* message along with utility methods that can import or export the message to the
-	* delimited string format specified by the LMS messaging protocol.
-	*/
-	class DT_LMS_EXPORT LmsMessage
-	{
-	public:
+   /**
+    * This class is used to encapsulate an LMS message that is sent to or received from
+    * an LMS. It provides several overloaded constructors to make it easy to create the
+    * message along with utility methods that can import or export the message to the
+    * delimited string format specified by the LMS messaging protocol.
+    */
+   class DT_LMS_EXPORT LmsMessage
+   {
+   public:
 
-		/**
-		* Default constructor.
-		*/
-		LmsMessage();
-		
-		/**
-		* Constructor used to create status messages, where only the ID, message type, and
-		* message value are required (i.e. id123:SIMULATION:RUNNING).
-		* @param senderID The ID value of the component sending the messages. For messages
-		*		sent by the LmsClientSocket, this can be retrieved via GetClientID().
-		* @param type The enumerated type of this message (i.e. SIMULATION, LAUNCH_PAGE,
-		*		(OBJECTIVE_COMPLETION, OBJECTIVE_SCORE)
-		* @param value The content of the message. In most cases, one should use the
-		*		LmsMessageValue enumeration's GetName() method; however, in the case of
-		*		OBJECTIVE_SCORE type messages, this will be the string form of a float
-		*		value.
-		*/
-      LmsMessage(const std::string &senderID, 
-                 const LmsMessageType &type, 
+      /**
+       * Default constructor.
+       */
+      LmsMessage();
+
+      /**
+       * Constructor used to create status messages, where only the ID, message type, and
+       * message value are required (i.e. id123:SIMULATION:RUNNING).
+       * @param senderID The ID value of the component sending the messages. For messages
+       *      sent by the LmsClientSocket, this can be retrieved via GetClientID().
+       * @param type The enumerated type of this message (i.e. SIMULATION, LAUNCH_PAGE,
+       *      (OBJECTIVE_COMPLETION, OBJECTIVE_SCORE)
+       * @param value The content of the message. In most cases, one should use the
+       *      LmsMessageValue enumeration's GetName() method; however, in the case of
+       *      OBJECTIVE_SCORE type messages, this will be the string form of a float
+       *      value.
+       */
+      LmsMessage(const std::string &senderID,
+                 const LmsMessageType &type,
                  const std::string &value);
 
-		/**
-		* Constructor used to create objective messages, where an ID, message type,
-		* message value, and objective ID are required
-		*		(i.e. id123:OBJECTIVE_COMPLETION:COMPLETE:ObjID123).
-		* @param senderID The ID value of the component sending the messages. For messages
-		*		sent by the LmsClientSocket, this can be retrieved via GetClientID().
-		* @param type The enumerated type of this message (i.e. SIMULATION, LAUNCH_PAGE,
-		*		(OBJECTIVE_COMPLETION, OBJECTIVE_SCORE)
-		* @param value The content of the message. In most cases, one should use the
-		*		LmsMessageValue enumeration's GetName() method; however, in the case of
-		*		OBJECTIVE_SCORE type messages, this will be the string form of a float
-		*		value.
-		* @param taskID The ID value of the LMS objective being updated. This generally
-		*		should be the ID value of the TaskActor sending the update message.
-		*/
-      LmsMessage(const std::string &senderID, 
-                 const LmsMessageType &type, 
-                 const std::string &value, 
+      /**
+       * Constructor used to create objective messages, where an ID, message type,
+       * message value, and objective ID are required
+       *      (i.e. id123:OBJECTIVE_COMPLETION:COMPLETE:ObjID123).
+       * @param senderID The ID value of the component sending the messages. For messages
+       *      sent by the LmsClientSocket, this can be retrieved via GetClientID().
+       * @param type The enumerated type of this message (i.e. SIMULATION, LAUNCH_PAGE,
+       *      (OBJECTIVE_COMPLETION, OBJECTIVE_SCORE)
+       * @param value The content of the message. In most cases, one should use the
+       *      LmsMessageValue enumeration's GetName() method; however, in the case of
+       *      OBJECTIVE_SCORE type messages, this will be the string form of a float
+       *      value.
+       * @param taskID The ID value of the LMS objective being updated. This generally
+       *      should be the ID value of the TaskActor sending the update message.
+       */
+      LmsMessage(const std::string &senderID,
+                 const LmsMessageType &type,
+                 const std::string &value,
                  const std::string &objectiveID);
-		
-		/**
-		* Constructor used to create an lms message from an appropriately delimited string.
-		* This constructor is generally used to create an LmsMessage object from a string
-		* message received from the LMS.
-		* @ param messageString The delimited string to create the LmsMessage from. Must be
-		*		in the proper delimited format per the LMS messaging protocol.
-		*/
+
+      /**
+       * Constructor used to create an lms message from an appropriately delimited string.
+       * This constructor is generally used to create an LmsMessage object from a string
+       * message received from the LMS.
+       * @ param messageString The delimited string to create the LmsMessage from. Must be
+       *      in the proper delimited format per the LMS messaging protocol.
+       */
       LmsMessage(const std::string &messageString);
 
-		/**
-		* Destructor
-		*/
-		virtual ~LmsMessage();
+      /**
+       * Destructor
+       */
+      virtual ~LmsMessage();
 
-		/**
-		* This public method populates this LmsMessage with the values parsed from
-		* an appropriately delimited string. It is called by one of the constructors
-		* (see LmsMessage(string messageString), but can also be called externally.
-		* @ param messageString The delimited string to create the LmsMessage from. Must be
-		*		in the proper delimited format per the LMS messaging protocol.
-		*/
+      /**
+       * This public method populates this LmsMessage with the values parsed from
+       * an appropriately delimited string. It is called by one of the constructors
+       * (see LmsMessage(string messageString), but can also be called externally.
+       * @ param messageString The delimited string to create the LmsMessage from. Must be
+       *      in the proper delimited format per the LMS messaging protocol.
+       */
       void BuildFromString(const std::string &messageString);
 
-		/**
-		* This public method will create and return an appropriately delimited string
-		* suitable for sending the LmsMessage to the LMS via the LmsClientSocket's
-		* SendLmsMessage() method.
-		* @ return Returns a delimited string that can be used by the LmsClientSocket's
-		*		SendLmsMessage() method.
-		*/
+      /**
+       * This public method will create and return an appropriately delimited string
+       * suitable for sending the LmsMessage to the LMS via the LmsClientSocket's
+       * SendLmsMessage() method.
+       * @ return Returns a delimited string that can be used by the LmsClientSocket's
+       *      SendLmsMessage() method.
+       */
       std::string ToString() const;
 
       const std::string& GetSenderID() const { return mSenderID; }
@@ -130,13 +131,13 @@ namespace dtLMS
       const LmsMessageType& GetMessageType() const {return *mType;}
       void SetMessageType(const LmsMessageType &type) {mType = &type;}
 
-	//member variables
-	private:
-      std::string mSenderID; //ID of the LMS message.
-		std::string mValue; //value of the LMS message.
-		std::string mObjectiveID; //objective ID of the LMS message.
-		std::string mDelimiter; //delimiter character used in string form of LMS messages. Defaults to ":".
-		const LmsMessageType* mType; //type of the LMS message
+   // member variables
+   private:
+      std::string mSenderID;       // ID of the LMS message.
+      std::string mValue;          // value of the LMS message.
+      std::string mObjectiveID;    // objective ID of the LMS message.
+      std::string mDelimiter;      // delimiter character used in string form of LMS messages. Defaults to ":".
+      const LmsMessageType* mType; // type of the LMS message
    };
 }
 #endif

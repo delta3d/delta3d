@@ -18,13 +18,14 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_FIRE_FIGHTER_UTILITY_FUNCTIONS
 #define DELTA_FIRE_FIGHTER_UTILITY_FUNCTIONS
 
 #include <dtCore/transform.h>
 #include <osg/Math>
 
-const float GRAVITY = 9.8f;						//meters per second^2
+const float GRAVITY = 9.8f;                  //meters per second^2
 const float yardsPerNM = 2000.0f;
 const float secsPerHour = 3600.0f;
 const float metersPerKnotPerSecond = 0.51283f;
@@ -50,7 +51,7 @@ struct UFWaypoint
       task = NONE;
    }
 
-   UFWaypoint(float tX, float tY, float tAltitude, float tSpeed, 
+   UFWaypoint(float tX, float tY, float tAltitude, float tSpeed,
             float tDesiredArrivalTime = 0.0f, Task tTask = NONE)
    {
       x = tX;
@@ -68,8 +69,10 @@ inline void AdjustX(dtCore::Transform* startPos, float newX, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newX += x1;
+   }
 
    startPos->Set(newX, y1, z1, h1, p1, r1);
 }
@@ -80,8 +83,10 @@ inline void AdjustY(dtCore::Transform* startPos, float newY, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newY += y1;
+   }
 
    startPos->Set(x1, newY, z1, h1, p1, r1);
 }
@@ -92,8 +97,10 @@ inline void AdjustZ(dtCore::Transform* startPos, float newZ, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newZ += z1;
+   }
 
    startPos->Set(x1, y1, newZ, h1, p1, r1);
 }
@@ -104,8 +111,10 @@ inline void AdjustH(dtCore::Transform* startPos, float newH, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newH += h1;
+   }
 
    startPos->Set(x1, y1, z1, newH, p1, r1);
 }
@@ -116,8 +125,10 @@ inline void AdjustP(dtCore::Transform* startPos, float newP, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newP += p1;
+   }
 
    startPos->Set(x1, y1, z1, h1, newP, r1);
 }
@@ -128,8 +139,10 @@ inline void AdjustR(dtCore::Transform* startPos, float newR, bool relative = fal
 
    startPos->Get(x1, y1, z1, h1, p1, r1);
 
-   if(relative)
+   if (relative)
+   {
       newR += r1;
+   }
 
    startPos->Set(x1, y1, z1, h1, p1, newR);
 }
@@ -165,11 +178,15 @@ inline float ConvertFromdtCoreBearing(float bearing)
 
 inline void VerifyBearingWithinBounds(float& bearing)
 {
-   while(bearing >= 360.0f)
+   while (bearing >= 360.0f)
+   {
       bearing -= 360.0f;
+   }
 
-   while(bearing < .0f)
+   while (bearing < .0f)
+   {
       bearing += 360.0f;
+   }
 }
 
 inline dtCore::Transform Offset2DPosition(dtCore::Transform* startPos, dtCore::Transform* offsetPos)
@@ -207,4 +224,4 @@ inline dtCore::Transform Difference2DPosition(dtCore::Transform* startPos, dtCor
    return tempPos;
 }
 
-#endif 
+#endif

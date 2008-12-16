@@ -18,6 +18,7 @@
 *
 * Curtiss Murphy
 */
+
 #ifndef DELTA_LOGGERMESSAGES
 #define DELTA_LOGGERMESSAGES
 
@@ -191,15 +192,17 @@ namespace dtGame
          
          /**
           * Overloaded to update the internal cached keyframe list.
+          * @return true if it was able to assign the value based on the string or false if not.
           * @param source The string to deserialized into a message.
           */
-         virtual void FromString(const std::string &source);
+         virtual bool FromString(const std::string &source);
          
          /**
           * Overloaded to update the internal cached keyframe list.
+          * @return true if it was able to assign the value based on the stream or false if not.
           * @param stream The stream to deserialized into a message.
           */
-         virtual void FromDataStream(dtUtil::DataStream &stream);
+         virtual bool FromDataStream(dtUtil::DataStream &stream);
          
          /**
           * Sets the list of keyframes this message contains.
@@ -241,15 +244,17 @@ namespace dtGame
          
          /**
           * Overloaded to update the internal cached tags list.
-          * @param source The string to deserialized into a message.
+          * @return true if it was able to assign the value based on the string or false if not.
+          * @param source The string to deserialize into a message.
           */
-         virtual void FromString(const std::string &source);
+         virtual bool FromString(const std::string &source);
          
          /**
           * Overloaded to update the internal cached tags list.
+          * @return true if it was able to assign the value based on the stream or false if not.
           * @param stream The stream to deserialized into a message.
           */
-         virtual void FromDataStream(dtUtil::DataStream &stream);
+         virtual bool FromDataStream(dtUtil::DataStream &stream);
          
          /**
           * Sets the list of logs this message contains.

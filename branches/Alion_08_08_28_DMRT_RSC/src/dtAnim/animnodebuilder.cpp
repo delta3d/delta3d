@@ -252,6 +252,14 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    Array<CalIndex> indexArray(numIndices);
 
    CalHardwareModel* hardwareModel = pWrapper->GetOrCreateCalHardwareModel();
+   if (!hardwareModel->getVectorHardwareMesh().empty())
+   {
+      //This could happen if we're re-creating the geometry for a character.  When
+      //we call CalHardwareModel::load(), CAL3D doesn't clear this container.
+      //CAL3D bug?  Perhaps.  We'll empty it just the same cause it'll double-up
+      //all meshes if we don't.
+      hardwareModel->getVectorHardwareMesh().clear();
+   }
 
    osg::Drawable::Extensions* glExt = osg::Drawable::getExtensions(0, true);
    GLuint vbo[2];

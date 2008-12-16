@@ -1,27 +1,28 @@
 /* -*-c++-*-
-* testAnim - testaniminput (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2007-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* Bradley Anderegg
-*/
+ * testAnim - testaniminput (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2007-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bradley Anderegg
+ */
+
 #include "testaniminput.h"
 
 #include <dtUtil/macros.h>
@@ -39,16 +40,16 @@
 #include <dtGame/logtag.h>
 
 ////////////////////////////////////////////////////////////////////
-TestAnimInput::TestAnimInput(const std::string &name) 
-: dtGame::BaseInputComponent(name)
-, mSpeed(2.0f)
-, mTurnRate(1.01f)
-, mTurnDirection(1.0f)
-, mKeyIsPressed(false)
-, mIsWalking(false)
-, mIsTurning(false)
+TestAnimInput::TestAnimInput(const std::string &name)
+   : dtGame::BaseInputComponent(name)
+   , mSpeed(2.0f)
+   , mTurnRate(1.01f)
+   , mTurnDirection(1.0f)
+   , mKeyIsPressed(false)
+   , mIsWalking(false)
+   , mIsTurning(false)
 {
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -73,12 +74,12 @@ void TestAnimInput::SetTurnRate(float turn)
 bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 {
    bool handled = true;
-   
-   switch(key)
+
+   switch (key)
    {
 
       case osgGA::GUIEventAdapter::KEY_Escape:
-         {            
+         {
             GetGameManager()->GetApplication().Quit();
             return true;
          }
@@ -102,8 +103,8 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
             break;
          }
       case osgGA::GUIEventAdapter::KEY_Up:
-         {            
-            if(!mIsWalking)
+         {
+            if (!mIsWalking)
             {
                mAnimationHelper->ClearAll(0.25f);
                mAnimationHelper->PlayAnimation("RunWalk");
@@ -112,14 +113,14 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
             return false;
          }
       case osgGA::GUIEventAdapter::KEY_Page_Up:
-         {            
+         {
             dtCore::Camera* camera = GetGameManager()->GetApplication().GetCamera();
             float oldLODScale = camera->GetLODScale();
             camera->SetLODScale(oldLODScale * 1.1);
             return false;
          }
       case osgGA::GUIEventAdapter::KEY_Page_Down:
-         {            
+         {
             dtCore::Camera* camera = GetGameManager()->GetApplication().GetCamera();
             float oldLODScale = camera->GetLODScale();
             camera->SetLODScale(oldLODScale / 1.1);
@@ -129,8 +130,10 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
          break;
    };
 
-   if(!handled)
+   if (!handled)
+   {
       return GetGameManager()->GetApplication().KeyPressed(keyBoard, key);
+   }
 
    return handled;
 }
@@ -139,11 +142,11 @@ bool TestAnimInput::HandleKeyPressed(const dtCore::Keyboard *keyBoard, int key)
 bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 {
    bool handled = true;
-   
-   switch(key)
+
+   switch (key)
    {
       case osgGA::GUIEventAdapter::KEY_Up:
-         {                        
+         {
             mAnimationHelper->ClearAll(0.25f);
             mAnimationHelper->PlayAnimation("Idle");
             mIsWalking = false;
@@ -159,8 +162,10 @@ bool TestAnimInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
          break;
    };
 
-   if(!handled)
+   if (!handled)
+   {
       return GetGameManager()->GetApplication().KeyPressed(keyboard, key);
+   }
 
    return handled;
 }
@@ -192,27 +197,27 @@ void TestAnimInput::ProcessMessage(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////////
 void TestAnimInput::TickLocal(float dt)
 {
-   
-   dtGame::GameActor* pActor = &mPlayer->GetGameActor();   
+
+   dtGame::GameActor* pActor = &mPlayer->GetGameActor();
 
    dtCore::Transform trans;
    osg::Matrix mat;
 
    osg::Vec3 pos, up, forward;
 
-   if(mIsWalking || mIsTurning)
+   if (mIsWalking || mIsTurning)
    {
       pActor->GetTransform(trans);
       trans.Get(mat);
-      
+
       up = dtUtil::MatrixUtil::GetRow3(mat, 2);
       forward = dtUtil::MatrixUtil::GetRow3(mat, 1);
 
       trans.GetTranslation(pos);
    }
 
-      
-   if(mIsTurning)
+
+   if (mIsTurning)
    {
       const float angle = dt * mTurnRate * mTurnDirection;
 
@@ -221,15 +226,15 @@ void TestAnimInput::TickLocal(float dt)
    }
 
 
-   if(mIsWalking)
-   { 
+   if (mIsWalking)
+   {
       float dist = -1.0f * (mSpeed * dt);
-      pos += forward * dist;  
+      pos += forward * dist;
 
       trans.SetTranslation(pos);
    }
 
-   if(mIsWalking || mIsTurning)
+   if (mIsWalking || mIsTurning)
    {
       pActor->SetTransform(trans, dtCore::Transformable::REL_CS);
    }

@@ -69,7 +69,7 @@ namespace dtAI
          ss << mData;
          return ss.str();
       }
-      
+
    private:
       _Type mData;
    };
@@ -108,15 +108,15 @@ namespace dtAI
       }
 
       /*virtual*/ bool Evaluate(const WorldState* pWS)
-      {         
+      {
          const StateVar<_Type>* pStateVar = GetWorldStateVariable<_Type>(pWS, mName);
-         if(pStateVar)
+         if (pStateVar)
          {
             return pStateVar->Get() == mData;
          }
          return false;
       }
-      
+
    protected:
       ~Conditional(){}
 
@@ -183,7 +183,7 @@ namespace dtAI
          typedef std::vector<dtCore::RefPtr<InterruptType> > InterruptList;
 
       public:
-         TOperator(const std::string& pName): 
+         TOperator(const std::string& pName):
             Operator(pName, Operator::ApplyOperatorFunctor(this, &TOperator<_Type>::Apply)){}
 
          void SetCost(float pcost){mCost = pcost;}
@@ -195,9 +195,9 @@ namespace dtAI
          {
             typename InterruptList::const_iterator iter = mInterrupts.begin();
             typename InterruptList::const_iterator endOfList = mInterrupts.end();
-            while(iter != endOfList)
+            while (iter != endOfList)
             {
-               if((*iter)->Evaluate(pCurrent))
+               if ((*iter)->Evaluate(pCurrent))
                {
                   return false;
                }
@@ -210,7 +210,7 @@ namespace dtAI
          {
             typename EffectList::const_iterator iter = mEffects.begin();
             typename EffectList::const_iterator endOfList = mEffects.end();
-            while(iter != endOfList)
+            while (iter != endOfList)
             {
                (*iter)->Apply(oper, pWSIn);
                ++iter;
@@ -221,17 +221,17 @@ namespace dtAI
          }
 
       private:
-         
+
          float mCost;
          EffectList mEffects;
          InterruptList mInterrupts;
-         
+
    };
 
- 
+
    typedef TOperator<bool> NPCOperator;
 
 
-}//namespace dtAI
+} // namespace dtAI
 
 #endif // __DELTA_PLANNERASTARUTILS_H__

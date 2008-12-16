@@ -16,22 +16,29 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * David Guthrie
+ * David Guthrie, Chris Rodgers
  */
-#ifndef DELTA_GROUNDCLAMPER
-#define DELTA_GROUNDCLAMPER
 
-#include <vector>
+#ifndef DELTA_BASEGROUNDCLAMPER
+#define DELTA_BASEGROUNDCLAMPER
 
+////////////////////////////////////////////////////////////////////////////////
+// INCLUDE DIRECTIVES
+////////////////////////////////////////////////////////////////////////////////
 #include <dtGame/export.h>
-
-#include <dtCore/transform.h>
 #include <dtCore/transformable.h>
-#include <dtCore/batchisector.h>
-
 #include <osg/Referenced>
-
 #include <osg/Vec3>
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FORWARD DECLARATIONS
+////////////////////////////////////////////////////////////////////////////////
+namespace dtDAL
+{
+   class TransformableActorProxy;
+}
 
 namespace dtUtil
 {
@@ -40,9 +47,9 @@ namespace dtUtil
 
 namespace dtGame
 {
-
-   class GameActorProxy;
-   
+   /////////////////////////////////////////////////////////////////////////////
+   // CLAMPING DATA CODE
+   /////////////////////////////////////////////////////////////////////////////
    class DT_GAME_EXPORT GroundClampingData
    {
       public:
@@ -54,7 +61,7 @@ namespace dtGame
           * This only matters if flying is set to false.
           * @param newOffset the new offset value. 
           */
-         void SetGroundOffset(float newOffset) { mGroundOffset = newOffset; };
+         void SetGroundOffset(float newOffset) { mGroundOffset = newOffset; }
 
          ///@return The distance from the ground that the actor should be.
          float GetGroundOffset() const { return mGroundOffset; }
@@ -82,31 +89,33 @@ namespace dtGame
          /// @return the current assigned dimensions of the model for the actor being dead-reckoned
          const osg::Vec3& GetModelDimensions() const { return mModelDimensions; }
 
-         /// Sets the last known offset from the existing the position to the terrain.
-         void SetLastClampedOffset(float newClampedOffset) { mLastClampedOffset = newClampedOffset; }
-         
-         /// @return the last known offset from the existing the position to the terrain.
-         float GetLastClampedOffset() const { return mLastClampedOffset; }
-         
-         void SetLastClampedTime(double newTime) { mLastClampedTime = newTime; }
-         double GetLastClampedTime() const { return mLastClampedTime; }
+         /**
+          * Set additional data associated with ground clamping.
+          * This is intended for sub-classes of Base Ground Clamper.
+          */
+         void SetUserData(osg::Referenced* userData) { mUserData = userData; }
+
+         /**
+          * Get additional data associated with ground clamping.
+          * This is intended for sub-classes of Base Ground Clamper.
+          */
+         osg::Referenced* GetUserData() { return mUserData.get(); }
+         const osg::Referenced* GetUserData() const { return mUserData.get(); }
 
       private:
 
-         osg::Vec3 mModelDimensions;
          float mGroundOffset;
-
-         float mLastClampedOffset;
-         double mLastClampedTime;
 
          bool mAdjustRotationToGround;
          bool mUseModelDimensions;
+         osg::Vec3 mModelDimensions;
+         dtCore::RefPtr<osg::Referenced> mUserData;
    };
    
    /**
     * This is a utility class for doing ground clamping.
     */
-   class DT_GAME_EXPORT GroundClamper : public osg::Referenced
+   class DT_GAME_EXPORT BaseGroundClamper : public osg::Referenced
    {
       public:
 
@@ -124,27 +133,27 @@ namespace dtGame
                }
          };
 
-         GroundClamper();
-         virtual ~GroundClamper();
+         BaseGroundClamper();
+         virtual ~BaseGroundClamper();
 
          ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         dtCore::Transformable* GetTerrainActor() { return mTerrainActor.get(); }
+         dtCore::Transformable* GetTerrainActor();
 
          ///@return the terrain actor using the given name.  If it has not yet been queried, the query will run when this is called.
-         const dtCore::Transformable* GetTerrainActor() const { return mTerrainActor.get(); };
+         const dtCore::Transformable* GetTerrainActor() const;
 
          ///changes the actor to use for the terrain.
          void SetTerrainActor(dtCore::Transformable* newTerrain);
 
          /// Caches the eyepoint from the eye point actor.  This MUST be called each frame before clamping.
          void UpdateEyePoint();
-         const osg::Vec3& GetLastEyePoint() const { return mCurrentEyePointABSPos; }
+         const osg::Vec3& GetLastEyePoint() const;
 
          ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         dtCore::Transformable* GetEyePointActor() { return mEyePointActor.get(); };
+         dtCore::Transformable* GetEyePointActor();
 
          ///@return the actor to use as an eye point for ground clamping.  This determines which LOD to clamp to. 
-         const dtCore::Transformable* GetEyePointActor() const { return mEyePointActor.get(); };
+         const dtCore::Transformable* GetEyePointActor() const;
 
          ///changes the actor to use for the terrain.
          void SetEyePointActor(dtCore::Transformable* newEyePointActor);
@@ -158,7 +167,12 @@ namespace dtGame
          /**
           * @return the maximum distance from the player that three intersection point clamping will be used.  
           */
-         float GetHighResGroundClampingRange() const { return mHighResClampRange; }
+         float GetHighResGroundClampingRange() const;
+
+         /**
+          * @return the maximum squared distance from the player that three intersection point clamping will be used.  
+          */
+         float GetHighResGroundClampingRange2() const;
 
          /**
           * Sets the maximum distance from the player that three intersection point clamping will be used.  
@@ -169,85 +183,59 @@ namespace dtGame
          /**
           * @return the maximum distance from the player that three intersection point clamping will be used.  
           */
-         float GetLowResGroundClampingRange() const { return mLowResClampRange; }
-         
+         float GetLowResGroundClampingRange() const;
+
+         /**
+          * @return the maximum squared distance from the player that three intersection point clamping will be used.  
+          */
+         float GetLowResGroundClampingRange2() const;
+
          /// Sets the delta time between clamping when clamping in intermittent mode.
-         void SetIntermittentGroundClampingTimeDelta(float newDelta) 
-         { mIntermittentGroundClampingTimeDelta = newDelta; }
-         
+         void SetIntermittentGroundClampingTimeDelta(float newDelta);
+
          /// @return the delta time between clamping when clamping in intermittent mode.
-         float GetIntermittentGroundClampingTimeDelta() const 
-         { return mIntermittentGroundClampingTimeDelta; }
+         float GetIntermittentGroundClampingTimeDelta() const;
 
          /// Sets the smoothing time between offsets when clamping in intermittent mode.
-         void SetIntermittentGroundClampingSmoothingTime(float newTime) 
-         { mIntermittentGroundClampingSmoothingTime = newTime; }
-         
-         /// @return the smoothing time between offsets when clamping in intermittent mode.
-         float GetIntermittentGroundClampingSmoothingTime() const 
-         { return mIntermittentGroundClampingSmoothingTime; }
+         void SetIntermittentGroundClampingSmoothingTime(float newTime);
 
-         /// Calculates the bounding box for the given proxy, stores it in the data object, and populates the Vec3.
-         void CalculateAndSetBoundingBox(osg::Vec3& modelDimensions,
-               dtGame::GameActorProxy& gameActorProxy, GroundClampingData& data);
-         
-         /// Gets the ground clamping hit that is closest to the deadreckoned z value.
-         bool GetClosestHit(dtCore::BatchIsector::SingleISector& single, float pointz,
-                  osg::Vec3& hit, osg::Vec3& normal);
+         /// @return the smoothing time between offsets when clamping in intermittent mode.
+         float GetIntermittentGroundClampingSmoothingTime() const;
 
          /**
           * Clamps an actor to the ground.  It will pick, based on the type and eye point 
           * which algorithm to Use.
-          * @param type  the ground clamping type to perform.
-          * @param currentTime the current simulation time.  Used for intermittent gc.
-          * @param xform the current absolute transform of the actor.
-          * @param gameActorProxy the actual actor.  This is passed case collision geometry is needed.
-          * @param helper the deadreckoning helper for the actor
+          * @param type Ground clamping type to perform.
+          * @param currentTime Current simulation time. Used for intermittent ground clamping.
+          * @param xform Current absolute transform of the actor.
+          * @param proxy Actor to be clamped and is passed in case collision geometry is needed.
+          * @param data Ground Clamping Data containing clamping options.
+          * @param transformChanged Flag to help the clamper to determine if it should perform a clamp or not.
+          * @param velocity The transformable's instantaneous velocity for the current frame.
           */
-         void ClampToGround(GroundClampingType& type, double currentTime, dtCore::Transform& xform,
-            dtGame::GameActorProxy& gameActorProxy, GroundClampingData& data);
-
-         ///Version of clamping that uses three intersection points to calculate the height and the rotation.
-         void ClampToGroundThreePoint(dtCore::Transform& xform,
-            dtGame::GameActorProxy& gameActorProxy, GroundClampingData& data);
-         
-         /**
-          * Clamps an actor to the ground by running an intersection query occasionally and saving
-          * the offset.
-          * @param currentTime the current simulation time. 
-          * @param xform the current absolute transform of the actor.
-          * @param gameActorProxy the actual actor.  This is passed case collision geometry is needed.
-          * @param helper the deadreckoning helper for the actor
-          */
-         void ClampToGroundIntermittent(double currentTime,
-                  dtCore::Transform& xform,
-                  dtGame::GameActorProxy& gameActorProxy, GroundClampingData& data);
+         virtual void ClampToGround(GroundClampingType& type, double currentTime, dtCore::Transform& xform,
+            dtDAL::TransformableActorProxy& proxy, GroundClampingData& data,
+            bool transformChanged = false,
+            const osg::Vec3& velocity = osg::Vec3()) = 0;
 
          /**
-          * This should be called manually at the end an group of ground clamping calls.
-          * It will go through any remaining ground clamping queries and run them in a batch.
-          * This is normally called when the number queued reaches a threshold, but in most cases
-          * some are left waiting at the end of a group of calls.
+          * Override this method to handle any cleanup after ground clamping has been completed.
           */
-         void RunClampBatch();
-         
-         dtCore::BatchIsector& GetGroundClampIsector();
+         virtual void FinishUp() = 0;
+
+      protected:
+         dtUtil::Log& GetLogger();
 
       private:
-         typedef std::pair<dtGame::GameActorProxy*, GroundClampingData*> ProxyAndData;
-         typedef std::vector<std::pair<dtCore::Transform, ProxyAndData> > BatchVector;
-
          dtUtil::Log& mLogger;
-         
-         BatchVector mGroundClampBatch;
 
          dtCore::RefPtr<dtCore::Transformable> mEyePointActor;
          dtCore::RefPtr<dtCore::Transformable> mTerrainActor;
 
-         dtCore::RefPtr<dtCore::BatchIsector> mTripleIsector, mIsector;
-
-         float mHighResClampRange, mHighResClampRange2;
-         float mLowResClampRange, mLowResClampRange2;
+         float mHighResClampRange;
+         float mHighResClampRange2;
+         float mLowResClampRange;
+         float mLowResClampRange2;
          float mIntermittentGroundClampingTimeDelta;
          float mIntermittentGroundClampingSmoothingTime;
 

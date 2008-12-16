@@ -72,7 +72,7 @@ dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
 {
    if(!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::CAMERA);
+      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
    }
 
    return mBillBoardIcon.get();

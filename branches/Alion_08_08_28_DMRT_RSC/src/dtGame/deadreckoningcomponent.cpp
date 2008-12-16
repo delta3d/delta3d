@@ -33,7 +33,7 @@
 #include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
-#include <dtGame/groundclamper.h>
+#include <dtGame/defaultgroundclamper.h>
 
 #include <osgSim/DOFTransform>
 
@@ -43,8 +43,10 @@ namespace dtGame
    const std::string DeadReckoningComponent::DEFAULT_NAME("Dead Reckoning Component");
 
    //////////////////////////////////////////////////////////////////////
-   DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name),
-      mGroundClamper(new GroundClamper), mForceClampInterval(3.0f), mArticSmoothTime(0.5f)
+   DeadReckoningComponent::DeadReckoningComponent(const std::string& name)
+      : dtGame::GMComponent(name)
+      , mGroundClamper(new DefaultGroundClamper)
+      , mArticSmoothTime(0.5f)
    {
       mLogger = &dtUtil::Log::GetInstance("deadreckoningcomponent.cpp");
    }
@@ -124,13 +126,19 @@ namespace dtGame
    }
    
    //////////////////////////////////////////////////////////////////////
-   GroundClamper& DeadReckoningComponent::GetGroundClamper()
+   void DeadReckoningComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
+   {
+      mGroundClamper = &clamper;
+   }
+
+   //////////////////////////////////////////////////////////////////////
+   BaseGroundClamper& DeadReckoningComponent::GetGroundClamper()
    {
       return *mGroundClamper;
    }
 
    //////////////////////////////////////////////////////////////////////
-   const GroundClamper& DeadReckoningComponent::GetGroundClamper() const
+   const BaseGroundClamper& DeadReckoningComponent::GetGroundClamper() const
    {
       return *mGroundClamper;
    }
@@ -217,33 +225,6 @@ namespace dtGame
       return itor != mRegisteredActors.end();
    }
 
-
-   //////////////////////////////////////////////////////////////////////
-   bool DeadReckoningComponent::ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged)
-   {
-      bool bForceClamp = false;
-      if (mForceClampInterval > 0)
-      {
-         float newForceClampInterval = helper.GetTimeUntilForceClamp() - deltaRealTime;
-         if (bTransformChanged)
-         {
-            newForceClampInterval = mForceClampInterval;
-         }
-         else
-         {
-            bForceClamp = newForceClampInterval < 0;
-
-            // reset the force clamp time if the transformed, which means it will be clamped anyway
-            // or the timer has elapsed
-            if (bForceClamp)
-               newForceClampInterval = mForceClampInterval;
-         }
-         
-         helper.SetTimeUntilForceClamp(newForceClampInterval);
-      }
-      return bForceClamp;
-   }
-
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningComponent::TickRemote(const dtGame::TickMessage& tickMessage)
    {
@@ -255,7 +236,9 @@ namespace dtGame
 
          dtGame::GameActorProxy* gameActorProxy = GetGameManager()->FindGameActorById(i->first);
          if (gameActorProxy == NULL)
+         {
             continue;
+         }
 
          dtGame::GameActor& gameActor = gameActorProxy->GetGameActor();
          DeadReckoningHelper& helper = *i->second;
@@ -274,20 +257,23 @@ namespace dtGame
          xform.SetTranslation(helper.GetCurrentDeadReckonedTranslation());
          xform.SetRotation(helper.GetCurrentDeadReckonedRotation());
 
+         // Get the current time delta.
+         float simTimeDelta = tickMessage.GetDeltaSimTime();
+
          if (helper.IsUpdated())
          {
             //Pretend we were updated on the last tick so we have time delta to work with
             //when calculating movement.
             if ( helper.IsTranslationUpdated() )
             {
-               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta);
                //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
                helper.SetTranslationCurrentSmoothingTime( 0.0 );
             }
 
             if ( helper.IsRotationUpdated() )
             {
-               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - tickMessage.GetDeltaSimTime());
+               helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta );
                //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
                helper.SetRotationCurrentSmoothingTime( 0.0 );
                helper.SetRotationResolved( false );
@@ -295,71 +281,73 @@ namespace dtGame
          }
 
          //We want to do this every time.
-         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
-         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + tickMessage.GetDeltaSimTime() );
+         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + simTimeDelta );
+         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + simTimeDelta );
 
          //make sure it's greater than 0 in case of time being set.
          if (helper.GetTranslationCurrentSmoothingTime() < 0.0) 
+         {
             helper.SetTranslationCurrentSmoothingTime( 0.0 );
+         }
          if (helper.GetRotationCurrentSmoothingTime() < 0.0) 
+         {
             helper.SetRotationCurrentSmoothingTime( 0.0 );
+         }
 
-         //actual dead reckoning code moved into the helper..
-         GroundClamper::GroundClampingType* groundClampingType = &GroundClamper::GroundClampingType::NONE;
-         bool bTransformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
+         // Actual dead reckoning code moved into the helper..
+         BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
+         bool transformChanged = helper.DoDR(gameActor, xform, mLogger, groundClampingType);
 
-         //Only actually ground clamp and move remote ones.
-         if (helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
+
+         // Only ground clamp and move remote objects.
+         if(helper.GetEffectiveUpdateMode(gameActor.IsRemote()) 
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
-            bool bForceClamp = ShouldForceClamp(helper, tickMessage.GetDeltaRealTime(), bTransformChanged);
-            
-            // if the actor moved, it's time to force clamp, or we are using intermittent, 
-            // we should clamp.
-            // The clamping also applies the transform when the clamping type is none.
-            // force clamp is silly when using intermittent because it's already running intermittently.
-            if (bTransformChanged || *groundClampingType == GroundClamper::GroundClampingType::INTERMITTENT_SAVE_OFFSET
-                  || (bForceClamp && *groundClampingType != GroundClamper::GroundClampingType::NONE))
-            {
-               //we could probably group these queries together...
-               mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
-                        xform, gameActor.GetGameActorProxy(), helper.GetGroundClampingData());
+            // Get the object's velocity for the current frame.
+            osg::Vec3 velocity( helper.GetVelocityVector() + helper.GetAccelerationVector() * simTimeDelta );
 
-               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               {
-                  std::ostringstream ss;
-                  ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
-                     << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                     << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
-                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                        ss.str().c_str());
-               }
+            // Call the ground clamper for the current object.
+            // The ground clamper should be smart enough to know
+            // what to do with the supplied values.
+            mGroundClamper->ClampToGround(*groundClampingType, tickMessage.GetSimulationTime(),
+                     xform, gameActor.GetGameActorProxy(),
+                     helper.GetGroundClampingData(), transformChanged, velocity);
+
+            if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               std::ostringstream ss;
+               ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
+                  << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
+                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                     ss.str().c_str());
             }
          }
 
          DoArticulation(helper, gameActor, tickMessage);
 
-         //clear the updated flag.
+         // Clear the updated flag.
          helper.ClearUpdated();
       }
 
-      //Make sure the last of them ran.
-      mGroundClamper->RunClampBatch();
+      // Make sure all remaining queued objects for batch clamping are clamped.
+      mGroundClamper->FinishUp();
    }
 
    void DeadReckoningComponent::DoArticulation(dtGame::DeadReckoningHelper& helper,
                                                const dtGame::GameActor& gameActor,
                                                const dtGame::TickMessage& tickMessage) const
    {
-      if( helper.GetNodeCollector() == NULL )
+      if(helper.GetNodeCollector() == NULL)
       {
          return;
       }
 
-      const std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >& containerDOFs = helper.GetDeadReckoningDOFs();
-      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator endDOF = containerDOFs.end();
+      typedef std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> > DRDOFArray;
 
-      std::list<dtCore::RefPtr<DeadReckoningHelper::DeadReckoningDOF> >::const_iterator iterDOF = containerDOFs.begin();
+      const DRDOFArray& containerDOFs = helper.GetDeadReckoningDOFs();
+      DRDOFArray::const_iterator endDOF = containerDOFs.end();
+      DRDOFArray::const_iterator iterDOF = containerDOFs.begin();
       for(; iterDOF != endDOF; ++iterDOF)
       {
          (*iterDOF)->mUpdate = false;
@@ -383,7 +371,7 @@ namespace dtGame
 
       // Now delete all stops that are unneeded.
       unsigned limit = deletableDRDOFs.size();
-      for( unsigned i = 0; i < limit; ++i )
+      for(unsigned i = 0; i < limit; ++i)
       {
          helper.RemoveDRDOF(*deletableDRDOFs[i]);
       }
@@ -403,10 +391,10 @@ namespace dtGame
             currentDOF->mUpdate = true;
 
             // Smooth time has completed, and this has more in its chain
-            if( currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime )
+            if(currentDOF->mNext != NULL && currentDOF->mCurrentTime >= mArticSmoothTime)
             {
                osgSim::DOFTransform* ptr = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if( ptr )
+               if(ptr != NULL)
                {
                   currentDOF->mNext->mStartLocation = ptr->getCurrentHPR();
                }
@@ -421,13 +409,15 @@ namespace dtGame
 
 
             // there is something in the chain
+            bool isPositional = currentDOF->mMetricName == DeadReckoningHelper::DeadReckoningDOF::REPRESENATION_EXTENSION;
             if(currentDOF->mNext != NULL)
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if( dofTransform != NULL )
+               if(dofTransform != NULL)
                {
                   DoArticulationSmooth(*dofTransform, currentDOF->mStartLocation,
-                     currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime);
+                     currentDOF->mNext->mStartLocation, currentDOF->mCurrentTime/mArticSmoothTime,
+                     isPositional);
                   // NOTE: The division by mArticSmoothTime counter balances the mArticSmoothTime check
                   // in the previous code block that attempts to remove the first DR stop. If the time
                   // was not magnified by the reciprocal of mArticSmoothTime, then the smoothing would
@@ -449,10 +439,10 @@ namespace dtGame
             else
             {
                osgSim::DOFTransform* dofTransform = helper.GetNodeCollector()->GetDOFTransform(currentDOF->mName);
-               if (dofTransform != NULL)
+               if(dofTransform != NULL)
                {
                   DoArticulationPrediction(*dofTransform, currentDOF->mStartLocation,
-                     currentDOF->mRateOverTime, currentDOF->mCurrentTime);
+                     currentDOF->mRateOverTime, currentDOF->mCurrentTime, isPositional);
                }
             }
          }
@@ -461,45 +451,51 @@ namespace dtGame
    } // end function DoArticulation
 
    void DeadReckoningComponent::DoArticulationSmooth(osgSim::DOFTransform& dofxform,
-                                                     const osg::Vec3& currLocation,
-                                                     const osg::Vec3& nextLocation,
-                                                     float currentTimeStep) const
+      const osg::Vec3& currLocation, const osg::Vec3& nextLocation,
+      float simTimeDelta, bool isPositionChange) const
    {
-      osg::Vec3 NewDistance = (nextLocation - currLocation);
-
-      for (int i = 0; i < 3; ++i)
+      if(isPositionChange)
       {
-         while (NewDistance[i] > osg::PI)
-            NewDistance[i] -= 2 * osg::PI;
-         while (NewDistance[i] < -osg::PI)
-            NewDistance[i] += 2 * osg::PI;
+         osg::Vec3 curPos( dofxform.getCurrentTranslate() );
+         dofxform.updateCurrentTranslate(curPos
+            + ((nextLocation - curPos) * simTimeDelta));
       }
-
-      osg::Vec3 RateOverTime = (NewDistance * currentTimeStep);
-
-      osg::Vec3 result(currLocation[0] + RateOverTime[0],
-                       currLocation[1] + RateOverTime[1],
-                       currLocation[2] + RateOverTime[2]);
-
-      for (int i = 0; i < 3; ++i)
+      else
       {
-         while (result[i] > 2 * osg::PI)
-            result[i] -= 2 * osg::PI;
+         osg::Vec3 newDistance = (nextLocation - currLocation);
 
-         while (result[i] < 0)
-            result[i] += 2 * osg::PI;
+         for(int i = 0; i < 3; ++i)
+         {
+            while(newDistance[i] > osg::PI)
+               newDistance[i] -= 2 * osg::PI;
+            while(newDistance[i] < -osg::PI)
+               newDistance[i] += 2 * osg::PI;
+         }
+
+         osg::Vec3 result(currLocation + (newDistance * simTimeDelta));
+
+         for(int i = 0; i < 3; ++i)
+         {
+            while(result[i] > 2 * osg::PI)
+               result[i] -= 2 * osg::PI;
+
+            while(result[i] < 0)
+               result[i] += 2 * osg::PI;
+         }
+
+         dofxform.updateCurrentHPR(result);
       }
-
-      dofxform.updateCurrentHPR(result);
    } // end function DoArticulationSmooth
 
-   void DeadReckoningComponent::DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const
+   void DeadReckoningComponent::DoArticulationPrediction(osgSim::DOFTransform& dofxform,
+      const osg::Vec3& currLocation, const osg::Vec3& currentRate,
+      float simTimeDelta, bool isPositional) const
    {
-      osg::Vec3 result( currLocation[0] + (currentTimeStep * currentRate[0]),
-                        currLocation[1] + (currentTimeStep * currentRate[1]),
-                        currLocation[2] + (currentTimeStep * currentRate[2]));
-
-      dofxform.updateCurrentHPR(result);
+      if( ! isPositional )
+      {
+         osg::Vec3 result(currLocation + (currentRate * simTimeDelta));
+         dofxform.updateCurrentHPR(result);
+      }
    } // end function DoArticulationPrediction
 
    void DeadReckoningComponent::SetArticulationSmoothTime( float smoothTime )

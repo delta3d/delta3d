@@ -20,8 +20,8 @@ Loadable::~Loadable(void)
 
 void Loadable::FlushObjectCache()
 {
-	osgDB::Registry::instance()->releaseGLObjects();
-	osgDB::Registry::instance()->clearObjectCache();
+   osgDB::Registry::instance()->releaseGLObjects();
+   osgDB::Registry::instance()->clearObjectCache();
 }
 
 /*!

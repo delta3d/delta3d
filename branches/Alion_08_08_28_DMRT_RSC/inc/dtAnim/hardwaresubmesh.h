@@ -59,6 +59,7 @@ namespace dtAnim
 
       private:
          HardwareSubmeshDrawable();   ///< not implemented by design
+         void SetUpMaterial();
 
          dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
          CalHardwareModel* mHardwareModel;

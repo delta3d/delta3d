@@ -31,6 +31,8 @@
 
 #include <osgDB/FileNameUtils>
 
+#include <cstring>
+
 using dtUtil::DataStream;
 
 namespace dtGame

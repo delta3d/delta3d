@@ -5,14 +5,14 @@ using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER(Trigger)
 
-Trigger::Trigger( const std::string& name )
-   :  DeltaDrawable(name),
-      mEnabled(false),
-      mTimeDelay(0.0),
-      mTimeLeft(mTimeDelay),
-      mTimesActive(1),
-      mTimesTriggered(0),
-      mActionToFire(0)
+Trigger::Trigger(const std::string& name)
+   : DeltaDrawable(name)
+   , mEnabled(false)
+   , mTimeDelay(0.0)
+   , mTimeLeft(mTimeDelay)
+   , mTimesActive(1)
+   , mTimesTriggered(0)
+   , mActionToFire(0)
 {
    RegisterInstance(this);
 }
@@ -22,9 +22,9 @@ Trigger::~Trigger()
    DeregisterInstance(this);
 }
 
-void Trigger::OnMessage( dtCore::Base::MessageData* data )
+void Trigger::OnMessage(dtCore::Base::MessageData* data)
 {
-   if( data->message == "preframe" )
+   if (data->message == "preframe")
    {
       double dt = *static_cast<double*>(data->userData);
       Update(dt);
@@ -33,35 +33,35 @@ void Trigger::OnMessage( dtCore::Base::MessageData* data )
 
 void Trigger::Fire()
 {
-   if( mEnabled )
+   if (mEnabled)
    {
-      if( mTimesActive < 0 )
+      if (mTimesActive < 0)
       {
          //Infintie activations
-         AddSender( &dtCore::System::GetInstance() );
+         AddSender(&dtCore::System::GetInstance());
       }
-      else if( mTimesTriggered < mTimesActive )
+      else if (mTimesTriggered < mTimesActive)
       {
-         AddSender( &dtCore::System::GetInstance() );
+         AddSender(&dtCore::System::GetInstance());
          ++mTimesTriggered;
       }
    }
 }
 
-void Trigger::Update( double time )
+void Trigger::Update(double time)
 {
-   if( mEnabled ) 
+   if (mEnabled)
    {
       mTimeLeft -= time;
 
-      if( mTimeLeft <= 0 )
+      if (mTimeLeft <= 0)
       {
-         if(mActionToFire.valid())
+         if (mActionToFire.valid())
          {
             mActionToFire->Start();
          }
          mTimeLeft = mTimeDelay;
-         RemoveSender( &dtCore::System::GetInstance() );
+         RemoveSender(&dtCore::System::GetInstance());
       }
    }
 }

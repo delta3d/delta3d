@@ -21,6 +21,8 @@
 
 #include <dtHLAGM/ddmregiondata.h>
 
+#include <cstring>
+
 namespace dtHLAGM
 {
    void DDMRegionData::SetDimensionValue(unsigned extent, const DimensionValues& dimVal)

@@ -37,8 +37,8 @@ namespace dtCore
       static void FlushObjectCache();
 
    protected:
-	   Loadable();
-		virtual ~Loadable();
+      Loadable();
+      virtual ~Loadable();
 
       std::string mFilename; ///<The filename of the last file loaded
    };

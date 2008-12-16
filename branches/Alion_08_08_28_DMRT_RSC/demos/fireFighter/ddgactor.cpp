@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/ddgactor.h>
 #include <fireFighter/utilityfunctions.h>
 #include <dtAudio/sound.h>
@@ -40,11 +41,11 @@ void DDGActorProxy::BuildPropertyMap()
 {
    ShipActorProxy::BuildPropertyMap();
 
-   DDGActor &ddg = static_cast<DDGActor&>(GetGameActor());
+   DDGActor& ddg = static_cast<DDGActor&>(GetGameActor());
 
-   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH, 
-      "Model", "Model", 
-      dtDAL::MakeFunctor(ddg, &DDGActor::LoadFile), 
+   AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+      "Model", "Model",
+      dtDAL::MakeFunctor(ddg, &DDGActor::LoadFile),
       "Loads the model file for the ship"));
 }
 
@@ -54,17 +55,17 @@ void DDGActorProxy::BuildInvokables()
 }
 
 /////////////////////////////////////////////////
-DDGActor::DDGActor(dtGame::GameActorProxy &proxy) :
-   ShipActor(proxy), 
-   forwardStackEngaged(true),
-   afterStackEngaged(true)
+DDGActor::DDGActor(dtGame::GameActorProxy& proxy)
+   : ShipActor(proxy)
+   , forwardStackEngaged(true)
+   , afterStackEngaged(true)
 {
    mCoordSys = &VehicleActor::CoordSys::SYS_ABS;
    SetPosition(position);
 
-   float deltaZ = 4.0f;
-   float deltaY = -3.0f;
-   float deltaWakeY = 25.0f;
+   float deltaZ        = 4.0f;
+   float deltaY        = -3.0f;
+   float deltaWakeY    = 25.0f;
    float deltaRoosterY = -2.0f;
 
    portWake = new dtCore::ParticleSystem;
@@ -136,34 +137,34 @@ void DDGActor::SetModelPosition()
    float speedOffset = 3.5f * GetSpeed() / GetMaxAheadSpeed();
    newPos = GetPosition();
    SetTransform(newPos, *mCoordSys == VehicleActor::CoordSys::SYS_ABS ? ABS_CS : REL_CS);
-   
-   if(CheckWake(portWake.get()))
+
+   if (CheckWake(portWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portWakePosition);
       portWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdWake.get()))
+   if (CheckWake(stbdWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdWakePosition);
       stbdWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(portBowWake.get()))
+   if (CheckWake(portBowWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portBowWakePosition);
       AdjustZ(&tempPos, speedOffset, true);
       portBowWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdBowWake.get()))
+   if (CheckWake(stbdBowWake.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdBowWakePosition);
       AdjustZ(&tempPos, speedOffset, true);
       stbdBowWake->SetTransform(tempPos);
    }
 
-   if(CheckWake(portRooster.get()))
+   if (CheckWake(portRooster.get()))
    {
       tempPos = Offset2DPosition(&newPos, &portRoosterPosition);
       AdjustZ(&tempPos, 1.2f * speedOffset, true);
@@ -171,7 +172,7 @@ void DDGActor::SetModelPosition()
       portRooster->SetTransform(tempPos);
    }
 
-   if(CheckWake(stbdRooster.get()))
+   if (CheckWake(stbdRooster.get()))
    {
       tempPos = Offset2DPosition(&newPos, &stbdRoosterPosition);
       AdjustZ(&tempPos, 1.2f * speedOffset, true);
@@ -179,24 +180,28 @@ void DDGActor::SetModelPosition()
       stbdRooster->SetTransform(tempPos);
    }
 
-   if(CheckStack(forwardStack.get(), forwardStackEngaged))
+   if (CheckStack(forwardStack.get(), forwardStackEngaged))
    {
    }
 
-   if(CheckStack(afterStack.get(), forwardStackEngaged))
+   if (CheckStack(afterStack.get(), forwardStackEngaged))
    {
    }
 
-   if(stackSound.valid())
+   if (stackSound.valid())
    {
       float gain = GetThrottlePosition() / GetMaxAheadSpeed();
       float pitch = GetThrottlePosition() / GetMaxAheadSpeed();
 
       if (gain > 1.0f)
+      {
          gain = 1.0f;
+      }
 
       if (pitch > 1.0f)
+      {
          pitch = 1.0f;
+      }
 
       stackSound->SetGain(gain);
       stackSound->SetPitch(pitch);
@@ -205,7 +210,7 @@ void DDGActor::SetModelPosition()
 
 bool DDGActor::CheckStack(dtCore::ParticleSystem* stack, bool stackEngaged)
 {
-   if(mEngineRunning)
+   if (mEngineRunning)
    {
       EngageForwardStack();
       EngageAfterStack();
@@ -218,26 +223,32 @@ bool DDGActor::CheckStack(dtCore::ParticleSystem* stack, bool stackEngaged)
 
    if (stack != NULL)
    {
-      if(stack->IsEnabled())
+      if (stack->IsEnabled())
       {
-         if(!stackEngaged)
+         if (!stackEngaged)
+         {
             stack->SetEnabled(false);
+         }
       }
       else
       {
-         if(stackEngaged)
+         if (stackEngaged)
+         {
             stack->SetEnabled(true);
+         }
       }
 
       return stack->IsEnabled();
    }
    else
+   {
       return false;
+   }
 }
 
 void DDGActor::SetForwardStack(dtCore::ParticleSystem* tForwardStack, dtCore::Transform tForwardStackPosition)
 {
-   if(tForwardStack != NULL)
+   if (tForwardStack != NULL)
    {
       forwardStack = tForwardStack;
       forwardStackPosition = tForwardStackPosition;
@@ -247,7 +258,7 @@ void DDGActor::SetForwardStack(dtCore::ParticleSystem* tForwardStack, dtCore::Tr
 
 void DDGActor::SetAfterStack(dtCore::ParticleSystem* tAfterStack, dtCore::Transform tAfterStackPosition)
 {
-   if(tAfterStack != NULL)
+   if (tAfterStack != NULL)
    {
       afterStack = tAfterStack;
       afterStackPosition = tAfterStackPosition;
@@ -275,7 +286,7 @@ void DDGActor::DisengageAfterStack()
    afterStackEngaged = false;
 }
 
-void DDGActor::SetStackSound(dtAudio::Sound *tStackSound, dtCore::Transform tStackSoundPosition)
+void DDGActor::SetStackSound(dtAudio::Sound* tStackSound, const dtCore::Transform& tStackSoundPosition)
 {
    stackSound = tStackSound;
    stackSoundPosition = tStackSoundPosition;
@@ -285,20 +296,24 @@ void DDGActor::SetStackSound(dtAudio::Sound *tStackSound, dtCore::Transform tSta
 
 void DDGActor::PlayStackSound()
 {
-   if(stackSound != NULL)
+   if (stackSound != NULL)
+   {
       stackSound->Play();
+   }
 }
 
 void DDGActor::StopStackSound()
 {
-   if(stackSound != NULL)
+   if (stackSound != NULL)
+   {
       stackSound->Stop();
+   }
 }
 
-void DDGActor::LoadFile(const std::string &fileName)
+void DDGActor::LoadFile(const std::string& fileName)
 {
-   osg::Node *node = dtCore::Loadable::LoadFile(fileName);
-   if(node == NULL)
+   osg::Node* node = dtCore::Loadable::LoadFile(fileName);
+   if (node == NULL)
    {
       LOG_ERROR("Failed to load the ddg model file: " + fileName);
       return;

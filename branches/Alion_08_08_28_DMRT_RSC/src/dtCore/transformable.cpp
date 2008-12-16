@@ -275,11 +275,11 @@ void Transformable::SetTransform(const Transform& xform, CoordSysEnum cs)
       //in relative coords
 
       //if this has a parent
-      if(GetParent())
+      if (!GetOSGNode()->getParents().empty())
       {
          //get the parent's world position
          osg::Matrix parentMat;
-         GetAbsoluteMatrix(GetParent()->GetOSGNode(), parentMat);
+         GetAbsoluteMatrix(GetOSGNode()->getParent(0), parentMat);
 
          //calc the difference between xform and the parent's world position
          //child * parent^-1
@@ -336,7 +336,7 @@ void Transformable::SetMatrix(const osg::Matrix& mat)
 bool Transformable::AddChild(DeltaDrawable* child)
 {
    // Add the child's node to our's
-   if(DeltaDrawable::AddChild(child))
+   if (DeltaDrawable::AddChild(child))
    {
       GetMatrixNode()->addChild(child->GetOSGNode());
       return true;

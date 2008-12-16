@@ -26,6 +26,7 @@
 #include <dtCore/globals.h>
 
 #include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
 
 namespace dtCore
 {
@@ -97,7 +98,17 @@ namespace dtCore
    
    std::string FindFileInPathList(const std::string &fileName)
    {
-      return osgDB::findDataFile(fileName);
+      std::string filePath = osgDB::findDataFile(fileName);
+      
+      // In some cases, filePath will contain a url that is
+      // relative to the current working directory so for
+      // consistency, be sure to return the full path every time
+      if (!filePath.empty())
+      {
+         filePath = osgDB::getRealPath(filePath);
+      }
+
+      return filePath;
    /**   
       std::vector<std::string> pathList;
       std::vector<std::string>::const_iterator itor;

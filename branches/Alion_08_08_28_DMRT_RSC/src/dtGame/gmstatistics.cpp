@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2008, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Allen Danklefsen
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Allen Danklefsen
+ */
 
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/gmstatistics.h>
@@ -49,14 +49,14 @@ namespace dtGame
    GMStatistics::~GMStatistics() {}
 
    //////////////////////////////////////////////////////////////////////////////
-   int GMStatistics::GetStatisticsInterval() const 
-   { 
+   int GMStatistics::GetStatisticsInterval() const
+   {
       return mStatisticsInterval;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   const std::string& GMStatistics::GetFilePathToPrintDebugInformation() const 
-   { 
+   const std::string& GMStatistics::GetFilePathToPrintDebugInformation() const
+   {
       static const std::string emptyString;
       if (mPrintFileToConsole)
          return emptyString;
@@ -65,13 +65,13 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   bool GMStatistics::ShouldWeLogActors() const 
+   bool GMStatistics::ShouldWeLogActors() const
    {
       return (mStatisticsInterval > 0 && mDoStatsOnTheActors);
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   bool GMStatistics::ShouldWeLogComponents() const 
+   bool GMStatistics::ShouldWeLogComponents() const
    {
       return (mStatisticsInterval > 0 && mDoStatsOnTheComponents);
    }
@@ -91,7 +91,7 @@ namespace dtGame
       if (itor != mDebugLoggerInformation.end())
       {
          LogDebugInformation& debugInfo = *itor->second;
-         if(ticklocal)
+         if (ticklocal)
          {
             debugInfo.mTickLocalTime +=elapsedTime;
             debugInfo.mTimesThrough += 1;
@@ -112,7 +112,7 @@ namespace dtGame
 
 
    //////////////////////////////////////////////////////////////////////////////
-   void GMStatistics::DebugStatisticsTurnOn(bool logComponents, bool logActors, 
+   void GMStatistics::DebugStatisticsTurnOn(bool logComponents, bool logActors,
                                            const int statisticsInterval, bool toConsole, const std::string& path)
    {
       mDoStatsOnTheComponents    = logComponents;
@@ -131,13 +131,13 @@ namespace dtGame
       mStatisticsInterval        = 0;
       mFilePathToPrintDebugInformation.clear();
 
-      if(logLastTime)
+      if (logLastTime)
       {
          // temporarily 100, fill in to correct time if needbe.
          DebugStatisticsPrintOut(100, ourGm);
       }
 
-      if(clearList)
+      if (clearList)
       {
          mDebugLoggerInformation.clear();
       }
@@ -147,20 +147,22 @@ namespace dtGame
    void GMStatistics::DebugStatisticsPrintOut(const float realTimeElapsed, const GameManager& ourGm)
    {
       // Lots of divides and unnecessary stuff in here to do if we don't need to
-      // Just return. 
-      if(!mDoStatsOnTheComponents && !mDoStatsOnTheActors)
+      // Just return.
+      if (!mDoStatsOnTheComponents && !mDoStatsOnTheActors)
+      {
          return;
+      }
 
-      // real time is milliseconds. Convert to seconds (*1000) and then trunc to 4 digits 
-      float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0; 
-      float truncCumGMTime = ((int)((float) mStatsCumGMProcessTime / 10.0)) / 100000.0; 
+      // real time is milliseconds. Convert to seconds (*1000) and then trunc to 4 digits
+      float truncRealTime = ((int)(realTimeElapsed / 10.0)) / 100000.0;
+      float truncCumGMTime = ((int)((float) mStatsCumGMProcessTime / 10.0)) / 100000.0;
       float gmPercentTime = ComputeStatsPercent(truncRealTime, truncCumGMTime);
       float cumulativeTime = 0.0;
       int numComps = 0, numActors = 0;
       std::vector<dtCore::RefPtr<LogDebugInformation> > debugDeleteList;
 
       std::ostringstream ss;
-      ss << "==========Printing Debug information===========" << 
+      ss << "==========Printing Debug information===========" <<
    #ifdef _DEBUG
          "  [DEBUG BUILD]  " << std::endl;
    #else
@@ -168,11 +170,11 @@ namespace dtGame
    #endif
 
       float fps = ((int)((mStatsNumFrames/truncRealTime) * 10.0)) / 10.0; // force data truncation to 1 place
-      ss << "GM Stats: CurSimTime[" << ourGm.GetSimulationTime() << "], TimeInGM[" << gmPercentTime << 
-         "%, " << truncCumGMTime << "s], ReportTime[" << truncRealTime << 
-         "s], Ticks[" << mStatsNumFrames << "], FPS[" << fps << 
+      ss << "GM Stats: CurSimTime[" << ourGm.GetSimulationTime() << "], TimeInGM[" << gmPercentTime <<
+         "%, " << truncCumGMTime << "s], ReportTime[" << truncRealTime <<
+         "s], Ticks[" << mStatsNumFrames << "], FPS[" << fps <<
          "], #Msgs[" << mStatsNumProcMessages << " Local/" << mStatsNumSendNetworkMessages <<
-         " Ntwrk], #Actors[" << ourGm.mActorProxyMap.size() << "/" << ourGm.mGameActorProxyMap.size() << 
+         " Ntwrk], #Actors[" << ourGm.mActorProxyMap.size() << "/" << ourGm.mGameActorProxyMap.size() <<
          " Game/" << ourGm.mActorProxyMap.size() << "]" << std::endl;
 
       // reset values for next fragment
@@ -183,17 +185,17 @@ namespace dtGame
 
       // Build up all the information in the stream
       std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator iter = mDebugLoggerInformation.begin();
-      if(mDoStatsOnTheComponents)
+      if (mDoStatsOnTheComponents)
       {
          ss << "*************** STARTING LOGGING OF TIME IN COMPONENTS *****************" << std::endl;
-         for(; iter != mDebugLoggerInformation.end(); ++iter)
+         for (; iter != mDebugLoggerInformation.end(); ++iter)
          {
             LogDebugInformation& debugInfo = *iter->second;
-            if(debugInfo.mIsComponent)
+            if (debugInfo.mIsComponent)
             {
                float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
                float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
-               ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
+               ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" <<
                   debugInfo.mNameOfLogInfo.c_str() << "]" << std::endl;
                debugInfo.mTotalTime = 0;
                debugInfo.mTimesThrough = 0;
@@ -209,28 +211,30 @@ namespace dtGame
       }
 
       // ACTORs
-      if(mDoStatsOnTheActors)
+      if (mDoStatsOnTheActors)
       {
          int numIgnored = 0;
          float ignoredCumulativeTime = 0.0;
 
          ss << "********** STARTING LOGGING OF TIME IN ACTORS -- if (> 0.1%) ************" << std::endl;
-         for(iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
+         for (iter = mDebugLoggerInformation.begin(); iter != mDebugLoggerInformation.end(); ++iter)
          {
             LogDebugInformation& debugInfo = *iter->second;
-            if(!debugInfo.mIsComponent)
+            if (!debugInfo.mIsComponent)
             {
                float percentTime = ComputeStatsPercent(truncRealTime, debugInfo.mTotalTime);
                float truncTotalTime = ((int)(debugInfo.mTotalTime * 10000)) / 10000.0; // force data truncation to 4 places
                if (percentTime > 0.1)
                {
-                  ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" << 
-                     debugInfo.mNameOfLogInfo.c_str() << "]" << 
+                  ss << "* Time[" << percentTime << "% / " << truncTotalTime << " Total], Name[" <<
+                     debugInfo.mNameOfLogInfo.c_str() << "]" <<
                      ", UniqueId[" << debugInfo.mUniqueID.ToString().c_str() << "]" << std::endl;
                }
                else if (debugInfo.mTotalTime == 0.0)
+               {
                   debugDeleteList.push_back(iter->second);
-               else 
+               }
+               else
                {
                   numIgnored ++;
                   ignoredCumulativeTime += truncTotalTime;
@@ -246,7 +250,7 @@ namespace dtGame
          if (numIgnored > 0)
          {
             float percentTime = ComputeStatsPercent(truncRealTime, ignoredCumulativeTime);
-            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime << 
+            ss << "*** Ignored [" << numIgnored << "] actors for [" << ignoredCumulativeTime <<
                ", " << percentTime << "%]." << std::endl;
          }
          ss << "************ ENDING LOGGING OF TIME IN ACTORS *********************" << std::endl;
@@ -266,10 +270,12 @@ namespace dtGame
       ss << "============ Ending Debug information ==============" << std::endl;
 
       // Do the writing
-      if(mPrintFileToConsole)
+      if (mPrintFileToConsole)
       {
-         if(ourGm.mLogger != NULL)
+         if (ourGm.mLogger != NULL)
+         {
             ourGm.mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
+         }
       }
       else // print to file
       {
@@ -282,10 +288,12 @@ namespace dtGame
       for (unsigned int i = 0; i < debugDeleteList.size(); ++i)
       {
          LogDebugInformation &debugInfo = *debugDeleteList[i];
-         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator deleteIter = 
+         std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> >::iterator deleteIter =
             mDebugLoggerInformation.find(debugInfo.mUniqueID);
          if (deleteIter != mDebugLoggerInformation.end())
+         {
             mDebugLoggerInformation.erase(deleteIter);
+         }
       }
    }
 
@@ -314,10 +322,10 @@ namespace dtGame
          // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
          // because mClock on system is only updated at the start of the whole tick.
          dtCore::Timer_t frameTickStop = mStatsTickClock.Tick();
-         double fragmentDelta = 
+         double fragmentDelta =
             mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
 
-         mStatsCumGMProcessTime += 
+         mStatsCumGMProcessTime +=
             dtCore::Timer_t(mStatsTickClock.DeltaMicro(frameTickStart, frameTickStop));
 
          if (fragmentDelta < 0) // handle wierd case of wrap around (just to be safe)
@@ -325,7 +333,7 @@ namespace dtGame
 
          else if (fragmentDelta >= (mStatisticsInterval * 1000000))
          {
-            dtCore::Timer_t realTimeElapsed = 
+            dtCore::Timer_t realTimeElapsed =
                dtCore::Timer_t(mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
 
             DebugStatisticsPrintOut(realTimeElapsed, ourGm);

@@ -7,6 +7,8 @@
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
 #include <dtDAL/project.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/map.h>
 
 #include <CEGUI/CEGUIWindowManager.h>
 
@@ -39,6 +41,11 @@ void TestHUD::Config()
 
    //create a hud-camera which is rendering to a hud's (see above) widget:
    m_pCamera1 = new dtCore::Camera();
+
+   //set the two cameras to the same position
+   dtCore::Transform camPos;
+   GetCamera()->GetTransform(camPos);
+   m_pCamera1->SetTransform(camPos);
 
    osg::Camera *pOSGCamera = m_pCamera1->GetOSGCamera();
 
@@ -73,6 +80,24 @@ void TestHUD::_ConfigScene()
 
    //Since we are in an Application we can simply call...
    LoadMap(myMap);
+
+   // translate the camera to the predefined start position
+   {
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
+      myMap.FindProxies(proxies, "startPosition");
+      if (!proxies.empty())
+      {
+         dtCore::Transformable *startPoint;
+         proxies[0]->GetActor(startPoint);
+
+         if (startPoint != NULL)
+         {
+            dtCore::Transform xform;
+            startPoint->GetTransform(xform);
+            GetCamera()->SetTransform(xform);
+         }
+      }
+   }
 }
 
 int main()

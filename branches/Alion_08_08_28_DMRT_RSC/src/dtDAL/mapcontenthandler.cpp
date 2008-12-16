@@ -21,6 +21,8 @@
 
 #include <prefix/dtdalprefix-src.h>
 
+#include <typeinfo>
+
 #include <dtDAL/mapcontenthandler.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
@@ -40,8 +42,8 @@
 #include <dtUtil/xercesutils.h>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
 #include <xercesc/util/XMLString.hpp>
@@ -49,7 +51,7 @@
 #include <xercesc/sax/SAXParseException.hpp>
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #include <osg/Vec2f>
@@ -233,16 +235,16 @@ namespace  dtDAL
          }
          else if (mInActors)
          {
-            if(mInActor)
+            if (mInActor)
             {
-               if(!mIgnoreCurrentActor)
+               if (!mIgnoreCurrentActor)
                {
                   ActorCharacters(chars);
                }
             }
             else
             {
-               if(topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
+               if (topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
             }
          }
@@ -1124,11 +1126,10 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-   void MapContentHandler::endElement(
-      const XMLCh* const uri,
-      const XMLCh* const localname,
-      const XMLCh* const qname) {
-
+   void MapContentHandler::endElement( const XMLCh* const uri,
+                                       const XMLCh* const localname,
+                                       const XMLCh* const qname) 
+   {
       if (mElements.empty())
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -1146,7 +1147,6 @@ namespace  dtDAL
                              "Ending element: \"%s\"", dtUtil::XMLStringConverter(lname).c_str());
       }
 
-
       if (XMLString::compareString(lname, localname) != 0)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -1157,149 +1157,19 @@ namespace  dtDAL
 
       if (mInHeader)
       {
-         if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
-            mInHeader = false;
+         EndHeaderElement(localname);
       }
       else if (mInEvents)
       {
-         if (XMLString::compareString(localname, MapXMLConstants::EVENTS_ELEMENT) == 0)
-         {
-            mInEvents = false;
-         }
-         else if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
-         {
-            if (mGameEvent.valid())
-            {
-               mMap->GetEventManager().AddEvent(*mGameEvent);
-               mGameEvent = NULL;
-            }
-         }
+         EndEventSection(localname);
       }
       else if (mInLibraries)
       {
-         if (XMLString::compareString(localname, MapXMLConstants::LIBRARIES_ELEMENT) == 0)
-         {
-            mInLibraries = false;
-         }
-         else if (XMLString::compareString(localname, MapXMLConstants::LIBRARY_ELEMENT) == 0)
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
-                                   "Attempting to add library %s version %s to the library manager.",
-                                   mLibName.c_str(),
-                                   mLibVersion.c_str());
-            }
-
-            try
-            {
-               if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
-                  LibraryManager::GetInstance().LoadActorRegistry(mLibName);
-               mMap->AddLibrary(mLibName, mLibVersion);
-               ClearLibraryValues();
-            }
-            catch (const dtUtil::Exception& e)
-            {
-               mMissingLibraries.push_back(mLibName);
-               if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                      "Error loading library %s version %s in the library manager.  Exception message to follow.",
-                                      mLibName.c_str(), mLibVersion.c_str());
-               }
-               else
-               {
-                  mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                      "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
-                                      mLibName.c_str(), mLibVersion.c_str());
-               }
-               e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
-            }
-
-         }
+         EndLibrarySection(localname);
       }
       else if (mInActors)
       {
-         if (XMLString::compareString(localname, MapXMLConstants::ACTORS_ELEMENT) == 0)
-         {
-            mInActors = false;
-            if (mInActor)
-            {
-               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                   "Found the closing actors section tag, but the content handler thinks it's still parsing an actor");
-               mInActor = false;
-            }
-         }
-         else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
-         {
-            if (mActorProxy != NULL)
-               mMap->AddProxy(*mActorProxy);
-            mActorProxy = NULL;
-            mInActor = false;
-            ClearActorValues();
-         }
-         else if (mInActor)
-         {
-            if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
-            {
-               mInActorProperty = false;
-               mActorProperty = NULL;
-               mActorPropertyType = NULL;
-            }
-            else if (mInGroupProperty)
-            {
-               if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT) == 0)
-               {
-                  ///We pop if the element was never filled in.  This happens if the value is empty for
-                  ///parameter data.  We don't pop for a group because that is handled separately below.
-                  if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
-                     mParameterStack.pop();
-               }
-               else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
-               {
-                  dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(mParameterStack.top().get());
-                  mParameterStack.pop();
-                  //The only way we know we have completed a group actor property is that the
-                  //stack of parameters has been emptied since they can nest infinitely.
-                  if (mParameterStack.empty())
-                  {
-                     mInGroupProperty = false;
-                     mGroupParameters.insert(std::make_pair(mActorProxy->GetId(),
-                        std::make_pair(mActorProperty->GetName(), topParam)));
-                  }
-               }
-               else if (!mParameterStack.empty())
-               {
-                  // parse the end element into a data type to see if it's an end param element.
-                  dtDAL::DataType* d = ParsePropertyType(localname, false);
-                  // The parameter has ended, so pop.
-                  if (d != NULL)
-                  {
-                     mParameterStack.pop();
-                  }
-               }
-            }
-            else if (mInActorProperty)
-            {
-               if (mActorProperty != NULL)
-               {
-                  if (mActorPropertyType != NULL)
-                  {
-                     // parse the end element into a data type to see if it's an end property element.
-                     dtDAL::DataType* d = ParsePropertyType(localname, false);
-                     // The property has ended, so in case the property type has not
-                     // been unset, it is now.
-                     if (d != NULL)
-                     {
-                        //This works here because the actor types referenced here all set
-                        // their property type to NULL when the value is set.
-                        NonEmptyDefaultWorkaround();
-                        mActorPropertyType = NULL;
-                     }
-                  }
-               }
-            }
-         }
+         EndActorSection(localname);
       }
       mElements.pop();
    }
@@ -1310,27 +1180,27 @@ namespace  dtDAL
       LinkActors();
       AssignGroupProperties();
 
-      if(!mEnvActorId.ToString().empty())
+      if (!mEnvActorId.ToString().empty())
       {
          try
          {
             dtCore::RefPtr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
-            if(!proxy.valid())
+            if (!proxy.valid())
             {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "No environment actor was located in the map.");
                return;
             }
             else
             {
-               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "An environment actor was located in the map.");
             }
 
             IEnvironmentActor *ea = dynamic_cast<IEnvironmentActor*>(proxy->GetActor());
-            if(ea == NULL)
+            if (ea == NULL)
             {
                throw dtUtil::Exception(ExceptionEnum::InvalidActorException,
                   "The environment actor proxy's actor should be an environment, but a dynamic_cast failed", __FILE__, __LINE__);
@@ -1589,6 +1459,209 @@ namespace  dtDAL
    InputSource* MapContentHandler::resolveEntity(const XMLCh* const publicId, const XMLCh* const systemId)
    {
       return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndHeaderElement(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
+      {
+         mInHeader = false;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorElement()
+   {
+      if (mActorProxy != NULL)
+      {
+         mMap->AddProxy(*mActorProxy);
+      }
+      mActorProxy = NULL;
+      mInActor = false;
+      ClearActorValues();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::ACTORS_ELEMENT) == 0)
+      {
+         EndActorsElement();
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_ELEMENT) == 0)
+      {
+         EndActorElement();
+      }
+      else if (mInActor)
+      {
+         EndActorPropertySection(localname);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorsElement()
+   {
+      mInActors = false;
+      if (mInActor)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                             "Found the closing actors section tag, but the content handler thinks it's still parsing an actor");
+         mInActor = false;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertySection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      {
+         EndActorPropertyElement();
+      }
+      else if (mInGroupProperty)
+      {
+         if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT) == 0)
+         {
+            EndActorPropertyParameterElement();
+         }
+         else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT) == 0)
+         {
+            EndActorPropertyGroupElement();
+         }
+         else if (!mParameterStack.empty())
+         {
+            // parse the end element into a data type to see if it's an end param element.
+            dtDAL::DataType* d = ParsePropertyType(localname, false);
+            // The parameter has ended, so pop.
+            if (d != NULL)
+            {
+               mParameterStack.pop();
+            }
+         }
+      }
+      else if (mInActorProperty)
+      {
+         if (mActorProperty != NULL)
+         {
+            if (mActorPropertyType != NULL)
+            {
+               // parse the end element into a data type to see if it's an end property element.
+               dtDAL::DataType* d = ParsePropertyType(localname, false);
+               // The property has ended, so in case the property type has not
+               // been unset, it is now.
+               if (d != NULL)
+               {
+                  //This works here because the actor types referenced here all set
+                  // their property type to NULL when the value is set.
+                  NonEmptyDefaultWorkaround();
+                  mActorPropertyType = NULL;
+               }
+            }
+         }
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyGroupElement()
+   {
+      dtCore::RefPtr<NamedGroupParameter> topParam = static_cast<NamedGroupParameter*>(mParameterStack.top().get());
+      mParameterStack.pop();
+      //The only way we know we have completed a group actor property is that the
+      //stack of parameters has been emptied since they can nest infinitely.
+      if (mParameterStack.empty())
+      {
+         mInGroupProperty = false;
+         mGroupParameters.insert(std::make_pair(mActorProxy->GetId(),
+            std::make_pair(mActorProperty->GetName(), topParam)));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyParameterElement()
+   {
+      ///We pop if the element was never filled in.  This happens if the value is empty for
+      ///parameter data.  We don't pop for a group because that is handled separately below.
+      if (!mParameterStack.empty() && mParameterStack.top()->GetDataType() != DataType::GROUP)
+      {
+         mParameterStack.pop();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndActorPropertyElement()
+   {
+      mInActorProperty = false;
+      mActorProperty = NULL;
+      mActorPropertyType = NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndLibrarySection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::LIBRARIES_ELEMENT) == 0)
+      {
+         mInLibraries = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::LIBRARY_ELEMENT) == 0)
+      {
+         EndLibraryElement();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndLibraryElement()
+   {
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
+            "Attempting to add library %s version %s to the library manager.",
+            mLibName.c_str(),
+            mLibVersion.c_str());
+      }
+
+      try
+      {
+         if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
+         {
+            LibraryManager::GetInstance().LoadActorRegistry(mLibName);
+         }
+         mMap->AddLibrary(mLibName, mLibVersion);
+         ClearLibraryValues();
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         mMissingLibraries.push_back(mLibName);
+         if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Error loading library %s version %s in the library manager.  Exception message to follow.",
+               mLibName.c_str(), mLibVersion.c_str());
+         }
+         else
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
+               mLibName.c_str(), mLibVersion.c_str());
+         }
+         e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndEventSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::EVENTS_ELEMENT) == 0)
+      {
+         mInEvents = false;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
+      {
+         if (mGameEvent.valid())
+         {
+            mMap->GetEventManager().AddEvent(*mGameEvent);
+            mGameEvent = NULL;
+         }
+      }
    }
 
 }

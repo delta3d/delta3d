@@ -44,7 +44,6 @@ class QListWidgetItem;
 class QListWidget;
 class QDialog;
 class QTimer;
-class QProcess;
 
 namespace dtCore
 {
@@ -54,11 +53,12 @@ namespace dtCore
 namespace dtDAL
 {
    class Map;
-   class ActorProxy;
 }
 
 namespace dtEditQt 
 {
+   class ExternalTool;
+   class ExternalToolArgParser;
 
    /**
     * This class holds all the UI QActions.  It has a list of the actions that are
@@ -99,6 +99,14 @@ namespace dtEditQt
           * the appropriate about to and delete proxy events.
           */
          bool deleteProxy(dtDAL::ActorProxy *proxy, dtCore::RefPtr<dtDAL::Map> currMap);
+
+         ///Get the container of ExternalTools, const-like
+         const QList<ExternalTool*>& GetExternalTools() const;
+
+         ///Get the container of ExternalTools in a modifiable kind of way.
+         QList<ExternalTool*>& GetExternalTools();
+
+         const QList<QAction*> GetExternalToolActions() const;
 
          /**
           * The actions for this class are public.  Essentially, this whole class is here
@@ -162,11 +170,11 @@ namespace dtEditQt
          // Action - Edit Clamp actors to ground.
          QAction *actionEditGroundClampActors;
 
-         // Action - Turns terrain paging off and on.
-         QAction *actionToggleTerrainPaging;
-
          // Action - Edit - Goto Actor
          QAction *actionEditGotoActor;
+
+         // Action - Goto position
+         QAction *actionGetGotoPosition;
 
          // Action - Edit - Undo
          QAction *actionEditUndo;
@@ -219,20 +227,17 @@ namespace dtEditQt
          // Since mode tools are mutually exclusive, add them to a group..
          QActionGroup *modeToolsGroup;
 
+         // Add a new external tool
+         QAction *actionAddTool;
+
          // Action - Help - About Delta Level Editor
          QAction *actionHelpAboutEditor;
 
          // Action - Help - About QT
          QAction *actionHelpAboutQT;
 
-         // Action - edit skeletal mesh
-         QAction *actionEditSkeletalMesh;
-
-         // Action - edit particle systems
-         QAction *actionEditParticleSystem;
-
-         // Action - launch the viewer
-         QAction *actionLaunchViewer;
+         //Group of external tool QActions
+         QActionGroup *mExternalToolActionGroup;
 
       public slots:
 
@@ -288,10 +293,6 @@ namespace dtEditQt
           */
          void slotEditGroundClampActors();
 
-         /**
-          * Slot - Edit - Toggle terrain paging.
-          */
-         void slotToggleTerrainPaging();
 
          /**
           * Slot - Edit - Task Editor
@@ -348,6 +349,9 @@ namespace dtEditQt
           */
          void slotFileRecentMap0();
 
+         ///Open the New External Tool editor window
+         void SlotNewExternalToolEditor();
+
          /**
           * Slot - Help - About Editor. Spawns the editor about box.
           */
@@ -380,14 +384,11 @@ namespace dtEditQt
 
          void slotOnActorCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
 
-         // Launches the "animation viewer"
-         void slotLaunchSkeletalMeshEditor();
+         void slotGetGotoPosition();
 
-         // Launches the particle editor
-         void slotLaunchParticleEditor();
 
-         // Launches the delta viewer
-         void slotLaunchDeltaViewer();
+signals:
+         void ExternalToolsModified(const QList<QAction*>&);
 
       protected:
          /**
@@ -432,9 +433,9 @@ namespace dtEditQt
          void setupFileActions();
          void setupEditActions();
          void setupSelectionActions();
+         void SetupToolsActions();
          void setupHelpActions();
          void setupWindowActions();
-         void setupSubeditorActions();
 
          QTimer *timer;
          std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
@@ -444,9 +445,9 @@ namespace dtEditQt
 
          dtCore::RefPtr<dtCore::Isector> mIsector;
 
-         QProcess *mSkeletalEditorProcess;  
-         QProcess *mParticleEditorProcess; 
-         QProcess *mViewerProcess;  
+         QList<ExternalTool*> mTools;      
+         QList<const ExternalToolArgParser*> mExternalToolArgParsers;
+
    };
 }
 

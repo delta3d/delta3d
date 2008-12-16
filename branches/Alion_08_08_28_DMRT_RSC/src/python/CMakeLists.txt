@@ -51,10 +51,12 @@ SET(TARGET_SRC
   motionmodelbindings.cpp
   mousebindings.cpp   
   objectbindings.cpp
-  odebindings.cpp   
+  odebindings.cpp
+  odebodywrapbindings.cpp
   orbitmotionmodelbindings.cpp        
   osgmath.cpp           
-  osgmatrix.cpp           
+  osgmatrix.cpp
+  osgnodebindings.cpp
   osgvec2.cpp             
   osgvec3.cpp
   osgvec4.cpp                        
@@ -65,6 +67,8 @@ SET(TARGET_SRC
   recorderbindings.cpp   
   rtsmotionmodelbindings.cpp
   scenebindings.cpp      
+  shadermanagerbindings.cpp
+  shaderprogrambindings.cpp
   skyboxbindings.cpp       
   skydomebindings.cpp      
   spotlightbindings.cpp    
@@ -171,7 +175,20 @@ BUILD_PYTHON_BINDING(${DAL_BINDINGS}
                      ${DTDAL_LIBRARY}
                     )
 
+################
+SET(ANIM_BINDINGS "PyDtAnim")
 
+SET(TARGET_SRC 
+  dtanimbindings.cpp
+  characterwrapperbindings.cpp
+)
+
+SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
+
+BUILD_PYTHON_BINDING(${ANIM_BINDINGS} 
+                     ${DTANIM_LIBRARY}
+                    )
+                    
 ################
 
 IF(BUILD_PLIB)

@@ -200,6 +200,10 @@ void CoordinateTests::TestConfigure()
    converter->SetLocalCoordinateType(dtUtil::LocalCoordinateType::GLOBE);
    CPPUNIT_ASSERT(converter->GetLocalCoordinateType() == dtUtil::LocalCoordinateType::GLOBE);
 
+   converter->SetLocalCoordinateType(dtUtil::LocalCoordinateType::CARTESIAN);
+   CPPUNIT_ASSERT_MESSAGE("The obsolete CARTESIAN should convert to CARTESIAN_UTM",
+            converter->GetLocalCoordinateType() == dtUtil::LocalCoordinateType::CARTESIAN_UTM);
+
    converter->SetGlobeRadius(20.34f);
    CPPUNIT_ASSERT(converter->GetGlobeRadius() == 20.34f);
 
@@ -245,7 +249,7 @@ void CoordinateTests::TestUTMLocalOffsetAsLatLon()
    osg::Vec3d actual;
    converter->GetLocalOffset(actual);
 
-   char hemisphere;
+   char hemisphere = 'n';
    osg::Vec3d expected;
 
    CPPUNIT_ASSERT_EQUAL(50U, converter->GetUTMZone());
@@ -360,7 +364,7 @@ void CoordinateTests::TestGeodeticToCartesianFlatEarthConversions()
       std::ostringstream ss;
       ss << "Expected: " << testLoc << ", Actual: " << resultBack;
 
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 1e-1));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 1e-4));
 
       ss.str("");
       ss << "Expected: " << testRot << ", Actual: " << resultRotBack;
@@ -389,7 +393,7 @@ void CoordinateTests::TestGeodeticToCartesianFlatEarthConversions()
       std::ostringstream ss;
       ss << "Expected: " << testLoc << ", Actual: " << resultBack;
 
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 25000.0));
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), dtUtil::Equivalent(resultBack, testLoc, 0.01));
 
       ss.str("");
       ss << "Expected: " << testRot << ", Actual: " << resultRotBack;
@@ -724,7 +728,6 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 
    {
       unsigned int lovePuppyZone;
-      char lovePuppyHemisphere;
       double lovePuppyEasting;
       double lovePuppyNorthing;
 
@@ -737,10 +740,8 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       converter->SetUTMZone(lovePuppyZone);
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat),
                                        osg::DegreesToRadians(lon),
-                                       lovePuppyZone, lovePuppyHemisphere, lovePuppyEasting, lovePuppyNorthing );
+                                       lovePuppyZone, 'N', lovePuppyEasting, lovePuppyNorthing );
 
-      //CPPUNIT_ASSERT_EQUAL( '11S', lovePuppyZone ) //How to convert to long?
-      CPPUNIT_ASSERT_EQUAL( 'N', lovePuppyHemisphere );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 598480.2, lovePuppyEasting, epsilon );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 3817592.11, lovePuppyNorthing, epsilon );
 
@@ -748,7 +749,6 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 
    {
       unsigned int dacoZone;
-      char dacoHemisphere;
       double dacoEasting;
       double dacoNorthing;
 
@@ -761,17 +761,15 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       converter->SetUTMZone(dacoZone);
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat),
                                        osg::DegreesToRadians(lon),
-                                       dacoZone, dacoHemisphere, dacoEasting, dacoNorthing );
+                                       dacoZone, 'N', dacoEasting, dacoNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
-      CPPUNIT_ASSERT_EQUAL( 'N', dacoHemisphere );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 589156.53, dacoEasting, epsilon );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 3796850.54, dacoNorthing, epsilon );
    }
 
    {
       unsigned int fatbackZone;
-      char fatbackHemisphere;
       double fatbackEasting;
       double fatbackNorthing;
 
@@ -784,10 +782,8 @@ void CoordinateTests::TestConvertGeodeticToUTM()
       converter->SetUTMZone(fatbackZone);
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(lat),
                                        osg::DegreesToRadians(lon),
-                                       fatbackZone, fatbackHemisphere, fatbackEasting, fatbackNorthing );
+                                       fatbackZone, 'N', fatbackEasting, fatbackNorthing );
 
-      //CPPUNIT_ASSERT_EQUAL( '11S', fatbackZone ) //How to convert to long?
-      CPPUNIT_ASSERT_EQUAL( 'N', fatbackHemisphere );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 595315.70, fatbackEasting, epsilon );
       CPPUNIT_ASSERT_DOUBLES_EQUAL( 3805195.52, fatbackNorthing, epsilon );
    }
@@ -801,8 +797,13 @@ void CoordinateTests::TestConvertUTMToGeodetic()
    double lat;
    double lon;
 
-   converter->ConvertUTMToGeodetic( 10, 500000, 5005000, lat, lon);
+   converter->ConvertUTMToGeodetic( 10, 'N', 500000, 5005000, lat, lon);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL( 45.2, osg::RadiansToDegrees(lat), epsilon );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( -123.0, osg::RadiansToDegrees(lon), epsilon );
+
+   converter->ConvertUTMToGeodetic( 10, 'S', 500000, 5005000, lat, lon);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( -45.1, osg::RadiansToDegrees(lat), epsilon );
    CPPUNIT_ASSERT_DOUBLES_EQUAL( -123.0, osg::RadiansToDegrees(lon), epsilon );
 }

@@ -18,6 +18,7 @@ void initWeatherBindings()
    
    //   const dtCore::Environment* GetEnvironment() const {return mEnvironment.get();}
    const dtCore::Environment* (Weather::*GetEnv) () const = &Weather::GetEnvironment;
+   dtCore::Environment* (Weather::*GetEnv2) () = &Weather::GetEnvironment;
 
    scope Weather_scope = class_<Weather, bases<Base>, dtCore::RefPtr<Weather> >("Weather", init<>())
       .def("GetInstanceCount", &Weather::GetInstanceCount)
@@ -34,6 +35,7 @@ void initWeatherBindings()
       .def("SetTheme", &Weather::SetTheme)
       .def("GetTheme", &Weather::GetTheme)
       .def("GetEnvironment", GetEnv, return_internal_reference<>())
+      .def("GetEnvironment", GetEnv2, return_internal_reference<>())
       .def("SetRateOfChange", &Weather::SetRateOfChange)
       .def("GetRateOfChange", &Weather::GetRateOfChange)
       .def("AddChild", &Weather::AddChild)

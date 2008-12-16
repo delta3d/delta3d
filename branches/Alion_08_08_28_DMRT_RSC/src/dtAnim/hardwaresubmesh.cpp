@@ -30,8 +30,10 @@
 #include <osg/Vec3>
 #include <osg/BoundingBox>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/log.h>
 #include <cal3d/hardwaremodel.h>
 #include <osg/CullFace>
+#include <osg/BlendFunc>
 
 namespace dtAnim
 {
@@ -41,18 +43,18 @@ namespace dtAnim
          HardwareSubmeshComputeBound()
          {
          }
-         
-         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const  
+
+         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const
          {
             return drawable.getInitialBound();
          }
-         
+
    };
 
    class HardwareSubmeshCallback : public osg::Drawable::UpdateCallback
    {
       public:
-         HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model, 
+         HardwareSubmeshCallback(Cal3DModelWrapper& wrapper, CalHardwareModel& model,
                osg::Uniform& boneTrans, unsigned mesh)
             : mWrapper(&wrapper)
             , mHardwareModel(&model)
@@ -69,13 +71,13 @@ namespace dtAnim
 
             //spin through the bones in the hardware mesh
             int numBones = mHardwareModel->getBoneCount();
-            for(int bone = 0; bone < numBones; ++bone)
+            for (int bone = 0; bone < numBones; ++bone)
             {
-               
+
                CalSkeleton* skel = mWrapper->GetCalModel()->getSkeleton();
                const CalQuaternion& quat = mHardwareModel->getRotationBoneSpace(bone, skel);
                const CalVector& vec = mHardwareModel->getTranslationBoneSpace(bone, skel);
-                              
+
                //compute matrices
                osg::Matrix matRot(osg::Quat(quat.x, quat.y, quat.z, quat.w));
 
@@ -103,46 +105,32 @@ namespace dtAnim
    };
 
 
-HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper *wrapper, CalHardwareModel* model, 
-      const std::string& boneUniformName, unsigned numBones, unsigned mesh, 
+HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
+      const std::string& boneUniformName, unsigned numBones, unsigned mesh,
       unsigned vertexVBO, unsigned indexVBO)
-: mWrapper(wrapper)
-, mHardwareModel(model)
-, mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
-, mBoneUniformName(boneUniformName)
-, mNumBones(numBones)
-, mMeshID(mesh)
-, mVertexVBO(vertexVBO)
-, mIndexVBO(indexVBO)
-{ 
-	setUseDisplayList(false);
+   : mWrapper(wrapper)
+   , mHardwareModel(model)
+   , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
+   , mBoneUniformName(boneUniformName)
+   , mNumBones(numBones)
+   , mMeshID(mesh)
+   , mVertexVBO(vertexVBO)
+   , mIndexVBO(indexVBO)
+{
+   setUseDisplayList(false);
    setUseVertexBufferObjects(true);
 
    osg::StateSet* ss = getOrCreateStateSet();
-
    ss->addUniform(mBoneTransforms.get());
-
    ss->setAttributeAndModes(new osg::CullFace);
-   
-   //get selected textures
-   std::vector<CalCoreMaterial::Map>& vectorMap = mHardwareModel->getVectorHardwareMesh()[mMeshID].pCoreMaterial->getVectorMap();
 
-   std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
-   std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
+   if (mHardwareModel == NULL) {return;}
 
-   for(int i = 0; iter != endIter; ++iter, ++i)
-   {
-      osg::Texture2D *texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
-      if(texture != NULL) 
-      {
-         ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
-      }
-   }
-
+   SetUpMaterial();
 
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   setCullCallback(new SubmeshCullCallback(*mWrapper, mHardwareModel->getVectorHardwareMesh()[mMeshID].meshId));
+   setCullCallback(new SubmeshCullCallback(*mWrapper, mMeshID));
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
@@ -150,7 +138,7 @@ HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 {
 }
 
-void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const 
+void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
    //select the appropriate mesh
    mHardwareModel->selectHardwareMesh(mMeshID);
@@ -158,7 +146,7 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    osg::State & state = *renderInfo.getState();
 
    //bind the VBO's
-   state.disableAllVertexArrays();    
+   state.disableAllVertexArrays();
 
    const Extensions* glExt = getExtensions(state.getContextID(),true);
 
@@ -174,13 +162,13 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.setTexCoordPointer(0, 2, GL_FLOAT, stride, BUFFER_OFFSET(6));
    state.setTexCoordPointer(1, 2, GL_FLOAT, stride, BUFFER_OFFSET(8));
 
-	state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
+   state.setTexCoordPointer(2, 4, GL_FLOAT, stride, BUFFER_OFFSET(10));
    state.setTexCoordPointer(3, 4, GL_FLOAT, stride, BUFFER_OFFSET(14));
 
    //make the call to render
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mIndexVBO);
- 
-   glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ? 
+
+   glDrawElements(GL_TRIANGLES,  mHardwareModel->getFaceCount() * 3, (sizeof(CalIndex) < 4) ?
          GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, (void*)(sizeof(CalIndex) * mHardwareModel->getStartIndex()));
 
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -198,16 +186,102 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.setTexCoordPointer(3, NULL);
 }
 
-osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const 
+osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
-   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName, 
+   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
          mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
-   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, 
+   return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
          mBoneUniformName, mNumBones, mMeshID, mVertexVBO, mIndexVBO);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void HardwareSubmeshDrawable::SetUpMaterial()
+{
+   if (!mWrapper.valid())
+   {
+      return;
+   }
+
+   osg::StateSet* ss = this->getOrCreateStateSet();
+
+   osg::Material* material = new osg::Material();
+   ss->setAttributeAndModes(material, osg::StateAttribute::ON);
+
+   osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   ss->setMode(GL_BLEND, osg::StateAttribute::ON);
+   ss->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+   ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+   if (mWrapper->BeginRenderingQuery() == false) {return;}
+   if (mWrapper->SelectMeshSubmesh(mMeshID,0) == false) {return;}
+
+   unsigned char meshColor[4];
+   osg::Vec4 materialColor;
+
+   // set the material ambient color
+   mWrapper->GetAmbientColor(&meshColor[0]);
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material diffuse color
+   mWrapper->GetDiffuseColor( &meshColor[0] );
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material specular color
+   mWrapper->GetSpecularColor(&meshColor[0]);
+   materialColor[0] = meshColor[0] / 255.0f;
+   materialColor[1] = meshColor[1] / 255.0f;
+   materialColor[2] = meshColor[2] / 255.0f;
+   materialColor[3] = meshColor[3] / 255.0f;
+   material->setSpecular(osg::Material::FRONT_AND_BACK, materialColor);
+
+   // set the material shininess factor
+   float shininess;
+   shininess = mWrapper->GetShininess();
+   material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
+
+   std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
+   if (mMeshID >= meshVec.size())
+   {
+      LOG_WARNING("MeshID isn't defined in the list of meshes");
+      return;
+   }
+
+   CalHardwareModel::CalHardwareMesh &coreMesh = meshVec[mMeshID];
+
+   if (coreMesh.pCoreMaterial != NULL)
+   {
+      //get selected textures
+      std::vector<CalCoreMaterial::Map>& vectorMap = coreMesh.pCoreMaterial->getVectorMap();
+      std::vector<CalCoreMaterial::Map>::iterator iter = vectorMap.begin();
+      std::vector<CalCoreMaterial::Map>::iterator endIter = vectorMap.end();
+
+      for (int i = 0; iter != endIter; ++iter, ++i)
+      {
+         osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(iter->userData);
+         if (texture != NULL)
+         {
+            ss->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
+         }
+      }
+   }
+   else
+   {
+      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
+   }
+
+   mWrapper->EndRenderingQuery();
 }
 
 } //namespace dtAnim

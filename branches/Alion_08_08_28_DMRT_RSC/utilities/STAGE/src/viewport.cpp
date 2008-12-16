@@ -136,16 +136,16 @@ namespace dtEditQt
       //First, remove the old scene, then add the new one.
       if (this->sceneView.valid())
       {
-         if (this->scene != NULL)
+         if (this->mScene != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->scene->GetSceneNode(), scene->GetSceneNode());
+            this->rootNodeGroup->replaceChild(this->mScene->GetSceneNode(), scene->GetSceneNode());
          }
          else
          {
             this->rootNodeGroup->addChild(scene->GetSceneNode());
          }
 
-         this->scene = scene;
+         this->mScene = scene;
          //this->scene->GetSceneNode()->setStateSet(this->globalStateSet.get());
       }
    }
@@ -199,7 +199,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()
    {
-      if (!this->sceneView.valid() || !this->scene.valid() || !this->camera.valid())
+      if (!this->sceneView.valid() || !this->mScene.valid() || !this->camera.valid())
          return;
 
       renderFrame();
@@ -232,12 +232,15 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
          if (dbp != NULL)
          {
-            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
-            osgDBP->signalBeginFrame(frameStamp.get());
-            osgDBP->updateSceneGraph(frameStamp->getReferenceTime());
+            dbp->SignalBeginFrame(frameStamp.get());
+#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
+            dbp->UpdateSceneGraph(frameStamp->getReferenceTime());
+#else
+            dbp->UpdateSceneGraph(frameStamp);
+#endif
          }
       }
 
@@ -250,15 +253,13 @@ namespace dtEditQt
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
-         dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
+         const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
          if (dbp != NULL)
          {
-            osgDB::DatabasePager* osgDBP = dbp->GetOsgDatabasePager();
-
-            osgDBP->signalEndFrame();
+            dbp->SignalEndFrame();
             //This magic number is the default amount of time that dtCore Scene USED to use.
             double cleanupTime = 0.0025;
-            osgDBP->compileGLObjects(*sceneView->getState(), cleanupTime);
+            dbp->CompileGLObjects(*sceneView->getState(), cleanupTime);
 
             sceneView->flushDeletedGLObjects(cleanupTime);
          }
@@ -325,7 +326,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::pick(int x, int y)
    {
-      if (!this->scene.valid())
+      if (!this->mScene.valid())
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
                "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
 
@@ -442,6 +443,18 @@ namespace dtEditQt
 
          refresh();
       }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Viewport::onGotoPosition(double x, double y, double z)
+   {
+      StageCamera* cam = getCamera();
+      if (cam != NULL)
+      {
+         cam->setPosition(osg::Vec3(x,y,z));
+      }
+
+      refresh(); //manually redraw the viewport to show new position
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -574,6 +587,7 @@ namespace dtEditQt
       connect(ga.actionSelectionRotateActor, SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
+      connect(&ge, SIGNAL(gotoPosition(double,double,double)), this, SLOT(onGotoPosition(double,double,double)));
       connect(&ge, SIGNAL(beginChangeTransaction()), this, SLOT(onBeginChangeTransaction()));
       connect(&ge, SIGNAL(endChangeTransaction()), this, SLOT(onEndChangeTransaction()));
    }

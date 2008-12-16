@@ -4,6 +4,7 @@
 #include <dtUtil/log.h>
 
 #include <osgDB/FileUtils>
+#include <osgDB/FileNameUtils>
 
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLUni.hpp>
@@ -15,11 +16,13 @@ using namespace dtUtil;
 
 XERCES_CPP_NAMESPACE_USE
 
+////////////////////////////////////////////////////////////////////////////////
 XercesParser::XercesParser():
 mParser(NULL)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 XercesParser::~XercesParser()
 {
    if (mParser!=NULL)
@@ -29,16 +32,20 @@ XercesParser::~XercesParser()
    }
 }
 
-bool XercesParser::Parse(  const std::string& datafile, 
-                           XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler, 
-                           const std::string& schemafile)
+////////////////////////////////////////////////////////////////////////////////
+bool XercesParser::Parse(const std::string& datafile, 
+                         XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler, 
+                         const std::string& schemafile)
 {
-   std::string filename = osgDB::findDataFile( datafile );
-   if( filename.empty() )
+   std::string filename = osgDB::findDataFile(datafile);   
+
+   if(filename.empty())
    {
       LOG_ERROR("Can't find file: " + datafile);
       return false;
    }
+
+   filename = osgDB::getRealPath(filename);
 
    try  // to inialize the xmlutils
    {
@@ -47,8 +54,8 @@ bool XercesParser::Parse(  const std::string& datafile,
    catch (const XMLException& e) 
    {
       char* message = XMLString::transcode(e.getMessage());
-      LOG_ERROR( message )
-      XMLString::release( &message );
+      LOG_ERROR(message)
+      XMLString::release(&message);
       return false;
    }
    catch(...)
@@ -62,26 +69,32 @@ bool XercesParser::Parse(  const std::string& datafile,
    try  // to create a reader
    {
       mParser = XMLReaderFactory::createXMLReader();        // allocate the mParser
-      mParser->setContentHandler( &handler );
-      mParser->setErrorHandler( &xmlerror );
+      mParser->setContentHandler(&handler);
+      mParser->setErrorHandler(&xmlerror);
 
       if (!schemafile.empty())
       {
-         std::string schema = osgDB::findDataFile( schemafile );
-         if( schema.empty() )
+         std::string schema = osgDB::findDataFile(schemafile);
+        
+         if(schema.empty())
          {
             LOG_WARNING("Scheme file, " + schemafile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
          }
          else   // turn on schema checking
-         {
+         {        
+            // In some cases, schema will contain a url that is
+            // relative to the current working directory which
+            // may cause problems with xerces correctly finding it
+            schema = osgDB::getRealPath(schema);
+
             mParser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
             mParser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
             mParser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
-            mParser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
-            XMLCh* SCHEMA = XMLString::transcode( schema.c_str() );
+            mParser->loadGrammar(schema.c_str(), Grammar::SchemaGrammarType);
+            XMLCh* SCHEMA = XMLString::transcode(schema.c_str());
             mParser->setFeature(XMLUni::fgXercesSchema, true);
-            mParser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
-            XMLString::release( &SCHEMA );
+            mParser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA);
+            XMLString::release(&SCHEMA);
          }
       }
    }
@@ -122,3 +135,5 @@ bool XercesParser::Parse(  const std::string& datafile,
 
    return retVal;
 }
+
+////////////////////////////////////////////////////////////////////////////////

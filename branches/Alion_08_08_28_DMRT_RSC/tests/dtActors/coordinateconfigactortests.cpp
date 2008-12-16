@@ -144,6 +144,7 @@ class CoordinateConfigActorTests : public CPPUNIT_NS::TestFixture
 
          dtUtil::Coordinates::ConvertUTMToGeodetic(
             mCoordinateConfigActor->GetCoordinateConverter().GetUTMZone(),
+            mCoordinateConfigActor->GetCoordinateConverter().GetUTMHemisphere(),
             localOffset.x(), localOffset.y() , latitude, longitude);
 
          osg::Vec3d expected(osg::RadiansToDegrees(latitude), osg::RadiansToDegrees(longitude), localOffset.z());

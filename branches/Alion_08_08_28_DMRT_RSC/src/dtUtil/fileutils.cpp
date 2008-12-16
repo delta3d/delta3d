@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/macros.h>
 
@@ -38,7 +39,7 @@ _CRTIMP extern int * __cdecl _errno(void);
 #      define errno   (*_errno())
 #   else   /* ndef _MT && ndef _DLL */
 _CRTIMP extern int errno;
-#   endif  /* _MT || _DLL */ 
+#   endif  /* _MT || _DLL */
 
 //Linux and Mac OS X
 #else
@@ -104,7 +105,7 @@ namespace dtUtil
 #else
    const char FileUtils::PATH_SEPARATOR = '/';
 #endif
- 
+
    //temporary copy of osgDB::makeDirectory because of some bugs in it.
    bool iMakeDirectory( const std::string &path )
    {
@@ -115,9 +116,9 @@ namespace dtUtil
       }
 
       struct stat64 stbuf;
-      if( stat64( path.c_str(), &stbuf ) == 0 )
+      if ( stat64( path.c_str(), &stbuf ) == 0 )
       {
-         if( S_ISDIR(stbuf.st_mode))
+         if ( S_ISDIR(stbuf.st_mode))
             return true;
          else
          {
@@ -129,14 +130,14 @@ namespace dtUtil
 
       std::string dir = path;
       std::stack<std::string> paths;
-      while( true )
+      while ( true )
       {
-         if( dir.empty() )
+         if ( dir.empty() )
             break;
 
-         if( stat64( dir.c_str(), &stbuf ) < 0 )
+         if ( stat64( dir.c_str(), &stbuf ) < 0 )
          {
-            switch( errno )
+            switch ( errno )
             {
             case ENOENT:
             case ENOTDIR:
@@ -155,11 +156,11 @@ namespace dtUtil
          dir = osgDB::getFilePath(std::string(dir));
       }
 
-      while( !paths.empty() )
+      while ( !paths.empty() )
       {
          std::string dir = paths.top();
 
-         if( mkdir( dir.c_str(), 0755 )< 0 )
+         if ( mkdir( dir.c_str(), 0755 )< 0 )
          {
             osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  << strerror(errno) << std::endl;
             return false;
@@ -168,7 +169,7 @@ namespace dtUtil
       }
       return true;
    }
-	
+
    //-----------------------------------------------------------------------
    bool FileUtils::FileExists( const std::string& strFile ) const
    {
@@ -183,7 +184,7 @@ namespace dtUtil
 
       struct stat tagStat;
 
-      if( strSrc != strDest )
+      if ( strSrc != strDest )
       {
 
          if (!FileExists(strSrc))
@@ -192,13 +193,13 @@ namespace dtUtil
 
          //Open the source file for reading.
          pSrcFile = fopen( strSrc.c_str(), "rb" );
-         if( pSrcFile == NULL )
+         if ( pSrcFile == NULL )
          {
             throw dtUtil::Exception(FileExceptionEnum::IOException,
                    std::string("Unable to open source file for reading: \"") + strSrc + "\"", __FILE__, __LINE__);
          }
 
-         try 
+         try
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
@@ -234,14 +235,14 @@ namespace dtUtil
 
             pDestFile = fopen( destFile.c_str(), "wb" );
 
-            if( pDestFile == NULL )
+            if ( pDestFile == NULL )
             {
                //make sure to close the source file.
                throw dtUtil::Exception(FileExceptionEnum::IOException,
                       std::string("Unable to open destination for writing: \"") + destFile + "\"", __FILE__, __LINE__);
             }
 
-            try 
+            try
             {
 
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -250,14 +251,14 @@ namespace dtUtil
 
                stat( strSrc.c_str(), &tagStat );
                long i = 0;
-               char buffer[4096]; 
+               char buffer[4096];
                while (i<tagStat.st_size)
                {
                   size_t readCount = fread(buffer, 1, 4096, pSrcFile );
-                  if (readCount > 0) 
+                  if (readCount > 0)
                   {
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
-                     if(numWritten<readCount)
+                     if (numWritten<readCount)
                      {
                         throw dtUtil::Exception(FileExceptionEnum::IOException,
                                std::string("Unable to write to destinate file: \"") + destFile + "\"", __FILE__, __LINE__);
@@ -334,7 +335,7 @@ namespace dtUtil
       FileCopy( strSrc, strDest, bOverwrite );
 
       //attempt to delete the original file.
-      if(unlink(strSrc.c_str()) != 0)
+      if (unlink(strSrc.c_str()) != 0)
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Unable to delete \"") + strSrc + "\" but file copied to new location.", __FILE__, __LINE__);
 
@@ -354,7 +355,7 @@ namespace dtUtil
                 std::string("File \"") + strFile + "\" is a directory.", __FILE__, __LINE__);
 
 
-      if( unlink(strFile.c_str()) != 0)
+      if ( unlink(strFile.c_str()) != 0)
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Unable to delete \"") + strFile + "\".", __FILE__, __LINE__);
    }
@@ -365,7 +366,7 @@ namespace dtUtil
       struct FileInfo info;
 
       struct stat tagStat;
-      if( stat( strFile.c_str(), &tagStat ) != 0 )
+      if ( stat( strFile.c_str(), &tagStat ) != 0 )
       {
          //throw dtUtil::Exception(FileExceptionEnum::FileNotFound, std::string("Cannot open file ") + strFile);
          info.fileType = FILE_NOT_FOUND;
@@ -413,11 +414,11 @@ namespace dtUtil
       }
       char buf[512];
       char* bufAddress = getcwd(buf, 512);
-      if(buf != bufAddress)
+      if (buf != bufAddress)
       {
-         throw dtUtil::Exception( FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);         
+         throw dtUtil::Exception( FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
       }
-      
+
       mCurrentDirectory = buf;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -446,7 +447,7 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    void FileUtils::PopDirectory()
    {
-      if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Popping Directory.");
       }
@@ -471,7 +472,7 @@ namespace dtUtil
          }
          char buf[512];
          char* bufAddress = getcwd(buf, 512);
-         if( bufAddress != buf )
+         if ( bufAddress != buf )
          {
             throw dtUtil::Exception( FileExceptionEnum::IOException, std::string("Cannot get current working directory"), __FILE__, __LINE__);
          }
@@ -684,7 +685,7 @@ namespace dtUtil
       }
 
       errno = 0;
-      if( rmdir( strDir.c_str() ) != 0 )
+      if ( rmdir( strDir.c_str() ) != 0 )
       {
          if (!bRecursive && errno == ENOTEMPTY)
          {
@@ -745,11 +746,11 @@ namespace dtUtil
    {
       std::string relativePath;
 
-      for(size_t i = 0; i < file.size(); i++)
+      for (size_t i = 0; i < file.size(); i++)
       {
-         if(file[i] != absolutePath[i])
+         if (file[i] != absolutePath[i])
          {
-            if(file[i] == '/')
+            if (file[i] == '/')
                relativePath = file.substr(i + 1);
             else
                relativePath = file.substr(i);
@@ -768,18 +769,18 @@ namespace dtUtil
       DirectoryContents dirCont = DirGetFiles(mCurrentDirectory);
 
       //iterate over all of the directory contents.
-      for(DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
+      for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
       {
          FileType ft = GetFileInfo(*i).fileType;
          if (ft == REGULAR_FILE)
          {
             //Delete regular files.
             errno = 0;
-            if (unlink(i->c_str()) < 0) 
+            if (unlink(i->c_str()) < 0)
             {
                throw dtUtil::Exception(FileExceptionEnum::IOException,
                       std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno), __FILE__, __LINE__);
-					
+
             }
          }
          else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive )
@@ -790,7 +791,7 @@ namespace dtUtil
             RecursDeleteDir( true );
             //now that the directory is empty, remove it.
             errno = 0;
-            if( rmdir( i->c_str() ) != 0 )
+            if ( rmdir( i->c_str() ) != 0 )
             {
                if (errno == ENOENT)
                {
@@ -823,7 +824,7 @@ namespace dtUtil
 
    //-----------------------------------------------------------------------
    FileUtils::~FileUtils() {}
-   
+
    /*void FileUtils::AbsoluteToRelative(const std::string &pcAbsPath, std::string& relPath)
    {
       char pcRelPath[MAX_PATH];
@@ -832,9 +833,9 @@ namespace dtUtil
       int count = 0;
       std::string curDir = CurrentDirectory();
 
-      for(size_t i = 0; i < curDir.size(); i++)
+      for (size_t i = 0; i < curDir.size(); i++)
       {
-         if(curDir[i] == '\\')
+         if (curDir[i] == '\\')
             curDir[i] = '/';
       }
 
@@ -849,21 +850,21 @@ namespace dtUtil
       const char *pathSep = "/";
 
       char *sTmp = strtok(acTmpAbsPath, pathSep);
-      while(sTmp)
+      while (sTmp)
       {
          tmpStackAbsPath.push(sTmp);
          sTmp = strtok(0, pathSep);
       }
 
       sTmp = strtok(acTmpCurrDir, pathSep);
-      while(sTmp)
+      while (sTmp)
       {
          tmpStackCurrPath.push(sTmp);
          sTmp = strtok(0, pathSep);
       }
 
       sTmp = pcRelPath;
-      while(tmpStackCurrPath.size() > tmpStackAbsPath.size() )
+      while (tmpStackCurrPath.size() > tmpStackAbsPath.size() )
       {
          *sTmp++ = '.';
          *sTmp++ = '.';
@@ -871,20 +872,20 @@ namespace dtUtil
          tmpStackCurrPath.pop();
       }
 
-      while(tmpStackAbsPath.size() > tmpStackCurrPath.size() )
+      while (tmpStackAbsPath.size() > tmpStackCurrPath.size() )
       {
          char *pcTmp = tmpStackAbsPath.top();
          tmpStackOutput.push(pcTmp);
          tmpStackAbsPath.pop();
       }
 
-      while(!tmpStackAbsPath.empty())
+      while (!tmpStackAbsPath.empty())
       {
-         if(strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top())== 0  )
+         if (strcmp(tmpStackAbsPath.top(),tmpStackCurrPath.top())== 0  )
             tmpMatchQueue.push(tmpStackAbsPath.top());
          else
          {
-            while(!tmpMatchQueue.empty())
+            while (!tmpMatchQueue.empty())
             {
                tmpStackOutput.push(tmpMatchQueue.front());
                tmpMatchQueue.pop();
@@ -895,12 +896,12 @@ namespace dtUtil
             sTmp[count++] = '/';
          }
          tmpStackAbsPath.pop();
-         tmpStackCurrPath.pop();	
+         tmpStackCurrPath.pop();
       }
-      while(!tmpStackOutput.empty())
+      while (!tmpStackOutput.empty())
       {
          char *pcTmp= tmpStackOutput.top();
-         while(*pcTmp != '\0')	
+         while (*pcTmp != '\0')
             sTmp[count++] = *pcTmp++;
          tmpStackOutput.pop();
          sTmp[count++] = '/';

@@ -1,24 +1,25 @@
 /* -*-c++-*-
-* testClouds - testclouds (.h & .cpp) - Using 'The MIT License'
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * testClouds - testclouds (.h & .cpp) - Using 'The MIT License'
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #include <dtInspector/inspector.h>
 #include <osgGA/GUIEventAdapter>
 
@@ -40,11 +41,11 @@ using namespace dtCore;
 class TestCloudsApp : public Application
 {
 
-DECLARE_MANAGEMENT_LAYER( TestCloudsApp )
+DECLARE_MANAGEMENT_LAYER(TestCloudsApp)
 
 public:
-   TestCloudsApp( std::string configFilename = "config.xml" )
-      : Application( configFilename )
+   TestCloudsApp(std::string configFilename = "config.xml")
+      : Application(configFilename)
    {
       terr = new InfiniteTerrain();
       terr->SetHorizontalScale(0.01f);
@@ -58,7 +59,7 @@ public:
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
       LOG_ALWAYS("...done creating clouds.");
 
-      weather = new Weather();   
+      weather = new Weather();
       weather->AddChild(terr.get());
 
       cloudLayers = 1;
@@ -69,7 +70,7 @@ public:
       Transform xform(0.f, 00.f, 30.f, 0.f, 10.f, 0.f);
       GetCamera()->SetTransform(xform);
 
-      orbit = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+      orbit = new OrbitMotionModel(GetKeyboard(), GetMouse());
       orbit->SetTarget(GetCamera());
    }
 
@@ -81,7 +82,7 @@ protected:
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int key)
    {
       bool verdict(false);
-      switch(key)
+      switch (key)
       {
       case osgGA::GUIEventAdapter::KEY_Escape:
          {
@@ -90,7 +91,7 @@ protected:
          } break;
       case 'h':
          {
-            dtInspector::Inspector *ui = new dtInspector::Inspector();
+            dtInspector::Inspector* ui = new dtInspector::Inspector();
             ui->Show(); //to prevent unused variable warnings
             verdict = true;
          } break;
@@ -101,10 +102,12 @@ protected:
       case osgGA::GUIEventAdapter::KEY_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
       case 'p':
          {
-            if(isDomeEnabled)
+            if (isDomeEnabled)
             {
-               for(int i = 0; i < cloudLayers; ++i)
+               for (int i = 0; i < cloudLayers; ++i)
+               {
                   weather->GetEnvironment()->AddEffect(cp[i].get());
+               }
 
                weather->GetEnvironment()->RemEffect(cd.get());
                isDomeEnabled = false;
@@ -112,18 +115,20 @@ protected:
             verdict = true;
          } break;
       case 'd':
-         if(!isDomeEnabled)
+         if (!isDomeEnabled)
          {
             weather->GetEnvironment()->AddEffect(cd.get());
             isDomeEnabled = true;
-            for(int i = 0; i < cloudLayers; ++i)
+            for (int i = 0; i < cloudLayers; ++i)
+            {
                weather->GetEnvironment()->RemEffect(cp[i].get());
+            }
             verdict = true;
          } break;
       case osgGA::GUIEventAdapter::KEY_KP_Add:
       case '=':
          if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
-         {	
+         {
             weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
             ++cloudLayers;
             verdict = true;
@@ -158,7 +163,7 @@ IMPLEMENT_MANAGEMENT_LAYER( TestCloudsApp )
 
 int main(int argc, char* argv[])
 {
-   RefPtr<TestCloudsApp> app = new TestCloudsApp( "config.xml" );
+   RefPtr<TestCloudsApp> app = new TestCloudsApp("config.xml");
    app->Config();
    app->Run();
 

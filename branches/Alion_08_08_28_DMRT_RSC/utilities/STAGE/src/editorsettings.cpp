@@ -43,6 +43,9 @@ namespace dtEditQt
    const int EditorSettings::MAINWIN_DOCK_STATE_ID = 0;
    const QString EditorSettings::MAINWIN_DOCK_STATE("MainWindow_DockState");
 
+   const QString EditorSettings::SPLITTER_GROUP("Splitters");
+   const QString EditorSettings::SPLITTER_SIZE("Splitter");
+
    const QString EditorSettings::RECENT_PROJECTS("Recently_Loaded_Projects");
    const QString EditorSettings::RECENT_MAPS("Recently_Loaded_Maps");
 
@@ -67,6 +70,14 @@ namespace dtEditQt
    const QString EditorSettings::SAVE_MILLISECONDS("Autosave_delay");
    const QString EditorSettings::SELECTION_COLOR("Selection_Color");
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
+
+   const QString EditorSettings::EXTERNAL_TOOLS("ExternalTools");
+   const QString EditorSettings::EXTERNAL_TOOL_TITLE("Title");
+   const QString EditorSettings::EXTERNAL_TOOL_COMMAND("Command");
+   const QString EditorSettings::EXTERNAL_TOOL_ARGS("Arguments");
+   const QString EditorSettings::EXTERNAL_TOOL_WORKING_DIR("WorkingDir");
+   const QString EditorSettings::EXTERNAL_TOOL_ICON("Icon");
+
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorSettings::EditorSettings() :

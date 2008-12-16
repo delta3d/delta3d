@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Eddie Johnson and David Guthrie
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Eddie Johnson and David Guthrie
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <iostream>
 #include <osg/Math>
@@ -181,7 +182,7 @@ void GameActorTests::TestActorIsInGM()
 
       CPPUNIT_ASSERT_MESSAGE("ActorProxy Should be in GM", gap->IsInGM() != false);
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -195,11 +196,11 @@ void GameActorTests::TestGameActor()
    {
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -219,7 +220,7 @@ void GameActorTests::TestGameActorProxy()
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
       CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
 
-      dtGame::GameActor *p = &gap->GetGameActor();
+      dtGame::GameActor* p = &gap->GetGameActor();
 
       CPPUNIT_ASSERT_MESSAGE("Actor should not be NULL", p != NULL);
       CPPUNIT_ASSERT_MESSAGE("IsGameActor should always return true", gap->IsGameActorProxy());
@@ -230,11 +231,11 @@ void GameActorTests::TestGameActorProxy()
 
       CPPUNIT_ASSERT_MESSAGE("GameActorProxy's ownership should have been set", gap->GetInitialOwnership() == dtGame::GameActorProxy::Ownership::SERVER_LOCAL);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-//   catch (const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
 //   }
@@ -266,11 +267,11 @@ void GameActorTests::TestGameActorProxyDeleteError()
       ///This should throw an exception because the proxy should have been cleaned up.
       CPPUNIT_ASSERT_THROW(actor->GetGameActorProxy(), dtUtil::Exception);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-//   catch (const std::exception &e)
+//   catch (const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
 //   }
@@ -314,7 +315,7 @@ void GameActorTests::TestInvokables()
       CPPUNIT_ASSERT_MESSAGE("Property \"Has Fired\" should be false", !prop->GetValue());
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -378,7 +379,7 @@ void GameActorTests::TestInvokableMessageRegistration()
       CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -402,14 +403,14 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
 
       // Make sure the invokable was created
       dtGame::Invokable* iTestListener = gap2->GetInvokable(dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
-      CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named \"Process Message\"",iTestListener != NULL);
+      CPPUNIT_ASSERT_MESSAGE("The actor should have an invokable named \"Process Message\"", iTestListener != NULL);
 
       mManager->AddActor(*gap1, false, false);
       mManager->AddActor(*gap2, false, false);
 
       // Make sure we can use proxy method to register for messages
       gap2->RegisterForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE);
-      std::vector<std::pair<dtGame::GameActorProxy*, std::string > > toFill;
+      std::vector< std::pair<dtGame::GameActorProxy*, std::string> > toFill;
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_ACTOR_PUBLISHED, toFill);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be one registered game actor listener for the actor published message",
          (unsigned int) 1, (unsigned int) toFill.size());
@@ -438,7 +439,7 @@ void GameActorTests::TestDefaultProcessMessageRegistration()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("We should only have gotten 1 publish, so count should be 2.",
          int(2), static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -462,7 +463,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistrationEndOfFrame()
                dtUtil::Exception);
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -493,7 +494,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistrationDuplicates()
       CPPUNIT_ASSERT_NO_THROW(
                mManager->RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, *gap1, iTestListener->GetName()));
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -529,7 +530,7 @@ void GameActorTests::TestOtherActorInvokableMessageRegistrationDuplicates()
       CPPUNIT_ASSERT_NO_THROW(
                mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_MAP_LOADED, gap2->GetId(), *gap1, iTestListener->GetName()));
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -562,7 +563,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       mManager->RegisterForMessagesAboutActor(dtGame::MessageType::INFO_ACTOR_PUBLISHED,
             gap1->GetId(), *gap2, iTestListener->GetName());
 
-      std::vector<std::pair<dtGame::GameActorProxy*, std::string > > toFill;
+      std::vector< std::pair<dtGame::GameActorProxy*, std::string> > toFill;
 
       mManager->GetRegistrantsForMessages(dtGame::MessageType::INFO_MAP_LOADED, toFill);
       CPPUNIT_ASSERT_MESSAGE("There should be one registered global listener for the Map Loaded message",
@@ -654,7 +655,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Map Loaded Count"))->GetValue() == 2);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -718,9 +719,9 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       // Ensure actor 2 is also returned in the list of actors returned by the environment.
       bool foundActor = false;
       ea->GetAllActors(actors);
-      for( unsigned int i = 0; i < actors.size(); ++i )
+      for (unsigned int i = 0; i < actors.size(); ++i)
       {
-         if( ap2->GetId() == actors[i]->GetUniqueId() )
+         if (ap2->GetId() == actors[i]->GetUniqueId())
          {
             foundActor = true;
             break;
@@ -741,7 +742,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       ea->GetAllActors(actors);
       CPPUNIT_ASSERT(actors.empty());
 
-      ap = NULL;
+      ap  = NULL;
       ap2 = NULL;
       CPPUNIT_ASSERT_MESSAGE("Actor 1 should have been deleted.", !apObserver1.valid());
       CPPUNIT_ASSERT_MESSAGE("Actor 2 should have been deleted.", !apObserver2.valid());
@@ -751,7 +752,7 @@ void GameActorTests::TestAddRemoveFromEnvActor()
       CPPUNIT_ASSERT(drawables.empty());
       // --- TEST GM REMOVAL --- END --- //
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -788,7 +789,7 @@ void GameActorTests::TestSetEnvironmentActor()
       CPPUNIT_ASSERT_MESSAGE("Should have been able to find the test player actor in the game manager", type.valid());
 
       const unsigned int numActors = 20;
-      for(unsigned int i = 0; i < numActors; i++)
+      for (unsigned int i = 0; i < numActors; ++i)
       {
          ap = mManager->CreateActor(*type);
          CPPUNIT_ASSERT_MESSAGE("The game manager should be able to create the test player actor", ap.valid());
@@ -804,10 +805,12 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
       std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
       bool wasMessage = false;
-      for(unsigned int i = 0; i < msgs.size(); i++)
+      for (unsigned int i = 0; i < msgs.size(); ++i)
       {
-         if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         {
             wasMessage = true;
+         }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should have been sent", wasMessage);
       mManager->GetActorsInScene(drawables);
@@ -823,10 +826,12 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
-      for(unsigned int i = 0; i < msgs.size(); i++)
+      for (unsigned int i = 0; i < msgs.size(); ++i)
       {
-         if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         {
             wasMessage = true;
+         }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should NOT have been sent", !wasMessage);
       mManager->GetActorsInScene(drawables);
@@ -841,10 +846,12 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
-      for(unsigned int i = 0; i < msgs.size(); i++)
+      for (unsigned int i = 0; i < msgs.size(); ++i)
       {
-         if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         {
             wasMessage = true;
+         }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should NOT have been sent, it was a no-op", !wasMessage);
       ea->GetAllActors(actors);
@@ -876,10 +883,12 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
-      for(unsigned int i = 0; i < msgs.size(); i++)
+      for (unsigned int i = 0; i < msgs.size(); i++)
       {
-         if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         {
             wasMessage = true;
+         }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should have been sent", wasMessage);
       mManager->GetActorsInScene(drawables);
@@ -896,10 +905,12 @@ void GameActorTests::TestSetEnvironmentActor()
       dtCore::System::GetInstance().Step();
       msgs = tc->GetReceivedProcessMessages();
       wasMessage = false;
-      for(unsigned int i = 0; i < msgs.size(); i++)
+      for (unsigned int i = 0; i < msgs.size(); ++i)
       {
-         if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ENVIRONMENT_CHANGED)
+         {
             wasMessage = true;
+         }
       }
       CPPUNIT_ASSERT_MESSAGE("An environment change message should NOT have been sent", !wasMessage);
       ea->GetAllActors(actors);
@@ -912,7 +923,7 @@ void GameActorTests::TestSetEnvironmentActor()
       mManager->GetActorsInScene(drawables);
       CPPUNIT_ASSERT(drawables.empty());
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
@@ -939,7 +950,7 @@ void GameActorTests::TestStaticGameActorTypes()
       TestGameActorLibrary::TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE/*,
       TestGameActorLibrary::TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE*/
    };
-   for(unsigned int i = 0; i < size; i++)
+   for (unsigned int i = 0; i < size; ++i)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*types[i]);
       CPPUNIT_ASSERT_MESSAGE("The proxy should not be NULL", proxy.valid());
@@ -987,7 +998,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       //Timer_t frameTickStart(0);
       startTime = statsTickClock.Tick();
 
-      for (int i = 0; i < numActors; i ++)
+      for (int i = 0; i < numActors; ++i)
       {
          dtCore::RefPtr<TestGamePropertyProxy> proxy1;
          mManager->CreateActor(*actor1Type, proxy1);
@@ -1008,20 +1019,20 @@ void GameActorTests::TestMessageProcessingPerformance()
       mManager->FindActorsByType(*actor1Type, testProxies);
 
       // loop multiple ticks.
-      for (int tickCounter = 0; tickCounter < numTicks; tickCounter ++)
+      for (int tickCounter = 0; tickCounter < numTicks; ++tickCounter)
       {
          // loop through the TON of actors (38 properties each)
-         for (unsigned int actorIndex = 0; actorIndex < testProxies.size(); actorIndex++)
+         for (unsigned int actorIndex = 0; actorIndex < testProxies.size(); ++actorIndex)
          {
             // get one of the actors
             dtCore::RefPtr<dtDAL::ActorProxy> actorProxy = testProxies[actorIndex];
             dtCore::RefPtr<TestGamePropertyProxy> propProxy =
-               dynamic_cast<TestGamePropertyProxy *>(actorProxy.get());
+               dynamic_cast<TestGamePropertyProxy*>(actorProxy.get());
 
             // create and populate an actor update message with ALL properties for this actor
             dtCore::RefPtr<dtGame::Message> updateMsg =
                   mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-            dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
+            dtGame::ActorUpdateMessage* message = static_cast<dtGame::ActorUpdateMessage*>(updateMsg.get());
             propProxy->PopulateActorUpdate(*message);
             mManager->SendMessage(*updateMsg);
          }
@@ -1042,7 +1053,7 @@ void GameActorTests::TestMessageProcessingPerformance()
       ss << "Update Msgs for " << numActors << " actors, 38 props, " << numTicks << " ticks took - [" << timeDelta << "] seconds " << std::endl;
       //CPPUNIT_ASSERT_MESSAGE(ss.str(), timeDelta < 10.0);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }

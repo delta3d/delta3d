@@ -130,7 +130,7 @@ namespace dtGame
          void GetIgnoredActorIds(std::vector<dtCore::UniqueId> &toFill) const
          {
             toFill.clear();
-            for(std::set<dtCore::UniqueId>::const_iterator i = mRecordIgnoreList.begin();
+            for (std::set<dtCore::UniqueId>::const_iterator i = mRecordIgnoreList.begin();
                i != mRecordIgnoreList.end(); ++i)
             {
                toFill.push_back(*i);
@@ -144,7 +144,7 @@ namespace dtGame
          void GetPlaybackActorIds(std::vector<dtCore::UniqueId> &toFill) const
          {
             toFill.clear();
-            for(std::set<dtCore::UniqueId>::const_iterator i = mPlaybackList.begin();
+            for (std::set<dtCore::UniqueId>::const_iterator i = mPlaybackList.begin();
                i != mPlaybackList.end(); ++i)
             {
                toFill.push_back(*i);

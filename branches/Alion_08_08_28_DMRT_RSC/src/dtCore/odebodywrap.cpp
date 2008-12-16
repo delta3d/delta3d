@@ -187,6 +187,15 @@ void dtCore::ODEBodyWrap::GetInertiaTensor(osg::Matrix& dest) const
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetLinearVelocity(const osg::Vec3& newVelocity) 
+{  
+   if (GetBodyID() != 0)
+   {
+      dBodySetLinearVel(GetBodyID(), newVelocity.x(), newVelocity.y(), newVelocity.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 osg::Vec3 dtCore::ODEBodyWrap::GetLinearVelocity() const
 {
    osg::Vec3 velVec;
@@ -287,7 +296,7 @@ void dtCore::ODEBodyWrap::GetBodyTransform(dtCore::Transform& xform) const
 
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransform)
 {
    if (DynamicsEnabled() == false) {return;}
@@ -324,4 +333,87 @@ void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransf
       dBodySetRotation(GetBodyID(), dRot);
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAutoDisableLinearThreshold() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableLinearThreshold(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableLinearThreshold(float threshold)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableLinearThreshold(GetBodyID(), threshold);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAutoDisableAngularThreshold() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableAngularThreshold(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableAngularThreshold(float threshold)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableAngularThreshold(GetBodyID(), threshold);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetLinearDamping() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetLinearDamping(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetLinearDamping(float scale)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetLinearDamping(GetBodyID(), scale);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAngularDamping() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAngularDamping(GetBodyID());
+   }
+
+   return -1.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAngularDamping(float scale)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAngularDamping(GetBodyID(), scale);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 

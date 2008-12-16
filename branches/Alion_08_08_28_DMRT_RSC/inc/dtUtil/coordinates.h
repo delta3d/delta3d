@@ -181,6 +181,8 @@ namespace dtUtil
          ///the terrain is flattened using a UTM projection
          static const LocalCoordinateType CARTESIAN_UTM;
 
+         ///Obsolete, don't use.  It will convert to CARTESIAN_UTM.
+         static const LocalCoordinateType CARTESIAN;
       private:
          LocalCoordinateType(const std::string& name): dtUtil::Enumeration(name)
          {
@@ -274,17 +276,11 @@ namespace dtUtil
 
          const IncomingCoordinateType& GetIncomingCoordinateType() const { return *mIncomingCoordinateType; }
 
-         void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType)
-         {
-            mIncomingCoordinateType = &incomingCoordType;
-         }
+         void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType);
 
          const LocalCoordinateType& GetLocalCoordinateType() const { return *mLocalCoordinateType; }
 
-         void SetLocalCoordinateType(const LocalCoordinateType& localCoordType)
-         {
-            mLocalCoordinateType = &localCoordType;
-         }
+         void SetLocalCoordinateType(const LocalCoordinateType& localCoordType);
 
          /**
           * Sets the globe radius for globe local coordinates.
@@ -303,13 +299,25 @@ namespace dtUtil
          /**
           * @return the currently set UTM zone.
           */
-         unsigned GetUTMZone() const { return mZone; }
+         unsigned GetUTMZone() const { return mUTMZone; }
 
          /**
           * Set the UTM zone to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
           * @param zone the utm zone.  If it's not between 1 and 60 inclusive, it will be clamped.
           */
          void SetUTMZone(unsigned zone);
+
+         /**
+          * @return the currently set UTM hemisphere.
+          */
+         char GetUTMHemisphere() const { return mUTMHemisphere; }
+
+         /**
+          * Set the UTM hemishere to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
+          * @param hemisphere the utm hemisphere.  It must be 'N' or 'S' or lowercase.
+          * Anything else will just be assigned as 'N'
+          */
+         void SetUTMHemisphere(char hemisphere);
 
          /**
           * Converts 3 part remote coordinates to a local translation vector based on the current
@@ -415,7 +423,7 @@ namespace dtUtil
           * The function ConvertGeodeticToUTM converts geodetic (latitude and
           * longitude) coordinates to UTM projection (zone, hemisphere, easting and
           * northing) coordinates according to the current ellipsoid and UTM zone
-          * override parameters.  The UTM Zone must be passed in so that the code
+          * override parameters.  The UTM Zone and hemisphere must be passed in so that the code
           * knows which zone to use as the point of reference.
           * Call CalculateUTMZone if you want to know the "home" zone of the lat lon before calling this.
           * Code taken from http://earth-info.nga.mil/GandG/geotrans/
@@ -423,12 +431,12 @@ namespace dtUtil
           * @param   Latitude          : Latitude in radians                 (input)
           * @param   Longitude         : Longitude in radians                (input)
           * @param   Zone              : UTM zone                            (input)
-          * @param   Hemisphere        : North or South hemisphere           (output)
+          * @param   Hemisphere        : North or South hemisphere           (input)
           * @param   Easting           : Easting (X) in meters               (output)
           * @param   Northing          : Northing (Y) in meters              (output)
           */
          static void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned Zone,
-                                    char  &Hemisphere, double& Easting, double& Northing);
+                                    char Hemisphere, double& Easting, double& Northing);
 
          /**
           * The function ConvertUTMToGeodetic converts UTM projection (zone, easting and
@@ -436,12 +444,13 @@ namespace dtUtil
           * and UTM zone override parameters.
           *
           * @param   zone              : UTM zone (east west)                (input)
+          * @param   hemisphere        : UTM hemisphere ('N' or 'S')         (input)
           * @param   easting           : Easting (X) in meters               (input)
           * @param   northing          : Northing (Y) in meters              (input)
           * @param   latitude          : Latitude in radians                 (output)
           * @param   longitude         : Longitude in radians                (output)
           */
-         static void ConvertUTMToGeodetic(unsigned zone, double easting, double northing, double& latitude, double& longitude);
+         static void ConvertUTMToGeodetic(unsigned zone, char hemisphere, double easting, double northing, double& latitude, double& longitude);
 
          /**
           * Calculates the proper UTM zone based on the latitude and longitude.
@@ -494,6 +503,10 @@ namespace dtUtil
           */
          static void ConvertGeocentricToGeodetic (double x, double y, double z,
                                            double& phi, double& lambda, double& elevation);
+
+         static void ConvertTransverseMercatorToGeodetic(const UTMParameters& params,
+                  double Easting, double Northing,
+                  double &Latitude, double &Longitude);
 
          /**
           * The function ConvertGeodeticToTransverse_Mercator converts geodetic
@@ -554,7 +567,8 @@ namespace dtUtil
          const LocalCoordinateType* mLocalCoordinateType;
          const IncomingCoordinateType* mIncomingCoordinateType;
 
-         unsigned mZone;
+         unsigned mUTMZone;
+         char mUTMHemisphere;
 
          ///The radius of the globe if the local coordinates are in globe mode.
          float mGlobeRadius;
@@ -592,7 +606,7 @@ namespace dtUtil
       public:
 
          Coordinates& operator = (const Coordinates &rhs);
-         bool operator == (const Coordinates &rhs);
+         bool operator == (const Coordinates &rhs) const;
          Coordinates(const Coordinates &rhs) { *this = rhs; }
    };
 }

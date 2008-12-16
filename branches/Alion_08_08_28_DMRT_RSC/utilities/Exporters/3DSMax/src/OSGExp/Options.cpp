@@ -32,6 +32,11 @@
  *
  *                  08.02.2006 Joran: Added option to export textures
  *                  as jpegs.
+ *
+ *					27.09.2007 Farshid Lashkari: Fix for a small memory 
+ *					leak in the Options class.
+ *
+ *                  05.11.2007 Daniel Sjolie: Added useOriginalTextures Option
  */		
 
 #include "Options.h"
@@ -102,7 +107,11 @@ Options::Options(){
     _exportPointHelpers         = FALSE;
 }
 
-Options::~Options(){}
+Options::~Options()
+{
+	delete [] _texFormat;
+	delete [] _texComp;
+}
 
 // NOTE: Update anytime the CFG file changes
 #define CFG_VERSION 0x0B
@@ -181,6 +190,9 @@ BOOL Options::write( TSTR filename){
     fputc(getAutoTwoSidedLighting(),    cfgStream);
     fputc(getExportSelfIllumMaps(),     cfgStream);
     fputc(getExportPointHelpers(),      cfgStream);
+
+	// Added in new version 0x0B
+	fputc(getUseOriginalTextureFiles(),		cfgStream);
 
     fputc(getReferencedGeometry(),      cfgStream);
 
@@ -283,6 +295,11 @@ BOOL Options::load(TSTR filename){
         setExportSelfIllumMaps(fgetc(cfgStream));
         setExportPointHelpers(fgetc(cfgStream));
     }
+
+	// Added for version 0x0B
+	if (fileVersion > 0x0A) {
+		setUseOriginalTextureFiles(fgetc(cfgStream));
+	}
 
     if (fileVersion > 0x0A) 
     {

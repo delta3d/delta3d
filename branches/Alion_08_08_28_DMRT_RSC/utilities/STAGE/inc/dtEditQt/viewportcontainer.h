@@ -39,6 +39,7 @@ class QMenu;
 class QContextMenuEvent;
 class QBoxLayout;
 class QFrame;
+class QLineEdit;
 
 namespace dtEditQt
 {
@@ -136,6 +137,10 @@ namespace dtEditQt
         ///Sets the camera speed to the fastest setting.
         void setCameraSpeedFastest();
 
+        void OnCameraMoved(double x, double y, double z);
+
+        void OnNewPositionEntered();
+
     protected:
         ///Creates the toolbar action objects.
         void createActions();
@@ -167,6 +172,7 @@ namespace dtEditQt
         QMenu *contextMenu;
         QMenu *cameraMovementMenu;
         QFrame *toolBar;
+        QList<QLineEdit*> mPositionEditWidgets;
 
         QActionGroup *renderStyleActionGroup;
         QActionGroup *cameraSpeedGroup;
@@ -182,6 +188,8 @@ namespace dtEditQt
         QAction *cameraSpeedNormal;
         QAction *cameraSpeedFast;
         QAction *cameraSpeedFastest;
+
+        void SetupPositionWidgets(QBoxLayout * layout);
     };
 }
 

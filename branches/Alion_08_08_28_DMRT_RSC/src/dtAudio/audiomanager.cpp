@@ -58,46 +58,6 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/)
 {
    RegisterInstance(this);
 
-   mSourceMap.clear();
-   mActiveList.clear();
-   mBufferMap.clear();
-   mSoundList.clear();
-
-   while (mAvailable.size())
-   {
-      mAvailable.pop();
-   }
-
-   while (mPlayQueue.size())
-   {
-      mPlayQueue.pop();
-   }
-
-   while (mPauseQueue.size())
-   {
-      mPauseQueue.pop();
-   }
-
-   while (mStopQueue.size())
-   {
-      mStopQueue.pop();
-   }
-
-   while (mRewindQueue.size())
-   {
-      mRewindQueue.pop();
-   }
-
-   while (mSoundCommand.size())
-   {
-      mSoundCommand.pop();
-   }
-
-   while (mSoundRecycle.size())
-   {
-      mSoundRecycle.pop();
-   }
-
    AddSender(&dtCore::System::GetInstance());
 
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -412,185 +372,96 @@ void AudioManager::OnMessage(MessageData* data)
    }
    else
    {
+      Sound::Command sndCommand = Sound::NONE;
+
       // sound commands
-      if (data->message == Sound::kCommand[Sound::POSITION])
+      if(data->message == Sound::kCommand[Sound::POSITION])
       {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::POSITION]);
-         mSoundCommand.push(snd);
-         return;
+         sndCommand = Sound::POSITION;
+      }
+      else if(data->message == Sound::kCommand[Sound::DIRECTION])
+      {
+         sndCommand = Sound::DIRECTION;
+      }
+      else if(data->message == Sound::kCommand[Sound::VELOCITY])
+      {
+         sndCommand = Sound::VELOCITY;
+      }
+      else if(data->message == Sound::kCommand[Sound::PLAY])
+      {
+         sndCommand = Sound::PLAY;
+      }
+      else if(data->message == Sound::kCommand[Sound::STOP])
+      {
+         sndCommand = Sound::STOP;
+      }
+      else if(data->message == Sound::kCommand[Sound::PAUSE])
+      {
+         sndCommand = Sound::PAUSE;
+      }
+      else if(data->message == Sound::kCommand[Sound::LOAD])
+      {
+         sndCommand = Sound::LOAD;
+      }
+      else if(data->message == Sound::kCommand[Sound::UNLOAD])
+      {
+         sndCommand = Sound::UNLOAD;
+      }
+      else if(data->message == Sound::kCommand[Sound::LOOP])
+      {
+         sndCommand = Sound::LOOP;
+      }
+      else if(data->message == Sound::kCommand[Sound::UNLOOP])
+      {
+         sndCommand = Sound::UNLOOP;
+      }
+      else if(data->message == Sound::kCommand[Sound::GAIN])
+      {
+         sndCommand = Sound::GAIN;
+      }
+      else if(data->message == Sound::kCommand[Sound::PITCH])
+      {
+         sndCommand = Sound::PITCH;
+      }
+      else if(data->message == Sound::kCommand[Sound::REWIND])
+      {
+         sndCommand = Sound::REWIND;
+      }
+      else if(data->message == Sound::kCommand[Sound::REL])
+      {
+         sndCommand = Sound::REL;
+      }
+      else if(data->message == Sound::kCommand[Sound::ABS])
+      {
+         sndCommand = Sound::ABS;
+      }
+      else if(data->message == Sound::kCommand[Sound::MIN_DIST])
+      {
+         sndCommand = Sound::MIN_DIST;
+      }
+      else if(data->message == Sound::kCommand[Sound::MAX_DIST])
+      {
+         sndCommand = Sound::MAX_DIST;
+      }
+      else if(data->message == Sound::kCommand[Sound::ROL_FACT])
+      {
+         sndCommand = Sound::ROL_FACT;
+      }
+      else if(data->message == Sound::kCommand[Sound::MIN_GAIN])
+      {
+         sndCommand = Sound::MIN_GAIN;
+      }
+      else if(data->message == Sound::kCommand[Sound::MAX_GAIN])
+      {
+         sndCommand = Sound::MAX_GAIN;
       }
 
-      if (data->message == Sound::kCommand[Sound::DIRECTION])
+      if( sndCommand != Sound::NONE )
       {
          assert(data->userData);
          SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::DIRECTION]);
+         snd->Command(Sound::kCommand[sndCommand]);
          mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::VELOCITY])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::VELOCITY]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::PLAY])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::PLAY]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::STOP])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::STOP]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::PAUSE])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::PAUSE]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::LOAD])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::LOAD]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::UNLOAD])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::UNLOAD]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::LOOP])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::LOOP]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::UNLOOP])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::UNLOOP]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::GAIN])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::GAIN]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::PITCH])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::PITCH]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::REWIND])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::REWIND]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::REL])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::REL]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::ABS])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::ABS]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::MIN_DIST])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::MIN_DIST]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::MAX_DIST])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::MAX_DIST]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::ROL_FACT])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::ROL_FACT]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::MIN_GAIN])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::MIN_GAIN]);
-         mSoundCommand.push(snd);
-         return;
-      }
-
-      if (data->message == Sound::kCommand[Sound::MAX_GAIN])
-      {
-         assert(data->userData);
-         SoundObj* snd(static_cast<SoundObj*>(data->userData));
-         snd->Command(Sound::kCommand[Sound::MAX_GAIN]);
-         mSoundCommand.push(snd);
-         return;
       }
    }
    CheckForError("Something went wrong in the OnMessage Method", __FUNCTION__, __LINE__);
@@ -641,7 +512,7 @@ void AudioManager::FreeSound(Sound*& sound)
    // remove user's copy of pointer
    sound = NULL;
 
-   if (snd.get() == NULL)
+   if(snd.get() == NULL)
    {
       return;
    }
@@ -1468,16 +1339,47 @@ void AudioManager::UnloadSound( SoundObj* snd )
    const char* file(static_cast<Sound*>(snd)->GetFilename());
 
    if ( file == NULL )
+   {
       return;
+   }
 
    snd->Buffer(0);
 
    BufferData* bd = mBufferMap[file];
 
    if ( bd == NULL )
+   {
       return;
+   }
 
    bd->use--;
+
+   // If the buffer is not being used by any other sound object...
+   if( bd->use == 0 )
+   {
+      ALuint src = snd->Source();
+      if ( alIsSource( src ) && snd->IsInitialized() )
+      {
+         // ...free the source before attempting to unload
+         // the sound file, which will subsequently attempt
+         // to delete the buffer. This will ensure the sound
+         // source is properly stopped and reset before the
+         // sound buffer is deleted.
+         FreeSource( snd );
+
+         // NOTE: Stop commands for the sound will not be
+         // processed until the next call to Frame. This is
+         // VERY bad if the sound is told to stop and unload on
+         // on the same frame; in this case the sound will not
+         // be stopped when it is attempted to be unloaded.
+         //
+         // NOTE: Deleting the buffer will fail if the sound
+         // source is still playing and thus result in a very
+         // sound memory leak and potentially mess up the
+         // the use of the sources for sounds; sources that
+         // should have been freed will essentially become locked.
+      }
+   }
 
    UnloadFile( file );
    CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
@@ -1552,7 +1454,9 @@ void AudioManager::PlaySound( SoundObj* snd )
    // bind the buffer to the source
    alSourcei( src, AL_BUFFER, buf );
    if (CheckForError("AudioManager: alSourcei(AL_BUFFER) error", __FUNCTION__, __LINE__))
+   {
       return;
+   }
 
    // set looping flag
    alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );

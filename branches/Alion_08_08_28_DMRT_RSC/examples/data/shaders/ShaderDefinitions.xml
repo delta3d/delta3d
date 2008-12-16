@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shaderlist>     
+   
+   <shadergroup name="FX">    
+
+      <shader name="TestBumpMap" default="no">
+         <source type="Vertex">shaders/TestBumpMap.vert</source>        
+         <source type="Fragment">shaders/TestBumpMap.frag</source>
+		 
+         <parameter name="diffuseTexture">
+            <texture2D textureUnit="0">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+	 
+	      <parameter name="normalTexture">
+            <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+       
+       <parameter name="mode">
+   		<integer defaultValue="1"/>
+   	 </parameter>
+	 
+      </shader>          
+   </shadergroup>   
+    
+</shaderlist>

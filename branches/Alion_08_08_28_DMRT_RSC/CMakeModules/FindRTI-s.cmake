@@ -13,9 +13,14 @@
 # Created by David Guthrie. 
 
 FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
-                        PATHS $ENV{RTI} $ENV{RTI_HOME} )	
+   PATHS 
+   $ENV{RTI} 
+   $ENV{RTI_HOME} 
+   ${RTI_INCLUDE_DIR}/..
+)	
 
 FIND_PATH(RTI_INCLUDE_DIR RTI.hh
+    PATHS
     ${RTIS_ROOT_DIR}/include/1.3
     ${RTIS_ROOT_DIR}/include/rtis
 )
@@ -99,6 +104,13 @@ ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6 AND ${CM
 SET(RTIS_FOUND "NO")
 IF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
     SET(RTIS_FOUND "YES")
+
+FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
+                        PATHS $ENV{RTI} $ENV{RTI_HOME} )
+
+    if (NOT RTIS_ROOT_DIR)
+        MESSAGE("RTIS_ROOT_DIR is not set, but the includes and libraries were found successfully. This unset var may be ignored.")
+    endif (NOT RTIS_ROOT_DIR)
     
     if (NOT RTIS_SINGLE_LIBRARY)    
        SET(RTI_LIBRARIES
@@ -131,6 +143,7 @@ IF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
           ${RTIS_LIBRARY}
        )
     endif (NOT RTIS_SINGLE_LIBRARY)    
-    
+ELSE(RTIS_LIBRARY AND RTI_INCLUDE_DIR) 
+    MESSAGE("Unable to Find RTI-s.  Try setting the cmake variable RTI_ROOT_DIR to the directory that contains include and lib/bin, or set the environment variable RTI_HOME.")
 ENDIF(RTIS_LIBRARY AND RTI_INCLUDE_DIR)
 

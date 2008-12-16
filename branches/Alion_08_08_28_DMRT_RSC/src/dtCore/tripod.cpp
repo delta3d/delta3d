@@ -155,7 +155,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
       osg::Vec3 lookAtXYZ, upVec;
       upVec.set(0.f, 0.f, 1.f);
       targetXform.GetTranslation(lookAtXYZ);
-      lookatXform.SetLookAt(osg::Vec3(newMat(3,0), newMat(3,1), newMat(3,2)), lookAtXYZ, upVec);
+      lookatXform.Set(osg::Vec3(newMat(3,0), newMat(3,1), newMat(3,2)), lookAtXYZ, upVec);
       lookatXform.Get(newMat);
    }
 

@@ -25,6 +25,8 @@
  *	CREATED BY:		Rune Schmidt Jensen, rune@schmidt-jensen.com
  *
  *	HISTORY:		Created 27.01.2003
+ *
+ *                  05.11.2007 Daniel Sjolie: Added useOriginalTextures Option
  */		
 
 
@@ -65,6 +67,7 @@ public:
 	BOOL  getShowErrMsg()					{return _showErrMsg;};
 	BOOL  getUseIndices()					{return _useIndices;};
 	BOOL  getWriteTexture()					{return _writeTexture;};
+	BOOL  getUseOriginalTextureFiles()		{return _useOriginalTextureFiles;};
 	int   getNumTexFormat()					{return _numTexFormat;};
 	int   getTexFormatIndex()				{return _texFormatIndex;};
 	char* getTexFormat(int i)				{return _texFormat[i];};
@@ -113,6 +116,7 @@ public:
 	void setShowErrMsg(BOOL b)				{_showErrMsg = b;};
 	void setUseIndices(BOOL b)				{_useIndices = b;};
 	void setWriteTexture(BOOL b)			{_writeTexture = b;};
+	void setUseOriginalTextureFiles(BOOL b)	{_useOriginalTextureFiles = b;};
 	void setTexFormatIndex(int i)			{_texFormatIndex = i;};
 	void setTexCompIndex(int i)				{_texCompIndex = i;};
 	void setIncludeImageDataInIveFile(BOOL b){_includeImageDataInIveFile = b;};
@@ -165,6 +169,7 @@ private:
 	BOOL			_showErrMsg;
 	BOOL			_useIndices;
 	BOOL			_writeTexture;
+	BOOL			_useOriginalTextureFiles;
 	int				_numTexFormat;
 	int				_texFormatIndex;
 	char**			_texFormat;

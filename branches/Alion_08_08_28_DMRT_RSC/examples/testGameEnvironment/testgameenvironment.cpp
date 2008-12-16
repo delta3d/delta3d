@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* testGameEnvironment - testgameenvironment (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II
-*/
+ * testGameEnvironment - testgameenvironment (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ */
+
 #include <dtABC/application.h>
 #include <dtCore/environment.h>
 #include <dtCore/infiniteterrain.h>
@@ -47,26 +48,26 @@ class TestGameEnvironmentApp : public dtABC::Application
          Config();
 
          mGM = new dtGame::GameManager(*GetScene());
-        
+
          dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGM->CreateActor("dtcore.Terrain", "Infinite Terrain");
-         if(!proxy.valid())
+         if (!proxy.valid())
          {
             LOG_ERROR("Failed to create the infinite terrain proxy. Aborting.");
             Quit();
          }
          mTerrain = static_cast<dtCore::InfiniteTerrain*>(proxy->GetActor());
-         
+
          mGM->AddActor(*proxy);
 
          proxy = mGM->CreateActor("dtcore.Environment", "Environment");
-         if(!proxy.valid())
+         if (!proxy.valid())
          {
             LOG_ERROR("Failed to create the environment proxy. Aborting.");
             Quit();
          }
-            
+
          mEnvironmentActor = static_cast<dtActors::BasicEnvironmentActor*>(proxy->GetActor());
-         
+
          mGM->SetEnvironmentActor(static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()));
 
          mFMM = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
@@ -87,7 +88,7 @@ class TestGameEnvironmentApp : public dtABC::Application
       virtual bool KeyPressed(const dtCore::Keyboard* keyboard,int key)
       {
          bool handled = true;
-         switch(key)
+         switch (key)
          {
             case '1':
             {
@@ -117,37 +118,49 @@ class TestGameEnvironmentApp : public dtABC::Application
             case '6':
             {
                static bool enable = true;
-               if(enable)
+               if (enable)
+               {
                   mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_RAINY);
+               }
                else
+               {
                   mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_FAIR);
-               
+               }
+
                enable = !enable;
                break;
             }
             case '7':
             {
                static bool enable = true;
-               if(enable)
+               if (enable)
+               {
                   mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_NIGHT, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_WINTER);
+               }
                else
+               {
                   mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_DAY, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER);
-               
+               }
+
                enable = !enable;
                break;
             }
             case '8':
             {
                static bool enable = true;
-               if(enable)
+               if (enable)
+               {
                   mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_SEVERE);
+               }
                else
+               {
                   mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_NONE);
+               }
                break;
             }
             case ' ':
             {
-               dtActors::BasicEnvironmentActorProxy *proxy = 
+               dtActors::BasicEnvironmentActorProxy* proxy =
                   mGM->GetEnvironmentActor() == NULL ?
                   static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()) :
                   NULL;
@@ -186,7 +199,7 @@ class TestGameEnvironmentApp : public dtABC::Application
 };
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
    try
    {
@@ -194,7 +207,7 @@ int main(int argc, char **argv)
       app->Config();
       app->Run();
    }
-   catch(const dtUtil::Exception &e) 
+   catch(const dtUtil::Exception& e)
    {
       e.LogException(dtUtil::Log::LOG_ERROR);
       return -1;

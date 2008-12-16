@@ -26,12 +26,18 @@
 //////////////////////////////////////////////////////////////////////
 
 
+#include <dtUtil/generic.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 #include <osg/Vec4>
 
 #include <osg/Camera>
 
+namespace dtUtil
+{
+   template <typename R, class TList, unsigned int size>
+   class Functor;
+}
 
 namespace dtCore
 {
@@ -43,10 +49,7 @@ namespace dtCore
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to
     * render the the Scene into.  If no DeltaWin is supplied, a default DeltaWin
     * will be created and will be overridden when a valid DeltaWin is supplied
-    * using SetWindow().
-    *
-    * The method SetScene() supplies the geometry to be rendered from the
-    * Camera's point of view.
+    * using SetWindow(). 
     *
     * Any part of the Scene that doesn't contain renderable geometry will be
     * drawn a solid color using the values supplied to SetClearColor().
@@ -59,8 +62,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Camera)
 
    public:
-
-
 
       Camera(const std::string& name = "camera");
       Camera(osg::Camera& osgCamera, const std::string& name = "camera");
@@ -79,22 +80,21 @@ namespace dtCore
       };
 
       ///Change how the near/far culling planes get automatically calculated
-      void SetNearFarCullingMode( AutoNearFarCullingMode mode );
+      void SetNearFarCullingMode(AutoNearFarCullingMode mode);
 
       //Enabled or disable this Camera. Disabled Cameras will not render.
-      void SetEnabled( bool enabled );
+      void SetEnabled(bool enabled);
 
       ///Is this Camera enabled?
       bool GetEnabled() const;
 
 
       ///Get the supplied DeltaWin (could be NULL)
-      DeltaWin * GetWindow() { return (mWindow.get()); }
-      const DeltaWin * GetWindow() const { return (mWindow.get()); }
+      DeltaWin* GetWindow()             { return (mWindow.get()); }
+      const DeltaWin* GetWindow() const { return (mWindow.get()); }
 
       ///Use the supplied DeltaWin to draw into
-      void SetWindow( DeltaWin *win );
-
+      void SetWindow(DeltaWin *win);
 
       /**
        * Take a screen shot at end of next frame
@@ -110,8 +110,7 @@ namespace dtCore
        * @param nearClip : the distance from the Camera to the near clipping plane
        * @param farClip : the distance from the Camera to the far clipping plane
        */
-      void SetPerspectiveParams( double vfov, double aspectRatio, double nearClip, double farClip );
-
+      void SetPerspectiveParams(double vfov, double aspectRatio, double nearClip, double farClip);
 
       /**
       * Get the perspective parameters of this Camera.
@@ -120,29 +119,22 @@ namespace dtCore
       * @param nearClip : the distance from the Camera to the near clipping plane
       * @param farClip : the distance from the Camera to the far clipping plane
       */
-      void GetPerspectiveParams(double &vfov, double &aspectRatio, double &nearClip, double &farClip);
-
+      void GetPerspectiveParams(double& vfov, double& aspectRatio, double& nearClip, double& farClip);
 
       ///Set view frustrum of camera lens
-      void SetFrustum(  double left, double right,
-                        double bottom, double top,
-                        double nearClip, double farClip );
+      void SetFrustum(double left, double right,
+                      double bottom, double top,
+                      double nearClip, double farClip);
 
       ///Get view frustrum in the projection matrix
-      void GetFrustum(  double& left, double& right,
-                        double& bottom, double& top,
-                        double& nearClip, double& farClip );
+      void GetFrustum(double& left, double& right,
+                      double& bottom, double& top,
+                      double& nearClip, double& farClip);
 
       ///set orthographic mode
-      void SetOrtho(    double left, double right,
-                        double bottom, double top,
-                        double nearClip, double farClip );
-
-//      ///enable orthographic mode
-//      void ConvertToOrtho( float d );
-//
-//      ///enable perspective mode
-//      bool ConvertToPerspective( float d );
+      void SetOrtho(double left, double right,
+                    double bottom, double top,
+                    double nearClip, double farClip);
 
       ///@return HOV
       float GetHorizontalFov();
@@ -151,19 +143,20 @@ namespace dtCore
       float GetVerticalFov();
 
       void SetProjectionResizePolicy( osg::Camera::ProjectionResizePolicy prp )
-      { mOsgCamera->setProjectionResizePolicy(prp); }
+      {
+         mOsgCamera->setProjectionResizePolicy(prp); 
+      }
+
       osg::Camera::ProjectionResizePolicy GetProjection()
-      { return (mOsgCamera->getProjectionResizePolicy()); }
+      {
+         return (mOsgCamera->getProjectionResizePolicy()); 
+      }
 
       ///takes a number from 0-1 to set as the aspect ratio
-      void SetAspectRatio( double aspectRatio );
+      void SetAspectRatio(double aspectRatio);
 
       ///@return aspect ratio
       double GetAspectRatio();
-
-      ///Get a handle to the Producer Lens that this Camera uses
-//      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
-
 
       void SetClearColor(float r, float g, float b, float a);
       void SetClearColor(const osg::Vec4& color);
@@ -182,6 +175,7 @@ namespace dtCore
        * the detail will decrease twice as fast.
        */
       void SetLODScale(float newScale);
+
       /// @return the multiplier applied to the Level of Detail distance calculation when rendering.
       float GetLODScale() const;
 
@@ -192,7 +186,7 @@ namespace dtCore
       *
       * @param scene The Scene to which this Camera is being added to.
       */
-      virtual void AddedToScene( Scene* scene );
+      virtual void AddedToScene(Scene* scene);
 
       /**
        * Gets the position on the screen into the outScreenPos and returns whether or not the position is on the screen
@@ -201,19 +195,42 @@ namespace dtCore
        * plane to the far clipping plane.  The values for anything values may be greater or less of the position
        * given is off the screen or behind the camera..
        */
-      bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;
+      bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;     
 
-      //bool IsMaster() { return (mView.valid() && (mView->GetCamera() == this)); }
+      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> FrameSyncCallback;
+
+      /**
+       * Adds a callback that fires whenever the this camera is updated on FrameSync.  This makes it easy to
+       * add code that will add camera specific uniforms, or do operations in screen space since the camera will be in its
+       * final state prior to rendering.
+       *
+       * An example call from inside class "A" with a method with signature "void OnCameraSync(Camera& camera)" would be:
+       *
+       * Camera::AddFrameSyncCallback(this, FrameSyncCallback(this, &A::OnCameraSync))
+       *
+       * @param keyObject this object will be held onto with an observer pointer.
+       *                  When this object is deleted, the callback will be removed.
+       *                  It's also handy when removing callbacks directly.
+       * @param callback a functor to call. See the typedef above FrameSyncCallback.
+       */
+      static void AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback);
+      static void RemoveFrameSyncCallback(osg::Referenced& keyObject);
+
+      // Updates the view matrix via the transformed position.  This is called from FrameSynch.
+      void UpdateViewMatrixFromTransform();
+
    protected:
 
       ///Override for FrameSynch
-      virtual void FrameSynch( const double deltaFrameTime );
+      virtual void FrameSynch(const double deltaFrameTime);
 
       /// Base override to receive messages.
       /// This method should be called from derived classes
       /// @param data the message to receive
-      virtual void OnMessage( MessageData *data );
+      virtual void OnMessage(MessageData* data);
 
+      /// Call all of the static frame sync callbacks using this camera.
+      void CallFrameSyncCallbacks();
 
    private:
 
@@ -221,8 +238,8 @@ namespace dtCore
       // creates this functions even if they are not used, and if
       // this class is forward declared, these implicit functions will
       // cause compiler errors for missing calls to "ref".
-      Camera& operator=( const Camera& );
-      Camera( const Camera& );
+      Camera& operator=(const Camera&);
+      Camera(const Camera&);
 
       void OnWindowChanged();
 

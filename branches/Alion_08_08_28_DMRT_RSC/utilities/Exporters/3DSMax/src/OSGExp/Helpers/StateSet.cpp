@@ -28,6 +28,9 @@
  *
  *                  12.10.2005 Joran: Modified stateset helper to a super stateset
  *                  helper.
+ *
+ *                  19.07.2006 Joran: Removed the StateSet::ENCLOSE_RENDERBIN_DETAILS 
+ *                  stuff, because it is removed from OSG.
  */
 #include "OSGHelper.h"
 
@@ -92,9 +95,9 @@ static ParamBlockDesc2 stateset_param_blk ( stateset_params, _T("stateset_params
 	// render bin mode
 	render_bin_mode,	_T("RenderBinMode"),	TYPE_INT, 	P_ANIMATABLE,	IDS_STATESET_RENDER_MODE,
 		p_default, 		1, 
-		p_range, 		0, 3, 
+		p_range, 		0, 2, 
 		p_ui, 			rollup_renderbin,    TYPE_RADIO, 
-            4, IDC_RENDER_INHERIT, IDC_RENDER_USE, IDC_RENDER_OVERRIDE, IDC_RENDER_ENCLOSE,
+            3, IDC_RENDER_INHERIT, IDC_RENDER_USE, IDC_RENDER_OVERRIDE,
 		end,
 	// glmode cullface
 	glmode_cullface,	_T("GLModeCullFace"),	TYPE_BOOL,	0,	IDS_STATESET_CULLFACE, 	

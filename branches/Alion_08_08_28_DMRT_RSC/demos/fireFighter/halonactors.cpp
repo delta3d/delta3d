@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/halonactors.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtGame/gamemanager.h>
@@ -47,8 +48,8 @@ void PrimaryHalonActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-PrimaryHalonActor::PrimaryHalonActor(dtGame::GameActorProxy &proxy) :
-   GameItemActor(proxy)
+PrimaryHalonActor::PrimaryHalonActor(dtGame::GameActorProxy& proxy)
+   : GameItemActor(proxy)
 {
 
 }
@@ -62,23 +63,25 @@ void PrimaryHalonActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
 
-   const std::string &name = "ThrowPrimaryHalon";
+   const std::string& name = "ThrowPrimaryHalon";
 
    // No event, peace out
-   if(!IsActivated())
+   if (!IsActivated())
+   {
       return;
+   }
 
-   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-   if(event == NULL)
+   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   RefPtr<dtGame::Message> msg = 
+   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
-   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
    gem.SetGameEvent(*event);
    mgr.SendMessage(gem);
 }
@@ -105,7 +108,7 @@ void SecondaryHalonActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy &proxy) :
+SecondaryHalonActor::SecondaryHalonActor(dtGame::GameActorProxy& proxy) :
    GameItemActor(proxy)
 {
 
@@ -120,23 +123,25 @@ void SecondaryHalonActor::Activate(bool enable)
 {
    GameItemActor::Activate(enable);
 
-   const std::string &name = "ThrowSecondaryHalon";
+   const std::string& name = "ThrowSecondaryHalon";
 
    // No event, peace out
-   if(!IsActivated())
+   if (!IsActivated())
+   {
       return;
+   }
 
-   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-   if(event == NULL)
+   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   RefPtr<dtGame::Message> msg = 
+   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
-   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
    gem.SetGameEvent(*event);
    mgr.SendMessage(gem);
 }

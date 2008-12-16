@@ -19,10 +19,11 @@
  * @author Matthew W. Campbell and David Guthrie
  */
 #include <prefix/dtutilprefix-src.h>
-#include <limits.h>
+#include <climits>
 #include <osg/Endian>
 #include <dtUtil/exception.h>
 #include <dtUtil/datastream.h>
+#include <cstring>
 
 namespace dtUtil
 {

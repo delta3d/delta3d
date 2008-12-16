@@ -32,7 +32,7 @@
 #include <osgUtil/GLObjectsVisitor>
 #include <osg/Timer>
 #include <osg/Framestamp>
-                
+
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TrackballManipulator>
 #include "EventAdapter.h"
@@ -113,4 +113,5 @@ private:
 	std::vector<osg::AnimationPath* >				_animations;
 
 	bool							_updateMatrixManipulatorView;
+
 };

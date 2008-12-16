@@ -1,27 +1,28 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* @author John K. Grant
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author John K. Grant
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtABC/application.h>
 #include <dtABC/applicationconfighandler.h>
@@ -159,7 +160,7 @@ namespace dtTest
       {
          BaseClass::ReadSystemProperties();
       }
-      
+
       void ResetHits()
       {
          mPressedHit = false;
@@ -170,7 +171,7 @@ namespace dtTest
       {
          mPressedHit = true;
 
-         if( key==mKey )
+         if ( key==mKey )
          {
             return true;
          }
@@ -181,7 +182,7 @@ namespace dtTest
       {
          mReleasedHit = true;
 
-         if( key==mKey )
+         if ( key==mKey )
          {
             return true;
          }
@@ -214,7 +215,7 @@ namespace dtTest
    {
       std::vector<std::string> paths;
       dtUtil::LibrarySharingManager::GetInstance().GetSearchPath(paths);
-      for(unsigned int i = 0; i < paths.size(); i++)
+      for (unsigned int i = 0; i < paths.size(); i++)
       {
          dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(paths[i]);
       }
@@ -256,15 +257,15 @@ namespace dtTest
    void ApplicationTests::TestConfigProperties()
    {
       dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
-      
+
       const std::string testDefault("abcd");
       const std::string testValue1("qqq");
       const std::string testValue2("qqv");
       const std::string testName("xyz");
-      
+
       CPPUNIT_ASSERT_EQUAL(std::string(), app->GetConfigPropertyValue(testName));
       CPPUNIT_ASSERT_EQUAL(testDefault, app->GetConfigPropertyValue(testName, testDefault));
-      
+
       app->SetConfigPropertyValue(testName, testValue1);
       CPPUNIT_ASSERT_EQUAL(testValue1, app->GetConfigPropertyValue(testName, testDefault));
 
@@ -305,7 +306,7 @@ namespace dtTest
       // a) the parser works, but more importantly
       // b) the writer wrote the right default values
       dtABC::ApplicationConfigData truth = dtABC::Application::GetDefaultConfigData();
-      
+
       CompareConfigData(truth, handler.mConfigData);
 
       // delete the file
@@ -325,7 +326,7 @@ namespace dtTest
       dtABC::ApplicationConfigData truth;
       truth.CHANGE_RESOLUTION = false;
       truth.FULL_SCREEN = false;
-   
+
       truth.RESOLUTION.bitDepth = 16;
       truth.RESOLUTION.height = 32;
       truth.RESOLUTION.width = 19;
@@ -338,22 +339,22 @@ namespace dtTest
       truth.WINDOW_Y = 97;
       truth.CAMERA_NAME = "SomeCam";
       truth.VIEW_NAME = "SomeCam";
-      
+
       truth.SCENE_INSTANCE = "SomeScene";
       truth.WINDOW_INSTANCE = "SomeWin";
       truth.CAMERA_INSTANCE = "SomeCam";
-      
+
       truth.LOG_LEVELS.insert(std::make_pair(dtUtil::Log::GetInstance().GetName(), "ERROR"));
       truth.LOG_LEVELS.insert(std::make_pair("SomeName", "Warn"));
       truth.LOG_LEVELS.insert(std::make_pair("AnotherName", "Error"));
       truth.LOG_LEVELS.insert(std::make_pair("horse", "Info"));
       truth.LOG_LEVELS.insert(std::make_pair("cow", "Debug"));
       truth.LOG_LEVELS.insert(std::make_pair("chicken", "Always"));
-      
+
       truth.LIBRARY_PATHS.push_back("mypath1");
       truth.LIBRARY_PATHS.push_back("mypath2");
       truth.LIBRARY_PATHS.push_back("mypath3");
-      
+
       truth.mProperties.insert(std::make_pair("Name1", "TestVal1"));
       truth.mProperties.insert(std::make_pair("Name2", "TestVal2"));
       truth.mProperties.insert(std::make_pair("Name3", "TestVal3"));
@@ -374,7 +375,7 @@ namespace dtTest
 
       //create an app to parse the config and actually load the values
       dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(mConfigName);
-      
+
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance().GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_WARNING, dtUtil::Log::GetInstance("SomeName").GetLogLevel());
       CPPUNIT_ASSERT_EQUAL(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("AnotherName").GetLogLevel());
@@ -394,13 +395,13 @@ namespace dtTest
       CPPUNIT_ASSERT_EQUAL(std::string("TestVal3"), app->GetConfigPropertyValue("Name3"));
 
       app = NULL;
-      
+
       // delete the file
       dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
 
       // make sure it does not exist
       CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
-      
+
    }
 
    void ApplicationTests::ResetConfigPropertyDefaults(dtABC::Application& app)
@@ -423,7 +424,7 @@ namespace dtTest
          pager->setDrawablePolicy(osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
       }
    }
-   
+
    void ApplicationTests::TestReadSystemProperties()
    {
       dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp('N'));
@@ -432,7 +433,7 @@ namespace dtTest
 
       osgDB::DatabasePager* pager = app->GetView()->GetDatabasePager()->GetOsgDatabasePager();
 
-      bool ignoreThreadPrioritySupport = 
+      bool ignoreThreadPrioritySupport =
          pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT) == -1;
 
       app->SetConfigPropertyValue(dtABC::Application::SIM_FRAME_RATE, "32.1");
@@ -478,11 +479,11 @@ namespace dtTest
          //It no longer does this
 //         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(
 //                  "If the system is set to fixed frame rate, and the pager target framerate is not "
-//                  "set, should pickup the one from the system", 
+//                  "set, should pickup the one from the system",
 //                  system.GetFrameRate(), pager->getTargetFrameRate(), 0.01);
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MAX);
 #endif
 
@@ -500,7 +501,7 @@ namespace dtTest
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
 #endif
 
@@ -518,7 +519,7 @@ namespace dtTest
          CPPUNIT_ASSERT_DOUBLES_EQUAL(31.6, pager->getTargetFrameRate(), 0.01);
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_HIGH);
 #endif
          //-------------------------------------
@@ -530,7 +531,7 @@ namespace dtTest
 
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::USE_VERTEX_ARRAYS);
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_NOMINAL);
 #endif
          //-------------------------------------
@@ -543,7 +544,7 @@ namespace dtTest
          CPPUNIT_ASSERT(pager->getDrawablePolicy() == osgDB::DatabasePager::DO_NOT_MODIFY_DRAWABLE_SETTINGS);
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_LOW);
 #endif
          //-------------------------------------
@@ -553,7 +554,7 @@ namespace dtTest
          app->ReadSystemProperties();
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_MIN);
 #endif
          //-------------------------------------
@@ -563,7 +564,7 @@ namespace dtTest
          app->ReadSystemProperties();
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
-         CPPUNIT_ASSERT(ignoreThreadPrioritySupport || 
+         CPPUNIT_ASSERT(ignoreThreadPrioritySupport ||
                   pager->getSchedulePriority() == OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
 #endif
       }
@@ -607,9 +608,9 @@ namespace dtTest
       }
       catch (...)
       {
-      	CPPUNIT_FAIL("Application should not have thrown an exception when parsing a bad config file");
+         CPPUNIT_FAIL("Application should not have thrown an exception when parsing a bad config file");
       }
-      
+
       //delete config file
       dtUtil::FileUtils::GetInstance().FileDelete( filename );
    }
@@ -634,11 +635,11 @@ namespace dtTest
       void TestReplaceCamera();
 
    protected:
-   	
+
    private:
    };
 
-   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationSetupTests );  
+   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationSetupTests );
 
 
    void ApplicationSetupTests::TestInit()
@@ -652,7 +653,7 @@ namespace dtTest
 
    void ApplicationSetupTests::TestReplaceScene()
    {
-      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(); 
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
       dtCore::RefPtr<dtCore::Scene> newScene = new dtCore::Scene();
 
       app->SetScene( newScene.get() );
@@ -671,11 +672,11 @@ namespace dtTest
 
    void ApplicationSetupTests::TestReplaceCamera()
    {
-      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application(); 
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
       dtCore::RefPtr<dtCore::Camera> newCam = new dtCore::Camera();
 
       app->SetCamera( newCam.get() );
- 
+
       CPPUNIT_ASSERT_EQUAL_MESSAGE("App didn't get the new Camera",
          newCam.get(), app->GetCamera() );
 

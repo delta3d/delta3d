@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 /** \file dtUtil/keyframedecoder.h
   * Utility methods for using strings, often for XML purposes.
@@ -76,7 +76,7 @@ namespace dtUtil
 
       void Walk(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
       {
-         if( mSources.empty() )
+         if (mSources.empty())
          {
             LOG_INFO("No recordable instances are available for loading from XML.")
             return;
@@ -98,16 +98,16 @@ namespace dtUtil
          float timeStamp(0.0);
          // start at the root
          // assume the first child is a frame stamp
-         for(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* framestamp=framestampwalker->firstChild();
+         for (XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* framestamp=framestampwalker->firstChild();
             framestamp != 0;
-            framestamp = framestampwalker->nextSibling() )
+            framestamp = framestampwalker->nextSibling())
          {
-            std::string val( dtUtil::FindAttributeValueFor("TimeCode", framestamp->getAttributes()) );
-            timeStamp = dtUtil::ToFloat( val );
+            std::string val(dtUtil::FindAttributeValueFor("TimeCode", framestamp->getAttributes()));
+            timeStamp = dtUtil::ToFloat(val);
 
             FrameDataPtrContainer dataToBeFilled;
-            DecodeFrameStamp( doc, framestamp , dataToBeFilled);
-            mKFC.push_back( typename KeyFrameContainer::value_type( timeStamp, dataToBeFilled ) );
+            DecodeFrameStamp(doc, framestamp, dataToBeFilled);
+            mKFC.push_back(typename KeyFrameContainer::value_type( timeStamp, dataToBeFilled));
          }
       }
 
@@ -123,7 +123,7 @@ namespace dtUtil
 
          // move the walker to the first source
          unsigned int sourceIndex(0);
-         for(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* child=sourcewalker->firstChild();
+         for (XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* child=sourcewalker->firstChild();
              child != 0;
              child=sourcewalker->nextSibling())
          {
@@ -136,7 +136,7 @@ namespace dtUtil
       FrameDataType* DecodeSourceData(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc,
                                       XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, unsigned int index)
       {
-         if( index < mSourcesSize )
+         if ( index < mSourcesSize )
          {
             return mSources[index]->Deserialize( doc, e );
          }

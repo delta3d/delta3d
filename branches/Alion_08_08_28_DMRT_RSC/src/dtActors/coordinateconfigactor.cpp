@@ -136,7 +136,7 @@ namespace dtActors
    dtDAL::ActorProxyIcon* CoordinateConfigActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::STATICMESH);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
 
       return mBillBoardIcon.get();
    }
@@ -205,7 +205,7 @@ namespace dtActors
       double latitude, longitude;
       mCoordinates.GetLocalOffset(xyz);
 
-      mCoordinates.ConvertUTMToGeodetic(mCoordinates.GetUTMZone(), xyz.x(), xyz.y(), latitude, longitude);
+      mCoordinates.ConvertUTMToGeodetic(mCoordinates.GetUTMZone(), mCoordinates.GetUTMHemisphere(), xyz.x(), xyz.y(), latitude, longitude);
 
       return osg::Vec3d(osg::RadiansToDegrees(latitude), osg::RadiansToDegrees(longitude), xyz.z());
    }

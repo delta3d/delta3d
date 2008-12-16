@@ -29,6 +29,7 @@
 #ifndef DELTA_STAGE_CAMERA
 #define DELTA_STAGE_CAMERA
 
+#include <QtCore/QObject>
 #include <osg/Referenced>
 #include <osg/Vec3>
 #include <osg/Quat>
@@ -43,8 +44,9 @@ namespace dtEditQt
      * The camera class provides a view into the scene.  It supports orthographic
      * and perspective views.
      */
-    class StageCamera : public osg::Referenced
+    class StageCamera : public QObject, public osg::Referenced
     {
+       Q_OBJECT
     public:
 
         /**
@@ -236,7 +238,7 @@ namespace dtEditQt
 
         /**
          * Updates the camera's viewing and projection matrices.  Also updates
-		 * any actors currently attached to it.
+       * any actors currently attached to it.
          */
         void update();
 
@@ -271,6 +273,10 @@ namespace dtEditQt
         unsigned int getNumActorAttachments() const {
             return this->attachedProxies.size();
         }
+
+signals:
+        ///Signal that the camera has moved to new position
+        void PositionMoved(double x, double y, double z);
 
     protected:
 

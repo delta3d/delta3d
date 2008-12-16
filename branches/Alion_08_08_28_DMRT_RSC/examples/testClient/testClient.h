@@ -1,32 +1,33 @@
 /* -*-c++-*-
-* testClient - testClient (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2007-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * testClient - testClient (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2007-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #ifndef DELTA_EXAMPLE_TESTCLIENT
 #define DELTA_EXAMPLE_TESTCLIENT
 
 #include <dtABC/application.h>
 #include <dtUtil/enumeration.h>
 
-//forward declarations
+// forward declarations
 namespace dtDAL
 {
    class GameEvent;
@@ -44,15 +45,18 @@ namespace dtNetGM
 }
 
 /**
-* Exceptions that may be thrown by the demo.
-*/
+ * Exceptions that may be thrown by the demo.
+ */
 class AppException : public dtUtil::Enumeration
 {
    DECLARE_ENUM(AppException);
+
 public:
    static AppException INIT_ERROR;
+
 private:
-   AppException(const std::string &name) : dtUtil::Enumeration(name)
+   AppException(const std::string& name)
+      : dtUtil::Enumeration(name)
    {
       AddInstance(this);
    }
@@ -65,18 +69,18 @@ class EchoClient : public dtABC::Application
 public:
 
    /**
-   * Constructs the test application.
-   */
+    * Constructs the test application.
+    */
    EchoClient();
 
    /**
-   * Destroys the test application.
-   */
+    * Destroys the test application.
+    */
    virtual ~EchoClient();
 
    /**
-   * Configures the application and prepares it to start the game/simulation.
-   */
+    * Configures the application and prepares it to start the game/simulation.
+    */
    void Config();
 
    virtual void Quit();

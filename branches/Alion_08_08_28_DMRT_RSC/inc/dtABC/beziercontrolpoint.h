@@ -1,30 +1,28 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg
+ */
+
 #ifndef __BEZIER_CONTROL_POINT_H__
 #define __BEZIER_CONTROL_POINT_H__
 
 #include "pathpointconverter.h"
-
-
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-* Bradley Anderegg
-*/
-
 
 namespace dtABC
 {
@@ -32,20 +30,20 @@ namespace dtABC
 
 
 /***
-* class BezierControlPoint is encapsulated by BezierPath
-* and acts as an entry or exit control to the curve
-*/
-class BezierControlPoint: public PathPointConverter
+ * class BezierControlPoint is encapsulated by BezierPath
+ * and acts as an entry or exit control to the curve
+ */
+class BezierControlPoint : public PathPointConverter
 {
 public:
-   BezierControlPoint():mParent(0){}
+   BezierControlPoint() : mParent(0) {}
 
-   const BezierNode* GetParent() const {return mParent;}
-   BezierNode* GetParent() {return mParent;}
-   void SetParent(BezierNode* pParent){mParent = pParent;}
-   
+   const BezierNode* GetParent() const { return mParent; }
+   BezierNode* GetParent() { return mParent; }
+   void SetParent(BezierNode* pParent) { mParent = pParent; }
+
 protected:
-   ~BezierControlPoint(){};
+   ~BezierControlPoint(){}
    BezierControlPoint(const BezierControlPoint&); //not implemented by design
    BezierControlPoint operator=(const BezierControlPoint&); //not implemented by design
 
@@ -55,7 +53,7 @@ private:
 };
 
 
-}//namespace dtABC
+} // namespace dtABC
 
 #endif //__BEZIER_CONTROL_POINT_H__
 

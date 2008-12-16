@@ -1,23 +1,24 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2005, BMH Associates, Inc. 
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * Matthew W. Campbell and David Guthrie
  */
+
 #ifndef DELTA_LIBRARY_MANAGER
 #define DELTA_LIBRARY_MANAGER
 
@@ -28,9 +29,9 @@
 #include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/export.h>
 
-namespace dtDAL 
+namespace dtDAL
 {
-	
+
    /**
     * This class is the main class in the dynamic actor library portion of the
     * DAL (Dynamic Actor Layer).  It has a list of the dynamic libraries that
@@ -41,7 +42,7 @@ namespace dtDAL
     * @see ActorType
     * @see ActorProxy
     */
-   class DT_DAL_EXPORT LibraryManager : public osg::Referenced 
+   class DT_DAL_EXPORT LibraryManager : public osg::Referenced
    {
       private:
          /**
@@ -61,19 +62,19 @@ namespace dtDAL
           * Simple structure for grouping the data corresponding to a
           * registry entry.
           */
-         struct RegistryEntry 
+         struct RegistryEntry
          {
             ActorPluginRegistry* registry;
             dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
             CreatePluginRegistryFn createFn;
             DestroyPluginRegistryFun destroyFn;
-         };		
+         };
 
-     
+
          typedef std::map<dtCore::RefPtr<const ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
          typedef ActorTypeMap::iterator ActorTypeMapItor;
 
-         typedef std::map<std::string, RegistryEntry> RegistryMap;			
+         typedef std::map<std::string, RegistryEntry> RegistryMap;
          typedef RegistryMap::iterator RegistryMapItor;
 
          /**
@@ -82,18 +83,20 @@ namespace dtDAL
          static LibraryManager &GetInstance();
 
          /**
-          * Loads an actor registry by loading a dynamic library 
+          * Loads an actor registry by loading a dynamic library
           * containing the actor registry implementation.
+          *
           * @param libName The system independent name of the library to load.
           * @throws ProjectResourceError Throws an exception if the
-          *		library cannot be found or the create and destroy
-          *		functions are not found in the library.
+          *         library cannot be found or the create and destroy
+          *         functions are not found in the library.
           */
          void LoadActorRegistry(const std::string &libName);
 
          /**
            * Inserts the pair of parameters into the container.
            * Also, registers the supported Actor types with the manager.
+           *
            * @param libName The system independent name of the library that was loaded
            * @param entry The RegistryEntry mapped to the library name.
            * @return true if successully added, false if not
@@ -104,18 +107,20 @@ namespace dtDAL
           * Unloads an actor registry.  This unloads the dynamic library
           * containing the actor registry implementation and also removes
           * all the actor types that the registry supported.
+          *
           * @param libName The system independent name of the library to load.
           */
-         void UnloadActorRegistry(const std::string &libName);            
+         void UnloadActorRegistry(const std::string &libName);
 
          /**
-          * Returns a list of all the actor types the library manager knows how 
+          * Returns a list of all the actor types the library manager knows how
           * to create.
           */
          void GetActorTypes(std::vector<const ActorType*> &actorTypes);
-   		
+
          /**
           * Gets a single actor type that matches the name and category specified.
+          *
           * @param category Category of the actor type to find.
           * @param name Name of the actor type.
           * @return A pointer if the actor type was found or NULL if not.
@@ -146,7 +151,7 @@ namespace dtDAL
          dtCore::RefPtr<ActorProxy> CreateActorProxy(const std::string &category, const std::string &name);
 
          /**
-          * Gets a registry currently loaded by the library manager.  
+          * Gets a registry currently loaded by the library manager.
           * @param name The name of the library.  Note, this name is the
           * system independent name.
           * @return A handle to the registry or NULL if it is not currently loaded.
@@ -192,7 +197,7 @@ namespace dtDAL
           */
          virtual ~LibraryManager();
 
-         
+
          ///Is the supplied library name already in the registry?
          bool IsInRegistry( const std::string &libName ) const;
 

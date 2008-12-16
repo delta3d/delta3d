@@ -314,7 +314,7 @@ void SystemTests::TestSimMode()
    osg::Vec3 camXYZ(0.0f, -50.0f, 20.0f);
    osg::Vec3 lookAtXYZ (0.0f, 10.f, 0.0f);
    osg::Vec3 upVec (0.0f, 0.0f, 1.0f );
-   camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
+   camPos.Set(camXYZ, lookAtXYZ, upVec);
    app->GetCamera()->SetTransform( camPos );
 
    mDummyDrawable = new DummyDrawable();

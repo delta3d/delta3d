@@ -18,6 +18,7 @@
  *
  * @author Pjotr van Amerongen
  */
+
 #ifndef DELTA_NETWORKCOMPONENT
 #define DELTA_NETWORKCOMPONENT
 
@@ -202,7 +203,7 @@ namespace dtNetGM
       virtual void OnTimeOut(NetworkBridge& networkBridge);
 
       /**
-       * Function called by a GameManager to send Messages accross a Network
+       * Function called by a GameManager to send Messages across a Network
        * @param The Message to be sent
        */
       virtual void DispatchNetworkMessage(const dtGame::Message& message);

@@ -7,6 +7,7 @@
 #include <osg/MatrixTransform>
 #include <ode/common.h>
 #include <ode/mass.h>
+#include <dtCore/odebodywrap.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -54,6 +55,9 @@ void initPhysicalBindings()
    void (Physical::*SetInertiaTensor1)(const osg::Matrix& inertiaTensor) = &Physical::SetInertiaTensor;
    void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
 
+   const ODEBodyWrap* (Physical::*GetBodyWrapper1)() const = &Physical::GetBodyWrapper;
+   ODEBodyWrap* (Physical::*GetBodyWrapper2) () = &Physical::GetBodyWrapper;
+
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
       .def(init<optional<const std::string&> >())
       .def(init<Transformable::TransformableNode&, optional<const std::string&> >())
@@ -71,6 +75,9 @@ void initPhysicalBindings()
       .def("GetInertiaTensor", GetInertiaTensor1)
       .def("PostPhysicsStepUpdate", &Physical::PostPhysicsStepUpdate, &PhysicalWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Physical::RenderCollisionGeometry)
+      .def("GetBodyWrapper", GetBodyWrapper1, return_internal_reference<>())
+      .def("GetBodyWrapper", GetBodyWrapper2, return_internal_reference<>())
       ;
+
 
 }

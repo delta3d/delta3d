@@ -19,6 +19,7 @@
  * Matthew W. Campbell
  * David Guthrie
  */
+
 #ifndef DELTA_NAMED_PARAMETER
 #define DELTA_NAMED_PARAMETER
 
@@ -64,17 +65,17 @@ namespace dtDAL
 
          NamedParameter(DataType& dataType, const dtUtil::RefString& name, bool isList = false);
 
-         virtual void ToDataStream(dtUtil::DataStream &stream) const = 0;
+         virtual void ToDataStream(dtUtil::DataStream& stream) const = 0;
 
-         virtual void FromDataStream(dtUtil::DataStream &stream) = 0;
+         virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
 
          /**
           * @param otherParam the message parameter to make this one match.
           */
-         virtual void CopyFrom(const NamedParameter &otherParam) = 0;
+         virtual void CopyFrom(const NamedParameter& otherParam) = 0;
 
          ///Writes pertinent data about this parameter to the given logger and log level.
-         void WriteToLog(dtUtil::Log &logger, dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_DEBUG) const;
+         void WriteToLog(dtUtil::Log& logger, dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_DEBUG) const;
 
          /**
           * @return True if the paramater contains a list of
@@ -90,7 +91,7 @@ namespace dtDAL
           */
          static dtCore::RefPtr<NamedParameter> CreateFromType(
                   dtDAL::DataType& type,
-                  const dtUtil::RefString& name, bool isList=false);
+                  const dtUtil::RefString& name, bool isList = false);
 
          /**
           * Gets the character used as a delimeter between parameters when serializing
@@ -109,28 +110,28 @@ namespace dtDAL
          void SetParamDelimeter(char delim);
 
 
-         /** 
+         /**
           * Sets the message parameter's value from the actor property's value
           */
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
 
-         /** 
+         /**
           * Sets the actor property's value from the message parameter's value
           */
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
          virtual bool operator==(const NamedParameter& toCompare) const = 0;
          bool operator!=(const NamedParameter& toCompare) const { return !(*this == toCompare); }
-         
+
       protected:
 
          virtual ~NamedParameter() { }
 
          /**
-          * Helper method for each specific parameter type to be able to 
+          * Helper method for each specific parameter type to be able to
           * validate the property type before acting on it
           */
-         void ValidatePropertyType(const dtDAL::ActorProperty &property) const;
+         void ValidatePropertyType(const dtDAL::ActorProperty& property) const;
 
       private:
          //This value is used as a delimeter between list data elements
@@ -147,15 +148,15 @@ namespace dtDAL
 
          NamedGroupParameter(const dtUtil::RefString& name);
 
-         virtual void ToDataStream(dtUtil::DataStream &stream) const;
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
-         virtual void FromDataStream(dtUtil::DataStream &stream);
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          virtual const std::string ToString() const;
 
-         virtual bool FromString(const std::string &value);
+         virtual bool FromString(const std::string& value);
 
-         virtual void CopyFrom(const NamedParameter &otherParam);
+         virtual void CopyFrom(const NamedParameter& otherParam);
 
          /**
           * Adds a parameter to the group
@@ -171,10 +172,10 @@ namespace dtDAL
           * Removes a parameter to the group
           * @param name The name of the parameter to remove
           * @return A ref pointer to the parameter removed or NULL if nothing was removed.  It returns a ref ptr in case
-          *         this group is the only object holding on to a reference.  
+          *         this group is the only object holding on to a reference.
           */
          dtCore::RefPtr<NamedParameter> RemoveParameter(const dtUtil::RefString& name);
-         
+
          /**
           * Adds a parameter to the group
           * @param param the new parameter to add
@@ -197,22 +198,22 @@ namespace dtDAL
           */
          const NamedParameter* GetParameter(const dtUtil::RefString& name) const;
 
-         /** 
+         /**
           * Retrieves all of the parameters in this group.
           * @param toFill The vector to fill with the parameters
           */
-         void GetParameters(std::vector<NamedParameter*> &toFill);
+         void GetParameters(std::vector<NamedParameter*>& toFill);
 
-         /** 
+         /**
           * Retrieves all of the parameters in this group as const.
           * @param toFill The vector to fill with the parameters
           */
-         void GetParameters(std::vector<const NamedParameter*> &toFill) const;
+         void GetParameters(std::vector<const NamedParameter*>& toFill) const;
 
          template <class UnaryFunction>
          void ForEachParameter(UnaryFunction function) const
          {
-            /*std::for_each(mParameterList.begin(), mParameterList.end(), 
+            /*std::for_each(mParameterList.begin(), mParameterList.end(),
                   std::compose1(std::select2nd<std::pair<std::string, dtCore::RefPtr<NamedParameter> > >(),
                         function));*/
             ParameterList::const_iterator i = mParameterList.begin();
@@ -229,15 +230,15 @@ namespace dtDAL
           */
          unsigned int GetParameterCount() const {return mParameterList.size();}
 
-         /** 
+         /**
           * Sets the message parameter's value from the actor property's value
           */
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
 
-         /** 
+         /**
           * Sets the actor property's value from the message parameter's value
           */
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 
@@ -249,12 +250,11 @@ namespace dtDAL
    class NamedGenericParameter : public NamedParameter
    {
       public:
-         NamedGenericParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue, bool isList=false)
+         NamedGenericParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue, bool isList = false)
             : NamedParameter(dataType, name, isList)
+            , mValue(defaultValue)
+            , mNumberPrecision(17)
          {
-            mValue = defaultValue;
-            mNumberPrecision = 17;
-
             if (IsList())
             {
                mValueList = new std::vector<ParamType>();
@@ -287,36 +287,46 @@ namespace dtDAL
             return mNumberPrecision;
          }
 
-         inline virtual void CopyFrom(const NamedParameter &otherParam)
+         inline virtual void CopyFrom(const NamedParameter& otherParam)
          {
-            const NamedGenericParameter<ParamType> *param =
-                static_cast<const NamedGenericParameter<ParamType> *>(&otherParam);
+            const NamedGenericParameter<ParamType>* param =
+                static_cast<const NamedGenericParameter<ParamType>*>(&otherParam);
 
             //First make sure this parameter does not have a list if the
             //other parameter does and vice versa.
             if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot assign two parameters with one being a list of values and the other not.", __FILE__, __LINE__);
+            }
 
             if (param != NULL)
             {
                if (!IsList())
+               {
                  SetValue(param->GetValue());
+               }
                else
+               {
                   SetValueList(param->GetValueList());
+               }
             }
             else
             {
                if (!FromString(otherParam.ToString()))
+               {
                   LOGN_ERROR("MessageParameter", "Parameter types are incompatible. Cannot copy the value.");
+               }
             }
          }
 
          inline virtual void SetValue(const ParamType& value)
          {
             if (IsList())
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot call SetValue() on message parameter with a list of values.", __FILE__, __LINE__);
+            }
 
             mValue = value;
          }
@@ -324,44 +334,54 @@ namespace dtDAL
          inline virtual const ParamType& GetValue() const
          {
             if (IsList())
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot call GetValue() on message parameter with a list of values.", __FILE__, __LINE__);
+            }
 
             return mValue;
          }
 
-         inline const std::vector<ParamType> &GetValueList() const
+         inline const std::vector<ParamType>& GetValueList() const
          {
             if (!IsList())
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
+            }
             return *mValueList;
          }
 
-         inline std::vector<ParamType> &GetValueList()
+         inline std::vector<ParamType>& GetValueList()
          {
             if (!IsList())
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.", __FILE__, __LINE__);
+            }
             return *mValueList;
          }
 
-         inline void SetValueList(const std::vector<ParamType> &newValues)
+         inline void SetValueList(const std::vector<ParamType>& newValues)
          {
             if (!IsList())
+            {
                throw dtUtil::Exception(ExceptionEnum::BaseException,
                   "Cannot set a list of new values on a parameter that is not a list.", __FILE__, __LINE__);
+            }
 
             *mValueList = newValues;
          }
 
-         inline virtual void ToDataStream(dtUtil::DataStream &stream) const
+         inline virtual void ToDataStream(dtUtil::DataStream& stream) const
          {
             if (IsList())
             {
                stream << mValueList->size();
                for (unsigned int i=0; i<mValueList->size(); i++)
+               {
                   stream << (*mValueList)[i];
+               }
             }
             else
             {
@@ -369,15 +389,17 @@ namespace dtDAL
             }
          }
 
-         inline virtual void FromDataStream(dtUtil::DataStream &stream)
+         inline virtual bool FromDataStream(dtUtil::DataStream& stream)
          {
+            bool okay = true;
+
             if (IsList())
             {
                mValueList->clear();
 
                unsigned int listSize;
                stream >> listSize;
-               for (unsigned int i=0; i<listSize; i++)
+               for (unsigned int i = 0; i < listSize; ++i)
                {
                   ParamType newElement;
                   stream >> newElement;
@@ -388,10 +410,12 @@ namespace dtDAL
             {
                stream >> mValue;
             }
+
+            return okay;
          }
 
          virtual const std::string ToString() const { return std::string(); }
-         virtual bool FromString(const std::string &value) { return false; }
+         virtual bool FromString(const std::string& value) { return false; }
 
          virtual bool operator==(const NamedParameter& toCompare) const
          {
@@ -407,7 +431,7 @@ namespace dtDAL
          virtual ~NamedGenericParameter() { delete mValueList; }
 
       private:
-         std::vector<ParamType> *mValueList;
+         std::vector<ParamType>* mValueList;
          ParamType mValue;
          unsigned int mNumberPrecision;
    };
@@ -420,8 +444,10 @@ namespace dtDAL
    class NamedPODParameter: public NamedGenericParameter<ParamType>
    {
       public:
-         NamedPODParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue, bool isList=false)
-            : NamedGenericParameter<ParamType>(dataType, name, defaultValue, isList) { }
+         NamedPODParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue, bool isList = false)
+            : NamedGenericParameter<ParamType>(dataType, name, defaultValue, isList)
+         {
+         }
 
          virtual const std::string ToString() const
          {
@@ -429,13 +455,15 @@ namespace dtDAL
             stream.precision(NamedGenericParameter<ParamType>::GetNumberPrecision());
             if (NamedGenericParameter<ParamType>::IsList())
             {
-               const std::vector<ParamType> &values =
+               const std::vector<ParamType>& values =
                   NamedGenericParameter<ParamType>::GetValueList();
 
                stream << values[0];
-               for (unsigned int i=1; i<values.size(); i++)
+               for (unsigned int i = 1; i < values.size(); ++i)
+               {
                   stream << NamedGenericParameter<ParamType>::GetParamDelimeter()
                      << values[i];
+               }
             }
             else
             {
@@ -445,14 +473,14 @@ namespace dtDAL
             return stream.str();
          }
 
-         virtual bool FromString(const std::string &value)
+         virtual bool FromString(const std::string& value)
          {
             std::istringstream stream;
             stream.precision(NamedGenericParameter<ParamType>::GetNumberPrecision());
 
             if (NamedGenericParameter<ParamType>::IsList())
             {
-               std::vector<ParamType> &result =
+               std::vector<ParamType>& result =
                   NamedGenericParameter<ParamType>::GetValueList();
 
                ParamType actual;
@@ -465,7 +493,9 @@ namespace dtDAL
                   char sep;
                   stream >> sep;
                   if (!stream)
+                  {
                      break;
+                  }
 
                   stream >> actual;
                   result.push_back(actual);
@@ -493,16 +523,16 @@ namespace dtDAL
    {
       public:
          NamedBooleanParameter(const dtUtil::RefString& name, bool defaultValue = false,
-            bool isList=false);
+            bool isList = false);
 
          ///overridden to return "true" and "false"
          virtual const std::string ToString() const;
 
          ///overridden to accept "true" and other such strings as well as numbers.
-         virtual bool FromString(const std::string &value);
+         virtual bool FromString(const std::string& value);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedBooleanParameter();
@@ -515,7 +545,7 @@ namespace dtDAL
    {
       public:
          NamedUnsignedCharParameter(const dtUtil::RefString& name,
-             unsigned char defaultValue = 0, bool isList=false);
+             unsigned char defaultValue = 0, bool isList = false);
       protected:
          virtual ~NamedUnsignedCharParameter();
    };
@@ -526,7 +556,7 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedShortIntParameter: public NamedPODParameter<short>
    {
       public:
-         NamedShortIntParameter(const dtUtil::RefString& name, short defaultValue = 0, bool isList=false);
+         NamedShortIntParameter(const dtUtil::RefString& name, short defaultValue = 0, bool isList = false);
 
       protected:
          virtual ~NamedShortIntParameter();
@@ -539,7 +569,7 @@ namespace dtDAL
    {
       public:
          NamedUnsignedShortIntParameter(const dtUtil::RefString& name,
-            unsigned short defaultValue = 0, bool isList=false);
+            unsigned short defaultValue = 0, bool isList = false);
       protected:
          virtual ~NamedUnsignedShortIntParameter();
    };
@@ -550,7 +580,7 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedUnsignedIntParameter: public NamedPODParameter<unsigned int>
    {
       public:
-         NamedUnsignedIntParameter(const dtUtil::RefString& name, unsigned int defaultValue=0,	bool isList=false);
+         NamedUnsignedIntParameter(const dtUtil::RefString& name, unsigned int defaultValue = 0, bool isList = false);
 
       protected:
          virtual ~NamedUnsignedIntParameter();
@@ -562,10 +592,10 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedIntParameter: public NamedPODParameter<int>
    {
       public:
-         NamedIntParameter(const dtUtil::RefString& name, int defaultValue=0,	bool isList=false);
+         NamedIntParameter(const dtUtil::RefString& name, int defaultValue = 0, bool isList = false);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedIntParameter();
@@ -578,7 +608,7 @@ namespace dtDAL
    {
       public:
          NamedUnsignedLongIntParameter(const dtUtil::RefString& name,
-            unsigned long defaultValue = 0, bool isList=false);
+            unsigned long defaultValue = 0, bool isList = false);
 
       protected:
          virtual ~NamedUnsignedLongIntParameter();
@@ -590,10 +620,10 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedLongIntParameter: public NamedPODParameter<long>
    {
       public:
-         NamedLongIntParameter(const dtUtil::RefString& name, long defaultValue=0, 	bool isList=false);
+         NamedLongIntParameter(const dtUtil::RefString& name, long defaultValue = 0, bool isList = false);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedLongIntParameter();
@@ -605,10 +635,10 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedFloatParameter: public NamedPODParameter<float>
    {
       public:
-         NamedFloatParameter(const dtUtil::RefString& name, float defaultValue=0.0f,  bool isList=false);
+         NamedFloatParameter(const dtUtil::RefString& name, float defaultValue = 0.0f, bool isList = false);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedFloatParameter();
@@ -620,10 +650,10 @@ namespace dtDAL
    class DT_DAL_EXPORT NamedDoubleParameter: public NamedPODParameter<double>
    {
       public:
-         NamedDoubleParameter(const dtUtil::RefString& name, double defaultValue=0.0, 	bool isList=false);
+         NamedDoubleParameter(const dtUtil::RefString& name, double defaultValue = 0.0, bool isList = false);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedDoubleParameter();
@@ -641,12 +671,12 @@ namespace dtDAL
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          NamedStringParameter(DataType& dataType, const dtUtil::RefString& name, const std::string& defaultValue = "",
-             bool isList=false);
+             bool isList = false);
          virtual ~NamedStringParameter();
    };
 
@@ -660,8 +690,8 @@ namespace dtDAL
       public:
          NamedEnumParameter(const dtUtil::RefString& name, const std::string& defaultValue = "", bool isList=false);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedEnumParameter();
@@ -676,13 +706,13 @@ namespace dtDAL
    {
       public:
          NamedActorParameter(const dtUtil::RefString& name,
-          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""), bool isList=false);
+          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""), bool isList = false);
 
          virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedActorParameter();
@@ -698,13 +728,13 @@ namespace dtDAL
    {
       public:
          NamedGameEventParameter(const dtUtil::RefString& name,
-                                   const dtCore::UniqueId &defaultValue = dtCore::UniqueId(""),
+                                   const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""),
                                    bool isList = false);
          virtual const std::string ToString() const;
-         virtual bool FromString(const std::string &value);
+         virtual bool FromString(const std::string& value);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedGameEventParameter();
@@ -725,13 +755,15 @@ namespace dtDAL
 
             if (NamedGenericParameter<ParamType>::IsList())
             {
-               const std::vector<ParamType> &values =
+               const std::vector<ParamType>& values =
                   NamedGenericParameter<ParamType>::GetValueList();
 
                ss << values[0];
-               for (unsigned int i=1; i<values.size(); i++)
+               for (unsigned int i = 1; i < values.size(); ++i)
+               {
                   ss << NamedGenericParameter<ParamType>::GetParamDelimeter() <<
                      values[i];
+               }
                return ss.str();
             }
             else
@@ -743,29 +775,31 @@ namespace dtDAL
 
       protected:
          NamedVecParameter(DataType& dataType, const dtUtil::RefString& name, const ParamType& defaultValue,
-            bool isList=false) : NamedGenericParameter<ParamType>(dataType, name, defaultValue, isList) 
+            bool isList = false) : NamedGenericParameter<ParamType>(dataType, name, defaultValue, isList)
          {
                NamedGenericParameter<ParamType>::SetNumberPrecision(2 * sizeof(defaultValue[0]) + 1);
          }
          virtual ~NamedVecParameter() {}
 
-         bool InternalFromString(const std::string &value, unsigned size)
+         bool InternalFromString(const std::string& value, unsigned size)
          {
             if (NamedGenericParameter<ParamType>::IsList())
             {
-               std::vector<ParamType> &result =
+               std::vector<ParamType>& result =
                   NamedGenericParameter<ParamType>::GetValueList();
 
                std::vector<std::string> stringList;
                dtUtil::IsDelimeter delimCheck(NamedGenericParameter<ParamType>::GetParamDelimeter());
-               dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(stringList,value,delimCheck);
+               dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(stringList, value, delimCheck);
 
                result.clear();
-               for (unsigned int i=0; i<stringList.size(); i++)
+               for (unsigned int i = 0; i < stringList.size(); ++i)
                {
                   ParamType v;
-                  if (!dtUtil::ParseVec<ParamType>(stringList[i],v,size))
+                  if (!dtUtil::ParseVec<ParamType>(stringList[i], v, size))
+                  {
                      return false;
+                  }
                   result.push_back(v);
                }
 
@@ -780,7 +814,9 @@ namespace dtDAL
                   return true;
                }
                else
+               {
                   return false;
+               }
             }
          }
    };
@@ -792,12 +828,12 @@ namespace dtDAL
    {
       public:
          NamedVec2Parameter(const dtUtil::RefString& name,
-             const osg::Vec2& defaultValue = osg::Vec2(0.0,0.0), bool isList=false);
+             const osg::Vec2& defaultValue = osg::Vec2(0.0,0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 2); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec2Parameter();
@@ -810,12 +846,12 @@ namespace dtDAL
    {
       public:
          NamedVec2fParameter(const dtUtil::RefString& name,
-             const osg::Vec2f& defaultValue = osg::Vec2f(0.0,0.0), bool isList=false);
+             const osg::Vec2f& defaultValue = osg::Vec2f(0.0,0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 2); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec2fParameter();
@@ -828,12 +864,12 @@ namespace dtDAL
    {
       public:
          NamedVec2dParameter(const dtUtil::RefString& name,
-         	   const osg::Vec2d& defaultValue = osg::Vec2d(0.0,0.0), bool isList=false);
+               const osg::Vec2d& defaultValue = osg::Vec2d(0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 2); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec2dParameter();
@@ -846,16 +882,16 @@ namespace dtDAL
    {
       public:
          NamedVec3Parameter(const dtUtil::RefString& name,
-         	   const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList=false);
+               const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 3); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          NamedVec3Parameter(DataType& dataType, const dtUtil::RefString& name,
-               const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList=false);
+               const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
          virtual ~NamedVec3Parameter();
    };
 
@@ -866,7 +902,7 @@ namespace dtDAL
    {
       public:
          NamedRGBColorParameter(const dtUtil::RefString& name,
-             const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList=false);
+             const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList = false);
 
       protected:
          virtual ~NamedRGBColorParameter();
@@ -880,12 +916,12 @@ namespace dtDAL
    {
       public:
          NamedVec3fParameter(const dtUtil::RefString& name,
-         	   const osg::Vec3f& defaultValue = osg::Vec3f(0.0, 0.0, 0.0), bool isList=false);
+               const osg::Vec3f& defaultValue = osg::Vec3f(0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 3); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec3fParameter();
@@ -898,12 +934,12 @@ namespace dtDAL
    {
       public:
          NamedVec3dParameter(const dtUtil::RefString& name,
-             const osg::Vec3d& defaultValue = osg::Vec3d(0.0, 0.0, 0.0), bool isList=false);
+             const osg::Vec3d& defaultValue = osg::Vec3d(0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 3); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec3dParameter();
@@ -916,16 +952,16 @@ namespace dtDAL
    {
       public:
          NamedVec4Parameter(const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList=false);
+             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 4); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 4); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          NamedVec4Parameter(DataType& dataType, const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList=false);
+             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
          virtual ~NamedVec4Parameter();
    };
 
@@ -936,7 +972,7 @@ namespace dtDAL
    {
       public:
          NamedRGBAColorParameter(const dtUtil::RefString& name,
-             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList=false);
+             const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList = false);
 
       protected:
          virtual ~NamedRGBAColorParameter();
@@ -949,12 +985,12 @@ namespace dtDAL
    {
       public:
          NamedVec4fParameter(const dtUtil::RefString& name,
-          const osg::Vec4f& defaultValue = osg::Vec4f(0.0, 0.0, 0.0, 0.0), bool isList=false);
+          const osg::Vec4f& defaultValue = osg::Vec4f(0.0, 0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value)  {  return InternalFromString(value, 4); }
+         virtual bool FromString(const std::string& value)  {  return InternalFromString(value, 4); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec4fParameter();
@@ -967,12 +1003,12 @@ namespace dtDAL
    {
       public:
          NamedVec4dParameter(const dtUtil::RefString& name,
-         	const osg::Vec4d& defaultValue = osg::Vec4d(0.0, 0.0, 0.0, 0.0), bool isList=false);
+            const osg::Vec4d& defaultValue = osg::Vec4d(0.0, 0.0, 0.0, 0.0), bool isList = false);
 
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 4); }
+         virtual bool FromString(const std::string& value) { return InternalFromString(value, 4); }
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
       protected:
          virtual ~NamedVec4dParameter();
@@ -985,30 +1021,30 @@ namespace dtDAL
    {
       public:
          NamedResourceParameter(dtDAL::DataType& type, const dtUtil::RefString& name,
-            bool isList=false);
+            bool isList = false);
 
-         virtual void ToDataStream(dtUtil::DataStream &stream) const;
+         virtual void ToDataStream(dtUtil::DataStream& stream) const;
 
-         virtual void FromDataStream(dtUtil::DataStream &stream);
+         virtual bool FromDataStream(dtUtil::DataStream& stream);
 
          virtual const std::string ToString() const;
 
-         virtual bool FromString(const std::string &value);
+         virtual bool FromString(const std::string& value);
 
-         virtual void CopyFrom(const NamedParameter &otherParam);
+         virtual void CopyFrom(const NamedParameter& otherParam);
 
          void SetValue(const dtDAL::ResourceDescriptor* descriptor);
 
          const dtDAL::ResourceDescriptor* GetValue() const;
 
-         const std::vector<dtDAL::ResourceDescriptor> &GetValueList() const;
+         const std::vector<dtDAL::ResourceDescriptor>& GetValueList() const;
 
-         std::vector<dtDAL::ResourceDescriptor> &GetValueList();
+         std::vector<dtDAL::ResourceDescriptor>& GetValueList();
 
-         void SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues);
+         void SetValueList(const std::vector<dtDAL::ResourceDescriptor>& newValues);
 
-         virtual void SetFromProperty(const dtDAL::ActorProperty &property);
-         virtual void ApplyValueToProperty(dtDAL::ActorProperty &property) const;
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
 
          virtual bool operator==(const NamedParameter& toCompare) const;
 
@@ -1017,7 +1053,7 @@ namespace dtDAL
 
       private:
          const dtDAL::DataType* mDataType;
-         std::vector<dtDAL::ResourceDescriptor> *mValueList;
+         std::vector<dtDAL::ResourceDescriptor>* mValueList;
          dtDAL::ResourceDescriptor mDescriptor;
    };
 

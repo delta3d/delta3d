@@ -19,6 +19,7 @@
  * @author Pjotr van Amerongen
  * Coded with an italian keyboard and an italian Visual Studio (I am Dutch and don't speak and read italian)
  */
+
 #ifndef DELTA_DATASTREAMPACKET
 #define DELTA_DATASTREAMPACKET
 

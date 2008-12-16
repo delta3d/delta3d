@@ -34,24 +34,24 @@ IMPLEMENT_MANAGEMENT_LAYER(WalkMotionModel)
  */
 WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
                                  Mouse* mouse)
-   : MotionModel("WalkMotionModel"),
-     mWalkForwardBackwardAxis(NULL),
-     mTurnLeftRightAxis(NULL),
-     mSidestepLeftRightAxis(NULL),
-     mMaximumWalkSpeed(10.0f),
-     mMaximumTurnSpeed(90.0f),
-     mMaximumSidestepSpeed(5.0f),
-     mHeightAboveTerrain(2.0f),
-     mMaximumStepUpDistance(1.0f),
-     mDownwardSpeed(0.0f)
+   : MotionModel("WalkMotionModel")
+   , mWalkForwardBackwardAxis(NULL)
+   , mTurnLeftRightAxis(NULL)
+   , mSidestepLeftRightAxis(NULL)
+   , mMaximumWalkSpeed(10.0f)
+   , mMaximumTurnSpeed(90.0f)
+   , mMaximumSidestepSpeed(5.0f)
+   , mHeightAboveTerrain(2.0f)
+   , mMaximumStepUpDistance(1.0f)
+   , mDownwardSpeed(0.0f)
 {
    RegisterInstance(this);
-   
-   if(keyboard != NULL && mouse != NULL)
+
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
-   
+
    AddSender(&System::GetInstance());
 }
 
@@ -61,7 +61,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
 WalkMotionModel::~WalkMotionModel()
 {
    RemoveSender(&System::GetInstance());
-   
+
    DeregisterInstance(this);
 }
 
@@ -94,10 +94,10 @@ Scene* WalkMotionModel::GetScene()
  */
 void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == 0)
+   if (mDefaultInputDevice.get() == 0)
    {
       mDefaultInputDevice = new LogicalInputDevice;
-      
+
       Axis* leftButtonUpAndDown = mDefaultInputDevice->AddAxis(
          "left mouse button up/down",
          mLeftButtonUpDownMapping = new ButtonAxisToAxis(
@@ -105,7 +105,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(1)
          )
       );
-      
+
       Axis* leftButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "left mouse button left/right",
          mLeftButtonLeftRightMapping = new ButtonAxisToAxis(
@@ -113,7 +113,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(0)
          )
       );
-   
+
       Axis* rightButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "right mouse button left/right",
          mRightButtonLeftRightMapping = new ButtonAxisToAxis(
@@ -121,7 +121,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(0)
          )
       );
-      
+
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
@@ -129,7 +129,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
          )
       );
-         
+
       Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "arrow keys left/right",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
@@ -137,7 +137,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
          )
       );
-      
+
       Axis* adKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
@@ -145,17 +145,17 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton('d')
          )
       );
-            
+
       mDefaultWalkForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default walk forward/backward",
          new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
       );
-         
+
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
          new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
       );
-         
+
       mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default sidestep left/right",
          new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight)
@@ -165,36 +165,36 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mArrowKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
       );
-      
+
       mArrowKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
       );
-      
+
       mADKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton('a'),
          keyboard->GetButton('d')
       );
    }
-   
+
    SetWalkForwardBackwardAxis(mDefaultWalkForwardBackwardAxis);
-      
+
    SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis);
-         
+
    SetSidestepLeftRightAxis(mDefaultSidestepLeftRightAxis);
 }
-         
+
 /**
  * Sets the axis that moves the target forwards (for positive
  * values) or backwards (for negative values).
@@ -225,7 +225,7 @@ Axis* WalkMotionModel::GetWalkForwardBackwardAxis()
  */
 void WalkMotionModel::SetTurnLeftRightAxis(Axis* turnLeftRightAxis)
 {
-   mTurnLeftRightAxis = turnLeftRightAxis;  
+   mTurnLeftRightAxis = turnLeftRightAxis;
 }
 
 /**
@@ -364,16 +364,16 @@ float WalkMotionModel::GetMaximumStepUpDistance()
 {
    return mMaximumStepUpDistance;
 }
-         
+
 /**
  * Message handler callback.
  *
  * @param data the message data
  */
-void WalkMotionModel::OnMessage(MessageData *data)
+void WalkMotionModel::OnMessage(MessageData* data)
 {
-   if(GetTarget() != 0 &&
-      IsEnabled() && 
+   if (GetTarget() != 0 &&
+      IsEnabled() &&
       data->message == "preframe")
    {
       double dtCore = *static_cast<double*>(data->userData);
@@ -386,7 +386,7 @@ void WalkMotionModel::OnMessage(MessageData *data)
 
       transform.Get(xyz, hpr);
 
-      if(mTurnLeftRightAxis != 0)
+      if (mTurnLeftRightAxis != 0)
       {
          hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
@@ -398,12 +398,12 @@ void WalkMotionModel::OnMessage(MessageData *data)
 
       osg::Vec3 translation(0, 0, 0);
 
-      if(mWalkForwardBackwardAxis != 0)
+      if (mWalkForwardBackwardAxis != 0)
       {
          translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * dtCore);
       }
 
-      if(mSidestepLeftRightAxis != 0)
+      if (mSidestepLeftRightAxis != 0)
       {
          translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * dtCore);
       }
@@ -418,7 +418,7 @@ void WalkMotionModel::OnMessage(MessageData *data)
       //sgAddVec3(xyz, translation);
       xyz += translation;
 
-      if(mScene.get() != 0)
+      if (mScene.get() != 0)
       {
          osgUtil::IntersectVisitor iv;
 
@@ -429,8 +429,8 @@ void WalkMotionModel::OnMessage(MessageData *data)
          );
 
          osg::Vec3 end(
-            xyz[0], 
-            xyz[1], 
+            xyz[0],
+            xyz[1],
             xyz[2] - 10000.0f
          );
 
@@ -442,20 +442,20 @@ void WalkMotionModel::OnMessage(MessageData *data)
 
          float height = 0.0f;
 
-         if(iv.hits())
+         if (iv.hits())
          {
             height = iv.getHitList(seg)[0].getWorldIntersectPoint()[2];
          }
 
          height += mHeightAboveTerrain;
 
-         if(xyz[2] <= height)
+         if (xyz[2] <= height)
          {
             xyz[2] = height;
 
             mDownwardSpeed = 0.0f;
          }
-         else if(xyz[2] > height)
+         else if (xyz[2] > height)
          {
             xyz[2] -= float(mDownwardSpeed * dtCore);
 
@@ -469,4 +469,4 @@ void WalkMotionModel::OnMessage(MessageData *data)
    }
 }
 
-}
+} // namespace dtCore

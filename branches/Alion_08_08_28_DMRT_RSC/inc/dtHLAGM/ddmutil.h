@@ -23,7 +23,7 @@
 
 #include <dtHLAGM/export.h>
 #include <vector>
-
+#include <string>
 
 namespace dtHLAGM
 {

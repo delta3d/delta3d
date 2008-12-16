@@ -29,7 +29,7 @@ namespace dtAnim
 {
    class Cal3DModelWrapper;
 
-class	DT_ANIM_EXPORT ICal3DDriver: public osg::Referenced
+class DT_ANIM_EXPORT ICal3DDriver: public osg::Referenced
 {
 
 public:

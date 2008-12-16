@@ -116,7 +116,7 @@ namespace dtActors
          config.mForwardVector = false;
          config.mUpVector = false;
 
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::TRIGGER, config);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER, config);
       }
 
       return mBillBoardIcon.get();

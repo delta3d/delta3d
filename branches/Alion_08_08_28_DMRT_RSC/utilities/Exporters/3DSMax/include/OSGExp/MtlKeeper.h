@@ -34,6 +34,10 @@
  *                  14.10.2005 Joran: Made addAlphaFunc static and public.
  *
  *                  08.02.2006 Joran: Added class id's for architectural materials.
+ *
+ *					02.10.2007 Farshid Lashkari: Texture memory usage improvements. When compressed
+ *					textures is turned on, textures will immediately be compressed and 
+ *					uncompressed data will be released during export.
  */
 
 #ifndef __MTLKEEPER__H
@@ -82,6 +86,25 @@ enum {
 	acubic_outputname,
 };
 
+//Class that will create a graphics context that will be used for compressing textures
+class TextureCompressor {
+public:
+    TextureCompressor();
+    virtual ~TextureCompressor();
+
+	void compress(osg::Texture2D *texture);
+private:
+    static LRESULT CALLBACK StaticWindowProc(HWND _hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+private:
+    HWND hwnd;
+    HGLRC hglrc;
+    HGLRC hglrcOld;
+    HDC hdc;
+    HDC hdcOld;
+	osg::ref_ptr<osg::State> state;
+};
+
+
 class MtlKeeper {
 public:
 
@@ -102,6 +125,7 @@ public:
 	void								setTextureWrap(osg::StateSet* stateset, int texUnit, 
 										   osg::Texture::WrapParameter param, osg::Texture::WrapMode mode);
     static osg::Texture::InternalFormatMode getTexComp(Options* options);
+	static bool getEmbedImageData(Options* options);
 	static osg::ref_ptr<osg::BlendFunc> addAlphaBlendFunc(osg::StateSet* stateset);
 private:
 
@@ -151,8 +175,7 @@ private:
 	MtlList								_mtlList;
 
 	// A container to map image names to their respective osg::Images and data arrays.
-	typedef std::pair<osg::ref_ptr<osg::Image>, unsigned char*> ImgPair;
-    typedef std::map<std::string, ImgPair>  ImgList;
+    typedef std::map<std::string, osg::ref_ptr<osg::Image> >  ImgList;
 	ImgList								_imgList;
 
 	// A container to map texture units to their repective mapping channels in MAX.
@@ -161,6 +184,9 @@ private:
 
 	// Only show memory error one time.
 	BOOL								_hasShownMemErr;
+
+	// For compressing textures (Only created when used for first time)
+	TextureCompressor*					_compressor;
 };
 
 #endif // __MTLKEEPER__H

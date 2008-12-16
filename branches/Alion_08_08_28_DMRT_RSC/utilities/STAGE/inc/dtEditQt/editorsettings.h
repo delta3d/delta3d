@@ -62,6 +62,9 @@ namespace dtEditQt
 
         static const QString MAINWIN_GEOMETRY;
 
+        static const QString SPLITTER_GROUP;
+        static const QString SPLITTER_SIZE;
+
         static const QString RECENT_PROJECTS;
         static const QString RECENT_MAPS;
         static const QString LIBRARY_PATHS;
@@ -91,6 +94,14 @@ namespace dtEditQt
 
         ///Current state of the main windows dockables and toolbars.
         static const QString MAINWIN_DOCK_STATE;
+
+        ///External tool labels
+        static const QString EXTERNAL_TOOLS;
+        static const QString EXTERNAL_TOOL_TITLE;
+        static const QString EXTERNAL_TOOL_COMMAND;
+        static const QString EXTERNAL_TOOL_ARGS;
+        static const QString EXTERNAL_TOOL_WORKING_DIR;
+        static const QString EXTERNAL_TOOL_ICON;
 
         /**
          * Constructs the settings object.  This reads the settings from disk if they

@@ -49,19 +49,19 @@ namespace dtGame
 
       if (msg.GetSource() == GetGameManager()->GetMachineInfo())
       {
-         if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
+         if (msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
          {
             GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
                ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg), *ga);
          }
-         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
+         else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
          {
             GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
                ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
          }
-         else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
+         else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
          {
             GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())

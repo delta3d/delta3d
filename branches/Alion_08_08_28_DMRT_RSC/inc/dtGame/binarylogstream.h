@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ */
+
 #ifndef DELTA_BINARYLOGSTREAM
 #define DELTA_BINARYLOGSTREAM
 
@@ -54,7 +55,7 @@ namespace dtGame
          /**
           * Constructs a new log stream.
           */
-         BinaryLogStream(MessageFactory &msgFactory);
+         BinaryLogStream(MessageFactory& msgFactory);
 
          /**
           * Flushes any write buffers, closes an open file handles, and
@@ -67,7 +68,7 @@ namespace dtGame
           * an extension of ".dlm" attached to the log resource name.  Second, an
           * index file is created.  This has an extension of ".dli" attached to the
           * log resource name.
-          * @param logResourceName The baes name of the new log file to create.  This can
+          * @param logResourceName The base name of the new log file to create.  This can
           *    be a relative or absolute path; however, this should not include any sort
           *    of file extensions.
           * @note This method implicitly opens the log stream for writing.
@@ -76,7 +77,7 @@ namespace dtGame
           * @note If any error occurs while creating the stream, a LogStream::LOGGER_IO_EXCEPTION
           *    is thrown.
           */
-         virtual void Create(const std::string &logsPath, const std::string &logResourceName);
+         virtual void Create(const std::string& logsPath, const std::string& logResourceName);
 
          /**
           * Opens an existing log.  Again, this implies that two physical files are opened
@@ -88,7 +89,7 @@ namespace dtGame
           * @note If any error occurs while creating the stream, a LogStream::LOGGER_IO_EXCEPTION
           *    is thrown.
           */
-         virtual void Open(const std::string &logsPath, const std::string &logResourceName);
+         virtual void Open(const std::string& logsPath, const std::string& logResourceName);
 
          /**
           * Deletes the specified log resource.
@@ -97,8 +98,8 @@ namespace dtGame
           *    Implementation should use this in some form in their naming conventions
           *    for log files.
           */
-         virtual void Delete(const std::string &logsPAth,
-            const std::string &logResourceName);
+         virtual void Delete(const std::string& logsPAth,
+            const std::string& logResourceName);
 
          /**
           * Gets a list of the current logs available to the log stream by
@@ -112,15 +113,15 @@ namespace dtGame
           *    by the other methods in the BinaryLogStream to identity logs
           *    for reading and writing.
           */
-         virtual void GetAvailableLogs(const std::string &logsPath,
-            std::vector<std::string> &logs);
+         virtual void GetAvailableLogs(const std::string& logsPath,
+            std::vector<std::string>& logs);
 
          /**
           * Writes a game message to the message database file.
           * @param msg The message to write.
           * @param timeStamp The time stamp matched to this message.
           */
-         virtual void WriteMessage(const Message &msg, double timeStamp);
+         virtual void WriteMessage(const Message& msg, double timeStamp);
 
          /**
           * Reads a game message from the messages database file.
@@ -128,19 +129,19 @@ namespace dtGame
           *    message.
           * @return The next game message in file.
           */
-         virtual dtCore::RefPtr<Message> ReadMessage(double &timeStamp);
+         virtual dtCore::RefPtr<Message> ReadMessage(double& timeStamp);
 
          /**
           * Creates and inserts a new tag into the current log stream.
           * @param newTag The new tag to insert.
           */
-         virtual void InsertTag(LogTag &newTag);
+         virtual void InsertTag(LogTag& newTag);
 
          /**
           * Creates and inserts a new keyframe into the current log stream.
           * @param newKeyFrame The new keyframe to insert.
           */
-         virtual void InsertKeyFrame(LogKeyframe &newKeyFrame);
+         virtual void InsertKeyFrame(LogKeyframe& newKeyFrame);
 
          /**
           * This method causes the current read position in the messages
@@ -148,7 +149,7 @@ namespace dtGame
           * keyframe.
           * @param keyFrame The keyframe to go to.
           */
-         virtual void JumpToKeyFrame(const LogKeyframe &keyFrame);
+         virtual void JumpToKeyFrame(const LogKeyframe& keyFrame);
 
          /**
           * Gets the list of tags in this log stream.  The tags are
@@ -156,7 +157,7 @@ namespace dtGame
           * @param tags This vector is filled with the tags currently in
           *    the log stream.
           */
-         virtual void GetTagIndex(std::vector<LogTag> &tags);
+         virtual void GetTagIndex(std::vector<LogTag>& tags);
 
          /**
           * Gets the list of keyframes contained within the log stream.  The keyframes
@@ -164,7 +165,7 @@ namespace dtGame
           * @param keyFrames This vector is filled with the tags currently
           *    in the log stream.
           */
-         virtual void GetKeyFrameIndex(std::vector<LogKeyframe> &keyFrames);
+         virtual void GetKeyFrameIndex(std::vector<LogKeyframe>& keyFrames);
 
          /**
           * Ensures the all outstanding messages, tags, and keyframes are
@@ -197,7 +198,7 @@ namespace dtGame
              * @param error If not valid, this contains the reason why.
              * @return True if valid, false otherwise.
              */
-            bool validate(std::string &error)
+            bool validate(std::string& error)
             {
                if (magicNumber != BinaryLogStream::LOGGER_MSGDB_MAGIC_NUMBER)
                {
@@ -235,7 +236,7 @@ namespace dtGame
           */
          struct IndexTableHeader
          {
-            bool validate(std::string &error)
+            bool validate(std::string& error)
             {
                if (magicNumber != BinaryLogStream::LOGGER_INDEX_MAGIC_NUMBER)
                {
@@ -273,7 +274,7 @@ namespace dtGame
           * @note If a valid message data base file does not exist or
           *    the header is malformed, a LOGGER_IO_EXCEPTION is thrown.
           */
-         void ReadMessageDataBaseHeader(MessageDataBaseHeader &header);
+         void ReadMessageDataBaseHeader(MessageDataBaseHeader& header);
 
          /**
           * Writes the file header to the message database file.
@@ -284,7 +285,7 @@ namespace dtGame
           * @note This method automatically seeks to the beginning of the file
           *    before writing the header data.
           */
-         void WriteMessageDataBaseHeader(MessageDataBaseHeader &header);
+         void WriteMessageDataBaseHeader(MessageDataBaseHeader& header);
 
          /**
           * Reads the file header located in the index table file.
@@ -293,7 +294,7 @@ namespace dtGame
           * @note If a valid index table file does not exist or
           *    the header is malformed, a LOGGER_IO_EXCEPTION is thrown.
           */
-         void ReadIndexTableHeader(IndexTableHeader &header);
+         void ReadIndexTableHeader(IndexTableHeader& header);
 
          /**
           * Writes the file header to the index table file.
@@ -304,7 +305,7 @@ namespace dtGame
           * @note This method automatically seeks to the beginning of the file
           *    before writing the header data.
           */
-         void WriteIndexTableHeader(IndexTableHeader &header);
+         void WriteIndexTableHeader(IndexTableHeader& header);
 
          /**
           * Destructor.  Calls the Close() method.
@@ -322,14 +323,14 @@ namespace dtGame
           * Checks the stream for any errors, throwing an exception if an error occurs.
           * @param fp The file stream to check.
           */
-         void CheckFileStatus(FILE *fp);
+         void CheckFileStatus(FILE* fp);
 
          /**
           * Writes a keyframe to the index tables file.  This method
           * assumes a valid index tables file exists.
           * @param keyFrame The keyframe to add to the file.
           */
-         void WriteKeyFrame(const LogKeyframe &keyFrame);
+         void WriteKeyFrame(const LogKeyframe& keyFrame);
 
          /**
           * Reads a keyframe from the current read position in the index tables
@@ -343,7 +344,7 @@ namespace dtGame
           * a valid index tables file exists.
           * @param tag The tag to add to the index tables file.
           */
-         void WriteTag(const LogTag &tag);
+         void WriteTag(const LogTag& tag);
 
          /**
           * Reads a tag from the current read position in the index tables
@@ -353,10 +354,10 @@ namespace dtGame
          LogTag ReadTag();
 
       private:
-         FILE *mMessagesFile;
+         FILE* mMessagesFile;
          std::string mMessagesFileName;
 
-         FILE *mIndexTablesFile;
+         FILE* mIndexTablesFile;
          std::string mIndexTablesFileName;
 
          ///List of existing tags in the index file.
@@ -372,14 +373,14 @@ namespace dtGame
          ///List of keyframes that were added during recording.
          ///These are inserted into the file if it flushed or closed.
          std::vector<LogKeyframe> mNewKeyFrames;
-         
+
          int mCurrentMinorVersion;
 
-         // Tracks whether we have opened the files for write mode (typically RECORD only) 
-         // or for read mode (typically playback). 
+         // Tracks whether we have opened the files for write mode (typically RECORD only)
+         // or for read mode (typically playback).
          bool mFilesAreOpenForWriting;
    };
 
-}
+} // namespace dtGame
 
-#endif
+#endif // DELTA_BINARYLOGSTREAM

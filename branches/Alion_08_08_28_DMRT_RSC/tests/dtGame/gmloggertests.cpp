@@ -1,31 +1,32 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Matthew W. Campbell
-* @author Curtiss Murphy
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Matthew W. Campbell
+ * @author Curtiss Murphy
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/binarylogstream.h>
 #include <dtGame/gamemanager.h>
@@ -177,17 +178,17 @@ class TestControllerSignal: public sigslot::has_slots<>, public osg::Referenced
 
       TestControllerSignal() { Reset(); }
 
-      void OnReceivedStatus(const dtGame::LogStatus &newStatus)
+      void OnReceivedStatus(const dtGame::LogStatus& newStatus)
       {
          mStatus = newStatus;
          mStatusSignalReceived = true;
       }
-      void OnReceivedRejection(const dtGame::Message &newMessage)
+      void OnReceivedRejection(const dtGame::Message& newMessage)
       {
          mRejectMessage = &newMessage;
          mRejectionSignalReceived = true;
       }
-      void RegisterSignals(dtGame::LogController &logController)
+      void RegisterSignals(dtGame::LogController& logController)
       {
          logController.SignalReceivedStatus().connect_slot(this, &TestControllerSignal::OnReceivedStatus);
          logController.SignalReceivedRejection().connect_slot(this, &TestControllerSignal::OnReceivedRejection);
@@ -212,35 +213,35 @@ class TestControllerSignal: public sigslot::has_slots<>, public osg::Referenced
 class TestLogStream : public dtGame::LogStream
 {
    public:
-      TestLogStream(dtGame::MessageFactory &msgFactory, dtCore::RefPtr<dtGame::GameManager> newGameManager)
+      TestLogStream(dtGame::MessageFactory& msgFactory, dtCore::RefPtr<dtGame::GameManager> newGameManager)
          : dtGame::LogStream(msgFactory)
       {
          mGameManager = newGameManager;
          mExceptionEnabled = false;
       }
-      void Create(const std::string &logsPath, const std::string &logResourceName) { DoException(); }
+      void Create(const std::string& logsPath, const std::string& logResourceName) { DoException(); }
       void Close()
       {
          // Note, real close doesn't throw exception at the moment, but left in
          // because it's easier to test failure/reject code
          DoException();
       }
-      void Open(const std::string &logsPath, const std::string &logResourceName) { DoException(); }
-      void WriteMessage(const dtGame::Message &msg, double timeStamp) { DoException(); }
-      dtCore::RefPtr<dtGame::Message> ReadMessage(double &timeStamp)
+      void Open(const std::string& logsPath, const std::string& logResourceName) { DoException(); }
+      void WriteMessage(const dtGame::Message& msg, double timeStamp) { DoException(); }
+      dtCore::RefPtr<dtGame::Message> ReadMessage(double& timeStamp)
       {
          DoException();
          return mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::LOG_INFO_STATUS);
       }
-      void InsertTag(dtGame::LogTag &newTag) { DoException(); }
-      void InsertKeyFrame(dtGame::LogKeyframe &newKeyFrame) { DoException(); }
-      void JumpToKeyFrame(const dtGame::LogKeyframe &keyFrame) { DoException(); }
-      void GetTagIndex(std::vector<dtGame::LogTag> &tags) { DoException(); }
-      void GetKeyFrameIndex(std::vector<dtGame::LogKeyframe> &keyFrames) { DoException(); }
+      void InsertTag(dtGame::LogTag& newTag) { DoException(); }
+      void InsertKeyFrame(dtGame::LogKeyframe& newKeyFrame) { DoException(); }
+      void JumpToKeyFrame(const dtGame::LogKeyframe& keyFrame) { DoException(); }
+      void GetTagIndex(std::vector<dtGame::LogTag>& tags) { DoException(); }
+      void GetKeyFrameIndex(std::vector<dtGame::LogKeyframe>& keyFrames) { DoException(); }
       void Flush() { DoException(); }
-      void GetAvailableLogs(const std::string &logsPath,
-            std::vector<std::string> &logs) { }
-      virtual void Delete(const std::string &logsPath, const std::string &logResourceName) { }
+      void GetAvailableLogs(const std::string& logsPath,
+            std::vector<std::string>& logs) { }
+      virtual void Delete(const std::string& logsPath, const std::string& logResourceName) { }
 
       bool mExceptionEnabled;
    protected:
@@ -248,8 +249,10 @@ class TestLogStream : public dtGame::LogStream
       void DoException()
       {
          if (mExceptionEnabled)
+         {
             throw dtUtil::Exception(dtGame::LogStreamException::LOGGER_IO_EXCEPTION,
             "Test Exception - Not an Error!", __FILE__, __LINE__);
+         }
       }
       virtual ~TestLogStream() { }
    private:
@@ -262,7 +265,7 @@ class TestLogStream : public dtGame::LogStream
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
 char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
@@ -281,11 +284,11 @@ void GMLoggerTests::setUp()
    keyframe.SetName("myName");
    keyframe.SetDescription("myDescription");
    keyframe.SetSimTimeStamp(d1);
-   
+
    dtGame::LogStatus::NameVector mapNames;
    mapNames.push_back("myMap");
    mapNames.push_back("myMap2");
-   
+
    keyframe.SetActiveMaps(mapNames);
    keyframe.SetLogFileOffset(long2);
    keyframe.SetTagUniqueId(dtCore::UniqueId("taguniqueid"));
@@ -333,10 +336,12 @@ void GMLoggerTests::tearDown()
          mGameManager->DeleteAllActors(true);
          mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
          mGameManager = NULL;
-         
-         stream->GetAvailableLogs(TESTS_DIR,logList);
-         for (unsigned int i=0; i<logList.size(); i++)
-            stream->Delete(TESTS_DIR,logList[i]);
+
+         stream->GetAvailableLogs(TESTS_DIR, logList);
+         for (unsigned int i = 0; i < logList.size(); ++i)
+         {
+            stream->Delete(TESTS_DIR, logList[i]);
+         }
 
          stream = NULL;
 
@@ -353,16 +358,16 @@ void GMLoggerTests::tearDown()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamCreate()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
 
    try
    {
-      stream->Create(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR, LOGFILE);
       stream->Close();
-      stream->Delete(TESTS_DIR,LOGFILE);
+      stream->Delete(TESTS_DIR, LOGFILE);
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -371,12 +376,12 @@ void GMLoggerTests::TestBinaryLogStreamCreate()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamOpen()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
 
    try
    {
-      stream->Create(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR, LOGFILE);
       stream->Close();
 
       std::string testFileName = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + LOGFILE;
@@ -389,12 +394,12 @@ void GMLoggerTests::TestBinaryLogStreamOpen()
 
       const dtUtil::FileInfo secondInfo = dtUtil::FileUtils::GetInstance().GetFileInfo(testFileName);
 
-      // make sure that the time didn't change on the file between creating and opening. This ensures 
+      // make sure that the time didn't change on the file between creating and opening. This ensures
       // that the open/close didn't write to the file.
       CPPUNIT_ASSERT_MESSAGE("Time Shouldn't change just from opening and closing log stream.",
          firstInfo.lastModified == secondInfo.lastModified);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -403,30 +408,30 @@ void GMLoggerTests::TestBinaryLogStreamOpen()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamDeleteLog()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-   dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
+   dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
 
    try
    {
       std::vector<std::string> logList;
 
-      stream->Create(TESTS_DIR,LOGFILE);
-      stream->Create(TESTS_DIR,LOGFILE+"1");
-      stream->Create(TESTS_DIR,LOGFILE+"2");
-      stream->Create(TESTS_DIR,LOGFILE+"3");
+      stream->Create(TESTS_DIR, LOGFILE);
+      stream->Create(TESTS_DIR, LOGFILE+"1");
+      stream->Create(TESTS_DIR, LOGFILE+"2");
+      stream->Create(TESTS_DIR, LOGFILE+"3");
 
       stream->GetAvailableLogs(TESTS_DIR,logList);
       CPPUNIT_ASSERT(logList.size() == 4);
 
-      stream->Delete(TESTS_DIR,LOGFILE);
-      stream->Delete(TESTS_DIR,LOGFILE+"1");
-      stream->Delete(TESTS_DIR,LOGFILE+"2");
-      stream->Delete(TESTS_DIR,LOGFILE+"3");
+      stream->Delete(TESTS_DIR, LOGFILE);
+      stream->Delete(TESTS_DIR, LOGFILE+"1");
+      stream->Delete(TESTS_DIR, LOGFILE+"2");
+      stream->Delete(TESTS_DIR, LOGFILE+"3");
 
       stream->GetAvailableLogs(TESTS_DIR,logList);
       CPPUNIT_ASSERT(logList.size() == 0);
    }
-   catch(const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -435,8 +440,8 @@ void GMLoggerTests::TestBinaryLogStreamDeleteLog()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamGetLogs()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-   dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
+   dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
 
    try
    {
@@ -452,7 +457,7 @@ void GMLoggerTests::TestBinaryLogStreamGetLogs()
       stream->GetAvailableLogs(TESTS_DIR,logList);
       CPPUNIT_ASSERT_EQUAL((size_t)4,logList.size());
       int count = 0;
-      for (unsigned int i=0; i<logList.size(); i++)
+      for (unsigned int i = 0; i < logList.size(); ++i)
       {
          if (logList[i] == LOGFILE || logList[i] == std::string(LOGFILE+"1") ||
             logList[i] == std::string(LOGFILE+"2") || logList[i] == std::string(LOGFILE+"3"))
@@ -465,7 +470,7 @@ void GMLoggerTests::TestBinaryLogStreamGetLogs()
       ss << (count-4) << " logs were not found in the returned log list.";
       CPPUNIT_ASSERT_MESSAGE(ss.str(),count == 4);
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -474,7 +479,7 @@ void GMLoggerTests::TestBinaryLogStreamGetLogs()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::TickMessage> tickMessage =
       (dtGame::TickMessage *)(msgFactory.CreateMessage(dtGame::MessageType::TICK_LOCAL)).get();
 
@@ -510,14 +515,14 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
 
          //Now try reading from it.. this should throw an exception.
          double timeStamp;
-         tickMessage = (dtGame::TickMessage *)(errorStream->ReadMessage(timeStamp)).get();
+         tickMessage = (dtGame::TickMessage*)(errorStream->ReadMessage(timeStamp)).get();
          CPPUNIT_FAIL("Should have caught a LOGGER_IO_EXCEPTION.");
       }
       catch (const dtUtil::Exception&)
       {
       }
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -526,16 +531,16 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
    dtCore::RefPtr<dtGame::TickMessage> tickMessage =
-      (dtGame::TickMessage *)(msgFactory.CreateMessage(dtGame::MessageType::TICK_LOCAL)).get();
+      (dtGame::TickMessage*)(msgFactory.CreateMessage(dtGame::MessageType::TICK_LOCAL)).get();
    int i;
 
    try
    {
       stream->Create(TESTS_DIR,LOGFILE);
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          tickMessage->SetDeltaSimTime(i*2.0f);
          tickMessage->SetDeltaRealTime(i*3.0f);
@@ -546,16 +551,16 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
       stream->Close();
 
       stream->Open(TESTS_DIR,LOGFILE);
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          float t1 = i*2.0f;
          float t2 = i*3.0f;
          float t3 = (float)i;
-         long t4 = i;
+         long  t4 = i;
 
          double timeStamp;
          dtCore::RefPtr<dtGame::TickMessage> msgToTest =
-            (dtGame::TickMessage *)(stream->ReadMessage(timeStamp)).get();
+            (dtGame::TickMessage*)(stream->ReadMessage(timeStamp)).get();
 
          CPPUNIT_ASSERT_MESSAGE("Message types should be equal.",msgToTest->GetMessageType() == tickMessage->GetMessageType());
          CPPUNIT_ASSERT_MESSAGE("Message time stamp was not read correctly.",timeStamp == 100.045);
@@ -570,7 +575,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
       }
       stream->Close();
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -579,8 +584,8 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamTags()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-   dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
+   dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
 
    try
    {
@@ -638,15 +643,19 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       newTag.SetName("bob");
       newTag.SetDescription("bob_desc_test");
       stream->Create(TESTS_DIR,LOGFILE);
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          newTag.SetUniqueId(dtCore::UniqueId());
          newTag.SetSimTimeStamp(i*100);
          newTag.SetKeyframeUniqueId(dtCore::UniqueId());
          if ((i%2) == 0)
+         {
             newTag.SetCaptureKeyframe(true);
+         }
          else
+         {
             newTag.SetCaptureKeyframe(false);
+         }
 
          stream->InsertTag(newTag);
          tagsToCompare.push_back(newTag);
@@ -656,7 +665,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       stream->Open(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       CPPUNIT_ASSERT_MESSAGE("Tag list should have a 100 tags.",tagList.size() == tagsToCompare.size());
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Tag unique ids should be equal.",tagList[i] == tagsToCompare[i]);
          CPPUNIT_ASSERT_MESSAGE("Tag keyframe ids should be equal.",
@@ -668,7 +677,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
             tagsToCompare[i].GetCaptureKeyframe());
       }
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -677,7 +686,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamKeyFrames()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
 
    try
@@ -700,7 +709,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       newFrame.SetName("bob");
       newFrame.SetDescription("bob_desc");
       newFrame.SetSimTimeStamp(10.001);
-      
+
       dtGame::LogStatus::NameVector mapNames;
       mapNames.push_back("testmap");
 
@@ -738,13 +747,13 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       std::vector<dtGame::LogKeyframe> framesToCompare;
       newFrame.SetName("bob");
       newFrame.SetDescription("bob_desc");
-      
+
       mapNames.clear();
       mapNames.push_back("activemap");
 
       newFrame.SetActiveMaps(mapNames);
       stream->Create(TESTS_DIR,LOGFILE);
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          newFrame.SetUniqueId(dtCore::UniqueId());
          newFrame.SetTagUniqueId(dtCore::UniqueId("tag:"+ dtUtil::ToString(i)));
@@ -758,7 +767,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       stream->GetKeyFrameIndex(kfList);
       //CPPUNIT_ASSERT_MESSAGE("KeyFrame list should have a 100 key frames.",kfList.size() == framesToCompare.size());
       CPPUNIT_ASSERT_EQUAL_MESSAGE("KeyFrame list should have a 100 key frames.",kfList.size(), framesToCompare.size());
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Keyframe unique ids should be equal",kfList[i] == framesToCompare[i]);
          CPPUNIT_ASSERT_MESSAGE("Tag unique ids should be equal",
@@ -769,7 +778,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
          CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMaps() == framesToCompare[i].GetActiveMaps());
       }
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -778,7 +787,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
    unsigned int i;
 
@@ -790,7 +799,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
       //This test makes sure that interleaved keyframes and tags are correctly
       //stored and retreived from the log stream's index table.
       stream->Create(TESTS_DIR,LOGFILE);
-      for (i=0; i<1000; i++)
+      for (i = 0; i < 1000; ++i)
       {
          if ((i%2) == 0)
          {
@@ -809,7 +818,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
             kf.SetUniqueId(dtCore::UniqueId());
             kf.SetName("bobkf");
             kf.SetDescription("bobkf_desc");
-            
+
             dtGame::LogStatus::NameVector mapNames;
             mapNames.push_back("bobtestmap");
 
@@ -831,7 +840,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
 
       CPPUNIT_ASSERT_MESSAGE("Tag list from file not of correct size.",tagList.size() == tagCompareList.size());
       CPPUNIT_ASSERT_MESSAGE("Keyframe list from file not of correct size.",kfList.size() == kfCompareList.size());
-      for (i=0; i<kfList.size(); i++)
+      for (i = 0; i < kfList.size(); ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Keyframe unique ids should be equal",kfList[i] == kfCompareList[i]);
          CPPUNIT_ASSERT_MESSAGE("Tag unique ids should be equal",
@@ -841,7 +850,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
          CPPUNIT_ASSERT_MESSAGE("Keyframe simulation times should be equal.",kfList[i].GetSimTimeStamp() == kfCompareList[i].GetSimTimeStamp());
          CPPUNIT_ASSERT_MESSAGE("Keyframe active map names should be equal.",kfList[i].GetActiveMaps() == kfCompareList[i].GetActiveMaps());
       }
-      for (i=0; i<tagList.size(); i++)
+      for (i = 0; i < tagList.size(); ++i)
       {
          CPPUNIT_ASSERT_MESSAGE("Tag unique ids should be equal.",tagList[i] == tagCompareList[i]);
          CPPUNIT_ASSERT_MESSAGE("Tag keyframe ids should be equal.",
@@ -855,7 +864,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -864,8 +873,8 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-   dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(msgFactory);
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
+   dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
    dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMessage;
    msgFactory.CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, actorUpdateMessage);
    unsigned int i;
@@ -873,7 +882,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
    try
    {
       stream->Create(TESTS_DIR,LOGFILE);
-      for (i=0; i<250; i++)
+      for (i = 0; i < 250; ++i)
       {
          std::ostringstream ss;
          ss << i;
@@ -906,7 +915,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 
       std::vector<dtGame::LogKeyframe> kfList;
       stream->GetKeyFrameIndex(kfList);
-      for (i=0; i<kfList.size(); i++)
+      for (i = 0; i < kfList.size(); ++i)
       {
          stream->JumpToKeyFrame(kfList[i]);
 
@@ -915,10 +924,10 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
          CPPUNIT_ASSERT(m.valid());
 
          dtCore::RefPtr<dtGame::ActorUpdateMessage> actorUpdateMessageRead = static_cast<dtGame::ActorUpdateMessage*>(m.get());
-         
+
          std::ostringstream ss;
          ss << i;
-         
+
          CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetName(),"Jojo" + ss.str());
          CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetActorTypeName(), "Bob" + ss.str());
          CPPUNIT_ASSERT_EQUAL(actorUpdateMessageRead->GetActorTypeCategory(), "Smith" + ss.str());
@@ -932,7 +941,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -941,7 +950,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestPlaybackRecordCycle()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream =
       new dtGame::BinaryLogStream(msgFactory);
    dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController =
@@ -1033,11 +1042,11 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       //during playback.
       numGameActors = mGameManager->GetNumGameActors();
       CPPUNIT_ASSERT_MESSAGE("Number of game actors after concluding playback should be 3",
-         (unsigned)3==numGameActors);
+         (unsigned)3 == numGameActors);
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1076,11 +1085,11 @@ void GMLoggerTests::TestLoggerMessages()
          endKeyframeMsg->GetSuccessFlag());
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -1148,11 +1157,11 @@ void GMLoggerTests::TestLoggerTagMessage()
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogTag on LogInsertTagMessage should have correct keyframe "
          "unique id.",tag.GetKeyframeUniqueId() == tag5.GetKeyframeUniqueId());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -1161,7 +1170,7 @@ void GMLoggerTests::TestLoggerTagMessage()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestLoggerGetKeyframes()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream = NULL;
    dtCore::RefPtr<dtGame::ServerLoggerComponent> serverLoggerComp = NULL;
    dtCore::RefPtr<dtGame::LogController> logController = NULL;
@@ -1204,7 +1213,9 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       if (rejectMsgSignal->mRejectMessage != NULL)
       {
          if (rejectMsgSignal->mRejectMessage->GetCausingMessage() != NULL)
+         {
             rejectMsgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+         }
 
          CPPUNIT_ASSERT_MESSAGE("Received error message from server before requesting "
             "first keyframe: " + errorMsg, rejectMsgSignal->mRejectMessage != NULL);
@@ -1232,12 +1243,14 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       dtCore::System::GetInstance().Step();
       SLEEP(10);
       kfList = logController->GetLastKnownKeyframeList();
-      CPPUNIT_ASSERT_MESSAGE("Should have two keyframes.",kfList.size() == 2);
+      CPPUNIT_ASSERT_MESSAGE("Should have two keyframes.", kfList.size() == 2);
 
       if (rejectMsgSignal->mRejectMessage != NULL)
       {
          if (rejectMsgSignal->mRejectMessage->GetCausingMessage() != NULL)
+         {
             rejectMsgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+         }
 
          CPPUNIT_ASSERT_MESSAGE("Received error message from server before requesting "
             "second keyframe: " + errorMsg, rejectMsgSignal->mRejectMessage != NULL);
@@ -1261,12 +1274,12 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       //Now go through a loop adding keyframe after keyframe...
       unsigned i;
       std::string loopCount;
-      for (i=0; i<100; i++)
+      for (i = 0; i < 100; ++i)
       {
          loopCount = dtUtil::ToString(i);
          keyFrame.SetName("bob_keyframe" + loopCount);
          keyFrame.SetDescription("bob_description" + loopCount);
-         
+
          mapNames = keyFrame.GetActiveMaps();
          mapNames.push_back("bob_map" + loopCount);
 
@@ -1279,7 +1292,9 @@ void GMLoggerTests::TestLoggerGetKeyframes()
          if (rejectMsgSignal->mRejectMessage != NULL)
          {
             if (rejectMsgSignal->mRejectMessage->GetCausingMessage() != NULL)
+            {
                rejectMsgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+            }
 
             CPPUNIT_ASSERT_MESSAGE("Received error message from server while generating keyframe " +
                loopCount + errorMsg, rejectMsgSignal->mRejectMessage != NULL);
@@ -1297,7 +1312,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       CPPUNIT_ASSERT_MESSAGE("Should have 101 keyframes.",kfList.size() == 101);
 
       //Check the keyframe data to make sure they all got sent around properly.
-      for (i=1; i<101; i++)
+      for (i = 1; i < 101; ++i)
       {
          loopCount = dtUtil::ToString(i-1);
          dtGame::LogKeyframe &k = kfList[i];
@@ -1307,14 +1322,14 @@ void GMLoggerTests::TestLoggerGetKeyframes()
             std::string("bob_description" + loopCount), k.GetDescription());
          CPPUNIT_ASSERT_EQUAL_MESSAGE("There should be loopCount + 1 maps where loopCount == " + loopCount,
             size_t(i + 1), k.GetActiveMaps().size());
-                  
+
          CPPUNIT_ASSERT_EQUAL_MESSAGE("Active map names were not equal on keyframe " + loopCount,
             std::string("bob_map" + loopCount), k.GetActiveMaps()[i]);
       }
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1329,17 +1344,17 @@ void GMLoggerTests::CompareKeyframeLists(const std::vector<dtGame::LogKeyframe> 
    CPPUNIT_ASSERT_MESSAGE("Keyframe list sizes should be equal.",listOne.size() == listTwo.size());
 
    for (itor=listOne.begin(), itor2=listTwo.begin();
-      itor!=listOne.end() && itor2!=listTwo.end(); ++itor,++itor2)
+      itor!=listOne.end() && itor2!=listTwo.end(); ++itor, ++itor2)
    {
-      const dtGame::LogKeyframe &first = *itor;
-      const dtGame::LogKeyframe &second = *itor2;
+      const dtGame::LogKeyframe& first  = *itor;
+      const dtGame::LogKeyframe& second = *itor2;
 
       CPPUNIT_ASSERT_MESSAGE("Keyframe names were not equal.  Should be: " +
          first.GetName() + " but was " + second.GetName(),first.GetName() == second.GetName());
       CPPUNIT_ASSERT_MESSAGE("Keyframe descriptions were not equal.  Should be: " +
          first.GetDescription() + " but was " + second.GetDescription(),
          first.GetDescription() == second.GetDescription());
-      
+
       CPPUNIT_ASSERT_EQUAL(first.GetActiveMaps().size(), second.GetActiveMaps().size());
 
       CPPUNIT_ASSERT_MESSAGE("Keyframe active maps were not equal. First map should be: " +
@@ -1367,7 +1382,7 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
       std::vector<dtGame::LogKeyframe> testList;
       std::vector<dtGame::LogKeyframe> resultList;
 
-      for (unsigned int i=0; i<10; i++)
+      for (unsigned int i = 0; i < 10; ++i)
       {
          std::string num = dtUtil::ToString(i);
          dtGame::LogKeyframe kf;
@@ -1379,7 +1394,7 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
          dtGame::LogKeyframe::NameVector mapNames;
          mapNames.push_back("ActiveMap" + num);
          kf.SetActiveMaps(mapNames);
-         
+
          kf.SetTagUniqueId("TagUniqueID" + num);
          testList.push_back(kf);
       }
@@ -1407,12 +1422,12 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
       resultList = otherMsg->GetKeyframeList();
       CompareKeyframeLists(testList,resultList);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
-      
+
       CPPUNIT_FAIL(e.ToString());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
       throw;
@@ -1423,15 +1438,15 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
 void GMLoggerTests::CompareTagLists(const std::vector<dtGame::LogTag> listOne,
    const std::vector<dtGame::LogTag> listTwo)
 {
-   std::vector<dtGame::LogTag>::const_iterator itor,itor2;
+   std::vector<dtGame::LogTag>::const_iterator itor, itor2;
 
    CPPUNIT_ASSERT_MESSAGE("Tag list sizes should be equal.",listOne.size() == listTwo.size());
 
-   for (itor=listOne.begin(), itor2=listTwo.begin();
-      itor!=listOne.end() && itor2!=listTwo.end(); ++itor,++itor2)
+   for (itor = listOne.begin(), itor2 = listTwo.begin();
+      itor != listOne.end() && itor2 != listTwo.end(); ++itor, ++itor2)
    {
-      const dtGame::LogTag &first = *itor;
-      const dtGame::LogTag &second = *itor2;
+      const dtGame::LogTag& first  = *itor;
+      const dtGame::LogTag& second = *itor2;
 
       CPPUNIT_ASSERT_MESSAGE("Tag names were not equal.  Should be: " +
          first.GetName() + " but was " + second.GetName(),first.GetName() == second.GetName());
@@ -1464,7 +1479,7 @@ void GMLoggerTests::TestLoggerTagListMessage()
       std::vector<dtGame::LogTag> testList;
       std::vector<dtGame::LogTag> resultList;
 
-      for (unsigned int i=0; i<10; i++)
+      for (unsigned int i = 0; i < 10; ++i)
       {
          std::string num = dtUtil::ToString(i);
          dtGame::LogTag tag;
@@ -1474,9 +1489,13 @@ void GMLoggerTests::TestLoggerTagListMessage()
          tag.SetUniqueId("UniqueID" + num);
 
          if ((i%2) == 0)
+         {
             tag.SetCaptureKeyframe(true);
+         }
          else
+         {
             tag.SetCaptureKeyframe(false);
+         }
 
          tag.SetKeyframeUniqueId("KeyframeUniqueID" + num);
          testList.push_back(tag);
@@ -1505,11 +1524,11 @@ void GMLoggerTests::TestLoggerTagListMessage()
       resultList = otherMsg->GetTagList();
       CompareTagLists(testList,resultList);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -1518,10 +1537,10 @@ void GMLoggerTests::TestLoggerTagListMessage()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestLoggerGetTags()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
-   dtGame::BinaryLogStream *stream = NULL;
-   dtGame::ServerLoggerComponent *serverLoggerComp = NULL;
-   dtGame::LogController *logController = NULL;
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
+   dtGame::BinaryLogStream* stream = NULL;
+   dtGame::ServerLoggerComponent* serverLoggerComp = NULL;
+   dtGame::LogController* logController = NULL;
    dtCore::RefPtr<TestControllerSignal> msgSignal = NULL;
 
    //This test actually tests both the get tags functionality and the insert
@@ -1559,7 +1578,7 @@ void GMLoggerTests::TestLoggerGetTags()
       SLEEP(10);
 
       double tagSimTimes[20];
-      for (i=0; i<20; i++)
+      for (i = 0; i < 20; ++i)
       {
          dtGame::LogTag tag;
          std::string count = dtUtil::ToString(i);
@@ -1567,9 +1586,13 @@ void GMLoggerTests::TestLoggerGetTags()
          tag.SetDescription("TagDescription" + count);
          tag.SetUniqueId(dtCore::UniqueId("TagUniqueId" + count));
          if ((i%2) == 0)
+         {
             tag.SetCaptureKeyframe(true);
+         }
          else
+         {
             tag.SetCaptureKeyframe(false);
+         }
 
          logController->RequestInsertTag(tag);
          tagSimTimes[i] = mGameManager->GetSimulationTime();
@@ -1590,23 +1613,25 @@ void GMLoggerTests::TestLoggerGetTags()
       dtCore::System::GetInstance().Step();
       SLEEP(10);
       tagList = logController->GetLastKnownTagList();
-      kfList = logController->GetLastKnownKeyframeList();
+      kfList  = logController->GetLastKnownKeyframeList();
 
-      CPPUNIT_ASSERT_MESSAGE("There should be 20 tags in the log.",tagList.size() == 20);
-      CPPUNIT_ASSERT_MESSAGE("There should be 11 keyframes in the log.",kfList.size() == 11);
+      CPPUNIT_ASSERT_MESSAGE("There should be 20 tags in the log.", tagList.size() == 20);
+      CPPUNIT_ASSERT_MESSAGE("There should be 11 keyframes in the log.", kfList.size() == 11);
 
       //Make sure we did not get any error messages during the keyframe capture.
       if (msgSignal->mRejectMessage != NULL)
       {
          if (msgSignal->mRejectMessage->GetCausingMessage() != NULL)
+         {
             msgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+         }
 
          CPPUNIT_ASSERT_MESSAGE("Received error message while auto capturing keyframes " +
             errorMsg, msgSignal->mRejectMessage != NULL);
       }
 
       //Well we seem to have gotten valid data, but lets make sure.
-      for (i=0; i<20; i++)
+      for (i = 0; i < 20; ++i)
       {
          std::string count = dtUtil::ToString(i);
 
@@ -1618,16 +1643,20 @@ void GMLoggerTests::TestLoggerGetTags()
          CPPUNIT_ASSERT_MESSAGE("Tag unique id was not correct",
             tagList[i].GetUniqueId() == std::string("TagUniqueId" + count));
          if ((i%2) == 0)
+         {
             CPPUNIT_ASSERT_MESSAGE("Tag capture keyframe was not correct.",
                tagList[i].GetCaptureKeyframe() == true);
+         }
          else
+         {
             CPPUNIT_ASSERT_MESSAGE("Tag capture keyframe was not correct.",
                tagList[i].GetCaptureKeyframe() == false);
+         }
       }
 
       //Make sure the keyframes/tags cross references were assigned correctly.
       int kfCount = 1;
-      for (i=0; i<20; i+=2)
+      for (i = 0; i < 20; i += 2)
       {
          CPPUNIT_ASSERT_MESSAGE("Tag " + dtUtil::ToString(i) + " did not have the correct keyframe id.",
             tagList[i].GetKeyframeUniqueId() == kfList[kfCount].GetUniqueId());
@@ -1635,12 +1664,12 @@ void GMLoggerTests::TestLoggerGetTags()
          CPPUNIT_ASSERT_MESSAGE("Keyframe + " + dtUtil::ToString(i) + " did not have the correct tag id.",
             kfList[kfCount].GetTagUniqueId() == tagList[i].GetUniqueId());
 
-         kfCount++;
+         ++kfCount;
       }
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1706,7 +1735,9 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
          if (msgSignal->mRejectMessage != NULL)
          {
             if (msgSignal->mRejectMessage->GetCausingMessage() != NULL)
+            {
                msgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+            }
 
             CPPUNIT_ASSERT_MESSAGE("Received error message while auto capturing keyframes " +
                errorMsg, msgSignal->mRejectMessage != NULL);
@@ -1727,13 +1758,15 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
       logController->RequestChangeStateToPlayback();
       dtCore::System::GetInstance().Step();
 
-      //for (int i=0; i<500; i++)
+      //for (int i = 0; i < 500; ++i)
       //   dtCore::System::GetInstance().Step();
 
       if (msgSignal->mRejectMessage != NULL)
       {
          if (msgSignal->mRejectMessage->GetCausingMessage() != NULL)
+         {
             msgSignal->mRejectMessage->GetCausingMessage()->ToString(errorMsg);
+         }
 
          CPPUNIT_ASSERT_MESSAGE("Received error message while auto capturing keyframes " +
             errorMsg, msgSignal->mRejectMessage != NULL);
@@ -1741,7 +1774,7 @@ void GMLoggerTests::TestLoggerAutoKeyframeInterval()
 
       stream->Close();
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1823,7 +1856,7 @@ void GMLoggerTests::TestLoggerKeyframeMessage()
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogKeyframe on LogCaptureKeyframeMessage should have correct tag "
          "uniqueid.",keyframe.GetTagUniqueId() == keyframe5.GetTagUniqueId());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1900,11 +1933,11 @@ void GMLoggerTests::TestLoggerStatusMessage()
       CPPUNIT_ASSERT_MESSAGE("Get/Set LogStatus on LogStatusMessage should have correct log file",
          status.GetLogFile() == status4.GetLogFile());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -1914,8 +1947,8 @@ void GMLoggerTests::TestLoggerStatusMessage()
 class TestServerLoggerComponent : public dtGame::ServerLoggerComponent
 {
 public:
-   TestServerLoggerComponent(dtGame::LogStream &logStream, const std::string &name = "TestServerLoggerComponent");
-   
+   TestServerLoggerComponent(dtGame::LogStream& logStream, const std::string& name = "TestServerLoggerComponent");
+
    int RequestDeletePlaybackActors();
 
 protected:
@@ -1923,8 +1956,8 @@ protected:
 
 };
 
-TestServerLoggerComponent::TestServerLoggerComponent(dtGame::LogStream &logStream, const std::string &name)
-: ServerLoggerComponent(logStream,name)
+TestServerLoggerComponent::TestServerLoggerComponent(dtGame::LogStream& logStream, const std::string& name)
+   : ServerLoggerComponent(logStream, name)
 {
 }
 
@@ -1936,7 +1969,7 @@ int TestServerLoggerComponent::RequestDeletePlaybackActors()
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::TestLoggerActorIDLists()
 {
-   dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+   dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
    dtCore::RefPtr<dtGame::BinaryLogStream> stream = new dtGame::BinaryLogStream(msgFactory);
    dtCore::RefPtr<dtGame::LogController> logController = new dtGame::LogController();
    dtCore::RefPtr<TestServerLoggerComponent> serverLoggerComp = new TestServerLoggerComponent(*stream);
@@ -1989,11 +2022,11 @@ void GMLoggerTests::TestLoggerActorIDLists()
 
    // Test to be sure IDs 1 and 2 have been removed
    CPPUNIT_ASSERT_MESSAGE("Processed ServerLoggerComponent.IsIgnoredActorID; IDs 1 & 2 should NOT be found",
-      (serverLoggerComp->IsIgnoredActorId(proxy1->GetId()) == false 
+      (serverLoggerComp->IsIgnoredActorId(proxy1->GetId()) == false
       && serverLoggerComp->IsIgnoredActorId(proxy2->GetId()) == false) );
    CPPUNIT_ASSERT_MESSAGE("Processed ServerLoggerComponent.IsIgnoredActorID; IDs 3 & 4 & 5 should be found",
-      (serverLoggerComp->IsIgnoredActorId(proxy3->GetId()) 
-      && serverLoggerComp->IsIgnoredActorId(proxy4->GetId()) 
+      (serverLoggerComp->IsIgnoredActorId(proxy3->GetId())
+      && serverLoggerComp->IsIgnoredActorId(proxy4->GetId())
       && serverLoggerComp->IsIgnoredActorId(proxy5->GetId()) ) );
 
 
@@ -2010,7 +2043,7 @@ void GMLoggerTests::TestLoggerActorIDLists()
 
    tc->reset(); // flush messages from previous steps
 
-   double newTime = 0.0;
+   double newTime    = 0.0;
    double timeFactor = 1.0;
 
 
@@ -2079,109 +2112,130 @@ void GMLoggerTests::TestLoggerActorIDLists()
 
 
    // Test the start frame for the existence of actors
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("Started playback, 0 actor IDs should exist in playback",
-                                 0, serverLoggerComp->GetPlaybackActorCount() );
+   // Should not be any playback actors.  If there are, try to figure out which
+   // ones by getting their names.
+   std::string names;
+   if (serverLoggerComp->GetPlaybackActorCount() > 0)
+   {
+      std::vector<dtCore::UniqueId> ids;
+      serverLoggerComp->GetPlaybackActorIds(ids);
+      std::vector<dtCore::UniqueId>::const_iterator itr = ids.begin();
+      while (itr != ids.end())
+      {
+         dtDAL::ActorProxy *prox = mGameManager->FindActorById(*itr);
+         if (prox != NULL)
+         {
+            names += " " + prox->GetClassName();
+         }
+         ++itr;
+      }
+   }
+
+   //CPPUNIT_ASSERT_EQUAL_MESSAGE("Started playback, 0 actor IDs should exist in playback.,
+   //                              0, serverLoggerComp->GetPlaybackActorCount() );
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Started playback, no actor types should exist in playback.",
+                                 std::string(), names);
 
    // Check keyframe jumps...
    // --- Forward (1.0 to KF1 - proxy1)
    logController->RequestJumpToKeyframe(keyframes[1]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to keyframe 1, 1 playback actor ID should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 1 );
+      serverLoggerComp->GetPlaybackActorCount() == 1);
 
    // --- Forward (1.0 to KF2 - proxy3)
    logController->RequestJumpToKeyframe(keyframes[2]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to Third keyframe, 1 playback actor ID should exist in playback (ignored actor was added here)",
-      serverLoggerComp->GetPlaybackActorCount() == 1 );
+      serverLoggerComp->GetPlaybackActorCount() == 1);
 
    // --- Forward (1.0 to KF3 - proxy2)
    logController->RequestJumpToKeyframe(keyframes[3]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to Fourth keyframe, 2 playback actor IDs should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 2 );
+      serverLoggerComp->GetPlaybackActorCount() == 2);
 
    // --- Check that an ignore actor does not interfere with playback
    mGameManager->AddActor(*proxy5,false,false);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Added an ignore actor, only 2 playback actor IDs should still exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 2 );
+      serverLoggerComp->GetPlaybackActorCount() == 2);
 
    // --- Forward (1.0 to KF4 - proxy4 - Last Keyframe)
    logController->RequestJumpToKeyframe(keyframes[4]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to Last keyframe, 2 playback actor IDs should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 2 );
+      serverLoggerComp->GetPlaybackActorCount() == 2);
 
    // --- Back (3.0 to KF1 - proxy1)
    logController->RequestJumpToKeyframe(keyframes[1]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to Second keyframe, 1 playback actor ID should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 1 );
+      serverLoggerComp->GetPlaybackActorCount() == 1);
 
    // --- Back (3.0 to KF0 - proxy1)
    logController->RequestJumpToKeyframe(keyframes[0]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to First keyframe, 0 playback actor IDs should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 0 );
+      serverLoggerComp->GetPlaybackActorCount() == 0);
 
    // --- Forward (1.0 to KF4 - proxy4 - Last Keyframe)
    logController->RequestJumpToKeyframe(keyframes[4]);
    SLEEP(10); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Moved to Last keyframe, 2 playback actor IDs should exist in playback",
-      serverLoggerComp->GetPlaybackActorCount() == 2 );
+      serverLoggerComp->GetPlaybackActorCount() == 2);
 
    // Count total game actors
    int totalActors = mGameManager->GetNumGameActors();
-   CPPUNIT_ASSERT_MESSAGE("Total game actors should be 5 at the end of playback.", totalActors == 5 );
+   CPPUNIT_ASSERT_MESSAGE("Total game actors should be 5 at the end of playback.", totalActors == 5);
 
    // Stop RECORD and switch to IDLE
    logController->RequestChangeStateToIdle();
    logController->RequestServerGetStatus();
    SLEEP(50); dtCore::System::GetInstance().Step();
-   CPPUNIT_ASSERT_MESSAGE( "ServerLoggerComponent should be in IDLE state.",
+   CPPUNIT_ASSERT_MESSAGE("ServerLoggerComponent should be in IDLE state.",
       logController->GetLastKnownStatus().GetStateEnum()
-      == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE );
+      == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
 
    // Count game actors after transition to IDLE state
    totalActors = mGameManager->GetNumGameActors();
-   CPPUNIT_ASSERT_MESSAGE("Transition to IDLE state should leave 3 ignore actors after deleting the 2 playback actors", 
-      totalActors == 3 );
+   CPPUNIT_ASSERT_MESSAGE("Transition to IDLE state should leave 3 ignore actors after deleting the 2 playback actors",
+      totalActors == 3);
 
    // Check playback IDs are cleared
    CPPUNIT_ASSERT_MESSAGE("Transition to IDLE state should have cleared the playback list; no playback actor IDs should exist",
-      serverLoggerComp->GetPlaybackActorCount() == 0 );
+      serverLoggerComp->GetPlaybackActorCount() == 0);
 
    // Check ignored IDs still exist
    CPPUNIT_ASSERT_MESSAGE("Playback ended, there should still be 3 ignored actor IDs",
-      serverLoggerComp->GetIgnoredActorCount() == 3 );
+      serverLoggerComp->GetIgnoredActorCount() == 3);
 
 
 
    // Check messages to make sure ignored ID have not been recorded
-   std::vector< dtCore::RefPtr<const dtGame::Message> > &messages = tc->GetReceivedProcessMessages();
+   std::vector< dtCore::RefPtr<const dtGame::Message> >& messages = tc->GetReceivedProcessMessages();
    dtCore::UniqueId curId;
    int limit = messages.size();
    bool ignored = true;
-   for( int msg = 0; msg < limit; msg++ )
+   for (int msg = 0; msg < limit; ++msg)
    {
-      if( messages[msg].valid() )
+      if (messages[msg].valid())
       {
          curId = messages[msg]->GetAboutActorId();
-         if(curId == proxy3->GetId()
+         if (curId == proxy3->GetId()
             || curId == proxy4->GetId())
          {
             ignored = false; break;
          }
       }
    }
-   CPPUNIT_ASSERT_MESSAGE("Done with playback, actors should have been ignored", ignored );
+   CPPUNIT_ASSERT_MESSAGE("Done with playback, actors should have been ignored", ignored);
 
    // Clear ignored IDs
    logController->RequestClearIgnoreList();
    SLEEP(50); dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("Processed LogController clear ignore actor IDs, there should be 0 ignored actor IDs",
-      serverLoggerComp->GetIgnoredActorCount() == 0 );
+      serverLoggerComp->GetIgnoredActorCount() == 0);
 
    // Cleanup
    proxy1 = NULL;
@@ -2239,19 +2293,19 @@ void GMLoggerTests::TestLogControllerComponent()
       dtCore::RefPtr<const dtGame::Message> procReqStateRecord = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
       dtCore::RefPtr<const dtGame::Message> procReqStateIdle = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
       dtCore::RefPtr<const dtGame::LogCaptureKeyframeMessage> procCaptureKeyframeMsg =
-         (const dtGame::LogCaptureKeyframeMessage *)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
+         (const dtGame::LogCaptureKeyframeMessage*)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
       dtCore::RefPtr<const dtGame::Message> procReqGeyKeyframes = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
       dtCore::RefPtr<const dtGame::Message> procReqGetLogfiles = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
       dtCore::RefPtr<const dtGame::Message> procReqGetTags = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_GET_TAGS);
       dtCore::RefPtr<const dtGame::Message> procReqGetStatus = tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_GET_STATUS);
       dtCore::RefPtr<const dtGame::LogInsertTagMessage> procInsertTagMsg =
-         (const dtGame::LogInsertTagMessage *)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
+         (const dtGame::LogInsertTagMessage*)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
       dtCore::RefPtr<const dtGame::LogDeleteLogfileMessage> procDeleteLogMsg =
-         (const dtGame::LogDeleteLogfileMessage *)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
+         (const dtGame::LogDeleteLogfileMessage*)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
       dtCore::RefPtr<const dtGame::LogSetLogfileMessage> procSetLogMsg =
-         (const dtGame::LogSetLogfileMessage *)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
+         (const dtGame::LogSetLogfileMessage*)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
       dtCore::RefPtr<const dtGame::LogSetAutoKeyframeIntervalMessage> procSetKeyframeIntMsg =
-         (const dtGame::LogSetAutoKeyframeIntervalMessage *)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
+         (const dtGame::LogSetAutoKeyframeIntervalMessage*)( tc->FindProcessMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
 
       // test that they were processed (processMessage())
 
@@ -2284,19 +2338,19 @@ void GMLoggerTests::TestLogControllerComponent()
       dtCore::RefPtr<const dtGame::Message> sentReqStateRecord = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
       dtCore::RefPtr<const dtGame::Message> sentReqStateIdle = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
       dtCore::RefPtr<const dtGame::LogCaptureKeyframeMessage> sentCaptureKeyframeMsg =
-         (const dtGame::LogCaptureKeyframeMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
+         (const dtGame::LogCaptureKeyframeMessage*)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
       dtCore::RefPtr<const dtGame::Message> sentReqGeyKeyframes = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
       dtCore::RefPtr<const dtGame::Message> sentReqGetLogfiles = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
       dtCore::RefPtr<const dtGame::Message> sentReqGetTags = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_TAGS);
       dtCore::RefPtr<const dtGame::Message> sentReqGetStatus = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_STATUS);
       dtCore::RefPtr<const dtGame::LogInsertTagMessage> sentInsertTagMsg =
-         (const dtGame::LogInsertTagMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
+         (const dtGame::LogInsertTagMessage*)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
       dtCore::RefPtr<const dtGame::LogDeleteLogfileMessage> sentDeleteLogMsg =
-         (const dtGame::LogDeleteLogfileMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
+         (const dtGame::LogDeleteLogfileMessage*)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
       dtCore::RefPtr<const dtGame::LogSetLogfileMessage> sentSetLogMsg =
-         (const dtGame::LogSetLogfileMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
+         (const dtGame::LogSetLogfileMessage*)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
       dtCore::RefPtr<const dtGame::LogSetAutoKeyframeIntervalMessage> sentSetKeyframeIntMsg =
-         (const dtGame::LogSetAutoKeyframeIntervalMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
+         (const dtGame::LogSetAutoKeyframeIntervalMessage*)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
       //dtCore::RefPtr<dtGame::LogStatusMessage> infoStatusMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
 
       // test that they were SENT(sendMessage())
@@ -2325,11 +2379,11 @@ void GMLoggerTests::TestLogControllerComponent()
       CPPUNIT_ASSERT_MESSAGE("Processed Set Keyframe Interval should be set.", sentSetKeyframeIntMsg->GetAutoKeyframeInterval() == d4);
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -2353,7 +2407,7 @@ void GMLoggerTests::TestControllerSignals()
 
       dtCore::RefPtr<dtGame::Message> statusMessage =
          mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::LOG_INFO_STATUS);
-      dtGame::LogStatusMessage *pMsg = static_cast<dtGame::LogStatusMessage *> (statusMessage.get());
+      dtGame::LogStatusMessage* pMsg = static_cast<dtGame::LogStatusMessage *> (statusMessage.get());
       pMsg->SetStatus(status);
       mGameManager->SendMessage(*statusMessage);
       //mGameManager->SendNetworkMessage(*statusMessage);
@@ -2376,11 +2430,11 @@ void GMLoggerTests::TestControllerSignals()
          (status.GetActiveMaps() == contStatus.GetActiveMaps()) && (status.GetCurrentRecordDuration() == contStatus.GetCurrentRecordDuration()));
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -2397,7 +2451,7 @@ void GMLoggerTests::TestServerLogger()
       // NOTE - Test setting a log file with an extension - windows and linux
 
       // add a controller component, the server component, and a test component (SIGNAL)
-      dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+      dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
       dtCore::RefPtr<TestLogStream> testStream = new TestLogStream(msgFactory, mGameManager);
       dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController =
          new dtGame::ServerLoggerComponent(*testStream.get());
@@ -2470,7 +2524,7 @@ void GMLoggerTests::TestServerLogger()
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_MESSAGE("Set Log File with error should NOT cause a Status message.", !testSignal->mStatusSignalReceived);
       // should have gotten a rejection message
-      const dtGame::Message *causeMsg2 = testSignal->mRejectMessage->GetCausingMessage();
+      const dtGame::Message* causeMsg2 = testSignal->mRejectMessage->GetCausingMessage();
       CPPUNIT_ASSERT_MESSAGE("Set Log File with error should have gotten reject message.",
          (testSignal->mRejectMessage->GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED) &&
          (causeMsg2 != NULL) && (causeMsg2->GetMessageType() == dtGame::MessageType::LOG_REQ_SET_LOGFILE));
@@ -2516,7 +2570,7 @@ void GMLoggerTests::TestServerLogger()
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
       dtCore::System::GetInstance().Step();
-      CPPUNIT_ASSERT_MESSAGE("State should have been changed to IDLE after the map change event", 
+      CPPUNIT_ASSERT_MESSAGE("State should have been changed to IDLE after the map change event",
          logController->GetLastKnownStatus().GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
       msgCount = logController->GetLastKnownStatus().GetNumMessages();
       CPPUNIT_ASSERT_MESSAGE("We should NOT have recorded the msg", msgCount == lastMsgCount);
@@ -2539,7 +2593,7 @@ void GMLoggerTests::TestServerLogger()
       // do the checks
       CPPUNIT_ASSERT_MESSAGE("With exception, should still get Status message.", testSignal->mStatusSignalReceived);
       CPPUNIT_ASSERT_MESSAGE("With exception, should still get reject message.", testSignal->mRejectionSignalReceived);
-      const dtGame::Message *causeMsg3 = testSignal->mRejectMessage->GetCausingMessage();
+      const dtGame::Message* causeMsg3 = testSignal->mRejectMessage->GetCausingMessage();
       CPPUNIT_ASSERT_MESSAGE("Change to Idle with error should have gotten reject message.",
          (testSignal->mRejectMessage->GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED) &&
          (causeMsg3 != NULL) && (causeMsg3->GetMessageType() == dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE));
@@ -2556,17 +2610,17 @@ void GMLoggerTests::TestServerLogger()
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception) should have sent status with IDLE.",
          testSignal->mStatus.GetStateEnum() == dtGame::LogStateEnumeration::LOGGER_STATE_IDLE);
       CPPUNIT_ASSERT_MESSAGE("Failed Record (exception), should get reject message.", testSignal->mRejectionSignalReceived);
-      const dtGame::Message *causeMsg4 = testSignal->mRejectMessage->GetCausingMessage();
+      const dtGame::Message* causeMsg4 = testSignal->mRejectMessage->GetCausingMessage();
       CPPUNIT_ASSERT_MESSAGE("Change to Idle with error should have gotten reject message.",
          (testSignal->mRejectMessage->GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED) &&
          (causeMsg4 != NULL) && (causeMsg4->GetMessageType() == dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD));
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   catch (const std::exception &e)
+   catch (const std::exception& e)
    {
       CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    }
@@ -2582,7 +2636,7 @@ void GMLoggerTests::TestServerLogger2()
 
    try
    {
-      dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
+      dtGame::MessageFactory& msgFactory = mGameManager->GetMessageFactory();
       dtCore::RefPtr<TestLogStream> testStream = new TestLogStream(msgFactory, mGameManager);
       dtCore::RefPtr<dtGame::ServerLoggerComponent> serverController =
          new dtGame::ServerLoggerComponent(*testStream.get());
@@ -2605,7 +2659,7 @@ void GMLoggerTests::TestServerLogger2()
       mapNames.push_back("myBogusMapName");
       mapNames.push_back("myBogusMapName2");
       mapNames.push_back("myBogusMapName3");
-      
+
       mapLoadedMsg->SetMapNames(mapNames);
 
       mGameManager->SendMessage(*mapLoadedMsg);
@@ -2615,11 +2669,11 @@ void GMLoggerTests::TestServerLogger2()
       CPPUNIT_ASSERT_MESSAGE("Change map msg should change map on logstatus", testSignal->mStatus.GetActiveMaps() == mapNames);
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.What());
    }
-   //catch (const std::exception &e)
+   //catch (const std::exception& e)
    //{
    //   CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    //}

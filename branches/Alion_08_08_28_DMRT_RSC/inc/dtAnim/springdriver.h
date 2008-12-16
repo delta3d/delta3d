@@ -30,7 +30,7 @@
 namespace dtAnim
 {
 
-class	DT_ANIM_EXPORT SpringDriver: public ICal3DDriver
+class DT_ANIM_EXPORT SpringDriver: public ICal3DDriver
 {
 
 public:
@@ -48,7 +48,7 @@ private:
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_SPRINGDRIVER_H__
 

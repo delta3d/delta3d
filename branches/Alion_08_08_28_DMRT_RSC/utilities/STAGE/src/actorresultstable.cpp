@@ -31,20 +31,9 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QGroupBox>
 #include <QtGui/QHeaderView>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QLabel>
 #include <QtGui/QPushButton>
-#include <QtCore/QSize>
 #include <QtCore/QStringList>
-#include <QtGui/QTableWidget>
-#include <QtGui/QTableWidgetItem>
-#include <QtGui/QTreeView>
 #include <QtGui/QTreeWidgetItem>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/actortype.h>
-#include <dtDAL/librarymanager.h>
-#include <dtUtil/log.h>
-#include <dtDAL/map.h>
 #include <dtEditQt/actorresultstable.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
@@ -70,19 +59,17 @@ namespace dtEditQt
         QVBoxLayout *boxLayout = new QVBoxLayout(this);
 
         // build our tree/table
-        table = new ActorResultsSubTree(this, this);
-        table->setAlternatingRowColors(true);
-        //table->setEvenRowColor(QColor(237, 243, 254));
-        //table->setOddRowColor(QColor(255, 255, 255));
-        table->setRootIsDecorated(false);
-        table->setSortingEnabled(true);
-        table->setSelectionMode(QTreeView::SingleSelection);//MultiSelection);
-        table->setSelectionBehavior(QTreeView::SelectRows);
+        mResultsTree = new QTreeWidget(this);
+        mResultsTree->setAlternatingRowColors(true);
+        mResultsTree->setRootIsDecorated(false);
+        mResultsTree->setSortingEnabled(true);
+        mResultsTree->setSelectionMode(QTreeView::ExtendedSelection);
+        mResultsTree->setSelectionBehavior(QTreeView::SelectRows);
         // set the headers
         QStringList headerLabels;
         headerLabels << "Name" << "Category" << "Type";
-        table->setHeaderLabels(headerLabels);
-        table->header()->setClickable(true);
+        mResultsTree->setHeaderLabels(headerLabels);
+        mResultsTree->header()->setClickable(true);
 
         // Select button - this button was removed and now selection happens everytime an
         // object is clicked or the selection changes.  Why else would the user select an object anyway?
@@ -131,7 +118,7 @@ namespace dtEditQt
 
 
         // add the controls  to the main layout
-        boxLayout->addWidget(table, 1, 0);
+        boxLayout->addWidget(mResultsTree, 1, 0);
         // only add the buttons if we're supposed to.
         if (showActions) 
         {
@@ -139,13 +126,7 @@ namespace dtEditQt
         }
 
         // connect all our signals
-        connect(table, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
-        //connect(table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, 
-        //   SLOT(OnItemDoubleClicked(QTreeWidgetItem *)));
-        // You can get the current item changed event, but none of the click or double click 
-        // or whatever signals can be found at runtime.
-        //connect(table, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
-        //   this, SLOT(OnDoCurrentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+        connect(mResultsTree, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
 
         connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(clearAll()));
@@ -165,11 +146,6 @@ namespace dtEditQt
     {
     }
 
-    //void ActorResultsTable::OnDoCurrentItemChanged(QTreeWidgetItem *test, QTreeWidgetItem *test2)    
-    //{
-    //   std::cout << "BOGUS TEST \n";
-    //}
-
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::updateResultsCount() 
@@ -178,7 +154,7 @@ namespace dtEditQt
 
         if (parentBox != NULL) 
         {
-            int count = table->topLevelItemCount();
+            int count = mResultsTree->topLevelItemCount();
 
             // add the count if it's greater than 0 and account for the 's'.
             if (count > 0) 
@@ -224,7 +200,7 @@ namespace dtEditQt
         QString category(myProxy->GetActorType().GetCategory().c_str());
 
         // create the tree entry
-        ActorResultsTreeItem *item = new ActorResultsTreeItem(table, myProxy);
+        ActorResultsTreeItem *item = new ActorResultsTreeItem(mResultsTree, myProxy);
         item->setText(0, name);
         item->setText(1, category);
         item->setText(2, type);
@@ -236,14 +212,14 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
     {
-       if (table != NULL && proxy.valid()) 
+       if (mResultsTree != NULL && proxy.valid()) 
        {
           QTreeWidgetItem *item;
           int index = 0;
 
           // Iterate through the items in our list and find a match. If we find the 
           // matching proxy, then update it's 3 fields
-          while (NULL != (item = table->topLevelItem(index))) 
+          while (NULL != (item = mResultsTree->topLevelItem(index))) 
           {
              ActorResultsTreeItem *treeItem = static_cast<ActorResultsTreeItem *>(item);
              if (proxy == treeItem->getProxy()) 
@@ -267,9 +243,9 @@ namespace dtEditQt
     {
         ActorResultsTreeItem *returnVal = NULL;
 
-        if (table != NULL) 
+        if (mResultsTree != NULL) 
         {
-            QList<QTreeWidgetItem *> list = table->selectedItems();
+            QList<QTreeWidgetItem *> list = mResultsTree->selectedItems();
 
             if (!list.isEmpty()) 
             {
@@ -282,7 +258,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::doEnableButtons() {
-        QList<QTreeWidgetItem *> list = table->selectedItems();
+        QList<QTreeWidgetItem *> list = mResultsTree->selectedItems();
 
         // goto Button only works with one.
         if (showGoto) 
@@ -301,22 +277,12 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::clearAll()
     {
-        table->clear();
+        mResultsTree->clear();
         doEnableButtons();
         updateResultsCount();
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // Can't be used because the Qt itemDoubleClicked signal is not found at runtime.
-    //void ActorResultsTable::OnItemDoubleClicked(QTreeWidgetItem *selectedItem)
-    //{
-    //   // Also, protect from recursive issues.
-    //   recurseProtectEmitSelectionChanged = true;
-    //   UnselectAllItemsManually(selectedItem);
-    //   recurseProtectEmitSelectionChanged = false;
-    //   sendSelection();
-    //}
-
+    
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::gotoPressed()
     {
@@ -341,13 +307,13 @@ namespace dtEditQt
         int index = 0;
 
         // iterate through our top level items until we have no more.
-        while (NULL != (item = table->topLevelItem(index))) 
+        while (NULL != (item = mResultsTree->topLevelItem(index))) 
         {
             ActorResultsTreeItem *treeItem = static_cast<ActorResultsTreeItem *>(item);
 
             if (proxy == treeItem->getProxy()) 
             {
-                table->takeTopLevelItem(index);
+                mResultsTree->takeTopLevelItem(index);
                 updateResultsCount();
                 doEnableButtons();
                 break;  // we're done
@@ -367,7 +333,7 @@ namespace dtEditQt
     {
         if (!recurseProtectSendingSelection) 
         {
-            QList<QTreeWidgetItem *> list = table->selectedItems();
+            QList<QTreeWidgetItem *> list = mResultsTree->selectedItems();
             QListIterator<QTreeWidgetItem *> iter(list);
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyVector;
 
@@ -403,7 +369,6 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorResultsTable::selectedActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
     {
-        //QTreeWidgetItem *currentItem = table->currentItem();
 
         if (!recurseProtectSendingSelection) 
         {
@@ -432,11 +397,11 @@ namespace dtEditQt
        // resets the current item, which causes wierd keyboard focus issues that will resend
        // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
        // the easiest thing to do was just unselect items one at a time.
-       while (NULL != (item = table->topLevelItem(index))) 
+       while (NULL != (item = mResultsTree->topLevelItem(index))) 
        {
-          if (item != keepSelectedItem && table->isItemSelected(item)) 
+          if (item != keepSelectedItem && mResultsTree->isItemSelected(item)) 
           {
-             table->setItemSelected(item, false);
+             mResultsTree->setItemSelected(item, false);
           }
           index ++;
        }

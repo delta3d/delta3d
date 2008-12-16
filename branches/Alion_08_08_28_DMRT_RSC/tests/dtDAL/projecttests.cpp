@@ -165,7 +165,7 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
 
    std::string currentCategory;
 
-   dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.tree_iterator();
+   dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.get_tree_iterator();
 
    for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i) {
       if (ti == currentTree.end())
@@ -177,10 +177,16 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
       //to create an accurate tree node to compare against.
       //Skip the first token because it is the datatype, not the category.
       if (i != tokens.begin())
+      {
          if (currentCategory == "")
+         {
             currentCategory += *i;
+         }
          else
+         {
             currentCategory += dtDAL::ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
+         }
+      }
 
       ti = ti.tree_ref().find(dtDAL::ResourceTreeNode(*i, currentCategory));
    }
@@ -815,6 +821,3 @@ void ProjectTests::testProject()
    //    }
 
 }
-
-
-

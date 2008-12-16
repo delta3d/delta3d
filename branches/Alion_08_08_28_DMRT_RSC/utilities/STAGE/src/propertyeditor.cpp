@@ -56,7 +56,6 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
-#include <dtEditQt/viewportmanager.h>
 
 #include <QtCore/QStringList>
 
@@ -536,14 +535,6 @@ namespace dtEditQt
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
         propertyTree->viewport()->update();
-
-        if(property->GetDataType() == dtDAL::DataType::TERRAIN)
-        {
-           if(ViewportManager::GetInstance().IsPagingEnabled())
-              ViewportManager::GetInstance().EnablePaging(false);
-
-           ViewportManager::GetInstance().EnablePaging(true);
-        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////

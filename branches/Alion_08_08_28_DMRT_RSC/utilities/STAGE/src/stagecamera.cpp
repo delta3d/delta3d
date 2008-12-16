@@ -58,6 +58,7 @@ namespace dtEditQt
     {
         this->position = pos;
         this->updateWorldViewMatrix = true;
+        emit PositionMoved(pos.x(), pos.y(), pos.z());
     }
 
     ///////////////////////////////////////////////////////////////////////////////

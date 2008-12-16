@@ -53,61 +53,44 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////////////////////
    std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_LIGHT("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_SOUND("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_CAMERA("");
-   std::string ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT("");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER("billboards/animcharacter.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH("billboards/staticmesh.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_LIGHT("billboards/light.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_SOUND("billboards/sound.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM("billboards/particlesystem.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN("billboards/terrain.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART("billboards/playerstart.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER("billboards/trigger.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_CAMERA("billboards/camera.png");
+   std::string ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT("billboards/Foot.png");
 
-   std::string ActorProxyIcon::IMAGE_ARROW_HEAD("");
-   std::string ActorProxyIcon::IMAGE_ARROW_BODY("");
+   std::string ActorProxyIcon::IMAGE_ARROW_HEAD("billboards/arrowhead.png");
+   std::string ActorProxyIcon::IMAGE_ARROW_BODY("billboards/arrowbody.png");
    //////////////////////////////////////////////////////////////////////////
 
+
+
    //////////////////////////////////////////////////////////////////////////
-   void ActorProxyIcon::staticInitialize()
+   ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename)
+      :mIconStateSet(NULL),
+      mConeStateSet(NULL),
+      mCylinderStateSet(NULL),
+      mIconNode(NULL),
+      mIconImageFile(iconImageFilename)
    {
-      IMAGE_BILLBOARD_GENERIC = ("");
-      IMAGE_BILLBOARD_CHARACTER = ("billboards/animcharacter.png");
-      IMAGE_BILLBOARD_STATICMESH = ("billboards/staticmesh.png");
-      IMAGE_BILLBOARD_LIGHT = ("billboards/light.png");
-      IMAGE_BILLBOARD_SOUND = ("billboards/sound.png");
-      IMAGE_BILLBOARD_PARTICLESYSTEM = ("billboards/particlesystem.png");
-      IMAGE_BILLBOARD_MESHTERRAIN = ("billboards/terrain.png");
-      IMAGE_BILLBOARD_PLAYERSTART = ("billboards/playerstart.png");
-      IMAGE_BILLBOARD_TRIGGER = ("billboards/trigger.png");
-      IMAGE_BILLBOARD_CAMERA = ("billboards/camera.png");
-      IMAGE_BILLBOARD_WAYPOINT = ("billboards/Foot.png");
-
-      IMAGE_ARROW_HEAD = ("billboards/arrowhead.png");
-      IMAGE_ARROW_BODY = ("billboards/arrowbody.png");
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const IconType &type) :
-      mIconStateSet(0),
-      mConeStateSet(0),
-      mCylinderStateSet(0)
-   {
-      mIconType = &type;
-      mIconNode = NULL;
-      //just use a default config
       CreateBillBoard();
    }
 
    //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
+   ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename, 
+                                  const ActorProxyIconConfig& pConfig)
       : mIconStateSet(0)
       , mConeStateSet(0)
       , mCylinderStateSet(0)
+      , mConfig(pConfig)
+      , mIconImageFile(iconImageFilename)
    {
-      mIconType = &type;
       mIconNode = NULL;
-      mConfig = pConfig;
       CreateBillBoard();
    }
 
@@ -121,6 +104,7 @@ namespace dtDAL
    ActorProxyIcon::ActorProxyIcon(const ActorProxyIcon &rhs)
    {
    }
+
 
    //////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::~ActorProxyIcon()
@@ -348,35 +332,47 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
+   const std::string& ActorProxyIcon::GetImageFilename(const IconType& iconType) const
+   {
+      //Based on the icon type, load the correct image.
+      if (&iconType == &IconType::GENERIC)
+         return IMAGE_BILLBOARD_GENERIC;
+      else if (&iconType == &IconType::CHARACTER)
+         return ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER;
+      else if (&iconType == &IconType::STATICMESH)
+         return ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH;
+      else if (&iconType == &IconType::SOUND)
+         return ActorProxyIcon::IMAGE_BILLBOARD_SOUND;
+      else if (&iconType == &IconType::LIGHT)
+         return ActorProxyIcon::IMAGE_BILLBOARD_LIGHT;
+      else if (&iconType == &IconType::PARTICLESYSTEM)
+         return ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM;
+      else if (&iconType == &IconType::MESHTERRAIN)
+         return ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN;
+      else if (&iconType == &IconType::PLAYERSTART)
+         return ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART;
+      else if (&iconType == &IconType::TRIGGER)
+         return ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER;
+      else if (&iconType == &IconType::WAYPOINT)
+         return ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT;
+      else if (&iconType == &IconType::CAMERA)
+         return ActorProxyIcon::IMAGE_BILLBOARD_CAMERA;
+
+      else
+         return IMAGE_BILLBOARD_GENERIC;
+
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
    osg::Image *ActorProxyIcon::GetBillBoardImage()
    {
-      osg::Image *image = NULL;
-
-      //Based on the icon type, load the correct image.
-      if (mIconType == &IconType::GENERIC)
+      if (mIconImageFile.empty())
+      {
          return NULL;
-      else if (mIconType == &IconType::CHARACTER)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER);
-      else if (mIconType == &IconType::STATICMESH)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
-      else if (mIconType == &IconType::SOUND)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_SOUND);
-      else if (mIconType == &IconType::LIGHT)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_LIGHT);
-      else if (mIconType == &IconType::PARTICLESYSTEM)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM);
-      else if (mIconType == &IconType::MESHTERRAIN)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN);
-      else if (mIconType == &IconType::PLAYERSTART)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART);
-      else if (mIconType == &IconType::TRIGGER)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER);
-      else if (mIconType == &IconType::WAYPOINT)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT);
-      else if (mIconType == &IconType::CAMERA)
-         image = osgDB::readImageFile(ActorProxyIcon::IMAGE_BILLBOARD_CAMERA);
+      }
 
-      return image;
+      return osgDB::readImageFile(mIconImageFile);
    }
 
    //////////////////////////////////////////////////////////////////////////

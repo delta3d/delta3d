@@ -55,28 +55,28 @@ void Weather::SetTheme(const WeatherTheme theme, const std::string &textureDirec
          SetBasicWindType(WIND_BREEZE);
          SetBasicCloudType(CLOUD_CLEAR, textureDirectory);
          SetBasicVisibilityType(VIS_UNLIMITED);
-   	   break;
+         break;
       }
       case THEME_FAIR:
       {
          SetBasicWindType(WIND_LIGHT);
          SetBasicCloudType(CLOUD_FEW, textureDirectory);
          SetBasicVisibilityType(VIS_MODERATE);
-   	   break;
+         break;
       }
       case THEME_FOGGY:
       {
          SetBasicWindType(WIND_LIGHT);
          SetBasicCloudType(CLOUD_OVERCAST, textureDirectory);
          SetBasicVisibilityType(VIS_CLOSE);
-   	   break;
+         break;
       }
       case THEME_RAINY:
       {
          SetBasicWindType(WIND_MODERATE);
          SetBasicCloudType(CLOUD_OVERCAST, textureDirectory);
          SetBasicVisibilityType(VIS_LIMITED);
-   	   break;
+         break;
       }
       default:
       {
@@ -91,7 +91,7 @@ void Weather::SetTheme(const WeatherTheme theme, const std::string &textureDirec
 
 void Weather::SetBasicCloudType(const CloudType type, const std::string &textureDirectory)
 {
-   //create a set of cloud layers EnvEffects to represent the 
+   //create a set of cloud layers EnvEffects to represent the
    //supplied cloud type
 
    mTheme = THEME_CUSTOM;
@@ -105,7 +105,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
 
    //remove any existing Clouds that have been added to the Env
    for ( CloudPlaneList::iterator it = mClouds.begin();
-      it != mClouds.end(); 
+      it != mClouds.end();
       ++it )
    {
       mEnvironment->RemEffect( it->get() );
@@ -115,23 +115,23 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
    {
       case CLOUD_CLEAR:
       {
-   	   break;
+         break;
       }
       case CLOUD_FEW:
       {
-         if(!mClouds[CLOUD_FEW-1].valid())
+         if (!mClouds[CLOUD_FEW-1].valid())
          {
-            mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f, 
+            mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f,
                "Clouds Few", textureDirectory);//few
          }
          mEnvironment->AddEffect( mClouds[CLOUD_FEW-1].get() );
-        	break;
+           break;
       }
       case CLOUD_SCATTERED:
       {
-         if(!mClouds[CLOUD_SCATTERED-1].valid())
+         if (!mClouds[CLOUD_SCATTERED-1].valid())
          {
-            mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f, 
+            mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f,
                "Clouds Scattered", textureDirectory);// scattered
          }
          mEnvironment->AddEffect( mClouds[CLOUD_SCATTERED-1].get() );
@@ -139,25 +139,25 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
       }
       case CLOUD_BROKEN:
       {
-         if(!mClouds[CLOUD_BROKEN-1].valid())
+         if (!mClouds[CLOUD_BROKEN-1].valid())
          {
-            mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f, 
+            mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f,
                "Clouds Broken", textureDirectory); //broken
          }
          mEnvironment->AddEffect( mClouds[CLOUD_BROKEN-1].get() );
          break;
       }
-   	case CLOUD_OVERCAST:
+      case CLOUD_OVERCAST:
       {
-         if(!mClouds[CLOUD_OVERCAST-1].valid())
+         if (!mClouds[CLOUD_OVERCAST-1].valid())
          {
-            mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f, 
+            mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f,
                "Clouds Overcast", textureDirectory);//overcast
          }
          mEnvironment->AddEffect( mClouds[CLOUD_OVERCAST-1].get() );
-         break;   
+         break;
       }
-      default: 
+      default:
       {
          break;
       }
@@ -173,7 +173,7 @@ void Weather::SetBasicWindType(const WindType windType)
 
    if (mWindType != windType)
    {
-      mWindType = windType;      
+      mWindType = windType;
    }
 }
 
@@ -195,16 +195,16 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
    {
       case VIS_UNLIMITED:
          mEnvironment->SetVisibility(100000.f);
-   	   break;
+         break;
       case VIS_FAR:
          mEnvironment->SetVisibility(50000.f);
-   	   break;
+         break;
       case VIS_MODERATE:
          mEnvironment->SetVisibility(25000.f);
-   	   break;
+         break;
       case VIS_LIMITED:
          mEnvironment->SetVisibility(8000.f);
-   	   break;
+         break;
       case VIS_CLOSE:
          mEnvironment->SetVisibility(1500.f);
          break;
@@ -214,8 +214,8 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
    }
 }
 
-/** 
- * 
+/**
+ *
  * @param rate : The rate of change from worsening to getting better
  *               (-1 = getting worse fast, 1 = getting better fast,
  *                 0 = stagnant)
@@ -245,14 +245,14 @@ void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season seaso
    //corresponding to the date
    switch ( mTimePeriod )
    {
-      case TIME_DAWN:  hr=6;  mi=0; sc=0; break;      
+      case TIME_DAWN:  hr=6;  mi=0; sc=0; break;
       case TIME_DAY:   hr=12; mi=30;sc=0; break;
       case TIME_DUSK:  hr=18; mi=0; sc=0; break;
       case TIME_NIGHT: hr=23; mi=0; sc=0; break;
       default:         hr=12; mi=0; sc=0; break;
    }
 
-   switch (mSeason) 
+   switch (mSeason)
    {
       case SEASON_SPRING: mo=3; da=15; break;
       case SEASON_SUMMER: mo=7; da=15; break;
@@ -287,19 +287,19 @@ int Weather::SaveCloudTextures( const std::string& textureDirectory )
 {
    int saveCount = 0;
 
-   if( mClouds[CLOUD_FEW-1].valid()
+   if ( mClouds[CLOUD_FEW-1].valid()
       && mClouds[CLOUD_FEW-1]->SaveTexture(textureDirectory+"/_WeatherCloudFew.png") )
       saveCount++;
 
-   if( mClouds[CLOUD_SCATTERED-1].valid()
+   if ( mClouds[CLOUD_SCATTERED-1].valid()
       && mClouds[CLOUD_SCATTERED-1]->SaveTexture(textureDirectory+"/_WeatherCloudScattered.png") )
       saveCount++;
 
-   if( mClouds[CLOUD_BROKEN-1].valid()
+   if ( mClouds[CLOUD_BROKEN-1].valid()
       && mClouds[CLOUD_BROKEN-1]->SaveTexture(textureDirectory+"/_WeatherCloudBroken.png") )
       saveCount++;
 
-   if( mClouds[CLOUD_OVERCAST-1].valid()
+   if ( mClouds[CLOUD_OVERCAST-1].valid()
       && mClouds[CLOUD_OVERCAST-1]->SaveTexture(textureDirectory+"/_WeatherCloudOvercast.png") )
       saveCount++;
 
@@ -310,19 +310,19 @@ int Weather::LoadCloudTextures( const std::string& textureDirectory )
 {
    int loadCount = 0;
 
-   if( mClouds[CLOUD_FEW-1].valid()
+   if ( mClouds[CLOUD_FEW-1].valid()
       && mClouds[CLOUD_FEW-1]->LoadTexture(textureDirectory+"/_WeatherCloudFew.png") )
       loadCount++;
 
-   if( mClouds[CLOUD_SCATTERED-1].valid()
+   if ( mClouds[CLOUD_SCATTERED-1].valid()
       && mClouds[CLOUD_SCATTERED-1]->LoadTexture(textureDirectory+"/_WeatherCloudScattered.png") )
       loadCount++;
-   
-   if( mClouds[CLOUD_BROKEN-1].valid() 
+
+   if ( mClouds[CLOUD_BROKEN-1].valid()
       && mClouds[CLOUD_BROKEN-1]->LoadTexture(textureDirectory+"/_WeatherCloudBroken.png") )
       loadCount++;
-   
-   if( mClouds[CLOUD_OVERCAST-1].valid()
+
+   if ( mClouds[CLOUD_OVERCAST-1].valid()
       && mClouds[CLOUD_OVERCAST-1]->LoadTexture(textureDirectory+"/_WeatherCloudOvercast.png") )
       loadCount++;
 

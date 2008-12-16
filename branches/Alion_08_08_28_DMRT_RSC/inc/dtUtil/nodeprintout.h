@@ -1,20 +1,20 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2006 MOVES Institute 
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * allen -morgas on forums- danklefsen, Curtiss Murphy
  */
@@ -32,7 +32,6 @@
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-   //class Node;
    class Geode;
    class PrimitiveSet;
 }
@@ -42,12 +41,12 @@ namespace dtUtil
 {
    ///Utility class used to traverse a node and generate a formatted text output
    /** Example:
-   * @code 
-   * osg::Node *node = LoadFile("myFile.ive");
-   * RefPtr<NodePrintOut> printout = new NodePrintOut();
-   * std::cout << printout->CollectNodeData(*node) << std::endl;
-   * @endcode
-   */
+    * @code
+    * osg::Node *node = LoadFile("myFile.ive");
+    * RefPtr<NodePrintOut> printout = new NodePrintOut();
+    * std::cout << printout->CollectNodeData(*node) << std::endl;
+    * @endcode
+    */
 
    class DT_UTIL_EXPORT NodePrintOut : public osg::Referenced
    {
@@ -64,13 +63,13 @@ namespace dtUtil
            * @param outputFilename : an optional filename to save the output to (default = "")
            * @param printVertData : optionally print out vertex information (default = false)
            * @return The formatted string output.
-           * 
+           *
            */
-         std::string CollectNodeData( const osg::Node &nodeToPrint, 
-                                      const std::string &outputFilename = "",
-                                      bool printVertData = false );
+         std::string CollectNodeData(const osg::Node& nodeToPrint,
+                                     const std::string& outputFilename = "",
+                                     bool printVertData = false);
 
-         
+
          /// Deprecated 06/10/08  Use CollectNodeData() instead
          void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true)
          {
@@ -78,9 +77,9 @@ namespace dtUtil
                       "std::string CollectNodeData( const osg::Node &nodeToPrint, const std::string &outputFilename = "", bool printVertData = false );");
 
             CollectNodeData(nodeToPrint, printOutFileName, PrintVerts);
-          }
+         }
 
-      
+
          /// Returns the file stream
          std::string GetFileOutput() const;
 
@@ -89,6 +88,7 @@ namespace dtUtil
 
          /// Dumps a node to a stream in osg formate
          void PrintNodeToOSGFile(const osg::Node& node, std::ostringstream &oss);
+
       protected:
          /// Called from printoutnode user should never call
          void Analyze(const osg::Node& nd, const std::string &indent);

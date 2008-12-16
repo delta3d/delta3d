@@ -20,8 +20,8 @@
 #include <dtABC/weather.h>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
 #endif
 
 #include <FL/Fl_Color_Chooser.H>
@@ -29,7 +29,7 @@
 #include <FL/fl_draw.H>
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 #include <osg/Vec3>
@@ -47,24 +47,24 @@ dtCore::Base *UserInterface::GetSelectedInstance( UserInterface *ui)
    return ( (dtCore::Base*)ui->InstanceList->data( ui->InstanceList->value() ) );
 }
 
-/** Reads the currently selected instance and updates all of its related 
+/** Reads the currently selected instance and updates all of its related
   * widgets.
   */
 void UserInterface::SelectInstance()
 {
    Base *b = GetSelectedInstance(this);
-   
-   if( (b = dynamic_cast<Base*>(b)) )
+
+   if ( (b = dynamic_cast<Base*>(b)) )
    {
       BaseName->value( b->GetName().c_str() );
-      InstanceClassName->label( "dtCore::Base" ); 
+      InstanceClassName->label( "dtCore::Base" );
       BaseReferenceCount->value( b->referenceCount() );
    }
 
 
    if (DeltaDrawable *d = dynamic_cast<DeltaDrawable*>(b))
    {
-      InstanceClassName->label( "dtCore::DeltaDrawable" ); 
+      InstanceClassName->label( "dtCore::DeltaDrawable" );
 
       DrawableChildList->clear();
       for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
@@ -93,10 +93,10 @@ void UserInterface::SelectInstance()
 
 
    /** Transformable **/
-   if(Transformable *t = dynamic_cast<Transformable*>(b))
+   if (Transformable *t = dynamic_cast<Transformable*>(b))
    {
-      InstanceClassName->label( "dtCore::Transformable" ); 
-      
+      InstanceClassName->label( "dtCore::Transformable" );
+
       Transform trans;
       if (TransformCSAbsButton->value())
       {
@@ -108,7 +108,7 @@ void UserInterface::SelectInstance()
       }
 
       osg::Vec3 xyz, hpr, scale;
-      
+
       trans.GetTranslation( xyz );
       trans.GetRotation( hpr );
 
@@ -122,17 +122,17 @@ void UserInterface::SelectInstance()
       TransformGroup->show();
    }
    else TransformGroup->hide();
-   
+
    /** Camera **/
    if (Camera *c = dynamic_cast<Camera*>(b))
    {
-      InstanceClassName->label( "dtCore::Camera" ); 
+      InstanceClassName->label( "dtCore::Camera" );
       osg::Vec4 color;
       c->GetClearColor(color);
       CameraClearRed->value(color[0]);
       CameraClearGreen->value(color[1]);
       CameraClearBlue->value(color[2]);
-      
+
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                        int(color[1]*(FL_NUM_GREEN-1)),
                                        int(color[2]*(FL_NUM_BLUE-1)) );
@@ -145,7 +145,7 @@ void UserInterface::SelectInstance()
       CameraWinChoice->clear();
       CameraWinChoice->add( "None", 0, NULL);
       for ( int i=0; i<DeltaWin::GetInstanceCount(); i++)
-      {         
+      {
          CameraWinChoice->add( DeltaWin::GetInstance(i)->GetName().c_str(), 0, NULL,
                                DeltaWin::GetInstance(i), 0);
       }
@@ -155,7 +155,7 @@ void UserInterface::SelectInstance()
       for ( int i=0; i<CameraWinChoice->size(); i++)
       {
          DeltaWin *menuItemWin = (DeltaWin*)menu[i].user_data();
-         
+
          if (menuItemWin == c->GetWindow())
          {
             CameraWinChoice->value(i);
@@ -171,7 +171,7 @@ void UserInterface::SelectInstance()
    //if (Scene *s = dynamic_cast<Scene*>(b))
    if (dynamic_cast<Scene*>(b))
    {
-      InstanceClassName->label( "dtCore::Scene" ); 
+      InstanceClassName->label( "dtCore::Scene" );
       //SceneGroup->show();
    }
    //else SceneGroup->hide();
@@ -179,7 +179,7 @@ void UserInterface::SelectInstance()
    /** Loadable **/
    if (Loadable *o = dynamic_cast<Loadable*>(b))
    {
-      InstanceClassName->label( "dtCore::Loadable" ); 
+      InstanceClassName->label( "dtCore::Loadable" );
       std::string filename = o->GetFilename();
       LoadableFilename->value( filename.c_str() );
 
@@ -190,7 +190,7 @@ void UserInterface::SelectInstance()
    /** DeltaWin **/
    if (DeltaWin *w = dynamic_cast<DeltaWin*>(b))
    {
-      InstanceClassName->label( "dtCore::DeltaWin" ); 
+      InstanceClassName->label( "dtCore::DeltaWin" );
 
       int x,y,width,height;
       w->GetPosition(x, y, width, height);
@@ -210,11 +210,11 @@ void UserInterface::SelectInstance()
    }
    else WindowGroup->hide();
 
-   
+
    /** View **/
    if (View *v = dynamic_cast<View*>(b))
    {
-      InstanceClassName->label( "dtCore::View" ); 
+      InstanceClassName->label( "dtCore::View" );
 
       //rebuild the ViewSceneChoice menu here in case
       //we have new Scene's or they changed their names
@@ -231,14 +231,14 @@ void UserInterface::SelectInstance()
       for ( int i=0; i<ViewSceneChoice->size(); i++)
       {
          Scene *menuItemScene = (Scene*)menu[i].user_data();
-      
+
          if (menuItemScene == v->GetScene())
          {
             ViewSceneChoice->value(i);
             break;
          }
       }
-      
+
       //rebuild the ViewCameraChoice menu here in case
       //we have new Scene's or they changed their names
       ViewCameraChoice->clear();
@@ -254,25 +254,25 @@ void UserInterface::SelectInstance()
       for ( int i=0; i<ViewCameraChoice->size(); i++)
       {
          Camera * menuItemCamera = (Camera*)menu[i].user_data();
-      
+
          if (menuItemCamera == v->GetCamera())
          {
             ViewCameraChoice->value(i);
             break;
          }
       }
-      
+
       //unsigned int num = v->GetFrameBin();
       //ViewFrameBin->value(num);
       ViewGroup->show();
    }
    else ViewGroup->hide();
-   
+
    /** Environment **/
    if (Environment *e = dynamic_cast<Environment*>(b))
    {
       InstanceClassName->label( "dtCore::Environment" );
-      
+
       osg::Vec3 fColor;
       e->GetFogColor(fColor);
       FogRed->value(fColor[0]);
@@ -282,7 +282,7 @@ void UserInterface::SelectInstance()
       Fl_Color fc = fl_color_cube( int(fColor[0])*(FL_NUM_RED-1),
                                    int(fColor[1])*(FL_NUM_GREEN-1),
                                    int(fColor[2])*(FL_NUM_BLUE-1) );
-      
+
       FogColorLoadButton->color(fc);
 
       osg::Vec3 bc;
@@ -305,7 +305,7 @@ void UserInterface::SelectInstance()
 
       if (e->GetFogEnable())  EnvFogEnable->value(1);
       else                    EnvFogEnable->value(0);
-   
+
       Environment::FogMode fm = e->GetFogMode();
       EnvFogMode->value(fm);
       if (fm==Environment::ADV)
@@ -327,7 +327,7 @@ void UserInterface::SelectInstance()
       Fl_Color sc = fl_color_cube( int(skyColor[0]*(FL_NUM_RED-1)),
                                    int(skyColor[1]*(FL_NUM_GREEN-1)),
                                    int(skyColor[2]*(FL_NUM_BLUE-1) ));
-      
+
       SkyColorLoadButton->color(sc);
 
       unsigned yr, mo, da, hr, mi, sec;
@@ -361,8 +361,8 @@ void UserInterface::SelectInstance()
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                    int(color[1]*(FL_NUM_GREEN-1)),
                                    int(color[2]*(FL_NUM_BLUE-1)) );
-      
-      SkyBoxBaseColorLoadButton->color(fc);      
+
+      SkyBoxBaseColorLoadButton->color(fc);
 
       SkyBoxGroup->show();
    }
@@ -397,9 +397,9 @@ void UserInterface::SelectInstance()
    }
 
    /** CloudDome **/
-   //if( const CloudDome *cd = dynamic_cast<CloudDome*>(b) )
-   if( CloudDome *cd = dynamic_cast<CloudDome*>(b) )
-   {   
+   //if ( const CloudDome *cd = dynamic_cast<CloudDome*>(b) )
+   if ( CloudDome *cd = dynamic_cast<CloudDome*>(b) )
+   {
        InstanceClassName->label( "dtCore::CloudDome" );
 
        cScale->value(cd->GetScale());
@@ -433,7 +433,7 @@ void UserInterface::SelectInstance()
           int(ccolor.y()*(FL_NUM_GREEN-1)),
           int(ccolor.z()*(FL_NUM_BLUE-1)) );
 
-       CloudColorLoadButton->color(fc);      
+       CloudColorLoadButton->color(fc);
 
        CloudEditor->show();
    }
@@ -445,38 +445,38 @@ void UserInterface::SelectInstance()
       InstanceClassName->label( "dtABC::Weather" );
 
       Weather::WeatherTheme theme = w->GetTheme();
-      switch(theme)
+      switch (theme)
       {
-         case Weather::THEME_CUSTOM: 
-            WeatherThemeCustomOption->setonly(); 
+         case Weather::THEME_CUSTOM:
+            WeatherThemeCustomOption->setonly();
             WeatherThemeGroup->deactivate();
             WeatherCustomGroup->activate();
             break;
-         case Weather::THEME_CLEAR: 
-            WeatherThemeClearOption->setonly(); 
+         case Weather::THEME_CLEAR:
+            WeatherThemeClearOption->setonly();
             WeatherThemeOption->setonly();
             WeatherThemeGroup->activate();
             WeatherCustomGroup->deactivate();
             break;
-         case Weather::THEME_FAIR: 
+         case Weather::THEME_FAIR:
             WeatherThemeFairOption->setonly();
             WeatherThemeOption->setonly();
             WeatherThemeGroup->activate();
             WeatherCustomGroup->deactivate();
             break;
-         case Weather::THEME_FOGGY: 
+         case Weather::THEME_FOGGY:
             WeatherThemeFoggyOption->setonly();
             WeatherThemeOption->setonly();
             WeatherThemeGroup->activate();
             WeatherCustomGroup->deactivate();
             break;
-         case Weather::THEME_RAINY: 
-            WeatherThemeRainyOption->setonly(); 
+         case Weather::THEME_RAINY:
+            WeatherThemeRainyOption->setonly();
             WeatherThemeOption->setonly();
             WeatherThemeGroup->activate();
             WeatherCustomGroup->deactivate();
             break;
-         default: 
+         default:
             WeatherThemeClearOption->setonly();
             WeatherThemeOption->setonly();
             WeatherThemeGroup->activate();
@@ -498,14 +498,14 @@ void UserInterface::SelectInstance()
          Weather::CloudType cloud = w->GetBasicCloudType();
          WeatherCloudSlider->value( (int) cloud);
 
-         switch(cloud) 
+         switch (cloud)
          {
-         case Weather::CLOUD_CLEAR: WeatherCloudSlider->label("Cloud: Clear"); break;
-         case Weather::CLOUD_FEW: WeatherCloudSlider->label("Cloud: Few"); break;
+         case Weather::CLOUD_CLEAR: WeatherCloudSlider->label("Cloud: Clear");         break;
+         case Weather::CLOUD_FEW: WeatherCloudSlider->label("Cloud: Few");             break;
          case Weather::CLOUD_SCATTERED: WeatherCloudSlider->label("Cloud: Scattered"); break;
-         case Weather::CLOUD_BROKEN: WeatherCloudSlider->label("Cloud: Broken"); break;
-         case Weather::CLOUD_OVERCAST: WeatherCloudSlider->label("Cloud: Overcast"); break;
-         default: WeatherCloudSlider->label("Cloud: Clear"); break;
+         case Weather::CLOUD_BROKEN: WeatherCloudSlider->label("Cloud: Broken");       break;
+         case Weather::CLOUD_OVERCAST: WeatherCloudSlider->label("Cloud: Overcast");   break;
+         default: WeatherCloudSlider->label("Cloud: Clear");                           break;
          }
       }
 
@@ -513,13 +513,14 @@ void UserInterface::SelectInstance()
          Weather::VisibilityType vis = w->GetBasicVisibilityType();
          WeatherVisSlider->value( (int)vis );
 
-         switch(vis) {
-      case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited"); 	break;
-      case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far"); 	break;
-      case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate"); 	break;
-      case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited"); 	break;
-      case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close"); 	break;
-      default: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+         switch (vis)
+         {
+         case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited"); break;
+         case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far");             break;
+         case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate");   break;
+         case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited");     break;
+         case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close");         break;
+         default: WeatherVisSlider->label("Vis: Unlimited");                     break;
          }
       }
 
@@ -527,14 +528,14 @@ void UserInterface::SelectInstance()
          Weather::WindType wind = w->GetBasicWindType();
          WeatherWindSlider->value( (int)wind );
 
-         switch(wind) {
-      case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");   	break;
-      case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");   	break;
-      case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");   	break;
-      case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate");   	break;
-      case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");   	break;
-      case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");   	break;
-      default:WeatherWindSlider->label("Wind: None");   	break;
+         switch (wind) {
+         case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");         break;
+         case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");     break;
+         case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");       break;
+         case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate"); break;
+         case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");       break;
+         case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");     break;
+         default:WeatherWindSlider->label("Wind: None");                          break;
          }
       }
 
@@ -542,8 +543,8 @@ void UserInterface::SelectInstance()
    }
    else WeatherGroup->hide();
 
-   // Light 
-   if(Light *l = dynamic_cast<Light *>(b))
+   // Light
+   if (Light *l = dynamic_cast<Light *>(b))
    {
       InstanceClassName->label( "dtCore::Light" );
 
@@ -552,7 +553,7 @@ void UserInterface::SelectInstance()
          LightModeGlobal->value(1);
          LightModeLocal->value(0);
       }
-      else 
+      else
       {
          LightModeLocal->value(1);
          LightModeGlobal->value(0);
@@ -566,9 +567,9 @@ void UserInterface::SelectInstance()
       LightAmbGreen->value(g);
       LightAmbBlue->value(b);
 
-      Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                                 int(g*(FL_NUM_GREEN-1)),
-                                 int(b*(FL_NUM_BLUE-1)) );
+      Fl_Color fc = fl_color_cube(int(r*(FL_NUM_RED-1)),
+                                  int(g*(FL_NUM_GREEN-1)),
+                                  int(b*(FL_NUM_BLUE-1)));
 
       LightAmbColorLoadButton->color(fc);
       LightAmbColorLoadButton->redraw();
@@ -579,9 +580,9 @@ void UserInterface::SelectInstance()
       LightSpecGreen->value(g);
       LightSpecBlue->value(b);
 
-      fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                        int(g*(FL_NUM_GREEN-1)),
-                        int(b*(FL_NUM_BLUE-1)) );
+      fc = fl_color_cube(int(r*(FL_NUM_RED-1)),
+                         int(g*(FL_NUM_GREEN-1)),
+                         int(b*(FL_NUM_BLUE-1)));
 
       LightSpecColorLoadButton->color(fc);
       LightSpecColorLoadButton->redraw();
@@ -592,23 +593,23 @@ void UserInterface::SelectInstance()
       LightDifGreen->value(g);
       LightDifBlue->value(b);
 
-      fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                        int(g*(FL_NUM_GREEN-1)),
-                        int(b*(FL_NUM_BLUE-1)) );
+      fc = fl_color_cube(int(r*(FL_NUM_RED-1)),
+                         int(g*(FL_NUM_GREEN-1)),
+                         int(b*(FL_NUM_BLUE-1)));
 
       LightDifColorLoadButton->color(fc);
       LightDifColorLoadButton->redraw();
 
 
-   	LightGroup->show();
+      LightGroup->show();
    }
    else
    {
       LightGroup->hide();
    }
 
-   //PositionalLight
-   if (PositionalLight *l = dynamic_cast<PositionalLight*>(b))
+   // PositionalLight
+   if (PositionalLight* l = dynamic_cast<PositionalLight*>(b))
    {
       InstanceClassName->label( "dtCore::PositionalLight" );
 
@@ -625,11 +626,11 @@ void UserInterface::SelectInstance()
       PositionalLightGroup->hide();
    }
 
-   
-   if(InfiniteLight *l = dynamic_cast<InfiniteLight *>(b))
+
+   if (InfiniteLight* l = dynamic_cast<InfiniteLight*>(b))
    {
       InstanceClassName->label( "dtCore::InfiniteLight" );
-      
+
       float az, el;
       l->GetAzimuthElevation(az, el);
 
@@ -644,15 +645,15 @@ void UserInterface::SelectInstance()
    }
 
    //SpotLight
-   if (SpotLight *l = dynamic_cast<SpotLight*>(b))
+   if (SpotLight* l = dynamic_cast<SpotLight*>(b))
    {
       InstanceClassName->label( "dtCore::SpotLight" );
-     
+
       float spotCutoff = l->GetSpotCutoff();
       float spotExp = l->GetSpotExponent();
       LightCutoffInput->value(spotCutoff);
       LightExponentInput->value(spotExp);
-      
+
       LightSpotGroup->show();
    }
    else
@@ -670,16 +671,16 @@ void UserInterface::SelectInstance()
 
    }
 
-   if (ParticleSystem *ps = dynamic_cast<ParticleSystem*>(b) )
+   if (ParticleSystem* ps = dynamic_cast<ParticleSystem*>(b))
    {
       InstanceClassName->label( "dtCore::ParticleSystem" );
 
-      if (ps->IsEnabled())    ParticleEnabled->value(1);       
-      else                    ParticleEnabled->value(0);
-         
+      if (ps->IsEnabled()) { ParticleEnabled->value(1); }
+      else                 { ParticleEnabled->value(0); }
 
-      if (ps->IsParentRelative())  ParticleParentRelative->value(1);
-      else                         ParticleParentRelative->value(0);
+
+      if (ps->IsParentRelative()) { ParticleParentRelative->value(1); }
+      else                        { ParticleParentRelative->value(0); }
 
       ParticleGroup->show();
    }
@@ -689,10 +690,10 @@ void UserInterface::SelectInstance()
    }
 }
 
-void UserInterface::BaseNameCB(Fl_Input *o )
+void UserInterface::BaseNameCB(Fl_Input *o)
 {
-   GetSelectedInstance(this)->SetName( o->value() );
-   InstanceList->text( InstanceList->value(), o->value() );
+   GetSelectedInstance(this)->SetName(o->value());
+   InstanceList->text(InstanceList->value(), o->value());
 }
 
 void UserInterface::TransformPosCB(Fl_Value_Input*)
@@ -700,7 +701,7 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
    Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
    Transform trans;
 
-   trans.Set(TransformX->value(), 
+   trans.Set(TransformX->value(),
              TransformY->value(),
              TransformZ->value(),
              TransformH->value(),
@@ -710,35 +711,35 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
 
    if (TransformCSAbsButton->value())
    {
-      t->SetTransform( trans, Transformable::ABS_CS );
+      t->SetTransform(trans, Transformable::ABS_CS);
    }
    else
    {
-      t->SetTransform( trans, Transformable::REL_CS );
+      t->SetTransform(trans, Transformable::REL_CS);
    }
 
 }
 
-void UserInterface::TransformCSCB( Fl_Round_Button *)
+void UserInterface::TransformCSCB(Fl_Round_Button*)
 {
-   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
+   Transformable* t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
    Transform trans;
-   
+
    if (TransformCSAbsButton->value())
    {
       //fill in widgets with abs position
-      t->GetTransform( trans, Transformable::ABS_CS );
+      t->GetTransform(trans, Transformable::ABS_CS);
    }
    else
    {
       //fill in widgets with rel position
-      t->GetTransform( trans, Transformable::REL_CS );
+      t->GetTransform(trans, Transformable::REL_CS);
    }
-  
+
    osg::Vec3 xyz, hpr;
 
-   trans.GetTranslation( xyz );
-   trans.GetRotation( hpr );
+   trans.GetTranslation(xyz);
+   trans.GetRotation(hpr);
 
    TransformX->value(xyz[0]);
    TransformY->value(xyz[1]);
@@ -759,24 +760,24 @@ void UserInterface::CameraClearColorBrowserCB(Fl_Button*)
    CameraClearRed->value(r);
    CameraClearGreen->value(g);
    CameraClearBlue->value(b);
-   
-   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                                int(g*(FL_NUM_GREEN-1)),
-                                int(b*(FL_NUM_BLUE-1)) );
+
+   Fl_Color fc = fl_color_cube(int(r*(FL_NUM_RED-1)),
+                               int(g*(FL_NUM_GREEN-1)),
+                               int(b*(FL_NUM_BLUE-1)));
 
    CameraClearLoadButton->color(fc);
-   
+
    osg::Vec4 color (
       CameraClearRed->value(),
       CameraClearGreen->value(),
       CameraClearBlue->value(),
       1.f );
 
-   Camera *c = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   Camera* c = dynamic_cast<Camera*>(GetSelectedInstance(this));
    c->SetClearColor( color );
 }
 
-void UserInterface::CameraClearColorCB(Fl_Value_Input* )
+void UserInterface::CameraClearColorCB(Fl_Value_Input*)
 {
    osg::Vec4 color (
       CameraClearRed->value(),
@@ -784,46 +785,46 @@ void UserInterface::CameraClearColorCB(Fl_Value_Input* )
          CameraClearBlue->value(),
          1.f );
 
-   Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
-                                int(color[1]*(FL_NUM_GREEN-1)),
-                                int(color[2]*(FL_NUM_BLUE-1)) );
-      
+   Fl_Color fc = fl_color_cube(int(color[0]*(FL_NUM_RED-1)),
+                               int(color[1]*(FL_NUM_GREEN-1)),
+                               int(color[2]*(FL_NUM_BLUE-1)));
+
       CameraClearLoadButton->color(fc);
       CameraClearLoadButton->redraw();
-    
-   Camera *c = dynamic_cast<Camera*>(GetSelectedInstance(this));
-   c->SetClearColor( color );
+
+   Camera* c = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   c->SetClearColor(color);
 }
 
 
-void UserInterface::ViewSceneCB( Fl_Choice *o )
+void UserInterface::ViewSceneCB(Fl_Choice* o)
 {
-   View *view = dynamic_cast<View*>(GetSelectedInstance(this));
-   const Fl_Menu *menu = o->menu();   
+   View* view = dynamic_cast<View*>(GetSelectedInstance(this));
+   const Fl_Menu* menu = o->menu();
 
-   Scene *scene = (Scene*)menu[o->value()].user_data();
-   view->SetScene( scene );
+   Scene* scene = (Scene*)menu[o->value()].user_data();
+   view->SetScene(scene);
 }
-void UserInterface::ViewCameraCB( Fl_Choice *o )
+void UserInterface::ViewCameraCB(Fl_Choice* o)
 {
-   View * view = dynamic_cast<View*>(GetSelectedInstance(this));
-   const Fl_Menu *menu = o->menu();   
+   View* view = dynamic_cast<View*>(GetSelectedInstance(this));
+   const Fl_Menu* menu = o->menu();
 
-   Camera * camera = (Camera*)menu[o->value()].user_data();
+   Camera* camera = (Camera*)menu[o->value()].user_data();
    view->SetCamera( camera );
 }
 
-void UserInterface::CameraWinCB( Fl_Choice *o )
+void UserInterface::CameraWinCB(Fl_Choice* o)
 {
-   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
-   const Fl_Menu *menu = o->menu();   
-   
-   DeltaWin *win = (DeltaWin*)menu[o->value()].user_data();
-   cam->SetWindow( win );
+   Camera* cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   const Fl_Menu* menu = o->menu();
+
+   DeltaWin* win = (DeltaWin*)menu[o->value()].user_data();
+   cam->SetWindow(win);
 
 }
 
-void UserInterface::CamStatisticsCB( Fl_Button *o)
+void UserInterface::CamStatisticsCB(Fl_Button* o)
 {// TODO
 //   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
 //   cam->SetNextStatisticsType();
@@ -839,7 +840,7 @@ void UserInterface::CamStatisticsCB( Fl_Button *o)
 void UserInterface::WinPosCB( Fl_Value_Input *o)
 {
    DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
-   w->SetPosition( int(WinPosX->value()), int(WinPosY->value()), 
+   w->SetPosition( int(WinPosX->value()), int(WinPosY->value()),
                    int(WinPosW->value()), int(WinPosH->value()) );
 }
 
@@ -847,14 +848,14 @@ void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 {
    DeltaWin *win = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
    const Fl_Menu_Item*menu = o->menu();
-   
+
 
    int width = 640, height = 480;
-   
+
    std::string size( menu[o->value()].text );
 
    size_t split = size.find("x");
-   
+
    if (split != std::string::npos)
    {
       width = atoi(size.substr(0, split).c_str());
@@ -890,22 +891,22 @@ void UserInterface::WinFullScreenCB( Fl_Check_Button *o)
    DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
 
    if (o->value()) w->SetFullScreenMode(true);
-   else            w->SetFullScreenMode(false);    
-   
+   else            w->SetFullScreenMode(false);
+
 }
 
 void UserInterface::LoadableFileCB( Fl_Input *o)
 {
-   
+
 }
 
 void UserInterface::LoadableLoadFileCB( Fl_Button *o)
 {
    std::string filename = fl_file_chooser("Load File", NULL, NULL, 1);
-   
+
    Loadable *obj = dynamic_cast<Loadable*>(GetSelectedInstance(this));
    obj->LoadFile(filename);
-   
+
    filename = obj->GetFilename();
    LoadableFilename->value( filename.c_str() );
 }
@@ -939,7 +940,7 @@ void UserInterface::DrawableAddChildCB( Fl_Button *)
 
          if (o == SelectWinAddButton)
          {
-            //read check boxes 
+            //read check boxes
             for (int i=0; i< SelectList->nitems()+1; i++)
             {
                if (SelectList->checked(i))
@@ -1002,10 +1003,10 @@ void UserInterface::SkyBoxBaseColorCB(Fl_Value_Input* )
    Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                 int(color[1]*(FL_NUM_GREEN-1)),
                                 int(color[2]*(FL_NUM_BLUE-1)) );
-      
+
       SkyBoxBaseColorLoadButton->color(fc);
       SkyBoxBaseColorLoadButton->redraw();
-    
+
    SkyDome *c = dynamic_cast<SkyDome*>(GetSelectedInstance(this));
    c->SetBaseColor( color );
 }
@@ -1021,13 +1022,13 @@ void UserInterface::SkyBoxBaseColorBrowserCB(Fl_Button*)
    SkyBoxBaseRed->value(r);
    SkyBoxBaseGreen->value(g);
    SkyBoxBaseBlue->value(b);
-   
+
    Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
                                 int(g*(FL_NUM_GREEN-1)),
                                 int(b*(FL_NUM_BLUE-1)) );
 
    SkyBoxBaseColorLoadButton->color(fc);
-   
+
    osg::Vec3 color(
       SkyBoxBaseRed->value(),
       SkyBoxBaseGreen->value(),
@@ -1057,10 +1058,10 @@ void UserInterface::EnvFogColorCB(Fl_Value_Input *)
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                    int(color[1]*(FL_NUM_GREEN-1)),
                                    int(color[2]*(FL_NUM_BLUE-1)) );
-      
+
       FogColorLoadButton->color(fc);
       FogColorLoadButton->redraw();
-    
+
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetFogColor(color);
 }
@@ -1076,13 +1077,13 @@ void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
    FogRed->value(r);
    FogGreen->value(g);
    FogBlue->value(b);
-   
+
    Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
                                 int(g*(FL_NUM_GREEN-1)),
                                 int(b*(FL_NUM_BLUE-1)) );
 
    FogColorLoadButton->color(fc);
-   
+
    osg::Vec3 color (
       FogRed->value(),
       FogGreen->value(),
@@ -1141,13 +1142,13 @@ void UserInterface::EnvSkyColorBrowserCB(Fl_Button *)
    SkyRed->value(r);
    SkyGreen->value(g);
    SkyBlue->value(b);
-   
+
    Fl_Color sc = fl_color_cube( int(r*(FL_NUM_RED-1)),
                                 int(g*(FL_NUM_GREEN-1)),
                                 int(b*(FL_NUM_BLUE-1)) );
 
    SkyColorLoadButton->color(sc);
-   
+
    osg::Vec3 color (
       SkyRed->value(),
       SkyGreen->value(),
@@ -1167,10 +1168,10 @@ void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                    int(color[1]*(FL_NUM_GREEN-1)),
                                    int(color[2]*(FL_NUM_BLUE-1)) );
-      
+
       SkyColorLoadButton->color(fc);
       SkyColorLoadButton->redraw();
-    
+
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetSkyColor(color);
 }
@@ -1186,7 +1187,7 @@ void UserInterface::EnvTimeCB(Fl_Value_Slider *o)
    float tod = EnvTimeOfDay->value();
    int hr = int(floor(tod));
    int min = int(floor((tod-hr)*60.0));
-   
+
    e->SetDateTime(yr, mo, da, hr, min, 0);
 }
 
@@ -1268,21 +1269,21 @@ void UserInterface::CloudWindCB(Fl_Value_Slider *)
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->SetSpeedX( cSpeedX->value());
     cd->SetSpeedY( cSpeedY->value());
-       
+
 }
 
 void UserInterface::CloudEnableCB(Fl_Check_Button *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->SetShaderEnable( cEnable->value());
-       
+
 }
 
 void UserInterface::CloudBiasCB(Fl_Value_Slider *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->SetBias( cBias->value());
-       
+
 }
 
 void UserInterface::CloudColorBrowserCB(Fl_Button *)
@@ -1317,7 +1318,7 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
     Fl_Color fc = fl_color_cube( int(ccolor.x()*(FL_NUM_RED-1)),
                                  int(ccolor.y()*(FL_NUM_GREEN-1)),
                                  int(ccolor.z()*(FL_NUM_BLUE-1)) );
-      
+
       CloudColorLoadButton->color(fc);
       CloudColorLoadButton->redraw();
 
@@ -1337,13 +1338,13 @@ void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)
    {
       WeatherThemeGroup->deactivate();
       WeatherCustomGroup->activate();
-      
+
       //w->SetTheme(Weather::THEME_CUSTOM);
    }
 }
 
 void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
-{   
+{
    Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    if (WeatherThemeCustomOption->value() == 1) w->SetTheme(Weather::THEME_CUSTOM);
@@ -1357,7 +1358,7 @@ void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
       Weather::CloudType cloud = w->GetBasicCloudType();
       WeatherCloudSlider->value( (int) cloud);
 
-      switch(cloud) 
+      switch (cloud)
       {
       case Weather::CLOUD_CLEAR: WeatherCloudSlider->label("Cloud: Clear"); break;
       case Weather::CLOUD_FEW: WeatherCloudSlider->label("Cloud: Few"); break;
@@ -1372,13 +1373,13 @@ void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
       Weather::VisibilityType vis = w->GetBasicVisibilityType();
       WeatherVisSlider->value( (int)vis );
 
-      switch(vis) {
-      case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited"); 	break;
-      case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far"); 	break;
-      case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate"); 	break;
-      case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited"); 	break;
-      case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close"); 	break;
-      default: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+      switch (vis) {
+      case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited");    break;
+      case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far");    break;
+      case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate");    break;
+      case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited");    break;
+      case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close");    break;
+      default: WeatherVisSlider->label("Vis: Unlimited");    break;
       }
    }
 
@@ -1386,14 +1387,14 @@ void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
       Weather::WindType wind = w->GetBasicWindType();
       WeatherWindSlider->value( (int)wind );
 
-      switch(wind) {
-      case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");   	break;
-      case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");   	break;
-      case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");   	break;
-      case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate");   	break;
-      case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");   	break;
-      case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");   	break;
-      default:WeatherWindSlider->label("Wind: None");   	break;
+      switch (wind) {
+      case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");      break;
+      case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");      break;
+      case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");      break;
+      case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate");      break;
+      case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");      break;
+      case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");      break;
+      default:WeatherWindSlider->label("Wind: None");      break;
       }
    }
 
@@ -1404,29 +1405,29 @@ void UserInterface::WeatherCustomCloudCB(Fl_Slider *)
    Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    int cloud  = static_cast<int>(WeatherCloudSlider->value());
-   
-   switch(cloud) {
-   case 0: 
+
+   switch (cloud) {
+   case 0:
       w->SetBasicCloudType(Weather::CLOUD_CLEAR);
-      WeatherCloudSlider->label("Cloud: Clear");      
+      WeatherCloudSlider->label("Cloud: Clear");
       break;
-   case 1: 
+   case 1:
       w->SetBasicCloudType(Weather::CLOUD_FEW);
       WeatherCloudSlider->label("Cloud: Few");
       break;
-   case 2: 
+   case 2:
       w->SetBasicCloudType(Weather::CLOUD_SCATTERED);
       WeatherCloudSlider->label("Cloud: Scattered");
       break;
-   case 3: 
+   case 3:
       w->SetBasicCloudType(Weather::CLOUD_BROKEN);
       WeatherCloudSlider->label("Cloud: Broken");
       break;
-   case 4: 
+   case 4:
       w->SetBasicCloudType(Weather::CLOUD_OVERCAST);
       WeatherCloudSlider->label("Cloud: Overcast");
       break;
-   default: 
+   default:
       w->SetBasicCloudType(Weather::CLOUD_CLEAR);
       WeatherCloudSlider->label("Cloud: Clear");
    break;
@@ -1441,28 +1442,28 @@ void UserInterface::WeatherCustomWindCB(Fl_Slider *)
 
    int wind  = static_cast<int>(WeatherWindSlider->value());
 
-   switch(wind) {
-   case 0: 
+   switch (wind) {
+   case 0:
       w->SetBasicWindType(Weather::WIND_NONE);
-      WeatherWindSlider->label("Wind: None");      
+      WeatherWindSlider->label("Wind: None");
       break;
-   case 1: 
+   case 1:
       w->SetBasicWindType(Weather::WIND_BREEZE);
       WeatherWindSlider->label("Wind: Breeze");
       break;
-   case 2: 
+   case 2:
       w->SetBasicWindType(Weather::WIND_LIGHT);
       WeatherWindSlider->label("Wind: Light");
       break;
-   case 3: 
+   case 3:
       w->SetBasicWindType(Weather::WIND_MODERATE);
       WeatherWindSlider->label("Wind: Moderate");
       break;
-   case 4: 
+   case 4:
       w->SetBasicWindType(Weather::WIND_HEAVY);
       WeatherWindSlider->label("Wind: Heavy");
       break;
-   default: 
+   default:
       w->SetBasicWindType(Weather::WIND_SEVERE);
       WeatherWindSlider->label("Wind: Severe");
       break;
@@ -1477,28 +1478,28 @@ void UserInterface::WeatherCustomVisCB(Fl_Slider *)
 
    int vis  = static_cast<int>(WeatherVisSlider->value());
 
-   switch(vis) {
-   case 0: 
+   switch (vis) {
+   case 0:
       w->SetBasicVisibilityType(Weather::VIS_UNLIMITED);
-      WeatherVisSlider->label("Vis: Unlimited");      
+      WeatherVisSlider->label("Vis: Unlimited");
       break;
-   case 1: 
+   case 1:
       w->SetBasicVisibilityType(Weather::VIS_FAR);
       WeatherVisSlider->label("Vis: VIS_FAR");
       break;
-   case 2: 
+   case 2:
       w->SetBasicVisibilityType(Weather::VIS_MODERATE);
       WeatherVisSlider->label("Vis: Moderate");
       break;
-   case 3: 
+   case 3:
       w->SetBasicVisibilityType(Weather::VIS_LIMITED);
       WeatherVisSlider->label("Vis: Limited");
       break;
-   case 4: 
+   case 4:
       w->SetBasicVisibilityType(Weather::VIS_CLOSE);
       WeatherVisSlider->label("Vis: Close");
       break;
-   default: 
+   default:
       w->SetBasicVisibilityType(Weather::VIS_UNLIMITED);
       WeatherVisSlider->label("Vis: Unlimited");
       break;
@@ -1713,10 +1714,10 @@ void UserInterface::LightAttCB(Fl_Value_Input*)
 void UserInterface::LightSpotCB(Fl_Value_Input*)
 {
    SpotLight *l = dynamic_cast<SpotLight*>(GetSelectedInstance(this));
-   
+
    l->SetSpotCutoff( LightCutoffInput->value() );
    l->SetSpotExponent( LightExponentInput->value() );
-   
+
 }
 
 void UserInterface::InfLightCB(Fl_Value_Input*)

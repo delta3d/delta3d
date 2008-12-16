@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <dtUtil/log.h>
 #include <dtUtil/datastream.h>
@@ -30,38 +31,58 @@ using dtUtil::DataStream;
    
 namespace dtGame 
 {
-   Message::Message() : mMessageType(&MessageType::UNKNOWN), mDestination(NULL), mSendingActorId(""), mAboutActorId("")
+   Message::Message()
+      : mMessageType(&MessageType::UNKNOWN)
+      , mDestination(NULL)
+      , mSendingActorId("")
+      , mAboutActorId("")
    {
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   bool Message::operator ==(const dtGame::Message& toCompare) const
+   bool Message::operator==(const dtGame::Message& toCompare) const
    {
-      if ((&toCompare) == this) 
+      if ((&toCompare) == this)
+      {
          return true;
+      }
       
       if (*mMessageType != *toCompare.mMessageType)
+      {
          return false;
+      }
       
       if (mDestination != toCompare.mDestination)
+      {
          return false;
+      }
       
       if (mSource != toCompare.mSource)
+      {
          return false;
+      }
       
       if (mDestination != toCompare.mDestination)
+      {
          return false;
+      }
       
-      if (mSendingActorId != toCompare.mSendingActorId)  
+      if (mSendingActorId != toCompare.mSendingActorId)
+      {
          return false;
+      }
       
       if (mAboutActorId != toCompare.mAboutActorId)
+      {
          return false;
+      }
       
       if (mParameterList.size() != toCompare.mParameterList.size())
+      {
          return false;
+      }
       
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i, j;
+      std::map< std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i, j;
       i = mParameterList.begin();
       j = toCompare.mParameterList.begin();
       
@@ -69,7 +90,9 @@ namespace dtGame
       while (i != mParameterList.end() && j != toCompare.mParameterList.end())
       {
          if (*i->second != *j->second)
+         {
             return false;
+         }
          ++i;
          ++j;
       }
@@ -80,10 +103,11 @@ namespace dtGame
    }
    
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::ToString(std::string &toFill) const
+   void Message::ToString(std::string& toFill) const
    {
       for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+         i != mParameterList.end();
+         ++i)
       {
          toFill.append(i->second->ToString());
          toFill.append(1, '\n');
@@ -91,44 +115,57 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::FromString(const std::string &source)
+   bool Message::FromString(const std::string& source)
    {
+      bool okay = true;
+
       std::istringstream iss(source);
       for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+         i != mParameterList.end();
+         ++i)
       {
          std::string line;
          std::getline(iss, line);
-         i->second->FromString(line);
-      }      
+         okay = okay && i->second->FromString(line);
+      }
+
+      return okay;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::ToDataStream(DataStream &stream) const
+   void Message::ToDataStream(DataStream& stream) const
    {
-      for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+      for (std::map< std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin(); 
+         i != mParameterList.end();
+         ++i)
       {
          i->second->ToDataStream(stream);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::FromDataStream(DataStream &stream)
+   bool Message::FromDataStream(DataStream& stream)
    {
-      for (std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
-         i != mParameterList.end(); ++i)
+      bool okay = true;
+
+      for (std::map< std::string, dtCore::RefPtr<MessageParameter> >::iterator i = mParameterList.begin(); 
+         i != mParameterList.end();
+         ++i)
       {
-         i->second->FromDataStream(stream);
-      }      
+         okay = okay && i->second->FromDataStream(stream);
+      }
+
+      return okay;
    }
   
    ///////////////////////////////////////////////////////////////////////////////
-   void Message::AddParameter(dtDAL::NamedParameter *param)
+   void Message::AddParameter(dtDAL::NamedParameter* param)
    {
       if (param == NULL)
+      {
          throw dtUtil::Exception(ExceptionEnum::INVALID_PARAMETER,
          "NULL parameters are not legal.", __FILE__, __LINE__);
+      }
       
       std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor =
          mParameterList.find(param->GetName());         
@@ -139,45 +176,54 @@ namespace dtGame
       }
       else
       {
-         mParameterList.insert(std::make_pair(param->GetName(),param));
+         mParameterList.insert(std::make_pair(param->GetName(), param));
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   MessageParameter* Message::GetParameter(const std::string &name)
+   MessageParameter* Message::GetParameter(const std::string& name)
    {
-      std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator itor =
+      std::map< std::string, dtCore::RefPtr<MessageParameter> >::iterator itor =
          mParameterList.find(name);
          
       if (itor != mParameterList.end())
+      {
          return itor->second.get();
-      else 
+      }
+      else
+      {
          return NULL;
+      }
    }
    
-   const MessageParameter* Message::GetParameter(const std::string &name) const
+   const MessageParameter* Message::GetParameter(const std::string& name) const
    {
       std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator itor =
          mParameterList.find(name);
          
       if (itor != mParameterList.end())
+      {
          return itor->second.get();
-      else 
+      }
+      else
+      {
          return NULL;
+      }
    }
          
    void Message::CopyDataTo(Message& msg) const
    {
       //copy header stuff
-      msg.mMessageType = mMessageType;
+      msg.mMessageType    = mMessageType;
       msg.mSendingActorId = mSendingActorId;
-      msg.mAboutActorId = mAboutActorId;
-      msg.mDestination = mDestination;
-      msg.mSource = mSource;
+      msg.mAboutActorId   = mAboutActorId;
+      msg.mDestination    = mDestination;
+      msg.mSource         = mSource;
       
       //copy parameters
       for (std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator i = mParameterList.begin();     
-            i != mParameterList.end(); ++i)
+            i != mParameterList.end();
+            ++i)
       {
          std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator copyTo = msg.mParameterList.find(i->first);
          if (copyTo != msg.mParameterList.end())

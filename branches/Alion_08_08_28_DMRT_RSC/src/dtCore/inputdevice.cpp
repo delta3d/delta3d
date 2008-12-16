@@ -10,7 +10,7 @@ namespace dtCore
 
    IMPLEMENT_MANAGEMENT_LAYER(InputDevice)
    
-    InputDevice::InputDevice(const std::string& name) : Base(name)
+   InputDevice::InputDevice(const std::string& name) : Base(name)
    {
       RegisterInstance(this);
    }
@@ -38,20 +38,7 @@ namespace dtCore
    Button* InputDevice::GetButton(int index)
    {
       ButtonMap::iterator it = mButtons.find(index);
-      if( it == mButtons.end() )
-      {
-         return NULL;
-      }
-      else
-      {
-         return it->second.get();
-      }
-   }
-   
-   const Button* InputDevice::GetButton(int index) const
-   {
-      ButtonMap::const_iterator it = mButtons.find(index);
-      if( it == mButtons.end() )
+      if ( it == mButtons.end() )
       {
          return NULL;
       }
@@ -61,6 +48,38 @@ namespace dtCore
       }
    }
 
+   const Button* InputDevice::GetButton(int index) const
+   {
+      ButtonMap::const_iterator it = mButtons.find(index);
+      if (it == mButtons.end() )
+      {
+         return NULL;
+      }
+      else
+      {
+         return it->second.get();
+      }
+   }
+
+   int InputDevice::GetButtonIndex(const Button* button) const
+   {
+      if (button->GetOwner() != this)
+      {
+         return -1;
+      }
+
+      for (ButtonMap::const_iterator i = mButtons.begin(); i != mButtons.end(); ++i)
+      {
+         std::pair< int, dtCore::RefPtr<dtCore::Button> > idButton = *i;
+         if (idButton.second.get() == button)
+         {
+            return idButton.first;
+         }
+      }
+
+      return -1;
+   }
+
    int InputDevice::GetAxisCount() const
    {
       return mAxes.size();
@@ -68,7 +87,7 @@ namespace dtCore
    
    Axis* InputDevice::GetAxis(int index)
    {
-      if( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
+      if ( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
       {
          return 0;
       }
@@ -80,7 +99,7 @@ namespace dtCore
    
    const Axis* InputDevice::GetAxis(int index) const
    {
-      if( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
+      if ( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
       {
          return 0;
       }
@@ -88,6 +107,18 @@ namespace dtCore
       {
          return mAxes[index].get();
       }
+   }
+
+   int InputDevice::GetAxisIndex(const Axis* axis) const
+   {
+      for (int i = 0; i < GetAxisCount(); ++i)
+      {
+         if (GetAxis(i) == axis)
+         {
+            return i;
+         }
+      }
+      return -1;
    }
 
    void InputDevice::AddButtonListener(ButtonListener* buttonListener)
@@ -118,7 +149,7 @@ namespace dtCore
    bool InputDevice::AddFeature( InputDeviceFeature* feature )
    {
    
-      if(Button* button = dynamic_cast<Button*>(feature))
+      if (Button* button = dynamic_cast<Button*>(feature))
       {
          //see if a button with the same symbol already exists
          if (GetButton(button->GetSymbol()) != NULL)
@@ -129,7 +160,7 @@ namespace dtCore
          mButtons[button->GetSymbol()] = button;
       }
       
-      if(Axis* axis = dynamic_cast<Axis*>(feature))
+      if (Axis* axis = dynamic_cast<Axis*>(feature))
       {
          mAxes.push_back(axis);
       }
@@ -140,21 +171,21 @@ namespace dtCore
    
    void InputDevice::RemoveFeature(InputDeviceFeature* feature)
    {
-      for(FeatureVector::iterator it = mFeatures.begin();
+      for (FeatureVector::iterator it = mFeatures.begin();
           it != mFeatures.end();
           ++it)
       {
-         if((*it).get() == feature)
+         if ((*it).get() == feature)
          {
             mFeatures.erase(it);
    
-            if(IS_A(feature, Button*))
+            if (IS_A(feature, Button*))
             {
-               for(ButtonMap::iterator bit = mButtons.begin();
+               for (ButtonMap::iterator bit = mButtons.begin();
                    bit != mButtons.end();
                    ++bit)
                {
-                  if((*bit).second.get() == feature)
+                  if ((*bit).second.get() == feature)
                   {
                      mButtons.erase(bit);
                      break;
@@ -162,13 +193,13 @@ namespace dtCore
                }
             }
    
-            if(IS_A(feature, Axis*))
+            if (IS_A(feature, Axis*))
             {
-               for(AxisVector::iterator ait = mAxes.begin();
+               for (AxisVector::iterator ait = mAxes.begin();
                    ait != mAxes.end();
                    ++ait)
                {
-                  if((*ait).get() == feature)
+                  if ((*ait).get() == feature)
                   {
                      mAxes.erase(ait);
                      break;
@@ -204,10 +235,10 @@ namespace dtCore
       return mDescription;
    }
    
-   Button::Button(InputDevice* owner, const std::string& description) :
-     InputDeviceFeature(owner, description),
-     mState(false),
-     mSymbol(-1)
+   Button::Button(InputDevice* owner, const std::string& description)
+      : InputDeviceFeature(owner, description)
+      , mState(false)
+      , mSymbol(-1)
   {}
    
    Button::Button(InputDevice* owner, int symbol, const std::string& description) :
@@ -219,7 +250,7 @@ namespace dtCore
    bool Button::SetState(bool state)
    {
       bool handled(false);
-      if(state != mState)
+      if (state != mState)
       {
          mState = state;
    
@@ -228,14 +259,14 @@ namespace dtCore
          // perform the chain of responsibility
          ButtonListenerList::iterator iter = mButtonListeners.begin();
          ButtonListenerList::iterator enditer = mButtonListeners.end();
-         while( !handled && iter!=enditer )
+         while ( !handled && iter!=enditer )
          {
             handled = (*iter)->ButtonStateChanged( this, !mState, mState);
             ++iter;
          }
 
          ///\todo Grasp why this is here
-         for(it = GetOwner()->mButtonListeners.begin();
+         for (it = GetOwner()->mButtonListeners.begin();
              it != GetOwner()->mButtonListeners.end();
              ++it)
          {
@@ -281,7 +312,7 @@ namespace dtCore
    {
       bool handled(false);
 
-      if(state != mState || delta != 0.0)
+      if (state != mState || delta != 0.0)
       {
          double oldState = mState;
          mState = state;
@@ -289,7 +320,7 @@ namespace dtCore
          // perform the chain of responsibility
          AxisListenerList::iterator iter = mAxisListeners.begin();
          AxisListenerList::iterator enditer = mAxisListeners.end();
-         while( !handled && iter!=enditer )
+         while ( !handled && iter!=enditer )
          {
             handled = (*iter)->AxisStateChanged(this, oldState, mState, delta);
             ++iter;
@@ -298,7 +329,7 @@ namespace dtCore
          ///\todo Grasp why this is here.
          // update all of the device's listeners?????????????????????
          AxisListenerList::iterator it;
-         for(it = GetOwner()->mAxisListeners.begin();
+         for (it = GetOwner()->mAxisListeners.begin();
              it != GetOwner()->mAxisListeners.end();
              ++it)
          {

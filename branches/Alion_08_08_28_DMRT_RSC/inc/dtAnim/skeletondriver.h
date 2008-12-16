@@ -30,7 +30,7 @@
 namespace dtAnim
 {
 
-class	DT_ANIM_EXPORT SkeletonDriver: public ICal3DDriver
+class DT_ANIM_EXPORT SkeletonDriver: public ICal3DDriver
 {
 
 public:

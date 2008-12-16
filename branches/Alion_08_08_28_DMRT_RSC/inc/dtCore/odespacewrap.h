@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2008 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-*  Erik Johnson
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ *  Erik Johnson
+ */
+
 #ifndef odespacewrap_h__
 #define odespacewrap_h__
 
@@ -48,7 +49,7 @@ namespace dtCore
         * @param worldWrapper : Collision contact joints will be created in this
         * world.
         */
-   	ODESpaceWrap(ODEWorldWrap* worldWrapper);
+      ODESpaceWrap(ODEWorldWrap* worldWrapper);
 
       /** Register a collidable object with the collision detection system.
         * @param collidable : valid collidable object to add to the system
@@ -103,11 +104,11 @@ namespace dtCore
 
    protected:
       virtual ~ODESpaceWrap();
-   	
+
    private:
       ///ODE collision callback
       static void DefaultNearCallback(void *data, dGeomID o1, dGeomID o2);
-      
+
       dSpaceID mSpaceID;  ///< the current collision space ID
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data

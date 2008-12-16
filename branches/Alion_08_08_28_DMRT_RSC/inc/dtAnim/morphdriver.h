@@ -30,7 +30,7 @@
 namespace dtAnim
 {
 
-class	DT_ANIM_EXPORT MorphDriver: public ICal3DDriver
+class DT_ANIM_EXPORT MorphDriver: public ICal3DDriver
 {
 
 public:
@@ -42,15 +42,11 @@ public:
 protected:
    virtual ~MorphDriver();
 
-
 private:
-
-      dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
-
-
+   dtCore::RefPtr<Cal3DModelWrapper> mWrapper;
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_MORPHDRIVER_H__
 

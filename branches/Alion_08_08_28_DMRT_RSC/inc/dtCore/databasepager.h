@@ -4,6 +4,7 @@
 #include <dtCore/export.h>
 #include <dtCore/base.h>
 
+#include <osg/Version>
 #include <osgDB/DatabasePager>
 #include <osg/ref_ptr>
 
@@ -14,11 +15,11 @@ namespace dtUtil
 
 
 namespace dtCore
-{ 
+{
 
    class DeltaDrawable;
 
-   /** Used to control how any potential page-able files are loaded.  
+   /** Used to control how any potential page-able files are loaded.
      * Currently based on the osgDB::DatabasePager which uses osg::PagedLOD
      * nodes.
      */
@@ -65,7 +66,7 @@ namespace dtCore
       * <br>
       * floating point in frames per second.
       * <br>
-      * The target frame rate.  The pager uses this to time certain operations.  
+      * The target frame rate.  The pager uses this to time certain operations.
       * If the system is set to use a fixed time step, the target frame rate is set to match the
       * fixed frame rate (SIM_FRAME_RATE). Otherwise, it defaults to 100.
       * Turning this number down can improve paging preformance somewhat.
@@ -155,10 +156,38 @@ namespace dtCore
       */
       double GetTargetFrameRate() const;
 
+      /** 
+      * Tell the database pager that a new frame has begun.  This will
+      * put the thread to sleep so the CPU can work on the
+      * rendering.
+      * @see SignalEndFrame()
+      */
+      virtual void SignalBeginFrame(const osg::FrameStamp* framestamp) const;      
+
+      /** 
+      * Tell the database pager that the frame has ended.  This will
+      * wake up the thread for work, now that the other threads are idle.
+      */
+      virtual void SignalEndFrame() const;
+
+      /** Merge changes to the scene graph.  Note: Must only be called
+      * from the single thread update phase.
+      */
+#if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
+      virtual void UpdateSceneGraph(double currentFrameTime) const;
+#else
+      virtual void UpdateSceneGraph(const osg::FrameStamp* framestamp) const;
+#endif
+
+      /** 
+      * Compile the rendering objects.  Should only be called from the 
+      * draw thread and requires a valid OpenGL context
+      */
+      virtual void CompileGLObjects(osg::State& state, double& availableTime) const;
 
    protected:
       virtual ~DatabasePager();
-   	
+
    private:
       osg::ref_ptr<osgDB::DatabasePager> mDatabasePager;
       dtUtil::ConfigProperties* mConfigProperties; ///<deprecated 06/30/08

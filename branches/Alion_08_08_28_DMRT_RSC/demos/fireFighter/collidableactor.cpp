@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -16,8 +16,9 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II 
+ * William E. Johnson II
  */
+
 #include <fireFighter/collidableactor.h>
 
 /////////////////////////////////////////////////////////////
@@ -43,16 +44,16 @@ void CollidableActorProxy::BuildInvokables()
 
 dtDAL::ActorProxyIcon* CollidableActorProxy::GetBillBoardIcon()
 {
-   if(!mBillBoardIcon.valid())
+   if (!mBillBoardIcon.valid())
    {
-      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::GENERIC);
+      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_GENERIC);
    }
    return mBillBoardIcon.get();
 }
 
 /////////////////////////////////////////////////////////////
-CollidableActor::CollidableActor(dtGame::GameActorProxy &proxy) : 
-   dtGame::GameActor(proxy)
+CollidableActor::CollidableActor(dtGame::GameActorProxy& proxy)
+   : dtGame::GameActor(proxy)
 {
 
 }

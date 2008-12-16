@@ -96,7 +96,11 @@ class OSGHelper : public HelperObject {
 		IParamBlock2* GetParamBlockByID(BlockID id) { return (pblock2->ID() == id) ? pblock2 : NULL; } // return id'd ParamBlock
 
 		// From ref
+#if MAX_RELEASE >= 9000
 		RefTargetHandle Clone(RemapDir& remap = DefaultRemapDir());
+#else
+		RefTargetHandle Clone(RemapDir& remap = NoRemap());
+#endif
 /*		IOResult Load(ILoad *iload);
 		IOResult Save(ISave *isave);
 */		int NumRefs() {return 1;}

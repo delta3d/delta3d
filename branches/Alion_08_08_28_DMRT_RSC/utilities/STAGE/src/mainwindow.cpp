@@ -57,6 +57,8 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
+#include <dtEditQt/externaltool.h>
+
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
 
@@ -132,6 +134,8 @@ namespace dtEditQt
         editMenu->addAction(editorActions.actionEditGroundClampActors);
         editMenu->addAction(editorActions.actionEditGotoActor);
         editMenu->addSeparator();
+        editMenu->addAction(editorActions.actionGetGotoPosition);
+        editMenu->addSeparator();
         editMenu->addAction(editorActions.actionEditMapProperties);
         editMenu->addAction(editorActions.actionEditMapLibraries);
         editMenu->addAction(editorActions.actionEditMapEvents);
@@ -150,6 +154,8 @@ namespace dtEditQt
         windowMenu->addAction(editorActions.actionWindowsResourceBrowser);
         windowMenu->addSeparator();
         windowMenu->addAction(editorActions.actionWindowsResetWindows);
+
+        mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
         helpMenu = menuBar()->addMenu(tr("&Help"));
         helpMenu->addAction(editorActions.actionHelpAboutEditor);
@@ -175,7 +181,6 @@ namespace dtEditQt
         editToolBar->addAction(EditorActions::GetInstance().actionEditDeleteActor);
         editToolBar->addAction(EditorActions::GetInstance().actionEditGotoActor);
         editToolBar->addAction(EditorActions::GetInstance().actionEditGroundClampActors);
-        editToolBar->addAction(EditorActions::GetInstance().actionToggleTerrainPaging);
         //editToolBar->addAction(EditorActions::GetInstance().actionEditTaskEditor);
         addToolBar(editToolBar);
 
@@ -195,13 +200,11 @@ namespace dtEditQt
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
         addToolBar(selectionToolBar);
 
-        subeditorToolBar = new QToolBar(this);
-        subeditorToolBar->setObjectName("SubeditorToolBar");
-        subeditorToolBar->setWindowTitle(tr("Subeditor Toolbar"));
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditSkeletalMesh);  
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionEditParticleSystem);  
-        subeditorToolBar->addAction(EditorActions::GetInstance().actionLaunchViewer);  
-        addToolBar(subeditorToolBar);    
+        mExternalToolsToolBar = new QToolBar(this);
+        mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
+        mExternalToolsToolBar->setWindowTitle(tr("External Tools ToolBar"));
+        addToolBar(mExternalToolsToolBar);
+        RebuildToolsMenu(EditorActions::GetInstance().GetExternalToolActions());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -250,6 +253,9 @@ namespace dtEditQt
         QSplitter *hSplit  = new QSplitter(Qt::Vertical); //Split top-bottom
         QSplitter *vSplit1 = new QSplitter(hSplit); //Split for top and front views
         QSplitter *vSplit2 = new QSplitter(hSplit); //Split for 3d and side views
+        mSplitters.push_back(hSplit);
+        mSplitters.push_back(vSplit1);
+        mSplitters.push_back(vSplit2);
 
         //Create the actual viewport objects..
         this->perspView = (PerspectiveViewport *)vpMgr.createViewport("Perspective View",
@@ -350,6 +356,8 @@ namespace dtEditQt
         addDockWidget(Qt::LeftDockWidgetArea,  propertyWindow);
         addDockWidget(Qt::LeftDockWidgetArea,  actorTab);
         addDockWidget(Qt::RightDockWidgetArea, resourceBrowser);
+
+        ResetSplitters();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -472,6 +480,16 @@ namespace dtEditQt
             settings.setValue(EditorSettings::MAINWIN_GEOMETRY, saveGeometry());
         settings.endGroup();
 
+        //splitter data
+        settings.remove(EditorSettings::SPLITTER_GROUP);
+        settings.beginWriteArray(EditorSettings::SPLITTER_GROUP);
+        for (int s=0; s<mSplitters.size(); ++s)
+        {
+           settings.setArrayIndex(s);
+           settings.setValue(EditorSettings::SPLITTER_SIZE, mSplitters.at(s)->saveState() );
+        }
+        settings.endArray();
+
         //Save the general preferences...
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
             settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS,editorData.getLoadLastProject());
@@ -504,6 +522,28 @@ namespace dtEditQt
                 }
             }
         settings.endGroup();
+
+        //save the external tools
+        const QList<ExternalTool*> extTools = EditorActions::GetInstance().GetExternalTools();
+
+        settings.remove(EditorSettings::EXTERNAL_TOOLS); //remove old ones
+        settings.beginWriteArray(EditorSettings::EXTERNAL_TOOLS);
+        int savedIdx = 0;///<used to keep the external tools sorted correctly
+        for (int toolIdx=0; toolIdx<extTools.size(); ++toolIdx)
+        {
+           if (extTools.at(toolIdx)->GetAction()->isVisible())
+           {
+              settings.setArrayIndex(savedIdx);
+              savedIdx++;
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_TITLE, extTools.at(toolIdx)->GetTitle());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_COMMAND, extTools.at(toolIdx)->GetCmd());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_ARGS, extTools.at(toolIdx)->GetArgs());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_WORKING_DIR, extTools.at(toolIdx)->GetWorkingDir());
+              settings.setValue(EditorSettings::EXTERNAL_TOOL_ICON, extTools.at(toolIdx)->GetIcon());
+           }
+        }
+        settings.endArray();
+
 
         //Save the recent projects unless the user does not wish to do so.
         if(!EditorData::GetInstance().getLoadLastProject())
@@ -668,6 +708,9 @@ namespace dtEditQt
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+
+        connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<QAction*>&)),
+                this, SLOT(RebuildToolsMenu(const QList<QAction*>&)));
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -703,6 +746,15 @@ namespace dtEditQt
            restoreGeometry(state);
         }
         settings.endGroup();
+
+        //restore splitter positions
+        const int numSplitters = settings.beginReadArray(EditorSettings::SPLITTER_GROUP);
+        for (int s=0; s<mSplitters.size(); ++s)
+        {
+           settings.setArrayIndex(s);
+           mSplitters.at(s)->restoreState(settings.value(EditorSettings::SPLITTER_SIZE).toByteArray());
+        }
+        settings.endArray();
         
         //Now check for the general preferences...
         settings.beginGroup(EditorSettings::PREFERENCES_GROUP);
@@ -756,6 +808,22 @@ namespace dtEditQt
             EditorData::GetInstance().setSelectionColor(color);
         }
         settings.endGroup();
+
+        //external tools
+        const int numExtTools = settings.beginReadArray(EditorSettings::EXTERNAL_TOOLS);
+        QList<ExternalTool*> &extTools = EditorActions::GetInstance().GetExternalTools();
+        for (int toolIdx=0; toolIdx<numExtTools; ++toolIdx)
+        {
+           settings.setArrayIndex(toolIdx);
+           ExternalTool* tool = extTools.at(toolIdx);
+           tool->SetTitle(settings.value(EditorSettings::EXTERNAL_TOOL_TITLE).toString());
+           tool->SetCmd(settings.value(EditorSettings::EXTERNAL_TOOL_COMMAND).toString());
+           tool->SetArgs(settings.value(EditorSettings::EXTERNAL_TOOL_ARGS).toString());
+           tool->SetWorkingDir(settings.value(EditorSettings::EXTERNAL_TOOL_WORKING_DIR).toString());
+           tool->SetIcon(settings.value(EditorSettings::EXTERNAL_TOOL_ICON).toString());
+           tool->GetAction()->setVisible(true);
+        }
+        settings.endArray();
     }
 
 
@@ -928,4 +996,43 @@ namespace dtEditQt
         QApplication::restoreOverrideCursor();
     }
 
+    
+    //////////////////////////////////////////////////////////////////////////
+    void MainWindow::RebuildToolsMenu(const QList<QAction*>& actions)
+    {
+       mToolsMenu->clear();
+       mExternalToolsToolBar->clear();
+       for (int toolIdx=0; toolIdx<actions.size(); ++toolIdx)
+       {
+          mToolsMenu->addAction(actions[toolIdx]);
+          mExternalToolsToolBar->addAction(actions[toolIdx]);
+       }
+
+       mToolsMenu->addSeparator();
+       mToolsMenu->addAction(EditorActions::GetInstance().actionAddTool);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    void MainWindow::ResetSplitters()
+    {
+       //funny little logic to set the splitter's children's sizes so that they
+       //are equally distributed across the window
+       for (int splitterIdx=0; splitterIdx<mSplitters.size(); ++splitterIdx)
+       {
+          QList<int> sizes = mSplitters.at(splitterIdx)->sizes();
+          int total = 0;
+          for (int i=0; i<sizes.size(); ++i)
+          {
+             total += sizes.at(i);
+          }
+
+          QList<int> newSizes;
+          for (int i=0; i<sizes.size(); ++i)
+          {
+             newSizes.push_back(total/sizes.size());
+          }
+
+          mSplitters.at(splitterIdx)->setSizes(newSizes);
+       }
+    }
 }

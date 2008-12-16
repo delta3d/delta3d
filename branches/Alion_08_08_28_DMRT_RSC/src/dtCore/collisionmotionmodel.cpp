@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2004-2006 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg and Chris Darken 08/21/2006
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2006 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg and Chris Darken 08/21/2006
+ */
 
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/collisionmotionmodel.h>
@@ -62,7 +62,7 @@ CollisionMotionModel::CollisionMotionModel(float pHeight, float pRadius, float k
    // override default behavior in FPSMotionModel to this end
    //SetUseMouseButtons(true); // no longer doing; something is causing window to not get mousemove msgs when mouse down...
 
-   if(keyboard != NULL && mouse != NULL)
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -108,7 +108,7 @@ void CollisionMotionModel::PerformTranslation(const double deltaTime)
 
    // limit maximum lateral speed to be the maximum walk speed
    /*
-   if(translation.length() > GetMaximumWalkSpeed())
+   if (translation.length() > GetMaximumWalkSpeed())
    {
       translation.normalize();
       translation.set(translation[0] * GetMaximumWalkSpeed(), translation[1] * GetMaximumWalkSpeed(), 0.0f);

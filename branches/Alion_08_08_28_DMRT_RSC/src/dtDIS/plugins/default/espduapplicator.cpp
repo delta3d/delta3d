@@ -296,7 +296,7 @@ void PartialApplicator::operator ()( const DIS::EntityStatePdu& source , dtGame:
    //TODO: add angular velocity vector
 
    // articulation support
-   unsigned char art_param_count=source.getArticulationParameterCount();
+   unsigned char art_param_count=source.getArticulationParameters().size();
    if( art_param_count > 0 )
    {
       mp = dest.AddUpdateParameter( dtDIS::EnginePropertyName::ARTICULATION, dtDAL::DataType::GROUP );

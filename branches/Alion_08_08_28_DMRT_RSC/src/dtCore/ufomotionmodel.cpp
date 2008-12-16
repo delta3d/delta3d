@@ -31,21 +31,21 @@ IMPLEMENT_MANAGEMENT_LAYER(UFOMotionModel)
  */
 UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
                                Mouse* mouse)
-   : MotionModel("UFOMotionModel"),
-     mFlyForwardBackwardAxis(NULL),
-     mFlyLeftRightAxis(NULL),
-     mFlyUpDownAxis(NULL),
-     mTurnLeftRightAxis(NULL),
-     mMaximumFlySpeed(100.0f),
-     mMaximumTurnSpeed(90.0f)
+   : MotionModel("UFOMotionModel")
+   , mFlyForwardBackwardAxis(NULL)
+   , mFlyLeftRightAxis(NULL)
+   , mFlyUpDownAxis(NULL)
+   , mTurnLeftRightAxis(NULL)
+   , mMaximumFlySpeed(100.0f)
+   , mMaximumTurnSpeed(90.0f)
 {
    RegisterInstance(this);
-   
-   if(keyboard != NULL && mouse != NULL)
+
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
-   
+
    AddSender(&System::GetInstance());
 }
 
@@ -55,7 +55,7 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
 UFOMotionModel::~UFOMotionModel()
 {
    RemoveSender(&System::GetInstance());
-   
+
    DeregisterInstance(this);
 }
 
@@ -68,10 +68,10 @@ UFOMotionModel::~UFOMotionModel()
  */
 void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(!mDefaultInputDevice.valid())
+   if (!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
-      
+
       Axis* leftButtonUpAndDown = mDefaultInputDevice->AddAxis(
          "left mouse button up/down",
          mLeftButtonUpDownMapping = new ButtonAxisToAxis(
@@ -79,7 +79,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(1)
          )
       );
-      
+
       Axis* leftButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "left mouse button left/right",
          mLeftButtonLeftRightMapping = new ButtonAxisToAxis(
@@ -87,7 +87,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(0)
          )
       );
-   
+
       Axis* rightButtonUpAndDown = mDefaultInputDevice->AddAxis(
          "right mouse button up/down",
          mRightButtonUpDownMapping = new ButtonAxisToAxis(
@@ -95,7 +95,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(1)
          )
       );
-      
+
       Axis* rightButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "right mouse button left/right",
          mRightButtonLeftRightMapping = new ButtonAxisToAxis(
@@ -103,7 +103,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(0)
          )
       );
-      
+
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
@@ -111,7 +111,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
          )
       );
-         
+
       Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "arrow keys left/right",
          mArrowKeysLeftRightMapping = new ButtonsToAxis(
@@ -119,7 +119,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
          )
       );
-      
+
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "w/s keys up/down",
          mWSKeysUpDownMapping = new ButtonsToAxis(
@@ -127,7 +127,7 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton('w')
          )
       );
-      
+
       Axis* adKeysLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
@@ -135,22 +135,22 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton('d')
          )
       );
-      
+
       mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default fly forward/backward",
          new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
       );
-      
+
       mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default fly left/right",
          new AxesToAxis(arrowKeysLeftAndRight, leftButtonLeftAndRight)
       );
-         
+
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
          "default fly up/down",
          new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown)
       );
-      
+
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
          new AxesToAxis(adKeysLeftAndRight, rightButtonLeftAndRight)
@@ -160,43 +160,43 @@ void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mArrowKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
       );
-      
+
       mArrowKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
       );
-      
+
       mWSKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton('s'),
          keyboard->GetButton('w')
       );
-      
+
       mADKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton('a'),
          keyboard->GetButton('d')
       );
    }
-   
+
    SetFlyForwardBackwardAxis(mDefaultFlyForwardBackwardAxis);
-      
+
    SetFlyLeftRightAxis(mDefaultFlyLeftRightAxis);
-   
+
    SetFlyUpDownAxis(mDefaultFlyUpDownAxis);
-   
+
    SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis);
 }
 
@@ -333,64 +333,64 @@ float UFOMotionModel::GetMaximumTurnSpeed()
  *
  * @param data the message data
  */
-void UFOMotionModel::OnMessage(MessageData *data)
+void UFOMotionModel::OnMessage(MessageData* data)
 {
-   if(GetTarget() != 0 &&
-      IsEnabled() && 
+   if (GetTarget() != 0 &&
+      IsEnabled() &&
       data->message == "preframe")
    {
       const double dtCore = *static_cast<const double*>(data->userData);
-      
+
       Transform transform;
-      
+
       GetTarget()->GetTransform(transform);
-      
+
       osg::Vec3 xyz, hpr;
-      
+
       transform.Get(xyz, hpr);
-      
-      if(mTurnLeftRightAxis != 0)
+
+      if (mTurnLeftRightAxis != 0)
       {
          hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
-      
+
       hpr[1] = 0.0f;
       hpr[2] = 0.0f;
-      
+
       transform.SetRotation(hpr);
-      
+
       osg::Vec3 translation;
-      
-      if(mFlyForwardBackwardAxis != 0)
+
+      if (mFlyForwardBackwardAxis != 0)
       {
-         translation[1] = 
+         translation[1] =
             (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
-      
-      if(mFlyLeftRightAxis != 0)
+
+      if (mFlyLeftRightAxis != 0)
       {
-         translation[0] = 
+         translation[0] =
             (float)(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
-      
-      if(mFlyUpDownAxis != 0)
+
+      if (mFlyUpDownAxis != 0)
       {
-         translation[2] = 
+         translation[2] =
             (float)(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
-      
+
       osg::Matrix mat;
-      
+
       transform.GetRotation(mat);
-      
+
       translation = translation * mat;
-      
+
       xyz += translation;
-      
+
       transform.SetTranslation(xyz);
-      
-      GetTarget()->SetTransform(transform);  
+
+      GetTarget()->SetTransform(transform);
    }
 }
 
-}
+} // namespace dtCore

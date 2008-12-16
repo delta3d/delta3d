@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* testAAR - testaarmessageprocessor (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2006-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II
-*/
+ * testAAR - testaarmessageprocessor (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2006-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ */
+
 #ifndef DELTA_TEST_AAR_MESSAGE_PROCESSOR
 #define DELTA_TEST_AAR_MESSAGE_PROCESSOR
 
@@ -65,15 +66,15 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
    public:
 
       /// Constructor
-      TestAARMessageProcessor(dtLMS::LmsComponent &lmsComp, 
-                                 dtGame::LogController &logCtrl, 
-                                 dtGame::ServerLoggerComponent &srvrCtrl);
+      TestAARMessageProcessor(dtLMS::LmsComponent& lmsComp, 
+                              dtGame::LogController& logCtrl, 
+                              dtGame::ServerLoggerComponent& srvrCtrl);
 
       /**
        * Override to handle messages from the input component
        * @param msg The message to handle
        */
-      virtual void ProcessMessage(const dtGame::Message &msg);
+      virtual void ProcessMessage(const dtGame::Message& msg);
 
       /**
        * Initializes the tasks associated with the demo
@@ -97,28 +98,28 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
        * from the logging component.
        * @param newStatus Contains the status object received from the logging component.
        */
-      void OnReceivedStatus(const dtGame::LogStatus &newStatus);
+      void OnReceivedStatus(const dtGame::LogStatus& newStatus);
 
       /**
        * Slot method called from the log controller when a Tags List message is sent
        * from the logging component to the log controller.
        * @param The Tags List vector.
        */
-      void OnReceivedTags(const std::vector<dtGame::LogTag> &newTagList);
+      void OnReceivedTags(const std::vector<dtGame::LogTag>& newTagList);
 
       /**
        * Slot method called from the log controller when a Keyframes List message is sent
        * from the logging component to the log controller.
        * @param The Keyframes List vector.
        */
-      void OnReceivedKeyframes(const std::vector<dtGame::LogKeyframe> &newKeyframeList);
+      void OnReceivedKeyframes(const std::vector<dtGame::LogKeyframe>& newKeyframeList);
 
       /**
        * Slot method called from the log controller when a rejection message is sent
        * from the logging component to the log controller.
        * @param The rejection message.  Note, this has the causing message in it as well.
        */
-      void OnReceivedRejection(const dtGame::Message &newMessage);
+      void OnReceivedRejection(const dtGame::Message& newMessage);
 
       /**
        * Force a request of status, tags, keys, etc...
@@ -134,7 +135,7 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
        * Sets the player actor that this component references
        * @param gap The new actor proxy
        */
-      void SetPlayerActor(dtGame::GameActorProxy &gap) { mPlayer = &gap; }
+      void SetPlayerActor(dtGame::GameActorProxy& gap) { mPlayer = &gap; }
 
    protected:
 
@@ -157,7 +158,7 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
       /**
        * Helper method to update the player
        */
-      void UpdatePlayerActor(const dtGame::ActorUpdateMessage &aum);
+      void UpdatePlayerActor(const dtGame::ActorUpdateMessage& aum);
 
       /**
        * Helper method that creates an actor with random movement behavior.
@@ -168,7 +169,7 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
       /**
        * Helper method to create a new actor to put in the scene.
        */
-      dtCore::RefPtr<dtGame::GameActorProxy> CreateNewMovingActor(const std::string &meshName, 
+      dtCore::RefPtr<dtGame::GameActorProxy> CreateNewMovingActor(const std::string& meshName, 
          float velocity, 
          float turnRate, 
          bool bSetLocation,
@@ -178,11 +179,11 @@ class TEST_AAR_EXPORT TestAARMessageProcessor : public dtGame::DefaultMessagePro
       dtCore::RefPtr<dtActors::TaskActorProxy> mTaskMoveCameraProxy;
       dtCore::RefPtr<dtActors::TaskActor> mTaskMoveCamera;
 
-      dtGame::LogController *mLogController;
-      dtLMS::LmsComponent *mLmsComponent; 
+      dtGame::LogController* mLogController;
+      dtLMS::LmsComponent* mLmsComponent; 
       double mLastAutoRequestStatus;
-      dtGame::ServerLoggerComponent *mServerLogger;
-      dtGame::GameActorProxy *mPlayer;
+      dtGame::ServerLoggerComponent* mServerLogger;
+      dtGame::GameActorProxy* mPlayer;
 };
 
 #endif

@@ -59,7 +59,7 @@ Environment::Environment(const std::string& name)
    mAdvFogCtrl.set(1.f, 10.f, 2.545 ); // T, E, N
    mSunColor.set(1.f, 1.f, 1.f);
    mModFogColor.set(mFogColor);
-   
+
    mRefLatLong.set(36.586944f, -121.842778f);
 
    osg::StateSet* state = mDrawableNode->getOrCreateStateSet();
@@ -153,8 +153,8 @@ Environment::~Environment()
    delete mDifLightTable;
    delete mSpecLightTable;
    delete mSkyLightTable;
-   delete mSunlightShader; 
-   delete mSkyDomeShader; 
+   delete mSunlightShader;
+   delete mSkyDomeShader;
 
    RemoveSender(&System::GetInstance());
 }
@@ -169,7 +169,7 @@ void Environment::AddedToScene(Scene* scene)
       mSkyLight = scene->GetLight(0);
    }
 }
-      
+
 // Add an Environmental Effect to the Environment
 void Environment::AddEffect(EnvEffect* effect)
 {
@@ -181,10 +181,10 @@ void Environment::AddEffect(EnvEffect* effect)
       // effect doesn't exit so add it to the list
       mEffectList.push_back(effect);
 
-      if(SkyDome* dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
+      if (SkyDome* dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
       {
          mSkyDome = dome;
-         mEnvEffectNode->addChild(dome->GetOSGNode()); 
+         mEnvEffectNode->addChild(dome->GetOSGNode());
 
          // add the skydome shader to dome's stateset
          short attr = osg::StateAttribute::OFF;
@@ -203,8 +203,8 @@ void Environment::AddEffect(EnvEffect* effect)
    }
 }
 
-/** Remove an EnvEffect from this Environment.  This method checks to see if 
-  * has previously been added, then puts the effect into a holding bin for 
+/** Remove an EnvEffect from this Environment.  This method checks to see if
+  * has previously been added, then puts the effect into a holding bin for
   * removal at a later time.
   */
 void Environment::RemEffect(EnvEffect* effect)
@@ -219,7 +219,7 @@ void Environment::RemEffect(EnvEffect* effect)
    }
 }
 
-/** Remove any EnvEffects that have been marked for removal.  This method 
+/** Remove any EnvEffects that have been marked for removal.  This method
   * needs to be called at a scene graph "safe" time.
   */
 void Environment::RemoveEffectCache()
@@ -257,12 +257,12 @@ bool Environment::AddChild(DeltaDrawable* child)
 /// Remove a DeltaDrawable from the Environment Node.
 void Environment::RemoveChild(DeltaDrawable* child)
 {
-	// we add Drawables to our mDrawableNode
-	if (child)
-	{
-		mDrawableNode->removeChild(child->GetOSGNode());
+   // we add Drawables to our mDrawableNode
+   if (child)
+   {
+      mDrawableNode->removeChild(child->GetOSGNode());
       DeltaDrawable::RemoveChild(child);
-	}
+   }
 }
 
 
@@ -291,7 +291,7 @@ void Environment::OnMessage(MessageData* data)
 
 
 /** Set the base color of the fog.  This color is then adjusted internally
-  * using the time of day.  NOTE: This value is not used for the fog 
+  * using the time of day.  NOTE: This value is not used for the fog
   * when the FogMode is ADV, but it still can be used by the EnvEffects.
   */
 void dtCore::Environment::SetFogColor(const osg::Vec3& color)
@@ -374,8 +374,8 @@ void dtCore::Environment::SetFogMode(FogMode mode)
    mFog->setMode(fm);
 }
 
-/** Set the fog's near value.  This is only used when the SetFogMode() is 
-  * LINEAR.  
+/** Set the fog's near value.  This is only used when the SetFogMode() is
+  * LINEAR.
   * @param val : the near value (meters)
   */
 void dtCore::Environment::SetFogNear(float val)
@@ -422,7 +422,7 @@ void dtCore::Environment::SetFogEnable(bool enable)
    {
       attr = osg::StateAttribute::ON;
    }
-   else 
+   else
    {
       attr = osg::StateAttribute::OFF;
    }
@@ -438,7 +438,7 @@ void dtCore::Environment::SetFogEnable(bool enable)
 
       // if we're using a skyDome, turn on/off its shader
       if (mSkyDome.valid())
-      {        
+      {
          state = mSkyDome.get()->GetOSGNode()->getOrCreateStateSet();
          state->setAttributeAndModes(mSkyDomeShader->GetLightScatterinVP(), attr);
          state->setAttributeAndModes(mSkyDomeShader->GetDomeFP(), attr);
@@ -478,7 +478,7 @@ void dtCore::Environment::SetDateTime(unsigned yr, unsigned mo, unsigned da,
 {
 
    mCurrTime.SetTime(yr, mo, da, hr, mi, sc);
-   
+
    Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__, "Sim time set to:%s",
       (mCurrTime.ToString(dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT)).c_str());
 
@@ -493,7 +493,7 @@ void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 
 /** Get the current Date and Time of this Environment within a second.
  * @param yr year
- * @param mo month 
+ * @param mo month
  * @param da day
  * @param hr hour
  * @param mi minute
@@ -511,7 +511,7 @@ const dtUtil::DateTime& dtCore::Environment::GetDateTime() const
 }
 
 
-dtUtil::DateTime& dtCore::Environment::GetDateTime() 
+dtUtil::DateTime& dtCore::Environment::GetDateTime()
 {
    return mCurrTime;
 }
@@ -522,7 +522,7 @@ void dtCore::Environment::Update(const double deltaFrameTime)
    mLastUpdate += deltaFrameTime;
    if (mLastUpdate > 1.0)
    {
-      mLastUpdate = 0.0;      
+      mLastUpdate = 0.0;
       GetSunPos(mCurrTime.GetGMTTime(), mRefLatLong[0], mRefLatLong[1], 1.0, &mSunAltitude, &mSunAzimuth);
       UpdateSkyLight();
       UpdateSunColor();
@@ -575,7 +575,7 @@ double Environment::InterpTable::Interpolate(double x) const
       return (0.0);
    }
 
-   while ((i < mSize) && (x > mTable[i].ind)) 
+   while ((i < mSize) && (x > mTable[i].ind))
    {
       i++;
    }
@@ -632,7 +632,7 @@ void dtCore::Environment::UpdateFogColor()
    const float MAX_VISIBILITY = 20000;
 
    // Clamp visibility
-   if (vis > MAX_VISIBILITY)   
+   if (vis > MAX_VISIBILITY)
    {
       vis = MAX_VISIBILITY;
    }
@@ -649,7 +649,7 @@ void dtCore::Environment::UpdateFogColor()
    float rf2 = inverseVis * pow(rf1 * rf1, 1/sif);
 
    float rf3  = 1.f - rf2;
-   
+
    mModFogColor[0] = rf3 * mModFogColor[0] + rf2 * red;
    mModFogColor[1] = rf3 * mModFogColor[1] + rf2 * green;
    mModFogColor[2] = rf3 * mModFogColor[2] + rf2 * blue;
@@ -705,11 +705,11 @@ void dtCore::Environment::UpdateShaders()
    camXform.GetTranslation(xyz);
 
    mSunlightShader->Update(sunDir,
-                           xyz, mAdvFogCtrl[0], mAdvFogCtrl[1], 
+                           xyz, mAdvFogCtrl[0], mAdvFogCtrl[1],
                            mAdvFogCtrl[2] * 10.0e25);
 
    mSkyDomeShader->Update(sunDir,
-                          mAdvFogCtrl[0], mAdvFogCtrl[1], 
+                          mAdvFogCtrl[0], mAdvFogCtrl[1],
                           mAdvFogCtrl[2] * 10.0e25);
 }
 

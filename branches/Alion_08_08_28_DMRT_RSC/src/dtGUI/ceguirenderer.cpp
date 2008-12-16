@@ -34,7 +34,7 @@
 using namespace dtGUI;
 
 /*************************************************************************
-	Constants definitions
+   Constants definitions
  **************************************************************************/
 const int CEGUIRenderer::VERTEX_PER_QUAD           = 6;
 const int CEGUIRenderer::VERTEX_PER_TRIANGLE       = 3;
@@ -42,55 +42,57 @@ const int CEGUIRenderer::VERTEXBUFFER_CAPACITY     = OGLRENDERER_VBUFF_CAPACITY;
 
 
 /*************************************************************************
-	Constructor
+   Constructor
  **************************************************************************/
-CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec*  codec) :
-   m_queueing(true),
-   m_currTexture(0),
-   m_bufferPos(0),
-   m_imageCodec(codec),
-   m_imageCodecModule(0)
+CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec*  codec)
+   : m_queueing(true)
+   , m_currTexture(0)
+   , m_bufferPos(0)
+   , m_imageCodec(codec)
+   , m_imageCodecModule(0)
    {
-   GLint vp[4];   
+      GLint vp[4];
 
-   // initialise renderer size
-   glGetIntegerv(GL_VIEWPORT, vp);
-   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
-   m_display_area.d_left	= 0;
-   m_display_area.d_top	= 0;
-   m_display_area.d_right	= (float)vp[2];
-   m_display_area.d_bottom	= (float)vp[3];
+      // initialise renderer size
+      glGetIntegerv(GL_VIEWPORT, vp);
+      glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
+      m_display_area.d_left   = 0;
+      m_display_area.d_top    = 0;
+      m_display_area.d_right  = (float)vp[2];
+      m_display_area.d_bottom = (float)vp[3];
 
-   if (!m_imageCodec) setupImageCodec("");
+      if (!m_imageCodec) { setupImageCodec(""); }
 
-   setModuleIdentifierString();
+      setModuleIdentifierString();
    }
 
 
-CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI::ImageCodec* codec) :
-   m_queueing(true),
-   m_currTexture(0),
-   m_bufferPos(0), 
-   m_imageCodec(codec), 
-   m_imageCodecModule(0)
+CEGUIRenderer::CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI::ImageCodec* codec)
+   : m_queueing(true)
+   , m_currTexture(0)
+   , m_bufferPos(0)
+   , m_imageCodec(codec)
+   , m_imageCodecModule(0)
    {
-   GLint vp[4];   
+      GLint vp[4];
 
-   // initialise renderer size
-   glGetIntegerv(GL_VIEWPORT, vp);
-   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
-   m_display_area.d_left	= 0;
-   m_display_area.d_top	= 0;
-   m_display_area.d_right	= static_cast<float>(width);
-   m_display_area.d_bottom	= static_cast<float>(height);
-   if (!m_imageCodec)
-      setupImageCodec("");
-   setModuleIdentifierString();
+      // initialise renderer size
+      glGetIntegerv(GL_VIEWPORT, vp);
+      glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxTextureSize);
+      m_display_area.d_left   = 0;
+      m_display_area.d_top    = 0;
+      m_display_area.d_right  = static_cast<float>(width);
+      m_display_area.d_bottom = static_cast<float>(height);
+      if (!m_imageCodec)
+      {
+         setupImageCodec("");
+      }
+      setModuleIdentifierString();
    }
 
 
 /*************************************************************************
-	Destructor
+   Destructor
  **************************************************************************/
 CEGUIRenderer::~CEGUIRenderer(void)
 {
@@ -100,7 +102,7 @@ CEGUIRenderer::~CEGUIRenderer(void)
 
 
 /*************************************************************************
-	add's a quad to the list to be rendered
+   adds a quad to the list to be rendered
  **************************************************************************/
 void CEGUIRenderer::addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours,  CEGUI::QuadSplitMode quam_split_mode)
 {
@@ -118,26 +120,28 @@ void CEGUIRenderer::addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::
    else
    {
       QuadInfo quad;
-      quad.position			= dest_rect;
-      quad.position.d_bottom	= m_display_area.d_bottom - dest_rect.d_bottom;
-      quad.position.d_top		= m_display_area.d_bottom - dest_rect.d_top;
-      quad.z					= z;
-      quad.texid				= ((CEGUITexture*)tex)->GetTextureID(m_pGraphicsContext.get());
+      quad.position          = dest_rect;
+      quad.position.d_bottom = m_display_area.d_bottom - dest_rect.d_bottom;
+      quad.position.d_top    = m_display_area.d_bottom - dest_rect.d_top;
+      quad.z                 = z;
+      quad.texid             = ((CEGUITexture*)tex)->GetTextureID(m_pGraphicsContext.get());
 
-      if(((CEGUITexture*)tex)->IsFlippedHorizontal())
+      if (((CEGUITexture*)tex)->IsFlippedHorizontal())
       {
-         quad.texPosition.d_left = texture_rect.d_left;
-         quad.texPosition.d_right = texture_rect.d_right;
-         quad.texPosition.d_top = texture_rect.d_bottom;
+         quad.texPosition.d_left   = texture_rect.d_left;
+         quad.texPosition.d_right  = texture_rect.d_right;
+         quad.texPosition.d_top    = texture_rect.d_bottom;
          quad.texPosition.d_bottom = texture_rect.d_top;
       }
       else
-         quad.texPosition		= texture_rect;
+      {
+         quad.texPosition = texture_rect;
+      }
 
-      quad.topLeftCol		= colourToOGL(colours.d_top_left);
-      quad.topRightCol	= colourToOGL(colours.d_top_right);
-      quad.bottomLeftCol	= colourToOGL(colours.d_bottom_left);
-      quad.bottomRightCol	= colourToOGL(colours.d_bottom_right);
+      quad.topLeftCol     = colourToOGL(colours.d_top_left);
+      quad.topRightCol    = colourToOGL(colours.d_top_right);
+      quad.bottomLeftCol  = colourToOGL(colours.d_bottom_left);
+      quad.bottomRightCol = colourToOGL(colours.d_bottom_right);
 
       // set quad split mode
       quad.splitMode = quam_split_mode;
@@ -150,7 +154,7 @@ void CEGUIRenderer::addQuad(const CEGUI::Rect& dest_rect, float z, const CEGUI::
 
 
 /*************************************************************************
-	perform final rendering for all queued renderable quads.
+   perform final rendering for all queued renderable quads.
  **************************************************************************/
 void CEGUIRenderer::doRender(void)
 {
@@ -164,105 +168,105 @@ void CEGUIRenderer::doRender(void)
    {
       const QuadInfo& quad = (*i);
 
-      if(m_currTexture != quad.texid)
-      {            
-         renderVBuffer();           
+      if (m_currTexture != quad.texid)
+      {
+         renderVBuffer();
          glBindTexture(GL_TEXTURE_2D, quad.texid);
-         m_currTexture = quad.texid;          
+         m_currTexture = quad.texid;
       }
 
-      //vert0       
-      myBuff[m_bufferPos].vertex[0]	= quad.position.d_left;
-      myBuff[m_bufferPos].vertex[1]	= quad.position.d_top;
-      myBuff[m_bufferPos].vertex[2]	= quad.z;
-      myBuff[m_bufferPos].color		= quad.topLeftCol;
-      myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_left;
-      myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_top;         
+      // vert0
+      myBuff[m_bufferPos].vertex[0] = quad.position.d_left;
+      myBuff[m_bufferPos].vertex[1] = quad.position.d_top;
+      myBuff[m_bufferPos].vertex[2] = quad.z;
+      myBuff[m_bufferPos].color     = quad.topLeftCol;
+      myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_left;
+      myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_top;
       ++m_bufferPos;
 
-      //vert1
-      myBuff[m_bufferPos].vertex[0]	= quad.position.d_left;
-      myBuff[m_bufferPos].vertex[1]	= quad.position.d_bottom;
-      myBuff[m_bufferPos].vertex[2]	= quad.z;
-      myBuff[m_bufferPos].color		= quad.bottomLeftCol;
-      myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_left;
-      myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_bottom;
+      // vert1
+      myBuff[m_bufferPos].vertex[0] = quad.position.d_left;
+      myBuff[m_bufferPos].vertex[1] = quad.position.d_bottom;
+      myBuff[m_bufferPos].vertex[2] = quad.z;
+      myBuff[m_bufferPos].color     = quad.bottomLeftCol;
+      myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_left;
+      myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_bottom;
       ++m_bufferPos;
 
-      //vert2
+      // vert2
 
       // top-left to bottom-right diagonal
       if (quad.splitMode == CEGUI::TopLeftToBottomRight)
       {
-         myBuff[m_bufferPos].vertex[0]	= quad.position.d_right;
-         myBuff[m_bufferPos].vertex[1]	= quad.position.d_bottom;
-         myBuff[m_bufferPos].vertex[2]	= quad.z;
-         myBuff[m_bufferPos].color		= quad.bottomRightCol;
-         myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_right;
-         myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_bottom;         
+         myBuff[m_bufferPos].vertex[0] = quad.position.d_right;
+         myBuff[m_bufferPos].vertex[1] = quad.position.d_bottom;
+         myBuff[m_bufferPos].vertex[2] = quad.z;
+         myBuff[m_bufferPos].color     = quad.bottomRightCol;
+         myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_right;
+         myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_bottom;
       }
       // bottom-left to top-right diagonal
       else
       {
-         myBuff[m_bufferPos].vertex[0]	= quad.position.d_right;
-         myBuff[m_bufferPos].vertex[1]	= quad.position.d_top;
-         myBuff[m_bufferPos].vertex[2]	= quad.z;
-         myBuff[m_bufferPos].color		= quad.topRightCol;
-         myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_right;
-         myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_top;         
+         myBuff[m_bufferPos].vertex[0] = quad.position.d_right;
+         myBuff[m_bufferPos].vertex[1] = quad.position.d_top;
+         myBuff[m_bufferPos].vertex[2] = quad.z;
+         myBuff[m_bufferPos].color     = quad.topRightCol;
+         myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_right;
+         myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_top;
       }
       ++m_bufferPos;
 
-      //vert3
-      myBuff[m_bufferPos].vertex[0]	= quad.position.d_right;
-      myBuff[m_bufferPos].vertex[1]	= quad.position.d_top;
-      myBuff[m_bufferPos].vertex[2]	= quad.z;
-      myBuff[m_bufferPos].color		= quad.topRightCol;
-      myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_right;
-      myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_top;
+      // vert3
+      myBuff[m_bufferPos].vertex[0] = quad.position.d_right;
+      myBuff[m_bufferPos].vertex[1] = quad.position.d_top;
+      myBuff[m_bufferPos].vertex[2] = quad.z;
+      myBuff[m_bufferPos].color     = quad.topRightCol;
+      myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_right;
+      myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_top;
       ++m_bufferPos;
 
-      //vert4
+      // vert4
 
       // top-left to bottom-right diagonal
       if (quad.splitMode == CEGUI::TopLeftToBottomRight)
       {
-         myBuff[m_bufferPos].vertex[0]	= quad.position.d_left;
-         myBuff[m_bufferPos].vertex[1]	= quad.position.d_top;
-         myBuff[m_bufferPos].vertex[2]	= quad.z;
-         myBuff[m_bufferPos].color		= quad.topLeftCol;
-         myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_left;
-         myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_top;         
+         myBuff[m_bufferPos].vertex[0] = quad.position.d_left;
+         myBuff[m_bufferPos].vertex[1] = quad.position.d_top;
+         myBuff[m_bufferPos].vertex[2] = quad.z;
+         myBuff[m_bufferPos].color     = quad.topLeftCol;
+         myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_left;
+         myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_top;
       }
       // bottom-left to top-right diagonal
       else
       {
-         myBuff[m_bufferPos].vertex[0]	= quad.position.d_left;
-         myBuff[m_bufferPos].vertex[1]	= quad.position.d_bottom;
-         myBuff[m_bufferPos].vertex[2]	= quad.z;
-         myBuff[m_bufferPos].color		= quad.bottomLeftCol;
-         myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_left;
-         myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_bottom;         
+         myBuff[m_bufferPos].vertex[0] = quad.position.d_left;
+         myBuff[m_bufferPos].vertex[1] = quad.position.d_bottom;
+         myBuff[m_bufferPos].vertex[2] = quad.z;
+         myBuff[m_bufferPos].color     = quad.bottomLeftCol;
+         myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_left;
+         myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_bottom;
       }
       ++m_bufferPos;
 
-      //vert 5
-      myBuff[m_bufferPos].vertex[0]	= quad.position.d_right;
-      myBuff[m_bufferPos].vertex[1]	= quad.position.d_bottom;
-      myBuff[m_bufferPos].vertex[2]	= quad.z;
-      myBuff[m_bufferPos].color		= quad.bottomRightCol;
-      myBuff[m_bufferPos].tex[0]		= quad.texPosition.d_right;
-      myBuff[m_bufferPos].tex[1]		= quad.texPosition.d_bottom;         
+      // vert 5
+      myBuff[m_bufferPos].vertex[0] = quad.position.d_right;
+      myBuff[m_bufferPos].vertex[1] = quad.position.d_bottom;
+      myBuff[m_bufferPos].vertex[2] = quad.z;
+      myBuff[m_bufferPos].color     = quad.bottomRightCol;
+      myBuff[m_bufferPos].tex[0]    = quad.texPosition.d_right;
+      myBuff[m_bufferPos].tex[1]    = quad.texPosition.d_bottom;
       ++m_bufferPos;
 
-      if(m_bufferPos > (VERTEXBUFFER_CAPACITY - VERTEX_PER_QUAD))
-      {          
+      if (m_bufferPos > (VERTEXBUFFER_CAPACITY - VERTEX_PER_QUAD))
+      {
          renderVBuffer();
       }
 
    }
 
-   //Render
+   // Render
    renderVBuffer();
 
    exitPerFrameStates();
@@ -270,7 +274,7 @@ void CEGUIRenderer::doRender(void)
 
 
 /*************************************************************************
-	clear the queue
+   clear the queue
  **************************************************************************/
 void CEGUIRenderer::clearRenderList(void)
 {
@@ -279,7 +283,7 @@ void CEGUIRenderer::clearRenderList(void)
 
 
 /*************************************************************************
-	create an empty texture
+   create an empty texture
  **************************************************************************/
 CEGUI::Texture* CEGUIRenderer::createTexture(void)
 {
@@ -323,7 +327,7 @@ CEGUI::Texture* CEGUIRenderer::createTexture(float size)
 
 
 /*************************************************************************
-	Destroy a texture
+   Destroy a texture
  **************************************************************************/
 void CEGUIRenderer::destroyTexture(CEGUI::Texture* texture)
 {
@@ -338,7 +342,7 @@ void CEGUIRenderer::destroyTexture(CEGUI::Texture* texture)
 
 
 /*************************************************************************
-	destroy all textures still active
+   destroy all textures still active
  **************************************************************************/
 void CEGUIRenderer::destroyAllTextures(void)
 {
@@ -350,7 +354,7 @@ void CEGUIRenderer::destroyAllTextures(void)
 
 
 /*************************************************************************
-	setup states etc
+   setup states etc
  **************************************************************************/
 void CEGUIRenderer::initPerFrameStates(void)
 {
@@ -380,7 +384,7 @@ void CEGUIRenderer::initPerFrameStates(void)
    glEnable(GL_CULL_FACE);
 
    glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
    glEnable(GL_TEXTURE_2D);
@@ -389,9 +393,9 @@ void CEGUIRenderer::initPerFrameStates(void)
 
 void CEGUIRenderer::exitPerFrameStates(void)
 {
-   glPopMatrix(); 
+   glPopMatrix();
    glMatrixMode(GL_PROJECTION);
-   glPopMatrix(); 
+   glPopMatrix();
    glMatrixMode(GL_MODELVIEW);
 
    //restore former attributes
@@ -401,7 +405,7 @@ void CEGUIRenderer::exitPerFrameStates(void)
 
 
 /*************************************************************************
-	renders whatever is in the vertex buffer
+   renders whatever is in the vertex buffer
  **************************************************************************/
 void CEGUIRenderer::renderVBuffer(void)
 {
@@ -420,7 +424,7 @@ void CEGUIRenderer::renderVBuffer(void)
 
 
 /*************************************************************************
-	sort quads list according to texture
+   sort quads list according to texture
  **************************************************************************/
 void CEGUIRenderer::sortQuads(void)
 {
@@ -429,7 +433,7 @@ void CEGUIRenderer::sortQuads(void)
 
 
 /*************************************************************************
-	render a quad directly to the display
+   render a quad directly to the display
  **************************************************************************/
 void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, const CEGUI::Texture* tex, const CEGUI::Rect& texture_rect, const CEGUI::ColourRect& colours,  CEGUI::QuadSplitMode quam_split_mode)
 {
@@ -440,16 +444,16 @@ void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, cons
    }
 
    QuadInfo quad;
-   quad.position.d_left	= dest_rect.d_left;
-   quad.position.d_right	= dest_rect.d_right;
-   quad.position.d_bottom	= m_display_area.d_bottom - dest_rect.d_bottom;
-   quad.position.d_top		= m_display_area.d_bottom - dest_rect.d_top;
-   quad.texPosition		= texture_rect;
+   quad.position.d_left   = dest_rect.d_left;
+   quad.position.d_right   = dest_rect.d_right;
+   quad.position.d_bottom   = m_display_area.d_bottom - dest_rect.d_bottom;
+   quad.position.d_top      = m_display_area.d_bottom - dest_rect.d_top;
+   quad.texPosition      = texture_rect;
 
-   quad.topLeftCol		= colourToOGL(colours.d_top_left);
-   quad.topRightCol	= colourToOGL(colours.d_top_right);
-   quad.bottomLeftCol	= colourToOGL(colours.d_bottom_left);
-   quad.bottomRightCol	= colourToOGL(colours.d_bottom_right);
+   quad.topLeftCol      = colourToOGL(colours.d_top_left);
+   quad.topRightCol   = colourToOGL(colours.d_top_right);
+   quad.bottomLeftCol   = colourToOGL(colours.d_bottom_left);
+   quad.bottomRightCol   = colourToOGL(colours.d_bottom_right);
 
    MyQuad myquad[VERTEX_PER_QUAD];
 
@@ -469,7 +473,7 @@ void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, cons
    myquad[1].vertex[0] = quad.position.d_left;
    myquad[1].vertex[1] = quad.position.d_bottom;
    myquad[1].vertex[2] = z;
-   myquad[1].color     = quad.bottomLeftCol;     
+   myquad[1].color     = quad.bottomLeftCol;
    myquad[1].tex[0]    = quad.texPosition.d_left;
    myquad[1].tex[1]    = quad.texPosition.d_bottom;
 
@@ -500,7 +504,7 @@ void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, cons
    myquad[3].vertex[0] = quad.position.d_right;
    myquad[3].vertex[1] = quad.position.d_top;
    myquad[3].vertex[2] = z;
-   myquad[3].color     = quad.topRightCol;      
+   myquad[3].color     = quad.topRightCol;
    myquad[3].tex[0]    = quad.texPosition.d_right;
    myquad[3].tex[1]    = quad.texPosition.d_top;
 
@@ -542,7 +546,7 @@ void CEGUIRenderer::renderQuadDirect(const CEGUI::Rect& dest_rect, float z, cons
 
 
 /*************************************************************************
-	convert colour value to whatever the OpenGL system is expecting.
+   convert colour value to whatever the OpenGL system is expecting.
  **************************************************************************/
 CEGUI::uint32 CEGUIRenderer::colourToOGL(const CEGUI::colour& col) const
 {
@@ -566,7 +570,7 @@ void CEGUIRenderer::setDisplaySize(const CEGUI::Size& sz)
       m_display_area.setSize(sz);
 
       CEGUI::EventArgs args;
-		fireEvent(EventDisplaySizeChanged, args, EventNamespace);
+      fireEvent(EventDisplaySizeChanged, args, EventNamespace);
    }
 }
 
@@ -606,21 +610,21 @@ void CEGUIRenderer::setModuleIdentifierString()
 //    }
 //}
 /***********************************************************************
-    Get the current ImageCodec object used 
+    Get the current ImageCodec object used
  *************************************************************************/
-CEGUI::ImageCodec& CEGUIRenderer::getImageCodec() 
+CEGUI::ImageCodec& CEGUIRenderer::getImageCodec()
 {
    return *m_imageCodec;
 }
 /***********************************************************************
-    Set the current ImageCodec object used 
+    Set the current ImageCodec object used
  *************************************************************************/
 void CEGUIRenderer::setImageCodec(const CEGUI::String& codecName)
 {
-   setupImageCodec(codecName);    
+   setupImageCodec(codecName);
 }
 /***********************************************************************
-    Set the current ImageCodec object used 
+    Set the current ImageCodec object used
  *************************************************************************/
 void CEGUIRenderer::setImageCodec(CEGUI::ImageCodec* codec)
 {
@@ -628,37 +632,43 @@ void CEGUIRenderer::setImageCodec(CEGUI::ImageCodec* codec)
    {
       cleanupImageCodec();
       m_imageCodec = codec;
-      m_imageCodecModule = 0; 
+      m_imageCodecModule = 0;
    }
 }
 /***********************************************************************
-    setup the ImageCodec object used 
+    setup the ImageCodec object used
  *************************************************************************/
 void CEGUIRenderer::setupImageCodec(const CEGUI::String& codecName)
 {
 
-   // Cleanup the old image codec 
+   // Cleanup the old image codec
    if (m_imageCodec)
+   {
       cleanupImageCodec();
-   // Test whether we should use the default codec or not 
+   }
+   // Test whether we should use the default codec or not
    if (codecName.empty())
+   {
       m_imageCodecModule = new CEGUI::DynamicModule(CEGUI::String("CEGUI") + m_defaultImageCodecName);
-   else 
+   }
+   else
+   {
       m_imageCodecModule = new CEGUI::DynamicModule(CEGUI::String("CEGUI") + codecName);
+   }
 
-   // Create the codec object itself 
-   CEGUI::ImageCodec* (*createFunc)(void) = 
+   // Create the codec object itself
+   CEGUI::ImageCodec* (*createFunc)(void) =
       (CEGUI::ImageCodec* (*)(void))m_imageCodecModule->getSymbolAddress("createImageCodec");
    m_imageCodec = createFunc();
 }
 /***********************************************************************
-    cleanup the ImageCodec object used 
+    cleanup the ImageCodec object used
  *************************************************************************/
 void CEGUIRenderer::cleanupImageCodec()
 {
    if (m_imageCodec && m_imageCodecModule)
    {
-      void(*deleteFunc)(CEGUI::ImageCodec*) = 
+      void(*deleteFunc)(CEGUI::ImageCodec*) =
          (void(*)(CEGUI::ImageCodec*))m_imageCodecModule->getSymbolAddress("destroyImageCodec");
       deleteFunc(m_imageCodec);
       m_imageCodec = 0;
@@ -668,7 +678,7 @@ void CEGUIRenderer::cleanupImageCodec()
 
 }
 /***********************************************************************
-    set the default ImageCodec name 
+    set the default ImageCodec name
  *************************************************************************/
 void CEGUIRenderer::setDefaultImageCodecName(const CEGUI::String& codecName)
 {
@@ -676,7 +686,7 @@ void CEGUIRenderer::setDefaultImageCodecName(const CEGUI::String& codecName)
 }
 
 /***********************************************************************
-    get the default ImageCodec name to be used  
+    get the default ImageCodec name to be used
  *************************************************************************/
 const CEGUI::String& CEGUIRenderer::getDefaultImageCodecName()
 {
@@ -689,6 +699,6 @@ void CEGUIRenderer::SetGraphicsContext(osg::GraphicsContext *gc)
    m_pGraphicsContext = gc;
 }
 
-CEGUI::String CEGUIRenderer::m_defaultImageCodecName("TGAImageCodec"); 
+CEGUI::String CEGUIRenderer::m_defaultImageCodecName("TGAImageCodec");
 
 

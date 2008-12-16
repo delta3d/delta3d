@@ -18,109 +18,120 @@
  *
  * @author Christopher DuBuc
  */
+
 #include <dtLMS/lmsmessage.h>
 #include <dtLMS/lmsmessagetype.h>
 #include <dtUtil/stringutils.h>
 
 namespace dtLMS
 {
-	//////////////////////////////////////////////////////////////////////////
-   LmsMessage::LmsMessage() : 
-      mDelimiter(":"),
-      mType(&LmsMessageType::SIMULATION)
-	{
-
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-   LmsMessage::LmsMessage(const std::string &senderID, 
-                          const LmsMessageType &type, 
-                          const std::string &value) : 
-      mSenderID(senderID), 
-      mValue(value), 
-      mDelimiter(":"),
-      mType(&type)
-   {
-		
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	LmsMessage::LmsMessage(const std::string &senderID, 
-                          const LmsMessageType &type, 
-                          const std::string &value,
-                          const std::string &objectiveID) :
-      mSenderID(senderID),
-      mValue(value),
-      mObjectiveID(objectiveID), 
-      mDelimiter(":"),
-      mType(&type) 
+   //////////////////////////////////////////////////////////////////////////
+   LmsMessage::LmsMessage()
+      : mDelimiter(":")
+      , mType(&LmsMessageType::SIMULATION)
    {
 
    }
 
-	//////////////////////////////////////////////////////////////////////////
-   LmsMessage::LmsMessage(const std::string &messageString) : 
-      mDelimiter(":"),
-      mType(&LmsMessageType::SIMULATION)
-	{
+   //////////////////////////////////////////////////////////////////////////
+   LmsMessage::LmsMessage(const std::string &senderID,
+                          const LmsMessageType &type,
+                          const std::string &value)
+      : mSenderID(senderID)
+      , mValue(value)
+      , mDelimiter(":")
+      , mType(&type)
+   {
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   LmsMessage::LmsMessage(const std::string &senderID,
+                          const LmsMessageType &type,
+                          const std::string &value,
+                          const std::string &objectiveID)
+      : mSenderID(senderID)
+      , mValue(value)
+      , mObjectiveID(objectiveID)
+      , mDelimiter(":")
+      , mType(&type)
+   {
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   LmsMessage::LmsMessage(const std::string& messageString)
+      : mDelimiter(":")
+      , mType(&LmsMessageType::SIMULATION)
+   {
       BuildFromString(messageString);
-	}
+   }
 
-	//////////////////////////////////////////////////////////////////////////
-	LmsMessage::~LmsMessage(){}
+   //////////////////////////////////////////////////////////////////////////
+   LmsMessage::~LmsMessage(){}
 
 
-	//////////////////////////////////////////////////////////////////////////
-	void LmsMessage::BuildFromString(const std::string &messageString)
-	{
+   //////////////////////////////////////////////////////////////////////////
+   void LmsMessage::BuildFromString(const std::string& messageString)
+   {
       //tokenize messageString to get at message parts
       std::vector<std::string> parameters;
       char delim = *mDelimiter.c_str();
       dtUtil::IsDelimeter delimCheck(delim);
       dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(parameters, messageString ,delimCheck);
 
-      if(parameters.empty())
-         return; 
+      if (parameters.empty())
+      {
+         return;
+      }
 
       //extract message parts from vector
-		if(parameters.size() > 0)
-		{
-			mSenderID = parameters[0];
-		}
+      if (parameters.size() > 0)
+      {
+         mSenderID = parameters[0];
+      }
 
-		if(parameters.size() > 1)
-		{
-			mType = static_cast<const LmsMessageType*> (LmsMessageType::GetValueForName(parameters[1]));
-		}
+      if (parameters.size() > 1)
+      {
+         mType = static_cast<const LmsMessageType*> (LmsMessageType::GetValueForName(parameters[1]));
+      }
 
-		if(parameters.size() > 2)
-		{
-			mValue = parameters[2];
-		}
+      if (parameters.size() > 2)
+      {
+         mValue = parameters[2];
+      }
 
-		if(parameters.size() > 3)
-		{
-			mObjectiveID = parameters[3];
-		}
-	}
+      if (parameters.size() > 3)
+      {
+         mObjectiveID = parameters[3];
+      }
+   }
 
-	//////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    std::string LmsMessage::ToString() const
-	{
+   {
       std::string tempString;
 
-		if (mSenderID != "")
-			tempString += mSenderID;
+      if (mSenderID != "")
+      {
+         tempString += mSenderID;
+      }
 
-		if (mType != 0)
-			tempString += mDelimiter + mType->GetName();
+      if (mType != 0)
+      {
+         tempString += mDelimiter + mType->GetName();
+      }
 
-		if (mValue != "")
-			tempString += mDelimiter + mValue;
+      if (mValue != "")
+      {
+         tempString += mDelimiter + mValue;
+      }
 
-		if (mObjectiveID != "")
-			tempString += mDelimiter + mObjectiveID;
+      if (mObjectiveID != "")
+      {
+         tempString += mDelimiter + mObjectiveID;
+      }
 
-		return tempString;
-	}
+      return tempString;
+   }
 }

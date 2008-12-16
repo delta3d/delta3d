@@ -146,7 +146,7 @@ namespace dtGame
       {
          HandleClearIgnoreListMessage();
       }
-      else if(type == MessageType::INFO_MAP_CHANGE_BEGIN)
+      else if (type == MessageType::INFO_MAP_CHANGE_BEGIN)
       {
          // Avoid recording map change events because they may cause havok
          // with lots of messages and state changes.
@@ -624,21 +624,21 @@ namespace dtGame
             mNextMessage = mLogStream->ReadMessage(mNextMessageSimTime);
 
          // while we got messages, do our stuff...
-         while(mNextMessage != NULL && mNextMessageSimTime < GetGameManager()->GetSimulationTime())
+         while (mNextMessage != NULL && mNextMessageSimTime < GetGameManager()->GetSimulationTime())
          {
             const MessageType &type = mNextMessage->GetMessageType();
 
             // If an actor is destroyed, check and then update
             // the ignore list and the playback-join list appropriately
             // if the ID exists in those lists.
-            if( type == MessageType::INFO_ACTOR_DELETED )
+            if ( type == MessageType::INFO_ACTOR_DELETED )
             {
                HandleRemovePlaybackActorMessage(*mNextMessage);
                mNextMessage->SetSource(*mLogComponentMachineInfo);
                mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
                GetGameManager()->SendMessage(*mNextMessage);
             }
-            else if(type == MessageType::INFO_ACTOR_CREATED ||
+            else if (type == MessageType::INFO_ACTOR_CREATED ||
                type == MessageType::INFO_ACTOR_UPDATED)
             {
                HandleAddPlaybackActorMessage(*mNextMessage);
@@ -656,7 +656,7 @@ namespace dtGame
 
                // skip all messages until end keyframe or empty (sort of an error)
                mNextMessage = mLogStream->ReadMessage(mNextMessageSimTime);
-               while(mNextMessage != NULL && mNextMessage->GetMessageType() !=
+               while (mNextMessage != NULL && mNextMessage->GetMessageType() !=
                   MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS)
                {
                   numKeyframeMsgsSkipped++; // for logging.
@@ -780,7 +780,7 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    bool ServerLoggerComponent::SetLogDirectory(const std::string &dir)
    {
-      if(dir.empty())
+      if (dir.empty())
       {
          // This should throw an exception, but I'll log an error and return true or 
          // false since the rest of the method looks like it is going out of it's way
@@ -840,7 +840,7 @@ namespace dtGame
       GetGameManager()->GetAllGameActors(actors);
       for (actorItor = actors.begin(); actorItor != actors.end(); ++actorItor)
       {
-         if( !IsActorIdInList( (*actorItor)->GetId(), mRecordIgnoreList ) )
+         if ( !IsActorIdInList( (*actorItor)->GetId(), mRecordIgnoreList ) )
          {
             //For each game actor we need to build an actor update message, ask the
             //actor to fill the message with its current property state, and then
@@ -967,7 +967,7 @@ namespace dtGame
    {
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
       {
-         if(!IsActorIdInList(message.GetAboutActorId(),mRecordIgnoreList))
+         if (!IsActorIdInList(message.GetAboutActorId(),mRecordIgnoreList))
          {
             try
             {
@@ -990,7 +990,7 @@ namespace dtGame
    void ServerLoggerComponent::HandleAddPlaybackActorMessage(const Message &message)
    {
       // Make sure no ignored actors get added when they join the playback simulation.
-      if(!message.GetAboutActorId().ToString().empty() &&
+      if (!message.GetAboutActorId().ToString().empty() &&
          !IsActorIdInList(message.GetAboutActorId(),mPlaybackList))
       {
          mPlaybackList.insert(message.GetAboutActorId());
@@ -1001,7 +1001,7 @@ namespace dtGame
    void ServerLoggerComponent::HandleRemovePlaybackActorMessage(const Message &message)
    {
       std::set<dtCore::UniqueId>::iterator itor = mPlaybackList.find(message.GetAboutActorId());
-      if( itor != mPlaybackList.end() )
+      if ( itor != mPlaybackList.end() )
       {
          mPlaybackList.erase(itor);
       }
@@ -1033,7 +1033,7 @@ namespace dtGame
    void ServerLoggerComponent::HandleRemoveIgnoredActorMessage(const Message &message)
    {
       std::set<dtCore::UniqueId>::iterator itor = mRecordIgnoreList.find(message.GetAboutActorId());
-      if( itor != mRecordIgnoreList.end() )
+      if ( itor != mRecordIgnoreList.end() )
       {
          mRecordIgnoreList.erase(itor);
       }

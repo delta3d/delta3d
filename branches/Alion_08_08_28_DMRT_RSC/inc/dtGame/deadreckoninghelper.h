@@ -30,7 +30,7 @@
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
-#include <dtGame/groundclamper.h>
+#include <dtGame/basegroundclamper.h>
 
 namespace dtDAL
 {
@@ -102,6 +102,7 @@ namespace dtGame
             public:
                // dof has a name
                std::string mName;
+               std::string mMetricName;
 
                // rate at which it needs to move in xyz direction
                osg::Vec3 mRateOverTime;
@@ -145,7 +146,7 @@ namespace dtGame
           * @return Return true if you think you changed the Transform, false if you did not.
           */
          virtual bool DoDR(GameActor& gameActor, dtCore::Transform& xform, 
-                  dtUtil::Log* pLogger, GroundClamper::GroundClampingType*& gcType);
+                  dtUtil::Log* pLogger, BaseGroundClamper::GroundClampingType*& gcType);
 
          /**
           * This is a utility function to make it easier to have a dead reckoned actor.  The actor
@@ -329,9 +330,6 @@ namespace dtGame
          /// Sets the last time this helper was updated for rotation.  This will also updated the average time between updates.
          void SetLastRotationUpdatedTime(double newUpdatedTime);
 
-         float GetTimeUntilForceClamp() const { return mTimeUntilForceClamp; }
-         void SetTimeUntilForceClamp(float newTime) { mTimeUntilForceClamp = newTime; }
-
          /// @return The node collector for this helper or NULL none has been set.
          dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
 
@@ -344,7 +342,8 @@ namespace dtGame
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
          /// Add onto the dof dead reckoning list where the dof should move 
-         void AddToDeadReckonDOF(const std::string &DofName, const osg::Vec3& position, const osg::Vec3& rateOverTime);
+         void AddToDeadReckonDOF(const std::string &dofName, const osg::Vec3& position,
+            const osg::Vec3& rateOverTime, const std::string& metricName = "");
 
          ///@return the rough average amount of time between rotation updates.  This is based on values sent to SetLastRotationUpdatedTime.
          double GetAverageTimeBetweenRotationUpdates() const { return mAverageTimeBetweenRotationUpdates; };
@@ -431,8 +430,6 @@ namespace dtGame
          ///the simulation time this was last updated.
          double mLastTranslationUpdatedTime;
          double mLastRotationUpdatedTime;
-
-         float mTimeUntilForceClamp;
 
          ///This should be fairly clear.
          float mAverageTimeBetweenTranslationUpdates;

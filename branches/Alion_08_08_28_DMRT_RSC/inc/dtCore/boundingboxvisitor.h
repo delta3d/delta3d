@@ -1,22 +1,22 @@
-/* -*-c++-*- 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- *
- */
+/* -*-c++-*-
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2004-2005 MOVES Institute
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+*/
 
 #ifndef DELTA_BOUNDING_BOX
 #define DELTA_BOUNDING_BOX
@@ -24,51 +24,40 @@
 #include <osg/NodeVisitor>
 #include <osg/BoundingBox>
 #include <osg/Geode>
-#include <osg/MatrixTransform>
-#include <osg/Version>
+
+#include <dtUtil/boundingshapeutils.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
+   ///Deprecated 11/3/08.  Use dtUtil::BoundingBoxVisitor instead
    class BoundingBoxVisitor : public osg::NodeVisitor
    {
-      public:
+   public:
 
-         BoundingBoxVisitor()
-            : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-         {}
+      ///Deprecated 11/3/08
+      BoundingBoxVisitor() : 
+         osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
 
-         /**
-          * Visits the specified geode.
-          *
-          * @param node the geode to visit
-          */
-         virtual void apply(osg::Geode& node)
-         {
-            osg::NodePath nodePath = getNodePath();
+      {
+         DEPRECATE("dtCore::BoundingBoxVisitor()", "dtUtil::BoundingBoxVisitor()");
+         mBoxVisitor = new dtUtil::BoundingBoxVisitor;
+      }
 
-            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0 
-            // Luckily, this behavior is redundant with OSG 1.1
-            if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
-            {
-               nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
-            }
-            #endif // OSG 1.1
+      ///Deprecated 11/3/08
+      virtual void apply(osg::Geode& node)
+      {
+         DEPRECATE("dtCore::BoundingBoxVisitor::apply(osg::Geode& node)",
+            "dtUtil::BoundingBoxVisitor::apply(osg::Geode& node)");
 
-            osg::Matrix matrix = osg::computeLocalToWorld(nodePath);
+         mBoxVisitor->apply(node);
 
-            for( unsigned int i = 0; i < node.getNumDrawables(); ++i )
-            {
-               for( unsigned int j = 0; j < 8; ++j )
-               {
-                  mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) * matrix );
-               }
-            }
-         }
+         this->mBoundingBox = mBoxVisitor->mBoundingBox;
+      }
 
-         /**
-          * The aggregate bounding box.
-          */
-         osg::BoundingBox mBoundingBox;
+      dtCore::RefPtr<dtUtil::BoundingBoxVisitor> mBoxVisitor;
+
+      osg::BoundingBox mBoundingBox;
    };
 
 }

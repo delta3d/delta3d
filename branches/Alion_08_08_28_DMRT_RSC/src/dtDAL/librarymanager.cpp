@@ -23,7 +23,6 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/actorproxyicon.h>
 
 #include <dtUtil/log.h>
 
@@ -43,8 +42,6 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    LibraryManager::LibraryManager()
    {
-      ActorProxyIcon::staticInitialize();
-
       mLogger = &dtUtil::Log::GetInstance("librarymanager.cpp");
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Initializing actor library manager.");
       LoadActorRegistry(ACTOR_LIBRARY);

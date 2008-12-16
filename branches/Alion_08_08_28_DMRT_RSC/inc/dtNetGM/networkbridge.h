@@ -18,6 +18,7 @@
  *
  * @author Pjotr van Amerongen
  */
+
 #ifndef DELTA_NETWORKBRIDGE
 #define DELTA_NETWORKBRIDGE
 
@@ -104,12 +105,12 @@ namespace dtNetGM
        * Sends a DataStream across the network
        * @param The messagepacket
        */
-		void SendDataStream(dtUtil::DataStream& dataStream);
+      void SendDataStream(dtUtil::DataStream& dataStream);
 
       /**
        * Disconnects the current connection
        */
-      void Disconnect(int waitTime= -1);
+      void Disconnect(int waitTime = -1);
 
       /**
        * Callback function for GNE::ConnectionListener

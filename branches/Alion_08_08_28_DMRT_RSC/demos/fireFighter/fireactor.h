@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_FIRE_FIGHTER_FIRE_ACTOR
 #define DELTA_FIRE_FIGHTER_FIRE_ACTOR
 
@@ -42,31 +43,31 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
    public:
 
       /// Constructor
-      FireActor(dtGame::GameActorProxy &proxy);
+      FireActor(dtGame::GameActorProxy& proxy);
 
       /**
        * Sets the filename of the flame particle system.
        * @param filename the new filename
        */
-      void SetFlameFilename(const std::string &filename);
+      void SetFlameFilename(const std::string& filename);
 
       /**
        * Sets the filename of the spark particle system.
        * @param filename the new filename
        */
-      void SetSparkFilename(const std::string &filename);
+      void SetSparkFilename(const std::string& filename);
 
       /**
        * Sets the filename of the smoke particle system.
        * @param filename the new filename
        */
-      void SetSmokeFilename(const std::string &filename);
+      void SetSmokeFilename(const std::string& filename);
 
       /**
        * Sets the filename of the smoke ceiling particle system.
        * @param filename the new filename
        */
-      void SetSmokeCeilingFilename(const std::string &filename);
+      void SetSmokeCeilingFilename(const std::string& filename);
 
       /**
        * Sets the radius of the fire.
@@ -103,7 +104,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        * associated with this fire.
        * @param plane the boundary plane to add
        */
-      void AddBoundaryPlane(const osg::Vec4 plane);
+      void AddBoundaryPlane(const osg::Vec4& plane);
 
       /**
        * Removes the boundary plane at the specified index.
@@ -122,25 +123,25 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        * @param dest the destination vector to hold the plane parameters
        * @param index the index of the boundary plane to retrieve
        */
-      void GetBoundaryPlane(osg::Vec4 dest, int index) const;
+      void GetBoundaryPlane(osg::Vec4& dest, int index) const;
 
       /**
        * Message handler.
        * @param data the received message
        */
-      void TickLocal(const dtGame::Message &msg);
+      void TickLocal(const dtGame::Message& msg);
 
       /// Invokable that plays the fire sound when the hatch door is opened or closed
-      void PlayFireSound(const dtGame::Message &msg);
+      void PlayFireSound(const dtGame::Message& msg);
 
       /// Invokable to stop all sounds associated with this actor
-      void StopSounds(const dtGame::Message &msg);
+      void StopSounds(const dtGame::Message& msg);
 
       /**
        * Sets the light rotation 
        * @param rotation The rotation to set
        */
-      void SetLightRotation(const osg::Vec3 &rotation);
+      void SetLightRotation(const osg::Vec3& rotation);
 
       /**
        * Gets the light rotation
@@ -152,7 +153,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        * Sets the light rotation 
        * @param rotation The rotation to set
        */
-      void SetLightTranslation(const osg::Vec3 &xyz);
+      void SetLightTranslation(const osg::Vec3& xyz);
 
       /**
        * Gets the light rotation

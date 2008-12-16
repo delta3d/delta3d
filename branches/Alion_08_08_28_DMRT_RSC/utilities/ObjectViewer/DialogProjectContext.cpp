@@ -1,24 +1,25 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
-* Simulation, Training, and Game Editor (STAGE)
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option)
-* any later version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* William E. Johnson II
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * William E. Johnson II
+ */
+
 #include <prefix/dtstageprefix-src.h>
 #include "DialogProjectContext.h"
 
@@ -59,7 +60,7 @@ ProjectContextDialog::ProjectContextDialog(QWidget* parent) : QDialog(parent)
 
    QLabel* desc = new QLabel(tr("A project holds all related maps, files, and "
       "resources.  Please select a directory where your project files will be "
-      "stored."),group);
+      "stored."), group);
 
    desc->setWordWrap(true);
    grid->addWidget(new QLabel(tr("Path:")), 0, 0);
@@ -90,7 +91,7 @@ ProjectContextDialog::~ProjectContextDialog()
 
 }
 
-QString ProjectContextDialog::getProjectPath() const 
+QString ProjectContextDialog::getProjectPath() const
 {
    return pathEdit->text();
 }
@@ -100,15 +101,17 @@ void ProjectContextDialog::spawnFileBrowser()
 {
    QString dir = QFileDialog::getExistingDirectory(this, tr("Select a project context"));
 
-   if(dir.isEmpty()) 
+   if (dir.isEmpty())
    {
       applyButton->setEnabled(false);
       return;
    }
 
    std::string strippedName = dir.toStdString();
-   if((*strippedName.rbegin()) == '\\' || (*strippedName.rbegin()) == '/')
+   if ((*strippedName.rbegin()) == '\\' || (*strippedName.rbegin()) == '/')
+   {
       strippedName = strippedName.substr(0, strippedName.size() - 1);
+   }
 
    pathEdit->setText(tr(strippedName.c_str()));
    applyButton->setEnabled(true);

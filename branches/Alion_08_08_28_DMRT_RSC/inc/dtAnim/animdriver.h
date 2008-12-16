@@ -29,9 +29,9 @@
 
 namespace dtAnim
 {
-  
 
-class	DT_ANIM_EXPORT AnimDriver: public ICal3DDriver
+
+class DT_ANIM_EXPORT AnimDriver: public ICal3DDriver
 {
 
 public:
@@ -49,7 +49,7 @@ private:
 
 };
 
-}//namespace dtAnim
+} // namespace dtAnim
 
 #endif // __DELTA_ANIMDRIVER_H__
 

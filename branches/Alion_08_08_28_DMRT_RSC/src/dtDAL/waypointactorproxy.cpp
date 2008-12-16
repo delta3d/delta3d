@@ -76,7 +76,7 @@ namespace dtDAL
          config.mUpVector = false;
          config.mScale = 0.1;
 
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::WAYPOINT, config);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT, config);
       }
 
       return mBillBoardIcon.get();

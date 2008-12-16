@@ -75,6 +75,24 @@
  *
  *                  08.02.2006 Joran: Added simple support for achitectural materials. They
  *                  are now detected and handled as standard materials.
+ *
+ *					27.09.2007 Farshid Lashkari: Fixed that too much memory was allocated
+ *					for textures, which could cause out-of-memory errors.
+ *
+ *					27.09.2007 Farshid Lashkari: Added two sided support for composite
+ *					materials.
+ *
+ *					01.10.2007 Farshid Lashkari: Disabled submaterials are not exported.
+ *
+ *					02.10.2007 Farshid Lashkari: Texture memory usage improvements. When compressed
+ *					textures is turned on, textures will immediately be compressed and 
+ *					uncompressed data will be released during export.
+ *
+ *                  05.11.2007 Daniel Sjolie: Added useOriginalTextures Option
+ *
+ *					25.01.2008 Farshid Lashkari: Fix for the processing of materials where the 
+ *					exporter would not properly check for composite materials before checking
+ *					if the sub-material is enabled.
  */
 
 #include "MtlKeeper.h"
@@ -86,22 +104,115 @@
 
 #include <sstream>
 
+TextureCompressor::TextureCompressor()
+{
+    WNDCLASS wndClass;
+
+    memset(&wndClass, 0, sizeof(WNDCLASS));
+    wndClass.style         = CS_OWNDC;
+	wndClass.lpfnWndProc   = (WNDPROC)StaticWindowProc;
+	wndClass.cbClsExtra    = 0;
+	wndClass.cbWndExtra    = 0;
+	wndClass.hInstance     = GetModuleHandle(NULL);
+	wndClass.hIcon         = NULL;
+	wndClass.hCursor       = NULL;
+	wndClass.hbrBackground = NULL;
+	wndClass.lpszMenuName  = NULL;
+	wndClass.lpszClassName = "GraphicsContext";
+	RegisterClass(&wndClass);
+
+    hwnd=CreateWindow(
+        "GraphicsContext",
+        "GraphicsContext",
+        WS_POPUP,
+        0,0,1,1,
+        0,0,
+        GetModuleHandle(NULL),
+        NULL);
+
+    hdc=GetDC(hwnd);
+
+	// Define pixel format descriptor.
+	PIXELFORMATDESCRIPTOR pfd = { 
+        sizeof(PIXELFORMATDESCRIPTOR),				// size
+	    1,											// version
+	    PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW,	// support double-buffering
+	    PFD_TYPE_RGBA,								// color type
+	    32,											// prefered color depth
+	    0, 0, 0, 0, 0, 0,							// color bits (ignored)
+	    0,											// no alpha buffer
+	    0,											// alpha bits (ignored)
+	    0,											// no accumulation buffer
+	    0, 0, 0, 0,									// accum bits (ignored)
+	    24,											// depth buffer
+	    0,											// no stencil buffer
+	    0,											// no auxiliary buffers
+	    PFD_MAIN_PLANE,								// main layer
+	    0,											// reserved
+	    0, 0, 0,									// no layer, visible, damage masks
+    };
+
+  	int pixelFormat = ChoosePixelFormat(hdc,&pfd);
+	SetPixelFormat(hdc,pixelFormat,&pfd);
+
+    hglrc=wglCreateContext(hdc);
+    hglrcOld=wglGetCurrentContext();
+    hdcOld=wglGetCurrentDC();
+    wglMakeCurrent(hdc,hglrc);
+
+	state = new osg::State;
+}
+
+TextureCompressor::~TextureCompressor()
+{
+    wglMakeCurrent(hdcOld,hglrcOld);
+    wglDeleteContext(hglrc);
+    ReleaseDC(hwnd,hdc);
+    DestroyWindow(hwnd);
+    UnregisterClass("GraphicsContext",GetModuleHandle(NULL));
+}
+
+void TextureCompressor::compress(osg::Texture2D *texture)
+{
+	osg::Image *image = texture->getImage();
+	
+	if(image && 
+		(image->getPixelFormat()==GL_RGB || image->getPixelFormat()==GL_RGBA) &&
+		(image->s()>=32 && image->t()>=32) &&
+		!osg::Texture::isCompressedInternalFormat(image->getInternalTextureFormat()))
+	{
+		// get OpenGL driver to create texture from image.
+		texture->apply(*state);
+
+		image->readImageFromCurrentTexture(0,true);
+
+		texture->setInternalFormatMode(osg::Texture::USE_IMAGE_DATA_FORMAT);
+	}
+}
+
+LRESULT CALLBACK TextureCompressor::StaticWindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    return DefWindowProc( hWnd, message, wParam, lParam );
+}
+
 /**
  * Constructor.
  */
 MtlKeeper::MtlKeeper(){
 	_hasShownMemErr = FALSE;
+	_compressor = NULL;
 }
 
 /**
  * Destructor.
  */
 MtlKeeper::~MtlKeeper(){
+	if(_compressor) delete _compressor;
 	// Find image data array and delete it.
-	for(MtlKeeper::ImgList::iterator itr=_imgList.begin(); itr!=_imgList.end(); ++itr){
-		if(itr->second.second)
-			delete [] itr->second.second;
-	}
+	//for(MtlKeeper::ImgList::iterator itr=_imgList.begin(); itr!=_imgList.end(); ++itr){
+	//	if(itr->second.second)
+	//		delete [] itr->second.second;
+	//}
 }
 
 /**
@@ -168,10 +279,25 @@ BOOL MtlKeeper::addMtl(Mtl* maxMtl, Options* options, TimeValue t,bool isShellMa
 
 	// If the MAX material has sub materials then add them to the list as well.
 	if (maxMtl->NumSubMtls() > 0)  {
+
+		// The composite materials properties are saved in a parameter block.
+		IParamBlock2* pblock2 = NULL;
+		if (maxMtl->ClassID() == Class_ID(COMPMTL_CLASS_ID_A, COMPMTL_CLASS_ID_B)) {
+			pblock2 = maxMtl->GetParamBlock(0);
+		}
+
 		for (int i=0; i<maxMtl->NumSubMtls(); i++) {
 			Mtl* subMtl = maxMtl->GetSubMtl(i);
-			if (subMtl)
+			if (subMtl) {
+				//If composite sub-material is disabled, then don't process it
+				if(i > 0 && pblock2) {
+					BOOL isEnabled;
+					Interval iv;
+					pblock2->GetValue(compmat_map_on,t,isEnabled,iv,i-1);
+					if(!isEnabled) continue;
+				}
 				addMtl(subMtl, options, t, isShellMaterial);
+			}
 		}
 	}
 
@@ -626,12 +752,15 @@ osg::ref_ptr<osg::Texture2D> MtlKeeper::createTexture2D(Mtl* maxMtl, Bitmap* bma
 	if(!bmap)
 		return NULL;
 
+	//Get compression mode
+	osg::Texture::InternalFormatMode internalFormat = getTexComp(options);
+
 	// Create texture and set compression.
 	osg::ref_ptr<osg::Texture2D> osgTex = new osg::Texture2D();
     osgTex->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
 	osgTex->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 	osgTex->setWrap(osg::Texture::WRAP_R, osg::Texture::CLAMP_TO_EDGE);
-    osgTex->setInternalFormatMode(getTexComp(options));
+    osgTex->setInternalFormatMode(internalFormat);
 
 	// If this bitmap has an alpha channel then add an alpha blend function to stateset.
     if(options->getAutoAlphaTextures() && bmap->HasAlpha()){
@@ -640,8 +769,19 @@ osg::ref_ptr<osg::Texture2D> MtlKeeper::createTexture2D(Mtl* maxMtl, Bitmap* bma
 
 	// Create image and set it to the texture.
 	osg::ref_ptr<osg::Image> osgImage = createImage(maxMtl, bmap, name, options, t);
-	if(osgImage.valid())
+	if(osgImage.valid()) {
 		osgTex->setImage(osgImage.get());
+
+		// Compress texture immediately to free up memory usage
+		if(internalFormat != osg::Texture::USE_IMAGE_DATA_FORMAT) {
+			if (getEmbedImageData(options))
+			{
+				if(!_compressor)
+					_compressor = new TextureCompressor;
+				_compressor->compress(osgTex.get());
+			}
+		}
+	}
 
 	return osgTex;
 }
@@ -745,9 +885,9 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, BitmapTex* bmt, Opt
 osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::string name, Options* options, TimeValue t){
 
 	// See if image is allready in list.
-	for(MtlKeeper::ImgList::iterator itr=_imgList.begin(); itr!=_imgList.end(); ++itr){
-		if(itr->first.compare(name)==0)
-			return itr->second.first.get();
+	MtlKeeper::ImgList::iterator itr = _imgList.find(name);
+	if(itr != _imgList.end()) {
+		return itr->second.get();
 	}
 
 	// Create image and set the name.
@@ -762,7 +902,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 	}
 
 	unsigned char* data = NULL;
-	if(options->getQuickView() || options->getIncludeImageDataInIveFile()){
+	if(options->getQuickView() || getEmbedImageData(options)){
 
 		// Retreive image properties.
 		int width = bmap->Width();
@@ -773,7 +913,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 		unsigned int internalFormat = hasAlpha ? 4 : 3;
 		unsigned int pixelFormat = hasAlpha ? GL_RGBA  : GL_RGB;
 
-		data = new unsigned char[width*height*internalFormat*sizeof(GL_UNSIGNED_BYTE)];
+		data = new unsigned char[width*height*internalFormat*sizeof(unsigned char)];
 
 		if(data){
 			BMM_Color_64 *in = new BMM_Color_64[width];
@@ -791,9 +931,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 				}
 			}
 			delete [] in;
-			// When using USE_NEW_DELETE or USE_MALLOC_FREE the exporter craches.
-			// Instead we will delete the data when the MtlKeeper class is deallocated.
-			image->setImage(width, height, r, internalFormat, pixelFormat, dataType, data, osg::Image::NO_DELETE);
+			image->setImage(width, height, r, internalFormat, pixelFormat, dataType, data, osg::Image::USE_NEW_DELETE);
 		}
 		else if(options->getShowErrMsg() && !_hasShownMemErr){
 			char buf[500];
@@ -805,7 +943,7 @@ osg::ref_ptr<osg::Image> MtlKeeper::createImage(Mtl* maxMtl, Bitmap* bmap, std::
 	}
 
 	// Add image to list.
-	_imgList[name] = ImgPair(image,data); 
+	_imgList[name] = image;
 
 	return image;
 }
@@ -832,6 +970,10 @@ void MtlKeeper::printError(int error){
  * current name and the format we would like save the texture in.
  */
 std::string MtlKeeper::createMapName(std::string oldname, Options* options){
+
+	if ( options->getUseOriginalTextureFiles() && !options->getWriteTexture() ) { // Use original file(name)s
+		return oldname;
+	}
 	char* texFormat = options->getTexFormat(options->getTexFormatIndex());
 
 	// Get texture name.
@@ -1026,6 +1168,15 @@ osg::Texture::InternalFormatMode MtlKeeper::getTexComp(Options* options){
 }
 
 /**
+ * This method will return whether image data is being embedded in an IVE file
+ */
+bool MtlKeeper::getEmbedImageData(Options* options)
+{
+	return (options->getExportExtension().compare(".ive")==0 
+				|| options->getExportExtension().compare(".IVE")==0) && options->getIncludeImageDataInIveFile();
+}
+
+/**
  * This method will add a texture environment INTERPOLATE combiner
  * to the given stateset in the given texture unit.
  */
@@ -1126,6 +1277,14 @@ BOOL MtlKeeper::isTwoSided(Mtl* maxMtl){
 			// See if this is two sided.
 			StdMat* stdMtl = (StdMat *)bakedMtl;
 			return stdMtl->GetTwoSided();
+		}
+	} else if(maxMtl->ClassID() == Class_ID(COMPMTL_CLASS_ID_A, COMPMTL_CLASS_ID_B)){
+		//Check if any sub materials are two-sided
+		if(maxMtl->NumSubMtls() > 0) {
+			for(int i = 0; i < maxMtl->NumSubMtls(); i++) {
+				StdMat* subMtl = (StdMat *)maxMtl->GetSubMtl(i);
+				if(subMtl && subMtl->GetTwoSided()) return TRUE;
+			}
 		}
 	}
 

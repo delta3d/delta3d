@@ -18,6 +18,7 @@
  *
  * David Guthrie
  */
+
 #include "OSGAdapterWidget.h"
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
@@ -70,10 +71,10 @@ namespace dtQt
             mKeyMap[Qt::Key_F18            ] = osgGA::GUIEventAdapter::KEY_F18;
             mKeyMap[Qt::Key_F19            ] = osgGA::GUIEventAdapter::KEY_F19;
             mKeyMap[Qt::Key_F20            ] = osgGA::GUIEventAdapter::KEY_F20;
-            
+
             mKeyMap[Qt::Key_hyphen         ] = '-';
             mKeyMap[Qt::Key_Equal         ] = '=';
-            
+
             mKeyMap[Qt::Key_division      ] = osgGA::GUIEventAdapter::KEY_KP_Divide;
             mKeyMap[Qt::Key_multiply      ] = osgGA::GUIEventAdapter::KEY_KP_Multiply;
             mKeyMap[Qt::Key_Minus         ] = '-';
@@ -103,8 +104,10 @@ namespace dtQt
             {
                return int(*(event->text().toAscii().data()));
             }
-            else 
+            else
+            {
                return itr->second;
+            }
          }
 
       private:
@@ -138,15 +141,15 @@ namespace dtQt
    OSGAdapterWidget::~OSGAdapterWidget() {}
 
    //////////////////////////////////////////////////////////////////////////////////
-   osgViewer::GraphicsWindow& OSGAdapterWidget::GetGraphicsWindow() 
-   { 
-      return *mGraphicsWindow; 
+   osgViewer::GraphicsWindow& OSGAdapterWidget::GetGraphicsWindow()
+   {
+      return *mGraphicsWindow;
    }
 
    //////////////////////////////////////////////////////////////////////////////////
-   const osgViewer::GraphicsWindow& OSGAdapterWidget::GetGraphicsWindow() const 
-   { 
-      return *mGraphicsWindow; 
+   const osgViewer::GraphicsWindow& OSGAdapterWidget::GetGraphicsWindow() const
+   {
+      return *mGraphicsWindow;
    }
 
    //////////////////////////////////////////////////////////////////////////////////
@@ -171,14 +174,14 @@ namespace dtQt
    {
       connect(&mTimer, SIGNAL(timeout()), this, SLOT(ThreadedUpdateGL()));
       mTimer.start();
-      
+
       //share the context on the other thread.
       mThreadGLContext = new QGLContext(QGLFormat::defaultFormat(), this);
       if (!mThreadGLContext->create(context()))
       {
          std::cerr << "broken!" << std::endl;
       }
-      
+
       setContext(mThreadGLContext, context(), false);
    }
 
@@ -217,7 +220,9 @@ namespace dtQt
    {
       dtCore::System& system = dtCore::System::GetInstance();
       if (system.IsRunning())
+      {
          system.StepWindow();
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +274,7 @@ namespace dtQt
    void OSGAdapterWidget::mousePressEvent(QMouseEvent* event)
    {
       int button = 0;
-      switch(event->button())
+      switch (event->button())
       {
          case(Qt::LeftButton):  button = 1; break;
          case(Qt::MidButton):   button = 2; break;
@@ -287,13 +292,13 @@ namespace dtQt
    void OSGAdapterWidget::mouseReleaseEvent(QMouseEvent* event)
    {
       int button = 0;
-      switch(event->button())
+      switch (event->button())
       {
-         case(Qt::LeftButton):   button = 1; break;
-         case(Qt::MidButton):    button = 2; break;
-         case (Qt::RightButton): button = 3; break;
-         case(Qt::NoButton):     button = 0; break;
-         default:                button = 0; break;
+         case Qt::LeftButton:   button = 1; break;
+         case Qt::MidButton:    button = 2; break;
+         case Qt::RightButton:  button = 3; break;
+         case Qt::NoButton:     button = 0; break;
+         default:               button = 0; break;
       }
 
       if (mGraphicsWindow.valid())

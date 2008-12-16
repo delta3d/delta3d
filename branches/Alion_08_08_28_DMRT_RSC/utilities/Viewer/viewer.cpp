@@ -312,7 +312,7 @@ Viewer::GetDefaultState( ViewState* vs )
    osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
    Transform   cam;
-   cam.SetLookAt( pos, lookat, up );
+   cam.Set( pos, lookat, up );
 
    float dist(( lookat - pos ).length());
 
@@ -435,7 +435,7 @@ void Viewer::LoadFile( ViewState* vs )
       osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
       Transform   cam;
-      cam.SetLookAt( pos, lookat, up );
+      cam.Set( pos, lookat, up );
 
       float dist(( lookat - pos ).length());
 

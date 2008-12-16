@@ -289,6 +289,18 @@ namespace dtDAL
          void CreateAndPushParameter();
          // Workaround for properties where empty data would result in the property not being set.
          void NonEmptyDefaultWorkaround();
+
+         void EndHeaderElement(const XMLCh* const localname);
+         void EndActorSection(const XMLCh* const localname);
+         void EndActorsElement();
+         void EndActorElement();
+         void EndActorPropertySection(const XMLCh* const localname);
+         void EndActorPropertyGroupElement();
+         void EndActorPropertyParameterElement();
+         void EndActorPropertyElement();
+         void EndLibrarySection(const XMLCh* const localname);
+         void EndLibraryElement();
+         void EndEventSection(const XMLCh* const localname);
    };
 }
 #endif

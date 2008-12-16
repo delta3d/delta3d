@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2008 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-*  Erik Johnson
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2008 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ *  Erik Johnson
+ */
+
 #ifndef odeiterator_h__
 #define odeiterator_h__
 
@@ -38,8 +39,8 @@ namespace dtCore
    class Transformable;
 
    /** Used to manage the ODE physics system.  Provides the functionality
-    *  to register physical objects, adjust global gravity, iterate the 
-    *  physics system (both collision detection and body physics), and 
+    *  to register physical objects, adjust global gravity, iterate the
+    *  physics system (both collision detection and body physics), and
     *  provides a default near collision callback.
     *  Typically used by dtCore::Scene, this class is something like the Facade
     *  pattern and manages both collision detection and physical body operations.
@@ -57,7 +58,7 @@ namespace dtCore
       ODEController(dtCore::Base* msgSender = NULL);
 
       /** Overloaded constructor to supply a custom ODESpaceWrap and ODEWorldWrap.
-       * @param spaceWrapper custom ODE space wrapper 
+       * @param spaceWrapper custom ODE space wrapper
        * @param worldWrap custom ODE world wrapper
        * @param msgSender : optional pointer to a class which will be used to send out
        *                the "collision" message.
@@ -77,7 +78,7 @@ namespace dtCore
       void UnRegisterCollidable(Transformable* collidable);
 
       /** Perform an iteration of the physics system.  Default implementation
-        * will perform as many physics steps required to fulfill the supplied 
+        * will perform as many physics steps required to fulfill the supplied
         * time step.  Custom iteration algorithms can be created by deriving from
         * this class and overwriting this method.
         * @param deltaFrameTime The amount of time to simulate in the physics system.
@@ -127,10 +128,10 @@ namespace dtCore
 
       ///When two geoms collide, send out a "collide" message
       virtual void DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionData &data);
-   	
+
    private:
       void Ctor();
-      
+
       ///perform one iteration using the supplied step size
       void Step(double stepSize) const;
 
@@ -144,7 +145,7 @@ namespace dtCore
 
       typedef std::vector< Transformable* > TransformableVector;
       TransformableVector mCollidableContents; ///<The physical contents of the scene
-      
+
       dtCore::RefPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
    };
 }

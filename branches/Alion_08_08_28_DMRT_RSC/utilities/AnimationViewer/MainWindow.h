@@ -9,6 +9,7 @@ class QToolBar;
 class AnimationTableWidget;
 class QListWidget;
 class QListWidgetItem;
+class QTableWidget;
 class QGraphicsView;
 class QGraphicsScene;
 class QTabWidget;
@@ -22,7 +23,7 @@ class QDoubleSpinBox;
 
 namespace dtQt
 {
-   class OSGAdapterWidget; 
+   class OSGAdapterWidget;
 }
 
 namespace dtAnim
@@ -46,7 +47,7 @@ public:
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
-   
+
 signals:
    void FileToLoad(const QString&);
    void StartAnimation(unsigned int, float, float);
@@ -61,14 +62,20 @@ signals:
    /// Hide the mesh on CalModel from view
    void HideMesh(int meshID);
 
+   void SubMorphTargetChanged(int meshID, int subMeshID,
+                              int morphID, float weight);
+
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
                        unsigned int keyframes, float duration);
-   
+
    void OnNewMesh(int meshID, const QString& meshName);
 
-   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList, 
-                           dtAnim::CharDrawable* model);   
+   void OnNewSubMorphTarget(int meshID, int subMeshID, 
+                            int morphID, const QString& morphName);
+
+   void OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMeshList,
+                           dtAnim::CharDrawable* model);
 
    void OnNewMaterial(int matID, const QString& name,
                       const QColor& diff, const QColor& amb, const QColor& spec,
@@ -85,9 +92,10 @@ public slots:
    void OnToggleShadingToolbar();
    void OnToggleLODScaleToolbar();
    void OnToggleScalingToolbar();
-   void OnToggleLightingToolbar(); 
+   void OnToggleLightingToolbar();
    void OnDisplayError(const QString& msg);
-	
+   void OnConfiged(); ///<call when everything is up and running
+
 private:
    void CreateMenus();
    void CreateActions();
@@ -98,16 +106,21 @@ private:
    void OnStartAnimation(int row);
    void OnStopAnimation(int row);
    void OnStartAction(int row);
+   bool IsAnimNodeBuildingUsingHW() const;
+
+   ///turns color into "R:rrr "G:ggg B:bbb A:aaa" format
+   QString MakeColorString(const QColor& color) const;
 
    QAction* mExitAct;
    QAction* mLoadCharAct;
    QAction* mRecentFilesAct[5];
-   QAction* mWireframeAction; 
-   QAction* mShadedAction;    
+   QAction* mWireframeAction;
+   QAction* mShadedAction;
    QAction* mShadedWireAction;
    QAction* mBoneBasisAction;
    QAction* mDiffuseLightAction;
    QAction* mPointLightAction;
+   QAction* mHardwareSkinningAction;
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;
@@ -121,7 +134,8 @@ private:
 
    AnimationTableWidget* mAnimListWidget;
    QListWidget*          mMeshListWidget;
-   
+   QTableWidget*         mSubMorphTargetListWidget;
+
    QStandardItemModel* mMaterialModel; ///<Model for the character's materials
    QTableView*         mMaterialView;  ///<View for the character's materials
 
@@ -146,5 +160,7 @@ private slots:
    void OnToggleDisplayError(bool shouldDisplay);
    void OnToggleFlipVertical();
    void OnToggleFlipHorizontal();
+
+   void OnSubMorphChanged(QTableWidgetItem* item);
 };
 #endif // DELTA_MainWindow

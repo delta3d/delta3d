@@ -107,54 +107,66 @@ namespace dtGame
          void SetEyePointActor(dtCore::Transformable* newEyePointActor);
 
          /**
-          * Typically actors are only ground clamped when their positions are updated
-          * but with this time, the actors are reclamped every so often in case LOD's have changed
-          * on the terrain.
-          * 
-          * @param newTime the new time in seconds.  It defaults to 3.  Setting it to 0 disables force clamping.
-          */
-         void SetForceClampInterval(float newTime) { mForceClampInterval = newTime; }
-
-         /// @return the interval at which entities will be re-clamped.
-         float GetForceClampInterval() const { return mForceClampInterval; }
-
-         /**
           * Set the time over which this component should smooth articulations between two DR DOF targets.
           */
          void SetArticulationSmoothTime( float smoothTime );
 
          float GetArticulationSmoothTime() const { return mArticSmoothTime; }
+
+         /// Set the ground clamper responsible for clamping animated objects.
+         void SetGroundClamper( dtGame::BaseGroundClamper& clamper );
          
          /// @return the ground clamping utility class
-         const GroundClamper& GetGroundClamper() const;
+         const BaseGroundClamper& GetGroundClamper() const;
 
          /// @return the ground clamping utility class
-         GroundClamper& GetGroundClamper();
+         BaseGroundClamper& GetGroundClamper();
          
       protected:
          virtual ~DeadReckoningComponent();
 
-         /// apply the articulation support
-         /// @param helper the instance containing the articulation data.
-         /// @param gameActor the instance to be articulated.
-         /// @param tickMessage the time data to be used when interpolating.
-         void DoArticulation(dtGame::DeadReckoningHelper& helper, const dtGame::GameActor& gameActor, const dtGame::TickMessage& tickMessage) const;
+         /**
+          * Apply the articulation support
+          * @param helper the instance containing the articulation data.
+          * @param gameActor the instance to be articulated.
+          * @param tickMessage the time data to be used when interpolating.
+          */
+         void DoArticulation(dtGame::DeadReckoningHelper& helper,
+            const dtGame::GameActor& gameActor,
+            const dtGame::TickMessage& tickMessage) const;
 
-         /// modifies the scene graph node by smoothing the articulation data.
-         void DoArticulationSmooth(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& nextLocation, float currentTimeStep) const;
+         /**
+          * Move the articulation DOF between the current position and next
+          * position over a certain time step.
+          * @param dofxform DOF transform for the current articulation.
+          * @param currLocation Current positional or rotational value on the DOF.
+          * @param nextLocation The target positional or rotational value of the DOF.
+          * @param simTimeDelta Simulation time step for the current frame.
+          * @param isPositionChange Flag to differentiate the data from rotational to
+          *        positional DOF value modifications. Most articulations are rotational.
+          */
+         void DoArticulationSmooth(osgSim::DOFTransform& dofxform,
+            const osg::Vec3& currLocation, const osg::Vec3& nextLocation,
+            float simTimeDelta, bool isPositionChange = false) const;
 
-         /// modifies the scene graph node by predicting the articulation data.
-         void DoArticulationPrediction(osgSim::DOFTransform& dofxform, const osg::Vec3& currLocation, const osg::Vec3& currentRate, float currentTimeStep) const;
-
-         /// @return true if the entity should be force clamped based on saved values.
-         bool ShouldForceClamp(DeadReckoningHelper& helper, float deltaRealTime, bool bTransformChanged);
+         /**
+          * Move the articulation DOF from the current position to the next
+          * based on the rate of movement and simulation time step.
+          * @param dofxform DOF transform for the current articulation.
+          * @param currLocation Current positional or rotational value on the DOF.
+          * @param currentRate Rate of change in the DOF value per second.
+          * @param simTimeDelta Simulation time step for the current frame.
+          * @param isPositionChange Flag to differentiate the data from rotational to
+          *        positional DOF value modifications. Most articulations are rotational.
+          */
+         void DoArticulationPrediction(osgSim::DOFTransform& dofxform,
+            const osg::Vec3& currLocation, const osg::Vec3& currentRate,
+            float simTimeDelta, bool isPositional = false) const;
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<DeadReckoningHelper> > mRegisteredActors;
-         dtCore::RefPtr<dtGame::GroundClamper> mGroundClamper;
+         dtCore::RefPtr<dtGame::BaseGroundClamper> mGroundClamper;
          
          dtUtil::Log* mLogger;
-
-         float mForceClampInterval;
 
          float mArticSmoothTime;
 

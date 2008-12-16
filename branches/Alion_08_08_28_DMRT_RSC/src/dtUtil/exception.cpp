@@ -18,33 +18,42 @@
  *
  * Matthew W. Campbell
  */
+
 #include <prefix/dtutilprefix-src.h>
 #include <sstream>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 #include <iostream>
 
-namespace dtUtil 
+namespace dtUtil
 {
    IMPLEMENT_ENUM(BaseExceptionType);
    BaseExceptionType BaseExceptionType::GENERAL_EXCEPTION("GENERAL_EXCEPTION");
 
    //////////////////////////////////////////////////////////////////////////
-   Exception::Exception(Enumeration &type, const std::string &message, const std::string &filename,
-         unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
+   Exception::Exception(Enumeration& type, const std::string& message, const std::string& filename,
+         unsigned int lineNum)
+      : mType(type)
+      , mMessage(message)
+      , mFileName(filename)
+      , mLineNum(lineNum)
    {
       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
    }
 
    //////////////////////////////////////////////////////////////////////////
-   Exception::Exception(const std::string &message, const std::string &filename,
-         unsigned int lineNum) : mType(BaseExceptionType::GENERAL_EXCEPTION),mMessage(message),mFileName(filename),mLineNum(lineNum) 
+   Exception::Exception(const std::string& message, const std::string& filename,
+         unsigned int lineNum)
+      : mType(BaseExceptionType::GENERAL_EXCEPTION)
+      , mMessage(message)
+      , mFileName(filename)
+      , mLineNum(lineNum)
    {
       LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Exception::Print()
+   void Exception::Print() const
    {
       std::cerr << "Exception: " << mMessage << std::endl <<
       "\tFile: " << mFileName << std::endl <<
@@ -74,14 +83,12 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const
    {
-      if (logger.IsLevelEnabled(level)) 
+      if (logger.IsLevelEnabled(level))
       {
          logger.LogMessage(level,__FUNCTION__, __LINE__,
                "Exception Thrown: %s File: %s  Line: %d  Type: %s",
                mMessage.c_str(), mFileName.c_str(), mLineNum,
                mType.GetName().c_str());
       }
-
    }
-
-}
+} // namespace dtUtil

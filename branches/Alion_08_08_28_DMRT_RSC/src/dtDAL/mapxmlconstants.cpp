@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 
@@ -29,12 +29,12 @@
 #include <xercesc/util/XMLString.hpp>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
 #endif
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 namespace dtDAL
@@ -225,7 +225,7 @@ namespace dtDAL
       xercesc::XMLString::release(&EVENT_ID_ELEMENT);
       xercesc::XMLString::release(&EVENT_NAME_ELEMENT);
       xercesc::XMLString::release(&EVENT_DESCRIPTION_ELEMENT);
-      
+
       xercesc::XMLString::release(&ACTORS_ELEMENT);
       xercesc::XMLString::release(&ACTOR_ELEMENT);
       xercesc::XMLString::release(&ACTOR_TYPE_ELEMENT);

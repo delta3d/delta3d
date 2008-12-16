@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #include <fireFighter/fuelvalveactor.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtGame/gamemanager.h>
@@ -47,8 +48,8 @@ void FuelValveActorProxy::BuildInvokables()
 }
 
 ////////////////////////////////////////////////////////
-FuelValveActor::FuelValveActor(dtGame::GameActorProxy &proxy) :
-   GameItemActor(proxy)
+FuelValveActor::FuelValveActor(dtGame::GameActorProxy& proxy)
+   : GameItemActor(proxy)
 {
 
 }
@@ -65,20 +66,22 @@ void FuelValveActor::Activate(bool enable)
    const std::string &name = "TripFuelValve";
 
    // No event, peace out
-   if(!IsActivated())
+   if (!IsActivated())
+   {
       return;
+   }
 
-   dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
-   if(event == NULL)
+   dtDAL::GameEvent* event = dtDAL::GameEventManager::GetInstance().FindEvent(name);
+   if (event == NULL)
    {
       throw dtUtil::Exception("Failed to find the game event: " + name, __FILE__, __LINE__);
    }
 
-   dtGame::GameManager &mgr = *GetGameActorProxy().GetGameManager();
-   RefPtr<dtGame::Message> msg = 
+   dtGame::GameManager& mgr = *GetGameActorProxy().GetGameManager();
+   RefPtr<dtGame::Message> msg =
       mgr.GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
 
-   dtGame::GameEventMessage &gem = static_cast<dtGame::GameEventMessage&>(*msg);
+   dtGame::GameEventMessage& gem = static_cast<dtGame::GameEventMessage&>(*msg);
    gem.SetGameEvent(*event);
    mgr.SendMessage(gem);
 }

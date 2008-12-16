@@ -15,8 +15,10 @@ void init_WaypointBindings()
       .def("GetRenderFlag", &Waypoint::GetRenderFlag)
       .def("SetRenderFlag", &Waypoint::SetRenderFlag)
       .def("SetGradient", &Waypoint::SetGradient)
-	  .def("SetColor", &Waypoint::SetColor)
-	  .def("GetColor", &Waypoint::GetColor, return_value_policy<copy_const_reference>())
+	   .def("SetColor", &Waypoint::SetColor)
+	   .def("GetColor", &Waypoint::GetColor, return_value_policy<copy_const_reference>())
+      .def("GetID", &Waypoint::GetID)
+      .def("SetID", &Waypoint::SetID)
       ;
 
    enum_<Waypoint::RenderFlag>("RenderFlag")

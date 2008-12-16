@@ -130,7 +130,7 @@ static void sunpos( double mjd, double *lsn, double *rsn)
       .00178*sin(e1);
    dr = 5.43e-06*sin(a1)+1.575e-05*sin(b1)+1.627e-05*sin(c1)+
       3.076e-05*cos(d1)+9.27e-06*sin(h1);
-   *lsn = nu+osg::DegreesToRadians(1.0)*(ls-ms+dl);   
+   *lsn = nu+osg::DegreesToRadians(1.0)*(ls-ms+dl);
    range(lsn, 2.0*osg::PI);
    last_lsn = *lsn;
    *rsn = last_rsn = 1.0000002*(1-s*cos(ea))+dr;
@@ -273,7 +273,7 @@ static double tnaught (double mjd)
    CalcCalFromMJD (mjd, &m, &d, &y);
    CalcMJD(1, 0., y, &dmjd);
    double t = dmjd/36525;
-   double t0 = 6.57098e-2 * (mjd - dmjd) - 
+   double t0 = 6.57098e-2 * (mjd - dmjd) -
       (24 - (6.6460656 + (5.1262e-2 + (t * 2.581e-5))*t) -
       (2400 * (t - ((double(y) - 1900)/100))));
    return t0;
@@ -287,7 +287,7 @@ static double GetGST (double mjd, double utc)
 {
    static double lastmjd = -10000;
    static double t0;
-   
+
    /* ratio of from synodic (solar) to sidereal (stellar) rate */
    const double SIDRATE  = .9972695677;
 
@@ -330,7 +330,7 @@ static void CalcParallax (double tha, double tdec, double phi, double ht,
                    double ehp, double *aha, double *adec)
 {
    static double last_phi = 1000.0, last_ht = -1000.0, rsp, rcp;
-   double rp;	/* distance to object in Earth radii */
+   double rp;   /* distance to object in Earth radii */
    double ctha;
    double stdec, ctdec;
    double tdtha, dtha;
@@ -402,7 +402,7 @@ static void aaha_aux (double lat, double x, double y, double *p, double *q)
       a = a < 0 ? -EPS : EPS; /* avoid / 0 */
    }
    cp = (sy - (sinlastlat*sq))/a;
-   if (cp >= 1.0)	/* the /a can be slightly > 1 */
+   if (cp >= 1.0)   /* the /a can be slightly > 1 */
    {
       *p = 0.0;
    }
@@ -429,15 +429,15 @@ static void CalcAltAz (double lat, double ha, double dec, double *alt, double *a
 
 static void equitorial_aux (int sw, double mjd, double x, double y, double *p, double *q)
 {
-   static double lastmjd = -10000;	/* last mjd calculated */
-   static double seps, ceps;	/* sin and cos of mean obliquity */
+   static double lastmjd = -10000;   /* last mjd calculated */
+   static double seps, ceps;   /* sin and cos of mean obliquity */
    double sx, cx, sy, cy, ty;
 
-   if (mjd != lastmjd) 
+   if (mjd != lastmjd)
    {
       double eps;
-      
-      {//envilm_obliquity (mjd, &eps);		/* mean obliquity for date */
+
+      {//envilm_obliquity (mjd, &eps);      /* mean obliquity for date */
          double t;
          t = mjd/36525.0;
          eps = osg::DegreesToRadians(1.0)*(2.345229444E1
@@ -449,14 +449,14 @@ static void equitorial_aux (int sw, double mjd, double x, double y, double *p, d
    }
 
    sy = sin(y);
-   cy = cos(y);				/* always non-negative */
-   if (std::abs(cy)<1e-20) cy = 1e-20;		/* insure > 0 */
+   cy = cos(y);            /* always non-negative */
+   if (std::abs(cy)<1e-20) cy = 1e-20;      /* insure > 0 */
    ty = sy/cy;
    cx = cos(x);
    sx = sin(x);
    *q = asin((sy*ceps)-(cy*seps*sx*sw));
    *p = atan(double(((sx*ceps)+(ty*seps*sw))/cx));
-   if (cx<0) *p += osg::PI;		/* account for atan quad ambiguity */
+   if (cx<0) *p += osg::PI;      /* account for atan quad ambiguity */
    range(p, 2.0*osg::PI);
 }
 
@@ -472,17 +472,17 @@ static void CalcEquitorialRaDec (double mjd, double lat, double lng, double *ra,
 
 static void sun_pos (Now *np, double *altitude, double *azimuth)
 {
-   double lsn, rsn;	/* true geoc lng of sun; dist from sn to earth*/
-   double lst;		/* local sidereal time */
-   double ehp;		/* angular diamter of earth from object */
-   double ha;		/* hour angle */
-   double ra, dec;		/* ra and dec now */
-   double alt, az;		/* alt and az */
+   double lsn, rsn;   /* true geoc lng of sun; dist from sn to earth*/
+   double lst;      /* local sidereal time */
+   double ehp;      /* angular diamter of earth from object */
+   double ha;      /* hour angle */
+   double ra, dec;      /* ra and dec now */
+   double alt, az;      /* alt and az */
    double dhlong;
 
    sunpos(np->n_mjd, &lsn, &rsn);/*sun's true ecliptic long and dist */
 
-   dhlong = lsn-osg::PI;	/* geo- to helio- centric */
+   dhlong = lsn-osg::PI;   /* geo- to helio- centric */
    range(&dhlong, 2.0*osg::PI);
 
    /* convert geocentric ecliptic lat/long to equitorial ra/dec of date */
@@ -511,18 +511,18 @@ static double GetMJD( time_t GMT)
 /** Get the altitude and azimuth of the Sun given the GMT time/date, a reference
   * Latitude/longitude/elevation.
   *
-  * @param time : the GMT time 
+  * @param time : the GMT time
   * @param lat : Reference latitude (in degrees, positive = northern hemisphere)
   * @param lon : Reference longitude (in degrees, negative = west)
   * @param elev : Reference elevation (in Earth radii, 1 = Earth surface)
   * @param sun_alt : The output sun altitude (in degrees above the horizon)
   * @param sun_az : The output sun Azimuth (in degrees (from North?))
   */
-void dtCore::GetSunPos( time_t time, 
-                        double lat, 
+void dtCore::GetSunPos( time_t time,
+                        double lat,
                         double lon,
-                        double elev, 
-                        double *sun_alt, 
+                        double elev,
+                        double *sun_alt,
                         double *sun_az )
 {
    double alt, azm;

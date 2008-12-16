@@ -149,18 +149,18 @@ namespace dtCore
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////     
       /**
-      * Function that Checks to see if the Switch Node is a node that we wish to collect and than traverses down the
-      * to any of the Switch Nodes children.
-      * @param switch A Switch Node Object that will be checked
-      */
-      virtual void apply(osg::Switch & pSwitch)
+       * Function that Checks to see if the Switch Node is a node that we wish to collect and than traverses down the
+       * to any of the Switch Nodes children.
+       * @param switch A Switch Node Object that will be checked
+       */
+      virtual void apply(osg::Switch& pSwitch)
       { 
          //Check if we should add this node using the flag
-         if( dtUtil::Bits::Has(mNodeMask, NodeCollector::SwitchFlag) && ( pSwitch.getName() != mNodeNamesIgnored ) )
+         if (dtUtil::Bits::Has(mNodeMask, NodeCollector::SwitchFlag) && (pSwitch.getName() != mNodeNamesIgnored))
          {
             //Add Switch to node collector's std::map
-             mNodeManager->AddSwitch(pSwitch.getName(), pSwitch);
-             LOG_DEBUG("Added Switch Node: " + pSwitch.getName());
+            mNodeManager->AddSwitch(pSwitch.getName(), pSwitch);
+            LOG_DEBUG("Added Switch Node: " + pSwitch.getName());
          }
          //Traverses through the Switch Nodes Children
          traverse(pSwitch);

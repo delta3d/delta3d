@@ -19,6 +19,7 @@
  * Erik Johnson
  * Bradley G Anderegg
  */
+
 #ifndef DELTA_CHARACTER_FILE_HANDLER
 #define DELTA_CHARACTER_FILE_HANDLER
 
@@ -58,18 +59,18 @@ namespace dtAnim
      *      <mesh ...
      *      <material fileName="mat1.crf" />
      *      <material ...
-     *	   <animationChannel>
-	  *         <name>Run</name>
-	  *	      <animationName>Run</animationName>
-	  *         <startDelay>0.0</startDelay>
-	  *         <fadeIn>0.0</fadeIn>
-	  *         <fadeOut>0.0</fadeOut>
-	  *         <speed>1.0</speed>
+     *      <animationChannel>
+     *         <name>Run</name>
+     *         <animationName>Run</animationName>
+     *         <startDelay>0.0</startDelay>
+     *         <fadeIn>0.0</fadeIn>
+     *         <fadeOut>0.0</fadeOut>
+     *         <speed>1.0</speed>
      *         <baseWeight>1.0</baseWeight>
-	  *         <maxDuration>0.0</maxDuration>
-	  *	      <isAction>0</isAction>
-	  *         <isLooping>1</isLooping>
-	  *      </animationChannel>
+     *         <maxDuration>0.0</maxDuration>
+     *         <isAction>0</isAction>
+     *         <isLooping>1</isLooping>
+     *      </animationChannel>
      *   </character>
      * @endcode
      */
@@ -112,13 +113,13 @@ namespace dtAnim
       static const std::string LOD_END_DISTANCE_ELEMENT;
       static const std::string MAX_VISIBLE_DISTANCE_ELEMENT;
 
-	  static const std::string SCALE_ELEMENT;
-	  static const std::string SCALE_FACTOR_ELEMENT;
+      static const std::string SCALE_ELEMENT;
+      static const std::string SCALE_FACTOR_ELEMENT;
 
 
    public:
-   	CharacterFileHandler();
-   	~CharacterFileHandler();
+      CharacterFileHandler();
+      ~CharacterFileHandler();
 
       virtual void characters(const XMLCh* const chars, const unsigned int length);
       virtual void endDocument();
@@ -134,7 +135,7 @@ namespace dtAnim
                               const XMLCh* const localname,
                               const XMLCh* const qname);
 
-      virtual void startPrefixMapping(const	XMLCh* const /*prefix*/,const XMLCh* const /*uri*/) {};
+      virtual void startPrefixMapping(const XMLCh* const /*prefix*/, const XMLCh* const /*uri*/) {};
       virtual void endPrefixMapping(const XMLCh* const /*prefix*/) {};
       virtual void skippedEntity(const XMLCh* const /*name*/) {};
 
@@ -144,8 +145,8 @@ namespace dtAnim
       template class DT_ANIM_EXPORT std::allocator<std::string>;
       template class DT_ANIM_EXPORT std::vector<std::string>;
 
-	  // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
-	  #pragma warning(disable : 4251)
+      // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
+      #pragma warning(disable : 4251)
 #endif
 
       ///structure to contain all info related to an animation
@@ -204,8 +205,8 @@ namespace dtAnim
       double mLODStartDistance, mLODEndDistance, mLODMaxVisibleDistance;
       bool mFoundLODOptions;
 
-	  bool  mFoundScale;
-	  float mScale; ///< The scaling factor
+      bool  mFoundScale;
+      float mScale; ///< The scaling factor
 
       std::vector<AnimationChannelStruct> mAnimationChannels; ///<The preconfigured playbable animations
       std::vector<AnimationSequenceStruct> mAnimationSequences; ///<The preconfigured playbable animations
@@ -226,7 +227,7 @@ namespace dtAnim
 
       bool mInSkinningShader;
       bool mInLOD;
-	  bool mInScale;
+      bool mInScale;
       bool mInChannel;
       bool mInSequence;
       dtUtil::Log* mLogger;

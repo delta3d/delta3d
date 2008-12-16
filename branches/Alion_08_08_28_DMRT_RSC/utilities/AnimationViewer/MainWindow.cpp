@@ -82,6 +82,19 @@ MainWindow::MainWindow()
       mMaterialModel->setHorizontalHeaderLabels(headers);
    }
 
+
+   mSubMorphTargetListWidget = new QTableWidget(this);
+   mSubMorphTargetListWidget->setColumnCount(4);
+   mSubMorphTargetListWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+   {
+      QStringList headers;
+      headers << "MeshID" << "SubMeshID" << "MorphName" << "Weight";
+      mSubMorphTargetListWidget->setHorizontalHeaderLabels(headers);
+   }
+
+   connect(mSubMorphTargetListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnSubMorphChanged(QTableWidgetItem*)));
+
+
    CreateActions();
    CreateMenus();
    statusBar();
@@ -91,6 +104,7 @@ MainWindow::MainWindow()
    mTabs->addTab(mAnimListWidget, tr("Animations"));
    mTabs->addTab(mMeshListWidget, tr("Meshes"));
    mTabs->addTab(mMaterialView, tr("Materials"));
+   mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
 
    QWidget* glParent = new QWidget(this);
 
@@ -124,11 +138,8 @@ void MainWindow::CreateMenus()
    QMenu* viewMenu    = menuBar()->addMenu("&View");
    QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");
 
-   QAction* toggleHardwareSkinning = viewMenu->addAction("Use Hardware Skinning");
-   toggleHardwareSkinning->setCheckable(true);
-   toggleHardwareSkinning->setChecked(false);
-   connect(toggleHardwareSkinning, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
-
+   viewMenu->addAction(mHardwareSkinningAction);
+   
    windowMenu->addAction(mLoadCharAct);
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
@@ -201,6 +212,11 @@ void MainWindow::CreateActions()
    mBoneBasisAction->setCheckable(true);
 
    mShadedAction->setChecked(true);
+
+   mHardwareSkinningAction = new QAction(tr("Use Hardware Skinning"), this);
+   mHardwareSkinningAction->setCheckable(true);
+   mHardwareSkinningAction->setChecked(false); //will get init'd properly when everything's up and running
+   connect(mHardwareSkinningAction, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -297,6 +313,11 @@ void MainWindow::LoadCharFile(const QString& filename)
          mAnimListWidget->removeRow(0);
       }
 
+      while (mSubMorphTargetListWidget->rowCount()>0)
+      {
+         mSubMorphTargetListWidget->removeRow(0);
+      }
+
       while (mMaterialModel->rowCount() > 0)
       {
          mMaterialModel->removeRow(0);
@@ -389,6 +410,44 @@ void MainWindow::OnNewMesh(int meshID, const QString& meshName)
    meshItem->setCheckState(Qt::Checked);
 
    mMeshListWidget->addItem(meshItem);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnNewSubMorphTarget(int meshID, int subMeshID,
+                                     int morphID, const QString& morphName)
+{
+   mSubMorphTargetListWidget->insertRow(mSubMorphTargetListWidget->rowCount());
+   { //meshID
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(meshID));
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 0, item);
+   }
+
+   { //submeshid
+      QTableWidgetItem* item = new QTableWidgetItem(QString::number(subMeshID));
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 1, item);
+   }
+
+   { //name
+      QTableWidgetItem* item = new QTableWidgetItem(morphName);
+      item->setData(Qt::UserRole, morphID);
+
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem(morphID, 2, item);
+   }
+
+   { //weight
+      QTableWidgetItem* item = new QTableWidgetItem(tr("0.0"));
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+      mSubMorphTargetListWidget->setItem( morphID, 3, item );
+   }
+
+   mSubMorphTargetListWidget->resizeColumnToContents(0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -497,43 +556,46 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    OnSelectModeBlendPick();
 }
 
+//////////////////////////////////////////////////////////////////////////
+QString MainWindow::MakeColorString(const QColor& color) const
+{
+   QString colorString;
+   colorString = tr("R:%1 G:%2 B:%3 A:%4").arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha());
+   return colorString;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void MainWindow::OnNewMaterial(int matID, const QString& name,
                                const QColor& diff, const QColor& amb, const QColor& spec,
                                float shininess)
 {
-   QString tooltip;
-
    QStandardItem* idItem = new QStandardItem(QString::number(matID));
    idItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
    QStandardItem* nameItem = new QStandardItem(name);
    nameItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
-   QStandardItem* diffItem = new QStandardItem(diff.name());
+   QStandardItem* diffItem = new QStandardItem(MakeColorString(diff));
    diffItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    diffItem->setData(diff, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(diff.red()).arg(diff.green()).arg(diff.blue()).arg(diff.alpha());
-   diffItem->setData( tooltip, Qt::ToolTipRole);
-
-   QStandardItem* ambItem = new QStandardItem(amb.name());
+ 
+   QStandardItem* ambItem = new QStandardItem(MakeColorString(amb));
    ambItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    ambItem->setData(amb, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(amb.red()).arg(amb.green()).arg(amb.blue()).arg(amb.alpha());
-   ambItem->setData( tooltip, Qt::ToolTipRole);
-
-   QStandardItem* specItem = new QStandardItem(spec.name());
+ 
+   QStandardItem* specItem = new QStandardItem(MakeColorString(spec));
    specItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
    specItem->setData(amb, Qt::BackgroundRole);
-   tooltip = tr("R:%1\nG:%2\nB:%3\nA:%4").arg(spec.red()).arg(spec.green()).arg(spec.blue()).arg(spec.alpha());
-   specItem->setData( tooltip, Qt::ToolTipRole);
-
+ 
    QStandardItem* shinItem = new QStandardItem(QString::number(shininess));
    shinItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
 
    QList<QStandardItem*> items;
    items << idItem << nameItem << diffItem << ambItem << specItem << shinItem;
    mMaterialModel->appendRow( items);
+
+   //resize the columns to fit the data width
+   mMaterialView->resizeColumnsToContents();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -948,5 +1010,39 @@ void MainWindow::dropEvent(QDropEvent* event)
       LoadCharFile(filename);
 
       event->acceptProposedAction();
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool MainWindow::IsAnimNodeBuildingUsingHW() const
+{
+   //Not really a great way to see what method we're using.  A better way would
+   //be to query a hardware skinning object to see if its being used or something.
+   //This'll have to do for now.
+   dtAnim::AnimNodeBuilder& nodeBuilder = dtAnim::Cal3DDatabase::GetInstance().GetNodeBuilder();
+
+   return (nodeBuilder.SupportsHardware());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnConfiged()
+{
+   //theoretically, everything is in place, the window is rendering, openGL 
+   //context is valid, etc.
+   mHardwareSkinningAction->setChecked(IsAnimNodeBuildingUsingHW());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSubMorphChanged(QTableWidgetItem* item)
+{
+   if (item->column() == 3) //the "weight" column
+   {
+      const float weight = item->text().toFloat();
+      const int morphID = item->row();
+
+      const int meshID = mSubMorphTargetListWidget->item(item->row(), 0)->text().toInt();
+      const int subMeshID = mSubMorphTargetListWidget->item(item->row(), 1)->text().toInt();
+
+      emit SubMorphTargetChanged(meshID, subMeshID, morphID, weight);
    }
 }

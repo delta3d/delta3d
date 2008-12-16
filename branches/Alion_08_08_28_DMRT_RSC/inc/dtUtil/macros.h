@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_MACROS
 #define DELTA_MACROS
@@ -37,7 +37,7 @@
 //
 //    Base* scene = new Scene();
 //
-//    if( IS_A(scene, Scene*) )
+//    if (IS_A(scene, Scene*))
 //    {
 //       cout << "Yes, it is." << endl;
 //    }
@@ -85,11 +85,11 @@
    }                                                           \
    void T::DeregisterInstance(T* instance)                     \
    {                                                           \
-      for(std::vector<T*>::iterator it = instances.begin();    \
+      for (std::vector<T*>::iterator it = instances.begin();   \
           it != instances.end();                               \
           ++it)                                                \
       {                                                        \
-         if((*it) == instance)                                 \
+         if ((*it) == instance)                                \
          {                                                     \
             instances.erase(it);                               \
             return;                                            \
@@ -100,11 +100,11 @@
    T* T::GetInstance(int index) { return instances[index]; }   \
    T* T::GetInstance(std::string name)                         \
    {                                                           \
-      for(std::vector<T*>::iterator it = instances.begin();    \
+      for (std::vector<T*>::iterator it = instances.begin();   \
           it != instances.end();                               \
           ++it)                                                \
       {                                                        \
-         if((*it)->GetName() == name)                          \
+         if ((*it)->GetName() == name)                         \
          {                                                     \
             return *it;                                        \
          }                                                     \

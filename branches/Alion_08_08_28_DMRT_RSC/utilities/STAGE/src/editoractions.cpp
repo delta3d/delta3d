@@ -20,30 +20,23 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-*
+* 
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
 * Curtiss Murphy
+* R. Erik Johnson
 */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/editoractions.h>
 
-#include <QtGui/QApplication>
 #include <QtGui/QAction>
 #include <QtGui/QIcon>
 #include <QtGui/QActionGroup>
 #include <QtGui/QMainWindow>
 #include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
 #include <QtGui/QTextEdit>
-#include <QtCore/QSettings>
 #include <QtCore/QTimer>
-#include <QtCore/QProcess>
 
 #include <osgDB/FileNameUtils>
 
@@ -67,6 +60,10 @@
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/undomanager.h>
 #include <dtEditQt/taskeditor.h>
+#include <dtEditQt/externaltooldialog.h>
+#include <dtEditQt/externaltool.h>
+#include <dtEditQt/externaltoolargparsers.h>
+#include "ui_positiondialog.h"
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -89,20 +86,18 @@ namespace dtEditQt
    dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorActions::EditorActions()
-      : mIsector(new dtCore::Isector)
-      , mSkeletalEditorProcess(NULL)
-      , mParticleEditorProcess(NULL)
-      , mViewerProcess(NULL)
+   EditorActions::EditorActions() 
+      : mExternalToolActionGroup(new QActionGroup(NULL))
+      , mIsector(new dtCore::Isector)
    {
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
       setupEditActions();
       setupSelectionActions();
       setupWindowActions();
+      SetupToolsActions();
       setupHelpActions();
       setupRecentItems();
-      setupSubeditorActions();
 
       saveMilliSeconds = 300000;
       wasCancelled = false;
@@ -128,6 +123,20 @@ namespace dtEditQt
    {
       timer->stop();
       delete timer;
+
+      while (mTools.size() > 0)
+      {
+         ExternalTool* tool = mTools.takeFirst();
+         delete tool;
+      }
+
+      delete mExternalToolActionGroup;
+      
+      while (mExternalToolArgParsers.size() > 0)
+      {
+         const ExternalToolArgParser* parser = mExternalToolArgParsers.takeFirst();
+         delete parser;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -241,13 +250,6 @@ namespace dtEditQt
       actionEditGroundClampActors->setStatusTip(tr("Moves the currently selected actors' Z value to be in line with whatever is below them."));
       connect(actionEditGroundClampActors, SIGNAL(triggered()), this, SLOT(slotEditGroundClampActors()));
 
-      // Edit - Toggle terrain paging.
-      actionToggleTerrainPaging = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
-            tr("&Toggle Paging"),this);
-      actionToggleTerrainPaging->setShortcut(tr("Ctrl+T"));
-      actionToggleTerrainPaging->setStatusTip(tr("Turns off or on terrain paging."));
-      connect(actionToggleTerrainPaging, SIGNAL(triggered()), this, SLOT(slotToggleTerrainPaging()));
-
       // Edit - Task Editor
       actionEditTaskEditor = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
             tr("Tas&k Editor"),this);
@@ -258,6 +260,10 @@ namespace dtEditQt
             tr("Goto Actor"), this);
       actionEditGotoActor->setStatusTip(tr("Places the camera at the selected actor."));
       connect(actionEditGotoActor, SIGNAL(triggered()), this, SLOT(slotEditGotoActor()));
+
+      actionGetGotoPosition = new QAction(tr("Go&to Position..."), this);
+      actionGetGotoPosition->setStatusTip(tr("Move all cameras to desired position."));
+      connect(actionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
 
       // Edit - Undo
       actionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"),this);
@@ -304,22 +310,6 @@ namespace dtEditQt
       actionSelectionRotateActor->setStatusTip(tr("Use this tool to rotate the current actor selection."));
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::setupSubeditorActions()
-   {
-      actionEditSkeletalMesh = new QAction(QIcon(UIResources::ICON_EDITOR_SKELETAL_MESH.c_str()),tr("&Launch Skeletal Mesh Editor"), modeToolsGroup);
-      actionEditSkeletalMesh->setStatusTip(tr("Launches the skeletal mesh editor."));
-      //actionEditSkeletalMesh->setDisabled(true);
-      connect(actionEditSkeletalMesh, SIGNAL(triggered()), this, SLOT(slotLaunchSkeletalMeshEditor()));
-
-      actionEditParticleSystem = new QAction(QIcon(UIResources::ICON_EDITOR_PARTICLE_SYSTEM.c_str()),tr("&Launch Particle System Editor"), modeToolsGroup);
-      actionEditParticleSystem->setStatusTip(tr("Launches the particle system editor."));
-      connect(actionEditParticleSystem, SIGNAL(triggered()), this, SLOT(slotLaunchParticleEditor()));
-
-      actionLaunchViewer = new QAction(QIcon(UIResources::ICON_EDITOR_VIEWER.c_str()),tr("&Launch Delta3D Model Viewer"), modeToolsGroup);
-      actionLaunchViewer->setStatusTip(tr("Launches the model viewer."));
-      connect(actionLaunchViewer, SIGNAL(triggered()), this, SLOT(slotLaunchDeltaViewer()));
-   }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupWindowActions()
@@ -342,9 +332,34 @@ namespace dtEditQt
       actionWindowsResourceBrowser->setCheckable(true);
       actionWindowsResourceBrowser->setChecked(true);
 
-      actionWindowsResetWindows = new QAction(tr("Reset Docking Windows"), this);
+      actionWindowsResetWindows = new QAction(tr("Reset Windows"), this);
       actionWindowsResetWindows->setShortcut(tr("Ctrl+R"));
-      actionWindowsResetWindows->setStatusTip(tr("Restores the docking windows to a default state"));
+      actionWindowsResetWindows->setStatusTip(tr("Restores the windows to a default state"));
+   }
+
+//////////////////////////////////////////////////////////////////////////
+   void EditorActions::SetupToolsActions()
+   {
+      actionAddTool = new QAction(tr("&External Tools..."), this);
+      actionAddTool->setStatusTip(tr("Add/edit external tools"));
+      connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
+
+      mExternalToolArgParsers.push_back(new CurrentContextArgParser());
+      mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
+      mExternalToolArgParsers.push_back(new CurrentMeshArgParser());
+      mExternalToolArgParsers.push_back(new CurrentParticleSystemArgParser());
+      mExternalToolArgParsers.push_back(new CurrentSkeletonArgParser());
+
+      //create a finite number of ExternalTool's which can be used and add them
+      //to an QActionGroup for reference
+      for (int i = 0; i < 10; i++)
+      {
+         ExternalTool* tool = new ExternalTool();
+         tool->GetAction()->setVisible(false);
+         tool->SetArgParsers(mExternalToolArgParsers);
+         mExternalToolActionGroup->addAction(tool->GetAction());
+         mTools.push_back(tool);
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -737,7 +752,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
       itor = selection.begin();
       itorEnd = selection.end();
-
+      
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
       for (; itor!=itorEnd; ++itor)
       {
@@ -767,12 +782,12 @@ namespace dtEditQt
                *tProxy =dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
          if (tProxy != NULL)
             oldPosition = tProxy->GetTranslation();
-
+   
          //Add the new proxy to the map and send out a create event.
          currMap->AddProxy(*proxy);
-
+   
          EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-
+   
          //Move the newly duplicated actor to where it is supposed to go.
          if (tProxy != NULL)
             tProxy->SetTranslation(oldPosition+offset);
@@ -937,98 +952,6 @@ namespace dtEditQt
          }
       }
    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchSkeletalMeshEditor()
-    {
-       // Create a new process if we don't already have one
-       if (!mSkeletalEditorProcess)
-       {
-          mSkeletalEditorProcess = new QProcess(this);
-       }
-
-       // Don't launch more than one copy of the editor
-       if (mSkeletalEditorProcess->state() != QProcess::Running)
-       {
-          QString program = "AnimationViewer.exe";
-          QStringList arguments;
-
-          mSkeletalEditorProcess->start(program, arguments);
-
-          QProcess::ProcessState state = mSkeletalEditorProcess->state();
-
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"),
-                tr("Unable to launch AnimationViewer.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-
-          }
-       }
-
-    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchParticleEditor()
-    {
-       // Create a new process if we don't already have one
-       if (!mParticleEditorProcess)
-       {
-          mParticleEditorProcess = new QProcess(this);
-       }
-
-       // Don't launch more than one copy of the editor
-       if (mParticleEditorProcess->state() != QProcess::Running)
-       {
-          QString program = "psEditor.exe";
-          QStringList arguments;
-
-          mParticleEditorProcess->start(program, arguments);
-
-          QProcess::ProcessState state = mParticleEditorProcess->state();
-
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"),
-                tr("Unable to launch psEditor.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-
-          }
-       }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////
-    void EditorActions::slotLaunchDeltaViewer()
-    {
-       // Create a new process if we don't already have one
-       if (!mViewerProcess)
-       {
-          mViewerProcess = new QProcess(this);
-       }
-
-       // Don't launch more than one copy of the editor
-       if (mViewerProcess->state() != QProcess::Running)
-       {
-          QString program = "viewer.exe";
-          QStringList arguments;
-
-          mViewerProcess->start(program, arguments);
-
-          QProcess::ProcessState state = mViewerProcess->state();
-
-          // Our process should have started
-          if (state == QProcess::NotRunning)
-          {
-             QMessageBox::information(NULL, tr("Process Error"),
-                tr("Unable to launch Viewer.exe.  Make sure application exists."),
-                QMessageBox::Ok);
-
-          }
-       }
-    }
-
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditUndo()
    {
@@ -1103,14 +1026,7 @@ namespace dtEditQt
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
 
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotToggleTerrainPaging()
-   {
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-         ViewportManager::GetInstance().EnablePaging(false);
-      else
-         ViewportManager::GetInstance().EnablePaging(true);
-   }
+
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditGotoActor()
@@ -1305,8 +1221,6 @@ namespace dtEditQt
          {
             EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
             dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
-            if (ViewportManager::GetInstance().IsPagingEnabled())
-            ViewportManager::GetInstance().EnablePaging(false);
             EditorEvents::GetInstance().emitMapLibraryRemoved();
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -1380,10 +1294,6 @@ namespace dtEditQt
       EditorData::GetInstance().setCurrentMap(newMap);
       EditorEvents::GetInstance().emitCurrentMapChanged();
 
-      if (ViewportManager::GetInstance().IsPagingEnabled())
-         ViewportManager::GetInstance().EnablePaging(false);
-      ViewportManager::GetInstance().EnablePaging(true);
-
       //Now that we have changed maps, clear the current selection.
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > emptySelection;
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
@@ -1456,6 +1366,64 @@ namespace dtEditQt
          return result; //Return the users response.
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::SlotNewExternalToolEditor()
+   {
+      //launch ext tool editor
+      ExternalToolDialog dialog(mTools, EditorData::GetInstance().getMainWindow());
+      int retCode = dialog.exec();
+
+      if (retCode == QDialog::Accepted)
+      {
+         //notify the world
+         emit ExternalToolsModified(GetExternalToolActions());
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const QList<ExternalTool*>& EditorActions::GetExternalTools() const
+   {
+      return mTools;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   QList<ExternalTool*>& EditorActions::GetExternalTools()
+   {
+      return mTools;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const QList<QAction*> EditorActions::GetExternalToolActions() const
+   {
+      QList<QAction*> actions;
+      for (int i=0; i<mTools.size(); ++i)
+      {
+         actions.push_back(mTools.at(i)->GetAction());
+      }
+
+      return actions;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotGetGotoPosition()
+   {
+      //display dialog
+      QDialog *dialog = new QDialog(EditorData::GetInstance().getMainWindow());
+      Ui::PositionDialog ui;
+      ui.setupUi(dialog);
+      int retCode = dialog->exec();
+
+      //if OK
+      if (retCode == QDialog::Accepted)
+      {
+         //emit new position to move cameras to
+         EditorEvents::GetInstance().emitGotoPosition(ui.xSpinBox->value(), ui.ySpinBox->value(), ui.zSpinBox->value());
+      }
+
+      delete dialog;
+   }
+
 }
 
 

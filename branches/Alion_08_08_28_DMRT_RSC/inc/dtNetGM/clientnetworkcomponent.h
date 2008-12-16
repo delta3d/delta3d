@@ -33,12 +33,12 @@ namespace dtNetGM
    public:
 
       /**
-      * Construct a ClientNetworkComponent with a game name and version to be used by GNE
-      * Calls base class constructor to initialize GNE
-      * @param gameName The game name
-      * @param gameVersion The game version
-      * @param logFile The logfile name
-      */
+       * Construct a ClientNetworkComponent with a game name and version to be used by GNE
+       * Calls base class constructor to initialize GNE
+       * @param gameName The game name
+       * @param gameVersion The game version
+       * @param logFile The logfile name
+       */
       ClientNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile = "");
 
    protected:
@@ -47,61 +47,61 @@ namespace dtNetGM
 
    public:
       /**
-      * @brief Setup a new networkconnection to a server.
-      * Call ConnectToServer to establish a connection
-      * @param host The hostname to connect to
-      * @param portNum The prot to connect to
-      * @return boolean indicating a successfull connect
-      */
+       * @brief Setup a new network connection to a server.
+       * Call ConnectToServer to establish a connection
+       * @param host The hostname to connect to
+       * @param portNum The port to connect to
+       * @return boolean indicating a successful connection
+       */
       bool SetupClient(const std::string& host, const int portNum);
 
       /**
-      * Processes a MessageType::NETSERVER_ACCEPT_CONNECTION Message.
-      * @param msg The message
-      */
+       * Processes a MessageType::NETSERVER_ACCEPT_CONNECTION Message.
+       * @param msg The message
+       */
       virtual void ProcessNetServerAcceptConnection(const MachineInfoMessage& msg);
 
       /**
-      * Processes a MessageType::NETSERVER_REJECT_CONNECTION Message.
-      * @param msg The message
-      */
+       * Processes a MessageType::NETSERVER_REJECT_CONNECTION Message.
+       * @param msg The message
+       */
       virtual void ProcessNetServerRejectConnection(const dtGame::NetServerRejectMessage& msg);
 
       /**
-      * Processes a MessageType::INFO_CLIENT_CONNECTED Message.
-      * @param msg The message
-      */
+       * Processes a MessageType::INFO_CLIENT_CONNECTED Message.
+       * @param msg The message
+       */
       virtual void ProcessInfoClientConnected(const MachineInfoMessage& msg);
 
       /**
-      * Processes a MessageType::NETCLIENT_NOTIFY_DISCONNECT Message and removes the client
-      * from the connected clients vector
-      * @param msg The message
-      */
+       * Processes a MessageType::NETCLIENT_NOTIFY_DISCONNECT Message and removes the client
+       * from the connected clients vector
+       * @param msg The message
+       */
       virtual void ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg);
 
       /**
-      * Processes a MessageType::SERVER_REQUEST_REJECTED Message.
-      * @param msg The message
-      */
+       * Processes a MessageType::SERVER_REQUEST_REJECTED Message.
+       * @param msg The message
+       */
       virtual void ProcessNetServerRejectMessage(const dtGame::ServerMessageRejected& msg);
 
       /**
-      * Function called by a NetworkBridge if a connection disconnects
-      * @param The NetworkBridge
-      */
+       * Function called by a NetworkBridge if a connection disconnects
+       * @param The NetworkBridge
+       */
       virtual void OnDisconnect(NetworkBridge& networkBridge);
 
       /**
-      * Reveals if a server has accepted our connectionrequest
-      * @return boolean indicating if the server has accepted our connection request
-      */
+       * Reveals if a server has accepted our connectionrequest
+       * @return boolean indicating if the server has accepted our connection request
+       */
       bool IsConnectedClient() { return mAcceptedClient; }
 
       /**
-      * Returns the MachineInfo of the Server, or NULL if we don't have a accepted connection
-      * @return MachineInfo
-      */
+       * Returns the MachineInfo of the Server, or NULL if we don't have a accepted connection
+       * @return MachineInfo
+       */
       const dtGame::MachineInfo* GetServer();
 
    private:
@@ -112,11 +112,11 @@ namespace dtNetGM
       bool mAcceptedClient;
 
       /**
-      * @brief connect a new GNE network connection to a server.
-      * @param host The hostname to connect to
-      * @param portNum The prot to connect to
-      * @return boolean indicating a successfull connect
-      */
+       * @brief connect a new GNE network connection to a server.
+       * @param host The hostname to connect to
+       * @param portNum The port to connect to
+       * @return boolean indicating a successfull connect
+       */
       bool ConnectToServer(const std::string& host, const int portNum);
 
    protected:
@@ -124,11 +124,11 @@ namespace dtNetGM
       std::vector< dtCore::RefPtr<dtGame::MachineInfo> > mConnectedClients;
 
       /**
-      * Retrieves a dtGame::MachineInfo* from the stored connections including all other connected clients
-      * If no matching connection is found, NULL is returned
-      * @param dtCore::UniqueId of the MachineInfo
-      * @return Pointer to the dtGame::MachineInfo* or NULL
-      */
+       * Retrieves a dtGame::MachineInfo* from the stored connections including all other connected clients
+       * If no matching connection is found, NULL is returned
+       * @param dtCore::UniqueId of the MachineInfo
+       * @return Pointer to the dtGame::MachineInfo* or NULL
+       */
       virtual const dtGame::MachineInfo* GetMachineInfo(const dtCore::UniqueId& uniqueId);
    };
 }

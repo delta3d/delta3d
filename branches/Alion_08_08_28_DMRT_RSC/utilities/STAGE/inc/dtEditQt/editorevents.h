@@ -208,11 +208,15 @@ namespace dtEditQt
 
          ///Emitted right before a game event is removed from the map.
          void emitGameEventAboutToBeRemoved();
+
+         void emitGotoPosition(double x, double y, double z);
+
           
           
       signals:
          void selectedActors(ActorProxyRefPtrVector &actors);
          void gotoActor(ActorProxyRefPtr actor);
+         void gotoPosition(double x, double y, double z);
          void actorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
          void actorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
          void actorProxyDestroyed(ActorProxyRefPtr proxy);

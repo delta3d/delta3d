@@ -26,6 +26,10 @@
  *
  *                  12.10.2005 Joran: Modified stateset helper to a super stateset
  *                  helper.
+ * 
+ *					08.01.2008: Farshid Lashkari: User modified normals are now 
+ *					correctly exported. Currently, this only works for 
+ *					non-indexed meshes.
  */
 
 #ifndef __OSGEXP__H
@@ -132,7 +136,7 @@ class OSGExp : public SceneExport {
 		osg::ref_ptr<osg::Geode>			createParticleSystemGeometry(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
 		BOOL								getTMNegParity(Matrix3 &m);
 		TriObject*							getTriObjectFromObject(Object* obj, TimeValue t, int &deleteIt);
-		Point3								getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);
+		Point3								getVertexNormal(Mesh* mesh, int faceNo, int vert);
 		// Method related to show error when exporting.
 		void								showErrorNoUVWMap(INode* node, int mapChan);
 

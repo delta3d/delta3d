@@ -82,7 +82,7 @@ namespace dtGame
    {
       // the default case handles the escape key to quit.  Override this to abort this behavior
       bool handled = true;
-      switch(key)
+      switch (key)
       {
          case osgGA::GUIEventAdapter::KEY_Escape:
          {

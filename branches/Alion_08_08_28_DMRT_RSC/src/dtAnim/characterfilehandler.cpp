@@ -1,24 +1,25 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2007 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2007 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
- * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
  * Erik Johnson
  * Bradley G Anderegg
  */
+
 #include <dtAnim/characterfilehandler.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/stringutils.h>
@@ -68,19 +69,19 @@ const std::string CharacterFileHandler::MAX_VISIBLE_DISTANCE_ELEMENT("maxVisible
 const std::string CharacterFileHandler::SCALE_ELEMENT("scale");
 const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT("scalingFactor");
 
-CharacterFileHandler::AnimatableStruct::AnimatableStruct():
-   mStartDelay(0.0f), 
-   mFadeIn(0.0f), 
-   mFadeOut(0.0f), 
-   mSpeed(0.0f), 
-   mBaseWeight(0.0f)
+CharacterFileHandler::AnimatableStruct::AnimatableStruct()
+   : mStartDelay(0.0f)
+   , mFadeIn(0.0f)
+   , mFadeOut(0.0f)
+   , mSpeed(0.0f)
+   , mBaseWeight(0.0f)
 {
 }
 
-CharacterFileHandler::AnimationChannelStruct::AnimationChannelStruct():
-   mMaxDuration(0.0f),
-   mIsLooping(false), 
-   mIsAction(false)
+CharacterFileHandler::AnimationChannelStruct::AnimationChannelStruct()
+   : mMaxDuration(0.0f)
+   , mIsLooping(false)
+   , mIsAction(false)
 {
 }
 
@@ -88,26 +89,26 @@ CharacterFileHandler::AnimationSequenceStruct::AnimationSequenceStruct()
 {
 }
 
-CharacterFileHandler::CharacterFileHandler() 
-: mName()
-, mAnimations()
-, mMaterials()
-, mMeshes()
-, mShaderMaxBones(72)
-, mLODStartDistance(10.0)
-, mLODEndDistance(500.0)
-, mLODMaxVisibleDistance(1000.0)
-, mFoundLODOptions(false)
-, mFoundScale(false)
-, mScale(1.0f)
-, mAnimationChannels()
-, mSkeletonFilename()
-, mInSkinningShader(false)
-, mInLOD(false)
-, mInScale(false)
-, mInChannel(false)
-, mInSequence(false)
-, mLogger(NULL)
+CharacterFileHandler::CharacterFileHandler()
+   : mName()
+   , mAnimations()
+   , mMaterials()
+   , mMeshes()
+   , mShaderMaxBones(72)
+   , mLODStartDistance(10.0)
+   , mLODEndDistance(500.0)
+   , mLODMaxVisibleDistance(1000.0)
+   , mFoundLODOptions(false)
+   , mFoundScale(false)
+   , mScale(1.0f)
+   , mAnimationChannels()
+   , mSkeletonFilename()
+   , mInSkinningShader(false)
+   , mInLOD(false)
+   , mInScale(false)
+   , mInChannel(false)
+   , mInSequence(false)
+   , mLogger(NULL)
 {
    mLogger = &dtUtil::Log::GetInstance(CHARACTER_XML_LOGGER);
 }
@@ -117,7 +118,7 @@ CharacterFileHandler::~CharacterFileHandler()
 }
 
 void CharacterFileHandler::startDocument()
-{   
+{
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
@@ -180,7 +181,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       }
    }
    else if (elementStr == SKELETON_ELEMENT)
-   {     
+   {
       resultIter = results.find(FILENAME_ELEMENT);
 
       if (resultIter != results.end())
@@ -190,7 +191,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <character> missing <name> child");
-      }     
+      }
    }
    else if (elementStr == POSEMESH_ELEMENT)
    {
@@ -206,15 +207,15 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       }
    }
    else if (elementStr == ANIMATION_ELEMENT)
-   {      
+   {
       resultIter = results.find(FILENAME_ELEMENT);
 
       if (resultIter != results.end())
       {
          std::string filename = resultIter->second;
-         
+
          //default the name of the animation to be the filename
-         std::string name = resultIter->second; 
+         std::string name = resultIter->second;
 
          resultIter = results.find(NAME_ELEMENT);
          if (resultIter != results.end() )
@@ -232,7 +233,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       }
    }
    else if (elementStr == MESH_ELEMENT)
-   {     
+   {
       resultIter = results.find(FILENAME_ELEMENT);
 
       if (resultIter != results.end())
@@ -247,7 +248,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
          {
             meshName = resultIter->second;
          }
-         
+
          MeshStruct mesh;
          mesh.mFileName = filename;
          mesh.mName = meshName;
@@ -257,10 +258,10 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <mesh> missing <filename> child");
-      }     
+      }
    }
    else if (elementStr == MATERIAL_ELEMENT)
-   {      
+   {
       resultIter = results.find(FILENAME_ELEMENT);
 
       if (resultIter != results.end())
@@ -285,7 +286,7 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <material> missing <filename> child");
-      }     
+      }
    }
    else if (elementStr == SKINNING_SHADER_ELEMENT)
    {
@@ -302,18 +303,18 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       mFoundScale = true;
    }
    else if (elementStr == CHANNEL_ELEMENT)
-   {      
+   {
       mInChannel = true;
       mAnimationChannels.push_back(AnimationChannelStruct());
    }
    else if (elementStr == SEQUENCE_ELEMENT)
-   {      
+   {
       mInSequence = true;
       mAnimationSequences.push_back(AnimationSequenceStruct());
    }
 
    if (!errorString.empty())
-   {      
+   {
       mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, errorString);
    }
 
@@ -345,25 +346,25 @@ void CharacterFileHandler::endElement(
    }
 
    std::string elementStr = dtUtil::XMLStringConverter(localname).ToString();
-   
+
    if (elementStr == SKINNING_SHADER_ELEMENT)
    {
       mInSkinningShader = false;
    }
-   else if(elementStr == LOD_ELEMENT)
-   { 
+   else if (elementStr == LOD_ELEMENT)
+   {
       mInLOD = false;
    }
-   else if(elementStr == SCALE_ELEMENT)
-   { 
-	   mInScale = false;
+   else if (elementStr == SCALE_ELEMENT)
+   {
+      mInScale = false;
    }
-   else if(elementStr == CHANNEL_ELEMENT)
-   { 
+   else if (elementStr == CHANNEL_ELEMENT)
+   {
       mInChannel = false;
    }
-   else if(elementStr == SEQUENCE_ELEMENT)
-   { 
+   else if (elementStr == SEQUENCE_ELEMENT)
+   {
       mInSequence = false;
    }
 
@@ -425,9 +426,9 @@ void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
 void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
 {
    std::string& topEl = mElements.top();
-   
+
    double value = dtUtil::ToType<double>(dtUtil::XMLStringConverter(chars).ToString());
-   
+
    if (topEl == LOD_START_DISTANCE_ELEMENT)
    {
       mLODStartDistance = value;
@@ -454,32 +455,32 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
    bool result = true;
 
    std::string& topEl = mElements.top();
-   
-   if(topEl == NAME_ELEMENT)
+
+   if (topEl == NAME_ELEMENT)
    {
       animatable.mName = dtUtil::XMLStringConverter(chars).ToString();
    }
-   else if(topEl == START_DELAY_ELEMENT)
+   else if (topEl == START_DELAY_ELEMENT)
    {
       std::string delay = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mStartDelay = dtUtil::ToType<float>(delay);
    }
-   else if(topEl == FADE_IN_ELEMENT)
+   else if (topEl == FADE_IN_ELEMENT)
    {
       std::string fade_in = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mFadeIn = dtUtil::ToType<float>(fade_in);
    }
-   else if(topEl == FADE_OUT_ELEMENT)
+   else if (topEl == FADE_OUT_ELEMENT)
    {
       std::string fade_out = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mFadeOut = dtUtil::ToType<float>(fade_out);
    }
-   else if(topEl == SPEED_ELEMENT)
+   else if (topEl == SPEED_ELEMENT)
    {
       std::string speed = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mSpeed = dtUtil::ToType<float>(speed);
    }
-   else if(topEl == BASE_WEIGHT_ELEMENT)
+   else if (topEl == BASE_WEIGHT_ELEMENT)
    {
       std::string base_weight = dtUtil::XMLStringConverter(chars).ToString();
       animatable.mBaseWeight = dtUtil::ToType<float>(base_weight);
@@ -488,7 +489,7 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
    {
       result = false;
    }
-   
+
    return result;
 }
 
@@ -499,21 +500,21 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
 
    if (!AnimatableCharacters(chars, pChannel))
    {
-      if(topEl == ANIMATION_NAME_ELEMENT)
+      if (topEl == ANIMATION_NAME_ELEMENT)
       {
          pChannel.mAnimationName = dtUtil::XMLStringConverter(chars).ToString();
       }
-      else if(topEl == MAX_DURATION_ELEMENT)
+      else if (topEl == MAX_DURATION_ELEMENT)
       {
          std::string max_duration = dtUtil::XMLStringConverter(chars).ToString();
          pChannel.mMaxDuration = dtUtil::ToType<float>(max_duration);
       }
-      else if(topEl == IS_LOOPING_ELEMENT)
+      else if (topEl == IS_LOOPING_ELEMENT)
       {
          std::string is_looping = dtUtil::XMLStringConverter(chars).ToString();
          pChannel.mIsLooping = dtUtil::ToType<bool>(is_looping);
       }
-      else if(topEl == IS_ACTION_ELEMENT)
+      else if (topEl == IS_ACTION_ELEMENT)
       {
          std::string is_action = dtUtil::XMLStringConverter(chars).ToString();
          pChannel.mIsAction = dtUtil::ToType<bool>(is_action);
@@ -521,7 +522,7 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
       else if (topEl != CHANNEL_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                              "Found characters for unknown element \"%s\" \"%s\"", 
+                              "Found characters for unknown element \"%s\" \"%s\"",
                               topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
       }
    }
@@ -549,7 +550,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 
    if (!AnimatableCharacters(chars, pSequence))
    {
-      if(topEl == CHILD_ELEMENT)
+      if (topEl == CHILD_ELEMENT)
       {
          std::string childName = dtUtil::XMLStringConverter(chars).ToString();
          pSequence.mChildNames.push_back(childName);
@@ -557,7 +558,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
       else if (topEl != SEQUENCE_ELEMENT)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                              "Found characters for unknown element \"%s\" \"%s\"", 
+                              "Found characters for unknown element \"%s\" \"%s\"",
                               topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
       }
    }
@@ -565,9 +566,9 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
    {
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-                           "Found characters for element \"%s\" \"%s\"", 
+                           "Found characters for element \"%s\" \"%s\"",
                            topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
    }
 }
 
-}//namespace dtAnim
+} // namespace dtAnim

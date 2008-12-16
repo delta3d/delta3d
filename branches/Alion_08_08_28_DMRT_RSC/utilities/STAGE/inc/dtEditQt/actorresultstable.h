@@ -75,31 +75,6 @@ namespace dtEditQt
     };
 
 
-    /**
-     * @class ActorResultsSubTree
-     * @brief Overrides the keyPressEvent from QTreeWidget 
-     */
-    class ActorResultsSubTree : public QTreeWidget
-    {
-      public: 
-         /**
-            * Constructor
-            */
-         ActorResultsSubTree(QWidget *parent, ActorResultsTable *newOwner) 
-               : QTreeWidget(parent), owner(newOwner)     {   }
-
-         /**
-            * Destructor
-            */
-         virtual ~ActorResultsSubTree()   {   }
-
-      protected: 
-         virtual void keyPressEvent(QKeyEvent *e)   { QTreeWidget::keyPressEvent(e);   }
-      private:
-         ActorResultsTable *owner;
-    };
-
-
 
     /**
     * @class ActorResultsTable 
@@ -228,7 +203,7 @@ namespace dtEditQt
 
         //QGroupBox *searchGroup();
 
-        ActorResultsSubTree *table;
+        QTreeWidget *mResultsTree;
         QPushButton *gotoBtn;
         //QPushButton *selectBtn;
         QPushButton *dupBtn;

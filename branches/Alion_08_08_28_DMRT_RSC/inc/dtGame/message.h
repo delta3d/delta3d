@@ -1,29 +1,31 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell and David Guthrie
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell and David Guthrie
+ */
+
 #ifndef DELTA_MESSAGE
 #define DELTA_MESSAGE
 
 #include <map>
 #include <limits.h>
 #include <dtDAL/exceptionenum.h>
+#include <dtDAL/serializeable.h>
 #include <dtUtil/exception.h>
 #include <dtGame/export.h>
 #include <dtGame/machineinfo.h>
@@ -38,55 +40,56 @@ namespace dtGame
 {
    class MessageType;
    
-   class DT_GAME_EXPORT Message : public osg::Referenced
+   class DT_GAME_EXPORT Message : public osg::Referenced, public dtDAL::Serializeable
    {
       public:
          Message();
-          
-         
+
          /**
           * This should write all of the subclass specific data to the string .
           * The base class data will be read by the caller before it calls this method.
           * @param toFill the string to fill.
           */
-         virtual void ToString(std::string& toFill) const;
+         void ToString(std::string& toFill) const;
 
          /**
           * This should read all of the subclass specific data from the string.
           * By default, it reads all of the message parameters.
           * The base class data will be set by the caller when it creates the object.
+          * @return true if it was able to assign the value based on the string or false if not.
           * @param source the string to pull the data from.
           */
-         virtual void FromString(const std::string &source); 
+         bool FromString(const std::string& source);
 
          /**
           * This should write all of the subclass specific data to the stream.
           * The base class data will be read by the caller before it calls this method.
           * @param stream the stream to fill.
           */
-         virtual void ToDataStream(dtUtil::DataStream& stream) const;
+         void ToDataStream(dtUtil::DataStream& stream) const;
 
          /**
           * This should read all of the subclass specific data from the stream.
           * By default, it reads all of the message parameters.
           * The base class data will be set by the caller when it creates the object.
+          * @return true if it was able to assign the value based on the stream or false if not.
           * @param stream the stream to pull the data from.
           */
-         virtual void FromDataStream(dtUtil::DataStream& stream);
-         
+         bool FromDataStream(dtUtil::DataStream& stream);
+
          /**
           * Non-const version of getter to return a message parameter by name.
           * @return the parameter specified or NULL of non exists.
           * @param name The name of the message parameter to return.
           */
-         MessageParameter* GetParameter(const std::string &name);
+         MessageParameter* GetParameter(const std::string& name);
 
          /**
           * Const version of getter to return a message parameter by name.
           * @return the parameter specified or NULL of non exists.
           * @param name The name of the message parameter to return.
           */
-         const MessageParameter *GetParameter(const std::string &name) const;
+         const MessageParameter* GetParameter(const std::string& name) const;
 
          /**
           * This getter, not the class of the object, determines what type the message is.
@@ -99,14 +102,14 @@ namespace dtGame
           * by the GM or a component.  It's intended for actor to actor messages.
           * @param newId the new id of the sending actor.
           */
-         void SetSendingActorId(const dtCore::UniqueId &newId) { mSendingActorId = newId; }
+         void SetSendingActorId(const dtCore::UniqueId& newId) { mSendingActorId = newId; }
 
          /**
           * Assigns the unique id of the actor the message is about or to. This should not be set if the message is not about
           * an specific actor.
           * @param newId the new id of the actor this message is about or to.
           */
-         void SetAboutActorId(const dtCore::UniqueId &newId)   { mAboutActorId   = newId; }
+         void SetAboutActorId(const dtCore::UniqueId& newId)   { mAboutActorId   = newId; }
 
          /**
           * @return the actor that send the message.  This may be an empty unique id, which means there was no sending actor.
@@ -125,6 +128,7 @@ namespace dtGame
           * @return the machine infor for this message.  This returns a reference because it may NOT be null.
           */
          const MachineInfo& GetSource() const      { return *mSource;      }
+
          /**
           * @note This is NOT set by the message factory.
           * @return the destination machine information.  This returns a pointer because it defaults to null.
@@ -135,7 +139,7 @@ namespace dtGame
           * Reassigns the Source.  
           * @param the machine info to assign as the source.  It is a reference so that it may not be NULL.
           */
-         void SetSource(const MachineInfo &mi) { mSource = &mi; }
+         void SetSource(const MachineInfo& mi) { mSource = &mi; }
 
          /**
           * Reassigns the destination.  
@@ -190,12 +194,12 @@ namespace dtGame
           * @param The message type
           * @see class dtGame::MessageFactory
           */
-         void SetMessageType(const MessageType &msgType) { mMessageType = &msgType; }
+         void SetMessageType(const MessageType& msgType) { mMessageType = &msgType; }
 
-         Message(const Message &rhs) { }
-         Message &operator=(const Message &rhs) { return *this; }
+         Message(const Message& rhs) { }
+         Message& operator=(const Message& rhs) { return *this; }
          
-         const MessageType *mMessageType;
+         const MessageType* mMessageType;
          dtCore::RefPtr<const MachineInfo> mSource;
          dtCore::RefPtr<const MachineInfo> mDestination;
          dtCore::UniqueId mSendingActorId, mAboutActorId;

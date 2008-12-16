@@ -1,24 +1,25 @@
 /* -*-c++-*-
-* testMotionModels - testmotionmodels(.h & .cpp) - Using 'The MIT License'
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * testMotionModels - testmotionmodels(.h & .cpp) - Using 'The MIT License'
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #include <dtUtil/log.h>
 #include <dtCore/collisionmotionmodel.h>
 #include <dtCore/deltawin.h>
@@ -68,62 +69,62 @@ namespace dtExample
    public:
       typedef dtUtil::Functor<void,TYPELIST_1(MotionModelType)> ForwardingFunctor;
 
-      QuickMenuManager(const ForwardingFunctor& ff) : 
-         mWalk(NULL), 
-         mFly(NULL), 
-         mUFO(NULL), 
-         mOrbit(NULL), 
-         mFPS(NULL), 
-         mCollision(NULL),
-         mRTS(NULL),
-         mForwardingFunctor(ff)
+      QuickMenuManager(const ForwardingFunctor& ff)
+         : mWalk(NULL)
+         , mFly(NULL)
+         , mUFO(NULL)
+         , mOrbit(NULL)
+         , mFPS(NULL)
+         , mCollision(NULL)
+         , mRTS(NULL)
+         , mForwardingFunctor(ff)
       {
       }
 
       void SetSelected(const MotionModelType mt)
       {
-         switch( mt )
+         switch (mt)
          {
             case WALK:
             {
                mWalk->setSelected(true);
-            } 
+            }
             break;
 
             case FLY:
             {
                mFly->setSelected(true);
-            } 
+            }
             break;
 
             case UFO:
             {
                mUFO->setSelected(true);
-            } 
+            }
             break;
 
             case ORBIT:
             {
                mOrbit->setSelected(true);
-            } 
+            }
             break;
 
             case FPS:
             {
                mFPS->setSelected(true);
-            } 
+            }
             break;
 
             case COLLISION:
             {
                mCollision->setSelected(true);
-            } 
+            }
             break;
 
             case RTS:
             {
                mRTS->setSelected(true);
-            } 
+            }
             break;
          }
       }
@@ -132,13 +133,13 @@ namespace dtExample
       {
          const CEGUI::WindowEventArgs& wea = static_cast<const CEGUI::WindowEventArgs&>( ea );
 
-         if( mWalk == wea.window )       { mForwardingFunctor( WALK ); }
-         else if( mFly == wea.window )   { mForwardingFunctor( FLY ); }
-         else if( mUFO == wea.window )   { mForwardingFunctor( UFO ); }
-         else if( mOrbit == wea.window ) { mForwardingFunctor( ORBIT ); }
-         else if( mFPS == wea.window )   { mForwardingFunctor( FPS ); }
-         else if( mCollision == wea.window )   { mForwardingFunctor( COLLISION ); }
-         else if( mRTS == wea.window )   { mForwardingFunctor( RTS ); }
+         if (mWalk == wea.window)           { mForwardingFunctor( WALK ); }
+         else if (mFly == wea.window)       { mForwardingFunctor( FLY ); }
+         else if (mUFO == wea.window)       { mForwardingFunctor( UFO ); }
+         else if (mOrbit == wea.window)     { mForwardingFunctor( ORBIT ); }
+         else if (mFPS == wea.window)       { mForwardingFunctor( FPS ); }
+         else if (mCollision == wea.window) { mForwardingFunctor( COLLISION ); }
+         else if (mRTS == wea.window)       { mForwardingFunctor( RTS ); }
 
          return true;
       }
@@ -147,11 +148,11 @@ namespace dtExample
       {
          try
          {
-            std::string schemefile( dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme") );
+            std::string schemefile(dtCore::FindFileInPathList("gui/schemes/WindowsLook.scheme"));
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
-            sm->loadScheme( schemefile );  ///< populate the window factories
+            sm->loadScheme(schemefile);  ///< populate the window factories
          }
-         catch(CEGUI::Exception& )
+         catch(CEGUI::Exception&)
          {
             LOG_ERROR("A problem occurred loading the scheme.")
          }
@@ -220,7 +221,7 @@ namespace dtExample
             menu->addChildWindow( rts );
 
 
-            CEGUI::System::getSingleton().setGUISheet( menu );
+            CEGUI::System::getSingleton().setGUISheet(menu);
 
             InitializeWidgets(static_cast<CEGUI::RadioButton*>(walk),
                               static_cast<CEGUI::RadioButton*>(fly),
@@ -232,7 +233,7 @@ namespace dtExample
                               );
 
          }
-         catch(CEGUI::Exception& )
+         catch(CEGUI::Exception&)
          {
             LOG_ERROR("A problem occurred creating the layout.")
          }
@@ -248,25 +249,25 @@ namespace dtExample
                              CEGUI::RadioButton* fps, CEGUI::RadioButton* col,
                              CEGUI::RadioButton* rts)
       {
-         mWalk = walk;
-         mFly = fly;
-         mUFO = ufo;
-         mOrbit = orb;
-         mFPS = fps;
+         mWalk      = walk;
+         mFly       = fly;
+         mUFO       = ufo;
+         mOrbit     = orb;
+         mFPS       = fps;
          mCollision = col;
-         mRTS = rts;
+         mRTS       = rts;
       }
 
-      CEGUI::Window* CreateWidget(const std::string &wtype, const std::string &wname)
+      CEGUI::Window* CreateWidget(const std::string& wtype, const std::string& wname)
       {
-         CEGUI::WindowManager *wmgr = CEGUI::WindowManager::getSingletonPtr();
-         CEGUI::Window *w = NULL;
+         CEGUI::WindowManager* wmgr = CEGUI::WindowManager::getSingletonPtr();
+         CEGUI::Window* w = NULL;
 
          try
          {
-            w = wmgr->createWindow(wtype,wname);
+            w = wmgr->createWindow(wtype, wname);
          }
-         catch (CEGUI::Exception &e)
+         catch (CEGUI::Exception& e)
          {
             std::string err;
             err += std::string("Can't create CEGUI Window of type ");
@@ -295,17 +296,18 @@ namespace dtExample
 /// The motion model test application.
 class TestMotionModelsApp : public Application
 {
-   DECLARE_MANAGEMENT_LAYER( TestMotionModelsApp )
+   DECLARE_MANAGEMENT_LAYER(TestMotionModelsApp)
 
 public:
 
    /// Constructor.
-   TestMotionModelsApp( const std::string& configFile = "config.xml" ) : Application( configFile ),
-      mTown(NULL),
-      mGUIDrawable(NULL),
-      mMenuManager(NULL)
+   TestMotionModelsApp(const std::string& configFile = "config.xml")
+      : Application(configFile)
+      , mTown(NULL)
+      , mGUIDrawable(NULL)
+      , mMenuManager(NULL)
    {
-      dtExample::QuickMenuManager::ForwardingFunctor ff(this,&TestMotionModelsApp::SetMotionModel);
+      dtExample::QuickMenuManager::ForwardingFunctor ff(this, &TestMotionModelsApp::SetMotionModel);
       mMenuManager = new dtExample::QuickMenuManager(ff);
    }
 
@@ -318,54 +320,54 @@ public:
       mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
       mTown->SetCollisionMesh();
       AddDrawable(mTown.get());
-      GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
 
-      RefPtr<WalkMotionModel> wmm = new WalkMotionModel( GetKeyboard(), GetMouse() );
-      wmm->SetScene( GetScene() );
-      mMotionModels.push_back( wmm.get() );
+      RefPtr<WalkMotionModel> wmm = new WalkMotionModel(GetKeyboard(), GetMouse());
+      wmm->SetScene(GetScene());
+      mMotionModels.push_back(wmm.get());
 
-      mMotionModels.push_back( new FlyMotionModel( GetKeyboard(), GetMouse() ) );
-      mMotionModels.push_back( new UFOMotionModel( GetKeyboard(), GetMouse() ) );
-      mMotionModels.push_back( new OrbitMotionModel( GetKeyboard(), GetMouse() ) );
+      mMotionModels.push_back(new FlyMotionModel(GetKeyboard(), GetMouse()));
+      mMotionModels.push_back(new UFOMotionModel(GetKeyboard(), GetMouse()));
+      mMotionModels.push_back(new OrbitMotionModel(GetKeyboard(), GetMouse()));
 
-      RefPtr<FPSMotionModel> fmm = new FPSMotionModel( GetKeyboard(), GetMouse() );
-      fmm->SetScene( GetScene() );
-      mMotionModels.push_back( fmm.get() );
+      RefPtr<FPSMotionModel> fmm = new FPSMotionModel(GetKeyboard(), GetMouse());
+      fmm->SetScene(GetScene());
+      mMotionModels.push_back(fmm.get());
 
       osg::Vec3 gravity;
       GetScene()->GetGravity(gravity);
-      mMotionModels.push_back( new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene(), GetKeyboard(), GetMouse()) );
+      mMotionModels.push_back(new CollisionMotionModel(1.5f, 0.4f, 0.25f, 0.1f, GetScene(), GetKeyboard(), GetMouse()));
 
-      mMotionModels.push_back( new RTSMotionModel(GetKeyboard(), GetMouse()) );
+      mMotionModels.push_back(new RTSMotionModel(GetKeyboard(), GetMouse()));
 
-      for( unsigned int i = 0; i < mMotionModels.size(); i++ )
-      {  
-         mMotionModels[i]->SetTarget( GetCamera() );
+      for (unsigned int i = 0; i < mMotionModels.size(); i++)
+      {
+         mMotionModels[i]->SetTarget(GetCamera());
       }
 
       // show a HUD
-      mGUIDrawable = new dtGUI::CEUIDrawable( GetWindow(), GetKeyboard(), GetMouse() );
-      AddDrawable( mGUIDrawable.get() );
+      mGUIDrawable = new dtGUI::CEUIDrawable(GetWindow(), GetKeyboard(), GetMouse());
+      AddDrawable(mGUIDrawable.get());
       mMenuManager->BuildMenu();
-      mMenuManager->SetSelected( dtExample::WALK );
+      mMenuManager->SetSelected(dtExample::WALK);
    }
 
    /**
-   * Key press callback.
-   *
-   * @param keyboard the keyboard object generating the event
-   * @param key the key pressed
-   * @param character the corresponding character
-   */
+    * Key press callback.
+    *
+    * @param keyboard the keyboard object generating the event
+    * @param key the key pressed
+    * @param character the corresponding character
+    */
    virtual bool KeyPressed(const dtCore::Keyboard* kb, int key)
    {
       bool verdict = Application::KeyPressed(kb, key);
-      if(verdict)
+      if (verdict)
       {
          return verdict;
       }
 
-      switch(key)
+      switch (key)
       {
       case '1':
          mMenuManager->SetSelected(dtExample::WALK);
@@ -416,9 +418,9 @@ private:
    *
    * @param index the index of the motion model to enable
    */
-   void SetMotionModel( unsigned int index )
+   void SetMotionModel(unsigned int index)
    {
-      for( unsigned int i = 0; i < mMotionModels.size(); i++ )
+      for (unsigned int i = 0; i < mMotionModels.size(); i++)
       {
          mMotionModels[i]->SetEnabled(i == index);
       }
@@ -441,12 +443,12 @@ private:
    dtCore::RefPtr<dtExample::QuickMenuManager> mMenuManager;
 };
 
-IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
+IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApp)
 
-int main( int argc, char **argv )
+int main(int argc, char** argv)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data/;" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +

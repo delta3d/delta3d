@@ -18,6 +18,7 @@
  *
  * William E. Johnson II
  */
+
 #ifndef DELTA_DEFAULTMESSAGEPROCESSOR
 #define DELTA_DEFAULTMESSAGEPROCESSOR
 
@@ -43,11 +44,11 @@ namespace dtGame
          DefaultMessageProcessor(const std::string& name = DEFAULT_NAME);
 
          /**
-          * Called publicily from other classes to process a message and 
+          * Called publicly from other classes to process a message and 
           * pass it off to its correct handler function based on its type
           * @param msg The message
           */
-         virtual void ProcessMessage(const Message &msg);
+         virtual void ProcessMessage(const Message& msg);
 
       protected:
 
@@ -58,25 +59,25 @@ namespace dtGame
           * Processes a tick message
           * @param msg The message
           */
-         virtual void ProcessTick(const TickMessage &msg) {}
+         virtual void ProcessTick(const TickMessage& msg) {}
 
          /**
           * Processes a local create message
           * @param msg The message
           */
-         virtual void ProcessLocalCreateActor(const ActorUpdateMessage &msg) {}
+         virtual void ProcessLocalCreateActor(const ActorUpdateMessage& msg) {}
 
          /**
           * Processes an local actor update message
           * @param msg The message
           */
-         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage &msg) {}
+         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage& msg) {}
 
          /**
           * Processes a local actor delete message
           * @param msg The message
           */
-         virtual void ProcessLocalDeleteActor(const ActorDeletedMessage &msg) {}
+         virtual void ProcessLocalDeleteActor(const ActorDeletedMessage& msg) {}
 
          /**
           * Processes a remote create actor message
@@ -84,19 +85,19 @@ namespace dtGame
           * @return A pointer to the newly created GameActorProxy.
           * @throws dtUtil::Exception if it was unable to create the proper actor.
           */
-         virtual dtCore::RefPtr<GameActorProxy> ProcessRemoteCreateActor(const ActorUpdateMessage &msg);
+         virtual dtCore::RefPtr<GameActorProxy> ProcessRemoteCreateActor(const ActorUpdateMessage& msg);
 
          /**
           * Processes a remote update actor message
           * @param msg The message
           */
-         virtual void ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap);
+         virtual void ProcessRemoteUpdateActor(const ActorUpdateMessage& msg, GameActorProxy* ap);
 
          /**
           * Processes a remote delete actor message
           * @param msg The message
           */
-         virtual void ProcessRemoteDeleteActor(const ActorDeletedMessage &msg);
+         virtual void ProcessRemoteDeleteActor(const ActorDeletedMessage& msg);
 
          /**
           * Processes a create actor message
@@ -104,19 +105,19 @@ namespace dtGame
           * primary behavior.
           * @param msg The message
           */
-         virtual void ProcessCreateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessCreateActor(const ActorUpdateMessage& msg);
 
          /**
           * Processes an update actor message
           * @param msg The message
           */
-         virtual void ProcessUpdateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessUpdateActor(const ActorUpdateMessage& msg);
 
          /**
           * Processes a delete actor message
           * @param msg The message
           */
-         virtual void ProcessDeleteActor(const ActorDeletedMessage &msg);
+         virtual void ProcessDeleteActor(const ActorDeletedMessage& msg);
 
          /**
           * Called when a pause command message is received.
@@ -148,19 +149,19 @@ namespace dtGame
           * Processes an unhandled local message
           * @param msg The message
           */
-         virtual void ProcessUnhandledLocalMessage(const Message &msg);
+         virtual void ProcessUnhandledLocalMessage(const Message& msg);
 
          /**
           * Processes an unhandled remote message
           * @param msg The message
           */
-         virtual void ProcessUnhandledRemoteMessage(const Message &msg);
+         virtual void ProcessUnhandledRemoteMessage(const Message& msg);
 
          /**
           * Processes the player entered world message
           * @param msg The message
           */
-         virtual void ProcessPlayerEnteredWorldMessage(const Message &msg) { }
+         virtual void ProcessPlayerEnteredWorldMessage(const Message& msg) { }
 
       private:
    };

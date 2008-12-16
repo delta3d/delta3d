@@ -8,6 +8,7 @@
 #include <dtUtil/noisetexture.h>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 using namespace dtUtil;
 

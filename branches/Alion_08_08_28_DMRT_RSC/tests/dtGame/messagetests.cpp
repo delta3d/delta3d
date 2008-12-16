@@ -1,30 +1,31 @@
 /* -*-c++-*-
-* allTests - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author Eddie Johnson and David Guthrie
-*/
+ * allTests - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author Eddie Johnson and David Guthrie
+ */
+
 #include <prefix/dtgameprefix-src.h>
 #include <iostream>
 #include <osg/Math>
@@ -146,7 +147,7 @@ private:
    void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
    void CheckMapNames(const dtGame::MapMessage& mapLoadedMsg,
-         const dtGame::GameManager::NameVector& mapNames);
+      const dtGame::GameManager::NameVector& mapNames);
    dtUtil::Log* mLogger;
 
    dtCore::RefPtr<dtGame::GameManager> mGameManager;
@@ -189,7 +190,7 @@ void MessageTests::setUp()
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::tearDown()
 {
-   if(mGameManager.valid())
+   if (mGameManager.valid())
    {
       try
       {
@@ -199,7 +200,7 @@ void MessageTests::tearDown()
          dtDAL::GameEventManager::GetInstance().ClearAllEvents();
          mGameManager->DeleteAllActors(true);
 
-         if(!mGameManager->GetCurrentMap().empty())
+         if (!mGameManager->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
             dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
@@ -209,9 +210,9 @@ void MessageTests::tearDown()
          mGameManager->UnloadActorRegistry(mTestActorLibrary);
          mGameManager = NULL;
       }
-      catch(const dtUtil::Exception &e)
+      catch(const dtUtil::Exception& e)
       {
-         if(!mGameManager->GetCurrentMap().empty())
+         if (!mGameManager->GetCurrentMap().empty())
          {
             dtDAL::Project::GetInstance().CloseMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()), true);
             dtDAL::Project::GetInstance().DeleteMap(dtDAL::Project::GetInstance().GetMap(mGameManager->GetCurrentMap()));
@@ -222,10 +223,12 @@ void MessageTests::tearDown()
 
    try
    {
-      if(dtUtil::FileUtils::GetInstance().DirExists("data/TestGameProject"))
+      if (dtUtil::FileUtils::GetInstance().DirExists("data/TestGameProject"))
+      {
          dtUtil::FileUtils::GetInstance().DirDelete("data/TestGameProject", true);
+      }
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL((std::string("Error: ") + e.ToString()).c_str());
    }
@@ -266,7 +269,7 @@ void MessageTests::createActors(dtDAL::Map& map)
 
    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
-   for (unsigned int i=0; i< actorTypes.size(); i++)
+   for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
 
@@ -276,14 +279,15 @@ void MessageTests::createActors(dtDAL::Map& map)
       proxy = mGameManager->CreateActor(*actorTypes[i]);
       snprintf(nameAsString, 21, "%d", nameCounter);
       proxy->SetName(std::string(nameAsString));
-      nameCounter++;
+      ++nameCounter;
 
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                          "Set proxy name to: %s", proxy->GetName().c_str());
 
 
       proxy->GetPropertyList(props);
-      for (unsigned int j=0; j<props.size(); j++) {
+      for (unsigned int j=0; j<props.size(); ++j)
+      {
          mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                             "Property: Name: %s, Type: %s",
                             props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
@@ -452,10 +456,10 @@ void MessageTests::TestBaseMessages()
       aum1->SetAboutActorId(dtCore::UniqueId());
       dtUtil::DataStream stream;
 
-      dtGame::MessageParameter *o = aum1->AddUpdateParameter("param1", dtDAL::DataType::FLOAT);
-      dtGame::MessageParameter *t = aum1->AddUpdateParameter("param2", dtDAL::DataType::INT);
-      dtGame::MessageParameter *h = aum1->AddUpdateParameter("param3", dtDAL::DataType::DOUBLE);
-      dtGame::MessageParameter *f = aum1->AddUpdateParameter("param4", dtDAL::DataType::BOOLEAN);
+      dtGame::MessageParameter* o = aum1->AddUpdateParameter("param1", dtDAL::DataType::FLOAT);
+      dtGame::MessageParameter* t = aum1->AddUpdateParameter("param2", dtDAL::DataType::INT);
+      dtGame::MessageParameter* h = aum1->AddUpdateParameter("param3", dtDAL::DataType::DOUBLE);
+      dtGame::MessageParameter* f = aum1->AddUpdateParameter("param4", dtDAL::DataType::BOOLEAN);
 
       CPPUNIT_ASSERT_MESSAGE("MessageParameter o should not be NULL", o != NULL);
       CPPUNIT_ASSERT_MESSAGE("MessageParameter t should not be NULL", t != NULL);
@@ -471,10 +475,10 @@ void MessageTests::TestBaseMessages()
 
       aum2->FromDataStream(stream);
 
-      dtGame::MessageParameter *one   = aum2->GetUpdateParameter("param1");
-      dtGame::MessageParameter *two   = aum2->GetUpdateParameter("param2");
-      dtGame::MessageParameter *three = aum2->GetUpdateParameter("param3");
-      dtGame::MessageParameter *four  = aum2->GetUpdateParameter("param4");
+      dtGame::MessageParameter* one   = aum2->GetUpdateParameter("param1");
+      dtGame::MessageParameter* two   = aum2->GetUpdateParameter("param2");
+      dtGame::MessageParameter* three = aum2->GetUpdateParameter("param3");
+      dtGame::MessageParameter* four  = aum2->GetUpdateParameter("param4");
 
       CPPUNIT_ASSERT_MESSAGE("MessageParameter 1 should not be NULL", one != NULL);
       CPPUNIT_ASSERT_MESSAGE("MessageParameter 2 should not be NULL", two != NULL);
@@ -501,11 +505,11 @@ void MessageTests::TestBaseMessages()
       CPPUNIT_ASSERT(type.valid());
       CPPUNIT_ASSERT_MESSAGE("The message type should be correct", type.get() == dtActors::EngineActorRegistry::TRIPOD_ACTOR_TYPE);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
-   //catch (const std::exception &e)
+   //catch (const std::exception& e)
    //{
    //   CPPUNIT_FAIL(std::string("Caught exception of type: ") + typeid(e).name() + " " + e.what());
    //}
@@ -577,8 +581,10 @@ void MessageTests::TestMessageFactory()
       CPPUNIT_ASSERT_MESSAGE("Server request rejected message should be supported", factory.IsMessageTypeSupported(dtGame::MessageType::SERVER_REQUEST_REJECTED));
 
       // Paranoia, but better safe than sorry
-      for(unsigned int i = 0; i < v.size(); i++)
+      for (unsigned int i = 0; i < v.size(); ++i)
+      {
          CPPUNIT_ASSERT_MESSAGE("The vector of supported message types should register as supported in the factory", factory.IsMessageTypeSupported(*v[i]));
+      }
 
       tickMsg->SetDeltaRealTime(1.34f);
       tickMsg->SetDeltaSimTime(2.56f);
@@ -611,7 +617,7 @@ void MessageTests::TestMessageFactory()
       CPPUNIT_ASSERT_MESSAGE("Server message rejected message's type should have been set correctly", serverMsg->GetMessageType() == dtGame::MessageType::SERVER_REQUEST_REJECTED);
 
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -697,7 +703,7 @@ void MessageTests::TestMessageDelivery()
       mGameManager->RemoveComponent(*tc);
       CPPUNIT_ASSERT(tc->GetGameManager() == NULL);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -798,7 +804,7 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT_MESSAGE("The Actor Create message should have GetSource matching the GameManager.", sendActorCreateMsg->GetSource() == mGameManager->GetMachineInfo());
       CPPUNIT_ASSERT_MESSAGE("The Actor Create message should have GetDestination of NULL.", sendActorCreateMsg->GetDestination() == NULL);
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -857,7 +863,7 @@ void MessageTests::TestPauseResume()
    SLEEP(10);
    dtCore::System::GetInstance().Step();
 
-   processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
+   processPausedMsg  = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
    processResumedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESUMED);
 
    CPPUNIT_ASSERT_MESSAGE("A paused message should not have been processed.", !processPausedMsg.valid());
@@ -901,7 +907,7 @@ void MessageTests::TestPauseResumeSystem()
       CPPUNIT_ASSERT_MESSAGE("A paused message should not have been processed.", !processPausedMsg.valid());
       CPPUNIT_ASSERT_MESSAGE("A resumed message should have been processed.", processResumedMsg.valid());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -930,11 +936,11 @@ void MessageTests::TestRejectMessage()
 
    // processed message should have the right data
 
-   const dtGame::ServerMessageRejected *pMsg1 = static_cast<const dtGame::ServerMessageRejected*> (processedRejection1.get());
+   const dtGame::ServerMessageRejected* pMsg1 = static_cast<const dtGame::ServerMessageRejected*> (processedRejection1.get());
    CPPUNIT_ASSERT_MESSAGE("Local reject message should have the reason.", pMsg1->GetCause() == "test reason");
    CPPUNIT_ASSERT_MESSAGE("Local reject message should have our machine.", pMsg1->GetSource() == mGameManager->GetMachineInfo());
    CPPUNIT_ASSERT_MESSAGE("Local reject message should have the destination.", *pMsg1->GetDestination() == mGameManager->GetMachineInfo());
-   const dtGame::Message *causeMsg1 = pMsg1->GetCausingMessage();
+   const dtGame::Message* causeMsg1 = pMsg1->GetCausingMessage();
    CPPUNIT_ASSERT_MESSAGE("Local reject message should have the causing message.",
       causeMsg1->GetMessageType() == dtGame::MessageType::REQUEST_PAUSE);
 
@@ -959,11 +965,11 @@ void MessageTests::TestRejectMessage()
 
    // sent message should have the right data
 
-   const dtGame::ServerMessageRejected *pMsg2 = static_cast<const dtGame::ServerMessageRejected*> (sentRejection2.get());
+   const dtGame::ServerMessageRejected* pMsg2 = static_cast<const dtGame::ServerMessageRejected*> (sentRejection2.get());
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have the reason.", pMsg2->GetCause() == "test reason2");
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have our machine.", pMsg2->GetSource() == mGameManager->GetMachineInfo());
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have the destination.", *pMsg2->GetDestination() == *testMachine);
-   const dtGame::Message *causeMsg2 = pMsg2->GetCausingMessage();
+   const dtGame::Message* causeMsg2 = pMsg2->GetCausingMessage();
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have the causing message.",
       causeMsg2->GetMessageType() == dtGame::MessageType::REQUEST_PAUSE);
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have the source machine info on the cause message.",
@@ -1017,13 +1023,13 @@ void MessageTests::TestTimeScaling()
    SLEEP(10);
    dtCore::System::GetInstance().Step();
 
-   processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
+   processTickLocalMsg  = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
    processTickRemoteMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_REMOTE);
 
    CPPUNIT_ASSERT_MESSAGE("A tick local message should have been processed.", processTickLocalMsg.valid());
    CPPUNIT_ASSERT_MESSAGE("A tick remote message should have been processed.", processTickRemoteMsg.valid());
 
-   tickLocal = static_cast<const dtGame::TickMessage*>(processTickLocalMsg.get());
+   tickLocal  = static_cast<const dtGame::TickMessage*>(processTickLocalMsg.get());
    tickRemote = static_cast<const dtGame::TickMessage*>(processTickLocalMsg.get());
 
    CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be half the real time", osg::equivalent(tickLocal->GetDeltaSimTime(), tickLocal->GetDeltaRealTime() * 0.5f, 1e-8f));
@@ -1153,7 +1159,7 @@ void MessageTests::TestChangeMapGameEvents()
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The events should still be in the Game Manager since we changed the flag.",
          geMan.GetNumEvents(), (unsigned int) 4);
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1235,7 +1241,7 @@ void MessageTests::TestChangeMap()
       RemoveOneProxy(*map2A);
       RemoveOneProxy(*map2B);
 
-      size_t numActors = mapA->GetAllProxies().size() * 2 ;
+      size_t numActors  = mapA->GetAllProxies().size() * 2 ;
       size_t numActors2 = map2A->GetAllProxies().size() * 2;
 
       CPPUNIT_ASSERT(numActors != numActors2);
@@ -1387,11 +1393,11 @@ void MessageTests::TestChangeMap()
       CheckMapNames(*mapLoadedMsg, mapNames2Expected);
 
    }
-   catch(const dtUtil::Exception &e)
+   catch(const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
-//   catch(const std::exception &e)
+//   catch(const std::exception& e)
 //   {
 //      CPPUNIT_FAIL(std::string("Exception: ") + typeid(e).name() +
 //                   std::string(" Message: ")  + e.what());
@@ -1402,15 +1408,15 @@ void MessageTests::TestGameEventMessage()
 {
    try
    {
-      dtDAL::GameEventManager &eventMgr = dtDAL::GameEventManager::GetInstance();
+      dtDAL::GameEventManager& eventMgr = dtDAL::GameEventManager::GetInstance();
       dtCore::RefPtr<dtGame::Message> message =
             mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT);
-      dtGame::GameEventMessage *gameEventMsg = static_cast<dtGame::GameEventMessage*>(message.get());
+      dtGame::GameEventMessage* gameEventMsg = static_cast<dtGame::GameEventMessage*>(message.get());
 
       eventMgr.AddEvent(*(new dtDAL::GameEvent("TestEvent1","This is test event one.")));
 
-      dtDAL::GameEvent *event = eventMgr.FindEvent("TestEvent1");
-      const dtDAL::GameEvent *event2;
+      dtDAL::GameEvent* event = eventMgr.FindEvent("TestEvent1");
+      const dtDAL::GameEvent* event2;
       gameEventMsg->SetGameEvent(*event);
       event2 = gameEventMsg->GetGameEvent();
 
@@ -1419,7 +1425,7 @@ void MessageTests::TestGameEventMessage()
       CPPUNIT_ASSERT_MESSAGE("Game event descriptions were not equal.",event->GetDescription() == event2->GetDescription());
       CPPUNIT_ASSERT_MESSAGE("Game event names were not equal.",event->GetUniqueId() == event2->GetUniqueId());
    }
-   catch (const dtUtil::Exception &e)
+   catch (const dtUtil::Exception& e)
    {
       CPPUNIT_FAIL(e.ToString());
    }
@@ -1742,18 +1748,22 @@ void MessageTests::TestActorEnteredWorldMessage()
 
    dtCore::RefPtr<dtDAL::ActorProxy> proxy = mGameManager->CreateActor("ExampleActors", "Test1Actor");
    CPPUNIT_ASSERT(proxy.valid());
-   dtGame::GameActorProxy *gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+   dtGame::GameActorProxy* gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
    CPPUNIT_ASSERT_MESSAGE("A Test1Actor actor was created. The dynamic_cast to a GameActorProxy should not be NULL", gap != NULL);
-   dtCore::Scene *scene = gap->GetActor()->GetSceneParent();
+   dtCore::Scene* scene = gap->GetActor()->GetSceneParent();
    CPPUNIT_ASSERT_MESSAGE("The game actor proxy has not yet been added to the game manager, its scene parent pointer should be NULL", scene == NULL);
 
    mGameManager->AddActor(*gap, false, false);
    dtCore::System::GetInstance().Step();
    msgs = tc->GetReceivedProcessMessages();
    bool receivedCreateMsg = false;
-   for(unsigned int i = 0; i < msgs.size(); i++)
-      if(msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
+   for (unsigned int i = 0; i < msgs.size(); ++i)
+   {
+      if (msgs[i]->GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
+      {
          receivedCreateMsg = true;
+      }
+   }
 
    CPPUNIT_ASSERT_MESSAGE("An actor created message should have been sent", receivedCreateMsg);
    scene = gap->GetActor()->GetSceneParent();

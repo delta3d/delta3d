@@ -22,40 +22,40 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
 
 //////////////////////////////////////////////////////////////////////////
-FlyMotionModel::FlyMotionModel(Keyboard *keyboard, Mouse *mouse, unsigned int options)
-   : MotionModel("FlyMotionModel"),
-     mLeftButtonUpDownMapping(NULL),
-     mLeftButtonLeftRightMapping(NULL),
-     mRightButtonUpDownMapping(NULL),
-     mRightButtonLeftRightMapping(NULL),
-     mArrowKeysUpDownMapping(NULL),
-     mArrowKeysLeftRightMapping(NULL),
-     mWSKeysUpDownMapping(NULL),
-     mADKeysLeftRightMapping(NULL),
-     mQEKeysUpDownMapping(NULL),
-     mDefaultFlyForwardBackwardAxis(NULL),
-     mDefaultFlyLeftRightAxis(NULL),
-     mDefaultFlyUpDownAxis(NULL),
-     mDefaultTurnLeftRightAxis(NULL),
-     mDefaultTurnUpDownAxis(NULL),
-     mFlyForwardBackwardAxis(NULL),
-     mFlyLeftRightAxis(NULL),
-     mFlyUpDownAxis(NULL),
-     mTurnLeftRightAxis(NULL),
-     mTurnUpDownAxis(NULL),
-     mMaximumFlySpeed(100.0f),
-     mMaximumTurnSpeed(90.0f),   
-     mMouse(mouse),
-     mOptions(options)
+FlyMotionModel::FlyMotionModel(Keyboard* keyboard, Mouse* mouse, unsigned int options)
+   : MotionModel("FlyMotionModel")
+   , mLeftButtonUpDownMapping(NULL)
+   , mLeftButtonLeftRightMapping(NULL)
+   , mRightButtonUpDownMapping(NULL)
+   , mRightButtonLeftRightMapping(NULL)
+   , mArrowKeysUpDownMapping(NULL)
+   , mArrowKeysLeftRightMapping(NULL)
+   , mWSKeysUpDownMapping(NULL)
+   , mADKeysLeftRightMapping(NULL)
+   , mQEKeysUpDownMapping(NULL)
+   , mDefaultFlyForwardBackwardAxis(NULL)
+   , mDefaultFlyLeftRightAxis(NULL)
+   , mDefaultFlyUpDownAxis(NULL)
+   , mDefaultTurnLeftRightAxis(NULL)
+   , mDefaultTurnUpDownAxis(NULL)
+   , mFlyForwardBackwardAxis(NULL)
+   , mFlyLeftRightAxis(NULL)
+   , mFlyUpDownAxis(NULL)
+   , mTurnLeftRightAxis(NULL)
+   , mTurnUpDownAxis(NULL)
+   , mMaximumFlySpeed(100.0f)
+   , mMaximumTurnSpeed(90.0f)
+   , mMouse(mouse)
+   , mOptions(options)
 {
 
    RegisterInstance(this);
-   
-   if(keyboard != NULL && mouse != NULL)
+
+   if (keyboard != NULL && mouse != NULL)
    {
       SetDefaultMappings(keyboard, mouse);
    }
-   
+
    AddSender(&System::GetInstance());
 }
 
@@ -65,7 +65,7 @@ FlyMotionModel::FlyMotionModel(Keyboard *keyboard, Mouse *mouse, unsigned int op
 FlyMotionModel::~FlyMotionModel()
 {
    RemoveSender(&System::GetInstance());
-   
+
    DeregisterInstance(this);
 }
 
@@ -78,7 +78,7 @@ FlyMotionModel::~FlyMotionModel()
  */
 void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(!mDefaultInputDevice.valid())
+   if (!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
 
@@ -121,7 +121,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(1)
          )
       );
-      
+
       Axis* rightButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "right mouse button left/right",
          mRightButtonLeftRightMapping = new ButtonAxisToAxis(
@@ -129,7 +129,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             mouse->GetAxis(0)
          )
       );
-   
+
       if (HasOption(OPTION_USE_CURSOR_KEYS))
       {
          Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
@@ -157,7 +157,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             "default turn up/down",
             new AxesToAxis(arrowKeysUpAndDown, leftButtonUpAndDown)
             );
-      }    
+      }
       else
       {
          mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
@@ -170,7 +170,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             new AxisToAxis(mouse->GetAxis(1))
             );
       }
-      
+
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "w/s keys stafe forward/back",
          mWSKeysUpDownMapping = new ButtonsToAxis(
@@ -178,7 +178,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
             keyboard->GetButton('w')
          )
       );
-      
+
       Axis* adKeysStrafeLeftAndRight = mDefaultInputDevice->AddAxis(
          "a/d keys strafe left/right",
          mADKeysLeftRightMapping = new ButtonsToAxis(
@@ -188,7 +188,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       );
 
       Axis* qeKeysFlyUpAndDown = mDefaultInputDevice->AddAxis(
-         "a/d keys fly up/down",
+         "q/e keys fly up/down",
          mQEKeysUpDownMapping = new ButtonsToAxis(
             keyboard->GetButton('q'),
             keyboard->GetButton('e')
@@ -199,7 +199,7 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          "default fly forward/backward",
          new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown)
       );
-      
+
       mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default fly left/right",
          new AxesToAxis(adKeysStrafeLeftAndRight, rightButtonLeftAndRight)
@@ -208,32 +208,32 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultFlyUpDownAxis = mDefaultInputDevice->AddAxis(
          "default fly up/down",
          new AxesToAxis(qeKeysFlyUpAndDown, 0) // not sure what to map for right 2nd parameter (?)
-      );     
+      );
    }
    else
    {
       mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
-      
+
       mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
-      
+
       mArrowKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
       );
-      
+
       mArrowKeysLeftRightMapping->SetSourceButtons(
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
          keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
       );
-      
+
       mWSKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton('s'),
          keyboard->GetButton('w')
@@ -249,15 +249,15 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          keyboard->GetButton('e')
       );
    }
-   
+
    SetFlyForwardBackwardAxis(mDefaultFlyForwardBackwardAxis);
-      
+
    SetFlyLeftRightAxis(mDefaultFlyLeftRightAxis);
 
    SetFlyUpDownAxis(mDefaultFlyUpDownAxis);
 
    SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis);
-         
+
    SetTurnUpDownAxis(mDefaultTurnUpDownAxis);
 }
 
@@ -440,19 +440,19 @@ void FlyMotionModel::SetUseSimTimeForSpeed(bool useSimTimeForSpeed)
 void FlyMotionModel::OnMessage(MessageData *data)
 {
    if (GetTarget() != 0 &&
-      IsEnabled() && 
-      (data->message == "preframe" || 
+      IsEnabled() &&
+      (data->message == "preframe" ||
         (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == "pause")))
    {
       // Get the time change (sim time or real time)
       double delta = GetTimeDelta(data);
 
       Transform transform;
-      
+
       GetTarget()->GetTransform(transform);
-      
+
       osg::Vec3 xyz, hpr;
-      
+
       transform.Get(xyz, hpr);
 
       // rotation
@@ -467,7 +467,7 @@ void FlyMotionModel::OnMessage(MessageData *data)
 
       // finalize changes
 
-      GetTarget()->SetTransform(transform);  
+      GetTarget()->SetTransform(transform);
    }
 }
 
@@ -477,11 +477,17 @@ double FlyMotionModel::GetTimeDelta(const MessageData* data) const
    double delta;
    double* timeChange = (double*)data->userData;
    if (data->message == "pause") // paused and !useSimTime
+   {
       delta = *timeChange; // 0 is real time when paused
-   else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED)) 
+   }
+   else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED))
+   {
       delta = timeChange[0]; // 0 is sim time
+   }
    else
+   {
       delta = timeChange[1]; // 1 is real time
+   }
 
    return delta;
 }
@@ -516,10 +522,10 @@ osg::Vec3 FlyMotionModel::Rotate(const osg::Vec3 &hpr, double delta) const
    out[2] = 0.0f;
 
    if (HasOption(OPTION_RESET_MOUSE_CURSOR))
-   {       
+   {
       // fix to avoid camera drift
       mTurnUpDownAxis->SetState(0.0f); // necessary to stop camera drifting down
-      mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left                
+      mTurnLeftRightAxis->SetState(0.0f); // necessary to stop camera drifting left
 
       mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
    }

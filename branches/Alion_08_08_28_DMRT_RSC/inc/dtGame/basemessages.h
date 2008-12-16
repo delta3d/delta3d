@@ -19,6 +19,7 @@
  * William E. Johnson II 
  * David Guthrie
  */
+
 #ifndef DELTA_BASEMESSAGES
 #define DELTA_BASEMESSAGES
 
@@ -217,11 +218,11 @@ namespace dtGame
           * @param The name of the map
           */
          void SetMapNames(const std::vector<std::string>& nameVec);
+
       protected:
          /// Destructor
          virtual ~MapMessage() { }
          dtCore::RefPtr<GroupMessageParameter> mMapNames;
-
    };
 
    class DT_GAME_EXPORT GameEventMessage : public Message
@@ -241,13 +242,13 @@ namespace dtGame
           * Sets the game event contained within this message.
           * @param event The game event.
           */
-         void SetGameEvent(dtDAL::GameEvent &event);
+         void SetGameEvent(const dtDAL::GameEvent& event);
 
          /**
           * Gets a reference to the game event contained within this message.
           * @return A const reference to the game event.
           */
-         const dtDAL::GameEvent *GetGameEvent() const;
+         const dtDAL::GameEvent* GetGameEvent() const;
 
       protected:
          virtual ~GameEventMessage() { }
@@ -256,11 +257,9 @@ namespace dtGame
    class DT_GAME_EXPORT ActorPublishedMessage : public Message
    {
       public:
-
          /// Constructor
          ActorPublishedMessage() : Message()
          {
-
          }
 
       protected:
@@ -271,11 +270,9 @@ namespace dtGame
    class DT_GAME_EXPORT ActorDeletedMessage : public Message
    {
       public:
-
          /// Constructor
          ActorDeletedMessage() : Message()
          {
-
          }
 
       protected:
@@ -286,7 +283,6 @@ namespace dtGame
    class DT_GAME_EXPORT NetServerRejectMessage : public Message
    {
       public:
-
          /// Constructor
          NetServerRejectMessage() : Message()
          {
@@ -313,7 +309,6 @@ namespace dtGame
    class DT_GAME_EXPORT RestartMessage : public Message
    {
       public:
-
          /// Constructor
          RestartMessage() : Message()
          {
@@ -340,7 +335,6 @@ namespace dtGame
    class DT_GAME_EXPORT ServerMessageRejected : public Message
    {
       public:
-
          /// Constructor
          ServerMessageRejected() : Message()
          {
@@ -358,6 +352,7 @@ namespace dtGame
           * @param The cause of the rejection
           */
          void SetCause(const std::string &cause);
+
       protected:
          ///Destructor
          virtual ~ServerMessageRejected() {}

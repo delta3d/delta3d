@@ -18,6 +18,7 @@
  *
  * Bradley Anderegg and Chris Darken 09/21/2006
  */
+
 #include <prefix/dtcoreprefix-src.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/fpscollider.h>
@@ -100,9 +101,9 @@ namespace dtCore
 
    FPSCollider::~FPSCollider()
    {
-      if(mBBFeet) dGeomDestroy(mBBFeet);
-      if(mBBTorso) dGeomDestroy(mBBTorso);
-      if(mSpaceID) dSpaceDestroy(mSpaceID);
+      if (mBBFeet) dGeomDestroy(mBBFeet);
+      if (mBBTorso) dGeomDestroy(mBBTorso);
+      if (mSpaceID) dSpaceDestroy(mSpaceID);
    }
 
    dSpaceID FPSCollider::GetSpaceID() const
@@ -152,8 +153,8 @@ namespace dtCore
 
    void FPSCollider::SetDimensions(float pHeight, float pRadius, float k, float theta)
    {
-      if(mBBFeet) dGeomDestroy(mBBFeet);
-      if(mBBTorso) dGeomDestroy(mBBTorso);
+      if (mBBFeet) dGeomDestroy(mBBFeet);
+      if (mBBTorso) dGeomDestroy(mBBTorso);
 
       mBBFeetOffset.set(0.0f, 0.0f, pHeight + (theta * 0.5f) - (k * 0.5f));
       mBBTorsoOffset.set(0.0f, 0.0f, (pHeight - k) * 0.5f);
@@ -195,7 +196,7 @@ namespace dtCore
 
 
    void FPSCollider::InitBoundingVolumes()
-   { 
+   {
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBFeet, mBBFeetLengths);
       CreateCollisionCylinder((dWorldID)mCollisionSpace, mSpaceID, mBBTorso, mBBTorsoLengths);
    }
@@ -223,11 +224,11 @@ namespace dtCore
       bool pCollided = CollideFeet();
       int normalIndex = 0;
 
-      if(!pCollided || mJumped)
+      if (!pCollided || mJumped)
       {
-         if(mJumped && !pCollided)
+         if (mJumped && !pCollided)
          {
-            mJumped = false; 
+            mJumped = false;
          }
          mCurrentMode = FALLING;
       }
@@ -238,15 +239,15 @@ namespace dtCore
          double zPrime = dtUtil::Min<double>(diff, mJumpSpeed * dt);
 
          newPos[2] += zPrime;
-         
+
          float highestZ = 1.0f;
-         if(mNormals.size())
+         if (mNormals.size())
          {
-            //find the collided normal with with max z value 
+            //find the collided normal with with max z value
             highestZ = mNormals[normalIndex][2];
-            for(unsigned i = 0; i < mNormals.size(); ++i)
+            for (unsigned i = 0; i < mNormals.size(); ++i)
             {
-               if(mNormals[i][2] > highestZ)
+               if (mNormals[i][2] > highestZ)
                {
                   highestZ = mNormals[i][2];
                   normalIndex = i;
@@ -255,7 +256,7 @@ namespace dtCore
          }
 
          float dotZ = highestZ;
-         if(dotZ < mSlideThreshold)
+         if (dotZ < mSlideThreshold)
          {
             mCurrentMode = SLIDING;
             //set mSlideVelocity = ((mSlideSpeed * dt) / (1 - n.z) * (n.z*n.x, n.z*n.y, n.z*n.z - 1))
@@ -263,7 +264,7 @@ namespace dtCore
             mSlideVelocity.set(speed * mNormals[normalIndex][2] * mNormals[normalIndex][0], speed * mNormals[normalIndex][2] * mNormals[normalIndex][1], speed * (mNormals[normalIndex][2] * mNormals[normalIndex][2] - 1.0));
          }
          else
-         { 
+         {
             mCurrentMode = WALKING;
          }
       }
@@ -298,20 +299,20 @@ namespace dtCore
 
    void FPSCollider::HandleCollideTorso(dGeomID pFeet, dGeomID pObject)
    {
-      if(pObject == GetFeetGeom()) return;
+      if (pObject == GetFeetGeom()) return;
 
       bool set = false;
       void* data = NULL;
       dGeomID pID = pObject;
 
 
-      while(dGeomGetClass(pID) == dGeomTransformClass)
+      while (dGeomGetClass(pID) == dGeomTransformClass)
       {
-         if(!pID) return;
+         if (!pID) return;
          pID = dGeomTransformGetGeom(pID);
       }
 
-      if(dGeomGetClass(pID) == dTriMeshClass)
+      if (dGeomGetClass(pID) == dTriMeshClass)
       {
          set = true;
          data = dGeomGetData(pID);
@@ -322,7 +323,7 @@ namespace dtCore
       dContactGeom contactGeoms[1];
       mNumTorsoContactPoints = dCollide(pFeet, pObject, 1, contactGeoms, sizeof(dContactGeom));
 
-      if(set)
+      if (set)
       {
          dGeomSetData(pID, data);
          dGeomTriMeshSetArrayCallback(pID, 0);
@@ -331,19 +332,19 @@ namespace dtCore
 
    void FPSCollider::HandleCollideFeet(dGeomID pFeet, dGeomID pObject)
    {
-      if(pObject == GetTorsoGeom()) return;
+      if (pObject == GetTorsoGeom()) return;
 
       bool set = false;
       void* data = NULL;
       dGeomID pID = pObject;
 
-      while(dGeomGetClass(pID) == dGeomTransformClass)
+      while (dGeomGetClass(pID) == dGeomTransformClass)
       {
-         if(!pID) return;
+         if (!pID) return;
          pID = dGeomTransformGetGeom(pID);
-      }      
+      }
 
-      if(dGeomGetClass(pID) == dTriMeshClass)
+      if (dGeomGetClass(pID) == dTriMeshClass)
       {
          set = true;
          data = dGeomGetData(pID);
@@ -355,10 +356,10 @@ namespace dtCore
       int contactPoints = dCollide(pFeet, pObject, 8, contactGeoms, sizeof(dContactGeom));
 
       //find the contact point with the highest z value
-      if(contactPoints)
+      if (contactPoints)
       {
          float highestZ;
-         if(mStartCollideFeet)
+         if (mStartCollideFeet)
          {
             highestZ = contactGeoms[0].pos[2];
             mLastFeetContact = contactGeoms[0];
@@ -369,9 +370,9 @@ namespace dtCore
             highestZ = mLastFeetContact.pos[2];
          }
 
-         for(int i = 0; i < contactPoints; ++i)
+         for (int i = 0; i < contactPoints; ++i)
          {
-            if(contactGeoms[i].pos[2] > highestZ)
+            if (contactGeoms[i].pos[2] > highestZ)
             {
                highestZ = contactGeoms[i].pos[2];
                mLastFeetContact = contactGeoms[i];
@@ -382,7 +383,7 @@ namespace dtCore
       }
 
 
-      if(set)
+      if (set)
       {
          dGeomSetData(pID, data);
          dGeomTriMeshSetArrayCallback(pID, 0);
@@ -393,14 +394,14 @@ namespace dtCore
    // ODE collision callback
    void FPSCollider::NearCallbackFeet( void* data, dGeomID o1, dGeomID o2 )
    {
-      if( data == NULL || o1 == 0 || o2 == 0 )
+      if ( data == NULL || o1 == 0 || o2 == 0 )
       {
          return;
       }
 
       FPSCollider* cmm = static_cast<FPSCollider*>(data);
 
-      if (o1 == cmm->GetFeetGeom()) 
+      if (o1 == cmm->GetFeetGeom())
       {
          cmm->HandleCollideFeet(o1, o2);
       }
@@ -413,14 +414,14 @@ namespace dtCore
    // ODE collision callback
    void FPSCollider::NearCallbackTorso( void* data, dGeomID o1, dGeomID o2 )
    {
-      if( data == NULL || o1 == 0 || o2 == 0 )
+      if ( data == NULL || o1 == 0 || o2 == 0 )
       {
          return;
       }
 
       FPSCollider* cmm = static_cast<FPSCollider*>(data);
 
-      if (o1 == cmm->GetTorsoGeom()) 
+      if (o1 == cmm->GetTorsoGeom())
       {
          cmm->HandleCollideTorso(o1, o2);
       }
@@ -445,7 +446,7 @@ namespace dtCore
 
       FPSCollider* cmm = static_cast<FPSCollider*>(dGeomGetData(TriMesh));
 
-      for(int i = 0; i < TriCount; ++i)
+      for (int i = 0; i < TriCount; ++i)
       {
          dVector3 v1, v2, v3;
 
@@ -458,12 +459,12 @@ namespace dtCore
          osg::Vec3 normal;
 
          side1 -= middle;
-         side2 = middle - side2; 
+         side2 = middle - side2;
 
          normal.set(side1 ^ side2);
          normal.normalize();
 
-         cmm->mNormals.push_back(normal);    
+         cmm->mNormals.push_back(normal);
       }
 
    }
@@ -477,17 +478,17 @@ namespace dtCore
       eMode oldMode = mCurrentMode;
 
       ////added flag for jumping, used true when we are on the way up
-      if(mJumped && mLastVelocity[2] <= 0.0f)
+      if (mJumped && mLastVelocity[2] <= 0.0f)
       {
          mJumped = false;
       }
 
-      switch(mCurrentMode)
+      switch (mCurrentMode)
       {
       case FALLING:
          {
             mFallingVelocity[2] = mLastVelocity[2] + mGravity[2] * deltaFrameTime;
-            if(mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
+            if (mFallingVelocity[2] < mTerminalVelocity[2]) mFallingVelocity[2] = mTerminalVelocity[2];
             v0 = osg::Vec3(mLastVelocity[0], mLastVelocity[1], mFallingVelocity[2]);
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
@@ -496,7 +497,7 @@ namespace dtCore
       case SLIDING:
          {
             v0[2] = 0.0f;
-			   v0 = mSlideVelocity;
+            v0 = mSlideVelocity;
 
             p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
@@ -506,18 +507,18 @@ namespace dtCore
          {
             v0[2] = 0.0f;
 
-            if(pJump)
+            if (pJump)
             {
-               v0[2] = mJumpSpeed;  
+               v0[2] = mJumpSpeed;
                mJumped = true;
             }
 
-            p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);            
+            p1 = p0 + osg::Vec3(v0[0] * deltaFrameTime, v0[1] * deltaFrameTime, v0[2] * deltaFrameTime);
          }
          break;
       }
 
-      if(!TestPosition(p1, deltaFrameTime))
+      if (!TestPosition(p1, deltaFrameTime))
       {
          newXYZ = p1;
          mLastVelocity = v0;
@@ -525,15 +526,15 @@ namespace dtCore
       else
       {
          v1 = v0;
-         for(unsigned i = 0; i < mNormals.size(); ++i)
+         for (unsigned i = 0; i < mNormals.size(); ++i)
          {
-            float dot = (mNormals[i] * v1); 
-            if(dot < 0.0f) v1 -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
+            float dot = (mNormals[i] * v1);
+            if (dot < 0.0f) v1 -= osg::Vec3(mNormals[i][0] * dot, mNormals[i][1] * dot, mNormals[i][2] * dot);
          }
 
          osg::Vec3 p2 = p0 + osg::Vec3(v1[0] * deltaFrameTime, v1[1] * deltaFrameTime, v1[2] * deltaFrameTime);
 
-         if(!TestPosition(p2, deltaFrameTime))
+         if (!TestPosition(p2, deltaFrameTime))
          {
             mLastVelocity = v1;
             newXYZ = p2;

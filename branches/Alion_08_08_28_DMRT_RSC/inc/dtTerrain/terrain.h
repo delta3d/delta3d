@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Matthew W. Campbell
+ */
 
 #ifndef DELTA_TERRAIN
 #define DELTA_TERRAIN
@@ -37,17 +37,17 @@
 
 #undef FindResource //due to some windows.h include which conflicts with dtTerrain::FindResource()
 
-/** 
+/**
  * An extensible library for rendering terrain databases.
  */
-namespace dtTerrain 
+namespace dtTerrain
 {
    ///Forward declare the interfaces we need in the terrain.
    class TerrainDataReader;
    class TerrainDataRenderer;
    class TerrainDecorationLayer;
    class PagedTerrainTile;
-   
+
    /**
     * This class enumerates the different exceptions that can be thrown by
     * terrain instances.
@@ -56,40 +56,40 @@ namespace dtTerrain
    {
       DECLARE_ENUM(TerrainException);
       public:
-      
+
          ///Thrown if an invalid pointer was encountered during terrain operations.
          static TerrainException NULL_POINTER;
-         
+
          ///Thrown if a specified resource could not be read or loaded.
          static TerrainException INVALID_RESOURCE_PATH;
-         
+
          ///Thrown if the current data reader does not support the specified
          ///resource.
          static TerrainException UNSUPPORTED_DATA_FORMAT;
-         
+
          ///Thrown if the terrain requires a data reader but it is currently invalid.
          static TerrainException INVALID_DATA_READER;
-         
+
          ///Thrown if the terrain encounters an invalid data renderer.
          static TerrainException INVALID_DATA_RENDERER;
-         
+
          ///Thrown if an invalid decoration layer is added to the terrain.
          static TerrainException INVALID_DECORATION_LAYER;
-         
+
       protected:
-         
+
          ///Simple enumeration constructor.
          TerrainException(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
    };
-   
+
    /**
     * This is the base terrain class that provides most of the functionlity
     * required for terrain rendering.  This class uses a component or aggregate
     * based design philosophy by utilizing terrain data readers and terrain data
-    * renderers.  Each reader loads a specific type of terrain data and the 
+    * renderers.  Each reader loads a specific type of terrain data and the
     * renderer implements a particular terrain rendering algorithm.  Each of these
     * components can be dynamically changed on each instance of this terrain class.
     */
@@ -98,18 +98,18 @@ namespace dtTerrain
       //Help minimize some typing...
       typedef std::map<std::string,dtCore::RefPtr<TerrainDecorationLayer> > TerrainLayerMap;
       typedef std::map<GeoCoordinates,dtCore::RefPtr<PagedTerrainTile> > TerrainTileMap;
-      
-      
+
+
       DECLARE_MANAGEMENT_LAYER(Terrain);
       public:
-      
+
          /**
           * Default Constructor - Sets the name and performs some routine
           * registration.
           * @param name The name of this terrain object.
           */
          Terrain(const std::string &name="Terrain");
-         
+
          /**
           * Adds a search path to the list of file paths to search for when loading
           * terrain data or other resources.  This path must be relative to a path
@@ -117,14 +117,14 @@ namespace dtTerrain
           * @param The new search path.
           */
          void AddResourcePath(const std::string &path);
-         
+
          /**
           * Removes a resource path from the list of known resource paths.
           * @param path The path to remove.  If it is not currently in the list
           *    this method does nothing.
           */
          void RemoveResourcePath(const std::string &path);
-         
+
          /**
           * Gets the terrain's current list of resource search paths.
           * @return The list of string paths.
@@ -133,7 +133,7 @@ namespace dtTerrain
          {
             return mResourcePathList;
          }
-         
+
          /**
           * Searches the terrains resource path list for the specified
           * resource.  The first resource matching the specified path is
@@ -141,23 +141,23 @@ namespace dtTerrain
           * @param The path to the resource to load.  This should be
           *    either a filename or a path relative to the resource paths
           *    registered with the terrain.
-          * @return An absolute path to the specified resource.  If the 
+          * @return An absolute path to the specified resource.  If the
           *    resource was not found, an empty string is returned.
           */
          const std::string FindResource(const std::string &path);
-         
+
          /**
           * Searches the terrain resources path list for all resources
           * matching the specified path.
-          * @path The path to the resource to load.  This should be 
+          * @path The path to the resource to load.  This should be
           *    either a filename or a path relative to the resource paths
           *    registered with the terrain.
           * @resourcePaths The result list filled with absolute paths to
           *    all resources matching the specified path.
           */
-         void FindAllResources(const std::string &path, 
+         void FindAllResources(const std::string &path,
             std::vector<std::string> &resourcePaths);
-         
+
          /**
           * Gets the height of the terrain at the given (x,y) coordinates.
           * @note This just calls the current terrain renderer's GetHeight
@@ -184,17 +184,17 @@ namespace dtTerrain
          float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
          virtual void LoadTerrainTile(PagedTerrainTile &newTile);
-         
+
          virtual void UnloadTerrainTile(PagedTerrainTile &toRemove);
-         
+
          virtual void UnloadAllTerrainTiles();
-         
-         virtual PagedTerrainTile *CreateTerrainTile(const GeoCoordinates &coords);         
-         
-         virtual bool IsTerrainTileResident(const GeoCoordinates &coords);         
-         
+
+         virtual PagedTerrainTile *CreateTerrainTile(const GeoCoordinates &coords);
+
+         virtual bool IsTerrainTileResident(const GeoCoordinates &coords);
+
          virtual void EnsureTileVisibility(const std::set<GeoCoordinates> &coordList);
-         
+
          /**
           * Sets the path of the terrain cache.  The terrain cache is a directory
           * somewhere on the hard drive which is used to store on the fly data
@@ -211,53 +211,53 @@ namespace dtTerrain
           * @throws Exception if the path does not exist and cannot be created.
           */
          bool SetCachePath(const std::string &path);
-         
+
          /**
           * Gets the current terrain cache.
           * @return The base cache path for this terrain.
           */
          const std::string &GetCachePath() const { return mCachePath; }
-         
+
          void SetLoadDistance(float value) { mLoadDistance = value; }
-         
+
          float GetLoadDistance() const { return mLoadDistance; }
-         
+
          /**
-          * Sets the terrain data reader.  This must be set before any terrain can 
+          * Sets the terrain data reader.  This must be set before any terrain can
           * be loaded.
           */
          void SetDataReader(TerrainDataReader *reader);
-         
+
          /**
           * Gets the current terrain data reader.
           * @return A data reader object.
           */
          TerrainDataReader *GetDataReader() { return mDataReader.get(); }
-         
+
          /**
           * Gets the current terrain data reader.
           * @return A const data reader object.
           */
          const TerrainDataReader *GetDataReader() const { return mDataReader.get(); }
-         
+
          /**
           * Sets the terrain data renderer.  This must be set before any terrain can be
           * loaded and rendered.
-          */          
+          */
          void SetDataRenderer(TerrainDataRenderer *renderer);
-         
+
          /**
           * Gets the current terrain data renderer.
           * @return A data renderer object.
           */
          TerrainDataRenderer *GetDataRenderer() { return mDataRenderer.get(); }
-         
+
          /**
           * Gets the current terrain data renderer.
           * @return A const data renderer object.
           */
          const TerrainDataRenderer *GetDataRenderer() const { return mDataRenderer.get(); }
-         
+
          /**
           * Adds a new decoration layer to this terrain.
           * @param newLayer The new layer to add.
@@ -267,7 +267,7 @@ namespace dtTerrain
           *    a unique identifier and a warning is logged.
           */
          void AddDecorationLayer(TerrainDecorationLayer *newLayer);
-         
+
          /**
           * Removes the specified decoration layer from this terrain.
           * @param toRemove The layer to remove.
@@ -275,22 +275,22 @@ namespace dtTerrain
           *    from this terrain.
           */
          void RemoveDecorationLayer(TerrainDecorationLayer *toRemove);
-         
+
          /**
           * Removes a decoration layer matching the specified name.
           * @param name The name of the terrain layer to remove.
           */
          void RemoveDecorationLayer(const std::string &name);
-         
+
          /**
-          * Gets the decoration layer whos name matches the specified 
+          * Gets the decoration layer whos name matches the specified
           * parameter.
           * @param name The name of the layer to retrieve.
           * @return A valid decoration layer or NULL if the layer could not
           *    be found.
           */
          TerrainDecorationLayer *GetDecorationLayer(const std::string &name);
-         
+
          /**
           * Gets the decoration layer who's name matches the specified
           * parameter.
@@ -298,7 +298,7 @@ namespace dtTerrain
           * @return A valid decoration layer or NULL if the layer could not be found.
           */
          const TerrainDecorationLayer *GetDecorationLayer(const std::string &name) const;
-         
+
          /**
           * Gets the number of decorator layers currently overlaid on this terrain.
           * @return The number of layers.
@@ -307,36 +307,36 @@ namespace dtTerrain
          {
             return mDecorationLayers.size();
          }
-         
+
          /**
           * Removes all the decorator layers from this terrain.
           */
          void ClearDecorationLayers();
-         
+
          /**
           * Hides the decoration layer that matches the specified name.
           * @param name The name of the layer to hide.
           */
          void HideDecorationLayer(const std::string &name);
-         
+
          /**
           * Hides the specified decoration layer.
           * @param toHide The layer to hide.
           */
          void HideDecorationLayer(TerrainDecorationLayer *toHide);
-         
+
          /**
           * Makes the decoration layer matching the specified name visible.
           * @param name The name of the layer to show.
           */
          void ShowDecorationLayer(const std::string &name);
-         
+
          /**
           * Makes the specified decoration layer visible in the scene.
           * @param The layer to make visible.
           */
          void ShowDecorationLayer(TerrainDecorationLayer *toShow);
-         
+
          /**
           * Fills a vector with the decoration layers currently attached to this
           * terrain.
@@ -345,57 +345,57 @@ namespace dtTerrain
           *    passed to this method will be destroyed.
           */
          void GetDecorationLayers(std::vector<dtCore::RefPtr<TerrainDecorationLayer> > &layers);
-         
+
          void SetTerrainTileFactory(PagedTerrainTileFactory &factory) { mTileFactory = &factory; }
-         
+
          PagedTerrainTileFactory *GetTerrainTileFactory() { return mTileFactory.get(); }
-         
+
          virtual void OnMessage(dtCore::Base::MessageData *data);
-            
+
       protected:
-      
+
          ///Cleans up the terrain and its components.
          virtual ~Terrain();
-         
+
          virtual void PreFrame(double frameTime);
-         
+
          virtual void PostFrame(double frameTime);
-   
+
          ///List of terrain tiles currently queued up for loading.
          std::queue<dtCore::RefPtr<PagedTerrainTile> > mTilesToLoadQ;
-         
+
          ///List of terrain tiles which are currently loaded into memory.
          TerrainTileMap mResidentTiles;
-         
+
          ///Queue of terrain tiles that need to be cached or destroyed.
          std::queue<dtCore::RefPtr<PagedTerrainTile> > mTilesToUnloadQ;
-   
+
       private:
-         
+
          ///Full path to the terrain cache directory.
          std::string mCachePath;
-         
-         ///This specifies a radius which tells the terrain how many terrain tiles 
+
+         ///This specifies a radius which tells the terrain how many terrain tiles
          ///to load into memory.
          float mLoadDistance;
-         
+
          ///List of resource paths used by the terrain, its reader, and its
          ///renderer to search for data.
          std::list<std::string> mResourcePathList;
-         
+
          ///The current terrain data reader.
          dtCore::RefPtr<TerrainDataReader> mDataReader;
-         
+
          ///The current terrain data renderer.
          dtCore::RefPtr<TerrainDataRenderer> mDataRenderer;
-         
+
          ///The current terrain tile creation factory.
          dtCore::RefPtr<PagedTerrainTileFactory> mTileFactory;
-         
-         ///List of the layers currently attached to this terrain.
-         TerrainLayerMap mDecorationLayers;  
 
-		   float mLOSPostSpacing;
+         ///List of the layers currently attached to this terrain.
+         TerrainLayerMap mDecorationLayers;
+
+         float mLOSPostSpacing;
    };
 
    /**
@@ -405,11 +405,11 @@ namespace dtTerrain
     *
     * This routine ONLY checks visibility against ground terrain!  We do not
     * check test against other objects, such as buildings or other vehicles.
-    * 
+    *
     * Sampling rate: our DTED data is sampled at about 30m resolution. Therefore
     * we adjust the postSpacing to be smaller than that, and use that to step along
     * the viewing ray.
-    * 
+    *
     * This uses dtTerrain::GetHeight which uses the current Renderer
     * this may be cause lots extra work, especially when called repeatedly
     * might be better to do it directly on heightField of tile?

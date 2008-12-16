@@ -118,7 +118,9 @@ namespace dtAudio
          if(snd != NULL)
          {
             if(snd->GetFilename())
+            {
                snd->UnloadFile();
+            }
          }
     }
 
@@ -142,6 +144,8 @@ namespace dtAudio
        if( sound != NULL )
        {
           sound->Stop();
+
+          GetGameManager()->ClearTimer(SoundActorProxy::TIMER_NAME.Get(), this);
        }
     }
 
@@ -175,7 +179,7 @@ namespace dtAudio
     void SoundActorProxy::BuildPropertyMap()
     {
         const dtUtil::RefString &GROUPNAME = "Sound";
-        TransformableActorProxy::BuildPropertyMap();
+        GameActorProxy::BuildPropertyMap();
 
         Sound *sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
         
@@ -333,7 +337,9 @@ namespace dtAudio
         Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
         if(!fileName.empty())
+        {
             snd->LoadFile(fileName.c_str());
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -385,7 +391,7 @@ namespace dtAudio
     {
        if(mRandomSoundEffect)
        {
-          offsetSeconds += float(dtUtil::RandRange(mMinRandomTime, mMaxRandomTime));
+          offsetSeconds += float(dtUtil::RandFloat(mMinRandomTime, mMaxRandomTime));
        }
 
        GetGameManager()->SetTimer(SoundActorProxy::TIMER_NAME.Get(), this, offsetSeconds);
@@ -397,7 +403,7 @@ namespace dtAudio
         if(!mBillBoardIcon.valid()) 
         {
             mBillBoardIcon =
-                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::SOUND);
+                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_SOUND);
         }
 
         return mBillBoardIcon.get();

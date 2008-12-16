@@ -36,6 +36,8 @@
 #include <dtDAL/map.h>
 #include <dtEditQt/typedefs.h>
 
+class QSplitter;
+
 namespace dtEditQt 
 {
 
@@ -60,15 +62,6 @@ namespace dtEditQt
           */
          MainWindow();
 
-         /**
-          * Overloaded so that the context menu is not displayed.  By default, the MainWindow
-          * displays a right-click menu when the right mouse button is clicked.  Unfortunantly,
-          * this causes problems for other right mouse button behavior.
-          * @todo
-          *  Allow application wide right click menu when mouse is only over certain
-          *  widgets.
-          */
-         QMenu *createPopupMenu() { return NULL; }
 
          /**
           * Adds custom library paths as specified by the user settings
@@ -183,6 +176,9 @@ namespace dtEditQt
          // aren't visible yet. 
          void setWindowMenuTabsChecked();
 
+         void RebuildToolsMenu(const QList<QAction*>& actions);
+
+
       protected:
          /**
           * Called when the window receives the event to close itself.
@@ -199,12 +195,13 @@ namespace dtEditQt
          QMenu *helpMenu;
          QMenu *recentProjs;
          QMenu *recentMaps;
+         QMenu* mToolsMenu;
 
          QToolBar *fileToolBar;
          QToolBar *editToolBar;
          QToolBar *undoToolBar;
          QToolBar *selectionToolBar;
-         QToolBar *subeditorToolBar;
+         QToolBar *mExternalToolsToolBar;
 
          PerspectiveViewport *perspView;
          OrthoViewport *topView;
@@ -217,6 +214,7 @@ namespace dtEditQt
          ResourceBrowser *resourceBrowser;
 
          QWidget *mainViewportParent;
+         QList<QSplitter*> mSplitters;
 
          /**
           * Connects the signals and slots the main window needs.
@@ -256,6 +254,12 @@ namespace dtEditQt
          QWidget *setupViewports();
 
          void checkAndLoadBackup(const std::string &str);
+
+         /** 
+           * Reset the splitters to equally divide the screen.
+           */
+         void ResetSplitters();
+
 
          friend class EditorActions;
    };
