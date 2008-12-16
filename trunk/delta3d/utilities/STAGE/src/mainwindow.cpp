@@ -608,6 +608,17 @@ namespace dtEditQt
         EditorActions::GetInstance().wasCancelled ? e->ignore() : e->accept();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    void MainWindow::keyPressEvent(QKeyEvent* e)
+    {
+       QMainWindow::keyPressEvent(e);
+
+       if(e->key() == Qt::Key_Home) ///<Go to currently selected item
+       {
+          EditorActions::GetInstance().slotEditGotoActor();
+       }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onPropertyEditorSelection()
     {
@@ -708,6 +719,8 @@ namespace dtEditQt
             this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
            this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+        connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)), 
+           this, SLOT(showStatusBarMessage(const QString, int)));
 
         connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<QAction*>&)),
                 this, SLOT(RebuildToolsMenu(const QList<QAction*>&)));
@@ -1010,6 +1023,12 @@ namespace dtEditQt
 
        mToolsMenu->addSeparator();
        mToolsMenu->addAction(EditorActions::GetInstance().actionAddTool);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void MainWindow::showStatusBarMessage(const QString message, int timeout)
+    {
+       statusBar()->showMessage(message, timeout);
     }
 
     //////////////////////////////////////////////////////////////////////////

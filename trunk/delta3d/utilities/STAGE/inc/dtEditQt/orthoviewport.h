@@ -155,6 +155,21 @@ namespace dtEditQt
              */
             void resizeGL(int width, int height);
 
+            /**
+             * Called when the user presses a key on the keyboard in the viewport.
+             * Based on the combination of keys pressed, the viewport's current
+             * mode will be set.
+             * @param e
+             */
+            void keyPressEvent(QKeyEvent *e);
+
+            /**
+             * Called when the user releases a key on the keyboard in the viewport.
+             * Based on the keys released, the viewport's current mode is
+             * updated accordingly.
+             * @param e
+             */
+            void keyReleaseEvent(QKeyEvent *e);
 
             /**
              * Called when the user releases a mouse button in the viewport.  Based on
@@ -253,6 +268,12 @@ namespace dtEditQt
             const InteractionModeExt *currentMode;
             const OrthoViewType *viewType;
             osg::Vec3 zoomToPosition;
+            float translationDeltaX;
+            float translationDeltaY;
+            float translationDeltaZ;
+            float rotationDeltaX;
+            float rotationDeltaY;
+            float rotationDeltaZ;
 
             //Allow the ViewportManager access to this class.
             friend class ViewportManager;

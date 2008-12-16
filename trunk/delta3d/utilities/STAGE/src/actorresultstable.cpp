@@ -65,6 +65,7 @@ namespace dtEditQt
         mResultsTree->setSortingEnabled(true);
         mResultsTree->setSelectionMode(QTreeView::ExtendedSelection);
         mResultsTree->setSelectionBehavior(QTreeView::SelectRows);
+        connect(mResultsTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(gotoPressed()));
         // set the headers
         QStringList headerLabels;
         headerLabels << "Name" << "Category" << "Type";
