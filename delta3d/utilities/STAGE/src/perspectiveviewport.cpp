@@ -31,6 +31,7 @@
 #include <QtGui/QAction>
 #include <sstream>
 #include <osg/Billboard>
+#include <osg/Math>
 #include <osgDB/WriteFile>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
@@ -65,6 +66,12 @@ namespace dtEditQt
     PerspectiveViewport::PerspectiveViewport(const std::string &name, QWidget *parent,
         QGLWidget *shareWith) :
             Viewport(ViewportManager::ViewportType::PERSPECTIVE,name,parent,shareWith)
+            , translationDeltaX(0.0f)
+            , translationDeltaY(0.0f)
+            , translationDeltaZ(0.0f)
+            , rotationDeltaX(0.0f)
+            , rotationDeltaY(0.0f)
+            , rotationDeltaZ(0.0f)
     {
         this->currentMode = &InteractionModeExt::NOTHING;
         this->camera = ViewportManager::GetInstance().getWorldViewCamera();
@@ -87,6 +94,43 @@ namespace dtEditQt
     {
         Viewport::initializeGL();
         setRenderStyle(Viewport::RenderStyle::TEXTURED,false);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void PerspectiveViewport::keyPressEvent(QKeyEvent* e)
+    {
+       Viewport::keyPressEvent(e);
+
+       if(e->key() == ' ') ///<Cycle through interaction modes with space
+       {
+          if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+          {
+             EditorActions::GetInstance().actionSelectionSelectActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionTranslateActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionRotateActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionCamera->trigger();
+          }
+       }
+       else if(e->key()==Qt::Key_A)
+       {
+          //If the 'A' key is pressed, try to create an actor
+          EditorEvents::GetInstance().emitCreateActor();
+       }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void PerspectiveViewport::keyReleaseEvent(QKeyEvent* e)
+    {
+       Viewport::keyReleaseEvent(e);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -145,21 +189,26 @@ namespace dtEditQt
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void PerspectiveViewport::mouseReleaseEvent(QMouseEvent *e)
-    {
-        if (getInteractionMode() != Viewport::InteractionMode::SELECT_ACTOR) {
-            if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {
-                endCameraMode(e);
-            }
-            else {
-               endActorMode(e);
-            }
-        }
-        else {
-            syncWithModeActions();
-        }
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void PerspectiveViewport::mouseReleaseEvent(QMouseEvent *e)
+   {
+      if (getInteractionMode() != Viewport::InteractionMode::SELECT_ACTOR)
+      {
+         if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+         {
+            endCameraMode(e);
+
+         }
+         else
+         {
+            endActorMode(e);
+         }
+      }
+      else
+      {
+         syncWithModeActions();
+      }
+   }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
@@ -302,6 +351,14 @@ namespace dtEditQt
             //If a modifier key was pressed the current interaction mode was
             //temporarily overridden, so make sure we restore the previous mode.
             syncWithModeActions();
+
+            // Clear out the status bar values
+            translationDeltaX = 0.0f;
+            translationDeltaY = 0.0f;
+            translationDeltaZ = 0.0f;
+            rotationDeltaX = 0.0f;
+            rotationDeltaY = 0.0f;
+            rotationDeltaZ = 0.0f;
         }
     }
 
@@ -354,31 +411,46 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::translateCurrentSelection(QMouseEvent *e, float dx, float dy)
     {
-        osg::Vec3 trans;
-        ViewportOverlay::ActorProxyList::iterator itor;
-        ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+       osg::Vec3 trans;
+       ViewportOverlay::ActorProxyList::iterator itor;
+       ViewportOverlay::ActorProxyList &selection =
+          ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
-        trans.set(0,0,0);
-        if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
-            trans[0] = -dy / getMouseSensitivity();
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
-            trans[1] = -dy / getMouseSensitivity();
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
-            trans[2] = -dy / getMouseSensitivity();
+       trans.set(0,0,0);
+       if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
+       {
+          trans[0] = -dy / getMouseSensitivity();
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
+       {
+          trans[1] = -dy / getMouseSensitivity();
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
+       {
+          trans[2] = -dy / getMouseSensitivity();
+       }
 
-        osg::Vec3 currTrans;
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
-            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy =
-                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+       osg::Vec3 currTrans;
+       for (itor=selection.begin(); itor!=selection.end(); ++itor)
+       {
+          dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
+          dtDAL::TransformableActorProxy *tProxy =
+             dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (tProxy != NULL) {
-                currTrans = tProxy->GetTranslation();
-                currTrans += trans;
-                tProxy->SetTranslation(currTrans);
-            }
-        }
+          if (tProxy != NULL)
+          {
+             currTrans = tProxy->GetTranslation();
+             currTrans += trans;
+             tProxy->SetTranslation(currTrans);
+
+             // Update the status bar with current movement
+             translationDeltaX += trans[0];
+             translationDeltaY += trans[1];
+             translationDeltaZ += trans[2];
+             EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+                "Current Translation - X: %1 Y: %2 Z: %3").arg(translationDeltaX).arg(translationDeltaY).arg(translationDeltaZ), 2000);
+          }
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -399,13 +471,26 @@ namespace dtEditQt
                 float delta = dy / getMouseSensitivity();
 
                 if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
+                {
                     hpr.x() += delta;
+                    rotationDeltaX += delta;
+                }
                 else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
+                {
                     hpr.y() += delta;
+                    rotationDeltaY += delta;
+                }
                 else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
+                {
                     hpr.z() += delta;
+                    rotationDeltaZ += delta;
+                }
 
                 tProxy->SetRotation(hpr);
+ 
+                // Update the status bar with current rotation (converted from radians to degrees)
+                EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+                   "Current Rotation - Pitch: %1° Roll: %2° Yaw: %3°").arg(rotationDeltaX).arg(rotationDeltaY).arg(rotationDeltaZ), 2000);
             }
         }
     }

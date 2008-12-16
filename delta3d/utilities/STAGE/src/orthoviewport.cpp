@@ -28,11 +28,13 @@
 */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QAction>
 #include <osg/Math>
 #include <osg/CullSettings>
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
+#include <dtEditQt/editoractions.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
 
@@ -65,6 +67,12 @@ namespace dtEditQt
     OrthoViewport::OrthoViewport(const std::string &name, QWidget *parent,
         QGLWidget *shareWith) :
             Viewport(ViewportManager::ViewportType::ORTHOGRAPHIC,name,parent,shareWith)
+            , translationDeltaX(0.0f)
+            , translationDeltaY(0.0f)
+            , translationDeltaZ(0.0f)
+            , rotationDeltaX(0.0f)
+            , rotationDeltaY(0.0f)
+            , rotationDeltaZ(0.0f)
     {
         this->camera = new StageCamera();
         this->currentMode = &OrthoViewport::InteractionModeExt::NOTHING;
@@ -122,6 +130,37 @@ namespace dtEditQt
                        "It has not been initialized.", __FILE__, __LINE__);
             refresh();
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void OrthoViewport::keyPressEvent(QKeyEvent* e)
+    {
+       Viewport::keyPressEvent(e);
+       if(e->key() == ' ') ///<Cycle through interaction modes with space
+       {
+          if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+          {
+             EditorActions::GetInstance().actionSelectionSelectActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionTranslateActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionRotateActor->trigger();
+          }
+          else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionCamera->trigger();
+          }
+       }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    void OrthoViewport::keyReleaseEvent(QKeyEvent* e)
+    {
+       Viewport::keyReleaseEvent(e);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -348,90 +387,146 @@ namespace dtEditQt
             //If a modifier key was pressed the current interaction mode was
             //temporarily overridden, so make sure we restore the previous mode.
             syncWithModeActions();
-        }
+
+            // Clear out the status bar values
+            translationDeltaX = 0.0f;
+            translationDeltaY = 0.0f;
+            translationDeltaZ = 0.0f;
+            rotationDeltaX = 0.0f;
+            rotationDeltaY = 0.0f;
+            rotationDeltaZ = 0.0f;
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::translateCurrentSelection(QMouseEvent *e, float dx, float dy)
     {
-        osg::Vec3 trans;
-        ViewportOverlay::ActorProxyList::iterator itor;
-        ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+       osg::Vec3 trans;
+       ViewportOverlay::ActorProxyList::iterator itor;
+       ViewportOverlay::ActorProxyList &selection =
+          ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
 
-        float xAmount = (dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
-        float yAmount = (-dy/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
+       float xAmount = (dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
+       float yAmount = (-dy/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
 
-        //Actors are translated along the camera's view plane.
-        if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
-            trans = getCamera()->getRightDir() * xAmount;
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
-            trans = getCamera()->getUpDir() * yAmount;
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH) {
-            trans = getCamera()->getRightDir() * xAmount;
-            trans += getCamera()->getUpDir() * yAmount;
-        }
+       //Actors are translated along the camera's view plane.
+       if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+       {
+          trans = getCamera()->getRightDir() * xAmount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+       {
+          trans = getCamera()->getUpDir() * yAmount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+       {
+          trans = getCamera()->getRightDir() * xAmount;
+          trans += getCamera()->getUpDir() * yAmount;
+       }
 
-        osg::Vec3 currTrans;
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
-            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy =
-                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+       osg::Vec3 currTrans;
+       for (itor=selection.begin(); itor!=selection.end(); ++itor)
+       {
+          dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
+          dtDAL::TransformableActorProxy *tProxy =
+              dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (tProxy != NULL)
-            {
-                currTrans = tProxy->GetTranslation();
-                currTrans += trans;
-                tProxy->SetTranslation(currTrans);
-            }
-        }
+          if (tProxy != NULL)
+          {
+             currTrans = tProxy->GetTranslation();
+             currTrans += trans;
+             tProxy->SetTranslation(currTrans);
+
+             // Update the status bar with current movement
+             translationDeltaX += trans[0];
+             translationDeltaY += trans[1];
+             translationDeltaZ += trans[2];
+             EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+                "Current Translation - X: %1 Y: %2 Z: %3").arg(translationDeltaX).arg(translationDeltaY).arg(translationDeltaZ), 2000);
+          }
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::rotateCurrentSelection(QMouseEvent *e, float dx, float dy)
     {
-        ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-        ViewportOverlay::ActorProxyList::iterator itor;
+       ViewportOverlay::ActorProxyList &selection =
+          ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+       ViewportOverlay::ActorProxyList::iterator itor;
 
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
-            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy =
-                    dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+       for (itor=selection.begin(); itor!=selection.end(); ++itor)
+       {
+          dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
+          dtDAL::TransformableActorProxy *tProxy =
+             dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (tProxy != NULL)
-            {
-                osg::Vec3 hpr = tProxy->GetRotation();
-                float delta = dy / getMouseSensitivity();
+          if (tProxy != NULL)
+          {
+             osg::Vec3 hpr = tProxy->GetRotation();
+             float delta = dy / getMouseSensitivity();
 
-                if (*this->viewType == OrthoViewType::TOP) {
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
-                        hpr.z() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
-                        hpr.x() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
-                        hpr.y() += delta;
+             if (*this->viewType == OrthoViewType::TOP)
+             {
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                {
+                   hpr.z() += delta;
+                   rotationDeltaZ += delta;
                 }
-                else if (*this->viewType == OrthoViewType::SIDE) {
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
-                        hpr.x() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
-                        hpr.y() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
-                        hpr.z() += delta;
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                {
+                   hpr.x() += delta;
+                   rotationDeltaX += delta;
                 }
-                else if (*this->viewType == OrthoViewType::FRONT) {
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
-                        hpr.y() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
-                        hpr.x() += delta;
-                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
-                        hpr.z() += delta;
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                {
+                   hpr.y() += delta;
+                   rotationDeltaY += delta;
                 }
+             }
+             else if (*this->viewType == OrthoViewType::SIDE)
+             {
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                {
+                   hpr.x() += delta;
+                   rotationDeltaX += delta;
+                }
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                {
+                   hpr.y() += delta;
+                   rotationDeltaY += delta;
+                }
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                {
+                   hpr.z() += delta;
+                   rotationDeltaZ += delta;
+                }
+             }
+             else if (*this->viewType == OrthoViewType::FRONT)
+             {
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                {
+                   hpr.y() += delta;
+                   rotationDeltaY += delta;
+                }
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                {
+                   hpr.x() += delta;
+                   rotationDeltaX += delta;
+                }
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                {
+                   hpr.z() += delta;
+                   rotationDeltaZ += delta;
+                }
+             }
 
-                tProxy->SetRotation(hpr);
-            }
-        }
+             tProxy->SetRotation(hpr);
+
+             // Update the status bar with current rotation (converted from radians to degrees)
+             EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+                "Current Rotation - Pitch: %1° Roll: %2° Yaw: %3°").arg(rotationDeltaX).arg(rotationDeltaY).arg(rotationDeltaZ), 2000);
+          }
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

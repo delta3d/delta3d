@@ -178,12 +178,25 @@ namespace dtEditQt
 
          void RebuildToolsMenu(const QList<QAction*>& actions);
 
+         /**
+         * Shows a specific message on the status bar.
+         */
+         void showStatusBarMessage(const QString message, int timeout);
+
 
       protected:
          /**
           * Called when the window receives the event to close itself.
           */
          void closeEvent(QCloseEvent *e);
+
+         /**
+          * Called when the user presses a key on the keyboard in the viewport.
+          * Based on the combination of keys pressed, the viewport's current
+          * mode will be set.
+          * @param e
+          */
+         void keyPressEvent(QKeyEvent *e);
 
       private:
 

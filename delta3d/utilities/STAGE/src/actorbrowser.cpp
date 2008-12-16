@@ -60,6 +60,8 @@ namespace dtEditQt
             this, SLOT(refreshActorTypes()));
         connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(clearActorTypesTree()));
+        connect(&EditorEvents::GetInstance(), SIGNAL(createActor()),
+           this, SLOT(createActorPressed()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

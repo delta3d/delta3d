@@ -143,6 +143,22 @@ namespace dtEditQt
             void resizeGL(int width, int height);
 
             /**
+             * Called when the user presses a key on the keyboard in the viewport.
+             * Based on the combination of keys pressed, the viewport's current
+             * mode will be set.
+             * @param e
+             */
+            void keyPressEvent(QKeyEvent *e);
+
+            /**
+             * Called when the user releases a key on the keyboard in the viewport.
+             * Based on the keys released, the viewport's current mode is
+             * updated accordingly.
+             * @param e
+             */
+            void keyReleaseEvent(QKeyEvent *e);
+
+            /**
              * Called when the user presses a mouse button in the viewport.  Based on
              * the combination of buttons pressed, the viewport's current mode will
              * be set.
@@ -243,6 +259,12 @@ namespace dtEditQt
          private:
             const InteractionModeExt *currentMode;
             bool attachActorToCamera;
+            float translationDeltaX;
+            float translationDeltaY;
+            float translationDeltaZ;
+            float rotationDeltaX;
+            float rotationDeltaY;
+            float rotationDeltaZ;
 
             ///Allow the ViewportManager access to it can create perspective viewports.
             friend class ViewportManager;

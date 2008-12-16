@@ -67,10 +67,21 @@ namespace dtEditQt
          void emitActorsSelected(ActorProxyRefPtrVector &actors);
 
          /**
-            * All the viewports should center on this actor.  Each visible should maintain
-            * their current focus.
-            */
+          * All the viewports should center on this actor.  Each visible should maintain
+          * their current focus.
+          */
          void emitGotoActor(ActorProxyRefPtr actor);
+
+         /**
+          * All the viewports should center on this location.
+          */
+         void emitGotoPosition(double x, double y, double z);
+
+         /**
+          * Create an actor using the functionality of the ActorBrowser's
+          * Create Actor button
+          */
+         void emitCreateActor();
 
          /**
             * A new ActorProxy was created in the UI.  Anybody that needs to know about the new object
@@ -196,6 +207,8 @@ namespace dtEditQt
          /// Emitted when an editor preference changes.
          void emitEditorPreferencesChanged();
 
+         /// Emitted when something wants to display a status bar message.
+         void emitShowStatusBarMessage(const QString message, int timeout);
 
          ///Emitted right after a game event has been added.
          void emitGameEventAdded();
@@ -209,7 +222,6 @@ namespace dtEditQt
          ///Emitted right before a game event is removed from the map.
          void emitGameEventAboutToBeRemoved();
 
-         void emitGotoPosition(double x, double y, double z);
 
           
           
@@ -217,6 +229,7 @@ namespace dtEditQt
          void selectedActors(ActorProxyRefPtrVector &actors);
          void gotoActor(ActorProxyRefPtr actor);
          void gotoPosition(double x, double y, double z);
+         void createActor();
          void actorProxyCreated(ActorProxyRefPtr proxy, bool forceNoAdjustments);
          void actorProxyAboutToBeDestroyed(ActorProxyRefPtr proxy);
          void actorProxyDestroyed(ActorProxyRefPtr proxy);
@@ -242,6 +255,8 @@ namespace dtEditQt
          void editorCloseEvent();
          void mapPropertyChanged();
          void editorPreferencesChanged();
+
+         void showStatusBarMessage(const QString message, int timeout);
 
       private:
          EditorEvents();

@@ -75,6 +75,12 @@ namespace dtEditQt
       emit EditorEvents::gotoPosition(x, y, z);
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitCreateActor()
+   {
+      emit createActor();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
    {
@@ -229,6 +235,12 @@ namespace dtEditQt
    {
       LOG_INFO("User preferences have changed.");
       emit editorPreferencesChanged();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void EditorEvents::emitShowStatusBarMessage(const QString message, int timeout)
+   {
+      emit showStatusBarMessage(message, timeout);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
