@@ -63,7 +63,7 @@ void ObjectViewer::Config()
 
    std::string exampleDataPath = dtCore::GetEnvironment("DELTA_ROOT");
    std::string rootDataPath    = dtCore::GetEnvironment("DELTA_DATA");
-   exampleDataPath += "/examples/data;" + rootDataPath;
+   exampleDataPath += ";" + rootDataPath;
 
    dtCore::SetDataFilePathList(dtCore::GetDataFilePathList() + ";" + exampleDataPath);
 
@@ -97,7 +97,7 @@ void ObjectViewer::Config()
    mShadeDecorator = new osg::Group;
 
    mLightArrow = new dtCore::Object;
-   mLightArrow->LoadFile("models/LightArrow.ive");
+   mLightArrow->LoadFile("examples/data/models/LightArrow.ive");
 
    dtCore::Transform lightArrowTransform;
    lightArrowTransform.SetTranslation(0.0f, 0.0f, 0.0f);
@@ -141,9 +141,8 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
       shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
 
       // Emit all shader groups and their individual shaders
+      for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
       {
-         size_t groupIndex = shaderGroupList.size() - 1;
-
          std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
          shaderGroupList[groupIndex]->GetAllShaders(programList);
 
