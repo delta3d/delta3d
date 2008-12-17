@@ -22,14 +22,16 @@
 #ifndef DELTA_TEXTURE2DSHADERPARAMETER
 #define DELTA_TEXTURE2DSHADERPARAMETER
 
+////////////////////////////////////////////////////////////////////////////////
+
 #include <dtCore/shaderparamtexture.h>
 #include <dtCore/export.h>
 
 namespace dtCore
 {
    /**
-     * This class represents a 2D texture parameter.
-     */
+    * This class represents a 2D texture parameter.
+    */
    class DT_CORE_EXPORT ShaderParamTexture2D : public ShaderParamTexture
    {
       public:
@@ -37,13 +39,13 @@ namespace dtCore
          /**
           * Constructs the texture parameter.
           */
-         ShaderParamTexture2D(const std::string &name);
+         ShaderParamTexture2D(const std::string& name);
 
          /**
           * Gets the type of this shader parameter.
           * @return SAMPLER_2D.
           */
-         virtual const ShaderParameter::ParamType &GetType() const
+         virtual const ShaderParameter::ParamType& GetType() const
          {
             return ShaderParameter::ParamType::SAMPLER_2D;
          }
@@ -51,7 +53,7 @@ namespace dtCore
          /**
           * Assigns the 2D texture parameter to the render state.
           */
-         virtual void AttachToRenderState(osg::StateSet &stateSet);
+         virtual void AttachToRenderState(osg::StateSet& stateSet);
 
          /**
           * Each shader parameter has this chance to clean itself up from the
@@ -59,7 +61,7 @@ namespace dtCore
           * that it set when it was attached.
           * @param stateSet The render state to cleanup.
           */
-         virtual void DetachFromRenderState(osg::StateSet &stateSet);
+         virtual void DetachFromRenderState(osg::StateSet& stateSet);
 
          /**
           * Sets the Filters and wrap modes on the Texture2D object.
@@ -76,11 +78,11 @@ namespace dtCore
           * @param path The path to the texture file.  Must be relative to
           *    the current delta3d data file path.
           */
-         virtual void SetTexture(const std::string &path);
+         virtual void SetTexture(const std::string& path);
 
          /**
           * Loads the image.  Called when SetTexture is called.
-          */ 
+          */
          void LoadImage();
 
          /**
@@ -91,14 +93,14 @@ namespace dtCore
           * @param axis The axis enumeration to assign the address mode to.
           * @param mode The address mode enumeration to assign.
           */
-         void SetAddressMode(const TextureAxis &axis, const AddressMode &mode);
+         void SetAddressMode(const TextureAxis& axis, const AddressMode& mode);
 
          /**
           * Makes a deep copy of the Shader Parameter. Used when a user assigns
           * a shader to a node because we clone the template shader and its parameters.
           * Note - Like Update(), this is a pure virtual method that must be implemented on each param.
           */
-         virtual ShaderParameter *Clone();
+         virtual ShaderParameter* Clone();
 
       protected:
 
@@ -108,14 +110,15 @@ namespace dtCore
          virtual ~ShaderParamTexture2D();
 
       private:
-
          // Disallowed to prevent compile errors on VS2003. It apparently
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will
          // cause compiler errors for missing calls to "ref".
-         ShaderParamTexture2D& operator=( const ShaderParamTexture2D& ); 
-         ShaderParamTexture2D( const ShaderParamTexture2D& );
+         ShaderParamTexture2D& operator=(const ShaderParamTexture2D&);
+         ShaderParamTexture2D(const ShaderParamTexture2D&);
    };
-}
+} // namespace dtCore
 
-#endif
+////////////////////////////////////////////////////////////////////////////////
+
+#endif // DELTA_TEXTURE2DSHADERPARAMETER

@@ -22,6 +22,8 @@
 #ifndef DELTA_ENUMERATION
 #define DELTA_ENUMERATION
 
+////////////////////////////////////////////////////////////////////////////////
+
 #include <string>
 #include <vector>
 #include <ostream>
@@ -156,49 +158,50 @@ namespace dtUtil
 
 
 /**
-* Helper macros used to create the static data and methods
-* needed to enumerate an enumeration.
-*/
-#define DECLARE_ENUM(EnumType)                          \
-private:                                                \
-   static std::vector<EnumType*> mInstances;           \
+ * Helper macros used to create the static data and methods
+ * needed to enumerate an enumeration.
+ */
+#define DECLARE_ENUM(EnumType)                                 \
+private:                                                       \
+   static std::vector<EnumType*> mInstances;                   \
    static std::vector<dtUtil::Enumeration*> mGenericInstances; \
-   static void AddInstance(EnumType* instance) \
-   {                                                  \
-      EnumType::mInstances.push_back(instance);        \
-      EnumType::mGenericInstances.push_back(instance);        \
-   }                                                   \
-public:                                                 \
-   static const std::vector<EnumType*>& EnumerateType() \
-   {                                                 \
-      return EnumType::mInstances;                     \
-   }                                                   \
-                                                    \
+   static void AddInstance(EnumType* instance)                 \
+   {                                                           \
+      EnumType::mInstances.push_back(instance);                \
+      EnumType::mGenericInstances.push_back(instance);         \
+   }                                                           \
+public:                                                        \
+   static const std::vector<EnumType*>& EnumerateType()        \
+   {                                                           \
+      return EnumType::mInstances;                             \
+   }                                                           \
+                                                               \
    static const std::vector<dtUtil::Enumeration*>& Enumerate() \
-   {                                                 \
-      return EnumType::mGenericInstances;                     \
-   }                                                   \
-   \
-   static EnumType* GetValueForName(const std::string& name) \
-   {                                                  \
-      for (unsigned i = 0; i < mInstances.size(); i++) \
-      {                                      \
-         if (name == mInstances[i]->GetName()) \
-         {                                   \
-            return mInstances[i];              \
-         }                                     \
-      }                                         \
-      return NULL;                              \
+   {                                                           \
+      return EnumType::mGenericInstances;                      \
+   }                                                           \
+                                                               \
+   static EnumType* GetValueForName(const std::string& name)   \
+   {                                                           \
+      for (unsigned i = 0; i < mInstances.size(); ++i)         \
+      {                                                        \
+         if (name == mInstances[i]->GetName())                 \
+         {                                                     \
+            return mInstances[i];                              \
+         }                                                     \
+      }                                                        \
+      return NULL;                                             \
    }
 
-#define IMPLEMENT_ENUM(EnumType)                        \
+#define IMPLEMENT_ENUM(EnumType)                       \
    std::vector<EnumType*> EnumType::mInstances;        \
    std::vector<dtUtil::Enumeration*> EnumType::mGenericInstances;
-
-}
+} // namespace dtUtil
 
 #ifdef _MSC_VER
 #   pragma warning(pop)
 #endif
 
-#endif
+////////////////////////////////////////////////////////////////////////////////
+
+#endif // DELTA_ENUMERATION
