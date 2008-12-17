@@ -2,7 +2,7 @@
 
 <shaderlist>     
    
-   <shadergroup name="FX">    
+   <shadergroup name="TestBumpMap">    
 
       <shader name="TestBumpMap" default="no">
          <source type="Vertex">shaders/TestBumpMap.vert</source>        
