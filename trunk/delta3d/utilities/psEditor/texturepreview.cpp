@@ -1,9 +1,10 @@
 // texturepreview.cpp: Implementation of the TexturePreview class.
 //
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include "texturepreview.h"
 
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Constructor.
@@ -23,13 +24,13 @@ TexturePreview::TexturePreview(int x, int y, int w, int h, const char *label)
  *
  * @param texture the texture path
  */
-void TexturePreview::SetTexture(std::string texture)
+void TexturePreview::SetTexture(const std::string& texture)
 {
-	osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
-	options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_IMAGES);
+   osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+   options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_IMAGES);
 
-	mImage = osgDB::readImageFile(texture, options.get());
-         
+   mImage = osgDB::readImageFile(texture, options.get());
+
    redraw();
 }
 
@@ -40,7 +41,7 @@ void TexturePreview::SetTexture(std::string texture)
  */
 std::string TexturePreview::GetTexture()
 {
-   if(mImage.valid())
+   if (mImage.valid())
    {
       return mImage->getFileName();
    }
@@ -55,14 +56,14 @@ std::string TexturePreview::GetTexture()
  */
 void TexturePreview::draw()
 {
-   if(mImage.valid())
+   if (mImage.valid())
    {
       fl_draw_image(drawImageCallback, this, x(), y(), w(), h());
    }
    else
    {
       fl_color(255, 255, 255);
-      
+
       fl_rectf(x(), y(), w(), h());
    }
 }
@@ -79,41 +80,43 @@ void TexturePreview::draw()
 void TexturePreview::drawImageCallback(void* data, int x, int y, int w, uchar* buf)
 {
    TexturePreview* self = (TexturePreview*)data;
-   
+
    float sStep = (float)self->mImage->s()/self->w(),
          tStep = (float)self->mImage->t()/self->h(),
          s = x*sStep;
-   
-   int t = (self->mImage->t()-1)-(int)(y*tStep), 
+
+   int t = (self->mImage->t()-1)-(int)(y*tStep),
        components = osg::Image::computeNumComponents(self->mImage->getPixelFormat()),
        ptr = 0;
-   
-   for(int i=0;i<w;i++)
+
+   for (int i = 0; i < w; ++i)
    {
-      uchar* data = self->mImage->data((int)s, t);
-      
-      switch(components)
+      uchar* data = self->mImage->data(int(s), t);
+
+      switch (components)
       {
-         case 1:
-            buf[ptr++] = data[0];
-            buf[ptr++] = data[0];
-            buf[ptr++] = data[0];
-            break;
-            
-         case 3:
-            buf[ptr++] = data[0];
-            buf[ptr++] = data[1];
-            buf[ptr++] = data[2];
-            break;
-            
-         case 4:
-            float alpha = data[3]/255.0f;
-            buf[ptr++] = (uchar)(data[0]*alpha);
-            buf[ptr++] = (uchar)(data[1]*alpha);
-            buf[ptr++] = (uchar)(data[2]*alpha);
-            break;
+      case 1:
+         buf[ptr++] = data[0];
+         buf[ptr++] = data[0];
+         buf[ptr++] = data[0];
+         break;
+
+      case 3:
+         buf[ptr++] = data[0];
+         buf[ptr++] = data[1];
+         buf[ptr++] = data[2];
+         break;
+
+      case 4:
+         float alpha = data[3]/255.0f;
+         buf[ptr++] = (uchar)(data[0]*alpha);
+         buf[ptr++] = (uchar)(data[1]*alpha);
+         buf[ptr++] = (uchar)(data[2]*alpha);
+         break;
       }
-      
+
       s += sStep;
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
