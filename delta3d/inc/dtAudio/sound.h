@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -23,7 +23,7 @@
 
 // sound.h: Declaration of the Sound class.
 //
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/transformable.h>
 #include <dtAudio/export.h>
@@ -37,9 +37,11 @@ XERCES_CPP_NAMESPACE_BEGIN
   class DOMDocument;
 XERCES_CPP_NAMESPACE_END
 
+////////////////////////////////////////////////////////////////////////////////
+
 namespace dtAudio
 {
-   /** dtAudio::Sound 
+   /** dtAudio::Sound
     *
     * dtAudio::Sound is a little more than just an interface to an object
     * held within (and protected) by the dtAudio::AudioManager.
@@ -64,7 +66,7 @@ namespace dtAudio
     * immediately, Sound has two callback functions which, if set by
     * the user, will get fired off when the Sound actually starts
     * playing and when it actually stops playing.
-    * 
+    *
     * Sound is a transformable, so it can be a child of other
     * transformables.  When a Sound is child of another object, it
     * automatically gets positioned in scene-space relative to the
@@ -97,7 +99,7 @@ namespace dtAudio
    {
       DECLARE_MANAGEMENT_LAYER(Sound)
    public:
-      typedef void (*CallBack)(Sound* sound, void* param );  ///callback function type
+      typedef void (*CallBack)(Sound* sound, void* param);  ///callback function type
 
       class FrameData : public osg::Referenced
       {
@@ -166,7 +168,7 @@ namespace dtAudio
           *
           * @param data the received message
           */
-         virtual  void        OnMessage( MessageData* data );
+         virtual  void        OnMessage(MessageData* data);
 
       public:
          /**
@@ -174,19 +176,19 @@ namespace dtAudio
           *
           * @param file the name of the file to load
           */
-         virtual  void        LoadFile( const char* file );
+         virtual  void        LoadFile(const char* file);
 
          /**
           * Unloads the specified sound file.
           */
-         virtual  void        UnloadFile( void );
+         virtual  void        UnloadFile(void);
 
          /**
           * Returns the name of the loaded sound file.
           *
           * @return the name of the loaded file
           */
-         virtual  const char* GetFilename( void )              {  return   mFilename.c_str();   }
+         virtual  const char* GetFilename(void)              {  return   mFilename.c_str();   }
 
          /**
           * Set callback for when sound starts playing.
@@ -194,7 +196,7 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetPlayCallback( CallBack cb, void* param );
+         virtual  void        SetPlayCallback(CallBack cb, void* param);
 
          /**
           * Set callback for when sound stops playing.
@@ -202,48 +204,48 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetStopCallback( CallBack cb, void* param );
+         virtual  void        SetStopCallback(CallBack cb, void* param);
 
          /**
           * Starts playing this sound.
           */
-         virtual  void        Play( void );
+         virtual  void        Play(void);
 
          /**
           * Pauses playing this sound.
           */
-         virtual  void        Pause( void );
+         virtual  void        Pause(void);
 
          /**
           * Stops playing this sound.
           */
-         virtual  void        Stop( void );
+         virtual  void        Stop(void);
 
          /**
           * Rewinds to the beginning of this sound.
           */
-         virtual  void        Rewind( void );
+         virtual  void        Rewind(void);
 
          /**
           * Is sound playing. (overloaded function)
           *
           * @return true if playing
           */
-         virtual  bool        IsPlaying( void )                   const {  return   false;   }
+         virtual  bool        IsPlaying(void)                     const {  return   false;   }
 
          /**
           * Is sound paused. (overloaded function)
           *
           * @return true if playing
           */
-         virtual  bool        IsPaused( void )                    const {  return   false;   }
+         virtual  bool        IsPaused(void)                      const {  return   false;   }
 
          /**
           * Is sound stopped. (overloaded function)
           *
           * @return true if playing
           */
-         virtual  bool        IsStopped( void )                   const {  return   true;    }
+         virtual  bool        IsStopped(void)                     const {  return   true;    }
 
          /**
           * Sets whether or not to play the sound in a continuous loop.
@@ -251,7 +253,7 @@ namespace dtAudio
           * @param loop true to play the sound in a loop, false
           * otherwise
           */
-         virtual  void        SetLooping( bool loop = true );
+         virtual  void        SetLooping(bool loop = true);
 
          /**
           * Checks whether or not the sound plays in a continuous loop.
@@ -259,21 +261,21 @@ namespace dtAudio
           *
           * @return true if the sound plays in a loop, false otherwise
           */
-         virtual  bool        IsLooping( void )                   const {  return   false;   }
+         virtual  bool        IsLooping(void)                     const {  return   false;   }
 
          /**
           * Sets the gain of the sound source.
           *
           * @param gain the new gain
           */
-         virtual  void        SetGain( float gain );
+         virtual  void        SetGain(float gain);
 
          /**
           * Returns the gain of the sound source.
           *
           * @return the current gain
           */
-         virtual  float       GetGain( void )                     const {  return   mGain;    }
+         virtual  float       GetGain(void)                       const {  return   mGain;    }
 
          /**
           * Sets the pitch multiplier of the sound source.
@@ -287,7 +289,7 @@ namespace dtAudio
           *
           * @return the current pitch
           */
-         virtual  float       GetPitch( void )                    const {  return   mPitch;   }
+         virtual  float       GetPitch(void)                      const {  return   mPitch;   }
 
          /**
           * Flags sound to be relative to listener position.
@@ -302,7 +304,7 @@ namespace dtAudio
           *
           * @return relative true uses distance modeling
           */
-         virtual  bool        IsListenerRelative( void )          const {  return   false;   }
+         virtual  bool        IsListenerRelative(void)            const {  return   false;   }
 
          /**
           * Set the transform position of sound.
@@ -311,8 +313,8 @@ namespace dtAudio
           * @param cs : Optional parameter describing the coordinate system of xform
           *             Defaults to ABS_CS.
           */
-         virtual  void        SetTransform(  const dtCore::Transform&                  xform,
-                                             dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
+         virtual  void        SetTransform(const dtCore::Transform&                  xform,
+                                           dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
 
          /**
           * Set the position of sound.
@@ -320,89 +322,89 @@ namespace dtAudio
           * @param position to set
           */
          virtual  void        SetPosition(const osg::Vec3& position);
-        
+
          /**
           * Get the position of sound.
           *
           * @param position to get
           */
-         virtual  void        GetPosition( osg::Vec3& position )     const;
-      
+         virtual  void        GetPosition(osg::Vec3& position)    const;
+
 
          /**
           * Set the direction of sound.
           *
           * @param direction to set
-          */         
-         virtual  void        SetDirection( const osg::Vec3& direction );
-         
+          */
+         virtual  void        SetDirection(const osg::Vec3& direction);
+
 
          /**
           * Get the direction of sound.
           *
           * @param direction to get
           */
-         virtual  void        GetDirection( osg::Vec3& direction )   const;
-        
+         virtual  void        GetDirection(osg::Vec3& direction)  const;
+
          /**
           * Set the velocity of sound.
           *
           * @param velocity to set
           */
-         virtual  void        SetVelocity( const osg::Vec3& velocity );
-       
+         virtual  void        SetVelocity(const osg::Vec3& velocity);
+
 
          /**
           * Get the velocity of sound.
           *
           * @param velocity to get
           */
-         virtual  void        GetVelocity( osg::Vec3& velocity )     const;
-        
+         virtual  void        GetVelocity(osg::Vec3& velocity)    const;
+
          /**
           * Set the minimum distance that sound plays at max_gain.
           * Attenuation is not calculated below this distance
           *
           * @param dist set to minimum
           */
-         virtual  void        SetMinDistance( float dist );
+         virtual  void        SetMinDistance(float dist);
 
          /**
           * Get the minimum distance that sound plays at max_gain.
           *
           * @return distance minimum
           */
-         virtual  float       GetMinDistance( void )              const {  return   mMinDist;   }
+         virtual  float       GetMinDistance(void)                const {  return   mMinDist;   }
 
          /**
           * Sets the distance where there will no longer be any attenuation of
           * the source.  Used with the Inverse Clamped Distance model.
-          * 
+          *
           * @see dmINVCLAMP
           * @param dist the maximum distance
           */
-         virtual  void        SetMaxDistance( float dist );
+         virtual  void        SetMaxDistance(float dist);
 
          /**
           * Get the maximum distance that sound plays at min_gain.
           *
           * @return distance maximum
           */
-         virtual  float       GetMaxDistance( void )              const {  return   mMaxDist;   }
+         virtual  float       GetMaxDistance(void)                const {  return   mMaxDist;   }
 
          /**
           * Set the rolloff factor describing attenuation curve.
           *
           * @param rolloff factor to set
           */
-         virtual  void        SetRolloffFactor( float rolloff );
+         virtual  void        SetRolloffFactor(float rolloff);
 
          /**
           * Get the rolloff factor describing attenuation curve.
           *
           * @return rolloff factor
           */
-         virtual  float       GetRolloffFactor( void )            const {  return   mRolloff;   }
+         virtual  float       GetRolloffFactor(void)              const {  return   mRolloff;   }
 
          /**
           * Set the minimum gain that sound plays at.
@@ -410,14 +412,14 @@ namespace dtAudio
           *
           * @param gain set to minimum
           */
-         virtual  void        SetMinGain( float gain );
+         virtual  void        SetMinGain(float gain);
 
          /**
           * Get the minimum gain that sound plays at.
           *
           * @return gain minimum
           */
-         virtual  float       GetMinGain( void )                  const {  return   mMinGain;   }
+         virtual  float       GetMinGain(void)                    const {  return   mMinGain;   }
 
          /**
           * Set the maximum gain that sound plays at.
@@ -425,14 +427,14 @@ namespace dtAudio
           *
           * @param gain set to maximum
           */
-         virtual  void        SetMaxGain( float gain );
+         virtual  void        SetMaxGain(float gain);
 
          /**
           * Get the maximum gain that sound plays at.
           *
           * @return gain maximum
           */
-         virtual  float       GetMaxGain( void )                  const {  return   mMaxGain;   }
+         virtual  float       GetMaxGain(void)                    const {  return   mMaxGain;   }
 
          /**
           * Generates and returns a key frame that represents the
@@ -443,8 +445,8 @@ namespace dtAudio
          FrameData* CreateFrameData() const;
 
          /** Used by dtCore::Recorder in playback.
-           * @param data The Sound::FrameData containing the Sound's state information.
-           */
+          * @param data The Sound::FrameData containing the Sound's state information.
+          */
          void UseFrameData(const FrameData* data);
 
          /**
@@ -462,19 +464,19 @@ namespace dtAudio
 
       protected:
          std::string mFilename;
-         CallBack     mPlayCB;
+         CallBack    mPlayCB;
          void*       mPlayCBData;
-         CallBack     mStopCB;
+         CallBack    mStopCB;
          void*       mStopCBData;
          float       mGain;
          float       mPitch;
          osg::Vec3   mPos;
          /// Sets sound direction.
          /**
-         *  If this is not zero, then the source is automatically considered as
-         *  "directional" by OpenAL, which means its intensity is not the same
-         *  in all directions. Check OpenAL specs for details (see AL_DIRECTION).
-         */
+          *  If this is not zero, then the source is automatically considered as
+          *  "directional" by OpenAL, which means its intensity is not the same
+          *  in all directions. Check OpenAL specs for details (see AL_DIRECTION).
+          */
          osg::Vec3   mDir;
          osg::Vec3   mVelo;
          float       mMinDist;
@@ -484,7 +486,8 @@ namespace dtAudio
          float       mMaxGain;
 
    };
-}
+} // namespace dtAudio
 
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // DELTA_SOUND
