@@ -22,12 +22,22 @@
 #ifndef DELTA__SERIALIZEABLE__H
 #define DELTA__SERIALIZEABLE__H
 
+////////////////////////////////////////////////////////////////////////////////
+
 #include <string>
+
+#include <xercesc/util/XercesDefs.hpp>
 
 namespace dtUtil
 {
    class DataStream;
 }
+
+XERCES_CPP_NAMESPACE_BEGIN
+   class DOMDocument;
+XERCES_CPP_NAMESPACE_END
+
+////////////////////////////////////////////////////////////////////////////////
 
 namespace dtDAL
 {
@@ -43,7 +53,6 @@ namespace dtDAL
 
       /**
        * This should read all of the subclass specific data from the string.
-       * By default, it reads all of the message parameters.
        * The base class data will be set by the caller when it creates the object.
        * @return true if it was able to assign the value based on the string or false if not.
        * @param value the string to pull the data from.
@@ -63,12 +72,30 @@ namespace dtDAL
 
       /**
        * This should read all of the subclass specific data from the stream.
-       * By default, it reads all of the message parameters.
        * The base class data will be set by the caller when it creates the object.
        * @return true if it was able to assign the value based on the stream or false if not.
        * @param stream the stream to pull the data from.
        */
       virtual bool FromDataStream(dtUtil::DataStream& stream) = 0;
+   };
+
+   class XMLSerializeable
+   {
+   public:
+      /**
+       * This should write all of the subclass specific data to xml.
+       * The base class data will be read by the caller before it calls this method.
+       * @param doc the XML document to write the data to.
+       */
+      virtual void ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const = 0;
+
+      /**
+       * This should read all of the subclass specific data from xml.
+       * The base class data will be set by the caller when it creates the object.
+       * @return true if it was able to assign the value based on the xml doc or false if not.
+       * @param doc the XML document to pull the data from.
+       */
+      virtual bool FromXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) = 0;
    };
 
    class Serializeable : public StringSerializeable, public DataStreamSerializeable
@@ -78,5 +105,7 @@ namespace dtDAL
    private:
    };
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // DELTA__SERIALIZEABLE__H
