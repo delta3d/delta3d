@@ -1388,18 +1388,18 @@ void AudioManager::UnloadSound( SoundObj* snd )
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::PlaySound( SoundObj* snd )
+void AudioManager::PlaySound(SoundObj* snd)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   ALuint   buf(0);
-   ALuint   src(0);
+   ALuint buf(0);
+   ALuint src(0);
    bool source_is_new = false;
 
-   assert( snd );
+   assert(snd);
 
    // first check if sound has a buffer
-   buf   = snd->Buffer();
-   if ( alIsBuffer( buf ) == AL_FALSE )
+   buf = snd->Buffer();
+   if(alIsBuffer(buf) == AL_FALSE)
    {
       CheckForError("alIsBuffer error", __FUNCTION__, __LINE__);
       // no buffer, bail
@@ -1408,10 +1408,10 @@ void AudioManager::PlaySound( SoundObj* snd )
 
    // then check if sound has a source
    src = snd->Source();
-   if ( ! snd->IsInitialized() )
+   if(!snd->IsInitialized())
    {
       // no source, gotta get one
-      if ( ! GetSource( snd ) )
+      if(!GetSource(snd))
       {
          // no source available
          Log::GetInstance().LogMessage( Log::LOG_ERROR, __FUNCTION__,
@@ -1421,7 +1421,7 @@ void AudioManager::PlaySound( SoundObj* snd )
          return;
       }
 
-      src   = snd->Source();
+      src = snd->Source();
       source_is_new = true;
    }
    else
@@ -1429,18 +1429,20 @@ void AudioManager::PlaySound( SoundObj* snd )
       // already has buffer and source
       // could be paused (or playing)
       ALint state(AL_STOPPED);
-      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      alGetSourcei(src, AL_SOURCE_STATE, &state);
 
-      if (CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
-         return;
-
-      switch( state )
+      if(CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
       {
-         case  AL_PAUSED:
-            mPauseQueue.push( src );
+         return;
+      }
+
+      switch(state)
+      {
+         case AL_PAUSED:
+            mPauseQueue.push(src);
             // no break, run to next case
 
-         case  AL_PLAYING:
+         case AL_PLAYING:
             return;
             break;
 
@@ -1452,105 +1454,105 @@ void AudioManager::PlaySound( SoundObj* snd )
    }
 
    // bind the buffer to the source
-   alSourcei( src, AL_BUFFER, buf );
+   alSourcei(src, AL_BUFFER, buf);
    if (CheckForError("AudioManager: alSourcei(AL_BUFFER) error", __FUNCTION__, __LINE__))
    {
       return;
    }
 
    // set looping flag
-   alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
+   alSourcei(src, AL_LOOPING, (snd->IsLooping()) ? AL_TRUE : AL_FALSE);
    CheckForError("AudioManager: alSourcei(AL_LOOPING) error", __FUNCTION__, __LINE__);
 
    // set source relative flag
-   if ( snd->IsListenerRelative() )
+   if(snd->IsListenerRelative())
    {
       // is listener relative
-      alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE);
+      alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
 
       // set initial position and direction
-      osg::Vec3   pos;
-      osg::Vec3   dir;
+      osg::Vec3 pos;
+      osg::Vec3 dir;
 
-      snd->GetPosition( pos );
-      snd->GetDirection( dir );
+      snd->GetPosition(pos);
+      snd->GetDirection(dir);
 
-      alSource3f( src,
-                  AL_POSITION,
-                  static_cast<ALfloat>(pos[0]),
-                  static_cast<ALfloat>(pos[1]),
-                  static_cast<ALfloat>(pos[2]) );
+      alSource3f(src,
+         AL_POSITION,
+         static_cast<ALfloat>(pos[0]),
+         static_cast<ALfloat>(pos[1]),
+         static_cast<ALfloat>(pos[2]));
 
       CheckForError("AudioManager: alSource3f(AL_POSITION) error", __FUNCTION__, __LINE__);
 
-      alSource3f( src,
+      alSource3f(src,
          AL_DIRECTION,
          static_cast<ALfloat>(dir[0]),
          static_cast<ALfloat>(dir[1]),
-         static_cast<ALfloat>(dir[2]) );
+         static_cast<ALfloat>(dir[2]));
       CheckForError("AudioManager: alSource3f(AL_DIRECTION) error", __FUNCTION__, __LINE__);
    }
    else
    {
       // not listener relative
-      alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+      alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
    }
 
    // set gain
-   alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
+   alSourcef(src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()));
    CheckForError("AudioManager: alSourcef(AL_GAIN) error", __FUNCTION__, __LINE__);
 
    // set pitch
-   alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
+   alSourcef(src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()));
    CheckForError("AudioManager: alSourcef(AL_PITCH) error", __FUNCTION__, __LINE__);
 
    // set reference distance
-   if ( snd->GetState( Sound::MIN_DIST ) || source_is_new)
+   if(snd->GetState(Sound::MIN_DIST) || source_is_new)
    {
-      snd->ResetState( Sound::MIN_DIST );
-      alSourcef( src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()) );
+      snd->ResetState(Sound::MIN_DIST);
+      alSourcef(src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()));
       CheckForError("AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error", __FUNCTION__, __LINE__);
    }
 
    // set maximum distance
-   if ( snd->GetState( Sound::MAX_DIST ) || source_is_new)
+   if(snd->GetState(Sound::MAX_DIST) || source_is_new)
    {
-      snd->ResetState( Sound::MAX_DIST );
-      alSourcef( src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()) );
+      snd->ResetState(Sound::MAX_DIST);
+      alSourcef(src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()));
       CheckForError("AudioManager: alSourcef(AL_MAX_DISTANCE) error", __FUNCTION__, __LINE__);
    }
 
    // set rolloff factor
-   if ( snd->GetState( Sound::ROL_FACT ) || source_is_new)
+   if(snd->GetState(Sound::ROL_FACT) || source_is_new)
    {
-      snd->ResetState( Sound::ROL_FACT );
-      alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
+      snd->ResetState(Sound::ROL_FACT);
+      alSourcef(src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()));
       CheckForError("AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error", __FUNCTION__, __LINE__);
    }
 
    // set minimum gain
-   if ( snd->GetState( Sound::MIN_GAIN ) || source_is_new)
+   if(snd->GetState(Sound::MIN_GAIN ) || source_is_new)
    {
-      snd->ResetState( Sound::MIN_GAIN );
-      alSourcef( src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()) );
+      snd->ResetState(Sound::MIN_GAIN);
+      alSourcef(src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()));
       CheckForError("AudioManager: alSourcef(AL_MIN_GAIN) error", __FUNCTION__, __LINE__);
    }
 
    // set maximum gain
-   if ( snd->GetState( Sound::MAX_GAIN ) || source_is_new)
+   if(snd->GetState( Sound::MAX_GAIN ) || source_is_new)
    {
-      snd->ResetState( Sound::MAX_GAIN );
-      alSourcef( src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()) );
+      snd->ResetState(Sound::MAX_GAIN);
+      alSourcef(src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()));
       CheckForError("AudioManager: alSourcef(AL_MAX_GAIN) error", __FUNCTION__, __LINE__);
    }
 
-   if (source_is_new)
+   if(source_is_new)
    {
-      snd->AddSender( this );
-      snd->AddSender( &dtCore::System::GetInstance() );
-      mPlayQueue.push( snd->Source() );
+      snd->AddSender(this );
+      snd->AddSender(&dtCore::System::GetInstance());
+      mPlayQueue.push(snd->Source());
    }
 }
 
@@ -1655,22 +1657,24 @@ void AudioManager::ResetLoop( SoundObj* snd )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SetRelative( SoundObj* snd )
+void AudioManager::SetRelative(SoundObj* snd)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
+   assert(snd);
 
-   if ( snd->IsListenerRelative() )
+   if(snd->IsListenerRelative())
+   {
       // already set, bail
       return;
+   }
 
-   ALuint   buf   = snd->Buffer();
-   if ( alIsBuffer( buf ) == AL_FALSE )
+   ALuint buf = snd->Buffer();
+   if(alIsBuffer(buf) == AL_FALSE)
    {
       // does not have sound buffer
       // set flag and bail
-      snd->SetState( Sound::REL );
-      snd->ResetState( Sound::ABS );
+      snd->SetState(Sound::REL);
+      snd->ResetState(Sound::ABS);
       return;
    }
    else
@@ -1678,21 +1682,21 @@ void AudioManager::SetRelative( SoundObj* snd )
       // check for stereo
       // multiple channels don't get positioned
       ALint numchannels(0L);
-      alGetBufferi( buf, AL_CHANNELS, &numchannels );
-      if ( numchannels == 2L )
+      alGetBufferi(buf, AL_CHANNELS, &numchannels);
+      if(numchannels == 2L)
       {
          // stereo!
          // set flag and bail
          Log::GetInstance().LogMessage(Log::LOG_INFO, __FUNCTION__,
             "AudioManager: A stereo Sound can't be positioned in 3D space");
-         snd->SetState( Sound::REL );
-         snd->ResetState( Sound::ABS );
+         snd->SetState(Sound::REL);
+         snd->ResetState(Sound::ABS);
          return;
       }
    }
 
-   ALuint   src   = snd->Source();
-   if ( alIsSource( src ) == AL_FALSE || !snd->IsInitialized() )
+   ALuint src = snd->Source();
+   if(alIsSource(src) == AL_FALSE || !snd->IsInitialized())
    {
       // sound is not playing
       // set flag and bail
@@ -1702,23 +1706,25 @@ void AudioManager::SetRelative( SoundObj* snd )
    }
 
    CheckForError("alGetBufferi && alIsSource calls check", __FUNCTION__, __LINE__);
-   alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
+   alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
+   {
       return;
+   }
 
-   SendMessage( Sound::kCommand[Sound::REL], snd );
+   SendMessage(Sound::kCommand[Sound::REL], snd);
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SetAbsolute( SoundObj* snd )
+void AudioManager::SetAbsolute(SoundObj* snd)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
+   assert(snd);
 
-   ALuint   src   = snd->Source();
-   if ( alIsSource( src ) == AL_FALSE || !snd->IsInitialized() )
+   ALuint src = snd->Source();
+   if(alIsSource(src) == AL_FALSE || !snd->IsInitialized())
    {
       // sound is not playing
       // set flag and bail
@@ -1727,12 +1733,13 @@ void AudioManager::SetAbsolute( SoundObj* snd )
       return;
    }
 
-
-   alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+   alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
+   {
       return;
+   }
 
-   SendMessage( Sound::kCommand[Sound::ABS], snd );
+   SendMessage(Sound::kCommand[Sound::ABS], snd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
