@@ -23,7 +23,12 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
    mBoneID = model->GetCoreBoneID(meshData.mBoneName);
-   assert(mBoneID != -1);
+
+   // We need to have a valid bone here in order to continue
+   if (mBoneID == -1)
+   {
+      throw dtUtil::Exception("Unable to find bone '" + meshData.mBoneName + "' for pose mesh", __FILE__, __LINE__);
+   }
 
    // Store off the forward axis for this mesh
    mNativeForward = meshData.mForward;
