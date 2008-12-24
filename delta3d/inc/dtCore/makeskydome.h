@@ -24,8 +24,10 @@ namespace dtCore
    class DT_CORE_EXPORT MakeSkyDome
    {
    public:
-      MakeSkyDome( const SkyDome &skyDome);
+
+      MakeSkyDome(const SkyDome &skyDome, float radius);
       ~MakeSkyDome();
+
       osg::Geode* Compute();
 
    protected:
@@ -36,14 +38,16 @@ namespace dtCore
       void SetCapCoordinatesAndColors();
       void CreateTriangleStrips();
       osg::StateSet* CreateStateSet() const;
-      const SkyDome *mSkyDome;
 
-      float mRadius;
-      osg::Geometry *mGeom;
-      osg::Vec3Array *mCoordArray;
-      osg::Vec4Array *mColorArray;
-      std::vector<float> mLevelHeight;
+      float                  mRadius;
+      osg::Geometry*         mGeom;
+      osg::Vec3Array*        mCoordArray;
+      osg::Vec4Array*        mColorArray;
+      std::vector<float>     mLevelHeight;
       std::vector<osg::Vec3> mCCArray;
+
+      const SkyDome* mSkyDome;
+
       static const unsigned int VERTS_IN_CIRCUM;
    };
 }
