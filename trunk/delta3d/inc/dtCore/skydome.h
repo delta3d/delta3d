@@ -43,34 +43,37 @@ namespace dtCore
 
    public:
    
-      SkyDome( const std::string& name = "SkyDome", bool createCapGeometry = true );
+      SkyDome(const std::string& name = "SkyDome", bool createCapGeometry = true, float radius = 6000.0f);
 
-   
    protected:
-      
+
       virtual ~SkyDome();
-      
+
    public:
       ///sets the base color
-      void SetBaseColor( const osg::Vec3& color );
-           
-      //gets the base color
-      void GetBaseColor( osg::Vec3& color ) const { color.set(mBaseColor); }
+      void SetBaseColor(const osg::Vec3& color);
 
-      bool GetCapEnabled() const {return mEnableCap;}
-    
+      ///gets the base color
+      void GetBaseColor(osg::Vec3& color) const { color.set(mBaseColor); }
+
+      bool GetCapEnabled() const { return mEnableCap; }
+
       ///the virtual paint function
-      virtual void Repaint(   const osg::Vec3& skyColor, 
-                              const osg::Vec3& fogColor,
-                              double sunAngle, 
-                              double sunAzimuth,
-                              double visibility );
+      /** 0 degrees  = horizon
+       *  90 degrees = high noon
+       *  - degrees  = below horizon
+       */
+      virtual void Repaint(const osg::Vec3& skyColor, 
+                           const osg::Vec3& fogColor,
+                           double sunAngle, 
+                           double sunAzimuth,
+                           double visibility);
 
    private:
 
       /// Build the sky dome
-      void Config();
-      bool IsSunsetOrSunrise( double sunAngle ) const;
+      void Config(float radius);
+      bool IsSunsetOrSunrise(double sunAngle) const;
       osg::Vec3 CalcCenterColors(double vis_factor,
                                  const osg::Vec3& skyColor, 
                                  const osg::Vec3& fogColor) const;
@@ -78,18 +81,19 @@ namespace dtCore
       void CalcNewColors(double visibility, const osg::Vec3& skyColor, 
                          const osg::Vec3& fogColor);
 
-      double CalcCVF( double visibility ) const;
+      double CalcCVF(double visibility) const;
 
-      void SetUpperMiddleLowerColors( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
-                                      unsigned int i, double visibility );
+      void SetUpperMiddleLowerColors(const osg::Vec3& skyColor, const osg::Vec3& fogColor,
+                                     unsigned int i, double visibility );
       void AssignColors() const;
 
       double GetVisibilityFactor(double visibility) const;
 
-      osg::Vec3 mBaseColor;
       dtCore::RefPtr<osg::Geode> mGeode;
       dtCore::RefPtr<MoveEarthySkyWithEyePointTransformAzimuth> mXform;
+
       bool mEnableCap;
+      osg::Vec3 mBaseColor;
       osg::Vec3 outer_param, outer_amt, outer_diff;
       osg::Vec3 middle_param, middle_amt, middle_diff;
       osg::Vec3 center_color;
