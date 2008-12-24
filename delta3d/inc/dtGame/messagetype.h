@@ -38,6 +38,8 @@ namespace dtGame
       public:
          /// his should never be used.  It is the default when creating a message object.
          static const MessageType UNKNOWN;
+       
+         //TICK MESSAGES
          static const MessageType TICK_LOCAL;
          static const MessageType TICK_REMOTE;
          static const MessageType TICK_END_OF_FRAME;
@@ -108,6 +110,11 @@ namespace dtGame
          static const MessageType LOG_REQ_ADD_IGNORED_ACTOR;
          static const MessageType LOG_REQ_REMOVE_IGNORED_ACTOR;
          static const MessageType LOG_REQ_CLEAR_IGNORE_LIST;
+
+         //SYSTEM MESSAGES
+         static const MessageType SYSTEM_POST_EVENT_TRAVERSAL;
+         static const MessageType SYSTEM_FRAME_SYNCH;
+
 
          /**
           * Gets the category of this message type

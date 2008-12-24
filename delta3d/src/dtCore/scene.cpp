@@ -402,10 +402,10 @@ dJointGroupID Scene::GetContactJoinGroupID() const
 // Performs collision detection and updates physics
 void Scene::OnMessage(MessageData *data)
 {
-   if(data->message == "postframe")
+   if(data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
    }
-   else if(data->message == "preframe")
+   else if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double dt = *static_cast<double*>(data->userData);
       if (mPhysicsController.valid())
@@ -413,19 +413,19 @@ void Scene::OnMessage(MessageData *data)
          mPhysicsController->Iterate(dt);
       }
    }
-   else if( data->message == "pause_start" )
+   else if( data->message == dtCore::System::MESSAGE_PAUSE_START)
    {
       // Freeze all particle systems.
       mFreezer.SetFreezing( true );
       GetSceneNode()->accept( mFreezer );
    }
-   else if( data->message == "pause_end" )
+   else if( data->message == dtCore::System::MESSAGE_PAUSE_END )
    {
       // Unfreeze all particle systems.
       mFreezer.SetFreezing( false );
       GetSceneNode()->accept( mFreezer );
    }
-   else if(data->message == "exit")
+   else if(data->message == dtCore::System::MESSAGE_EXIT)
    {
       RemoveAllDrawables();
    }

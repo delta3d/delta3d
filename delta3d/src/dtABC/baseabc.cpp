@@ -95,15 +95,19 @@ void BaseABC::RemoveDrawable(DeltaDrawable* obj)
 ////////////////////////////////////////////////
 void BaseABC::OnMessage(MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
+   {
+      EventTraversal(*static_cast<const double*>(data->userData));
+   }
+   else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       PreFrame(*static_cast<const double*>(data->userData));
    }
-   else if (data->message == "frame")
+   else if (data->message == dtCore::System::MESSAGE_FRAME)
    {
       Frame(*static_cast<const double*>(data->userData));
    }
-   else if (data->message == "postframe")
+   else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       PostFrame(*static_cast<const double*>(data->userData));
    }

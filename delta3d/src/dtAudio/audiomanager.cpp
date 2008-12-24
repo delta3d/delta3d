@@ -289,25 +289,25 @@ void AudioManager::OnMessage(MessageData* data)
    if (data->sender == &dtCore::System::GetInstance())
    {
       // system messages
-      if (data->message == "preframe")
+      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          PreFrame(*static_cast<const double*>(data->userData));
          return;
       }
 
-      if (data->message == "frame")
+      if (data->message == dtCore::System::MESSAGE_FRAME)
       {
          Frame(*static_cast<const double*>(data->userData));
          return;
       }
 
-      if (data->message == "postframe")
+      if (data->message == dtCore::System::MESSAGE_POST_FRAME)
       {
          PostFrame(*static_cast<const double*>(data->userData));
          return;
       }
 
-      if (data->message == "pause")
+      if (data->message == dtCore::System::MESSAGE_PAUSE)
       {
          // During a system-wide pause, we want the AudioManager to behave
          // as normal. In many games, there are sounds that occur during
@@ -319,7 +319,7 @@ void AudioManager::OnMessage(MessageData* data)
          return;
       }
 
-      if (data->message == "pause_start")
+      if (data->message == dtCore::System::MESSAGE_PAUSE_START)
       {
          mSoundStateMap.clear();
 
@@ -346,7 +346,7 @@ void AudioManager::OnMessage(MessageData* data)
          }
       }
 
-      if (data->message == "pause_end")
+      if (data->message == dtCore::System::MESSAGE_PAUSE_END)
       {
          // Restore all paused sounds to their previous state.
          for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++)
@@ -2073,7 +2073,7 @@ void AudioManager::SoundObj::OnMessage( MessageData* data )
 
    Sound::OnMessage( data );
 
-   if ( data->message == "frame" )
+   if(data->message == dtCore::System::MESSAGE_FRAME)
    {
       if ( alIsSource( Source() ) == AL_FALSE || !IsInitialized() )
          // no source, don't bother with positions or direction
@@ -2360,7 +2360,7 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert( data );
 
-   if ( data->message == "frame" )
+   if(data->message == dtCore::System::MESSAGE_FRAME)
    {
       dtCore::Transform transform;
       osg::Matrix       matrix;

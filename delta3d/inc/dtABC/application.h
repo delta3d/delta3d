@@ -214,6 +214,9 @@ namespace dtABC
    protected:
 
       virtual ~Application();
+      
+      virtual  void  EventTraversal( const double deltaSimTime );
+
       ///override for preframe
       virtual  void  PreFrame( const double deltaSimTime );
 
@@ -256,7 +259,8 @@ namespace dtABC
          /// @return true, if all went well.
          bool operator ()(const ApplicationConfigData& data, Application* app);
       };
-
+ 
+      bool mFirstFrame;
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
 
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;

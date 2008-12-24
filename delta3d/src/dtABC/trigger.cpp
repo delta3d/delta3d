@@ -24,7 +24,7 @@ Trigger::~Trigger()
 
 void Trigger::OnMessage(dtCore::Base::MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double dt = *static_cast<double*>(data->userData);
       Update(dt);

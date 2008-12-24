@@ -294,7 +294,7 @@ void CloudPlane::Repaint(  const osg::Vec3& skyColor,
 
 void CloudPlane::OnMessage(MessageData *data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double *deltaFrameTime = (double*)data->userData;
       Update(*deltaFrameTime);

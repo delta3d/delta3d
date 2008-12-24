@@ -79,17 +79,17 @@ void StateManager::PostFrame(const double deltaFrameTime)
   */
 void StateManager::OnMessage(MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       const double delta = *static_cast<const double*>(data->userData);
       PreFrame(delta);
    }
-   else if (data->message == "frame")
+   else if (data->message == dtCore::System::MESSAGE_FRAME)
    {
       const double delta = *static_cast<const double*>(data->userData);
       Frame(delta);
    }
-   else if (data->message == "postframe")
+   else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       const double delta = *static_cast<const double*>(data->userData);
       PostFrame(delta);

@@ -258,7 +258,7 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
 
 void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
 {
-   if( data->message == "preframe" )
+   if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {  
       if ( (GetAutoResizing() == true) && (mWindow.valid()) )
       {

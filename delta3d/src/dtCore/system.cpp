@@ -20,6 +20,19 @@ namespace dtCore
    bool System::mInstanceFlag = false;
    System* System::mSystem = 0;
 
+   const dtUtil::RefString System::MESSAGE_EVENT_TRAVERSAL("eventtraversal");
+   const dtUtil::RefString System::MESSAGE_POST_EVENT_TRAVERSAL("posteventtraversal");
+   const dtUtil::RefString System::MESSAGE_PRE_FRAME("preframe");
+   const dtUtil::RefString System::MESSAGE_CAMERA_SYNCH("camerasynch");
+   const dtUtil::RefString System::MESSAGE_FRAME_SYNCH("framesynch");
+   const dtUtil::RefString System::MESSAGE_FRAME("frame");
+   const dtUtil::RefString System::MESSAGE_POST_FRAME("postframe");
+   const dtUtil::RefString System::MESSAGE_CONFIG("configure");
+   const dtUtil::RefString System::MESSAGE_PAUSE("pause");
+   const dtUtil::RefString System::MESSAGE_PAUSE_START("pause_start");
+   const dtUtil::RefString System::MESSAGE_PAUSE_END("pause_end");
+   const dtUtil::RefString System::MESSAGE_EXIT("exit");
+
    ////////////////////////////////////////////////////////////////////////////////
    System::System()
    : mRealClockTime(0)
@@ -184,11 +197,11 @@ namespace dtCore
 
       if( mPaused )
       {
-         SendMessage( "pause_start" );
+         SendMessage(MESSAGE_PAUSE_START);
       }
       else
       {
-         SendMessage( "pause_end" );
+         SendMessage(MESSAGE_PAUSE_END);
       }
    }
 
@@ -212,19 +225,9 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Frame(const double deltaSimTime, const double deltaRealTime)
-   {
-      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME))
-      {
-         double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage( "frame", userData );
-      }
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void System::Pause( const double deltaRealTime )
    {
-      SendMessage( "pause", const_cast<double*>(&deltaRealTime) );
+      SendMessage(MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime) );
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +266,8 @@ namespace dtCore
 
       //const double realFrameTime = realDT + mAccumulationTime;
       const double realFrameTime = mFrameTime;
+      EventTraversal(simFrameTime, realFrameTime);
+      PostEventTraversal(simFrameTime, realFrameTime);
       PreFrame(simFrameTime, realFrameTime);
 
       //if we're ahead of the desired sim time, then draw.
@@ -270,6 +275,7 @@ namespace dtCore
          || (mRealClockTime - mLastDrawClockTime) > mMaxTimeBetweenDraws)
       {
          mLastDrawClockTime = mRealClockTime;
+         CameraSynch(simFrameTime, realFrameTime);
          FrameSynch(simFrameTime, realFrameTime);
          Frame(simFrameTime, realFrameTime);
       }
@@ -294,9 +300,12 @@ namespace dtCore
       if (mPaused)
       {
          mWasPaused = true;
-         Pause     (realDT);
+         EventTraversal(0.0, realDT);
+         PostEventTraversal(0.0, realDT);
+         Pause(realDT);
+         CameraSynch(0.0, realDT);
          FrameSynch(0.0, realDT);
-         Frame     (0.0, realDT);
+         Frame(0.0, realDT);
       }
       else
       {
@@ -312,11 +321,14 @@ namespace dtCore
             mSimulationTime      += simDT;
             mSimTimeSinceStartup += simDT;
             mSimulationClockTime += Timer_t(simDT * 1000000);
-
-            PreFrame  (simDT, realDT);
+            
+            EventTraversal(simDT, realDT);
+            PostEventTraversal(simDT, realDT);
+            PreFrame(simDT, realDT);
+            CameraSynch(simDT, realDT);
             FrameSynch(simDT, realDT);
-            Frame     (simDT, realDT);
-            PostFrame (simDT, realDT);
+            Frame(simDT, realDT);
+            PostFrame(simDT, realDT);
          }
          else
          {
@@ -370,7 +382,7 @@ namespace dtCore
       }
 
       LOG_DEBUG("System: Exiting...");
-      SendMessage("exit");
+      SendMessage(MESSAGE_EXIT);
       LOG_DEBUG("System: Done Exiting.");
    }
 
@@ -407,12 +419,22 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::FrameSynch( const double deltaSimTime, const double deltaRealTime )
+   void System::EventTraversal( const double deltaSimTime, const double deltaRealTime )
    {
-      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAMESYNCH))
+      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_EVENT_TRAVERSAL))
       {
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage("framesynch", userData);
+         SendMessage(MESSAGE_EVENT_TRAVERSAL, userData);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::PostEventTraversal( const double deltaSimTime, const double deltaRealTime )
+   {
+      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POST_EVENT_TRAVERSAL))
+      {
+         double userData[2] = { deltaSimTime, deltaRealTime };
+         SendMessage(MESSAGE_POST_EVENT_TRAVERSAL, userData);
       }
    }
 
@@ -422,7 +444,37 @@ namespace dtCore
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_PREFRAME))
       {
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage("preframe", userData);
+         SendMessage(MESSAGE_PRE_FRAME, userData);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::FrameSynch( const double deltaSimTime, const double deltaRealTime )
+   {
+      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME_SYNCH))
+      {
+         double userData[2] = { deltaSimTime, deltaRealTime };
+         SendMessage(MESSAGE_FRAME_SYNCH, userData);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::CameraSynch( const double deltaSimTime, const double deltaRealTime )
+   {
+      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CAMERA_SYNCH))
+      {
+         double userData[2] = { deltaSimTime, deltaRealTime };
+         SendMessage(MESSAGE_CAMERA_SYNCH, userData);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void System::Frame(const double deltaSimTime, const double deltaRealTime)
+   {
+      if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME))
+      {
+         double userData[2] = { deltaSimTime, deltaRealTime };
+         SendMessage(MESSAGE_FRAME, userData );
       }
    }
 
@@ -432,7 +484,7 @@ namespace dtCore
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POSTFRAME))
       {
          double userData[2] = { deltaSimTime, deltaRealTime };
-         SendMessage("postframe", userData);
+         SendMessage(MESSAGE_POST_FRAME, userData);
       }
    }
 
@@ -441,7 +493,7 @@ namespace dtCore
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CONFIG))
       {
-         SendMessage("configure");
+         SendMessage(MESSAGE_CONFIG);
       }
    }
 }

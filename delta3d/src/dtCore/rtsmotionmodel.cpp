@@ -123,7 +123,7 @@ void RTSMotionModel::OnMessage(MessageData *data)
 
    if (  target == 0
       || !IsEnabled()
-      || (data->message != "preframe"
+      || (data->message != dtCore::System::MESSAGE_PRE_FRAME
          //&& (mUseSimTimeForSpeed || data->message != "pause")
          )
       )
@@ -137,7 +137,7 @@ void RTSMotionModel::OnMessage(MessageData *data)
    double *timeChange = (double *)data->userData;
 
    // paused and !useSimTime
-   if (data->message == "pause")
+   if (data->message == dtCore::System::MESSAGE_PAUSE)
    {
       // 0 is real time when paused
       delta = *timeChange;

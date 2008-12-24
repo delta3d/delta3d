@@ -367,9 +367,9 @@ namespace dtTerrain
       //Make sure we call our super class implementation of this method.
       dtCore::Physical::OnMessage(data);
 
-      if (data->message == "preframe")
+      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
          PreFrame(*(double *)data->userData);
-      else if (data->message == "postframe")
+      else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
          PostFrame(*(double *)data->userData);     
    }
 

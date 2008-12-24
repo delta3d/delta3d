@@ -50,7 +50,7 @@ void CharDrawable::OnMessage(dtCore::Base::MessageData* data)
    assert(mAnimator.get());
 
    // tick the animation
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double dt = *static_cast<double*>(data->userData);
       mAnimator->Update(dt);

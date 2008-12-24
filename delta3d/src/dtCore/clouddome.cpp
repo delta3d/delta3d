@@ -304,7 +304,7 @@ void CloudDome::Repaint(   const osg::Vec3& skyColor,
 
 void CloudDome::OnMessage( MessageData *data )
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double deltaFrameTime = *static_cast<double*>(data->userData);
       Update(deltaFrameTime);

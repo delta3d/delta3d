@@ -129,6 +129,8 @@ class DT_ABC_EXPORT BaseABC : public dtCore::Base
 
    protected:
    
+      virtual void EventTraversal( const double deltaSimTime ){};
+
       ///Override for preframe
       virtual void PreFrame( const double deltaSimTime ) = 0;
    

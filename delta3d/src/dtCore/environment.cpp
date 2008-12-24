@@ -268,17 +268,17 @@ void Environment::RemoveChild(DeltaDrawable* child)
 
 void Environment::OnMessage(MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double deltaFrameTime = *static_cast<double*>(data->userData);
       Update(deltaFrameTime);
    }
-   else if (data->message == "postframe")
+   else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       // remove any EnvEffects that need removing
       if (mToBeRemoved.size() > 0) { RemoveEffectCache(); }
    }
-   else if (data->message == "exit")
+   else if (data->message == dtCore::System::MESSAGE_EXIT)
    {
       // time to get rid of any added children
       while (GetNumChildren() > 0)

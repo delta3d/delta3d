@@ -100,6 +100,19 @@ namespace dtGame
          dtCore::RefPtr<DoubleMessageParameter> mSimulationTime;
    };
 
+   /**
+    *	SystemMessage is used to propagate messages sent out by dtCore::System
+    * it derives from TickMessage and has no new functionality, currently a placeholder.
+    */
+   class DT_GAME_EXPORT SystemMessage : public TickMessage
+   {
+      public:
+         SystemMessage(){}
+
+      protected:
+         virtual ~SystemMessage(){}
+   };
+
    class DT_GAME_EXPORT TimerElapsedMessage : public Message
    {
       public:

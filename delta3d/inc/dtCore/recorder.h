@@ -305,7 +305,7 @@ namespace dtCore
          {
          case Recording:
             {
-               if (data->message == "postframe")
+               if (data->message == dtCore::System::MESSAGE_POST_FRAME)
                {
                   mDeltaTime = mClock.Tick();
                   double timeCode = mClock.DeltaSec(mStartTime, mDeltaTime);
@@ -327,7 +327,7 @@ namespace dtCore
             // for now, this just plays a frame-by-frame playback, no time stamp interpolation for FrameData
          case Playing:
             {
-               if (data->message == "preframe")
+               if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
                {
                   if (mKeyFrameIter != mKeyFrames.end())
                   {

@@ -422,7 +422,7 @@ namespace dtCore
     */
    void EffectManager::OnMessage(MessageData *data)
    {
-      if(data->message == "preframe")
+      if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          const double delta = *static_cast<const double*>(data->userData);
 
