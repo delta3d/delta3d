@@ -111,6 +111,10 @@ namespace dtGame
 
       //Game Event...
       RegisterMessageType<GameEventMessage>(MessageType::INFO_GAME_EVENT);
+
+      //System Messages
+      RegisterMessageType<SystemMessage>(MessageType::SYSTEM_POST_EVENT_TRAVERSAL);
+      RegisterMessageType<SystemMessage>(MessageType::SYSTEM_FRAME_SYNCH);
    }
 
    MessageFactory::~MessageFactory()

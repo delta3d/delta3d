@@ -97,7 +97,7 @@ void Tripod::SetScale(float x, float y, float z, float h, float p, float r)
 ///Override to receive messages
 void Tripod::OnMessage(MessageData *data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       Update( *static_cast<double*>(data->userData) );
    }

@@ -87,7 +87,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::OnMessage(dtCore::Base::MessageData *msgData)
    {
-      if (msgData->message == "preframe")
+      if (msgData->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          double *timeData = (double *)msgData->userData;
          OnPreFrame(timeData[0],timeData[1]);

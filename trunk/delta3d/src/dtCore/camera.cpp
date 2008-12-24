@@ -25,8 +25,8 @@ using namespace dtUtil;
 
 namespace dtCore
 {
-   typedef std::vector<std::pair<dtCore::ObserverPtr<osg::Referenced>, Camera::FrameSyncCallback> > CallbackListType;
-   static CallbackListType staticFrameSyncCallbacks;
+   typedef std::vector<std::pair<dtCore::ObserverPtr<osg::Referenced>, Camera::CameraSyncCallback> > CallbackListType;
+   static CallbackListType staticCameraSyncCallbacks;
 
    class ScreenShotCallback : public osg::Camera::DrawCallback
    {
@@ -183,9 +183,9 @@ namespace dtCore
    void Camera::OnMessage(MessageData* data)
    {
 
-      if (data->message == "framesynch")
+      if (data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
       {
-         FrameSynch(*static_cast<const double*>(data->userData));
+         CameraSynch(*static_cast<const double*>(data->userData));
       }
    }
 
@@ -266,7 +266,7 @@ namespace dtCore
    }
 
    //////////////////////////////////////////
-   void Camera::FrameSynch(const double /*deltaFrameTime*/)
+   void Camera::CameraSynch( const double /*deltaFrameTime*/ )
    {
       // Only do our normal Camera stuff if it is enabled
       if (GetEnabled() == false)
@@ -275,7 +275,7 @@ namespace dtCore
       }
 
       UpdateViewMatrixFromTransform();
-      CallFrameSyncCallbacks();
+      CallCameraSyncCallbacks();
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -512,25 +512,25 @@ namespace dtCore
    };
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::CallFrameSyncCallbacks()
+   void Camera::CallCameraSyncCallbacks()
    {
-      staticFrameSyncCallbacks.erase(
-               std::remove_if(staticFrameSyncCallbacks.begin(), staticFrameSyncCallbacks.end(), CameraCallbackHandler(NULL, this, true)),
-               staticFrameSyncCallbacks.end());
+      staticCameraSyncCallbacks.erase(
+               std::remove_if(staticCameraSyncCallbacks.begin(), staticCameraSyncCallbacks.end(), CameraCallbackHandler(NULL, this, true)),
+               staticCameraSyncCallbacks.end());
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback)
+   void Camera::AddCameraSyncCallback(osg::Referenced& keyObject, CameraSyncCallback callback)
    {
-      staticFrameSyncCallbacks.push_back(std::make_pair(&keyObject, callback));
+      staticCameraSyncCallbacks.push_back(std::make_pair(&keyObject, callback));
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Camera::RemoveFrameSyncCallback(osg::Referenced& keyObject)
+   void Camera::RemoveCameraSyncCallback(osg::Referenced& keyObject)
    {
-      staticFrameSyncCallbacks.erase(
-               std::remove_if(staticFrameSyncCallbacks.begin(), staticFrameSyncCallbacks.end(), CameraCallbackHandler(&keyObject)),
-               staticFrameSyncCallbacks.end());
+      staticCameraSyncCallbacks.erase(
+               std::remove_if(staticCameraSyncCallbacks.begin(), staticCameraSyncCallbacks.end(), CameraCallbackHandler(&keyObject)),
+               staticCameraSyncCallbacks.end());
    }
 }
 

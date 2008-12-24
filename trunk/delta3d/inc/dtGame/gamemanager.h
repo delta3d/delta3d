@@ -1050,11 +1050,26 @@ namespace dtGame
             dtUtil::Log* mLogger;
 
             /**
+            * Implements the functionality that will happen on the PostEventTraversal event
+            * @param deltaSimTime the change in simulation time since the last frame.
+            * @param deltaRealTime the change in real time since the last frame.
+            */
+            virtual void PostEventTraversal(double deltaSimTime, double deltaRealTime);
+
+            /**
+            * Implements the functionality that will happen on the PostEventTraversal event
+            * @param deltaSimTime the change in simulation time since the last frame.
+            * @param deltaRealTime the change in real time since the last frame.
+            */
+            virtual void FrameSynch(double deltaSimTime, double deltaRealTime);
+
+            /**
              * Implements the functionality that will happen on the PreFrame event
              * @param deltaSimTime the change in simulation time since the last frame.
              * @param deltaRealTime the change in real time since the last frame.
              */
             virtual void PreFrame(double deltaSimTime, double deltaRealTime);
+
 
             /// Implements the functionality that will happen on the PostFrame event
             virtual void PostFrame();

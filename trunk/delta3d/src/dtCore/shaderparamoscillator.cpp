@@ -168,7 +168,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::OnMessage(MessageData *data)
    {
-      if (data->message == "preframe")
+      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          // If the oscillation needs to be 'triggered' to start, 
          // only continue if it was already triggered.

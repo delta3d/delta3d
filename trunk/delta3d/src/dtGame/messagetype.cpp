@@ -142,6 +142,12 @@ namespace dtGame
       "Request", "Sent by the logger controller component (often a client) to request the logger server "
       " component to remove all actors from the recording ignore list", 221);
 
+   const MessageType MessageType::SYSTEM_POST_EVENT_TRAVERSAL("Post Event Traversal", "System",
+      "Sent on the system message posteventtraversal.  Use this message to respond to input or window events.", 300);
+   
+   const MessageType MessageType::SYSTEM_FRAME_SYNCH("Frame Synch", "System",
+      "Sent on the system message framesynch.  Use this message to do anything dependent on per frame camera positions or orientations.", 301);
+
    //////////////////////////////////////////////////////////////////////////////////////
    MessageType::MessageType(const std::string& name, const std::string& category,
                const std::string& description, const unsigned short id)

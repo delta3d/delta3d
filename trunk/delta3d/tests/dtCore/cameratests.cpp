@@ -50,7 +50,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_TEST(TestPerspective);
          CPPUNIT_TEST(TestFrustum);
          CPPUNIT_TEST(TestEnabled);
-         CPPUNIT_TEST(TestFrameSyncCallbacks);
+         CPPUNIT_TEST(TestCameraSyncCallbacks);
          CPPUNIT_TEST(TestSettingTheCullingMode);
          CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
          CPPUNIT_TEST(TestOnScreen);
@@ -83,7 +83,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestFrustum();
       void TestSupplyingOSGCameraToConstructor();
       void TestEnabled();
-      void TestFrameSyncCallbacks();
+      void TestCameraSyncCallbacks();
       void TestSettingTheCullingMode();
 
       void TestOnScreen()
@@ -258,12 +258,12 @@ void CameraTests::TestCallback(dtCore::Camera& camera)
    mCamerasThatCalled.push_back(&camera);
 }
 
-void CameraTests::TestFrameSyncCallbacks()
+void CameraTests::TestCameraSyncCallbacks()
 {
    dtCore::RefPtr<osg::Referenced> testKeyObject = new osg::Referenced;
    using namespace dtCore;
    RefPtr<Camera> cam = new Camera();
-   Camera::AddFrameSyncCallback(*testKeyObject, Camera::FrameSyncCallback(this, &CameraTests::TestCallback));
+   Camera::AddCameraSyncCallback(*testKeyObject, Camera::CameraSyncCallback(this, &CameraTests::TestCallback));
 
    CPPUNIT_ASSERT(!mCalledCallback);
    dtCore::System::GetInstance().Step();
@@ -274,13 +274,13 @@ void CameraTests::TestFrameSyncCallbacks()
    mCalledCallback = false;
    mCamerasThatCalled.clear();
 
-   Camera::RemoveFrameSyncCallback(*testKeyObject);
+   Camera::RemoveCameraSyncCallback(*testKeyObject);
    dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("The callback should have been removed", !mCalledCallback);
 
    mCalledCallback = false;
    mCamerasThatCalled.clear();
-   Camera::AddFrameSyncCallback(*testKeyObject, Camera::FrameSyncCallback(this, &CameraTests::TestCallback));
+   Camera::AddCameraSyncCallback(*testKeyObject, Camera::CameraSyncCallback(this, &CameraTests::TestCallback));
    cam->SetEnabled(false);
    dtCore::System::GetInstance().Step();
    CPPUNIT_ASSERT_MESSAGE("The camera was disabled, it should not have fired the callback",

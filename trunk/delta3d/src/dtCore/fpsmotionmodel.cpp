@@ -588,7 +588,7 @@ float FPSMotionModel::GetFallingHeight() const
  */
 void FPSMotionModel::OnMessage(MessageData* data)
 {
-   if (IsCurrentlyActive() && data->message == "preframe")
+   if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
    {
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
@@ -718,6 +718,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    {
       mpDebugger->Update(deltaTime, mouse_has_moved);
    }
+
 
    if (calc_new_heading_pitch && mouse_has_moved)
    {

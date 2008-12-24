@@ -349,7 +349,7 @@ void HUD::SetKeyboard(dtCore::Keyboard* pObservedKeyboard)
 ////////////////////////////////////////////////////////////////////////////////
 void HUD::OnMessage(dtCore::Base::MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       _CheckCamera();
 

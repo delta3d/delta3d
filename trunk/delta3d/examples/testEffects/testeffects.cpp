@@ -56,7 +56,7 @@ public:
 
    virtual void OnMessage(MessageData* data)
    {
-      if (data->message == "preframe")
+      if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          if (mKeyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Escape))
          {

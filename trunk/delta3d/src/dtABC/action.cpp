@@ -48,7 +48,7 @@ void Action::UnPause()
 
 void Action::OnMessage(MessageData* data)
 {
-   if (data->message == "preframe")
+   if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       Update(*(double*)data->userData);
    }

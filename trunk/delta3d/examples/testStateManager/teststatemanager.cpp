@@ -46,7 +46,7 @@ StateWalker::~StateWalker()
 
 void StateWalker::OnMessage(dtCore::Base::MessageData* msg)
 {
-   if (msg->message == "preframe")
+   if (msg->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       DisplayEventChoicesAndWaitForInput();
    }

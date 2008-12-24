@@ -441,8 +441,8 @@ void FlyMotionModel::OnMessage(MessageData *data)
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      (data->message == "preframe" ||
-        (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == "pause")))
+      (data->message == dtCore::System::MESSAGE_PRE_FRAME ||
+      (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == dtCore::System::MESSAGE_PAUSE)))
    {
       // Get the time change (sim time or real time)
       double delta = GetTimeDelta(data);
@@ -476,7 +476,7 @@ double FlyMotionModel::GetTimeDelta(const MessageData* data) const
    // Get the time change (sim time or real time)
    double delta;
    double* timeChange = (double*)data->userData;
-   if (data->message == "pause") // paused and !useSimTime
+   if (data->message == dtCore::System::MESSAGE_PAUSE) // paused and !useSimTime
    {
       delta = *timeChange; // 0 is real time when paused
    }

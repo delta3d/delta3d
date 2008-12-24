@@ -230,26 +230,36 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::OnMessage(MessageData *data)
    {
-      if (data->message == "preframe")
+      if (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+      {
+         double* timeChange = (double*)data->userData;
+         PostEventTraversal(timeChange[0], timeChange[1]);
+      }
+      else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
          double* timeChange = (double*)data->userData;
          PreFrame(timeChange[0], timeChange[1]);
       }
-      else if (data->message == "postframe")
+      else if (data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
+      {
+         double* timeChange = (double*)data->userData;
+         FrameSynch(timeChange[0], timeChange[1]);
+      }
+      else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
       {
          PostFrame();
       }
-      else if (data->message == "pause_start")
+      else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
       {
          if (!IsPaused())
             SetPaused(true);
       }
-      else if (data->message == "pause_end")
+      else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
       {
          if (IsPaused())
             SetPaused(false);
       }
-      else if (data->message == "pause")
+      else if (data->message == dtCore::System::MESSAGE_PAUSE)
       {
          if (!IsPaused())
          {
@@ -345,6 +355,30 @@ namespace dtGame
       tickMessage.SetSimTimeScale(GetTimeScale());
       tickMessage.SetDestination(&GetMachineInfo());
       tickMessage.SetSimulationTime(simulationTime);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::PostEventTraversal(double deltaSimTime, double deltaRealTime)
+   {
+      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
+
+      dtCore::RefPtr<SystemMessage> postEventTraversal;
+      GetMessageFactory().CreateMessage(MessageType::SYSTEM_POST_EVENT_TRAVERSAL, postEventTraversal);
+      PopulateTickMessage(*postEventTraversal, deltaSimTime, deltaRealTime, simulationTime);
+
+      DoSendMessage(*postEventTraversal);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void GameManager::FrameSynch(double deltaSimTime, double deltaRealTime)
+   {
+      double simulationTime = dtCore::System::GetInstance().GetSimulationTime();
+
+      dtCore::RefPtr<SystemMessage> frameSynch;
+      GetMessageFactory().CreateMessage(MessageType::SYSTEM_FRAME_SYNCH, frameSynch);
+      PopulateTickMessage(*frameSynch, deltaSimTime, deltaRealTime, simulationTime);
+
+      DoSendMessage(*frameSynch);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

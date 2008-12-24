@@ -337,7 +337,7 @@ void UFOMotionModel::OnMessage(MessageData* data)
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      data->message == "preframe")
+      data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       const double dtCore = *static_cast<const double*>(data->userData);
 

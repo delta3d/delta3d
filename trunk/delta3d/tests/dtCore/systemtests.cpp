@@ -62,9 +62,35 @@ class DummyCallback: public osg::NodeCallback
 class DummyDrawable: public dtCore::DeltaDrawable
 {
    public:
+      double m_TimeOne;
+      double m_TimeTwo;
+
+      int mCounter;
       bool mPreframeCalled;
       bool mPostFrameCalled;
       bool mFrameCalled;
+      bool mEventTraversalCalled;
+      bool mPostEventTraversalCalled;
+      bool mFrameSynchCalled;
+      bool mCameraSynchCalled;
+      bool mPauseStartCalled;
+      bool mPauseEndCalled;
+      bool mPauseCalled;
+      bool mExitCalled;
+      bool mConfigCalled;
+
+      int mPreframeOrder;
+      int mPostFrameOrder;
+      int mFrameOrder;
+      int mEventTraversalOrder;
+      int mPostEventTraversalOrder;
+      int mFrameSynchOrder;
+      int mCameraSynchOrder;
+      int mPauseStartOrder;
+      int mPauseEndOrder;
+      int mPauseOrder;
+      int mExitOrder;
+      int mConfigOrder;
 
 
       DummyDrawable()
@@ -96,31 +122,97 @@ class DummyDrawable: public dtCore::DeltaDrawable
          mPreframeCalled = false;
          mPostFrameCalled = false;
          mFrameCalled = false;
+         mEventTraversalCalled = false;
+         mPostEventTraversalCalled = false;
+         mCameraSynchCalled = false;
+         mFrameSynchCalled = false;
+         mPauseStartCalled = false;
+         mPauseEndCalled = false;
+         mPauseCalled = false;
+         mExitCalled = false;
+         mConfigCalled = false;
+
+         mPreframeOrder = 0;
+         mPostFrameOrder = 0;
+         mFrameOrder = 0;
+         mEventTraversalOrder = 0;
+         mPostEventTraversalOrder = 0;
+         mCameraSynchOrder = 0;
+         mFrameSynchOrder = 0;
+         mPauseStartOrder = 0;
+         mPauseEndOrder = 0;
+         mPauseOrder = 0;
+         mExitOrder = 0;
+         mConfigOrder = 0;
+
+
+         mCounter = 0;
       }
 
       void OnMessage(dtCore::Base::MessageData* data)
       {
-         if(data->message == "preframe")
+         if(data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
+         { 
+            mEventTraversalCalled = true;
+            mEventTraversalOrder = mCounter++;
+         }
+         else if(data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+         { 
+            mPostEventTraversalCalled = true;
+            mPostEventTraversalOrder = mCounter++;
+         }
+         else if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
          {
             mPreframeCalled = true;
             double userData[2] = {0.0,0.0};
             memcpy(userData, data->userData, sizeof(double) * 2);
             m_TimeOne = userData[0];
             m_TimeTwo = userData[1];
+
+            mPreframeOrder = mCounter++;
          }
-         else if(data->message == "frame")
+         else if(data->message == dtCore::System::MESSAGE_CAMERA_SYNCH)
+         { 
+            mCameraSynchCalled = true;
+            mCameraSynchOrder = mCounter++;
+         }
+         else if(data->message == dtCore::System::MESSAGE_FRAME_SYNCH)
+         { 
+            mFrameSynchCalled = true;
+            mFrameSynchOrder = mCounter++;
+         }
+         else if(data->message == dtCore::System::MESSAGE_FRAME)
          {
             mFrameCalled = true;
+            mFrameOrder = mCounter++;
          }
-         else if(data->message == "postframe")
-         {
+         else if(data->message == dtCore::System::MESSAGE_POST_FRAME)
+         { 
             mPostFrameCalled = true;
-         }
+            mPostFrameOrder = mCounter++;
+         }                  
+         else if(data->message == dtCore::System::MESSAGE_PAUSE_START)
+         { 
+            mPauseStartCalled = true;
+            mPauseStartOrder = mCounter++;
+         }    
+         else if(data->message == dtCore::System::MESSAGE_PAUSE_END)
+         { 
+            mPauseEndCalled = true;
+            mPauseEndOrder = mCounter++;
+         }    
+         else if(data->message == dtCore::System::MESSAGE_PAUSE)
+         { 
+            mPauseCalled = true;
+            mPauseOrder = mCounter++;
+         }    
+         else if(data->message == dtCore::System::MESSAGE_CONFIG)
+         { 
+            mConfigCalled = true;
+            mConfigOrder = mCounter++;
+         }   
       }
 
-   public:
-      double m_TimeOne;
-      double m_TimeTwo;
 };
 
 
@@ -185,6 +277,7 @@ class SystemTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestSimMode);
    CPPUNIT_TEST(TestProperties);
    CPPUNIT_TEST(TestStepping);
+   CPPUNIT_TEST(TestSystemStages);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -195,6 +288,9 @@ class SystemTests : public CPPUNIT_NS::TestFixture
       void TestSimMode();
       void TestProperties();
       void TestStepping();
+      void TestSystemStages();
+      void AssertStages(int stageMask);
+      void TestStage(int stageMask);
 
    private:
 
@@ -371,4 +467,136 @@ void SystemTests::TestSimMode()
    CPPUNIT_ASSERT(mDummyDrawable->mPreframeCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mPostFrameCalled);
    CPPUNIT_ASSERT(mDummyDrawable->mFrameCalled);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void SystemTests::TestSystemStages()
+{
+
+   dtCore::RefPtr<dtABC::Application> app = &GetGlobalApplication();
+
+   mDummyDrawable = new DummyDrawable();
+
+   app->GetScene()->AddDrawable(mDummyDrawable.get());
+
+   dtCore::System& ourSystem = dtCore::System::GetInstance();
+   ourSystem.SetShutdownOnWindowClose(false);
+   ourSystem.SetUseFixedTimeStep(false);
+
+   ourSystem.SetSystemStages(System::STAGE_CONFIG);
+
+   mDummyDrawable->ResetState();
+   AssertStages(0);
+   app->Config();
+   AssertStages(System::STAGE_CONFIG);
+   mDummyDrawable->ResetState();
+
+   ourSystem.SetSystemStages(System::STAGE_NONE);
+   app->Config();
+   AssertStages(System::STAGE_NONE);
+
+   ourSystem.Start();
+
+   //test each flag corresponds to the correct message
+   TestStage(System::STAGE_EVENT_TRAVERSAL);
+   TestStage(System::STAGE_POST_EVENT_TRAVERSAL);
+   TestStage(System::STAGE_PREFRAME);
+   TestStage(System::STAGE_CAMERA_SYNCH);
+   TestStage(System::STAGE_FRAME_SYNCH);
+   TestStage(System::STAGE_FRAME);
+   TestStage(System::STAGE_POSTFRAME);
+
+   //mix it up a bit, make sure it still works
+   TestStage(System::STAGE_EVENT_TRAVERSAL | System::STAGE_POST_EVENT_TRAVERSAL);   
+   TestStage(System::STAGE_PREFRAME | System::STAGE_CAMERA_SYNCH);
+   TestStage(System::STAGE_FRAME_SYNCH | System::STAGE_FRAME);   
+   TestStage(System::STAGE_POSTFRAME | System::STAGE_CAMERA_SYNCH);
+
+   //test all the per frame messages and make sure the order is correct
+   TestStage(System::STAGE_EVENT_TRAVERSAL | System::STAGE_POST_EVENT_TRAVERSAL |
+             System::STAGE_PREFRAME | System::STAGE_CAMERA_SYNCH |
+             System::STAGE_FRAME_SYNCH | System::STAGE_FRAME |
+             System::STAGE_POSTFRAME | System::STAGE_CAMERA_SYNCH);
+
+   //assert they were called in the proper order
+   CPPUNIT_ASSERT(mDummyDrawable->mEventTraversalOrder == 0);
+   CPPUNIT_ASSERT(mDummyDrawable->mPostEventTraversalOrder == 1);
+   CPPUNIT_ASSERT(mDummyDrawable->mPreframeOrder == 2);
+   CPPUNIT_ASSERT(mDummyDrawable->mCameraSynchOrder == 3);
+   CPPUNIT_ASSERT(mDummyDrawable->mFrameSynchOrder == 4);
+   CPPUNIT_ASSERT(mDummyDrawable->mFrameOrder == 5);
+   CPPUNIT_ASSERT(mDummyDrawable->mPostFrameOrder == 6);
+
+
+   //test pause
+   mDummyDrawable->ResetState();
+   ourSystem.SetSystemStages(System::STAGES_DEFAULT);
+   ourSystem.Step();
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseStartCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseEndCalled);
+
+   ourSystem.SetPause(true);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseCalled);
+   CPPUNIT_ASSERT(mDummyDrawable->mPauseStartCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseEndCalled);
+
+   mDummyDrawable->ResetState();
+   ourSystem.Step();
+   CPPUNIT_ASSERT(mDummyDrawable->mPauseCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseStartCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseEndCalled);
+
+   mDummyDrawable->ResetState();
+   ourSystem.SetPause(false);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseCalled);
+   CPPUNIT_ASSERT(!mDummyDrawable->mPauseStartCalled);
+   CPPUNIT_ASSERT(mDummyDrawable->mPauseEndCalled);
+
+}
+
+void SystemTests::TestStage(int stageMask)
+{
+   dtCore::System& ourSystem = dtCore::System::GetInstance();
+   mDummyDrawable->ResetState();
+
+   ourSystem.SetSystemStages(stageMask);
+   ourSystem.Step();
+   AssertStages(stageMask);
+}
+
+void SystemTests::AssertStages( int stageMask )
+{
+   //we pass in the flag containing which stages should be set to true
+   if(stageMask & System::STAGE_CONFIG)
+   {
+      CPPUNIT_ASSERT(mDummyDrawable->mConfigCalled);
+   }
+   else
+   {
+      CPPUNIT_ASSERT(!mDummyDrawable->mConfigCalled);
+   }
+
+   if(stageMask & System::STAGE_EVENT_TRAVERSAL)
+   {
+      CPPUNIT_ASSERT(mDummyDrawable->mEventTraversalCalled);
+   }
+   else
+   {
+      CPPUNIT_ASSERT(!mDummyDrawable->mEventTraversalCalled);
+   }
+
+   (stageMask & System::STAGE_POST_EVENT_TRAVERSAL) ? CPPUNIT_ASSERT(mDummyDrawable->mPostEventTraversalCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mPostEventTraversalCalled);
+
+   (stageMask & System::STAGE_PREFRAME) ? CPPUNIT_ASSERT(mDummyDrawable->mPreframeCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mPreframeCalled);
+
+   (stageMask & System::STAGE_CAMERA_SYNCH) ? CPPUNIT_ASSERT(mDummyDrawable->mCameraSynchCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mCameraSynchCalled);
+
+   (stageMask & System::STAGE_FRAME_SYNCH) ? CPPUNIT_ASSERT(mDummyDrawable->mFrameSynchCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mFrameSynchCalled);
+
+   (stageMask & System::STAGE_FRAME) ? CPPUNIT_ASSERT(mDummyDrawable->mFrameCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mFrameCalled);
+
+   (stageMask & System::STAGE_POSTFRAME) ? CPPUNIT_ASSERT(mDummyDrawable->mPostFrameCalled) : CPPUNIT_ASSERT(!mDummyDrawable->mPostFrameCalled);
+
+
 }

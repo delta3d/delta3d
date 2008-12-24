@@ -197,32 +197,32 @@ namespace dtCore
        */
       bool ConvertWorldCoordinateToScreenCoordinate(const osg::Vec3d& worldPos, osg::Vec3d& outScreenPos) const;     
 
-      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> FrameSyncCallback;
+      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::Camera&), 4 * sizeof(void*)> CameraSyncCallback;
 
       /**
-       * Adds a callback that fires whenever the this camera is updated on FrameSync.  This makes it easy to
+       * Adds a callback that fires whenever the this camera is updated on CameraSync.  This makes it easy to
        * add code that will add camera specific uniforms, or do operations in screen space since the camera will be in its
        * final state prior to rendering.
        *
        * An example call from inside class "A" with a method with signature "void OnCameraSync(Camera& camera)" would be:
        *
-       * Camera::AddFrameSyncCallback(this, FrameSyncCallback(this, &A::OnCameraSync))
+       * Camera::AddCameraSyncCallback(this, CameraSyncCallback(this, &A::OnCameraSync))
        *
        * @param keyObject this object will be held onto with an observer pointer.
        *                  When this object is deleted, the callback will be removed.
        *                  It's also handy when removing callbacks directly.
-       * @param callback a functor to call. See the typedef above FrameSyncCallback.
+       * @param callback a functor to call. See the typedef above CameraSyncCallback.
        */
-      static void AddFrameSyncCallback(osg::Referenced& keyObject, FrameSyncCallback callback);
-      static void RemoveFrameSyncCallback(osg::Referenced& keyObject);
+      static void AddCameraSyncCallback(osg::Referenced& keyObject, CameraSyncCallback callback);
+      static void RemoveCameraSyncCallback(osg::Referenced& keyObject);
 
-      // Updates the view matrix via the transformed position.  This is called from FrameSynch.
+      // Updates the view matrix via the transformed position.  This is called from CameraSynch.
       void UpdateViewMatrixFromTransform();
 
    protected:
 
-      ///Override for FrameSynch
-      virtual void FrameSynch(const double deltaFrameTime);
+      ///Override for CameraSynch
+      virtual void CameraSynch(const double deltaFrameTime);
 
       /// Base override to receive messages.
       /// This method should be called from derived classes
@@ -230,7 +230,7 @@ namespace dtCore
       virtual void OnMessage(MessageData* data);
 
       /// Call all of the static frame sync callbacks using this camera.
-      void CallFrameSyncCallbacks();
+      void CallCameraSyncCallbacks();
 
    private:
 

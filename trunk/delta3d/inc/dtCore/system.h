@@ -78,16 +78,82 @@ namespace dtCore
         */
       enum SystemStages
       {
-         STAGE_NONE        = 0x00000000, ///<No update loop stages are performed
-         STAGE_PREFRAME    = 0x00000001, ///<"preframe" message
-         STAGE_FRAMESYNCH  = 0x00000002,
-         STAGE_FRAME       = 0x00000004, ///<"frame" message, plus camera rendering
-         STAGE_POSTFRAME   = 0x00000008, ///<"postframe" message
-         STAGE_CONFIG      = 0X00000010, ///<"config" message, plus render a camera frame
-         STAGES_DEFAULT  = STAGE_FRAMESYNCH|STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
+         STAGE_NONE                   = 0x00000000, ///<No update loop stages are performed
+         STAGE_EVENT_TRAVERSAL        = 0x00000001, ///<"eventtraversal" message is when input and windowing events are picked up, you should not be listening to this message 
+         STAGE_POST_EVENT_TRAVERSAL   = 0x00000002, ///<"posteventtraversal" message is sent immediately after "eventtraversal" listen to this message for input or windowing related response
+         STAGE_PREFRAME               = 0x00000004, ///<"preframe" message
+         STAGE_CAMERA_SYNCH           = 0x00000008,
+         STAGE_FRAME_SYNCH            = 0x00000010,
+         STAGE_FRAME                  = 0x00000020, ///<"frame" message, plus camera rendering
+         STAGE_POSTFRAME              = 0x00000040, ///<"postframe" message
+         STAGE_CONFIG                 = 0X00000080, ///<"config" message, plus render a camera frame
+         STAGES_DEFAULT  = STAGE_EVENT_TRAVERSAL|STAGE_POST_EVENT_TRAVERSAL|STAGE_CAMERA_SYNCH|STAGE_FRAME_SYNCH|STAGE_PREFRAME|STAGE_FRAME|STAGE_POSTFRAME|STAGE_CONFIG
       };
 
       typedef unsigned int SystemStageFlags;
+
+     /**
+      * MESSAGE_EVENT_TRAVERSAL: This message is used by dtABC::Application to perform the OSG Event Traversal
+      * Users are not reccommend to listen to this event.
+      */
+      const static dtUtil::RefString MESSAGE_EVENT_TRAVERSAL;
+
+     /**
+      * MESSAGE_POST_EVENT_TRAVERSAL: This message is sent directly after the OSG Event Traversal, this message
+      * is intended to be used when performing any behavior related to input or windowing events.
+      */
+      const static dtUtil::RefString MESSAGE_POST_EVENT_TRAVERSAL;
+
+     /**
+      * MESSAGE_PRE_FRAME: This message is intended to be the main per frame simulation step or update.  
+      */
+      const static dtUtil::RefString MESSAGE_PRE_FRAME;
+
+     /**
+      * MESSAGE_CAMERA_SYNCH: This message is used by the camera to update its transform after the simulation step.
+      */
+      const static dtUtil::RefString MESSAGE_CAMERA_SYNCH;
+
+     /**
+      * MESSAGE_FRAME_SYNCH:  This message is used to allow per frame behavior related to camera orientations or positions.
+      */
+      const static dtUtil::RefString MESSAGE_FRAME_SYNCH;
+
+     /**
+      * MESSAGE_FRAME: This message is used by dtABC::Application to perform the OSG Update Traversals and OSG Rendering Traversals
+      */
+      const static dtUtil::RefString MESSAGE_FRAME;
+
+     /**
+      * MESSAGE_POST_FRAME: This message is the last per-frame message sent, notifying the end of the frame.
+      */
+      const static dtUtil::RefString MESSAGE_POST_FRAME;
+
+      /**
+       *	MESSAGE_CONFIG: This message is sent out before the start of the frame loop, any initialization code should 
+       * be done on this message.
+       */
+      const static dtUtil::RefString MESSAGE_CONFIG;
+
+      /**
+       *	MESSAGE_PAUSE: This message replaces the MESSAGE_PREFRAME when the system is in 'pause' mode.
+       */
+      const static dtUtil::RefString MESSAGE_PAUSE;
+
+      /**
+       *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(true) is called.
+       */
+      const static dtUtil::RefString MESSAGE_PAUSE_START;
+      
+      /**
+      *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(false) is called.
+      */
+      const static dtUtil::RefString MESSAGE_PAUSE_END;
+
+      /**
+       *	MESSAGE_EXIT: This message is sent out on system shutdown.
+       */
+      const static dtUtil::RefString MESSAGE_EXIT;
 
    protected:
 
@@ -286,17 +352,34 @@ namespace dtCore
       void InitVars();
 
       /**
+      * @param deltaSimTime The change in simulation time is seconds.
+      * @param deltaRealTime The change in real time in seconds.
+      */
+      void EventTraversal(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+      * @param deltaSimTime The change in simulation time is seconds.
+      * @param deltaRealTime The change in real time in seconds.
+      */
+      void PostEventTraversal(const double deltaSimTime, const double deltaRealTime);
+
+      /**
+      * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
+      * @param deltaSimTime The change in simulation time is seconds.
+      * @param deltaRealTime The change in real time in seconds.
+      */
+      void PreFrame(const double deltaSimTime, const double deltaRealTime);
+
+      /**
        * @param deltaSimTime The change in simulation time is seconds.
        * @param deltaRealTime The change in real time in seconds.
        */
       void FrameSynch(const double deltaSimTime, const double deltaRealTime);
-
       /**
-       * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
-       * @param deltaSimTime The change in simulation time is seconds.
-       * @param deltaRealTime The change in real time in seconds.
-       */
-      void PreFrame(const double deltaSimTime, const double deltaRealTime);
+      * @param deltaSimTime The change in simulation time is seconds.
+      * @param deltaRealTime The change in real time in seconds.
+      */
+      void CameraSynch(const double deltaSimTime, const double deltaRealTime);
 
       /**
        * Render the Camera, etc.  Message: "frame", delta time in seconds
