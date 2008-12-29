@@ -129,7 +129,7 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
 
    // Calculate tangent vectors from the geometry for use in tangent space calculations
    GenerateTangentsForObject(mSphere.get());
-   GenerateTangentsForObject(mCustomObject.get());   
+   GenerateTangentsForObject(mCustomObject.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
    // Override texture values in the geometry to ensure that we can apply normal mapping
    osg::StateSet* ss = object->GetOSGNode()->getOrCreateStateSet();
    ss->setTextureAttributeAndModes(0, mDiffuseTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
-   ss->setTextureAttributeAndModes(1, mNormalTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);    
+   ss->setTextureAttributeAndModes(1, mNormalTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
    // Get all geometry in the graph to apply the shader to
    osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
@@ -246,25 +246,25 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
       if (!geom->getVertexAttribArray(6))
       {
          geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
-      }          
-   }      
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode)
 {
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-   dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestBumpMap", "FX");
+   dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestBumpMap", "TestShaders");
 
    if (sp != NULL)
    {
-      dtCore::ShaderProgram* boundProgram = sm.AssignShaderFromPrototype(*sp, *object->GetOSGNode());     
+      dtCore::ShaderProgram* boundProgram = sm.AssignShaderFromPrototype(*sp, *object->GetOSGNode());
 
       // Associate the vertex attribute in location 6 with the name "TangentAttrib"
       osg::Program* osgProgram = boundProgram->GetShaderProgram();
       osgProgram->addBindAttribLocation("TangentAttrib", 6);
 
-      outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));         
+      outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));
    }
 }
 
