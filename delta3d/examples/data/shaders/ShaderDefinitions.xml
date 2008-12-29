@@ -2,10 +2,10 @@
 
 <shaderlist>     
    
-   <shadergroup name="TestBumpMap">    
+   <shadergroup name="TestShaders">
 
       <shader name="TestBumpMap" default="no">
-         <source type="Vertex">shaders/TestBumpMap.vert</source>        
+         <source type="Vertex">shaders/TestBumpMap.vert</source>
          <source type="Fragment">shaders/TestBumpMap.frag</source>
 		 
          <parameter name="diffuseTexture">
@@ -24,7 +24,7 @@
    		<integer defaultValue="1"/>
    	 </parameter>
 	 
-      </shader>          
-   </shadergroup>   
+      </shader>
+   </shadergroup>
     
 </shaderlist>
