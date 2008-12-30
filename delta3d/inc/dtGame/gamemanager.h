@@ -573,9 +573,9 @@ namespace dtGame
                if (!toFill.empty())
                {
                   // Iterate until we find a proxy of the proper type.
-                  for (int nFoundIndex = 0; nFoundIndex < toFill.size(); nFoundIndex++)
+                  for (size_t foundIndex = 0; foundIndex < toFill.size(); foundIndex++)
                   {
-                     proxy = dynamic_cast<ProxyType*>(toFill[nFoundIndex]);
+                     proxy = dynamic_cast<ProxyType*>(toFill[foundIndex]);
 
                      if (proxy)
                      {
