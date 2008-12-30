@@ -572,7 +572,16 @@ namespace dtGame
                FindActorsByName(name, toFill);
                if (!toFill.empty())
                {
-                  proxy = dynamic_cast<ProxyType*>(toFill[0]);
+                  // Iterate until we find a proxy of the proper type.
+                  for (int nFoundIndex = 0; nFoundIndex < toFill.size(); nFoundIndex++)
+                  {
+                     proxy = dynamic_cast<ProxyType*>(toFill[nFoundIndex]);
+
+                     if (proxy)
+                     {
+                        return;
+                     }
+                  }
                }
             }
 
