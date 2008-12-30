@@ -26,6 +26,7 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
+////////////////////////////////////////////////////////////////////////////////
 Environment::Environment(const std::string& name)
    : mAmbLightTable(new InterpTable())
    , mDifLightTable(new InterpTable())
@@ -56,7 +57,7 @@ Environment::Environment(const std::string& name)
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
    mFogColor.set(0.84f, 0.87f, 1.f);
-   mAdvFogCtrl.set(1.f, 10.f, 2.545 ); // T, E, N
+   mAdvFogCtrl.set(1.f, 10.f, 2.545); // T, E, N
    mSunColor.set(1.f, 1.f, 1.f);
    mModFogColor.set(mFogColor);
 
@@ -130,6 +131,7 @@ Environment::Environment(const std::string& name)
    AddSender(&System::GetInstance());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Environment::~Environment()
 {
    while (GetNumEffects() > 0)
@@ -159,7 +161,7 @@ Environment::~Environment()
    RemoveSender(&System::GetInstance());
 }
 
-/// Notifies this object that it has been added to a Scene
+////////////////////////////////////////////////////////////////////////////////
 void Environment::AddedToScene(Scene* scene)
 {
    DeltaDrawable::AddedToScene(scene);
@@ -170,10 +172,13 @@ void Environment::AddedToScene(Scene* scene)
    }
 }
 
-// Add an Environmental Effect to the Environment
+////////////////////////////////////////////////////////////////////////////////
 void Environment::AddEffect(EnvEffect* effect)
 {
-   if (!effect) { return; }
+   if (!effect) 
+   {
+      return; 
+   }
 
    // we add EnvEffects to our "mEnvEffectNode"
    if (std::find(mEffectList.begin(), mEffectList.end(), effect) == mEffectList.end())
@@ -203,13 +208,13 @@ void Environment::AddEffect(EnvEffect* effect)
    }
 }
 
-/** Remove an EnvEffect from this Environment.  This method checks to see if
-  * has previously been added, then puts the effect into a holding bin for
-  * removal at a later time.
-  */
+////////////////////////////////////////////////////////////////////////////////
 void Environment::RemEffect(EnvEffect* effect)
 {
-   if (!effect) { return; }
+   if (!effect) 
+   {
+      return; 
+   }
 
    EnvEffectList::iterator it = std::find(mEffectList.begin(), mEffectList.end(), effect);
    if (it != mEffectList.end())
@@ -219,9 +224,7 @@ void Environment::RemEffect(EnvEffect* effect)
    }
 }
 
-/** Remove any EnvEffects that have been marked for removal.  This method
-  * needs to be called at a scene graph "safe" time.
-  */
+////////////////////////////////////////////////////////////////////////////////
 void Environment::RemoveEffectCache()
 {
    for (EnvEffectList::iterator it = mToBeRemoved.begin();
@@ -236,10 +239,11 @@ void Environment::RemoveEffectCache()
       mEffectList.erase(std::remove(mEffectList.begin(), mEffectList.end(), effect),
                         mEffectList.end());
    }
+
    mToBeRemoved.clear();
 }
 
-/// Add a DeltaDrawable to the Scene to be viewed.
+////////////////////////////////////////////////////////////////////////////////
 bool Environment::AddChild(DeltaDrawable* child)
 {
    // we add Drawables to our mDrawableNode
@@ -254,7 +258,7 @@ bool Environment::AddChild(DeltaDrawable* child)
    }
 }
 
-/// Remove a DeltaDrawable from the Environment Node.
+////////////////////////////////////////////////////////////////////////////////
 void Environment::RemoveChild(DeltaDrawable* child)
 {
    // we add Drawables to our mDrawableNode
@@ -265,7 +269,7 @@ void Environment::RemoveChild(DeltaDrawable* child)
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void Environment::OnMessage(MessageData* data)
 {
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
@@ -276,7 +280,10 @@ void Environment::OnMessage(MessageData* data)
    else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       // remove any EnvEffects that need removing
-      if (mToBeRemoved.size() > 0) { RemoveEffectCache(); }
+      if (mToBeRemoved.size() > 0) 
+      {
+         RemoveEffectCache(); 
+      }
    }
    else if (data->message == dtCore::System::MESSAGE_EXIT)
    {
@@ -289,11 +296,7 @@ void Environment::OnMessage(MessageData* data)
    }
 }
 
-
-/** Set the base color of the fog.  This color is then adjusted internally
-  * using the time of day.  NOTE: This value is not used for the fog
-  * when the FogMode is ADV, but it still can be used by the EnvEffects.
-  */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetFogColor(const osg::Vec3& color)
 {
    mFogColor = color; // base fog color
@@ -303,7 +306,7 @@ void dtCore::Environment::SetFogColor(const osg::Vec3& color)
    Repaint();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::Repaint()
 {
    float vis = mVisibility;
@@ -320,7 +323,7 @@ void dtCore::Environment::Repaint()
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetSkyColor(const osg::Vec3& color)
 {
    // what does this do if there is no SkyDome in the Environment?  Clear color?
@@ -328,11 +331,7 @@ void dtCore::Environment::SetSkyColor(const osg::Vec3& color)
    Repaint();
 }
 
-/** Set the fog mode.  Any Drawables added to the Environment will be fogged
- *   based on the FogMode.  The ADV FogMode uses a pixel shader to calculate
- *   a somewhat physically correct fog/haze.  LINEAR, EXP, and EXP2 use standard
- *   OpenGL Fog.
- */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetFogMode(FogMode mode)
 {
    if (mFogMode == mode) { return; }
@@ -374,16 +373,19 @@ void dtCore::Environment::SetFogMode(FogMode mode)
    mFog->setMode(fm);
 }
 
-/** Set the fog's near value.  This is only used when the SetFogMode() is
-  * LINEAR.
-  * @param val : the near value (meters)
-  */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetFogNear(float val)
 {
    mFogNear = val;
-   if (mFogNear < 0.f) { mFogNear = 0.f; }
 
-   if (mFogNear > mVisibility) { mFogNear = mVisibility; }
+   if (mFogNear < 0.f)
+   {
+      mFogNear = 0.f;
+   }
+   if (mFogNear > mVisibility)
+   {
+      mFogNear = mVisibility;
+   }
 
    mFog->setStart(mFogNear);
    mFog->setEnd(mVisibility);
@@ -391,13 +393,13 @@ void dtCore::Environment::SetFogNear(float val)
    Repaint();
 }
 
-/** Set's the distance at which the scene becomes fully "fogged".
-  *
-  * @param distance : the distance of "full" fog (meters)
-  */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetVisibility(float distance)
 {
-   if (mVisibility == distance) { return; }
+   if (mVisibility == distance)
+   {
+      return;
+   }
 
    mVisibility = distance;
 
@@ -409,10 +411,13 @@ void dtCore::Environment::SetVisibility(float distance)
    Repaint();
 }
 
-/** Turns the fog effect on or off */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetFogEnable(bool enable)
 {
-   if (mFogEnabled == enable) { return; }
+   if (mFogEnabled == enable)
+   {
+      return;
+   }
 
    mFogEnabled = enable;
    osg::StateSet* state = mDrawableNode->getOrCreateStateSet();
@@ -448,31 +453,19 @@ void dtCore::Environment::SetFogEnable(bool enable)
    Repaint();
 }
 
-
-
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetFogDensity(float density)
 {
    mFog->setDensity(density);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 float dtCore::Environment::GetFogDensity()
 {
    return mFog->getDensity();
 }
 
-
-
-/** Set the starting date and time.  Any value of -1 resets the date/time
- *  to be the system time.
- * @param yr Year (1900-xxxx)
- * @param mo Month of the year (1-12)
- * @param da Day of the Month (1-31)
- * @param hr Hour since midnight (0-23)
- * @param mi Minutes after the hour (0-59)
- * @param sc Seconds pass the minute (0-59)
- */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetDateTime(unsigned yr, unsigned mo, unsigned da,
                                       unsigned hr, unsigned mi, unsigned sc)
 {
@@ -485,41 +478,35 @@ void dtCore::Environment::SetDateTime(unsigned yr, unsigned mo, unsigned da,
    Update(999.99);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetDateTime(const DateTime& dateTime)
 {
    mCurrTime = dateTime;
 }
 
-/** Get the current Date and Time of this Environment within a second.
- * @param yr year
- * @param mo month
- * @param da day
- * @param hr hour
- * @param mi minute
- * @param sc second
- */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::GetDateTime(unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc) const
 {
    mCurrTime.GetTime(yr, mo, da, hr, mi, sc);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 const dtUtil::DateTime& dtCore::Environment::GetDateTime() const
 {
    return mCurrTime;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 dtUtil::DateTime& dtCore::Environment::GetDateTime()
 {
    return mCurrTime;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::Update(const double deltaFrameTime)
 {
    mLastUpdate += deltaFrameTime;
+
    if (mLastUpdate > 1.0)
    {
       mLastUpdate = 0.0;
@@ -531,10 +518,13 @@ void dtCore::Environment::Update(const double deltaFrameTime)
       Repaint();
    }
 
-   if (GetFogMode() == Environment::ADV) { UpdateShaders(); }
+   if (GetFogMode() == Environment::ADV)
+   {
+      UpdateShaders();
+   }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::UpdateEnvColors()
 {
    float skyBright = mSkyLightTable->Interpolate(mSunAltitude);
@@ -546,25 +536,26 @@ void dtCore::Environment::UpdateEnvColors()
    mModFogColor = mFogColor * skyBright;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 Environment::InterpTable::InterpTable()
    : mSize(0)
 {
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 Environment::InterpTable::~InterpTable()
 {
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void Environment::InterpTable::AddEntry(double ind, double dep)
 {
    mTable.push_back(TableEntry(ind,dep));
    mSize++;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 double Environment::InterpTable::Interpolate(double x) const
 {
    int i = 0;
@@ -598,9 +589,7 @@ double Environment::InterpTable::Interpolate(double x) const
    return y;
 }
 
-/**
- * Updates the sky light based on the sun angle.
- */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::UpdateSkyLight()
 {
    if (mSkyLight.valid())
@@ -612,10 +601,7 @@ void dtCore::Environment::UpdateSkyLight()
    }
 }
 
-/** Update the fog color based on the sun angle and the sun color.
- *
- *  TODO: Adjust based on the Camera's current heading
- */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::UpdateFogColor()
 {
    // Calculate the fog color in the direction of the sun for
@@ -643,10 +629,10 @@ void dtCore::Environment::UpdateFogColor()
    double rotation = -(sunRotation + osg::PI) - heading;
 
    float inverseVis = 1.f - (MAX_VISIBILITY - vis) / MAX_VISIBILITY;
-   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude) * 2.f)/2.f + 0.000001f;
+   float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude) * 2.f) / 2.f + 0.000001f;
 
    float rf1  = std::abs((rotation-osg::PI) / osg::PI); // difference between eyepoint heading and sun heading (rad)
-   float rf2 = inverseVis * pow(rf1 * rf1, 1/sif);
+   float rf2 = inverseVis * pow(rf1 * rf1, 1.0f / sif);
 
    float rf3  = 1.f - rf2;
 
@@ -658,9 +644,7 @@ void dtCore::Environment::UpdateFogColor()
    mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f));
 }
 
-
-/** Update the color of the sun light based on it's angle.
-*/
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::UpdateSunColor()
 {
    // magic light color code borrowed from osgEphemeris, courtesy of Don Burns
@@ -692,7 +676,7 @@ void dtCore::Environment::UpdateSunColor()
 
 }
 
-/** Private method used to pass parameters to the light scattering shader */
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::UpdateShaders()
 {
    osg::Vec2 sunDir;
@@ -713,14 +697,16 @@ void dtCore::Environment::UpdateShaders()
                           mAdvFogCtrl[2] * 10.0e25);
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetRefLatLong(const osg::Vec2& latLong)
 {
    mRefLatLong = latLong;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::Environment::SetOSGNode(osg::Node* pNode)
 {
    mNode = pNode;
 }
+
+////////////////////////////////////////////////////////////////////////////////
