@@ -51,7 +51,7 @@ namespace dtCore
 
    public:
 
-      Environment( const std::string& name = "Environment" );
+      Environment(const std::string& name = "Environment");
    protected:
       virtual ~Environment();
 
@@ -66,65 +66,72 @@ namespace dtCore
       };
 
       ///Notifies this object that it has been added to a Scene
-      virtual void AddedToScene( Scene *scene );
+      virtual void AddedToScene(Scene* scene);
 
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
-      virtual bool AddChild( DeltaDrawable *child );
+      virtual bool AddChild(DeltaDrawable* child);
 
       ///Remove a DeltaDrawable added to the Environment.
-      void RemoveChild( DeltaDrawable *child );
+      void RemoveChild(DeltaDrawable* child);
 
       /// Add an Environmental Effect to the Environment
-      void AddEffect( EnvEffect *effect );
+      void AddEffect(EnvEffect* effect);
 
       /// Remove an EnvEffect from this Environment
-      void RemEffect( EnvEffect *effect );
+      void RemEffect(EnvEffect* effect);
 
       ///Get an Environmental Effect by its index
-      EnvEffect* GetEffect( int idx ) { return mEffectList[idx].get(); }
+      EnvEffect* GetEffect(int idx) { return mEffectList[idx].get(); }
 
       ///Get the number of Environmental Effects in this Environment
       int GetNumEffects() { return mEffectList.size(); }
 
       ///Set the base color of the sky
-      void SetSkyColor( const osg::Vec3& color );
-      void GetSkyColor( osg::Vec3& color ) const { color = mSkyColor; }
+      void SetSkyColor(const osg::Vec3& color);
+      void GetSkyColor(osg::Vec3& color) const { color = mSkyColor; }
 
-      ///Set the base color of the fog
-      void SetFogColor( const osg::Vec3& color );
-      void GetFogColor( osg::Vec3& color ) const { color = mFogColor; }
+      /** Set the base color of the fog.  This color is then adjusted internally
+      * using the time of day.  NOTE: This value is not used for the fog
+      * when the FogMode is ADV, but it still can be used by the EnvEffects.
+      */
+      void SetFogColor(const osg::Vec3& color);
+      void GetFogColor(osg::Vec3& color) const { color = mFogColor; }
 
       ///Get the modified color of the fog
-      void GetModFogColor( osg::Vec3& color ) const { color = mModFogColor; }
+      void GetModFogColor(osg::Vec3& color) const { color = mModFogColor; }
 
-      ///Set the fog mode
-      void SetFogMode( FogMode mode );
+      /** Set the fog mode.  Any Drawables added to the Environment will be fogged
+      *   based on the FogMode.  The ADV FogMode uses a pixel shader to calculate
+      *   a somewhat physically correct fog/haze.  LINEAR, EXP, and EXP2 use standard
+      *   OpenGL Fog.
+      */
+      void SetFogMode(FogMode mode);
       FogMode GetFogMode() const { return mFogMode; }
 
       ///Supply the advanced fog control values
-      void SetAdvFogCtrl( const osg::Vec3& src ) { mAdvFogCtrl = src; }
-      void GetAdvFogCtrl( osg::Vec3& dst ) const{ dst = mAdvFogCtrl; }
+      void SetAdvFogCtrl(const osg::Vec3& src) { mAdvFogCtrl = src; }
+      void GetAdvFogCtrl(osg::Vec3& dst) const { dst = mAdvFogCtrl; }
 
       ///Set the fog near value (only used for FogMode::LINEAR
-      void SetFogNear( float val );
-      float GetFogNear() const {return mFogNear;}
+      void SetFogNear(float val);
+      float GetFogNear() const { return mFogNear; }
 
       //Turn the fog on or off
-      void SetFogEnable( bool enable );
-      bool GetFogEnable() const {return mFogEnabled;}
+      void SetFogEnable(bool enable);
+      bool GetFogEnable() const { return mFogEnabled; }
 
       //Set fog Density
-      void SetFogDensity( float density );
+      void SetFogDensity(float density);
       float GetFogDensity();
 
       ///Set the visibility distance in meters
-      void SetVisibility( float distance );
-      float GetVisibility() const {return mVisibility;}
+      void SetVisibility(float distance);
+      float GetVisibility() const { return mVisibility; }
 
       ///Get the current color of the sun
-      void GetSunColor( osg::Vec3& color ) {color = mSunColor;}
+      void GetSunColor(osg::Vec3& color) {color = mSunColor;}
 
-      void GetSunAzEl( float& az, float& el ) const
+      void GetSunAzEl(float& az, float& el) const
       {
          az = mSunAzimuth;
          el = mSunAltitude;
@@ -141,24 +148,32 @@ namespace dtCore
       //otherwise it will update every second
       void Update(const double deltaFrameTime);
 
-      ///Set the environment's date and time
-      void SetDateTime( unsigned yr, unsigned mo, unsigned da,
-                        unsigned hr, unsigned mi, unsigned sc);
+      /** Set the starting date and time.  Any value of -1 resets the date/time
+      *  to be the system time.
+      * @param yr Year (1900-xxxx)
+      * @param mo Month of the year (1-12)
+      * @param da Day of the Month (1-31)
+      * @param hr Hour since midnight (0-23)
+      * @param mi Minutes after the hour (0-59)
+      * @param sc Seconds pass the minute (0-59)
+      */
+      void SetDateTime(unsigned yr, unsigned mo, unsigned da,
+                       unsigned hr, unsigned mi, unsigned sc);
 
       void SetDateTime(const dtUtil::DateTime& dateTime);
 
-      void GetDateTime( unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc ) const;
+      void GetDateTime(unsigned& yr, unsigned& mo, unsigned& da, unsigned& hr, unsigned& mi, unsigned& sc) const;
 
       const dtUtil::DateTime& GetDateTime() const;
       dtUtil::DateTime& GetDateTime();
 
       ///Set the ephemeris reference lat/long
-      void SetRefLatLong( const osg::Vec2& latLong );
-      void GetRefLatLong( osg::Vec2& latLong ) const { latLong = mRefLatLong; }
+      void SetRefLatLong(const osg::Vec2& latLong);
+      void GetRefLatLong(osg::Vec2& latLong) const { latLong = mRefLatLong; }
 
       ///required by DeltaDrawable
-      osg::Node* GetOSGNode(){return mNode.get();}
-      const osg::Node* GetOSGNode() const{return mNode.get();}
+      osg::Node* GetOSGNode() { return mNode.get(); }
+      const osg::Node* GetOSGNode() const { return mNode.get(); }
 
       void SetOSGNode(osg::Node* pNode);
 
@@ -168,14 +183,17 @@ namespace dtCore
       {
          struct TableEntry
          {
-            TableEntry() :
-               ind(0.0),
-               dep(0.0)
+            TableEntry() 
+               : ind(0.0)
+               , dep(0.0)
             {
             }
 
-            TableEntry(double independent, double dependent):
-            ind(independent), dep(dependent) {}
+            TableEntry(double independent, double dependent)
+               : ind(independent)
+               , dep(dependent) 
+            {
+            }
 
             double ind;
             double dep;
@@ -185,16 +203,17 @@ namespace dtCore
          std::vector<TableEntry> mTable;
 
       public:
+
          InterpTable();
          ~InterpTable();
          void AddEntry(double ind, double dep);
          double Interpolate(double x) const;
       };
 
-      InterpTable *mAmbLightTable;
-      InterpTable *mDifLightTable;
-      InterpTable *mSpecLightTable;
-      InterpTable *mSkyLightTable;
+      InterpTable* mAmbLightTable;
+      InterpTable* mDifLightTable;
+      InterpTable* mSpecLightTable;
+      InterpTable* mSkyLightTable;
 
       osg::Vec3 mAmbLightColor; ///<The current ambient light color
       osg::Vec3 mDifLightColor; ///<The current diffuse light color
@@ -229,15 +248,26 @@ namespace dtCore
       dtUtil::DateTime mCurrTime;   ///< The current time/day of the sim
 
       double mLastUpdate;
-      SunlightShader *mSunlightShader; ///<pixel shader for light scattering
-      SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
+      SunlightShader* mSunlightShader; ///<pixel shader for light scattering
+      SkyDomeShader* mSkyDomeShader; ///<pixel shader for the skydome
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
 
       RefPtr<osg::Node> mNode;
 
+      /**
+      * Updates the sky light based on the sun angle.
+      */
       void UpdateSkyLight();
+
+      /** Update the fog color based on the sun angle and the sun color.
+      *
+      *  TODO: Adjust based on the Camera's current heading
+      */
       void UpdateFogColor();
+
+      /// Update the color of the sun light based on it's angle.
       void UpdateSunColor();
+
       void UpdateEnvColors();
       void UpdateShaders();
 };
