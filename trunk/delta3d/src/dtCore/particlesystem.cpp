@@ -358,10 +358,18 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
  */
 void ParticleSystem::SetEnabled(bool enable)
 {
-   mEnabled = enable;
+   mEnabled = enable;  
 
    ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor(mEnabled);
    GetOSGNode()->accept(pspv);
+
+   std::list<dtCore::ParticleLayer> layerList = GetAllLayers();
+   std::list<dtCore::ParticleLayer>::iterator nextLayerIt;   
+
+   for(nextLayerIt = layerList.begin(); nextLayerIt != layerList.end(); ++nextLayerIt)
+   {      
+      nextLayerIt->GetParticleSystem().setFrozen(!mEnabled);
+   }      
 }
 
 /**
