@@ -73,6 +73,7 @@
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/playerstartactorproxy.h>
 #include <dtActors/engineactorregistry.h>
+#include <dtActors/taskactorgameevent.h>
 
 #include "testcomponent.h"
 
@@ -248,12 +249,19 @@ void GameManagerTests::TestTemplatedActorMethods()
    {
       dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
-      CPPUNIT_ASSERT(p);
+      CPPUNIT_ASSERT(p != NULL);
       //proxies.push_back(p);
       mManager->AddActor(*p, false, false);
    }
 
-   dtActors::GameMeshActorProxy* shouldBeValid;
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> testEvent;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, testEvent);
+   CPPUNIT_ASSERT(testEvent != NULL);
+   //proxies.push_back(p);
+   mManager->AddActor(*testEvent, false, false);
+
+   dtActors::GameMeshActorProxy* shouldBeValid = NULL;
+   dtActors::TaskActorGameEventProxy* shouldBeValid2 = NULL;
 
    mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
    mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
@@ -271,14 +279,18 @@ void GameManagerTests::TestTemplatedActorMethods()
    CPPUNIT_ASSERT(proxies.empty());
 
    std::string searchName = shouldBeValid->GetName();
+   // make the event have the same name.
+   testEvent->SetName(searchName);
 
    shouldBeValid = NULL;
 
    mManager->FindActorsByName(searchName, proxies);
    mManager->FindActorByName(searchName, shouldBeValid);
+   mManager->FindActorByName(searchName, shouldBeValid2);
 
    CPPUNIT_ASSERT(!proxies.empty());
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list and not NULL", shouldBeValid == proxies[0]);
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the one task event proxy and not NULL", shouldBeValid2 == testEvent);
 
    for (size_t i = proxies.size() - 1; i >= 1; --i)
    {
