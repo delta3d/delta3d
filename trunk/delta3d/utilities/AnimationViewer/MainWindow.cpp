@@ -465,7 +465,6 @@ void MainWindow::OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>& poseMe
    mPoseDock->setWidget(mPoseMeshViewer);
 
    addDockWidget(Qt::RightDockWidgetArea, mPoseDock);
-   resize(1000, 800);
 
    // Create icons for the mode toolbar
    QIcon modeGrabIcon(QPixmap(":/images/handIcon.png"));
