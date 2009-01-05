@@ -574,7 +574,7 @@ namespace dtGame
                {
                   std::vector<dtDAL::ActorProxy*>::iterator i, iend;
                   i = toFill.begin();
-                  iend < toFill.end();
+                  iend = toFill.end();
                   // Iterate until we find a proxy of the proper type.
                   for (;i != iend; ++i)
                   {
