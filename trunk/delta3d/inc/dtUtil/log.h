@@ -24,6 +24,7 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <cstdarg>
 
 #include <osg/Referenced>
 #include <dtCore/refptr.h>
@@ -141,6 +142,19 @@ namespace dtUtil
          */
         void LogMessage(LogMessageType msgType, const std::string &source, int line,
                         const std::string &msg) const;
+
+		/**
+         * Logs a time-stamped message.  Takes a variable-argument list
+         *  (va_list) that was created with va_start.
+		 *  @param msgType - Type of message being displayed. (error,warning,info)
+		 *  @param source - String identifier of the source of the message.
+         *  @param msg - Printf - style format string.
+         *  @param list - va_list created with va_start.
+		 *  @note
+		 *      Max length of the string to be printed is 2048 characters.
+		 */
+		void LogMessage(LogMessageType msgType, const std::string &source,
+							const char *msg, va_list list) const;
 
         /**
          * Little more sophisticated method for logging messages.  Allows for

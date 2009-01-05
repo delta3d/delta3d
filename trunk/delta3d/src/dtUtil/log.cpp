@@ -271,10 +271,9 @@ namespace dtUtil
 
    //////////////////////////////////////////////////////////////////////////
    void Log::LogMessage(LogMessageType msgType, const std::string &source,
-                            const char *msg, ...) const
+                            const char *msg, va_list list) const
    {
       static char buffer[2049];
-      va_list list;
       struct tm *t;
       time_t cTime;
       std::string color;
@@ -315,9 +314,7 @@ namespace dtUtil
 
       }
 
-      va_start(list,msg);
       vsprintf(buffer,msg,list);
-      va_end(list);
 
       if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
       {
@@ -326,7 +323,7 @@ namespace dtUtil
             << std::setw(2) << std::setfill('0') << t->tm_min << ":"
             << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
             << source << "&gt; " << buffer << "</font></b><br>" << std::endl;
- 
+
          manager->logFile.flush();
       }
 
@@ -338,6 +335,18 @@ namespace dtUtil
             << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
             << source << ">" << buffer << std::endl;
       }
+
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Log::LogMessage(LogMessageType msgType, const std::string &source,
+                     const char *msg, ...) const
+   {
+      va_list list;
+
+      va_start(list,msg);
+      LogMessage(msgType,source,msg,list);
+      va_end(list);
 
    }
 
