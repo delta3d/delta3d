@@ -79,7 +79,7 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, const std::s
 {
    //load the xml file which specifies our shaders
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-   sm.LoadShaderDefinitions("Shaders/ShaderDefinitions.xml");
+   sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
 
    // Load our art assets
    LoadTextures();
