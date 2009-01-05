@@ -104,7 +104,8 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
         CPPUNIT_TEST(TestGMShutdown);
 
         CPPUNIT_TEST(TestTimers);
-        CPPUNIT_TEST(VerifyOnAddedToGMIsCalled);
+        CPPUNIT_TEST(TestIfOnAddedToGMIsCalled);
+        CPPUNIT_TEST(TestIfGMSendsRestartedMessage);
         CPPUNIT_TEST(TestSetProjectContext);
 
    CPPUNIT_TEST_SUITE_END();
@@ -136,7 +137,8 @@ public:
 
    void TestTimers();
 
-   void VerifyOnAddedToGMIsCalled();
+   void TestIfOnAddedToGMIsCalled();
+   void TestIfGMSendsRestartedMessage();
    void TestSetProjectContext();
 
 private:
@@ -1158,7 +1160,7 @@ void GameManagerTests::TestComplexScene()
 }
 
 /////////////////////////////////////////////////
-void GameManagerTests::VerifyOnAddedToGMIsCalled()
+void GameManagerTests::TestIfOnAddedToGMIsCalled()
 {
    dtCore::RefPtr<TestComponent> tc = new TestComponent;
    CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should not be called until added to the GM.",
@@ -1168,14 +1170,29 @@ void GameManagerTests::VerifyOnAddedToGMIsCalled()
    CPPUNIT_ASSERT_MESSAGE("OnAddedToGM should be called when added to the GM.",
       tc->mWasOnAddedToGMCalled);
 
-   //dtCore::System::GetInstance().Step();
-   //CPPUNIT_ASSERT_MESSAGE("GM should have sent RESTARTED message on startup.",
-   //   tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESTARTED).valid());
+   mManager->RemoveComponent(*tc);
+}
 
+/////////////////////////////////////////////////
+void GameManagerTests::TestIfGMSendsRestartedMessage()
+{
+   dtCore::RefPtr<TestComponent> tc = new TestComponent;
+
+   mManager->AddComponent(*tc.get(), dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtCore::System::GetInstance().Step();
+   CPPUNIT_ASSERT_MESSAGE("GM should have sent RESTARTED message on startup.",
+                           tc->FindProcessMessageOfType(dtGame::MessageType::INFO_RESTARTED).valid());
+
+   //Note: this is invalid now, since other messages can be sent before the
+   //queued INFO_RESTARTED.
    //std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
    //CPPUNIT_ASSERT_MESSAGE("INFO_RESTARTED should be very first message from GM. Always.",
    //   msgs[0]->GetMessageType() == dtGame::MessageType::INFO_RESTARTED);
+
+   mManager->RemoveComponent(*tc);
 }
+
 
 /////////////////////////////////////////////////
 void GameManagerTests::TestTimers()
