@@ -229,6 +229,11 @@ namespace dtCore
          float GetCycleTimeMax() const { return mCycleTimeMax; }
 
          /**
+         * Set min and max amount of cycle time (see SetCycleTimeMax().
+         */
+         void SetCycleTimeMinMax(float cycleTimeMin, float cycleTimeMax);
+
+         /**
           * @param count The number of cycles that will happen before oscillation stops.
           */
          void SetCycleCountTotal(int newCount) { mCycleCountTotal = newCount; }
