@@ -136,18 +136,17 @@ void dtCore::ODEController::Iterate(double deltaFrameTime)
 
    const double leftOver = deltaFrameTime - (numSteps * stepSize);
 
-   if(leftOver > 0.0)
+   if (leftOver > 0.0)
    {
       Step(leftOver);
    }
 
-   for(it = mCollidableContents.begin();
-       it != mCollidableContents.end();
-       it++)
+   for (it = GetRegisteredCollidables().begin();
+        it != GetRegisteredCollidables().end();
+        it++)
    {
       (*it)->PostPhysicsStepUpdate();
    }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
