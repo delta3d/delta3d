@@ -1,25 +1,27 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_WIDGET
 #define DELTA_WIDGET
+
+////////////////////////////////////////////////////////////////////////////////
 
 #include <dtABC/baseabc.h>
 #include <osgViewer/GraphicsWindow>
@@ -39,7 +41,7 @@ typedef osgViewer::GraphicsWindowX11::WindowData WindowData;
 #endif
 
 
-#if   !  defined(BIT)
+#if !defined(BIT)
    ///BIT  helper definition for enumerated values and bit packing
    #define  BIT(a)   (1<<a)
 #endif
@@ -49,6 +51,8 @@ namespace osgViewer
 {
    class CompositeViewer;
 }///@endcond
+
+////////////////////////////////////////////////////////////////////////////////
 
 namespace dtABC
 {
@@ -92,11 +96,11 @@ namespace dtABC
 
 
    public:
-                              Widget( const std::string& name = "Widget" );
+                              Widget(const std::string& name = "Widget");
    protected:
-   
+
       virtual                 ~Widget();
-   
+
    public:
 
       /**
@@ -105,27 +109,27 @@ namespace dtABC
        *
        * @param data the window handle and size
        */
-      virtual  void           Config( const WinData* data = NULL );
+      virtual  void           Config(const WinData* data = NULL);
 
       ///Quit the application (call's system quit)
-      virtual  void           Quit( void );
+      virtual  void           Quit(void);
 
       ///Set the data path to use
-      virtual  void           SetPath( std::string path );
+      virtual  void           SetPath(const std::string& path);
 
    protected:
       ///Override for PreFrame
-      virtual  void           PreFrame( const double deltaFrameTime );
+      virtual  void           PreFrame(const double deltaFrameTime);
 
       ///Override for Frame
-      virtual  void           Frame( const double deltaFrameTime );
+      virtual  void           Frame(const double deltaFrameTime);
 
       ///Override for PostFrame
-      virtual  void           PostFrame( const double deltaFrameTime );
+      virtual  void           PostFrame(const double deltaFrameTime);
 
       ///BaseABC override to receive messages.
       ///This method should be called from derived classes
-      virtual  void           OnMessage( dtCore::Base::MessageData* data ); 
+      virtual  void           OnMessage(dtCore::Base::MessageData* data);
 
       bool     mIsInitialized;  ///<have we been fully initialized yet
 
@@ -138,20 +142,20 @@ namespace dtABC
 
    private:
       ///Advance a single frame cycle.
-      inline   void           Step( void );
+      inline   void           Step(void);
 
       ///Handle a window resize event.
-      inline   void           Resize( const dtABC::WinRect* r );
+      inline   void           Resize(const dtABC::WinRect* r);
 
       ///Handle a mouse events.
-      inline   void           HandleMouseEvent( const MouseEvent& ev );
+      inline   void           HandleMouseEvent(const MouseEvent& ev);
 
       ///Handle a keyboard events.
-      inline   void           HandleKeyboardEvent( const KeyboardEvent& ev );
+      inline   void           HandleKeyboardEvent(const KeyboardEvent& ev);
 
       ///Determin if special keyboard event.
-      inline   bool           IsSpecialKeyboardEvent( const KeyboardEvent& ev );
-      
+      inline   bool           IsSpecialKeyboardEvent(const KeyboardEvent& ev);
+
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
    };
 
@@ -165,9 +169,9 @@ namespace dtABC
       int   width;                  ///window width
       int   height;                 ///window height
 
-      WinRect( int x = 0, int y = 0, int w = 640L, int h = 480L );
-      WinRect( const WinRect& that );
-      WinRect& operator=( const WinRect& that );
+      WinRect(int x = 0, int y = 0, int w = 640L, int h = 480L);
+      WinRect(const WinRect& that);
+      WinRect& operator=(const WinRect& that);
    };
 
 
@@ -175,12 +179,12 @@ namespace dtABC
    ///WinData struct for passing window handle and dimensions
    struct DT_ABC_EXPORT WinData   :  public   WinRect
    {
-      WindowHandle  hwnd;  ///window handle 
+      WindowHandle  hwnd;  ///window handle
 
-      WinData( WindowHandle hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L ); //TODO
-      WinData( const WinData& that );
-      WinData( const WinRect& that );
-      WinData& operator=( const WinData& that );
+      WinData(WindowHandle hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L); //TODO
+      WinData(const WinData& that);
+      WinData(const WinRect& that);
+      WinData& operator=(const WinData& that);
    };
 
 
@@ -193,27 +197,27 @@ namespace dtABC
       float pos_y;                  ///y coordinate
       int   button;                 ///event button
 
-      MouseEvent( int ev = NO_EVENT, float px = 0.f, float py = 0.f, int bt = 0L );
-      MouseEvent( const MouseEvent& that );
-      MouseEvent& operator=( const MouseEvent& that );
+      MouseEvent(int ev = NO_EVENT, float px = 0.f, float py = 0.f, int bt = 0L);
+      MouseEvent(const MouseEvent& that);
+      MouseEvent& operator=(const MouseEvent& that);
 
       enum  Type
-            {
-               NO_EVENT = 0,
-               PUSH,
-               DOUBLE,
-               RELEASE,
-               ENTER,
-               LEAVE,
-               DRAG,
-               MOVE,
-               WHEEL_UP,
-               WHEEL_DN,
-               DND_ENTER,
-               DND_DRAG,
-               DND_LEAVE,
-               DND_RELEASE
-            };
+      {
+         NO_EVENT = 0,
+         PUSH,
+         DOUBLE,
+         RELEASE,
+         ENTER,
+         LEAVE,
+         DRAG,
+         MOVE,
+         WHEEL_UP,
+         WHEEL_DN,
+         DND_ENTER,
+         DND_DRAG,
+         DND_LEAVE,
+         DND_RELEASE
+      };
    };
 
 
@@ -226,29 +230,29 @@ namespace dtABC
       int   mod;                    ///key modifiers
       char  chr;                    ///ascii char of key
 
-      KeyboardEvent( int ev = NO_EVENT, int ky = 0L, int mod = 0L, char ch = 0 );
-      KeyboardEvent( const KeyboardEvent& that );
-      KeyboardEvent& operator=( const KeyboardEvent& that );
+      KeyboardEvent(int ev = NO_EVENT, int ky = 0L, int mod = 0L, char ch = 0);
+      KeyboardEvent(const KeyboardEvent& that);
+      KeyboardEvent& operator=(const KeyboardEvent& that);
 
       enum  Type
-            {
-               NO_EVENT = 0L,
-               FOCUS,
-               UNFOCUS,
-               KEYDOWN,
-               KEYUP
-            };
+      {
+         NO_EVENT = 0L,
+         FOCUS,
+         UNFOCUS,
+         KEYDOWN,
+         KEYUP
+      };
 
       enum  Modifier
-            {
-               SHIFT       = BIT(0L),
-               CAPLOCK     = BIT(1L),
-               CONTROL     = BIT(2L),
-               ALT         = BIT(4L),
-               NUMLOCK     = BIT(3L),
-               META        = BIT(5L),
-               SCROLLLOCK  = BIT(6L)
-            };
+      {
+         SHIFT       = BIT(0L),
+         CAPLOCK     = BIT(1L),
+         CONTROL     = BIT(2L),
+         ALT         = BIT(4L),
+         NUMLOCK     = BIT(3L),
+         META        = BIT(5L),
+         SCROLLLOCK  = BIT(6L)
+      };
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
       #undef KEY_0
@@ -300,8 +304,8 @@ namespace dtABC
       #undef KEY_F11
       #undef KEY_F12
 #endif
-      
-      
+
+
       static   const int   KEY_BackSpace;
       static   const int   KEY_Tab;
       static   const int   KEY_Enter;
@@ -468,6 +472,8 @@ namespace dtABC
       static   const int   KEY_F12;
    };
 
-}
+} // namespace dtABC
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // DELTA_WIDGET

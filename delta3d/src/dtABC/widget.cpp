@@ -12,7 +12,7 @@
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
 #endif
-   
+
 #include <osgViewer/CompositeViewer>
 
 /** name spaces */
@@ -39,226 +39,211 @@ const char* Widget::msgWindowData      = "windata";
 const char* Widget::msgQuit            = "quit";
 
 
-Widget::Widget( const std::string& name /*= "Widget"*/ )
-:  BaseABC(name),
-mIsInitialized(false)
+Widget::Widget(const std::string& name /*= "Widget"*/)
+   : BaseABC(name)
+   , mIsInitialized(false)
 {
-   RegisterInstance( this );
+   RegisterInstance(this);
    CreateInstances();
 }
 
 Widget::~Widget()
 {
-   DeregisterInstance( this );
+   DeregisterInstance(this);
 }
 
-void Widget::Config( const WinData* d /*= NULL*/ )
+void Widget::Config(const WinData* d /*= NULL*/)
 {
-   System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
+   System* sys = &dtCore::System::GetInstance();
+   assert(sys);
 
-   if( sys->IsRunning() )
+   if (sys->IsRunning())
+   {
       // don't configure twice
       return;
+   }
 
-   if( d != NULL )
+   if (d != NULL)
    {
-      WindowData * inheritedWindowData = new WindowData(d->hwnd);
-      
-      mWindow  = new dtCore::DeltaWin( "Widget",  
-                                      d->pos_x, d->pos_y, 
-                                      d->width, d->height, 
-                                      true, false, inheritedWindowData );
-      assert( mWindow.valid() );
-      
+      WindowData* inheritedWindowData = new WindowData(d->hwnd);
+
+      mWindow = new dtCore::DeltaWin("Widget",
+                                     d->pos_x, d->pos_y,
+                                     d->width, d->height,
+                                     true, false, inheritedWindowData);
+      assert(mWindow.valid());
+
       GetCamera()->SetWindow(mWindow.get());
       sys->Start();
    }
-   
+
    BaseABC::Config();
-   
+
    mCompositeViewer = new osgViewer::CompositeViewer;
    mCompositeViewer->addView(mViewList.front()->GetOsgViewerView());
 
    mIsInitialized = true;
 }
 
-void Widget::Quit( void )
+void Widget::Quit(void)
 {
    BaseABC::Quit();
-   SendMessage( msgStopped );
+   SendMessage(msgStopped);
 }
 
-void Widget::SetPath( std::string path )
+void Widget::SetPath(const std::string& path)
 {
-   SetDataFilePathList( path );
+   SetDataFilePathList(path);
 }
 
-void Widget::PreFrame( const double deltaFrameTime )
+void Widget::PreFrame(const double deltaFrameTime)
 {
 }
 
-void Widget::Frame( const double deltaFrameTime )
+void Widget::Frame(const double deltaFrameTime)
 {
    mCompositeViewer->frame();
 }
 
-void Widget::PostFrame( const double deltaFrameTime )
+void Widget::PostFrame(const double deltaFrameTime)
 {
 }
 
-void Widget::OnMessage( Base::MessageData* data )
+void Widget::OnMessage(Base::MessageData* data)
 {
-   assert( data );
+   assert(data);
 
-   if( data->message == msgStep )
+   if (data->message == msgStep)
    {
       Step();
       return;
    }
 
-   if( data->message == msgMouseEvent )
+   if (data->message == msgMouseEvent)
    {
-      assert( data->userData );
-      HandleMouseEvent( *(static_cast<MouseEvent*>(data->userData)) );
+      assert(data->userData);
+      HandleMouseEvent(*(static_cast<MouseEvent*>(data->userData)));
       return;
    }
 
-   if( data->message == msgKeyboardEvent )
+   if (data->message == msgKeyboardEvent)
    {
-      assert( data->userData );
-      HandleKeyboardEvent( *(static_cast<KeyboardEvent*>(data->userData)) );
+      assert(data->userData);
+      HandleKeyboardEvent(*(static_cast<KeyboardEvent*>(data->userData)));
       return;
    }
 
-   if( data->message == msgResize )
+   if (data->message == msgResize)
    {
       if (mIsInitialized)
       {
-         Resize( static_cast<WinRect*>(data->userData) );
+         Resize(static_cast<WinRect*>(data->userData));
       }
       return;
    }
 
-   if( data->message == msgAddDrawable )
+   if (data->message == msgAddDrawable)
    {
-      AddDrawable( static_cast<dtCore::DeltaDrawable*>(data->userData) );
+      AddDrawable(static_cast<dtCore::DeltaDrawable*>(data->userData));
       return;
    }
 
-   if( data->message == msgSetPath )
+   if (data->message == msgSetPath)
    {
-      SetPath( *(static_cast<std::string*>(data->userData)) );
+      SetPath(*(static_cast<std::string*>(data->userData)));
       return;
    }
 
-   if( data->message == msgWindowData )
+   if (data->message == msgWindowData)
    {
-      Config( static_cast<WinData*>(data->userData) );
+      Config(static_cast<WinData*>(data->userData));
       return;
    }
 
-   if( data->message == msgQuit )
+   if (data->message == msgQuit)
    {
       Quit();
       return;
    }
 
-   BaseABC::OnMessage( data );
+   BaseABC::OnMessage(data);
 }
 
-void Widget::Step( void )
+void Widget::Step(void)
 {
-   System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
+   System* sys = &dtCore::System::GetInstance();
+   assert(sys);
 
    sys->Step();
-   //SendMessage( msgRedraw );
+   //SendMessage(msgRedraw);
 }
 
-void Widget::Resize( const WinRect* r )
+void Widget::Resize(const WinRect* r)
 {
-   assert( r );
+   assert(r);
 
-   //tell OSG that the window has been resized.
+   // tell OSG that the window has been resized.
    GetWindow()->GetOsgViewerGraphicsWindow()->resized(r->pos_x, r->pos_y, r->width, r->height);
 }
 
-void Widget::HandleMouseEvent( const MouseEvent& ev )
+void Widget::HandleMouseEvent(const MouseEvent& ev)
 {
 
    // an unknown button number defaults to LeftButton.
-   dtCore::Mouse::MouseButton mb( dtCore::Mouse::LeftButton );
-   
-   switch( ev.button )
+   dtCore::Mouse::MouseButton mb(dtCore::Mouse::LeftButton);
+
+   switch (ev.button)
    {
-      case 0 :
+   case 0:
       {
          mb = dtCore::Mouse::LeftButton;
          break;
       }
-      case 1 :
+   case 1:
       {
          mb = dtCore::Mouse::MiddleButton;
          break;
       }
-      case 2 :
+   case 2:
       {
          mb = dtCore::Mouse::RightButton;
          break;
       }
-      default :
+   default:
       {
          mb = dtCore::Mouse::LeftButton;
          break;
       }
    }
 
-   switch( ev.event )
+   switch (ev.event)
    {
-       case  MouseEvent::PUSH:
-         GetMouse()->ButtonDown( ev.pos_x, ev.pos_y, mb );
-         break;
-
-      case  MouseEvent::DOUBLE:
-         GetMouse()->DoubleButtonDown( ev.pos_x, ev.pos_y, mb );
-         break;
-
-      case  MouseEvent::RELEASE:
-         GetMouse()->ButtonUp( ev.pos_x, ev.pos_y, mb );
-         break;
-
-      case  MouseEvent::DRAG:
-         GetMouse()->MouseMotion( ev.pos_x, ev.pos_y );
-         break;
-
-      case  MouseEvent::MOVE:
-         GetMouse()->PassiveMouseMotion( ev.pos_x, ev.pos_y );
-         break;
-
-      case  MouseEvent::WHEEL_UP:
-         GetMouse()->MouseScroll( osgGA::GUIEventAdapter::SCROLL_UP );
-         break;
-
-      case  MouseEvent::WHEEL_DN:
-         GetMouse()->MouseScroll( osgGA::GUIEventAdapter::SCROLL_DOWN );
-         break;
-
-      default:
-         break;
-   }
-}
-
-void Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
-{
-   switch( ev.event )
-   {
-   case  KeyboardEvent::KEYDOWN:
-      GetKeyboard()->KeyDown( ev.key );
+   case MouseEvent::PUSH:
+      GetMouse()->ButtonDown(ev.pos_x, ev.pos_y, mb);
       break;
 
-   case  KeyboardEvent::KEYUP:
-      GetKeyboard()->KeyUp( ev.key );
+   case MouseEvent::DOUBLE:
+      GetMouse()->DoubleButtonDown(ev.pos_x, ev.pos_y, mb);
+      break;
+
+   case MouseEvent::RELEASE:
+      GetMouse()->ButtonUp(ev.pos_x, ev.pos_y, mb);
+      break;
+
+   case MouseEvent::DRAG:
+      GetMouse()->MouseMotion(ev.pos_x, ev.pos_y);
+      break;
+
+   case MouseEvent::MOVE:
+      GetMouse()->PassiveMouseMotion(ev.pos_x, ev.pos_y);
+      break;
+
+   case MouseEvent::WHEEL_UP:
+      GetMouse()->MouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+      break;
+
+   case MouseEvent::WHEEL_DN:
+      GetMouse()->MouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
       break;
 
    default:
@@ -266,69 +251,86 @@ void Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
    }
 }
 
-bool Widget::IsSpecialKeyboardEvent( const KeyboardEvent& ev )
+void Widget::HandleKeyboardEvent(const KeyboardEvent& ev)
 {
-   switch( ev.key )
+   switch (ev.event)
    {
-      case  osgGA::GUIEventAdapter::KEY_Escape:
-      case  osgGA::GUIEventAdapter::KEY_F1:
-      case  osgGA::GUIEventAdapter::KEY_F2:
-      case  osgGA::GUIEventAdapter::KEY_F3:
-      case  osgGA::GUIEventAdapter::KEY_F4:
-      case  osgGA::GUIEventAdapter::KEY_F5:
-      case  osgGA::GUIEventAdapter::KEY_F6:
-      case  osgGA::GUIEventAdapter::KEY_F7:
-      case  osgGA::GUIEventAdapter::KEY_F8:
-      case  osgGA::GUIEventAdapter::KEY_F9:
-      case  osgGA::GUIEventAdapter::KEY_F10:
-      case  osgGA::GUIEventAdapter::KEY_F11:
-      case  osgGA::GUIEventAdapter::KEY_F12:
-      case  osgGA::GUIEventAdapter::KEY_Tab:
-      case  osgGA::GUIEventAdapter::KEY_Caps_Lock:
-      case  osgGA::GUIEventAdapter::KEY_Shift_L:
-      case  osgGA::GUIEventAdapter::KEY_Control_L:
-      case  osgGA::GUIEventAdapter::KEY_Meta_L:
-      case  osgGA::GUIEventAdapter::KEY_Meta_R:
-      case  osgGA::GUIEventAdapter::KEY_Control_R:
-      case  osgGA::GUIEventAdapter::KEY_Shift_R:
-      case  osgGA::GUIEventAdapter::KEY_Return:
-      case  osgGA::GUIEventAdapter::KEY_BackSpace:
-      case  osgGA::GUIEventAdapter::KEY_Scroll_Lock:
-      case  osgGA::GUIEventAdapter::KEY_Pause:
-      case  osgGA::GUIEventAdapter::KEY_Insert:
-      case  osgGA::GUIEventAdapter::KEY_Home:
-      case  osgGA::GUIEventAdapter::KEY_Page_Up:
-      case  osgGA::GUIEventAdapter::KEY_Delete:
-      case  osgGA::GUIEventAdapter::KEY_End:
-      case  osgGA::GUIEventAdapter::KEY_Page_Down:
-      case  osgGA::GUIEventAdapter::KEY_Up:
-      case  osgGA::GUIEventAdapter::KEY_Left:
-      case  osgGA::GUIEventAdapter::KEY_Down:
-      case  osgGA::GUIEventAdapter::KEY_Right:
-      case  osgGA::GUIEventAdapter::KEY_Num_Lock:
-      case  osgGA::GUIEventAdapter::KEY_KP_Divide:
-      case  osgGA::GUIEventAdapter::KEY_KP_Multiply:
-      case  osgGA::GUIEventAdapter::KEY_KP_Subtract:
-      case  osgGA::GUIEventAdapter::KEY_KP_Add:
-      case  osgGA::GUIEventAdapter::KEY_KP_Enter:
-      case  osgGA::GUIEventAdapter::KEY_KP_Home:
-      case  osgGA::GUIEventAdapter::KEY_KP_Up:
-      case  osgGA::GUIEventAdapter::KEY_KP_Page_Up:
-      case  osgGA::GUIEventAdapter::KEY_KP_Left:
-      case  osgGA::GUIEventAdapter::KEY_KP_Right:
-      case  osgGA::GUIEventAdapter::KEY_KP_End:
-      case  osgGA::GUIEventAdapter::KEY_KP_Down:
-      case  osgGA::GUIEventAdapter::KEY_KP_Page_Down:
-      case  osgGA::GUIEventAdapter::KEY_KP_Insert:
-      case  osgGA::GUIEventAdapter::KEY_KP_Delete:
-         return   true;
-         break;
+   case  KeyboardEvent::KEYDOWN:
+      GetKeyboard()->KeyDown(ev.key);
+      break;
 
-      default:
-         break;
+   case  KeyboardEvent::KEYUP:
+      GetKeyboard()->KeyUp(ev.key);
+      break;
+
+   default:
+      break;
+   }
+}
+
+bool Widget::IsSpecialKeyboardEvent(const KeyboardEvent& ev)
+{
+   switch (ev.key)
+   {
+   case  osgGA::GUIEventAdapter::KEY_Escape:
+   case  osgGA::GUIEventAdapter::KEY_F1:
+   case  osgGA::GUIEventAdapter::KEY_F2:
+   case  osgGA::GUIEventAdapter::KEY_F3:
+   case  osgGA::GUIEventAdapter::KEY_F4:
+   case  osgGA::GUIEventAdapter::KEY_F5:
+   case  osgGA::GUIEventAdapter::KEY_F6:
+   case  osgGA::GUIEventAdapter::KEY_F7:
+   case  osgGA::GUIEventAdapter::KEY_F8:
+   case  osgGA::GUIEventAdapter::KEY_F9:
+   case  osgGA::GUIEventAdapter::KEY_F10:
+   case  osgGA::GUIEventAdapter::KEY_F11:
+   case  osgGA::GUIEventAdapter::KEY_F12:
+   case  osgGA::GUIEventAdapter::KEY_Tab:
+   case  osgGA::GUIEventAdapter::KEY_Caps_Lock:
+   case  osgGA::GUIEventAdapter::KEY_Shift_L:
+   case  osgGA::GUIEventAdapter::KEY_Control_L:
+   case  osgGA::GUIEventAdapter::KEY_Meta_L:
+   case  osgGA::GUIEventAdapter::KEY_Meta_R:
+   case  osgGA::GUIEventAdapter::KEY_Control_R:
+   case  osgGA::GUIEventAdapter::KEY_Shift_R:
+   case  osgGA::GUIEventAdapter::KEY_Return:
+   case  osgGA::GUIEventAdapter::KEY_BackSpace:
+   case  osgGA::GUIEventAdapter::KEY_Scroll_Lock:
+   case  osgGA::GUIEventAdapter::KEY_Pause:
+   case  osgGA::GUIEventAdapter::KEY_Insert:
+   case  osgGA::GUIEventAdapter::KEY_Home:
+   case  osgGA::GUIEventAdapter::KEY_Page_Up:
+   case  osgGA::GUIEventAdapter::KEY_Delete:
+   case  osgGA::GUIEventAdapter::KEY_End:
+   case  osgGA::GUIEventAdapter::KEY_Page_Down:
+   case  osgGA::GUIEventAdapter::KEY_Up:
+   case  osgGA::GUIEventAdapter::KEY_Left:
+   case  osgGA::GUIEventAdapter::KEY_Down:
+   case  osgGA::GUIEventAdapter::KEY_Right:
+   case  osgGA::GUIEventAdapter::KEY_Num_Lock:
+   case  osgGA::GUIEventAdapter::KEY_KP_Divide:
+   case  osgGA::GUIEventAdapter::KEY_KP_Multiply:
+   case  osgGA::GUIEventAdapter::KEY_KP_Subtract:
+   case  osgGA::GUIEventAdapter::KEY_KP_Add:
+   case  osgGA::GUIEventAdapter::KEY_KP_Enter:
+   case  osgGA::GUIEventAdapter::KEY_KP_Home:
+   case  osgGA::GUIEventAdapter::KEY_KP_Up:
+   case  osgGA::GUIEventAdapter::KEY_KP_Page_Up:
+   case  osgGA::GUIEventAdapter::KEY_KP_Left:
+   case  osgGA::GUIEventAdapter::KEY_KP_Right:
+   case  osgGA::GUIEventAdapter::KEY_KP_End:
+   case  osgGA::GUIEventAdapter::KEY_KP_Down:
+   case  osgGA::GUIEventAdapter::KEY_KP_Page_Down:
+   case  osgGA::GUIEventAdapter::KEY_KP_Insert:
+   case  osgGA::GUIEventAdapter::KEY_KP_Delete:
+      return   true;
+      break;
+
+   default:
+      break;
    }
 
-   return   false;
+   return false;
 }
 
 
@@ -343,11 +345,11 @@ bool Widget::IsSpecialKeyboardEvent( const KeyboardEvent& ev )
  * @param w width
  * @param h height
  */
-WinRect::WinRect( int x, int y, int w, int h )
-:  pos_x(x),
-   pos_y(y),
-   width(w),
-   height(h)
+WinRect::WinRect(int x, int y, int w, int h)
+   : pos_x(x)
+   , pos_y(y)
+   , width(w)
+   , height(h)
 {
 }
 
@@ -358,11 +360,11 @@ WinRect::WinRect( int x, int y, int w, int h )
  *
  * @param that object to copy from
  */
-WinRect::WinRect( const WinRect& that )
-:  pos_x(that.pos_x),
-   pos_y(that.pos_y),
-   width(that.width),
-   height(that.height)
+WinRect::WinRect(const WinRect& that)
+   : pos_x(that.pos_x)
+   , pos_y(that.pos_y)
+   , width(that.width)
+   , height(that.height)
 {
 }
 
@@ -376,14 +378,14 @@ WinRect::WinRect( const WinRect& that )
  * @return a reference to this object
  */
 WinRect&
-WinRect::operator=( const WinRect& that )
+WinRect::operator=(const WinRect& that)
 {
-   pos_x    = that.pos_x;
-   pos_y    = that.pos_y;
-   width    = that.width;
-   height   = that.height;
+   pos_x  = that.pos_x;
+   pos_y  = that.pos_y;
+   width  = that.width;
+   height = that.height;
 
-   return   *this;
+   return *this;
 }
 
 
@@ -397,9 +399,9 @@ WinRect::operator=( const WinRect& that )
  * @param w width
  * @param h height
  */
-WinData::WinData( WindowHandle hw, int x, int y, int w, int h )
-:  WinRect(x,y,w,h),
-   hwnd(hw)
+WinData::WinData(WindowHandle hw, int x, int y, int w, int h)
+   : WinRect(x,y,w,h)
+   , hwnd(hw)
 {
 }
 
@@ -410,9 +412,9 @@ WinData::WinData( WindowHandle hw, int x, int y, int w, int h )
  *
  * @param that object to copy from
  */
-WinData::WinData( const WinData& that )
-:  WinRect(that),
-   hwnd(that.hwnd)
+WinData::WinData(const WinData& that)
+   : WinRect(that)
+   , hwnd(that.hwnd)
 {
 }
 
@@ -423,9 +425,9 @@ WinData::WinData( const WinData& that )
  *
  * @param that object to copy from
  */
-WinData::WinData( const WinRect& that )
-:  WinRect(that),
-   hwnd(0L)
+WinData::WinData(const WinRect& that)
+   : WinRect(that)
+   , hwnd(0L)
 {
 }
 
@@ -439,12 +441,12 @@ WinData::WinData( const WinRect& that )
  * @return a reference to this object
  */
 WinData&
-WinData::operator=( const WinData& that )
+WinData::operator=(const WinData& that)
 {
    WinRect(*this) = WinRect(that);
    hwnd           = that.hwnd;
 
-   return   *this;
+   return *this;
 }
 
 
@@ -457,11 +459,11 @@ WinData::operator=( const WinData& that )
  * @param py vertical position
  * @param bt the button number
  */
-MouseEvent::MouseEvent( int ev, float px, float py, int bt )
-:  event(ev),
-   pos_x(px),
-   pos_y(py),
-   button(bt)
+MouseEvent::MouseEvent(int ev, float px, float py, int bt)
+   : event(ev)
+   , pos_x(px)
+   , pos_y(py)
+   , button(bt)
 {
 }
 
@@ -472,11 +474,11 @@ MouseEvent::MouseEvent( int ev, float px, float py, int bt )
  *
  * @param that object to copy from
  */
-MouseEvent::MouseEvent( const MouseEvent& that )
-:  event(that.event),
-   pos_x(that.pos_x),
-   pos_y(that.pos_y),
-   button(that.button)
+MouseEvent::MouseEvent(const MouseEvent& that)
+   : event(that.event)
+   , pos_x(that.pos_x)
+   , pos_y(that.pos_y)
+   , button(that.button)
 {
 }
 
@@ -490,23 +492,23 @@ MouseEvent::MouseEvent( const MouseEvent& that )
  * @return a reference to this object
  */
 MouseEvent&
-MouseEvent::operator=( const MouseEvent& that )
+MouseEvent::operator=(const MouseEvent& that)
 {
-   event    = that.event;
-   pos_x    = that.pos_x;
-   pos_y    = that.pos_y;
-   button   = that.button;
+   event  = that.event;
+   pos_x  = that.pos_x;
+   pos_y  = that.pos_y;
+   button = that.button;
 
-   return   *this;
+   return *this;
 }
 
 
 
-KeyboardEvent::KeyboardEvent( int ev, int ky, int md, char ch )
-:  event(ev),
-   key(ky),
-   mod(md),
-   chr(ch)
+KeyboardEvent::KeyboardEvent(int ev, int ky, int md, char ch)
+   : event(ev)
+   , key(ky)
+   , mod(md)
+   , chr(ch)
 {
 }
 
@@ -517,11 +519,11 @@ KeyboardEvent::KeyboardEvent( int ev, int ky, int md, char ch )
  *
  * @param that object to copy from
  */
-KeyboardEvent::KeyboardEvent( const KeyboardEvent& that )
-:  event(that.event),
-   key(that.key),
-   mod(that.mod),
-   chr(that.chr)
+KeyboardEvent::KeyboardEvent(const KeyboardEvent& that)
+   : event(that.event)
+   , key(that.key)
+   , mod(that.mod)
+   , chr(that.chr)
 {
 }
 
@@ -535,14 +537,14 @@ KeyboardEvent::KeyboardEvent( const KeyboardEvent& that )
  * @return a reference to this object
  */
 KeyboardEvent&
-KeyboardEvent::operator=( const KeyboardEvent& that )
+KeyboardEvent::operator=(const KeyboardEvent& that)
 {
    event = that.event;
    key   = that.key;
    mod   = that.mod;
    chr   = that.chr;
 
-   return   *this;
+   return *this;
 }
 
 
