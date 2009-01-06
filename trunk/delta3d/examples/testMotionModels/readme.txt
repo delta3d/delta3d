@@ -16,24 +16,6 @@ up/down and turn left/right. The orbit motion model simulates the standard
 controls to manipulate a 3D scene for viewing from arbitrary point (i.e.
 translate, rotation, and zoom).
 
-Instructions
-------------
-Win32 Source: 
-- Open \VisualStudio\examples\testMotionModels.sln.
-- Build testMotionModels.
-- Start testMotionModels.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testMotionModels.exe.
-
-Linux Source:
-- To build only testMotionModels, from the root delta3d folder:
-  scons bin/testMotionModels
-
-Linux Binary:
-- cd bin
-- ./testMotionModels
 
 Controls
 --------

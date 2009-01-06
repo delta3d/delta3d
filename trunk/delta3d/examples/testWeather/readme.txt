@@ -15,24 +15,6 @@ as well. The time of day is determined by your system clock.
 The Inspector window is automatically created to interact with Weather class.
 Just select the "weather" instance and the weather parameters will be displayed.
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio\testWeather\testWeather.sln.
-- Build testWeather.
-- Start testWeather.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testWeather.exe.
-
-Linux Source:
-- To build only testWeather, from the root delta3d folder:
-  scons bin/testWeather
-
-Linux Binary:
-- cd bin
-- ./testWeather
 
 Controls
 --------

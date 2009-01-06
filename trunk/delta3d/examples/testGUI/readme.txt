@@ -15,27 +15,9 @@ the application. The cursor also changes to a different icon within the window.
 
 Instructions
 ------------
-Win32 Source: 
-- Open VisualStudio\examples\testGUI\testGUI.sln.
-- Build testGUI.
-- Start testGUI.
-- To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ..\examples\testGUI\gui.layout
-  
-Win32 Binary:
-- Go to bin.
-- Double-click testGUI.exe.
-- To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ..\examples\tesGUI\gui.layout
+- To use hard coded UI definitions, just run "testGUI.exe" with no parameters.
+- To load the UI definitions from the layout file, run "testGUI.exe ..\examples\testGUI\gui.layout"
 
-Linux Source:
-- To build only testGUI, from the root delta3d folder:
-  scons bin/testGUI
-
-Linux Binary:
-- cd bin
-- ./testGUI
-  ./testGUI ../examples/testGUI/gui.layout
 
 Controls
 --------
