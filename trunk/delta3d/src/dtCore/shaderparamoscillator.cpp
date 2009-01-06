@@ -166,6 +166,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void ShaderParamOscillator::SetCycleTimeMinMax(float cycleTimeMin, float cycleTimeMax)
+   {
+      mCycleTimeMin = cycleTimeMin;
+      mCycleTimeMax = cycleTimeMax;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void ShaderParamOscillator::OnMessage(MessageData *data)
    {
       if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
