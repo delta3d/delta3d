@@ -109,21 +109,21 @@ dtCore::ODEController::~ODEController()
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEController::Iterate(double deltaFrameTime)
 {
-   bool usingDeltaStep = false;
+   double stepSize = deltaFrameTime;
 
-   // if step size is 0.0, use the deltaFrameTime instead
-   if( mPhysicsStepSize == 0.0 )
+   // if step size is set, use it instead of the delta frame time
+   if (GetPhysicsStepSize() > 0.0)
    {
-      SetPhysicsStepSize(deltaFrameTime);
-      usingDeltaStep = true;
+      stepSize = GetPhysicsStepSize();
    }
 
-   const int numSteps = int(deltaFrameTime/mPhysicsStepSize);
+   //calc the number of steps to take
+   const int numSteps = int(deltaFrameTime/stepSize);
 
-   TransformableVector::iterator it;
+   TransformableVector::const_iterator it;
 
-   for (it = mCollidableContents.begin();
-        it != mCollidableContents.end();
+   for (it = GetRegisteredCollidables().begin();
+        it != GetRegisteredCollidables().end();
         it++ )
    {
       (*it)->PrePhysicsStepUpdate();
@@ -131,10 +131,10 @@ void dtCore::ODEController::Iterate(double deltaFrameTime)
 
    for (int i=0; i<numSteps; i++)
    {
-      Step(mPhysicsStepSize);
+      Step(stepSize);
    }
 
-   const double leftOver = deltaFrameTime - (numSteps * mPhysicsStepSize);
+   const double leftOver = deltaFrameTime - (numSteps * stepSize);
 
    if(leftOver > 0.0)
    {
@@ -148,10 +148,6 @@ void dtCore::ODEController::Iterate(double deltaFrameTime)
       (*it)->PostPhysicsStepUpdate();
    }
 
-   if (usingDeltaStep) //reset physics step size to 0.0 (i.e. use System step size)
-   {
-      SetPhysicsStepSize(0.0);
-   }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -305,4 +301,10 @@ void dtCore::ODEController::DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionD
       //send out the "collision" message
       mMsgSender->SendMessage("collision", &scd);
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+const dtCore::ODEController::TransformableVector& dtCore::ODEController::GetRegisteredCollidables() const
+{
+   return mCollidableContents;
 }

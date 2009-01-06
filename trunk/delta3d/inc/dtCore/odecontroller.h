@@ -77,6 +77,13 @@ namespace dtCore
       */
       void UnRegisterCollidable(Transformable* collidable);
 
+      typedef std::vector<Transformable*> TransformableVector;
+
+      /** Get the container of previously registered collidables.
+       * @return The const container of registered collidables
+       */
+      const TransformableVector& GetRegisteredCollidables() const;
+
       /** Perform an iteration of the physics system.  Default implementation
         * will perform as many physics steps required to fulfill the supplied
         * time step.  Custom iteration algorithms can be created by deriving from
@@ -129,11 +136,11 @@ namespace dtCore
       ///When two geoms collide, send out a "collide" message
       virtual void DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionData &data);
 
-   private:
-      void Ctor();
-
       ///perform one iteration using the supplied step size
       void Step(double stepSize) const;
+
+   private:
+      void Ctor();
 
 
       dtCore::RefPtr<dtCore::ODESpaceWrap> mSpaceWrapper;
@@ -143,7 +150,6 @@ namespace dtCore
       ///<(default = 0.0, indicating to use the System deltaFrameTime )
       double mPhysicsStepSize;
 
-      typedef std::vector< Transformable* > TransformableVector;
       TransformableVector mCollidableContents; ///<The physical contents of the scene
 
       dtCore::RefPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
