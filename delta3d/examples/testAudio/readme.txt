@@ -11,25 +11,7 @@ Purpose
 To demonstrate advanced functionality of the dtAudio module, specfically
 effect binding, panning, dopler effects, gain, pitch changing, and looping. 
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio\examples\testAudio\testAudio.sln.
-- Build testAudio.
-- Start testAudio.
 
-Win32 Binary:
-- Go to bin.
-- Double-click testAudio.exe.
-
-Linux Source:
-- To build only testAudio, from the root delta3d folder:
-  scons bin/testAudio
-- To run:
-
-Linux Binary:
-- cd bin
-- ./testAudio
 
 Controls
 --------

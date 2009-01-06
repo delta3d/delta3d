@@ -20,20 +20,7 @@ normals are relative to the surface they are on, the light vector
 must be transformed to this space (tangent space) before doing the 
 lighting calculation.  
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio/examples/testBumpMap\testBumpMap.sln.
-- Build testBumpMap.
-- Start testBumpMap.
 
-Win32 Binary:
-- Go to bin.
-- Double-click testBumpMap.exe.
-
-Linux Binary:
-- cd bin
-- ./testBumpMap
 
 Controls
 --------

@@ -37,28 +37,6 @@ Note: Set the environment variable PYTHONPATH to the folder that contains
       the Delta3D .pyd files.  Otherwise the scripts will not be able to
       import the modules.
 
-Win32 Source:
-- Go to the Tools->Options->Projects->VC++ Directories and select 
-  "Show directories for: Include files".
-- Add the Boost and Python include directories (e.g., "c:\boost_1_32_0",
-  "C:\Program Files\Python2.4\include") to the "Include" section.
-- Add the Boost and Python lib directories (e.g., "C:\boost_1_32_0\libs\python\build\bin-stage", 
-  "C:\Program Files\Python2.4\libs") to the "Library files" section.
-- Build testPython.
-- Start testPython.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testPython.exe.
-
-
-Linux Source:
-- To build only testPython, from the root delta3d folder:
-  scons && scons bin/testPython
-
-Linux Binary:
-- cd bin
-- ./testPython
 
 Controls
 --------

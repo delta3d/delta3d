@@ -20,24 +20,6 @@ OpenGL directional light) and has the appearance of being located at an
 infinite distance from the scene and therefore only it's direction and color
 can change (and change they do).
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio\examples\testLights\testLights.sln.
-- Build testLights.
-- Start testLights.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testLights.exe.
-
-Linux Source:
-- To build only testLights, from the root delta3d folder:
-  scons bin/testLights
-
-Linux Binary:
-- cd bin
-- ./testLights
 
 Controls
 --------

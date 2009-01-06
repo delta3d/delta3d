@@ -18,22 +18,6 @@ Running testNetwork with no command line arguments creates a server.  Supplying
 a hostname or IP address on the command line will create a client and try to 
 connect to the host at that address.
 
-Win32 Source: 
-- Open VisualStudio\examples\testNetwork\testNetwork.sln.
-- Build testNetwork.
-- Start testNetwork.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testNetwork.exe.
-
-Linux Source:
-- To build only testNetwork, from the root delta3d folder:
-  scons bin/testNetwork
-
-Linux Binary:
-- cd bin
-- ./testNetwork
 
 Controls
 --------

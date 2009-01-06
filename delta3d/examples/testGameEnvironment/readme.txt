@@ -11,24 +11,6 @@ Purpose
 To demonstrate how to manipulate weather and environmental effects
 using the GameManager and EnvironmentActors.
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio\examples\testGameEnvironment\testGameEnvironment.sln.
-- Build testGameEnvironment.
-- Start testGameEnvironment.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testGameEnvironment.exe.
-
-Linux Source:
-- To build only testGameEnvironment, from the root delta3d folder:
-  scons bin/testGameEnvironment
-
-Linux Binary:
-- cd bin
-- ./testGameEnvironment
 
 Controls
 --------

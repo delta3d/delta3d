@@ -11,24 +11,6 @@ Purpose
 To demonstrate the dtCore::Recorder.  It provides example code
 for what is needed to record class instances.
 
-Instructions
-------------
-Win32 Source: 
-- Open VisualStudio/examples/testRecorder/testRecorder.sln.
-- Build testRecorder.
-- Start testRecorder.
-
-Win32 Binary:
-- Go to bin.
-- Double-click testRecorder.exe.
-
-Linux Source:
-- To build only testRecorder, from the root delta3d folder:
-  scons bin/testRecorder
-
-Linux Binary:
-- cd bin
-- ./testRecorder
 
 Controls
 --------
