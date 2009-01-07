@@ -49,7 +49,9 @@ public:
 
    void Update(double dt);
 
-   void Start();
+   virtual bool CanStart() const { return true; }
+
+   bool Start();
    void Pause();
    void UnPause();
 
