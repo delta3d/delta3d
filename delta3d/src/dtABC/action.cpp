@@ -21,16 +21,19 @@ Action::~Action()
    RemoveSender(&dtCore::System::GetInstance());
 }
 
-void Action::Start()
+bool Action::Start()
 {
    // we cannot be started after we are already running
-   if (mIsRunning) { return; }
+   if (!mIsRunning && CanStart())
+   {
+      mTotalTime = 0.0f;
+      mAccumTime = 0.0f;
+      if (mTimeStep < 0.000001f) { mTimeStep = float(1.0 / 60.0); }
+      OnStart();
+      mIsRunning = true;
+   }
 
-   mTotalTime = 0.0f;
-   mAccumTime = 0.0f;
-   if (mTimeStep < 0.000001f) { mTimeStep = float(1.0 / 60.0); }
-   OnStart();
-   mIsRunning = true;
+   return mIsRunning;
 }
 
 void Action::Pause()
@@ -86,4 +89,3 @@ void Action::Update(double dt)
 }
 
 } // namespace dtABC
-
