@@ -268,7 +268,7 @@ namespace dtAnim
 
    bool CharacterWrapper::IsAnimationPlaying(const std::string& name) const
    {
-      return mAnimHelper->GetSequenceMixer().GetActiveAnimation(name) != NULL;
+      return mAnimHelper->GetSequenceMixer().IsAnimationPlaying(name);
    }
 
    void CharacterWrapper::ClearAllAnimations(float fadeOutTime)

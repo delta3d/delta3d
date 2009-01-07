@@ -192,6 +192,11 @@ public:
    /*virtual*/ void ForceFadeOut(float time);
 
 
+   /**
+   *	@return whether or not the specified animation is playing
+   */
+   bool IsAnimationPlaying(const std::string& pAnim) const;
+
 protected:
    /*virtual*/ ~AnimationSequence();
 
