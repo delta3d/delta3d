@@ -146,6 +146,11 @@ namespace dtAnim
           */
          void ForceRecalculate();
 
+         /**
+          *	@return whether or not the specified animation is playing
+          */
+         bool IsAnimationPlaying(const std::string& pAnim) const;
+
       protected:
          virtual ~SequenceMixer();
 

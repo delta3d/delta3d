@@ -484,4 +484,11 @@ void AnimationSequence::Remove(const std::string& pAnim)
    LOG_WARNING("Unable to remove animation '" + pAnim + "' from AnimationSequence '" + GetName() + "'." )
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+bool AnimationSequence::IsAnimationPlaying(const std::string& pAnim) const
+{
+   const Animatable* anim = GetAnimatable(pAnim);
+   return anim != NULL;
+}
+
 }//namespace dtAnim

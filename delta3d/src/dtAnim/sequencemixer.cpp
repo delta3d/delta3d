@@ -165,4 +165,10 @@ void SequenceMixer::ForceRecalculate()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+bool SequenceMixer::IsAnimationPlaying(const std::string& pAnim) const
+{
+   return mRootSequence->IsAnimationPlaying(pAnim);
+}
+
 }//namespace dtAnim
