@@ -36,6 +36,7 @@ const std::string CharacterFileHandler::CHARACTER_XML_LOGGER("characterfilehandl
 
 const std::string CharacterFileHandler::CHARACTER_ELEMENT("character");
 const std::string CharacterFileHandler::ANIMATION_ELEMENT("animation");
+const std::string CharacterFileHandler::MORPH_ANIMATION_ELEMENT("morph");
 const std::string CharacterFileHandler::SKELETON_ELEMENT("skeleton");
 const std::string CharacterFileHandler::MESH_ELEMENT("mesh");
 const std::string CharacterFileHandler::MATERIAL_ELEMENT("material");
@@ -92,6 +93,7 @@ CharacterFileHandler::AnimationSequenceStruct::AnimationSequenceStruct()
 CharacterFileHandler::CharacterFileHandler()
    : mName()
    , mAnimations()
+   , mMorphAnimations()
    , mMaterials()
    , mMeshes()
    , mShaderMaxBones(72)
@@ -126,6 +128,7 @@ void CharacterFileHandler::startDocument()
    }
    mName.clear();
    mAnimations.clear();
+   mMorphAnimations.clear();
    mMaterials.clear();
    mMeshes.clear();
    mShaderGroup.clear();
@@ -230,6 +233,31 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
       else
       {
          errorString = std::string("Invalid XML format: <animation> missing <filename> child");
+      }
+   }
+   else if (elementStr == MORPH_ANIMATION_ELEMENT)
+   {
+      resultIter = results.find(FILENAME_ELEMENT);
+
+      if (resultIter != results.end())
+      {
+         std::string filename = resultIter->second;
+
+         //default the name of the animation to be the filename
+         std::string name = resultIter->second;
+         resultIter = results.find(NAME_ELEMENT);
+         if (resultIter != results.end() )
+         {
+            name = resultIter->second;
+         }
+         MorphAnimationStruct morph;
+         morph.mFileName = filename;
+         morph.mName = name;
+         mMorphAnimations.push_back(morph);
+      }
+      else
+      {
+         errorString = std::string("Invalid XML format: <morph> missing <filename> child");
       }
    }
    else if (elementStr == MESH_ELEMENT)
