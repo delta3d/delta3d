@@ -76,6 +76,24 @@ namespace dtAnim
             ++animItr;
          }
 
+         //load morph animations
+         std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
+         while (morphAnimItr != handler.mMorphAnimations.end())
+         {
+            std::string filename = FindFileInPathList(path + (*morphAnimItr).mFileName);
+
+            if (!filename.empty()) 
+            {
+               //TODO for use with new morph target CAL3D
+               //coreModel->loadCoreAnimatedMorph( filename );
+            }
+            else
+            {
+               LOG_ERROR("Can't find morph animation file named:'" + path + (*morphAnimItr).mFileName + "'.");
+            }
+            ++morphAnimItr;
+         }
+
          //load meshes
          std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
          while (meshItr != handler.mMeshes.end())

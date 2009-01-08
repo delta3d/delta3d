@@ -5,6 +5,7 @@
          <xs:choice maxOccurs="unbounded">
             <xs:element ref="skeleton" />
             <xs:element ref="animation" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="morph" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="mesh" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="material" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="LOD" />
@@ -22,6 +23,20 @@
       </xs:complexType>
    </xs:element>
    <xs:element name="animation">
+      <xs:complexType>
+         <xs:attribute name="fileName" use="required">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+         <xs:attribute name="name" use="optional">
+            <xs:simpleType>
+               <xs:restriction base="xs:normalizedString" />
+            </xs:simpleType>
+         </xs:attribute>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="morph">
       <xs:complexType>
          <xs:attribute name="fileName" use="required">
             <xs:simpleType>

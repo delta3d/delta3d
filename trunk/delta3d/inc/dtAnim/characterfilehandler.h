@@ -84,6 +84,7 @@ namespace dtAnim
       //parsing constants
       static const std::string CHARACTER_ELEMENT;
       static const std::string ANIMATION_ELEMENT;
+      static const std::string MORPH_ANIMATION_ELEMENT;
       static const std::string SKELETON_ELEMENT;
       static const std::string MESH_ELEMENT;
       static const std::string MATERIAL_ELEMENT;
@@ -156,6 +157,13 @@ namespace dtAnim
          std::string mName;     ///<The user friendly name of this animation
       };
 
+      ///structure to contain all info related to an animation
+      struct MorphAnimationStruct
+      {
+         std::string mFileName; ///<The filename of the cal3D morph animation
+         std::string mName;     ///<The user friendly name of this morph animation
+      };
+
       ///structure to contain all info related to a mesh
       struct MeshStruct
       {
@@ -196,6 +204,7 @@ namespace dtAnim
       ///Character Data
       std::string mName;                            ///<The name of this animated entity
       std::vector<AnimationStruct> mAnimations;     ///<Container of animation structs
+      std::vector<MorphAnimationStruct> mMorphAnimations;     ///<Container of MorphAnimation structs
       std::vector<MaterialStruct> mMaterials;       ///<Container of material structs
       std::vector<MeshStruct> mMeshes;              ///<Container of mesh structs
       ///Shader information for hardware skinning. these value work with the shader manager.
