@@ -2019,8 +2019,11 @@ bool AudioManager::GetSource( SoundObj* snd )
 void AudioManager::FreeSource( SoundObj* snd )
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   if ( snd == NULL || snd-IsInitialized() == false)
+   
+   if (snd == NULL || snd->IsInitialized() == false)
+   {
       return;
+   }
 
    ALuint   src(snd->Source());
 
