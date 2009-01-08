@@ -12,10 +12,10 @@ void main(void)
    vec4 normalColor = texture2D(normalTexture, gl_TexCoord[0].st);
    vec4 normal = normalize((normalColor * 2.0) - 1.0);
    
-   float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);
+   float NdotL = clamp(dot(vec3(normal), lightDir), 0.0, 1.0);
    
    vec3 viewDir = normalize(eyeDir);
-   vec3 reflectionDir = normalize(2.0 * NdotL * normal - lightDir);
+   vec3 reflectionDir = normalize(2.0 * NdotL * vec3(normal) - lightDir);
    float reflectionAngle =  dot(reflectionDir, viewDir);
    
    // Calculate the contributions from each shading component
