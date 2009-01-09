@@ -77,7 +77,7 @@ namespace dtUtil
          NODE_HOT_SPOT,
          NODE_HOT_SPOT_PARENT,
          NODE_HOT_SPOT_LOCAL_TRANSLATION,
-         NODE_HOT_SPOT_LOCAL_ROTATION,
+         NODE_HOT_SPOT_LOCAL_ROTATION
       };
 
       typedef std::stack<HotSpotNode> NodeStack;

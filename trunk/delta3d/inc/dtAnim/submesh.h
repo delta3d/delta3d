@@ -188,6 +188,6 @@ namespace dtAnim
          virtual const char* className() const;
    };
 
-}; //namespace dtAnim
+} //namespace dtAnim
 
 #endif

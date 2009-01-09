@@ -59,7 +59,7 @@
 #include <osg/Vec3f>
 #include <osg/Vec3d>
 
-XERCES_CPP_NAMESPACE_USE;
+XERCES_CPP_NAMESPACE_USE
 
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3

@@ -162,7 +162,7 @@ static void CalcMJD (int mn, double dy, int yr, double *mjd)
       y -= 1;
    }
 
-   if (yr < 1582 || yr == 1582 && (mn < 10 || mn == 10 && dy < 15))
+   if (yr < 1582 || (yr == 1582 && (mn < 10 || (mn == 10 && dy < 15))))
    {
       b = 0;
    }

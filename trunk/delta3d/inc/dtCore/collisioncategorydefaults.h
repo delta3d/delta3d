@@ -109,7 +109,7 @@ enum
                                             | COLLISION_CATEGORY_MASK_ENTITY
                                             | COLLISION_CATEGORY_MASK_TERRAIN,
 
-   COLLISION_CATEGORY_MASK_ALL              = 0xffffffff,
+   COLLISION_CATEGORY_MASK_ALL              = 0xffffffff
 };
 
 ////////////////////////////////////////////////////////////////////////////////
