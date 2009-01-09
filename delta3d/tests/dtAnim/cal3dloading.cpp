@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * Erik Johnson
 */
 
@@ -61,7 +61,7 @@ class CAL3DLoadingTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST( TestLoadMaterial );
    CPPUNIT_TEST( CorrectMaterialData );
 
-   
+
 #ifdef TEST_MORPH_TARGET
    CPPUNIT_TEST( SceneAmbientColor );
    CPPUNIT_TEST( TestLoadMorphAnimation );
@@ -116,7 +116,7 @@ private:
 };
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( CAL3DLoadingTests ); 
+CPPUNIT_TEST_SUITE_REGISTRATION( CAL3DLoadingTests );
 
 //////////////////////////////////////////////////////////////////////////
 void CAL3DLoadingTests::setUp()
@@ -124,7 +124,7 @@ void CAL3DLoadingTests::setUp()
    const std::string dataPath = dtCore::GetDeltaRootPath() + "/tests/data/ProjectContext/";
    mMorphSkelFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Skeleton.xsf");
    mAnimFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/ERightIn.xaf");
-   mMeshFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xmf");   
+   mMeshFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xmf");
    mMorphMeshFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/test_head.xmf");
    mMaterialFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/Helmet.xrf");
    mMorphAnimationFile = dtCore::FindFileInPathList(dataPath + "SkeletalMeshes/talking_head.xpf");
@@ -153,7 +153,7 @@ void CAL3DLoadingTests::CorrectNumberOfBones()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile);
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile));
 
    CalCoreSkeleton* skel = model->getCoreSkeleton();
 
@@ -173,7 +173,7 @@ void CAL3DLoadingTests::CorrectBoneIdAndName()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile);
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile));
 
    CalCoreSkeleton* skel = model->getCoreSkeleton();
    CalCoreBone* bone = skel->getCoreBone(3);
@@ -192,16 +192,16 @@ void CAL3DLoadingTests::CorrectBoneData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile);
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile));
 
    CalCoreSkeleton* skel = model->getCoreSkeleton();
    CalCoreBone* bone = skel->getCoreBone(17);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Bone 17 doesn't have the right number of children",
-                                unsigned (3), bone->getListChildId().size());
+                                size_t(3), bone->getListChildId().size());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Bone 17 doesn't have the right parent id",
-                                16, bone->getParentId());  
+                                16, bone->getParentId());
    delete model;
 }
 
@@ -210,7 +210,7 @@ void CAL3DLoadingTests::TestLoadAnimation()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
 
    const int animId = model->loadCoreAnimation(mAnimFile);
 
@@ -240,7 +240,7 @@ void CAL3DLoadingTests::CorrectAnimationData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
 
    const int animId = model->loadCoreAnimation(mAnimFile);
 
@@ -261,7 +261,7 @@ void CAL3DLoadingTests::CorrectTrackData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
 
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
    const int animId = model->loadCoreAnimation(mAnimFile);
    CalCoreAnimation* anim = model->getCoreAnimation(animId);
    CalCoreTrack* track = anim->getCoreTrack(12);
@@ -282,7 +282,7 @@ void CAL3DLoadingTests::CorrectTrackData()
 void CAL3DLoadingTests::TestLoadMesh()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
    const int meshID = model->loadCoreMesh(mMeshFile);
 
    std::ostringstream ss;
@@ -298,7 +298,7 @@ void CAL3DLoadingTests::TestLoadMesh()
 void CAL3DLoadingTests::CorrectMeshData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
    const int meshID = model->loadCoreMesh(mMeshFile);
 
    CPPUNIT_ASSERT_MESSAGE("CalCoreModel did not return the correct mesh.",
@@ -334,11 +334,11 @@ void CAL3DLoadingTests::CorrectMeshData()
 
    const std::vector<CalCoreSubmesh::Vertex> vertices = submesh->getVectorVertex();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreSubMesh did not return a correctly sized Vertex vector",
-                                unsigned (77), vertices.size());
+                                size_t(77), vertices.size());
 
    const CalCoreSubmesh::Vertex vert = vertices[0];
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Vertex did not return a correctly sized influence vector",
-                                 unsigned (1), vert.vectorInfluence.size());
+                                size_t(1), vert.vectorInfluence.size());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Influence boneID is incorrect.",
       int(8), vert.vectorInfluence[0].boneId);
@@ -354,7 +354,7 @@ void CAL3DLoadingTests::CorrectMeshData()
 void CAL3DLoadingTests::TestLoadMaterial()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
 
    const int matID = model->loadCoreMaterial(mMaterialFile);
 
@@ -371,7 +371,7 @@ void CAL3DLoadingTests::TestLoadMaterial()
 void CAL3DLoadingTests::CorrectMaterialData()
 {
    CalCoreModel* model = new CalCoreModel("testskel");
-   bool result = model->loadCoreSkeleton(mMorphSkelFile); //need a skeleton to load an animation
+   CPPUNIT_ASSERT(model->loadCoreSkeleton(mMorphSkelFile)); //need a skeleton to load an animation
 
    const int matID = model->loadCoreMaterial(mMaterialFile);
 
@@ -431,14 +431,14 @@ void CAL3DLoadingTests::CorrectMorphAnimationData()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CoreModel doesn't have the correct number of morph animations.",
                                 1, model->getNumCoreAnimatedMorphs());
-   
+
    CalCoreAnimatedMorph* morph = model->getCoreAnimatedMorph(morphID);
    CPPUNIT_ASSERT_MESSAGE("CalModel didn't return back the correct morph animation.",
                            morph != NULL);
- 
+
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalCoreAnimatedMorph didn't have the correct duration",
                         11.3333, morph->getDuration(), 0.0001f);
-   
+
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimatedMorph didn't have the correct number of tracks.",
       unsigned (9), morph->getListCoreTrack().size());
 
@@ -452,7 +452,7 @@ void CAL3DLoadingTests::CorrectMorphAnimationData()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreMorphTrack didn't have the correct number of keyframes.",
       341, track->getCoreMorphKeyframeCount());
-   
+
    const CalCoreMorphKeyframe* keyframe = track->getCoreMorphKeyframe(1);
    CPPUNIT_ASSERT_MESSAGE("CalCoreMorphTrack didn't return the correct keyframe.",
                          keyframe != NULL);
@@ -518,15 +518,15 @@ void CAL3DLoadingTests::TestLoadMorphMesh()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreSubMorphTarget did not return the correct type.",
                                  CalMorphTargetTypeExclusive, morphTarget->morphTargetType());
-   
-   
+
+
    const CalCoreSubMorphTarget::BlendVertex *vert = morphTarget->getBlendVertex(26);
    CPPUNIT_ASSERT_MESSAGE("CalCoreSubMorphTarget did not return the correct BlendVertex.",
                            vert != NULL);
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("BlendVertex doesn't have the correct X",
                                         0.0f, vert->position.x, 0.0001f);
-   
+
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("BlendVertex doesn't have the correct Y",
                                         -52.7146f, vert->position.y, 0.0001f);
 
@@ -572,7 +572,7 @@ void CAL3DLoadingTests::TestMorphWeights()
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalModel's unmoved vert is in the incorrect position",
       1057.13f, vertBuff[26][2], 0.001f);
-    
+
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalModel's unmoved vert is in the incorrect position",
       1057.13f, vertBuff[27][2], 0.001f);
 
@@ -594,11 +594,11 @@ void CAL3DLoadingTests::TestMorphWeights()
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("CalModel's moved vert is in the incorrect position",
       1077.13f, vertBuff2[26][2], 0.001f);
-   
+
    // get vertex vector of the core submesh
    std::vector<CalCoreSubmesh::Vertex>& vectorVertex = subMesh->getCoreSubmesh()->getVectorVertex();
 
- 
+
    delete model;
    delete coreModel;
 }
