@@ -319,7 +319,7 @@ namespace dtUtil
       Clamp(zone, unsigned(1), unsigned(60));
       mUTMZone = zone;
       mRotationDirty = true;
-   };
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::SetUTMHemisphere(char hemisphere)

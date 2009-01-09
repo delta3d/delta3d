@@ -11,9 +11,9 @@ const unsigned int MakeSkyDome::VERTS_IN_CIRCUM = 19;
 
 ////////////////////////////////////////////////////////////////////////////////
 MakeSkyDome::MakeSkyDome(const SkyDome &skyDome, float radius)
-   : mSkyDome(&skyDome)
-   , mRadius(radius)
+   : mRadius(radius)
    , mGeom(new osg::Geometry())
+   , mSkyDome(&skyDome)
 {
    mLevelHeight.push_back(-9.0);
    mLevelHeight.push_back(-9.0);

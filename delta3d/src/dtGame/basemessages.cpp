@@ -31,7 +31,7 @@ namespace dtGame
    const dtUtil::RefString TickMessage::PARAM_DELTA_SIM_TIME("DeltaSimTime");
    const dtUtil::RefString TickMessage::PARAM_DELTA_REAL_TIME("DeltaRealTime");
    const dtUtil::RefString TickMessage::PARAM_SIM_TIME_SCALE("SimTimeScale");
-   const dtUtil::RefString TickMessage::PARAM_SIMULATION_TIME("SimulationTime");;
+   const dtUtil::RefString TickMessage::PARAM_SIMULATION_TIME("SimulationTime");
 
    //////////////////////////////////////////////////////////////////////////////
    /// Constructor

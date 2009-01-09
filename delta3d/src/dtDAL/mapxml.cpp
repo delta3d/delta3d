@@ -65,7 +65,7 @@
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
-XERCES_CPP_NAMESPACE_USE;
+XERCES_CPP_NAMESPACE_USE
 
 namespace dtDAL
 {
@@ -386,19 +386,19 @@ namespace dtDAL
       }
 
       BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", vec[0]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", vec[0]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 
       BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", vec[1]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", vec[1]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 
       if (VecType::num_components > 2)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
-         snprintf(numberConversionBuffer, bufferMax, "%lf", vec[2]);
+         snprintf(numberConversionBuffer, bufferMax, "%f", vec[2]);
          AddCharacters(numberConversionBuffer);
          EndElement();
       }
@@ -406,7 +406,7 @@ namespace dtDAL
       if (VecType::num_components > 3)
       {
          BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
-         snprintf(numberConversionBuffer, bufferMax, "%lf", vec[3]);
+         snprintf(numberConversionBuffer, bufferMax, "%f", vec[3]);
          AddCharacters(numberConversionBuffer);
          EndElement();
       }
@@ -715,22 +715,22 @@ namespace dtDAL
       BeginElement(MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT);
 
       BeginElement(MapXMLConstants::ACTOR_COLOR_R_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", val[0]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", val[0]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 
       BeginElement(MapXMLConstants::ACTOR_COLOR_G_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", val[1]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", val[1]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 
       BeginElement(MapXMLConstants::ACTOR_COLOR_B_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", val[2]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", val[2]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 
       BeginElement(MapXMLConstants::ACTOR_COLOR_A_ELEMENT);
-      snprintf(numberConversionBuffer, bufferMax, "%lf", val[3]);
+      snprintf(numberConversionBuffer, bufferMax, "%f", val[3]);
       AddCharacters(numberConversionBuffer);
       EndElement();
 

@@ -10,8 +10,8 @@ namespace dtABC
 
 
 MotionAction::MotionAction()
-   : mParentRelation(NO_RELATION)
-   , mTargetObject(NULL)
+   : mTargetObject(NULL)
+   , mParentRelation(NO_RELATION)
 {
 
 }

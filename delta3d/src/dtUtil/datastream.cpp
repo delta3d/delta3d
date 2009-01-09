@@ -711,7 +711,7 @@ namespace dtUtil
    unsigned int DataStream::GetRemainingReadSize()
    { 
       return mBufferSize - mReadPos; 
-   };
+   }
 
    unsigned int DataStream::ClearBuffer()
    {

@@ -66,7 +66,7 @@ namespace dtAnim
       {
          RENDER_MODE_NONE  =0,
          RENDER_MODE_SKIN  =1<<0,
-         RENDER_MODE_BONES =1<<1,
+         RENDER_MODE_BONES =1<<1
       };
 
       /**
