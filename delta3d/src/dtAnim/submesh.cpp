@@ -106,7 +106,7 @@ namespace dtAnim
          }
       }
 
-      return osg::Geometry::CullCallback::cull(nv, drawable, renderInfo? renderInfo->getState(): NULL); 
+      return osg::Geometry::CullCallback::cull(nv, drawable, renderInfo); 
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////

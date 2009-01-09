@@ -216,14 +216,13 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    ss->setAttributeAndModes(bf, osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
    ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
-   if (mWrapper->BeginRenderingQuery() == false) {return;}
-   if (mWrapper->SelectMeshSubmesh(mMeshID,0) == false) {return;}
+   if (!mHardwareModel->selectHardwareMesh(mMeshID)) {return;}
 
    unsigned char meshColor[4];
    osg::Vec4 materialColor;
 
    // set the material ambient color
-   mWrapper->GetAmbientColor(&meshColor[0]);
+   mHardwareModel->getAmbientColor(&meshColor[0]);
    materialColor[0] = meshColor[0] / 255.0f;
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
@@ -231,7 +230,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
 
    // set the material diffuse color
-   mWrapper->GetDiffuseColor( &meshColor[0] );
+   mHardwareModel->getDiffuseColor( &meshColor[0] );
    materialColor[0] = meshColor[0] / 255.0f;
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
@@ -239,7 +238,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    material->setDiffuse(osg::Material::FRONT_AND_BACK, materialColor);
 
    // set the material specular color
-   mWrapper->GetSpecularColor(&meshColor[0]);
+   mHardwareModel->getSpecularColor(&meshColor[0]);
    materialColor[0] = meshColor[0] / 255.0f;
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
@@ -248,7 +247,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
    // set the material shininess factor
    float shininess;
-   shininess = mWrapper->GetShininess();
+   shininess = mHardwareModel->getShininess();
    material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
 
    std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
