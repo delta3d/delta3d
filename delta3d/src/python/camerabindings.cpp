@@ -20,6 +20,9 @@ void initCameraBindings()
    
    void (Camera::*GetClearColor)(osg::Vec4&) = &Camera::GetClearColor;
 
+   osg::Camera* (Camera::*GetOSGCamera1)() = &Camera::GetOSGCamera;
+   const osg::Camera * (Camera::*GetOSGCamera2)() const = &Camera::GetOSGCamera;
+
    DeltaWin* (Camera::*GetWindow1)() = &Camera::GetWindow;
    
    scope in_camera = class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera>, boost::noncopyable >("Camera", init<optional<const std::string&> >())
@@ -40,8 +43,10 @@ void initCameraBindings()
       .def("SetPerspectiveParams", &Camera::SetPerspectiveParams)
       .def("SetFrustum", &Camera::SetFrustum)
       .def("SetOrtho", &Camera::SetOrtho)
-      .def("SetNearFarCullingMode", &Camera::SetNearFarCullingMode)                                             
-      ;
+      .def("SetNearFarCullingMode", &Camera::SetNearFarCullingMode)          
+      .def("GetOSGCamera", GetOSGCamera1, return_value_policy<reference_existing_object>())
+      .def("GetOSGCamera", GetOSGCamera2, return_value_policy<reference_existing_object>())      
+	  ;
 
    enum_<Camera::AutoNearFarCullingMode>("AutoNearFarCullingMode")
       .value("NO_AUTO_NEAR_FAR", Camera::NO_AUTO_NEAR_FAR)

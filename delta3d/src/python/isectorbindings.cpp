@@ -46,6 +46,7 @@ void initIsectorBindings()
       .def("GetNumberOfHits", &Isector::GetNumberOfHits)
       .def("Update", &Isector::Update)
       .def("Reset", &Isector::Reset)
+      .def("SetScene", &Isector::SetScene)
       .def("GetClosestDeltaDrawable", GetClosestDeltaDrawable1, return_internal_reference<>())
       .def("GetClosestDeltaDrawable", GetClosestDeltaDrawable2, return_internal_reference<>())
       .def("SetGeometry", &Isector::SetGeometry);
