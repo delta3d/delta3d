@@ -132,7 +132,7 @@ IF (AUTO_RUN_TESTS)
   IF (MSVC)
     ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
                           POST_BUILD
-                          COMMAND "\"$(TargetPath)\""
+                          COMMAND $(TargetPath)
                           COMMENT "Run the unit tests")  
   ELSE (MSVC)
      ADD_CUSTOM_COMMAND(TARGET ${PROG_NAME}
