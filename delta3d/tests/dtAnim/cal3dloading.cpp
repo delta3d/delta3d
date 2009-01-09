@@ -198,7 +198,7 @@ void CAL3DLoadingTests::CorrectBoneData()
    CalCoreBone* bone = skel->getCoreBone(17);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Bone 17 doesn't have the right number of children",
-                                unsigned int(3), bone->getListChildId().size());
+                                unsigned (3), bone->getListChildId().size());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Bone 17 doesn't have the right parent id",
                                 16, bone->getParentId());  
@@ -247,7 +247,7 @@ void CAL3DLoadingTests::CorrectAnimationData()
    CalCoreAnimation* anim = model->getCoreAnimation(animId);
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimation doesn't have the correct num tracks.",
-                                 unsigned int(1), anim->getTrackCount());
+                                 unsigned (1), anim->getTrackCount());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimation doesn't have the correct duration.",
                                 2.f, anim->getDuration());
@@ -334,11 +334,11 @@ void CAL3DLoadingTests::CorrectMeshData()
 
    const std::vector<CalCoreSubmesh::Vertex> vertices = submesh->getVectorVertex();
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreSubMesh did not return a correctly sized Vertex vector",
-                                unsigned int(77), vertices.size());
+                                unsigned (77), vertices.size());
 
    const CalCoreSubmesh::Vertex vert = vertices[0];
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Vertex did not return a correctly sized influence vector",
-                                 unsigned int(1), vert.vectorInfluence.size());
+                                 unsigned (1), vert.vectorInfluence.size());
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("Influence boneID is incorrect.",
       int(8), vert.vectorInfluence[0].boneId);
@@ -440,7 +440,7 @@ void CAL3DLoadingTests::CorrectMorphAnimationData()
                         11.3333, morph->getDuration(), 0.0001f);
    
    CPPUNIT_ASSERT_EQUAL_MESSAGE("CalCoreAnimatedMorph didn't have the correct number of tracks.",
-      unsigned int(9), morph->getListCoreTrack().size());
+      unsigned (9), morph->getListCoreTrack().size());
 
    const CalCoreMorphTrack* track = morph->getCoreTrack("aah_Head.Exclusive");
    CPPUNIT_ASSERT_MESSAGE("CalCoreAnimatedMorph didn't return back the correct CalCoreMorphTrack.",
