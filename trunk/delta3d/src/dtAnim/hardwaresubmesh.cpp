@@ -128,9 +128,18 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
 
    SetUpMaterial();
 
+   int guessedMeshID = mMeshID; 
+   if (guessedMeshID >= mWrapper->GetMeshCount()) 
+   {
+      //this is an ugly hack which attempts to get the correct mesh ID from the hardware mesh ID
+      //it is a result of the fact that there is no way to get the original mesh ID from the Cal Hardware Model
+      //this only works if there is one submesh per mesh ID
+      guessedMeshID = mWrapper->GetMeshCount() - 1;
+   }
+   
    //set our update callback which will update the bone transforms
    setUpdateCallback(new HardwareSubmeshCallback(*mWrapper, *mHardwareModel, *mBoneTransforms, mMeshID));
-   setCullCallback(new SubmeshCullCallback(*mWrapper, mMeshID));
+   setCullCallback(new SubmeshCullCallback(*mWrapper, guessedMeshID));
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
