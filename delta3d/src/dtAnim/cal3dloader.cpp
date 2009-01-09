@@ -1,5 +1,7 @@
 
 #include <dtAnim/cal3dloader.h>
+#include <osgDB/ReadFile>
+#include <osg/Texture2D>
 #include <cal3d/model.h>
 #include <cal3d/coremodel.h>
 #include <cal3d/coreanimation.h>
@@ -12,8 +14,6 @@
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
 #include <dtCore/globals.h>
-#include <osgDB/ReadFile>
-#include <osg/Texture2D>
 
 namespace dtAnim 
 {
