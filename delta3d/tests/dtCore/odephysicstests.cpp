@@ -22,6 +22,9 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
+#include <dtCore/odecontroller.h>
+#include <dtCore/scene.h>
 #include <dtUtil/mathdefines.h>
 #include <ode/objects.h>
 
@@ -33,6 +36,7 @@ class ODEPhysicsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestEnablingAfterBodyAssignment);
       CPPUNIT_TEST(TestSettingMassBeforeBodyAssignment);
       CPPUNIT_TEST(TestSettingThePosition);
+      CPPUNIT_TEST(TestODEControllerDestructor);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -46,6 +50,7 @@ public:
    void TestSettingMassBeforeBodyAssignment();
    void TestSettingThePosition();
    void TestSettingTheCoG();	
+   void TestODEControllerDestructor();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ODEPhysicsTests);
@@ -186,4 +191,30 @@ void ODEPhysicsTests::TestSettingTheCoG()
    wrap = NULL;
    dWorldDestroy(worldID);
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ODEPhysicsTests::TestODEControllerDestructor()
+{
+   dtCore::ObserverPtr<dtCore::ODEController> ctrl = new dtCore::ODEController();
+ 
+   dtCore::ObserverPtr<dtCore::Scene> sceneObserver;
+ 
+   {
+      dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene(ctrl.get());
+      sceneObserver = scene.get();
+
+      ctrl->SetMessageSender(scene.get());
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("ODEController should have a reference count of 1.",
+                                   1, ctrl->referenceCount());
+   }
+
+   //scene goes out of scope, should be de-referenced and destroyed
+   CPPUNIT_ASSERT_MESSAGE("Scene should have been destroyed, but it didn't.",
+                           sceneObserver.get() == NULL);
+
+   //Scene de-referenced ODEController so it should have been destroyed
+   CPPUNIT_ASSERT_MESSAGE("ODEController should be deleted when the Scene does.",
+                           ctrl.get() == NULL);
 }

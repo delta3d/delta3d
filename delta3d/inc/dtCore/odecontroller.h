@@ -25,6 +25,7 @@
 #include <osg/Referenced>
 #include <osg/Vec3>
 #include <dtCore/refptr.h>
+#include <dtCore/observerptr.h>
 #include <dtCore/export.h>
 #include <dtCore/odespacewrap.h>
 #include <dtCore/odeworldwrap.h>
@@ -54,6 +55,7 @@ namespace dtCore
         * instances used for collision and body functionality.
         * @param msgSender : optional pointer to a class which will be used to send out
         *                the "collision" message.
+        * @see SetMessageSender()
         */
       ODEController(dtCore::Base* msgSender = NULL);
 
@@ -64,6 +66,12 @@ namespace dtCore
        *                the "collision" message.
       */
       ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base* msgSender = NULL);
+
+      /** Set the class that will act as the sender for the "collision" message.
+       * @param msgSender : pointer to a class which will be used to send out
+       *                    the "collision" message (can be NULL)
+       */
+      void SetMessageSender(dtCore::Base* msgSender);
 
       /** Register a physics object with the system.  When added, the object
         * will be supplied to the underlying physics system for processing.
@@ -152,7 +160,7 @@ namespace dtCore
 
       TransformableVector mCollidableContents; ///<The physical contents of the scene
 
-      dtCore::RefPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
+      dtCore::ObserverPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
 
       static bool kInitialized; ///< static flag to track if ODE has been init'd
    };
