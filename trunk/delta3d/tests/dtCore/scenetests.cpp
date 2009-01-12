@@ -32,6 +32,9 @@
 #include <dtCore/light.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/environment.h>
+#include <dtCore/skybox.h>
+#include <dtCore/system.h>
+#include <dtABC/application.h>
 #include <dtUtil/stringutils.h>
 
 #include <osg/Group>
@@ -45,6 +48,7 @@ class CoreTests : public CPPUNIT_NS::TestFixture
 
       CPPUNIT_TEST(TestAssignToView);
       CPPUNIT_TEST(TestScene);
+      CPPUNIT_TEST(TestHeightOfTerrainWithSkybox);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -54,6 +58,7 @@ class CoreTests : public CPPUNIT_NS::TestFixture
       void tearDown();
       void TestAssignToView();
       void TestScene();
+      void TestHeightOfTerrainWithSkybox();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CoreTests);
@@ -180,4 +185,23 @@ void CoreTests::TestScene()
 //   dp = osgDB::Registry::instance()->getDatabasePager();
 //
 //   CPPUNIT_ASSERT_MESSAGE("The database pager should again be NULL", dp == NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CoreTests::TestHeightOfTerrainWithSkybox()
+{
+   dtCore::RefPtr<dtABC::Application> application = new dtABC::Application();
+   dtCore::RefPtr<dtCore::Environment> env = new dtCore::Environment();
+   dtCore::RefPtr<dtCore::SkyBox> skybox = new dtCore::SkyBox("skybox", dtCore::SkyBox::RP_FIXED_FUNCTION);
+   env->AddEffect(skybox.get());
+
+   application->AddDrawable(env.get());
+   dtCore::System::GetInstance().Start();
+   dtCore::System::GetInstance().Config();
+   dtCore::System::GetInstance().Step();
+
+   const float hot = application->GetScene()->GetHeightOfTerrain(0.f, 0.f);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The height of terrain of an empty scene should be zero.",
+                                        0.f, hot, 0.0001f);
 }

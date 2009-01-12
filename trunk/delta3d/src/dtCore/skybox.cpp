@@ -46,6 +46,9 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyBox)
 
+///Used to "hide" the SkyBox's geometry from the Scene's intersect visitor
+const int SKYBOX_NODE_MASK = 0xf0000000;
+
 SkyBox::SkyBox(const std::string& name, RenderProfileEnum pRenderProfile):
 EnvEffect(name),
 mRenderProfilePreference(pRenderProfile),
@@ -620,6 +623,10 @@ osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
       polyGeom[side]->setStateSet( dstate );
       mGeode->addDrawable(polyGeom[side]);
    }
+
+   //not a great solution, but this is here to prevent the Scene's intersection
+   //visitor from hitting this geometry (see Scene::GetHeightOfTerrain())
+   mGeode->setNodeMask(SKYBOX_NODE_MASK);
    return mGeode.get();
 }
 
