@@ -117,7 +117,24 @@ namespace dtAnim
       osg::ref_ptr<osg::Group> mGroupToAddTo;
    };
 
+////////////////////////////////////////////////////////////////////////////////
+AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper)
+   : mWrapper(&wrapper)
+{
+}
 
+////////////////////////////////////////////////////////////////////////////////
+osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
+{
+   CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
+   osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
+      calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
+
+   osg::BoundingSphere bSphere(bBox);
+   return bSphere;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 AnimNodeBuilder::AnimNodeBuilder()
 {
    if (SupportsHardware())
@@ -134,28 +151,31 @@ AnimNodeBuilder::AnimNodeBuilder()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 AnimNodeBuilder::AnimNodeBuilder(const CreateFunc& pCreate)
 : mCreateFunc(pCreate)
 {
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 AnimNodeBuilder::~AnimNodeBuilder()
 {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
 AnimNodeBuilder::CreateFunc& AnimNodeBuilder::GetCreate()
 {
    return mCreateFunc;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void AnimNodeBuilder::SetCreate(const CreateFunc& pCreate)
 {
    mCreateFunc = pCreate;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrapper)
 {
    ///Add a temporary rendered shape with a draw callback to a Group.  The callback
@@ -176,7 +196,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
    return rootNode;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
 {
    if (pWrapper == NULL)
@@ -212,6 +232,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
    return geode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWrapper)
 {
    if (pWrapper == NULL)
@@ -367,6 +388,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
    return geode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(Cal3DModelWrapper* pWrapper)
 {
    UNREFERENCED_PARAMETER(pWrapper);
@@ -377,7 +399,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(Cal3DModelWrapper* pWrappe
    return geode;
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const
 {
    static const std::string hardwareSkinningSPGroup = "HardwareSkinning";
@@ -437,21 +459,7 @@ dtCore::ShaderProgram* AnimNodeBuilder::LoadShaders(Cal3DModelData& modelData, o
    return shaderManager.AssignShaderFromPrototype(*shaderProgram, geode);
 }
 
-AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Cal3DModelWrapper& wrapper)
-   : mWrapper(&wrapper)
-{
-}
-
-osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
-{
-   CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
-   osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
-         calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
-
-   osg::BoundingSphere bSphere(bBox);
-   return bSphere;
-}
-
+////////////////////////////////////////////////////////////////////////////////
 void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
                                              int &numVerts, int &numIndices)
 {
@@ -474,6 +482,7 @@ void AnimNodeBuilder::CalcNumVertsAndIndices( Cal3DModelWrapper* pWrapper,
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel, const size_t stride,
                                                 float* vboVertexAttr, Cal3DModelData* modelData,
                                                 Array<CalIndex> &indexArray )
@@ -508,21 +517,21 @@ void AnimNodeBuilder::InvertTextureCoordinates( CalHardwareModel* hardwareModel,
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool AnimNodeBuilder::SupportsHardware() const
 {
    //check if hardware supports our requirements
    return SupportsVertexBuffers();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool AnimNodeBuilder::SupportsSoftware() const
 {
    //check if hardware supports our requirements
    return SupportsVertexBuffers();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool AnimNodeBuilder::SupportsVertexBuffers() const
 {
    //see if we can support vertex buffer objects
@@ -530,6 +539,8 @@ bool AnimNodeBuilder::SupportsVertexBuffers() const
 
    return (osg::isGLExtensionSupported(0, "GL_ARB_vertex_buffer_object"));
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 
 }//namespace dtAnim

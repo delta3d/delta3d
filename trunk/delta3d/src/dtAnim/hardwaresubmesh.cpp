@@ -46,7 +46,8 @@ namespace dtAnim
 
          /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const
          {
-            return drawable.getInitialBound();
+            // temp until a better solution is implemented
+            return osg::BoundingBox(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
          }
 
    };
@@ -104,11 +105,12 @@ namespace dtAnim
          unsigned mHardwareMeshID;
    };
 
-
+////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, CalHardwareModel* model,
       const std::string& boneUniformName, unsigned numBones, unsigned mesh,
       unsigned vertexVBO, unsigned indexVBO)
-   : mWrapper(wrapper)
+   : osg::Drawable()
+   , mWrapper(wrapper)
    , mHardwareModel(model)
    , mBoneTransforms(new osg::Uniform(osg::Uniform::FLOAT_VEC4, boneUniformName, numBones))
    , mBoneUniformName(boneUniformName)
@@ -143,16 +145,18 @@ HardwareSubmeshDrawable::HardwareSubmeshDrawable(Cal3DModelWrapper* wrapper, Cal
    setComputeBoundingBoxCallback(new HardwareSubmeshComputeBound());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 HardwareSubmeshDrawable::~HardwareSubmeshDrawable(void)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
    //select the appropriate mesh
    mHardwareModel->selectHardwareMesh(mMeshID);
 
-   osg::State & state = *renderInfo.getState();
+   osg::State& state = *renderInfo.getState();
 
    //bind the VBO's
    state.disableAllVertexArrays();
@@ -195,12 +199,14 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    state.setTexCoordPointer(3, NULL);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::clone(const osg::CopyOp&) const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel, mBoneUniformName,
          mNumBones, mMeshID, mVertexVBO, mIndexVBO);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::Object* HardwareSubmeshDrawable::cloneType() const
 {
    return new HardwareSubmeshDrawable(mWrapper.get(), mHardwareModel,
@@ -291,6 +297,8 @@ void HardwareSubmeshDrawable::SetUpMaterial()
 
    mWrapper->EndRenderingQuery();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 } //namespace dtAnim
 
