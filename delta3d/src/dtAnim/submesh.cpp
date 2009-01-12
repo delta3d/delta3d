@@ -28,7 +28,8 @@ namespace dtAnim
 
          /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const  
          {
-            return drawable.getInitialBound();
+            // temp until a better solution is implemented
+            return osg::BoundingBox(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
          }
 
    };
