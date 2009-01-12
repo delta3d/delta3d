@@ -35,22 +35,22 @@ namespace dtCore
 
    ////////////////////////////////////////////////////////////////////////////////
    System::System()
-   : mRealClockTime(0)
-   , mSimulationClockTime(0)
-   , mLastDrawClockTime(0)
-   , mSimulationTime(0.0)
-   , mCorrectSimulationTime(0.0)
-   , mFrameTime(1.0/60.0)
-   , mTimeScale(1.0)
-   , mMaxTimeBetweenDraws(30000)
-   , mAccumulationTime(0.0)
-   , mSystemStages(STAGES_DEFAULT)
-   , mUseFixedTimeStep(false)
-   , mAccumulateLastRealDt(false)
-   , mRunning(false)
-   , mShutdownOnWindowClose(true)
-   , mPaused(false)
-   , mWasPaused(false)
+      : mRealClockTime(0)
+      , mSimulationClockTime(0)
+      , mLastDrawClockTime(0)
+      , mSimulationTime(0.0)
+      , mCorrectSimulationTime(0.0)
+      , mFrameTime(1.0/60.0)
+      , mTimeScale(1.0)
+      , mMaxTimeBetweenDraws(30000)
+      , mAccumulationTime(0.0)
+      , mSystemStages(STAGES_DEFAULT)
+      , mUseFixedTimeStep(false)
+      , mAccumulateLastRealDt(false)
+      , mRunning(false)
+      , mShutdownOnWindowClose(true)
+      , mPaused(false)
+      , mWasPaused(false)
    {
       mTickClockTime = mClock.Tick();
       RegisterInstance(this);
@@ -82,7 +82,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetShutdownOnWindowClose( bool shutdown )
+   void System::SetShutdownOnWindowClose(bool shutdown)
    {
       mShutdownOnWindowClose = shutdown;
    }
@@ -118,7 +118,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetSimulationClockTime(const dtCore::Timer_t &newTime)
+   void System::SetSimulationClockTime(const dtCore::Timer_t& newTime)
    {
       mSimulationClockTime = newTime;
    }
@@ -144,7 +144,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    void System::SetFrameRate(double newRate)
    {
-      mFrameTime = 1.0/newRate;
+      mFrameTime = 1.0 / newRate;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    double System::GetMaxTimeBetweenDraws() const
    {
-      return mMaxTimeBetweenDraws/1000000.0;
+      return mMaxTimeBetweenDraws / 1000000.0;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -185,17 +185,17 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetPause( bool paused )
+   void System::SetPause(bool paused)
    {
       //don't send out a message unless it actually changes.
-      if( mPaused == paused )
+      if(mPaused == paused)
       {
          return;
       }
 
       mPaused = paused;
 
-      if( mPaused )
+      if(mPaused)
       {
          SendMessage(MESSAGE_PAUSE_START);
       }
@@ -213,7 +213,7 @@ namespace dtCore
 
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::SetSystemStages( SystemStageFlags stages )
+   void System::SetSystemStages(SystemStageFlags stages)
    {
       mSystemStages = stages;
    }
@@ -225,9 +225,9 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::Pause( const double deltaRealTime )
+   void System::Pause(const double deltaRealTime)
    {
-      SendMessage(MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime) );
+      SendMessage(MESSAGE_PAUSE, const_cast<double*>(&deltaRealTime));
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -342,11 +342,12 @@ namespace dtCore
    {
       SystemStep();
 
-      if( mShutdownOnWindowClose ) // FIXME how to check if GraphicsWindow is always running ??
-                                   // this implementation in really the good way
+      // FIXME how to check if GraphicsWindow is always running ??
+      // this implementation in really the good way
+      if(mShutdownOnWindowClose) 
       {
          bool areGraphicsWindow = false;
-         for( int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; i++ )
+         for(int i = 0; i < DeltaWin::GetInstanceCount() && !areGraphicsWindow; i++)
          {
              areGraphicsWindow = areGraphicsWindow || DeltaWin::GetInstance(i)->GetOsgViewerGraphicsWindow()->valid();
          }
@@ -376,7 +377,7 @@ namespace dtCore
       mRunning = true;
       InitVars();
 
-      while( mRunning )
+      while(mRunning)
       {
          StepWindow();
       }
@@ -398,7 +399,7 @@ namespace dtCore
    {
       static bool first = true;
 
-      if ( !mRunning )
+      if (!mRunning)
       {
          return;
       }
@@ -419,7 +420,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::EventTraversal( const double deltaSimTime, const double deltaRealTime )
+   void System::EventTraversal(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_EVENT_TRAVERSAL))
       {
@@ -429,7 +430,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PostEventTraversal( const double deltaSimTime, const double deltaRealTime )
+   void System::PostEventTraversal(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POST_EVENT_TRAVERSAL))
       {
@@ -439,7 +440,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PreFrame( const double deltaSimTime, const double deltaRealTime )
+   void System::PreFrame(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_PREFRAME))
       {
@@ -449,7 +450,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::FrameSynch( const double deltaSimTime, const double deltaRealTime )
+   void System::FrameSynch(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_FRAME_SYNCH))
       {
@@ -459,7 +460,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::CameraSynch( const double deltaSimTime, const double deltaRealTime )
+   void System::CameraSynch(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_CAMERA_SYNCH))
       {
@@ -479,7 +480,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void System::PostFrame( const double deltaSimTime, const double deltaRealTime )
+   void System::PostFrame(const double deltaSimTime, const double deltaRealTime)
    {
       if (dtUtil::Bits::Has(mSystemStages, System::STAGE_POSTFRAME))
       {
