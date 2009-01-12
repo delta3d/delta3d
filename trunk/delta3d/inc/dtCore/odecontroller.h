@@ -153,6 +153,8 @@ namespace dtCore
       TransformableVector mCollidableContents; ///<The physical contents of the scene
 
       dtCore::RefPtr<dtCore::Base> mMsgSender; ///<only to send out a "collision" message
+
+      static bool kInitialized; ///< static flag to track if ODE has been init'd
    };
 }
 #endif // odeiterator_h__

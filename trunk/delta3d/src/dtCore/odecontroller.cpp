@@ -5,6 +5,7 @@
 #include <dtCore/keyboardmousehandler.h>//due to scene.h
 #include <dtUtil/log.h>
 #include <cassert>
+#include <ode/odeinit.h>
 
 /////////////////////////////////////////////
 // Replacement message handler for ODE
@@ -29,30 +30,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
    assert(false);
 }
 
-
-// dTriIndex is a macro hack in delta for ODE < 0.10. For 0.10 it's a typedef, so this will only
-// exist for 0.10 and later.
-#ifndef dTriIndex
-
-#include <ode/odeinit.h>
-
-class ODELifeCycle
-{
-public:
-   ODELifeCycle()
-   {
-      dInitODE2(0);
-   }
-
-   ~ODELifeCycle()
-   {
-      dCloseODE();
-   }
-};
-
-// This statically starts and shuts ode down.  This is needed for ODE 0.10.
-static ODELifeCycle odeLifeCycle;
-#endif
+bool dtCore::ODEController::kInitialized = false;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,6 +58,18 @@ mMsgSender(msgSender)
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEController::Ctor()
 {
+   if (kInitialized == false)
+   {
+      if (dInitODE2(0))
+      {
+         kInitialized = true;
+      }
+      else
+      {
+         LOG_ERROR("ODE failed to initialize.");
+      }
+   }
+
    //supply our method to be called when geoms actually collide
    mSpaceWrapper->SetDefaultCollisionCBFunc(dtCore::ODESpaceWrap::CollisionCBFunc(this, &ODEController::DefaultCBFunc));
 
@@ -91,6 +81,12 @@ void dtCore::ODEController::Ctor()
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEController::~ODEController()
 {
+   if (kInitialized == true)
+   {
+      dCloseODE();
+      kInitialized = false;
+   }
+
    // Since we are going to destroy all the bodies in our world with dWorldDestroy,
    // we must remove the references to the bodies associated with their default collision
    // geoms. Otherwise destroying the world will leave the geoms references bad memory.
