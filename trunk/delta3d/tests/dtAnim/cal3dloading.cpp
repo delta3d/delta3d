@@ -23,8 +23,6 @@
 * Erik Johnson
 */
 
-//Uncomment to use new CAL3D API
-//#define TEST_MORPH_TARGET
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cal3d/coremodel.h>
@@ -39,6 +37,11 @@
 #include <dtCore/globals.h>
 #include <cal3d/coresubmorphtarget.h>
 #include <cal3d/morphtargetmixer.h>
+
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
+   #define TEST_MORPH_TARGET
+#endif
+
 
 #ifdef TEST_MORPH_TARGET
    #include <cal3d/coreanimatedmorph.h>
