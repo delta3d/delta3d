@@ -303,3 +303,9 @@ const dtCore::ODEController::TransformableVector& dtCore::ODEController::GetRegi
 {
    return mCollidableContents;
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEController::SetMessageSender(dtCore::Base* msgSender)
+{
+   mMsgSender = msgSender;
+}
