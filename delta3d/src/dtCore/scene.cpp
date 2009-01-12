@@ -28,7 +28,8 @@ using namespace dtUtil;
 namespace dtCore
 {
 
-
+///the intersect traversal mask the Scene uses
+const int SCENE_INTERSECT_MASK = 0x0fffffff;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 /////////////////////////////////////////////
@@ -37,7 +38,7 @@ Scene::ParticleSystemFreezer::ParticleSystemFreezer()
      mFreezing( true )
 {
    // Since we are setting all ParticleSystems to be frozen, we don't care
-   // about the previous state of the last attemp to freeze.
+   // about the previous state of the last attempt to freeze.
    if( mFreezing )
    {
       mPreviousFrozenState.clear();
@@ -300,7 +301,7 @@ float Scene::GetHeightOfTerrain( float x, float y )
 
    segDown->set(osg::Vec3(x, y, 10000.f),osg::Vec3(x,y, -10000.f));
    iv.addLineSegment(segDown.get());
-   iv.setTraversalMask(0x0fffffff);
+   iv.setTraversalMask(SCENE_INTERSECT_MASK);
 
    mSceneNode->accept(iv);
 
