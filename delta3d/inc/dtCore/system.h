@@ -180,7 +180,7 @@ namespace dtCore
        * Defaults to STAGES_DEFAULT.
        * @param stages The bitwise combination of SystemStages the System should process.
        */
-      void SetSystemStages( SystemStageFlags stages );
+      void SetSystemStages(SystemStageFlags stages);
 
       /** Get the SystemStages the System is currently operating on.
        * @return The bitwise combination of stages
@@ -216,7 +216,7 @@ namespace dtCore
       ///Is the system running
       bool IsRunning() const { return mRunning; }
 
-      void SetPause( bool paused );
+      void SetPause(bool paused);
       bool GetPause() const;
 
       /*!
@@ -230,7 +230,7 @@ namespace dtCore
       * when the last window is closed. Otherwise, the console and system will
       * remain open.
       */
-      void SetShutdownOnWindowClose( bool shutdown );
+      void SetShutdownOnWindowClose(bool shutdown);
 
       /*!
       * Returns whether or not the system will shutdown upon the last window being
@@ -266,7 +266,7 @@ namespace dtCore
        * Sets the simulation wall clock time.  This is used for things like time of day.
        * @param newTime the new time in microseconds, like the real clock time.
        */
-      void SetSimulationClockTime(const dtCore::Timer_t &newTime);
+      void SetSimulationClockTime(const dtCore::Timer_t& newTime);
 
       /**
        * The simulation time starts at 0 at the beginning of the simulation.
@@ -315,7 +315,7 @@ namespace dtCore
    private:
 
       System(); ///<private
-      static System *mSystem;   ///<The System pointer
+      static System* mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?
       Timer mClock;
 
@@ -395,7 +395,7 @@ namespace dtCore
        */
       void PostFrame(const double deltaSimTime, const double deltaRealTime);
 
-      void Pause( const double deltaRealTime );
+      void Pause(const double deltaRealTime);
 
       ///Intenal helper that calls Producer::Camera::frame(bool doSwap)
       ///with the proper value for doSwap.
@@ -403,7 +403,6 @@ namespace dtCore
 
       ///One System frame
       void SystemStep();
-
    };
 }
 
