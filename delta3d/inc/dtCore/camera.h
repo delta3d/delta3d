@@ -152,7 +152,7 @@ namespace dtCore
          return (mOsgCamera->getProjectionResizePolicy()); 
       }
 
-      ///takes a number from 0-1 to set as the aspect ratio
+      ///takes a number (generally width / height) to allow projections to scale correctly
       void SetAspectRatio(double aspectRatio);
 
       ///@return aspect ratio
