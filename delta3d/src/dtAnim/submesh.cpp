@@ -62,7 +62,7 @@ namespace dtAnim
    const char* SubmeshUserData::className() const { return "SubmeshUserData";}
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   void SubmeshDirtyCallback::update (osg::NodeVisitor *, osg::Drawable *d) 
+   void SubmeshDirtyCallback::update (osg::NodeVisitor*, osg::Drawable* d)
    {
       d->dirtyBound();
    }
@@ -88,7 +88,7 @@ namespace dtAnim
                return true;
    
             float start = submeshDraw->GetLODOptions().GetStartDistance();
-            float end = submeshDraw->GetLODOptions().GetEndDistance();
+            float end   = submeshDraw->GetLODOptions().GetEndDistance();
             float slope = 1.0f / (end - start);
    
             float lod = 1.0f - (slope*(distance - start));
@@ -112,10 +112,10 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////////////////
    SubmeshDrawable::SubmeshDrawable(Cal3DModelWrapper* wrapper, unsigned mesh, unsigned Submesh) 
-   : mMeshID(mesh), mSubmeshID(Submesh), mMeshVBO(0), mMeshIndices(0), mCurrentLOD(1.0f),
-     mInitalized(false), 
-     mVBOContextID(-1),
-     mWrapper(wrapper)
+      : mMeshID(mesh), mSubmeshID(Submesh), mMeshVBO(0), mMeshIndices(0), mCurrentLOD(1.0f)
+      , mInitalized(false)
+      , mVBOContextID(-1)
+      , mWrapper(wrapper)
    {
       setUseDisplayList(false);
       setUseVertexBufferObjects(true);
@@ -145,25 +145,29 @@ namespace dtAnim
 
          GLuint bufferID = mMeshVBO;
          if (bufferID > 0)
+         {
             glExt->glDeleteBuffers(1, &bufferID);
+         }
 
          bufferID = mMeshIndices;
          if (bufferID > 0)
+         {
             glExt->glDeleteBuffers(1, &bufferID);
+         }
       }
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
    void SubmeshDrawable::SetUpMaterial() 
    {
-      osg::StateSet *set = this->getOrCreateStateSet();
+      osg::StateSet* set = this->getOrCreateStateSet();
 
       if(mWrapper->BeginRenderingQuery())
       {
          // select mesh and Submesh for further data access
          if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
          {
-            osg::Material *material = new osg::Material();
+            osg::Material* material = new osg::Material();
             set->setAttributeAndModes(material, osg::StateAttribute::ON);
 
             osg::BlendFunc* bf = new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -184,7 +188,7 @@ namespace dtAnim
             material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
 
             // set the material diffuse color
-            mWrapper->GetDiffuseColor( &meshColor[0] );
+            mWrapper->GetDiffuseColor(&meshColor[0]);
             materialColor[0] = meshColor[0] / 255.0f;
             materialColor[1] = meshColor[1] / 255.0f;
             materialColor[2] = meshColor[2] / 255.0f;
@@ -210,6 +214,7 @@ namespace dtAnim
             {
                unsigned i = 0;
                osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(i));
+
                for (;texture != NULL; ++i)
                {
                   set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
@@ -219,7 +224,6 @@ namespace dtAnim
          }
          mWrapper->EndRenderingQuery();
       }
-
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
@@ -257,6 +261,7 @@ namespace dtAnim
       //save the offsets for easy lookup.
       mVertexOffsets[0] = 0;
       mFaceOffsets[0] = 0;
+
       for (unsigned i = 1; i < LOD_COUNT; ++i)
       {
          mVertexOffsets[i] = mVertexOffsets[i - 1] + mVertexCount[i - 1]; 
@@ -292,7 +297,6 @@ namespace dtAnim
             // select mesh and Submesh for further data access
             if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
-
                int vertexCount = mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
 
                // get the transformed normals of the Submesh
@@ -427,7 +431,9 @@ namespace dtAnim
    void SubmeshDrawable::accept(osg::PrimitiveFunctor& functor) const
    {
       if (mMeshVBO == 0)
+      {
          return;
+      }
 
       /// this processes the lowest LOD at the moment,
       /// because that's what's loaded at the front of the VBO.
@@ -440,16 +446,16 @@ namespace dtAnim
       glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
       void* indexArray = glExt->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB);
 
-      if(sizeof(CalIndex) == sizeof(short))
+      if (sizeof(CalIndex) == sizeof(short))
       {
          osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
-                  mFaceCount[0] * 3, (GLushort *) indexArray);
+                  mFaceCount[0] * 3, (GLushort*) indexArray);
          pset->accept(functor);
       } 
       else
       {
          osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
-                  mFaceCount[0] * 3, (GLuint *) indexArray);
+                  mFaceCount[0] * 3, (GLuint*) indexArray);
          pset->accept(functor);
       }
 

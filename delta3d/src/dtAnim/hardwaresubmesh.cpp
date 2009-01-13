@@ -245,7 +245,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    material->setAmbient(osg::Material::FRONT_AND_BACK, materialColor);
 
    // set the material diffuse color
-   mHardwareModel->getDiffuseColor( &meshColor[0] );
+   mHardwareModel->getDiffuseColor(&meshColor[0]);
    materialColor[0] = meshColor[0] / 255.0f;
    materialColor[1] = meshColor[1] / 255.0f;
    materialColor[2] = meshColor[2] / 255.0f;
