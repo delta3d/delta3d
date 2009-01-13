@@ -215,10 +215,10 @@ namespace dtAnim
                unsigned i = 0;
                osg::Texture2D* texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(i));
 
-               for (;texture != NULL; ++i)
+               while (texture != NULL)
                {
-                  set->setTextureAttributeAndModes(0, texture, osg::StateAttribute::ON);
-                  texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(i));
+                  set->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
+                  texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(++i));                  
                }
             }
          }
