@@ -52,6 +52,22 @@ namespace dtAI
          void AddPathSegment(const Waypoint* pFrom, const Waypoint* pTo);
 
          /**
+         * Removes the path segment between the two waypoints if one exists         
+         */
+         void RemovePathSegment(const Waypoint* pFrom, const Waypoint* pTo);
+
+         /**
+         * Removes all path segments from the specified waypoint
+         */
+         void RemoveAllPaths(const Waypoint* pFrom);
+
+
+         /**
+          *	@return whether or not a path exists between the two waypoints
+          */
+         bool ContainsPath(const Waypoint* pFrom, const Waypoint* pTo) const;
+
+         /**
          * returns a reference to the multimap which contains all WaypointPairs
          * indexed by the starting waypoint
          */

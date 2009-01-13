@@ -58,6 +58,47 @@ namespace dtAI
       mNavMesh.insert( NavMeshPair(pFrom->GetID(), new WaypointPair(pFrom, pTo)));
    }
 
+   void NavMesh::RemovePathSegment( const Waypoint* pFrom, const Waypoint* pTo )
+   {
+      NavMeshContainer::iterator iter = begin(pFrom);
+      NavMeshContainer::iterator endOfList = end(pFrom);
+
+      WaypointID id = pTo->GetID();
+      while(iter != endOfList)
+      {
+         if(iter->second->GetWaypointTo()->GetID() == id)
+         {
+            mNavMesh.erase(iter);
+            return;
+         }
+         ++iter;
+      }
+   }
+
+   void NavMesh::RemoveAllPaths( const Waypoint* pFrom )
+   {
+      std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(pFrom->GetID());
+      mNavMesh.erase(rangeElements.first, rangeElements.second);
+   }
+
+   bool NavMesh::ContainsPath( const Waypoint* pFrom, const Waypoint* pTo ) const
+   {
+      NavMeshContainer::const_iterator iter = begin(pFrom);
+      NavMeshContainer::const_iterator endOfList = end(pFrom);
+
+      WaypointID id = pTo->GetID();
+      while(iter != endOfList)
+      {
+         if(iter->second->GetWaypointTo()->GetID() == id)
+         {
+            return true;
+         }
+         ++iter;
+      }
+
+      return false;
+   }
+
    const NavMesh::NavMeshContainer& NavMesh::GetNavMesh() const
    {
       return mNavMesh;
@@ -103,5 +144,6 @@ namespace dtAI
 
       return true;
    }
+
 
 }//namespace dtAI

@@ -46,6 +46,7 @@ namespace dtTest
       CPPUNIT_TEST_SUITE(AStarTests);
       CPPUNIT_TEST(TestCreatePath);
       CPPUNIT_TEST(TestCreatePathVector);
+      CPPUNIT_TEST(TestNavMesh);
       CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -56,6 +57,7 @@ namespace dtTest
       void destroy();
       void TestCreatePath();
       void TestCreatePathVector();
+      void TestNavMesh();
 
    private:
       void PrintStats(const TestAStar::config_type& pConfig);
@@ -70,8 +72,13 @@ namespace dtTest
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( AStarTests );
 
-void AStarTests::setUp(){}
-void AStarTests::tearDown(){}
+void AStarTests::setUp()
+{
+}
+
+void AStarTests::tearDown()
+{
+}
 
 
 void AStarTests::init()
@@ -163,6 +170,66 @@ void AStarTests::destroy()
 {
    delete AStarTest_PathData::sPathData;
    delete PathCostData::sCostData;
+}
+
+void AStarTests::TestNavMesh()
+{
+   dtAI::WaypointManager* man = &dtAI::WaypointManager::GetInstance();
+   dtAI::NavMesh* navMesh = &man->GetNavMesh();
+
+   dtAI::Waypoint one, two, three, four, five;
+   one.SetID(1);
+   two.SetID(2);
+   three.SetID(3);
+   four.SetID(4);
+   five.SetID(5);
+
+   navMesh->AddPathSegment(&one, &two);
+   navMesh->AddPathSegment(&two, &three);
+   navMesh->AddPathSegment(&two, &four);
+   navMesh->AddPathSegment(&two, &five);
+   navMesh->AddPathSegment(&two, &one);
+   navMesh->AddPathSegment(&three, &four);
+   navMesh->AddPathSegment(&four, &five);
+
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &three));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &four));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &five));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &one));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&three, &four));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&four, &five));
+
+   navMesh->RemovePathSegment(&two, &four);
+   navMesh->RemovePathSegment(&four, &five);
+
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &three));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &four));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &five));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&two, &one));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&three, &four));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&four, &five));
+
+   navMesh->RemoveAllPaths(&two);
+
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &three));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &four));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &five));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &one));
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&three, &four));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&four, &five));
+
+   navMesh->RemoveAllPaths(&three);
+
+   CPPUNIT_ASSERT(navMesh->ContainsPath(&one, &two));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &three));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &four));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &five));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&two, &one));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&three, &four));
+   CPPUNIT_ASSERT(!navMesh->ContainsPath(&four, &five));
 }
 
 void AStarTests::TestCreatePath()
