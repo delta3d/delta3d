@@ -92,6 +92,8 @@ void Delta3DThread::run()
    mViewer->Config();
 
    connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
+   connect(mWin, SIGNAL(UnloadFile()), mViewer.get(), SLOT(OnUnloadCharFile()) );
+   connect(mViewer.get(), SIGNAL(ClearCharacterData()), mWin, SLOT(OnClearCharacterData()));
 
    connect(mViewer.get(), SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
            mWin, SLOT(OnNewAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
@@ -126,7 +128,7 @@ void Delta3DThread::run()
 
    connect(mViewer.get(), SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), mWin, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
    connect(mWin, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer.get(), SLOT(OnMorphChanged(int,int,int,float)));
-
+   connect(mWin, SIGNAL(PlayMorphAnimation(int)), mViewer.get(), SLOT(OnPlayMorphAnimation(int)));
 
    dtCore::System::GetInstance().Start();
    mTimer.start(10);

@@ -50,6 +50,7 @@ protected:
 
 signals:
    void FileToLoad(const QString&);
+   void UnloadFile();
    void StartAnimation(unsigned int, float, float);
    void StopAnimation(unsigned int, float);
    void StartAction(unsigned int, float, float);
@@ -64,6 +65,8 @@ signals:
 
    void SubMorphTargetChanged(int meshID, int subMeshID,
                               int morphID, float weight);
+
+   void PlayMorphAnimation(int morphAnimID);
 
 public slots:
    void OnNewAnimation(unsigned int id, const QString& animationName, unsigned int trackCount,
@@ -96,6 +99,8 @@ public slots:
    void OnDisplayError(const QString& msg);
    void OnConfiged(); ///<call when everything is up and running
 
+   void OnClearCharacterData();
+
 private:
    void CreateMenus();
    void CreateActions();
@@ -113,6 +118,7 @@ private:
 
    QAction* mExitAct;
    QAction* mLoadCharAct;
+   QAction* mCloseCharAction;
    QAction* mRecentFilesAct[5];
    QAction* mWireframeAction;
    QAction* mShadedAction;
@@ -149,6 +155,9 @@ private:
 private slots:
    void OnOpenCharFile();
    void OpenRecentFile();
+      
+   void OnCloseCharFile();
+
    void OnItemChanged(QTableWidgetItem* item);
    void OnItemDoubleClicked(QTableWidgetItem* item);
 
@@ -162,5 +171,6 @@ private slots:
    void OnToggleFlipHorizontal();
 
    void OnSubMorphChanged(QTableWidgetItem* item);
+   void OnSubMorphPlay(QTableWidgetItem* item);
 };
 #endif // DELTA_MainWindow

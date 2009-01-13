@@ -147,18 +147,7 @@ void Viewer::OnLoadCharFile(const QString& filename)
    SetDataFilePathList(dtCore::GetDataFilePathList() + ";" +
                        dir.path().toStdString() + ";");
 
-   // try to clean up the scene graph
-   if (mCharacter.valid())
-   {
-      mShadeDecorator->removeChild(mCharacter->GetOSGNode());
-      mWireDecorator->removeChild(mCharacter->GetOSGNode());
-      mCharacter = NULL;
-   }
-
-   //wipe out any previously loaded characters. This will ensure we can
-   //reload the same file (which might have been modified).
-   mCalDatabase->TruncateDatabase();
-   mCalDatabase->PurgeLoaderCaches();
+   OnUnloadCharFile();
 
    //create an instance from the character definition file
    try
@@ -254,6 +243,25 @@ void Viewer::OnLoadCharFile(const QString& filename)
    CreateBoneBasisDisplay();
 
    LOG_DEBUG("Done loading file: " + filename.toStdString());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnUnloadCharFile()
+{
+   // try to clean up the scene graph
+   if (mCharacter.valid())
+   {
+      mShadeDecorator->removeChild(mCharacter->GetOSGNode());
+      mWireDecorator->removeChild(mCharacter->GetOSGNode());
+      mCharacter = NULL;
+   }
+
+   //wipe out any previously loaded characters. This will ensure we can
+   //reload the same file (which might have been modified).
+   mCalDatabase->TruncateDatabase();
+   mCalDatabase->PurgeLoaderCaches();
+
+   emit ClearCharacterData();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -551,3 +559,12 @@ void Viewer::OnMorphChanged(int meshID, int subMeshID, int morphID, float weight
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void Viewer::OnPlayMorphAnimation(int morphAnimID)
+{
+   CalMorphTargetMixer *mixer = mCharacter->GetCal3DWrapper()->GetCalModel()->getMorphTargetMixer();
+   if (mixer)
+   {
+      mixer->blend(morphAnimID, 1.f, 0.f);
+   }
+}
