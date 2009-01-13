@@ -265,7 +265,8 @@ void HardwareSubmeshDrawable::SetUpMaterial()
    shininess = mHardwareModel->getShininess();
    material->setShininess(osg::Material::FRONT_AND_BACK, shininess);
 
-   std::vector<CalHardwareModel::CalHardwareMesh> &meshVec = mHardwareModel->getVectorHardwareMesh();
+   std::vector<CalHardwareModel::CalHardwareMesh>& meshVec = mHardwareModel->getVectorHardwareMesh();
+
    if (mMeshID >= meshVec.size())
    {
       LOG_WARNING("MeshID isn't defined in the list of meshes");
