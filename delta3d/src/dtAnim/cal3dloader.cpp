@@ -76,6 +76,7 @@ namespace dtAnim
             ++animItr;
          }
 
+#if defined(CAL3D_VERSION) && CAL3D_VERSION >= 1300
          //load morph animations
          std::vector<CharacterFileHandler::MorphAnimationStruct>::iterator morphAnimItr = handler.mMorphAnimations.begin();
          while (morphAnimItr != handler.mMorphAnimations.end())
@@ -84,8 +85,7 @@ namespace dtAnim
 
             if (!filename.empty()) 
             {
-               //TODO for use with new morph target CAL3D
-               //coreModel->loadCoreAnimatedMorph( filename );
+               coreModel->loadCoreAnimatedMorph(filename);
             }
             else
             {
@@ -93,6 +93,7 @@ namespace dtAnim
             }
             ++morphAnimItr;
          }
+#endif
 
          //load meshes
          std::vector<CharacterFileHandler::MeshStruct>::iterator meshItr = handler.mMeshes.begin();
