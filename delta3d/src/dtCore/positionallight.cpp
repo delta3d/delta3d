@@ -42,16 +42,9 @@ public:
       osg::Vec4 position( x, y, z, 1.0f ); //force positional lighting with w of 1.0f
       osgLight->setPosition( position * osg::Matrix::inverse( absMatrix ) );
 
-      //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
-      osg::Matrix hRot, pRot, rRot;
-
-      dtUtil::MatrixUtil::HprToMatrix(hRot, osg::Vec3(h,      0.0f,   0.0f));
-      dtUtil::MatrixUtil::HprToMatrix(pRot, osg::Vec3(0.0f,   p,      0.0f));
-      dtUtil::MatrixUtil::HprToMatrix(rRot, osg::Vec3(0.0f,   0.0f,   r));
-
-      osg::Matrix rotation = hRot * pRot * rRot;
-      osg::Vec3 xyz = rotation.preMult( osg::Vec3( 0.0f, 1.0f, 0.0f ) );
-      osgLight->setDirection( xyz );
+      //note: the actual direction is handled by the Transformable's MatrixNode.
+      //this just tells the Light that it has a direction.
+      osgLight->setDirection( osg::Vec3( 0.0f, 1.0f, 0.0f ) );
 
       traverse( node, nv );
    }
