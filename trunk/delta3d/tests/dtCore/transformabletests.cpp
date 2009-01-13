@@ -39,24 +39,6 @@
 
 using namespace dtCore;
 
-class TransformableSubClass : public Transformable
-{
-   public:
-   TransformableSubClass()
-   {
-   }
-
-   void ExecuteReplaceMatrixNode()
-   {
-      osg::ref_ptr<osg::MatrixTransform> mNewNode( new osg::MatrixTransform() );
-      mNewNode->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::ON );
-      ReplaceMatrixNode( mNewNode.get() );
-   }
-   protected:
-   virtual ~TransformableSubClass()
-   {
-   }
-};
 
 class TransformableTests : public CPPUNIT_NS::TestFixture 
 {
@@ -76,7 +58,6 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestRotationHPR);
    CPPUNIT_TEST(TestRotationQuat);
    CPPUNIT_TEST(TestTransRotScaleGetSet);
-   CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST(TestConstructorTakingMatrixNode);
    CPPUNIT_TEST(TestRows);
    CPPUNIT_TEST(TestDistance);
@@ -106,7 +87,6 @@ public:
    void TestRotationHPR();
    void TestRotationQuat();
    void TestTransRotScaleGetSet();
-   void TestReplaceMatrixNode();
    void TestConstructorTakingMatrixNode();
    void TestSetMatrix();
    void TestRows();
@@ -580,71 +560,6 @@ bool TransformableTests::CompareVector(const osg::Vec3& rhs, const osg::Vec3& lh
    return dtUtil::Equivalent(rhs, lhs, TEST_EPSILON);
 }
 
-void TransformableTests::TestReplaceMatrixNode()
-{
-   // This subclass should immediately call SetMatrixNode in the constructor with
-   // GL_LIGHTING turned on.
-   dtCore::RefPtr<TransformableSubClass> testTrans( new TransformableSubClass() );
-   testTrans->ExecuteReplaceMatrixNode();
-
-   // So, the new node should...
-   // 1) Have a StateSet
-   osg::ref_ptr<const osg::StateSet> stateSet( testTrans->GetOSGNode()->getStateSet() );
-   CPPUNIT_ASSERT( stateSet.valid() );
-
-   // 2) Still have GL_LIGHTING turned on (from new Node)
-   CPPUNIT_ASSERT( osg::StateAttribute::ON == stateSet->getMode( GL_LIGHTING ) );
-
-   // 3) Still have GL_NORMAL_RESCALING turned on (from original Node)
-   CPPUNIT_ASSERT( osg::StateAttribute::ON == stateSet->getMode( GL_RESCALE_NORMAL ) );
-
-
-   //////////
-
-   dtCore::RefPtr<TransformableSubClass> testTransTwo( new TransformableSubClass() );
-   testTransTwo->SetCollisionBox(2.0f, 3.0f, 4.0f);
-   
-   dtCore::RefPtr<Transformable> parent( new Transformable("Parent") );
-                     
-   dtCore::RefPtr<Transformable> childOne( new Transformable("ChildOne") );
-   dtCore::RefPtr<Transformable> childTwo( new Transformable("ChildTwo") );
-
-   parent->AddChild( testTransTwo.get() );
-   testTransTwo->AddChild( childTwo.get() );
-   testTransTwo->AddChild( childOne.get() );
-
-   // Verify Delta3D hierarchy before replacement
-   CPPUNIT_ASSERT( HasChild( parent.get(), testTransTwo.get() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo.get(), childTwo.get() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo.get(), childOne.get() ) );
-
-   // Verify OSG hierarchy before replacement
-   CPPUNIT_ASSERT( HasChild( parent->GetMatrixNode(), testTransTwo->GetOSGNode() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childTwo->GetOSGNode() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childOne->GetOSGNode() ) );
-
-   CPPUNIT_ASSERT_EQUAL( 2U, testTransTwo->GetMatrixNode()->getNumChildren() );
-
-   bool renderingCollisionGeometry = testTransTwo->GetRenderCollisionGeometry();
-   
-   testTransTwo->ExecuteReplaceMatrixNode();
-
-   CPPUNIT_ASSERT_EQUAL(   &Transformable::CollisionGeomType::CUBE, 
-                           testTransTwo->GetCollisionGeomType() );
-
-   CPPUNIT_ASSERT_EQUAL( renderingCollisionGeometry, testTransTwo->GetRenderCollisionGeometry() );
-
-   // Verify Delta3D hierarchy after replacement
-   CPPUNIT_ASSERT( HasChild( parent.get(), testTransTwo.get() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo.get(), childTwo.get() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo.get(), childOne.get() ) );
-
-   CPPUNIT_ASSERT_EQUAL( 2U, testTransTwo->GetMatrixNode()->getNumChildren() );
-   
-   CPPUNIT_ASSERT( HasChild( parent->GetMatrixNode(), testTransTwo->GetOSGNode() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childTwo->GetOSGNode() ) );
-   CPPUNIT_ASSERT( HasChild( testTransTwo->GetMatrixNode(), childOne->GetOSGNode() ) );
-}
 
 void TransformableTests::TestConstructorTakingMatrixNode()
 {

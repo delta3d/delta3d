@@ -19,6 +19,8 @@
 #include <osg/StateSet>
 #include <osg/Version> // For #ifdef
 
+#include <dtUtil/deprecationmgr.h>
+
 
 #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
 #include <osg/CameraNode>
@@ -147,8 +149,13 @@ const osg::Node* Transformable::GetOSGNode() const
 }
 
 /////////////////////////////////////////////////////////////
+/** DEPRECATED 1/13/09.  Method is not required anymore*/
 void Transformable::ReplaceMatrixNode(TransformableNode* matrixTransform)
 {
+
+   DEPRECATE("void Transformable::ReplaceMatrixNode(TransformableNode*)",
+             "N/A");
+
    if (matrixTransform == NULL)
    {
       LOG_ERROR("The matrix node may not be set to NULL.");
