@@ -9,7 +9,7 @@
 class TestMultiWin : public dtABC::Application
 {
    public:
-      TestMultiWin( const std::string& configFilename = "" );
+      TestMultiWin(const std::string& configFilename = "");
    protected:
       virtual ~TestMultiWin();
 
@@ -18,8 +18,8 @@ class TestMultiWin : public dtABC::Application
 
    private:
       dtCore::RefPtr<dtCore::DeltaWin> mWin2;
-      dtCore::RefPtr<dtCore::Camera> mCam2;
-      dtCore::RefPtr<dtCore::Camera> mCam3;
+      dtCore::RefPtr<dtCore::Camera>   mCam2;
+      dtCore::RefPtr<dtCore::Camera>   mCam3;
       
       dtCore::RefPtr<dtCore::View> mView2;
       dtCore::RefPtr<dtCore::View> mView3;
