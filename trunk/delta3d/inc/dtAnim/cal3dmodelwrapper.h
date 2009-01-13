@@ -54,9 +54,9 @@ namespace dtAnim
       public:
          static const int NULL_BONE = -1;
    
-         Cal3DModelWrapper( CalModel *model );
+         Cal3DModelWrapper(CalModel* model);
 
-         void SetCalModel( CalModel *model );
+         void SetCalModel(CalModel* model);
 
          /**
           * Get a pointer to the internal CalModel.  For advanced users only!
@@ -78,12 +78,12 @@ namespace dtAnim
           */
          const CalModel* GetCalModel() const;
 
-         bool AttachMesh( int meshID ); 
-         bool DetachMesh( int meshID ); 
+         bool AttachMesh(int meshID); 
+         bool DetachMesh(int meshID); 
 
-         void ShowMesh( int meshID ); 
-         void HideMesh( int meshID ); 
-         bool IsMeshVisible( int meshID ); 
+         void ShowMesh(int meshID); 
+         void HideMesh(int meshID); 
+         bool IsMeshVisible(int meshID); 
 
          void SetMaterialSet(int materialSetID) { mCalModel->setMaterialSet(materialSetID); }
          void SetLODLevel(float level) { mCalModel->setLodLevel(level); }
@@ -96,16 +96,16 @@ namespace dtAnim
          void UpdateAnimation(float deltaTime) {mCalModel->getMixer()->updateAnimation(deltaTime);}
 
          /// Update just Cal3D's skeleton using the mixer
-         void UpdateSkeleton()                 {mCalModel->getMixer()->updateSkeleton();}
+         void UpdateSkeleton() {mCalModel->getMixer()->updateSkeleton();}
 
          /// Update the CalModel's morph target mixer
-         void UpdateMorphTargetMixer(float deltaTime)  {mCalModel->getMorphTargetMixer()->update(deltaTime);}
+         void UpdateMorphTargetMixer(float deltaTime) {mCalModel->getMorphTargetMixer()->update(deltaTime);}
 
          /// Update the CalModel's physique
-         void UpdatePhysique()                 {mCalModel->getPhysique()->update();}
+         void UpdatePhysique() {mCalModel->getPhysique()->update();}
 
          /// Update the CalModel's spring system
-         void UpdateSpringSystem(float deltaTime)      {mCalModel->getSpringSystem()->update(deltaTime);}
+         void UpdateSpringSystem(float deltaTime) {mCalModel->getSpringSystem()->update(deltaTime);}
 
          /************************************************************************/
          bool BeginRenderingQuery() { return mRenderer->beginRendering(); } 
@@ -217,15 +217,15 @@ namespace dtAnim
          void ApplyCoreModelScaleFactor(float scaleFactor) const;
 
          /************************************************************************/
-         int GetFaces(int *faces)          { return mRenderer->getFaces( (CalIndex*)faces ); }
-         int GetNormals(float *normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
-         int GetTextureCoords(int mapID, float *coords, int stride=0) {return mRenderer->getTextureCoordinates(mapID, coords, stride);}
-         int GetVertices(float *vertBuffer, int stride=0) {return mRenderer->getVertices(vertBuffer, stride);}
+         int GetFaces(int* faces)          { return mRenderer->getFaces((CalIndex*)faces); }
+         int GetNormals(float* normals, int stride=0) { return mRenderer->getNormals(normals, stride); }
+         int GetTextureCoords(int mapID, float* coords, int stride=0) {return mRenderer->getTextureCoordinates(mapID, coords, stride);}
+         int GetVertices(float* vertBuffer, int stride=0) {return mRenderer->getVertices(vertBuffer, stride);}
 
          /************************************************************************/
-         void GetAmbientColor( unsigned char *colorBuffer ) {mRenderer->getAmbientColor(colorBuffer);}
-         void GetDiffuseColor( unsigned char *colorBuffer ) {mRenderer->getDiffuseColor(colorBuffer);}
-         void GetSpecularColor( unsigned char *colorBuffer ) {mRenderer->getSpecularColor(colorBuffer);}
+         void GetAmbientColor(unsigned char* colorBuffer)  {mRenderer->getAmbientColor(colorBuffer);}
+         void GetDiffuseColor(unsigned char* colorBuffer)  {mRenderer->getDiffuseColor(colorBuffer);}
+         void GetSpecularColor(unsigned char* colorBuffer) {mRenderer->getSpecularColor(colorBuffer);}
          float GetShininess() { return mRenderer->getShininess(); }
          void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
 
@@ -269,7 +269,7 @@ namespace dtAnim
           * @return true if successful, false if an error happened.
           */
          bool ExecuteAction(int id, float delayIn, float delayOut,
-                            float weightTgt=1.0f, bool autoLock=false);
+                            float weightTgt = 1.0f, bool autoLock = false);
 
          /** 
           * Remove an existing one-time animation from the mixer

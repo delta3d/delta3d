@@ -187,7 +187,7 @@ void HardwareSubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) co
    glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
    glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
-   // This data could potential cause problems
+   // This data could potentially cause problems
    // so we clear it out here (i.e CEGUI incompatible)
    state.setVertexPointer(NULL);
 
@@ -272,7 +272,7 @@ void HardwareSubmeshDrawable::SetUpMaterial()
       return;
    }
 
-   CalHardwareModel::CalHardwareMesh &coreMesh = meshVec[mMeshID];
+   CalHardwareModel::CalHardwareMesh& coreMesh = meshVec[mMeshID];
 
    if (coreMesh.pCoreMaterial != NULL)
    {
