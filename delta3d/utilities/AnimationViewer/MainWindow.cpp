@@ -43,6 +43,7 @@
 MainWindow::MainWindow()
   : mExitAct(NULL)
   , mLoadCharAct(NULL)
+  , mCloseCharAction(NULL)
   , mScaleFactorSpinner(NULL)
   , mAnimListWidget(NULL)
   , mMeshListWidget(NULL)
@@ -93,6 +94,8 @@ MainWindow::MainWindow()
    }
 
    connect(mSubMorphTargetListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnSubMorphChanged(QTableWidgetItem*)));
+   connect(mSubMorphTargetListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnSubMorphPlay(QTableWidgetItem*)));
+
 
 
    CreateActions();
@@ -124,6 +127,8 @@ MainWindow::MainWindow()
    //accept drag & drop operations
    setAcceptDrops(true);
 
+   SetCurrentFile("");
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +146,9 @@ void MainWindow::CreateMenus()
    viewMenu->addAction(mHardwareSkinningAction);
    
    windowMenu->addAction(mLoadCharAct);
+   windowMenu->addSeparator();
+   windowMenu->addAction(mCloseCharAction);
+   windowMenu->addSeparator();
 
    QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
    QAction* toggleLODScaleToolbarAction  = toolBarMenu->addAction("LOD Scale toolbar");
@@ -166,6 +174,7 @@ void MainWindow::CreateMenus()
    }
 
    menuBar()->addSeparator();
+   windowMenu->addSeparator();
    windowMenu->addAction(mExitAct);
 
    UpdateRecentFileActions();
@@ -190,6 +199,10 @@ void MainWindow::CreateActions()
       mRecentFilesAct[actionIndex]->setVisible(false);
       connect(mRecentFilesAct[actionIndex], SIGNAL(triggered()), this, SLOT(OpenRecentFile()));
    }
+
+   mCloseCharAction = new QAction(tr("&Close"), this);
+   mCloseCharAction->setStatusTip(tr("Close the character file."));
+   connect(mCloseCharAction, SIGNAL(triggered()), this, SLOT(OnCloseCharFile()));
 
    // The actiongroup is used to make the action behave like radio buttons
    QActionGroup* actionGroup = new QActionGroup(this);
@@ -302,29 +315,7 @@ void MainWindow::LoadCharFile(const QString& filename)
 {
    if (dtUtil::FileUtils::GetInstance().FileExists(filename.toStdString()))
    {
-      //mAnimListWidget->clear(); //note, this also removes the header items
-      mMeshListWidget->clear();
-
-      // Make sure we start fresh
-      DestroyPoseResources();
-
-      while (mAnimListWidget->rowCount()>0)
-      {
-         mAnimListWidget->removeRow(0);
-      }
-
-      while (mSubMorphTargetListWidget->rowCount()>0)
-      {
-         mSubMorphTargetListWidget->removeRow(0);
-      }
-
-      while (mMaterialModel->rowCount() > 0)
-      {
-         mMaterialModel->removeRow(0);
-      }
-
-      // reset the scale spinbox
-      mScaleFactorSpinner->setValue(1.0f);
+      OnClearCharacterData();
 
       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -798,11 +789,12 @@ void MainWindow::SetCurrentFile(const QString& filename)
    if (filename.isEmpty())
    {
       setWindowTitle(tr("Animation Viewer"));
+      mCloseCharAction->setEnabled(false);
+      return;
    }
-   else
-   {
-      setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
-   }
+   
+   setWindowTitle(tr("%1 - %2").arg(QFileInfo(filename).fileName()).arg(tr("Animation Viewer")));
+   mCloseCharAction->setEnabled(true);
 
    QSettings settings("MOVES", "Animation Viewer");
    QStringList files = settings.value("recentFileList").toStringList();
@@ -1044,4 +1036,51 @@ void MainWindow::OnSubMorphChanged(QTableWidgetItem* item)
 
       emit SubMorphTargetChanged(meshID, subMeshID, morphID, weight);
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnSubMorphPlay(QTableWidgetItem* item)
+{
+   const int morphID = item->row();
+
+   emit PlayMorphAnimation(morphID);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnCloseCharFile()
+{
+   SetCurrentFile("");
+
+   emit UnloadFile();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void MainWindow::OnClearCharacterData()
+{
+   //wipe out previous mesh, animation, material ui's
+
+   //mAnimListWidget->clear(); //note, this also removes the header items
+   mMeshListWidget->clear();
+
+   // Make sure we start fresh
+   DestroyPoseResources();
+
+   while (mAnimListWidget->rowCount()>0)
+   {
+      mAnimListWidget->removeRow(0);
+   }
+
+   while (mSubMorphTargetListWidget->rowCount()>0)
+   {
+      mSubMorphTargetListWidget->removeRow(0);
+   }
+
+   while (mMaterialModel->rowCount() > 0)
+   {
+      mMaterialModel->removeRow(0);
+   }
+
+   // reset the scale spinbox
+   mScaleFactorSpinner->setValue(1.0f);
+
 }

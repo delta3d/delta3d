@@ -50,6 +50,7 @@ public:
 public slots:
 
    void OnLoadCharFile    (const QString& filename);
+   void OnUnloadCharFile  ();
    void OnLoadPoseMeshFile(const std::string& filename);
    void OnStartAnimation  (unsigned int id, float weight, float delay);
    void OnStopAnimation   (unsigned int id, float delay);
@@ -71,10 +72,13 @@ public slots:
    void OnHideMesh(int meshID);
 
    void OnMorphChanged(int meshID, int subMeshID, int morphID, float weight);
+   void OnPlayMorphAnimation(int morphAnimID);
 
 signals:
    void AnimationLoaded(unsigned int, const QString&, unsigned int trackCount,
                         unsigned int keyframes, float duration);
+
+   void ClearCharacterData();
 
    void MeshLoaded(int meshID, const QString& meshName);
 
