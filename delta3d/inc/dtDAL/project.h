@@ -508,7 +508,10 @@ namespace dtDAL
          const dtUtil::tree<ResourceTreeNode>& GetAllResources() const
          {
             if (!mResourcesIndexed)
+            {
                IndexResources();
+            }
+
             return mResources;
          }
 
@@ -564,7 +567,7 @@ namespace dtDAL
 
 
          ///Deprecated 07/01/08
-         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards, bool enablePaging )
+         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
          {
             DEPRECATE("Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)",
                "Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false)");
