@@ -142,16 +142,16 @@ namespace dtAnim
    class SubmeshDirtyCallback: public osg::Drawable::UpdateCallback 
    {
       public:
-         virtual void update (osg::NodeVisitor *, osg::Drawable *d);
+         virtual void update (osg::NodeVisitor*, osg::Drawable* d);
    };
 
    class SubmeshCullCallback: public osg::Drawable::CullCallback 
    {
       public:
          SubmeshCullCallback(Cal3DModelWrapper& wrapper, int meshID)
-                  : mWrapper(&wrapper)
-                  , mMeshID(meshID)
-                  {}
+            : mWrapper(&wrapper)
+            , mMeshID(meshID)
+          {}
 
          virtual bool cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const;
 
