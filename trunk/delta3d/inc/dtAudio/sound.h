@@ -49,13 +49,13 @@ namespace dtAudio
     * Sound objects are not created directly by the user (new/delete).
     * Instead the user requests a new sound from the AudioManager:
     *
-    *    Sound* mysound = AudioManager::GetManager()->NewSound();
+    *    Sound* mysound = AudioManager::GetInstance().NewSound();
     *
     * The user can then call any of the Sound interface functions.
     * After the user is finished with Sound, it should be returned
     * to the AudioManager for recycling:
     *
-    *    AudioManager::GetManager()->FreeSound( mysound );
+    *    AudioManager::GetInstance().FreeSound( mysound );
     *
     * Sounds do not directly call the underlying sound-engine functions,
     * but rather send commands through the sig-slot messaging system
