@@ -18,38 +18,42 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(View)
 
 
-/////////////////////
-View::View(const std::string& name, bool useSceneLight) :
-   Base(name),
-   mOsgViewerView(new osgViewer::View),
-   mTargetFrameRate(60.0),
-   mFrameBin(0),
-   mPager(NULL)
+////////////////////////////////////////////////////////////////////////////////
+View::View(const std::string& name, bool useSceneLight) 
+   : Base(name)
+   , mOsgViewerView(new osgViewer::View)
+   , mTargetFrameRate(60.0)
+   , mFrameBin(0)
+   , mPager(NULL)
 {
    Ctor(useSceneLight);
 }
 
-/////////////////////
-View::View(osgViewer::View * view, const std::string& name, bool useSceneLight) :
-   Base(name),
-   mOsgViewerView(view),
-   mTargetFrameRate(60.0),
-   mFrameBin(0),
-   mPager(NULL)
+////////////////////////////////////////////////////////////////////////////////
+View::View(osgViewer::View* view, const std::string& name, bool useSceneLight) 
+   : Base(name)
+   , mOsgViewerView(view)
+   , mTargetFrameRate(60.0)
+   , mFrameBin(0)
+   , mPager(NULL)
 {
    assert(mOsgViewerView.valid());
    Ctor(useSceneLight);
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void dtCore::View::Ctor(bool useSceneLight)
 {
    RegisterInstance(this);
 
    if (useSceneLight)
+   {
       mOsgViewerView->setLightingMode(osg::View::SKY_LIGHT);
+   }
    else
+   {
       mOsgViewerView->setLightingMode(osg::View::NO_LIGHT);
+   }
 
    CreateKeyboardMouseHandler();
 
@@ -63,13 +67,13 @@ void dtCore::View::Ctor(bool useSceneLight)
    }
 }
 
-/////////////////////
+////////////////////////////////////////////////////////////////////////////////
 View::~View()
 {
     DeregisterInstance(this);
 }
 
-////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool View::AddSlave(Camera* camera)
 {
    if (camera == NULL)
@@ -88,7 +92,8 @@ bool View::AddSlave(Camera* camera)
 
    return mOsgViewerView->addSlave(camera->GetOSGCamera());
 }
-////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
 bool View::RemoveSlave(Camera* camera)
 {
    assert(camera);
@@ -97,10 +102,13 @@ bool View::RemoveSlave(Camera* camera)
    return mCameraSlave.erase(camera) > 0;
 }
 
-////////////////////////////
-void View::SetCamera( Camera* camera )
+////////////////////////////////////////////////////////////////////////////////
+void View::SetCamera(Camera* camera)
 {
-   if (mCamera == camera) return;
+   if (mCamera == camera) 
+   {
+      return;
+   }
 
    mCamera = camera;
 
@@ -111,10 +119,13 @@ void View::SetCamera( Camera* camera )
    }
 }
 
-////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void View::SetScene(Scene* scene)
 {
-   if (mScene == scene) return;
+   if (mScene == scene) 
+   {
+      return;
+   }
 
    if (mScene.valid())
    {
@@ -127,13 +138,13 @@ void View::SetScene(Scene* scene)
    if (mScene.valid())
    {
       mScene->AddView(*this);
-      mScene->SetDatabasePager( mPager.get() );
+      mScene->SetDatabasePager(mPager.get());
       UpdateFromScene();
    }
 }
 
-/////////////////////////////////////////////////
-void View::SetMouse( Mouse* mouse )
+////////////////////////////////////////////////////////////////////////////////
+void View::SetMouse(Mouse* mouse)
 {
    if( mouse == 0 )
    {
@@ -144,10 +155,10 @@ void View::SetMouse( Mouse* mouse )
    mKeyboardMouseHandler->SetMouse(mouse);
 }
 
-/////////////////////
-void View::SetKeyboard( Keyboard* keyboard )
+////////////////////////////////////////////////////////////////////////////////
+void View::SetKeyboard(Keyboard* keyboard)
 {
-   if( keyboard == 0 )
+   if(keyboard == 0)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied dtCore::Keyboard is invalid", __FILE__, __LINE__);
@@ -155,65 +166,72 @@ void View::SetKeyboard( Keyboard* keyboard )
 
    mKeyboardMouseHandler->SetKeyboard(keyboard);
 }
-/////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
 Keyboard* View::GetKeyboard()
 {
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL;
 }
-/////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
 const Keyboard* View::GetKeyboard() const
 {
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetKeyboard() : NULL;
 }
-/////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
 Mouse* View::GetMouse()
 {
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL;
 }
 
-/////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const Mouse* View::GetMouse() const
 {
    return mKeyboardMouseHandler.valid() ? mKeyboardMouseHandler->GetMouse() : NULL;
 }
 
-/////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void View::UpdateFromScene()
 {
    mOsgViewerView->setSceneData(mScene->GetSceneNode());
    mOsgViewerView->assignSceneDataToCameras();
 }
 
-/////////////////////
-dtCore::KeyboardMouseHandler * View::CreateKeyboardMouseHandler()
+////////////////////////////////////////////////////////////////////////////////
+dtCore::KeyboardMouseHandler* View::CreateKeyboardMouseHandler()
 {
     mKeyboardMouseHandler = new dtCore::KeyboardMouseHandler(this);
     mOsgViewerView->addEventHandler(mKeyboardMouseHandler.get());
     return mKeyboardMouseHandler.get();
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool View::GetMousePickPosition( osg::Vec3 &position, unsigned int traversalMask )
+////////////////////////////////////////////////////////////////////////////////
+bool View::GetMousePickPosition(osg::Vec3 &position, unsigned int traversalMask)
 {
    const Mouse *mouse = GetMouse();
-   if (mouse == NULL) return false;
+
+   if (mouse == NULL) 
+   {
+      return false;
+   }
 
    return GetPickPosition(position, mouse->GetPosition(), traversalMask);
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool View::GetPickPosition(osg::Vec3& intersectionPoint,
-                           const osg::Vec2 &mousePos,
+                           const osg::Vec2& mousePos,
                            unsigned int traversalMask)
 {
-   osgUtil::LineSegmentIntersector::Intersections hitList ;
+   osgUtil::LineSegmentIntersector::Intersections hitList;
 
    if (GetMouseIntersections(hitList, mousePos, traversalMask))
    {
-      std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin() ;
-      osgUtil::LineSegmentIntersector::Intersection hit = *itr ;
+      std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin();
+      osgUtil::LineSegmentIntersector::Intersection hit = *itr;
 
-      intersectionPoint = hit.getWorldIntersectPoint() ;
+      intersectionPoint = hit.getWorldIntersectPoint();
 
       return true;
    }
@@ -223,18 +241,24 @@ bool View::GetPickPosition(osg::Vec3& intersectionPoint,
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersections& hitList,
                                          const osg::Vec2& mousePos,
                                          unsigned int traversalMask)
 {
-   if (GetCamera() == NULL)  {return false;}
+   if (GetCamera() == NULL)  
+   {
+      return false;
+   }
 
-   if (GetCamera()->GetWindow() == NULL) {return false;}
+   if (GetCamera()->GetWindow() == NULL) 
+   {
+      return false;
+   }
 
    // lower left screen has ( 0, 0 )
-   osg::Vec2 windowCoord( 0.0 , 0.0 ) ;
-   GetCamera()->GetWindow()->CalcPixelCoords(mousePos, windowCoord );
+   osg::Vec2 windowCoord(0.0 , 0.0);
+   GetCamera()->GetWindow()->CalcPixelCoords(mousePos, windowCoord);
 
    if (GetOsgViewerView()->computeIntersections(windowCoord.x(), windowCoord.y(),
                                                 hitList, traversalMask))
@@ -247,7 +271,7 @@ bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Inters
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 {
    const Mouse* mouse = GetMouse();
@@ -287,8 +311,8 @@ dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
    return NULL;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::View::SetDatabasePager(dtCore::DatabasePager* pager)
 {
    if (mPager.get() == pager)
    {
@@ -299,29 +323,31 @@ void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )
 
    if (mPager.valid())
    {
-      mOsgViewerView->setDatabasePager( mPager->GetOsgDatabasePager() );
+      mOsgViewerView->setDatabasePager(mPager->GetOsgDatabasePager());
    }
    else
    {
-      mOsgViewerView->setDatabasePager( NULL );
+      mOsgViewerView->setDatabasePager(NULL);
    }
 
 
    if (mScene.valid())
    {
-      mScene->SetDatabasePager( mPager.get() );
+      mScene->SetDatabasePager(mPager.get());
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 dtCore::DatabasePager* dtCore::View::GetDatabasePager()
 {
    return mPager.get();
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const dtCore::DatabasePager* dtCore::View::GetDatabasePager() const
 {
    return mPager.get();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
