@@ -466,6 +466,16 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
+   osg::BoundingBox Cal3DModelWrapper::GetBoundingBox()
+   {
+      // Compute the bounding box which will be used for culling
+      CalBoundingBox& calBBox = GetCalModel()->getBoundingBox(false);
+
+      return osg::BoundingBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
+                              calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::ApplyCoreModelScaleFactor(float scaleFactor) const
    {
       mCalModel->getCoreModel()->scale(scaleFactor);

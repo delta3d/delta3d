@@ -89,7 +89,8 @@ namespace dtAnim
          virtual bool supports(osg::PrimitiveFunctor&) const { return true; }
 
          /** Accept a PrimitiveFunctor and call its methods to tell it
-    about the interal primitives that this Drawable has. */
+           * about the interal primitives that this Drawable has. 
+           */
 
          virtual void accept(osg::PrimitiveFunctor& pf) const;
 
@@ -107,6 +108,9 @@ namespace dtAnim
 
          float GetCurrentLOD() const { return mCurrentLOD; }
          void SetCurrentLOD(float lod) { mCurrentLOD = lod; };
+
+         void SetBoundingBox(const osg::BoundingBox& boundingBox) { mBoundingBox = boundingBox; }
+
       protected:
          ~SubmeshDrawable();
 
@@ -135,6 +139,8 @@ namespace dtAnim
 
          static const unsigned STRIDE = 10;
          static const unsigned STRIDE_BYTES = STRIDE * sizeof(float);
+
+         osg::BoundingBox mBoundingBox;
 
          void SetUpMaterial();
    };

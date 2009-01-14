@@ -36,6 +36,7 @@
 #include <osg/Referenced>
 #include <osg/Vec4>
 #include <osg/Vec3>
+#include <osg/BoundingBox>
 
 #include <vector>                     // for param type
 
@@ -204,10 +205,13 @@ namespace dtAnim
          osg::Vec4 GetCoreMaterialSpecular(int matID) const;
 
          ///Get the core material shininess
-         float     GetCoreMaterialShininess(int matID) const;
+         float GetCoreMaterialShininess(int matID) const;
 
          ///Get the name associated with the material using the supplied material ID
          const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
+
+         /// Get a bounding box the encompasses the character in its default pose
+         osg::BoundingBox Cal3DModelWrapper::GetBoundingBox();
 
          /** 
           * Apply a scaling factor to the core model.  May need to rebuild
@@ -228,7 +232,6 @@ namespace dtAnim
          void GetSpecularColor(unsigned char* colorBuffer) {mRenderer->getSpecularColor(colorBuffer);}
          float GetShininess() { return mRenderer->getShininess(); }
          void* GetMapUserData(int mapID) { return mRenderer->getMapUserData(mapID); }
-
 
          /************************************************************************/
 
