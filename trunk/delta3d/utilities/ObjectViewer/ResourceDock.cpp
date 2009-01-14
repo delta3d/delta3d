@@ -190,7 +190,7 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
          entryName += " (";
 
          char number[10];
-         itoa(entryIndex, number, 10);
+         sprintf(number, "%d", entryIndex);
          entryName += number;
 
          entryName += ")";
