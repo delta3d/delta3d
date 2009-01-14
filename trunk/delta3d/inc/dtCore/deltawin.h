@@ -21,10 +21,6 @@
 #ifndef DELTA_DELTA_WIN
 #define DELTA_DELTA_WIN
 
-// deltawin.h: interface for the DeltaWin class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 
@@ -33,6 +29,9 @@
 #include <osg/observer_ptr>
 #include <osg/Vec2>
 #include <osg/GraphicsContext>
+
+//////////////////////////////////////////////////////////////////////
+
 ///@cond
 namespace osgViewer
 {
@@ -70,30 +69,67 @@ namespace dtCore
    public:
 
       /** 
-       * Constructor
-       *
-       * @param name the name of the class as well as the window title
-       * @param x the location of the window in pixels
-       * @param y the location of the window in pixels
-       * @param width the width of the window in pixels
-       * @param height the height of the window in pixels
-       * @param cursor true if you wish to use the default cursor, false if not
-       * @param fullScreen true if this window should be displayed fullscreen
-       * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window  
-       */
-       DeltaWin(  const std::string& name = "defaultWindow", 
-                  int x = 0, int y = 0, 
-                  int width = 640, int height = 480, 
-                  bool cursor = true, bool fullScreen = false,
-                  osg::Referenced * inheritedWindowData = NULL);
-       
+      * Traits - Set of window specific properties that control appearance and behavior.
+      *
+      * @param name the name of the class as well as the window title
+      * @param x the location of the window in pixels
+      * @param y the location of the window in pixels
+      * @param width the width of the window in pixels
+      * @param height the height of the window in pixels
+      * @param cursor true if you wish to use the default cursor, false if not
+      * @param fullScreen true if this window should be displayed fullscreen
+      * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window  
+      */
+      struct DeltaWinTraits
+      {
+         static const int DEFAULT_WIDTH  = 640;
+         static const int DEFAULT_HEIGHT = 480;
+
+         DeltaWinTraits()
+            : name("defaultWindow")
+            , x(0)
+            , y(0)
+            , width(DEFAULT_WIDTH)
+            , height(DEFAULT_HEIGHT)
+            , showCursor(true)
+            , fullScreen(false)
+            , inheritedWindowData(NULL)
+            , contextToShare(NULL)
+         {
+         }
+
+         std::string name;
+         int x;
+         int y;
+         int width;
+         int height;
+         bool showCursor;
+         bool fullScreen;
+         osg::Referenced* inheritedWindowData;
+         osg::GraphicsContext* contextToShare;
+      };
+
+      /** 
+      * Constructor
+      *     
+      * @param windowTraits : the properties used to create the window.
+      */
+      DeltaWin(const DeltaWinTraits& windowTraits);
+
+      /// DEPRECATED 01/14/09 in favor of dtCore::DeltaWin(const DeltaWinTraits& windowTraits)
+      DeltaWin(const std::string& name = "defaultWindow", 
+               int x = 0, int y = 0, 
+               int width = 640, int height = 480, 
+               bool cursor = true, bool fullScreen = false,
+               osg::Referenced* inheritedWindowData = NULL);
+
       /** 
       * Constructor
       *
       * @param name : the name of the class as well as the window title
       * @param gw : the GraphicsWindow use by this instance  
       */
-      DeltaWin(const std::string& name, osgViewer::GraphicsWindow &gw);
+      DeltaWin(const std::string& name, osgViewer::GraphicsWindow& gw);
       
    protected:
 
@@ -113,8 +149,8 @@ namespace dtCore
        *
        * @return bool  : Returns true if the (x,y) is a valid window coordinate
        */
-      bool CalcPixelCoords( float winX, float winY, float &pixelX, float &pixelY ) const;
-      bool CalcPixelCoords( const osg::Vec2 &window_xy, osg::Vec2 &pixel_xy ) const;
+      bool CalcPixelCoords(float winX, float winY, float& pixelX, float& pixelY) const;
+      bool CalcPixelCoords(const osg::Vec2& window_xy, osg::Vec2& pixel_xy) const;
 
       /** Calculate the normalized window coords given the screen pixel coords.  Pixel
        *  coordinate (0,0) is the lower left of the display which equates to the
@@ -167,14 +203,13 @@ namespace dtCore
       void SetPosition(const PositionSize& positionSize);
 
       ///Get the size and position of the DeltaWin
-      void GetPosition( int& x, int& y, int& width, int& height );
+      void GetPosition(int& x, int& y, int& width, int& height);
       PositionSize GetPosition();
 
       ///Get a handle to the underlying GraphicsWindow
       osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() { return mOsgViewerGraphicsWindow.get(); }
-      const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }
+      const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }      
 
-      
 
       /// The data structure modeling monitor resolution
       struct Resolution
@@ -190,43 +225,46 @@ namespace dtCore
       //TODO: put these into a dtCore::Display class
       static ResolutionVec GetResolutions();              
       static Resolution GetCurrentResolution();
-      static bool ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
-      static bool ChangeScreenResolution( Resolution res );
+      static bool ChangeScreenResolution(int width, int height, int colorDepth, int refreshRate);
+      static bool ChangeScreenResolution(Resolution res);
 
-      static int IsValidResolution( const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
+      static int IsValidResolution(const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0);
 
       /// Tests to see if the system supports the desired resolution.
       /// @param candidate the Resolution to be tested.
       /// @return 'true' when the Resolution is supported.
-      bool IsValidResolution(const Resolution& candidate);      
-      
+      bool IsValidResolution(const Resolution& candidate);
       
    private:
+
+      void CreateDeltaWindow(const DeltaWinTraits& windowTraits);
 
       ///Convenient method to create a GraphicsWindow
       osg::ref_ptr<osgViewer::GraphicsWindow> CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const;
 
-      static int CalcRefreshRate( int width, int height, int dotclock );
+      static int CalcRefreshRate(int width, int height, int dotclock);
 
       osg::ref_ptr<osg::GraphicsContext::Traits> CreateTraits(const std::string& name = "defaulWindow", 
-                                                               int x = 500, int y = 500, 
-                                                               int width = 640, int height = 480, 
-                                                               unsigned int screenNum = 0,
-                                                               bool cursor = true, 
-                                                               osg::Referenced * inheritedWindowData = NULL) const;
+                                                              int x = 500, int y = 500, 
+                                                              int width = 640, int height = 480, 
+                                                              unsigned int screenNum = 0,
+                                                              bool cursor = true, 
+                                                              osg::Referenced * inheritedWindowData = NULL) const;
+
+      ///Little utility used to convert the supplied parameters into a OSG Trait.
+      osg::ref_ptr<osg::GraphicsContext::Traits> CreateOSGTraits(const DeltaWinTraits& deltaTraits) const;
       
       dtCore::RefPtr<osgViewer::GraphicsWindow> mOsgViewerGraphicsWindow;
 
       bool mIsFullScreen;
       bool mShowCursor;
 
-
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if
       // this class is forward declared, these implicit functions will
       // cause compiler errors for missing calls to "ref".
-      DeltaWin& operator=( const DeltaWin& );
-      DeltaWin( const DeltaWin& );
+      DeltaWin& operator=(const DeltaWin&);
+      DeltaWin(const DeltaWin&);
    };
 }
 
