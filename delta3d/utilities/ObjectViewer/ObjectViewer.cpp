@@ -162,12 +162,6 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnReloadShaderFile(const QString& filename)
-{
-   dtCore::ShaderManager::GetInstance().ReloadAndReassignShaderDefinitions(filename.toStdString());
-}
-
-///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
    // For now only allow 1 object

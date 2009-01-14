@@ -198,6 +198,9 @@ void ObjectWorkspace::CreateShaderToolbarActions()
    mOpenVertexShaderAction = new QAction(vertexSourceIcon, tr("Open Current Vertex Shader"), this);
    mOpenFragmentShaderAction = new QAction(fragmentSourceIcon, tr("Open Current Fragment Shader"), this);
 
+   mOpenVertexShaderAction->setEnabled(false);
+   mOpenFragmentShaderAction->setEnabled(false);
+
    connect(mRecompileAction, SIGNAL(triggered()), this, SLOT(OnRecompileClicked()));
 
    connect(mOpenVertexShaderAction, SIGNAL(triggered()), 
@@ -275,7 +278,19 @@ void ObjectWorkspace::OnToggleShadingToolbar()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnRecompileClicked()
 {
-   emit ReloadShaderDefinition(mShaderDefinitionName);
+   emit ReloadShaderDefinition();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleVertexShaderSource(bool enabled)
+{
+   mOpenVertexShaderAction->setEnabled(enabled);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleFragmentShaderSource(bool enabled)
+{
+   mOpenFragmentShaderAction->setEnabled(enabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
