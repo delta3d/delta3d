@@ -162,8 +162,11 @@ namespace dtCore
       ///Get the ODE world ID
       dWorldID GetWorldID() const;
 
-      ///Get the ODE contact join group ID
+      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
       dJointGroupID GetContactJoinGroupID() const;
+
+      ///Get the ODE contact joint group ID
+      dJointGroupID GetContactJointGroupID() const;
 
       ///Set the gravity vector
       void SetGravity(const osg::Vec3& gravity) const;
