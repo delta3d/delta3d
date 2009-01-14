@@ -59,6 +59,8 @@ public:
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
 
+   bool FindShaderFileEntryName(const std::string& entryName) const;
+
    void SetGeometry(const std::string& fullName, bool shouldDisplay) const;
    void SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay) const;
 
