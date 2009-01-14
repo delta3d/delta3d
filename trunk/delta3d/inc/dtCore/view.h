@@ -55,8 +55,6 @@ namespace dtCore
 
    public:
 
-
-
       View(const std::string& name = "view", bool useSceneLight = true);
       View(osgViewer::View * view, const std::string& name = "view", bool useSceneLight = true);
 
@@ -71,25 +69,25 @@ namespace dtCore
       unsigned int GetFrameBin() const { return mFrameBin; }
       
       
-      bool AddSlave( Camera* camera );
-      bool RemoveSlave( Camera* camera );
+      bool AddSlave(Camera* camera);
+      bool RemoveSlave(Camera* camera);
       
-      void SetCamera( Camera* camera );
+      void SetCamera(Camera* camera);
       Camera* GetCamera() { return mCamera.get(); }
       const Camera* GetCamera() const { return mCamera.get(); }
       
       ///Supply the Scene this Camera should render
-      void SetScene( Scene *scene );
+      void SetScene(Scene* scene);
 
       ///Get a non-const version of the supplied Scene
       Scene* GetScene() { return (mScene.get()); }
       const Scene* GetScene() const { return (mScene.get()); }
       
       ///Get the osgViewer::View wrapped
-      osgViewer::View * GetOsgViewerView() { return mOsgViewerView.get(); }
+      osgViewer::View* GetOsgViewerView() { return mOsgViewerView.get(); }
       
       ///Get the osgViewer::View wrapped
-      const osgViewer::View * GetOsgViewerView() const { return mOsgViewerView.get(); }
+      const osgViewer::View* GetOsgViewerView() const { return mOsgViewerView.get(); }
 
       /** 
        * Supply an instance of a Keyboard to be used instead of the default, 
@@ -205,20 +203,18 @@ namespace dtCore
    protected:
 
       virtual ~View();
-
       
       friend class Scene;
       void UpdateFromScene();
-           
       
    private:
  
       ///constructor implementation
       void Ctor(bool useSceneLight);
 
-      KeyboardMouseHandler * GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
+      KeyboardMouseHandler* GetKeyboardMouseHandler() { return mKeyboardMouseHandler.get(); }
 
-      dtCore::KeyboardMouseHandler * CreateKeyboardMouseHandler();
+      dtCore::KeyboardMouseHandler* CreateKeyboardMouseHandler();
 
       ///Get the list of Intersections given the mouse position and traversal mask
       bool GetMouseIntersections(osgUtil::LineSegmentIntersector::Intersections& hitList,
