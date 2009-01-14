@@ -211,7 +211,7 @@ namespace dtAnim
          const std::string& GetCoreMaterialName(int matID) const {return mCalModel->getCoreModel()->getCoreMaterial(matID)->getName(); }
 
          /// Get a bounding box the encompasses the character in its default pose
-         osg::BoundingBox Cal3DModelWrapper::GetBoundingBox();
+         osg::BoundingBox GetBoundingBox();
 
          /** 
           * Apply a scaling factor to the core model.  May need to rebuild
