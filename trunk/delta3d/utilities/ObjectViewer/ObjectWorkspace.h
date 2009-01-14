@@ -53,7 +53,7 @@ public:
 signals:
    void FileToLoad(const QString&);
    void LoadShaderDefinition(const QString&);
-   void ReloadShaderDefinition(const QString&);
+   void ReloadShaderDefinition();
 
    void ToggleGrid(bool shouldShow);
 
@@ -62,6 +62,8 @@ public slots:
    void OnInitialization();
    void OnToggleShadingToolbar();
    void OnRecompileClicked();
+   void OnToggleVertexShaderSource(bool enabled);
+   void OnToggleFragmentShaderSource(bool enabled);
 
 private:
    void CreateMenus();

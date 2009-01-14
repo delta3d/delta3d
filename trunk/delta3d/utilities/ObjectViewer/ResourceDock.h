@@ -79,14 +79,18 @@ signals:
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);
 
+   void ToggleVertexShaderSources(bool enabled);
+   void ToggleFragmentShaderSources(bool enabled);
+
 public slots:
    
    void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
    void OnShaderItemChanged(QTreeWidgetItem* item, int column);
+   void OnReloadShaderFiles();
 
    void OnNewGeometry(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
-   
+
    void OnLightUpdate(const LightInfo& lightInfo);
 
    void OnOpenCurrentVertexShaderSources();

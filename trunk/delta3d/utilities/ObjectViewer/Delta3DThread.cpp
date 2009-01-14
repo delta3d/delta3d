@@ -110,8 +110,8 @@ void Delta3DThread::MakeConnections()
    connect(mWin, SIGNAL(LoadShaderDefinition(const QString&)), 
       mViewer.get(), SLOT(OnLoadShaderFile(const QString&)));
 
-   connect(mWin, SIGNAL(ReloadShaderDefinition(const QString&)), 
-      mViewer.get(), SLOT(OnReloadShaderFile(const QString&)));  
+   connect(mWin, SIGNAL(ReloadShaderDefinition()), 
+      mWin->GetResourceObject(), SLOT(OnReloadShaderFiles()));  
 
    connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
       mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
@@ -140,6 +140,12 @@ void Delta3DThread::MakeConnections()
            mViewer.get(), SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
    connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));   
+
+   connect(mWin->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
+      mWin, SLOT(OnToggleVertexShaderSource(bool)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(ToggleFragmentShaderSources(bool)),
+      mWin, SLOT(OnToggleFragmentShaderSource(bool)));
 
    // Toolbar connections
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));

@@ -69,7 +69,7 @@ ResourceDock::ResourceDock()
    mTabs->addTab(mShaderTreeWidget, tr("Shaders"));
    mTabs->addTab(mLightTreeWidget, tr("Lights"));
 
-   setWidget(mTabs);     
+   setWidget(mTabs);
 
    CreateLightItems();
 }
@@ -251,6 +251,8 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 { 
    if (column == 0)
    {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
       QString programName = item->text(0);
       QString groupName   = item->parent()->text(0);
       QString fileName    = item->parent()->parent()->toolTip(0);
@@ -260,7 +262,6 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          // Now load the shader file if it isn't already loaded.
          if (mCurrentShaderFile != fileName)
          {
-            dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
             shaderManager.Clear();
             shaderManager.LoadShaderDefinitions(fileName.toStdString());
          }
@@ -283,7 +284,17 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
             ++treeIter;
          }
 
-         emit ApplyShader(groupName.toStdString(), programName.toStdString());         
+         emit ApplyShader(groupName.toStdString(), programName.toStdString());
+
+         dtCore::ShaderProgram *program = 
+            shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
+         if (program)
+         {
+            const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+            ToggleVertexShaderSources(vertShaderList.size()? true: false);
+            const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+            ToggleFragmentShaderSources(fragShaderList.size()? true: false);
+         }  
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
@@ -294,11 +305,53 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          {
             mCurrentShaderGroup.clear();
             mCurrentShaderProgram.clear();
+
+            ToggleVertexShaderSources(false);
+            ToggleFragmentShaderSources(false);
          }
 
          emit RemoveShader();
       }
    }  
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnReloadShaderFiles()
+{
+   QList<QString> fileNames;
+
+   // Get our full list of files.
+   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
+
+      fileNames.append(fileItem->toolTip(0));
+   }
+   mShaderTreeWidget->clear();
+
+   for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++)
+   {
+      dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.Clear();
+      shaderManager.LoadShaderDefinitions(fileNames.at(fileIndex).toStdString());
+
+      std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
+      shaderManager.GetAllShaderGroupPrototypes(shaderGroupList);
+
+      // Emit all shader groups and their individual shaders
+      for (size_t groupIndex = 0; groupIndex < shaderGroupList.size(); ++groupIndex)
+      {
+         std::vector<dtCore::RefPtr<dtCore::ShaderProgram> > programList;
+         shaderGroupList[groupIndex]->GetAllShaders(programList);
+
+         const std::string& groupName = shaderGroupList[groupIndex]->GetName();
+
+         for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
+         {
+            OnNewShader(fileNames.at(fileIndex).toStdString(), groupName, programList[programIndex]->GetName());
+         }
+      }
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
