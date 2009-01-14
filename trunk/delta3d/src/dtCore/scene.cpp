@@ -390,9 +390,19 @@ dWorldID Scene::GetWorldID() const
 // Get the ODE contact join group ID
 dJointGroupID Scene::GetContactJoinGroupID() const
 {
+   DEPRECATE("dJointGroupID dtCore::Scene::GetContactJoinGroupID() const",
+             "dJointGroupID dtCore::Scene::GetContactJointGroupID() const");
+
+   return this->GetContactJointGroupID();
+}
+
+/////////////////////////////////////////////
+// Get the ODE contact joint group ID
+dJointGroupID Scene::GetContactJointGroupID() const
+{
    if (mPhysicsController.valid()) 
    { 
-      return mPhysicsController->GetContactJoinGroupID();
+      return mPhysicsController->GetContactJointGroupID();
    }
    else
    {

@@ -128,9 +128,12 @@ namespace dtCore
 
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
-
-      ///Get the ODE contact join group ID
+      
+      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
       dJointGroupID GetContactJoinGroupID() const;
+
+      ///Get the ODE contact joint group ID
+      dJointGroupID GetContactJointGroupID() const;
 
       ///Get a pointer to the internal ODEWorldWrap instance
       dtCore::ODEWorldWrap* GetWorldWrapper() const;
