@@ -36,7 +36,7 @@ namespace   dtAudio
     * The listener is not created directly by the user (new/delete).
     * Instead the user requests the listener from the AudioManager:
     *
-    *    Listener* global_ear = AudioManager::GetManager()->GetListener();
+    *    Listener* global_ear = AudioManager::GetInstance().GetListener();
     *
     * The user can then call any of the Listener interface functions.
     * After the user is finished with the Listener, there is no need to
