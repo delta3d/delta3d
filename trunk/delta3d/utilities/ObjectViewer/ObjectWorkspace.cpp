@@ -243,7 +243,19 @@ void ObjectWorkspace::OnInitialization()
       mContextPath = files.at(0).toStdString();
    }
 
-   SaveCurrentContextPath();   
+   // Load additional shader files.
+   int shaderSize = settings.beginReadArray("shaderList");
+
+   mAdditionalShaderFiles.clear();
+   for (int shaderIndex = 0; shaderIndex < shaderSize; shaderIndex++)
+   {
+      settings.setArrayIndex(shaderIndex);
+      mAdditionalShaderFiles.append(settings.value("shaderFile").toString().toStdString());
+   }
+   settings.endArray();
+
+   SaveCurrentContextPath();
+   SaveCurrentShaderFiles();
    UpdateResourceLists();
 }
 
@@ -291,6 +303,12 @@ void ObjectWorkspace::UpdateResourceLists()
       directory.cdUp();
    }
 
+   // Now load all the additional shader files in the shader lists.
+   for (int shaderIndex = 0; shaderIndex < mAdditionalShaderFiles.size(); shaderIndex++)
+   {
+      emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
+   }
+
    QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
 
    if (directory.cd(staticMeshDir))
@@ -324,6 +342,12 @@ void ObjectWorkspace::OnLoadShaderDefinition()
       {
          emit LoadShaderDefinition(filename);         
          statusMessage = QString(tr("File Loaded"));
+
+         if (!mAdditionalShaderFiles.contains(filename.toStdString()))
+         {
+            mAdditionalShaderFiles.append(filename.toStdString());
+            SaveCurrentShaderFiles();
+         }
       }      
    }
    else
@@ -423,6 +447,28 @@ void ObjectWorkspace::SaveCurrentContextPath()
 
       settings.setValue("projectContextPath", mContextPath.c_str());
       settings.sync();
+   }
+   catch (const dtUtil::Exception &e)
+   {
+      QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SaveCurrentShaderFiles()
+{
+   QSettings settings("MOVES", "Shader Viewer");
+
+   try
+   {
+      settings.beginWriteArray("shaderList");
+
+      for (int shaderIndex = 0; shaderIndex < (int)mAdditionalShaderFiles.size(); shaderIndex++)
+      {
+         settings.setArrayIndex(shaderIndex);
+         settings.setValue("shaderFile", mAdditionalShaderFiles.at(shaderIndex).c_str());
+      }
+      settings.endArray();
    }
    catch (const dtUtil::Exception &e)
    {

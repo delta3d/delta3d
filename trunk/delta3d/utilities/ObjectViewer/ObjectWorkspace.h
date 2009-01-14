@@ -105,6 +105,8 @@ private:
    std::string mContextPath;
    QString mShaderDefinitionName;
 
+   QList<std::string> mAdditionalShaderFiles;
+
    dtQt::OSGAdapterWidget* mGLWidget;
 
 private slots:
@@ -119,6 +121,7 @@ private slots:
 
    std::string GetContextPathFromUser();
    void SaveCurrentContextPath();
+   void SaveCurrentShaderFiles();
 };
 
 #endif // DELTA_OBJECTWORKSPACE
