@@ -49,6 +49,8 @@ namespace dtAnim
                const std::string& boneUniformName, unsigned numBones,
                unsigned mesh, unsigned vertexVBO, unsigned indexVBO);
 
+         void SetBoundingBox(const osg::BoundingBox& boundingBox);
+
          virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
          virtual osg::Object* cloneType() const;
@@ -65,6 +67,7 @@ namespace dtAnim
          CalHardwareModel* mHardwareModel;
          dtCore::RefPtr<osg::Uniform> mBoneTransforms;
          std::string mBoneUniformName;
+         osg::BoundingBox mBoundingBox;
          unsigned mNumBones, mMeshID, mVertexVBO, mIndexVBO;
    };
 

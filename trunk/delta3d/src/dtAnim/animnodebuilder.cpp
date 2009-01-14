@@ -125,12 +125,8 @@ AnimNodeBuilder::Cal3DBoundingSphereCalculator::Cal3DBoundingSphereCalculator(Ca
 
 ////////////////////////////////////////////////////////////////////////////////
 osg::BoundingSphere AnimNodeBuilder::Cal3DBoundingSphereCalculator::computeBound(const osg::Node&) const
-{
-   CalBoundingBox& calBBox = mWrapper->GetCalModel()->getBoundingBox(false);
-   osg::BoundingBox bBox(-calBBox.plane[0].d, -calBBox.plane[2].d, -calBBox.plane[4].d,
-      calBBox.plane[1].d, calBBox.plane[3].d, calBBox.plane[5].d);
-
-   osg::BoundingSphere bSphere(bBox);
+{   
+   osg::BoundingSphere bSphere(mWrapper->GetBoundingBox());
    return bSphere;
 }
 
@@ -207,10 +203,13 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 
-   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));
+   geode->setComputeBoundingSphereCallback(new Cal3DBoundingSphereCalculator(*pWrapper));   
 
    if (pWrapper->BeginRenderingQuery())
    {
+      // Compute this only once
+      osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();
+
       int meshCount = pWrapper->GetMeshCount();
 
       for (int meshId = 0; meshId < meshCount; meshId++)
@@ -220,6 +219,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
          for (int submeshId = 0; submeshId < submeshCount; submeshId++)
          {
             dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
+            submesh->SetBoundingBox(boundingBox);
             geode->addDrawable(submesh);
          }
       }
@@ -362,13 +362,17 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
             boneTransformUniform.append("[0]");
          }
       }
-      // End check.
+      // End check.      
+
+      // Compute this only once
+      osg::BoundingBox boundingBox = pWrapper->GetBoundingBox();
 
       for (int meshCount = 0; meshCount < hardwareModel->getHardwareMeshCount(); ++meshCount)
       {
          HardwareSubmeshDrawable* drawable = new HardwareSubmeshDrawable(pWrapper, hardwareModel,
                                                  boneTransformUniform, modelData->GetShaderMaxBones(),
                                                  meshCount, vbo[0], vbo[1]);
+         drawable->SetBoundingBox(boundingBox);
          geode->addDrawable(drawable);
       }
 

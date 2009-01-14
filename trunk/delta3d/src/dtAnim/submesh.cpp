@@ -22,16 +22,18 @@ namespace dtAnim
    class SubmeshComputeBound : public osg::Drawable::ComputeBoundingBoxCallback
    {
       public:
-         SubmeshComputeBound()
+         SubmeshComputeBound(const osg::BoundingBox& boundingBox)
+            : mBoundingBox(boundingBox)
          {
          }
 
-         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable& drawable) const  
+         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const  
          {
             // temp until a better solution is implemented
-            return osg::BoundingBox(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+            return mBoundingBox;
          }
 
+         const osg::BoundingBox& mBoundingBox;
    };
 
 
@@ -133,7 +135,7 @@ namespace dtAnim
 
       //setUpdateCallback(new SubmeshDirtyCallback());
       setCullCallback(new SubmeshCullCallback(*mWrapper, mMeshID));
-      setComputeBoundingBoxCallback(new SubmeshComputeBound());
+      setComputeBoundingBoxCallback(new SubmeshComputeBound(mBoundingBox));
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
