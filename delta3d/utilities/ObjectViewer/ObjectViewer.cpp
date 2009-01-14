@@ -135,6 +135,7 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
    try
    {
       dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+      shaderManager.Clear();
       shaderManager.LoadShaderDefinitions(filename.toStdString());
 
       std::vector<dtCore::RefPtr<dtCore::ShaderGroup> > shaderGroupList;
@@ -150,7 +151,7 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
 
          for (size_t programIndex = 0; programIndex < programList.size(); ++programIndex)
          {
-            emit ShaderLoaded(groupName, programList[programIndex]->GetName());
+            emit ShaderLoaded(filename.toStdString(), groupName, programList[programIndex]->GetName());
          }
       }
    }

@@ -284,7 +284,7 @@ void ObjectWorkspace::UpdateResourceLists()
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         mShaderDefinitionName = QString("shaders/%1").arg(fileInfo.fileName());
+         mShaderDefinitionName = QString("%1/shaders/%2").arg(QString(mContextPath.c_str()), fileInfo.fileName());
          emit LoadShaderDefinition(mShaderDefinitionName);
       }
 

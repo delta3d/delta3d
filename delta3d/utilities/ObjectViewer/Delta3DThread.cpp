@@ -119,8 +119,8 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(UnloadGeometry()),
       mViewer.get(), SLOT(OnUnloadGeometryFile()));
 
-   connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string&, const std::string&)), 
-      mWin->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&)));
+   connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string&, const std::string&, const std::string&)), 
+      mWin->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&, const std::string&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)), 
       mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));  
