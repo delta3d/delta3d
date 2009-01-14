@@ -287,8 +287,14 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
-         mCurrentShaderGroup.clear();
-         mCurrentShaderProgram.clear();
+         // Only clear the shader program if we are unchecking the current one.
+         if (fileName == mCurrentShaderFile &&
+            groupName == mCurrentShaderGroup &&
+            programName == mCurrentShaderProgram)
+         {
+            mCurrentShaderGroup.clear();
+            mCurrentShaderProgram.clear();
+         }
 
          emit RemoveShader();
       }
