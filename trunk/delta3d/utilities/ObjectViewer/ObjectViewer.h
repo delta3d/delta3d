@@ -99,7 +99,7 @@ public slots:
 
 signals:
 
-   void ShaderLoaded(const std::string& shaderGroup, const std::string& shaderName);
+   void ShaderLoaded(const std::string& filename, const std::string& shaderGroup, const std::string& shaderName);
    void ErrorOccured(const QString& msg);
    void LightUpdate(const LightInfo& lightInfo);
 

@@ -98,16 +98,32 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
    return NULL;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string& name) const
+////////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::FindShaderFileItem(const std::string& filename) const
 {
    for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
    {
-      QTreeWidgetItem* childItem = mShaderTreeWidget->topLevelItem(itemIndex);
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
 
-      if (name == childItem->text(0).toStdString())
+      if (filename == fileItem->text(0).toStdString())
       {
-         return childItem; 
+         return fileItem;
+      }
+   }
+
+   return NULL;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const
+{
+   for (int itemIndex = 0; itemIndex < fileItem->childCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* shaderGroup = fileItem->child(itemIndex);
+
+      if (groupName == shaderGroup->text(0).toStdString())
+      {
+         return shaderGroup;
       }
    }
 
@@ -133,33 +149,60 @@ void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnNewShader(const std::string& shaderGroup, const std::string& shaderProgram)
+void ResourceDock::OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram)
 {
    //// We don't want this signal emitted when we're adding a shader
    disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
               this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 
-   QTreeWidgetItem *shaderItem = FindShaderGroupItem(shaderGroup);
-   QTreeWidgetItem *programItem = new QTreeWidgetItem();
-
-   // If the group doesn't exist, create a new one
-   if (shaderItem == NULL)
+   // Get the file item.
+   QTreeWidgetItem* fileItem = FindShaderFileItem(filename);
+   // If the file doesn't exist, create a new one.
+   if (fileItem == NULL)
    {
-      shaderItem = new QTreeWidgetItem;
-      mShaderTreeWidget->addTopLevelItem(shaderItem); 
+      fileItem = new QTreeWidgetItem;
+      fileItem->setText(0, filename.c_str());
+
+      mShaderTreeWidget->addTopLevelItem(fileItem);
    }
 
-   shaderItem->setText(0, shaderGroup.c_str());
-   programItem->setText(0, shaderProgram.c_str());
+   // Get the group item.
+   QTreeWidgetItem* groupItem = FindShaderGroupItem(shaderGroup, fileItem);
 
-   shaderItem->setFlags(Qt::ItemIsSelectable |
-                        Qt::ItemIsUserCheckable |
-                        Qt::ItemIsEnabled);
+   // If the group doesn't exist, create a new one.
+   if (groupItem == NULL)
+   {
+      groupItem = new QTreeWidgetItem;
+      groupItem->setText(0, shaderGroup.c_str());
+      groupItem->setFlags(Qt::ItemIsSelectable |
+         Qt::ItemIsUserCheckable |
+         Qt::ItemIsEnabled);
+
+      fileItem->addChild(groupItem);
+   }
+
+   // If the program already exists, don't add it again.
+   for (int childIndex = 0; childIndex < groupItem->childCount(); childIndex++)
+   {
+      QTreeWidgetItem* programItem = groupItem->child(childIndex);
+
+      if (shaderProgram == programItem->text(0).toStdString())
+      {
+         connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
+         // The program already exists, so we don't want to add it again.
+         return;
+      }
+   }
+
+   // Create the program item.
+   QTreeWidgetItem* programItem = new QTreeWidgetItem();
+   programItem->setText(0, shaderProgram.c_str());
 
    // The shader itself should have a checkbox
    programItem->setCheckState(0, Qt::Unchecked);
-   
-   shaderItem->addChild(programItem);
+
+   groupItem->addChild(programItem);
 
    connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
@@ -172,12 +215,35 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
    {
       QString programName = item->text(0);
       QString groupName   = item->parent()->text(0);
+      QString fileName    = item->parent()->parent()->text(0);
 
       if (item->checkState(0) == Qt::Checked)
       {
+         // Now load the shader file if it isn't already loaded.
+         if (mCurrentShaderFile != fileName)
+         {
+            dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+            shaderManager.Clear();
+            shaderManager.LoadShaderDefinitions(fileName.toStdString());
+         }
+
          // Store so we know where the source files can be found
+         mCurrentShaderFile    = fileName;
          mCurrentShaderGroup   = groupName;
          mCurrentShaderProgram = programName;
+
+         QTreeWidgetItemIterator treeIter(mShaderTreeWidget);
+
+         // Uncheck the previously checked item
+         while (*treeIter)
+         {
+            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+            {
+               (*treeIter)->setCheckState(0, Qt::Unchecked);
+            }
+
+            ++treeIter;
+         }
 
          emit ApplyShader(groupName.toStdString(), programName.toStdString());         
       }

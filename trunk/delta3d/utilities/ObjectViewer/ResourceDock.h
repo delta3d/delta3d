@@ -56,7 +56,8 @@ public:
    virtual ~ResourceDock();
 
    QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
-   QTreeWidgetItem* FindShaderGroupItem(const std::string& name) const;
+   QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
+   QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
 
    void SetGeometry(const std::string& fullName, bool shouldDisplay) const;
    void SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay) const;
@@ -78,7 +79,7 @@ signals:
 
 public slots:
    
-   void OnNewShader(const std::string& shaderGroup, const std::string& shaderProgram);
+   void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
    void OnShaderItemChanged(QTreeWidgetItem* item, int column);
 
    void OnNewGeometry(const std::string& path, const std::string& filename);
@@ -108,6 +109,7 @@ private:
 
    LightItems mLightItems[dtCore::MAX_LIGHTS];  
 
+   QString mCurrentShaderFile;
    QString mCurrentShaderGroup;
    QString mCurrentShaderProgram;
 
