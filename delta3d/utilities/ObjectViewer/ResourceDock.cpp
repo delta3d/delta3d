@@ -28,6 +28,8 @@
 #include <QtGui/QTreeWidget>
 #include <QtGui/QColorDialog>
 
+#include <QtCore/QDir>
+
 #include <osg/LightSource>
 #include <dtCore/globals.h>
 #include <dtCore/shadermanager.h>
@@ -105,7 +107,7 @@ QTreeWidgetItem* ResourceDock::FindShaderFileItem(const std::string& filename) c
    {
       QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
 
-      if (filename == fileItem->text(0).toStdString())
+      if (filename == fileItem->toolTip(0).toStdString())
       {
          return fileItem;
       }
@@ -128,6 +130,22 @@ QTreeWidgetItem* ResourceDock::FindShaderGroupItem(const std::string& groupName,
    }
 
    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool ResourceDock::FindShaderFileEntryName(const std::string& entryName) const
+{
+   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
+
+      if (entryName == fileItem->text(0).toStdString())
+      {
+         return true;
+      }
+   }
+
+   return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -160,8 +178,28 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
    // If the file doesn't exist, create a new one.
    if (fileItem == NULL)
    {
+      QFileInfo fileInfo(filename.c_str());
+
+      std::string baseEntryName = fileInfo.baseName().toStdString().c_str();
+      std::string entryName = baseEntryName;
+      // If the entry name already exists, add a number to it instead.
+      int entryIndex = 1;
+      while (FindShaderFileEntryName(entryName))
+      {
+         entryName = baseEntryName;
+         entryName += " (";
+
+         char number[10];
+         itoa(entryIndex, number, 10);
+         entryName += number;
+
+         entryName += ")";
+         entryIndex++;
+      }
+
       fileItem = new QTreeWidgetItem;
-      fileItem->setText(0, filename.c_str());
+      fileItem->setText(0, entryName.c_str());
+      fileItem->setToolTip(0, filename.c_str());
 
       mShaderTreeWidget->addTopLevelItem(fileItem);
    }
@@ -215,7 +253,7 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
    {
       QString programName = item->text(0);
       QString groupName   = item->parent()->text(0);
-      QString fileName    = item->parent()->parent()->text(0);
+      QString fileName    = item->parent()->parent()->toolTip(0);
 
       if (item->checkState(0) == Qt::Checked)
       {
