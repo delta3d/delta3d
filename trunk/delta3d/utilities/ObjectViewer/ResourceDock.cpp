@@ -35,6 +35,10 @@
 #include <dtCore/globals.h>
 #include <dtCore/shadermanager.h>
 
+#include <dtCore/infinitelight.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/spotlight.h>
+
 #include <algorithm>
 #include <cctype>
 #include <sstream>
@@ -173,17 +177,20 @@ ResourceDock::ResourceDock()
    mShaderTreeWidget->headerItem()->setText(0, "");
    mLightTreeWidget->headerItem()->setText(0, "");
 
+   connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+           this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int))); 
+
    connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-           this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int))); 
+      this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int))); 
 
    connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()),
       this, SLOT(OnShaderSelectionChanged()));
 
-   connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-           this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int))); 
-
    connect(mLightTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
            this, SLOT(OnLightItemClicked(QTreeWidgetItem*, int)));
+
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+           this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
 
    mTabs = new QTabWidget;
    mTabs->addTab(mGeometryTreeWidget, tr("Geometry"));
@@ -540,6 +547,37 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
    }  
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
+{
+   if (column == 0)
+   {
+      if (item->checkState(0) == Qt::Checked)
+      {
+         int lightID = GetLightIDFromItem(item);
+
+         QTreeWidgetItemIterator treeIter(mLightTreeWidget);
+
+         // Uncheck the previously checked item
+         while (*treeIter)
+         {
+            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+            {
+               (*treeIter)->setCheckState(0, Qt::Unchecked);
+            }
+
+            ++treeIter;
+         }
+
+         emit SetCurrentLight(lightID);
+      }
+      else if (item->checkState(0) == Qt::Unchecked)
+      {
+         emit SetCurrentLight(-1);
+      }
+   }  
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnReloadShaderFiles()
 {
@@ -653,7 +691,29 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    const osg::Vec4& diffuse  = osgLight->getDiffuse();
    const osg::Vec4& specular = osgLight->getSpecular();
 
-   QString typeString = (osgLight->getPosition().w() > 0.0f) ? "Positional": "Infinite";
+   // Get the type of light.
+   QString typeString;
+   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(lightInfo.light);
+   if (infiniteLight)
+   {
+      typeString = "Infinite";
+   }
+   else
+   {
+      dtCore::PositionalLight* positionalLight = dynamic_cast<dtCore::PositionalLight*>(lightInfo.light);
+      if (positionalLight)
+      {
+         dtCore::SpotLight* spotLight = dynamic_cast<dtCore::SpotLight*>(lightInfo.light);
+         if (spotLight)
+         {
+            typeString = "Spot";
+         }
+         else
+         {
+            typeString = "Positional";
+         }
+      }
+   }
    mLightItems[lightIndex].type->setText(1, typeString);
 
    SetPositionItem(mLightItems[lightIndex].position, position);
@@ -715,7 +775,7 @@ void ResourceDock::OnOpenCurrentFragmentShaderSources()
 
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::CreateLightItems()
-{  
+{
    QStringList headerLables;
    headerLables << "Property" << "Value";
 
@@ -729,11 +789,14 @@ void ResourceDock::CreateLightItems()
       QTreeWidgetItem* newLightItem = new QTreeWidgetItem;
       newLightItem->setText(0, oss.str().c_str());  
       newLightItem->setText(1, "Disabled");
-      newLightItem->setFlags(Qt::ItemIsEnabled);
+      newLightItem->setFlags(Qt::ItemIsSelectable |
+                             Qt::ItemIsUserCheckable |
+                             Qt::ItemIsEnabled);
+      newLightItem->setCheckState(0, Qt::Unchecked);
 
       QTreeWidgetItem* type = new QTreeWidgetItem(newLightItem);
       type->setText(0, "Type");  
-      type->setText(1, "Infinite");    
+      type->setText(1, "Directional");    
       type->setFlags(Qt::ItemIsEnabled);
 
       mLightTreeWidget->addTopLevelItem(newLightItem);
@@ -749,6 +812,7 @@ void ResourceDock::CreateLightItems()
    // Set the default light to "on"
    QTreeWidgetItem* light0 = mLightItems[0].type->parent();
    light0->setText(1, "Enabled");   
+   light0->setCheckState(0, Qt::Checked);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -893,6 +957,21 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
          }
 
          // Change the type of the light.
+         if (item == light.type)
+         {
+            if (item->text(1) == QString("Infinite"))
+            {
+               emit SetLightType(lightID, 1);
+            }
+            else if (item->text(1) == QString("Positional"))
+            {
+               emit SetLightType(lightID, 2);
+            }
+            else if (item->text(1) == QString("Spot"))
+            {
+               emit SetLightType(lightID, 0);
+            }
+         }
 
          // Change a color attribute of the light.
          if (item == light.ambient ||

@@ -128,10 +128,17 @@ void Delta3DThread::MakeConnections()
    connect(mViewer.get(), SIGNAL(LightUpdate(const LightInfo&)),
       mWin->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
 
-   connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
+   connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()),
+      mViewer.get(), SLOT(OnRemoveShader()));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetCurrentLight(int)),
+      mViewer.get(), SLOT(OnSetCurrentLight(int)));
 
    connect(mWin->GetResourceObject(), SIGNAL(SetLightEnabled(int, bool)),
       mViewer.get(), SLOT(OnSetLightEnabled(int, bool)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightType(int, int)),
+      mViewer.get(), SLOT(OnSetLightType(int, int)));
 
    connect(mWin->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetAmbient(int, const osg::Vec4&)));
