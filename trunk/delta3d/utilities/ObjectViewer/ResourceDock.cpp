@@ -346,6 +346,54 @@ void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnNewGeometry(const std::string& path, const std::string& filename)
+{
+   QTreeWidgetItem *geometryItem = new QTreeWidgetItem();
+   geometryItem->setText(0, filename.c_str());
+   geometryItem->setToolTip(0, (path + "/" + filename).c_str());
+
+   geometryItem->setFlags(Qt::ItemIsSelectable |
+      Qt::ItemIsUserCheckable |
+      Qt::ItemIsEnabled);
+
+   geometryItem->setCheckState(0, Qt::Unchecked);
+
+   mGeometryTreeWidget->addTopLevelItem(geometryItem);    
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
+{
+   if (column == 0)
+   {
+      // The full path is stored in the tooltip
+      QString geomName = item->toolTip(0);
+
+      if (item->checkState(0) == Qt::Checked)
+      {
+         QTreeWidgetItemIterator treeIter(mGeometryTreeWidget);
+
+         // Uncheck the previously checked item
+         while (*treeIter)
+         {
+            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+            {
+               (*treeIter)->setCheckState(0, Qt::Unchecked);
+            }
+
+            ++treeIter;
+         }
+
+         emit LoadGeometry(geomName.toStdString());         
+      }
+      else if (item->checkState(0) == Qt::Unchecked)
+      {
+         emit UnloadGeometry();
+      }
+   }  
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram)
 {
    // We don't want this signal emitted when we're adding a shader
@@ -547,37 +595,6 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
    }  
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
-{
-   if (column == 0)
-   {
-      if (item->checkState(0) == Qt::Checked)
-      {
-         int lightID = GetLightIDFromItem(item);
-
-         QTreeWidgetItemIterator treeIter(mLightTreeWidget);
-
-         // Uncheck the previously checked item
-         while (*treeIter)
-         {
-            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
-            {
-               (*treeIter)->setCheckState(0, Qt::Unchecked);
-            }
-
-            ++treeIter;
-         }
-
-         emit SetCurrentLight(lightID);
-      }
-      else if (item->checkState(0) == Qt::Unchecked)
-      {
-         emit SetCurrentLight(-1);
-      }
-   }  
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnReloadShaderFiles()
 {
@@ -627,52 +644,74 @@ void ResourceDock::OnReloadShaderFiles()
    ReselectCurrentShaderItem();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnNewGeometry(const std::string& path, const std::string& filename)
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnEditShaderDef()
 {
-   QTreeWidgetItem *geometryItem = new QTreeWidgetItem();
-   geometryItem->setText(0, filename.c_str());
-   geometryItem->setToolTip(0, (path + "/" + filename).c_str());
+   // TODO: Open the Shader Definition file in an XML editor.
+}
 
-   geometryItem->setFlags(Qt::ItemIsSelectable |
-                          Qt::ItemIsUserCheckable |
-                          Qt::ItemIsEnabled);
-   
-   geometryItem->setCheckState(0, Qt::Unchecked);
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnRemoveShaderDef()
+{
+   // Iterate through each file item and find the one we want to remove.
+   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
 
-   mGeometryTreeWidget->addTopLevelItem(geometryItem);    
+      if (fileItem->isSelected())
+      {
+         mShaderTreeWidget->takeTopLevelItem(itemIndex);
+
+         emit RemoveShaderDef(fileItem->toolTip(0).toStdString());
+
+         OnReloadShaderFiles();
+         return;
+      }
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
+void ResourceDock::OnOpenCurrentVertexShaderSources()
 {
-   if (column == 0)
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
    {
-      // The full path is stored in the tooltip
-      QString geomName = item->toolTip(0);
+      QTreeWidgetItem* currentItem = itemList.at(0);
 
-      if (item->checkState(0) == Qt::Checked)
+      dtCore::ShaderProgram *program = 
+         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
+
+      if (program)
       {
-         QTreeWidgetItemIterator treeIter(mGeometryTreeWidget);
-
-         // Uncheck the previously checked item
-         while (*treeIter)
-         {
-            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
-            {
-               (*treeIter)->setCheckState(0, Qt::Unchecked);
-            }
-
-            ++treeIter;
-         }
-
-         emit LoadGeometry(geomName.toStdString());         
+         const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+         OpenFilesInTextEditor(vertShaderList);     
       }
-      else if (item->checkState(0) == Qt::Unchecked)
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnOpenCurrentFragmentShaderSources()
+{
+   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
+
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
+   {
+      QTreeWidgetItem* currentItem = itemList.at(0);
+
+      dtCore::ShaderProgram *program = 
+         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
+
+      if (program)
       {
-         emit UnloadGeometry();
+         const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+         OpenFilesInTextEditor(fragShaderList);     
       }
-   }  
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -792,45 +831,173 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnOpenCurrentVertexShaderSources()
+void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
 {
-   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
-
-   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
-
-   if (itemList.size() > 0)
+   if (column == 1)
    {
-      QTreeWidgetItem* currentItem = itemList.at(0);
+      int lightID = GetLightIDFromItem(item);
 
-      dtCore::ShaderProgram *program = 
-         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
-      
-      if (program)
+      if (lightID != -1)
       {
-         const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-         OpenFilesInTextEditor(vertShaderList);     
+         LightItems& light = mLightItems[lightID];
+
+         // Toggle the enabled status of the light.
+         if (item == light.light)
+         {
+            bool isEnabled = item->text(1) == QString("Enabled");
+            emit SetLightEnabled(lightID, !isEnabled);
+         }
+
+         // Change the type of the light.
+         if (item == light.type)
+         {
+            if (item->text(1) == QString("Infinite"))
+            {
+               emit SetLightType(lightID, 1);
+            }
+            else if (item->text(1) == QString("Positional"))
+            {
+               emit SetLightType(lightID, 2);
+            }
+            else if (item->text(1) == QString("Spot"))
+            {
+               emit SetLightType(lightID, 0);
+            }
+
+            // Delete the custom light data so it can be refreshed with new data.
+            DeleteTreeItem(mLightItems[lightID].custom);
+            mLightItems[lightID].custom = NULL;
+         }
+
+         // Change a color attribute of the light.
+         if (item == light.ambient ||
+            item == light.diffuse ||
+            item == light.specular ||
+            light.ambient->indexOfChild(item) != -1 ||
+            light.diffuse->indexOfChild(item) != -1 ||
+            light.specular->indexOfChild(item) != -1)
+         {
+            QColor color;
+
+            // Get the current color.
+            if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
+            {
+               color.setRedF(light.ambient->child(0)->text(1).toFloat());
+               color.setGreenF(light.ambient->child(1)->text(1).toFloat());
+               color.setBlueF(light.ambient->child(2)->text(1).toFloat());
+               color.setAlphaF(light.ambient->child(3)->text(1).toFloat());
+            }
+            if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
+            {
+               color.setRedF(light.diffuse->child(0)->text(1).toFloat());
+               color.setGreenF(light.diffuse->child(1)->text(1).toFloat());
+               color.setBlueF(light.diffuse->child(2)->text(1).toFloat());
+               color.setAlphaF(light.diffuse->child(3)->text(1).toFloat());
+            }
+            if (item == light.specular || light.specular->indexOfChild(item) != -1)
+            {
+               color.setRedF(light.specular->child(0)->text(1).toFloat());
+               color.setGreenF(light.specular->child(1)->text(1).toFloat());
+               color.setBlueF(light.specular->child(2)->text(1).toFloat());
+               color.setAlphaF(light.specular->child(3)->text(1).toFloat());
+            }
+
+            // Bring up the color picker
+            bool clickedOk = false;
+            QRgb pickedColor = QColorDialog::getRgba(qRgba(color.red(), color.green(), color.blue(), color.alpha()), &clickedOk);
+
+            // If the ok button was pressed
+            if (clickedOk)
+            {
+               // Get the normalized color values
+               float red   = qRed(pickedColor) / 255.0f;
+               float green = qGreen(pickedColor) / 255.0f;
+               float blue  = qBlue(pickedColor) / 255.0f;
+               float alpha = qAlpha(pickedColor) / 255.0f;
+
+               osg::Vec4 lightColor(red, green, blue, alpha);
+
+               if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
+               {
+                  emit SetAmbient(lightID, lightColor);
+               }
+               else if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
+               {
+                  emit SetDiffuse(lightID, lightColor);
+               }
+               else if (item == light.specular || light.specular->indexOfChild(item) != -1)
+               {
+                  emit SetSpecular(lightID, lightColor);
+               }
+            }         
+         }
       }
-   }
+   }   
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnOpenCurrentFragmentShaderSources()
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
 {
-   dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
-
-   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
-
-   if (itemList.size() > 0)
+   if (column == 0)
    {
-      QTreeWidgetItem* currentItem = itemList.at(0);
-
-      dtCore::ShaderProgram *program = 
-         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
-
-      if (program)
+      if (item->checkState(0) == Qt::Checked)
       {
-         const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-         OpenFilesInTextEditor(fragShaderList);     
+         int lightID = GetLightIDFromItem(item);
+
+         QTreeWidgetItemIterator treeIter(mLightTreeWidget);
+
+         // Uncheck the previously checked item
+         while (*treeIter)
+         {
+            if ((*treeIter)->checkState(0) == Qt::Checked && (*treeIter) != item)
+            {
+               (*treeIter)->setCheckState(0, Qt::Unchecked);
+            }
+
+            ++treeIter;
+         }
+
+         emit SetCurrentLight(lightID);
+      }
+      else if (item->checkState(0) == Qt::Unchecked)
+      {
+         emit SetCurrentLight(-1);
+      }
+   }
+   else if (column == 1)
+   {
+      int lightID = GetLightIDFromItem(item);
+
+      // Infinite Light Properties
+      if (item->text(0) == QString("Azimuth"))
+      {
+         emit SetLightAzimuth(lightID, item->text(1).toFloat());
+      }
+      else if (item->text(0) == QString("Elevation"))
+      {
+         emit SetLightElevation(lightID, item->text(1).toFloat());
+      }
+      // Spot Light Properties
+      else if (item->text(0) == QString("Cut off"))
+      {
+         emit SetLightCutoff(lightID, item->text(1).toFloat());
+      }
+      else if (item->text(0) == QString("Exponent"))
+      {
+         emit SetLightExponent(lightID, item->text(1).toFloat());
+      }
+      // Positional Light Properties
+      else if (item->text(0) == QString("Constant"))
+      {
+         emit SetLightConstant(lightID, item->text(1).toFloat());
+      }
+      else if (item->text(0) == QString("Linear"))
+      {
+         emit SetLightLinear(lightID, item->text(1).toFloat());
+      }
+      else if (item->text(0) == QString("Quadratic"))
+      {
+         emit SetLightQuadratic(lightID, item->text(1).toFloat());
       }
    }
 }
@@ -842,6 +1009,10 @@ void ResourceDock::CreateLightItems()
    headerLables << "Property" << "Value";
 
    mLightTreeWidget->setHeaderLabels(headerLables);
+
+   // disconnect the item changed trigger so we don't get infinite item changed events.
+   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
 
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
@@ -877,6 +1048,9 @@ void ResourceDock::CreateLightItems()
    QTreeWidgetItem* light0 = mLightItems[0].light;
    light0->setText(1, "Enabled");   
    light0->setCheckState(0, Qt::Checked);
+
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1012,7 +1186,7 @@ int ResourceDock::GetLightIDFromItem(QTreeWidgetItem* item)
           light.ambient->indexOfChild(item) != -1  ||
           light.diffuse->indexOfChild(item) != -1  ||
           light.specular->indexOfChild(item) != -1 ||
-          light.custom->indexOfChild(item) != -1)
+          (light.custom && light.custom->indexOfChild(item) != -1))
       {
          return lightIndex;
       }
@@ -1047,136 +1221,5 @@ QTreeWidgetItem* ResourceDock::CreateTreeItem(const QString& name, const QString
    item->setText(1, value);
    item->setFlags(flags);
    return item;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
-{
-   if (column == 1)
-   {
-      int lightID = GetLightIDFromItem(item);
-
-      if (lightID != -1)
-      {
-         LightItems& light = mLightItems[lightID];
-
-         // Toggle the enabled status of the light.
-         if (item == light.light)
-         {
-            bool isEnabled = item->text(1) == QString("Enabled");
-            emit SetLightEnabled(lightID, !isEnabled);
-         }
-
-         // Change the type of the light.
-         if (item == light.type)
-         {
-            if (item->text(1) == QString("Infinite"))
-            {
-               emit SetLightType(lightID, 1);
-            }
-            else if (item->text(1) == QString("Positional"))
-            {
-               emit SetLightType(lightID, 2);
-            }
-            else if (item->text(1) == QString("Spot"))
-            {
-               emit SetLightType(lightID, 0);
-            }
-
-            // Delete the custom light data so it can be refreshed with new data.
-            DeleteTreeItem(mLightItems[lightID].custom);
-            mLightItems[lightID].custom = NULL;
-         }
-
-         // Change a color attribute of the light.
-         if (item == light.ambient ||
-             item == light.diffuse ||
-             item == light.specular ||
-             light.ambient->indexOfChild(item) != -1 ||
-             light.diffuse->indexOfChild(item) != -1 ||
-             light.specular->indexOfChild(item) != -1)
-         {
-            QColor color;
-
-            // Get the current color.
-            if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
-            {
-               color.setRedF(light.ambient->child(0)->text(1).toFloat());
-               color.setGreenF(light.ambient->child(1)->text(1).toFloat());
-               color.setBlueF(light.ambient->child(2)->text(1).toFloat());
-               color.setAlphaF(light.ambient->child(3)->text(1).toFloat());
-            }
-            if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
-            {
-               color.setRedF(light.diffuse->child(0)->text(1).toFloat());
-               color.setGreenF(light.diffuse->child(1)->text(1).toFloat());
-               color.setBlueF(light.diffuse->child(2)->text(1).toFloat());
-               color.setAlphaF(light.diffuse->child(3)->text(1).toFloat());
-            }
-            if (item == light.specular || light.specular->indexOfChild(item) != -1)
-            {
-               color.setRedF(light.specular->child(0)->text(1).toFloat());
-               color.setGreenF(light.specular->child(1)->text(1).toFloat());
-               color.setBlueF(light.specular->child(2)->text(1).toFloat());
-               color.setAlphaF(light.specular->child(3)->text(1).toFloat());
-            }
-
-            // Bring up the color picker
-            bool clickedOk = false;
-            QRgb pickedColor = QColorDialog::getRgba(qRgba(color.red(), color.green(), color.blue(), color.alpha()), &clickedOk);
-
-            // If the ok button was pressed
-            if (clickedOk)
-            {
-               // Get the normalized color values
-               float red   = qRed(pickedColor) / 255.0f;
-               float green = qGreen(pickedColor) / 255.0f;
-               float blue  = qBlue(pickedColor) / 255.0f;
-               float alpha = qAlpha(pickedColor) / 255.0f;
-
-               osg::Vec4 lightColor(red, green, blue, alpha);
-
-               if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
-               {
-                  emit SetAmbient(lightID, lightColor);
-               }
-               else if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
-               {
-                  emit SetDiffuse(lightID, lightColor);
-               }
-               else if (item == light.specular || light.specular->indexOfChild(item) != -1)
-               {
-                  emit SetSpecular(lightID, lightColor);
-               }
-            }         
-         }
-      }
-   }   
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnEditShaderDef()
-{
-   // TODO: Open the Shader Definition file in an XML editor.
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ResourceDock::OnRemoveShaderDef()
-{
-   // Iterate through each file item and find the one we want to remove.
-   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
-   {
-      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
-
-      if (fileItem->isSelected())
-      {
-         mShaderTreeWidget->takeTopLevelItem(itemIndex);
-
-         emit RemoveShaderDef(fileItem->toolTip(0).toStdString());
-
-         OnReloadShaderFiles();
-         return;
-      }
-   }
 }
 

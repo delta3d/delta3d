@@ -97,42 +97,49 @@ public:
 
 signals:
 
-   void ApplyShader(const std::string& group, const std::string& name);
-   void RemoveShader();
-
    void LoadGeometry(const std::string& filename);
    void UnloadGeometry();
 
+   void ApplyShader(const std::string& group, const std::string& name);
+   void RemoveShader();
+   void ToggleVertexShaderSources(bool enabled);
+   void ToggleFragmentShaderSources(bool enabled);
+   void RemoveShaderDef(const std::string& filename);
+
    void AddLight();
    void RemoveLight(int id);
-
+   void SetCurrentLight(int id);
    void SetLightEnabled(int id, bool enabled);
    void SetLightType(int id, int type);
    void SetAmbient(int id, const osg::Vec4& ambient);
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);
-
-   void ToggleVertexShaderSources(bool enabled);
-   void ToggleFragmentShaderSources(bool enabled);
-
-   void RemoveShaderDef(const std::string& filename);
-
-   void SetCurrentLight(int id);
+   void SetLightAzimuth(int id, float azimuth);
+   void SetLightElevation(int id, float elevation);
+   void SetLightCutoff(int id, float cutoff);
+   void SetLightExponent(int id, float exponent);
+   void SetLightConstant(int id, float constant);
+   void SetLightLinear(int id, float linear);
+   void SetLightQuadratic(int id, float quadratic);
 
 public slots:
    
+   void OnNewGeometry(const std::string& path, const std::string& filename);
+   void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
+
    void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
    void OnShaderSelectionChanged();
    void OnShaderItemChanged(QTreeWidgetItem* item, int column);
    void OnReloadShaderFiles();
-
-   void OnNewGeometry(const std::string& path, const std::string& filename);
-   void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
-
-   void OnLightUpdate(const LightInfo& lightInfo);
+   void OnEditShaderDef();
+   void OnRemoveShaderDef();
 
    void OnOpenCurrentVertexShaderSources();
    void OnOpenCurrentFragmentShaderSources();
+
+   void OnLightUpdate(const LightInfo& lightInfo);
+   void OnLightItemClicked(QTreeWidgetItem* item, int column);
+   void OnLightItemChanged(QTreeWidgetItem* item, int column);
 
 private:
 
@@ -175,14 +182,6 @@ private:
 
    void DeleteTreeItem(QTreeWidgetItem* item);
    QTreeWidgetItem* CreateTreeItem(const QString& name, const QString& value, Qt::ItemFlags flags, QTreeWidgetItem* parent);
-
-private slots:
-
-   void OnLightItemClicked(QTreeWidgetItem* item, int column);
-   void OnLightItemChanged(QTreeWidgetItem* item, int column);
-
-   void OnEditShaderDef();
-   void OnRemoveShaderDef();
 };
 
 
