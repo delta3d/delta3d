@@ -88,7 +88,9 @@ public slots:
 
    // Lighting slots
    void OnAddLight(int id);
+   void OnSetCurrentLight(int id);
    void OnSetLightEnabled(int id, bool enabled);
+   void OnSetLightType(int id, int type);
    void OnSetAmbient(int id, const osg::Vec4& color);
    void OnSetDiffuse(int id, const osg::Vec4& color);
    void OnSetSpecular(int id, const osg::Vec4& color);
@@ -112,7 +114,7 @@ private:
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
-   dtCore::RefPtr<dtCore::OrbitMotionModel> mLightMotion;
+   std::vector<dtCore::RefPtr<dtCore::OrbitMotionModel>> mLightMotion;
 
    dtCore::RefPtr<osg::Group> mShadedScene;
    dtCore::RefPtr<osg::Group> mUnShadedScene;
@@ -120,8 +122,10 @@ private:
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Geode> mGridGeode;
 
-   dtCore::RefPtr<dtCore::Transformable> mLightArrowTransformable;
-   dtCore::RefPtr<dtCore::Object>        mLightArrow;
+   std::vector<dtCore::RefPtr<dtCore::Transformable>> mLightArrowTransformable;
+   std::vector<dtCore::RefPtr<dtCore::Object>>        mLightArrow;
+
+   int   mCurrentLight;
 
    void InitWireDecorator();
    void InitGridPlanes();

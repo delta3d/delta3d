@@ -107,6 +107,7 @@ signals:
    void RemoveLight(int id);
 
    void SetLightEnabled(int id, bool enabled);
+   void SetLightType(int id, int type);
    void SetAmbient(int id, const osg::Vec4& ambient);
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);
@@ -115,6 +116,8 @@ signals:
    void ToggleFragmentShaderSources(bool enabled);
 
    void RemoveShaderDef(const std::string& filename);
+
+   void SetCurrentLight(int id);
 
 public slots:
    
@@ -146,8 +149,8 @@ private:
 
    QTabWidget* mTabs;
 
-   ShaderTree*    mShaderTreeWidget;
    QTreeWidget*   mGeometryTreeWidget;  
+   ShaderTree*    mShaderTreeWidget;
    QTreeWidget*   mLightTreeWidget; 
 
    LightItems mLightItems[dtCore::MAX_LIGHTS];  
@@ -171,6 +174,7 @@ private:
 private slots:
 
    void OnLightItemClicked(QTreeWidgetItem* item, int column);
+   void OnLightItemChanged(QTreeWidgetItem* item, int column);
 
    void OnEditShaderDef();
    void OnRemoveShaderDef();

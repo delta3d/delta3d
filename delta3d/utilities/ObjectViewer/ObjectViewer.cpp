@@ -13,9 +13,12 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/moveearthtransform.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
 #include <dtCore/infinitelight.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/spotlight.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/shadermanager.h>
@@ -44,6 +47,7 @@ ObjectViewer::ObjectViewer()
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
+   mCurrentLight = 0;
 
    osg::StateSet* shadedState = mShadedScene->getOrCreateStateSet();
    shadedState->setMode(GL_LIGHTING, osg::StateAttribute::ON);
@@ -86,42 +90,48 @@ void ObjectViewer::Config()
    mModelMotion->SetTarget(GetCamera());
    mModelMotion->SetDistance(5.f);
 
-   dtCore::Light* l = GetScene()->GetLight(0);
-   l->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
-   l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
-   l->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
-
-   // Infinite lights must start here, point light from the postive y axis
-   l->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
+   InitLights();
 
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
 
-   mLightArrow = new dtCore::Object;
-   mLightArrow->LoadFile("examples/data/models/LightArrow.ive");
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+      light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
+      light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
+      light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
 
-   dtCore::Transform lightArrowTransform;
-   lightArrowTransform.SetTranslation(0.0f, 0.0f, 0.0f);
+      // Infinite lights must start here, point light from the postive y axis
+      light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
 
-   mLightArrowTransformable = new dtCore::Transformable;
-   mLightArrowTransformable->AddChild(mLightArrow.get());
-   mLightArrowTransformable->AddChild(l);
+      dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
+      lightArrow->LoadFile("examples/data/models/LightArrow.ive");
 
-   mLightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
-   mLightMotion->SetTarget(mLightArrowTransformable.get());
-   mLightMotion->SetDistance(3.f);
-   mLightMotion->SetFocalPoint(osg::Vec3());
-   mLightMotion->SetLeftRightTranslationAxis(NULL);
-   mLightMotion->SetUpDownTranslationAxis(NULL);
+      dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
+      lightArrowTransformable->AddChild(lightArrow.get());
+      lightArrowTransformable->AddChild(light);
+
+      //dtCore::RefPtr<dtCore::OrbitMotionModel> lightMotion = new dtCore::MoveEarthySkyWithEyePointTransform(GetKeyboard(), GetMouse());
+      dtCore::RefPtr<dtCore::OrbitMotionModel> lightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+      lightMotion->SetTarget(lightArrowTransformable.get());
+      lightMotion->SetDistance(3.f);
+      lightMotion->SetFocalPoint(osg::Vec3());
+      //lightMotion->SetLeftRightTranslationAxis(NULL);
+      //lightMotion->SetUpDownTranslationAxis(NULL);
+
+      GetScene()->AddDrawable(lightArrowTransformable.get());
+
+      mLightMotion.push_back(lightMotion);
+      mLightArrowTransformable.push_back(lightArrowTransformable);
+      mLightArrow.push_back(lightArrow);
+   }
 
    GetScene()->GetSceneNode()->addChild(mShadedScene.get());
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
 
-   GetScene()->AddDrawable(mLightArrowTransformable.get());
-
    InitWireDecorator();
    InitGridPlanes();
-   InitLights();
 
    OnSetShaded();
    OnToggleGrid(true);
@@ -186,12 +196,15 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
       float radius;
       mObject->GetBoundingSphere(&center, &radius);
 
-      mLightMotion->SetDistance(radius * 0.5f);
-      mLightMotion->SetFocalPoint(center);
+      for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+      {
+         mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+         mLightMotion[lightIndex]->SetFocalPoint(center);
 
-      // Adust the size of the light arrow
-      float arrowScale = radius * 0.5f;
-      mLightArrow->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+         // Adust the size of the light arrow
+         float arrowScale = radius * 0.5f;
+         mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+      }
    }
 }
 
@@ -275,10 +288,72 @@ void ObjectViewer::OnAddLight(int id)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetCurrentLight(int id)
+{
+   mCurrentLight = id;
+
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      if (id != lightIndex)
+      {
+         mLightMotion[lightIndex]->SetEnabled(false);
+         mLightArrow[lightIndex]->SetActive(false);
+      }
+      else
+      {
+         mLightMotion[lightIndex]->SetEnabled(true);
+         mLightArrow[lightIndex]->SetActive(true);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetLightEnabled(int id, bool enabled)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetEnabled(enabled);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightType(int id, int type)
+{
+   QString lightName = QString("Light%1").arg(id);
+
+   dtCore::Light* light = GetScene()->GetLight(id);
+
+   dtCore::Light* newLight = NULL;
+
+   switch (type)
+   {
+   case 0: // Infinite
+      newLight = new dtCore::InfiniteLight(id, lightName.toStdString());
+      break;
+
+   case 1: // Positional
+      newLight = new dtCore::PositionalLight(id, lightName.toStdString());
+      break;
+
+   case 2: // Spot
+      newLight = new dtCore::SpotLight(id, lightName.toStdString());
+      break;
+   }
+
+   // Copy the previous light data to the new light.
+   if (newLight)
+   {
+      newLight->SetEnabled(light->GetEnabled());
+      newLight->SetAmbient(light->GetAmbient());
+      newLight->SetDiffuse(light->GetDiffuse());
+      newLight->SetSpecular(light->GetSpecular());
+
+      dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = mLightArrowTransformable[id];
+      lightArrowTransformable->RemoveChild(light);
+      lightArrowTransformable->AddChild(newLight);
+
+      //GetScene()->RemoveDrawable(light);
+      //GetScene()->AddDrawable(newLight);
+      GetScene()->RegisterLight(newLight);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -306,18 +381,26 @@ void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
 void ObjectViewer::OnEnterObjectMode()
 {
    mModelMotion->SetEnabled(true);
-   mLightMotion->SetEnabled(false);
 
-   mLightArrow->SetActive(false);
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetEnabled(false);
+
+      mLightArrow[lightIndex]->SetActive(false);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterLightMode()
 {
    mModelMotion->SetEnabled(false);
-   mLightMotion->SetEnabled(true);
 
-   mLightArrow->SetActive(true);
+   if (mCurrentLight > -1 && mCurrentLight < dtCore::MAX_LIGHTS)
+   {
+      mLightMotion[mCurrentLight]->SetEnabled(true);
+
+      mLightArrow[mCurrentLight]->SetActive(true);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -383,12 +466,11 @@ void ObjectViewer::InitLights()
 {
    for (int lightIndex = 1; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      QString lightName = "Light";
-      lightName += lightIndex;
+      QString lightName = QString("Light%1").arg(lightIndex);
 
       dtCore::Light* light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
-      GetScene()->AddDrawable(light);
       light->SetEnabled(false);
+      //GetScene()->AddDrawable(light);
       GetScene()->RegisterLight(light);
    }
 }
@@ -404,7 +486,7 @@ void ObjectViewer::PostFrame(const double)
       if (light)
       {
          dtCore::Transform arrowTransform;
-         mLightArrowTransformable->GetTransform(arrowTransform);
+         mLightArrowTransformable[lightIndex]->GetTransform(arrowTransform);
 
          //osg::Vec3 lightPos = arrowTransform.GetTranslation();
 
