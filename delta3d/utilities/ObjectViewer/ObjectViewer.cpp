@@ -13,7 +13,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtCore/moveearthtransform.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
 #include <dtCore/infinitelight.h>
@@ -112,11 +111,10 @@ void ObjectViewer::Config()
       lightArrowTransformable->AddChild(lightArrow.get());
       lightArrowTransformable->AddChild(light);
 
-      //dtCore::RefPtr<dtCore::OrbitMotionModel> lightMotion = new dtCore::MoveEarthySkyWithEyePointTransform(GetKeyboard(), GetMouse());
       dtCore::RefPtr<dtCore::OrbitMotionModel> lightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
       lightMotion->SetTarget(lightArrowTransformable.get());
-      lightMotion->SetDistance(3.f);
-      lightMotion->SetFocalPoint(osg::Vec3());
+      //lightMotion->SetDistance(3.f);
+      //lightMotion->SetFocalPoint(osg::Vec3());
       //lightMotion->SetLeftRightTranslationAxis(NULL);
       //lightMotion->SetUpDownTranslationAxis(NULL);
 
@@ -198,8 +196,8 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 
       for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
       {
-         mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-         mLightMotion[lightIndex]->SetFocalPoint(center);
+         //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+         //mLightMotion[lightIndex]->SetFocalPoint(center);
 
          // Adust the size of the light arrow
          float arrowScale = radius * 0.5f;

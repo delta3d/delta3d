@@ -590,6 +590,13 @@ void ResourceDock::OnReloadShaderFiles()
 
       fileNames.append(fileItem->toolTip(0));
    }
+
+   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
+
+      DeleteTreeItem(fileItem);
+   }
    mShaderTreeWidget->clear();
 
    for (int fileIndex = 0; fileIndex < fileNames.size(); fileIndex++)
@@ -671,6 +678,10 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
 {
+   // disconnect the item changed trigger so we don't get infinite item changed events.
+   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+
    int lightIndex = lightInfo.light->GetNumber();  
 
    const osg::LightSource* osgSource = lightInfo.light->GetLightSource();
@@ -679,14 +690,16 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    bool enabled = lightInfo.light->GetEnabled();
    if (enabled)
    {
-      mLightItems[lightIndex].enabled->setText(1, "Enabled");
+      mLightItems[lightIndex].light->setText(1, "Enabled");
    }
    else
    {
-      mLightItems[lightIndex].enabled->setText(1, "Disabled");
+      mLightItems[lightIndex].light->setText(1, "Disabled");
    }
 
    const osg::Vec3& position = lightInfo.transform->GetTranslation();
+   osg::Vec3 right, up, rotation;
+   lightInfo.transform->GetOrientation(right, up, rotation);
    const osg::Vec4& ambient  = osgLight->getAmbient();
    const osg::Vec4& diffuse  = osgLight->getDiffuse();
    const osg::Vec4& specular = osgLight->getSpecular();
@@ -697,6 +710,20 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    if (infiniteLight)
    {
       typeString = "Infinite";
+      float azimuth = 0.0f;
+      float elevation = 0.0f;
+      infiniteLight->GetAzimuthElevation(azimuth, elevation);
+
+      if (!mLightItems[lightIndex].custom)
+      {
+         mLightItems[lightIndex].custom = CreateTreeItem(tr("Custom"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
+
+         CreateTreeItem(tr("Azimuth"), QString("%1").arg(azimuth), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+         CreateTreeItem(tr("Elevation"), QString("%1").arg(elevation), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+      }
+
+      mLightItems[lightIndex].custom->child(0)->setText(1, QString("%1").arg(azimuth));
+      mLightItems[lightIndex].custom->child(1)->setText(1, QString("%1").arg(elevation));
    }
    else
    {
@@ -707,16 +734,47 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
          if (spotLight)
          {
             typeString = "Spot";
+            float cutoff = spotLight->GetSpotCutoff();
+            float exponent = spotLight->GetSpotExponent();
+
+            if (!mLightItems[lightIndex].custom)
+            {
+               mLightItems[lightIndex].custom = CreateTreeItem(tr("Custom"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
+
+               CreateTreeItem(tr("Cut off"), QString("%1").arg(cutoff), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+               CreateTreeItem(tr("Exponent"), QString("%1").arg(exponent), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+            }
+
+            mLightItems[lightIndex].custom->child(0)->setText(1, QString("%1").arg(cutoff));
+            mLightItems[lightIndex].custom->child(1)->setText(1, QString("%1").arg(exponent));
          }
          else
          {
             typeString = "Positional";
+            float constant = 0.0f;
+            float linear = 0.0f;
+            float quadratic = 0.0f;
+            positionalLight->GetAttenuation(constant, linear, quadratic);
+
+            if (!mLightItems[lightIndex].custom)
+            {
+               mLightItems[lightIndex].custom = CreateTreeItem(tr("Attenuation"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
+
+               CreateTreeItem(tr("Constant"), QString("%1").arg(constant), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+               CreateTreeItem(tr("Linear"), QString("%1").arg(linear), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+               CreateTreeItem(tr("Quadratic"), QString("%1").arg(quadratic), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+            }
+
+            mLightItems[lightIndex].custom->child(0)->setText(1, QString("%1").arg(constant));
+            mLightItems[lightIndex].custom->child(1)->setText(1, QString("%1").arg(linear));
+            mLightItems[lightIndex].custom->child(2)->setText(1, QString("%1").arg(quadratic));
          }
       }
    }
    mLightItems[lightIndex].type->setText(1, typeString);
 
    SetPositionItem(mLightItems[lightIndex].position, position);
+   SetPositionItem(mLightItems[lightIndex].rotation, rotation);
    SetColorItem(mLightItems[lightIndex].ambient, ambient);
    SetColorItem(mLightItems[lightIndex].diffuse, diffuse);
    SetColorItem(mLightItems[lightIndex].specular, specular);
@@ -727,6 +785,10 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    //    << ")";
 
    //std::cout << oss.str() << std::endl;   
+
+   // Reconnect the item changed event.
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -796,21 +858,23 @@ void ResourceDock::CreateLightItems()
 
       QTreeWidgetItem* type = new QTreeWidgetItem(newLightItem);
       type->setText(0, "Type");  
-      type->setText(1, "Directional");    
+      type->setText(1, "Infinite");    
       type->setFlags(Qt::ItemIsEnabled);
 
       mLightTreeWidget->addTopLevelItem(newLightItem);
 
-      mLightItems[lightIndex].enabled  = newLightItem;
-      mLightItems[lightIndex].type     = type;
-      mLightItems[lightIndex].position = CreatePositionItem(newLightItem);
-      mLightItems[lightIndex].ambient  = CreateColorItem("Ambient", newLightItem);
-      mLightItems[lightIndex].diffuse  = CreateColorItem("Diffuse", newLightItem);
-      mLightItems[lightIndex].specular = CreateColorItem("Specular", newLightItem);
+      mLightItems[lightIndex].light     = newLightItem;
+      mLightItems[lightIndex].type      = type;
+      mLightItems[lightIndex].position  = CreatePositionItem(newLightItem);
+      mLightItems[lightIndex].rotation  = CreateRotationItem(newLightItem);
+      mLightItems[lightIndex].ambient   = CreateColorItem("Ambient", newLightItem);
+      mLightItems[lightIndex].diffuse   = CreateColorItem("Diffuse", newLightItem);
+      mLightItems[lightIndex].specular  = CreateColorItem("Specular", newLightItem);
+      mLightItems[lightIndex].custom    = NULL;
    }
 
    // Set the default light to "on"
-   QTreeWidgetItem* light0 = mLightItems[0].type->parent();
+   QTreeWidgetItem* light0 = mLightItems[0].light;
    light0->setText(1, "Enabled");   
    light0->setCheckState(0, Qt::Checked);
 }
@@ -834,6 +898,24 @@ QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::CreateRotationItem(QTreeWidgetItem* parent)
+{
+   QTreeWidgetItem* rotation = new QTreeWidgetItem(parent);
+   rotation->setText(0, "Rotation");  
+   rotation->setFlags(Qt::ItemIsEnabled);
+
+   QTreeWidgetItem* xItem = new QTreeWidgetItem(rotation);
+   QTreeWidgetItem* yItem = new QTreeWidgetItem(rotation);
+   QTreeWidgetItem* zItem = new QTreeWidgetItem(rotation);
+
+   xItem->setText(0, "x");
+   yItem->setText(0, "y");
+   zItem->setText(0, "z");
+
+   return rotation;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* colorItem = new QTreeWidgetItem(parent);
@@ -844,7 +926,6 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    QPixmap colorPicker(16, 16);
    colorPicker.fill(color);
    colorItem->setIcon(1, colorPicker);
-   colorItem->setText(1, "Choose Color...");
 
    QTreeWidgetItem* redItem   = new QTreeWidgetItem(colorItem);
    QTreeWidgetItem* greenItem = new QTreeWidgetItem(colorItem);
@@ -920,22 +1001,52 @@ int ResourceDock::GetLightIDFromItem(QTreeWidgetItem* item)
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
       LightItems& light = mLightItems[lightIndex];
-      if (light.enabled  == item ||
+      if (light.light    == item ||
           light.type     == item ||
           light.position == item ||
           light.ambient  == item ||
           light.diffuse  == item ||
           light.specular == item ||
+          light.custom   == item ||
           light.position->indexOfChild(item) != -1 ||
           light.ambient->indexOfChild(item) != -1  ||
           light.diffuse->indexOfChild(item) != -1  ||
-          light.specular->indexOfChild(item) != -1)
+          light.specular->indexOfChild(item) != -1 ||
+          light.custom->indexOfChild(item) != -1)
       {
          return lightIndex;
       }
    }
 
    return -1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::DeleteTreeItem(QTreeWidgetItem* item)
+{
+   if (!item)
+   {
+      return;
+   }
+
+   // First delete all children of this item.
+   for (int childIndex = 0; childIndex < item->childCount(); childIndex++)
+   {
+      DeleteTreeItem(item->child(childIndex));
+   }
+
+   // Now delete the item itself.
+   delete item;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::CreateTreeItem(const QString& name, const QString& value, Qt::ItemFlags flags, QTreeWidgetItem* parent)
+{
+   QTreeWidgetItem* item = new QTreeWidgetItem(parent);
+   item->setText(0, name);
+   item->setText(1, value);
+   item->setFlags(flags);
+   return item;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -950,7 +1061,7 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
          LightItems& light = mLightItems[lightID];
 
          // Toggle the enabled status of the light.
-         if (item == light.enabled)
+         if (item == light.light)
          {
             bool isEnabled = item->text(1) == QString("Enabled");
             emit SetLightEnabled(lightID, !isEnabled);
@@ -971,6 +1082,10 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
             {
                emit SetLightType(lightID, 0);
             }
+
+            // Delete the custom light data so it can be refreshed with new data.
+            DeleteTreeItem(mLightItems[lightID].custom);
+            mLightItems[lightID].custom = NULL;
          }
 
          // Change a color attribute of the light.
