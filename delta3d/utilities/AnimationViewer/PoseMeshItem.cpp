@@ -401,8 +401,8 @@ QPainterPath PoseMeshItem::shape() const
 ////////////////////////////////////////////////////////////////////////////////
 void PoseMeshItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-   UNREFERENCED_PARAMETER(widget);
-   UNREFERENCED_PARAMETER(option);
+   DTUNREFERENCED_PARAMETER(widget);
+   DTUNREFERENCED_PARAMETER(option);
 
    if (mAreErrorSamplesDisplayed && isEnabled())
    {

@@ -159,8 +159,8 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
       unsigned long long1;
       long long2;
 
-      static char* mTestGameActorLibrary;
-      static char* mTestActorLibrary;
+      static const char* mTestGameActorLibrary;
+      static const char* mTestActorLibrary;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,8 +267,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
 
-char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
-char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
+const char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
+const char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
 
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::setUp()

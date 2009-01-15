@@ -378,11 +378,9 @@ void CAL3DLoadingTests::CorrectMaterialData()
 
    const int matID = model->loadCoreMaterial(mMaterialFile);
 
-   CalCoreMaterial* material = model->getCoreMaterial(matID);
-
+   model->getCoreMaterial(matID);
 
    delete model;
-
 }
 
 

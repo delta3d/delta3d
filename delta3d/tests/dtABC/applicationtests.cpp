@@ -433,8 +433,12 @@ namespace dtTest
 
       osgDB::DatabasePager* pager = app->GetView()->GetDatabasePager()->GetOsgDatabasePager();
 
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 4
       bool ignoreThreadPrioritySupport =
          pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT) == -1;
+#else
+      pager->setSchedulePriority(OpenThreads::Thread::THREAD_PRIORITY_DEFAULT);
+#endif
 
       app->SetConfigPropertyValue(dtABC::Application::SIM_FRAME_RATE, "32.1");
       app->SetConfigPropertyValue(dtABC::Application::MAX_TIME_BETWEEN_DRAWS, "1.03");

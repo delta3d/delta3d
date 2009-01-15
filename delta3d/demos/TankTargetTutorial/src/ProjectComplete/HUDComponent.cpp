@@ -218,7 +218,7 @@ void HUDComponent::SetupGUI(dtCore::DeltaWin* win,
 }
 
 //////////////////////////////////////////////////////////////////////////
-void HUDComponent::UpdateStaticText(CEGUI::Window* textControl, char* newText,
+void HUDComponent::UpdateStaticText(CEGUI::Window* textControl, const char* newText,
                                   float red, float blue, float green, float x, float y)
 {
    if (textControl != NULL)

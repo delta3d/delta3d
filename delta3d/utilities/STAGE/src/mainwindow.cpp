@@ -761,7 +761,7 @@ namespace dtEditQt
         settings.endGroup();
 
         //restore splitter positions
-        const int numSplitters = settings.beginReadArray(EditorSettings::SPLITTER_GROUP);
+        settings.beginReadArray(EditorSettings::SPLITTER_GROUP);
         for (int s=0; s<mSplitters.size(); ++s)
         {
            settings.setArrayIndex(s);

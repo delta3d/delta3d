@@ -49,35 +49,35 @@ namespace dtUtil
        * @param name The name of the XML Node to be created.
        * @param doc The Xerces DOMDocument required for creating new XML Nodes.
        */
-      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToInt(int value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToInt(const int value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
 
       /** Creates an XML Node.
        * @param value The important value to be stored.
        * @param name The name of the XML Node to be created.
        * @param doc The Xerces DOMDocument required for creating new XML Nodes.
        */
-      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToFloat(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToFloat(const float value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
 
       /** Creates an XML Node.
        * @param value The important value to be stored.
        * @param name The name of the XML Node to be created.
        * @param doc The Xerces DOMDocument required for creating new XML Nodes.
        */
-      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToDouble(double value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToDouble(const double value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
 
       /** Creates an XML Node.
        * @param value The important value to be stored.
        * @param name The name of the XML Node to be created.
        * @param doc The Xerces DOMDocument required for creating new XML Nodes.
        */
-      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToBool(bool value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToBool(const bool value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
 
       /** Creates an XML Node.
        * @param value The important value to be stored.
        * @param name The name of the XML Node to be created.
        * @param doc The Xerces DOMDocument required for creating new XML Nodes.
        */
-      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToString(const std::string& value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToString(const std::string& value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
    };
 }
 
