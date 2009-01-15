@@ -114,7 +114,7 @@ private:
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
-   std::vector<dtCore::RefPtr<dtCore::OrbitMotionModel>> mLightMotion;
+   std::vector<dtCore::RefPtr<dtCore::OrbitMotionModel> > mLightMotion;
 
    dtCore::RefPtr<osg::Group> mShadedScene;
    dtCore::RefPtr<osg::Group> mUnShadedScene;
@@ -122,8 +122,8 @@ private:
    dtCore::RefPtr<osg::Group> mShadeDecorator;
    dtCore::RefPtr<osg::Geode> mGridGeode;
 
-   std::vector<dtCore::RefPtr<dtCore::Transformable>> mLightArrowTransformable;
-   std::vector<dtCore::RefPtr<dtCore::Object>>        mLightArrow;
+   std::vector<dtCore::RefPtr<dtCore::Transformable> > mLightArrowTransformable;
+   std::vector<dtCore::RefPtr<dtCore::Object> >        mLightArrow;
 
    int   mCurrentLight;
 
