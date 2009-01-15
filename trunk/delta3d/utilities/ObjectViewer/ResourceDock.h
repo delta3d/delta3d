@@ -106,6 +106,7 @@ signals:
    void AddLight();
    void RemoveLight(int id);
 
+   void SetLightEnabled(int id, bool enabled);
    void SetAmbient(int id, const osg::Vec4& ambient);
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);
@@ -134,8 +135,10 @@ private:
 
    struct LightItems
    {
+      QTreeWidgetItem* enabled;
       QTreeWidgetItem* type;
       QTreeWidgetItem* position;
+      QTreeWidgetItem* direction;
       QTreeWidgetItem* ambient;
       QTreeWidgetItem* diffuse;
       QTreeWidgetItem* specular;
@@ -163,7 +166,7 @@ private:
 
    void OpenFilesInTextEditor(const std::vector<std::string>& fileList);
 
-   int GetLightIDFromItem(const QTreeWidgetItem* item);
+   int GetLightIDFromItem(QTreeWidgetItem* item);
 
 private slots:
 

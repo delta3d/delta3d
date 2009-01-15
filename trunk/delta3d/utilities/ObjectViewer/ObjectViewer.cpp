@@ -15,6 +15,7 @@
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
+#include <dtCore/infinitelight.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/exceptionenum.h>
 #include <dtCore/shadermanager.h>
@@ -120,6 +121,7 @@ void ObjectViewer::Config()
 
    InitWireDecorator();
    InitGridPlanes();
+   InitLights();
 
    OnSetShaded();
    OnToggleGrid(true);
@@ -272,6 +274,13 @@ void ObjectViewer::OnAddLight(int id)
    //l->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightEnabled(int id, bool enabled)
+{
+   dtCore::Light* light = GetScene()->GetLight(id);
+   light->SetEnabled(enabled);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetAmbient(int id, const osg::Vec4& color)
 {
@@ -367,6 +376,21 @@ void ObjectViewer::InitGridPlanes()
 
    mGridGeode->addDrawable(geometry);
    mGridGeode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::InitLights()
+{
+   for (int lightIndex = 1; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   {
+      QString lightName = "Light";
+      lightName += lightIndex;
+
+      dtCore::Light* light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
+      GetScene()->AddDrawable(light);
+      light->SetEnabled(false);
+      GetScene()->RegisterLight(light);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

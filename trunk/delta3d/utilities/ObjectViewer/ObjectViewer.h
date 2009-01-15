@@ -88,6 +88,7 @@ public slots:
 
    // Lighting slots
    void OnAddLight(int id);
+   void OnSetLightEnabled(int id, bool enabled);
    void OnSetAmbient(int id, const osg::Vec4& color);
    void OnSetDiffuse(int id, const osg::Vec4& color);
    void OnSetSpecular(int id, const osg::Vec4& color);
@@ -124,6 +125,7 @@ private:
 
    void InitWireDecorator();
    void InitGridPlanes();
+   void InitLights();
 };
 
 #endif // DELTA_OBJECT_VIEWER

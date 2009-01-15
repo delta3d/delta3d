@@ -130,6 +130,9 @@ void Delta3DThread::MakeConnections()
 
    connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()), mViewer.get(), SLOT(OnRemoveShader()));
 
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightEnabled(int, bool)),
+      mViewer.get(), SLOT(OnSetLightEnabled(int, bool)));
+
    connect(mWin->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetAmbient(int, const osg::Vec4&)));
 
