@@ -638,6 +638,16 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    const osg::LightSource* osgSource = lightInfo.light->GetLightSource();
    const osg::Light* osgLight = osgSource->getLight();
 
+   bool enabled = lightInfo.light->GetEnabled();
+   if (enabled)
+   {
+      mLightItems[lightIndex].enabled->setText(1, "Enabled");
+   }
+   else
+   {
+      mLightItems[lightIndex].enabled->setText(1, "Disabled");
+   }
+
    const osg::Vec3& position = lightInfo.transform->GetTranslation();
    const osg::Vec4& ambient  = osgLight->getAmbient();
    const osg::Vec4& diffuse  = osgLight->getDiffuse();
@@ -649,7 +659,7 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    SetPositionItem(mLightItems[lightIndex].position, position);
    SetColorItem(mLightItems[lightIndex].ambient, ambient);
    SetColorItem(mLightItems[lightIndex].diffuse, diffuse);
-   SetColorItem(mLightItems[lightIndex].specular, specular);     
+   SetColorItem(mLightItems[lightIndex].specular, specular);
 
    //std::ostringstream oss;
    //oss << "light #" << lightNumber << ": (" 
@@ -728,6 +738,7 @@ void ResourceDock::CreateLightItems()
 
       mLightTreeWidget->addTopLevelItem(newLightItem);
 
+      mLightItems[lightIndex].enabled  = newLightItem;
       mLightItems[lightIndex].type     = type;
       mLightItems[lightIndex].position = CreatePositionItem(newLightItem);
       mLightItems[lightIndex].ambient  = CreateColorItem("Ambient", newLightItem);
@@ -765,10 +776,11 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    colorItem->setText(0, name.c_str());
    colorItem->setFlags(Qt::ItemIsEnabled);
 
-   //QColor color;
-   //QPixmap pix(16, 16);
-   //pix.fill(color);
-   //colorItem->setIcon(1, pix);
+   QColor color;
+   QPixmap colorPicker(16, 16);
+   colorPicker.fill(color);
+   colorItem->setIcon(1, colorPicker);
+   colorItem->setText(1, "Choose Color...");
 
    QTreeWidgetItem* redItem   = new QTreeWidgetItem(colorItem);
    QTreeWidgetItem* greenItem = new QTreeWidgetItem(colorItem);
@@ -789,7 +801,10 @@ void ResourceDock::SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& posit
    QString xString = QString("%1").arg(position.x());
    QString yString = QString("%1").arg(position.y());
    QString zString = QString("%1").arg(position.z());
-  
+
+   QString fullString = QString("[%1, %2, %3]").arg(xString, yString, zString);
+
+   item->setText(1, fullString);
    item->child(0)->setText(1, xString);
    item->child(1)->setText(1, yString);
    item->child(2)->setText(1, zString);
@@ -798,13 +813,17 @@ void ResourceDock::SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& posit
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color)
 {
-   QColor qtColor(color.x(), 
-                  color.y(),
-                  color.z(),
-                  color.w());
+   QColor qtColor(color.x() * 255, 
+                  color.y() * 255,
+                  color.z() * 255,
+                  color.w() * 255);
 
-   QBrush newBrush(QColor::fromRgbF(color.x(), color.y(), color.z(), color.a()));    
-   item->setBackground(1, newBrush);
+//   QBrush newBrush(QColor::fromRgbF(color.x(), color.y(), color.z(), color.a()));    
+//   item->setBackground(1, newBrush);
+
+   QPixmap colorFill(16, 16);
+   colorFill.fill(qtColor);
+   item->setIcon(1, colorFill);
 
    QString rString = QString("%1").arg(color.x());
    QString gString = QString("%1").arg(color.y());
@@ -832,15 +851,21 @@ void ResourceDock::OpenFilesInTextEditor(const std::vector<std::string>& fileLis
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int ResourceDock::GetLightIDFromItem(const QTreeWidgetItem* item)
+int ResourceDock::GetLightIDFromItem(QTreeWidgetItem* item)
 {
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      if (mLightItems[lightIndex].type     == item ||
-          mLightItems[lightIndex].position == item ||
-          mLightItems[lightIndex].ambient  == item ||
-          mLightItems[lightIndex].diffuse  == item ||
-          mLightItems[lightIndex].specular == item)
+      LightItems& light = mLightItems[lightIndex];
+      if (light.enabled  == item ||
+          light.type     == item ||
+          light.position == item ||
+          light.ambient  == item ||
+          light.diffuse  == item ||
+          light.specular == item ||
+          light.position->indexOfChild(item) != -1 ||
+          light.ambient->indexOfChild(item) != -1  ||
+          light.diffuse->indexOfChild(item) != -1  ||
+          light.specular->indexOfChild(item) != -1)
       {
          return lightIndex;
       }
@@ -854,44 +879,83 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
 {
    if (column == 1)
    {
-      // Verify this is a light color item
-      bool isAmbient  = item->text(0) == QString("Ambient");
-      bool isDiffuse  = item->text(0) == QString("Diffuse");
-      bool isSpecular = item->text(0) == QString("Specular");
+      int lightID = GetLightIDFromItem(item);
 
-      if (isAmbient || isDiffuse || isSpecular)
+      if (lightID != -1)
       {
-         // Bring up the color picker
-         bool clickedOk = false;
-         QRgb pickedColor = QColorDialog::getRgba(0xffffffff, &clickedOk);
+         LightItems& light = mLightItems[lightID];
 
-         // If the ok button was pressed
-         if (clickedOk)
+         // Toggle the enabled status of the light.
+         if (item == light.enabled)
          {
-            int lightID = GetLightIDFromItem(item);
-            assert(lightID != -1);
+            bool isEnabled = item->text(1) == QString("Enabled");
+            emit SetLightEnabled(lightID, !isEnabled);
+         }
 
-            // Get the normalized color values
-            float red   = qRed(pickedColor) / 255.0f;
-            float green = qGreen(pickedColor) / 255.0f;
-            float blue  = qBlue(pickedColor) / 255.0f;
-            float alpha = qAlpha(pickedColor) / 255.0f;
+         // Change the type of the light.
 
-            osg::Vec4 lightColor(red, green, blue, alpha);
+         // Change a color attribute of the light.
+         if (item == light.ambient ||
+             item == light.diffuse ||
+             item == light.specular ||
+             light.ambient->indexOfChild(item) != -1 ||
+             light.diffuse->indexOfChild(item) != -1 ||
+             light.specular->indexOfChild(item) != -1)
+         {
+            QColor color;
 
-            if (isAmbient)
+            // Get the current color.
+            if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
             {
-               emit SetAmbient(lightID, lightColor);
+               color.setRedF(light.ambient->child(0)->text(1).toFloat());
+               color.setGreenF(light.ambient->child(1)->text(1).toFloat());
+               color.setBlueF(light.ambient->child(2)->text(1).toFloat());
+               color.setAlphaF(light.ambient->child(3)->text(1).toFloat());
             }
-            else if (isDiffuse)
+            if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
             {
-               emit SetDiffuse(lightID, lightColor);
+               color.setRedF(light.diffuse->child(0)->text(1).toFloat());
+               color.setGreenF(light.diffuse->child(1)->text(1).toFloat());
+               color.setBlueF(light.diffuse->child(2)->text(1).toFloat());
+               color.setAlphaF(light.diffuse->child(3)->text(1).toFloat());
             }
-            else if (isSpecular)
+            if (item == light.specular || light.specular->indexOfChild(item) != -1)
             {
-               emit SetSpecular(lightID, lightColor);
+               color.setRedF(light.specular->child(0)->text(1).toFloat());
+               color.setGreenF(light.specular->child(1)->text(1).toFloat());
+               color.setBlueF(light.specular->child(2)->text(1).toFloat());
+               color.setAlphaF(light.specular->child(3)->text(1).toFloat());
             }
-         }         
+
+            // Bring up the color picker
+            bool clickedOk = false;
+            QRgb pickedColor = QColorDialog::getRgba(qRgba(color.red(), color.green(), color.blue(), color.alpha()), &clickedOk);
+
+            // If the ok button was pressed
+            if (clickedOk)
+            {
+               // Get the normalized color values
+               float red   = qRed(pickedColor) / 255.0f;
+               float green = qGreen(pickedColor) / 255.0f;
+               float blue  = qBlue(pickedColor) / 255.0f;
+               float alpha = qAlpha(pickedColor) / 255.0f;
+
+               osg::Vec4 lightColor(red, green, blue, alpha);
+
+               if (item == light.ambient || light.ambient->indexOfChild(item) != -1)
+               {
+                  emit SetAmbient(lightID, lightColor);
+               }
+               else if (item == light.diffuse || light.diffuse->indexOfChild(item) != -1)
+               {
+                  emit SetDiffuse(lightID, lightColor);
+               }
+               else if (item == light.specular || light.specular->indexOfChild(item) != -1)
+               {
+                  emit SetSpecular(lightID, lightColor);
+               }
+            }         
+         }
       }
    }   
 }
