@@ -138,13 +138,14 @@ private:
 
    struct LightItems
    {
-      QTreeWidgetItem* enabled;
+      QTreeWidgetItem* light;
       QTreeWidgetItem* type;
       QTreeWidgetItem* position;
-      QTreeWidgetItem* direction;
+      QTreeWidgetItem* rotation;
       QTreeWidgetItem* ambient;
       QTreeWidgetItem* diffuse;
       QTreeWidgetItem* specular;
+      QTreeWidgetItem* custom;
    };
 
    QTabWidget* mTabs;
@@ -162,6 +163,7 @@ private:
    void CreateLightItems();
 
    QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);
+   QTreeWidgetItem* CreateRotationItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
 
    void SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& position);
@@ -170,6 +172,9 @@ private:
    void OpenFilesInTextEditor(const std::vector<std::string>& fileList);
 
    int GetLightIDFromItem(QTreeWidgetItem* item);
+
+   void DeleteTreeItem(QTreeWidgetItem* item);
+   QTreeWidgetItem* CreateTreeItem(const QString& name, const QString& value, Qt::ItemFlags flags, QTreeWidgetItem* parent);
 
 private slots:
 
