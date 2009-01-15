@@ -25,8 +25,9 @@
 
 #include <QtGui/QAction>
 #include <QtGui/QTabWidget>
-#include <QtGui/QTreeWidget>
 #include <QtGui/QColorDialog>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QMenu>
 
 #include <QtCore/QDir>
 
@@ -39,7 +40,124 @@
 #include <sstream>
 #include <assert.h>
 
+////////////////////////////////////////////////////////////////////////////////
+ShaderTree::ShaderTree(QWidget* parent)
+   : QTreeWidget(parent)
+{
+   CreateContextActions();
+   CreateContextMenus();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+ShaderTree::~ShaderTree()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ShaderTree::SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled)
+{
+   mOpenVertexSource->setEnabled(vertexEnabled);
+   mOpenFragmentSource->setEnabled(fragmentEnabled);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ShaderTree::CreateContextActions()
+{
+   // Definition Actions
+   mEditShaderDef = new QAction(tr("&Edit"), this);
+   mEditShaderDef->setCheckable(false);
+   mEditShaderDef->setStatusTip(tr("Edits the Shader Definition File (Not implemented yet)"));
+   mEditShaderDef->setEnabled(false);
+   connect(mEditShaderDef, SIGNAL(triggered()), parent(), SLOT(OnEditShaderDef()));
+
+   mRemoveShaderDef = new QAction(tr("&Remove"), this);
+   mRemoveShaderDef->setCheckable(false);
+   mRemoveShaderDef->setStatusTip(tr("Removes the Shader Definition from the list"));
+   connect(mRemoveShaderDef, SIGNAL(triggered()), parent(), SLOT(OnRemoveShaderDef()));
+
+   // Program Actions
+   mOpenVertexSource = new QAction(tr("&Open Vertex Source"), this);
+   mOpenVertexSource->setCheckable(false);
+   mOpenVertexSource->setStatusTip(tr("Open Current Vertex Shader"));
+   connect(mOpenVertexSource, SIGNAL(triggered()), parent(), SLOT(OnOpenCurrentVertexShaderSources()));
+
+   mOpenFragmentSource = new QAction(tr("&Open Fragment Source"), this);
+   mOpenFragmentSource->setCheckable(false);
+   mOpenFragmentSource->setStatusTip(tr("Open Current Fragment Shader"));
+   connect(mOpenFragmentSource, SIGNAL(triggered()), parent(), SLOT(OnOpenCurrentFragmentShaderSources()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ShaderTree::CreateContextMenus()
+{
+   // Definition Context
+   mDefinitionContext = new QMenu(this);
+   mDefinitionContext->addAction(mEditShaderDef);
+   mDefinitionContext->addSeparator();
+   mDefinitionContext->addAction(mRemoveShaderDef);
+
+   // Program Context
+   mProgramContext = new QMenu(this);
+   mProgramContext->addAction(mOpenVertexSource);
+   mProgramContext->addAction(mOpenFragmentSource);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ShaderTree::contextMenuEvent(QContextMenuEvent *contextEvent)
+{
+   QTreeWidgetItem* clickedItem = this->itemAt(contextEvent->pos());
+   if (!clickedItem)
+   {
+      contextEvent->ignore();
+      return;
+   }
+
+   // De-select all items.
+   QList<QTreeWidgetItem*> itemList = selectedItems();
+   for (int selectedIndex = 0; selectedIndex < itemList.size(); selectedIndex++)
+   {
+      QTreeWidgetItem* treeItem = itemList.at(selectedIndex);
+      treeItem->setSelected(false);
+   }
+
+   // Select our clicked item.
+   clickedItem->setSelected(true);
+
+   // Iterate through each definition to see if they were selected.
+   for (int itemIndex = 0; itemIndex < topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = topLevelItem(itemIndex);
+
+      if (fileItem == clickedItem)
+      {
+         // Show Shader Definition Context menu.
+         mDefinitionContext->exec(contextEvent->globalPos());
+         return;
+      }
+
+      // Iterate through each program to see if they were selected.
+      for (int groupIndex = 0; groupIndex < fileItem->childCount(); groupIndex++)
+      {
+         QTreeWidgetItem* groupItem = fileItem->child(groupIndex);
+
+         for (int programIndex = 0; programIndex < groupItem->childCount(); programIndex++)
+         {
+            QTreeWidgetItem* programItem = groupItem->child(programIndex);
+
+            if (programItem == clickedItem)
+            {
+               mProgramContext->exec(contextEvent->globalPos());
+               return;
+            }
+         }
+      }
+   }
+
+   contextEvent->ignore();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
+
 ResourceDock::ResourceDock()
   : QDockWidget()
   , mTabs(NULL)
@@ -48,7 +166,7 @@ ResourceDock::ResourceDock()
    setMouseTracking(true);
   
    mGeometryTreeWidget = new QTreeWidget(this);
-   mShaderTreeWidget   = new QTreeWidget(this);  
+   mShaderTreeWidget   = new ShaderTree(this);  
    mLightTreeWidget    = new QTreeWidget(this);  
 
    mGeometryTreeWidget->headerItem()->setText(0, "");
@@ -57,6 +175,9 @@ ResourceDock::ResourceDock()
 
    connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int))); 
+
+   connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()),
+      this, SLOT(OnShaderSelectionChanged()));
 
    connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
            this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int))); 
@@ -148,6 +269,57 @@ bool ResourceDock::FindShaderFileEntryName(const std::string& entryName) const
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::ReselectCurrentShaderItem()
+{
+   // Get the file item.
+   QTreeWidgetItem* fileItem = FindShaderFileItem(mCurrentShaderFile.toStdString());
+
+   // If the file no longer exists, clear the data and return none
+   if (fileItem == NULL)
+   {
+      mCurrentShaderFile.clear();
+      mCurrentShaderGroup.clear();
+      mCurrentShaderProgram.clear();
+      return;
+   }
+   fileItem->setExpanded(true);
+
+   // Get the group item.
+   QTreeWidgetItem* groupItem = FindShaderGroupItem(mCurrentShaderGroup.toStdString(), fileItem);
+
+   // If the group doesn't exist, clear the data and return none
+   if (groupItem == NULL)
+   {
+      mCurrentShaderFile.clear();
+      mCurrentShaderGroup.clear();
+      mCurrentShaderProgram.clear();
+      return;
+   }
+   groupItem->setExpanded(true);
+
+   // Now find the program.
+   for (int childIndex = 0; childIndex < groupItem->childCount(); childIndex++)
+   {
+      QTreeWidgetItem* programItem = groupItem->child(childIndex);
+
+      if (mCurrentShaderProgram == programItem->text(0))
+      {
+         mCurrentShaderFile.clear();
+         mCurrentShaderGroup.clear();
+         mCurrentShaderProgram.clear();
+         programItem->setCheckState(0, Qt::Checked);
+         programItem->setSelected(true);
+         return;
+      }
+   }
+
+   // If we get here, it means the program doesn't exist.
+   mCurrentShaderFile.clear();
+   mCurrentShaderGroup.clear();
+   mCurrentShaderProgram.clear();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::SetGeometry(const std::string& fullName, bool shouldDisplay) const
 {  
@@ -169,7 +341,7 @@ void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram)
 {
-   //// We don't want this signal emitted when we're adding a shader
+   // We don't want this signal emitted when we're adding a shader
    disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
               this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 
@@ -246,6 +418,72 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnShaderSelectionChanged()
+{
+   dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
+
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
+   {
+      QTreeWidgetItem* selectedItem = itemList.at(0);
+
+      // Now determine if the selected item is a program.
+      for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+      {
+         QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
+
+         if (fileItem == selectedItem)
+         {
+            ToggleVertexShaderSources(false);
+            ToggleFragmentShaderSources(false);
+            mShaderTreeWidget->SetShaderSourceEnabled(false, false);
+            return;
+         }
+
+         // Iterate through each program to see if they were selected.
+         for (int groupIndex = 0; groupIndex < fileItem->childCount(); groupIndex++)
+         {
+            QTreeWidgetItem* groupItem = fileItem->child(groupIndex);
+
+            if (groupItem == selectedItem)
+            {
+               ToggleVertexShaderSources(false);
+               ToggleFragmentShaderSources(false);
+               mShaderTreeWidget->SetShaderSourceEnabled(false, false);
+               return;
+            }
+
+            for (int programIndex = 0; programIndex < groupItem->childCount(); programIndex++)
+            {
+               QTreeWidgetItem* programItem = groupItem->child(programIndex);
+
+               if (programItem == selectedItem)
+               {
+                  dtCore::ShaderProgram *program = 
+                     shaderManager.FindShaderPrototype(programItem->text(0).toStdString(), groupItem->text(0).toStdString());
+                  if (program)
+                  {
+                     const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+                     const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+                     
+                     bool vertexEnabled = vertShaderList.size()? true: false;
+                     bool fragmentEnabled = fragShaderList.size()? true: false;
+                     
+                     ToggleVertexShaderSources(vertexEnabled);
+                     ToggleFragmentShaderSources(fragmentEnabled);
+                     mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, fragmentEnabled);
+                  }  
+                  return;
+               }
+            }
+         }
+      }
+   }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 { 
@@ -285,16 +523,6 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          }
 
          emit ApplyShader(groupName.toStdString(), programName.toStdString());
-
-         dtCore::ShaderProgram *program = 
-            shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
-         if (program)
-         {
-            const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-            ToggleVertexShaderSources(vertShaderList.size()? true: false);
-            const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-            ToggleFragmentShaderSources(fragShaderList.size()? true: false);
-         }  
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
@@ -305,9 +533,6 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
          {
             mCurrentShaderGroup.clear();
             mCurrentShaderProgram.clear();
-
-            ToggleVertexShaderSources(false);
-            ToggleFragmentShaderSources(false);
          }
 
          emit RemoveShader();
@@ -352,6 +577,9 @@ void ResourceDock::OnReloadShaderFiles()
          }
       }
    }
+
+   // Now reload the most recent shader.
+   ReselectCurrentShaderItem();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -436,14 +664,21 @@ void ResourceDock::OnOpenCurrentVertexShaderSources()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
 
-   dtCore::ShaderProgram *program = 
-      shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
-   
-   if (program)
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
    {
-      const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-      OpenFilesInTextEditor(vertShaderList);     
-   }  
+      QTreeWidgetItem* currentItem = itemList.at(0);
+
+      dtCore::ShaderProgram *program = 
+         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
+      
+      if (program)
+      {
+         const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
+         OpenFilesInTextEditor(vertShaderList);     
+      }
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -451,14 +686,21 @@ void ResourceDock::OnOpenCurrentFragmentShaderSources()
 {
    dtCore::ShaderManager &shaderManager = dtCore::ShaderManager::GetInstance();
 
-   dtCore::ShaderProgram *program = 
-      shaderManager.FindShaderPrototype(mCurrentShaderProgram.toStdString(), mCurrentShaderGroup.toStdString());
+   QList<QTreeWidgetItem*> itemList = mShaderTreeWidget->selectedItems();
 
-   if (program)
+   if (itemList.size() > 0)
    {
-      const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-      OpenFilesInTextEditor(fragShaderList);     
-   }  
+      QTreeWidgetItem* currentItem = itemList.at(0);
+
+      dtCore::ShaderProgram *program = 
+         shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
+
+      if (program)
+      {
+         const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
+         OpenFilesInTextEditor(fragShaderList);     
+      }
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -522,6 +764,11 @@ QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWid
    QTreeWidgetItem* colorItem = new QTreeWidgetItem(parent);
    colorItem->setText(0, name.c_str());
    colorItem->setFlags(Qt::ItemIsEnabled);
+
+   //QColor color;
+   //QPixmap pix(16, 16);
+   //pix.fill(color);
+   //colorItem->setIcon(1, pix);
 
    QTreeWidgetItem* redItem   = new QTreeWidgetItem(colorItem);
    QTreeWidgetItem* greenItem = new QTreeWidgetItem(colorItem);
@@ -649,4 +896,29 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
    }   
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnEditShaderDef()
+{
+   // TODO: Open the Shader Definition file in an XML editor.
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnRemoveShaderDef()
+{
+   // Iterate through each file item and find the one we want to remove.
+   for (int itemIndex = 0; itemIndex < mShaderTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* fileItem = mShaderTreeWidget->topLevelItem(itemIndex);
+
+      if (fileItem->isSelected())
+      {
+         mShaderTreeWidget->takeTopLevelItem(itemIndex);
+
+         emit RemoveShaderDef(fileItem->toolTip(0).toStdString());
+
+         OnReloadShaderFiles();
+         return;
+      }
+   }
+}
 
