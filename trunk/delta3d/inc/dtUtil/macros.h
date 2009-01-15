@@ -138,6 +138,8 @@
 #endif
 
 // Eliminate compiler warnings for unused variables
-#define UNREFERENCED_PARAMETER(parameter) (parameter)
+#ifndef UNREFERENCED_PARAMETER
+   #define UNREFERENCED_PARAMETER(parameter) ((void)parameter)
+#endif
 
 #endif // DELTA_MACROS
