@@ -110,14 +110,14 @@ namespace dtCore
       };
 
       /** 
-      * Constructor
-      *     
-      * @param windowTraits : the properties used to create the window.
-      */
-      DeltaWin(const DeltaWinTraits& windowTraits);
+       * Constructor that uses custom traits
+       *     
+       * @param windowTraits : the properties used to create the window.
+       */
+      DeltaWin(const DeltaWinTraits& windowTraits = DeltaWinTraits());
 
       /// DEPRECATED 01/14/09 in favor of dtCore::DeltaWin(const DeltaWinTraits& windowTraits)
-      DeltaWin(const std::string& name = "defaultWindow", 
+      DeltaWin(const std::string& name, 
                int x = 0, int y = 0, 
                int width = 640, int height = 480, 
                bool cursor = true, bool fullScreen = false,
@@ -236,6 +236,9 @@ namespace dtCore
       bool IsValidResolution(const Resolution& candidate);
       
    private:
+
+      int mLastWindowedWidth;
+      int mLastWindowedHeight;
 
       void CreateDeltaWindow(const DeltaWinTraits& windowTraits);
 
