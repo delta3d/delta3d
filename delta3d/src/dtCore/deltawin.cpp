@@ -15,8 +15,14 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
+
 ////////////////////////////////////////////////////////////////////////////////
 DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
+   : Base(windowTraits.name)
+   , mIsFullScreen(false)
+   , mShowCursor(true)
+   , mLastWindowedWidth(640)
+   , mLastWindowedHeight(480)
 {
    RegisterInstance(this);  
    CreateDeltaWindow(windowTraits);
@@ -30,7 +36,9 @@ DeltaWin::DeltaWin(const std::string& name,
                    osg::Referenced* inheritedWindowData)
    : Base(name)
    , mIsFullScreen(false)
-   , mShowCursor(true) // force set fullscreen
+   , mShowCursor(true)
+   , mLastWindowedWidth(640)
+   , mLastWindowedHeight(480)
 {  
    RegisterInstance(this);
 
@@ -161,11 +169,9 @@ void DeltaWin::SetFullScreenMode(bool enable)
 
    if (mIsFullScreen)
    {
-      osg::Vec2 resolution;
+      int rx = mLastWindowedWidth;
+      int ry = mLastWindowedHeight;
 
-      int rx = 640;
-      int ry = 480;
-      
       mOsgViewerGraphicsWindow->setWindowDecoration(true);
       mOsgViewerGraphicsWindow->setWindowRectangle((screenWidth - rx) / 2, (screenHeight - ry) / 2, rx, ry);
    }
@@ -184,12 +190,20 @@ void DeltaWin::SetFullScreenMode(bool enable)
 void DeltaWin::SetPosition(int x, int y, int width, int height)
 {
    mOsgViewerGraphicsWindow->setWindowRectangle(x, y, width, height);
+
+   // Save the window size in case we have to restore it later
+   mLastWindowedWidth  = width;
+   mLastWindowedHeight = height;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void DeltaWin::SetPosition(const DeltaWin::PositionSize& positionSize)
 {
    SetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
+
+   // Save the window size in case we have to restore it later
+   mLastWindowedWidth  = positionSize.mWidth;
+   mLastWindowedHeight = positionSize.mHeight;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
