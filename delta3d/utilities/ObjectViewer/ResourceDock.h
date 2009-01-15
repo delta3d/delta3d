@@ -22,6 +22,7 @@
 #define DELTA_RESOURCE_DOCK
 
 #include <QtGui/QWidget>
+#include <QtGui/QTreeWidget>
 #include <QtGui/QDockWidget>
 #include <QtGui/QMainWindow>
 #include <QtCore/QObject>
@@ -31,7 +32,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 class QTabWidget;
-class QTreeWidget;
 class QTreeWidgetItem;
 
 struct LightInfo;
@@ -42,6 +42,36 @@ namespace dtCore
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+* @class ShaderTree
+* @brief This class contains the context menu support for the shader tree.
+*/
+class ShaderTree : public QTreeWidget
+{
+public:
+   ShaderTree(QWidget* parent = NULL);
+   ~ShaderTree();
+
+   void SetShaderSourceEnabled(bool vertexEnabled, bool fragmentEnabled);
+
+private:
+
+   void CreateContextActions();
+   void CreateContextMenus();
+
+   void contextMenuEvent(QContextMenuEvent* contextEvent);
+
+   // Context Menu
+   QAction* mEditShaderDef;
+   QAction* mRemoveShaderDef;
+
+   QAction* mOpenVertexSource;
+   QAction* mOpenFragmentSource;
+
+   QMenu*   mDefinitionContext;
+   QMenu*   mProgramContext;
+};
 
 /**
 * @class ResourceDock
@@ -58,6 +88,7 @@ public:
    QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
+   void ReselectCurrentShaderItem();
 
    bool FindShaderFileEntryName(const std::string& entryName) const;
 
@@ -82,9 +113,12 @@ signals:
    void ToggleVertexShaderSources(bool enabled);
    void ToggleFragmentShaderSources(bool enabled);
 
+   void RemoveShaderDef(const std::string& filename);
+
 public slots:
    
    void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
+   void OnShaderSelectionChanged();
    void OnShaderItemChanged(QTreeWidgetItem* item, int column);
    void OnReloadShaderFiles();
 
@@ -109,9 +143,9 @@ private:
 
    QTabWidget* mTabs;
 
-   QTreeWidget* mShaderTreeWidget;
-   QTreeWidget* mGeometryTreeWidget;  
-   QTreeWidget* mLightTreeWidget; 
+   ShaderTree*    mShaderTreeWidget;
+   QTreeWidget*   mGeometryTreeWidget;  
+   QTreeWidget*   mLightTreeWidget; 
 
    LightItems mLightItems[dtCore::MAX_LIGHTS];  
 
@@ -135,6 +169,8 @@ private slots:
 
    void OnLightItemClicked(QTreeWidgetItem* item, int column);
 
+   void OnEditShaderDef();
+   void OnRemoveShaderDef();
 };
 
 

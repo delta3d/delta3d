@@ -294,6 +294,16 @@ void ObjectWorkspace::OnToggleFragmentShaderSource(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnRemoveShaderDef(const std::string& filename)
+{
+   if (mAdditionalShaderFiles.contains(filename))
+   {
+      mAdditionalShaderFiles.removeOne(filename);
+      SaveCurrentShaderFiles();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::UpdateResourceLists()
 {
    assert(!mContextPath.empty());

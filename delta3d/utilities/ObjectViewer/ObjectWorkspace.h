@@ -64,6 +64,7 @@ public slots:
    void OnRecompileClicked();
    void OnToggleVertexShaderSource(bool enabled);
    void OnToggleFragmentShaderSource(bool enabled);
+   void OnRemoveShaderDef(const std::string& filename);
 
 private:
    void CreateMenus();

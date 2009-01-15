@@ -139,13 +139,16 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
-   connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));   
+   connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));
 
    connect(mWin->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
       mWin, SLOT(OnToggleVertexShaderSource(bool)));
 
    connect(mWin->GetResourceObject(), SIGNAL(ToggleFragmentShaderSources(bool)),
       mWin, SLOT(OnToggleFragmentShaderSource(bool)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(RemoveShaderDef(const std::string&)),
+      mWin, SLOT(OnRemoveShaderDef(const std::string&)));
 
    // Toolbar connections
    connect((QObject*)mWin->mShadedAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShaded()));
