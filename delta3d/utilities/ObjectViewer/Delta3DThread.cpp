@@ -149,6 +149,27 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightAzimuth(int, float)),
+      mViewer.get(), SLOT(OnSetLightAzimuth(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightElevation(int, float)),
+      mViewer.get(), SLOT(OnSetLightElevation(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightCutoff(int, float)),
+      mViewer.get(), SLOT(OnSetLightCutoff(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightExponent(int, float)),
+      mViewer.get(), SLOT(OnSetLightExponent(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightConstant(int, float)),
+      mViewer.get(), SLOT(OnSetLightConstant(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightLinear(int, float)),
+      mViewer.get(), SLOT(OnSetLightLinear(int, float)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightQuadratic(int, float)),
+      mViewer.get(), SLOT(OnSetLightQuadratic(int, float)));
+
    connect(mWin, SIGNAL(ToggleGrid(bool)), mViewer.get(), SLOT(OnToggleGrid(bool)));
 
    connect(mWin->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),

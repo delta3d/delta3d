@@ -375,6 +375,88 @@ void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
    light->SetSpecular(color);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightAzimuth(int id, float azimuth)
+{
+   dtCore::InfiniteLight* light = dynamic_cast<dtCore::InfiniteLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      float oldAzimuth = 0.0f;
+      float elevation = 0.0f;
+      light->GetAzimuthElevation(oldAzimuth, elevation);
+      light->SetAzimuthElevation(azimuth, elevation);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightElevation(int id, float elevation)
+{
+   dtCore::InfiniteLight* light = dynamic_cast<dtCore::InfiniteLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      float azimuth = 0.0f;
+      float oldElevation = 0.0f;
+      light->GetAzimuthElevation(azimuth, oldElevation);
+      light->SetAzimuthElevation(azimuth, elevation);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightCutoff(int id, float cutoff)
+{
+   dtCore::SpotLight* light = dynamic_cast<dtCore::SpotLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      light->SetSpotCutoff(cutoff);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightExponent(int id, float exponent)
+{
+   dtCore::SpotLight* light = dynamic_cast<dtCore::SpotLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      light->SetSpotExponent(exponent);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightConstant(int id, float constant)
+{
+   dtCore::PositionalLight* light = dynamic_cast<dtCore::PositionalLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      osg::Vec3 attenuation = light->GetAttenuation();
+      attenuation[0] = constant;
+      light->SetAttenuation(attenuation);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightLinear(int id, float linear)
+{
+   dtCore::PositionalLight* light = dynamic_cast<dtCore::PositionalLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      osg::Vec3 attenuation = light->GetAttenuation();
+      attenuation[1] = linear;
+      light->SetAttenuation(attenuation);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightQuadratic(int id, float quadratic)
+{
+   dtCore::PositionalLight* light = dynamic_cast<dtCore::PositionalLight*>(GetScene()->GetLight(id));
+   if (light)
+   {
+      osg::Vec3 attenuation = light->GetAttenuation();
+      attenuation[2] = quadratic;
+      light->SetAttenuation(attenuation);
+   }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnEnterObjectMode()
 {
