@@ -585,7 +585,7 @@ public:
    }
 
 private:
-   static char* mTestActorLibrary;
+   static const char* mTestActorLibrary;
    dtCore::RefPtr<dtGame::GameManager> mManager;
 
    dtCore::RefPtr<dtDAL::NamedGroupParameter> CreateNamedGroupParameter();
@@ -598,7 +598,7 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(NamedParameterTests);
 
-char* NamedParameterTests::mTestActorLibrary="testActorLibrary";
+const char* NamedParameterTests::mTestActorLibrary="testActorLibrary";
 
 void NamedParameterTests::setUp()
 {

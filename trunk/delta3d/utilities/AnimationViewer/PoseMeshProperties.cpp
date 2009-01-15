@@ -95,7 +95,7 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::
 ///////////////////////////////////////////////////////////////////////////////
 void PoseMeshProperties::OnItemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-   UNREFERENCED_PARAMETER(column);
+   DTUNREFERENCED_PARAMETER(column);
    emit ViewPoseMesh(item->text(0).toStdString());
 }
 
@@ -123,7 +123,7 @@ void PoseMeshProperties::OnItemToggled(QTreeWidgetItem* item, int column)
 ///////////////////////////////////////////////////////////////////////////////
 void PoseMeshProperties::OnItemExpanded(QTreeWidgetItem* item)
 {
-   UNREFERENCED_PARAMETER(item);
+   DTUNREFERENCED_PARAMETER(item);
 
    // Make sure we can read everything in the columns
    resizeColumnToContents(0);

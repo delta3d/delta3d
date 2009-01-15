@@ -2424,7 +2424,7 @@ void AudioManager::ListenerObj::Clear( void )
          ALfloat  at[3];
          ALfloat  up[3];
       };
-   }  orient = { 0.0f };
+   }  orient;
    orient.ort[0] = 0.0f;
    orient.ort[1] = 1.0f;
    orient.ort[2] = 0.0f;

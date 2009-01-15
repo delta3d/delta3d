@@ -11,7 +11,7 @@ namespace dtUtil
 {
    
    ////////////////////////////////////////////////////////////////////
-   static bool Scan(char*& wildCards, char*& str) 
+   static bool Scan(const char*& wildCards, const char*& str) 
    {
       // scan '?' and '*'
 
@@ -37,8 +37,8 @@ namespace dtUtil
       } 
       else 
       {
-         char* wdsCopy = wildCards;
-         char* strCopy = str;
+         const char* wdsCopy = wildCards;
+         const char* strCopy = str;
          bool  Yes     = true;
          do 
          {
@@ -58,7 +58,7 @@ namespace dtUtil
    }
    
    ////////////////////////////////////////////////////////////////////
-   static bool WildMatch(char *wildCards, char *str)
+   static bool WildMatch(const char *wildCards, const char *str)
    {
       bool Yes = true;
    
@@ -87,7 +87,7 @@ namespace dtUtil
    }
    
    ////////////////////////////////////////////////////////////////////
-   bool Match(char* Wildcards, char* str)
+   bool Match(const char* Wildcards, const char* str)
    {
       return WildMatch(Wildcards, str);    
    }

@@ -65,7 +65,7 @@ class DeprecationMgrTests : public CPPUNIT_NS::TestFixture {
       /**
       * Function to deprecate (args)
       */
-      void funcToDeprecate2(int x, char* y);
+      void funcToDeprecate2(int x, const char* y);
 
       /**
       * The replacement function for funcToDeprecate1()
@@ -152,4 +152,4 @@ void DeprecationMgrTests::TestCallDeprecatedFunction()
 void DeprecationMgrTests::correctFunction1(){}
 void DeprecationMgrTests::correctFunction2(int x, std::string& y){}
 void DeprecationMgrTests::funcToDeprecate1(){}
-void DeprecationMgrTests::funcToDeprecate2(int x, char* y){}
+void DeprecationMgrTests::funcToDeprecate2(int x, const char* y){}

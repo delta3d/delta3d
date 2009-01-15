@@ -116,7 +116,7 @@ ViewWindow::FileLoaded( bool loaded, const char* filename )
 void 
 ViewWindow::DisplayError( const std::string &msg )
 {
-   fl_alert(msg.c_str());
+   fl_alert("%s", msg.c_str());
 }
 
 const char*

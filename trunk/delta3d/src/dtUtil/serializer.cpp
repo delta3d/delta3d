@@ -9,7 +9,7 @@
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
 
-DOMElement* Serializer::ToInt(int value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToInt(const int value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode(name);
@@ -26,7 +26,7 @@ DOMElement* Serializer::ToInt(int value, char* name, XERCES_CPP_NAMESPACE_QUALIF
    return element;
 }
 
-DOMElement* Serializer::ToFloat(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToFloat(const float value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode(name);
@@ -43,7 +43,7 @@ DOMElement* Serializer::ToFloat(float value, char* name, XERCES_CPP_NAMESPACE_QU
    return element;
 }
 
-DOMElement* Serializer::ToDouble(double value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToDouble(const double value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode(name);
@@ -60,7 +60,7 @@ DOMElement* Serializer::ToDouble(double value, char* name, XERCES_CPP_NAMESPACE_
    return element;
 }
 
-DOMElement* Serializer::ToBool(bool value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToBool(const bool value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode(name);
@@ -77,7 +77,7 @@ DOMElement* Serializer::ToBool(bool value, char* name, XERCES_CPP_NAMESPACE_QUAL
    return element;
 }
 
-DOMElement* Serializer::ToString(const std::string& value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToString(const std::string& value, const char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode(name);

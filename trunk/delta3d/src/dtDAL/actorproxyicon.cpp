@@ -72,11 +72,11 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename)
-      :mIconStateSet(NULL),
-      mConeStateSet(NULL),
-      mCylinderStateSet(NULL),
-      mIconNode(NULL),
-      mIconImageFile(iconImageFilename)
+      : mIconImageFile(iconImageFilename)
+      , mIconNode(NULL)
+      , mIconStateSet(NULL)
+      , mConeStateSet(NULL)
+      , mCylinderStateSet(NULL)
    {
       CreateBillBoard();
    }
@@ -84,13 +84,13 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename, 
                                   const ActorProxyIconConfig& pConfig)
-      : mIconStateSet(0)
+      : mIconImageFile(iconImageFilename)
+      , mConfig(pConfig)
+      , mIconNode(NULL)
+      , mIconStateSet(0)
       , mConeStateSet(0)
       , mCylinderStateSet(0)
-      , mConfig(pConfig)
-      , mIconImageFile(iconImageFilename)
    {
-      mIconNode = NULL;
       CreateBillBoard();
    }
 

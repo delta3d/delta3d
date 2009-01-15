@@ -19,10 +19,10 @@ IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 ////////////////////////////////////////////////////////////////////////////////
 DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
    : Base(windowTraits.name)
-   , mIsFullScreen(false)
-   , mShowCursor(true)
    , mLastWindowedWidth(640)
    , mLastWindowedHeight(480)
+   , mIsFullScreen(false)
+   , mShowCursor(true)
 {
    RegisterInstance(this);  
    CreateDeltaWindow(windowTraits);
@@ -35,10 +35,10 @@ DeltaWin::DeltaWin(const std::string& name,
                    bool cursor, bool fullScreen,
                    osg::Referenced* inheritedWindowData)
    : Base(name)
-   , mIsFullScreen(false)
-   , mShowCursor(true)
    , mLastWindowedWidth(640)
    , mLastWindowedHeight(480)
+   , mIsFullScreen(false)
+   , mShowCursor(true)
 {  
    RegisterInstance(this);
 

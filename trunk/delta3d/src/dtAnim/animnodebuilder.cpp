@@ -395,7 +395,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateHardware(Cal3DModelWrapper* pWr
 ////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNULL(Cal3DModelWrapper* pWrapper)
 {
-   UNREFERENCED_PARAMETER(pWrapper);
+   DTUNREFERENCED_PARAMETER(pWrapper);
 
    dtCore::RefPtr<osg::Geode> geode = new osg::Geode();
 

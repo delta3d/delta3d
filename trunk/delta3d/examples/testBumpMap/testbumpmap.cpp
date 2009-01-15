@@ -73,9 +73,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, const std::string& configFilename /*= "config.xml"*/)
    : Application(configFilename)
+   , mTotalTime(0.0f)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
-   , mTotalTime(0.0f)
 {
    //load the xml file which specifies our shaders
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();

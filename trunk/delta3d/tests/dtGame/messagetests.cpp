@@ -137,8 +137,8 @@ public:
    void TestActorEnteredWorldMessage();
 
 private:
-   static char* mTestGameActorLibrary;
-   static char* mTestActorLibrary;
+   static const char* mTestGameActorLibrary;
+   static const char* mTestActorLibrary;
 
    void createActors(dtDAL::Map& map);
    void RemoveOneProxy(dtDAL::Map& map);
@@ -158,8 +158,8 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(MessageTests);
 
-char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
-char* MessageTests::mTestActorLibrary="testActorLibrary";
+const char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
+const char* MessageTests::mTestActorLibrary="testActorLibrary";
 
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::setUp()

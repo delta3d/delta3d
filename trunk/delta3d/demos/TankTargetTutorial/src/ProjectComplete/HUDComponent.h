@@ -75,7 +75,7 @@ class TUTORIAL_TANK_EXPORT HUDComponent : public dtGame::GMComponent
        * Check to see if the data changed.  The default values for color and position
        * won't do anything since they use a color and position < 0.
        */
-      void UpdateStaticText(CEGUI::Window *textControl, char *newText,
+      void UpdateStaticText(CEGUI::Window *textControl, const char *newText,
                             float red = -1.0, float blue = -1.0, float green = -1.0,
                             float x = -1, float y = -1);
 

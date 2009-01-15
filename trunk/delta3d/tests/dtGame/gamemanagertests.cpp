@@ -1235,7 +1235,7 @@ void GameManagerTests::TestTimers()
    CPPUNIT_ASSERT_MESSAGE(msg2.str(), currentRealTime > expectedRealTime);
 
    const dtCore::Timer_t lateSimTime  = currentSimTime  - expectedSimTime;
-   const dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
+   //const dtCore::Timer_t lateRealTime = currentRealTime - expectedRealTime;
 
    std::vector<dtCore::RefPtr<const dtGame::Message> > msgs = tc->GetReceivedProcessMessages();
    bool foundTimeMsg = false;
