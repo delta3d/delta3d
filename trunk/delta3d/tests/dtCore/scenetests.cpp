@@ -34,6 +34,7 @@
 #include <dtCore/environment.h>
 #include <dtCore/skybox.h>
 #include <dtCore/system.h>
+#include <dtCore/object.h>
 #include <dtABC/application.h>
 #include <dtUtil/stringutils.h>
 
@@ -49,6 +50,7 @@ class CoreTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestAssignToView);
       CPPUNIT_TEST(TestScene);
       CPPUNIT_TEST(TestHeightOfTerrainWithSkybox);
+      CPPUNIT_TEST(TestGettingAllDeltaDrawablesInScene);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -59,6 +61,7 @@ class CoreTests : public CPPUNIT_NS::TestFixture
       void TestAssignToView();
       void TestScene();
       void TestHeightOfTerrainWithSkybox();
+      void TestGettingAllDeltaDrawablesInScene();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CoreTests);
@@ -204,4 +207,57 @@ void CoreTests::TestHeightOfTerrainWithSkybox()
 
    CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("The height of terrain of an empty scene should be zero.",
                                         0.f, hot, 0.0001f);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CoreTests::TestGettingAllDeltaDrawablesInScene()
+{
+   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene();
+   
+   //the Scene automatically adds a light as a DeltaDrawble.  We'll remove it
+   //so that it won't affect out test
+   scene->UseSceneLight(false);
+   scene->RemoveDrawable(scene->GetLight(0));
+
+   dtCore::RefPtr<dtCore::Object> obj1 = new dtCore::Object("one");
+   dtCore::RefPtr<dtCore::Object> obj2 = new dtCore::Object("two");
+   dtCore::RefPtr<dtCore::Object> obj3 = new dtCore::Object("three");
+   dtCore::RefPtr<dtCore::Object> obj4 = new dtCore::Object("four");
+
+   obj1->AddChild(obj2.get());
+   obj2->AddChild(obj3.get());
+   obj2->AddChild(obj4.get());
+
+   scene->AddDrawable(obj1.get());
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene should just have one DeltaDrawable added",
+                                (unsigned int)1, scene->GetNumberOfAddedDrawable());
+
+   std::vector<dtCore::DeltaDrawable*> drawables = scene->GetAllDrawablesInTheScene();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene should have returned all of the DeltaDrawables in the Scene",
+                                size_t(4), drawables.size());
+
+   bool foundOne(false);
+   bool foundTwo(false);
+   bool foundThree(false);
+   bool foundFour(false);
+
+   std::vector<dtCore::DeltaDrawable*>::iterator itr = drawables.begin();
+   while (itr != drawables.end())
+   {
+      if ((*itr) == obj1.get())  {foundOne = true; }
+      if ((*itr) == obj2.get())  {foundTwo = true; }
+      if ((*itr) == obj3.get())  {foundThree = true; }
+      if ((*itr) == obj4.get())  {foundFour = true; }
+
+      ++itr;
+   }
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene did not return an Object in the Scene", true, foundOne);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene did not return an Object in the Scene", true, foundTwo);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene did not return an Object in the Scene", true, foundThree);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Scene did not return an Object in the Scene", true, foundFour);
+
+   scene->RemoveAllDrawables();
 }

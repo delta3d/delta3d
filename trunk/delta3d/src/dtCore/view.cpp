@@ -287,22 +287,29 @@ dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
       return NULL;
    }
 
-   //if a node in a hit's node path is owned by a DeltaDrawable, then return it
+   //For every isector hit, loop through all of the Nodes in it's NodePath and
+   //try to find a corresponding DeltaDrawable that's in the Scene.
+   //Will return back the first match found.
+   //Note: using a reverse iterator to loop through the NodePath.  This should cause 
+   //it to return the child-most DeltaDrawable and not the DeltaDrawable parents.
+   std::vector<dtCore::DeltaDrawable*> drawables = scene->GetAllDrawablesInTheScene();
+
    std::multiset< osgUtil::LineSegmentIntersector::Intersection >::const_iterator hitItr = hitList.begin();
    while (hitItr != hitList.end())
    {
-      for (unsigned int i=0; i<scene->GetNumberOfAddedDrawable(); i++)
+      osg::NodePath::const_reverse_iterator nodeItr = hitItr->nodePath.rbegin();
+      while (nodeItr != hitItr->nodePath.rend())
       {
-         osg::NodePath::const_iterator nodeItr = hitItr->nodePath.begin();
-         while (nodeItr != hitItr->nodePath.end())
+         std::vector<dtCore::DeltaDrawable*>::iterator drawableItr = drawables.begin();
+         while (drawableItr != drawables.end())
          {
-            if (*nodeItr == scene->GetDrawable(i)->GetOSGNode())
+            if ((*nodeItr) == (*drawableItr)->GetOSGNode())
             {
-               //found a match, return it
-               return scene->GetDrawable(i);
+               return (*drawableItr);
             }
-            ++nodeItr;
+            ++drawableItr;
          }
+         ++nodeItr;
       }
       ++hitItr;
    }
