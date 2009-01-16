@@ -128,6 +128,7 @@ OPTION(BUILD_TESTS "Enables the building of the unit tests (requires CPPUNIT)" O
 OPTION(BUILD_EXAMPLES "Enables the building of the Delta3D example projects" ON)
 OPTION(BUILD_DEMOS "Enables the building of the Delta3D demo projects" ON)
 OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled headers, where applicable" OFF)
+OPTION(BUILD_WITH_QT "Enables the building of projects that require Qt" ON)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
 if (BUILD_HLA)
@@ -269,9 +270,10 @@ INCLUDE_DIRECTORIES(
 )
 
 
-
-SET(QT_USE_QTOPENGL "true")
-FIND_PACKAGE(Qt4)     #for STAGE, AnimationViewer, ObjectViewer
+IF (BUILD_WITH_QT)
+  SET(QT_USE_QTOPENGL "true")
+  FIND_PACKAGE(Qt4 REQUIRED)     #for STAGE, AnimationViewer, ObjectViewer
+ENDIF (BUILD_WITH_QT)
 
   
 IF (BUILD_WITH_PCH)
