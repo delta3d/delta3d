@@ -51,7 +51,9 @@ Environment::Environment(const std::string& name)
    RegisterInstance(this);
 
    SetName(name);
-   SetOSGNode(new osg::Group());
+   osg::Node *rootNode = new osg::Group();
+   rootNode->setName(name);
+   SetOSGNode(rootNode);
    GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 

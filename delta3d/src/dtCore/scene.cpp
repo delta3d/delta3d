@@ -204,6 +204,67 @@ void Scene::RemoveAllDrawables()
       }
    }
 }
+
+//////////////////////////////////////////////////////////////////////////
+DeltaDrawable* Scene::GetDrawable(unsigned int i) const
+{
+   return mAddedDrawables[i].get();
+}
+
+/////////////////////////////////////////////
+///Get the index number of the supplied drawable
+unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
+{
+   for( unsigned int childNum = 0; childNum < mAddedDrawables.size(); ++childNum )
+   {
+      if( mAddedDrawables[childNum] == drawable )
+      {
+         return childNum;
+      }
+   }
+
+   return mAddedDrawables.size(); // node not found.
+}
+
+//////////////////////////////////////////////////////////////////////////
+unsigned int Scene::GetNumberOfAddedDrawable() const
+{
+   return mAddedDrawables.size();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void Scene::GetDrawableChildren(std::vector<dtCore::DeltaDrawable*> &children,
+                                dtCore::DeltaDrawable& parent) const
+{
+   for (unsigned int childIdx=0; childIdx<parent.GetNumChildren(); childIdx++)
+   {
+      DeltaDrawable* child = parent.GetChild(childIdx);
+      if (child != NULL)
+      {
+         children.push_back(child);
+
+         GetDrawableChildren(children, *child);
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+std::vector<dtCore::DeltaDrawable*> Scene::GetAllDrawablesInTheScene() const
+{
+   std::vector<dtCore::DeltaDrawable*> drawables;
+
+   for (unsigned int drawableIdx=0; drawableIdx<GetNumberOfAddedDrawable(); drawableIdx++)
+   {
+      DeltaDrawable* drawable = GetDrawable(drawableIdx);
+      if (drawable != NULL)
+      {
+         drawables.push_back(drawable);
+         GetDrawableChildren(drawables, *drawable);
+      }
+   }
+   return drawables;
+}
+
 /////////////////////////////////////////////
 void Scene::SetRenderState( Face face, Mode mode )
 {
@@ -505,20 +566,7 @@ const Light* Scene::GetLight( const std::string& name ) const
    }
 }
 
-/////////////////////////////////////////////
-///Get the index number of the supplied drawable
-unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
-{
-   for( unsigned int childNum = 0; childNum < mAddedDrawables.size(); ++childNum )
-   {
-      if( mAddedDrawables[childNum] == drawable )
-      {
-         return childNum;
-      }
-   }
 
-   return mAddedDrawables.size(); // node not found.
-}
 /////////////////////////////////////////////
 ///registers a light using the light number
 void Scene::RegisterLight( Light* light )
@@ -627,6 +675,8 @@ void Scene::SetPhysicsStepSize(double stepSize) const
       mPhysicsController->SetPhysicsStepSize(stepSize);
    }
 }
+
+
 
 
 }

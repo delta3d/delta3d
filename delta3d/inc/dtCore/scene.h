@@ -146,8 +146,29 @@ namespace dtCore
       ///clears the scene.
       void RemoveAllDrawables();
 
-      ///Get a handle to the DeltaDrawable with the supplied index number
-      DeltaDrawable* GetDrawable(unsigned int i) {return mAddedDrawables[i].get(); }
+      /** Get a handle to the DeltaDrawable using the supplied index number.
+        * @param i the index of the DeltaDrawable that was added with AddDrawable()
+        * @return The selected DeltaDrawable.  Could be NULL.
+        */
+      DeltaDrawable* GetDrawable(unsigned int i) const;
+
+      /// Get the index number of the supplied drawable
+      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const;
+
+      /** Get the number of DeltaDrawables which have been directly added to the Scene
+        * using AddDrawable().
+        * @return The number of DeltaDrawables that have been directly added to the Scene
+        */
+      unsigned int GetNumberOfAddedDrawable() const;
+
+      /** Get all the DeltaDrawables that are currently in the scene.  This will
+        * return all the DeltaDrawables added by AddDrawable(), plus their DeltaDrawable
+        * children.
+        * @see GetDrawable(), GetNumberOfAddedDrawable()
+        * @return a container of all the DeltaDrawables, including their children,
+        * that are in this Scene.
+        */
+      std::vector<dtCore::DeltaDrawable*> GetAllDrawablesInTheScene() const;
 
       //Set the State for rendering.  Wireframe, Fill polygons, or vertex points.
       void SetRenderState( Face face, Mode mode );
@@ -234,11 +255,6 @@ namespace dtCore
       /// Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
-      /// Get the index number of the supplied drawable
-      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const;
-
-      /// Get the number of Drawables which have been directly added to the Scene
-      unsigned int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}
 
       /// DEPRECATED 06/30/08 in favor of dtCore::View::EnablePaging()
       void EnablePaging()
@@ -328,6 +344,9 @@ namespace dtCore
       Scene( const Scene& );
 
       void Ctor();
+
+      void GetDrawableChildren(std::vector<dtCore::DeltaDrawable*> &children,
+                               dtCore::DeltaDrawable& parent) const;
 
       ///The physics controller to use for physics integration (can be NULL)
       dtCore::RefPtr<ODEController> mPhysicsController;
