@@ -103,6 +103,7 @@ void ObjectViewer::Config()
 
       // Infinite lights must start here, point light from the postive y axis
       light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
+      bool enabled = light->GetEnabled();
 
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
@@ -123,6 +124,7 @@ void ObjectViewer::Config()
       mLightMotion.push_back(lightMotion);
       mLightArrowTransformable.push_back(lightArrowTransformable);
       mLightArrow.push_back(lightArrow);
+      light->SetEnabled(enabled);
    }
 
    GetScene()->GetSceneNode()->addChild(mShadedScene.get());
@@ -193,6 +195,10 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
    {
       float radius;
       mObject->GetBoundingSphere(&center, &radius);
+
+      // Reset the camera outside the bounding sphere.
+      mModelMotion->SetDistance(radius * 2.0f);
+      mModelMotion->SetFocalPoint(center);
 
       for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
       {
@@ -549,9 +555,9 @@ void ObjectViewer::InitLights()
       QString lightName = QString("Light%1").arg(lightIndex);
 
       dtCore::Light* light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
-      light->SetEnabled(false);
-      //GetScene()->AddDrawable(light);
+      GetScene()->AddDrawable(light);
       GetScene()->RegisterLight(light);
+      light->SetEnabled(false);
    }
 }
 
