@@ -56,8 +56,6 @@ ObjectViewer::ObjectViewer()
 
    osg::StateSet* shadedState = mShadedScene->getOrCreateStateSet();
    shadedState->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,8 +141,6 @@ void ObjectViewer::Config()
    OnToggleGrid(true);
 
    OnEnterObjectMode();
-
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
