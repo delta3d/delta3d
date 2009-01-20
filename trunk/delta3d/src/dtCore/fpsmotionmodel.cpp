@@ -895,6 +895,10 @@ bool FPSMotionModel::OnLookUpDownChanged(double newState, double delta)
    return true;
 }
 
+void FPSMotionModel::SetFallingHeight( float fallingHeight )
+{
+   mFallingHeight = fallingHeight;
+}
 /////////////////////////////////////////////////////////////////////////////
 
 }
