@@ -142,6 +142,14 @@ namespace dtUtil
       return ToString();
    }
 
+   float DateTime::GetLocalGMTOffset()
+   {
+      //There should be a faster way to do this, but
+      //it's probably not worth the effort.
+      DateTime dt(TimeOrigin::LOCAL_TIME);
+      return dt.GetGMTOffset();
+   }
+
    ////////////////////////////////////////////////////////////////////
    void DateTime::IncrementClock(double seconds)
    {
@@ -158,6 +166,15 @@ namespace dtUtil
    }
 
    ////////////////////////////////////////////////////////////////////
+   void DateTime::AdjustTimeZone(float newGMTOffset)
+   {
+      float adjustmentToMake = newGMTOffset - mGMTOffset;
+      double adjustmentToMakeInSec = adjustmentToMake * 60.0 * 60.0;
+      IncrementClock(adjustmentToMakeInSec);
+      mGMTOffset = newGMTOffset;
+   }
+
+   ////////////////////////////////////////////////////////////////////
    void DateTime::SetToLocalTime()
    {
       time_t t = time(NULL);
@@ -170,7 +187,7 @@ namespace dtUtil
 
    ////////////////////////////////////////////////////////////////////
    void DateTime::SetToGMTTime()
-   {     
+   {
       time_t t = time(NULL);
       struct tm timeParts;
       GetGMTTime(&t, timeParts);
@@ -263,7 +280,7 @@ namespace dtUtil
       struct tm mt;
       mt.tm_mon = mMonths - 1;
       mt.tm_mday = mDays;
-      mt.tm_year = mYears - 1900;     
+      mt.tm_year = mYears - 1900;
       mt.tm_hour = mHours;
       mt.tm_min = mMinutes;
       mt.tm_sec = mSeconds;
@@ -539,23 +556,23 @@ namespace dtUtil
       char buffer[80];
       struct tm timeParts = *this; //conversion operator
       std::string str;
-      
+
       if(tf == TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT)
       {
-         //this case we must handle specially because the msvc compiler insists on 
+         //this case we must handle specially because the msvc compiler insists on
          //writing out the time zone for %z as opposed to printing the actual offset
          //this is what we want it to look like
-         //2007-05-10T16:08:18.0-05:00                 
+         //2007-05-10T16:08:18.0-05:00
 
          float tz = GetGMTOffset();
-   
+
          int tzHour = (int)floorf(tz);
          int tzMin = (int)(tz - float(tzHour));
-   
+
          snprintf(buffer, 80, "%04d-%02d-%02dT%02d:%02d:%02d%+03d:%02d",
             timeParts.tm_year + 1900, timeParts.tm_mon + 1, timeParts.tm_mday,
             timeParts.tm_hour, timeParts.tm_min, timeParts.tm_sec,
-            tzHour, tzMin);  
+            tzHour, tzMin);
       }
       else
       {
@@ -591,10 +608,10 @@ namespace dtUtil
          {
             strftime(buffer, 80, "%Y-%j", &timeParts);
          }
- 
+
       }
 
-      str.assign(buffer); 
+      str.assign(buffer);
       return str;
    }
 
