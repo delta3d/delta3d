@@ -116,6 +116,7 @@ private slots:
 
    // File menu callbacks
    void OnLoadShaderDefinition();
+   void OnLoadMap(const std::string& mapName);
    void OnLoadGeometry();
    void OnLoadGeometry(const std::string& fullName);
    void OnChangeContext();

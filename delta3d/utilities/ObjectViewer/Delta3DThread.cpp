@@ -1,5 +1,6 @@
 #include <QtOpenGL/QGLContext>
 #include <QtGui/QDockWidget>
+#include <QtCore/QFileInfo>
 
 #include "Delta3DThread.h"
 #include "ObjectViewer.h"
@@ -99,9 +100,18 @@ void Delta3DThread::run()
    MakeConnections();    
 
    dtCore::System::GetInstance().Start();  
+   QFileInfo fileInfo(mStartupFile.c_str());
+   
+   mWin->OnInitialization();
 
-   mWin->OnInitialization();  
-   mWin->OnLoadGeometry(mStartupFile.c_str());
+   if (fileInfo.fileName().endsWith(QString("xml"), Qt::CaseInsensitive))
+   {
+      mWin->OnLoadMap(fileInfo.baseName().toStdString());
+   }
+   else
+   {
+      mWin->OnLoadGeometry(mStartupFile.c_str());
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +125,9 @@ void Delta3DThread::MakeConnections()
 
    connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
       mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(LoadMap(const std::string&)),
+      mViewer.get(), SLOT(OnLoadMapFile(const std::string&)));
 
    connect(mWin->GetResourceObject(), SIGNAL(UnloadGeometry()),
       mViewer.get(), SLOT(OnUnloadGeometryFile()));
@@ -130,6 +143,9 @@ void Delta3DThread::MakeConnections()
 
    connect(mWin->GetResourceObject(), SIGNAL(RemoveShader()),
       mViewer.get(), SLOT(OnRemoveShader()));
+
+   connect(mWin->GetResourceObject(), SIGNAL(FixLights()),
+      mViewer.get(), SLOT(OnFixLights()));
 
    connect(mWin->GetResourceObject(), SIGNAL(SetCurrentLight(int)),
       mViewer.get(), SLOT(OnSetCurrentLight(int)));
