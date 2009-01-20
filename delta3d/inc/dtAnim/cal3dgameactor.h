@@ -71,9 +71,9 @@ namespace dtAnim
 
       /**
       * Constructs a Cal3DGameActor actor.
-      * @param proxy The actor proxy owning this task actor.     
+      * @param proxy The actor proxy owning this task actor.
       */
-      Cal3DGameActor(dtGame::GameActorProxy &proxy);   
+      Cal3DGameActor(dtGame::GameActorProxy &proxy);
 
       /**
       * Loads a model file.
@@ -84,7 +84,7 @@ namespace dtAnim
       /**
       * Called when the actor has been added to the game manager.
       */
-      virtual void AddedToScene(dtCore::Scene* scene);     
+      virtual void AddedToScene(dtCore::Scene* scene);
 
       virtual void OnEnteredWorld();
 
@@ -94,23 +94,23 @@ namespace dtAnim
       dtAnim::Cal3DAnimator* GetAnimator();
       const dtAnim::Cal3DAnimator* GetAnimator() const;
 
-      virtual void TickLocal(const dtGame::Message& tickMessage);
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
       void SetRenderMode(int bits);
       int GetRenderMode() const;
 
-   protected:      
+   protected:
 
       dtCore::RefPtr<osg::Geode>            mModelGeode;
       dtCore::RefPtr<osg::Geode>            mSkeletalGeode;   ///< support to visualize the skeletal.
       dtCore::RefPtr<dtAnim::Cal3DDatabase> mModelLoader;
-      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;      
+      dtCore::RefPtr<dtAnim::Cal3DAnimator> mAnimator;
 
       typedef unsigned char RenderModeBitContainer;
       RenderModeBitContainer mRenderModeBits;
 
-      /// Destroys this actor.     
-      virtual ~Cal3DGameActor();    
+      /// Destroys this actor.
+      virtual ~Cal3DGameActor();
 
    private:
 

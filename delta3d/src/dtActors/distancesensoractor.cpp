@@ -34,21 +34,21 @@ namespace dtActors
    ////////////////////////////////////////////////////
    DistanceSensorActorProxy::DistanceSensorActorProxy()
    {
-      
+
    }
-   
+
    ////////////////////////////////////////////////////
    DistanceSensorActorProxy::~DistanceSensorActorProxy()
    {
-      
+
    }
-   
+
    ////////////////////////////////////////////////////
    void DistanceSensorActorProxy::BuildInvokables()
    {
       GameActorProxy::BuildInvokables();
    }
-   
+
    ////////////////////////////////////////////////////
    void DistanceSensorActorProxy::BuildPropertyMap()
    {
@@ -61,13 +61,13 @@ namespace dtActors
       static const dtUtil::RefString EMPTY;
 
       AddProperty(new dtDAL::ActorActorProperty(*this, DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
-               DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR, 
+               DistanceSensorActorProxy::PROPERTY_ATTACH_TO_ACTOR,
                dtDAL::MakeFunctor(*this, &DistanceSensorActorProxy::SetAttachToProxy),
                dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetAttachToActor),
                "dtCore::DeltaDrawable", EMPTY, GROUP));
 
       AddProperty(new dtDAL::FloatActorProperty(DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
-               DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE, 
+               DistanceSensorActorProxy::PROPERTY_TRIGGER_DISTANCE,
                dtDAL::MakeFunctor(*actor, &DistanceSensorActor::SetTriggerDistance),
                dtDAL::MakeFunctorRet(*actor, &DistanceSensorActor::GetTriggerDistance),
                EMPTY, GROUP));
@@ -93,7 +93,7 @@ namespace dtActors
    {
       SetActor(*new DistanceSensorActor(*this));
    }
-   
+
    ////////////////////////////////////////////////////
    DistanceSensorActor::DistanceSensorActor(dtGame::GameActorProxy& parent):
    dtGame::GameActor(parent),
@@ -171,7 +171,7 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////
-   void DistanceSensorActor::TickLocal(const dtGame::Message& tickMessage)
+   void DistanceSensorActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
    {
 
       //do all removes here
@@ -181,7 +181,7 @@ namespace dtActors
          mRemoveList.pop_back();
       }
 
-      BaseClass::TickLocal(tickMessage);
+      BaseClass::OnTickLocal(tickMessage);
 
       SensorMap::iterator i = mSensors.begin();
       SensorMap::iterator iend = mSensors.end();
@@ -193,11 +193,11 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////
-   void DistanceSensorActor::TickRemote(const dtGame::Message& tickMessage)
+   void DistanceSensorActor::OnTickRemote(const dtGame::TickMessage& tickMessage)
    {
-      BaseClass::TickRemote(tickMessage);
+      BaseClass::OnTickRemote(tickMessage);
       //This could potentially cause problems with subclassing this.
-      TickLocal(tickMessage);
+      OnTickLocal(tickMessage);
    }
 
 }

@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -46,10 +46,10 @@ namespace dtDAL
 }
 
 // Waypoint class to hold waypoint data
-class Waypoint 
+class Waypoint
 {
    public:
-      
+
       double x;
       double y;
       double z;
@@ -62,10 +62,10 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      FlySequenceActor(dtGame::GameActorProxy &proxy);
+      FlySequenceActor(dtGame::GameActorProxy& proxy);
 
       /// Invokable to update the camera
-      void TickLocal(const dtGame::Message &msg);
+      void OnTickLocal(const dtGame::TickMessage& msg);
 
       /// Starts moving the player
       void StartFlying();
@@ -77,7 +77,7 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
        * Sets the player actor this FlySequence will manipulate
        * @param player The new player actor
        */
-      void SetPlayerActor(PlayerActor &player) { mPlayer = &player; }
+      void SetPlayerActor(PlayerActor& player) { mPlayer = &player; }
 
    protected:
 
@@ -102,9 +102,9 @@ class FIRE_FIGHTER_EXPORT FlySequenceActor : public dtGame::GameActor
       double actPos[3];
       osg::Vec3 camPos, lookAt, up;
 
-      Waypoint* wayptArray;           
-      double dirOfTransit[3], speed, delta;              
-      int prevWaypoint, numWaypoints;           
+      Waypoint* wayptArray;
+      double dirOfTransit[3], speed, delta;
+      int prevWaypoint, numWaypoints;
       bool mFlyBy;
       dtCore::RefPtr<dtAudio::Sound> snd;
       PlayerActor *mPlayer;

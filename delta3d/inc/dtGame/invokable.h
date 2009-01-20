@@ -29,6 +29,31 @@
 
 namespace dtGame
 {
+   class InvokableFunctorCallerBase: public osg::Referenced
+   {
+   public:
+      virtual void Call(const Message& message) = 0;
+   };
+
+   template <typename Message_T = Message>
+   class InvokableFunctorCaller: public InvokableFunctorCallerBase
+   {
+   public:
+      typedef dtUtil::Functor<void, TYPELIST_1(const Message_T&)> InvokableFunc;
+
+      InvokableFunctorCaller(InvokableFunc func)
+      : mFunctor(func)
+      {
+      }
+
+      virtual void Call(const Message& message)
+      {
+         mFunctor(static_cast<const Message_T&>(message));
+      }
+   private:
+       InvokableFunc mFunctor;
+   };
+
    /**
     * @class Invokable
     * @brief An Invokable is a queriable method interface that can be added to a dtGame::GameActorProxy just
@@ -41,7 +66,13 @@ namespace dtGame
    {
       public:
          typedef dtUtil::Functor<void, TYPELIST_1(const Message&)> InvokableFunc;
-         Invokable(const std::string& name, InvokableFunc toInvoke);
+
+         template<typename Message_T>
+         Invokable(const std::string& name, dtUtil::Functor<void, TYPELIST_1(const Message_T&)> toInvoke)
+         : mName(name)
+         , mCaller(new InvokableFunctorCaller<Message_T>(toInvoke))
+         {
+         }
 
          /**
           * @return the name of this invokable.
@@ -58,8 +89,8 @@ namespace dtGame
          virtual ~Invokable();
       private:
          std::string mName;
-         ///functor taking one parameter and optionally returning a value.
-         InvokableFunc mMethodToInvoke;
+
+         dtCore::RefPtr<InvokableFunctorCallerBase> mCaller;
 
          Invokable(const Invokable& toCopy) {}
          Invokable& operator=(const Invokable& toAssign) { return *this; }

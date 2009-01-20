@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * @author Curtiss Murphy
 * @author Chris Osborn
 */
@@ -61,15 +61,15 @@ class TUTORIAL_TANK_EXPORT KillableTargetActor : public dtActors::GameMeshActor
        * receives a tick.
        * @param tickMessage A message containing tick related information.
        */
-      virtual void TickLocal(const dtGame::Message &tickMessage);
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
       /**
        * This method is an invokable called when an object is remote and
        * receives a tick.
        * @param tickMessage A message containing tick related information.
        */
-      virtual void TickRemote(const dtGame::Message &tickMessage);
-      
+      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
+
       /**
        * Generic handler (Invokable) for messages. Overridden from base class.
        * This is the default invokable on GameActorProxy.
@@ -122,14 +122,14 @@ class TUTORIAL_TANK_EXPORT KillableTargetActorProxy : public dtActors::GameMeshA
 
       // Constructs the proxy.
       KillableTargetActorProxy();
-      
+
       // Creates the properties that are custom to the hover tank proxy.
       virtual void BuildPropertyMap();
-      
+
    protected:
       virtual ~KillableTargetActorProxy() { };
 
-      // Creates an instance of our hover tank actor 
+      // Creates an instance of our hover tank actor
       virtual void CreateActor();
 
       // Called when this proxy is added to the game manager (ie, the "world")

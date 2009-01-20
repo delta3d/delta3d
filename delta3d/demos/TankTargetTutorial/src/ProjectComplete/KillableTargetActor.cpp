@@ -81,7 +81,7 @@ KillableTargetActor::KillableTargetActor(dtGame::GameActorProxy& proxy)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void KillableTargetActor::TickLocal(const dtGame::Message& tickMessage)
+void KillableTargetActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
    //const dtGame::TickMessage& tick = static_cast<const dtGame::TickMessage&>(tickMessage);
    //float deltaSimTime = tick.GetDeltaSimTime();
@@ -92,7 +92,7 @@ void KillableTargetActor::TickLocal(const dtGame::Message& tickMessage)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void KillableTargetActor::TickRemote(const dtGame::Message& tickMessage)
+void KillableTargetActor::OnTickRemote(const dtGame::TickMessage& tickMessage)
 {
    //const dtGame::TickMessage& tick = static_cast<const dtGame::TickMessage&>(tickMessage);
    //float deltaSimTime = tick.GetDeltaSimTime();

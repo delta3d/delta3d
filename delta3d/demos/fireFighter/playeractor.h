@@ -1,4 +1,4 @@
-/* -*-c++-*- 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation
  *
@@ -48,26 +48,26 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
    public:
 
       /// Constructor
-      PlayerActor(dtGame::GameActorProxy &proxy);
-      
+      PlayerActor(dtGame::GameActorProxy& proxy);
+
       /// Override
-      void TickLocal(const dtGame::Message &tickMessage);
+      void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
       /**
        * Adds a game item to the player
        * @param item The item to add
        */
-      void AddItemToInventory(GameItemActor &item);
+      void AddItemToInventory(GameItemActor& item);
 
       /**
        * Returns true if the player has item
        */
-      bool IsItemInInventory(GameItemActor &item) const;
+      bool IsItemInInventory(GameItemActor& item) const;
 
       /**
        * Returns true if the player has item
        */
-      bool IsItemInInventory(const std::string &itemName) const;
+      bool IsItemInInventory(const std::string& itemName) const;
 
       /**
        * Used the currently selected item in the player's inventory
@@ -90,15 +90,15 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
        * @return mIsCrouched
        */
       bool IsCrouched() const { return mIsCrouched; }
-      
+
       /**
        * Sets if the player is crouched
        * @param crouch true to crouch the player
        */
-      void SetIsCrouched(bool crouch); 
+      void SetIsCrouched(bool crouch);
 
       /**
-       * Returns a pointer to the currently selected item in the 
+       * Returns a pointer to the currently selected item in the
        * player's inventory
        * @return A pointer to a GameItemActor, or NULL if the inventory
        * is empty
@@ -118,7 +118,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
 
    private:
 
-      /** 
+      /**
        * Computes intersections with the scene
        * If a game item or something else of interest
        * is intersected with, a MessageType::ITEM_INTERSECTED
@@ -130,7 +130,7 @@ class FIRE_FIGHTER_EXPORT PlayerActor : public dtGame::GameActor
 
       /**
        * Private helper method to send out an ITEM_INTERSECTED message
-       * @param id The unique id of the about actor 
+       * @param id The unique id of the about actor
        */
       void SendItemIntersectedMessage(const dtCore::UniqueId &id);
 

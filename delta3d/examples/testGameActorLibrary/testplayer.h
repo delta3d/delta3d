@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -55,8 +55,8 @@ class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
       void SetTurnRate(float rate);
       float GetTurnRate() const;
 
-      virtual void TickLocal(const dtGame::Message &tickMessage);
-      virtual void TickRemote(const dtGame::Message &tickMessage);
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
 
       void HandleTick(double deltaSimTime, bool forceGroundClamp=false);
 

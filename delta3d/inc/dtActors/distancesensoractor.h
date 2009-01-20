@@ -36,7 +36,7 @@ namespace dtGame
 
 namespace dtActors
 {
-   class DT_PLUGIN_EXPORT DistanceSensorActorProxy: public dtGame::GameActorProxy 
+   class DT_PLUGIN_EXPORT DistanceSensorActorProxy: public dtGame::GameActorProxy
    {
       public:
          static const dtUtil::RefString PROPERTY_TRIGGER_DISTANCE;
@@ -58,7 +58,7 @@ namespace dtActors
          virtual void CreateActor();
    };
 
-   class DT_PLUGIN_EXPORT DistanceSensorActor: public dtGame::GameActor 
+   class DT_PLUGIN_EXPORT DistanceSensorActor: public dtGame::GameActor
    {
       public:
          typedef std::map<std::string, dtCore::RefPtr<dtAI::SensorBase<float> > > SensorMap;
@@ -67,7 +67,7 @@ namespace dtActors
          DistanceSensorActor(dtGame::GameActorProxy& parent);
 
          template <typename DistanceCallback>
-         bool RegisterWithSensor(const std::string& keyName, dtCore::Transformable& referenceActor, 
+         bool RegisterWithSensor(const std::string& keyName, dtCore::Transformable& referenceActor,
                   DistanceCallback func)
          {
             typedef dtAI::DistanceSensor<dtAI::EvaluateTransformablePosition<>,
@@ -76,7 +76,7 @@ namespace dtActors
             dtAI::EvaluateTransformablePosition<> etpThis(*this, dtCore::Transformable::ABS_CS);
             dtAI::EvaluateTransformablePosition<> etpRefActor(referenceActor, dtCore::Transformable::ABS_CS);
 
-            dtCore::RefPtr<TransformableDistanceSensor> distSensor = 
+            dtCore::RefPtr<TransformableDistanceSensor> distSensor =
                new TransformableDistanceSensor(etpThis, etpRefActor, mTriggerDistance, func);
 
             if (!mSensors.insert(std::make_pair(keyName, distSensor.get())).second)
@@ -97,7 +97,7 @@ namespace dtActors
             dtAI::EvaluateMatrixPosition<> etpRefMatrix(referenceNode);
 
 
-            dtCore::RefPtr<MatrixTransformDistanceSensor> distSensor = 
+            dtCore::RefPtr<MatrixTransformDistanceSensor> distSensor =
                new MatrixTransformDistanceSensor(etpThis, etpRefMatrix, mTriggerDistance, func);
 
             if (!mSensors.insert(std::make_pair(keyName, dtCore::RefPtr<dtAI::SensorBase<float> >(distSensor.get()))).second)
@@ -119,10 +119,10 @@ namespace dtActors
          float GetTriggerDistance() const;
 
          ///Overridden to handle evaluating callbacks.
-         virtual void TickLocal(const dtGame::Message& tickMessage);
+         virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
          ///Overridden to handle evaluating callbacks.
-         virtual void TickRemote(const dtGame::Message& tickMessage);
+         virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
 
       protected:
 

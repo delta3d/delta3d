@@ -133,7 +133,7 @@ void FlySequenceActor::OnEnteredWorld()
    snd->SetLooping(false);
 }
 
-void FlySequenceActor::TickLocal(const dtGame::Message& msg)
+void FlySequenceActor::OnTickLocal(const dtGame::TickMessage& msg)
 {
    if (mPlayer == NULL)
    {

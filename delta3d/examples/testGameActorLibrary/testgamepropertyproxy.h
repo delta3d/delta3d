@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -58,13 +58,13 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
 
       TestGamePropertyActor(dtGame::GameActorProxy& proxy);
 
-      virtual void TickLocal(const dtGame::Message &tickMessage);
-      virtual void TickRemote(const dtGame::Message &tickMessage);
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
       virtual void ProcessMessage(const dtGame::Message &message);
 
       //dtCore::Light has an enumeration.  We define our own enumeration here
       //which can be exported as a property to the editor.
-      class DT_EXAMPLE_EXPORT TestEnum : public dtUtil::Enumeration 
+      class DT_EXAMPLE_EXPORT TestEnum : public dtUtil::Enumeration
       {
          DECLARE_ENUM(TestEnum);
       public:
@@ -76,7 +76,7 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
          static TestEnum OPTION6;
 
       private:
-         TestEnum(const std::string &name) : dtUtil::Enumeration(name) 
+         TestEnum(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
@@ -454,12 +454,12 @@ class DT_EXAMPLE_EXPORT TestGamePropertyActor : public dtGame::GameActor
 
 
 /**
- * This actor is like the property test actor in testActorLibrary except that it uses 
- * a GameActorProxy as its base.  The purpose of this class is to test sending and 
+ * This actor is like the property test actor in testActorLibrary except that it uses
+ * a GameActorProxy as its base.  The purpose of this class is to test sending and
  * handling actor update messages, particularly in high volume.
  * @see ExampleTestPropertyProxy
  */
-class DT_EXAMPLE_EXPORT TestGamePropertyProxy : public GameActorProxy 
+class DT_EXAMPLE_EXPORT TestGamePropertyProxy : public GameActorProxy
 {
    public:
       TestGamePropertyProxy();

@@ -26,19 +26,12 @@
 
 namespace dtGame
 {
-
-   Invokable::Invokable(const std::string& name, InvokableFunc toInvoke):
-      mName(name), mMethodToInvoke(toInvoke)
-   {
-   }
-   
    Invokable::~Invokable()
    {
    }
 
    void Invokable::Invoke(const Message& message)
    {
-      mMethodToInvoke(message);
+      mCaller->Call(message);
    }
-
 }

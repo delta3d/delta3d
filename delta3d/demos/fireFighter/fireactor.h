@@ -129,7 +129,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
        * Message handler.
        * @param data the received message
        */
-      void TickLocal(const dtGame::Message& msg);
+      void OnTickLocal(const dtGame::TickMessage& msg);
 
       /// Invokable that plays the fire sound when the hatch door is opened or closed
       void PlayFireSound(const dtGame::Message& msg);
@@ -138,7 +138,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       void StopSounds(const dtGame::Message& msg);
 
       /**
-       * Sets the light rotation 
+       * Sets the light rotation
        * @param rotation The rotation to set
        */
       void SetLightRotation(const osg::Vec3& rotation);
@@ -150,7 +150,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       osg::Vec3 GetLightRotation() const;
 
       /**
-       * Sets the light rotation 
+       * Sets the light rotation
        * @param rotation The rotation to set
        */
       void SetLightTranslation(const osg::Vec3& xyz);
@@ -170,7 +170,7 @@ class FIRE_FIGHTER_EXPORT FireActor : public GameItemActor
       virtual ~FireActor();
 
    private:
-      
+
       dtCore::RefPtr<dtCore::ParticleSystem> mFlameSystem, mSparkSystem, mSmokeSystem, mCeilingSystem;
 
       dtCore::RefPtr<dtCore::PositionalLight> mLight;
