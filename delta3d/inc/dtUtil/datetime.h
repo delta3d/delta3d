@@ -153,6 +153,8 @@ namespace dtUtil
 
          virtual ~DateTime();
 
+         static float GetLocalGMTOffset();
+
          ///changes time to be system local time
          void SetToLocalTime();
 
@@ -167,6 +169,15 @@ namespace dtUtil
           * @param the number of seconds to increase the clock by.
           */
          void IncrementClock(double seconds);
+
+         /**
+          * Every date time has a GMT offset.  This method allows one to set a new
+          * GMT offset, and then change the clock internally to match the newoffset.  For example
+          * if the clock is in 12:00 AM Eastern Time (-5) Jan 5, 2009, setting the offset to
+          * west coast time (-8) would make the date time be 9:00 PM, Jan 4, 2009.
+          * @param newGMTOffset the offset in hours from GMT to change this to.
+          */
+         void AdjustTimeZone(float newGMTOffset);
 
          /**
           * Gets the time internally stored using unsigned year, month, day, hour, minute, and seconds.  The float second version

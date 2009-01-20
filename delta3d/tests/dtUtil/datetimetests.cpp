@@ -35,6 +35,7 @@ namespace dtUtil
          CPPUNIT_TEST( TestGetSetTime );
          CPPUNIT_TEST( TestIncrementTime );
          CPPUNIT_TEST( TestTimeToString );
+         CPPUNIT_TEST( TestAdjustTimeZones );
          CPPUNIT_TEST( TestTimeZones );
       CPPUNIT_TEST_SUITE_END();
 
@@ -45,6 +46,7 @@ namespace dtUtil
          void TestGetSetTime();
          void TestIncrementTime();
          void TestTimeToString();
+         void TestAdjustTimeZones();
          void TestTimeZones();
 
       private:
@@ -74,7 +76,7 @@ namespace dtUtil
 
       DateTime testSetGet1, testSetGet2;
       testSetGet1.SetTime(yr, mo, day, hr, min, sec);
-      
+
       testSetGet2.SetYear(yr);
       testSetGet2.SetMonth(mo);
       testSetGet2.SetDay(day);
@@ -83,12 +85,12 @@ namespace dtUtil
       testSetGet2.SetSecond(sec);
       CompareTimes(testSetGet1, testSetGet2);
 
-      
+
       time_t curr;
       time(&curr);
       struct tm timeParts;
       timeParts = *gmtime(&curr);
-      
+
       testSetGet1.SetTime(curr);
       testSetGet2.SetTime(timeParts);
       CompareTimes(testSetGet1, testSetGet2);
@@ -106,17 +108,31 @@ namespace dtUtil
       CompareTimes(testSetGet3, testSetGet5);
       CompareTimes(testSetGet5, testSetGet6);
 
-      //test conversion operators 
+      //test conversion operators
       CPPUNIT_ASSERT_EQUAL(curr, time_t(testSetGet1));
       CompareTimes(DateTime(timeParts), DateTime(tm(testSetGet1)));
 
    }
 
+   void DateTimeTests::TestAdjustTimeZones()
+   {
+      DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);
+      dt_local.SetTime(2009, 1, 1, 00, 00, 34.4f);
+      dt_local.AdjustTimeZone(DateTime::GetLocalGMTOffset() - 3.50);
+      CPPUNIT_ASSERT_EQUAL(2008U, dt_local.GetYear());
+      CPPUNIT_ASSERT_EQUAL(12U, dt_local.GetMonth());
+      CPPUNIT_ASSERT_EQUAL(31U, dt_local.GetDay());
+      CPPUNIT_ASSERT_EQUAL(20U, dt_local.GetHour());
+      CPPUNIT_ASSERT_EQUAL(30U, dt_local.GetMinute());
+      CPPUNIT_ASSERT_EQUAL(34.4f, dt_local.GetSecond());
+   }
+
    void DateTimeTests::TestTimeZones()
    {
       DateTime dt_gmt(DateTime::TimeOrigin::GMT_TIME);
-      DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);  
+      DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);
 
+      CPPUNIT_ASSERT_EQUAL(dt_local.GetGMTOffset(), DateTime::GetLocalGMTOffset());
 
       time_t curr;
       tm local;
@@ -129,12 +145,12 @@ namespace dtUtil
       dt_test.SetTime(local);
       CompareTimes(dt_local, dt_test);
 
-      CompareTimes(DateTime(dt_local.GetGMTTime()), dt_gmt); 
+      CompareTimes(DateTime(dt_local.GetGMTTime()), dt_gmt);
    }
 
    void DateTimeTests::CompareTimes(const DateTime& lhs, const DateTime& rhs)
    {
-      CPPUNIT_ASSERT_EQUAL(lhs.GetYear(), rhs.GetYear()); 
+      CPPUNIT_ASSERT_EQUAL(lhs.GetYear(), rhs.GetYear());
       CPPUNIT_ASSERT_EQUAL(lhs.GetMonth(), rhs.GetMonth());
       CPPUNIT_ASSERT_EQUAL(lhs.GetDay(), rhs.GetDay());
       CPPUNIT_ASSERT_EQUAL(lhs.GetHour(), rhs.GetHour());
@@ -187,13 +203,13 @@ namespace dtUtil
          testIncrementTime1.IncrementClock(86400.0f); //24 hours
       }
 
-      CompareTimes(testIncrementTime1, testIncrementTime2); 
+      CompareTimes(testIncrementTime1, testIncrementTime2);
 
    }
 
    void DateTimeTests::TestTimeToString()
    {
-      DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);  
+      DateTime dt_local(DateTime::TimeOrigin::LOCAL_TIME);
 
       std::cout << "TESTING TIME OUTPUT" << std::endl;
 
