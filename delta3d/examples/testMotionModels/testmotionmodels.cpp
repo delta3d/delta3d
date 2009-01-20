@@ -34,6 +34,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
+#include <dtCore/system.h>
 
 #include <dtABC/application.h>
 
@@ -70,7 +71,9 @@ namespace dtExample
       typedef dtUtil::Functor<void,TYPELIST_1(MotionModelType)> ForwardingFunctor;
 
       QuickMenuManager(const ForwardingFunctor& ff)
-         : mWalk(NULL)
+         :mPausedUI(NULL)
+         , mUseSimTimeUI(NULL)
+         , mWalk(NULL)
          , mFly(NULL)
          , mUFO(NULL)
          , mOrbit(NULL)
@@ -159,12 +162,19 @@ namespace dtExample
 
          try
          {
+            CEGUI::Window* rootWindow = CreateWidget("DefaultGUISheet", "root");
+            rootWindow->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
+               CEGUI::UVector2(cegui_reldim(1.0),cegui_reldim(1.0)));
+
             CEGUI::Window* frame = CreateWidget("WindowsLook/StaticText","frame");
-            frame->setArea(CEGUI::UVector2(cegui_reldim(0.f),cegui_reldim(0.f)),
-                           CEGUI::UVector2(cegui_reldim(1.f),cegui_reldim(0.2f)));
+            frame->setArea(CEGUI::UVector2(cegui_reldim(0.f),cegui_reldim(0.08f /*0.f*/)),
+                           CEGUI::UVector2(cegui_reldim(1.f),cegui_reldim(0.12f /*0.2f*/)));
+            //frame->setProperty("FrameEnabled", "false");
             frame->setProperty("BackgroundEnabled","True");
             frame->setProperty("BackgroundColours","tl:FFDFDFDF tr:FFDFDFDF bl:FFDFDFDF br:FFDFDFDF");
+            //frame->setProperty("BackgroundEnabled", "false");
             frame->setText("");
+            rootWindow->addChildWindow(frame);
 
             CEGUI::Window* menu = CreateWidget("DefaultWindow","SelectionBar");
             menu->setArea(CEGUI::UVector2(cegui_reldim(0),cegui_reldim(0)),
@@ -221,7 +231,20 @@ namespace dtExample
             menu->addChildWindow( rts );
 
 
-            CEGUI::System::getSingleton().setGUISheet(menu);
+            mPausedUI = CreateWidget("WindowsLook/StaticText", "PausedUI");
+            mPausedUI->setText("(F2) Not Paused");
+            mPausedUI->setPosition(CEGUI::UVector2(cegui_absdim(10), cegui_absdim(400)));
+            mPausedUI->setSize(CEGUI::UVector2(cegui_absdim(155), cegui_absdim(20)));
+            rootWindow->addChildWindow(mPausedUI);
+
+            mUseSimTimeUI = CreateWidget("WindowsLook/StaticText", "UseSimTimeUI");
+            mUseSimTimeUI->setText("(F3) REAL Time (if applies)");
+            mUseSimTimeUI->setPosition(CEGUI::UVector2(cegui_absdim(10), cegui_absdim(421)));
+            mUseSimTimeUI->setSize(CEGUI::UVector2(cegui_absdim(155), cegui_absdim(20)));
+            rootWindow->addChildWindow(mUseSimTimeUI);
+
+
+            CEGUI::System::getSingleton().setGUISheet(rootWindow/*menu*/);
 
             InitializeWidgets(static_cast<CEGUI::RadioButton*>(walk),
                               static_cast<CEGUI::RadioButton*>(fly),
@@ -280,6 +303,11 @@ namespace dtExample
          return w;
       }
 
+   public:
+      CEGUI::Window* mPausedUI;
+      CEGUI::Window* mUseSimTimeUI;
+
+
    private:
       CEGUI::RadioButton* mWalk;
       CEGUI::RadioButton* mFly;
@@ -306,6 +334,8 @@ public:
       , mTown(NULL)
       , mGUIDrawable(NULL)
       , mMenuManager(NULL)
+      , mUseSimTime(false)
+      , mCurrentMotionModelIndex(0)
    {
       dtExample::QuickMenuManager::ForwardingFunctor ff(this, &TestMotionModelsApp::SetMotionModel);
       mMenuManager = new dtExample::QuickMenuManager(ff);
@@ -397,6 +427,32 @@ public:
          mMenuManager->SetSelected(dtExample::RTS);
          verdict = true;
          break;
+
+      case osgGA::GUIEventAdapter::KEY_F2:
+         {
+            bool bPausedState = !dtCore::System::GetInstance().GetPause();
+            dtCore::System::GetInstance().SetPause(bPausedState);
+            if (bPausedState)
+               mMenuManager->mPausedUI->setText("(F2) PAUSED!");
+            else
+               mMenuManager->mPausedUI->setText("(F3) Not Paused");
+         }
+         break;
+
+      case osgGA::GUIEventAdapter::KEY_F3:
+         {
+            mUseSimTime = !mUseSimTime;
+            if (mUseSimTime)
+               mMenuManager->mUseSimTimeUI->setText("(F3) SIM Time (if applies)");
+            else
+               mMenuManager->mUseSimTimeUI->setText("(F3) REAL Time (if applies)");
+            std::cout << "Note - only a few motion models support Sim time vs Real Time including::  FlyMotionModel." << std::endl;
+
+            // resetting the MM will update the sim time flag.
+            SetMotionModel(mCurrentMotionModelIndex);
+         }
+         break;
+
       default:
          break;
       }
@@ -420,9 +476,20 @@ private:
    */
    void SetMotionModel(unsigned int index)
    {
+      mCurrentMotionModelIndex = index;
+
       for (unsigned int i = 0; i < mMotionModels.size(); i++)
       {
          mMotionModels[i]->SetEnabled(i == index);
+
+         if (i == index)
+         {
+            // figure out which MM we have so we can set the option flags appropriately.  
+            // Currently, only Fly supports this 
+            FlyMotionModel *flyMM = dynamic_cast<FlyMotionModel*> (mMotionModels[i].get());
+            if (flyMM != NULL)
+               flyMM->SetUseSimTimeForSpeed(mUseSimTime);
+         }
       }
 
       //turn off cursor for FPS motion model
@@ -441,6 +508,9 @@ private:
    dtCore::RefPtr<dtGUI::CEUIDrawable> mGUIDrawable;
 
    dtCore::RefPtr<dtExample::QuickMenuManager> mMenuManager;
+
+   bool mUseSimTime; // ie sim time versus real time. Only supported by some motion models.
+   unsigned int mCurrentMotionModelIndex;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApp)

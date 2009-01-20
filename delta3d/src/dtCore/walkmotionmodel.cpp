@@ -374,7 +374,7 @@ void WalkMotionModel::OnMessage(MessageData* data)
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      data->message == dtCore::System::MESSAGE_PRE_FRAME)
+      data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/)
    {
       double dtCore = *static_cast<double*>(data->userData);
 

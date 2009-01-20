@@ -441,8 +441,9 @@ void FlyMotionModel::OnMessage(MessageData *data)
 {
    if (GetTarget() != 0 &&
       IsEnabled() &&
-      (data->message == dtCore::System::MESSAGE_PRE_FRAME ||
-      (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) && data->message == dtCore::System::MESSAGE_PAUSE)))
+      (data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/) &&
+      // don't move if paused & using simtime for speed (since simtime will be 0 if paused)
+      (!HasOption(OPTION_USE_SIMTIME_FOR_SPEED) || !System::GetInstance().GetPause()))
    {
       // Get the time change (sim time or real time)
       double delta = GetTimeDelta(data);
@@ -476,9 +477,11 @@ double FlyMotionModel::GetTimeDelta(const MessageData* data) const
    // Get the time change (sim time or real time)
    double delta;
    double* timeChange = (double*)data->userData;
-   if (data->message == dtCore::System::MESSAGE_PAUSE) // paused and !useSimTime
+   //if (data->message == dtCore::System::MESSAGE_PAUSE) // paused and !useSimTime
+   // Note - the if in OnMessage() prevents getting here if paused & OPTION_USE_SIMTIME_FOR_SPEED is set
+   if (System::GetInstance().GetPause())
    {
-      delta = *timeChange; // 0 is real time when paused
+      delta = timeChange[1]; // 0 is real time when paused
    }
    else if (HasOption(OPTION_USE_SIMTIME_FOR_SPEED))
    {
