@@ -55,6 +55,8 @@ int main(int argc, char** argv)
       app->Config();
       app->Run();
       app = NULL;
+
+      std::cerr << "The Game Manager is now shutting down ... " << std::endl;
    }
    catch (const dtUtil::Exception& ex)
    {
