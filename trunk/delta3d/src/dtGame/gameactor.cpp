@@ -30,6 +30,7 @@
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
+#include <dtGame/basemessages.h>
 
 #include <dtCore/shadergroup.h>
 #include <dtCore/shaderprogram.h>
@@ -409,10 +410,10 @@ namespace dtGame
    void GameActorProxy::BuildInvokables()
    {
       AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
-               dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickLocal)));
+               dtDAL::MakeFunctor(GetGameActor(), &GameActor::OnTickLocal)));
 
       AddInvokable(*new Invokable(TICK_REMOTE_INVOKABLE,
-               dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickRemote)));
+               dtDAL::MakeFunctor(GetGameActor(), &GameActor::OnTickRemote)));
 
       AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
                dtDAL::MakeFunctor(GetGameActor(), &GameActor::ProcessMessage)));
@@ -605,6 +606,20 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////////
    GameActor::~GameActor()
    {
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::OnTickLocal(const TickMessage& tickMessage)
+   {
+      //Call to support older code.
+      TickLocal(tickMessage);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::OnTickRemote(const TickMessage& tickMessage)
+   {
+      //Call to support older code.
+      TickLocal(tickMessage);
    }
 
    //////////////////////////////////////////////////////////////////////////////

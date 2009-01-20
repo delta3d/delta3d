@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -51,15 +51,15 @@ TestGamePropertyActor::TestEnum TestGamePropertyActor::TestEnum::OPTION6("Mind w
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-TestGamePropertyActor::TestGamePropertyActor(dtGame::GameActorProxy& proxy): 
+TestGamePropertyActor::TestGamePropertyActor(dtGame::GameActorProxy& proxy):
    dtGame::GameActor(proxy),
-   mInt(0), 
-   mReadOnlyInt(5), 
-   mFloat(0.0f), 
-   mDouble(0.0), 
-   mLong(0), 
+   mInt(0),
+   mReadOnlyInt(5),
+   mFloat(0.0f),
+   mDouble(0.0),
+   mLong(0),
    mBool(0),
-   mString(""), 
+   mString(""),
    mEnum(&TestEnum::OPTION1)
 {
 }
@@ -70,7 +70,7 @@ TestGamePropertyActor::~TestGamePropertyActor()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestGamePropertyActor::TickLocal(const dtGame::Message &tickMessage)
+void TestGamePropertyActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
    //const dtGame::TickMessage &tick =
    //   static_cast<const dtGame::TickMessage&>(tickMessage);
@@ -80,7 +80,7 @@ void TestGamePropertyActor::TickLocal(const dtGame::Message &tickMessage)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestGamePropertyActor::TickRemote(const dtGame::Message &tickMessage)
+void TestGamePropertyActor::OnTickRemote(const dtGame::TickMessage& tickMessage)
 {
    //const dtGame::TickMessage &tick =
    //   static_cast<const dtGame::TickMessage&>(tickMessage);
@@ -113,7 +113,7 @@ TestGamePropertyProxy::TestGamePropertyProxy() :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestGamePropertyProxy::BuildPropertyMap() 
+void TestGamePropertyProxy::BuildPropertyMap()
 {
    GameActorProxy::BuildPropertyMap();
 

@@ -53,13 +53,13 @@ class TUTORIAL_TANK_EXPORT TankActor : public dtActors::GameMeshActor
        * This method is an invokable for when a local object receives a tick.
        * @param tickMessage A message containing tick related information.
        */
-      virtual void TickLocal(const dtGame::Message& tickMessage);
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
       /**
        * This method is an invokable for when a remote object receives a tick.
        * @param tickMessage A message containing tick related information.
        */
-      virtual void TickRemote(const dtGame::Message& tickMessage);
+      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
 
       /**
        * Generic handler (Invokable) for messages. Overridden from base class.

@@ -125,10 +125,9 @@ void PlayerActor::OnEnteredWorld()
       dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 }
 
-void PlayerActor::TickLocal(const dtGame::Message& tickMessage)
+void PlayerActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
-   const dtGame::TickMessage& msg = static_cast<const dtGame::TickMessage&>(tickMessage);
-   ComputeSceneIntersections(msg.GetDeltaSimTime());
+   ComputeSceneIntersections(tickMessage.GetDeltaSimTime());
 }
 
 void PlayerActor::AddItemToInventory(GameItemActor& item)

@@ -78,26 +78,26 @@ namespace dtAnim
 
    void Cal3DGameActor::SetModel(const std::string &modelFile)
    {
-      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = dtAnim::Cal3DDatabase::GetInstance().Load(modelFile);    
+      dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = dtAnim::Cal3DDatabase::GetInstance().Load(modelFile);
 
       // If we successfully loaded the model, give it to the animator
       if (newModel.valid())
-      {         
-         mAnimator = new dtAnim::Cal3DAnimator(newModel.get());   
+      {
+         mAnimator = new dtAnim::Cal3DAnimator(newModel.get());
 
          // support to draw the skeleton
          mSkeletalGeode->addDrawable(new dtAnim::SkeletalDrawable(newModel.get()));
 
          // support to draw the mesh
-         if(newModel->BeginRenderingQuery()) 
+         if(newModel->BeginRenderingQuery())
          {
             int meshCount = newModel->GetMeshCount();
 
-            for(int meshId = 0; meshId < meshCount; meshId++) 
+            for(int meshId = 0; meshId < meshCount; meshId++)
             {
                int submeshCount = newModel->GetSubmeshCount(meshId);
 
-               for(int submeshId = 0; submeshId < submeshCount; submeshId++) 
+               for(int submeshId = 0; submeshId < submeshCount; submeshId++)
                {
                   dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(newModel.get(), meshId, submeshId);
                   mModelGeode->addDrawable(submesh);
@@ -145,7 +145,7 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
    void Cal3DGameActor::AddedToScene(dtCore::Scene* scene)
    {
-      dtGame::GameActor::AddedToScene(scene);     
+      dtGame::GameActor::AddedToScene(scene);
       GetMatrixNode()->addChild(mModelGeode.get());
       GetMatrixNode()->addChild(mSkeletalGeode.get());
    }
@@ -204,8 +204,7 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
    void Cal3DGameActorProxy::BuildInvokables()
    {
-      dtCore::RefPtr<dtGame::Invokable> invokable_tick_local = new dtGame::Invokable(dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE, dtDAL::MakeFunctor(GetGameActor(),&dtGame::GameActor::TickLocal) );
-      AddInvokable( *invokable_tick_local );
+      dtGame::GameActorProxy::BuildInvokables();
    }
 
    const dtDAL::ActorProxy::RenderMode& Cal3DGameActorProxy::GetRenderMode()
@@ -232,7 +231,7 @@ namespace dtAnim
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);   
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
 
       return mBillBoardIcon.get();
@@ -241,7 +240,7 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
    void Cal3DGameActorProxy::CreateActor()
    {
-      SetActor(*new Cal3DGameActor(*this));   
+      SetActor(*new Cal3DGameActor(*this));
    }
 
    void Cal3DGameActor::ApplyAnimationGroup(const dtDAL::NamedGroupParameter& prop)
@@ -292,10 +291,9 @@ namespace dtAnim
       return mAnimator.get();
    }
 
-   void Cal3DGameActor::TickLocal(const dtGame::Message& msg)
+   void Cal3DGameActor::OnTickLocal(const dtGame::TickMessage& msg)
    {
-      const dtGame::TickMessage& tickmsg = static_cast<const dtGame::TickMessage&>( msg );
-      float dt = tickmsg.GetDeltaSimTime();
+      float dt = msg.GetDeltaSimTime();
 
       if (mAnimator.valid())
          mAnimator->Update(dt);

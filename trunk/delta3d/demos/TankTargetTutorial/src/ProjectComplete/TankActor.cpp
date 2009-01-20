@@ -69,10 +69,9 @@ TankActor::TankActor(dtGame::GameActorProxy& proxy)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TankActor::TickLocal(const dtGame::Message& tickMessage)
+void TankActor::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
-   const dtGame::TickMessage& tick = static_cast<const dtGame::TickMessage&>(tickMessage);
-   float deltaSimTime = tick.GetDeltaSimTime();
+   float deltaSimTime = tickMessage.GetDeltaSimTime();
 
    ComputeVelocityAndTurn(deltaSimTime);
    if (mPropertiesUpdated)
@@ -86,10 +85,9 @@ void TankActor::TickLocal(const dtGame::Message& tickMessage)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TankActor::TickRemote(const dtGame::Message& tickMessage)
+void TankActor::OnTickRemote(const dtGame::TickMessage& tickMessage)
 {
-   const dtGame::TickMessage& tick = static_cast<const dtGame::TickMessage&>(tickMessage);
-   float deltaSimTime = tick.GetDeltaSimTime();
+   float deltaSimTime = tickMessage.GetDeltaSimTime();
 
    // do NOT recompute velocity and turn rate since we don't own this tank!
 

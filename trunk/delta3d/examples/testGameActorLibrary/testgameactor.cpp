@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -42,7 +42,7 @@ TestGameActorProxy1::TestGameActorProxy1():ticksEnabled(false)
    SetClassName("TestGameActor1");
 }
 
-TestGameActorProxy1::~TestGameActorProxy1() 
+TestGameActorProxy1::~TestGameActorProxy1()
 {
 
 }
@@ -50,36 +50,36 @@ TestGameActorProxy1::~TestGameActorProxy1()
 void TestGameActorProxy1::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
-   
-   AddProperty(new dtDAL::BooleanActorProperty("Has Fired", "Has this actor fired", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetOneIsFired), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::OneIsFired), 
+
+   AddProperty(new dtDAL::BooleanActorProperty("Has Fired", "Has this actor fired",
+      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetOneIsFired),
+      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::OneIsFired),
       "Sets/Gets if this actor has fired.", ""));
 
-   AddProperty(new dtDAL::IntActorProperty("Local Tick Count", "The number of tick messages received", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickLocals), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickLocals), 
+   AddProperty(new dtDAL::IntActorProperty("Local Tick Count", "The number of tick messages received",
+      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickLocals),
+      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickLocals),
       "Sets/Gets the number of local tick messages counted.", ""));
-   AddProperty(new dtDAL::IntActorProperty("Remote Tick Count", "The number of tick messages received", 
-      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickRemotes), 
-      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickRemotes), 
+   AddProperty(new dtDAL::IntActorProperty("Remote Tick Count", "The number of tick messages received",
+      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickRemotes),
+      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickRemotes),
       "Sets/Gets the number of remote tick messages counted.", ""));
 }
 
 void TestGameActorProxy1::BuildInvokables()
 {
    dtGame::GameActorProxy::BuildInvokables();
-   
-   AddInvokable(*new dtGame::Invokable("Fire One", 
+
+   AddInvokable(*new dtGame::Invokable("Fire One",
       dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::FireOne)));
 
-   AddInvokable(*new dtGame::Invokable("Reset", 
+   AddInvokable(*new dtGame::Invokable("Reset",
       dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::Reset)));
 
-   AddInvokable(*new dtGame::Invokable("Toggle Ticks", 
+   AddInvokable(*new dtGame::Invokable("Toggle Ticks",
       dtDAL::MakeFunctor(*this, &TestGameActorProxy1::ToggleTicks)));
-   
-   //register local tick handles.  
+
+   //register local tick handles.
    //This is just to test local handler registration.  If you want to
    //register to receive tick messages, you would override OnEnteredWorld()
    //and add code like GetGameManager()->RegisterForMessages(dtGame::MessageType::TICK_LOCAL, *this, "Tick Local")
@@ -99,20 +99,20 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
 {
    if (ticksEnabled)
    {
-      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, 
+      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL,
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
-      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, 
+      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE,
          dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
       ticksEnabled = false;
    }
    else
    {
-      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, 
+      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL,
          dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
-      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, 
+      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE,
          dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
       ticksEnabled = true;
-   }      
+   }
 }
 ////////////////////////////////////////////////////////////////////
 // Actor Code
@@ -133,15 +133,15 @@ void TestGameActor1::FireOne(const dtGame::Message& message)
 
 void TestGameActor1::Reset(const dtGame::Message& message)
 {
-   fired = false;      
+   fired = false;
 }
 
-void TestGameActor1::TickLocal(const dtGame::Message& tickMessage)
+void TestGameActor1::OnTickLocal(const dtGame::TickMessage& tickMessage)
 {
    tickLocals++;
 }
 
-void TestGameActor1::TickRemote(const dtGame::Message& tickMessage)
+void TestGameActor1::OnTickRemote(const dtGame::TickMessage& tickMessage)
 {
    tickRemotes++;
 }

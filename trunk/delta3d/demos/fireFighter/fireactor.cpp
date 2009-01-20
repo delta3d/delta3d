@@ -298,10 +298,8 @@ void FireActor::GetBoundaryPlane(osg::Vec4& dest, int index) const
    dest.set(mBoundaryPlanes[index][0],mBoundaryPlanes[index][1],mBoundaryPlanes[index][2],mBoundaryPlanes[index][3]);
 }
 
-void FireActor::TickLocal(const dtGame::Message& msg)
+void FireActor::OnTickLocal(const dtGame::TickMessage& tickMsg)
 {
-   const dtGame::TickMessage& tickMsg = static_cast<const dtGame::TickMessage&>(msg);
-
    double delta = tickMsg.GetDeltaSimTime();
 
    static double randomWalk = 0.5;

@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -46,16 +46,16 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
       /**
        * @see GameActorProxy#TickLocal
        */
-      virtual void TickLocal(const dtGame::Message& tickMessage);
-      
+      virtual void OnTickLocal(const dtGame::TickMessage& tickMessage);
+
       /**
        * @see GameActorProxy#TickRemote
        */
-      virtual void TickRemote(const dtGame::Message& tickMessage);
-      
+      virtual void OnTickRemote(const dtGame::TickMessage& tickMessage);
+
       bool OneIsFired() const { return fired; }
       void SetOneIsFired(bool newValue) { fired = newValue; }
-      
+
       int GetTickLocals() const { return tickLocals; }
       void SetTickLocals(int newTickLocals) { tickLocals = newTickLocals; }
 
@@ -86,14 +86,14 @@ class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy
        * Builds the invokable associated with this proxy.
        */
       virtual void BuildInvokables();
-      
+
       void ToggleTicks(const dtGame::Message& message);
-       
+
    protected:
       virtual void CreateActor();
    private:
       bool ticksEnabled;
 };
 
-#endif 
+#endif
 

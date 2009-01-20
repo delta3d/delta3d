@@ -41,6 +41,7 @@ namespace dtGame
    class GameManager;
    class Invokable;
    class MessageType;
+   class TickMessage;
 
    class GameActorProxy;
    /**
@@ -102,6 +103,9 @@ namespace dtGame
        * @see GameManager#RegisterForMessages
        * @param tickMessage the actual message
        */
+      virtual void OnTickLocal(const TickMessage& tickMessage);
+
+      ///Deprecated, override the one that takes a TickMessage;
       virtual void TickLocal(const Message& tickMessage);
 
       /**
@@ -111,6 +115,9 @@ namespace dtGame
        * @see GameManager#RegisterForMessages
        * @param tickMessage the actual message
        */
+      virtual void OnTickRemote(const TickMessage& tickMessage);
+
+      ///Deprecated, override the one that takes a TickMessage;
       virtual void TickRemote(const Message& tickMessage);
 
       /**
@@ -362,7 +369,7 @@ namespace dtGame
       void SetInitialOwnership(Ownership& newOwnership);
 
       /**
-       * Registers to receive a specific tyep of message from the GM.  You will receive
+       * Registers to receive a specific type of message from the GM.  You will receive
        * all instances of this message, regardless of whether you are the about actor or not.
        * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
        * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
