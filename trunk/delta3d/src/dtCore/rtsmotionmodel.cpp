@@ -123,7 +123,8 @@ void RTSMotionModel::OnMessage(MessageData *data)
 
    if (  target == 0
       || !IsEnabled()
-      || (data->message != dtCore::System::MESSAGE_PRE_FRAME
+      || (data->message != dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL/*MESSAGE_PRE_FRAME*/
+      // Note - someone commented out the paused stuff below - this model does NOTHING while paused.
          //&& (mUseSimTimeForSpeed || data->message != "pause")
          )
       )
