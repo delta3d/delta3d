@@ -79,7 +79,7 @@ namespace dtCore
       enum SystemStages
       {
          STAGE_NONE                   = 0x00000000, ///<No update loop stages are performed
-         STAGE_EVENT_TRAVERSAL        = 0x00000001, ///<"eventtraversal" message is when input and windowing events are picked up, you should not be listening to this message 
+         STAGE_EVENT_TRAVERSAL        = 0x00000001, ///<"eventtraversal" message is when input and windowing events are picked up, you should not be listening to this message
          STAGE_POST_EVENT_TRAVERSAL   = 0x00000002, ///<"posteventtraversal" message is sent immediately after "eventtraversal" listen to this message for input or windowing related response
          STAGE_PREFRAME               = 0x00000004, ///<"preframe" message
          STAGE_CAMERA_SYNCH           = 0x00000008,
@@ -105,7 +105,7 @@ namespace dtCore
       const static dtUtil::RefString MESSAGE_POST_EVENT_TRAVERSAL;
 
      /**
-      * MESSAGE_PRE_FRAME: This message is intended to be the main per frame simulation step or update.  
+      * MESSAGE_PRE_FRAME: This message is intended to be the main per frame simulation step or update.
       */
       const static dtUtil::RefString MESSAGE_PRE_FRAME;
 
@@ -130,7 +130,7 @@ namespace dtCore
       const static dtUtil::RefString MESSAGE_POST_FRAME;
 
       /**
-       *	MESSAGE_CONFIG: This message is sent out before the start of the frame loop, any initialization code should 
+       *	MESSAGE_CONFIG: This message is sent out before the start of the frame loop, any initialization code should
        * be done on this message.
        */
       const static dtUtil::RefString MESSAGE_CONFIG;
@@ -144,7 +144,7 @@ namespace dtCore
        *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(true) is called.
        */
       const static dtUtil::RefString MESSAGE_PAUSE_START;
-      
+
       /**
       *	MESSAGE_PAUSE_START: This message is sent out immediately when SetPause(false) is called.
       */
@@ -256,7 +256,7 @@ namespace dtCore
 
 
       /**
-       * @note the simulation clock time is a 64 bit int in microseconds
+       * @note the simulation clock time is a 64 bit integer in microseconds
        * @return the current simulation clock in the same format as the real clock time but can be changed
        *         and follows the time scale.
        */
@@ -284,13 +284,13 @@ namespace dtCore
       /**
        * This is the Simulation time that would be based on actual passage of time. This won't
        * match the simulation time always when SetUseFixedTimeStep(true) is called.  The value
-       * is probably not of any use to a developer.  This accessor exists for the sake of unit testsing.
+       * is probably not of any use to a developer.  This accessor exists for the sake of unit testing.
        */
       double GetCorrectSimulationTime() const;
 
       /**
        * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
-       * @param newTime the new time in seconds since the start of the simulation for the simualtion time.
+       * @param newTime the new time in seconds since the start of the simulation for the simulation time.
        */
       void SetSimulationTime(double newTime);
 
@@ -323,7 +323,7 @@ namespace dtCore
       /// system dependent algorithms.  The value is not necessarily human understandable.
       Timer_t mTickClockTime;
 
-      //The real world time (UTC) and a simulated, settable version of it. They are both
+      //The real world time (UTC) and a simulated, set-able version of it. They are both
       // in microseconds since January 1, 1970.
       Timer_t mRealClockTime, mSimulationClockTime;
       Timer_t mLastDrawClockTime;
