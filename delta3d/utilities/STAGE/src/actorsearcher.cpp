@@ -258,7 +258,6 @@ namespace dtEditQt
     {
         EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-        LOG_ERROR("User pressed the search button");
         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > foundProxies;
         dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
 
