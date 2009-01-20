@@ -334,6 +334,20 @@ void ObjectWorkspace::UpdateResourceLists()
       emit LoadShaderDefinition(mAdditionalShaderFiles.at(shaderIndex).c_str());
    }
 
+   // Populate the map list.
+   QStringList mapList;
+   std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
+   for (std::set<std::string>::iterator map = mapNames.begin(); map != mapNames.end(); map++)
+   {
+      mapList << map->c_str();
+   }
+
+   for (int mapIndex = 0; mapIndex < mapList.size(); mapIndex++)
+   {
+      mResourceDock->OnNewMap(mapList.at(mapIndex).toStdString());
+   }
+
+   // Populate the object list.
    QString staticMeshDir = QString(mContextPath.c_str()) + "/staticmeshes";
 
    if (directory.cd(staticMeshDir))
@@ -381,6 +395,20 @@ void ObjectWorkspace::OnLoadShaderDefinition()
    }
 
     statusBar()->showMessage(statusMessage, 2000);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnLoadMap(const std::string& mapName)
+{
+   QTreeWidgetItem* mapItem = mResourceDock->FindMapItem(mapName);
+   if (mapItem)
+   {
+      mapItem->setCheckState(0, Qt::Checked);
+   }
+   else
+   {
+      QMessageBox::critical(this, "Error", "Map cannot be loaded because it is not part of the current project!", QMessageBox::Ok);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,10 @@
 #include <dtCore/system.h>
 #include <dtCore/object.h>
 #include <dtCore/compass.h>
+
 #include <dtABC/application.h>
+
+#include <dtDAL/actorproxy.h>
 
 #include <dtAnim/posemeshdatabase.h>
 #include <dtAnim/posemeshutility.h>
@@ -77,6 +80,7 @@ public:
 public slots:
 
    void OnLoadShaderFile(const QString& filename);
+   void OnLoadMapFile(const std::string& filename);
    void OnLoadGeometryFile(const std::string& filename);
    void OnUnloadGeometryFile();
    void OnApplyShader(const std::string& groupName, const std::string& programName);
@@ -88,6 +92,7 @@ public slots:
 
    // Lighting slots
    void OnAddLight(int id);
+   void OnFixLights();
    void OnSetCurrentLight(int id);
    void OnSetLightEnabled(int id, bool enabled);
    void OnSetLightType(int id, int type);
@@ -113,10 +118,17 @@ signals:
    void LightUpdate(const LightInfo& lightInfo);
 
 protected:
+   void InitWireDecorator();
+   void InitGridPlanes();
+   void InitLights();
+
+   void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies);
+
    virtual void PostFrame(const double deltaFrameTime);
 
 private:
 
+   dtCore::RefPtr<dtDAL::Map>      mMap;
    dtCore::RefPtr<dtCore::Object>  mObject;
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
@@ -133,10 +145,6 @@ private:
    std::vector<dtCore::RefPtr<dtCore::Object> >        mLightArrow;
 
    int   mCurrentLight;
-
-   void InitWireDecorator();
-   void InitGridPlanes();
-   void InitLights();
 };
 
 #endif // DELTA_OBJECT_VIEWER

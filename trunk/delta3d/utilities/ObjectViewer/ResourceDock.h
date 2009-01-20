@@ -85,6 +85,7 @@ public:
    ResourceDock();  
    virtual ~ResourceDock();
 
+   QTreeWidgetItem* FindMapItem(std::string fullName) const;
    QTreeWidgetItem* FindGeometryItem(const std::string& fullName) const;
    QTreeWidgetItem* FindShaderFileItem(const std::string& filename) const;
    QTreeWidgetItem* FindShaderGroupItem(const std::string& groupName, const QTreeWidgetItem* fileItem) const;
@@ -97,6 +98,7 @@ public:
 
 signals:
 
+   void LoadMap(const std::string& mapName);
    void LoadGeometry(const std::string& filename);
    void UnloadGeometry();
 
@@ -108,6 +110,7 @@ signals:
 
    void AddLight();
    void RemoveLight(int id);
+   void FixLights();
    void SetCurrentLight(int id);
    void SetLightEnabled(int id, bool enabled);
    void SetLightType(int id, int type);
@@ -124,6 +127,7 @@ signals:
 
 public slots:
    
+   void OnNewMap(const std::string& mapName);
    void OnNewGeometry(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
 
@@ -167,6 +171,9 @@ private:
    QString mCurrentShaderGroup;
    QString mCurrentShaderProgram;
 
+   bool mLoadingMap;
+
+   void InitGeometryTree();
    void CreateLightItems();
 
    QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);

@@ -199,29 +199,77 @@ ResourceDock::ResourceDock()
 
    setWidget(mTabs);
 
+   InitGeometryTree();
    CreateLightItems();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ResourceDock::~ResourceDock(){}
 
+////////////////////////////////////////////////////////////////////////////////
+QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
+{
+   std::transform(fullName.begin(), fullName.end(), fullName.begin(), (int(*)(int))std::tolower);
+
+   for (int itemIndex = 0; itemIndex < mGeometryTreeWidget->topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
+
+      if (childItem->text(0) == QString("Maps"))
+      {
+         if (fullName == "")
+         {
+            return childItem;
+         }
+
+         for (int geometryIndex = 0; geometryIndex < childItem->childCount(); geometryIndex++)
+         {
+            QTreeWidgetItem* geometryItem = childItem->child(geometryIndex);
+            std::string mapName = geometryItem->text(0).toStdString();
+            std::transform(mapName.begin(), mapName.end(), mapName.begin(), (int(*)(int))std::tolower);
+
+            // Case insensitive comparison
+            if (fullName == fullName)
+            {
+               return geometryItem; 
+            }
+         }
+      }
+   }
+
+   return NULL;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) const
 {
    for (int itemIndex = 0; itemIndex < mGeometryTreeWidget->topLevelItemCount(); ++itemIndex)
    {
-      QTreeWidgetItem *childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
+      QTreeWidgetItem* childItem = mGeometryTreeWidget->topLevelItem(itemIndex);
 
-      std::string currentPath = childItem->toolTip(0).toStdString();
-      std::string findPath = fullName;
-
-      std::transform(currentPath.begin(), currentPath.end(), currentPath.begin(), (int(*)(int))std::tolower);
-      std::transform(findPath.begin(), findPath.end(), findPath.begin(), (int(*)(int))std::tolower);
-
-      // Case insensitive comparison
-      if (currentPath == findPath)
+      if (childItem->text(0) == QString("Objects"))
       {
-         return childItem; 
+         if (fullName == "")
+         {
+            return childItem;
+         }
+
+         for (int geometryIndex = 0; geometryIndex < childItem->childCount(); geometryIndex++)
+         {
+            QTreeWidgetItem* geometryItem = childItem->child(geometryIndex);
+
+            std::string currentPath = geometryItem->toolTip(0).toStdString();
+            std::string findPath = fullName;
+
+            std::transform(currentPath.begin(), currentPath.end(), currentPath.begin(), (int(*)(int))std::tolower);
+            std::transform(findPath.begin(), findPath.end(), findPath.begin(), (int(*)(int))std::tolower);
+
+            // Case insensitive comparison
+            if (currentPath == findPath)
+            {
+               return geometryItem; 
+            }
+         }
       }
    }
 
@@ -346,6 +394,26 @@ void ResourceDock::SetGeometry(QTreeWidgetItem* geometryItem, bool shouldDisplay
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnNewMap(const std::string& mapName)
+{
+   QTreeWidgetItem *mapItem = new QTreeWidgetItem();
+   mapItem->setText(0, mapName.c_str());
+
+   mapItem->setFlags(Qt::ItemIsSelectable |
+      Qt::ItemIsUserCheckable |
+      Qt::ItemIsEnabled);
+
+   mapItem->setCheckState(0, Qt::Unchecked);
+
+   QTreeWidgetItem* listItem = FindMapItem("");
+   if (listItem)
+   {
+      listItem->addChild(mapItem);    
+      listItem->setExpanded(true);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnNewGeometry(const std::string& path, const std::string& filename)
 {
    QTreeWidgetItem *geometryItem = new QTreeWidgetItem();
@@ -358,7 +426,12 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
 
    geometryItem->setCheckState(0, Qt::Unchecked);
 
-   mGeometryTreeWidget->addTopLevelItem(geometryItem);    
+   QTreeWidgetItem* listItem = FindGeometryItem("");
+   if (listItem)
+   {
+      listItem->addChild(geometryItem);   
+      listItem->setExpanded(true);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -366,9 +439,6 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
 {
    if (column == 0)
    {
-      // The full path is stored in the tooltip
-      QString geomName = item->toolTip(0);
-
       if (item->checkState(0) == Qt::Checked)
       {
          QTreeWidgetItemIterator treeIter(mGeometryTreeWidget);
@@ -384,11 +454,38 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
             ++treeIter;
          }
 
-         emit LoadGeometry(geomName.toStdString());         
+         // Load a map
+         if (item->parent() == FindMapItem(""))
+         {
+            // Reset all the light custom data as all lights may change with a map.
+            for (int lightID = 0; lightID < dtCore::MAX_LIGHTS; lightID++)
+            {
+               DeleteTreeItem(mLightItems[lightID].custom);
+               mLightItems[lightID].custom = NULL;
+            }
+
+            QString mapName = item->text(0);
+            emit LoadMap(mapName.toStdString());
+         }
+         // Load an object
+         else
+         {
+            // The full path is stored in the tooltip
+            QString geomName = item->toolTip(0);
+            emit LoadGeometry(geomName.toStdString());
+            
+            // In case we are switching from a map, we need to fix the lights as
+            // the map would probably have removed a few.
+            emit FixLights();
+         }
       }
       else if (item->checkState(0) == Qt::Unchecked)
       {
          emit UnloadGeometry();
+
+         // In case we are switching from a map, we need to fix the lights as
+         // the map would probably have removed a few.
+         emit FixLights();
       }
    }  
 }
@@ -753,6 +850,13 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
       float elevation = 0.0f;
       infiniteLight->GetAzimuthElevation(azimuth, elevation);
 
+      // If the light changed types somewhere, make sure we re-do the custom data.
+      if (typeString != mLightItems[lightIndex].type->text(1))
+      {
+         DeleteTreeItem(mLightItems[lightIndex].custom);
+         mLightItems[lightIndex].custom = NULL;
+      }
+
       if (!mLightItems[lightIndex].custom)
       {
          mLightItems[lightIndex].custom = CreateTreeItem(tr("Custom"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
@@ -776,6 +880,13 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
             float cutoff = spotLight->GetSpotCutoff();
             float exponent = spotLight->GetSpotExponent();
 
+            // If the light changed types somewhere, make sure we re-do the custom data.
+            if (typeString != mLightItems[lightIndex].type->text(1))
+            {
+               DeleteTreeItem(mLightItems[lightIndex].custom);
+               mLightItems[lightIndex].custom = NULL;
+            }
+
             if (!mLightItems[lightIndex].custom)
             {
                mLightItems[lightIndex].custom = CreateTreeItem(tr("Custom"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
@@ -794,6 +905,13 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
             float linear = 0.0f;
             float quadratic = 0.0f;
             positionalLight->GetAttenuation(constant, linear, quadratic);
+
+            // If the light changed types somewhere, make sure we re-do the custom data.
+            if (typeString != mLightItems[lightIndex].type->text(1))
+            {
+               DeleteTreeItem(mLightItems[lightIndex].custom);
+               mLightItems[lightIndex].custom = NULL;
+            }
 
             if (!mLightItems[lightIndex].custom)
             {
@@ -1000,6 +1118,20 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
          emit SetLightQuadratic(lightID, item->text(1).toFloat());
       }
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::InitGeometryTree()
+{
+   QTreeWidgetItem* mapItem = new QTreeWidgetItem;
+   mapItem->setText(0, "Maps");
+   mapItem->setFlags(Qt::ItemIsEnabled);
+   mGeometryTreeWidget->addTopLevelItem(mapItem);
+
+   QTreeWidgetItem* geometryItem = new QTreeWidgetItem;
+   geometryItem->setText(0, "Objects");
+   geometryItem->setFlags(Qt::ItemIsEnabled);
+   mGeometryTreeWidget->addTopLevelItem(geometryItem);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

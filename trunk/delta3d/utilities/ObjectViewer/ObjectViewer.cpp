@@ -3,10 +3,11 @@
 #include <QtCore/QDebug>
 #include <QtCore/QString>
 #include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
 
 #include "ObjectViewer.h"
 #include "ObjectViewerData.h"
-#include "ObjectWorkspace.h"
+//#include "ObjectWorkspace.h"
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
@@ -27,6 +28,11 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/librarysharingmanager.h>
+
+#include <dtDAL/project.h>
+#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/map.h>
 
 #include <osg/Geode>
 #include <osg/Shape>
@@ -173,14 +179,165 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnLoadMapFile(const std::string& filename)
+{
+   OnUnloadGeometryFile();
+
+   dtCore::RefPtr<dtDAL::Map> map;
+
+   // Attempt to open the map.
+   try
+   {
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+      map = &dtDAL::Project::GetInstance().GetMap(filename);
+   }
+   catch (dtUtil::Exception &e)
+   {
+      QApplication::restoreOverrideCursor();
+      QString error = "An error occured while opening the map. ";
+      error += e.What().c_str();
+      LOG_ERROR(error.toStdString());
+      QMessageBox::critical(NULL, tr("Map Open Error"),error,tr("OK"));
+      return;
+   }
+
+   // Load the new map into the current scene.
+   if (map.valid())
+   {
+      const std::vector<std::string>& missingLibs= map->GetMissingLibraries();
+
+      if (!missingLibs.empty())
+      {
+         QString
+            errors(tr("The following libraries listed in the map could not be loaded:\n\n"));
+         for (unsigned i = 0; i < missingLibs.size(); ++i)
+         {
+            std::string
+               nativeName = dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(missingLibs[i]);
+            errors.append(nativeName.c_str());
+            errors.append("\n");
+         }
+
+         errors.append("\nThis could happen for a number of reasons. Please ensure that the name is correct, ");
+         errors.append("the library is in the path (or the working directory), the library can load correctly, and dependent libraries are available.");
+         errors.append("If you save this map, the library and any actors referenced by the library will be lost.");
+
+         QApplication::restoreOverrideCursor();
+         QMessageBox::warning(NULL, tr("Missing Libraries"), errors, tr("OK"));
+         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+      }
+
+      //try
+      //{
+      //   dtDAL::Project::GetInstance().LoadMapIntoScene(*map,
+      //      *GetScene(), true);
+      //}
+      //catch (const dtUtil::Exception& e)
+      //{
+      //   QApplication::restoreOverrideCursor();
+      //   QMessageBox::critical(NULL, tr("Error"), e.What().c_str(), tr("OK"));
+      //   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+      //}
+   }
+
+   QApplication::restoreOverrideCursor();
+   mMap = map;
+
+   if (mMap.valid())
+   {
+      mMap->SetModified(false);
+
+      bool bFirstBoundSet = false;
+      osg::Vec3 minBounds;
+      osg::Vec3 maxBounds;
+
+      const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies =
+         mMap->GetAllProxies();
+
+      std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+
+      for (itor = proxies.begin(); itor != proxies.end(); ++itor)
+      {
+         dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
+
+         dtCore::DeltaDrawable* drawable = proxy->GetActor();
+         if (drawable)
+         {
+            mShadeDecorator->addChild(drawable->GetOSGNode());
+            mWireDecorator->addChild(drawable->GetOSGNode());
+
+            // Get the min and max bounding area.
+            osg::Vec3 center;
+            float radius;
+            drawable->GetBoundingSphere(&center, &radius);
+
+            if (bFirstBoundSet)
+            {
+               for (int axis = 0; axis < 3; axis++)
+               {
+                  if (minBounds[axis] > center[axis] - radius)
+                  {
+                     minBounds[axis] = center[axis] - radius;
+                  }
+
+                  if (maxBounds[axis] < center[axis] + radius)
+                  {
+                     maxBounds[axis] = center[axis] + radius;
+                  }
+               }
+            }
+            else
+            {
+               for (int axis = 0; axis < 3; axis++)
+               {
+                  minBounds[axis] = center[axis] - radius;
+                  maxBounds[axis] = center[axis] + radius;
+               }
+               bFirstBoundSet = true;
+            }
+         }
+      }
+
+      // Now update the camera positions.
+      if (bFirstBoundSet)
+      {
+         osg::Vec3 center;
+         float radius = 0.0f;
+
+         for (int axis = 0; axis < 3; axis++)
+         {
+            center[axis] = minBounds[axis] + ((maxBounds[axis] - minBounds[axis]) * 0.5f);
+
+            float testRadius = (maxBounds[axis] - minBounds[axis]) * 0.5f;
+            if (testRadius > radius)
+            {
+               radius = testRadius;
+            }
+         }
+    
+         // Reset the camera outside the bounding sphere.
+         mModelMotion->SetDistance(radius * 2.0f);
+         mModelMotion->SetFocalPoint(center);
+
+         for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+         {
+            mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+            mLightMotion[lightIndex]->SetFocalPoint(center);
+
+            // Adjust the size of the light arrow
+            float arrowScale = radius * 0.5f;
+            mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+         }
+      }
+   }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 {
-   // For now only allow 1 object
-   if (mObject.valid())
-   {
-      OnUnloadGeometryFile();
-   }
+   OnUnloadGeometryFile();
 
    mObject = new dtCore::Object;
    mObject->LoadFile(filename);
@@ -202,10 +359,10 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 
       for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
       {
-         //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-         //mLightMotion[lightIndex]->SetFocalPoint(center);
+         mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+         mLightMotion[lightIndex]->SetFocalPoint(center);
 
-         // Adust the size of the light arrow
+         // Adjust the size of the light arrow
          float arrowScale = radius * 0.5f;
          mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
       }
@@ -221,6 +378,23 @@ void ObjectViewer::OnUnloadGeometryFile()
       mWireDecorator->removeChild(mObject->GetOSGNode());
 
       mObject = NULL;
+   }
+
+   // Remove the old map.
+   if (mMap.valid())
+   {
+      // Remove all proxies from the scene.
+      clearProxies(mMap->GetAllProxies());
+
+      try
+      {
+         dtDAL::Project::GetInstance().CloseMap(*mMap, true);
+         mMap = NULL;
+      }
+      catch (const dtUtil::Exception &e)
+      {
+         QMessageBox::critical(NULL, tr("Error"), e.What().c_str(), tr("OK"));
+      }
    }
 }
 
@@ -292,6 +466,20 @@ void ObjectViewer::OnAddLight(int id)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnFixLights()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+
+      if (!light)
+      {
+         OnSetLightType(lightIndex, 0);
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetCurrentLight(int id)
 {
    mCurrentLight = id;
@@ -345,17 +533,39 @@ void ObjectViewer::OnSetLightType(int id, int type)
    // Copy the previous light data to the new light.
    if (newLight)
    {
-      newLight->SetEnabled(light->GetEnabled());
-      newLight->SetAmbient(light->GetAmbient());
-      newLight->SetDiffuse(light->GetDiffuse());
-      newLight->SetSpecular(light->GetSpecular());
+      if (light)
+      {
+         newLight->SetEnabled(light->GetEnabled());
+         newLight->SetAmbient(light->GetAmbient());
+         newLight->SetDiffuse(light->GetDiffuse());
+         newLight->SetSpecular(light->GetSpecular());
+      }
+      else
+      {
+         if (id == 0)
+         {
+            newLight->SetEnabled(true);
+         }
+         else
+         {
+            newLight->SetEnabled(false);
+         }
+      }
 
+      // Remove the current light from the transform.
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = mLightArrowTransformable[id];
-      lightArrowTransformable->RemoveChild(light);
+      for (int childIndex = 0; childIndex < (int)lightArrowTransformable->GetNumChildren(); childIndex++)
+      {
+         dtCore::DeltaDrawable* drawable = lightArrowTransformable->GetChild(childIndex);
+         if (drawable && dynamic_cast<dtCore::Light*>(drawable))
+         {
+            lightArrowTransformable->RemoveChild(drawable);
+            break;
+         }
+      }
+
       lightArrowTransformable->AddChild(newLight);
 
-      //GetScene()->RemoveDrawable(light);
-      //GetScene()->AddDrawable(newLight);
       GetScene()->RegisterLight(newLight);
    }
 }
@@ -558,6 +768,44 @@ void ObjectViewer::InitLights()
       GetScene()->AddDrawable(light);
       GetScene()->RegisterLight(light);
       light->SetEnabled(false);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies)
+{
+   std::map<dtCore::UniqueId,dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator itor;
+
+   for (itor = proxies.begin(); itor != proxies.end(); ++itor)
+   {
+      dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
+      const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+      dtDAL::ActorProxyIcon *billBoard;
+
+      //if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+      //{
+      //   billBoard = proxy->GetBillBoardIcon();
+      //   if (billBoard != NULL)
+      //      GetScene()->RemoveDrawable(billBoard->GetDrawable());
+      //}
+      //else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+      //{
+      //   GetScene()->RemoveDrawable(proxy->GetActor());
+      //}
+      //else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+      //{
+      //   billBoard = proxy->GetBillBoardIcon();
+      //   if (billBoard != NULL)
+      //      GetScene()->RemoveDrawable(billBoard->GetDrawable());
+      //   GetScene()->RemoveDrawable(proxy->GetActor());
+      //}
+
+      dtCore::DeltaDrawable* drawable = proxy->GetActor();
+      if (drawable)
+      {
+         mShadeDecorator->removeChild(drawable->GetOSGNode());
+         mWireDecorator->removeChild(drawable->GetOSGNode());
+      }
    }
 }
 
