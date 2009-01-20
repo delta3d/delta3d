@@ -25,18 +25,18 @@ namespace dtCore
 
    /////////////////////////////////////////////////////////////////////////////
    Object::Object(const std::string& name)
-   :  Physical(name),
-      mModel(new Model), 
-      mRecenterGeometry( false )
+      : Physical(name)
+      , mModel(new Model)
+      , mRecenterGeometry(false)
    {
       Ctor();
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Object::Object( TransformableNode &node, const std::string &name )
-   :  Physical(node, name),
-      mModel(new Model), 
-      mRecenterGeometry( false )
+   Object::Object(TransformableNode& node, const std::string& name)
+      : Physical(node, name)
+      , mModel(new Model)
+      , mRecenterGeometry(false)
    {
       Ctor();
    }
@@ -46,14 +46,13 @@ namespace dtCore
    {
       RegisterInstance(this);
 
-      osg::StateSet *stateSet = GetOSGNode()->getOrCreateStateSet();
+      osg::StateSet* stateSet = GetOSGNode()->getOrCreateStateSet();
       stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
 
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_OBJECT);
    }
-
 
    /////////////////////////////////////////////////////////////////////////////
    Object::~Object()
@@ -64,29 +63,29 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
    {
-      osg::Node *node = NULL;
+      osg::Node* node = NULL;
       node = Loadable::LoadFile(filename, useCache);
    
       //We should always clear the geometry.  If LoadFile fails, we should have no geometry.
       if (mModel->GetMatrixTransform().getNumChildren() != 0)
       {
-         mModel->GetMatrixTransform().removeChild(0,GetMatrixNode()->getNumChildren() );
+         mModel->GetMatrixTransform().removeChild(0,GetMatrixNode()->getNumChildren());
       }
 
       //attach our geometry node to the matrix node
-      if (node!=NULL)
+      if (node != NULL)
       {
          //recenter the geometry about the origin by finding the center of it's
          //bounding box and adding a transform between the loaded group node
          //and the top transform which undo's any offsets
-         if( mRecenterGeometry )
+         if(mRecenterGeometry)
          {
             dtUtil::BoundingBoxVisitor bbv;
             node->accept(bbv);
 
             osg::Matrix tempMat;
-            tempMat.makeTranslate( -bbv.mBoundingBox.center() );
-            mModel->GetMatrixTransform().setMatrix( tempMat );
+            tempMat.makeTranslate(-bbv.mBoundingBox.center());
+            mModel->GetMatrixTransform().setMatrix(tempMat);
             mModel->SetDirty();
          }
 
@@ -101,7 +100,7 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void Object::SetScale(const osg::Vec3 &xyz)
+   void Object::SetScale(const osg::Vec3& xyz)
    {  
       mModel->SetScale(xyz);
    }

@@ -52,7 +52,7 @@ namespace dtCore
            * @param node : A node this class should use internally
            * @param name : The name of this instance
            */
-         Object( TransformableNode &node, const std::string &name = "Object" );
+         Object(TransformableNode& node, const std::string& name = "Object");
          
          /*!
           * Load a geometry from a file using any supplied data file paths set in
@@ -71,7 +71,7 @@ namespace dtCore
           * Sets the scale on this object
           * @param xyz The scale vector
           */
-         void SetScale(const osg::Vec3 &xyz);
+         void SetScale(const osg::Vec3& xyz);
 
          /**
           * Returns the scale vector
