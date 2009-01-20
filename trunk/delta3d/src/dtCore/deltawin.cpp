@@ -24,14 +24,14 @@ DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
    , mIsFullScreen(false)
    , mShowCursor(true)
 {
-   RegisterInstance(this);  
+   RegisterInstance(this);
    CreateDeltaWindow(windowTraits);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DeltaWin::DeltaWin(const std::string& name, 
-                   int x, int y, 
-                   int width, int height, 
+DeltaWin::DeltaWin(const std::string& name,
+                   int x, int y,
+                   int width, int height,
                    bool cursor, bool fullScreen,
                    osg::Referenced* inheritedWindowData)
    : Base(name)
@@ -39,7 +39,7 @@ DeltaWin::DeltaWin(const std::string& name,
    , mLastWindowedHeight(480)
    , mIsFullScreen(false)
    , mShowCursor(true)
-{  
+{
    RegisterInstance(this);
 
    DeltaWinTraits deltaTraits;
@@ -65,13 +65,13 @@ DeltaWin::DeltaWin(const std::string& name,
 
 ////////////////////////////////////////////////////////////////////////////////
 void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
-{  
+{
    osg::ref_ptr<osg::GraphicsContext::Traits> osgTraits;
-   osgTraits = CreateOSGTraits(windowTraits);   
+   osgTraits = CreateOSGTraits(windowTraits);
 
    mOsgViewerGraphicsWindow = CreateGraphicsWindow(*osgTraits).get();
 
-   if(!windowTraits.fullScreen)
+   if (!windowTraits.fullScreen)
    {
       SetPosition(windowTraits.x, windowTraits.y, windowTraits.width, windowTraits.height);
    }
@@ -85,14 +85,14 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
 osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const
 {
    osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
-   
+
    if (gc.valid() == false)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_CONTEXT,
          "The graphics context could not be created.",
-         __FILE__, __LINE__ );
+         __FILE__, __LINE__);
    }
-   
+
    osg::ref_ptr<osgViewer::GraphicsWindow> gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
    if (gw != NULL)
    {
@@ -101,7 +101,7 @@ osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::Grap
       gw->realize();
       gw->makeCurrent();
    }
-      
+
    return gw;
 }
 
@@ -113,7 +113,7 @@ DeltaWin::DeltaWin(const std::string& name, osgViewer::GraphicsWindow& gw)
    , mShowCursor(true)
 {
    RegisterInstance(this);
- 
+
    mOsgViewerGraphicsWindow = &gw;
 
    SetWindowTitle(name);
@@ -153,7 +153,7 @@ void DeltaWin::SetFullScreenMode(bool enable)
    {
       return;
    }
-   
+
    osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
 
    if (wsi == NULL)
@@ -180,7 +180,7 @@ void DeltaWin::SetFullScreenMode(bool enable)
       mOsgViewerGraphicsWindow->setWindowDecoration(false);
       mOsgViewerGraphicsWindow->setWindowRectangle(0, 0, screenWidth, screenHeight);
    }
-   
+
    mIsFullScreen = enable;
 
    mOsgViewerGraphicsWindow->grabFocusIfPointerInWindow();
@@ -223,16 +223,16 @@ DeltaWin::PositionSize DeltaWin::GetPosition()
 ////////////////////////////////////////////////////////////////////////////////
 bool DeltaWin::CalcPixelCoords(float winX, float winY, float &pixelX, float &pixelY) const
 {
-   if ( winX < -1.0f || winX > 1.0f ) return false;
-   if ( winY < -1.0f || winY > 1.0f ) return false;
-   
+   if (winX < -1.0f || winX > 1.0f) return false;
+   if (winY < -1.0f || winY > 1.0f) return false;
+
    int wx, wy;
    int w, h;
    mOsgViewerGraphicsWindow->getWindowRectangle(wx, wy, w, h);
 
-   pixelX = ( w/2 ) * (winX + 1.0f);
-   pixelY = ( h/2 ) * (winY + 1.0f);
-   
+   pixelX = (w/2) * (winX + 1.0f);
+   pixelY = (h/2) * (winY + 1.0f);
+
    return true;
 }
 
@@ -249,14 +249,14 @@ bool DeltaWin::CalcWindowCoords(float pixel_x, float pixel_y, float& x, float& y
    int w, h;
    mOsgViewerGraphicsWindow->getWindowRectangle(wx, wy, w, h);
 
-   if (pixel_x < 0 || pixel_x > w ) return false;
-   if (pixel_y < 0 || pixel_y > h ) return false;
+   if (pixel_x < 0 || pixel_x > w) return false;
+   if (pixel_y < 0 || pixel_y > h) return false;
 
-   if( w != 0 && h != 0 )
+   if (w != 0 && h != 0)
    {
-      x = ( 2 * pixel_x / w ) - 1;
-      y = ( 2 * pixel_y / h ) - 1;
-      
+      x = (2 * pixel_x / w) - 1;
+      y = (2 * pixel_y / h) - 1;
+
       return true;
    }
    else
@@ -273,7 +273,7 @@ bool DeltaWin::CalcWindowCoords(const osg::Vec2& pixel_xy, osg::Vec2& window_xy)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool DeltaWin::ChangeScreenResolution(Resolution res) 
+bool DeltaWin::ChangeScreenResolution(Resolution res)
 {
    return ChangeScreenResolution(res.width, res.height, res.bitDepth, res.refresh);
 }
@@ -281,62 +281,62 @@ bool DeltaWin::ChangeScreenResolution(Resolution res)
 /////////////////////////////////////////////////
 int DeltaWin::IsValidResolution(const ResolutionVec &rv, int width, int height, int refreshRate, int colorDepth)
 {
-   for(unsigned int i = 0; i < rv.size(); i++)
+   for (unsigned int i = 0; i < rv.size(); ++i)
    {
-      if(width && height)
+      if (width && height)
       {
-         if(refreshRate && colorDepth)
+         if (refreshRate && colorDepth)
          {
-            if(rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth)
+            if (rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth)
             {
                return i;
             }
          }
-         else if(refreshRate)
+         else if (refreshRate)
          {
-            if(rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate)
+            if (rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate)
             {
                return i;
             }
          }
-         else if(colorDepth)
+         else if (colorDepth)
          {
-            if(rv[i].width == width && rv[i].height == height && rv[i].bitDepth == colorDepth)
+            if (rv[i].width == width && rv[i].height == height && rv[i].bitDepth == colorDepth)
             {
                return i;
             }
          }
          else
          {
-            if(rv[i].width == width && rv[i].height == height)
+            if (rv[i].width == width && rv[i].height == height)
             {
                return i;
             }
          }
       }
-      else if(refreshRate && colorDepth)
+      else if (refreshRate && colorDepth)
       {
-         if(rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth)
+         if (rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth)
          {
             return i;
          }
       }
-      else if(refreshRate)
+      else if (refreshRate)
       {
-         if(rv[i].refresh == refreshRate)
+         if (rv[i].refresh == refreshRate)
          {
             return i;
          }
       }
-      else if(colorDepth)
+      else if (colorDepth)
       {
-         if(rv[i].bitDepth == colorDepth)
+         if (rv[i].bitDepth == colorDepth)
          {
             return i;
          }
       }
    }
-   
+
    return -1;
 }
 
@@ -347,12 +347,12 @@ bool DeltaWin::IsValidResolution(const DeltaWin::Resolution& candidate)
 
    DeltaWin::ResolutionVec::iterator iter = vec.begin();
    DeltaWin::ResolutionVec::iterator enditer = vec.end();
-   while(iter != enditer)
+   while (iter != enditer)
    {
-      if((candidate.width==iter->width) &&
-         (candidate.height==iter->height) &&
-         (candidate.bitDepth==iter->bitDepth) &&
-         (candidate.refresh==iter->refresh))
+      if ((candidate.width==iter->width)       &&
+          (candidate.height==iter->height)     &&
+          (candidate.bitDepth==iter->bitDepth) &&
+          (candidate.refresh==iter->refresh))
       {
          return true;
       }
@@ -376,7 +376,7 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
 
    osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 
-   //Favor the value of the environment variable "DISPLAY" to set the 
+   //Favor the value of the environment variable "DISPLAY" to set the
    //diplayNum and the screenNum, unless it fails, in which case use the
    //passed in value.  Format is "host:displayNum.screenNum".
    traits->readDISPLAY();
@@ -423,4 +423,3 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-

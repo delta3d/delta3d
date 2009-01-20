@@ -19,7 +19,7 @@ IMPLEMENT_MANAGEMENT_LAYER(View)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-View::View(const std::string& name, bool useSceneLight) 
+View::View(const std::string& name, bool useSceneLight)
    : Base(name)
    , mOsgViewerView(new osgViewer::View)
    , mTargetFrameRate(60.0)
@@ -30,7 +30,7 @@ View::View(const std::string& name, bool useSceneLight)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-View::View(osgViewer::View* view, const std::string& name, bool useSceneLight) 
+View::View(osgViewer::View* view, const std::string& name, bool useSceneLight)
    : Base(name)
    , mOsgViewerView(view)
    , mTargetFrameRate(60.0)
@@ -105,7 +105,7 @@ bool View::RemoveSlave(Camera* camera)
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetCamera(Camera* camera)
 {
-   if (mCamera == camera) 
+   if (mCamera == camera)
    {
       return;
    }
@@ -122,7 +122,7 @@ void View::SetCamera(Camera* camera)
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetScene(Scene* scene)
 {
-   if (mScene == scene) 
+   if (mScene == scene)
    {
       return;
    }
@@ -146,7 +146,7 @@ void View::SetScene(Scene* scene)
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetMouse(Mouse* mouse)
 {
-   if( mouse == 0 )
+   if (mouse == 0)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied dtCore::Mouse is invalid", __FILE__, __LINE__);
@@ -158,7 +158,7 @@ void View::SetMouse(Mouse* mouse)
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetKeyboard(Keyboard* keyboard)
 {
-   if(keyboard == 0)
+   if (keyboard == 0)
    {
       throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
          "Supplied dtCore::Keyboard is invalid", __FILE__, __LINE__);
@@ -207,11 +207,11 @@ dtCore::KeyboardMouseHandler* View::CreateKeyboardMouseHandler()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool View::GetMousePickPosition(osg::Vec3 &position, unsigned int traversalMask)
+bool View::GetMousePickPosition(osg::Vec3& position, unsigned int traversalMask)
 {
-   const Mouse *mouse = GetMouse();
+   const Mouse* mouse = GetMouse();
 
-   if (mouse == NULL) 
+   if (mouse == NULL)
    {
       return false;
    }
@@ -228,7 +228,7 @@ bool View::GetPickPosition(osg::Vec3& intersectionPoint,
 
    if (GetMouseIntersections(hitList, mousePos, traversalMask))
    {
-      std::multiset< osgUtil::LineSegmentIntersector::Intersection >::iterator itr = hitList.begin();
+      std::multiset<osgUtil::LineSegmentIntersector::Intersection>::iterator itr = hitList.begin();
       osgUtil::LineSegmentIntersector::Intersection hit = *itr;
 
       intersectionPoint = hit.getWorldIntersectPoint();
@@ -246,17 +246,17 @@ bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Inters
                                          const osg::Vec2& mousePos,
                                          unsigned int traversalMask)
 {
-   if (GetCamera() == NULL)  
+   if (GetCamera() == NULL)
    {
       return false;
    }
 
-   if (GetCamera()->GetWindow() == NULL) 
+   if (GetCamera()->GetWindow() == NULL)
    {
       return false;
    }
 
-   // lower left screen has ( 0, 0 )
+   // lower left screen has (0, 0)
    osg::Vec2 windowCoord(0.0 , 0.0);
    GetCamera()->GetWindow()->CalcPixelCoords(mousePos, windowCoord);
 
@@ -275,10 +275,10 @@ bool dtCore::View::GetMouseIntersections(osgUtil::LineSegmentIntersector::Inters
 dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 {
    const Mouse* mouse = GetMouse();
-   if (mouse == NULL) {return NULL;}
+   if (mouse == NULL) { return NULL; }
 
-   dtCore::Scene *scene = GetScene();
-   if (scene == NULL) {return NULL;}
+   dtCore::Scene* scene = GetScene();
+   if (scene == NULL) { return NULL; }
 
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
@@ -290,28 +290,28 @@ dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
    //For every isector hit, loop through all of the Nodes in it's NodePath and
    //try to find a corresponding DeltaDrawable that's in the Scene.
    //Will return back the first match found.
-   //Note: using a reverse iterator to loop through the NodePath.  This should cause 
+   //Note: using a reverse iterator to loop through the NodePath.  This should cause
    //it to return the child-most DeltaDrawable and not the DeltaDrawable parents.
    std::vector<dtCore::DeltaDrawable*> drawables = scene->GetAllDrawablesInTheScene();
 
-   std::multiset< osgUtil::LineSegmentIntersector::Intersection >::const_iterator hitItr = hitList.begin();
-   while (hitItr != hitList.end())
+   for (std::multiset<osgUtil::LineSegmentIntersector::Intersection>::const_iterator hitItr = hitList.begin();
+        hitItr != hitList.end();
+        ++hitItr)
    {
-      osg::NodePath::const_reverse_iterator nodeItr = hitItr->nodePath.rbegin();
-      while (nodeItr != hitItr->nodePath.rend())
+      for (osg::NodePath::const_reverse_iterator nodeItr = hitItr->nodePath.rbegin();
+           nodeItr != hitItr->nodePath.rend();
+           ++nodeItr)
       {
-         std::vector<dtCore::DeltaDrawable*>::iterator drawableItr = drawables.begin();
-         while (drawableItr != drawables.end())
+         for (std::vector<dtCore::DeltaDrawable*>::iterator drawableItr = drawables.begin();
+              drawableItr != drawables.end();
+              ++drawableItr)
          {
             if ((*nodeItr) == (*drawableItr)->GetOSGNode())
             {
                return (*drawableItr);
             }
-            ++drawableItr;
          }
-         ++nodeItr;
       }
-      ++hitItr;
    }
 
    //nothing hit or no match found, return NULL
@@ -357,4 +357,3 @@ const dtCore::DatabasePager* dtCore::View::GetDatabasePager() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
