@@ -34,39 +34,39 @@ const int SCENE_INTERSECT_MASK = 0x0fffffff;
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 /////////////////////////////////////////////
 Scene::ParticleSystemFreezer::ParticleSystemFreezer()
-   : osg::NodeVisitor( TRAVERSE_ALL_CHILDREN ),
-     mFreezing( true )
+   : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+   , mFreezing(true)
 {
    // Since we are setting all ParticleSystems to be frozen, we don't care
    // about the previous state of the last attempt to freeze.
-   if( mFreezing )
+   if (mFreezing)
    {
       mPreviousFrozenState.clear();
    }
 }
 /////////////////////////////////////////////
-void Scene::ParticleSystemFreezer::apply( osg::Node& node )
+void Scene::ParticleSystemFreezer::apply(osg::Node& node)
 {
-   if( osgParticle::ParticleSystemUpdater* psu = dynamic_cast< osgParticle::ParticleSystemUpdater* >( &node ) )
+   if (osgParticle::ParticleSystemUpdater* psu = dynamic_cast<osgParticle::ParticleSystemUpdater*>(&node))
    {
-      for( unsigned int i = 0; i < psu->getNumParticleSystems(); i++ )
+      for (unsigned int i = 0; i < psu->getNumParticleSystems(); ++i)
       {
-         if( osgParticle::ParticleSystem* ps = psu->getParticleSystem( i ) )
+         if (osgParticle::ParticleSystem* ps = psu->getParticleSystem(i))
          {
-            if( mFreezing )
+            if (mFreezing)
             {
                // Save the previous frozen state of the ParticleSystem, so subsequent attempts
                // to unfreeze it will bring it back to the way it was.
-               mPreviousFrozenState.insert( ParticleSystemBoolMap::value_type( ps, ps->isFrozen() ) );
+               mPreviousFrozenState.insert(ParticleSystemBoolMap::value_type(ps, ps->isFrozen()));
 
                // Allow me to break the ice. My name is Freeze. Learn it well.
                // For it's the chilling sound of your doom. -Mr. Freeze
-               ps->setFrozen( mFreezing );
+               ps->setFrozen(mFreezing);
             }
             else
             {
                // Restore the previous state.
-               ps->setFrozen( mPreviousFrozenState[ ps ] );
+               ps->setFrozen(mPreviousFrozenState[ps]);
             }
          }
       }
@@ -80,24 +80,26 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-Scene::Scene( const std::string& name) : Base(name),
-   mPhysicsController(NULL/*new ODEController()*/),
-   mSceneNode(new osg::Group),
-   mLights(MAX_LIGHTS),
-   mRenderMode(POINT),
-   mRenderFace(FRONT)
+Scene::Scene(const std::string& name)
+   : Base(name)
+   , mPhysicsController(NULL/*new ODEController()*/)
+   , mSceneNode(new osg::Group)
+   , mLights(MAX_LIGHTS)
+   , mRenderMode(POINT)
+   , mRenderFace(FRONT)
 {
    mPhysicsController = new ODEController(this);
    Ctor();
 }
 
 //////////////////////////////////////////////////////////////////////////
-Scene::Scene(dtCore::ODEController *physicsController, const std::string &name) : Base(name),
-   mPhysicsController(physicsController),
-   mSceneNode(new osg::Group),
-   mLights(MAX_LIGHTS),
-   mRenderMode(POINT),
-   mRenderFace(FRONT)
+Scene::Scene(dtCore::ODEController* physicsController, const std::string& name)
+   : Base(name)
+   , mPhysicsController(physicsController)
+   , mSceneNode(new osg::Group)
+   , mLights(MAX_LIGHTS)
+   , mRenderMode(POINT)
+   , mRenderFace(FRONT)
 {
    Ctor();
 }
@@ -112,7 +114,7 @@ Scene::~Scene()
 
    DeregisterInstance(this);
 
-   RemoveSender( &System::GetInstance() );
+   RemoveSender(&System::GetInstance());
 }
 
 
@@ -122,10 +124,10 @@ void Scene::Ctor()
    RegisterInstance(this);
    mSceneNode->setName(GetName());
 
-   InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
+   InfiniteLight* skyLight = new InfiniteLight(0, "SkyLight");
 
-   AddDrawable( skyLight );
-   skyLight->SetEnabled( true );
+   AddDrawable(skyLight);
+   skyLight->SetEnabled(true);
 
    AddSender(&System::GetInstance());
 
@@ -141,7 +143,7 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
 //   osg::Group * sceneData = mOsgViewerScene->getSceneData()->asGroup();
    unsigned numChildren = mSceneNode->getNumChildren();
 
-   for(unsigned i = 0; i < numChildren; ++i)
+   for (unsigned i = 0; i < numChildren; ++i)
    {
       osg::Node* child = mSceneNode->getChild(i);
       newSceneNode->addChild(child);
@@ -156,14 +158,14 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    RemoveAllDrawables();
 
    DrawableList::iterator iterEnd = dl.end();
-   for(DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
+   for (DrawableList::iterator iter = dl.begin(); iter != iterEnd; ++iter)
    {
       AddDrawable((*iter).get());
    }
 
 }
 /////////////////////////////////////////////
-void Scene::AddDrawable( DeltaDrawable *drawable )
+void Scene::AddDrawable(DeltaDrawable* drawable)
 {
    // This is modified to put a RefPtr in the scene
    // They are required or when you change the stateset
@@ -178,27 +180,27 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
 
    if (mPager.valid())
    {
-      mPager->RegisterDrawable( *drawable );
+      mPager->RegisterDrawable(*drawable);
    }
 }
 /////////////////////////////////////////////
-void Scene::RemoveDrawable(DeltaDrawable *drawable)
+void Scene::RemoveDrawable(DeltaDrawable* drawable)
 {
-   mSceneNode->removeChild( drawable->GetOSGNode() );
+   mSceneNode->removeChild(drawable->GetOSGNode());
    drawable->AddedToScene(NULL);
 
    unsigned int pos = GetDrawableIndex(drawable);
    if (pos<mAddedDrawables.size())
    {
-      mAddedDrawables.erase( mAddedDrawables.begin()+pos );
+      mAddedDrawables.erase(mAddedDrawables.begin()+pos);
    }
 }
 /////////////////////////////////////////////
 void Scene::RemoveAllDrawables()
 {
-   while( !mAddedDrawables.empty() )
+   while (!mAddedDrawables.empty())
    {
-      if( DeltaDrawable *d = GetDrawable(0) )
+      if (DeltaDrawable* d = GetDrawable(0))
       {
          RemoveDrawable(d);
       }
@@ -213,11 +215,11 @@ DeltaDrawable* Scene::GetDrawable(unsigned int i) const
 
 /////////////////////////////////////////////
 ///Get the index number of the supplied drawable
-unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
+unsigned int Scene::GetDrawableIndex(const DeltaDrawable* drawable) const
 {
-   for( unsigned int childNum = 0; childNum < mAddedDrawables.size(); ++childNum )
+   for (unsigned int childNum = 0; childNum < mAddedDrawables.size(); ++childNum)
    {
-      if( mAddedDrawables[childNum] == drawable )
+      if (mAddedDrawables[childNum] == drawable)
       {
          return childNum;
       }
@@ -233,10 +235,10 @@ unsigned int Scene::GetNumberOfAddedDrawable() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Scene::GetDrawableChildren(std::vector<dtCore::DeltaDrawable*> &children,
+void Scene::GetDrawableChildren(std::vector<dtCore::DeltaDrawable*>& children,
                                 dtCore::DeltaDrawable& parent) const
 {
-   for (unsigned int childIdx=0; childIdx<parent.GetNumChildren(); childIdx++)
+   for (unsigned int childIdx=0; childIdx<parent.GetNumChildren(); ++childIdx)
    {
       DeltaDrawable* child = parent.GetChild(childIdx);
       if (child != NULL)
@@ -266,7 +268,7 @@ std::vector<dtCore::DeltaDrawable*> Scene::GetAllDrawablesInTheScene() const
 }
 
 /////////////////////////////////////////////
-void Scene::SetRenderState( Face face, Mode mode )
+void Scene::SetRenderState(Face face, Mode mode)
 {
    mRenderFace = face;
    mRenderMode = mode;
@@ -278,7 +280,7 @@ void Scene::SetRenderState( Face face, Mode mode )
 
    // this switch statement will take the osg face and make it the corresponding
    // scene face
-   switch(mRenderFace)
+   switch (mRenderFace)
    {
    case FRONT:
       myface = osg::PolygonMode::FRONT;
@@ -298,7 +300,7 @@ void Scene::SetRenderState( Face face, Mode mode )
    }
 
    // this switch statement is similar to the one above for mode
-   switch(mRenderMode)
+   switch (mRenderMode)
    {
    case POINT:
       mymode = osg::PolygonMode::POINT;
@@ -354,7 +356,7 @@ void Scene::UnRegisterCollidable(Transformable* collidable) const
  *
  * @return float  : The found Height of Terrain (or 0 if no intersection)
  */
-float Scene::GetHeightOfTerrain( float x, float y )
+float Scene::GetHeightOfTerrain(float x, float y)
 {
    float HOT = 0.f;
    osgUtil::IntersectVisitor iv;
@@ -381,8 +383,8 @@ float Scene::GetHeightOfTerrain( float x, float y )
 /////////////////////////////////////////////
 void Scene::SetGravity(const osg::Vec3& gravity) const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       mPhysicsController->SetGravity(gravity);
    }
 }
@@ -390,8 +392,8 @@ void Scene::SetGravity(const osg::Vec3& gravity) const
 //////////////////////////////////////////////////////////////////////////
 void Scene::GetGravity(osg::Vec3& vec) const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       vec = mPhysicsController->GetGravity();
    }
 }
@@ -399,8 +401,8 @@ void Scene::GetGravity(osg::Vec3& vec) const
 //////////////////////////////////////////////////////////////////////////
 osg::Vec3 Scene::GetGravity() const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       return mPhysicsController->GetGravity();
    }
    else
@@ -410,10 +412,10 @@ osg::Vec3 Scene::GetGravity() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void Scene::GetGravity(float &x, float &y, float &z) const
+void Scene::GetGravity(float& x, float& y, float& z) const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       osg::Vec3 grav = mPhysicsController->GetGravity();
       x = grav[0]; y = grav[1]; z = grav[2];
    }
@@ -423,7 +425,7 @@ void Scene::GetGravity(float &x, float &y, float &z) const
 // Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const
 {
-   if (mPhysicsController.valid()) 
+   if (mPhysicsController.valid())
    {
       return mPhysicsController->GetSpaceID();
    }
@@ -437,8 +439,8 @@ dSpaceID Scene::GetSpaceID() const
 // Get the ODE world ID
 dWorldID Scene::GetWorldID() const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       return mPhysicsController->GetWorldID();
    }
    else
@@ -461,8 +463,8 @@ dJointGroupID Scene::GetContactJoinGroupID() const
 // Get the ODE contact joint group ID
 dJointGroupID Scene::GetContactJointGroupID() const
 {
-   if (mPhysicsController.valid()) 
-   { 
+   if (mPhysicsController.valid())
+   {
       return mPhysicsController->GetContactJointGroupID();
    }
    else
@@ -472,12 +474,12 @@ dJointGroupID Scene::GetContactJointGroupID() const
 }
 /////////////////////////////////////////////
 // Performs collision detection and updates physics
-void Scene::OnMessage(MessageData *data)
+void Scene::OnMessage(MessageData* data)
 {
-   if(data->message == dtCore::System::MESSAGE_POST_FRAME)
+   if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
    }
-   else if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
+   else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {
       double dt = *static_cast<double*>(data->userData);
       if (mPhysicsController.valid())
@@ -485,19 +487,19 @@ void Scene::OnMessage(MessageData *data)
          mPhysicsController->Iterate(dt);
       }
    }
-   else if( data->message == dtCore::System::MESSAGE_PAUSE_START)
+   else if (data->message == dtCore::System::MESSAGE_PAUSE_START)
    {
       // Freeze all particle systems.
-      mFreezer.SetFreezing( true );
-      GetSceneNode()->accept( mFreezer );
+      mFreezer.SetFreezing(true);
+      GetSceneNode()->accept(mFreezer);
    }
-   else if( data->message == dtCore::System::MESSAGE_PAUSE_END )
+   else if (data->message == dtCore::System::MESSAGE_PAUSE_END)
    {
       // Unfreeze all particle systems.
-      mFreezer.SetFreezing( false );
-      GetSceneNode()->accept( mFreezer );
+      mFreezer.SetFreezing(false);
+      GetSceneNode()->accept(mFreezer);
    }
-   else if(data->message == dtCore::System::MESSAGE_EXIT)
+   else if (data->message == dtCore::System::MESSAGE_EXIT)
    {
       RemoveAllDrawables();
    }
@@ -518,12 +520,12 @@ void Scene::SetUserCollisionCallback(dNearCallback* func, void* data) const
 }
 
 /////////////////////////////////////////////
-template< typename T >
-struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bool >
+template<typename T>
+struct HasName : public std::binary_function<dtCore::RefPtr<T>, std::string, bool>
 {
-   bool operator()( const dtCore::RefPtr<T>& obj, const std::string& name ) const
+   bool operator()(const dtCore::RefPtr<T>& obj, const std::string& name) const
    {
-      if( obj.valid() )
+      if (obj.valid())
       {
          return obj->GetName() == name;
       }
@@ -534,13 +536,13 @@ struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bo
    }
 };
 /////////////////////////////////////////////
-Light* Scene::GetLight( const std::string& name )
+Light* Scene::GetLight(const std::string& name)
 {
-   LightVector::iterator found = std::find_if(  mLights.begin(),
-                                                mLights.end(),
-                                                std::bind2nd( HasName<Light>(), name ) );
+   LightVector::iterator found = std::find_if(mLights.begin(),
+                                              mLights.end(),
+                                              std::bind2nd(HasName<Light>(), name));
 
-   if( found != mLights.end() )
+   if (found != mLights.end())
    {
       return found->get();
    }
@@ -550,13 +552,13 @@ Light* Scene::GetLight( const std::string& name )
    }
 }
 /////////////////////////////////////////////
-const Light* Scene::GetLight( const std::string& name ) const
+const Light* Scene::GetLight(const std::string& name) const
 {
-   LightVector::const_iterator found = std::find_if(  mLights.begin(),
-                                                      mLights.end(),
-                                                      std::bind2nd( HasName<Light>(), name ) );
+   LightVector::const_iterator found = std::find_if(mLights.begin(),
+                                                    mLights.end(),
+                                                    std::bind2nd(HasName<Light>(), name));
 
-   if( found != mLights.end() )
+   if (found != mLights.end())
    {
       return found->get();
    }
@@ -569,23 +571,23 @@ const Light* Scene::GetLight( const std::string& name ) const
 
 /////////////////////////////////////////////
 ///registers a light using the light number
-void Scene::RegisterLight( Light* light )
+void Scene::RegisterLight(Light* light)
 {
-   mLights[ light->GetNumber() ] = light; //add to internal array of lights
+   mLights[light->GetNumber()] = light; //add to internal array of lights
 }
 /////////////////////////////////////////////
 ///unreferences the current light, by number, Note: does not erase
-void Scene::UnRegisterLight( Light* light )
+void Scene::UnRegisterLight(Light* light)
 {
-   mLights[ light->GetNumber() ] = NULL;
+   mLights[light->GetNumber()] = NULL;
 }
 
 /////////////////////////////////////////////
-void Scene::UseSceneLight( bool lightState )
+void Scene::UseSceneLight(bool lightState)
 {
    if (mLights[0] == NULL && lightState)
    {
-      InfiniteLight *skyLight = new InfiniteLight( 0, "SkyLight" );
+      InfiniteLight* skyLight = new InfiniteLight(0, "SkyLight");
       AddDrawable(skyLight);
       skyLight->SetEnabled(true);
    }
@@ -593,7 +595,9 @@ void Scene::UseSceneLight( bool lightState )
    {
       mLights[0]->SetEnabled(lightState);
       if (GetDrawableIndex(mLights[0].get()) == GetNumberOfAddedDrawable())
+      {
          AddDrawable(mLights[0].get());
+      }
    }
 }
 
@@ -647,7 +651,7 @@ dtCore::DatabasePager* Scene::GetDatabasePager() const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void Scene::SetDatabasePager( dtCore::DatabasePager *pager )
+void Scene::SetDatabasePager(dtCore::DatabasePager* pager)
 {
    mPager = pager;
    if (mPager.valid())
@@ -679,5 +683,4 @@ void Scene::SetPhysicsStepSize(double stepSize) const
 
 
 
-}
-
+} // namespace dtCore
