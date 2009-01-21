@@ -28,6 +28,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/loadable.h>
 
+#include <osg/MatrixTransform>
 #include <osgParticle/ModularEmitter>
 #include <osgParticle/Program>
 #include <osgParticle/Particle>

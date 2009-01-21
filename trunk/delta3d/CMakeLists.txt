@@ -272,7 +272,7 @@ INCLUDE_DIRECTORIES(
 
 IF (BUILD_WITH_QT)
   SET(QT_USE_QTOPENGL "true")
-  FIND_PACKAGE(Qt4 REQUIRED)     #for STAGE, AnimationViewer, ObjectViewer
+  FIND_PACKAGE(Qt4 REQUIRED)     #for STAGE, AnimationViewer, ObjectViewer, ParticleEditor
 ENDIF (BUILD_WITH_QT)
 
   

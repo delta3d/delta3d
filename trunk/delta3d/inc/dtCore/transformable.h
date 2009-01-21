@@ -21,18 +21,15 @@
 #ifndef DELTA_TRANSFORMABLE
 #define DELTA_TRANSFORMABLE
 
+#include <osg/MatrixTransform>
+#include <osg/Geode>
+
 #include <ode/common.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
-namespace osg
-{
-   class MatrixTransform;
-   class Geode;
-}
-
 struct dContact;
 /// @endcond
 
