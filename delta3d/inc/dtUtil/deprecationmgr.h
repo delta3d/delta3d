@@ -41,11 +41,26 @@
 #include <set>
 #include <sstream>
 
+
 #if defined( _DEBUG) && (defined DELTA_WIN32)
    #define DEPRECATE(a,b) {                                            \
       void * fptr;                                                     \
       _asm { mov fptr, ebp }                                           \
       DeprecationMgr::GetInstance().AddDeprecatedFunction(a, b, fptr); \
+   }
+#elif defined (_DEBUG) && defined (__GNUC__)
+   static void* GetEBP() 
+   {
+     void* ebp;
+     __asm__ __volatile__(
+      "movl (%%ebp), %0"
+      : "=a" (ebp)
+     );
+     return ebp;
+   }
+
+   #define DEPRECATE(a,b) {        \
+      DeprecationMgr::GetInstance().AddDeprecatedFunction(a,b,GetEBP()); \
    }
 #else
    #define DEPRECATE(a,b)
