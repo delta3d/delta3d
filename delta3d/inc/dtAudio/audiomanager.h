@@ -361,8 +361,8 @@ namespace dtAudio
          /// create or recycle a new sound for the user
          Sound*            NewSound( void );
 
-         /// free a sound (recycle it) that the user is finish with
-         void              FreeSound( Sound*& sound );
+         /// free a sound that the user is finished with
+         void              FreeSound( Sound* sound );
 
          ///Pre-load a sound file into a buffer. We still only support .wav's
          ///but .ogg support is coming soon!

@@ -504,13 +504,10 @@ Sound* AudioManager::NewSound(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::FreeSound(Sound*& sound)
+void AudioManager::FreeSound(Sound* sound)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR snd = static_cast<SoundObj*>(sound);
-
-   // remove user's copy of pointer
-   sound = NULL;
 
    if(snd.get() == NULL)
    {
@@ -1469,6 +1466,7 @@ void AudioManager::PlaySound(SoundObj* snd)
    {
       // is listener relative
       alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
+      //alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
 
       // set initial position and direction
@@ -1497,6 +1495,7 @@ void AudioManager::PlaySound(SoundObj* snd)
    {
       // not listener relative
       alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+      //alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
    }
 
@@ -1707,6 +1706,7 @@ void AudioManager::SetRelative(SoundObj* snd)
 
    CheckForError("alGetBufferi && alIsSource calls check", __FUNCTION__, __LINE__);
    alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
+   //alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
    {
       return;
@@ -1734,6 +1734,7 @@ void AudioManager::SetAbsolute(SoundObj* snd)
    }
 
    alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+   //alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
    {
       return;
@@ -2380,9 +2381,9 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
          };
       } orient;
 
-      GetTransform( transform );
+      GetTransform( transform );      
       osg::Vec3 tmp;
-      transform.GetTranslation( tmp );
+      transform.GetTranslation( tmp );      
       pos[0] = tmp[0];
       pos[1] = tmp[1];
       pos[2] = tmp[2];
