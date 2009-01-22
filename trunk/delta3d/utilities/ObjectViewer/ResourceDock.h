@@ -44,6 +44,29 @@ namespace dtCore
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+* @class GeometryTree
+* @brief This class contains the context menu support for the geometry tree.
+*/
+class GeometryTree : public QTreeWidget
+{
+public:
+   GeometryTree(QWidget* parent = NULL);
+   ~GeometryTree();
+
+private:
+
+   void CreateContextActions();
+   void CreateContextMenus();
+
+   void contextMenuEvent(QContextMenuEvent* contextEvent);
+
+   // Context Menu
+   QAction* mSaveAs;
+
+   QMenu*   mObjectContext;
+};
+
+/**
 * @class ShaderTree
 * @brief This class contains the context menu support for the shader tree.
 */
@@ -130,6 +153,7 @@ public slots:
    void OnNewMap(const std::string& mapName);
    void OnNewGeometry(const std::string& path, const std::string& filename);
    void OnGeometryItemChanged(QTreeWidgetItem* item, int column);
+   void OnSaveAs();
 
    void OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram);
    void OnShaderSelectionChanged();
@@ -161,7 +185,7 @@ private:
 
    QTabWidget* mTabs;
 
-   QTreeWidget*   mGeometryTreeWidget;  
+   GeometryTree*  mGeometryTreeWidget;  
    ShaderTree*    mShaderTreeWidget;
    QTreeWidget*   mLightTreeWidget; 
 
