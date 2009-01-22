@@ -26,6 +26,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/deltadrawable.h>
 #include <dtUtil/log.h>
+#include <dtUtil/macros.h>
 
 #include <osg/GraphicsContext>
 #include <osg/State>
@@ -36,10 +37,15 @@
 
 using namespace dtGUI;
 
-//default path where to find the layout/lokknfeel/../images-files
+//default path where to find the layout/looknfeel/../images-files
 std::string HUD::FilePath=std::string("./data/gui/");
 
-
+//to get around a Windows #define that uses "CreateFont"
+#if defined(DELTA_WIN32)
+   #if defined(CreateFont)
+      #undef CreateFont
+   #endif
+#endif
 
 /********************************************************************************
                               DELTA-implementation
