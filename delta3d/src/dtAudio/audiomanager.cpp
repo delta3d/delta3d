@@ -542,6 +542,28 @@ void AudioManager::FreeSound(Sound* sound)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+ALuint AudioManager::GetSource(Sound* sound)
+{
+   dtCore::RefPtr<dtAudio::AudioManager::SoundObj> snd = static_cast<SoundObj*>(sound);
+   ALuint src = -1;
+
+   //pull SoundObj out of "the list"   
+   std::vector<dtCore::RefPtr<dtAudio::AudioManager::SoundObj> >::iterator iter;
+   for (iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
+   {
+      if (snd != *iter)
+      {
+         continue;
+      }
+
+      src = (*iter)->Source();
+      break;
+   }
+
+   return src;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 bool AudioManager::LoadFile(const std::string& file)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -1465,8 +1487,7 @@ void AudioManager::PlaySound(SoundObj* snd)
    if(snd->IsListenerRelative())
    {
       // is listener relative
-      alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
-      //alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+      alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);      
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
 
       // set initial position and direction
@@ -1494,8 +1515,7 @@ void AudioManager::PlaySound(SoundObj* snd)
    else
    {
       // not listener relative
-      alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
-      //alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
+      alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);      
       CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__);
    }
 
@@ -1705,8 +1725,7 @@ void AudioManager::SetRelative(SoundObj* snd)
    }
 
    CheckForError("alGetBufferi && alIsSource calls check", __FUNCTION__, __LINE__);
-   alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
-   //alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
+   alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);   
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
    {
       return;
@@ -1733,8 +1752,7 @@ void AudioManager::SetAbsolute(SoundObj* snd)
       return;
    }
 
-   alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);
-   //alSourcei(src, AL_SOURCE_RELATIVE, AL_FALSE);
+   alSourcei(src, AL_SOURCE_RELATIVE, AL_TRUE);   
    if (CheckForError("AudioManager: alSourcei(AL_SOURCE_RELATIVE) error", __FUNCTION__, __LINE__))
    {
       return;
@@ -2088,14 +2106,7 @@ void AudioManager::SoundObj::OnMessage( MessageData* data )
 
       // extract current transform from actor
       dtCore::Transform transform;
-      if (IsListenerRelative())
-      {
-         GetTransform(transform, dtCore::Transformable::REL_CS);
-      }
-      else
-      {
-         GetTransform(transform, dtCore::Transformable::ABS_CS);
-      }
+      GetTransform(transform, dtCore::Transformable::ABS_CS);
 
       // extract separate values for position and direction now
       osg::Vec3            pos   (0.0f, 0.0f, 0.0f);
@@ -2104,7 +2115,7 @@ void AudioManager::SoundObj::OnMessage( MessageData* data )
       transform.GetTranslation(pos);
       transform.GetRotation(dir);
 
-      // set the values on the sound object
+      // set the values on the sound object      
       SetPosition( pos );
       SetDirection( dir );
 
