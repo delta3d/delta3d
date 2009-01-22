@@ -31,22 +31,22 @@ namespace dtAnim
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationChannel::AnimationChannel()
-: mIsAction(false)
-, mIsLooping(true)
-, mMaxDuration(0.0f)
-, mLastWeight(0.0f)
-, mModelWrapper(NULL)
-, mAnimationWrapper(NULL)
+   : mIsAction(false)
+   , mIsLooping(true)
+   , mMaxDuration(0.0f)
+   , mLastWeight(0.0f)
+   , mModelWrapper(NULL)
+   , mAnimationWrapper(NULL)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationChannel::AnimationChannel(Cal3DModelWrapper* pModelWrapper, AnimationWrapper* pAnimationWrapper)
-: mIsAction(false)
-, mIsLooping(true)
-, mMaxDuration(0.0f)
-, mModelWrapper(pModelWrapper)
-, mAnimationWrapper(pAnimationWrapper)
+   : mIsAction(false)
+   , mIsLooping(true)
+   , mMaxDuration(0.0f)
+   , mModelWrapper(pModelWrapper)
+   , mAnimationWrapper(pAnimationWrapper)
 {
 }
 
@@ -57,13 +57,13 @@ AnimationChannel::~AnimationChannel()
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationChannel::AnimationChannel(const AnimationChannel& pChannel)
-: Animatable(pChannel)
-, mIsAction(pChannel.IsAction())
-, mIsLooping(pChannel.IsLooping())
-, mMaxDuration(pChannel.GetMaxDuration())
-, mLastWeight(0.0f)
-, mModelWrapper(pChannel.mModelWrapper)
-, mAnimationWrapper(pChannel.mAnimationWrapper)
+   : Animatable(pChannel)
+   , mIsAction(pChannel.IsAction())
+   , mIsLooping(pChannel.IsLooping())
+   , mMaxDuration(pChannel.GetMaxDuration())
+   , mLastWeight(0.0f)
+   , mModelWrapper(pChannel.mModelWrapper)
+   , mAnimationWrapper(pChannel.mAnimationWrapper)
 {
 }
 
@@ -72,11 +72,11 @@ AnimationChannel& AnimationChannel::operator=(const AnimationChannel& pChannel)
 {
    Animatable::operator=(pChannel);
 
-   mIsAction= pChannel.IsAction();
-   mIsLooping = pChannel.IsLooping();
-   mMaxDuration = pChannel.GetMaxDuration();
-   mLastWeight = 0.0f;
-   mModelWrapper = pChannel.mModelWrapper;
+   mIsAction         = pChannel.IsAction();
+   mIsLooping        = pChannel.IsLooping();
+   mMaxDuration      = pChannel.GetMaxDuration();
+   mLastWeight       = 0.0f;
+   mModelWrapper     = pChannel.mModelWrapper;
    mAnimationWrapper = pChannel.mAnimationWrapper;
    return *this;
 }
@@ -91,7 +91,7 @@ dtCore::RefPtr<Animatable> AnimationChannel::Clone(Cal3DModelWrapper* wrapper) c
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::SetAnimation(AnimationWrapper* pAnimation)
-{ 
+{
    mAnimationWrapper = pAnimation;
 }
 
@@ -108,8 +108,8 @@ const AnimationWrapper* AnimationChannel::GetAnimation() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-Cal3DModelWrapper* AnimationChannel::GetModel() 
-{ 
+Cal3DModelWrapper* AnimationChannel::GetModel()
+{
    return mModelWrapper.get();
 }
 
@@ -129,21 +129,21 @@ void AnimationChannel::SetModel(Cal3DModelWrapper* pWrapper)
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Update(float dt)
 {
-   if(!mModelWrapper.valid())
+   if (!mModelWrapper.valid())
    {
       LOG_ERROR("AnimationChannel '" + GetName() + "' does not have a valid Cal3DModelWrapper.");
       return;
    }
-   
-   if(GetEndTime() > 0.0f && GetElapsedTime() >= GetEndTime())
+
+   if (GetEndTime() > 0.0f && GetElapsedTime() >= GetEndTime())
    {
       SetPrune(true);
    }
-   else if(!IsActive())
+   else if (!IsActive())
    {
-      if(IsAction())
+      if (IsAction())
       {
-         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut());         
+         mModelWrapper->ExecuteAction(mAnimationWrapper->GetID(), GetFadeIn(), GetFadeOut());
       }
       else
       {
@@ -155,11 +155,11 @@ void AnimationChannel::Update(float dt)
    }
    else
    {
-      if(!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
+      if (!IsAction() && !osg::equivalent(mLastWeight, GetCurrentWeight()))
       {
          mModelWrapper->BlendCycle(mAnimationWrapper->GetID(), GetCurrentWeight(), 0.0f);
          mLastWeight = GetCurrentWeight();
-      }         
+      }
    }
 
 }
@@ -167,14 +167,14 @@ void AnimationChannel::Update(float dt)
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Recalculate()
 {
-   if(mIsLooping && GetMaxDuration() > 0.0f)
+   if (mIsLooping && GetMaxDuration() > 0.0f)
    {
       SetEndTime(GetStartTime() + GetMaxDuration());
    }
-   else if(IsAction() && !mIsLooping)
+   else if (IsAction() && !mIsLooping)
    {
       SetEndTime(GetStartTime() + mAnimationWrapper->GetDuration());
-   }   
+   }
    else
    {
       SetEndTime(0.0f);
@@ -184,10 +184,10 @@ void AnimationChannel::Recalculate()
 
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationChannel::Prune()
-{  
-   if(IsActive())
+{
+   if (IsActive())
    {
-      if(IsAction())
+      if (IsAction())
       {
          mModelWrapper->RemoveAction(mAnimationWrapper->GetID());
       }
@@ -197,7 +197,7 @@ void AnimationChannel::Prune()
       }
 
       SetActive(false);
-   }   
+   }
 
 }
 
@@ -206,9 +206,9 @@ void AnimationChannel::ForceFadeOut(float time)
 {
    SetPrune(true);
 
-   //only non actions can fade out, else by keeping active true
-   //we will do a remove action if necessary on prune
-   if(!mIsAction)
+   // only non actions can fade out, else by keeping active true
+   // we will do a remove action if necessary on prune
+   if (!mIsAction)
    {
       mModelWrapper->ClearCycle(mAnimationWrapper->GetID(), time);
       SetActive(false);
@@ -252,4 +252,4 @@ void AnimationChannel::SetMaxDuration(float b)
 }
 
 
-}//namespace dtAnim
+} // namespace dtAnim

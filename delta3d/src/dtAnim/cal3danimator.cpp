@@ -31,14 +31,14 @@ namespace dtAnim
 {
 
 Cal3DAnimator::Cal3DAnimator(Cal3DModelWrapper* pWrapper)
-: mWrapper(pWrapper)
-, mPreDriver(0)
-, mPostDriver(0)
-, mAnimDriver(new AnimDriver(pWrapper))
-, mSkelDriver(new SkeletonDriver(pWrapper))
-, mMorphDriver(new MorphDriver(pWrapper))
-, mSpringDriver(new SpringDriver(pWrapper))
-, mPhysiqueDriver(new PhysiqueDriver(pWrapper))
+   : mWrapper(pWrapper)
+   , mPreDriver(0)
+   , mPostDriver(0)
+   , mAnimDriver(new AnimDriver(pWrapper))
+   , mSkelDriver(new SkeletonDriver(pWrapper))
+   , mMorphDriver(new MorphDriver(pWrapper))
+   , mSpringDriver(new SpringDriver(pWrapper))
+   , mPhysiqueDriver(new PhysiqueDriver(pWrapper))
 {
 }
 
@@ -50,21 +50,21 @@ Cal3DAnimator::~Cal3DAnimator()
 
 void Cal3DAnimator::Update(double dt)
 {
-   //it is ok for a driver to be null
+   // it is ok for a driver to be null
 
-   if(mPreDriver.valid()) mPreDriver->Update(dt);
+   if (mPreDriver.valid())      { mPreDriver->Update(dt);      }
 
-   if(mAnimDriver.valid()) mAnimDriver->Update(dt);
+   if (mAnimDriver.valid())     { mAnimDriver->Update(dt);     }
 
-   if(mSkelDriver.valid()) mSkelDriver->Update(dt);
+   if (mSkelDriver.valid())     { mSkelDriver->Update(dt);     }
 
-   if(mMorphDriver.valid()) mMorphDriver->Update(dt);
+   if (mMorphDriver.valid())    { mMorphDriver->Update(dt);    }
 
-   if(mPhysiqueDriver.valid()) mPhysiqueDriver->Update(dt);
+   if (mPhysiqueDriver.valid()) { mPhysiqueDriver->Update(dt); }
 
-   if(mSpringDriver.valid()) mSpringDriver->Update(dt);
+   if (mSpringDriver.valid())   { mSpringDriver->Update(dt);   }
 
-   if(mPostDriver.valid()) mPostDriver->Update(dt);
+   if (mPostDriver.valid())     { mPostDriver->Update(dt);     }
 
 }
 
@@ -101,7 +101,7 @@ void Cal3DAnimator::SetMorphTargetDriver(ICal3DDriver* pDriver)
 }
 
 void Cal3DAnimator::SetPhysiqueDriver(ICal3DDriver* pDriver)
-{ 
+{
    mPhysiqueDriver = pDriver;
 }
 
@@ -117,13 +117,13 @@ void Cal3DAnimator::SetWrapper( Cal3DModelWrapper *wrapper )
 {
    mWrapper = wrapper;
 
-   if (mPreDriver.valid()) mPreDriver->SetWrapper(wrapper);
-   if (mPostDriver.valid()) mPostDriver->SetWrapper(wrapper);
-   if (mAnimDriver.valid()) mAnimDriver->SetWrapper(wrapper);
-   if (mSkelDriver.valid())  mSkelDriver->SetWrapper(wrapper);
-   if (mMorphDriver.valid()) mMorphDriver->SetWrapper(wrapper);
-   if (mSpringDriver.valid()) mSpringDriver->SetWrapper(wrapper);
-   if (mPhysiqueDriver.valid()) mPhysiqueDriver->SetWrapper(wrapper);
+   if (mPreDriver.valid())      { mPreDriver->SetWrapper(wrapper);      }
+   if (mPostDriver.valid())     { mPostDriver->SetWrapper(wrapper);     }
+   if (mAnimDriver.valid())     { mAnimDriver->SetWrapper(wrapper);     }
+   if (mSkelDriver.valid())     { mSkelDriver->SetWrapper(wrapper);     }
+   if (mMorphDriver.valid())    { mMorphDriver->SetWrapper(wrapper);    }
+   if (mSpringDriver.valid())   { mSpringDriver->SetWrapper(wrapper);   }
+   if (mPhysiqueDriver.valid()) { mPhysiqueDriver->SetWrapper(wrapper); }
 }
 
-}//namespace dtAnim
+} // namespace dtAnim

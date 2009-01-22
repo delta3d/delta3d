@@ -18,6 +18,7 @@
  *
  * Bradley Anderegg 05/11/2007
  */
+
 #include <dtAnim/animationcomponent.h>
 #include <dtAnim/cal3danimator.h>
 #include <dtAnim/animnodebuilder.h>
@@ -45,9 +46,9 @@ const std::string AnimationComponent::DEFAULT_NAME("Animation Component");
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationComponent::AnimationComponent(const std::string& name)
-: BaseClass(name)
-, mRegisteredActors()
-, mGroundClamper(new dtGame::DefaultGroundClamper)
+   : BaseClass(name)
+   , mRegisteredActors()
+   , mGroundClamper(new dtGame::DefaultGroundClamper)
 {
    mGroundClamper->SetHighResGroundClampingRange(0.01);
    mGroundClamper->SetLowResGroundClampingRange(0.1);
@@ -59,7 +60,7 @@ AnimationComponent::~AnimationComponent()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationComponent::ProcessMessage(const dtGame::Message &message)
+void AnimationComponent::ProcessMessage(const dtGame::Message& message)
 {
    if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
@@ -91,7 +92,7 @@ void AnimationComponent::TickLocal(float dt)
 {
    AnimCompIter end = mRegisteredActors.end();
 
-   for(AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
+   for (AnimCompIter iter = mRegisteredActors.begin(); iter != end; ++iter)
    {
       std::pair<const dtCore::UniqueId, dtCore::RefPtr<dtAnim::AnimationHelper> >& current = *iter;
       current.second->Update(dt);
@@ -101,14 +102,14 @@ void AnimationComponent::TickLocal(float dt)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::GameActorProxy &proxy) const
+const dtAnim::AnimationHelper* AnimationComponent::GetHelperForProxy(dtGame::GameActorProxy& proxy) const
 {
    const AnimCompMap::const_iterator iter = mRegisteredActors.find(proxy.GetId());
-   if(iter == mRegisteredActors.end())
+   if (iter == mRegisteredActors.end())
    {
       return NULL;
    }
-   
+
    return (*iter).second.get();
 }
 
@@ -126,7 +127,7 @@ void AnimationComponent::RegisterActor(dtGame::GameActorProxy& proxy, dtAnim::An
 void AnimationComponent::UnregisterActor(dtGame::GameActorProxy& proxy)
 {
    AnimCompIter iter = mRegisteredActors.find(proxy.GetId());
-   if(iter != mRegisteredActors.end())
+   if (iter != mRegisteredActors.end())
    {
       mRegisteredActors.erase(iter);
    }
@@ -176,7 +177,7 @@ void AnimationComponent::SetEyePointActor(dtCore::Transformable* newEyePointActo
 }
 
 //////////////////////////////////////////////////////////////////////
-void AnimationComponent::SetGroundClamper( dtGame::BaseGroundClamper& clamper )
+void AnimationComponent::SetGroundClamper(dtGame::BaseGroundClamper& clamper)
 {
    mGroundClamper = &clamper;
 }
@@ -203,29 +204,29 @@ void AnimationComponent::GroundClamp()
       AnimCompIter end = mRegisteredActors.end();
       AnimCompIter iter = mRegisteredActors.begin();
 
-      while(iter != end)
+      while (iter != end)
       {
          dtGame::GroundClampingData gcData;
          gcData.SetAdjustRotationToGround(false);
          gcData.SetUseModelDimensions(false);
 
-         for(; iter != end; ++iter)
+         for (; iter != end; ++iter)
          {
             dtGame::GameActorProxy* pProxy = gm->FindGameActorById((*iter).first);
-            if(pProxy != NULL)
+            if (pProxy != NULL)
             {
                dtCore::Transform xform;
                pProxy->GetGameActor().GetTransform(xform, dtCore::Transformable::REL_CS);
 
                mGroundClamper->ClampToGround(dtGame::BaseGroundClamper::GroundClampingType::RANGED,
                         0.0, xform, *pProxy, gcData, true);
-            }//if
-         }//for
+            } // if
+         } // for
 
          mGroundClamper->FinishUp();
-      }//while
-   }//if
+      } // while
+   } // if
 }
 
 
-}//namespace dtGame
+} // namespace dtGame

@@ -46,7 +46,7 @@ namespace dtAnim
 
 const std::string AnimationHelper::PROPERTY_SKELETAL_MESH("Skeletal Mesh");
 
-   /////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 AnimationHelper::AnimationHelper()
    : mGroundClamp(false)
    , mNode(NULL)
@@ -79,12 +79,12 @@ void AnimationHelper::PlayAnimation(const std::string& pAnim)
 
    if (anim != NULL)
    {
-      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());      
+      dtCore::RefPtr<Animatable> clonedAnim = anim->Clone(mAnimator->GetWrapper());
       mSequenceMixer->PlayAnimation(clonedAnim.get());
    }
    else
    {
-      LOG_ERROR("Cannot play animation '" + pAnim + 
+      LOG_ERROR("Cannot play animation '" + pAnim +
             "' because it has not been registered with the SequenceMixer.")
    }
 }
@@ -108,25 +108,25 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
    {
       Cal3DDatabase& database = Cal3DDatabase::GetInstance();
       dtCore::RefPtr<Cal3DModelWrapper> newModel = database.Load(pFilename);
-   
+
       if (newModel.valid())
       {
          mAnimator = new Cal3DAnimator(newModel.get());
          mNode = database.GetNodeBuilder().CreateNode(newModel.get());
-         
+
          const Cal3DModelData*  modelData = database.GetModelData(*newModel);
-         if(modelData == NULL)
+         if (modelData == NULL)
          {
             LOG_ERROR("ModelData not found for Character XML '" + pFilename + "'");
             return false;
          }
-   
+
          const Cal3DModelData::AnimatableArray& animatables = modelData->GetAnimatables();
-   
+
          Cal3DModelData::AnimatableArray::const_iterator iter = animatables.begin();
          Cal3DModelData::AnimatableArray::const_iterator end = animatables.end();
-   
-         for(;iter != end; ++iter)
+
+         for (;iter != end; ++iter)
          {
             mSequenceMixer->RegisterAnimation((*iter).get());
          }
@@ -147,15 +147,15 @@ bool AnimationHelper::LoadModel(const std::string& pFilename)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy, 
-      std::vector<dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
+void AnimationHelper::GetActorProperties(dtDAL::ActorProxy& pProxy,
+      std::vector< dtCore::RefPtr<dtDAL::ActorProperty> >& pFillVector)
 {
    static const std::string ANIMATION_MODEL_GROUP("AnimationModel");
 
    static const std::string PROPERTY_SKELETAL_MESH_DESC
       ("The model resource that defines the skeletal mesh");
    pFillVector.push_back(new dtDAL::ResourceActorProperty(pProxy, dtDAL::DataType::SKELETAL_MESH,
-      PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH, 
+      PROPERTY_SKELETAL_MESH, PROPERTY_SKELETAL_MESH,
       dtDAL::ResourceActorProperty::SetFuncType(this, (void (AnimationHelper::*)(const std::string&))(&AnimationHelper::LoadModel)),
       PROPERTY_SKELETAL_MESH_DESC, ANIMATION_MODEL_GROUP));
 }
@@ -182,7 +182,9 @@ Cal3DAnimator* AnimationHelper::GetAnimator()
 const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
 {
    if (!mAnimator.valid())
+   {
       return NULL;
+   }
    return mAnimator->GetWrapper();
 }
 
@@ -190,7 +192,9 @@ const Cal3DModelWrapper* AnimationHelper::GetModelWrapper() const
 Cal3DModelWrapper* AnimationHelper::GetModelWrapper()
 {
    if (!mAnimator.valid())
+   {
       return NULL;
+   }
    return mAnimator->GetWrapper();
 }
 
@@ -237,4 +241,4 @@ void AnimationHelper::SetAttachmentController(AttachmentController& newControlle
 }
 
 
-}//namespace dtAnim
+} // namespace dtAnim

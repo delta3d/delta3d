@@ -37,11 +37,11 @@ namespace dtAnim
    const typename Array::value_type::element_type* FindWithFunctor(Array a, T functor)
    {
       typename Array::const_iterator iter = a.begin();
-      typename Array::const_iterator end = a.end();
+      typename Array::const_iterator end  = a.end();
 
-      for(;iter != end; ++iter)
+      for (;iter != end; ++iter)
       {
-         if(functor((*iter).get()))
+         if (functor((*iter).get()))
          {
             return (*iter).get();
          }
@@ -52,7 +52,7 @@ namespace dtAnim
 
    struct findWithFilename
    {
-      findWithFilename(const std::string& filename): mFilename(filename){}
+      findWithFilename(const std::string& filename) : mFilename(filename) {}
 
       bool operator()(Cal3DModelData* data)
       {
@@ -64,7 +64,7 @@ namespace dtAnim
 
    struct findWithCoreModel
    {
-      findWithCoreModel(const CalCoreModel* model): mModel(model){}
+      findWithCoreModel(const CalCoreModel* model) : mModel(model) {}
 
       bool operator()(Cal3DModelData* data)
       {
@@ -78,9 +78,9 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DDatabase::Cal3DDatabase()
-   : mModelData()
-   , mFileLoader(new Cal3DLoader())
-   , mNodeBuilder(new AnimNodeBuilder())
+      : mModelData()
+      , mFileLoader(new Cal3DLoader())
+      , mNodeBuilder(new AnimNodeBuilder())
    {
    }
 
@@ -107,13 +107,13 @@ namespace dtAnim
       return *mNodeBuilder;
    }
    ///Load an animated entity definition file and return the Cal3DModelWrapper
-   dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load( const std::string& file )
+   dtCore::RefPtr<Cal3DModelWrapper> Cal3DDatabase::Load(const std::string& file)
    {
       std::string filename = osgDB::convertFileNameToNativeStyle(file);
       Cal3DModelData* data = Find(filename);
-      if(!data)
+      if (!data)
       {
-         if(mFileLoader->Load(filename, data))
+         if (mFileLoader->Load(filename, data))
          {
             mModelData.push_back(data);
          }
@@ -123,23 +123,23 @@ namespace dtAnim
             return NULL;
          }
       }
-      
-      CalModel *model = new CalModel(data->GetCoreModel());
-      dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);   
+
+      CalModel* model = new CalModel(data->GetCoreModel());
+      dtCore::RefPtr<Cal3DModelWrapper> wrapper = new Cal3DModelWrapper(model);
       return wrapper;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DDatabase::PurgeLoaderCaches() 
-   { 
-      mFileLoader->PurgeAllCaches(); 
+   void Cal3DDatabase::PurgeLoaderCaches()
+   {
+      mFileLoader->PurgeAllCaches();
    }
    ////////////////////////////////////////////////////////////////////////////////
-   void Cal3DDatabase::TruncateDatabase() 
-   { 
+   void Cal3DDatabase::TruncateDatabase()
+   {
       mModelData.clear();
    }
-   
+
    ////////////////////////////////////////////////////////////////////////////////
    const Cal3DModelData* Cal3DDatabase::GetModelData(const Cal3DModelWrapper& wrapper) const
    {
@@ -159,7 +159,7 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const std::string& filename)
    {
-      //todo- this is ugly, get rid of it
+      // todo- this is ugly, get rid of it
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithFilename(filename)));
    }
 
@@ -172,7 +172,7 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////
    Cal3DModelData* Cal3DDatabase::Find(const CalCoreModel* coreModel)
    {
-      //todo- this is ugly, get rid of it
+      // todo- this is ugly, get rid of it
       return const_cast<Cal3DModelData*>(FindWithFunctor(mModelData, findWithCoreModel(coreModel)));
    }
 
@@ -181,4 +181,4 @@ namespace dtAnim
    {
       return FindWithFunctor(mModelData, findWithCoreModel(coreModel));
    }
-}
+} // namespace dtAnim

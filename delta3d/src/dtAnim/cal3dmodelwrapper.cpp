@@ -1,3 +1,22 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <cal3d/cal3d.h>
 #include <cal3d/coretrack.h>
@@ -22,12 +41,12 @@ namespace dtAnim
 
       if (model)
       {
-         CalCoreModel *coreModel = model->getCoreModel();
+         CalCoreModel* coreModel = model->getCoreModel();
 
          // attach all meshes to the model
          if (coreModel)
          {
-            for(int meshId = 0; meshId < coreModel->getCoreMeshCount(); meshId++)
+            for (int meshId = 0; meshId < coreModel->getCoreMeshCount(); ++meshId)
             {
                AttachMesh(meshId);
                ShowMesh(meshId);
@@ -46,7 +65,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::AttachMesh(int meshID)
    {
-      bool success = mCalModel->attachMesh(meshID); 
+      bool success = mCalModel->attachMesh(meshID);
       mCalModel->setMaterialSet(0);
 
       return success;
@@ -55,7 +74,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    bool Cal3DModelWrapper::DetachMesh(int meshID)
    {
-      return mCalModel->detachMesh(meshID); 
+      return mCalModel->detachMesh(meshID);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -96,7 +115,7 @@ namespace dtAnim
    {
       assert(model != NULL);
 
-      mCalModel = model;   
+      mCalModel = model;
       mRenderer = mCalModel->getRenderer();
       mMixer    = mCalModel->getMixer();
    }
@@ -112,17 +131,17 @@ namespace dtAnim
    {
       return mMixer->clearCycle(id, delay);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    void Cal3DModelWrapper::ClearAll(float delay)
    {
-      std::vector<CalAnimation*> &animList = mMixer->getAnimationVector();
+      std::vector<CalAnimation*>& animList = mMixer->getAnimationVector();
       for (size_t animIndex = 0; animIndex < animList.size(); ++animIndex)
       {
-         CalAnimation *currentAnim = animList[animIndex];
+         CalAnimation* currentAnim = animList[animIndex];
          if (currentAnim)
          {
-            if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)  
+            if (currentAnim->getType() == CalAnimation::TYPE_CYCLE)
             {
                ClearCycle(animIndex, delay);
             }
@@ -135,7 +154,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Cal3DModelWrapper::ExecuteAction(int id, float delayIn, float delayOut, 
+   bool Cal3DModelWrapper::ExecuteAction(int id, float delayIn, float delayOut,
          float weightTgt/*=1.f*/, bool autoLock/*=false*/)
    {
       return mMixer->executeAction(id, delayIn, delayOut, weightTgt, autoLock);
@@ -148,7 +167,7 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   CalModel* Cal3DModelWrapper::GetCalModel() 
+   CalModel* Cal3DModelWrapper::GetCalModel()
    {
       return mCalModel;
    }
@@ -184,10 +203,10 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotationForKeyFrame(int animID, int boneID, unsigned int keyframeindex) const
    {
-      osg::Quat accumulatedRotation; 
+      osg::Quat accumulatedRotation;
       osg::Quat relativeRotation;
 
-      do 
+      do
       {
          int parentBoneID = GetParentBoneID(boneID);
 
@@ -196,24 +215,24 @@ namespace dtAnim
          if (HasTrackForBone(animID, boneID))
          {
             // Make sure this is a valid keyframe
-            unsigned int keyframecount = GetCoreAnimationKeyframeCountForTrack(animID, boneID);   
+            unsigned int keyframecount = GetCoreAnimationKeyframeCountForTrack(animID, boneID);
             assert(keyframeindex < keyframecount);
 
             // Get the rotation for the bone at the desired keyframe
-            relativeRotation = GetCoreTrackKeyFrameQuat(animID, boneID, keyframeindex);  
-         }  
+            relativeRotation = GetCoreTrackKeyFrameQuat(animID, boneID, keyframeindex);
+         }
          else
          {
-           relativeRotation = GetBoneRelativeRotation(boneID);   
+           relativeRotation = GetBoneRelativeRotation(boneID);
          }
 
          // Accumulate the rotation
-         accumulatedRotation = accumulatedRotation * relativeRotation;    
+         accumulatedRotation = accumulatedRotation * relativeRotation;
 
          // Move on to the next bone
          boneID = parentBoneID;
 
-      } while(boneID != dtAnim::Cal3DModelWrapper::NULL_BONE);
+      } while (boneID != dtAnim::Cal3DModelWrapper::NULL_BONE);
 
       return accumulatedRotation;
    }
@@ -221,7 +240,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::Quat Cal3DModelWrapper::GetBoneAbsoluteRotation(unsigned int boneID) const
    {
-      CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
       assert(bone);
 
       if (bone)
@@ -237,7 +256,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::Vec3 Cal3DModelWrapper::GetBoneAbsoluteTranslation(unsigned int boneID) const
    {
-      CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
       assert(bone);
 
       if (bone)
@@ -252,13 +271,13 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    osg::Quat Cal3DModelWrapper::GetBoneRelativeRotation(unsigned int boneID) const
    {
-      CalBone *bone = mCalModel->getSkeleton()->getBone(boneID);
+      CalBone* bone = mCalModel->getSkeleton()->getBone(boneID);
       assert(bone);
 
       if (bone)
       {
          const CalQuaternion& calQuat = bone->getRotation();
-         return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);     
+         return osg::Quat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);
       }
 
       return osg::Quat();
@@ -268,7 +287,7 @@ namespace dtAnim
    int Cal3DModelWrapper::GetCoreBoneID(const std::string& name) const
    {
       CalCoreBone* corebone = mCalModel->getCoreModel()->getCoreSkeleton()->getCoreBone(name);
-      if( corebone == NULL )
+      if (corebone == NULL)
       {
          return Cal3DModelWrapper::NULL_BONE;
       }
@@ -295,7 +314,7 @@ namespace dtAnim
       CalCoreSkeleton* skel = mCalModel->getCoreModel()->getCoreSkeleton();
       std::vector<CalCoreBone*> boneVec = skel->getVectorCoreBone();
 
-      if(boneVec.empty()) return;
+      if (boneVec.empty()) { return; }
 
       toFill.resize(boneVec.size());
       std::transform(boneVec.begin(), boneVec.end(), toFill.begin(), details::ReturnBoneName());
@@ -317,7 +336,7 @@ namespace dtAnim
    bool Cal3DModelWrapper::HasAnimation(int animID) const
    {
       std::vector<CalAnimation*>& animationList = mCalModel->getMixer()->getAnimationVector();
-      return (animID < (int)animationList.size() && animationList[animID]);
+      return animID < (int)animationList.size() && animationList[animID];
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -346,8 +365,8 @@ namespace dtAnim
 
       if (coreBone)
       {
-         //CalCoreBone* coreBone = currentBone->getCoreBone();     
-         return coreBone->getParentId();      
+         //CalCoreBone* coreBone = currentBone->getCoreBone();
+         return coreBone->getParentId();
       }
 
       return NULL_BONE;
@@ -361,7 +380,7 @@ namespace dtAnim
       // prefer a container that is contiguous
       toFill.clear();
       std::list<int>::iterator listEnd=childIdList.end();
-      for(std::list<int>::iterator listIndex=childIdList.begin(); listIndex!=listEnd; ++listIndex)
+      for (std::list<int>::iterator listIndex=childIdList.begin(); listIndex!=listEnd; ++listIndex)
       {
          toFill.push_back(*listIndex);
       }
@@ -408,7 +427,7 @@ namespace dtAnim
    {
       osg::Vec4 retColor;
 
-      CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
       if (mat != NULL)
       {
          CalCoreMaterial::Color color = mat->getDiffuseColor();
@@ -419,12 +438,12 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   osg::Vec4 Cal3DModelWrapper::GetCoreMaterialAmbient(int matID) const 
+   osg::Vec4 Cal3DModelWrapper::GetCoreMaterialAmbient(int matID) const
    {
       osg::Vec4 retColor;
 
       CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
-      
+
       if (mat != NULL)
       {
          CalCoreMaterial::Color color = mat->getAmbientColor();
@@ -453,7 +472,7 @@ namespace dtAnim
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetCoreMaterialShininess(int matID) const
    {
-      CalCoreMaterial *mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
+      CalCoreMaterial* mat = mCalModel->getCoreModel()->getCoreMaterial(matID);
 
       if (mat != NULL)
       {
@@ -486,7 +505,7 @@ namespace dtAnim
    {
       mMixer->setAnimationTime(time);
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////
    float Cal3DModelWrapper::GetAnimationTime()
    {
@@ -505,4 +524,4 @@ namespace dtAnim
    }
 
    /////////////////////////////////////////////////////////////////////////////
-}
+} // namespace dtAnim

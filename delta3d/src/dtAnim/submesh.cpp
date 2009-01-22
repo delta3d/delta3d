@@ -1,3 +1,22 @@
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2007, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #include <dtAnim/submesh.h>
 #include <dtAnim/cal3dmodelwrapper.h>
 #include <dtAnim/cal3dmodeldata.h>
@@ -27,7 +46,7 @@ namespace dtAnim
          {
          }
 
-         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const  
+         /*virtual*/ osg::BoundingBox computeBound(const osg::Drawable&) const
          {
             // temp until a better solution is implemented
             return mBoundingBox;
@@ -47,7 +66,7 @@ namespace dtAnim
    osg::Object* SubmeshUserData::clone(const osg::CopyOp& op) const
    {
       SubmeshUserData* theClone = static_cast<SubmeshUserData*>(cloneType());
-      theClone->mLOD = mLOD; 
+      theClone->mLOD = mLOD;
       return theClone;
    }
 
@@ -70,8 +89,8 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   bool SubmeshCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const 
-   { 
+   bool SubmeshCullCallback::cull(osg::NodeVisitor* nv, osg::Drawable* drawable, osg::RenderInfo* renderInfo) const
+   {
       if (!mWrapper->IsMeshVisible(mMeshID) || mWrapper->GetMeshCount() <= mMeshID)
       {
          return true;
@@ -81,18 +100,18 @@ namespace dtAnim
       if (parent != NULL)
       {
          float distance = nv->getDistanceToEyePoint(parent->getBound().center(), true);
-         
+
          SubmeshDrawable* submeshDraw = dynamic_cast<SubmeshDrawable*>(drawable);
          if (submeshDraw != NULL)
          {
             // disappear once the max distance is reached
             if (distance > submeshDraw->GetLODOptions().GetMaxVisibleDistance())
                return true;
-   
+
             float start = submeshDraw->GetLODOptions().GetStartDistance();
             float end   = submeshDraw->GetLODOptions().GetEndDistance();
             float slope = 1.0f / (end - start);
-   
+
             float lod = 1.0f - (slope*(distance - start));
             dtUtil::Clamp(lod, 0.0f, 1.0f);
             if (!osg::isNaN(lod))
@@ -101,19 +120,19 @@ namespace dtAnim
                //dtCore::RefPtr<SubmeshUserData> userData = new SubmeshUserData;
                //userData->mLOD = lod;
                //renderInfo->setUserData(userData.get());
-   
+
                submeshDraw->SetCurrentLOD(lod);
-   
+
                //std::cout << "Setting LOD to " << lod << std::endl;
             }
          }
       }
 
-      return osg::Geometry::CullCallback::cull(nv, drawable, renderInfo); 
+      return osg::Geometry::CullCallback::cull(nv, drawable, renderInfo);
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   SubmeshDrawable::SubmeshDrawable(Cal3DModelWrapper* wrapper, unsigned mesh, unsigned Submesh) 
+   SubmeshDrawable::SubmeshDrawable(Cal3DModelWrapper* wrapper, unsigned mesh, unsigned Submesh)
       : mMeshID(mesh), mSubmeshID(Submesh), mMeshVBO(0), mMeshIndices(0), mCurrentLOD(1.0f)
       , mInitalized(false)
       , mVBOContextID(-1)
@@ -160,14 +179,14 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   void SubmeshDrawable::SetUpMaterial() 
+   void SubmeshDrawable::SetUpMaterial()
    {
       osg::StateSet* set = this->getOrCreateStateSet();
 
-      if(mWrapper->BeginRenderingQuery())
+      if (mWrapper->BeginRenderingQuery())
       {
          // select mesh and Submesh for further data access
-         if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID)) 
+         if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
          {
             osg::Material* material = new osg::Material();
             set->setAttributeAndModes(material, osg::StateAttribute::ON);
@@ -220,7 +239,7 @@ namespace dtAnim
                while (texture != NULL)
                {
                   set->setTextureAttributeAndModes(i, texture, osg::StateAttribute::ON);
-                  texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(++i));                  
+                  texture = reinterpret_cast<osg::Texture2D*>(mWrapper->GetMapUserData(++i));
                }
             }
          }
@@ -243,10 +262,10 @@ namespace dtAnim
          float lodToQuery = float(i + 1) / float(LOD_COUNT);
          mWrapper->SetLODLevel(lodToQuery);
 
-         if(mWrapper->BeginRenderingQuery())
+         if (mWrapper->BeginRenderingQuery())
          {
             // select mesh and Submesh for further data access
-            if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+            if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
                // begin the rendering loop t get the faces.
 
@@ -266,7 +285,7 @@ namespace dtAnim
 
       for (unsigned i = 1; i < LOD_COUNT; ++i)
       {
-         mVertexOffsets[i] = mVertexOffsets[i - 1] + mVertexCount[i - 1]; 
+         mVertexOffsets[i] = mVertexOffsets[i - 1] + mVertexCount[i - 1];
          mFaceOffsets[i] = mFaceOffsets[i - 1 ] + mFaceCount[i - 1];
       }
 
@@ -294,10 +313,10 @@ namespace dtAnim
          mWrapper->SetLODLevel(lodToQuery);
 
          // begin the rendering loop t get the faces.
-         if(mWrapper->BeginRenderingQuery())
+         if (mWrapper->BeginRenderingQuery())
          {
             // select mesh and Submesh for further data access
-            if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+            if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
             {
                int vertexCount = mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
 
@@ -309,7 +328,7 @@ namespace dtAnim
                mWrapper->GetTextureCoords(1, vertexArray + 8, STRIDE_BYTES);
 
                //invert texture coordinates.
-               for(unsigned i = 0; i < vertexCount * STRIDE; i += STRIDE)
+               for (unsigned i = 0; i < vertexCount * STRIDE; i += STRIDE)
                {
                   vertexArray[i + 7] = 1.0f - vertexArray[i + 7]; //the odd texture coordinates in cal3d are flipped, not sure why
                   vertexArray[i + 9] = 1.0f - vertexArray[i + 9]; //the odd texture coordinates in cal3d are flipped, not sure why
@@ -338,7 +357,7 @@ namespace dtAnim
 #define INDEX_OFFSET(x)((GLvoid*) (0 + ((x) * sizeof(CalIndex))))
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   void SubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const 
+   void SubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
    {
       osg::State& state = *renderInfo.getState();
       //bind the VBO's
@@ -353,12 +372,12 @@ namespace dtAnim
       }
 
       // begin the rendering loop
-      if(mWrapper->BeginRenderingQuery())
+      if (mWrapper->BeginRenderingQuery())
       {
          // select mesh and Submesh for further data access
-         if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+         if (mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
          {
-            SubmeshUserData* userData = 
+            SubmeshUserData* userData =
                dynamic_cast<SubmeshUserData*>(renderInfo.getUserData());
 
                float finalLOD = 0.0;
@@ -387,12 +406,12 @@ namespace dtAnim
                if (!initializedThisDraw)
                {
                   float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-   
+
                   ///offset into the vbo to fill the correct lod.
                   vertexArray += mVertexOffsets[lodIndex] * STRIDE;
-   
+
                   mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
-   
+
                   // get the transformed normals of the Submesh
                   mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
                   glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
@@ -409,7 +428,7 @@ namespace dtAnim
                //make the call to render
                glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
 
-               glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ? 
+               glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
                         GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
 
                glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -453,7 +472,7 @@ namespace dtAnim
          osg::ref_ptr<osg::DrawElementsUShort> pset = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLES,
                   mFaceCount[0] * 3, (GLushort*) indexArray);
          pset->accept(functor);
-      } 
+      }
       else
       {
          osg::ref_ptr<osg::DrawElementsUInt> pset = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES,
@@ -468,7 +487,7 @@ namespace dtAnim
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
-   osg::Object* SubmeshDrawable::clone(const osg::CopyOp&) const 
+   osg::Object* SubmeshDrawable::clone(const osg::CopyOp&) const
    {
       return new SubmeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
    }
@@ -478,4 +497,4 @@ namespace dtAnim
    {
       return new SubmeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
    }
-}
+} // namespace dtAnim
