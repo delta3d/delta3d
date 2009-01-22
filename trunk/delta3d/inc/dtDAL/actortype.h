@@ -27,8 +27,6 @@
 #include <ostream>
 #include <dtDAL/export.h>
 
-#include <dtUtil/deprecationmgr.h>
-
 namespace dtDAL 
 {
    /**
@@ -170,15 +168,6 @@ namespace dtDAL
          bool operator!=(const ActorType& rhs) const 
          {
             return (mUniqueId != rhs.mUniqueId);
-         }
-
-         /// DEPRECATED 3/24/08.  Use GetFullName() instead.
-         const std::string ToString() const
-         {
-            DEPRECATE("const std::string ActorType::ToString() const",
-                      "const std::string &ActorType::GetFullName() const" );
-
-            return GetFullName();
          }
 
          ///Get the fully qualified string representation for this ActorType.

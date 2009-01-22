@@ -30,7 +30,6 @@
 #include <osg/Referenced>
 
 #include <dtUtil/tree.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/resourcehelper.h>
 #include <dtDAL/export.h>
@@ -564,24 +563,6 @@ namespace dtDAL
           * @see class dtDAL::ActorProxy
           */
          const bool GetEditMode() const { return mEditMode; }
-
-
-         ///Deprecated 07/01/08
-         Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
-         {
-            DEPRECATE("Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)",
-               "Map& dtDAL::Project::LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false)");
-            return LoadMapIntoScene(name, scene, addBillBoards);
-         }
-
-         ///Deprecated 07/01/08
-         void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
-         {
-            DEPRECATE("dtDAL::Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)",
-               "dtDAL::Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false)");
-            LoadMapIntoScene(map, scene, addBillBoards);
-         }
-
    };
 
 }

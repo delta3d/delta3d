@@ -542,7 +542,7 @@ namespace dtDAL
 
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
-            AddCharacters(proxy.GetActorType().ToString());
+            AddCharacters(proxy.GetActorType().GetFullName());
             EndElement();
             BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
             AddCharacters(proxy.GetId().ToString());

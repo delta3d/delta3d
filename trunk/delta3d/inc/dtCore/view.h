@@ -25,7 +25,6 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/databasepager.h>
-#include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>
 #include <osgViewer/View>
 
@@ -166,39 +165,6 @@ namespace dtCore
        * @return The internal DatabasePager (could be NULL)
        */
        const dtCore::DatabasePager* GetDatabasePager() const;
-
-
-       ///Deprecated 07/01/08
-       void EnablePaging()
-       {
-          DEPRECATE("dtCore::View::EnablePaging()",
-                    "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
-       }
-
-       ///Deprecated 07/01/08
-       void DisablePaging()
-       {
-          DEPRECATE("dtCore::View::DisablePaging()",
-                    "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
-       }
-
-       ///Deprecated 07/01/08
-       void SetTargetFrameRate(double pTargetFR)
-       { 
-          DEPRECATE("dtCore::View::SetTargetFrameRate(double)",
-             "dtCore::DatabasePager::SetTargetFrameRate(double)");
-
-          GetDatabasePager()->SetTargetFrameRate(pTargetFR);
-       }
-
-       ///Deprecated 07/01/08
-       double GetTargetFrameRate()
-       { 
-          DEPRECATE("double dtCore::View::GetTargetFrameRate()",
-             "double dtCore::DatabasePager::GetTargetFrameRate() const");
-
-          return GetDatabasePager()->GetTargetFrameRate();
-       }
 
    protected:
 

@@ -30,6 +30,7 @@
 #include <dtCore/odespacewrap.h>
 #include <dtCore/odeworldwrap.h>
 #include <dtCore/base.h>
+#include <dtUtil/deprecationmgr.h>
 #include <vector>
 #include <ode/common.h>
 #include <ode/collision_space.h>
@@ -129,9 +130,6 @@ namespace dtCore
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
       
-      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
-      dJointGroupID GetContactJoinGroupID() const;
-
       ///Get the ODE contact joint group ID
       dJointGroupID GetContactJointGroupID() const;
 
@@ -141,6 +139,14 @@ namespace dtCore
       ///Get a pointer to the internal ODESpaceWrap instance
       dtCore::ODESpaceWrap* GetSpaceWrapper() const;
 
+      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
+      DEPRECATE_FUNC dJointGroupID GetContactJoinGroupID() const
+      {
+         DEPRECATE("dJointGroupID dtCore::ODEController::GetContactJoinGroupID() const",
+                   "dJointGroupID dtCore::ODEController::GetContactJointGroupID() const");
+
+         return this->GetContactJointGroupID();
+      }
    protected:
       virtual ~ODEController();
 

@@ -190,8 +190,8 @@ namespace dtAI
       NPCState* state_idle = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_IDLE);
       NPCState* state_die = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DIE);
 
-      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SPAWN, state_default, state_spawn);
-      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_idle, state_die);
+      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SPAWN, state_default->GetType(), state_spawn->GetType());
+      mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_idle->GetType(), state_die->GetType());
 
       //when spawn first updates, it will call the virtual spawn function
       //set mSleeping to false and select a new state through the

@@ -248,14 +248,6 @@ dWorldID dtCore::ODEController::GetWorldID() const
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
-dJointGroupID dtCore::ODEController::GetContactJoinGroupID() const
-{
-   DEPRECATE("dJointGroupID dtCore::ODEController::GetContactJoinGroupID() const",
-             "dJointGroupID dtCore::ODEController::GetContactJointGroupID() const");
-
-   return this->GetContactJointGroupID();
-}
 
 //////////////////////////////////////////////////////////////////////////
 dJointGroupID dtCore::ODEController::GetContactJointGroupID() const
