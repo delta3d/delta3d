@@ -362,7 +362,12 @@ namespace dtAudio
          Sound*            NewSound( void );
 
          /// free a sound that the user is finished with
-         void              FreeSound( Sound* sound );
+         void              FreeSound( Sound* sound );         
+
+         /** Get the underlying ALUT sound source.  Returns -1 if inidcated
+          *  Sound parameter is not found by the AudioManager.
+          */ 
+         ALuint            GetSource(Sound* sound);
 
          ///Pre-load a sound file into a buffer. We still only support .wav's
          ///but .ogg support is coming soon!
