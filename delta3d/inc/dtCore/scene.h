@@ -183,9 +183,6 @@ namespace dtCore
       ///Get the ODE world ID
       dWorldID GetWorldID() const;
 
-      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
-      dJointGroupID GetContactJoinGroupID() const;
-
       ///Get the ODE contact joint group ID
       dJointGroupID GetContactJointGroupID() const;
 
@@ -255,70 +252,14 @@ namespace dtCore
       /// Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
-
-      /// DEPRECATED 06/30/08 in favor of dtCore::View::EnablePaging()
-      void EnablePaging()
+      ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
+      DEPRECATE_FUNC dJointGroupID GetContactJoinGroupID() const
       {
-         DEPRECATE("void dtCore::Scene::EnablePaging()",
-                   "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
+         DEPRECATE("dJointGroupID dtCore::Scene::GetContactJoinGroupID() const",
+                   "dJointGroupID dtCore::Scene::GetContactJointGroupID() const");
+
+         return this->GetContactJointGroupID();
       }
-
-      /// DEPRECATED 06/30/08 in favor of dtCore::View::DisablePaging()
-      void DisablePaging()
-      {
-         DEPRECATE("dtCore::Scene::DisablePaging()",
-                   "void dtCore::View::SetDatabasePager( dtCore::DatabasePager *pager )");
-      }
-
-      /// Returns if paging is enabled
-      bool IsPagingEnabled() const
-      {
-         DEPRECATE("dtCore::Scene::DisablePaging() const",
-                   "dtCore::DatabasePager* dtCore::View::GetDatabasePager() const");
-         return false;
-      }
-
-      /// DEPRECATED 06/30/08
-      void SetPagingCleanup(double pCleanup)
-      {
-         DEPRECATE("dtCore::Scene::SetPagingCleanup(double)",
-                   "N/A");
-      }
-
-      /// DEPRECATED 06/30/08
-      double GetPagingCleanup()
-      {
-         DEPRECATE("double dtCore::Scene::GetPagingCleanup()",
-                   "N/A");
-         return 0.0;
-      }
-
-      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager::SetConfiguration()
-      void SetConfiguration(dtUtil::ConfigProperties* config)
-      {
-         DEPRECATE("void dtCore::Scene::SetConfiguration(dtUtil::ConfigProperties* config)",
-                   "void dtCore::DatabasePager::SetConfiguration(dUtil::ConfigProperties *config");
-      }
-
-      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager:GetConfiguration()
-      dtUtil::ConfigProperties* GetConfiguration()
-      {
-         DEPRECATE("dtUtil::ConfigProperties* dtCore::Scene::GetConfiguration()",
-                   "dtUtil::ConfigProperties* dtCore::DatabasePager::GetConfiguration()");
-
-         return NULL;
-      }
-
-      /// DEPRECATED 06/30/08 in favor of dtCore::DataBasePager::GetConfiguration()
-      const dtUtil::ConfigProperties* GetConfiguration() const
-      {
-         DEPRECATE("const dtUtil::ConfigProperties* dtCore::Scene::GetConfiguration() const",
-                   "const dtUtil::ConfigProperties* dtCore::DatabasePager::GetConfiguration() const" );
-
-         return NULL;
-      }
-
-
    protected:
 
       friend class View;

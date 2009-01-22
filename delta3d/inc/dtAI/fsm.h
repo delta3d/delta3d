@@ -29,7 +29,6 @@
 #include <dtCore/refptr.h>
 
 #include <dtUtil/objectfactory.h>
-#include <dtUtil/deprecationmgr.h>
 #include <set>
 #include <map>
 #include <functional>
@@ -107,16 +106,6 @@ namespace dtAI
 
       NPCState* AddState(const NPCState::Type* state);
 
-      void AddTransition(const NPCEvent* eventType, const NPCState* from, const NPCState* to)
-      {
-         //there is no more support for lazy addition of the states, you must add them independently first
-         DEPRECATE( "void AddTransition(const NPCEvent* eventType, const NPCState* from, const NPCState* to)",
-            "void AddTransition( const NPCEvent* eventType, const NPCState::Type* from, const NPCState::Type* to");
-
-         AddState(from->GetType());
-         AddState(to->GetType());
-         AddTransition(eventType, from->GetType(), to->GetType());
-      }
       void AddTransition( const NPCEvent* eventType, const NPCState::Type* from, const NPCState::Type* to);
 
       NPCState* GetCurrentState();

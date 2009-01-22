@@ -36,12 +36,6 @@ void initTransformBindings()
    void (Transform::*GetRotation2)(osg::Matrix&) const = &Transform::GetRotation;
    void (Transform::*GetRotation3)(osg::Quat&) const = &Transform::GetRotation;
 
-   void (Transform::*SetLookAt1)(const osg::Vec3&,
-                                 const osg::Vec3&,
-                                 const osg::Vec3&) = &Transform::SetLookAt;
-   void (Transform::*SetLookAt2)(float, float, float,
-                                 float, float, float,
-                                 float, float, float) = &Transform::SetLookAt;
 
    class_<Transform>("Transform", init<optional<float, float, float, float, float, float> >())
       .def("Set", Set1)
@@ -50,8 +44,6 @@ void initTransformBindings()
       .def("Set", Set4)
       .def("Set", Set5)
       .def("Set", Set6)
-      .def("SetLookAt", SetLookAt1)
-      .def("SetLookAt", SetLookAt2)
       .def("SetTranslation", SetTranslation1)
       .def("SetTranslation", SetTranslation2)
       .def("SetRotation", SetRotation1)

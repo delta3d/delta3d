@@ -189,7 +189,7 @@ namespace dtDAL
 
 
          ///Deprecated 11/6/08          
-         ActorProxyIcon(const IconType& type = IconType::GENERIC)
+         DEPRECATE_FUNC ActorProxyIcon(const IconType& type = IconType::GENERIC)
             : mIconStateSet(0),
             mConeStateSet(0),
             mCylinderStateSet(0)
@@ -204,7 +204,7 @@ namespace dtDAL
          }
 
          ///Deprecated 11/6/08
-         ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
+         DEPRECATE_FUNC ActorProxyIcon(const IconType& type, const ActorProxyIconConfig& pConfig)
             : mIconStateSet(0)
             , mConeStateSet(0)
             , mCylinderStateSet(0)
@@ -219,7 +219,7 @@ namespace dtDAL
          }
 
          ///Deprecated 11/6/08
-         void SetIconType(const IconType& type)
+         DEPRECATE_FUNC void SetIconType(const IconType& type)
          {
             DEPRECATE("void SetIconType(const IconType& type)",
                       "n/a");

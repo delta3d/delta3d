@@ -149,8 +149,6 @@ Viewer::Config( const WinData* d /*= NULL*/ )
    vs.SetDisplayFlag( ViewState::SCENEPOLY );
    vs.SetDisplayFlag( ViewState::SCENETXT );
    vs.SetDisplayFlag( ViewState::SCENELIGHT );
-
-   scene->EnablePaging();
 }
 
 

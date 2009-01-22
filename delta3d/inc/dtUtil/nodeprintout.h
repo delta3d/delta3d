@@ -23,7 +23,6 @@
 #define __DELTA_NODE_PRINT_OUT__
 
 #include <dtUtil/export.h>
-#include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>
 #include <osg/Node>
 #include <sstream>
@@ -68,17 +67,6 @@ namespace dtUtil
          std::string CollectNodeData(const osg::Node& nodeToPrint,
                                      const std::string& outputFilename = "",
                                      bool printVertData = false);
-
-
-         /// Deprecated 06/10/08  Use CollectNodeData() instead
-         void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true)
-         {
-            DEPRECATE("void PrintOutNode(const std::string& printOutFileName, const osg::Node& nodeToPrint, bool PrintVerts = false, bool printToFile = true)",
-                      "std::string CollectNodeData( const osg::Node &nodeToPrint, const std::string &outputFilename = "", bool printVertData = false );");
-
-            CollectNodeData(nodeToPrint, printOutFileName, PrintVerts);
-         }
-
 
          /// Returns the file stream
          std::string GetFileOutput() const;

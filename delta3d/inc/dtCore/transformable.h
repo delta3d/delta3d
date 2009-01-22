@@ -28,6 +28,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/deprecationmgr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 struct dContact;
@@ -104,19 +105,8 @@ namespace dtCore
 
    protected:
 
-      /**
-       * Replaces the scene graph node with a new MatrixTransform.
-       * WARNING! This function is a big fat hack to get RepliacntBody
-       * to play nice with our API. This will almost certainly be removed
-       * in future version, so don't get to comfy using it! ;) Properties
-       * set on this Transformable are merged onto the new node, however
-       * the old collision geometry will remain.
-       *
-       * @param matrixTransform The node you wish to squeeze into this
-       * Transformable.
-       * @pre matrixTransform != NULL
-       */
-      void ReplaceMatrixNode(TransformableNode* matrixTransform);
+      ///DEPRECATED 1/13/09.  Method is not required anymore      
+      DEPRECATE_FUNC void ReplaceMatrixNode(TransformableNode* matrixTransform);
 
       virtual ~Transformable();
 

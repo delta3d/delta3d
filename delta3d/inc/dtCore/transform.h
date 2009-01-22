@@ -26,7 +26,6 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 
-#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -173,28 +172,6 @@ namespace dtCore
        * the scale value and make your mesh be a child of that. See GameMeshActor for an example.
        */
       void Rescale(const osg::Vec3f& scale);
-
-      ///sets this matrix to be used for setting an object's orientation
-      void SetLookAt(const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec)
-      {
-         DEPRECATE("void SetLookAt(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)",
-                   "void SetOrientation(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec)");
-
-         Set(xyz, lookAtXyz, upVec);
-      }
-
-      ///sets this matrix to be used for setting an object's orientation
-      void SetLookAt(float posX, float posY, float posZ,
-                     float lookAtX, float lookAtY, float lookAtZ,
-                     float upVecX, float upVecY, float upVecZ)
-      {
-         DEPRECATE("void SetLookAt(float posX, float posY, float posZ, float lookAtX, float lookAtY,"
-                   "float lookAtZ, float upVecX, float upVecY, float upVecZ)",
-                   "void SetOrientation(float posX, float posY, float posZ, float lookAtX, float lookAtY,"
-                   "float lookAtZ, float upVecX, float upVecY, float upVecZ)");
-
-         Set(posX, posY, posZ, lookAtX, lookAtY, lookAtZ, upVecX, upVecY, upVecZ);
-      }           
 
       ///checks to see if the param transform is within epsilon of this transform
       ///slightly more sophisticated as using operator ==

@@ -38,8 +38,6 @@
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
 
-#include <dtUtil/deprecationmgr.h>
-
 namespace dtUtil
 {
    class Log;
@@ -1021,23 +1019,6 @@ namespace dtGame
              * destroyed, but can be called manually at the appropriate time as well.
              */
             void Shutdown();
-
-
-            ///Deprecated 07/01/08
-            void ChangeMap(const std::string& mapName, bool addBillboards, bool enableDatabasePaging)
-            {
-               DEPRECATE("dtGame::GameManager::ChangeMap(const std::string& mapName, bool addBillboards=false, bool enableDatabasePaging=false)",
-                         "dtGame::GameManager::ChangeMap(const std::string& mapName, bool addBillboards=false)");
-               ChangeMap(mapName, addBillboards);
-            }
-
-            ///Deprecated 07/01/08
-            void ChangeMapSet(const NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)
-            {
-               DEPRECATE("dtGame::GameMananger::ChangeMapSet(const NameVector& mapNames, bool addBillboards, bool enableDatabasePaging)",
-                         "dtGame::GameMananger::ChangeMapSet(const NameVector& mapNames, bool addBillboards)");
-               ChangeMapSet(mapNames, addBillboards);
-            }
 
          protected:
 

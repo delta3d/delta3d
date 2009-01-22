@@ -86,15 +86,6 @@ namespace dtGame
          void ContinueMapChange();
 
 
-         ///Deprecated 07/01/08
-         void BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)
-         {
-            DEPRECATE("dtGame::MapChangeStateData::BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards, bool enableDatabasePaging)",
-                      "dtGame::MapChangeStateData::BeginMapChange(const NameVector& oldMapNames, const NameVector& newMapNames, bool addBillboards)" );
-
-            BeginMapChange(oldMapNames, newMapNames, addBillboards);
-         }
-
       protected:
 
          //Takes an open map name and loads all the actors into the GM
