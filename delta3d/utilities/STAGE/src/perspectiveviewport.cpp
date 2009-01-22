@@ -29,17 +29,13 @@
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QAction>
-#include <sstream>
-#include <osg/Billboard>
-#include <osg/Math>
-#include <osgDB/WriteFile>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
 #include <dtDAL/transformableactorproxy.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtDAL/enginepropertytypes.h>
 
 namespace dtEditQt
 {
@@ -235,6 +231,10 @@ namespace dtEditQt
       else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
       {
           rotateCurrentSelection(e,dx,dy);
+      }
+      else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+      {
+         scaleCurrentSelection(e,dx,dy);
       }
 
     }
@@ -503,6 +503,57 @@ namespace dtEditQt
                    "Current Rotation - Pitch: %1° Roll: %2° Yaw: %3°").arg(rotationDeltaX).arg(rotationDeltaY).arg(rotationDeltaZ), 2000);
             }
         }
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PerspectiveViewport::scaleCurrentSelection(QMouseEvent *e, float dx, float dy)
+    {
+       osg::Vec3 scale;
+       const float amount = -dy/getMouseSensitivity();
+
+       if (*currentMode == InteractionModeExt::ACTOR_AXIS_X)
+       {
+          scale[0] = amount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
+       {
+          scale[1] = amount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
+       {
+          scale[2] = amount;
+       }
+
+       ViewportOverlay::ActorProxyList &selection =
+          ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+       ViewportOverlay::ActorProxyList::iterator itor;
+
+       for (itor=selection.begin(); itor!=selection.end(); ++itor)
+       {
+          dtDAL::ActorProxy *proxy = itor->get();
+
+          dtDAL::ActorProperty* scaleProp = proxy->GetProperty("Scale");
+
+          if (scaleProp == NULL) 
+          { 
+             continue;
+          }
+          dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(scaleProp);
+
+          if (vecProp == NULL) 
+          { 
+             continue;
+          }
+
+          osg::Vec3 currentScale = vecProp->GetValue();
+          currentScale += scale;
+          vecProp->SetValue(currentScale);
+
+          // Update the status bar with current rotation (converted from radians to degrees)
+          EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+             "Current Scale - X: %1 Y: %2 Z: %3").arg(currentScale[0]).arg(currentScale[1]).arg(currentScale[2]), 2000);
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
