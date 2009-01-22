@@ -49,7 +49,7 @@
 //This will generate a compile-time warning when a function is prefaced.
 #if defined (DELTA_WIN32)
    #define DEPRECATE_FUNC  __declspec(deprecated)
-#elif __GNUC_
+#elif __GNUC__
    #define DEPRECATE_FUNC __attribute__ ((deprecated))
 #endif
 
