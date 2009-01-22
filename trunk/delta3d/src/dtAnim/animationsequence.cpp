@@ -36,7 +36,7 @@ namespace dtAnim
 struct AnimSequenceUpdater
 {
 public:
-   AnimSequenceUpdater(float dt, float parent_weight): mDT(dt), mParentWeight(parent_weight){}
+   AnimSequenceUpdater(float dt, float parent_weight) : mDT(dt), mParentWeight(parent_weight) {}
    template<typename T>
    void operator()(T& pChild)
    {
@@ -50,7 +50,7 @@ private:
 class AnimSeqForceFade
 {
 public:
-   AnimSeqForceFade(float time): mTime(time){}
+   AnimSeqForceFade(float time) : mTime(time) {}
    template<typename T>
    void operator()(T& pChild)
    {
@@ -64,7 +64,7 @@ private:
 class CloneFunctor
 {
 public:
-   CloneFunctor(AnimationSequence* pSeq, Cal3DModelWrapper* pWrapper): mSequence(pSeq), mWrapper(pWrapper) {}
+   CloneFunctor(AnimationSequence* pSeq, Cal3DModelWrapper* pWrapper) : mSequence(pSeq), mWrapper(pWrapper) {}
    template<typename T>
    void operator()(T& pChild)
    {
@@ -98,7 +98,7 @@ public:
 
       //keep track of the maximum end time
       float end = pChild->GetEndTime();
-      if(end > mEnd) mEnd = end;
+      if (end > mEnd) { mEnd = end; }
    }
 
 private:
@@ -112,7 +112,7 @@ private:
 //Animation Controller
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationController::AnimationController(AnimationSequence& pParent)
-: mParent(&pParent)
+   : mParent(&pParent)
 {
 }
 
@@ -123,7 +123,7 @@ AnimationSequence::AnimationController::~AnimationController()
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationController::AnimationController(const AnimationController& pCont)
-: mParent(pCont.mParent)
+   : mParent(pCont.mParent)
 {
 }
 
@@ -164,7 +164,7 @@ void AnimationSequence::AnimationController::Update(float dt)
    AnimationSequence::AnimationContainer& pCont = mParent->GetChildAnimations();
    AnimationSequence::AnimationContainer::iterator iterEnd = pCont.end();
 
-   for(AnimationSequence::AnimationContainer::iterator iter = pCont.begin(); iter != iterEnd; ++iter)
+   for (AnimationSequence::AnimationContainer::iterator iter = pCont.begin(); iter != iterEnd; ++iter)
    {
       Animatable* child = (*iter).get();
 
@@ -173,7 +173,7 @@ void AnimationSequence::AnimationController::Update(float dt)
 
       child->SetElapsedTime(child->GetElapsedTime() + dt);
 
-      if(child->GetElapsedTime() >= child->GetStartTime())
+      if (child->GetElapsedTime() >= child->GetStartTime())
       {
          child->Update(dt);
       }
@@ -195,29 +195,29 @@ void AnimationSequence::AnimationController::Recalculate()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::AnimationController::SetComputeWeight(Animatable* pAnim)
 {
-   //Compute Child Weight using fade in and out
+   // Compute Child Weight using fade in and out
    float weight = mParent->GetCurrentWeight();
 
    float fade = 1.0f;
 
-   if(pAnim->GetElapsedTime() < pAnim->GetStartTime() + pAnim->GetFadeIn())
+   if (pAnim->GetElapsedTime() < pAnim->GetStartTime() + pAnim->GetFadeIn())
    {
-      //compute fade in- we linearly interpolate from weight 0 to weight base weight
-      //over time specified by FadeIn
+      // compute fade in- we linearly interpolate from weight 0 to weight base weight
+      // over time specified by FadeIn
       float percent = (pAnim->GetElapsedTime() - pAnim->GetStartTime()) / pAnim->GetFadeIn();
       fade = percent * pAnim->GetBaseWeight();
 
    }
-   else if(pAnim->GetEndTime() > 0.0f && (pAnim->GetElapsedTime() > (pAnim->GetEndTime() - pAnim->GetFadeOut())))
+   else if (pAnim->GetEndTime() > 0.0f && (pAnim->GetElapsedTime() > (pAnim->GetEndTime() - pAnim->GetFadeOut())))
    {
-      //compute fade out- we linearly interpolate from base weight to 0
-      //over time specified by FadeOut
+      // compute fade out- we linearly interpolate from base weight to 0
+      // over time specified by FadeOut
       float percent = (pAnim->GetEndTime() - pAnim->GetElapsedTime()) / pAnim->GetFadeOut();
-      fade = percent * pAnim->GetBaseWeight();         
+      fade = percent * pAnim->GetBaseWeight();
    }
 
    dtUtil::Clamp(fade, 0.0f, 1.0f);
-  
+
    pAnim->SetCurrentWeight(fade * weight * pAnim->GetBaseWeight());
 }
 
@@ -232,7 +232,7 @@ void AnimationSequence::AnimationController::SetComputeSpeed(Animatable* pAnim)
 //Animation Sequence
 ///////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence()
-: mActiveAnimations()
+   : mActiveAnimations()
 {
    // vs complains about using this in initializer list
    SetController(new AnimationController(*this));
@@ -240,7 +240,7 @@ AnimationSequence::AnimationSequence()
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(AnimationController* pController)
-: mActiveAnimations()
+   : mActiveAnimations()
 {
    SetController(pController);
 }
@@ -252,21 +252,21 @@ AnimationSequence::~AnimationSequence()
 
 /////////////////////////////////////////////////////////////////////////////////
 AnimationSequence::AnimationSequence(const AnimationSequence& pSeq, Cal3DModelWrapper* wrapper)
-: Animatable(pSeq)
-, mActiveAnimations()
+   : Animatable(pSeq)
+   , mActiveAnimations()
 {
    if (pSeq.GetController() != NULL)
    {
       SetController(pSeq.GetController()->Clone().get());
    }
-      
+
    std::for_each(pSeq.mActiveAnimations.begin(), pSeq.mActiveAnimations.end(), CloneFunctor(this, wrapper));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 dtCore::RefPtr<Animatable> AnimationSequence::Clone(Cal3DModelWrapper* wrapper) const
 {
-   return new AnimationSequence(*this, wrapper); 
+   return new AnimationSequence(*this, wrapper);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +282,7 @@ AnimationSequence::AnimationController* AnimationSequence::GetController()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void AnimationSequence::SetController(AnimationController* pController) 
+void AnimationSequence::SetController(AnimationController* pController)
 {
    mController = pController;
    mController->SetParent(*this);
@@ -300,7 +300,7 @@ void AnimationSequence::AddAnimation(Animatable* pAnimation)
 void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeTime)
 {
    Animatable* anim = GetAnimatable(pAnimName);
-   if(anim)
+   if (anim)
    {
       anim->ForceFadeOut(fadeTime);
    }
@@ -314,7 +314,7 @@ void AnimationSequence::ClearAnimation(const std::string& pAnimName, float fadeT
 Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 {
    Animatable* anim = GetAnimatable(pAnimName);
-   if(anim == NULL)
+   if (anim == NULL)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
       return NULL;
@@ -327,7 +327,7 @@ Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName)
 const Animatable* AnimationSequence::GetAnimation(const std::string& pAnimName) const
 {
    const Animatable* anim = GetAnimatable(pAnimName);
-   if(anim == NULL)
+   if (anim == NULL)
    {
       LOG_WARNING("Unable to find animation '" + pAnimName + "' in AnimationSequence '" + GetName() + "'." )
       return NULL;
@@ -351,14 +351,14 @@ const AnimationSequence::AnimationContainer& AnimationSequence::GetChildAnimatio
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Update(float dt)
 {
-   if(mController.valid())
+   if (mController.valid())
    {
       mController->Update(dt);
    }
 
    PruneChildren();
 
-   if(mActiveAnimations.empty())
+   if (mActiveAnimations.empty())
    {
       SetPrune(true);
    }
@@ -375,7 +375,7 @@ void AnimationSequence::Recalculate()
 //TODO
 void AnimationSequence::CalculateBaseWeight()
 {
-   //calculate weight based on fade in's and out's
+   // calculate weight based on fade in's and out's
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -392,10 +392,10 @@ void AnimationSequence::Prune()
    AnimationContainer::iterator iter = mActiveAnimations.begin();
    AnimationContainer::iterator end = mActiveAnimations.end();
 
-   for(;iter != end; ++iter)
+   for (;iter != end; ++iter)
    {
       (*iter)->Prune();
-      iter = mActiveAnimations.erase(iter);      
+      iter = mActiveAnimations.erase(iter);
    }
 }
 
@@ -405,9 +405,9 @@ void AnimationSequence::PruneChildren()
    AnimationContainer::iterator iter = mActiveAnimations.begin();
    AnimationContainer::iterator end = mActiveAnimations.end();
 
-   for(;iter != end;)
+   for (;iter != end;)
    {
-      if((*iter)->ShouldPrune())
+      if ((*iter)->ShouldPrune())
       {
         (*iter)->Prune();
         AnimationContainer::iterator toDelete = iter;
@@ -424,7 +424,7 @@ void AnimationSequence::PruneChildren()
 /////////////////////////////////////////////////////////////////////////////////
 void AnimationSequence::Insert(Animatable* pAnimation)
 {
-   if(GetAnimatable(pAnimation->GetName()) != NULL)
+   if (GetAnimatable(pAnimation->GetName()) != NULL)
    {
       LOG_WARNING("Trying to add already existing animation '" + pAnimation->GetName() + "' to AnimationSequence '" + GetName() + "'." )
    }
@@ -440,9 +440,9 @@ Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim)
    AnimationContainer::iterator iter = mActiveAnimations.begin();
    AnimationContainer::iterator end = mActiveAnimations.end();
 
-   for(;iter != end; ++iter)
+   for (;iter != end; ++iter)
    {
-      if((*iter)->GetName() == pAnim)
+      if ((*iter)->GetName() == pAnim)
       {
         return (*iter).get();
       }
@@ -456,9 +456,9 @@ const Animatable* AnimationSequence::GetAnimatable(const std::string& pAnim) con
    AnimationContainer::const_iterator iter = mActiveAnimations.begin();
    AnimationContainer::const_iterator end = mActiveAnimations.end();
 
-   for(;iter != end; ++iter)
+   for (;iter != end; ++iter)
    {
-      if((*iter)->GetName() == pAnim)
+      if ((*iter)->GetName() == pAnim)
       {
         return (*iter).get();
       }
@@ -472,9 +472,9 @@ void AnimationSequence::Remove(const std::string& pAnim)
    AnimationContainer::iterator iter = mActiveAnimations.begin();
    AnimationContainer::iterator end = mActiveAnimations.end();
 
-   for(;iter != end; ++iter)
+   for (;iter != end; ++iter)
    {
-      if((*iter)->GetName() == pAnim)
+      if ((*iter)->GetName() == pAnim)
       {
          iter = mActiveAnimations.erase(iter);
          return;
@@ -491,4 +491,4 @@ bool AnimationSequence::IsAnimationPlaying(const std::string& pAnim) const
    return anim != NULL;
 }
 
-}//namespace dtAnim
+} // namespace dtAnim

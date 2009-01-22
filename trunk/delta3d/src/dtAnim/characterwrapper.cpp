@@ -42,22 +42,22 @@ namespace dtAnim
       , mHeightAboveGround(0.0f)
       , mLocalOffset(0)
       , mAnimHelper(0)
-   {      
+   {
       Init(filename);
    }
-   
+
    CharacterWrapper::~CharacterWrapper()
    {
    }
 
 
    void CharacterWrapper::Update(float dt)
-   {  
+   {
       osg::Vec3 pos;
       dtCore::Transform trans;
       BaseClass::GetTransform(trans);
-      trans.GetTranslation(pos);        
-   
+      trans.GetTranslation(pos);
+
       //apply rotation
       osg::Vec3 hpr;
       trans.GetRotation(hpr); //this is a little less efficient but increase readability dramatically
@@ -67,11 +67,11 @@ namespace dtAnim
       //apply translation
       osg::Matrix rot;
       trans.GetRotation(rot);
-      osg::Vec3 forwardVec = dtUtil::MatrixUtil::GetRow3(rot, 1); 
-      pos += forwardVec * (mSpeed * dt);      
-      
+      osg::Vec3 forwardVec = dtUtil::MatrixUtil::GetRow3(rot, 1);
+      pos += forwardVec * (mSpeed * dt);
+
       //ground clamp
-      if(mIsector.valid())
+      if (mIsector.valid())
       {
          //we disable our nodemask so we don't intersect ourself
          unsigned nodeMask = BaseClass::GetOSGNode()->getNodeMask();
@@ -79,7 +79,7 @@ namespace dtAnim
 
          mIsector->SetStartPosition(pos + osg::Vec3(0.0f, 0.0f, mHeightAboveGround + 1.0f)); //start the intersect 1 meter above the target
          mIsector->SetDirection(osg::Vec3(0.0f, 0.0f, -1.0f)); //straight down
-         if(mIsector->Update())
+         if (mIsector->Update())
          {
             pos[2] = mIsector->GetHitList()[0].getWorldIntersectPoint()[2] + mHeightAboveGround;
          }
@@ -109,7 +109,7 @@ namespace dtAnim
 
    void CharacterWrapper::SetGroundClamp(dtCore::Transformable* nodeToClampTo, float heightAboveGround)
    {
-      if(!mIsector.valid())
+      if (!mIsector.valid())
       {
          mIsector = new dtCore::Isector();
       }
@@ -120,7 +120,7 @@ namespace dtAnim
 
    void CharacterWrapper::SetGroundClamp(dtCore::Scene* sceneRoot, float heightAboveGround)
    {
-      if(!mIsector.valid())
+      if (!mIsector.valid())
       {
          mIsector = new dtCore::Isector(sceneRoot);
       }
@@ -164,25 +164,25 @@ namespace dtAnim
       float rotation = GetHeading();
       float dR = headingInRadians - rotation;
 
-      if(dR > 180.0f)
+      if (dR > 180.0f)
       {
          dR -= 360.0f;
       }
-      else if(dR < -180.0f)
+      else if (dR < -180.0f)
       {
          dR += 360.0f;
       }
 
-      if(dR > 0.0f)
+      if (dR > 0.0f)
       {
-         rotation += (dR > delta*90.0f ? delta*90.0f : dR);   
+         rotation += (dR > delta*90.0f ? delta*90.0f : dR);
       }
-      else if(dR < 0.0f)
+      else if (dR < 0.0f)
       {
          rotation += (dR < -delta*90.0f ? -delta*90.0f : dR);
       }
 
-      SetHeading(rotation); 
+      SetHeading(rotation);
    }
 
    void CharacterWrapper::RotateToPoint(const osg::Vec3& targetPos, float delta)
@@ -190,7 +190,7 @@ namespace dtAnim
       osg::Vec3 ownPos;
       dtCore::Transform trans;
       BaseClass::GetTransform(trans);
-      trans.GetTranslation(ownPos);  
+      trans.GetTranslation(ownPos);
 
       osg::Vec3 pVector = targetPos - ownPos;
 
@@ -200,25 +200,25 @@ namespace dtAnim
       float rotation = GetHeading();
       float dR = dir - rotation;
 
-      if(dR > 180.0f)
+      if (dR > 180.0f)
       {
          dR -= 360.0f;
       }
-      else if(dR < -180.0f)
+      else if (dR < -180.0f)
       {
          dR += 360.0f;
       }
 
-      if(dR > 0.0f)
+      if (dR > 0.0f)
       {
-         rotation += (dR > delta*90.0f ? delta*90.0f : dR);   
+         rotation += (dR > delta*90.0f ? delta*90.0f : dR);
       }
-      else if(dR < 0.0f)
+      else if (dR < 0.0f)
       {
          rotation += (dR < -delta*90.0f ? -delta*90.0f : dR);
       }
 
-      SetHeading(rotation);      
+      SetHeading(rotation);
    }
 
 
@@ -276,4 +276,4 @@ namespace dtAnim
       mAnimHelper->ClearAll(fadeOutTime);
    }
 
-}//namespace dtAI
+} // namespace dtAI

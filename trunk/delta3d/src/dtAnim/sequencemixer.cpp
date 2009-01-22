@@ -28,7 +28,7 @@ namespace dtAnim
 {
 /////////////////////////////////////////////////////////////////////////////////
 SequenceMixer::SequenceMixer()
-: mRootSequence(new AnimationSequence())
+   : mRootSequence(new AnimationSequence())
 {
 }
 
@@ -71,9 +71,9 @@ void SequenceMixer::ClearRegisteredAnimations()
 void SequenceMixer::RemoveRegisteredAnimation(const std::string& pAnim)
 {
    AnimationTable::iterator iter = mAnimatables.find(pAnim);
-   if(iter == mAnimatables.end())
+   if (iter == mAnimatables.end())
    {
-      LOG_WARNING("Cannot find registered animation '" + pAnim+ "' in SequenceMixer." );
+      LOG_WARNING("Cannot find registered animation '" + pAnim+ "' in SequenceMixer.");
    }
 
    mAnimatables.erase(iter);
@@ -102,7 +102,7 @@ void SequenceMixer::GetRegisteredAnimations(std::vector<const Animatable*>& toFi
 {
    toFill.clear();
    toFill.reserve(mAnimatables.size());
-   
+
    AnimationTable::const_iterator i = mAnimatables.begin();
    AnimationTable::const_iterator end = mAnimatables.end();
    for (; i != end; ++i)
@@ -115,12 +115,12 @@ void SequenceMixer::GetRegisteredAnimations(std::vector<const Animatable*>& toFi
 void SequenceMixer::RegisterAnimation(const Animatable* pAnimation)
 {
    AnimationTable::iterator iter = mAnimatables.find(pAnimation->GetName());
-   if(iter != mAnimatables.end())
+   if (iter != mAnimatables.end())
    {
-      LOG_WARNING("Animation '" + pAnimation->GetName() + "' already added to SequenceMixer." );
+      LOG_WARNING("Animation '" + pAnimation->GetName() + "' already added to SequenceMixer.");
    }
    else
-   {   
+   {
       mAnimatables.insert(TableKey(pAnimation->GetName(), pAnimation));
    }
 }
@@ -130,7 +130,7 @@ const Animatable* SequenceMixer::Lookup(const std::string& pAnimation) const
 {
    AnimationTable::const_iterator iter = mAnimatables.find(pAnimation);
 
-   if(iter == mAnimatables.end())
+   if (iter == mAnimatables.end())
    {
       return 0;
    }
@@ -145,17 +145,17 @@ const Animatable* SequenceMixer::Lookup(const std::string& pAnimation) const
 void SequenceMixer::ForceRecalculate()
 {
    //somehow we only want to recalculate active animations
-   //this case does not account for a single animation channel who needs to get 
+   //this case does not account for a single animation channel who needs to get
    //its start time recomputed
    //for now we will just update the entire root
 
    //AnimationSequence::AnimationContainer::iterator iter = mRootSequence->GetChildAnimations().begin();
    //AnimationSequence::AnimationContainer::iterator end = mRootSequence->GetChildAnimations().end();
    //
-   //for(;iter != end; ++iter)
+   //for (;iter != end; ++iter)
    //{
-   //   Animatable* anim = (*iter).get(); 
-   //   if(!anim->IsActive())
+   //   Animatable* anim = (*iter).get();
+   //   if (!anim->IsActive())
    //   {
    //      anim->Recalculate();
    //   }
@@ -171,4 +171,4 @@ bool SequenceMixer::IsAnimationPlaying(const std::string& pAnim) const
    return mRootSequence->IsAnimationPlaying(pAnim);
 }
 
-}//namespace dtAnim
+} // namespace dtAnim

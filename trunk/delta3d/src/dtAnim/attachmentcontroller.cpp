@@ -54,22 +54,21 @@ namespace dtAnim
    class IsActor
    {
       public:
-         IsActor(const dtCore::Transformable& actor): mActor(actor)
-         {}
-         
+         IsActor(const dtCore::Transformable& actor) : mActor(actor) {}
+
          bool operator()(const AttachmentPair& val)
          {
             return val.first.get() == &mActor;
          }
-         
+
       private:
          const dtCore::Transformable& mActor;
    };
 
    /////////////////////////////////////////////////////////////////////////////////
    void AttachmentController::RemoveAttachment(const dtCore::Transformable& actor)
-   {    
-      mAttachments.erase(std::remove_if(mAttachments.begin(), mAttachments.end(), IsActor(actor)), mAttachments.end());
+   {
+      mAttachments.erase(std::remove_if (mAttachments.begin(), mAttachments.end(), IsActor(actor)), mAttachments.end());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -82,17 +81,17 @@ namespace dtAnim
    void AttachmentController::Update(Cal3DModelWrapper& model)
    {
       AttachmentMover mover(model);
-      std::for_each( mAttachments.begin(), mAttachments.end(), mover );
+      std::for_each(mAttachments.begin(), mAttachments.end(), mover);
    }
 
-   
+
    AttachmentMover::AttachmentMover(const dtAnim::Cal3DModelWrapper& model)
-   : mModel(&model)
+      : mModel(&model)
    {
    }
 
    AttachmentMover::AttachmentMover(const AttachmentMover& same)
-   : mModel( same.mModel )
+      : mModel(same.mModel)
    {
    }
 
@@ -101,7 +100,7 @@ namespace dtAnim
       mModel = same.mModel;
       return *this;
    }
-   
+
    void AttachmentMover::operator()(dtCore::RefPtr<dtCore::HotSpotAttachment>& attachment)
    {
       AttachmentPair aPair(dtCore::RefPtr<dtCore::Transformable>(attachment.get()), attachment->GetDefinition());
@@ -114,30 +113,30 @@ namespace dtAnim
       dtUtil::HotSpotDefinition& spotDef = attachment.second;
 
       // find out if the bone exists
-      int boneId = mModel->GetCoreBoneID( spotDef.mParentName );
+      int boneId = mModel->GetCoreBoneID(spotDef.mParentName);
 
       // there was no bone with this name
-      if( boneId == dtAnim::Cal3DModelWrapper::NULL_BONE )
+      if (boneId == dtAnim::Cal3DModelWrapper::NULL_BONE)
       {
-         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
-               "Ignoring update on character attached actor \"%s\" because bone named \"%s\" does not exist.", 
+         dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+               "Ignoring update on character attached actor \"%s\" because bone named \"%s\" does not exist.",
                actor.GetName().c_str(), spotDef.mParentName.c_str());
          return;
       }
 
       // find the total transformation for the bone
-      osg::Quat parentRot = mModel->GetBoneAbsoluteRotation( boneId );
+      osg::Quat parentRot = mModel->GetBoneAbsoluteRotation(boneId);
       osg::Quat bodyRotation = spotDef.mLocalRotation * parentRot;
 
-      osg::Vec3 boneTrans = mModel->GetBoneAbsoluteTranslation( boneId );
+      osg::Vec3 boneTrans = mModel->GetBoneAbsoluteTranslation(boneId);
 
       // transform the local point by the total transformation
       // and store result in the absolute point
       osg::Vec3 bodyTranslation = boneTrans + (parentRot * spotDef.mLocalTranslation);
 
       dtCore::Transform x;
-      x.Set( bodyTranslation, osg::Matrix(bodyRotation));
-      actor.SetTransform( x, dtCore::Transformable::REL_CS );
+      x.Set(bodyTranslation, osg::Matrix(bodyRotation));
+      actor.SetTransform(x, dtCore::Transformable::REL_CS);
    }
 
-}
+} // namespace dtAnim

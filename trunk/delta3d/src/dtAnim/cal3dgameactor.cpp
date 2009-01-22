@@ -1,23 +1,24 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2006, Alion Science and Technology
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Michael Guerrero
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2006, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Michael Guerrero
+ */
+
 #include <dtAnim/cal3dgameactor.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
@@ -60,15 +61,15 @@ namespace dtAnim
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy &proxy)
+   Cal3DGameActor::Cal3DGameActor(dtGame::GameActorProxy& proxy)
       : dtGame::GameActor(proxy)
       , mModelGeode(new osg::Geode)
       , mSkeletalGeode(new osg::Geode)
-      , mAnimator( NULL )
-      , mRenderModeBits( RENDER_MODE_SKIN )
+      , mAnimator(NULL)
+      , mRenderModeBits(RENDER_MODE_SKIN)
    {
       mSkeletalGeode->setName("Cal3DGameActor_mSkeletalGeode");
-      mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
+      mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -76,7 +77,7 @@ namespace dtAnim
    {
    }
 
-   void Cal3DGameActor::SetModel(const std::string &modelFile)
+   void Cal3DGameActor::SetModel(const std::string& modelFile)
    {
       dtCore::RefPtr<dtAnim::Cal3DModelWrapper> newModel = dtAnim::Cal3DDatabase::GetInstance().Load(modelFile);
 
@@ -89,15 +90,15 @@ namespace dtAnim
          mSkeletalGeode->addDrawable(new dtAnim::SkeletalDrawable(newModel.get()));
 
          // support to draw the mesh
-         if(newModel->BeginRenderingQuery())
+         if (newModel->BeginRenderingQuery())
          {
             int meshCount = newModel->GetMeshCount();
 
-            for(int meshId = 0; meshId < meshCount; meshId++)
+            for (int meshId = 0; meshId < meshCount; ++meshId)
             {
                int submeshCount = newModel->GetSubmeshCount(meshId);
 
-               for(int submeshId = 0; submeshId < submeshCount; submeshId++)
+               for (int submeshId = 0; submeshId < submeshCount; ++submeshId)
                {
                   dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(newModel.get(), meshId, submeshId);
                   mModelGeode->addDrawable(submesh);
@@ -116,23 +117,23 @@ namespace dtAnim
       mRenderModeBits = bits;
 
       // parse the bits
-      if( RENDER_MODE_NONE == mRenderModeBits )
+      if (RENDER_MODE_NONE == mRenderModeBits)
       {
-         mModelGeode->setNodeMask( 0x0 );  // will not be drawn
-         mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
+         mModelGeode->setNodeMask(0x0);  // will not be drawn
+         mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
       }
       else
       {
-         mModelGeode->setNodeMask( 0x0 );  // will not be drawn
-         mSkeletalGeode->setNodeMask( 0x0 );  // will not be drawn
+         mModelGeode->setNodeMask(0x0);  // will not be drawn
+         mSkeletalGeode->setNodeMask(0x0);  // will not be drawn
 
-         if( dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_SKIN) )
+         if (dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_SKIN))
          {
-            mModelGeode->setNodeMask( 0xffffffff );  // will be drawn
+            mModelGeode->setNodeMask(0xffffffff);  // will be drawn
          }
-         if( dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_BONES) )
+         if (dtUtil::Bits::Has(mRenderModeBits,RENDER_MODE_BONES))
          {
-            mSkeletalGeode->setNodeMask( 0xffffffff );  // will be drawn
+            mSkeletalGeode->setNodeMask(0xffffffff);  // will be drawn
          }
       }
    }
@@ -177,7 +178,7 @@ namespace dtAnim
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      Cal3DGameActor &myActor = static_cast<Cal3DGameActor&>(GetGameActor());
+      Cal3DGameActor& myActor = static_cast<Cal3DGameActor&>(GetGameActor());
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SKELETAL_MESH,
          "Skeletal Mesh", "Skeletal Mesh", dtDAL::MakeFunctor(myActor, &Cal3DGameActor::SetModel),
@@ -209,7 +210,7 @@ namespace dtAnim
 
    const dtDAL::ActorProxy::RenderMode& Cal3DGameActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor *resource = GetResource("Skeletal Mesh");
+      dtDAL::ResourceDescriptor* resource = GetResource("Skeletal Mesh");
       if (resource != NULL)
       {
          if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
@@ -229,7 +230,7 @@ namespace dtAnim
 
    dtDAL::ActorProxyIcon* Cal3DGameActorProxy::GetBillBoardIcon()
    {
-      if(!mBillBoardIcon.valid())
+      if (!mBillBoardIcon.valid())
       {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
       }
@@ -247,28 +248,28 @@ namespace dtAnim
    {
       // unpack the creative method used to pack all the needed params into the group.
       unsigned int childcount = prop.GetParameterCount();
-      for(unsigned int child=0; child<childcount; ++child)
+      for (unsigned int child=0; child<childcount; ++child)
       {
-         if( const dtDAL::NamedParameter* childparam = prop.GetParameter( Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP + dtUtil::ToString(child)) )
+         if (const dtDAL::NamedParameter* childparam = prop.GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_GROUP + dtUtil::ToString(child)))
          {
             const dtDAL::NamedGroupParameter* childgroup = static_cast<const dtDAL::NamedGroupParameter*>(childparam);
-            const dtDAL::NamedParameter* idchild = childgroup->GetParameter( Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID + dtUtil::ToString(child));
-            const dtDAL::NamedParameter* wchild = childgroup->GetParameter( Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT + dtUtil::ToString(child));
-            if( idchild && wchild )
+            const dtDAL::NamedParameter* idchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_ID + dtUtil::ToString(child));
+            const dtDAL::NamedParameter* wchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_WEIGHT + dtUtil::ToString(child));
+            if (idchild && wchild)
             {
-               const dtDAL::NamedUnsignedIntParameter* idparam = static_cast<const dtDAL::NamedUnsignedIntParameter*>( idchild );
-               const dtDAL::NamedFloatParameter* wparam = static_cast<const dtDAL::NamedFloatParameter*>( wchild );
+               const dtDAL::NamedUnsignedIntParameter* idparam = static_cast<const dtDAL::NamedUnsignedIntParameter*>(idchild);
+               const dtDAL::NamedFloatParameter* wparam = static_cast<const dtDAL::NamedFloatParameter*>(wchild);
 
-               float delay=0.f;
-               const dtDAL::NamedParameter* dchild = childgroup->GetParameter( Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY + dtUtil::ToString(child));
-               if( dchild )
+               float delay = 0.f;
+               const dtDAL::NamedParameter* dchild = childgroup->GetParameter(Cal3DGameActor::PropertyNames::ANIMATION_BLEND_DELAY + dtUtil::ToString(child));
+               if (dchild)
                {
-                  const dtDAL::NamedFloatParameter* dparam = static_cast<const dtDAL::NamedFloatParameter*>( dchild );
+                  const dtDAL::NamedFloatParameter* dparam = static_cast<const dtDAL::NamedFloatParameter*>(dchild);
                   delay = dparam->GetValue();
                }
 
                dtAnim::Cal3DModelWrapper* wrapper = mAnimator->GetWrapper();
-               wrapper->BlendCycle( idparam->GetValue(), wparam->GetValue(), delay );
+               wrapper->BlendCycle(idparam->GetValue(), wparam->GetValue(), delay);
             }
          }
       }
@@ -296,7 +297,9 @@ namespace dtAnim
       float dt = msg.GetDeltaSimTime();
 
       if (mAnimator.valid())
+      {
          mAnimator->Update(dt);
+      }
 
       //static double doIt = 0;
       //doIt += dt;
@@ -323,7 +326,7 @@ namespace dtAnim
    void Cal3DGameActor::OnEnteredWorld()
    {
       dtGame::GameActorProxy& gap = GetGameActorProxy();
-      gap.RegisterForMessages( dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE );
+      gap.RegisterForMessages(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
    }
 
-}
+} // namespace dtAnim

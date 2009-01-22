@@ -1,3 +1,22 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2007 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #include <dtAnim/posemeshutility.h>
 #include <dtAnim/posemesh.h>
 #include <dtAnim/posemath.h>
@@ -11,14 +30,14 @@
 using namespace dtAnim;
 
 // Used to sort the BaseReferencePose list
-bool BaseReferencePredicate(const std::pair<int, float> &lhs, const std::pair<int, float> &rhs)
+bool BaseReferencePredicate(const std::pair<int, float>& lhs, const std::pair<int, float>& rhs)
 {
    return lhs.second < rhs.second;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshUtility::PoseMeshUtility()
-: mPoseList(NULL)
+   : mPoseList(NULL)
 {
 }
 
@@ -28,9 +47,9 @@ PoseMeshUtility::~PoseMeshUtility()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshUtility::ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWrapper *model, float delay)
+void PoseMeshUtility::ClearPoses(const PoseMesh* poseMesh, dtAnim::Cal3DModelWrapper* model, float delay)
 {
-   const PoseMesh::VertexVector &verts = poseMesh->GetVertices();
+   const PoseMesh::VertexVector& verts = poseMesh->GetVertices();
 
    for (size_t vertIndex = 0; vertIndex < verts.size(); ++vertIndex)
    {
@@ -39,13 +58,13 @@ void PoseMeshUtility::ClearPoses(const PoseMesh *poseMesh, dtAnim::Cal3DModelWra
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
+void PoseMeshUtility::BlendPoses(const PoseMesh* poseMesh,
                                  dtAnim::Cal3DModelWrapper* model,
-                                 const PoseMesh::TargetTriangle &targetTriangle,
+                                 const PoseMesh::TargetTriangle& targetTriangle,
                                  float blendDelay)
 {
    osg::Vec3 weights;
-   unsigned int animIDs[3];  
+   unsigned int animIDs[3];
 
    // grab the animation ids now that we know which polygon we are using
    const PoseMesh::TriangleVector& triangles = poseMesh->GetTriangles();
@@ -54,8 +73,8 @@ void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
    animIDs[1] = poly.mVertices[1]->mAnimID;
    animIDs[2] = poly.mVertices[2]->mAnimID;
 
-   const PoseMesh::Barycentric2DVector &barySpaceVector = poseMesh->GetBarySpaces();
-   dtUtil::BarycentricSpace<osg::Vec3> *barySpace = barySpaceVector[targetTriangle.mTriangleID];
+   const PoseMesh::Barycentric2DVector& barySpaceVector = poseMesh->GetBarySpaces();
+   dtUtil::BarycentricSpace<osg::Vec3>* barySpace = barySpaceVector[targetTriangle.mTriangleID];
 
    // calculate the weights for the known animations using the corresponding barycentric space
    weights = barySpace->Transform(osg::Vec3(targetTriangle.mAzimuth, targetTriangle.mElevation, 0.0f));
@@ -69,22 +88,22 @@ void PoseMeshUtility::BlendPoses(const PoseMesh *poseMesh,
    const PoseMesh::VertexVector& vertices = poseMesh->GetVertices();
    unsigned int numVerts = vertices.size();
 
-   for(unsigned int vertIndex = 0; vertIndex < numVerts; ++vertIndex)
+   for (unsigned int vertIndex = 0; vertIndex < numVerts; ++vertIndex)
    {
       unsigned int anim_id = vertices[vertIndex]->mAnimID;
 
-      if(anim_id != animIDs[0] &&
-         anim_id != animIDs[1] &&
-         anim_id != animIDs[2])
+      if (anim_id != animIDs[0] &&
+          anim_id != animIDs[1] &&
+          anim_id != animIDs[2])
       {
-         float weight= 0.f;  // only want to turn off these animations.    
+         float weight= 0.f;  // only want to turn off these animations.
          model->BlendCycle(anim_id, weight, blendDelay);
       }
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose> *poseList,
+void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose>* poseList,
                                             const dtAnim::Cal3DModelWrapper* model)
 {
    assert(AreBaseReferencePosesValid(poseList));
@@ -95,25 +114,25 @@ void PoseMeshUtility::SetBaseReferencePoses(std::vector<BaseReferencePose> *pose
    std::sort(mPoseList->begin(), mPoseList->end(), BaseReferencePredicate);
 
    // TODO - don't make assumptions about this bone facing forward
-   int headID = model->GetCoreBoneID( "Bip01 Head" );    
+   int headID = model->GetCoreBoneID("Bip01 Head");
 
    // Calculate the forward direction for each pose
    for (size_t poseIndex = 0; poseIndex < mPoseList->size(); ++poseIndex)
    {
       int currentAnimID = (*mPoseList)[poseIndex].first;
-      assert( currentAnimID != -1 );
+      assert(currentAnimID != -1);
 
       // TODO - Don't assume 30 frames!
       osg::Quat boneRotation  = model->GetBoneAbsoluteRotationForKeyFrame(currentAnimID, headID, 30);
       osg::Vec3 poseDirection = boneRotation * osg::Y_AXIS;
 
       poseDirection.normalize();
-      mPoseDirections.push_back(poseDirection);      
+      mPoseDirections.push_back(poseDirection);
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshUtility::GetBaseReferenceBlend(float overallAlpha, BaseReferenceBlend &outFinalBlend)
+bool PoseMeshUtility::GetBaseReferenceBlend(float overallAlpha, BaseReferenceBlend& outFinalBlend)
 {
    assert(AreBaseReferencePosesValid(mPoseList));
 
@@ -149,18 +168,18 @@ int PoseMeshUtility::GetEndPoseIndex(float alpha)
    size_t endPoseIndex = 0;
 
    // Find the bounding poses
-   while ( endPoseIndex < mPoseList->size() )
+   while (endPoseIndex < mPoseList->size())
    {
-      if ( alpha < (*mPoseList)[endPoseIndex].second )
+      if (alpha < (*mPoseList)[endPoseIndex].second)
       {
          break;
       }
 
-      ++endPoseIndex; 
+      ++endPoseIndex;
    }
 
    // If we are at the end, back up one step
-   if ( endPoseIndex == mPoseList->size() )
+   if (endPoseIndex == mPoseList->size())
    {
       --endPoseIndex;
    }
@@ -169,20 +188,20 @@ int PoseMeshUtility::GetEndPoseIndex(float alpha)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool PoseMeshUtility::AreBaseReferencePosesValid(const std::vector<BaseReferencePose> *poseList)
+bool PoseMeshUtility::AreBaseReferencePosesValid(const std::vector<BaseReferencePose>* poseList)
 {
    if (poseList && poseList->size() >= 2)
    {
       // Pose lists need to have the following:
-      // a start pose ( 0.0 )
-      // an end Pose ( 1.0 )
-      // no duplicate time parameters ( 1 zero, 1 one, etc...)
+      // a start pose (0.0)
+      // an end Pose (1.0)
+      // no duplicate time parameters (1 zero, 1 one, etc...)
       bool hasZero = false;
       bool hasOne  = false;
 
       for (size_t poseIndex = 0; poseIndex < poseList->size(); ++poseIndex)
       {
-         if ( dtUtil::Equivalent((*poseList)[poseIndex].second, 0.0f ))
+         if (dtUtil::Equivalent((*poseList)[poseIndex].second, 0.0f))
          {
             hasZero = true;
          }
@@ -206,5 +225,5 @@ bool PoseMeshUtility::AreBaseReferencePosesValid(const std::vector<BaseReference
    }
 
    LOG_ERROR("Base references poses are not valid.");
-   return false;  
+   return false;
 }
