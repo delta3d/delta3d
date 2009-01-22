@@ -28,10 +28,17 @@
 #include <QtGui/QColorDialog>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QMenu>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
 
 #include <QtCore/QDir>
 
 #include <osg/LightSource>
+#include <osgDB/WriteFile>
+
+#include <dtCore/object.h>
+#include <dtCore/refptr.h>
 #include <dtCore/globals.h>
 #include <dtCore/shadermanager.h>
 
@@ -45,6 +52,83 @@
 #include <assert.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+GeometryTree::GeometryTree(QWidget* parent)
+   : QTreeWidget(parent)
+{
+   CreateContextActions();
+   CreateContextMenus();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+GeometryTree::~GeometryTree()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GeometryTree::CreateContextActions()
+{
+   // Definition Actions
+   mSaveAs = new QAction(tr("Save as..."), this);
+   mSaveAs->setCheckable(false);
+   mSaveAs->setStatusTip(tr("Save the object under another name."));
+   connect(mSaveAs, SIGNAL(triggered()), parent(), SLOT(OnSaveAs()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GeometryTree::CreateContextMenus()
+{
+   // Definition Context
+   mObjectContext = new QMenu(this);
+   mObjectContext->addAction(mSaveAs);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void GeometryTree::contextMenuEvent(QContextMenuEvent *contextEvent)
+{
+   QTreeWidgetItem* clickedItem = this->itemAt(contextEvent->pos());
+   if (!clickedItem)
+   {
+      contextEvent->ignore();
+      return;
+   }
+
+   // De-select all items.
+   QList<QTreeWidgetItem*> itemList = selectedItems();
+   for (int selectedIndex = 0; selectedIndex < itemList.size(); selectedIndex++)
+   {
+      QTreeWidgetItem* treeItem = itemList.at(selectedIndex);
+      treeItem->setSelected(false);
+   }
+
+   // Select our clicked item.
+   clickedItem->setSelected(true);
+
+   // Find the object category.
+   for (int itemIndex = 0; itemIndex < topLevelItemCount(); ++itemIndex)
+   {
+      QTreeWidgetItem* categoryItem = topLevelItem(itemIndex);
+
+      if (categoryItem->text(0) == QString("Objects"))
+      {
+         // Find the selected object.
+         for (int objectIndex = 0; objectIndex < categoryItem->childCount(); objectIndex++)
+         {
+            QTreeWidgetItem* objectItem = categoryItem->child(objectIndex);
+
+            if (objectItem == clickedItem)
+            {
+               mObjectContext->exec(contextEvent->globalPos());
+               return;
+            }
+         }
+      }
+   }
+
+   contextEvent->ignore();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 ShaderTree::ShaderTree(QWidget* parent)
    : QTreeWidget(parent)
 {
@@ -169,7 +253,7 @@ ResourceDock::ResourceDock()
    setWindowTitle(tr("Resources"));
    setMouseTracking(true);
   
-   mGeometryTreeWidget = new QTreeWidget(this);
+   mGeometryTreeWidget = new GeometryTree(this);
    mShaderTreeWidget   = new ShaderTree(this);  
    mLightTreeWidget    = new QTreeWidget(this);  
 
@@ -488,6 +572,49 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
          emit FixLights();
       }
    }  
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::OnSaveAs()
+{
+   QList<QTreeWidgetItem*> itemList = mGeometryTreeWidget->selectedItems();
+
+   if (itemList.size() > 0)
+   {
+      QTreeWidgetItem* currentItem = itemList.at(0);
+
+      QFileInfo fileInfo = currentItem->toolTip(0);
+
+      // Now get the new file name to save as...
+      QString filename = QFileDialog::getSaveFileName(this,
+         tr("Save Geometry File"),
+         fileInfo.filePath(),
+         tr("Geometry(*.osg *.ive)") );
+
+      if (!filename.isEmpty())
+      {
+         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+         dtCore::RefPtr<dtCore::Object> saveObject = new dtCore::Object;
+         osg::Node *node = saveObject->LoadFile(fileInfo.filePath().toStdString());
+
+         if (node)
+         {
+            if (osgDB::writeNodeFile(*node, filename.toStdString()))
+            {
+               fileInfo = filename;
+
+               // Now add our now object into the object list.
+               OnNewGeometry(fileInfo.path().toStdString(), fileInfo.fileName().toStdString());
+            }
+            else
+            {
+               QApplication::restoreOverrideCursor();
+               QMessageBox::critical(this, tr("Error"), QString("Failed to save file: %1").arg(filename), tr("Ok"));
+            }
+         }
+      }
+   }
+   QApplication::restoreOverrideCursor();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
