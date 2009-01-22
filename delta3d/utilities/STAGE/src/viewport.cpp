@@ -575,6 +575,13 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void Viewport::setActorScaleMode()
+   {
+      this->interactionMode = &InteractionMode::SCALE_ACTOR;
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
    void Viewport::connectInteractionModeSlots()
    {
       //Connect the global actions we want to track.
@@ -585,6 +592,7 @@ namespace dtEditQt
       connect(ga.actionSelectionSelectActor, SIGNAL(triggered()), this, SLOT(setActorSelectMode()));
       connect(ga.actionSelectionTranslateActor, SIGNAL(triggered()), this, SLOT(setActorTranslateMode()));
       connect(ga.actionSelectionRotateActor, SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
+      connect(ga.actionSelectionScaleActor, SIGNAL(triggered()), this, SLOT(setActorScaleMode()));
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
       connect(&ge, SIGNAL(gotoPosition(double,double,double)), this, SLOT(onGotoPosition(double,double,double)));
@@ -603,6 +611,7 @@ namespace dtEditQt
       disconnect(ga.actionSelectionSelectActor, SIGNAL(triggered()), this, SLOT(setActorSelectMode()));
       disconnect(ga.actionSelectionTranslateActor, SIGNAL(triggered()), this, SLOT(setActorTranslateMode()));
       disconnect(ga.actionSelectionRotateActor, SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
+      disconnect(ga.actionSelectionScaleActor, SIGNAL(triggered()), this, SLOT(setActorScaleMode()));
 
       disconnect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
    }
@@ -621,6 +630,8 @@ namespace dtEditQt
             setActorTranslateMode();
          else if (action == EditorActions::GetInstance().actionSelectionRotateActor)
             setActorRotateMode();
+         else if (action == EditorActions::GetInstance().actionSelectionScaleActor)
+            setActorScaleMode();
       }
    }
 

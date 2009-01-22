@@ -379,6 +379,9 @@ namespace dtEditQt
         ///Sets the current interaction mode to ROTATE_ACTOR.
         void setActorRotateMode();
 
+        ///Sets the current interaction mode to SCALE_ACTOR.
+        void setActorScaleMode();
+
         ///Moves the camera such that the actor is clearly visible.
         void onGotoActor(ActorProxyRefPtr proxy);
 

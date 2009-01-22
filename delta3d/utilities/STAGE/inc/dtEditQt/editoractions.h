@@ -209,6 +209,9 @@ namespace dtEditQt
          // Selection - Rotate - Puts the editor viewports in translate actor mode.
          QAction *actionSelectionRotateActor;
 
+         // Selection - Scale - Puts the editor viewports in scale actor mode.
+         QAction *actionSelectionScaleActor;
+
          // Selection - Pick - Puts the editor viewports in select actor mode.
          QAction *actionSelectionSelectActor;
 

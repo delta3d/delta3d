@@ -51,6 +51,7 @@ namespace dtEditQt
         ICON_TOOLMODE_SELECT = ":/icons/selectmode_small.png";
         ICON_TOOLMODE_TRANSLATE = ":/icons/translatemode_small.png";
         ICON_TOOLMODE_ROTATE = ":/icons/rotatemode_small.png";
+        ICON_TOOLMODE_SCALE = ":/icons/scalemode_small.png";
 
         ICON_VIEWMODE_TEXTURES = ":/icons/texturemode_tiny.png";
         ICON_VIEWMODE_LIGHTING = ":/icons/lightingmode_tiny.png";
@@ -110,6 +111,7 @@ namespace dtEditQt
     std::string UIResources::ICON_TOOLMODE_SELECT("");
     std::string UIResources::ICON_TOOLMODE_TRANSLATE("");
     std::string UIResources::ICON_TOOLMODE_ROTATE("");
+    std::string UIResources::ICON_TOOLMODE_SCALE("");
 
     std::string UIResources::ICON_VIEWMODE_TEXTURES("");
     std::string UIResources::ICON_VIEWMODE_LIGHTING("");

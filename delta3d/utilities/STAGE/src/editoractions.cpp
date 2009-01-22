@@ -308,6 +308,13 @@ namespace dtEditQt
       actionSelectionRotateActor->setCheckable(true);
       actionSelectionRotateActor->setActionGroup(modeToolsGroup);
       actionSelectionRotateActor->setStatusTip(tr("Use this tool to rotate the current actor selection."));
+
+      actionSelectionScaleActor =new QAction(QIcon(UIResources::ICON_TOOLMODE_SCALE.c_str()),tr("&Scale Actor(s)"), modeToolsGroup);
+      actionSelectionScaleActor->setShortcut(tr("Ctrl+Shift+Z"));
+      actionSelectionScaleActor->setCheckable(true);
+      actionSelectionScaleActor->setActionGroup(modeToolsGroup);
+      actionSelectionScaleActor->setStatusTip(tr("Use this tool to scale the current actor selection."));
+
    }
 
 
