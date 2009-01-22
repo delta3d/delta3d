@@ -40,12 +40,6 @@ using namespace dtGUI;
 //default path where to find the layout/looknfeel/../images-files
 std::string HUD::FilePath=std::string("./data/gui/");
 
-//to get around a Windows #define that uses "CreateFont"
-#if defined(DELTA_WIN32)
-   #if defined(CreateFont)
-      #undef CreateFont
-   #endif
-#endif
 
 /********************************************************************************
                               DELTA-implementation
