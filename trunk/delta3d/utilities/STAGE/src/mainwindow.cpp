@@ -147,6 +147,7 @@ namespace dtEditQt
         selectionMenu->addAction(editorActions.actionSelectionSelectActor);
         selectionMenu->addAction(editorActions.actionSelectionTranslateActor);
         selectionMenu->addAction(editorActions.actionSelectionRotateActor);
+        selectionMenu->addAction(editorActions.actionSelectionScaleActor);
 
         windowMenu = menuBar()->addMenu(tr("&Window"));
         windowMenu->addAction(editorActions.actionWindowsPropertyEditor);
@@ -198,6 +199,7 @@ namespace dtEditQt
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionSelectActor);
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionTranslateActor);
         selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
+        selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionScaleActor);
         addToolBar(selectionToolBar);
 
         mExternalToolsToolBar = new QToolBar(this);
@@ -316,6 +318,7 @@ namespace dtEditQt
         EditorActions::GetInstance().actionSelectionSelectActor->setEnabled(hasBoth);
         EditorActions::GetInstance().actionSelectionTranslateActor->setEnabled(hasBoth);
         EditorActions::GetInstance().actionSelectionRotateActor->setEnabled(hasBoth);
+        EditorActions::GetInstance().actionSelectionScaleActor->setEnabled(hasBoth);
 
         EditorActions::GetInstance().actionWindowsActorSearch->setEnabled(hasBoth);
         EditorActions::GetInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);

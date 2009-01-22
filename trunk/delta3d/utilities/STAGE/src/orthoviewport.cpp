@@ -37,6 +37,7 @@
 #include <dtEditQt/editoractions.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
 
 namespace dtEditQt
 {
@@ -154,6 +155,10 @@ namespace dtEditQt
           {
              EditorActions::GetInstance().actionSelectionCamera->trigger();
           }
+          else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionScaleActor->trigger();
+          }
        }
     }
 
@@ -230,25 +235,29 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::onMouseMoveEvent(QMouseEvent *e, float dx, float dy)
     {
-      if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
-      {
+       if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+       {
           return;
-      }
-      else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
-      {
+       }
+       else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+       {
           if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
-              return;
+             return;
 
           moveCamera(dx,dy);
-      }
-      else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
-      {
+       }
+       else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+       {
           translateCurrentSelection(e,dx,dy);
-      }
-      else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
-      {
+       }
+       else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+       {
           rotateCurrentSelection(e,dx,dy);
-      }
+       }
+       else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+       {
+          scaleCurrentSelection(e,dx,dy);
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -355,6 +364,8 @@ namespace dtEditQt
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
         else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+        else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+           saveSelectedActorOrigValues("Scale");
 
         trapMouseCursor();
     }
@@ -381,6 +392,8 @@ namespace dtEditQt
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+               updateActorSelectionProperty("Scale");
 
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
@@ -526,6 +539,60 @@ namespace dtEditQt
              EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
                 "Current Rotation - Pitch: %1° Roll: %2° Yaw: %3°").arg(rotationDeltaX).arg(rotationDeltaY).arg(rotationDeltaZ), 2000);
           }
+       }
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void OrthoViewport::scaleCurrentSelection(QMouseEvent *e, float dx, float dy)
+    {
+       osg::Vec3 scale;
+       float xAmount = (dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
+       float yAmount = (-dy/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
+
+       //Actors are translated along the camera's view plane.
+       if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+       {
+          scale = getCamera()->getRightDir() * xAmount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+       {
+          scale = getCamera()->getUpDir() * yAmount;
+       }
+       else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+       {
+          scale = getCamera()->getRightDir() * xAmount;
+          scale += getCamera()->getUpDir() * yAmount;
+       }
+
+       ViewportOverlay::ActorProxyList &selection =
+          ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+       ViewportOverlay::ActorProxyList::iterator itor;
+
+       for (itor=selection.begin(); itor!=selection.end(); ++itor)
+       {
+          dtDAL::ActorProxy *proxy = itor->get();
+
+          dtDAL::ActorProperty* scaleProp = proxy->GetProperty("Scale");
+
+          if (scaleProp == NULL) 
+          { 
+             continue;
+          }
+          dtDAL::Vec3ActorProperty* vecProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(scaleProp);
+
+          if (vecProp == NULL) 
+          { 
+             continue;
+          }
+
+          osg::Vec3 currentScale = vecProp->GetValue();
+          currentScale += scale;
+          vecProp->SetValue(currentScale);
+
+          // Update the status bar with current rotation (converted from radians to degrees)
+          EditorEvents::GetInstance().emitShowStatusBarMessage(tr(
+             "Current Scale - X: %1 Y: %2 Z: %3").arg(currentScale[0]).arg(currentScale[1]).arg(currentScale[2]), 2000);
        }
     }
 

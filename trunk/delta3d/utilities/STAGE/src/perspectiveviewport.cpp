@@ -119,6 +119,10 @@ namespace dtEditQt
           {
              EditorActions::GetInstance().actionSelectionCamera->trigger();
           }
+          else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+          {
+             EditorActions::GetInstance().actionSelectionScaleActor->trigger();
+          }
        }
        else if(e->key()==Qt::Key_A)
        {
@@ -247,6 +251,7 @@ namespace dtEditQt
             attachCurrentSelectionToCamera();
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            saveSelectedActorOrigValues("Scale");
         }
 
         if (e->buttons() == bothButtons || e->buttons() == Qt::MidButton)
@@ -287,6 +292,7 @@ namespace dtEditQt
 
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+                updateActorSelectionProperty("Scale");
 
                 EditorEvents::GetInstance().emitEndChangeTransaction();
 
@@ -319,6 +325,8 @@ namespace dtEditQt
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
         else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
             saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+        else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+           saveSelectedActorOrigValues("Scale");
 
         trapMouseCursor();
     }
@@ -345,6 +353,8 @@ namespace dtEditQt
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
                 updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+            else if (getInteractionMode() == Viewport::InteractionMode::SCALE_ACTOR)
+               updateActorSelectionProperty("Scale");
 
             EditorEvents::GetInstance().emitEndChangeTransaction();
 
