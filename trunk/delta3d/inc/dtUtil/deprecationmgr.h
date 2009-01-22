@@ -35,6 +35,7 @@
    #include <windows.h>
    #undef GetClassName
    #undef SendMessage
+   #undef CreateFont
 #else
    #include <iostream>
    #include <csignal>
