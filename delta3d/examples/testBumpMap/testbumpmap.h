@@ -34,7 +34,10 @@
 class TestBumpMapApp : public dtABC::Application
 {
 public:
-   TestBumpMapApp(const std::string& customObjectName, const std::string& configFilename = "config.xml");     
+
+   TestBumpMapApp(const std::string& customObjectName, 
+                  const std::string& configFilename = "config.xml",
+                  bool usePrecomputedTangents = true);
 
 protected:
 
@@ -56,6 +59,7 @@ private:
    dtCore::RefPtr<dtCore::Object> mLightObject;
 
    float mTotalTime;
+   bool mUsePrecomputedTangents;
 
    osg::ref_ptr<osg::Texture2D> mDiffuseTexture;
    osg::ref_ptr<osg::Texture2D> mNormalTexture;
@@ -67,7 +71,7 @@ private:
 
    void GenerateTangentsForObject(dtCore::Object* object);
    void AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode);
-   void CenterCameraOnObject(dtCore::Object* object);   
+   void CenterCameraOnObject(dtCore::Object* object);
 };
 
 #endif // DELTA_TEST_BUMPMAP

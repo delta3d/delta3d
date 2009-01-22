@@ -71,12 +71,15 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, const std::string& configFilename /*= "config.xml"*/)
+TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, 
+                               const std::string& configFilename /*= "config.xml"*/,
+                               bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
    , mTotalTime(0.0f)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
-{
+   , mUsePrecomputedTangents(usePrecomputedTangents)
+{ 
    //load the xml file which specifies our shaders
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
    sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
@@ -112,6 +115,8 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, const std::s
 void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
 {   
    // Load a sphere a second object to see the effect on
+   // NOTE! This model mirrors the uv coords so the lighting
+   // will be incorrect on the backside.
    mSphere = new dtCore::Object("Sphere");
    mSphere->LoadFile("models/physics_happy_sphere.ive");
    mSphere->SetActive(false);
@@ -122,10 +127,16 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
    AddDrawable(mCustomObject.get());
 
    // Load some geometry to represent the direction of the light
-   mLightObject = new dtCore::Object("Happy Sphere");
+   mLightObject = new dtCore::Object("Light Arrow");
    mLightObject->LoadFile("models/LightArrow.ive");
    mLightObject->SetScale(osg::Vec3(0.5f, 0.5f, 0.5f));
-   AddDrawable(mLightObject.get());  
+   
+   AddDrawable(mLightObject.get());
+
+   dtCore::Light* light = GetScene()->GetLight(0); 
+
+   // Infinite lights must start here, point light from the postive y axis
+   light->GetLightSource()->getLight()->setPosition(osg::Vec4(osg::Y_AXIS, 0.0f));
 
    // Calculate tangent vectors from the geometry for use in tangent space calculations
    GenerateTangentsForObject(mSphere.get());
@@ -181,12 +192,16 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 
          break;
       }
+   case '0':
    case '1':
    case '2':
    case '3':
    case '4':
    case '5':  
    case '6':
+   case '7':
+   case '8':
+   case '9':
       {
          int value = key - 48;
 
@@ -231,39 +246,43 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
    ss->setTextureAttributeAndModes(0, mDiffuseTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    ss->setTextureAttributeAndModes(1, mNormalTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-   // Get all geometry in the graph to apply the shader to
-   osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
-   object->GetOSGNode()->accept(*geomCollector);        
-
-   // Calculate tangent vectors for all faces and store them as vertex attributes
-   for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
+   // We only need to compute the tangents if the shader is going to use them
+   if (mUsePrecomputedTangents)
    {
-      osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
+      // Get all geometry in the graph to apply the shader to
+      osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
+      object->GetOSGNode()->accept(*geomCollector);        
 
-      osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
-      tsg->generate(geom, 0);
-
-      if (!geom->getVertexAttribArray(6))
+      // Calculate tangent vectors for all faces and store them as vertex attributes
+      for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
       {
-         geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+         osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
+
+         osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
+         tsg->generate(geom, 0);
+
+         if (!geom->getVertexAttribArray(6))
+         {
+            geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+         }
       }
-   }
+   }  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode)
 {
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-   dtCore::ShaderProgram* sp = sm.FindShaderPrototype("TestBumpMap", "TestShaders");
+  
+   std::string shaderName = (mUsePrecomputedTangents) ? "TestBumpMap": "AttributelessBump"; 
+
+   dtCore::ShaderProgram* sp = sm.FindShaderPrototype(shaderName, "TestShaders");
 
    if (sp != NULL)
    {
       dtCore::ShaderProgram* boundProgram = sm.AssignShaderFromPrototype(*sp, *object->GetOSGNode());
 
-      // Associate the vertex attribute in location 6 with the name "TangentAttrib"
-      osg::Program* osgProgram = boundProgram->GetShaderProgram();
-      osgProgram->addBindAttribLocation("TangentAttrib", 6);
-
+      osg::Program* osgProgram = boundProgram->GetShaderProgram();    
       outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));
    }
 }
@@ -304,7 +323,7 @@ int main(int argc, char* argv[])
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/testBumpMap");
 
-   dtCore::RefPtr<TestBumpMapApp> app = new TestBumpMapApp(customObjectName);
+   dtCore::RefPtr<TestBumpMapApp> app = new TestBumpMapApp(customObjectName, "config.xml", true);
    app->Config();
    app->Run();
 
