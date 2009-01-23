@@ -1275,7 +1275,7 @@ void UserInterface::CloudWindCB(Fl_Value_Slider *)
 void UserInterface::CloudEnableCB(Fl_Check_Button *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-    cd->SetShaderEnable( cEnable->value());
+    cd->SetShaderEnable(cEnable->value() > 0);
 
 }
 
