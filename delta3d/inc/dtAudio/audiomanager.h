@@ -124,19 +124,6 @@ namespace dtAudio
     * and unbinds the source from it's associated buffer.  The source is then
     * put in a recycle queue for later use by new sounds.
     *
-    *********************       WARNING       ********************
-    ********************* JPJ (Sept. 23 2004) ********************
-    * The SetRelative() and SetAbsolute() functions are not working properly.
-    * The underlying sound engine (OpenAL) claims setting the
-    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sources with
-    * respect to the gloabal listener's position, and resetting the
-    * flag to AL_FALSE will not do any distance calculations.  This does
-    * not  appear to be correct.  It appears that resetting the flag to
-    * AL_FALSE does the distance calculations with respect to the
-    * listener's position, and setting to AL_TRUE still does the
-    * distance calculations with respect to the origin.  For now, we
-    * are always resseting the flag to AL_FALSE.
-    *
     */
    class DT_AUDIO_EXPORT AudioManager   :  public   dtCore::Base
    {
@@ -344,6 +331,9 @@ namespace dtAudio
 
          /// access the global Listener
          static   Listener*         GetListener( void );
+
+         /// get the ListenerRelative flag of the indicated flag
+         bool                       GetListenerRelative(Sound* sound);
 
          /// initialize AudioManager
          virtual  void              Config( const AudioConfigData& data = _DefCfg );

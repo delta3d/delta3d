@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <cfloat>
+#include <dtAudio/audiomanager.h>
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
@@ -273,7 +274,7 @@ void Sound::SetPitch( float pitch )
  *
  * @param relative true uses distance modeling
  */
-void Sound::ListenerRelative( bool relative )
+void Sound::SetListenerRelative( bool relative )
 {
    if( relative )
       SendMessage( kCommand[REL], this );
@@ -281,7 +282,18 @@ void Sound::ListenerRelative( bool relative )
       SendMessage( kCommand[ABS], this );
 }
 
+/**
+  * Get relative to listener position flag.          
+  *
+  * @return relative true uses distance modeling
+  */
+bool Sound::IsListenerRelative(void) const 
+{
+   if(! dtAudio::AudioManager::GetInstance().IsInitialized())
+      return false;
 
+   return dtAudio::AudioManager::GetInstance().GetListenerRelative((Sound*) this);   
+}
 
 /**
  * Set the transform position of sound.

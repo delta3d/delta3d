@@ -74,20 +74,7 @@ namespace dtAudio
     * Sound's position.  The Sound position can be set manually in
     * scene-space without having to make it a child of another object,
     * but any position updates must then be made manually.
-    *
-    *********************       WARNING       ********************
-    ********************* JPJ (Sept. 23 2004) ********************
-    * The ListenerRelative( bool ) is not working properly.  The
-    * underlying sound engine (OpenAL) claims setting the
-    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sources with
-    * respect to the gloabal listener's position, and resetting the
-    * flag to AL_FALSE will not do any distance calculations.  This does
-    * not  appear to be correct.  It appears that resetting the flag to
-    * AL_FALSE does the distance calculations with respect to the
-    * listener's position, and setting to AL_TRUE still does the
-    * distance calculations with respect to the origin.  For now, we
-    * are always resseting the flag to AL_FALSE.
-    *
+    *    
     *********************       WARNING       ********************
     * The serialization member functions have not been tested.  They
     * may work well.  Also, the functions require for playback,
@@ -294,17 +281,38 @@ namespace dtAudio
          /**
           * Flags sound to be relative to listener position.
           *
-          * @param relative true uses distance modeling
+          * IT IS IMPORTANT TO UNDERSTAND EXACTLY WHAT THIS MEANS, otherwise
+          * confusion ensues:
+          * 
+          * When you enable Relative mode on a Sound source then its Position, Velocity
+          * and Orientation all become relative to the Listener's parameters rather
+          * than absolute values.
+          *
+          * Therefore: calling this function has no effect on the Listnener it 
+          * ONLY affects the Sound source.
+          *
+          * You almost never want to set ListenerRelative to be true-- if a
+          * Sound is in relative mode then when the Listener is moved
+          * the Sound moves with it. For that reason, Delta3D defaults all Sounds
+          * to relative = false when Sounds are created.
+          *          
           */
-         virtual  void        ListenerRelative( bool relative );
+         virtual void SetListenerRelative(bool relative);
+
+         ///Deprecated 1/23/2009 in favor of SetListenerRelative
+         DEPRECATE_FUNC virtual  void        ListenerRelative( bool relative )
+         {
+            DEPRECATE("void dtAudio::Sound::ListenerRelative()",
+                      "void dtAudio::Sound::SetListenerRelative()");
+
+            SetListenerRelative(relative);            
+         } 
 
          /**
-          * Get relative to listener position flag.
-          * (overloaded function)
-          *
-          * @return relative true uses distance modeling
+          * Get relative to listener position flag.          
+          *          
           */
-         virtual  bool        IsListenerRelative(void)            const {  return   false;   }
+         virtual  bool        IsListenerRelative(void) const;
 
          /**
           * Set the transform position of sound.
