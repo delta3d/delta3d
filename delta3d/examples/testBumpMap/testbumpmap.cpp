@@ -22,6 +22,8 @@
 
 #include "testbumpmap.h"
 
+#include <dtUtil/geometrycollector.h>
+
 #include <dtCore/globals.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
@@ -35,40 +37,6 @@
 #include <osgDB/ReadFile>
 #include <osgUtil/TangentSpaceGenerator>
 
-////////////////////////////////////////////////////////////////////////////////
-
-// Node visitor that gather all geometry contained within a subgraph
-class GeometryCollector : public osg::NodeVisitor
-{
-public:
-
-   GeometryCollector()
-      : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN){}
-
-   virtual void apply(osg::Geode& node)
-   {
-      // start off with an empty list
-      mGeomList.clear();
-
-      int numberOfDrawables = node.getNumDrawables();
-
-      for (int drawableIndex = 0; drawableIndex < numberOfDrawables; ++drawableIndex)
-      {
-         // If this is geometry, get a pointer to it
-         osg::Geometry* geom = node.getDrawable(drawableIndex)->asGeometry();
-
-         if (geom)
-         {
-            // store the geometry in this list
-            mGeomList.push_back(geom);
-         }
-      }
-
-      traverse(node);
-   }
-
-   std::vector<osg::Geometry*> mGeomList;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, 
@@ -250,7 +218,7 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
    if (mUsePrecomputedTangents)
    {
       // Get all geometry in the graph to apply the shader to
-      osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
+      osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
       object->GetOSGNode()->accept(*geomCollector);        
 
       // Calculate tangent vectors for all faces and store them as vertex attributes
