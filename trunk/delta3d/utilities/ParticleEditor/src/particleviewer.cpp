@@ -536,6 +536,60 @@ void ParticleViewer::SectorPlacerMaxPhiValueChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexAXValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexA = sp->getVertexA();
+   vertexA[0] = newValue;
+   sp->setVertexA(vertexA);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexAYValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexA = sp->getVertexA();
+   vertexA[1] = newValue;
+   sp->setVertexA(vertexA);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexAZValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexA = sp->getVertexA();
+   vertexA[2] = newValue;
+   sp->setVertexA(vertexA);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexBXValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexB = sp->getVertexB();
+   vertexB[0] = newValue;
+   sp->setVertexB(vertexB);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexBYValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexB = sp->getVertexB();
+   vertexB[1] = newValue;
+   sp->setVertexB(vertexB);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SegmentPlacerVertexBZValueChanged(double newValue)
+{
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexB = sp->getVertexB();
+   vertexB[2] = newValue;
+   sp->setVertexB(vertexB);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::MakeCompass()
 {
    dtCore::Compass* compass = new dtCore::Compass(GetCamera());
@@ -715,6 +769,15 @@ void ParticleViewer::UpdateSectorPlacerValues()
 ////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::UpdateSegmentPlacerValues()
 {
+   osgParticle::SegmentPlacer* sp =(osgParticle::SegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertexA = sp->getVertexA();
+   emit SegmentPlacerVertexAXUpdated(vertexA[0]);
+   emit SegmentPlacerVertexAYUpdated(vertexA[1]);
+   emit SegmentPlacerVertexAZUpdated(vertexA[2]);
+   osg::Vec3 vertexB = sp->getVertexB();
+   emit SegmentPlacerVertexBXUpdated(vertexB[0]);
+   emit SegmentPlacerVertexBYUpdated(vertexB[1]);
+   emit SegmentPlacerVertexBZUpdated(vertexB[2]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -257,6 +257,20 @@ void MainWindow::SetupPlacerTab()
    mpPlacerTab->SetSectorPlacerMaxPhiSpinBox(mUI.SectorPlacerMaxPhiSpinBox);
    mpPlacerTab->SetSectorPlacerMaxPhiSlider(mUI.SectorPlacerMaxPhiSlider);
 
+   // Placer Placer UI
+   mpPlacerTab->SetSegmentPlacerVertexAXSpinBox(mUI.SegmentPlacerVertexAXSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexAXSlider(mUI.SegmentPlacerVertexAXSlider);
+   mpPlacerTab->SetSegmentPlacerVertexAYSpinBox(mUI.SegmentPlacerVertexAYSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexAYSlider(mUI.SegmentPlacerVertexAYSlider);
+   mpPlacerTab->SetSegmentPlacerVertexAZSpinBox(mUI.SegmentPlacerVertexAZSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexAZSlider(mUI.SegmentPlacerVertexAZSlider);
+   mpPlacerTab->SetSegmentPlacerVertexBXSpinBox(mUI.SegmentPlacerVertexBXSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexBXSlider(mUI.SegmentPlacerVertexBXSlider);
+   mpPlacerTab->SetSegmentPlacerVertexBYSpinBox(mUI.SegmentPlacerVertexBYSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexBYSlider(mUI.SegmentPlacerVertexBYSlider);
+   mpPlacerTab->SetSegmentPlacerVertexBZSpinBox(mUI.SegmentPlacerVertexBZSpinBox);
+   mpPlacerTab->SetSegmentPlacerVertexBZSlider(mUI.SegmentPlacerVertexBZSlider);
+
    SetupPlacerTabConnections();
 
    mpPlacerTab->SetupUI();
@@ -279,6 +293,13 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mUI.SectorPlacerMaxRadiusSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMaxRadiusValueChanged(double)));
    connect(mUI.SectorPlacerMinPhiSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMinPhiValueChanged(double)));
    connect(mUI.SectorPlacerMaxPhiSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMaxPhiValueChanged(double)));
+   // Segment Placer UI
+   connect(mUI.SegmentPlacerVertexAXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexAXValueChanged(double)));
+   connect(mUI.SegmentPlacerVertexAYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexAYValueChanged(double)));
+   connect(mUI.SegmentPlacerVertexAZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexAZValueChanged(double)));
+   connect(mUI.SegmentPlacerVertexBXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBXValueChanged(double)));
+   connect(mUI.SegmentPlacerVertexBYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBYValueChanged(double)));
+   connect(mUI.SegmentPlacerVertexBZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBZValueChanged(double)));
 
    ///> Connections from particle viewer to UI
    connect(mpParticleViewer, SIGNAL(PlacerTypeBoxUpdated(int)), mUI.PlacerTypeComboBox, SLOT(setCurrentIndex(int)));
@@ -294,6 +315,13 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mpParticleViewer, SIGNAL(SectorPlacerMaxRadiusUpdated(double)), mUI.SectorPlacerMaxRadiusSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(SectorPlacerMinPhiUpdated(double)), mUI.SectorPlacerMinPhiSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(SectorPlacerMaxPhiUpdated(double)), mUI.SectorPlacerMaxPhiSpinBox, SLOT(setValue(double)));
+   // Segment Placer UI
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexAXUpdated(double)), mUI.SegmentPlacerVertexAXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexAYUpdated(double)), mUI.SegmentPlacerVertexAYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexAZUpdated(double)), mUI.SegmentPlacerVertexAZSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBXUpdated(double)), mUI.SegmentPlacerVertexBXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBYUpdated(double)), mUI.SegmentPlacerVertexBYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBZUpdated(double)), mUI.SegmentPlacerVertexBZSpinBox, SLOT(setValue(double)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

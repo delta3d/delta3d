@@ -137,7 +137,15 @@ signals:
    void SectorPlacerMinPhiUpdated(double newValue);
    void SectorPlacerMaxPhiUpdated(double newValue);
 
-public slots:
+   // Point Placer UI
+   void SegmentPlacerVertexAXUpdated(double newValue);
+   void SegmentPlacerVertexAYUpdated(double newValue);
+   void SegmentPlacerVertexAZUpdated(double newValue);
+   void SegmentPlacerVertexBXUpdated(double newValue);
+   void SegmentPlacerVertexBYUpdated(double newValue);
+   void SegmentPlacerVertexBZUpdated(double newValue);
+
+   public slots:
    void CreateNewParticleSystem();
 
    // Layer Browser slots
@@ -199,6 +207,14 @@ public slots:
    void SectorPlacerMaxRadiusValueChanged(double newValue);
    void SectorPlacerMinPhiValueChanged(double newValue);
    void SectorPlacerMaxPhiValueChanged(double newValue);
+
+   // Placer Placer UI
+   void SegmentPlacerVertexAXValueChanged(double newValue);
+   void SegmentPlacerVertexAYValueChanged(double newValue);
+   void SegmentPlacerVertexAZValueChanged(double newValue);
+   void SegmentPlacerVertexBXValueChanged(double newValue);
+   void SegmentPlacerVertexBYValueChanged(double newValue);
+   void SegmentPlacerVertexBZValueChanged(double newValue);
 
 private:
    void MakeCompass();

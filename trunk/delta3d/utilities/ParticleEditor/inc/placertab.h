@@ -59,6 +59,32 @@ public:
    void SetSectorPlacerMaxPhiSlider(QSlider* SectorPlacerMaxPhiSlider)
       { mpSectorPlacerMaxPhiSlider = SectorPlacerMaxPhiSlider; }
 
+   // Segment placer UI items
+   void SetSegmentPlacerVertexAXSpinBox(QDoubleSpinBox* segmentPlacerVertexAXSpinBox)
+      { mpSegmentPlacerVertexAXSpinBox = segmentPlacerVertexAXSpinBox; }
+   void SetSegmentPlacerVertexAXSlider(QSlider* segmentPlacerVertexAXSlider)
+      { mpSegmentPlacerVertexAXSlider = segmentPlacerVertexAXSlider; }
+   void SetSegmentPlacerVertexAYSpinBox(QDoubleSpinBox* segmentPlacerVertexAYSpinBox)
+      { mpSegmentPlacerVertexAYSpinBox = segmentPlacerVertexAYSpinBox; }
+   void SetSegmentPlacerVertexAYSlider(QSlider* segmentPlacerVertexAYSlider)
+      { mpSegmentPlacerVertexAYSlider = segmentPlacerVertexAYSlider; }
+   void SetSegmentPlacerVertexAZSpinBox(QDoubleSpinBox* segmentPlacerVertexAZSpinBox)
+      { mpSegmentPlacerVertexAZSpinBox = segmentPlacerVertexAZSpinBox; }
+   void SetSegmentPlacerVertexAZSlider(QSlider* segmentPlacerVertexBZSlider)
+      { mpSegmentPlacerVertexAZSlider = segmentPlacerVertexBZSlider; }
+   void SetSegmentPlacerVertexBXSpinBox(QDoubleSpinBox* segmentPlacerVertexBXSpinBox)
+      { mpSegmentPlacerVertexBXSpinBox = segmentPlacerVertexBXSpinBox; }
+   void SetSegmentPlacerVertexBXSlider(QSlider* segmentPlacerVertexBXSlider)
+      { mpSegmentPlacerVertexBXSlider = segmentPlacerVertexBXSlider; }
+   void SetSegmentPlacerVertexBYSpinBox(QDoubleSpinBox* segmentPlacerVertexBYSpinBox)
+      { mpSegmentPlacerVertexBYSpinBox = segmentPlacerVertexBYSpinBox; }
+   void SetSegmentPlacerVertexBYSlider(QSlider* segmentPlacerVertexBYSlider)
+      { mpSegmentPlacerVertexBYSlider = segmentPlacerVertexBYSlider; }
+   void SetSegmentPlacerVertexBZSpinBox(QDoubleSpinBox* segmentPlacerVertexBZSpinBox)
+      { mpSegmentPlacerVertexBZSpinBox = segmentPlacerVertexBZSpinBox; }
+   void SetSegmentPlacerVertexBZSlider(QSlider* segmentPlacerVertexBZSlider)
+      { mpSegmentPlacerVertexBZSlider = segmentPlacerVertexBZSlider; }
+
    void SetupUI();
 
 public slots:
@@ -86,9 +112,24 @@ public slots:
    void SectorPlacerMaxPhiSpinBoxValueChanged(double newValue);
    void SectorPlacerMaxPhiSliderValueChanged(int newValue);
 
+   // Segment placer UI items
+   void SegmentPlacerVertexAXSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexAXSliderValueChanged(int newValue);
+   void SegmentPlacerVertexAYSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexAYSliderValueChanged(int newValue);
+   void SegmentPlacerVertexAZSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexAZSliderValueChanged(int newValue);
+   void SegmentPlacerVertexBXSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexBXSliderValueChanged(int newValue);
+   void SegmentPlacerVertexBYSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexBYSliderValueChanged(int newValue);
+   void SegmentPlacerVertexBZSpinBoxValueChanged(double newValue);
+   void SegmentPlacerVertexBZSliderValueChanged(int newValue);
+
 private:
    void SetupPointPlacerConnections();
    void SetupSectorPlacerConnections();
+   void SetupSegmentPlacerConnections();
 
    QComboBox* mpPlacerTypeBox;
 
@@ -115,6 +156,20 @@ private:
    QSlider* mpSectorPlacerMinPhiSlider;
    QDoubleSpinBox* mpSectorPlacerMaxPhiSpinBox;
    QSlider* mpSectorPlacerMaxPhiSlider;
+
+   // Segment placer UI items
+   QDoubleSpinBox* mpSegmentPlacerVertexAXSpinBox;
+   QSlider* mpSegmentPlacerVertexAXSlider;
+   QDoubleSpinBox* mpSegmentPlacerVertexAYSpinBox;
+   QSlider* mpSegmentPlacerVertexAYSlider;
+   QDoubleSpinBox* mpSegmentPlacerVertexAZSpinBox;
+   QSlider* mpSegmentPlacerVertexAZSlider;
+   QDoubleSpinBox* mpSegmentPlacerVertexBXSpinBox;
+   QSlider* mpSegmentPlacerVertexBXSlider;
+   QDoubleSpinBox* mpSegmentPlacerVertexBYSpinBox;
+   QSlider* mpSegmentPlacerVertexBYSlider;
+   QDoubleSpinBox* mpSegmentPlacerVertexBZSpinBox;
+   QSlider* mpSegmentPlacerVertexBZSlider;
 };
 
 #endif /*DELTA_PLACER_TAB*/
