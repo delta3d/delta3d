@@ -1,5 +1,5 @@
 
-SET(LIB_NAME     Viewer)
+SET(LIB_NAME Viewer)
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${LIB_NAME})
 file(GLOB PROG_SOURCES "*.cpp" "*.cxx" "*.h" "*.rc")
@@ -19,9 +19,9 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTABC_LIBRARY}
                      )
 
-IF(WIN32)
+IF (WIN32)
   TARGET_LINK_LIBRARIES(${LIB_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)
-ENDIF(WIN32)
+ENDIF (WIN32)
                                
 INCLUDE(ModuleInstall OPTIONAL)
 

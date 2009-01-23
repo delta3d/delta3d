@@ -8,32 +8,32 @@
 /**
  * Name spaces.
  */
-using namespace   dtCore;
+using namespace dtCore;
 
 
 
 /**
  * Static member variables.
  */
-const int   ViewState::kDisplayMask(COMPASS|XY_PLANE|YZ_PLANE|ZX_PLANE|SCENEPOLY|SCENEWIRE|SCENETXT|SCENELIGHT);
-const int   ViewState::kModelMask(~kDisplayMask&~RESET&~DISPLAY);
-      int   ViewState::mDisplayFlags(0L);
+const int ViewState::kDisplayMask(COMPASS|XY_PLANE|YZ_PLANE|ZX_PLANE|SCENEPOLY|SCENEWIRE|SCENETXT|SCENELIGHT);
+const int ViewState::kModelMask(~kDisplayMask&~RESET&~DISPLAY);
+      int ViewState::mDisplayFlags(0L);
 
 
 
 /**
  * Default Constructor member function
  */
-ViewState::ViewState( std::string filename /*= ""*/, unsigned int indx /*= (unsigned int)(-1)*/ )
-:  mFilename(filename),
-   mFileIndex(indx),
-   mCamPosition(0.f,0.f,0.f,0.f,0.f,0.f),
-   mOrbitDist(0L),
-   mCamPositionDef(0.f,0.f,0.f,0.f,0.f,0.f),
-   mOrbitDistDef(0L),
-   mModelFlags(0L),
-   mMotionFlags(0L),
-   mJoystickFlags(0)
+ViewState::ViewState(std::string filename /*= ""*/, unsigned int indx /*= (unsigned int)(-1)*/)
+   : mFilename(filename)
+   , mFileIndex(indx)
+   , mCamPosition(0.f,0.f,0.f,0.f,0.f,0.f)
+   , mOrbitDist(0L)
+   , mCamPositionDef(0.f,0.f,0.f,0.f,0.f,0.f)
+   , mOrbitDistDef(0L)
+   , mModelFlags(0L)
+   , mMotionFlags(0L)
+   , mJoystickFlags(0)
 {
 }
 
@@ -42,16 +42,16 @@ ViewState::ViewState( std::string filename /*= ""*/, unsigned int indx /*= (unsi
 /**
  * Copy Constructor member function
  */
-ViewState::ViewState( const ViewState& that )
-:  mFilename(that.mFilename),
-   mFileIndex(that.mFileIndex),
-   mCamPosition(that.mCamPosition),
-   mOrbitDist(that.mOrbitDist),
-   mCamPositionDef(that.mCamPositionDef),
-   mOrbitDistDef(that.mOrbitDistDef),
-   mModelFlags(that.mModelFlags),
-   mMotionFlags(that.mMotionFlags),
-   mJoystickFlags(that.mJoystickFlags)
+ViewState::ViewState(const ViewState& that)
+   : mFilename(that.mFilename)
+   , mFileIndex(that.mFileIndex)
+   , mCamPosition(that.mCamPosition)
+   , mOrbitDist(that.mOrbitDist)
+   , mCamPositionDef(that.mCamPositionDef)
+   , mOrbitDistDef(that.mOrbitDistDef)
+   , mModelFlags(that.mModelFlags)
+   , mMotionFlags(that.mMotionFlags)
+   , mJoystickFlags(that.mJoystickFlags)
 {
 }
 
@@ -69,11 +69,12 @@ ViewState::~ViewState()
 /**
  * Copy operator member function
  */
-ViewState&
-ViewState::operator=( const ViewState& that )
+ViewState& ViewState::operator=(const ViewState& that)
 {
-   if( this == &that )
-      return   *this;
+   if (this == &that)
+   {
+      return *this;
+   }
 
    mFilename         = that.mFilename;
    mFileIndex        = that.mFileIndex;
@@ -85,7 +86,7 @@ ViewState::operator=( const ViewState& that )
    mMotionFlags      = that.mMotionFlags;
    mJoystickFlags    = that.mJoystickFlags;
 
-   return   *this;
+   return *this;
 }
 
 
@@ -93,23 +94,22 @@ ViewState::operator=( const ViewState& that )
 /**
  * Equality operator member function
  */
-bool
-ViewState::operator==( const ViewState& that )
+bool ViewState::operator==(const ViewState& that)
 {
-   if( this == &that )
-      return   true;
+   if (this == &that)
+   {
+      return true;
+   }
 
-   return   (
-               ( mFilename       == that.mFilename       )  &&
-               ( mFileIndex      == that.mFileIndex      )  &&
-               ( mCamPosition    == that.mCamPosition    )  &&
-               ( mOrbitDist      == that.mOrbitDist      )  &&
-               ( mCamPositionDef == that.mCamPositionDef )  &&
-               ( mOrbitDistDef   == that.mOrbitDistDef   )  &&
-               ( mModelFlags     == that.mModelFlags     )  &&
-               ( mMotionFlags    == that.mMotionFlags    )  &&
-               ( mJoystickFlags  == that.mJoystickFlags  )
-            );
+   return (mFilename       == that.mFilename      ) &&
+          (mFileIndex      == that.mFileIndex     ) &&
+          (mCamPosition    == that.mCamPosition   ) &&
+          (mOrbitDist      == that.mOrbitDist     ) &&
+          (mCamPositionDef == that.mCamPositionDef) &&
+          (mOrbitDistDef   == that.mOrbitDistDef  ) &&
+          (mModelFlags     == that.mModelFlags    ) &&
+          (mMotionFlags    == that.mMotionFlags   ) &&
+          (mJoystickFlags  == that.mJoystickFlags );
 }
 
 
@@ -121,16 +121,15 @@ ViewState::operator==( const ViewState& that )
  * @param   camPos reference which will receive current position data
  * @param   def flag gets the default position instead if true
  */
-void
-ViewState::GetCamPosition( Transform& camPos, bool def /*= false*/ ) const
+void ViewState::GetCamPosition(Transform& camPos, bool def /*= false*/) const
 {
-   if( def )
+   if (def)
    {
-      camPos   = mCamPositionDef;
+      camPos = mCamPositionDef;
    }
    else
    {
-      camPos   = mCamPosition;
+      camPos = mCamPosition;
    }
 }
 
@@ -143,16 +142,15 @@ ViewState::GetCamPosition( Transform& camPos, bool def /*= false*/ ) const
  * @param   camPos reference to transform which will supply position data
  * @param   def flag sets the default position instead if true
  */
-void
-ViewState::SetCamPosition( const Transform& camPos, bool def /*= false*/ )
+void ViewState::SetCamPosition(const Transform& camPos, bool def /*= false*/)
 {
-   if( def )
+   if (def)
    {
-      mCamPositionDef   = camPos;
+      mCamPositionDef = camPos;
    }
    else
    {
-      mCamPosition      = camPos;
+      mCamPosition    = camPos;
    }
 }
 
@@ -165,15 +163,14 @@ ViewState::SetCamPosition( const Transform& camPos, bool def /*= false*/ )
  *
  * @return  current distance for the orbit motion model
  */
-float
-ViewState::GetCamOrbitDist( bool def /*= false*/ ) const
+float ViewState::GetCamOrbitDist(bool def /*= false*/) const
 {
-   if( def )
+   if (def)
    {
-      return   mOrbitDistDef;
+      return mOrbitDistDef;
    }
 
-   return   mOrbitDist;
+   return mOrbitDist;
 }
 
 
@@ -184,19 +181,20 @@ ViewState::GetCamOrbitDist( bool def /*= false*/ ) const
  * @param   orbitDist is the new distance for the orbit motion model
  * @param   def flag sets the default distance instead if true
 */
-void
-ViewState::SetCamOrbitDist( float orbitDist, bool def /*= false*/ )
+void ViewState::SetCamOrbitDist(float orbitDist, bool def /*= false*/)
 {
-   if( orbitDist <= 0.f )
-      return;
-
-   if( def )
+   if (orbitDist <= 0.f)
    {
-      mOrbitDistDef  = orbitDist;
+      return;
+   }
+
+   if (def)
+   {
+      mOrbitDistDef = orbitDist;
    }
    else
    {
-      mOrbitDist     = orbitDist;
+      mOrbitDist    = orbitDist;
    }
 }
 
@@ -209,18 +207,17 @@ ViewState::SetCamOrbitDist( float orbitDist, bool def /*= false*/ )
  *
  * @return  non-zero if flag is set, else zero
  */
-int
-ViewState::GetDisplayFlag( DISPLAY_FLAG flag )  const
+int ViewState::GetDisplayFlag(DISPLAY_FLAG flag)  const
 {
-   unsigned int   disp(DISPLAY & mDisplayFlags);
+   unsigned int disp(DISPLAY & mDisplayFlags);
 
-   if( flag & DISPLAY )
+   if (flag & DISPLAY)
    {
       // clear the display-changed flag once user looks at it
-      mDisplayFlags  &= ~DISPLAY;
+      mDisplayFlags &= ~DISPLAY;
    }
 
-   return   ( disp | mDisplayFlags | mModelFlags ) & flag;
+   return (disp | mDisplayFlags | mModelFlags) & flag;
 }
 
 
@@ -231,31 +228,30 @@ ViewState::GetDisplayFlag( DISPLAY_FLAG flag )  const
  * @param  flag to set
  * @param  on if setting, !on if resetting
  */
-void
-ViewState::SetDisplayFlag( DISPLAY_FLAG flag, bool on /*= true*/ )
+void ViewState::SetDisplayFlag(DISPLAY_FLAG flag, bool on /*= true*/)
 {
-   if( flag & RESET )
+   if (flag & RESET)
    {
-      Transform   xform;
-      GetCamPosition( xform, true );
-      SetCamPosition( xform );
-      SetCamOrbitDist( GetCamOrbitDist( true ) );
+      Transform xform;
+      GetCamPosition(xform, true);
+      SetCamPosition(xform);
+      SetCamOrbitDist(GetCamOrbitDist(true));
    }
 
-   if( flag & kDisplayMask )
+   if (flag & kDisplayMask)
    {
       mDisplayFlags  |= DISPLAY;
    }
 
-   if( on )
+   if (on)
    {
-      mDisplayFlags  |= ( flag & kDisplayMask );
-      mModelFlags    |= ( flag & kModelMask );
+      mDisplayFlags  |= (flag & kDisplayMask);
+      mModelFlags    |= (flag & kModelMask);
    }
    else
    {
-      mDisplayFlags  &= ~( flag & kDisplayMask );
-      mModelFlags    &= ~( flag & kModelMask );
+      mDisplayFlags  &= ~(flag & kDisplayMask);
+      mModelFlags    &= ~(flag & kModelMask);
    }
 }
 
@@ -268,10 +264,9 @@ ViewState::SetDisplayFlag( DISPLAY_FLAG flag, bool on /*= true*/ )
  *
  * @return  non-zero if flag is set, else zero
  */
-int
-ViewState::GetMotionFlag( MOTION_FLAG flag ) const
+int ViewState::GetMotionFlag(MOTION_FLAG flag) const
 {
-   return   mMotionFlags & flag;
+   return mMotionFlags & flag;
 }
 
 
@@ -281,11 +276,10 @@ ViewState::GetMotionFlag( MOTION_FLAG flag ) const
  *
  * @param  flag to set
  */
-void
-ViewState::SetMotionFlag( MOTION_FLAG flag )
+void ViewState::SetMotionFlag(MOTION_FLAG flag)
 {
    // motion flags are radio flags, so copy it, don't 'or' it
-   mMotionFlags   = flag;
+   mMotionFlags = flag;
 }
 
 
@@ -297,10 +291,9 @@ ViewState::SetMotionFlag( MOTION_FLAG flag )
  *
  * @return  non-zero if flag is set, else zero
  */
-int
-ViewState::GetJoystickFlag( JOYSTICK_FLAG flag )   const
+int ViewState::GetJoystickFlag(JOYSTICK_FLAG flag) const
 {
-   return   mJoystickFlags & flag;
+   return mJoystickFlags & flag;
 }
 
 
@@ -311,10 +304,9 @@ ViewState::GetJoystickFlag( JOYSTICK_FLAG flag )   const
  * @param  flag to set
  * @param  on if setting, !on if resetting
  */
-void
-ViewState::SetJoystickFlag( JOYSTICK_FLAG flag, bool on /*= true*/ )
+void ViewState::SetJoystickFlag(JOYSTICK_FLAG flag, bool on /*= true*/)
 {
-   if( on )
+   if (on)
    {
       mJoystickFlags |= flag;
    }
