@@ -44,7 +44,7 @@ namespace dtUtil
    {
    public:
       // constructor
-      TangentSpaceVisitor(const std::string &vertexAttributeName, 
+      TangentSpaceVisitor(const std::string& vertexAttributeName, 
             osg::Program *shaderProgram = NULL, int tangentVertexAttribNumber = 6);
 
       // apply - called for each node
