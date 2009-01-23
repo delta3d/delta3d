@@ -1,11 +1,14 @@
 #include <particleviewer.h>
 
-#include <osg/Vec3f>
+#include <osg/BlendFunc>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/Shape>
-#include <osg/ShapeDrawable>
+#include <osg/PrimitiveSet>
+#include <osg/StateAttribute>
+#include <osg/Image>
+#include <osg/Material>
 #include <osg/MatrixTransform>
+#include <osg/Texture2D>
 
 //#include <osgParticle/AccelOperator>
 //#include <osgParticle/FluidFrictionOperator>
@@ -104,6 +107,7 @@ void ParticleViewer::CreateNewParticleLayer()
    layer.mModularEmitter->setCounter(rrc);
    layer.mModularEmitter->setPlacer(new osgParticle::PointPlacer());
    layer.mModularEmitter->setShooter(new osgParticle::RadialShooter());
+   layer.mModularEmitter->setLifeTime(5.0);
    layer.mEmitterTransform->addChild(layer.mModularEmitter.get());
    mpParticleSystemGroup->addChild(layer.mEmitterTransform.get());
 
@@ -158,7 +162,245 @@ void ParticleViewer::UpdateSelectionIndex(int newIndex)
    if(0 <= mLayerIndex && mLayerIndex < static_cast<int>(mLayers.size()))
    {
       emit LayerHiddenChanged(mLayers[mLayerIndex].mModularEmitter->isEnabled());
+      emit AlignmentUpdated(mLayers[mLayerIndex].mParticleSystem->getParticleAlignment());
+      emit ShapeUpdated( mLayers[mLayerIndex].mpParticle->getShape());
+      emit LifeUpdated(mLayers[mLayerIndex].mpParticle->getLifeTime());
+      emit RadiusUpdated(mLayers[mLayerIndex].mpParticle->getRadius());
+      emit MassUpdated(mLayers[mLayerIndex].mpParticle->getMass());
+      osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getSizeRange();
+      emit SizeFromUpdated(sizeRange.minimum);
+      emit SizeToUpdated(sizeRange.maximum);
+
+      std::string textureFile = "";
+      osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
+      osg::StateAttribute* sa = ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+      if(IS_A(sa, osg::Texture2D*))
+      {
+         osg::Texture2D* t2d = (osg::Texture2D*)sa;
+         osg::Image* image = t2d->getImage();
+         if (image != NULL)
+         {
+            textureFile = image->getFileName();
+         }
+      }
+      osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
+      bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
+      osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+      bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
+      emit TextureUpdated(QString::fromStdString(textureFile), emissive, lighting);
+
+      osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+      emit RFromUpdated(colorRange.minimum[0]);
+      emit RToUpdated(colorRange.maximum[0]);
+      emit GFromUpdated(colorRange.minimum[1]);
+      emit GToUpdated(colorRange.maximum[1]);
+      emit BFromUpdated(colorRange.minimum[2]);
+      emit BToUpdated(colorRange.maximum[2]);
+      osgParticle::rangef alphaRange = mLayers[mLayerIndex].mpParticle->getAlphaRange();
+      emit AFromUpdated(alphaRange.minimum);
+      emit AToUpdated(alphaRange.maximum);
+      emit EmitterLifeUpdated(mLayers[mLayerIndex].mModularEmitter->getLifeTime());
+      emit EmitterStartUpdated(mLayers[mLayerIndex].mModularEmitter->getStartTime());
+      emit EmitterResetUpdated(mLayers[mLayerIndex].mModularEmitter->getResetTime());
+      emit EndlessLifetimeUpdated(mLayers[mLayerIndex].mModularEmitter->isEndless());
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::AlignmentChanged(int newAlignment)
+{
+   mLayers[mLayerIndex].mParticleSystem->setParticleAlignment(
+      (osgParticle::ParticleSystem::Alignment)newAlignment);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ShapeChanged(int newShape)
+{
+   mLayers[mLayerIndex].mpParticle->setShape((osgParticle::Particle::Shape)newShape);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ToggleEmissive(bool enabled)
+{
+   std::string textureFile = "";
+   osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
+   osg::StateAttribute* sa = ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+   if(IS_A(sa, osg::Texture2D*))
+   {
+      osg::Texture2D* t2d = (osg::Texture2D*)sa;
+      osg::Image* image = t2d->getImage();
+      if (image != NULL)
+      {
+         textureFile = image->getFileName();
+      }
+   }
+   osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+   bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
+
+   mLayers[mLayerIndex].mParticleSystem->setDefaultAttributes(textureFile, enabled, lighting);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ToggleLighting(bool enabled)
+{
+   std::string textureFile = "";
+   osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
+   osg::StateAttribute* sa = ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+   if(IS_A(sa, osg::Texture2D*))
+   {
+      osg::Texture2D* t2d = (osg::Texture2D*)sa;
+      osg::Image* image = t2d->getImage();
+      if (image != NULL)
+      {
+         textureFile = image->getFileName();
+      }
+   }
+   osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
+   bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
+
+   mLayers[mLayerIndex].mParticleSystem->setDefaultAttributes(textureFile, emissive, enabled);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::LifeValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mpParticle->setLifeTime(newValue);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadiusValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mpParticle->setRadius(newValue);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MassValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mpParticle->setMass(newValue);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SizeFromValueChanged(double newValue)
+{
+   osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getSizeRange();
+   sizeRange.minimum = newValue;
+   mLayers[mLayerIndex].mpParticle->setSizeRange(sizeRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SizeToValueChanged(double newValue)
+{
+   osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getSizeRange();
+   sizeRange.maximum = newValue;
+   mLayers[mLayerIndex].mpParticle->setSizeRange(sizeRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::TextureChanged(QString filename, bool emissive, bool lighting)
+{
+   mLayers[mLayerIndex].mParticleSystem->setDefaultAttributes(filename.toStdString(), emissive, lighting);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RFromValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.minimum[0] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RToValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.maximum[0] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::GFromValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.minimum[1] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::GToValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.maximum[1] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::BFromValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.minimum[2] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::BToValueChanged(double newValue)
+{
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   colorRange.maximum[2] = newValue;
+   mLayers[mLayerIndex].mpParticle->setColorRange(colorRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::AFromValueChanged(double newValue)
+{
+   osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getAlphaRange();
+   sizeRange.minimum = newValue;
+   mLayers[mLayerIndex].mpParticle->setAlphaRange(sizeRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::AToValueChanged(double newValue)
+{
+   osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getAlphaRange();
+   sizeRange.maximum = newValue;
+   mLayers[mLayerIndex].mpParticle->setAlphaRange(sizeRange);
+   mLayers[mLayerIndex].mParticleSystem->setDefaultParticleTemplate(*mLayers[mLayerIndex].mpParticle);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::EmitterLifeValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mModularEmitter->setLifeTime(newValue);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::EmitterStartValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mModularEmitter->setStartTime(newValue);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::EmitterResetValueChanged(double newValue)
+{
+   mLayers[mLayerIndex].mModularEmitter->setResetTime(newValue);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::EndlessLifetimeChanged(bool endless)
+{
+   mLayers[mLayerIndex].mModularEmitter->setEndless(endless);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

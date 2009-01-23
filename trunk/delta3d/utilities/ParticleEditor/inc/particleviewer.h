@@ -83,6 +83,35 @@ public:
 signals:
    void LayerHiddenChanged(bool hidden);
 
+   void AlignmentUpdated(int newAlignment);
+   void ShapeUpdated(int newShape);
+
+   void EmissiveUpdated(bool enabled);
+   void LightingUpdated(bool enabled);
+
+   void LifeUpdated(double newValue);
+   void RadiusUpdated(double newValue);
+   void MassUpdated(double newValue);
+   void SizeFromUpdated(double newValue);
+   void SizeToUpdated(double newValue);
+
+   void TextureUpdated(QString filename, bool emissive, bool lighting);
+
+   void RFromUpdated(double newValue);
+   void RToUpdated(double newValue);
+   void GFromUpdated(double newValue);
+   void GToUpdated(double newValue);
+   void BFromUpdated(double newValue);
+   void BToUpdated(double newValue);
+   void AFromUpdated(double newValue);
+   void AToUpdated(double newValue);
+
+   void EmitterLifeUpdated(double newValue);
+   void EmitterStartUpdated(double newValue);
+   void EmitterResetUpdated(double newValue);
+
+   void EndlessLifetimeUpdated(bool endless);
+
 public slots:
    void CreateNewParticleSystem();
    void CreateNewParticleLayer();
@@ -90,6 +119,35 @@ public slots:
    void ToggleSelectedLayerHidden();
    void ResetEmitters();
    void UpdateSelectionIndex(int newIndex);
+
+   void AlignmentChanged(int newAlignment);
+   void ShapeChanged(int newShape);
+
+   void ToggleEmissive(bool enabled);
+   void ToggleLighting(bool enabled);
+
+   void LifeValueChanged(double newValue);
+   void RadiusValueChanged(double newValue);
+   void MassValueChanged(double newValue);
+   void SizeFromValueChanged(double newValue);
+   void SizeToValueChanged(double newValue);
+
+   void TextureChanged(QString filename, bool emissive, bool lighting);
+
+   void RFromValueChanged(double newValue);
+   void RToValueChanged(double newValue);
+   void GFromValueChanged(double newValue);
+   void GToValueChanged(double newValue);
+   void BFromValueChanged(double newValue);
+   void BToValueChanged(double newValue);
+   void AFromValueChanged(double newValue);
+   void AToValueChanged(double newValue);
+
+   void EmitterLifeValueChanged(double newValue);
+   void EmitterStartValueChanged(double newValue);
+   void EmitterResetValueChanged(double newValue);
+
+   void EndlessLifetimeChanged(bool endless);
 
 private:
    void MakeCompass();
