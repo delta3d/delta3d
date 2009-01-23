@@ -29,12 +29,12 @@
 namespace dtUtil
 {
    // constructor
-   TangentSpaceVisitor::TangentSpaceVisitor(const std::string &vertexAttributeName, 
-         osg::Program* shaderProgram, int tangentVertexAttribNumber): 
-      NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN),
-      mVertexAttributeName(vertexAttributeName),
-      mShaderProgram(shaderProgram),
-      mTangentVertexAttribNumber(tangentVertexAttribNumber)
+   TangentSpaceVisitor::TangentSpaceVisitor(const std::string& vertexAttributeName, 
+         osg::Program* shaderProgram, int tangentVertexAttribNumber)
+         : NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN)
+         , mVertexAttributeName(vertexAttributeName)
+         , mShaderProgram(shaderProgram)
+         , mTangentVertexAttribNumber(tangentVertexAttribNumber)
    {
    }
 
@@ -69,11 +69,12 @@ namespace dtUtil
 
             // give the attribute a name so you can use it in your vertex shader.
             if (mShaderProgram != NULL)
+            {
                mShaderProgram->addBindAttribLocation(mVertexAttributeName, mTangentVertexAttribNumber);
+            }
          }
       }
 
       NodeVisitor::apply(geode);
    }
-
 }
