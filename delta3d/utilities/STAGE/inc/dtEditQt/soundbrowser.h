@@ -30,8 +30,9 @@
 #ifndef DELTA_SOUND_BROWSER
 #define DELTA_SOUND_BROWSER
 
-#include <QtGui/QSound>
 #include <dtEditQt/resourceabstractbrowser.h>
+
+#include <al.h>
 
 class QAction;
 class QGroupBox;
@@ -121,9 +122,10 @@ namespace dtEditQt {
 
         // Button Objects
         QPushButton *playBtn;
-        QPushButton *stopBtn;
-        
-        QSound *sound;
+        QPushButton *stopBtn;        
+
+        ALuint mSoundBuffers[1];
+        ALuint mSoundSources[1];
 
         // Layout Objects
         QGridLayout *grid;
