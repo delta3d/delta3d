@@ -41,18 +41,53 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 #include <osg/MatrixTransform>
+#include <osgUtil/TangentSpaceGenerator>
 
 #include <osgViewer/GraphicsWindow>
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
 
+// Node visitor that gather all geometry contained within a subgraph
+class GeometryCollector : public osg::NodeVisitor
+{
+public:
+
+   GeometryCollector()
+      : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN){}
+
+   virtual void apply(osg::Geode& node)
+   {
+      // start off with an empty list
+      mGeomList.clear();
+
+      int numberOfDrawables = node.getNumDrawables();
+
+      for (int drawableIndex = 0; drawableIndex < numberOfDrawables; ++drawableIndex)
+      {
+         // If this is geometry, get a pointer to it
+         osg::Geometry* geom = node.getDrawable(drawableIndex)->asGeometry();
+
+         if (geom)
+         {
+            // store the geometry in this list
+            mGeomList.push_back(geom);
+         }
+      }
+
+      traverse(node);
+   }
+
+   std::vector<osg::Geometry*> mGeomList;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
+   : mCurrentLight(0)
+   , mShouldGenerateTangents(true)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
-   mCurrentLight = 0;
 
    osg::StateSet* shadedState = mShadedScene->getOrCreateStateSet();
    shadedState->setMode(GL_LIGHTING, osg::StateAttribute::ON);
@@ -362,6 +397,11 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
          float arrowScale = radius * 0.5f;
          mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
       }
+
+      if (mShouldGenerateTangents)
+      {
+         GenerateTangentsForObject(mObject.get());
+      }
    }
 }
 
@@ -402,7 +442,11 @@ void ObjectViewer::OnApplyShader(const std::string& groupName, const std::string
    dtCore::ShaderProgram* program = shaderManager.FindShaderPrototype(programName, groupName);
    assert(program);
 
-   shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
+   dtCore::ShaderProgram* deltaProgram = shaderManager.AssignShaderFromPrototype(*program, *mShadedScene);
+   osg::Program* osgProgram = deltaProgram->GetShaderProgram();
+
+   // Bind the default location for tangents
+   osgProgram->addBindAttribLocation("tangentAttrib", 6);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -438,6 +482,12 @@ void ObjectViewer::OnSetShadedWireframe()
 
    mShadedScene->addChild(mWireDecorator.get());
    mShadedScene->addChild(mShadeDecorator.get());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetGenerateTangentAttribute(bool shouldGenerate)
+{
+   mShouldGenerateTangents = shouldGenerate;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -834,6 +884,28 @@ void ObjectViewer::PostFrame(const double)
       }
 
       break;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
+{
+   // Get all geometry in the graph to apply the shader to
+   osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
+   object->GetOSGNode()->accept(*geomCollector);        
+
+   // Calculate tangent vectors for all faces and store them as vertex attributes
+   for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
+   {
+      osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
+
+      osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
+      tsg->generate(geom, 0);
+
+      if (!geom->getVertexAttribArray(6))
+      {
+         geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
+      }
    }
 }
 

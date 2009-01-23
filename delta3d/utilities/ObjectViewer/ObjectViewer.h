@@ -88,6 +88,7 @@ public slots:
    void OnSetShaded();
    void OnSetWireframe();
    void OnSetShadedWireframe();
+   void OnSetGenerateTangentAttribute(bool shouldGenerate);
    void OnToggleGrid(bool shouldDisplay);
 
    // Lighting slots
@@ -126,6 +127,8 @@ protected:
 
    virtual void PostFrame(const double deltaFrameTime);
 
+   void GenerateTangentsForObject(dtCore::Object* object);
+
 private:
 
    dtCore::RefPtr<dtDAL::Map>      mMap;
@@ -144,7 +147,8 @@ private:
    std::vector<dtCore::RefPtr<dtCore::Transformable> > mLightArrowTransformable;
    std::vector<dtCore::RefPtr<dtCore::Object> >        mLightArrow;
 
-   int   mCurrentLight;
+   int  mCurrentLight;
+   bool mShouldGenerateTangents;
 };
 
 #endif // DELTA_OBJECT_VIEWER
