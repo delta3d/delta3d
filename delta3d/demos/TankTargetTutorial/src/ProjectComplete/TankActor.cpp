@@ -32,7 +32,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/loadable.h>
 #include <dtCore/isector.h>
-#include <dtCore/nodecollector.h>
+#include <dtUtil/nodecollector.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/basemessages.h>
@@ -452,7 +452,7 @@ void TankActor::OnEnteredWorld()
    mIsector->SetScene(&(GetGameActorProxy().GetGameManager()->GetScene()));
 
    //Collect all of the Transform Nodes off of the Model
-   dtCore::RefPtr<dtCore::NodeCollector> mOSGCollector = new dtCore::NodeCollector(GetGameActorProxy().GetGameActor().GetOSGNode(), dtCore::NodeCollector::DOFTransformFlag);
+   dtCore::RefPtr<dtUtil::NodeCollector> mOSGCollector = new dtUtil::NodeCollector(GetGameActorProxy().GetGameActor().GetOSGNode(), dtUtil::NodeCollector::DOFTransformFlag);
 
    mDOFTran = mOSGCollector->GetDOFTransform("dof_turret_01");
    mDOFTran->addChild(mCannonShot.get()->GetOSGNode());

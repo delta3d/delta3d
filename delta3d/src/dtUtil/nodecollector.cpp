@@ -19,9 +19,9 @@
  * Matthew "w00by" Stokes
  */
 
-#include <prefix/dtcoreprefix-src.h>
-#include <dtCore/nodecollector.h>
-#include <dtCore/collectorutil.h>
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/nodecollector.h>
+#include <dtUtil/collectorutil.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 
@@ -31,10 +31,9 @@
 #include <osg/Switch>
 #include <osg/Drawable>
 #include <osg/Geode>
-#include <osg/Material>
 
 
-namespace dtCore
+namespace dtUtil
 {
    //Define all the different flags so that users can OR the variables together to create a mask
    const NodeCollector::NodeFlag NodeCollector::GroupFlag = dtUtil::Bits::Add(0,1);
@@ -524,4 +523,4 @@ namespace dtCore
 
    }
 
- }//namespace dtCore
+ }//namespace dtUtil

@@ -20,10 +20,10 @@
 #ifndef DELTA_TANGENTSPACEVISITOR
 #define DELTA_TANGENTSPACEVISITOR
 
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 #include <osg/NodeVisitor>
 
-namespace dtCore
+namespace dtUtil
 {
    /**
     * This visitor is used to generate tangents for your node.  It will stick the 
@@ -40,7 +40,7 @@ namespace dtCore
     *       mMyCoolNode->accept(*visitor.get());
     * This visitor was based on osgFx::BumpMapping.cpp 
     */
-   class DT_CORE_EXPORT TangentSpaceVisitor: public osg::NodeVisitor 
+   class DT_UTIL_EXPORT TangentSpaceVisitor: public osg::NodeVisitor 
    {
    public:
       // constructor

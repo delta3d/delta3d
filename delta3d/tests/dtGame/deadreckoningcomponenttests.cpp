@@ -41,7 +41,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
-#include <dtCore/nodecollector.h>
+#include <dtUtil/nodecollector.h>
 #include <dtCore/batchisector.h>
 
 #include <dtGame/basemessages.h>
@@ -313,7 +313,7 @@ namespace dtGame
             CPPUNIT_ASSERT(!helper->IsUpdated());
             CPPUNIT_ASSERT(helper->GetMaxTranslationSmoothingTime() == 4.8f);
 
-            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector(new osg::Group(), dtCore::NodeCollector::GroupFlag);
+            dtCore::RefPtr<dtUtil::NodeCollector> nodeCollector = new dtUtil::NodeCollector(new osg::Group(), dtUtil::NodeCollector::GroupFlag);
             helper->SetNodeCollector(*nodeCollector);
 
             CPPUNIT_ASSERT(helper->GetNodeCollector() == nodeCollector.get());
@@ -448,7 +448,7 @@ namespace dtGame
             dof1->setName(dofName2);
 
             // Setup a node collector to reference the DOF
-            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector;
+            dtCore::RefPtr<dtUtil::NodeCollector> nodeCollector = new dtUtil::NodeCollector;
             nodeCollector->AddDOFTransform(dofName1, *dof1);
             nodeCollector->AddDOFTransform(dofName2, *dof2);
 
@@ -514,7 +514,7 @@ namespace dtGame
             dof->setName(dofName);
 
             // Setup a node collector to reference the DOF
-            dtCore::RefPtr<dtCore::NodeCollector> nodeCollector = new dtCore::NodeCollector;
+            dtCore::RefPtr<dtUtil::NodeCollector> nodeCollector = new dtUtil::NodeCollector;
             nodeCollector->AddDOFTransform(dofName, *dof);
 
             // Setup the helper

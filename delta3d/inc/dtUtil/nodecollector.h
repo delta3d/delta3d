@@ -23,7 +23,7 @@
 #define DELTA_NODE_COLLECTOR
 
 #include <dtCore/refptr.h>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 #include <osg/Referenced>
 #include <map>
 #include <string>
@@ -46,12 +46,12 @@ namespace osgSim
 /// @endcond
 
 
-namespace dtCore
+namespace dtUtil
 {
    //Create the NodeCollector Class for dtCore.  It is used to gather osg Group nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
    //and Geode nodes (which have Drawable objects and Material objects).  It stores the different nodes into corresponding maps which may than
    //be retrieved by the user.  In the case of Geode nodes it creates maps for Drawable objects and Material Objects which can be retrieved.
-   class DT_CORE_EXPORT NodeCollector : public osg::Referenced
+   class DT_UTIL_EXPORT NodeCollector : public osg::Referenced
    {
    public:
 

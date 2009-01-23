@@ -25,7 +25,7 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/nodecollector.h>
+#include <dtUtil/nodecollector.h>
 #include <dtCore/object.h>
 #include <dtUtil/exception.h>
 #include <osg/ref_ptr>
@@ -56,11 +56,11 @@ public:
    void TestNodeRemoval();
 
 private:
-   dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector;
-   dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector2;
-   dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector3;
-   dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector4;
-   dtCore::RefPtr<dtCore::NodeCollector>  mNodeCollector5;
+   dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector;
+   dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector2;
+   dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector3;
+   dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector4;
+   dtCore::RefPtr<dtUtil::NodeCollector>  mNodeCollector5;
    
    dtCore::RefPtr<dtCore::Object>         mObj;
    dtCore::RefPtr<osg::Group>             mTestTree;
@@ -81,7 +81,7 @@ void NodeCollectorTests::setUp()
 
    mObj = new dtCore::Object("Object");
    mObj->LoadFile(loadFile);
-   mNodeCollector = new dtCore::NodeCollector(mObj->GetOSGNode(), dtCore::NodeCollector::AllNodeTypes);
+   mNodeCollector = new dtUtil::NodeCollector(mObj->GetOSGNode(), dtUtil::NodeCollector::AllNodeTypes);
    
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////End Load an Object that contains Nodes/////////////////////////////////////////
@@ -133,10 +133,10 @@ void NodeCollectorTests::setUp()
    switch02->setName("switch_02");
    group02->addChild(switch02);
 
-   mNodeCollector2 = new dtCore::NodeCollector(mTestTree.get(), dtCore::NodeCollector::AllNodeTypes);
-   mNodeCollector3 = new dtCore::NodeCollector(mTestTree.get(), dtCore::NodeCollector::GroupFlag | dtCore::NodeCollector::DOFTransformFlag);
-   mNodeCollector4 = new dtCore::NodeCollector(mTestTree.get(), dtCore::NodeCollector::SwitchFlag | dtCore::NodeCollector::MatrixTransformFlag);
-   mNodeCollector5 = new dtCore::NodeCollector(mTestTree.get(), dtCore::NodeCollector::GeodeFlag);
+   mNodeCollector2 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::AllNodeTypes);
+   mNodeCollector3 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::GroupFlag | dtUtil::NodeCollector::DOFTransformFlag);
+   mNodeCollector4 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::SwitchFlag | dtUtil::NodeCollector::MatrixTransformFlag);
+   mNodeCollector5 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::GeodeFlag);
 
 }
 
@@ -180,7 +180,7 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Switch MAP Problem", mNodeCollector2->GetSwitchNodeMap().empty() == true);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector2->GetGeodeNodeMap().empty() == true);
 
-     mNodeCollector2->CollectNodes(mTestTree.get(), dtCore::NodeCollector::AllNodeTypes);
+     mNodeCollector2->CollectNodes(mTestTree.get(), dtUtil::NodeCollector::AllNodeTypes);
 
      CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_01") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_02") != NULL);

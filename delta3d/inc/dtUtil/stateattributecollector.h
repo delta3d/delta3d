@@ -24,7 +24,7 @@
 #include <osg/Referenced>
 
 #include <dtCore/refptr.h>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 #include <map>
 #include <string>
@@ -41,13 +41,13 @@ namespace osg
 }
 /// @endcond
 
-namespace dtCore
+namespace dtUtil
 {
-   //Create the StateAttributeCollector Class for dtCore.  It is used to gather osg State Attributes off of nodes.  The State Attributes that it 
+   //Create the StateAttributeCollector Class for dtUtil.  It is used to gather osg State Attributes off of nodes.  The State Attributes that it 
    //gathers are: Material Objects, Program Objects, and Texture Objects.  It stores the different StateAttributes into corresponding maps which 
    //may than be retrieved by the user.  In the case of Geode nodes it retrieves the StateAttributes off of the Drawable objects which are 
    //associated with the Geode.
-   class DT_CORE_EXPORT StateAttributeCollector : public osg::Referenced
+   class DT_UTIL_EXPORT StateAttributeCollector : public osg::Referenced
    {
    public:
 

@@ -26,7 +26,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtGame/export.h>
-#include <dtCore/nodecollector.h>
+#include <dtUtil/nodecollector.h>
 
 #include <dtCore/base.h>
 #include <dtCore/transform.h>
@@ -331,13 +331,13 @@ namespace dtGame
          void SetLastRotationUpdatedTime(double newUpdatedTime);
 
          /// @return The node collector for this helper or NULL none has been set.
-         dtCore::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
+         dtUtil::NodeCollector* GetNodeCollector() { return mDOFDeadReckoning.get(); }
 
          /// @return The node collector for this helper or NULL none has been set.
-         const dtCore::NodeCollector* GetNodeCollector() const { return mDOFDeadReckoning.get(); }
+         const dtUtil::NodeCollector* GetNodeCollector() const { return mDOFDeadReckoning.get(); }
 
          /// Set the dof container to what the entity is using for reference.
-         void SetNodeCollector(dtCore::NodeCollector& dofContainerToSet) { mDOFDeadReckoning = &dofContainerToSet; }
+         void SetNodeCollector(dtUtil::NodeCollector& dofContainerToSet) { mDOFDeadReckoning = &dofContainerToSet; }
 
          ///@return the rough average amount of time between translation updates.  This is based on values sent to SetLastTranslationUpdatedTime.
          double GetAverageTimeBetweenTranslationUpdates() const { return mAverageTimeBetweenTranslationUpdates; };
@@ -421,7 +421,7 @@ namespace dtGame
          std::list<dtCore::RefPtr<DeadReckoningDOF> > mDeadReckonDOFS;
 
          /// The Dead reckoning DOF Container object
-         dtCore::RefPtr<dtCore::NodeCollector> mDOFDeadReckoning;
+         dtCore::RefPtr<dtUtil::NodeCollector> mDOFDeadReckoning;
 
          GroundClampingData mGroundClampingData;
          

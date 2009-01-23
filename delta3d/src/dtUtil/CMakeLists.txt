@@ -17,7 +17,9 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 
 LINK_WITH_VARIABLES(${LIB_NAME}
                         OSG_LIBRARY 
-                        OSGDB_LIBRARY 
+                        OSGDB_LIBRARY
+                        OSGUTIL_LIBRARY
+                        OSGSIM_LIBRARY
                         XERCES_LIBRARY
                         OPENTHREADS_LIBRARY)
 
