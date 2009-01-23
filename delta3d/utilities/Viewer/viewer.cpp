@@ -44,13 +44,13 @@
    #pragma warning(pop)
 #endif
 
-using namespace   dtCore;
-using namespace   dtABC;
+using namespace dtCore;
+using namespace dtABC;
 
 
 /** static variables */
 static   const char* _DefName = "default";
-static   ViewState   _CurState( _DefName );
+static   ViewState   _CurState(_DefName);
 
 
 
@@ -81,33 +81,35 @@ const char*                Viewer::msgResetCam("resetcam");
 
 
 
-Viewer::Viewer( const std::string& name /*= "Viewer"*/ )
-:  Widget(name),
-   mCurState(_CurState)
+Viewer::Viewer(const std::string& name /*= "Viewer"*/)
+   : Widget(name)
+   , mCurState(_CurState)
 {
-   memset( mMotionModel, 0L, sizeof(mMotionModel) );
-   memset( mDispXform, 0L, sizeof(mDispXform) );
+   memset(mMotionModel, 0L, sizeof(mMotionModel));
+   memset(mDispXform, 0L, sizeof(mDispXform));
 }
 
 
 
-Viewer::~Viewer( void )
+Viewer::~Viewer(void)
 {
 }
 
 
 
 void
-Viewer::Config( const WinData* d /*= NULL*/ )
+Viewer::Config(const WinData* d /*= NULL*/)
 {
-   System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
+   System* sys = &dtCore::System::GetInstance();
+   assert(sys);
 
-   if( sys->IsRunning() )
+   if (sys->IsRunning())
+   {
       // don't configure twice
       return;
+   }
 
-   Widget::Config( d );
+   Widget::Config(d);
 
    Scene* scene = GetScene();
    osg::Group* sceneRoot  = scene->GetSceneNode();
@@ -119,180 +121,186 @@ Viewer::Config( const WinData* d /*= NULL*/ )
    InitCompass();
    InitObjects();
 
-   GetDefaultState( &mCurState );
+   GetDefaultState(&mCurState);
 
    Transform cam;
 
-   mCurState.GetCamPosition( cam, true );
+   mCurState.GetCamPosition(cam, true);
 
-   GetCamera()->SetTransform( cam );
+   GetCamera()->SetTransform(cam);
 
 
    // make sure that the global color mask exists.
-   osg::ColorMask*   rootColorMask  = new osg::ColorMask;
-   rootColorMask->setMask( true, true, true, true);        
+   osg::ColorMask* rootColorMask = new osg::ColorMask;
+   rootColorMask->setMask(true, true, true, true);
 
    // set up depth to be inherited by the rest of the scene unless
    // overridden. this is overridden in bin 3.
-   osg::Depth* rootDepth   = new osg::Depth;
-   rootDepth->setFunction( osg::Depth::LESS );
-   rootDepth->setRange( 0.0, 1.0 );
+   osg::Depth* rootDepth = new osg::Depth;
+   rootDepth->setFunction(osg::Depth::LESS);
+   rootDepth->setRange(0.0, 1.0);
 
    osg::StateSet* rootStateSet = mViewerNode->getOrCreateStateSet();
-   rootStateSet->setAttribute( rootColorMask );
-   rootStateSet->setAttribute( rootDepth );
+   rootStateSet->setAttribute(rootColorMask);
+   rootStateSet->setAttribute(rootDepth);
 
    // force default static settings for ViewState
    ViewState vs;
-   vs.SetDisplayFlag( ViewState::COMPASS );
-   vs.SetDisplayFlag( ViewState::XY_PLANE );
-   vs.SetDisplayFlag( ViewState::SCENEPOLY );
-   vs.SetDisplayFlag( ViewState::SCENETXT );
-   vs.SetDisplayFlag( ViewState::SCENELIGHT );
+   vs.SetDisplayFlag(ViewState::COMPASS);
+   vs.SetDisplayFlag(ViewState::XY_PLANE);
+   vs.SetDisplayFlag(ViewState::SCENEPOLY);
+   vs.SetDisplayFlag(ViewState::SCENETXT);
+   vs.SetDisplayFlag(ViewState::SCENELIGHT);
 }
 
 
 
 void
-Viewer::OnMessage( MessageData* data )
+Viewer::OnMessage(MessageData* data)
 {
-   Widget::OnMessage( data );
+   Widget::OnMessage(data);
 }
 
 
 
 /**Protected */
-void Viewer::GetState( ViewState* vs )
+void Viewer::GetState(ViewState* vs)
 {
-   assert( vs );
+   assert(vs);
 
    Transform   cam;
-   GetCamera()->GetTransform( cam );
-   mCurState.SetCamPosition( cam );
+   GetCamera()->GetTransform(cam);
+   mCurState.SetCamPosition(cam);
 
-   OrbitMotionModel* omm   = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
-   assert( omm );
+   OrbitMotionModel* omm = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
+   assert(omm);
 
-   mCurState.SetCamOrbitDist( omm->GetDistance() );
+   mCurState.SetCamOrbitDist(omm->GetDistance());
 
-   *vs   = mCurState;
+   *vs = mCurState;
 }
 
 
 //protected
-void Viewer::SetState( ViewState* vs )
+void Viewer::SetState(ViewState* vs)
 {
-   assert( vs );
+   assert(vs);
 
-   if( mCurState.GetIndex() != vs->GetIndex() )
+   if (mCurState.GetIndex() != vs->GetIndex())
    {
       // toggle transparency of the geometry
-      EnableFile( false, mCurState.GetIndex() );
-      EnableFile( true, vs->GetIndex() );
+      EnableFile(false, mCurState.GetIndex());
+      EnableFile(true, vs->GetIndex());
 
       // set the cam position
-      Transform   cam;
-      vs->GetCamPosition( cam );
-      GetCamera()->SetTransform( cam );
+      Transform cam;
+      vs->GetCamPosition(cam);
+      GetCamera()->SetTransform(cam);
 
-      OrbitMotionModel* omm   = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
-      assert( omm );
+      OrbitMotionModel* omm = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
+      assert(omm);
 
-      omm->SetDistance( vs->GetCamOrbitDist() );
+      omm->SetDistance(vs->GetCamOrbitDist());
    }
 
 
-   
+
    // set each of the display items
-   if( vs->GetDisplayFlag( ViewState::DISPLAY ) )
+   if (vs->GetDisplayFlag(ViewState::DISPLAY))
    {
       // toggle the display items
-      EnableDisplay( vs->GetDisplayFlag( ViewState::COMPASS ) ? true : false, COMPASS );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::XY_PLANE ) ? true : false, XY_PLANE );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::YZ_PLANE ) ? true : false, YZ_PLANE );
-      EnableDisplay( vs->GetDisplayFlag( ViewState::ZX_PLANE ) ? true : false, ZX_PLANE );
+      EnableDisplay(vs->GetDisplayFlag(ViewState::COMPASS)  ? true : false, COMPASS);
+      EnableDisplay(vs->GetDisplayFlag(ViewState::XY_PLANE) ? true : false, XY_PLANE);
+      EnableDisplay(vs->GetDisplayFlag(ViewState::YZ_PLANE) ? true : false, YZ_PLANE);
+      EnableDisplay(vs->GetDisplayFlag(ViewState::ZX_PLANE) ? true : false, ZX_PLANE);
 
       // set the scene view modes
-      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::SCENEPOLY ) ? true : false  );
-      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::SCENEWIRE ) ? true : false );
-      EnableTexture( vs->GetDisplayFlag( ViewState::SCENETXT ) ? true : false );
-      EnableLighting( vs->GetDisplayFlag( ViewState::SCENELIGHT ) ? true : false );
+      EnablePolygonMode(FILL, vs->GetDisplayFlag(ViewState::SCENEPOLY) ? true : false);
+      EnablePolygonMode(WIRE, vs->GetDisplayFlag(ViewState::SCENEWIRE) ? true : false);
+      EnableTexture(vs->GetDisplayFlag(ViewState::SCENETXT) ? true : false);
+      EnableLighting(vs->GetDisplayFlag(ViewState::SCENELIGHT) ? true : false);
    }
 
    // set the model view modes
-   if(   mCurState.GetDisplayFlag( ViewState::POLYGON ) !=
-         vs->GetDisplayFlag( ViewState::POLYGON )       )
+   if (mCurState.GetDisplayFlag(ViewState::POLYGON) !=
+       vs->GetDisplayFlag(ViewState::POLYGON))
    {
-      EnablePolygonMode( FILL, vs->GetDisplayFlag( ViewState::POLYGON ) ? true : false, vs->GetIndex() );
+      EnablePolygonMode(FILL, vs->GetDisplayFlag(ViewState::POLYGON) ? true : false, vs->GetIndex());
    }
 
-   if(   mCurState.GetDisplayFlag( ViewState::WIREFRAME ) !=
-         vs->GetDisplayFlag( ViewState::WIREFRAME )       )
+   if (mCurState.GetDisplayFlag(ViewState::WIREFRAME) !=
+       vs->GetDisplayFlag(ViewState::WIREFRAME))
    {
-      EnablePolygonMode( WIRE, vs->GetDisplayFlag( ViewState::WIREFRAME ) ? true : false, vs->GetIndex() );
+      EnablePolygonMode(WIRE, vs->GetDisplayFlag(ViewState::WIREFRAME) ? true : false, vs->GetIndex());
    }
 
-   if(   mCurState.GetDisplayFlag( ViewState::TEXTURE ) !=
-         vs->GetDisplayFlag( ViewState::TEXTURE )       )
+   if (mCurState.GetDisplayFlag(ViewState::TEXTURE) !=
+       vs->GetDisplayFlag(ViewState::TEXTURE))
    {
-      EnableTexture( vs->GetDisplayFlag( ViewState::TEXTURE ) ? true : false, vs->GetIndex() );
+      EnableTexture(vs->GetDisplayFlag(ViewState::TEXTURE) ? true : false, vs->GetIndex());
    }
 
-   if(   mCurState.GetDisplayFlag( ViewState::LIGHTING ) !=
-         vs->GetDisplayFlag( ViewState::LIGHTING )       )
+   if (mCurState.GetDisplayFlag(ViewState::LIGHTING) !=
+       vs->GetDisplayFlag(ViewState::LIGHTING))
    {
-      EnableLighting( vs->GetDisplayFlag( ViewState::LIGHTING ) ? true : false, vs->GetIndex() );
+      EnableLighting(vs->GetDisplayFlag(ViewState::LIGHTING) ? true : false, vs->GetIndex());
    }
 
 
    // set the motion model
-   if(   mCurState.GetMotionFlag( ViewState::FLY ) !=
-         vs->GetMotionFlag( ViewState::FLY )       )
+   if (mCurState.GetMotionFlag(ViewState::FLY) !=
+       vs->GetMotionFlag(ViewState::FLY))
    {
-      if( vs->GetMotionFlag( ViewState::FLY ) )
-         EnableMotionModel( FLY );
-   }
-
-   if(   mCurState.GetMotionFlag( ViewState::ORBIT )  !=
-         vs->GetMotionFlag( ViewState::ORBIT )        )
-   {
-      if( vs->GetMotionFlag( ViewState::ORBIT ) )
+      if (vs->GetMotionFlag(ViewState::FLY))
       {
-         EnableMotionModel( ORBIT );
-
-         OrbitMotionModel* omm   = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
-         assert( omm );
-
-         omm->SetDistance( vs->GetCamOrbitDist() );
+         EnableMotionModel(FLY);
       }
    }
 
-   if(   mCurState.GetMotionFlag( ViewState::UFO ) !=
-         vs->GetMotionFlag( ViewState::UFO )       )
+   if (mCurState.GetMotionFlag(ViewState::ORBIT)  !=
+       vs->GetMotionFlag(ViewState::ORBIT))
    {
-      if( vs->GetMotionFlag( ViewState::UFO ) )
-         EnableMotionModel( UFO );
+      if (vs->GetMotionFlag(ViewState::ORBIT))
+      {
+         EnableMotionModel(ORBIT);
+
+         OrbitMotionModel* omm = static_cast<OrbitMotionModel*>(mMotionModel[ORBIT]);
+         assert(omm);
+
+         omm->SetDistance(vs->GetCamOrbitDist());
+      }
    }
 
-   if(   mCurState.GetMotionFlag( ViewState::WALK )   !=
-         vs->GetMotionFlag( ViewState::WALK )         )
+   if (mCurState.GetMotionFlag(ViewState::UFO) !=
+       vs->GetMotionFlag(ViewState::UFO))
    {
-      if( vs->GetMotionFlag( ViewState::WALK ) )
-         EnableMotionModel( WALK );
+      if (vs->GetMotionFlag(ViewState::UFO))
+      {
+         EnableMotionModel(UFO);
+      }
+   }
+
+   if (mCurState.GetMotionFlag(ViewState::WALK) !=
+       vs->GetMotionFlag(ViewState::WALK))
+   {
+      if (vs->GetMotionFlag(ViewState::WALK))
+      {
+         EnableMotionModel(WALK);
+      }
    }
 
 
    // set the joysticks
-   if(   mCurState.GetJoystickFlag( ViewState::JOY_1 )   !=
-         vs->GetJoystickFlag( ViewState::JOY_1 )         )
+   if (mCurState.GetJoystickFlag(ViewState::JOY_1) !=
+       vs->GetJoystickFlag(ViewState::JOY_1))
    {
-      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_1 ) ? true : false, JOY_1 );
+      EnableJoystick(vs->GetJoystickFlag(ViewState::JOY_1) ? true : false, JOY_1);
    }
 
-   if(   mCurState.GetJoystickFlag( ViewState::JOY_2 )   !=
-         vs->GetJoystickFlag( ViewState::JOY_2 )         )
+   if (mCurState.GetJoystickFlag(ViewState::JOY_2) !=
+       vs->GetJoystickFlag(ViewState::JOY_2))
    {
-      EnableJoystick( vs->GetJoystickFlag( ViewState::JOY_2 ) ? true : false, JOY_2 );
+      EnableJoystick(vs->GetJoystickFlag(ViewState::JOY_2) ? true : false, JOY_2);
    }
 
    mCurState = *vs;
@@ -301,48 +309,48 @@ void Viewer::SetState( ViewState* vs )
 
 
 void
-Viewer::GetDefaultState( ViewState* vs )
+Viewer::GetDefaultState(ViewState* vs)
 {
-   assert( vs );
+   assert(vs);
 
-   osg::Vec3   pos   ( DEF_X, DEF_Y, DEF_Z );
-   osg::Vec3   lookat   ( 0.f, 0.f, 0.f );
-   osg::Vec3   up       ( 0.f, 0.f, 1.f );
+   osg::Vec3 pos   (DEF_X, DEF_Y, DEF_Z);
+   osg::Vec3 lookat(0.f,   0.f,   0.f);
+   osg::Vec3 up    (0.f,   0.f,   1.f);
 
-   Transform   cam;
-   cam.Set( pos, lookat, up );
+   Transform cam;
+   cam.Set(pos, lookat, up);
 
-   float dist(( lookat - pos ).length());
+   float dist((lookat - pos).length());
 
-   vs->SetCamPosition( cam, true );
-   vs->SetCamPosition( cam, false );
-   vs->SetCamOrbitDist( dist, true );
-   vs->SetCamOrbitDist( dist, false );
-   vs->SetDisplayFlag( ViewState::POLYGON, true );
-   vs->SetDisplayFlag( ViewState::WIREFRAME, false );
-   vs->SetDisplayFlag( ViewState::TEXTURE, true );
-   vs->SetDisplayFlag( ViewState::LIGHTING, true );
-   vs->SetMotionFlag( ViewState::ORBIT );
-   vs->SetJoystickFlag( ViewState::JOY_1, false );
-   vs->SetJoystickFlag( ViewState::JOY_2, false );
+   vs->SetCamPosition(cam, true);
+   vs->SetCamPosition(cam, false);
+   vs->SetCamOrbitDist(dist, true);
+   vs->SetCamOrbitDist(dist, false);
+   vs->SetDisplayFlag(ViewState::POLYGON, true);
+   vs->SetDisplayFlag(ViewState::WIREFRAME, false);
+   vs->SetDisplayFlag(ViewState::TEXTURE, true);
+   vs->SetDisplayFlag(ViewState::LIGHTING, true);
+   vs->SetMotionFlag(ViewState::ORBIT);
+   vs->SetJoystickFlag(ViewState::JOY_1, false);
+   vs->SetJoystickFlag(ViewState::JOY_2, false);
 }
 
 
 //protected
-void Viewer::LoadFile( ViewState* vs )
+void Viewer::LoadFile(ViewState* vs)
 {
-   assert( vs );
+   assert(vs);
 
    // get the filename
    std::string filename = vs->GetFilename();
-   assert( filename != "" );
+   assert(filename != "");
 
 
    // generate default states for this object
-   GetDefaultState( vs );
+   GetDefaultState(vs);
 
    bool fileLoaded = false;
-   osg::Node*  filenode = NULL;
+   osg::Node* filenode = NULL;
    dtCore::RefPtr<dtCore::Object> fileobj;
 
    const std::string ext = osgDB::getLowerCaseFileExtension(filename);
@@ -356,9 +364,9 @@ void Viewer::LoadFile( ViewState* vs )
         return;
       }
 
-      path.erase( path.find("/maps"), path.size() );
+      path.erase(path.find("/maps"), path.size());
       std::string name = osgDB::getStrippedName(filename);
-      dtDAL::Map *theMap = NULL;
+      dtDAL::Map* theMap = NULL;
       try
       {
          dtDAL::Project::GetInstance().SetContext(path, true);
@@ -366,8 +374,8 @@ void Viewer::LoadFile( ViewState* vs )
          theMap = &dtDAL::Project::GetInstance().GetMap(name);
          fileLoaded = true;
       }
-      catch (const dtUtil::Exception &e)
-      {   
+      catch (const dtUtil::Exception& e)
+      {
          fileLoaded = false;
          std::string msg;
          msg = "Problem loading map: " + e.What();
@@ -380,10 +388,11 @@ void Viewer::LoadFile( ViewState* vs )
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > container;
       theMap->GetAllProxies(container);
       for (std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i = container.begin();
-            i != container.end(); ++i)
+           i != container.end();
+           ++i)
       {
          dtDAL::ActorProxy& proxy = **i;
-         filenode->asGroup()->addChild( proxy.GetActor()->GetOSGNode() );
+         filenode->asGroup()->addChild(proxy.GetActor()->GetOSGNode());
       }
 
 
@@ -393,7 +402,7 @@ void Viewer::LoadFile( ViewState* vs )
       fileobj  = new Object;
 
      // load the graphics file from disk
-      fileLoaded = fileobj->LoadFile( filename ) ? true : false;
+      fileLoaded = fileobj->LoadFile(filename) ? true : false;
 
       if (fileLoaded)
       {
@@ -405,12 +414,12 @@ void Viewer::LoadFile( ViewState* vs )
    if (fileLoaded)
    {
       //notify viewer that the file loaded
-      FileLoaded( true, filename.c_str() );
+      FileLoaded(true, filename.c_str());
    }
    else
    {
       //tell the GUI the file didn't load
-      FileLoaded( false, filename.c_str() );
+      FileLoaded(false, filename.c_str());
       return;
    }
 
@@ -418,51 +427,51 @@ void Viewer::LoadFile( ViewState* vs )
    if (filenode != NULL)
    {
       // set up the scribe node (turned off) then attach the file object
-      osgFX::Scribe* scribe   = new osgFX::Scribe;
-      assert( scribe );
+      osgFX::Scribe* scribe = new osgFX::Scribe;
+      assert(scribe);
       scribe->setName("fileScribe");
 
-      scribe->setEnabled( false );
-      scribe->addChild( filenode );
+      scribe->setEnabled(false);
+      scribe->addChild(filenode);
 
       // set default cam position for this object based on it's bounding sphere
-      osg::BoundingSphere  bs(scribe->getBound());
+      osg::BoundingSphere bs(scribe->getBound());
 
-      osg::Vec3   pos      ( bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z );
-      osg::Vec3   lookat   ( bs.center().x(), bs.center().y(), bs.center().z() );
-      osg::Vec3   up       ( 0.f, 0.f, 1.f );
+      osg::Vec3   pos   (bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z);
+      osg::Vec3   lookat(bs.center().x(), bs.center().y(), bs.center().z());
+      osg::Vec3   up    (0.f, 0.f, 1.f);
 
-      Transform   cam;
-      cam.Set( pos, lookat, up );
+      Transform cam;
+      cam.Set(pos, lookat, up);
 
-      float dist(( lookat - pos ).length());
+      float dist((lookat - pos).length());
 
-      vs->SetCamPosition( cam, true );
-      vs->SetCamPosition( cam, false );
-      vs->SetCamOrbitDist( dist, true );
-      vs->SetCamOrbitDist( dist, false );
+      vs->SetCamPosition(cam, true);
+      vs->SetCamPosition(cam, false);
+      vs->SetCamOrbitDist(dist, true);
+      vs->SetCamOrbitDist(dist, false);
 
       // turn off node visibility
-      scribe->setNodeMask( NODEMASK_OFF );
+      scribe->setNodeMask(NODEMASK_OFF);
 
       // add the object to the scene
-      osg::Group* scenenode  = GetDisplayObj( FILEOBJS );
-      assert( scenenode );
+      osg::Group* scenenode  = GetDisplayObj(FILEOBJS);
+      assert(scenenode);
 
-      scenenode->addChild( scribe );
+      scenenode->addChild(scribe);
    }
 }
 
 //protected
-void Viewer::SaveFileAs( char *filename )
+void Viewer::SaveFileAs(char* filename)
 {
    assert(filename!=NULL);
 
-   osg::Group *root = GetFileObj(mCurState.GetIndex());
+   osg::Group* root = GetFileObj(mCurState.GetIndex());
    assert(root!=NULL);
 
-   osg::Group *child = static_cast<osg::Group*>(root->getChild( FILL ));
-   assert( child );
+   osg::Group* child = static_cast<osg::Group*>(root->getChild(FILL));
+   assert(child);
 
    if (osgDB::writeNodeFile(*child, filename))
    {
@@ -472,203 +481,202 @@ void Viewer::SaveFileAs( char *filename )
 
 
 //Protected
-void Viewer::ResetCam( void )
+void Viewer::ResetCam(void)
 {
    Transform   cam;
-   mCurState.GetCamPosition( cam, true );
-   mCurState.SetCamPosition( cam );
+   mCurState.GetCamPosition(cam, true);
+   mCurState.SetCamPosition(cam);
 
-   if( mCurState.GetMotionFlag( ViewState::ORBIT ) )
+   if (mCurState.GetMotionFlag(ViewState::ORBIT))
    {
-      float dist(mCurState.GetCamOrbitDist( true ));
-      mCurState.SetCamOrbitDist( dist );
-      static_cast<OrbitMotionModel*>(mMotionModel[ORBIT])->SetDistance( dist );
+      float dist(mCurState.GetCamOrbitDist(true));
+      mCurState.SetCamOrbitDist(dist);
+      static_cast<OrbitMotionModel*>(mMotionModel[ORBIT])->SetDistance(dist);
    }
 
-   GetCamera()->SetTransform( cam );
+   GetCamera()->SetTransform(cam);
 }
 
 
 
-void
-Viewer::EnableFile( bool on, unsigned int indx )
+void Viewer::EnableFile(bool on, unsigned int indx)
 {
-   osg::Group*  node  = GetFileObj( indx );
+   osg::Group* node = GetFileObj(indx);
 
-   if( node == NULL )
+   if (node == NULL)
+   {
       return;
+   }
 
-   if( on )
-      node->setNodeMask( NODEMASK_ON );
-   else
-      node->setNodeMask( NODEMASK_OFF );
-}
-
-
-
-void
-Viewer::EnableDisplay( bool on, DISPLAYITEM di )
-{
-   osg::Group*  node  = GetDisplayObj( di );
-   assert( node );
-
-   if( on )
+   if (on)
    {
-      node->setNodeMask( NODEMASK_ON );
+      node->setNodeMask(NODEMASK_ON);
    }
    else
    {
-      node->setNodeMask( NODEMASK_OFF );
+      node->setNodeMask(NODEMASK_OFF);
    }
 }
 
 
 
-void
-Viewer::EnablePolygonMode( POLYGONMODE mode, bool on, unsigned int indx /*= SCENE_INDX*/ )
+void Viewer::EnableDisplay(bool on, DISPLAYITEM di)
 {
-   osgFX::Scribe* node  = NULL;
+   osg::Group* node = GetDisplayObj(di);
+   assert(node);
 
-   if( indx == SCENE_INDX )
+   if (on)
    {
-      node  = static_cast<osgFX::Scribe*>(GetDisplayObj( FILEOBJS ));
-      assert( node );
+      node->setNodeMask(NODEMASK_ON);
    }
    else
    {
-      node  = static_cast<osgFX::Scribe*>(GetFileObj( indx ));
-      assert( node );
+      node->setNodeMask(NODEMASK_OFF);
+   }
+}
+
+
+
+void Viewer::EnablePolygonMode(POLYGONMODE mode, bool on, unsigned int indx /*= SCENE_INDX*/)
+{
+   osgFX::Scribe* node = NULL;
+
+   if (indx == SCENE_INDX)
+   {
+      node = static_cast<osgFX::Scribe*>(GetDisplayObj(FILEOBJS));
+      assert(node);
+   }
+   else
+   {
+      node = static_cast<osgFX::Scribe*>(GetFileObj(indx));
+      assert(node);
    }
 
-   switch( mode )
+   switch (mode)
    {
-      case  FILL:
+   case FILL:
+      {
+         osg::StateSet* ss = node->getOrCreateStateSet();
+         assert(ss);
+
+         osg::PolygonMode* pm =
+         static_cast<osg::PolygonMode*>(ss->getAttribute(osg::StateAttribute::POLYGONMODE));
+
+         if (pm == NULL)
          {
-            osg::StateSet* ss = node->getOrCreateStateSet();
-            assert( ss );
+            pm = new osg::PolygonMode;
+            assert(pm);
 
-            osg::PolygonMode* pm =
-            static_cast<osg::PolygonMode*>(ss->getAttribute( osg::StateAttribute::POLYGONMODE ));
-
-            if( pm == NULL )
-            {
-               pm = new osg::PolygonMode;
-               assert( pm );
-
-               ss->setAttribute( pm );
-            }
-
-            if( on )
-            {
-               pm->setMode( osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL );
-               ss->setAttribute( pm, osg::StateAttribute::OFF );
-            }
-            else
-            {
-               pm->setMode( osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE );
-               ss->setAttribute( pm, osg::StateAttribute::OVERRIDE );
-            }
+            ss->setAttribute(pm);
          }
-         break;
 
-      case  WIRE:
+         if (on)
          {
-            // toggling scribe's effect on/off
-            node->setEnabled( on );
+            pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+            ss->setAttribute(pm, osg::StateAttribute::OFF);
          }
-         break;
+         else
+         {
+            pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+            ss->setAttribute(pm, osg::StateAttribute::OVERRIDE);
+         }
+      }
+      break;
 
-      default:
-         assert( false );
-         break;
+   case WIRE:
+      {
+         // toggling scribe's effect on/off
+         node->setEnabled(on);
+      }
+      break;
+
+   default:
+      assert(false);
+      break;
    }
 }
 
 
 
-void
-Viewer::EnableTexture( bool on, unsigned int indx /*= SCENE_INDX*/ )
+void Viewer::EnableTexture(bool on, unsigned int indx /*= SCENE_INDX*/)
 {
-   osg::Group*  node  = NULL;
-   osg::Group* child  = NULL;
+   osg::Group*  node = NULL;
+   osg::Group* child = NULL;
 
-   if( indx == SCENE_INDX )
+   if (indx == SCENE_INDX)
    {
-      child = GetDisplayObj( FILEOBJS );
+      child = GetDisplayObj(FILEOBJS);
    }
    else
    {
-      node  = GetFileObj( indx );
-      assert( node );
+      node = GetFileObj(indx);
+      assert(node);
 
-      child  = static_cast<osg::Group*>(node->getChild( FILL ));
-      assert( child );
+      child  = static_cast<osg::Group*>(node->getChild(FILL));
+      assert(child);
    }
 
    osg::StateSet* ss = child->getOrCreateStateSet();
-   assert( ss );
+   assert(ss);
 
-   if( on )
+   if (on)
    {
-      ss->setTextureMode( 0, GL_TEXTURE_2D, osg::StateAttribute::ON );
+      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
    }
    else
    {
-      ss->setTextureMode( 0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      ss->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
    }
 }
 
 
 
-void
-Viewer::EnableLighting( bool on, unsigned int indx /*= SCENE_INDX*/ )
+void Viewer::EnableLighting(bool on, unsigned int indx /*= SCENE_INDX*/)
 {
-   osg::Group*  node  = NULL;
-   osg::Group* child  = NULL;
+   osg::Group*  node = NULL;
+   osg::Group* child = NULL;
 
-   if( indx == SCENE_INDX )
+   if (indx == SCENE_INDX)
    {
-      child = GetDisplayObj( FILEOBJS );
+      child = GetDisplayObj(FILEOBJS);
    }
    else
    {
-      node  = GetFileObj( indx );
-      assert( node );
+      node = GetFileObj(indx);
+      assert(node);
 
-      child  = static_cast<osg::Group*>(node->getChild( FILL ));
-      assert( child );
+      child = static_cast<osg::Group*>(node->getChild(FILL));
+      assert(child);
    }
 
    osg::StateSet* ss = child->getOrCreateStateSet();
-   assert( ss );
+   assert(ss);
 
-   if( on )
+   if (on)
    {
-      ss->setMode( GL_LIGHTING, osg::StateAttribute::ON );
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::ON);
    }
    else
    {
-      ss->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
+      ss->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
    }
 }
 
 
 
-void
-Viewer::EnableMotionModel( MOTIONMODEL mm )
+void Viewer::EnableMotionModel(MOTIONMODEL mm)
 {
-   assert( mm <= NUMMOTIONMODELS );
+   assert(mm <= NUMMOTIONMODELS);
 
-   for( int ii(WALK); ii < NUMMOTIONMODELS; ii++ )
+   for (int ii(WALK); ii < NUMMOTIONMODELS; ++ii)
    {
-      mMotionModel[ii]->SetEnabled( ii == mm );
+      mMotionModel[ii]->SetEnabled(ii == mm);
    }
 }
 
 
 
-void
-Viewer::EnableJoystick( bool on, JOYSTICKID jy )
+void Viewer::EnableJoystick(bool on, JOYSTICKID jy)
 {
 }
 
@@ -676,60 +684,58 @@ Viewer::EnableJoystick( bool on, JOYSTICKID jy )
 
 void Viewer::InitInputDevices()
 {
-   WalkMotionModel*  wmm   = new WalkMotionModel( GetKeyboard(), GetMouse() );
-   assert( wmm );
-   wmm->SetScene( GetScene() );
-   mMotionModel[WALK]  = wmm;
+   WalkMotionModel* wmm = new WalkMotionModel(GetKeyboard(), GetMouse());
+   assert(wmm);
+   wmm->SetScene(GetScene());
+   mMotionModel[WALK] = wmm;
 
 
-   FlyMotionModel*   fmm   = new FlyMotionModel( GetKeyboard(), GetMouse() );
-   assert( fmm );
-   mMotionModel[FLY]   = fmm;
+   FlyMotionModel* fmm = new FlyMotionModel(GetKeyboard(), GetMouse());
+   assert(fmm);
+   mMotionModel[FLY] = fmm;
 
 
-   UFOMotionModel*   umm   = new UFOMotionModel( GetKeyboard(), GetMouse() );
-   assert( umm );
-   mMotionModel[UFO]   = umm;
+   UFOMotionModel* umm = new UFOMotionModel(GetKeyboard(), GetMouse());
+   assert(umm);
+   mMotionModel[UFO] = umm;
 
 
-   OrbitMotionModel* omm   = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-   assert( omm );
+   OrbitMotionModel* omm = new OrbitMotionModel(GetKeyboard(), GetMouse());
+   assert(omm);
 
-   mMotionModel[ORBIT]  = omm;
+   mMotionModel[ORBIT] = omm;
 
 
-   for( int ii(WALK); ii < NUMMOTIONMODELS; ii++ )
-   {  
-      mMotionModel[ii]->SetTarget( GetCamera() );
+   for (int ii(WALK); ii < NUMMOTIONMODELS; ++ii)
+   {
+      mMotionModel[ii]->SetTarget(GetCamera());
    }
 
-   EnableMotionModel( ORBIT );
+   EnableMotionModel(ORBIT);
 }
 
 
 
-void
-Viewer::InitObjects( void )
+void Viewer::InitObjects(void)
 {
-   osgFX::Scribe* scribe   = new osgFX::Scribe;
-   assert( scribe );
+   osgFX::Scribe* scribe = new osgFX::Scribe;
+   assert(scribe);
    scribe->setName("HeadScribe");
 
-   mViewerNode->addChild( scribe );
+   mViewerNode->addChild(scribe);
 
-   scribe->setEnabled( false );
+   scribe->setEnabled(false);
 }
 
 
 
-void
-Viewer::InitCompass( void )
+void Viewer::InitCompass(void)
 {
-   dtCore::Camera*  cam   = GetCamera();
-   assert( cam );
+   dtCore::Camera* cam = GetCamera();
+   assert(cam);
 
-   Compass* compass  = new Compass( cam );
-   assert( compass );
+   Compass* compass = new Compass(cam);
+   assert(compass);
 
    mViewerNode->addChild(compass->GetOSGNode());
 }
@@ -740,85 +746,87 @@ void
 Viewer::InitGridPlanes()
 {
    const int   numVerts(2 * 2 * GRID_LINE_COUNT);
-   const float length(( ( GRID_LINE_COUNT - 1 ) * GRID_LINE_SPACING ) / 2.f);
+   const float length(((GRID_LINE_COUNT - 1) * GRID_LINE_SPACING) / 2.f);
 
-   osg::Vec3   verts[numVerts];
-   int         indx(0L);
-   for( int ii(0L); ii < GRID_LINE_COUNT; ii++ )
+   osg::Vec3 verts[numVerts];
+   int       indx(0L);
+   for (int ii(0L); ii < GRID_LINE_COUNT; ++ii)
    {
-      verts[indx++].set( -length + ii * GRID_LINE_SPACING,  length, 0.0f );
-      verts[indx++].set( -length + ii * GRID_LINE_SPACING, -length, 0.0f );
+      verts[indx++].set(-length + ii * GRID_LINE_SPACING,  length, 0.0f);
+      verts[indx++].set(-length + ii * GRID_LINE_SPACING, -length, 0.0f);
    }
 
-   for( int ii(0L); ii < GRID_LINE_COUNT; ii++ )
+   for (int ii(0L); ii < GRID_LINE_COUNT; ++ii)
    {
-      verts[indx++].set(  length, -length + ii * GRID_LINE_SPACING, 0.0f );
-      verts[indx++].set( -length, -length + ii * GRID_LINE_SPACING, 0.0f );
+      verts[indx++].set( length, -length + ii * GRID_LINE_SPACING, 0.0f);
+      verts[indx++].set(-length, -length + ii * GRID_LINE_SPACING, 0.0f);
    }
 
 
    osg::Geometry* geome = new osg::Geometry;
-   assert( geome );
+   assert(geome);
 
-   geome->setVertexArray( new osg::Vec3Array(numVerts, verts) );
-   geome->addPrimitiveSet( new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVerts) );
+   geome->setVertexArray(new osg::Vec3Array(numVerts, verts));
+   geome->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, numVerts));
 
 
    osg::Geode* geode = new osg::Geode;
-   assert( geode );
+   assert(geode);
 
-   geode->addDrawable( geome );
-   geode->getOrCreateStateSet()->setMode( GL_LIGHTING, 0 );
+   geode->addDrawable(geome);
+   geode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);
 
 
    mDispXform[XY_PLANE] = new osg::MatrixTransform;
-   assert( mDispXform[XY_PLANE] != NULL );
+   assert(mDispXform[XY_PLANE] != NULL);
 
-   mDispXform[XY_PLANE]->addChild( geode );
-   mDispXform[XY_PLANE]->setNodeMask( NODEMASK_ON );
+   mDispXform[XY_PLANE]->addChild(geode);
+   mDispXform[XY_PLANE]->setNodeMask(NODEMASK_ON);
 
 
    mDispXform[YZ_PLANE] = new osg::MatrixTransform;
-   assert( mDispXform[YZ_PLANE] != NULL );
-   
-   mDispXform[YZ_PLANE]->setMatrix( osg::Matrix::rotate( osg::PI_2, 0, 1, 0 ) );
-   mDispXform[YZ_PLANE]->addChild( geode );
-   mDispXform[YZ_PLANE]->setNodeMask( NODEMASK_OFF );
+   assert(mDispXform[YZ_PLANE] != NULL);
+
+   mDispXform[YZ_PLANE]->setMatrix(osg::Matrix::rotate(osg::PI_2, 0, 1, 0));
+   mDispXform[YZ_PLANE]->addChild(geode);
+   mDispXform[YZ_PLANE]->setNodeMask(NODEMASK_OFF);
 
 
    mDispXform[ZX_PLANE] = new osg::MatrixTransform;
-   assert( mDispXform[ZX_PLANE] != NULL );
-   
-   mDispXform[ZX_PLANE]->setMatrix( osg::Matrix::rotate( osg::PI_2, 1, 0, 0 ) );
-   mDispXform[ZX_PLANE]->addChild( geode );
-   mDispXform[ZX_PLANE]->setNodeMask( NODEMASK_OFF );
+   assert(mDispXform[ZX_PLANE] != NULL);
 
-   mViewerNode->addChild( mDispXform[XY_PLANE] );
-   mViewerNode->addChild( mDispXform[YZ_PLANE] );
-   mViewerNode->addChild( mDispXform[ZX_PLANE] );
+   mDispXform[ZX_PLANE]->setMatrix(osg::Matrix::rotate(osg::PI_2, 1, 0, 0));
+   mDispXform[ZX_PLANE]->addChild(geode);
+   mDispXform[ZX_PLANE]->setNodeMask(NODEMASK_OFF);
+
+   mViewerNode->addChild(mDispXform[XY_PLANE]);
+   mViewerNode->addChild(mDispXform[YZ_PLANE]);
+   mViewerNode->addChild(mDispXform[ZX_PLANE]);
 }
 
 
 
-osg::Group*
-Viewer::GetFileObj( unsigned int indx )
+osg::Group* Viewer::GetFileObj(unsigned int indx)
 {
-   osg::Group* objs  = static_cast<osg::Group*>(mViewerNode->getChild( FILEOBJS ));
-   assert( objs );
+   osg::Group* objs = static_cast<osg::Group*>(mViewerNode->getChild(FILEOBJS));
+   assert(objs);
 
-   if( indx >= objs->getNumChildren() )
-      return   NULL;
+   if (indx >= objs->getNumChildren())
+   {
+      return NULL;
+   }
 
-   return   static_cast<osg::Group*>(objs->getChild( indx ));
+   return static_cast<osg::Group*>(objs->getChild(indx));
 }
 
 
 
-osg::Group*
-Viewer::GetDisplayObj( unsigned int indx )
+osg::Group* Viewer::GetDisplayObj(unsigned int indx)
 {
-   if( indx >= NUMDISPLAYITEMS )
-      return   NULL;
+   if (indx >= NUMDISPLAYITEMS)
+   {
+      return NULL;
+   }
 
-   return   static_cast<osg::Group*>(mViewerNode->getChild( indx ));
+   return static_cast<osg::Group*>(mViewerNode->getChild(indx));
 }

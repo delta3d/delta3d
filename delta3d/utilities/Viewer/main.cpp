@@ -6,28 +6,28 @@
 #include <cassert>
 
 #ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#   pragma warning(push)
+#   pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
 #endif
 
 #include "UserInterface.h"
 
 #ifdef _MSC_VER
-#	pragma warning(pop)
+#   pragma warning(pop)
 #endif
 
 int
-main( int argc, char** argv )
+main(int argc, char** argv)
 {
-   UserInterface* app   = new UserInterface( argc, argv );
-   assert( app );
+   UserInterface* app = new UserInterface(argc, argv);
+   assert(app);
 
-   Fl::visual( FL_DOUBLE | FL_RGB8 );
+   Fl::visual(FL_DOUBLE | FL_RGB8);
    app->Show();
    Fl::run();
 
-   delete   app;
-   app   = NULL;
+   delete app;
+   app = NULL;
 
-   return   0;
+   return 0;
 }
