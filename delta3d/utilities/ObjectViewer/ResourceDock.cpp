@@ -1332,7 +1332,7 @@ void ResourceDock::ExportTexturesFromStateSet(const QString& path, osg::StateSet
                   osg::Image* image = texture->getImage(imageIndex);
                   if (image)
                   {
-                     QFileInfo fileInfo = image->getFileName().c_str();
+                     QFileInfo fileInfo(QString::fromStdString(image->getFileName()));
                      std::string filePath = path.toStdString();
                      filePath.append("/");
                      filePath.append(fileInfo.fileName().toStdString());

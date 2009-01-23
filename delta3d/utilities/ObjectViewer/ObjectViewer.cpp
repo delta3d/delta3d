@@ -775,8 +775,8 @@ void ObjectViewer::clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr
    for (itor = proxies.begin(); itor != proxies.end(); ++itor)
    {
       dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->second.get());
-      const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
-      dtDAL::ActorProxyIcon *billBoard;
+      //const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+      //dtDAL::ActorProxyIcon *billBoard;
 
       //if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
       //{
