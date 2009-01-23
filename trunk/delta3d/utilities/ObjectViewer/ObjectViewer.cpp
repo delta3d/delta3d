@@ -28,6 +28,7 @@
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/geometrycollector.h>
 #include <dtUtil/librarysharingmanager.h>
 
 #include <dtDAL/project.h>
@@ -47,39 +48,6 @@
 #include <osgViewer/CompositeViewer>
 
 #include <assert.h>
-
-// Node visitor that gather all geometry contained within a subgraph
-class GeometryCollector : public osg::NodeVisitor
-{
-public:
-
-   GeometryCollector()
-      : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN){}
-
-   virtual void apply(osg::Geode& node)
-   {
-      // start off with an empty list
-      mGeomList.clear();
-
-      int numberOfDrawables = node.getNumDrawables();
-
-      for (int drawableIndex = 0; drawableIndex < numberOfDrawables; ++drawableIndex)
-      {
-         // If this is geometry, get a pointer to it
-         osg::Geometry* geom = node.getDrawable(drawableIndex)->asGeometry();
-
-         if (geom)
-         {
-            // store the geometry in this list
-            mGeomList.push_back(geom);
-         }
-      }
-
-      traverse(node);
-   }
-
-   std::vector<osg::Geometry*> mGeomList;
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
@@ -891,7 +859,7 @@ void ObjectViewer::PostFrame(const double)
 void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
 {
    // Get all geometry in the graph to apply the shader to
-   osg::ref_ptr<GeometryCollector> geomCollector = new GeometryCollector;
+   osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
    object->GetOSGNode()->accept(*geomCollector);        
 
    // Calculate tangent vectors for all faces and store them as vertex attributes
