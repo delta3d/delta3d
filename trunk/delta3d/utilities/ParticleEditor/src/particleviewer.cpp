@@ -10,9 +10,9 @@
 #include <osg/MatrixTransform>
 #include <osg/Texture2D>
 
-//#include <osgParticle/AccelOperator>
-//#include <osgParticle/FluidFrictionOperator>
-//#include <osgParticle/ForceOperator>
+#include <osgParticle/AccelOperator>
+#include <osgParticle/FluidFrictionOperator>
+#include <osgParticle/ForceOperator>
 #include <osgParticle/MultiSegmentPlacer>
 #include <osgParticle/PointPlacer>
 #include <osgParticle/RadialShooter>
@@ -161,48 +161,9 @@ void ParticleViewer::UpdateSelectionIndex(int newIndex)
    mLayerIndex = newIndex;
    if(0 <= mLayerIndex && mLayerIndex < static_cast<int>(mLayers.size()))
    {
-      emit LayerHiddenChanged(mLayers[mLayerIndex].mModularEmitter->isEnabled());
-      emit AlignmentUpdated(mLayers[mLayerIndex].mParticleSystem->getParticleAlignment());
-      emit ShapeUpdated( mLayers[mLayerIndex].mpParticle->getShape());
-      emit LifeUpdated(mLayers[mLayerIndex].mpParticle->getLifeTime());
-      emit RadiusUpdated(mLayers[mLayerIndex].mpParticle->getRadius());
-      emit MassUpdated(mLayers[mLayerIndex].mpParticle->getMass());
-      osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getSizeRange();
-      emit SizeFromUpdated(sizeRange.minimum);
-      emit SizeToUpdated(sizeRange.maximum);
-
-      std::string textureFile = "";
-      osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
-      osg::StateAttribute* sa = ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
-      if(IS_A(sa, osg::Texture2D*))
-      {
-         osg::Texture2D* t2d = (osg::Texture2D*)sa;
-         osg::Image* image = t2d->getImage();
-         if (image != NULL)
-         {
-            textureFile = image->getFileName();
-         }
-      }
-      osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
-      bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
-      osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
-      bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
-      emit TextureUpdated(QString::fromStdString(textureFile), emissive, lighting);
-
-      osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
-      emit RFromUpdated(colorRange.minimum[0]);
-      emit RToUpdated(colorRange.maximum[0]);
-      emit GFromUpdated(colorRange.minimum[1]);
-      emit GToUpdated(colorRange.maximum[1]);
-      emit BFromUpdated(colorRange.minimum[2]);
-      emit BToUpdated(colorRange.maximum[2]);
-      osgParticle::rangef alphaRange = mLayers[mLayerIndex].mpParticle->getAlphaRange();
-      emit AFromUpdated(alphaRange.minimum);
-      emit AToUpdated(alphaRange.maximum);
-      emit EmitterLifeUpdated(mLayers[mLayerIndex].mModularEmitter->getLifeTime());
-      emit EmitterStartUpdated(mLayers[mLayerIndex].mModularEmitter->getStartTime());
-      emit EmitterResetUpdated(mLayers[mLayerIndex].mModularEmitter->getResetTime());
-      emit EndlessLifetimeUpdated(mLayers[mLayerIndex].mModularEmitter->isEndless());
+      UpdateParticleTabsValues();
+      UpdateCounterTabsValues();
+      UpdatePlacerTabsValues();
    }
 }
 
@@ -404,6 +365,114 @@ void ParticleViewer::EndlessLifetimeChanged(bool endless)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::CounterTypeBoxValueChanged(int newCounter)
+{
+   osgParticle::Counter* counter = mLayers[mLayerIndex].mModularEmitter->getCounter();
+
+   switch(newCounter)
+   {
+   case 0:
+      if(!IS_A(counter, osgParticle::RandomRateCounter*))
+      {
+         mLayers[mLayerIndex].mModularEmitter->setCounter(new osgParticle::RandomRateCounter());
+         UpdateRandomRatesValues();
+      }
+      break;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RandomRateMinRateValueChanged(double newValue)
+{
+   osgParticle::RandomRateCounter* rrc =
+      (osgParticle::RandomRateCounter*)mLayers[mLayerIndex].mModularEmitter->getCounter();
+   osgParticle::rangef rateRange = rrc->getRateRange();
+   rateRange.minimum = newValue;
+   rrc->setRateRange(rateRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RandomRateMaxRateValueChanged(double newValue)
+{
+   osgParticle::RandomRateCounter* rrc =
+      (osgParticle::RandomRateCounter*)mLayers[mLayerIndex].mModularEmitter->getCounter();
+   osgParticle::rangef rateRange = rrc->getRateRange();
+   rateRange.maximum = newValue;
+   rrc->setRateRange(rateRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::PlacerTypeBoxValueChanged(int newCounter)
+{
+   osgParticle::Placer* placer = mLayers[mLayerIndex].mModularEmitter->getPlacer();
+
+   switch(newCounter)
+   {
+   case 0:
+      if(!IS_A(placer, osgParticle::PointPlacer*))
+      {
+         mLayers[mLayerIndex].mModularEmitter->setPlacer(new osgParticle::PointPlacer());
+         UpdatePointPlacerValues();
+      }
+      break;
+
+   case 1:
+      if (!IS_A(placer, osgParticle::SectorPlacer*))
+      {
+         mLayers[mLayerIndex].mModularEmitter->setPlacer(new osgParticle::SectorPlacer());
+         //updateSectorPlacerParameters();
+      }
+      break;
+
+   case 2:
+      if (!IS_A(placer, osgParticle::SegmentPlacer*))
+      {
+         mLayers[mLayerIndex].mModularEmitter->setPlacer(new osgParticle::SegmentPlacer());
+         //updateSegmentPlacerParameters();
+      }
+      break;
+
+   case 3:
+      if (!IS_A(placer, osgParticle::MultiSegmentPlacer*))
+      {
+         osgParticle::MultiSegmentPlacer* msp = new osgParticle::MultiSegmentPlacer();
+         msp->addVertex(-1, 0, 0);
+         msp->addVertex(1, 0, 0);
+         mLayers[mLayerIndex].mModularEmitter->setPlacer(msp);
+         //updateMultiSegmentPlacerParameters();
+      }
+      break;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::PointPlacerXValueChanged(double newValue)
+{
+   osgParticle::PointPlacer* pp =(osgParticle::PointPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = pp->getCenter();
+   center[0] = newValue;
+   pp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::PointPlacerYValueChanged(double newValue)
+{
+   osgParticle::PointPlacer* pp =(osgParticle::PointPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = pp->getCenter();
+   center[1] = newValue;
+   pp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::PointPlacerZValueChanged(double newValue)
+{
+   osgParticle::PointPlacer* pp =(osgParticle::PointPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = pp->getCenter();
+   center[2] = newValue;
+   pp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::MakeCompass()
 {
    dtCore::Compass* compass = new dtCore::Compass(GetCamera());
@@ -453,6 +522,112 @@ void ParticleViewer::MakeGrids()
 
    mpYZGridTransform->addChild(geode);
    mpYZGridTransform->setNodeMask(0x0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateParticleTabsValues()
+{
+   // Particle UI
+   emit LayerHiddenChanged(mLayers[mLayerIndex].mModularEmitter->isEnabled());
+   emit AlignmentUpdated((int)mLayers[mLayerIndex].mParticleSystem->getParticleAlignment());
+   emit ShapeUpdated(mLayers[mLayerIndex].mpParticle->getShape());
+   emit LifeUpdated(mLayers[mLayerIndex].mpParticle->getLifeTime());
+   emit RadiusUpdated(mLayers[mLayerIndex].mpParticle->getRadius());
+   emit MassUpdated(mLayers[mLayerIndex].mpParticle->getMass());
+   osgParticle::rangef sizeRange = mLayers[mLayerIndex].mpParticle->getSizeRange();
+   emit SizeFromUpdated(sizeRange.minimum);
+   emit SizeToUpdated(sizeRange.maximum);
+
+   // Texture UI
+   std::string textureFile = "";
+   osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
+   osg::StateAttribute* sa = ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+   if(IS_A(sa, osg::Texture2D*))
+   {
+      osg::Texture2D* t2d = (osg::Texture2D*)sa;
+      osg::Image* image = t2d->getImage();
+      if (image != NULL)
+      {
+         textureFile = image->getFileName();
+      }
+   }
+   osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
+   bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
+   osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+   bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
+   emit TextureUpdated(QString::fromStdString(textureFile), emissive, lighting);
+
+   // Color UI
+   osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();
+   emit RFromUpdated(colorRange.minimum[0]);
+   emit RToUpdated(colorRange.maximum[0]);
+   emit GFromUpdated(colorRange.minimum[1]);
+   emit GToUpdated(colorRange.maximum[1]);
+   emit BFromUpdated(colorRange.minimum[2]);
+   emit BToUpdated(colorRange.maximum[2]);
+   osgParticle::rangef alphaRange = mLayers[mLayerIndex].mpParticle->getAlphaRange();
+   emit AFromUpdated(alphaRange.minimum);
+   emit AToUpdated(alphaRange.maximum);
+
+   // Emitter UI
+   emit EmitterLifeUpdated(mLayers[mLayerIndex].mModularEmitter->getLifeTime());
+   emit EmitterStartUpdated(mLayers[mLayerIndex].mModularEmitter->getStartTime());
+   emit EmitterResetUpdated(mLayers[mLayerIndex].mModularEmitter->getResetTime());
+   emit EndlessLifetimeUpdated(mLayers[mLayerIndex].mModularEmitter->isEndless());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateCounterTabsValues()
+{
+   osgParticle::Counter* counter = mLayers[mLayerIndex].mModularEmitter->getCounter();
+   if(IS_A(counter, osgParticle::RandomRateCounter*))
+   {
+      emit CounterTypeBoxUpdated(0);
+      UpdateRandomRatesValues();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateRandomRatesValues()
+{
+   osgParticle::RandomRateCounter* rrc =
+      (osgParticle::RandomRateCounter*)mLayers[mLayerIndex].mModularEmitter->getCounter();
+   osgParticle::rangef rateRange = rrc->getRateRange();
+   emit RandomRateMinRateUpdated(rateRange.minimum);
+   emit RandomRateMaxRateUpdated(rateRange.maximum);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdatePlacerTabsValues()
+{
+   osgParticle::Placer* placer = mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   if(IS_A(placer, osgParticle::PointPlacer*))
+   {
+      emit PlacerTypeBoxUpdated(0);
+      UpdatePointPlacerValues();
+   }
+   else if(IS_A(placer, osgParticle::SectorPlacer*))
+   {
+      emit PlacerTypeBoxUpdated(1);
+   }
+   else if(IS_A(placer, osgParticle::SegmentPlacer*))
+   {
+      emit PlacerTypeBoxUpdated(2);
+   }
+   else if(IS_A(placer, osgParticle::MultiSegmentPlacer*))
+   {
+      emit PlacerTypeBoxUpdated(3);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdatePointPlacerValues()
+{
+   osgParticle::PointPlacer* pp =(osgParticle::PointPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = pp->getCenter();
+   emit PointPlacerXUpdated(center[0]);
+   emit PointPlacerYUpdated(center[1]);
+   emit PointPlacerZUpdated(center[2]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

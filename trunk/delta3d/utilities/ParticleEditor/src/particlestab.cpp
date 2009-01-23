@@ -18,8 +18,6 @@ ParticlesTab::~ParticlesTab()
 ///////////////////////////////////////////////////////////////////////////////
 void ParticlesTab::SetupUI()
 {
-   SetupComboBoxes();
-
    SetupParticleConnections();
    SetupTextureConnections();
    SetupColorConnections();
@@ -285,21 +283,6 @@ void ParticlesTab::EmitterResetSliderValueChanged(int newValue)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ParticlesTab::SetupComboBoxes()
-{
-   mpAlignmentBox->addItem("Billboard");
-   mpAlignmentBox->addItem("Fixed");
-
-   mpShapeBox->addItem("Point");
-   mpShapeBox->addItem("Quad");
-   mpShapeBox->addItem("Quad Tri Strip");
-   mpShapeBox->addItem("Hexagon");
-   mpShapeBox->addItem("Line");
-
-   mpShapeBox->setCurrentIndex(1);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 void ParticlesTab::SetupParticleConnections()
 {
    connect(mpLifeSpinBox, SIGNAL(valueChanged(double)), this, SLOT(LifeSpinBoxValueChanged(double)));
@@ -340,7 +323,6 @@ void ParticlesTab::SetupColorConnections()
    connect(mpAFromSlider, SIGNAL(sliderMoved(int)), this, SLOT(AFromSliderValueChanged(int)));
    connect(mpAToSpinBox, SIGNAL(valueChanged(double)), this, SLOT(AToSpinBoxValueChanged(double)));
    connect(mpAToSlider, SIGNAL(sliderMoved(int)), this, SLOT(AToSliderValueChanged(int)));
-
    connect(mpCustomColorFromButton, SIGNAL(clicked()), this, SLOT(CustomColorFromButtonPushed()));
    connect(mpCustomColorToButton, SIGNAL(clicked()), this, SLOT(CustomColorToButtonPushed()));
 }
