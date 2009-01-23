@@ -51,16 +51,23 @@ public:
    virtual void dropEvent(QDropEvent* event);
 
 signals:
+   
+   // File menu
    void FileToLoad(const QString&);
    void LoadShaderDefinition(const QString&);
    void ReloadShaderDefinition();
 
+   // Toolbar
    void ToggleGrid(bool shouldShow);
+
+   // Settings menu
+   void SetGenerateTangentAttribute(bool shouldGenerate);
 
 public slots:
 
    void OnInitialization();
    void OnToggleShadingToolbar();
+   void OnToggleGenerateTangents();
    void OnRecompileClicked();
    void OnToggleVertexShaderSource(bool enabled);
    void OnToggleFragmentShaderSource(bool enabled);
@@ -81,6 +88,9 @@ private:
    QAction* mLoadGeometryAction;
    QAction* mChangeContextAction;
    QAction* mExitAct;
+
+   // Settings menu
+   QAction* mGenerateTangentsAction;
 
    // Mode Toolbar
    QAction* mObjectModeAction;

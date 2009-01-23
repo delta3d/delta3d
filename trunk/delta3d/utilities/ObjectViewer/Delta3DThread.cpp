@@ -64,7 +64,7 @@ Delta3DThread::Delta3DThread(QApplication* parent)
    // If we have an argument(possibly from drag and drop)
    if (argList.size() > 1)
    {
-      mStartupFile = argList.at(1).toStdString();      
+      mStartupFile = argList.at(1).toStdString();
    }
 }
 
@@ -117,12 +117,17 @@ void Delta3DThread::run()
 ////////////////////////////////////////////////////////////////////////////////
 void Delta3DThread::MakeConnections()
 {
+   // Menu connections
    connect(mWin, SIGNAL(LoadShaderDefinition(const QString&)), 
       mViewer.get(), SLOT(OnLoadShaderFile(const QString&)));
+   
+   connect((QObject*)mWin, SIGNAL(SetGenerateTangentAttribute(bool)), 
+      mViewer.get(), SLOT(OnSetGenerateTangentAttribute(bool)));
 
    connect(mWin, SIGNAL(ReloadShaderDefinition()), 
-      mWin->GetResourceObject(), SLOT(OnReloadShaderFiles()));  
+      mWin->GetResourceObject(), SLOT(OnReloadShaderFiles()));
 
+   // Resource dock connections
    connect(mWin->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
       mViewer.get(), SLOT(OnLoadGeometryFile(const std::string&)));
 
@@ -202,7 +207,7 @@ void Delta3DThread::MakeConnections()
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mLightModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterLightMode()));
-   connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));
+   connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));   
 }
 
 ////////////////////////////////////////////////////////////////////////////////

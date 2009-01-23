@@ -100,20 +100,26 @@ void ObjectWorkspace::dropEvent(QDropEvent *event)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateMenus()
 {
-   QMenu* windowMenu = menuBar()->addMenu("&File");
-   QMenu* viewMenu   = menuBar()->addMenu("&View");
+   QMenu* windowMenu   = menuBar()->addMenu("&File");
+   QMenu* viewMenu     = menuBar()->addMenu("&View");
+   QMenu* settingsMenu = menuBar()->addMenu("&Settings");
+
    QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");   
 
    windowMenu->addAction(mLoadShaderDefAction);
    windowMenu->addAction(mLoadGeometryAction);
    windowMenu->addAction(mChangeContextAction);
 
-   QAction* toggleShadeToolbarAction = toolBarMenu->addAction("Shading toolbar");
-
+   QAction* toggleShadeToolbarAction = toolBarMenu->addAction(tr("Shading toolbar"));
    toggleShadeToolbarAction->setCheckable(true);
    toggleShadeToolbarAction->setChecked(true);
 
-   connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));  
+   mGenerateTangentsAction = settingsMenu->addAction(tr("Generate tangent attribute on geometry load."));
+   mGenerateTangentsAction->setCheckable(true);
+   mGenerateTangentsAction->setChecked(true);
+
+   connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
+   connect(mGenerateTangentsAction, SIGNAL(triggered()), this, SLOT(OnToggleGenerateTangents()));
 
    menuBar()->addSeparator();
    windowMenu->addAction(mExitAct);
@@ -133,11 +139,11 @@ void ObjectWorkspace::CreateFileMenuActions()
 
    mLoadGeometryAction = new QAction(tr("Load Geometry..."), this);
    mLoadGeometryAction->setStatusTip(tr("Open an existing shader definition file."));
-   connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));   
+   connect(mLoadGeometryAction, SIGNAL(triggered()), this, SLOT(OnLoadGeometry()));
 
    mChangeContextAction = new QAction(tr("Change Project..."), this);
    mChangeContextAction->setStatusTip(tr("Change the project context directory."));
-   connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));     
+   connect(mChangeContextAction, SIGNAL(triggered()), this, SLOT(OnChangeContext()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -276,6 +282,12 @@ void ObjectWorkspace::OnToggleShadingToolbar()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::OnToggleGenerateTangents()
+{
+   emit SetGenerateTangentAttribute(mGenerateTangentsAction->isChecked());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnRecompileClicked()
 {
    emit ReloadShaderDefinition();
@@ -360,7 +372,7 @@ void ObjectWorkspace::UpdateResourceLists()
       while (!fileList.empty())
       {
          QFileInfo fileInfo = fileList.takeFirst();
-         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());         
+         mResourceDock->OnNewGeometry(staticMeshDir.toStdString(), fileInfo.fileName().toStdString());
       }      
    }
 }
