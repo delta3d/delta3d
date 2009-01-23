@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace dtCore
+namespace dtUtil
 {
 
    namespace CollectorUtil
@@ -121,6 +121,6 @@ namespace dtCore
    } // namespace CollectorUtil
 
 
-} // namespace dtCore
+} // namespace dtUtil
 
 #endif // DELTA_COLLECTOR_UTIL

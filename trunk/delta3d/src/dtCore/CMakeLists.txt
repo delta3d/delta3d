@@ -36,7 +36,6 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 LINK_WITH_VARIABLES(${LIB_NAME}
                     OSG_LIBRARY
                     OSGTEXT_LIBRARY
-                    OSGSIM_LIBRARY
                     OSGDB_LIBRARY
                     OSGGA_LIBRARY
                     OSGVIEWER_LIBRARY

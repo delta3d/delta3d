@@ -19,23 +19,20 @@
 * Matthew "w00by" Stokes
 */
 
-#include <prefix/dtcoreprefix-src.h>
-#include <dtCore/stateattributecollector.h>
-#include <dtCore/collectorutil.h>
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/stateattributecollector.h>
+#include <dtUtil/collectorutil.h>
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 
 #include <osg/Node>
-#include <osg/MatrixTransform>
-#include <osgSim/DOFTransform>
-#include <osg/Switch>
 #include <osg/Drawable>
 #include <osg/Geode>
 #include <osg/Material>
 #include <osg/Texture>
 
 
-namespace dtCore
+namespace dtUtil
 {
    //Define all the different flags so that users can OR the variables together to create a mask
    const StateAttributeCollector::StateAttribFlag StateAttributeCollector::MaterialFlag =  dtUtil::Bits::Add(0,1);
@@ -359,4 +356,4 @@ namespace dtCore
    {
 
    }
-}//namespace dtCore
+}//namespace dtUtil

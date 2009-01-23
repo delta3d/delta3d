@@ -17,8 +17,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#include <prefix/dtcoreprefix-src.h>
-#include <dtCore/tangentspacevisitor.h>
+#include <prefix/dtutilprefix-src.h>
+#include <dtUtil/tangentspacevisitor.h>
 
 #include <osg/Program>
 #include <osg/Geode>
@@ -26,7 +26,7 @@
 #include <osgUtil/TangentSpaceGenerator>
 #include <dtCore/refptr.h>
 
-namespace dtCore
+namespace dtUtil
 {
    // constructor
    TangentSpaceVisitor::TangentSpaceVisitor(const std::string &vertexAttributeName, 

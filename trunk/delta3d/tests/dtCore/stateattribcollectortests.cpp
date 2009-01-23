@@ -27,8 +27,7 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/nodecollector.h>
-#include <dtCore/stateattributecollector.h>
+#include <dtUtil/stateattributecollector.h>
 #include <dtCore/object.h>
 #include <dtUtil/exception.h>
 #include <osg/ref_ptr>
@@ -58,10 +57,10 @@ public:
    void TestModel();
 
 private:
-   dtCore::RefPtr<dtCore::StateAttributeCollector> mStateCollector1;
-   dtCore::RefPtr<dtCore::StateAttributeCollector> mStateCollector2;
-   dtCore::RefPtr<dtCore::StateAttributeCollector> mStateCollector3;
-   dtCore::RefPtr<dtCore::StateAttributeCollector> mStateCollector4;
+   dtCore::RefPtr<dtUtil::StateAttributeCollector> mStateCollector1;
+   dtCore::RefPtr<dtUtil::StateAttributeCollector> mStateCollector2;
+   dtCore::RefPtr<dtUtil::StateAttributeCollector> mStateCollector3;
+   dtCore::RefPtr<dtUtil::StateAttributeCollector> mStateCollector4;
 
    osg::Group* mGroup;
 };
@@ -80,7 +79,7 @@ void StateAttribCollectorTests::setUp()
 
    mObj = new dtCore::Object("Object");
    mObj->LoadFile(loadFile);
-   mNodeCollector = new dtCore::NodeCollector(mObj->GetOSGNode(), dtCore::NodeCollector::AllNodeTypes); 
+   mNodeCollector = new dtUtil::NodeCollector(mObj->GetOSGNode(), dtUtil::NodeCollector::AllNodeTypes); 
 */
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //////////////////////////////////////End Load an Object that contains Nodes/////////////////////////////////////////
@@ -159,10 +158,10 @@ void StateAttribCollectorTests::setUp()
    switch01->setStateSet(stateset02);
    trans01->setStateSet(stateset01);
    
-   mStateCollector1 = new dtCore::StateAttributeCollector(mGroup, dtCore::StateAttributeCollector::MaterialFlag);
-   mStateCollector2 = new dtCore::StateAttributeCollector(mGroup, dtCore::StateAttributeCollector::ProgramFlag);
-   mStateCollector3 = new dtCore::StateAttributeCollector(mGroup, dtCore::StateAttributeCollector::TextureFlag);
-   mStateCollector4 = new dtCore::StateAttributeCollector(mGroup, dtCore::StateAttributeCollector::AllAttributes);
+   mStateCollector1 = new dtUtil::StateAttributeCollector(mGroup, dtUtil::StateAttributeCollector::MaterialFlag);
+   mStateCollector2 = new dtUtil::StateAttributeCollector(mGroup, dtUtil::StateAttributeCollector::ProgramFlag);
+   mStateCollector3 = new dtUtil::StateAttributeCollector(mGroup, dtUtil::StateAttributeCollector::TextureFlag);
+   mStateCollector4 = new dtUtil::StateAttributeCollector(mGroup, dtUtil::StateAttributeCollector::AllAttributes);
 }
 
 void StateAttribCollectorTests::tearDown()
