@@ -420,7 +420,7 @@ void ParticleViewer::PlacerTypeBoxValueChanged(int newCounter)
       if (!IS_A(placer, osgParticle::SectorPlacer*))
       {
          mLayers[mLayerIndex].mModularEmitter->setPlacer(new osgParticle::SectorPlacer());
-         //updateSectorPlacerParameters();
+         UpdateSectorPlacerValues();
       }
       break;
 
@@ -428,7 +428,7 @@ void ParticleViewer::PlacerTypeBoxValueChanged(int newCounter)
       if (!IS_A(placer, osgParticle::SegmentPlacer*))
       {
          mLayers[mLayerIndex].mModularEmitter->setPlacer(new osgParticle::SegmentPlacer());
-         //updateSegmentPlacerParameters();
+         UpdateSegmentPlacerValues();
       }
       break;
 
@@ -439,7 +439,7 @@ void ParticleViewer::PlacerTypeBoxValueChanged(int newCounter)
          msp->addVertex(-1, 0, 0);
          msp->addVertex(1, 0, 0);
          mLayers[mLayerIndex].mModularEmitter->setPlacer(msp);
-         //updateMultiSegmentPlacerParameters();
+         UpdateMultiSegmentPlacerValues();
       }
       break;
    }
@@ -470,6 +470,69 @@ void ParticleViewer::PointPlacerZValueChanged(double newValue)
    osg::Vec3 center = pp->getCenter();
    center[2] = newValue;
    pp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerXValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = sp->getCenter();
+   center[0] = newValue;
+   sp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerYValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = sp->getCenter();
+   center[1] = newValue;
+   sp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerZValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = sp->getCenter();
+   center[2] = newValue;
+   sp->setCenter(center);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerMinRadiusValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osgParticle::rangef radiusRange = sp->getRadiusRange();
+   radiusRange.minimum = newValue;
+   sp->setRadiusRange(radiusRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerMaxRadiusValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osgParticle::rangef radiusRange = sp->getRadiusRange();
+   radiusRange.maximum = newValue;
+   sp->setRadiusRange(radiusRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerMinPhiValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osgParticle::rangef phiRange = sp->getPhiRange();
+   phiRange.minimum = newValue;
+   sp->setPhiRange(phiRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SectorPlacerMaxPhiValueChanged(double newValue)
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osgParticle::rangef phiRange = sp->getPhiRange();
+   phiRange.maximum = newValue;
+   sp->setPhiRange(phiRange);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -609,14 +672,17 @@ void ParticleViewer::UpdatePlacerTabsValues()
    else if(IS_A(placer, osgParticle::SectorPlacer*))
    {
       emit PlacerTypeBoxUpdated(1);
+      UpdateSectorPlacerValues();
    }
    else if(IS_A(placer, osgParticle::SegmentPlacer*))
    {
       emit PlacerTypeBoxUpdated(2);
+      UpdateSegmentPlacerValues();
    }
    else if(IS_A(placer, osgParticle::MultiSegmentPlacer*))
    {
       emit PlacerTypeBoxUpdated(3);
+      UpdateMultiSegmentPlacerValues();
    }
 }
 
@@ -628,6 +694,32 @@ void ParticleViewer::UpdatePointPlacerValues()
    emit PointPlacerXUpdated(center[0]);
    emit PointPlacerYUpdated(center[1]);
    emit PointPlacerZUpdated(center[2]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateSectorPlacerValues()
+{
+   osgParticle::SectorPlacer* sp =(osgParticle::SectorPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 center = sp->getCenter();
+   emit SectorPlacerXUpdated(center[0]);
+   emit SectorPlacerYUpdated(center[1]);
+   emit SectorPlacerZUpdated(center[2]);
+   osgParticle::rangef radiusRange = sp->getRadiusRange();
+   emit SectorPlacerMinRadiusUpdated(radiusRange.minimum);
+   emit SectorPlacerMaxRadiusUpdated(radiusRange.maximum);
+   osgParticle::rangef phiRange = sp->getPhiRange();
+   emit SectorPlacerMinPhiUpdated(phiRange.minimum);
+   emit SectorPlacerMaxPhiUpdated(phiRange.maximum);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateSegmentPlacerValues()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateMultiSegmentPlacerValues()
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////

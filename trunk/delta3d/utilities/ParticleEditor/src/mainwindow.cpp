@@ -241,6 +241,22 @@ void MainWindow::SetupPlacerTab()
    mpPlacerTab->SetPointPlacerZSpinBox(mUI.PointPlacerZSpinBox);
    mpPlacerTab->SetPointPlacerZSlider(mUI.PointPlacerZSlider);
 
+   // Sector Placer UI
+   mpPlacerTab->SetSectorPlacerXSpinBox(mUI.SectorPlacerXSpinBox);
+   mpPlacerTab->SetSectorPlacerXSlider(mUI.SectorPlacerXSlider);
+   mpPlacerTab->SetSectorPlacerYSpinBox(mUI.SectorPlacerYSpinBox);
+   mpPlacerTab->SetSectorPlacerYSlider(mUI.SectorPlacerYSlider);
+   mpPlacerTab->SetSectorPlacerZSpinBox(mUI.SectorPlacerZSpinBox);
+   mpPlacerTab->SetSectorPlacerZSlider(mUI.SectorPlacerZSlider);
+   mpPlacerTab->SetSectorPlacerMinRadiusSpinBox(mUI.SectorPlacerMinRadiusSpinBox);
+   mpPlacerTab->SetSectorPlacerMinRadiusSlider(mUI.SectorPlacerMinRadiusSlider);
+   mpPlacerTab->SetSectorPlacerMaxRadiusSpinBox(mUI.SectorPlacerMaxRadiusSpinBox);
+   mpPlacerTab->SetSectorPlacerMaxRadiusSlider(mUI.SectorPlacerMaxRadiusSlider);
+   mpPlacerTab->SetSectorPlacerMinPhiSpinBox(mUI.SectorPlacerMinPhiSpinBox);
+   mpPlacerTab->SetSectorPlacerMinPhiSlider(mUI.SectorPlacerMinPhiSlider);
+   mpPlacerTab->SetSectorPlacerMaxPhiSpinBox(mUI.SectorPlacerMaxPhiSpinBox);
+   mpPlacerTab->SetSectorPlacerMaxPhiSlider(mUI.SectorPlacerMaxPhiSlider);
+
    SetupPlacerTabConnections();
 
    mpPlacerTab->SetupUI();
@@ -255,6 +271,14 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mUI.PointPlacerXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(PointPlacerXValueChanged(double)));
    connect(mUI.PointPlacerYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(PointPlacerYValueChanged(double)));
    connect(mUI.PointPlacerZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(PointPlacerZValueChanged(double)));
+   // Sector Placer UI
+   connect(mUI.SectorPlacerXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerXValueChanged(double)));
+   connect(mUI.SectorPlacerYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerYValueChanged(double)));
+   connect(mUI.SectorPlacerZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerZValueChanged(double)));
+   connect(mUI.SectorPlacerMinRadiusSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMinRadiusValueChanged(double)));
+   connect(mUI.SectorPlacerMaxRadiusSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMaxRadiusValueChanged(double)));
+   connect(mUI.SectorPlacerMinPhiSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMinPhiValueChanged(double)));
+   connect(mUI.SectorPlacerMaxPhiSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SectorPlacerMaxPhiValueChanged(double)));
 
    ///> Connections from particle viewer to UI
    connect(mpParticleViewer, SIGNAL(PlacerTypeBoxUpdated(int)), mUI.PlacerTypeComboBox, SLOT(setCurrentIndex(int)));
@@ -262,6 +286,14 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mpParticleViewer, SIGNAL(PointPlacerXUpdated(double)), mUI.PointPlacerXSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(PointPlacerYUpdated(double)), mUI.PointPlacerYSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(PointPlacerZUpdated(double)), mUI.PointPlacerZSpinBox, SLOT(setValue(double)));
+   // Sector Placer UI
+   connect(mpParticleViewer, SIGNAL(SectorPlacerXUpdated(double)), mUI.SectorPlacerXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerYUpdated(double)), mUI.SectorPlacerYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerZUpdated(double)), mUI.SectorPlacerZSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerMinRadiusUpdated(double)), mUI.SectorPlacerMinRadiusSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerMaxRadiusUpdated(double)), mUI.SectorPlacerMaxRadiusSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerMinPhiUpdated(double)), mUI.SectorPlacerMinPhiSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(SectorPlacerMaxPhiUpdated(double)), mUI.SectorPlacerMaxPhiSpinBox, SLOT(setValue(double)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1057,6 +1057,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="alignment" >
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
                          <property name="maximum" >
                           <double>1000.000000000000000</double>
                          </property>
@@ -1087,6 +1090,9 @@
                            <width>48</width>
                            <height>25</height>
                           </size>
+                         </property>
+                         <property name="alignment" >
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
                          <property name="maximum" >
                           <double>10.000000000000000</double>
@@ -1138,6 +1144,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="alignment" >
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
                          <property name="maximum" >
                           <double>10.000000000000000</double>
                          </property>
@@ -1169,6 +1178,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="alignment" >
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                         </property>
                          <property name="maximum" >
                           <double>1000.000000000000000</double>
                          </property>
@@ -1199,6 +1211,9 @@
                            <width>48</width>
                            <height>25</height>
                           </size>
+                         </property>
+                         <property name="alignment" >
+                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
                          <property name="maximum" >
                           <double>1000.000000000000000</double>
@@ -1680,6 +1695,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
                       </property>
@@ -1710,6 +1728,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
@@ -1742,6 +1763,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
                       </property>
@@ -1772,6 +1796,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
@@ -1988,6 +2015,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
                       </property>
@@ -2018,6 +2048,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
@@ -2050,6 +2083,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
                       </property>
@@ -2080,6 +2116,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                       <property name="maximum" >
                        <double>1.000000000000000</double>
@@ -2323,6 +2362,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>10.000000000000000</double>
                       </property>
@@ -2354,6 +2396,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
                       <property name="maximum" >
                        <double>10.000000000000000</double>
                       </property>
@@ -2381,6 +2426,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                       <property name="maximum" >
                        <double>10.000000000000000</double>
@@ -2643,6 +2691,9 @@
                   <height>25</height>
                  </size>
                 </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
                 <property name="decimals" >
                  <number>1</number>
                 </property>
@@ -2676,6 +2727,9 @@
                   <width>60</width>
                   <height>25</height>
                  </size>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                 <property name="decimals" >
                  <number>1</number>
@@ -2980,6 +3034,9 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
                     <property name="decimals" >
                      <number>1</number>
                     </property>
@@ -3027,6 +3084,9 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
                     <property name="decimals" >
                      <number>1</number>
                     </property>
@@ -3073,6 +3133,9 @@
                       <width>60</width>
                       <height>25</height>
                      </size>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="decimals" >
                      <number>1</number>
@@ -3251,6 +3314,21 @@
                          <height>25</height>
                         </size>
                        </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
                       </widget>
                      </item>
                      <item row="1" column="0" >
@@ -3294,6 +3372,21 @@
                          <width>48</width>
                          <height>25</height>
                         </size>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
                        </property>
                       </widget>
                      </item>
@@ -3339,10 +3432,31 @@
                          <height>25</height>
                         </size>
                        </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
                       </widget>
                      </item>
                      <item row="0" column="2" >
                       <widget class="QSlider" name="SectorPlacerXSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
@@ -3350,6 +3464,12 @@
                      </item>
                      <item row="1" column="2" >
                       <widget class="QSlider" name="SectorPlacerYSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
@@ -3357,6 +3477,12 @@
                      </item>
                      <item row="2" column="2" >
                       <widget class="QSlider" name="SectorPlacerZSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
@@ -3415,6 +3541,18 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>1</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>10.000000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.100000000000000</double>
+                    </property>
                    </widget>
                   </item>
                   <item row="2" column="2" >
@@ -3437,10 +3575,31 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>1</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>10.000000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.100000000000000</double>
+                    </property>
+                    <property name="value" >
+                     <double>1.000000000000000</double>
+                    </property>
                    </widget>
                   </item>
                   <item row="1" column="3" >
                    <widget class="QSlider" name="SectorPlacerMinRadiusSlider" >
+                    <property name="maximum" >
+                     <number>100</number>
+                    </property>
+                    <property name="value" >
+                     <number>0</number>
+                    </property>
                     <property name="orientation" >
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -3448,6 +3607,12 @@
                   </item>
                   <item row="2" column="3" >
                    <widget class="QSlider" name="SectorPlacerMaxRadiusSlider" >
+                    <property name="maximum" >
+                     <number>100</number>
+                    </property>
+                    <property name="value" >
+                     <number>1</number>
+                    </property>
                     <property name="orientation" >
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -3493,6 +3658,18 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>2</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>6.280000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.010000000000000</double>
+                    </property>
                    </widget>
                   </item>
                   <item row="2" column="5" >
@@ -3515,10 +3692,28 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>2</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>6.280000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.010000000000000</double>
+                    </property>
+                    <property name="value" >
+                     <double>6.280000000000000</double>
+                    </property>
                    </widget>
                   </item>
                   <item row="1" column="6" >
                    <widget class="QSlider" name="SectorPlacerMinPhiSlider" >
+                    <property name="maximum" >
+                     <number>628</number>
+                    </property>
                     <property name="orientation" >
                      <enum>Qt::Horizontal</enum>
                     </property>
@@ -3526,6 +3721,12 @@
                   </item>
                   <item row="2" column="6" >
                    <widget class="QSlider" name="SectorPlacerMaxPhiSlider" >
+                    <property name="maximum" >
+                     <number>628</number>
+                    </property>
+                    <property name="value" >
+                     <number>628</number>
+                    </property>
                     <property name="orientation" >
                      <enum>Qt::Horizontal</enum>
                     </property>
