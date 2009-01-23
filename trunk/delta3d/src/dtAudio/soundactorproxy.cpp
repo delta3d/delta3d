@@ -221,7 +221,7 @@ namespace dtAudio
         AddProperty(new BooleanActorProperty(
            PROPERTY_LISTENER_RELATIVE,
            PROPERTY_LISTENER_RELATIVE,
-            MakeFunctor(*sound, &Sound::ListenerRelative),
+            MakeFunctor(*sound, &Sound::SetListenerRelative),
             MakeFunctorRet(*sound, &Sound::IsListenerRelative),
             "Toggles if a sound is relative to the listener.", GROUPNAME));
 
