@@ -44,14 +44,14 @@
 
 #include <dtDAL/project.h>
 
+#include <AL/alut.h>
+
 namespace dtEditQt 
 {
     ///////////////////////////////////////////////////////////////////////////////
     SoundBrowser::SoundBrowser(dtDAL::DataType &type,QWidget *parent)
-        : ResourceAbstractBrowser(&type,parent)
+        : ResourceAbstractBrowser(&type,parent)          
     {
-        sound = new QSound("",this);
-
         // This sets our resource icon that is visible on leaf nodes
         QIcon resourceIcon;
         resourceIcon.addPixmap(QPixmap(UIResources::ICON_SOUND_RESOURCE.c_str()));
@@ -62,6 +62,9 @@ namespace dtEditQt
         grid->addWidget(previewSoundGroup(), 0, 0);
         grid->addWidget(listSoundGroup(), 1, 0);
         grid->addWidget(standardButtons(QString("Resource Tools")),2,0,Qt::AlignCenter);
+
+        mSoundBuffers[0] = NULL;
+        mSoundSources[0] = NULL;
     }
     ///////////////////////////////////////////////////////////////////////////////
     SoundBrowser::~SoundBrowser(){}
@@ -141,9 +144,42 @@ namespace dtEditQt
                         file = context+"\\"+file;
                         // The following is performed to comply with linux and windows file systems
                         file.replace("\\","/");
+                        
+                        //Load the sound manually from OpenAL / ALUT (dtAudio doesn't currently provide a
+                        // way to do this without firing up a game/application loop).-------------------
+                        ALenum format;
+                        ALsizei size;
+                        ALfloat freq;
+                        ALvoid* soundData = alutLoadMemoryFromFile(file.toAscii(), &format, &size, &freq);
+                        if(soundData == NULL)
+                           return false;
 
-                        sound = new QSound(file);
-                        sound->play();
+                        //clean up previous source and buffer
+                        if(mSoundSources[0] != NULL)
+                        {                        
+                           alDeleteSources(1, mSoundSources);
+                           mSoundSources[0] = NULL;
+                        }
+                        if(mSoundBuffers[0] != NULL)
+                        {
+                           alDeleteBuffers(1, mSoundBuffers);
+                           mSoundBuffers[0] = NULL;
+                        }           
+                        
+                        //create buffer                        
+                        alGenBuffers(1, mSoundBuffers);
+                        alBufferData(mSoundBuffers[0], format, soundData, size, ALsizei(freq));
+
+                        //data's memory can be deleted once it's copied to the buffer
+                        free(soundData);
+
+                        //create source                        
+                        alGenSources(1, mSoundSources);
+                        alSourcei(mSoundSources[0], AL_BUFFER, mSoundBuffers[0]);                        
+                        {                        
+                           alSourcePlay(mSoundSources[0]);
+                        }
+                        //Done loading and playing the sound via OpenAL / ALUT ------------
 
                         returnVal = true;
                     }
@@ -152,10 +188,14 @@ namespace dtEditQt
         }
         return returnVal;
     }
+
     ///////////////////////////////////////////////////////////////////////////////
     void SoundBrowser::stopSound()
     {
-        sound->stop();
+        if(mSoundSources[0] == NULL)
+            return;
+
+        alSourceStop(mSoundSources[0]);             
     }
     ///////////////////////////////////////////////////////////////////////////////
     // Keyboard Event filter
