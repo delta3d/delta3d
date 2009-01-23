@@ -589,7 +589,19 @@ float FPSMotionModel::GetFallingHeight() const
 void FPSMotionModel::OnMessage(MessageData* data)
 {
    //if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
-   if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
+   if (IsCurrentlyActive() && mShouldResetMouse)
+   {
+      if (GetTurnLeftRightAxis())
+      {
+         GetTurnLeftRightAxis()->SetState(0.0f);
+      }
+      if (GetLookUpDownAxis())
+      {
+         GetLookUpDownAxis()->SetState(0.0f);
+      }
+      mShouldResetMouse = false;
+   }
+   else if (IsCurrentlyActive() && data->message == dtCore::System::MESSAGE_POST_EVENT_TRAVERSAL)
    {
       // use the simulated change in time, not the real time change
       // see dtCore::System for the difference.
@@ -671,48 +683,62 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
-   osg::Vec2 diff(0.0f, 0.0f);
+   //NOTE: This code has been commented out because it does not work with window resizing
+   //if the window is resized then the mouse position which was set to (0.1, 0.0) will come 
+   //back differently and you will never regain mouse movement.  Is there a better way we can do this? -Anderegg
 
-   if (!mShouldResetMouse)
+   //if (!mShouldResetMouse)
+   //{
+   //   if (GetTurnLeftRightAxis())
+   //   {
+   //      diff.x() = GetTurnLeftRightAxis()->GetState();
+   //   }
+   //   if (GetLookUpDownAxis())
+   //   {
+   //      diff.y() = GetLookUpDownAxis()->GetState();
+   //   }
+   //}
+   //// If the mouse needs to be reset (eg. the motion model has just become active)
+   //// then we need to reset the mouse to ensure the camera does not pop to a different angle.
+   //else if (IsCurrentlyActive())
+   //{
+   //   // This is a really ugly hack that I hate!
+   //   // Since the OSG mouse does not update its position from 0,0 until the
+   //   // mouse first enters a valid viewport area, there is no way
+   //   // to tell if the mouse is currently on the screen.
+   //   // If the mouse is not in a valid camera view, setting its position
+   //   // does nothing.  Therefore, I set the position to a value
+   //   // other than its default position 0,0 and then check the position to be sure
+   //   // the mouse was actually moved.
+   //   mMouse->SetPosition(0.1f,0.0f);
+
+   //   osg::Vec2 mousePosition = mMouse->GetPosition();
+
+   //   // If the mouse has moved to my custom position, that means
+   //   // the mouse is within a valid camera view area.
+   //   // It is now that I need to reset the mouse so
+   //   // the view camera does not pop to another angle during a focus change.
+   //   if( mousePosition.x() == 0.1f && mousePosition.y() == 0.0f )
+   //   {
+   //      mShouldResetMouse = false;
+   //      mMouse->SetPosition(0.0f, 0.0f);
+   //   }
+   //}
+
+   if (GetTurnLeftRightAxis())
    {
-      if (GetTurnLeftRightAxis())
-      {
-         diff.x() = GetTurnLeftRightAxis()->GetState();
-      }
-      if (GetLookUpDownAxis())
-      {
-         diff.y() = GetLookUpDownAxis()->GetState();
-      }
+      mMouseMove.x() += GetTurnLeftRightAxis()->GetState();
+      GetTurnLeftRightAxis()->SetState(0.0f);
    }
-   // If the mouse needs to be reset (eg. the motion model has just become active)
-   // then we need to reset the mouse to ensure the camera does not pop to a different angle.
-   else if (IsCurrentlyActive())
+   if (GetLookUpDownAxis())
    {
-      // This is a really ugly hack that I hate!
-      // Since the OSG mouse does not update its position from 0,0 until the
-      // mouse first enters a valid viewport area, there is no way
-      // to tell if the mouse is currently on the screen.
-      // If the mouse is not in a valid camera view, setting its position
-      // does nothing.  Therefore, I set the position to a value
-      // other than its default position 0,0 and then check the position to be sure
-      // the mouse was actually moved.
-      mMouse->SetPosition(0.1f,0.0f);
-
-      osg::Vec2 mousePosition = mMouse->GetPosition();
-
-      // If the mouse has moved to my custom position, that means
-      // the mouse is within a valid camera view area.
-      // It is now that I need to reset the mouse so
-      // the view camera does not pop to another angle during a focus change.
-      if( mousePosition.x() == 0.1f && mousePosition.y() == 0.0f )
-      {
-         mShouldResetMouse = false;
-         mMouse->SetPosition(0.0f, 0.0f);
-      }
+      mMouseMove.y() += GetLookUpDownAxis()->GetState();
+      GetLookUpDownAxis()->SetState(0.0f);
    }
+
 
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
-   const bool mouse_has_moved = (std::abs(diff[0]) > 0.0f || std::abs(diff[1]) > 0.0f);
+   const bool mouse_has_moved = HasMouseMoved(mMouseMove);
 
    // Once a new mouse movement has been triggered, we no longer need to reset the mouse.
    if (mpDebugger)
@@ -728,8 +754,8 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       osg::Matrix rot;
       transform.GetRotation(rot);
-      float deltaZ = diff[0] * mMaximumTurnSpeed;
-      float deltaX = diff[1] * mMaximumTurnSpeed;
+      float deltaZ = mMouseMove[0] * mMaximumTurnSpeed;
+      float deltaX = mMouseMove[1] * mMaximumTurnSpeed;
 
       osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
@@ -765,7 +791,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       transform.SetRotation(rot);
       GetTarget()->SetTransform(transform);
 
-      mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
+      ResetMousePosition();
    }
 }
 
@@ -870,6 +896,50 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
       mFallingVec.set(0.f, 0.f, 0.f);
       xyz[2] = targetHeight;
    }
+}
+
+bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
+{
+   //this is overly complicated and rather annoying however it fixes the 'drifting' bug
+   //the use case is resizing the window with the motion model active and the camera will
+   //drift indefinitely.  This is caused by setting the mouse position to (0.0, 0.0) which 
+   //does not work in the case that the window width or height is an odd number.  When the 
+   //window width or height is odd then the center of the screen is not an even number of pixels.
+   //The result is that the mouse will get a difference of 1/width or 1/height for whichever is odd
+   //it will then recenter the mouse again and we drift.  This code here uses an accumulated mouse movement
+   //so the user has to move the mouse at least one pixel to get the motion model to update.
+
+   dtCore::View* viewPtr = mMouse->GetView();
+
+   int width = 2;
+   int height = 2;
+
+   if (viewPtr && 
+      viewPtr->GetOsgViewerView() &&
+      viewPtr->GetOsgViewerView()->getCamera() &&
+      viewPtr->GetOsgViewerView()->getCamera()->getGraphicsContext() &&
+      viewPtr->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits())
+   {
+      width = viewPtr->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->width;
+      height = viewPtr->GetOsgViewerView()->getCamera()->getGraphicsContext()->getTraits()->height;
+   }
+   else
+   {
+      //in the odd case that there is no view I'm not sure it matters what we do here....
+      return true;
+   }
+
+   //this will ensure we do not move the camera unless the mouse has moved at least one pixel from the center
+   float diffWidth = 1.0f / float(width - 1);
+   float diffHeight = 1.0f / float(height - 1);
+
+   return (std::abs(diff[0]) > diffWidth || std::abs(diff[1]) > diffHeight);
+}
+
+void FPSMotionModel::ResetMousePosition()
+{
+   mMouseMove.set(0.0f, 0.0f);
+   mMouse->SetPosition(0.0f,0.0f); // keeps cursor at center of screen
 }
 
 bool FPSMotionModel::OnForwardBackwardChanged(double newState, double delta)

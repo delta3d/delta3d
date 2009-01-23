@@ -489,6 +489,7 @@ namespace dtCore
          bool mOperateWhenUnfocused; // should motion model operate when unfocused? Defaults to false
          bool mShouldResetMouse;
 
+         osg::Vec2 mMouseMove;
          dtCore::RefPtr<Mouse>    mMouse;
          dtCore::RefPtr<Keyboard> mKeyboard;
 
@@ -498,6 +499,8 @@ namespace dtCore
          bool OnSidestepChanged(double newState, double delta);
          bool OnLookLeftRightChanged(double newState, double delta);
          bool OnLookUpDownChanged(double newState, double delta);
+         bool HasMouseMoved(const osg::Vec2& diff);
+         void ResetMousePosition();
 
          float mForwardBackCtrl; ///<control value for forward/back movement (-1.0, 1.0)
          float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
