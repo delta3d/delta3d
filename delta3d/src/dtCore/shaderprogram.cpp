@@ -34,7 +34,7 @@
 namespace dtCore
 {
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderProgram::ShaderProgram(const std::string &name) : mName(name)
+   ShaderProgram::ShaderProgram(const std::string& name) : mName(name)
    {
       Reset();
    }
@@ -45,13 +45,13 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderProgram &ShaderProgram::operator=(const ShaderProgram &rhs)
+   ShaderProgram& ShaderProgram::operator=(const ShaderProgram& rhs)
    {
       return *this;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderProgram::ShaderProgram(const ShaderProgram &rhs)
+   ShaderProgram::ShaderProgram(const ShaderProgram& rhs)
    {
    }
 
@@ -85,21 +85,23 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::AddParameter(ShaderParameter &newParam)
+   void ShaderProgram::AddParameter(ShaderParameter& newParam)
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
          mParameters.find(newParam.GetName());
 
       if (itor != mParameters.end())
+      {
          throw dtUtil::Exception(ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND,
             "Shader parameters must have unique names.", __FILE__, __LINE__);
+      }
 
       mParameters.insert(std::make_pair(newParam.GetName(),&newParam));
       newParam.SetParentShader(this);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::RemoveParameter(ShaderParameter &param)
+   void ShaderProgram::RemoveParameter(ShaderParameter& param)
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
          mParameters.find(param.GetName());
@@ -117,7 +119,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::RemoveParameter(const std::string &name)
+   void ShaderProgram::RemoveParameter(const std::string& name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
          mParameters.find(name);
@@ -135,41 +137,51 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const ShaderParameter *ShaderProgram::FindParameter(const std::string &name) const
+   const ShaderParameter *ShaderProgram::FindParameter(const std::string& name) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator itor =
          mParameters.find(name);
 
       if (itor != mParameters.end())
+      {
          return itor->second.get();
+      }
       else
+      {
          return NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ShaderParameter *ShaderProgram::FindParameter(const std::string &name)
+   ShaderParameter* ShaderProgram::FindParameter(const std::string& name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
          mParameters.find(name);
 
       if (itor != mParameters.end())
+      {
          return itor->second.get();
+      }
       else
+      {
          return NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> > &toFill) const
+   void ShaderProgram::GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> >& toFill) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderParameter> >::const_iterator itor;
 
       toFill.clear();
       for (itor=mParameters.begin(); itor!=mParameters.end(); ++itor)
+      {
          toFill.push_back(itor->second);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::AddVertexShader(const std::string &fileName)
+   void ShaderProgram::AddVertexShader(const std::string& fileName)
    {
       // Vertex source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
@@ -190,7 +202,7 @@ namespace dtCore
 
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderProgram::AddFragmentShader(const std::string &fileName)
+   void ShaderProgram::AddFragmentShader(const std::string& fileName)
    {
       // Fragment source is now allowed to be empty - but, if a filename is set, the file needs to exist.
       if (!fileName.empty())
@@ -217,7 +229,9 @@ namespace dtCore
       for (itor=mParameters.begin(); itor!=mParameters.end(); ++itor)
       {
          if (itor->second->IsDirty())
+         {
             itor->second->Update();
+         }
       }
 
       SetDirty(false);
@@ -232,9 +246,9 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::ShaderProgram *ShaderProgram::Clone() const
+   dtCore::ShaderProgram* ShaderProgram::Clone() const
    {
-      dtCore::ShaderProgram *newShader = new dtCore::ShaderProgram(GetName());
+      dtCore::ShaderProgram* newShader = new dtCore::ShaderProgram(GetName());
 
       // copy main values
       newShader->mVertexShaderFileName = GetVertexShaders();
