@@ -34,6 +34,8 @@
 
 #include <QtCore/QDir>
 
+#include <osg/StateAttribute>
+#include <osg/Texture>
 #include <osg/LightSource>
 #include <osgDB/WriteFile>
 
@@ -596,20 +598,26 @@ void ResourceDock::OnSaveAs()
          QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
          dtCore::RefPtr<dtCore::Object> saveObject = new dtCore::Object;
          osg::Node *node = saveObject->LoadFile(fileInfo.filePath().toStdString());
-
+ 
          if (node)
          {
+            fileInfo = filename;
+
+            // Only export textures if we are saving to OSG format.
+            if (fileInfo.fileName().endsWith(tr(".osg"), Qt::CaseInsensitive))
+            {
+               ExportTexturesFromNode(fileInfo.path(), node);
+            }
+
             if (osgDB::writeNodeFile(*node, filename.toStdString()))
             {
-               fileInfo = filename;
-
                // Now add our now object into the object list.
                OnNewGeometry(fileInfo.path().toStdString(), fileInfo.fileName().toStdString());
             }
             else
             {
                QApplication::restoreOverrideCursor();
-               QMessageBox::critical(this, tr("Error"), QString("Failed to save file: %1").arg(filename), tr("Ok"));
+               QMessageBox::critical(this, tr("Error"), QString("Failed to save file: %1").arg(fileInfo.fileName()), tr("Ok"));
             }
          }
       }
@@ -1259,6 +1267,83 @@ void ResourceDock::InitGeometryTree()
    geometryItem->setText(0, "Objects");
    geometryItem->setFlags(Qt::ItemIsEnabled);
    mGeometryTreeWidget->addTopLevelItem(geometryItem);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::ExportTexturesFromNode(const QString& path, osg::Node* node)
+{
+   if (!node)
+   {
+      return;
+   }
+
+   osg::StateSet* stateSet = node->getStateSet();
+   ExportTexturesFromStateSet(path, stateSet);
+
+   osg::Geode* geode = dynamic_cast<osg::Geode*>(node);
+   if (geode)
+   {
+      for (unsigned int geometryIndex = 0; geometryIndex < geode->getNumDrawables(); geometryIndex++)
+      {
+         osg::Drawable* drawable = geode->getDrawable(geometryIndex);
+         if (drawable)
+         {
+            osg::Geometry* geometry = dynamic_cast<osg::Geometry*>(drawable);
+            if (geometry)
+            {
+               osg::StateSet* stateSet = geometry->getStateSet();
+               ExportTexturesFromStateSet(path, stateSet);
+            }
+         }
+      }
+   }
+
+   // Now iterate through all children and save their textures too.
+   osg::Group* group = dynamic_cast<osg::Group*>(node);
+   if (group)
+   {
+      for (unsigned int childIndex = 0; childIndex < group->getNumChildren(); childIndex++)
+      {
+         osg::Node* childNode = group->getChild(childIndex);
+         if (childNode)
+         {
+            ExportTexturesFromNode(path, childNode);
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ResourceDock::ExportTexturesFromStateSet(const QString& path, osg::StateSet* stateSet)
+{
+   if (stateSet)
+   {
+      osg::StateSet::TextureAttributeList& attributeList = stateSet->getTextureAttributeList();
+      for (unsigned int attributeIndex = 0; attributeIndex < attributeList.size(); attributeIndex++)
+      {
+         osg::StateAttribute* attribute = stateSet->getTextureAttribute(attributeIndex, osg::StateAttribute::TEXTURE);
+         if (attribute)
+         {
+            osg::Texture* texture = attribute->asTexture();
+            if (texture)
+            {
+               for (unsigned int imageIndex = 0; imageIndex < texture->getNumImages(); imageIndex++)
+               {
+                  osg::Image* image = texture->getImage(imageIndex);
+                  if (image)
+                  {
+                     QFileInfo fileInfo = image->getFileName().c_str();
+                     std::string filePath = path.toStdString();
+                     filePath.append("/");
+                     filePath.append(fileInfo.fileName().toStdString());
+                     image->setFileName(fileInfo.fileName().toStdString());
+                     osgDB::writeImageFile(*image, filePath);
+                  }
+               }
+            }
+         }
+      }
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
