@@ -81,22 +81,25 @@ public:
    virtual void Config();
 
 signals:
+   ///> Layer Browser signals
    void LayerHiddenChanged(bool hidden);
 
+   ///> Particles Tab signals
+   // Particle UI
    void AlignmentUpdated(int newAlignment);
    void ShapeUpdated(int newShape);
-
    void EmissiveUpdated(bool enabled);
    void LightingUpdated(bool enabled);
-
    void LifeUpdated(double newValue);
    void RadiusUpdated(double newValue);
    void MassUpdated(double newValue);
    void SizeFromUpdated(double newValue);
    void SizeToUpdated(double newValue);
 
+   // Texture UI
    void TextureUpdated(QString filename, bool emissive, bool lighting);
 
+   // Color UI
    void RFromUpdated(double newValue);
    void RToUpdated(double newValue);
    void GFromUpdated(double newValue);
@@ -106,34 +109,49 @@ signals:
    void AFromUpdated(double newValue);
    void AToUpdated(double newValue);
 
+   // Emitter UI
    void EmitterLifeUpdated(double newValue);
    void EmitterStartUpdated(double newValue);
    void EmitterResetUpdated(double newValue);
-
    void EndlessLifetimeUpdated(bool endless);
+
+   ///> Counter Tab signals
+   void CounterTypeBoxUpdated(int newCounter);
+   void RandomRateMinRateUpdated(double newValue);
+   void RandomRateMaxRateUpdated(double newValue);
+
+   ///> Placer Tab signals
+   void PlacerTypeBoxUpdated(int newCounter);
+   void PointPlacerXUpdated(double newValue);
+   void PointPlacerYUpdated(double newValue);
+   void PointPlacerZUpdated(double newValue);
 
 public slots:
    void CreateNewParticleSystem();
+
+   // Layer Browser slots
    void CreateNewParticleLayer();
    void DeleteSelectedLayer();
    void ToggleSelectedLayerHidden();
    void ResetEmitters();
    void UpdateSelectionIndex(int newIndex);
 
+   ///> Particles Tab slots
+   // Particle UI
    void AlignmentChanged(int newAlignment);
    void ShapeChanged(int newShape);
-
    void ToggleEmissive(bool enabled);
    void ToggleLighting(bool enabled);
-
    void LifeValueChanged(double newValue);
    void RadiusValueChanged(double newValue);
    void MassValueChanged(double newValue);
    void SizeFromValueChanged(double newValue);
    void SizeToValueChanged(double newValue);
 
+   // Texture UI
    void TextureChanged(QString filename, bool emissive, bool lighting);
 
+   // Color UI
    void RFromValueChanged(double newValue);
    void RToValueChanged(double newValue);
    void GFromValueChanged(double newValue);
@@ -143,15 +161,34 @@ public slots:
    void AFromValueChanged(double newValue);
    void AToValueChanged(double newValue);
 
+   // Emitter UI
    void EmitterLifeValueChanged(double newValue);
    void EmitterStartValueChanged(double newValue);
    void EmitterResetValueChanged(double newValue);
-
    void EndlessLifetimeChanged(bool endless);
+
+   ///> Counter Tab slots
+   void CounterTypeBoxValueChanged(int newCounter);
+   void RandomRateMinRateValueChanged(double newValue);
+   void RandomRateMaxRateValueChanged(double newValue);
+
+   ///> Placer Tab signals
+   void PlacerTypeBoxValueChanged(int newCounter);
+
+   // Point Placer UI
+   void PointPlacerXValueChanged(double newValue);
+   void PointPlacerYValueChanged(double newValue);
+   void PointPlacerZValueChanged(double newValue);
+
 
 private:
    void MakeCompass();
    void MakeGrids();
+   void UpdateParticleTabsValues();
+   void UpdateCounterTabsValues();
+   void UpdateRandomRatesValues();
+   void UpdatePlacerTabsValues();
+   void UpdatePointPlacerValues();
 
    dtCore::RefPtr<OrbitMotionModel> mMotion;
 

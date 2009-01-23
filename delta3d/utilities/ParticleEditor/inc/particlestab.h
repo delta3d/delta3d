@@ -17,12 +17,11 @@ public:
    ParticlesTab();
    ~ParticlesTab();
 
+   // Particle UI
    void SetAlignmentBox(QComboBox* alignmentBox) { mpAlignmentBox = alignmentBox; }
    void SetShapeBox(QComboBox* shapeBox) { mpShapeBox = shapeBox; }
-
    void SetEmissiveBox(QCheckBox* emissiveBox) { mpEmissiveBox = emissiveBox; }
    void SetLightingBox(QCheckBox* lightingBox) { mpLightingBox = lightingBox; }
-
    void SetLifeSpinBox(QDoubleSpinBox* lifeSpinBox) { mpLifeSpinBox = lifeSpinBox; }
    void SetLifeSlider(QSlider* lifeSlider) { mpLifeSlider = lifeSlider; }
    void SetRadiusSpinBox(QDoubleSpinBox* radiusSpinBox) { mpRadiusSpinBox = radiusSpinBox; }
@@ -34,10 +33,12 @@ public:
    void SetSizeToSpinBox(QDoubleSpinBox* sizeToSpinBox) { mpSizeToSpinBox = sizeToSpinBox; }
    void SetSizeToSlider(QSlider* sizeToSlider) { mpSizeToSlider = sizeToSlider; }
 
+   // Texture UI
    void SetTextureLineEdit(QLineEdit* TextureLineEdit) { mpTextureLineEdit = TextureLineEdit; }
    void SetTextureButton(QPushButton* textureButton) { mpTextureButton = textureButton; }
    void SetTexturePreview(QLabel* texturePreview) { mpTexturePreview = texturePreview; }
 
+   // Color UI
    void SetRFromSpinBox(QDoubleSpinBox* rFromSpinBox) { mpRFromSpinBox = rFromSpinBox; }
    void SetRFromSlider(QSlider* rFromSlider) { mpRFromSlider = rFromSlider; }
    void SetRToSpinBox(QDoubleSpinBox* rToSpinBox) { mpRToSpinBox = rToSpinBox; }
@@ -54,17 +55,16 @@ public:
    void SetAFromSlider(QSlider* aFromSlider) { mpAFromSlider = aFromSlider; }
    void SetAToSpinBox(QDoubleSpinBox* aToSpinBox) { mpAToSpinBox = aToSpinBox; }
    void SetAToSlider(QSlider* aToSlider) { mpAToSlider = aToSlider; }
-
    void SetCustomColorFromButton(QPushButton* customColorFromButton) { mpCustomColorFromButton = customColorFromButton; }
    void SetCustomColorToButton(QPushButton* customColorToButton) { mpCustomColorToButton = customColorToButton; }
 
+   // Emitter UI
    void SetEmitterLifeSpinBox(QDoubleSpinBox* emitterLifeSpinBox) { mpEmitterLifeSpinBox = emitterLifeSpinBox; }
    void SetEmitterLifeSlider(QSlider* emitterLifeSlider) { mpEmitterLifeSlider = emitterLifeSlider; }
    void SetEmitterStartSpinBox(QDoubleSpinBox* emitterStartSpinBox) { mpEmitterStartSpinBox = emitterStartSpinBox; }
    void SetEmitterStartSlider(QSlider* emitterStartSlider) { mpEmitterStartSlider = emitterStartSlider; }
    void SetEmitterResetSpinBox(QDoubleSpinBox* emitterResetSpinBox) { mpEmitterResetSpinBox = emitterResetSpinBox; }
    void SetEmitterResetSlider(QSlider* emitterResetSlider) { mpEmitterResetSlider = emitterResetSlider; }
-
    void SetForeverBox(QCheckBox* foreverBox) { mpForeverBox = foreverBox; }
 
    void SetupUI();
@@ -73,6 +73,7 @@ signals:
    void TextureChanged(QString filename, bool emissive, bool lighting);
 
 public slots:
+   // Particle UI
    void LifeSpinBoxValueChanged(double newValue);
    void LifeSliderValueChanged(int newValue);
    void RadiusSpinBoxValueChanged(double newValue);
@@ -84,10 +85,12 @@ public slots:
    void SizeToSpinBoxValueChanged(double newValue);
    void SizeToSliderValueChanged(int newValue);
 
+   // Texture UI
    void TextureLineEditValueChanged(QString newText);
    void TextureBrowserButtonPressed();
    void TextureUpdated(QString filename, bool emissive, bool lighting);
 
+   // Color UI
    void RFromSpinBoxValueChanged(double newValue);
    void RFromSliderValueChanged(int newValue);
    void RToSpinBoxValueChanged(double newValue);
@@ -104,10 +107,10 @@ public slots:
    void AFromSliderValueChanged(int newValue);
    void AToSpinBoxValueChanged(double newValue);
    void AToSliderValueChanged(int newValue);
-
    void CustomColorFromButtonPushed();
    void CustomColorToButtonPushed();
 
+   // Emitter UI
    void EmitterLifeSpinBoxValueChanged(double newValue);
    void EmitterLifeSliderValueChanged(int newValue);
    void EmitterStartSpinBoxValueChanged(double newValue);
@@ -116,8 +119,6 @@ public slots:
    void EmitterResetSliderValueChanged(int newValue);
 
 private:
-   void SetupComboBoxes();
-
    void SetupParticleConnections();
    void SetupTextureConnections();
    void SetupColorConnections();
@@ -126,12 +127,11 @@ private:
    void ChangeCustomColorFromColor();
    void ChangeCustomColorToColor();
 
+   // Particle UI
    QComboBox* mpAlignmentBox;
    QComboBox* mpShapeBox;
-
    QCheckBox* mpEmissiveBox;
    QCheckBox* mpLightingBox;
-
    QDoubleSpinBox* mpLifeSpinBox;
    QSlider* mpLifeSlider;
    QDoubleSpinBox* mpRadiusSpinBox;
@@ -143,10 +143,12 @@ private:
    QDoubleSpinBox* mpSizeToSpinBox;
    QSlider* mpSizeToSlider;
 
+   // Texture UI
    QLineEdit* mpTextureLineEdit;
    QPushButton* mpTextureButton;
    QLabel* mpTexturePreview;
 
+   // Color UI
    QDoubleSpinBox* mpRFromSpinBox;
    QSlider* mpRFromSlider;
    QDoubleSpinBox* mpRToSpinBox;
@@ -163,17 +165,16 @@ private:
    QSlider* mpAFromSlider;
    QDoubleSpinBox* mpAToSpinBox;
    QSlider* mpAToSlider;
-
    QPushButton* mpCustomColorFromButton;
    QPushButton* mpCustomColorToButton;
 
+   // Emitter UI
    QDoubleSpinBox* mpEmitterLifeSpinBox;
    QSlider* mpEmitterLifeSlider;
    QDoubleSpinBox* mpEmitterStartSpinBox;
    QSlider* mpEmitterStartSlider;
    QDoubleSpinBox* mpEmitterResetSpinBox;
    QSlider* mpEmitterResetSlider;
-
    QCheckBox* mpForeverBox;
 };
 
