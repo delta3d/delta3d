@@ -284,6 +284,9 @@ void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::Shader
 
       osg::Program* osgProgram = boundProgram->GetShaderProgram();    
       outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));
+
+      // Hook up the vertex attrib to the location where it was created
+      osgProgram->addBindAttribLocation("tangentAttrib", 6);
    }
 }
 

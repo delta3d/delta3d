@@ -4,8 +4,8 @@ uniform sampler2D normalTexture;
 uniform int mode;
 
 varying vec3 vNormal;
-varying vec3 vLightDir;
 varying vec3 vViewDir;
+varying vec3 vLightDir;
 
 float saturate(float inValue)
 {
@@ -17,70 +17,22 @@ void main(void)
    vec4 baseColor = texture2D(diffuseTexture, gl_TexCoord[0].st);
    vec4 normalColor = texture2D(normalTexture, gl_TexCoord[0].st);
    
-   vec4 normal = normalize((normalColor * 2.0) - 1.0);
-   //normal.y = -normal.y;
-   
-   float originalNdotL = saturate(dot(vNormal, vLightDir));
-   float NdotL = saturate(dot(vec3(normal), vLightDir));
-   
+   vec3 normal = normalize((normalColor.xyz * 2.0) - 1.0);
+
+   // normalize all of our incoming vectors
+   vec3 lightDir = normalize(vLightDir);
    vec3 viewDir = normalize(vViewDir);
-   vec3 reflectionDir = normalize(2.0 * NdotL * vec3(normal) - vLightDir);
-   
-   float reflectionAngle =  saturate(dot(reflectionDir, viewDir));
-   float specularFactor = 0.25;
-   
+   vec3 reflectionDir = normalize(2.0 * dot(normal, lightDir) * normal - lightDir);
+
+   float NdotL = saturate(dot(normal, lightDir));
+   float reflectionAngle =  dot(reflectionDir, viewDir);
+
    // Calculate the contributions from each shading component
-   vec3 ambientColor  = baseColor.xyz * 0.2;
-   vec3 diffuseColor  = NdotL * baseColor.xyz * 0.8;
-   vec3 specularColor = vec3(pow(max(0.0, reflectionAngle), 16.0)) * specularFactor;
-   
-   vec3 finalColor;
-   
-   if (mode == 1)
-   {
-	  finalColor = baseColor;
-   }
-   else if (mode == 2)
-   {
-	  finalColor = normalColor;
-   }
-   else if (mode == 3)
-   {
-	  finalColor = ambientColor;
-   }
-   else if (mode == 4)
-   {
-      finalColor = diffuseColor;
-   }
-   else if (mode == 5)
-   { 
-	  finalColor = specularColor;
-   }
-   else if (mode == 6)
-   {
-      finalColor = vec3(NdotL);
-   }
-   else if (mode == 7)
-   {
-	  finalColor = normal;
-   }
-   else if (mode == 8)
-   {
-      finalColor = vNormal.xyz;
-   }
-   else if (mode == 9)
-   {
-      //finalColor = vViewDir;
-	  finalColor = normalize(vLightDir);
-   }   
-   else if (mode == 0)
-   {
-      finalColor = ambientColor + diffuseColor + specularColor;
-   }
-   else
-   {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-   }
-   
-   gl_FragColor = vec4(finalColor, 1.0);
+   vec3 ambientColor = vec3(gl_LightSource[0].ambient.rgb);
+   vec3 diffuseColor = NdotL * vec3(gl_LightSource[0].diffuse.rgb);
+   vec3 specularColor = NdotL * vec3(gl_LightSource[0].specular.rgb) * pow(max(0.0, reflectionAngle), 128.0);
+
+   vec3 result = (ambientColor + diffuseColor) * baseColor + specularColor;  
+
+   gl_FragColor = vec4(result, 1.0);
 }
