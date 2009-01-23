@@ -122,9 +122,20 @@ signals:
 
    ///> Placer Tab signals
    void PlacerTypeBoxUpdated(int newCounter);
+
+   // Point Placer UI
    void PointPlacerXUpdated(double newValue);
    void PointPlacerYUpdated(double newValue);
    void PointPlacerZUpdated(double newValue);
+
+   // Sector Placer UI
+   void SectorPlacerXUpdated(double newValue);
+   void SectorPlacerYUpdated(double newValue);
+   void SectorPlacerZUpdated(double newValue);
+   void SectorPlacerMinRadiusUpdated(double newValue);
+   void SectorPlacerMaxRadiusUpdated(double newValue);
+   void SectorPlacerMinPhiUpdated(double newValue);
+   void SectorPlacerMaxPhiUpdated(double newValue);
 
 public slots:
    void CreateNewParticleSystem();
@@ -180,6 +191,14 @@ public slots:
    void PointPlacerYValueChanged(double newValue);
    void PointPlacerZValueChanged(double newValue);
 
+   // Sector Placer UI
+   void SectorPlacerXValueChanged(double newValue);
+   void SectorPlacerYValueChanged(double newValue);
+   void SectorPlacerZValueChanged(double newValue);
+   void SectorPlacerMinRadiusValueChanged(double newValue);
+   void SectorPlacerMaxRadiusValueChanged(double newValue);
+   void SectorPlacerMinPhiValueChanged(double newValue);
+   void SectorPlacerMaxPhiValueChanged(double newValue);
 
 private:
    void MakeCompass();
@@ -189,6 +208,9 @@ private:
    void UpdateRandomRatesValues();
    void UpdatePlacerTabsValues();
    void UpdatePointPlacerValues();
+   void UpdateSectorPlacerValues();
+   void UpdateSegmentPlacerValues();
+   void UpdateMultiSegmentPlacerValues();
 
    dtCore::RefPtr<OrbitMotionModel> mMotion;
 
