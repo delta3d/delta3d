@@ -182,11 +182,11 @@ namespace dtUtil
       FILE* pSrcFile;
       FILE* pDestFile;
 
-      struct stat tagStat;
+      struct stat tagStat;            
 
-      if ( strSrc != strDest )
+      //Make absolutely certain these two strings don't point to the same file.
+      if(!IsSameFile(strSrc, strDest))
       {
-
          if (!FileExists(strSrc))
             throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                    std::string("Source file does not exist: \"") + strSrc + "\"", __FILE__, __LINE__);
@@ -249,7 +249,7 @@ namespace dtUtil
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
 
-               stat( strSrc.c_str(), &tagStat );
+               stat( strSrc.c_str(), &tagStat );               
                long i = 0;
                char buffer[4096];
                while (i<tagStat.st_size)
@@ -283,6 +283,8 @@ namespace dtUtil
 
       }
       //if the source equals the destination, this method is really a noop.
+      //(Not to mention the fact that if you attempt to copy a file onto itself
+      // in this manner then you will end up blowing it away).
 
    }
 
@@ -760,6 +762,23 @@ namespace dtUtil
       }
 
       return relativePath;
+   }
+
+   //-----------------------------------------------------------------------
+   bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
+   {
+      struct stat stat1, stat2;
+
+      if(stat(file1.c_str(), &stat1) != 0)
+         return false;
+      
+      if(stat(file2.c_str(), &stat2) != 0)
+         return false;
+
+      if(stat1.st_ino == stat2.st_ino)
+         return true;
+
+      return false;       
    }
 
    //-----------------------------------------------------------------------

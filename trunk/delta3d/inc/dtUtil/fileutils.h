@@ -257,6 +257,22 @@ namespace dtUtil
           *  @param relPath output parameter that will contain the relative path.
           */
          //void AbsoluteToRelative(const std::string &absPath, std::string& relPath);
+   
+         /**
+          *  It is possible for two different path strings to point at the same
+          *  file on disk.
+          *  (Things like relative paths and filesystem links make this possible).
+          *
+          *  This function makes absolutely certain that the two files aren't the same
+          *  by checking the inodes of the two files -- preventing things like having
+          *  the FileUtils::FileCopy accidentally blow away a file by copying it
+          *  onto itself.
+          *
+          *  @param file1 -- Path to first file.
+          *  @param file2 -- Path to second file.
+          *  @return True if inodes match, false otherwise (if one or both files are inaccessible, returns false).          
+          */
+         bool IsSameFile(const std::string& file1, const std::string& file2) const;
 
       private:
 
