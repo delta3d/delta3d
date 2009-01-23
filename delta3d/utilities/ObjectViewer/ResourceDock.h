@@ -198,8 +198,10 @@ private:
    bool mLoadingMap;
 
    void InitGeometryTree();
-   void CreateLightItems();
+   void ExportTexturesFromNode(const QString& path, osg::Node* node);
+   void ExportTexturesFromStateSet(const QString& path, osg::StateSet* stateSet);
 
+   void CreateLightItems();
    QTreeWidgetItem* CreatePositionItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateRotationItem(QTreeWidgetItem* parent);
    QTreeWidgetItem* CreateColorItem(const std::string& name, QTreeWidgetItem* parent);
