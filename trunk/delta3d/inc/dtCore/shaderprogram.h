@@ -59,13 +59,13 @@ namespace dtCore
           * Construct an empty shader.
           * @param name Name to assign the new shader.  Shader names must be unique.
           */
-         ShaderProgram(const std::string &name);
+         ShaderProgram(const std::string& name);
 
          /**
           * Gets the name currently assigned to this shader.
           * @return The shader's name.
           */
-         const std::string &GetName() const { return mName; }
+         const std::string& GetName() const { return mName; }
 
          /**
           * This method adds a shader source meant for vertex processing from the
@@ -73,13 +73,13 @@ namespace dtCore
           * @param fileName The path of the shader file source.  This must be either the
           *    full path or a path relative to the Delta3d path list.
           */
-         void AddVertexShader(const std::string &fileName);
+         void AddVertexShader(const std::string& fileName);
 
          /**
           * Gets the vertex shaders file names.
           * @return A Vector that contains a set of strings that represent the different vertex file names 
           */
-         const std::vector<std::string> &GetVertexShaders() const { return mVertexShaderFileName; }
+         const std::vector<std::string>& GetVertexShaders() const { return mVertexShaderFileName; }
 
 
          /**
@@ -100,13 +100,13 @@ namespace dtCore
           * @param fileName The path of the shader file source.  This must be either the
           *    full path or a path relative to the Delta3d path list.
           */
-         void AddFragmentShader(const std::string &fileName);
+         void AddFragmentShader(const std::string& fileName);
 
          /**
          * Gets the fragment shaders file names.
          * @return A Vector that contains a set of strings that represent the different fragment file names 
          */
-         const std::vector<std::string> &GetFragmentShaders() const { return mFragmentShaderFileName; }
+         const std::vector<std::string>& GetFragmentShaders() const { return mFragmentShaderFileName; }
 
          /**
           * Binds a shader parameter to this shader.
@@ -114,21 +114,21 @@ namespace dtCore
           * @note An exception is thrown if a parameter with the same name already
           *    exists on the shader.
           */
-         void AddParameter(ShaderParameter &newParam);
+         void AddParameter(ShaderParameter& newParam);
 
          /**
           * Removes an existing parameter from the shader.
           * @param param The parameter to remove.  This results in a no-op if the parameter
           *    to remove is not owned by this shader.
           */
-         void RemoveParameter(ShaderParameter &param);
+         void RemoveParameter(ShaderParameter& param);
 
          /**
           * Removes an existing parameter from this shader.
           * @param name The name of the shader parameter to remove.  If this parameter is not
           *    currently owned by this shader, this method is a no-op.
           */
-         void RemoveParameter(const std::string &name);
+         void RemoveParameter(const std::string& name);
 
          /**
           * Clears this shaders list of parameters.
@@ -141,13 +141,13 @@ namespace dtCore
           * Looks up a shader parameter with the given name. (Const version).
           * @return A const pointer to the shader parameter or NULL if it could not be found.
           */
-         const ShaderParameter *FindParameter(const std::string &name) const;
+         const ShaderParameter* FindParameter(const std::string& name) const;
 
          /**
           * Looks up a shader parameter with the given name. (Non-const version).
           * @return A pointer to the shader parameter or NULL if it could not be found.
           */
-         ShaderParameter *FindParameter(const std::string &name);
+         ShaderParameter* FindParameter(const std::string &name);
 
          /**
           * Gets the number of parameters currently attached to this shader.
@@ -160,7 +160,7 @@ namespace dtCore
           * attached to this shader.
           * @param toFill The vector to fill.  Note, this is cleared first.
           */
-         void GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> > &toFill) const;
+         void GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> >& toFill) const;
 
          /**
           * Updates any parameter state which may have changed on this shader since the
@@ -176,14 +176,14 @@ namespace dtCore
           * @return A pointer to the shader program.  This may be shared
           *    amoungst many renderable objects.
           */
-         const osg::Program *GetShaderProgram() const { return mGLSLProgram.get(); }
+         const osg::Program* GetShaderProgram() const { return mGLSLProgram.get(); }
 
          /**
           * Gets a pointer to the actual shader program constructed by the shader source code.
           * @return A pointer to the shader program.  This may be shared
           *    amoungst many renderable objects. Either put this in a RefPtr or don't hold onto it.
           */
-         osg::Program *GetShaderProgram() { return mGLSLProgram.get(); }
+         osg::Program* GetShaderProgram() { return mGLSLProgram.get(); }
 
          /**
           * Removes all shader source and compiler programs from this shader object.
@@ -208,7 +208,7 @@ namespace dtCore
           * a shader to a node using ShaderManager::AssignShaderFromTempalte.
           * @return the cloned shader instance with cloned parameters.
           */
-         dtCore::ShaderProgram *Clone() const;
+         dtCore::ShaderProgram* Clone() const;
 
       protected:
 
@@ -218,11 +218,11 @@ namespace dtCore
          virtual ~ShaderProgram();
 
          ///Hidden copy constructor and assignment operator.
-         ShaderProgram &operator=(const ShaderProgram &rhs);
-         ShaderProgram(const ShaderProgram &rhs);
+         ShaderProgram &operator=(const ShaderProgram& rhs);
+         ShaderProgram(const ShaderProgram& rhs);
 
       private:
-         void SetGLSLProgram(osg::Program &program) { mGLSLProgram = &program; }
+         void SetGLSLProgram(osg::Program& program) { mGLSLProgram = &program; }
 
          std::string mName;
 
