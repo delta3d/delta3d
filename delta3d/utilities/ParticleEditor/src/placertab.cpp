@@ -15,6 +15,7 @@ void PlacerTab::SetupUI()
 {
    SetupPointPlacerConnections();
    SetupSectorPlacerConnections();
+   SetupSegmentPlacerConnections();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -138,6 +139,78 @@ void PlacerTab::SectorPlacerMaxPhiSliderValueChanged(int newValue)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAXSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexAXSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAXSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexAXSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAYSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexAYSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAYSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexAYSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAZSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexAZSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexAZSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexAZSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBXSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexBXSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBXSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexBXSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBYSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexBYSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBYSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexBYSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBZSpinBoxValueChanged(double newValue)
+{
+   mpSegmentPlacerVertexBZSlider->setValue(newValue * 10);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SegmentPlacerVertexBZSliderValueChanged(int newValue)
+{
+   mpSegmentPlacerVertexBZSpinBox->setValue(newValue / 10.0f);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void PlacerTab::SetupPointPlacerConnections()
 {
    connect(mpPointPlacerXSpinBox, SIGNAL(valueChanged(double)), this, SLOT(PointPlacerXSpinBoxValueChanged(double)));
@@ -165,6 +238,23 @@ void PlacerTab::SetupSectorPlacerConnections()
    connect(mpSectorPlacerMinPhiSlider, SIGNAL(sliderMoved(int)), this, SLOT(SectorPlacerMinPhiSliderValueChanged(int)));
    connect(mpSectorPlacerMaxPhiSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SectorPlacerMaxPhiSpinBoxValueChanged(double)));
    connect(mpSectorPlacerMaxPhiSlider, SIGNAL(sliderMoved(int)), this, SLOT(SectorPlacerMaxPhiSliderValueChanged(int)));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SetupSegmentPlacerConnections()
+{
+   connect(mpSegmentPlacerVertexAXSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexAXSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexAXSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexAXSliderValueChanged(int)));
+   connect(mpSegmentPlacerVertexAYSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexAYSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexAYSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexAYSliderValueChanged(int)));
+   connect(mpSegmentPlacerVertexAZSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexAZSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexAZSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexAZSliderValueChanged(int)));
+   connect(mpSegmentPlacerVertexBXSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexBXSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexBXSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexBXSliderValueChanged(int)));
+   connect(mpSegmentPlacerVertexBYSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexBYSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexBYSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexBYSliderValueChanged(int)));
+   connect(mpSegmentPlacerVertexBZSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexBZSpinBoxValueChanged(double)));
+   connect(mpSegmentPlacerVertexBZSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexBZSliderValueChanged(int)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

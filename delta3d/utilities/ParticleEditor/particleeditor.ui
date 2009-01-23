@@ -3821,30 +3821,102 @@
                       </widget>
                      </item>
                      <item row="0" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexAXSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexAXSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                       <property name="value" >
+                        <double>-1.000000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="1" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexAYSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexAYSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="2" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexAZSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexAZSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="0" column="2" >
-                      <widget class="QSlider" name="VertexAXSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexAXSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
+                       <property name="value" >
+                        <number>-1</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
                       </widget>
                      </item>
                      <item row="1" column="2" >
-                      <widget class="QSlider" name="VertexAYSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexAYSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
                       </widget>
                      </item>
                      <item row="2" column="2" >
-                      <widget class="QSlider" name="VertexAZSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexAZSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
@@ -3922,30 +3994,102 @@
                       </widget>
                      </item>
                      <item row="0" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexBXSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexBXSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                       <property name="value" >
+                        <double>1.000000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="1" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexBYSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexBYSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="2" column="1" >
-                      <widget class="QDoubleSpinBox" name="VertexBZSpinBox" />
+                      <widget class="QDoubleSpinBox" name="SegmentPlacerVertexBZSpinBox" >
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="decimals" >
+                        <number>1</number>
+                       </property>
+                       <property name="minimum" >
+                        <double>-10.000000000000000</double>
+                       </property>
+                       <property name="maximum" >
+                        <double>10.000000000000000</double>
+                       </property>
+                       <property name="singleStep" >
+                        <double>0.100000000000000</double>
+                       </property>
+                      </widget>
                      </item>
                      <item row="0" column="2" >
-                      <widget class="QSlider" name="VertexBXSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexBXSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
+                       <property name="value" >
+                        <number>1</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
                       </widget>
                      </item>
                      <item row="1" column="2" >
-                      <widget class="QSlider" name="VertexBYSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexBYSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
                       </widget>
                      </item>
                      <item row="2" column="2" >
-                      <widget class="QSlider" name="VertexBZSlider" >
+                      <widget class="QSlider" name="SegmentPlacerVertexBZSlider" >
+                       <property name="minimum" >
+                        <number>-100</number>
+                       </property>
+                       <property name="maximum" >
+                        <number>100</number>
+                       </property>
                        <property name="orientation" >
                         <enum>Qt::Horizontal</enum>
                        </property>
