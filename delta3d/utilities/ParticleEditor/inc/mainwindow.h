@@ -32,14 +32,19 @@ namespace psEditor
       void SetupUI();
 
    private:
-      void SetupParticleViewer();
       void SetupViewWindow();
       void SetupLayersBrowser();
+      void SetupLayersBrowserConnections();
       void SetupParticlesTab();
+      void SetupParticlesTabConnections();
       void SetupCounterTab();
+      void SetupCounterTabConnections();
       void SetupPlacerTab();
+      void SetupPlacerTabConnections();
       void SetupShooterTab();
+      void SetupShooterTabConnections();
       void SetupProgramTab();
+      void SetupProgramTabConnections();
 
       Ui::MainWindow mUI;
 
