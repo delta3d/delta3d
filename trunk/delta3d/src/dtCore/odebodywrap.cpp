@@ -26,7 +26,7 @@ void dtCore::ODEBodyWrap::SetBodyID(dBodyID bodyID)
    {
       dBodyDestroy(GetBodyID());
    }
-   
+
    mBodyID = bodyID;
 
    EnableDynamics(mDynamicsEnabled);
@@ -45,9 +45,9 @@ void dtCore::ODEBodyWrap::EnableDynamics(bool enable)
 {
    mDynamicsEnabled = enable;
 
-   if(GetBodyID() != 0)
+   if (GetBodyID() != 0)
    {
-      if(enable)
+      if (enable)
       {
          dBodyEnable(GetBodyID());
       }
@@ -69,7 +69,7 @@ void dtCore::ODEBodyWrap::SetMass(const dMass* mass)
 {
    mMass = *mass;
 
-   if(GetBodyID() != 0)
+   if (GetBodyID() != 0)
    {
       dBodySetMass(GetBodyID(), &mMass);
    }
@@ -85,7 +85,7 @@ void dtCore::ODEBodyWrap::SetMass(float mass)
 {
    mMass.mass = mass;
 
-   if(GetBodyID() != 0)
+   if (GetBodyID() != 0)
    {
       dBodySetMass(GetBodyID(), &mMass);
    }
@@ -98,7 +98,7 @@ float dtCore::ODEBodyWrap::GetMass() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetPosition( const osg::Vec3& xyz )
+void dtCore::ODEBodyWrap::SetPosition(const osg::Vec3& xyz)
 {
    if (GetBodyID() != 0)
    {
@@ -107,7 +107,7 @@ void dtCore::ODEBodyWrap::SetPosition( const osg::Vec3& xyz )
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetRotation( const osg::Matrix& rot )
+void dtCore::ODEBodyWrap::SetRotation(const osg::Matrix& rot)
 {
    if (GetBodyID() != 0)
    {
@@ -129,13 +129,13 @@ void dtCore::ODEBodyWrap::SetRotation( const osg::Matrix& rot )
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetCenterOfGravity( const osg::Vec3& centerOfGravity )
+void dtCore::ODEBodyWrap::SetCenterOfGravity(const osg::Vec3& centerOfGravity)
 {
    mMass.c[0] = centerOfGravity[0];
    mMass.c[1] = centerOfGravity[1];
    mMass.c[2] = centerOfGravity[2];
 
-   if(GetBodyID() != 0)
+   if (GetBodyID() != 0)
    {
       dBodySetMass(GetBodyID(), &mMass);
    }
@@ -150,7 +150,7 @@ void dtCore::ODEBodyWrap::GetCenterOfGravity(osg::Vec3& dest) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetInertiaTensor( const osg::Matrix& inertiaTensor )
+void dtCore::ODEBodyWrap::SetInertiaTensor(const osg::Matrix& inertiaTensor)
 {
    mMass.I[0] = inertiaTensor(0,0);
    mMass.I[1] = inertiaTensor(1,0);
@@ -164,7 +164,7 @@ void dtCore::ODEBodyWrap::SetInertiaTensor( const osg::Matrix& inertiaTensor )
    mMass.I[9] = inertiaTensor(1,2);
    mMass.I[10] = inertiaTensor(2,2);
 
-   if(GetBodyID() != 0)
+   if (GetBodyID() != 0)
    {
       dBodySetMass(GetBodyID(), &mMass);
    }
@@ -187,8 +187,8 @@ void dtCore::ODEBodyWrap::GetInertiaTensor(osg::Matrix& dest) const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::SetLinearVelocity(const osg::Vec3& newVelocity) 
-{  
+void dtCore::ODEBodyWrap::SetLinearVelocity(const osg::Vec3& newVelocity)
+{
    if (GetBodyID() != 0)
    {
       dBodySetLinearVel(GetBodyID(), newVelocity.x(), newVelocity.y(), newVelocity.z());
@@ -202,7 +202,7 @@ osg::Vec3 dtCore::ODEBodyWrap::GetLinearVelocity() const
 
    if (GetBodyID() != 0)
    {
-      const dReal *vel = dBodyGetLinearVel(GetBodyID());
+      const dReal* vel = dBodyGetLinearVel(GetBodyID());
       velVec.set(vel[0], vel[1], vel[2]);
    }
 
@@ -216,7 +216,7 @@ osg::Vec3 dtCore::ODEBodyWrap::GetAngularVelocity() const
 
    if (GetBodyID() != 0)
    {
-      const dReal *vel = dBodyGetAngularVel(GetBodyID());
+      const dReal* vel = dBodyGetAngularVel(GetBodyID());
       angVec.set(vel[0], vel[1], vel[2]);
    }
 
@@ -243,7 +243,7 @@ void dtCore::ODEBodyWrap::ApplyRelForce(const osg::Vec3& relForce)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEBodyWrap::ApplyRelForceAtRelPos(const osg::Vec3& relForce, 
+void dtCore::ODEBodyWrap::ApplyRelForceAtRelPos(const osg::Vec3& relForce,
                                                 const osg::Vec3& relPosition)
 {
    if (GetBodyID() != 0)
@@ -291,7 +291,7 @@ void dtCore::ODEBodyWrap::GetBodyTransform(dtCore::Transform& xform) const
    newRotation(1,2) = rotation[9];
    newRotation(2,2) = rotation[10];
 
-   xform.SetTranslation( position[0], position[1], position[2] );
+   xform.SetTranslation(position[0], position[1], position[2]);
    xform.SetRotation(newRotation);
 
 }
@@ -304,7 +304,7 @@ void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransf
    dtCore::Transform odeTransform;
    GetBodyTransform(odeTransform);
 
-   if(!newTransform.EpsilonEquals(odeTransform))
+   if (!newTransform.EpsilonEquals(odeTransform))
    {
       osg::Matrix rotation;
       osg::Vec3 position;
@@ -318,19 +318,39 @@ void dtCore::ODEBodyWrap::UpdateBodyTransform(const dtCore::Transform& newTransf
       // Set rotation
       dMatrix3 dRot;
 
-      dRot[0] = rotation(0,0);
-      dRot[1] = rotation(1,0);
-      dRot[2] = rotation(2,0);
+      dRot[ 0] = rotation(0,0);
+      dRot[ 1] = rotation(1,0);
+      dRot[ 2] = rotation(2,0);
 
-      dRot[4] = rotation(0,1);
-      dRot[5] = rotation(1,1);
-      dRot[6] = rotation(2,1);
+      dRot[ 4] = rotation(0,1);
+      dRot[ 5] = rotation(1,1);
+      dRot[ 6] = rotation(2,1);
 
-      dRot[8] = rotation(0,2);
-      dRot[9] = rotation(1,2);
+      dRot[ 8] = rotation(0,2);
+      dRot[ 9] = rotation(1,2);
       dRot[10] = rotation(2,2);
 
       dBodySetRotation(GetBodyID(), dRot);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool dtCore::ODEBodyWrap::GetAutoDisableFlag() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableFlag(GetBodyID());
+   }
+
+   return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableFlag(bool auto_disable)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableFlag(GetBodyID(), auto_disable);
    }
 }
 
@@ -371,6 +391,46 @@ void dtCore::ODEBodyWrap::SetAutoDisableAngularThreshold(float threshold)
    if (GetBodyID() != 0)
    {
       dBodySetAutoDisableAngularThreshold(GetBodyID(), threshold);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int dtCore::ODEBodyWrap::GetAutoDisableSteps() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableSteps(GetBodyID());
+   }
+
+   return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableSteps(int numSteps)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableSteps(GetBodyID(), numSteps);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::ODEBodyWrap::GetAutoDisableTime() const
+{
+   if (GetBodyID() != 0)
+   {
+      return dBodyGetAutoDisableTime(GetBodyID());
+   }
+
+   return 0.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::SetAutoDisableTime(float numSeconds)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodySetAutoDisableTime(GetBodyID(), numSeconds);
    }
 }
 
