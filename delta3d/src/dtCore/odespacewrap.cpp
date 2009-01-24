@@ -7,11 +7,11 @@
 #include <dtCore/transformable.h>
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::ODESpaceWrap::ODESpaceWrap(ODEWorldWrap* worldWrapper):
-  mSpaceID(0)
-, mUserNearCallback(NULL)
-, mContactJointGroupID(0)
-, mWorldWrapper(worldWrapper)
+dtCore::ODESpaceWrap::ODESpaceWrap(ODEWorldWrap* worldWrapper)
+   : mSpaceID(0)
+   , mUserNearCallback(NULL)
+   , mContactJointGroupID(0)
+   , mWorldWrapper(worldWrapper)
 {
    mSpaceID = dHashSpaceCreate(0);
    dSpaceSetCleanup(mSpaceID, 0);
@@ -29,19 +29,19 @@ dtCore::ODESpaceWrap::~ODESpaceWrap()
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODESpaceWrap::RegisterCollidable(Transformable* collidable)
 {
-   if (collidable == NULL) {return;}
+   if (collidable == NULL) { return; }
 
-   dSpaceAdd( mSpaceID, collidable->GetGeomID() );
+   dSpaceAdd(mSpaceID, collidable->GetGeomID());
 
-   dGeomSetData( collidable->GetGeomID(), collidable );
+   dGeomSetData(collidable->GetGeomID(), collidable);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODESpaceWrap::UnRegisterCollidable(Transformable* collidable)
 {
-   if (collidable == NULL) {return;}
+   if (collidable == NULL) { return; }
 
-   dSpaceRemove( mSpaceID, collidable->GetGeomID() );
+   dSpaceRemove(mSpaceID, collidable->GetGeomID());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,30 +58,30 @@ void dtCore::ODESpaceWrap::Collide()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODESpaceWrap::SetUserCollisionCallback(dNearCallback *func, void *data)
+void dtCore::ODESpaceWrap::SetUserCollisionCallback(dNearCallback* func, void* data)
 {
    mUserNearCallback = func;
    mUserNearCallbackData = data;
 }
 
 /// static
-void dtCore::ODESpaceWrap::DefaultNearCallback(void *data, dGeomID o1, dGeomID o2)
+void dtCore::ODESpaceWrap::DefaultNearCallback(void* data, dGeomID o1, dGeomID o2)
 {
-   if( data == 0 || o1 == 0 || o2 == 0 )
+   if (data == 0 || o1 == 0 || o2 == 0)
    {
       return;
    }
 
    ODESpaceWrap* spaceWrap = static_cast<ODESpaceWrap*>(data);
 
-   Transformable* c1 = static_cast<Transformable*>( dGeomGetData(o1) );
-   Transformable* c2 = static_cast<Transformable*>( dGeomGetData(o2) );
+   Transformable* c1 = static_cast<Transformable*>(dGeomGetData(o1));
+   Transformable* c2 = static_cast<Transformable*>(dGeomGetData(o2));
 
    dContactGeom contactGeoms[8];
 
-   int numContacts = dCollide( o1, o2, 8, contactGeoms, sizeof(dContactGeom) );
+   int numContacts = dCollide(o1, o2, 8, contactGeoms, sizeof(dContactGeom));
 
-   if( numContacts > 0 && c1 != 0 && c2 != 0 )
+   if (numContacts > 0 && c1 != 0 && c2 != 0)
    {
       CollisionData cd;
 
@@ -103,15 +103,15 @@ void dtCore::ODESpaceWrap::DefaultNearCallback(void *data, dGeomID o1, dGeomID o
          spaceWrap->mCollisionCBFunc(cd);
       }
 
-      if( c1 != 0 || c2 != 0 )
+      if (c1 != 0 || c2 != 0)
       {
          dContact contact;
 
-         for( int i = 0; i < numContacts; i++ )
+         for (int i = 0; i < numContacts; ++i)
          {
-            contact.surface.mode = dContactBounce;
-            contact.surface.mu = 1000.0;
-            contact.surface.bounce = 0.75;
+            contact.surface.mode       = dContactBounce;
+            contact.surface.mu         = 1000.0;
+            contact.surface.bounce     = 0.75;
             contact.surface.bounce_vel = 0.001;
 
             contact.geom = contactGeoms[i];
@@ -122,26 +122,44 @@ void dtCore::ODESpaceWrap::DefaultNearCallback(void *data, dGeomID o1, dGeomID o
             bool contactResult1 = c1->FilterContact(&contact, c2);
             bool contactResult2 = c2->FilterContact(&contact, c1);
 
-            if( contactResult1 && contactResult2 )
+            if (contactResult1 && contactResult2)
             {
                // All this also should be in a virtual function.
                Physical* p1 = dynamic_cast<Physical*>(c1);
                Physical* p2 = dynamic_cast<Physical*>(c2);
 
-               if( p1 != 0 || p2 != 0 )
+               if (p1 != 0 || p2 != 0)
                {
                   dJointID joint = dJointCreateContact(spaceWrap->mWorldWrapper->GetWorldID(),
                                                        spaceWrap->mContactJointGroupID,
                                                        &contact);
 
-                  dJointAttach( joint,
+                  dJointAttach(joint,
                      p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
-                     p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );
+                     p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0);
                }
             }
          }
       }
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+dNearCallback* dtCore::ODESpaceWrap::GetUserCollisionCallback() const
+{
+   return mUserNearCallback;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void* dtCore::ODESpaceWrap::GetUserCollisionData()
+{
+   return mUserNearCallbackData;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const void* dtCore::ODESpaceWrap::GetUserCollisionData() const
+{
+   return mUserNearCallbackData;
 }
 
 //////////////////////////////////////////////////////////////////////////

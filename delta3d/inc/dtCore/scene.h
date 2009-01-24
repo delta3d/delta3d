@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef DELTA_SCENE
 #define DELTA_SCENE
@@ -65,8 +65,8 @@ namespace dtCore
    class ODEController;
 
    /**
-   *  Scene: This class encapsulates the root of the delta scene graph
-   */
+    *  Scene: This class encapsulates the root of the delta scene graph
+    */
    class DT_CORE_EXPORT Scene : public Base
    {
       DECLARE_MANAGEMENT_LAYER(Scene)
@@ -78,16 +78,16 @@ namespace dtCore
       public:
 
          ParticleSystemFreezer();
-         void SetFreezing( bool freeze ) { mFreezing = freeze; }
+         void SetFreezing(bool freeze) { mFreezing = freeze; }
          bool GetFreezing() const { return mFreezing; }
 
-         virtual void apply( osg::Node& node );
+         virtual void apply(osg::Node& node);
 
       private:
 
          bool mFreezing;
 
-         typedef std::map< osgParticle::ParticleSystem*, bool > ParticleSystemBoolMap;
+         typedef std::map<osgParticle::ParticleSystem*, bool> ParticleSystemBoolMap;
          ParticleSystemBoolMap mPreviousFrozenState;
       };
 
@@ -110,7 +110,7 @@ namespace dtCore
        * @param name : Optional string used to name this particular Scene
        */
       Scene(const std::string& name = "scene");
-      
+
       /**
        * Scene constructor used to supply a custom physics controller, or NULL, to
        * use for physics stepping.
@@ -118,7 +118,7 @@ namespace dtCore
        * physics.  Can be NULL, if no controller is required.
        * @param name : Optional string used to name this particular Scene
        */
-      Scene (ODEController* physicsController, const std::string& name = "scene");
+      Scene(ODEController* physicsController, const std::string& name = "scene");
 
    protected:
 
@@ -128,54 +128,54 @@ namespace dtCore
       ///Get a pointer to the internal scene node
       osg::Group* GetSceneNode() { return (mSceneNode.get()); }
 
-      /*
-      *  This function will remove all children of the current scene node,
-      *  and add them to this new node, and then set the current scene node to
-      *  be this one.  It then notifies the camera group to change all scene nodes applicable.
-      *  And finally must remove all drawables and re-add then in case they are holding onto the
-      *  scene root.
-      */
+      /**
+       *  This function will remove all children of the current scene node,
+       *  and add them to this new node, and then set the current scene node to
+       *  be this one.  It then notifies the camera group to change all scene nodes applicable.
+       *  And finally must remove all drawables and re-add then in case they are holding onto the
+       *  scene root.
+       */
       void SetSceneNode(osg::Group* newSceneNode);
 
       ///Add a DeltaDrawable to the Scene to be viewed.
-      void AddDrawable( DeltaDrawable* drawable );
+      void AddDrawable(DeltaDrawable* drawable);
 
       ///Remove a DeltaDrawable from the Scene
-      void RemoveDrawable( DeltaDrawable *drawable );
+      void RemoveDrawable(DeltaDrawable* drawable);
 
       ///clears the scene.
       void RemoveAllDrawables();
 
       /** Get a handle to the DeltaDrawable using the supplied index number.
-        * @param i the index of the DeltaDrawable that was added with AddDrawable()
-        * @return The selected DeltaDrawable.  Could be NULL.
-        */
+       * @param i the index of the DeltaDrawable that was added with AddDrawable()
+       * @return The selected DeltaDrawable.  Could be NULL.
+       */
       DeltaDrawable* GetDrawable(unsigned int i) const;
 
       /// Get the index number of the supplied drawable
-      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const;
+      unsigned int GetDrawableIndex(const DeltaDrawable* drawable) const;
 
       /** Get the number of DeltaDrawables which have been directly added to the Scene
-        * using AddDrawable().
-        * @return The number of DeltaDrawables that have been directly added to the Scene
-        */
+       * using AddDrawable().
+       * @return The number of DeltaDrawables that have been directly added to the Scene
+       */
       unsigned int GetNumberOfAddedDrawable() const;
 
       /** Get all the DeltaDrawables that are currently in the scene.  This will
-        * return all the DeltaDrawables added by AddDrawable(), plus their DeltaDrawable
-        * children.
-        * @see GetDrawable(), GetNumberOfAddedDrawable()
-        * @return a container of all the DeltaDrawables, including their children,
-        * that are in this Scene.
-        */
+       * return all the DeltaDrawables added by AddDrawable(), plus their DeltaDrawable
+       * children.
+       * @see GetDrawable(), GetNumberOfAddedDrawable()
+       * @return a container of all the DeltaDrawables, including their children,
+       * that are in this Scene.
+       */
       std::vector<dtCore::DeltaDrawable*> GetAllDrawablesInTheScene() const;
 
       //Set the State for rendering.  Wireframe, Fill polygons, or vertex points.
-      void SetRenderState( Face face, Mode mode );
-      const std::pair<Face,Mode> GetRenderState() const { return std::make_pair( mRenderFace, mRenderMode ); }
+      void SetRenderState(Face face, Mode mode);
+      const std::pair<Face,Mode> GetRenderState() const { return std::make_pair(mRenderFace, mRenderMode); }
 
       ///Get the height of terrain at a given x,y
-      float GetHeightOfTerrain( float x, float y );
+      float GetHeightOfTerrain(float x, float y);
 
       ///Get the ODE space ID
       dSpaceID GetSpaceID() const;
@@ -190,7 +190,7 @@ namespace dtCore
       void SetGravity(const osg::Vec3& gravity) const;
 
       ///Set the gravity vector
-      void SetGravity(float x, float y, float z) const { SetGravity( osg::Vec3(x,y,z) ); }
+      void SetGravity(float x, float y, float z) const { SetGravity(osg::Vec3(x, y, z)); }
 
       ///Get the gravity vector
       void GetGravity(osg::Vec3& vec) const;
@@ -199,10 +199,10 @@ namespace dtCore
       osg::Vec3 GetGravity() const;
 
       ///Get the gravity vector
-      void GetGravity(float &x, float &y, float &z) const;
+      void GetGravity(float& x, float& y, float& z) const;
 
       ///Performs collision detection and updates physics
-      virtual void OnMessage(MessageData *data);
+      virtual void OnMessage(MessageData* data);
 
       ///The user data associated with "collision" messages
       struct DT_CORE_EXPORT CollisionData
@@ -215,6 +215,9 @@ namespace dtCore
 
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
+      dNearCallback* GetUserCollisionCallback() const;
+      void* GetUserCollisionData();
+      const void* GetUserCollisionData() const;
 
       /**
        * Get the step size of the physics.  The physics will
@@ -228,7 +231,7 @@ namespace dtCore
       double GetPhysicsStepSize() const;
 
       /// @see GetPhysicsStepSize()
-      void SetPhysicsStepSize(double stepSize = 0.0 ) const;
+      void SetPhysicsStepSize(double stepSize = 0.0) const;
 
       /// Register a Transformable with the Scene
       void RegisterCollidable(Transformable* collidable) const;
@@ -237,20 +240,20 @@ namespace dtCore
       void UnRegisterCollidable(Transformable* collidable) const;
 
       /// Returns a pointer to the light specified by the param number
-      Light* GetLight( const int number ) { return mLights[ number ].get(); }
-      const Light* GetLight( const int number ) const { return mLights[ number ].get(); }
+      Light* GetLight(const int number) { return mLights[number].get(); }
+      const Light* GetLight(const int number) const { return mLights[number].get(); }
       /// Returns a pointer to the light specified by the current string
-      Light* GetLight( const std::string& name );
-      const Light* GetLight( const std::string& name ) const;
+      Light* GetLight(const std::string& name);
+      const Light* GetLight(const std::string& name) const;
 
       /// Registers a light using the light number
-      void RegisterLight( Light* light );
+      void RegisterLight(Light* light);
 
       /// Unreferences the current light, by number, Note: does not erase
-      void UnRegisterLight( Light* light );
+      void UnRegisterLight(Light* light);
 
       /// Use the internal scene light
-      void UseSceneLight( bool lightState = true );
+      void UseSceneLight(bool lightState = true);
 
       ///DEPRECATED 1/14/2009 in favor of GetContactJointGroupID() (typo: missing t)
       DEPRECATE_FUNC dJointGroupID GetContactJoinGroupID() const
@@ -271,7 +274,7 @@ namespace dtCore
       void RemoveView(dtCore::View& view);
       void AddView(dtCore::View& view);
 
-      void SetDatabasePager( dtCore::DatabasePager *pager );
+      void SetDatabasePager(dtCore::DatabasePager *pager);
       /// Made public so I can be unit tested better.
       dtCore::DatabasePager* GetDatabasePager() const;
 
@@ -281,12 +284,12 @@ namespace dtCore
       // creates this functions even if they are not used, and if
       // this class is forward declared, these implicit functions will
       // cause compiler errors for missing calls to "ref".
-      Scene& operator=( const Scene& );
-      Scene( const Scene& );
+      Scene& operator=(const Scene&);
+      Scene(const Scene&);
 
       void Ctor();
 
-      void GetDrawableChildren(std::vector<dtCore::DeltaDrawable*> &children,
+      void GetDrawableChildren(std::vector<dtCore::DeltaDrawable*>& children,
                                dtCore::DeltaDrawable& parent) const;
 
       ///The physics controller to use for physics integration (can be NULL)

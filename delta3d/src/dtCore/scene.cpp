@@ -140,7 +140,7 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
    //remove all children from our current scene node
    //and add them to the new scene node
 
-//   osg::Group * sceneData = mOsgViewerScene->getSceneData()->asGroup();
+//   osg::Group* sceneData = mOsgViewerScene->getSceneData()->asGroup();
    unsigned numChildren = mSceneNode->getNumChildren();
 
    for (unsigned i = 0; i < numChildren; ++i)
@@ -323,7 +323,7 @@ void Scene::SetRenderState(Face face, Mode mode)
    osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
    polymode->setMode(myface, mymode);
 
-   osg::StateSet *stateSet = mSceneNode->getOrCreateStateSet();
+   osg::StateSet* stateSet = mSceneNode->getOrCreateStateSet();
    stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 }
 
@@ -508,6 +508,24 @@ void Scene::SetUserCollisionCallback(dNearCallback* func, void* data) const
    {
       mPhysicsController->SetUserCollisionCallback(func, data);
    }
+}
+
+/////////////////////////////////////////////
+dNearCallback* Scene::GetUserCollisionCallback() const
+{
+   return mPhysicsController.valid() ? mPhysicsController->GetUserCollisionCallback() : NULL;
+}
+
+/////////////////////////////////////////////
+void* Scene::GetUserCollisionData()
+{
+   return mPhysicsController.valid() ? mPhysicsController->GetUserCollisionData() : NULL;
+}
+
+/////////////////////////////////////////////
+const void* Scene::GetUserCollisionData() const
+{
+   return mPhysicsController.valid() ? mPhysicsController->GetUserCollisionData() : NULL;
 }
 
 /////////////////////////////////////////////

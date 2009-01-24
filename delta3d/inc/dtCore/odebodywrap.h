@@ -130,8 +130,8 @@ namespace dtCore
       void GetInertiaTensor(osg::Matrix& dest) const;
 
       /**
-      * @return the Body's linear velocity
-      */
+       * @return the Body's linear velocity
+       */
       void SetLinearVelocity(const osg::Vec3& newVelocity);
 
       /**
@@ -194,51 +194,91 @@ namespace dtCore
       void UpdateBodyTransform(const dtCore::Transform& newTransform);
 
       /**
-      * Returns the value below which this object will "sleep"
-      * @return The current sleep threshold
-      */
+       * Reports whether the object will automatically sleep when conditions are met.
+       * @return True if the object is configured to automatically sleep.
+       */
+      bool GetAutoDisableFlag() const;
+
+      /**
+       * Set whether an object will automatically sleep when conditions are met.
+       * @param auto_disable True to auto-sleep, false to not
+       */
+      void SetAutoDisableFlag(bool auto_disable);
+
+      /**
+       * Returns the value below which this object will "sleep"
+       * @return The current sleep threshold
+       */
       float GetAutoDisableLinearThreshold() const;
 
       /**
-      * Sets the value below which the object will "sleep" 
-      * @param threshold The new sleep threshold
-      */
+       * Sets the value below which the object will "sleep"
+       * @param threshold The new sleep threshold
+       */
       void SetAutoDisableLinearThreshold(float threshold);
 
       /**
-      * Returns the value below which this object will "sleep"
-      * @return The current sleep threshold
-      */
+       * Returns the value below which this object will "sleep"
+       * @return The current sleep threshold
+       */
       float GetAutoDisableAngularThreshold() const;
 
       /**
-      * Sets the value below which the object will "sleep" 
-      * @param threshold The new sleep threshold
-      */
+       * Sets the value below which the object will "sleep"
+       * @param threshold The new sleep threshold
+       */
       void SetAutoDisableAngularThreshold(float threshold);
 
       /**
-      * Returns the linear motion damping value used for this body
-      * @return The current linear damping value
-      */
+       * Get the number of simulation steps that the body must be idle (within linear/angular
+       * threshold) before being auto-disabled.
+       * @return The number of steps to wait before the (idle) body is disabled
+       */
+      int GetAutoDisableSteps() const;
+
+      /**
+       * Set the number of simulation steps that the body must be idle (within linear/angular
+       * threshold) before being auto-disabled. Zero removes steps from consideration.
+       * @param numSteps The number of steps to wait before the (idle) body is disabled
+       */
+      void SetAutoDisableSteps(int numSteps);
+
+      /**
+       * Get the (simulation) time that the body must be idle (within linear/angular threshold)
+       * before being auto-disabled.
+       * @return The number of seconds to wait before the (idle) body is disabled
+       */
+      float GetAutoDisableTime() const;
+
+      /**
+       * Set the (simulation) time that the body must be idle (within linear/angular threshold)
+       * before being auto-disabled. Zero removes time from consideration.
+       * @param numSeconds The number of seconds to wait before the (idle) body is disabled
+       */
+      void SetAutoDisableTime(float numSeconds);
+
+      /**
+       * Returns the linear motion damping value used for this body
+       * @return The current linear damping value
+       */
       float GetLinearDamping() const;
 
       /**
-      * Sets the linear motion damping value used for this body
-      * @param scale The linear damping value to use
-      */
+       * Sets the linear motion damping value used for this body
+       * @param scale The linear damping value to use
+       */
       void SetLinearDamping(float scale);
 
       /**
-      * Returns the angular motion damping value used for this body
-      * @return The current angular damping value
-      */
+       * Returns the angular motion damping value used for this body
+       * @return The current angular damping value
+       */
       float GetAngularDamping() const;
 
       /**
-      * Sets the angular motion damping value used for this body
-      * @param scale The angular damping value to use
-      */
+       * Sets the angular motion damping value used for this body
+       * @param scale The angular damping value to use
+       */
       void SetAngularDamping(float scale);
 
    protected:

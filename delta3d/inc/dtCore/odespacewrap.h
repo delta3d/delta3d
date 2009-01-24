@@ -37,45 +37,49 @@ namespace dtCore
    class ODEWorldWrap;
 
    /** Used to wrap up the functionality provided by the ODE Space.  Typically
-     * not referenced directly by end users.  Contains most of the collision
-     * detection functionality.
-     */
+    * not referenced directly by end users.  Contains most of the collision
+    * detection functionality.
+    */
    class DT_CORE_EXPORT ODESpaceWrap : public osg::Referenced
    {
    public:
 
       /** Default constructor.  Uses the supplied parameter to get the world ID
-        * in order to create collision contact joints.
-        * @param worldWrapper : Collision contact joints will be created in this
-        * world.
-        */
+       * in order to create collision contact joints.
+       * @param worldWrapper : Collision contact joints will be created in this
+       * world.
+       */
       ODESpaceWrap(ODEWorldWrap* worldWrapper);
 
       /** Register a collidable object with the collision detection system.
-        * @param collidable : valid collidable object to add to the system
-        */
+       * @param collidable : valid collidable object to add to the system
+       */
       void RegisterCollidable(Transformable* collidable);
 
       /** Unregister a collidable object with the collision detection system.
-        * @param collidable : valid collidable object to remove from the system.
-        */
+       * @param collidable : valid collidable object to remove from the system.
+       */
       void UnRegisterCollidable(Transformable* collidable);
 
 
       /** Check the system for collision detections.  Will use the default
-        * near collision detection method unless a user created one is supplied.
-        * @see SetUserCollisionCallback()
-        */
+       * near collision detection method unless a user created one is supplied.
+       * @see SetUserCollisionCallback()
+       */
       void Collide();
 
       /** Performs cleanup functionality after Collide() has taken place.
-        */
+       */
       void PostCollide();
 
       /** Supply a user-defined near collision callback to replace the internal one.
        *  This is used to do a rough-cut filter of geoms that could be colliding.
        */
       void SetUserCollisionCallback(dNearCallback* func, void* data=NULL);
+
+      dNearCallback* GetUserCollisionCallback() const;
+      void* GetUserCollisionData();
+      const void* GetUserCollisionData() const;
 
       ///The user data associated with "collision" messages
       struct DT_CORE_EXPORT CollisionData
@@ -89,11 +93,11 @@ namespace dtCore
       typedef dtUtil::Functor<void, TYPELIST_1(const CollisionData&)> CollisionCBFunc;
 
       /** Supply a callback function to be used by the default collision function.
-        * The func will be called when two geom's are colliding and supplied with
-        * the collision data.
-        * @param func A functor to be called when two geoms are actually colliding
-        * @see CollisionCBFunc
-        */
+       * The func will be called when two geom's are colliding and supplied with
+       * the collision data.
+       * @param func A functor to be called when two geoms are actually colliding
+       * @see CollisionCBFunc
+       */
       void SetDefaultCollisionCBFunc(const CollisionCBFunc& func);
 
       ///Get the ODE contact join group ID
@@ -107,11 +111,11 @@ namespace dtCore
 
    private:
       ///ODE collision callback
-      static void DefaultNearCallback(void *data, dGeomID o1, dGeomID o2);
+      static void DefaultNearCallback(void* data, dGeomID o1, dGeomID o2);
 
       dSpaceID mSpaceID;  ///< the current collision space ID
-      dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
-      void *mUserNearCallbackData; ///< pointer to user-supplied data
+      dNearCallback* mUserNearCallback;   ///<The user-supplied collision callback func
+      void* mUserNearCallbackData; ///< pointer to user-supplied data
 
       dJointGroupID mContactJointGroupID; ///<The group that contains all contact joints
 

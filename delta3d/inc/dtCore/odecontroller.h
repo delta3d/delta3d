@@ -53,11 +53,11 @@ namespace dtCore
    public:
 
       /** Default constructor.  Will create default ODESpaceWrap and ODEWorldWrap
-        * instances used for collision and body functionality.
-        * @param msgSender : optional pointer to a class which will be used to send out
-        *                the "collision" message.
-        * @see SetMessageSender()
-        */
+       * instances used for collision and body functionality.
+       * @param msgSender : optional pointer to a class which will be used to send out
+       *                the "collision" message.
+       * @see SetMessageSender()
+       */
       ODEController(dtCore::Base* msgSender = NULL);
 
       /** Overloaded constructor to supply a custom ODESpaceWrap and ODEWorldWrap.
@@ -65,7 +65,7 @@ namespace dtCore
        * @param worldWrap custom ODE world wrapper
        * @param msgSender : optional pointer to a class which will be used to send out
        *                the "collision" message.
-      */
+       */
       ODEController(ODESpaceWrap& spaceWrapper, ODEWorldWrap& worldWrap, dtCore::Base* msgSender = NULL);
 
       /** Set the class that will act as the sender for the "collision" message.
@@ -75,15 +75,15 @@ namespace dtCore
       void SetMessageSender(dtCore::Base* msgSender);
 
       /** Register a physics object with the system.  When added, the object
-        * will be supplied to the underlying physics system for processing.
-        * @param collidable A valid collision/physics object
-        */
+       * will be supplied to the underlying physics system for processing.
+       * @param collidable A valid collision/physics object
+       */
       void RegisterCollidable(Transformable* collidable);
 
       /** Unregister a physics object with the system.  The object
        * will be removed from the underlying physics system.
        * @param collidable A valid collision/physics object
-      */
+       */
       void UnRegisterCollidable(Transformable* collidable);
 
       typedef std::vector<Transformable*> TransformableVector;
@@ -94,22 +94,22 @@ namespace dtCore
       const TransformableVector& GetRegisteredCollidables() const;
 
       /** Perform an iteration of the physics system.  Default implementation
-        * will perform as many physics steps required to fulfill the supplied
-        * time step.  Custom iteration algorithms can be created by deriving from
-        * this class and overwriting this method.
-        * @param deltaFrameTime The amount of time to simulate in the physics system.
-        */
+       * will perform as many physics steps required to fulfill the supplied
+       * time step.  Custom iteration algorithms can be created by deriving from
+       * this class and overwriting this method.
+       * @param deltaFrameTime The amount of time to simulate in the physics system.
+       */
       virtual void Iterate(double deltaFrameTime);
 
       /**
-      * Get the step size of the physics.  The physics will
-      * be updated numerous times per frame based on this number.  For example,
-      * if the delta frame rate is 33ms and the step size is 2ms, the physics
-      * will be updated 16 times.
-      *
-      * @return the step size in seconds
-      * @see SetPhysicsStepSize()
-      */
+       * Get the step size of the physics.  The physics will
+       * be updated numerous times per frame based on this number.  For example,
+       * if the delta frame rate is 33ms and the step size is 2ms, the physics
+       * will be updated 16 times.
+       *
+       * @return the step size in seconds
+       * @see SetPhysicsStepSize()
+       */
       double GetPhysicsStepSize() const;
 
       /// @see GetPhysicsStepSize()
@@ -129,7 +129,11 @@ namespace dtCore
 
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback(dNearCallback* func, void* data=NULL) const;
-      
+
+      dNearCallback* GetUserCollisionCallback() const;
+      void* GetUserCollisionData();
+      const void* GetUserCollisionData() const;
+
       ///Get the ODE contact joint group ID
       dJointGroupID GetContactJointGroupID() const;
 
@@ -151,7 +155,7 @@ namespace dtCore
       virtual ~ODEController();
 
       ///When two geoms collide, send out a "collide" message
-      virtual void DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionData &data);
+      virtual void DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionData& data);
 
       ///perform one iteration using the supplied step size
       void Step(double stepSize) const;
@@ -164,7 +168,7 @@ namespace dtCore
       dtCore::RefPtr<dtCore::ODEWorldWrap> mWorldWrapper;
 
       ///<The time (seconds) for the physics time step.
-      ///<(default = 0.0, indicating to use the System deltaFrameTime )
+      ///<(default = 0.0, indicating to use the System deltaFrameTime)
       double mPhysicsStepSize;
 
       TransformableVector mCollidableContents; ///<The physical contents of the scene
