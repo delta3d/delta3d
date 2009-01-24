@@ -37,6 +37,7 @@ ParticleViewer::ParticleViewer()
 : mpParticleSystemGroup(NULL)
 , mpParticleSystemUpdater(NULL)
 , mLayerIndex(0)
+, mMultiSegmentVertexIndex(0)
 {
 }
 
@@ -439,7 +440,7 @@ void ParticleViewer::PlacerTypeBoxValueChanged(int newCounter)
          msp->addVertex(-1, 0, 0);
          msp->addVertex(1, 0, 0);
          mLayers[mLayerIndex].mModularEmitter->setPlacer(msp);
-         UpdateMultiSegmentPlacerValues();
+         UpdateMultiSegmentPlacerVertexList();
       }
       break;
    }
@@ -590,6 +591,67 @@ void ParticleViewer::SegmentPlacerVertexBZValueChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateMultiSegmentPlacerSelectionIndex(int newIndex)
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+  mMultiSegmentVertexIndex = newIndex;
+   if(0 <= mMultiSegmentVertexIndex && mMultiSegmentVertexIndex < msp->numVertices())
+   {
+      UpdateMultiSegmentPlacerValues();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MultiSegmentPlacerAddVertex()
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   msp->addVertex(0.0, 0.0, 0.0);
+   mMultiSegmentVertexIndex = msp->numVertices() - 1;
+   UpdateMultiSegmentPlacerVertexList();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MultiSegmentPlacerDeleteVertex()
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   msp->removeVertex(mMultiSegmentVertexIndex);
+   UpdateMultiSegmentPlacerVertexList();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MultiSegmentPlacerXValueChanged(double newValue)
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertex = msp->getVertex(mMultiSegmentVertexIndex);
+   vertex[0] = newValue;
+   msp->setVertex(mMultiSegmentVertexIndex, vertex);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MultiSegmentPlacerYValueChanged(double newValue)
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertex = msp->getVertex(mMultiSegmentVertexIndex);
+   vertex[1] = newValue;
+   msp->setVertex(mMultiSegmentVertexIndex, vertex);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::MultiSegmentPlacerZValueChanged(double newValue)
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertex = msp->getVertex(mMultiSegmentVertexIndex);
+   vertex[2] = newValue;
+   msp->setVertex(mMultiSegmentVertexIndex, vertex);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::MakeCompass()
 {
    dtCore::Compass* compass = new dtCore::Compass(GetCamera());
@@ -736,7 +798,7 @@ void ParticleViewer::UpdatePlacerTabsValues()
    else if(IS_A(placer, osgParticle::MultiSegmentPlacer*))
    {
       emit PlacerTypeBoxUpdated(3);
-      UpdateMultiSegmentPlacerValues();
+      UpdateMultiSegmentPlacerVertexList();
    }
 }
 
@@ -781,8 +843,27 @@ void ParticleViewer::UpdateSegmentPlacerValues()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateMultiSegmentPlacerVertexList()
+{
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   emit ClearMultiSegmentPlacerVertexList();
+   for(int i = 0; i < msp->numVertices(); ++i)
+   {
+      osg::Vec3 vertex = msp->getVertex(i);
+      emit AddVertexToMultiSegmentPlacerVertexList(vertex[0], vertex[1], vertex[2]);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::UpdateMultiSegmentPlacerValues()
 {
+   osgParticle::MultiSegmentPlacer* msp =
+      (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
+   osg::Vec3 vertex = msp->getVertex(mMultiSegmentVertexIndex);
+   emit MultiSegmentPlacerXUpdated(vertex[0]);
+   emit MultiSegmentPlacerYUpdated(vertex[1]);
+   emit MultiSegmentPlacerZUpdated(vertex[2]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

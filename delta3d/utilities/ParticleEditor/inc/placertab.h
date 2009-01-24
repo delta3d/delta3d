@@ -4,6 +4,9 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QDoubleSpinBox>
 #include <QtGui/QSlider>
+#include <QtGui/QListWidget>
+#include <QtGui/QStackedWidget>
+#include <QtGui/QPushButton>
 
 class PlacerTab : public QObject
 {
@@ -85,6 +88,28 @@ public:
    void SetSegmentPlacerVertexBZSlider(QSlider* segmentPlacerVertexBZSlider)
       { mpSegmentPlacerVertexBZSlider = segmentPlacerVertexBZSlider; }
 
+   // Multi Segment placer UI items
+   void SetMultiSegmentPlacerVerticesList(QListWidget* multiSegmentPlacerVerticesList)
+      { mpMultiSegmentPlacerVerticesList = multiSegmentPlacerVerticesList; }
+   void SetVertexParametersStackedWidget(QStackedWidget* vertexParametersStackedWidget)
+      { mpVertexParametersStackedWidget = vertexParametersStackedWidget; }
+   void SetMultiSegmentPlacerAddVertexButton(QPushButton* multiSegmentPlacerAddVertexButton)
+      { mpMultiSegmentPlacerAddVertexButton = multiSegmentPlacerAddVertexButton; }
+   void SetMultiSegmentPlacerDeleteVertexButton(QPushButton* multiSegmentPlacerDeleteVertexButton)
+      { mpMultiSegmentPlacerDeleteVertexButton = multiSegmentPlacerDeleteVertexButton; }
+   void SetMultiSegmentPlacerXSpinBox(QDoubleSpinBox* multiSegmentPlacerXSpinBox)
+      { mpMultiSegmentPlacerXSpinBox = multiSegmentPlacerXSpinBox; }
+   void SetMultiSegmentPlacerXSlider(QSlider* multiSegmentPlacerXSlider)
+      { mpMultiSegmentPlacerXSlider = multiSegmentPlacerXSlider; }
+   void SetMultiSegmentPlacerYSpinBox(QDoubleSpinBox* multiSegmentPlacerYSpinBox)
+      { mpMultiSegmentPlacerYSpinBox = multiSegmentPlacerYSpinBox; }
+   void SetMultiSegmentPlacerYSlider(QSlider* multiSegmentPlacerYSlider)
+      { mpMultiSegmentPlacerYSlider = multiSegmentPlacerYSlider; }
+   void SetMultiSegmentPlacerZSpinBox(QDoubleSpinBox* multiSegmentPlacerZSpinBox)
+      { mpMultiSegmentPlacerZSpinBox = multiSegmentPlacerZSpinBox; }
+   void SetMultiSegmentPlacerZSlider(QSlider* multiSegmentPlacerZSlider)
+      { mpMultiSegmentPlacerZSlider = multiSegmentPlacerZSlider; }
+
    void SetupUI();
 
 public slots:
@@ -126,10 +151,25 @@ public slots:
    void SegmentPlacerVertexBZSpinBoxValueChanged(double newValue);
    void SegmentPlacerVertexBZSliderValueChanged(int newValue);
 
+   // Multi Segment placer UI items
+   void MultiSegmentPlacerVertexListSelectionChanged(int newIndex);
+   void MultiSegmentPlacerClearVertexList();
+   void MultiSegmentPlacerAddVertexToList(double x, double y, double z);
+   void MultiSegmentPlacerAddVertexButtonPressed();
+   void MultiSegmentPlacerDeleteVertexButtonPressed();
+   void MultiSegmentPlacerXSpinBoxValueChanged(double newValue);
+   void MultiSegmentPlacerXSliderValueChanged(int newValue);
+   void MultiSegmentPlacerYSpinBoxValueChanged(double newValue);
+   void MultiSegmentPlacerYSliderValueChanged(int newValue);
+   void MultiSegmentPlacerZSpinBoxValueChanged(double newValue);
+   void MultiSegmentPlacerZSliderValueChanged(int newValue);
+
 private:
    void SetupPointPlacerConnections();
    void SetupSectorPlacerConnections();
    void SetupSegmentPlacerConnections();
+   void SetupMultiSegmentPlacerConnections();
+   void UpdateMultSegmentPlacerVerticesList();
 
    QComboBox* mpPlacerTypeBox;
 
@@ -170,6 +210,18 @@ private:
    QSlider* mpSegmentPlacerVertexBYSlider;
    QDoubleSpinBox* mpSegmentPlacerVertexBZSpinBox;
    QSlider* mpSegmentPlacerVertexBZSlider;
+
+   // Segment placer UI items
+   QListWidget* mpMultiSegmentPlacerVerticesList;
+   QStackedWidget* mpVertexParametersStackedWidget;
+   QPushButton* mpMultiSegmentPlacerAddVertexButton;
+   QPushButton* mpMultiSegmentPlacerDeleteVertexButton;
+   QDoubleSpinBox* mpMultiSegmentPlacerXSpinBox;
+   QSlider* mpMultiSegmentPlacerXSlider;
+   QDoubleSpinBox* mpMultiSegmentPlacerYSpinBox;
+   QSlider* mpMultiSegmentPlacerYSlider;
+   QDoubleSpinBox* mpMultiSegmentPlacerZSpinBox;
+   QSlider* mpMultiSegmentPlacerZSlider;
 };
 
 #endif /*DELTA_PLACER_TAB*/

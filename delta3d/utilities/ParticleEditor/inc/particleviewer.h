@@ -137,13 +137,20 @@ signals:
    void SectorPlacerMinPhiUpdated(double newValue);
    void SectorPlacerMaxPhiUpdated(double newValue);
 
-   // Point Placer UI
+   // Segment Placer UI
    void SegmentPlacerVertexAXUpdated(double newValue);
    void SegmentPlacerVertexAYUpdated(double newValue);
    void SegmentPlacerVertexAZUpdated(double newValue);
    void SegmentPlacerVertexBXUpdated(double newValue);
    void SegmentPlacerVertexBYUpdated(double newValue);
    void SegmentPlacerVertexBZUpdated(double newValue);
+
+   // Multi Segment Placer UI
+   void ClearMultiSegmentPlacerVertexList();
+   void AddVertexToMultiSegmentPlacerVertexList(double x, double y, double z);
+   void MultiSegmentPlacerXUpdated(double newValue);
+   void MultiSegmentPlacerYUpdated(double newValue);
+   void MultiSegmentPlacerZUpdated(double newValue);
 
    public slots:
    void CreateNewParticleSystem();
@@ -208,13 +215,21 @@ signals:
    void SectorPlacerMinPhiValueChanged(double newValue);
    void SectorPlacerMaxPhiValueChanged(double newValue);
 
-   // Placer Placer UI
+   // Segment Placer UI
    void SegmentPlacerVertexAXValueChanged(double newValue);
    void SegmentPlacerVertexAYValueChanged(double newValue);
    void SegmentPlacerVertexAZValueChanged(double newValue);
    void SegmentPlacerVertexBXValueChanged(double newValue);
    void SegmentPlacerVertexBYValueChanged(double newValue);
    void SegmentPlacerVertexBZValueChanged(double newValue);
+
+   // Multi Segment Placer UI
+   void UpdateMultiSegmentPlacerSelectionIndex(int newIndex);
+   void MultiSegmentPlacerAddVertex();
+   void MultiSegmentPlacerDeleteVertex();
+   void MultiSegmentPlacerXValueChanged(double newValue);
+   void MultiSegmentPlacerYValueChanged(double newValue);
+   void MultiSegmentPlacerZValueChanged(double newValue);
 
 private:
    void MakeCompass();
@@ -226,6 +241,7 @@ private:
    void UpdatePointPlacerValues();
    void UpdateSectorPlacerValues();
    void UpdateSegmentPlacerValues();
+   void UpdateMultiSegmentPlacerVertexList();
    void UpdateMultiSegmentPlacerValues();
 
    dtCore::RefPtr<OrbitMotionModel> mMotion;
@@ -243,6 +259,7 @@ private:
    std::string mParticleSystemFilename;
 
    int mLayerIndex;
+   int mMultiSegmentVertexIndex;
 };
 
 #endif // __PARTICLE_VIEWER_H__
