@@ -767,16 +767,27 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
    {
+      if (file1 != file2)
+      {
+         return false;         
+      }
+
       struct stat stat1, stat2;
 
       if(stat(file1.c_str(), &stat1) != 0)
+      {
          return false;
-      
+      }
+
       if(stat(file2.c_str(), &stat2) != 0)
+      {
          return false;
+      }
 
       if(stat1.st_ino == stat2.st_ino)
+      {
          return true;
+      }
 
       return false;       
    }
