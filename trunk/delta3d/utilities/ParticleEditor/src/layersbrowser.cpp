@@ -55,17 +55,13 @@ void LayersBrowser::TrashLayerButtonPushed()
 ///////////////////////////////////////////////////////////////////////////////
 void LayersBrowser::RenameLayerButtonPushed()
 {
-   QListWidgetItem *currentItem = mpLayerList->currentItem();
-   int currentRow = mpLayerList->row(currentItem);
-   QString text = currentItem->text();
+   QString text = mpLayerList->currentItem()->text();
    QString newText = QInputDialog::getText(this, "Item", 
       "Enter new item", QLineEdit::Normal, text);
    newText = newText.simplified();
-   if (!newText.isEmpty()) {
-      mpLayerList->takeItem(currentRow);
-      delete currentItem;
-      mpLayerList->insertItem(currentRow, newText);
-      mpLayerList->setCurrentRow(currentRow);
+   if(!newText.isEmpty())
+   {
+      mpLayerList->currentItem()->setText(newText);
    }
 }
 

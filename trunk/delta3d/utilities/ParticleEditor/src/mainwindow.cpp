@@ -257,7 +257,7 @@ void MainWindow::SetupPlacerTab()
    mpPlacerTab->SetSectorPlacerMaxPhiSpinBox(mUI.SectorPlacerMaxPhiSpinBox);
    mpPlacerTab->SetSectorPlacerMaxPhiSlider(mUI.SectorPlacerMaxPhiSlider);
 
-   // Placer Placer UI
+   // Segment Placer UI
    mpPlacerTab->SetSegmentPlacerVertexAXSpinBox(mUI.SegmentPlacerVertexAXSpinBox);
    mpPlacerTab->SetSegmentPlacerVertexAXSlider(mUI.SegmentPlacerVertexAXSlider);
    mpPlacerTab->SetSegmentPlacerVertexAYSpinBox(mUI.SegmentPlacerVertexAYSpinBox);
@@ -270,6 +270,18 @@ void MainWindow::SetupPlacerTab()
    mpPlacerTab->SetSegmentPlacerVertexBYSlider(mUI.SegmentPlacerVertexBYSlider);
    mpPlacerTab->SetSegmentPlacerVertexBZSpinBox(mUI.SegmentPlacerVertexBZSpinBox);
    mpPlacerTab->SetSegmentPlacerVertexBZSlider(mUI.SegmentPlacerVertexBZSlider);
+
+   // Multi Segment Placer UI
+   mpPlacerTab->SetMultiSegmentPlacerVerticesList(mUI.MultiSegmentPlacerVerticesList);
+   mpPlacerTab->SetVertexParametersStackedWidget(mUI.VertexParametersStackedWidget);
+   mpPlacerTab->SetMultiSegmentPlacerAddVertexButton(mUI.MultiSegmentPlacerAddVertexButton);
+   mpPlacerTab->SetMultiSegmentPlacerDeleteVertexButton(mUI.MultiSegmentPlacerDeleteVertexButton);
+   mpPlacerTab->SetMultiSegmentPlacerXSpinBox(mUI.MultiSegmentPlacerXSpinBox);
+   mpPlacerTab->SetMultiSegmentPlacerXSlider(mUI.MultiSegmentPlacerXSlider);
+   mpPlacerTab->SetMultiSegmentPlacerYSpinBox(mUI.MultiSegmentPlacerYSpinBox);
+   mpPlacerTab->SetMultiSegmentPlacerYSlider(mUI.MultiSegmentPlacerYSlider);
+   mpPlacerTab->SetMultiSegmentPlacerZSpinBox(mUI.MultiSegmentPlacerZSpinBox);
+   mpPlacerTab->SetMultiSegmentPlacerZSlider(mUI.MultiSegmentPlacerZSlider);
 
    SetupPlacerTabConnections();
 
@@ -300,6 +312,13 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mUI.SegmentPlacerVertexBXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBXValueChanged(double)));
    connect(mUI.SegmentPlacerVertexBYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBYValueChanged(double)));
    connect(mUI.SegmentPlacerVertexBZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SegmentPlacerVertexBZValueChanged(double)));
+   // Multi Segment Placer UI
+   connect(mUI.MultiSegmentPlacerVerticesList, SIGNAL(currentRowChanged(int)), mpParticleViewer, SLOT(UpdateMultiSegmentPlacerSelectionIndex(int)));
+   connect(mUI.MultiSegmentPlacerAddVertexButton, SIGNAL(clicked()), mpParticleViewer, SLOT(MultiSegmentPlacerAddVertex()));
+   connect(mUI.MultiSegmentPlacerDeleteVertexButton, SIGNAL(clicked()), mpParticleViewer, SLOT(MultiSegmentPlacerDeleteVertex()));
+   connect(mUI.MultiSegmentPlacerXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(MultiSegmentPlacerXValueChanged(double)));
+   connect(mUI.MultiSegmentPlacerYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(MultiSegmentPlacerYValueChanged(double)));
+   connect(mUI.MultiSegmentPlacerZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(MultiSegmentPlacerZValueChanged(double)));
 
    ///> Connections from particle viewer to UI
    connect(mpParticleViewer, SIGNAL(PlacerTypeBoxUpdated(int)), mUI.PlacerTypeComboBox, SLOT(setCurrentIndex(int)));
@@ -322,6 +341,12 @@ void MainWindow::SetupPlacerTabConnections()
    connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBXUpdated(double)), mUI.SegmentPlacerVertexBXSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBYUpdated(double)), mUI.SegmentPlacerVertexBYSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(SegmentPlacerVertexBZUpdated(double)), mUI.SegmentPlacerVertexBZSpinBox, SLOT(setValue(double)));
+   // Multi Segment Placer UI
+   connect(mpParticleViewer, SIGNAL(ClearMultiSegmentPlacerVertexList()), mpPlacerTab, SLOT(MultiSegmentPlacerClearVertexList()));
+   connect(mpParticleViewer, SIGNAL(AddVertexToMultiSegmentPlacerVertexList(double, double, double)), mpPlacerTab, SLOT(MultiSegmentPlacerAddVertexToList(double, double, double)));
+   connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerXUpdated(double)), mUI.MultiSegmentPlacerXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerYUpdated(double)), mUI.MultiSegmentPlacerYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerZUpdated(double)), mUI.MultiSegmentPlacerZSpinBox, SLOT(setValue(double)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

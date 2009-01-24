@@ -16,6 +16,7 @@ void PlacerTab::SetupUI()
    SetupPointPlacerConnections();
    SetupSectorPlacerConnections();
    SetupSegmentPlacerConnections();
+   SetupMultiSegmentPlacerConnections();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -211,6 +212,97 @@ void PlacerTab::SegmentPlacerVertexBZSliderValueChanged(int newValue)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerVertexListSelectionChanged(int newIndex)
+{
+   if(newIndex != -1)
+   {
+      mpMultiSegmentPlacerDeleteVertexButton->setEnabled(true);
+      mpVertexParametersStackedWidget->setCurrentIndex(1);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerClearVertexList()
+{
+   mpMultiSegmentPlacerVerticesList->clear();
+   mpMultiSegmentPlacerDeleteVertexButton->setEnabled(false);
+   mpVertexParametersStackedWidget->setCurrentIndex(0);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerAddVertexToList(double x, double y, double z)
+{
+   QString newVector;
+   newVector.sprintf("%g, %g, %g", x, y, z);
+   mpMultiSegmentPlacerVerticesList->addItem(newVector);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerAddVertexButtonPressed()
+{
+   //MultiSegmentPlacerAddVertexToList(0, 0, 0);
+   //mpMultiSegmentPlacerVerticesList->setCurrentRow(mpMultiSegmentPlacerVerticesList->count() - 1);
+   if(mpMultiSegmentPlacerVerticesList->count() == 1)
+   {
+      mpMultiSegmentPlacerDeleteVertexButton->setEnabled(true);
+      mpVertexParametersStackedWidget->setCurrentIndex(1);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerDeleteVertexButtonPressed()
+{
+   //mpMultiSegmentPlacerVerticesList->takeItem(mpMultiSegmentPlacerVerticesList->currentRow());
+   if(mpMultiSegmentPlacerVerticesList->count() < 1)
+   {
+      mpMultiSegmentPlacerDeleteVertexButton->setEnabled(false);
+      mpVertexParametersStackedWidget->setCurrentIndex(0);
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerXSpinBoxValueChanged(double newValue)
+{
+   mpMultiSegmentPlacerXSlider->setValue(newValue * 10);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerXSliderValueChanged(int newValue)
+{
+   mpMultiSegmentPlacerXSpinBox->setValue(newValue / 10.0f);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerYSpinBoxValueChanged(double newValue)
+{
+   mpMultiSegmentPlacerYSlider->setValue(newValue * 10);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerYSliderValueChanged(int newValue)
+{
+   mpMultiSegmentPlacerYSpinBox->setValue(newValue / 10.0f);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerZSpinBoxValueChanged(double newValue)
+{
+   mpMultiSegmentPlacerZSlider->setValue(newValue * 10);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerZSliderValueChanged(int newValue)
+{
+   mpMultiSegmentPlacerZSpinBox->setValue(newValue / 10.0f);
+   UpdateMultSegmentPlacerVerticesList();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void PlacerTab::SetupPointPlacerConnections()
 {
    connect(mpPointPlacerXSpinBox, SIGNAL(valueChanged(double)), this, SLOT(PointPlacerXSpinBoxValueChanged(double)));
@@ -255,6 +347,29 @@ void PlacerTab::SetupSegmentPlacerConnections()
    connect(mpSegmentPlacerVertexBYSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexBYSliderValueChanged(int)));
    connect(mpSegmentPlacerVertexBZSpinBox, SIGNAL(valueChanged(double)), this, SLOT(SegmentPlacerVertexBZSpinBoxValueChanged(double)));
    connect(mpSegmentPlacerVertexBZSlider, SIGNAL(sliderMoved(int)), this, SLOT(SegmentPlacerVertexBZSliderValueChanged(int)));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::SetupMultiSegmentPlacerConnections()
+{
+   connect(mpMultiSegmentPlacerVerticesList, SIGNAL(currentRowChanged(int)), this, SLOT(MultiSegmentPlacerVertexListSelectionChanged(int)));
+   connect(mpMultiSegmentPlacerAddVertexButton, SIGNAL(clicked()), this, SLOT(MultiSegmentPlacerAddVertexButtonPressed()));
+   connect(mpMultiSegmentPlacerDeleteVertexButton, SIGNAL(clicked()), this, SLOT(MultiSegmentPlacerDeleteVertexButtonPressed()));
+   connect(mpMultiSegmentPlacerXSpinBox, SIGNAL(valueChanged(double)), this, SLOT(MultiSegmentPlacerXSpinBoxValueChanged(double)));
+   connect(mpMultiSegmentPlacerXSlider, SIGNAL(sliderMoved(int)), this, SLOT(MultiSegmentPlacerXSliderValueChanged(int)));
+   connect(mpMultiSegmentPlacerYSpinBox, SIGNAL(valueChanged(double)), this, SLOT(MultiSegmentPlacerYSpinBoxValueChanged(double)));
+   connect(mpMultiSegmentPlacerYSlider, SIGNAL(sliderMoved(int)), this, SLOT(MultiSegmentPlacerYSliderValueChanged(int)));
+   connect(mpMultiSegmentPlacerZSpinBox, SIGNAL(valueChanged(double)), this, SLOT(MultiSegmentPlacerZSpinBoxValueChanged(double)));
+   connect(mpMultiSegmentPlacerZSlider, SIGNAL(sliderMoved(int)), this, SLOT(MultiSegmentPlacerZSliderValueChanged(int)));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::UpdateMultSegmentPlacerVerticesList()
+{
+   QString newVector;
+   newVector.sprintf("%g, %g, %g", mpMultiSegmentPlacerXSpinBox->value(),
+      mpMultiSegmentPlacerYSpinBox->value(), mpMultiSegmentPlacerZSpinBox->value());
+   mpMultiSegmentPlacerVerticesList->currentItem()->setText(newVector);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

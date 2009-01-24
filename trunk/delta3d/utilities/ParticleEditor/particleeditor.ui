@@ -3010,7 +3010,7 @@
                  <number>1</number>
                 </property>
                 <property name="currentIndex" >
-                 <number>0</number>
+                 <number>3</number>
                 </property>
                 <widget class="QWidget" name="PointPlacerPage" >
                  <layout class="QGridLayout" name="gridLayout_18" >
@@ -4134,16 +4134,6 @@
                     <property name="selectionRectVisible" >
                      <bool>false</bool>
                     </property>
-                    <item>
-                     <property name="text" >
-                      <string>-1, 0, 0</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text" >
-                      <string>1, 0, 0</string>
-                     </property>
-                    </item>
                    </widget>
                   </item>
                   <item row="3" column="0" >
@@ -4216,7 +4206,7 @@
                    </spacer>
                   </item>
                   <item rowspan="3" row="0" column="2" >
-                   <widget class="QStackedWidget" name="stackedWidget_3" >
+                   <widget class="QStackedWidget" name="VertexParametersStackedWidget" >
                     <property name="currentIndex" >
                      <number>0</number>
                     </property>
@@ -4269,30 +4259,96 @@
                           </widget>
                          </item>
                          <item row="0" column="1" >
-                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerVertexParametersXSpinBox" />
+                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerXSpinBox" >
+                           <property name="alignment" >
+                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           </property>
+                           <property name="decimals" >
+                            <number>1</number>
+                           </property>
+                           <property name="minimum" >
+                            <double>-10.000000000000000</double>
+                           </property>
+                           <property name="maximum" >
+                            <double>10.000000000000000</double>
+                           </property>
+                           <property name="singleStep" >
+                            <double>0.100000000000000</double>
+                           </property>
+                          </widget>
                          </item>
                          <item row="1" column="1" >
-                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerVertexParametersYSpinBox" />
+                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerYSpinBox" >
+                           <property name="alignment" >
+                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           </property>
+                           <property name="decimals" >
+                            <number>1</number>
+                           </property>
+                           <property name="minimum" >
+                            <double>-10.000000000000000</double>
+                           </property>
+                           <property name="maximum" >
+                            <double>10.000000000000000</double>
+                           </property>
+                           <property name="singleStep" >
+                            <double>0.100000000000000</double>
+                           </property>
+                          </widget>
                          </item>
                          <item row="2" column="1" >
-                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerVertexParametersZSpinBox" />
+                          <widget class="QDoubleSpinBox" name="MultiSegmentPlacerZSpinBox" >
+                           <property name="alignment" >
+                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                           </property>
+                           <property name="decimals" >
+                            <number>1</number>
+                           </property>
+                           <property name="minimum" >
+                            <double>-10.000000000000000</double>
+                           </property>
+                           <property name="maximum" >
+                            <double>10.000000000000000</double>
+                           </property>
+                           <property name="singleStep" >
+                            <double>0.100000000000000</double>
+                           </property>
+                          </widget>
                          </item>
                          <item row="0" column="2" >
-                          <widget class="QSlider" name="MultiSegmentPlacerVertexParametersXSlider" >
+                          <widget class="QSlider" name="MultiSegmentPlacerXSlider" >
+                           <property name="minimum" >
+                            <number>-100</number>
+                           </property>
+                           <property name="maximum" >
+                            <number>100</number>
+                           </property>
                            <property name="orientation" >
                             <enum>Qt::Horizontal</enum>
                            </property>
                           </widget>
                          </item>
                          <item row="1" column="2" >
-                          <widget class="QSlider" name="MultiSegmentPlacerVertexParametersYSlider" >
+                          <widget class="QSlider" name="MultiSegmentPlacerYSlider" >
+                           <property name="minimum" >
+                            <number>-100</number>
+                           </property>
+                           <property name="maximum" >
+                            <number>100</number>
+                           </property>
                            <property name="orientation" >
                             <enum>Qt::Horizontal</enum>
                            </property>
                           </widget>
                          </item>
                          <item row="2" column="2" >
-                          <widget class="QSlider" name="MultiSegmentPlacerVertexParametersZSlider" >
+                          <widget class="QSlider" name="MultiSegmentPlacerZSlider" >
+                           <property name="minimum" >
+                            <number>-100</number>
+                           </property>
+                           <property name="maximum" >
+                            <number>100</number>
+                           </property>
                            <property name="orientation" >
                             <enum>Qt::Horizontal</enum>
                            </property>
