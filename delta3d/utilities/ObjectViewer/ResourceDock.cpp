@@ -34,6 +34,8 @@
 
 #include <QtCore/QDir>
 
+#include <osg/Version>
+#include <osg/Geometry>
 #include <osg/StateAttribute>
 #include <osg/Texture>
 #include <osg/LightSource>
@@ -1324,7 +1326,11 @@ void ResourceDock::ExportTexturesFromStateSet(const QString& path, osg::StateSet
          osg::StateAttribute* attribute = stateSet->getTextureAttribute(attributeIndex, osg::StateAttribute::TEXTURE);
          if (attribute)
          {
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 6
             osg::Texture* texture = attribute->asTexture();
+#else
+            osg::Texture* texture = dynamic_cast<osg::Texture*>(attribute);
+#endif
             if (texture)
             {
                for (unsigned int imageIndex = 0; imageIndex < texture->getNumImages(); imageIndex++)
