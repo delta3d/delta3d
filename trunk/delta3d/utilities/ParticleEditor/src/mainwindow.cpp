@@ -344,6 +344,7 @@ void MainWindow::SetupPlacerTabConnections()
    // Multi Segment Placer UI
    connect(mpParticleViewer, SIGNAL(ClearMultiSegmentPlacerVertexList()), mpPlacerTab, SLOT(MultiSegmentPlacerClearVertexList()));
    connect(mpParticleViewer, SIGNAL(AddVertexToMultiSegmentPlacerVertexList(double, double, double)), mpPlacerTab, SLOT(MultiSegmentPlacerAddVertexToList(double, double, double)));
+   connect(mpParticleViewer, SIGNAL(SelectIndexOfMultiSegmentPlacerVertexList(int)), mpPlacerTab, SLOT(MultiSegmentPlacerSelectIndexOfVertexList(int)));
    connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerXUpdated(double)), mUI.MultiSegmentPlacerXSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerYUpdated(double)), mUI.MultiSegmentPlacerYSpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(MultiSegmentPlacerZUpdated(double)), mUI.MultiSegmentPlacerZSpinBox, SLOT(setValue(double)));
@@ -427,11 +428,84 @@ void MainWindow::SetupShooterTabConnections()
 void MainWindow::SetupProgramTab()
 {
    mpProgramTab = new ProgramTab();
+
+   // Operators UI
+   mpProgramTab->SetOperatorsList(mUI.OperatorsList);
+   mpProgramTab->SetOperatorsStackedWidget(mUI.OperatorsStackedWidget);
+   mpProgramTab->SetOperatorsNewForceButton(mUI.OperatorsNewForceButton);
+   mpProgramTab->SetOperatorsNewAccelerationButton(mUI.OperatorsNewAccelerationButton);
+   mpProgramTab->SetOperatorsNewFluidFrictionButton(mUI.OperatorsNewFluidFrictionButton);
+   mpProgramTab->SetOperatorsDeleteOperatorsButton(mUI.OperatorsDeleteOperatorButton);
+
+   // Force UI
+   mpProgramTab->SetForceXSpinBox(mUI.ForceParametersXSpinBox);
+   mpProgramTab->SetForceXSlider(mUI.ForceParametersXSlider);
+   mpProgramTab->SetForceYSpinBox(mUI.ForceParametersYSpinBox);
+   mpProgramTab->SetForceYSlider(mUI.ForceParametersYSlider);
+   mpProgramTab->SetForceZSpinBox(mUI.ForceParametersZSpinBox);
+   mpProgramTab->SetForceZSlider(mUI.ForceParametersZSlider);
+
+   // Acceleration UI
+   mpProgramTab->SetAccelerationXSpinBox(mUI.AccelerationParametersXSpinBox);
+   mpProgramTab->SetAccelerationXSlider(mUI.AccelerationParametersXSlider);
+   mpProgramTab->SetAccelerationYSpinBox(mUI.AccelerationParametersYSpinBox);
+   mpProgramTab->SetAccelerationYSlider(mUI.AccelerationParametersYSlider);
+   mpProgramTab->SetAccelerationZSpinBox(mUI.AccelerationParametersZSpinBox);
+   mpProgramTab->SetAccelerationZSlider(mUI.AccelerationParametersZSlider);
+
+   // Force UI
+   mpProgramTab->SetDensitySpinBox(mUI.FluidFrictionDensitySpinBox);
+   mpProgramTab->SetDensitySlider(mUI.FluidFrictionDensitySlider);
+   mpProgramTab->SetViscositySpinBox(mUI.FluidFrictionViscositySpinBox);
+   mpProgramTab->SetViscositySlider(mUI.FluidFrictionViscositySlider);
+   mpProgramTab->SetOverrideRadiusSpinBox(mUI.FluidFrictionOverrideRadiusSpinBox);
+   mpProgramTab->SetOverrideRadiusSlider(mUI.FluidFrictionOverrideRadiusSlider);
+
+   SetupProgramTabConnections();
+
+   mpProgramTab->SetupUI();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupProgramTabConnections()
 {
+   ///> Connections from UI to particle viewer
+   // Operators UI
+   connect(mpProgramTab, SIGNAL(OperatorSelectionUpdate(int, const QString&)), mpParticleViewer, SLOT(UpdateOperatorsSelectionIndex(int, const QString&)));
+   connect(mUI.OperatorsNewForceButton, SIGNAL(clicked()), mpParticleViewer, SLOT(OperatorsAddNewForce()));
+   connect(mUI.OperatorsNewAccelerationButton, SIGNAL(clicked()), mpParticleViewer, SLOT(OperatorsAddNewAcceleration()));
+   connect(mUI.OperatorsNewFluidFrictionButton, SIGNAL(clicked()), mpParticleViewer, SLOT(OperatorsAddNewFluidFriction()));
+   connect(mUI.OperatorsDeleteOperatorButton, SIGNAL(clicked()), mpParticleViewer, SLOT(OperatorsDeleteCurrentOperator()));
+   // Force UI
+   connect(mUI.ForceParametersXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsForceXValueChanged(double)));
+   connect(mUI.ForceParametersYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsForceYValueChanged(double)));
+   connect(mUI.ForceParametersZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsForceZValueChanged(double)));
+   // Acceleration UI
+   connect(mUI.AccelerationParametersXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsAccelerationXValueChanged(double)));
+   connect(mUI.AccelerationParametersYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsAccelerationYValueChanged(double)));
+   connect(mUI.AccelerationParametersZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsAccelerationZValueChanged(double)));
+   // Fluid Friction UI
+   connect(mUI.FluidFrictionDensitySpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionDensityValueChanged(double)));
+   connect(mUI.FluidFrictionViscositySpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionViscosityValueChanged(double)));
+   connect(mUI.FluidFrictionOverrideRadiusSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionOverrideRadiusValueChanged(double)));
+
+   ///> Connections from particle viewer to UI
+   // Operators UI
+   connect(mpParticleViewer, SIGNAL(ClearOperatorsList()), mpProgramTab, SLOT(ClearOperatorsList()));
+   connect(mpParticleViewer, SIGNAL(AddOperatorToOperatorsList(const QString &)), mpProgramTab, SLOT(AddOperatorToOperatorsList(const QString &)));
+   connect(mpParticleViewer, SIGNAL(SelectIndexOfOperatorsList(int)), mpProgramTab, SLOT(SelectIndexOfOperatorsList(int)));
+   // Force UI
+   connect(mpParticleViewer, SIGNAL(OperatorsForceXUpdated(double)), mUI.ForceParametersXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsForceYUpdated(double)), mUI.ForceParametersYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsForceZUpdated(double)), mUI.ForceParametersZSpinBox, SLOT(setValue(double)));
+   // Acceleration UI
+   connect(mpParticleViewer, SIGNAL(OperatorsAccelerationXUpdated(double)), mUI.AccelerationParametersXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsAccelerationYUpdated(double)), mUI.AccelerationParametersYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsAccelerationZUpdated(double)), mUI.AccelerationParametersZSpinBox, SLOT(setValue(double)));
+   // Fluid Friction UI
+   connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionDensityUpdated(double)), mUI.FluidFrictionDensitySpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionViscosityUpdated(double)), mUI.FluidFrictionViscositySpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionOverrideRadiusUpdated(double)), mUI.FluidFrictionOverrideRadiusSpinBox, SLOT(setValue(double)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -230,6 +230,16 @@ void PlacerTab::MultiSegmentPlacerClearVertexList()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void PlacerTab::MultiSegmentPlacerSelectIndexOfVertexList(int newIndex)
+{
+   if(0 <= newIndex && newIndex < mpMultiSegmentPlacerVerticesList->count())
+   {
+      mpMultiSegmentPlacerVerticesList->setCurrentRow(newIndex);
+      mpMultiSegmentPlacerVerticesList->setFocus();
+   }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void PlacerTab::MultiSegmentPlacerAddVertexToList(double x, double y, double z)
 {
    QString newVector;
@@ -240,8 +250,6 @@ void PlacerTab::MultiSegmentPlacerAddVertexToList(double x, double y, double z)
 ///////////////////////////////////////////////////////////////////////////////
 void PlacerTab::MultiSegmentPlacerAddVertexButtonPressed()
 {
-   //MultiSegmentPlacerAddVertexToList(0, 0, 0);
-   //mpMultiSegmentPlacerVerticesList->setCurrentRow(mpMultiSegmentPlacerVerticesList->count() - 1);
    if(mpMultiSegmentPlacerVerticesList->count() == 1)
    {
       mpMultiSegmentPlacerDeleteVertexButton->setEnabled(true);
@@ -252,7 +260,6 @@ void PlacerTab::MultiSegmentPlacerAddVertexButtonPressed()
 ///////////////////////////////////////////////////////////////////////////////
 void PlacerTab::MultiSegmentPlacerDeleteVertexButtonPressed()
 {
-   //mpMultiSegmentPlacerVerticesList->takeItem(mpMultiSegmentPlacerVerticesList->currentRow());
    if(mpMultiSegmentPlacerVerticesList->count() < 1)
    {
       mpMultiSegmentPlacerDeleteVertexButton->setEnabled(false);

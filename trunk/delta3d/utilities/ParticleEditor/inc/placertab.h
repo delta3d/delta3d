@@ -155,6 +155,7 @@ public slots:
    void MultiSegmentPlacerVertexListSelectionChanged(int newIndex);
    void MultiSegmentPlacerClearVertexList();
    void MultiSegmentPlacerAddVertexToList(double x, double y, double z);
+   void MultiSegmentPlacerSelectIndexOfVertexList(int newIndex);
    void MultiSegmentPlacerAddVertexButtonPressed();
    void MultiSegmentPlacerDeleteVertexButtonPressed();
    void MultiSegmentPlacerXSpinBoxValueChanged(double newValue);
@@ -211,7 +212,7 @@ private:
    QDoubleSpinBox* mpSegmentPlacerVertexBZSpinBox;
    QSlider* mpSegmentPlacerVertexBZSlider;
 
-   // Segment placer UI items
+   // Multi Segment placer UI items
    QListWidget* mpMultiSegmentPlacerVerticesList;
    QStackedWidget* mpVertexParametersStackedWidget;
    QPushButton* mpMultiSegmentPlacerAddVertexButton;
