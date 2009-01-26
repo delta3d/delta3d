@@ -38,6 +38,7 @@ ParticleViewer::ParticleViewer()
 , mpParticleSystemUpdater(NULL)
 , mLayerIndex(0)
 , mMultiSegmentVertexIndex(0)
+, mOperatorsIndex(0)
 {
 }
 
@@ -166,6 +167,7 @@ void ParticleViewer::UpdateSelectionIndex(int newIndex)
       UpdateCounterTabsValues();
       UpdatePlacerTabsValues();
       UpdateShooterTabsValues();
+      UpdateProgramTabsValues();
    }
 }
 
@@ -596,9 +598,9 @@ void ParticleViewer::UpdateMultiSegmentPlacerSelectionIndex(int newIndex)
 {
    osgParticle::MultiSegmentPlacer* msp =
       (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
-  mMultiSegmentVertexIndex = newIndex;
-   if(0 <= mMultiSegmentVertexIndex && mMultiSegmentVertexIndex < msp->numVertices())
+   if(0 <= newIndex && newIndex < msp->numVertices())
    {
+      mMultiSegmentVertexIndex = newIndex;
       UpdateMultiSegmentPlacerValues();
    }
 }
@@ -611,6 +613,7 @@ void ParticleViewer::MultiSegmentPlacerAddVertex()
    msp->addVertex(0.0, 0.0, 0.0);
    mMultiSegmentVertexIndex = msp->numVertices() - 1;
    UpdateMultiSegmentPlacerVertexList();
+   emit SelectIndexOfMultiSegmentPlacerVertexList(mMultiSegmentVertexIndex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -620,6 +623,11 @@ void ParticleViewer::MultiSegmentPlacerDeleteVertex()
       (osgParticle::MultiSegmentPlacer*)mLayers[mLayerIndex].mModularEmitter->getPlacer();
    msp->removeVertex(mMultiSegmentVertexIndex);
    UpdateMultiSegmentPlacerVertexList();
+   if(mMultiSegmentVertexIndex >= msp->numVertices())
+   {
+      mMultiSegmentVertexIndex = msp->numVertices() - 1;
+   }
+   emit SelectIndexOfMultiSegmentPlacerVertexList(mMultiSegmentVertexIndex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -775,6 +783,142 @@ void ParticleViewer::RadialShooterInitialMaxRotationZValueChanged(double newValu
    osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
    rotationalRange.maximum[2] = newValue;
    rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateOperatorsSelectionIndex(int newIndex, const QString &operatorType)
+{
+   if(0 <= newIndex && newIndex < mLayers[mLayerIndex].mModularProgram->numOperators())
+   {
+      mOperatorsIndex = newIndex;
+   }
+
+   if(operatorType == "Force")
+   {
+      UpdateForceValues();
+   }
+   else if(operatorType == "Acceleration")
+   {
+      UpdateAccelerationValues();
+   }
+   else if(operatorType == "Fluid Friction")
+   {
+      UpdateFluidFrictionValues();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAddNewForce()
+{
+   osgParticle::ForceOperator* ao = new osgParticle::ForceOperator();
+   mLayers[mLayerIndex].mModularProgram->addOperator(ao);
+   UpdateOperatorsList();
+   emit SelectIndexOfOperatorsList(mLayers[mLayerIndex].mModularProgram->numOperators() - 1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAddNewAcceleration()
+{
+   osgParticle::AccelOperator* ao = new osgParticle::AccelOperator();
+   mLayers[mLayerIndex].mModularProgram->addOperator(ao);
+   UpdateOperatorsList();
+   emit SelectIndexOfOperatorsList(mLayers[mLayerIndex].mModularProgram->numOperators() - 1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAddNewFluidFriction()
+{
+   osgParticle::FluidFrictionOperator* ao = new osgParticle::FluidFrictionOperator();
+   mLayers[mLayerIndex].mModularProgram->addOperator(ao);
+   UpdateOperatorsList();
+   emit SelectIndexOfOperatorsList(mLayers[mLayerIndex].mModularProgram->numOperators() - 1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsDeleteCurrentOperator()
+{
+   mLayers[mLayerIndex].mModularProgram->removeOperator(mOperatorsIndex);
+   UpdateOperatorsList();
+   if(mOperatorsIndex >= mLayers[mLayerIndex].mModularProgram->numOperators())
+   {
+      mOperatorsIndex = mLayers[mLayerIndex].mModularProgram->numOperators() - 1;
+   }
+   emit SelectIndexOfOperatorsList(mOperatorsIndex);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsForceXValueChanged(double newValue)
+{
+   osgParticle::ForceOperator* fo = (osgParticle::ForceOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 force = fo->getForce();
+   force[0] = newValue;
+   fo->setForce(force);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsForceYValueChanged(double newValue)
+{
+   osgParticle::ForceOperator* fo = (osgParticle::ForceOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 force = fo->getForce();
+   force[1] = newValue;
+   fo->setForce(force);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsForceZValueChanged(double newValue)
+{
+   osgParticle::ForceOperator* fo = (osgParticle::ForceOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 force = fo->getForce();
+   force[2] = newValue;
+   fo->setForce(force);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAccelerationXValueChanged(double newValue)
+{
+   osgParticle::AccelOperator* ao = (osgParticle::AccelOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 acceleration = ao->getAcceleration();
+   acceleration[0] = newValue;
+   ao->setAcceleration(acceleration);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAccelerationYValueChanged(double newValue)
+{
+   osgParticle::AccelOperator* ao = (osgParticle::AccelOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 acceleration = ao->getAcceleration();
+   acceleration[1] = newValue;
+   ao->setAcceleration(acceleration);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsAccelerationZValueChanged(double newValue)
+{
+   osgParticle::AccelOperator* ao = (osgParticle::AccelOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 acceleration = ao->getAcceleration();
+   acceleration[2] = newValue;
+   ao->setAcceleration(acceleration);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsFluidFrictionDensityValueChanged(double newValue)
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   ffo->setFluidDensity(newValue);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsFluidFrictionViscosityValueChanged(double newValue)
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   ffo->setFluidViscosity(newValue);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OperatorsFluidFrictionOverrideRadiusValueChanged(double newValue)
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   ffo->setOverrideRadius(newValue);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1023,6 +1167,63 @@ void ParticleViewer::UpdateRadialShooterValues()
    emit RadialShooterInitialMaxRotationXUpdated(rotationalRange.maximum[0]);
    emit RadialShooterInitialMaxRotationYUpdated(rotationalRange.maximum[1]);
    emit RadialShooterInitialMaxRotationZUpdated(rotationalRange.maximum[2]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateProgramTabsValues()
+{
+   UpdateOperatorsList();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateOperatorsList()
+{
+   emit ClearOperatorsList();
+   for(int i = 0; i < mLayers[mLayerIndex].mModularProgram->numOperators(); ++i)
+   {
+      osgParticle::Operator* op = mLayers[mLayerIndex].mModularProgram->getOperator(i);
+      if(IS_A(op, osgParticle::ForceOperator*))
+      {
+         emit AddOperatorToOperatorsList("Force");
+      }
+      else if(IS_A(op, osgParticle::AccelOperator*))
+      {
+         emit AddOperatorToOperatorsList("Acceleration");
+      }
+      else if(IS_A(op, osgParticle::FluidFrictionOperator*))
+      {
+         emit AddOperatorToOperatorsList("Fluid Friction");
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateForceValues()
+{
+   osgParticle::ForceOperator* fo = (osgParticle::ForceOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 force = fo->getForce();
+   emit OperatorsForceXUpdated(force[0]);
+   emit OperatorsForceYUpdated(force[1]);
+   emit OperatorsForceZUpdated(force[2]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateAccelerationValues()
+{
+   osgParticle::AccelOperator* ao = (osgParticle::AccelOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   osg::Vec3 acceleration = ao->getAcceleration();
+   emit OperatorsAccelerationXUpdated(acceleration[0]);
+   emit OperatorsAccelerationYUpdated(acceleration[1]);
+   emit OperatorsAccelerationZUpdated(acceleration[2]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateFluidFrictionValues()
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   emit OperatorsFluidFrictionDensityUpdated(ffo->getFluidDensity());
+   emit OperatorsFluidFrictionViscosityUpdated(ffo->getFluidViscosity());
+   emit OperatorsFluidFrictionOverrideRadiusUpdated(ffo->getOverrideRadius());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

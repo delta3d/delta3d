@@ -11,6 +11,7 @@
 #include <osgParticle/Program>
 
 #include <QtCore/QObject>
+#include <QtCore/QString>
 
 #include <dtABC/application.h>
 
@@ -95,10 +96,8 @@ signals:
    void MassUpdated(double newValue);
    void SizeFromUpdated(double newValue);
    void SizeToUpdated(double newValue);
-
    // Texture UI
    void TextureUpdated(QString filename, bool emissive, bool lighting);
-
    // Color UI
    void RFromUpdated(double newValue);
    void RToUpdated(double newValue);
@@ -108,7 +107,6 @@ signals:
    void BToUpdated(double newValue);
    void AFromUpdated(double newValue);
    void AToUpdated(double newValue);
-
    // Emitter UI
    void EmitterLifeUpdated(double newValue);
    void EmitterStartUpdated(double newValue);
@@ -122,12 +120,10 @@ signals:
 
    ///> Placer Tab signals
    void PlacerTypeBoxUpdated(int newCounter);
-
    // Point Placer UI
    void PointPlacerXUpdated(double newValue);
    void PointPlacerYUpdated(double newValue);
    void PointPlacerZUpdated(double newValue);
-
    // Sector Placer UI
    void SectorPlacerXUpdated(double newValue);
    void SectorPlacerYUpdated(double newValue);
@@ -136,7 +132,6 @@ signals:
    void SectorPlacerMaxRadiusUpdated(double newValue);
    void SectorPlacerMinPhiUpdated(double newValue);
    void SectorPlacerMaxPhiUpdated(double newValue);
-
    // Segment Placer UI
    void SegmentPlacerVertexAXUpdated(double newValue);
    void SegmentPlacerVertexAYUpdated(double newValue);
@@ -144,17 +139,16 @@ signals:
    void SegmentPlacerVertexBXUpdated(double newValue);
    void SegmentPlacerVertexBYUpdated(double newValue);
    void SegmentPlacerVertexBZUpdated(double newValue);
-
    // Multi Segment Placer UI
    void ClearMultiSegmentPlacerVertexList();
    void AddVertexToMultiSegmentPlacerVertexList(double x, double y, double z);
+   void SelectIndexOfMultiSegmentPlacerVertexList(int newIndex);
    void MultiSegmentPlacerXUpdated(double newValue);
    void MultiSegmentPlacerYUpdated(double newValue);
    void MultiSegmentPlacerZUpdated(double newValue);
 
    ///> Shooter Tab signals
    void ShooterTypeBoxUpdated(int newCounter);
-
    // Radial Shooter UI
    void RadialShooterElevationMinUpdated(double newValue);
    void RadialShooterElevationMaxUpdated(double newValue);
@@ -168,6 +162,24 @@ signals:
    void RadialShooterInitialMaxRotationXUpdated(double newValue);
    void RadialShooterInitialMaxRotationYUpdated(double newValue);
    void RadialShooterInitialMaxRotationZUpdated(double newValue);
+
+   ///> Program Tab signals
+   // Operators UI
+   void ClearOperatorsList();
+   void AddOperatorToOperatorsList(const QString &newOperator);
+   void SelectIndexOfOperatorsList(int newIndex);
+   // Force UI
+   void OperatorsForceXUpdated(double newValue);
+   void OperatorsForceYUpdated(double newValue);
+   void OperatorsForceZUpdated(double newValue);
+   // Acceleration UI
+   void OperatorsAccelerationXUpdated(double newValue);
+   void OperatorsAccelerationYUpdated(double newValue);
+   void OperatorsAccelerationZUpdated(double newValue);
+   // Force UI
+   void OperatorsFluidFrictionDensityUpdated(double newValue);
+   void OperatorsFluidFrictionViscosityUpdated(double newValue);
+   void OperatorsFluidFrictionOverrideRadiusUpdated(double newValue);
 
 public slots:
    void CreateNewParticleSystem();
@@ -190,10 +202,8 @@ public slots:
    void MassValueChanged(double newValue);
    void SizeFromValueChanged(double newValue);
    void SizeToValueChanged(double newValue);
-
    // Texture UI
    void TextureChanged(QString filename, bool emissive, bool lighting);
-
    // Color UI
    void RFromValueChanged(double newValue);
    void RToValueChanged(double newValue);
@@ -203,7 +213,6 @@ public slots:
    void BToValueChanged(double newValue);
    void AFromValueChanged(double newValue);
    void AToValueChanged(double newValue);
-
    // Emitter UI
    void EmitterLifeValueChanged(double newValue);
    void EmitterStartValueChanged(double newValue);
@@ -217,12 +226,10 @@ public slots:
 
    ///> Placer Tab signals
    void PlacerTypeBoxValueChanged(int newCounter);
-
    // Point Placer UI
    void PointPlacerXValueChanged(double newValue);
    void PointPlacerYValueChanged(double newValue);
    void PointPlacerZValueChanged(double newValue);
-
    // Sector Placer UI
    void SectorPlacerXValueChanged(double newValue);
    void SectorPlacerYValueChanged(double newValue);
@@ -231,7 +238,6 @@ public slots:
    void SectorPlacerMaxRadiusValueChanged(double newValue);
    void SectorPlacerMinPhiValueChanged(double newValue);
    void SectorPlacerMaxPhiValueChanged(double newValue);
-
    // Segment Placer UI
    void SegmentPlacerVertexAXValueChanged(double newValue);
    void SegmentPlacerVertexAYValueChanged(double newValue);
@@ -239,7 +245,6 @@ public slots:
    void SegmentPlacerVertexBXValueChanged(double newValue);
    void SegmentPlacerVertexBYValueChanged(double newValue);
    void SegmentPlacerVertexBZValueChanged(double newValue);
-
    // Multi Segment Placer UI
    void UpdateMultiSegmentPlacerSelectionIndex(int newIndex);
    void MultiSegmentPlacerAddVertex();
@@ -250,7 +255,6 @@ public slots:
 
    ///> Shooter Tab signals
    void ShooterTypeBoxValueChanged(int newShooter);
-
    // Radial Shooter UI
    void RadialShooterElevationMinValueChanged(double newValue);
    void RadialShooterElevationMaxValueChanged(double newValue);
@@ -264,6 +268,26 @@ public slots:
    void RadialShooterInitialMaxRotationXValueChanged(double newValue);
    void RadialShooterInitialMaxRotationYValueChanged(double newValue);
    void RadialShooterInitialMaxRotationZValueChanged(double newValue);
+
+   ///> Placer Tab signals
+   // Operators UI
+   void UpdateOperatorsSelectionIndex(int newIndex, const QString &operatorType);
+   void OperatorsAddNewForce();
+   void OperatorsAddNewAcceleration();
+   void OperatorsAddNewFluidFriction();
+   void OperatorsDeleteCurrentOperator();
+   // Force UI
+   void OperatorsForceXValueChanged(double newValue);
+   void OperatorsForceYValueChanged(double newValue);
+   void OperatorsForceZValueChanged(double newValue);
+   // Acceleration UI
+   void OperatorsAccelerationXValueChanged(double newValue);
+   void OperatorsAccelerationYValueChanged(double newValue);
+   void OperatorsAccelerationZValueChanged(double newValue);
+   // Force UI
+   void OperatorsFluidFrictionDensityValueChanged(double newValue);
+   void OperatorsFluidFrictionViscosityValueChanged(double newValue);
+   void OperatorsFluidFrictionOverrideRadiusValueChanged(double newValue);
 
 private:
    void MakeCompass();
@@ -279,6 +303,11 @@ private:
    void UpdateMultiSegmentPlacerValues();
    void UpdateShooterTabsValues();
    void UpdateRadialShooterValues();
+   void UpdateProgramTabsValues();
+   void UpdateOperatorsList();
+   void UpdateForceValues();
+   void UpdateAccelerationValues();
+   void UpdateFluidFrictionValues();
 
    dtCore::RefPtr<OrbitMotionModel> mMotion;
 
@@ -296,6 +325,7 @@ private:
 
    int mLayerIndex;
    int mMultiSegmentVertexIndex;
+   int mOperatorsIndex;
 };
 
 #endif // __PARTICLE_VIEWER_H__
