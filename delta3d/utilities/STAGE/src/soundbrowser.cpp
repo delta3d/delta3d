@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -44,13 +44,17 @@
 
 #include <dtDAL/project.h>
 
+#ifdef __APPLE__
+#include <OpenAL/alut.h>
+#else
 #include <AL/alut.h>
+#endif
 
-namespace dtEditQt 
+namespace dtEditQt
 {
     ///////////////////////////////////////////////////////////////////////////////
     SoundBrowser::SoundBrowser(dtDAL::DataType &type,QWidget *parent)
-        : ResourceAbstractBrowser(&type,parent)          
+        : ResourceAbstractBrowser(&type,parent)
     {
         // This sets our resource icon that is visible on leaf nodes
         QIcon resourceIcon;
@@ -123,18 +127,18 @@ namespace dtEditQt
 
             // Find the currently selected tree item
             dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentSoundResource();
-            
+
             if(!resource.GetResourceIdentifier().empty())
             {
                 context = QString(project.GetContext().c_str());
                 if(!context.isEmpty())
                 {
-                    try 
+                    try
                     {
                         file = QString(project.GetResourcePath(resource).c_str());
                         validFile = true;
-                    } 
-                    catch (dtUtil::Exception &) 
+                    }
+                    catch (dtUtil::Exception &)
                     {
                         validFile = false;
                     }
@@ -144,7 +148,7 @@ namespace dtEditQt
                         file = context+"\\"+file;
                         // The following is performed to comply with linux and windows file systems
                         file.replace("\\","/");
-                        
+
                         //Load the sound manually from OpenAL / ALUT (dtAudio doesn't currently provide a
                         // way to do this without firing up a game/application loop).-------------------
                         ALenum format;
@@ -156,7 +160,7 @@ namespace dtEditQt
 
                         //clean up previous source and buffer
                         if(mSoundSources[0] != NULL)
-                        {                        
+                        {
                            alDeleteSources(1, mSoundSources);
                            mSoundSources[0] = NULL;
                         }
@@ -164,19 +168,19 @@ namespace dtEditQt
                         {
                            alDeleteBuffers(1, mSoundBuffers);
                            mSoundBuffers[0] = NULL;
-                        }           
-                        
-                        //create buffer                        
+                        }
+
+                        //create buffer
                         alGenBuffers(1, mSoundBuffers);
                         alBufferData(mSoundBuffers[0], format, soundData, size, ALsizei(freq));
 
                         //data's memory can be deleted once it's copied to the buffer
                         free(soundData);
 
-                        //create source                        
+                        //create source
                         alGenSources(1, mSoundSources);
-                        alSourcei(mSoundSources[0], AL_BUFFER, mSoundBuffers[0]);                        
-                        {                        
+                        alSourcei(mSoundSources[0], AL_BUFFER, mSoundBuffers[0]);
+                        {
                            alSourcePlay(mSoundSources[0]);
                         }
                         //Done loading and playing the sound via OpenAL / ALUT ------------
@@ -195,21 +199,21 @@ namespace dtEditQt
         if(mSoundSources[0] == NULL)
             return;
 
-        alSourceStop(mSoundSources[0]);             
+        alSourceStop(mSoundSources[0]);
     }
     ///////////////////////////////////////////////////////////////////////////////
     // Keyboard Event filter
     ///////////////////////////////////////////////////////////////////////////////
     bool SoundBrowser::eventFilter(QObject *obj, QEvent *e)
     {
-        if (obj == tree) 
+        if (obj == tree)
         {
             //For some reason, KeyPress is getting defined by something...
             //Without this undef, it will not compile under Linux..
             //It would be great if someone could figure out exactly what's
             //going on.
 #undef KeyPress
-            if (e->type() == QEvent::KeyPress) 
+            if (e->type() == QEvent::KeyPress)
             {
                 QKeyEvent *keyEvent = (QKeyEvent *)e;
                 switch(keyEvent->key())
