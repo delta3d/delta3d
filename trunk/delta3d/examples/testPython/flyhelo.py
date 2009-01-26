@@ -1,5 +1,5 @@
-from PyDtCore import *
 from PyDtUtil import *
+from PyDtCore import *
 
 from math import *
 from time import *
