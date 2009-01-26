@@ -151,6 +151,8 @@ namespace dtEditQt
 
                         //Load the sound manually from OpenAL / ALUT (dtAudio doesn't currently provide a
                         // way to do this without firing up a game/application loop).-------------------
+                        //
+                        //TODO: Have dtAudio provide a way to play a sound from STAGE. 
                         ALenum format;
                         ALsizei size;
                         ALfloat freq;
