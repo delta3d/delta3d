@@ -36,9 +36,6 @@ namespace dtUtil
 
       virtual void apply(osg::Geode& node)
       {
-         // start off with an empty list
-         mGeomList.clear();
-
          int numberOfDrawables = node.getNumDrawables();
 
          for (int drawableIndex = 0; drawableIndex < numberOfDrawables; ++drawableIndex)
