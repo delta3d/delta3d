@@ -559,7 +559,7 @@
           </size>
          </property>
          <property name="currentIndex" >
-          <number>0</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="ParticlesTab" >
           <attribute name="title" >
@@ -2564,185 +2564,197 @@
              </property>
              <layout class="QGridLayout" name="gridLayout_17" >
               <property name="margin" >
-               <number>20</number>
+               <number>0</number>
               </property>
-              <property name="verticalSpacing" >
-               <number>6</number>
+              <property name="spacing" >
+               <number>0</number>
               </property>
               <item row="0" column="0" >
-               <widget class="QLabel" name="MinRateLabel" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QStackedWidget" name="CounterTypeStackedWidget" >
+                <property name="currentIndex" >
+                 <number>0</number>
                 </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>0</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="text" >
-                 <string>Min. Rate (particles/sec)</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="MaxRateLabel" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>0</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="text" >
-                 <string>Max. Rate (particles/sec)</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0" colspan="3" >
-               <widget class="QLabel" name="RandomRateLabel" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>Random Rate Counter Parameters</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" colspan="3" >
-               <spacer name="verticalSpacer_20" >
-                <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="0" column="2" >
-               <widget class="QSlider" name="RandomRateMinRateSlider" >
-                <property name="maximum" >
-                 <number>10000</number>
-                </property>
-                <property name="value" >
-                 <number>200</number>
-                </property>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2" >
-               <widget class="QSlider" name="RandomRateMaxRateSlider" >
-                <property name="maximum" >
-                 <number>10000</number>
-                </property>
-                <property name="value" >
-                 <number>300</number>
-                </property>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QDoubleSpinBox" name="RandomRateMinRateSpinBox" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>60</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>60</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="decimals" >
-                 <number>1</number>
-                </property>
-                <property name="maximum" >
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="singleStep" >
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="value" >
-                 <double>20.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1" >
-               <widget class="QDoubleSpinBox" name="RandomRateMaxRateSpinBox" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize" >
-                 <size>
-                  <width>60</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>60</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="decimals" >
-                 <number>1</number>
-                </property>
-                <property name="maximum" >
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="singleStep" >
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="value" >
-                 <double>30.000000000000000</double>
-                </property>
+                <widget class="QWidget" name="RandomRateCounterPage" >
+                 <layout class="QGridLayout" name="gridLayout_28" >
+                  <item row="0" column="0" >
+                   <widget class="QLabel" name="MinRateLabel" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                     <size>
+                      <width>0</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="text" >
+                     <string>Min. Rate (particles/sec)</string>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1" >
+                   <widget class="QDoubleSpinBox" name="RandomRateMinRateSpinBox" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                     <size>
+                      <width>60</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize" >
+                     <size>
+                      <width>60</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>1</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.100000000000000</double>
+                    </property>
+                    <property name="value" >
+                     <double>20.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2" >
+                   <widget class="QSlider" name="RandomRateMinRateSlider" >
+                    <property name="maximum" >
+                     <number>10000</number>
+                    </property>
+                    <property name="value" >
+                     <number>200</number>
+                    </property>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" >
+                   <widget class="QLabel" name="MaxRateLabel" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                     <size>
+                      <width>0</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="text" >
+                     <string>Max. Rate (particles/sec)</string>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1" >
+                   <widget class="QDoubleSpinBox" name="RandomRateMaxRateSpinBox" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                     <size>
+                      <width>60</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize" >
+                     <size>
+                      <width>60</width>
+                      <height>25</height>
+                     </size>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="decimals" >
+                     <number>1</number>
+                    </property>
+                    <property name="maximum" >
+                     <double>1000.000000000000000</double>
+                    </property>
+                    <property name="singleStep" >
+                     <double>0.100000000000000</double>
+                    </property>
+                    <property name="value" >
+                     <double>30.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2" >
+                   <widget class="QSlider" name="RandomRateMaxRateSlider" >
+                    <property name="maximum" >
+                     <number>10000</number>
+                    </property>
+                    <property name="value" >
+                     <number>300</number>
+                    </property>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" colspan="3" >
+                   <spacer name="verticalSpacer_20" >
+                    <property name="orientation" >
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Fixed</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item row="3" column="0" colspan="3" >
+                   <widget class="QLabel" name="RandomRateLabel" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text" >
+                     <string>Random Rate Counter Parameters</string>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="EmptyCounterPage" />
                </widget>
               </item>
              </layout>
@@ -2999,7 +3011,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QStackedWidget" name="stackedWidget" >
+               <widget class="QStackedWidget" name="PlacerTypeStackedWidget" >
                 <property name="enabled" >
                  <bool>true</bool>
                 </property>
@@ -3010,7 +3022,7 @@
                  <number>1</number>
                 </property>
                 <property name="currentIndex" >
-                 <number>3</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="PointPlacerPage" >
                  <layout class="QGridLayout" name="gridLayout_18" >
@@ -4484,977 +4496,1241 @@
                <number>10</number>
               </property>
               <property name="margin" >
-               <number>5</number>
+               <number>0</number>
               </property>
               <item>
-               <widget class="QFrame" name="ElevationRangeFrame" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="frameShape" >
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow" >
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_3" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <spacer name="horizontalSpacer_37" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>65</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="ElevationRangeLabel" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="toolTip" >
-                    <string>The elevation range the Shooter will send each particle. 0=up, 3.14=down</string>
-                   </property>
-                   <property name="text" >
-                    <string>Elevation Range</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="ElevationRangeBox" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="title" >
-                    <string/>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_14" >
-                    <property name="margin" >
-                     <number>5</number>
+               <widget class="QStackedWidget" name="ShooterTypeStackedWidget" >
+                <widget class="QWidget" name="RadialShooterPage" >
+                 <layout class="QGridLayout" name="gridLayout_29" >
+                  <property name="margin" >
+                   <number>5</number>
+                  </property>
+                  <item row="0" column="0" >
+                   <widget class="QFrame" name="RadialShooterElevationRangeFrame" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <item row="0" column="0" >
-                     <widget class="QLabel" name="ElevationMinLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Min (rad)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" >
-                     <widget class="QLabel" name="ElevationMaxLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Max (rad)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2" >
-                     <widget class="QSlider" name="ElevationMinSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" >
-                     <widget class="QDoubleSpinBox" name="ElevationMinSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2" >
-                     <widget class="QSlider" name="ElevationMaxSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" >
-                     <widget class="QDoubleSpinBox" name="ElevationMaxSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_31" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="AzimuthRangeFrame" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="frameShape" >
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow" >
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_4" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <spacer name="horizontalSpacer_36" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>69</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="AzimuthRangeLabel" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="toolTip" >
-                    <string>The azimuth range the Shooter will send each particle. 0 = X axis, 3.14 = -X axis</string>
-                   </property>
-                   <property name="text" >
-                    <string>Azimuth Range</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="AzimuthRangeBox" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="title" >
-                    <string/>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_13" >
-                    <property name="margin" >
-                     <number>5</number>
+                    <property name="frameShape" >
+                     <enum>QFrame::StyledPanel</enum>
                     </property>
-                    <item row="0" column="0" >
-                     <widget class="QLabel" name="AzimuthMinLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Min (rad)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" >
-                     <widget class="QLabel" name="AzimuthMaxLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Max (rad)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2" >
-                     <widget class="QSlider" name="AzimuthMinSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" >
-                     <widget class="QDoubleSpinBox" name="AzimuthMinSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2" >
-                     <widget class="QSlider" name="AzimuthMaxSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" >
-                     <widget class="QDoubleSpinBox" name="AzimuthMaxSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_32" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="InitialVelocityFrame" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="frameShape" >
-                 <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow" >
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_5" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <spacer name="horizontalSpacer_35" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="InitialVelocityLabel" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="toolTip" >
-                    <string>The initial velocity range the Shooter will send each particle</string>
-                   </property>
-                   <property name="text" >
-                    <string>Initial Velocity Range</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="InitialVelocityBox" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="title" >
-                    <string/>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_12" >
-                    <property name="margin" >
-                     <number>5</number>
+                    <property name="frameShadow" >
+                     <enum>QFrame::Raised</enum>
                     </property>
-                    <item row="1" column="0" >
-                     <widget class="QLabel" name="InitialVelocityMaxLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Max (m/s)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="0" >
-                     <widget class="QLabel" name="InitialVelocityMinLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Min (m/s)</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2" >
-                     <widget class="QSlider" name="InitialVelocityMinSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialVelocityMinSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2" >
-                     <widget class="QSlider" name="InitialVelocityMaxSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialVelocityMaxSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_33" >
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0" >
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="InitialRotationBox" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip" >
-                 <string>The inital rotational velocity range the Shooter applies to each particle</string>
-                </property>
-                <property name="title" >
-                 <string>Initial Rotational Velocity Range</string>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_8" >
-                 <property name="margin" >
-                  <number>5</number>
-                 </property>
-                 <item>
-                  <widget class="QLabel" name="InitialMinRotationLabel" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text" >
-                    <string>Min(rad/sec)</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="InitialMinRotationBox" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="title" >
-                    <string/>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_11" >
-                    <property name="margin" >
-                     <number>5</number>
+                    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+                     <property name="margin" >
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <spacer name="horizontalSpacer_37" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>65</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="RadialShooterElevationRangeLabel" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip" >
+                        <string>The elevation range the Shooter will send each particle. 0=up, 3.14=down</string>
+                       </property>
+                       <property name="text" >
+                        <string>Elevation Range</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="RadialShooterElevationRangeBox" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title" >
+                        <string/>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_14" >
+                        <property name="margin" >
+                         <number>5</number>
+                        </property>
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="RadialShooterElevationMinLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Min (rad)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="RadialShooterElevationMaxLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Max (rad)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2" >
+                         <widget class="QSlider" name="RadialShooterElevationMinSlider" >
+                          <property name="minimum" >
+                           <number>-314</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>314</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterElevationMinSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="minimum" >
+                           <double>-3.140000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>3.140000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.010000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2" >
+                         <widget class="QSlider" name="RadialShooterElevationMaxSlider" >
+                          <property name="minimum" >
+                           <number>-314</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>314</number>
+                          </property>
+                          <property name="value" >
+                           <number>39</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterElevationMaxSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="minimum" >
+                           <double>-3.140000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>3.140000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.010000000000000</double>
+                          </property>
+                          <property name="value" >
+                           <double>0.390000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_31" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" >
+                   <widget class="QFrame" name="RadialShooterAzimuthRangeFrame" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
                     </property>
-                    <item row="0" column="0" >
-                     <widget class="QLabel" name="InitialMinRotationXLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>X Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" >
-                     <widget class="QLabel" name="InitialMinRotationYLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Y Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" >
-                     <widget class="QLabel" name="InitialMinRotationZLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Z Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2" >
-                     <widget class="QSlider" name="InitialMinRotationXSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMinRotationXSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2" >
-                     <widget class="QSlider" name="InitialMinRotationYSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMinRotationYSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="2" >
-                     <widget class="QSlider" name="InitialMinRotationZSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMinRotationZSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="InitialMaxRotationLabel" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text" >
-                    <string>Max(rad/sec)</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="InitialMaxRotation" >
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="title" >
-                    <string/>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_10" >
-                    <property name="margin" >
-                     <number>5</number>
+                    <property name="frameShape" >
+                     <enum>QFrame::StyledPanel</enum>
                     </property>
-                    <item row="0" column="0" >
-                     <widget class="QLabel" name="InitialMaxRotationXLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>X Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" >
-                     <widget class="QLabel" name="InitialMaxRotationYLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Y Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" >
-                     <widget class="QLabel" name="InitialMaxRotationZLabel" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>0</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="text" >
-                       <string>Z Axis</string>
-                      </property>
-                      <property name="alignment" >
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMaxRotationXSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2" >
-                     <widget class="QSlider" name="InitialMaxRotationXSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMaxRotationYSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2" >
-                     <widget class="QSlider" name="InitialMaxRotationYSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="2" >
-                     <widget class="QSlider" name="InitialMaxRotationZSlider" >
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1" >
-                     <widget class="QDoubleSpinBox" name="InitialMaxRotationZSpinBox" >
-                      <property name="sizePolicy" >
-                       <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize" >
-                       <size>
-                        <width>60</width>
-                        <height>25</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
+                    <property name="frameShadow" >
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+                     <property name="margin" >
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <spacer name="horizontalSpacer_36" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>69</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="RadialShooterAzimuthRangeLabel" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip" >
+                        <string>The azimuth range the Shooter will send each particle. 0 = X axis, 3.14 = -X axis</string>
+                       </property>
+                       <property name="text" >
+                        <string>Azimuth Range</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="RadialShooterAzimuthRangeBox" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title" >
+                        <string/>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_13" >
+                        <property name="margin" >
+                         <number>5</number>
+                        </property>
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="RadialShooterAzimuthMinLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Min (rad)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="RadialShooterAzimuthMaxLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Max (rad)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2" >
+                         <widget class="QSlider" name="RadialShooterAzimuthMinSlider" >
+                          <property name="minimum" >
+                           <number>-628</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>628</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterAzimuthMinSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="minimum" >
+                           <double>-6.280000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>6.280000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.010000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2" >
+                         <widget class="QSlider" name="RadialShooterAzimuthMaxSlider" >
+                          <property name="minimum" >
+                           <number>-628</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>628</number>
+                          </property>
+                          <property name="value" >
+                           <number>628</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterAzimuthMaxSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="minimum" >
+                           <double>-6.280000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>6.280000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.010000000000000</double>
+                          </property>
+                          <property name="value" >
+                           <double>6.280000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_32" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item row="2" column="0" >
+                   <widget class="QFrame" name="RadialShooterInitialVelocityFrame" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="frameShape" >
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow" >
+                     <enum>QFrame::Raised</enum>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_5" >
+                     <property name="margin" >
+                      <number>0</number>
+                     </property>
+                     <item>
+                      <spacer name="horizontalSpacer_35" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="RadialShooterInitialVelocityLabel" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip" >
+                        <string>The initial velocity range the Shooter will send each particle</string>
+                       </property>
+                       <property name="text" >
+                        <string>Initial Velocity Range</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="RadialShooterInitialVelocityBox" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title" >
+                        <string/>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_12" >
+                        <property name="margin" >
+                         <number>5</number>
+                        </property>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialVelocityMaxLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Max (m/s)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialVelocityMinLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Min (m/s)</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialVelocityMinSlider" >
+                          <property name="maximum" >
+                           <number>10000</number>
+                          </property>
+                          <property name="value" >
+                           <number>10</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialVelocityMinSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="maximum" >
+                           <double>1000.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                          <property name="value" >
+                           <double>10.000000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialVelocityMaxSlider" >
+                          <property name="maximum" >
+                           <number>10000</number>
+                          </property>
+                          <property name="value" >
+                           <number>10</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialVelocityMaxSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="maximum" >
+                           <double>1000.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                          <property name="value" >
+                           <double>10.000000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer_33" >
+                       <property name="orientation" >
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeType" >
+                        <enum>QSizePolicy::Preferred</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0" >
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                  <item row="3" column="0" >
+                   <widget class="QGroupBox" name="RadialShooterInitialRotationBox" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip" >
+                     <string>The inital rotational velocity range the Shooter applies to each particle</string>
+                    </property>
+                    <property name="title" >
+                     <string>Initial Rotational Velocity Range</string>
+                    </property>
+                    <layout class="QHBoxLayout" name="horizontalLayout_8" >
+                     <property name="margin" >
+                      <number>5</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="RadialShooterInitialMinRotationLabel" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text" >
+                        <string>Min(rad/sec)</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="InitialMinRotationBox" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title" >
+                        <string/>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_11" >
+                        <property name="margin" >
+                         <number>5</number>
+                        </property>
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMinRotationXLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>X Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMinRotationYLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Y Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMinRotationZLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Z Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMinRotationXSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMinRotationXSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMinRotationYSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMinRotationYSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMinRotationZSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMinRotationZSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="RadialShooterInitialMaxRotationLabel" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text" >
+                        <string>Max(rad/sec)</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QGroupBox" name="InitialMaxRotation" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="title" >
+                        <string/>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_10" >
+                        <property name="margin" >
+                         <number>5</number>
+                        </property>
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMaxRotationXLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>X Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMaxRotationYLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Y Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="0" >
+                         <widget class="QLabel" name="RadialShooterInitialMaxRotationZLabel" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="text" >
+                           <string>Z Axis</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMaxRotationXSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMaxRotationXSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMaxRotationYSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMaxRotationYSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="2" >
+                         <widget class="QSlider" name="RadialShooterInitialMaxRotationZSlider" >
+                          <property name="minimum" >
+                           <number>-100</number>
+                          </property>
+                          <property name="maximum" >
+                           <number>100</number>
+                          </property>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1" >
+                         <widget class="QDoubleSpinBox" name="RadialShooterInitialMaxRotationZSpinBox" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize" >
+                           <size>
+                            <width>60</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="decimals" >
+                           <number>1</number>
+                          </property>
+                          <property name="minimum" >
+                           <double>-10.000000000000000</double>
+                          </property>
+                          <property name="maximum" >
+                           <double>10.000000000000000</double>
+                          </property>
+                          <property name="singleStep" >
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="EmptyShooterPage" />
                </widget>
               </item>
              </layout>
@@ -6212,7 +6488,7 @@
   <connection>
    <sender>PlacerTypeComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
+   <receiver>PlacerTypeStackedWidget</receiver>
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel" >

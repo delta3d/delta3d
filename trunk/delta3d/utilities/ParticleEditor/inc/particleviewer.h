@@ -152,7 +152,24 @@ signals:
    void MultiSegmentPlacerYUpdated(double newValue);
    void MultiSegmentPlacerZUpdated(double newValue);
 
-   public slots:
+   ///> Shooter Tab signals
+   void ShooterTypeBoxUpdated(int newCounter);
+
+   // Radial Shooter UI
+   void RadialShooterElevationMinUpdated(double newValue);
+   void RadialShooterElevationMaxUpdated(double newValue);
+   void RadialShooterAzimuthMinUpdated(double newValue);
+   void RadialShooterAzimuthMaxUpdated(double newValue);
+   void RadialShooterInitialVelocityMinUpdated(double newValue);
+   void RadialShooterInitialVelocityMaxUpdated(double newValue);
+   void RadialShooterInitialMinRotationXUpdated(double newValue);
+   void RadialShooterInitialMinRotationYUpdated(double newValue);
+   void RadialShooterInitialMinRotationZUpdated(double newValue);
+   void RadialShooterInitialMaxRotationXUpdated(double newValue);
+   void RadialShooterInitialMaxRotationYUpdated(double newValue);
+   void RadialShooterInitialMaxRotationZUpdated(double newValue);
+
+public slots:
    void CreateNewParticleSystem();
 
    // Layer Browser slots
@@ -231,6 +248,23 @@ signals:
    void MultiSegmentPlacerYValueChanged(double newValue);
    void MultiSegmentPlacerZValueChanged(double newValue);
 
+   ///> Shooter Tab signals
+   void ShooterTypeBoxValueChanged(int newShooter);
+
+   // Radial Shooter UI
+   void RadialShooterElevationMinValueChanged(double newValue);
+   void RadialShooterElevationMaxValueChanged(double newValue);
+   void RadialShooterAzimuthMinValueChanged(double newValue);
+   void RadialShooterAzimuthMaxValueChanged(double newValue);
+   void RadialShooterInitialVelocityMinValueChanged(double newValue);
+   void RadialShooterInitialVelocityMaxValueChanged(double newValue);
+   void RadialShooterInitialMinRotationXValueChanged(double newValue);
+   void RadialShooterInitialMinRotationYValueChanged(double newValue);
+   void RadialShooterInitialMinRotationZValueChanged(double newValue);
+   void RadialShooterInitialMaxRotationXValueChanged(double newValue);
+   void RadialShooterInitialMaxRotationYValueChanged(double newValue);
+   void RadialShooterInitialMaxRotationZValueChanged(double newValue);
+
 private:
    void MakeCompass();
    void MakeGrids();
@@ -243,6 +277,8 @@ private:
    void UpdateSegmentPlacerValues();
    void UpdateMultiSegmentPlacerVertexList();
    void UpdateMultiSegmentPlacerValues();
+   void UpdateShooterTabsValues();
+   void UpdateRadialShooterValues();
 
    dtCore::RefPtr<OrbitMotionModel> mMotion;
 
