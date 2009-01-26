@@ -23,7 +23,7 @@
 
 // fpsmotionmodel.h: Declaration of the FPSMotionModel class.
 //
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
 #include <dtCore/inputdevice.h>
@@ -41,6 +41,8 @@ namespace osg
    class IntersectVisitor;
 }
 /// @endcond
+
+////////////////////////////////////////////////////////////////////////////////
 
 namespace dtCore
 {
@@ -354,24 +356,24 @@ namespace dtCore
           *
           * @param data the message data
           */
-         virtual void OnMessage(MessageData *data);
+         virtual void OnMessage(MessageData* data);
 
          /**
-         * Sets having to use the mouse buttons to move the camera
-         * @param use True to use
-         */
+          * Sets having to use the mouse buttons to move the camera
+          * @param use True to use
+          */
          void SetUseMouseButtons(bool use) { mUseMouseButtons = use; }
 
 
          /**
           * Inverts the mouse movement in pitch
           */
-         void InvertMouse(bool b){ mInvertMouse = b;}
+         void InvertMouse(bool b) { mInvertMouse = b; }
 
          /**
           * @return whether or not the mouse movement in pitch has been inverted
           */
-         bool GetInvertMouse() {return mInvertMouse;}
+         bool GetInvertMouse() { return mInvertMouse; }
 
          /**
           * Sets whether this motion model should operate even when unfocused.
@@ -389,7 +391,7 @@ namespace dtCore
 
       private:
          class FPSMotionModelDebugger; // private inner class used for debugging
-         FPSMotionModelDebugger *mpDebugger; // private inner object used for debugging
+         FPSMotionModelDebugger* mpDebugger; // private inner object used for debugging
 
          /**
           * A reference to the Scene, used for ground following.
@@ -512,7 +514,8 @@ namespace dtCore
          ///private method used to ground clamp or adjust the falling velocity/position
          void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
    };
-}
+} // namespace dtCore
 
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // DELTA_FPSMOTIONMODEL

@@ -191,7 +191,7 @@ namespace dtCore
        * Sets the starting position of the intersection ray.
        * @param start The start position.
        */
-      void SetStartPosition(const osg::Vec3 &start)
+      void SetStartPosition(const osg::Vec3& start)
       {
          mStart = start;
          mUpdateLineSegment = true;
@@ -207,7 +207,7 @@ namespace dtCore
       }
 
       //sets a new end position
-      void SetEndPosition( const osg::Vec3& endXYZ )
+      void SetEndPosition(const osg::Vec3& endXYZ)
       {
          mDirection = endXYZ-mStart;
          mLineLength = mDirection.length();
@@ -219,7 +219,7 @@ namespace dtCore
        * Sets the direction of the intersection ray.
        * @param dir The direction vector.  This is normalized before being assigned.
        */
-      void SetDirection(const osg::Vec3 &dir)
+      void SetDirection(const osg::Vec3& dir)
       {
          mDirection = dir;
          mUpdateLineSegment = true;
@@ -229,13 +229,13 @@ namespace dtCore
        * Gets the direction of the intersection ray.
        * @return The direction unit vector.
        */
-      const osg::Vec3 &GetDirection() const 
+      const osg::Vec3& GetDirection() const 
       {
          return mDirection;
       }
 
       ///Set the length of the isector
-      void SetLength( float distance )
+      void SetLength(float distance)
       {
          mLineLength = distance;
          mUpdateLineSegment = true;
@@ -248,10 +248,10 @@ namespace dtCore
       }
 
       ///@return the intersected point
-      void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
+      void GetHitPoint(osg::Vec3& xyz, int pointNum = 0) const;
 
       ///@return the normal at the intersected point
-      void GetHitPointNormal( osg::Vec3& normal, int pointNum = 0 ) const;
+      void GetHitPointNormal(osg::Vec3& normal, int pointNum = 0) const;
 
       ///Get the number of intersected items
       int GetNumberOfHits() const;
