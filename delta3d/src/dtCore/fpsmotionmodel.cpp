@@ -99,10 +99,10 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    FPSAxisListener::SetFunctor lookLeftRightFunc(this, &FPSMotionModel::OnLookLeftRightChanged);
    FPSAxisListener::SetFunctor lookUpDownFunc(this, &FPSMotionModel::OnLookUpDownChanged);
 
-   mLookUpDownListener      = new FPSAxisListener( lookUpDownFunc );
-   mLookLeftRightListener   = new FPSAxisListener( lookLeftRightFunc );
-   mSidestepListener        = new FPSAxisListener( sideStepFunc );
-   mForwardBackwardListener = new FPSAxisListener( fbFunc );
+   mLookUpDownListener      = new FPSAxisListener(lookUpDownFunc);
+   mLookLeftRightListener   = new FPSAxisListener(lookLeftRightFunc);
+   mSidestepListener        = new FPSAxisListener(sideStepFunc);
+   mForwardBackwardListener = new FPSAxisListener(fbFunc);
 
    if (keyboard != NULL && mouse != NULL)
    {
@@ -115,7 +115,7 @@ FPSMotionModel::FPSMotionModel(Keyboard* keyboard,
    mKeyboard = keyboard;
 
    mIsector = new Isector();
-   mIsector->SetDirection( osg::Vec3(0.f, 0.f, -1.f) );
+   mIsector->SetDirection(osg::Vec3(0.f, 0.f, -1.f));
    mIsector->SetLength(1000.f);
 }
 
@@ -264,23 +264,23 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       {
          Axis* forwardAndBackAxis1 = mDefaultInputDevice->AddAxis(
             "s/w",
-            new ButtonsToAxis( keyboard->GetButton('s'), keyboard->GetButton('w') )
-            );
+            new ButtonsToAxis(keyboard->GetButton('s'), keyboard->GetButton('w'))
+         );
 
          Axis* forwardAndBackAxis2 = mDefaultInputDevice->AddAxis(
             "S/W",
-            new ButtonsToAxis( keyboard->GetButton('S'), keyboard->GetButton('W') )
-            );
+            new ButtonsToAxis(keyboard->GetButton('S'), keyboard->GetButton('W'))
+         );
 
          Axis* sideStepAxis1 = mDefaultInputDevice->AddAxis(
             "a/d",
-            new ButtonsToAxis( keyboard->GetButton('a'), keyboard->GetButton('d') )
-            );
+            new ButtonsToAxis(keyboard->GetButton('a'), keyboard->GetButton('d'))
+         );
 
          Axis* sideStepAxis2 = mDefaultInputDevice->AddAxis(
             "A/D",
-            new ButtonsToAxis( keyboard->GetButton('A'), keyboard->GetButton('D') )
-            );
+            new ButtonsToAxis(keyboard->GetButton('A'), keyboard->GetButton('D'))
+         );
 
          forwardBack->AddSourceAxis(forwardAndBackAxis1);
          forwardBack->AddSourceAxis(forwardAndBackAxis2);
@@ -294,18 +294,18 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
             "arrow keys up/down",
             new ButtonsToAxis(
-            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
-            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
+               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Down),
+               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Up)
             )
-            );
+         );
 
          Axis* arrowKeysLeftAndRight = mDefaultInputDevice->AddAxis(
             "arrow keys left/right",
             new ButtonsToAxis(
-            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
-            keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
+               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Left),
+               keyboard->GetButton(osgGA::GUIEventAdapter::KEY_Right)
             )
-            );
+         );
 
          forwardBack->AddSourceAxis(arrowKeysUpAndDown);
          leftRight->AddSourceAxis(arrowKeysLeftAndRight);
@@ -319,7 +319,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultSidestepLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default sidestep left/right",
          leftRight
-         );
+      );
 
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
          "default turn left/right",
@@ -684,7 +684,7 @@ private:
 void FPSMotionModel::UpdateMouse(const double deltaTime)
 {
    //NOTE: This code has been commented out because it does not work with window resizing
-   //if the window is resized then the mouse position which was set to (0.1, 0.0) will come 
+   //if the window is resized then the mouse position which was set to (0.1, 0.0) will come
    //back differently and you will never regain mouse movement.  Is there a better way we can do this? -Anderegg
 
    //if (!mShouldResetMouse)
@@ -718,7 +718,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
    //   // the mouse is within a valid camera view area.
    //   // It is now that I need to reset the mouse so
    //   // the view camera does not pop to another angle during a focus change.
-   //   if( mousePosition.x() == 0.1f && mousePosition.y() == 0.0f )
+   //   if (mousePosition.x() == 0.1f && mousePosition.y() == 0.0f)
    //   {
    //      mShouldResetMouse = false;
    //      mMouse->SetPosition(0.0f, 0.0f);
@@ -735,7 +735,6 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       mMouseMove.y() += GetLookUpDownAxis()->GetState();
       GetLookUpDownAxis()->SetState(0.0f);
    }
-
 
    const bool calc_new_heading_pitch = !mUseMouseButtons || mMouse->GetButtonState(Mouse::LeftButton);
    const bool mouse_has_moved = HasMouseMoved(mMouseMove);
@@ -757,9 +756,9 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       float deltaZ = mMouseMove[0] * mMaximumTurnSpeed;
       float deltaX = mMouseMove[1] * mMaximumTurnSpeed;
 
-      osg::Vec3 upVector = dtUtil::MatrixUtil::GetRow3(rot, 2);
+      osg::Vec3 upVector      = dtUtil::MatrixUtil::GetRow3(rot, 2);
       osg::Vec3 forwardVector = dtUtil::MatrixUtil::GetRow3(rot, 1);
-      osg::Vec3 rightVector = dtUtil::MatrixUtil::GetRow3(rot, 0);
+      osg::Vec3 rightVector   = dtUtil::MatrixUtil::GetRow3(rot, 0);
 
       if (mInvertMouse)
       {
@@ -768,7 +767,7 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
 
       osg::Quat rotateZ, rotateX;
       rotateZ.makeRotate(-deltaZ, upVector);
-      rotateX.makeRotate(deltaX, rightVector); //we must revert the x axis delta
+      rotateX.makeRotate(+deltaX, rightVector); //we must revert the x axis delta
 
       forwardVector = rotateZ * forwardVector;
       forwardVector = rotateX * forwardVector;
@@ -777,15 +776,15 @@ void FPSMotionModel::UpdateMouse(const double deltaTime)
       upVector = osg::Vec3(0.0f, 0.0f, 1.0f);
 
       rightVector = forwardVector ^ upVector;
-      upVector = rightVector ^ forwardVector;
+      upVector    = rightVector   ^ forwardVector;
 
       rightVector.normalize();
       forwardVector.normalize();
       upVector.normalize();
 
-      dtUtil::MatrixUtil::SetRow(rot, rightVector, 0);
+      dtUtil::MatrixUtil::SetRow(rot, rightVector,   0);
       dtUtil::MatrixUtil::SetRow(rot, forwardVector, 1);
-      dtUtil::MatrixUtil::SetRow(rot, upVector, 2);
+      dtUtil::MatrixUtil::SetRow(rot, upVector,      2);
 
       // apply changes (new orientation)
       transform.SetRotation(rot);
@@ -833,7 +832,7 @@ void FPSMotionModel::PerformTranslation(const double deltaTime)
 }
 
 ///Update the MotionModel's elevation by either ground clamping, or "falling"
-void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
+void FPSMotionModel::AdjustElevation(osg::Vec3& xyz, double deltaFrameTime)
 {
    mIsector->Reset();
 
@@ -863,7 +862,7 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
    const float targetHeight = hot + mHeightAboveTerrain;
 
    //if we're too high off the terrain, then let gravity take over
-   if ( (xyz[2]-targetHeight) > mFallingHeight)
+   if ((xyz[2]-targetHeight) > mFallingHeight)
    {
       mFalling = true;
    }
@@ -902,8 +901,8 @@ bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
 {
    //this is overly complicated and rather annoying however it fixes the 'drifting' bug
    //the use case is resizing the window with the motion model active and the camera will
-   //drift indefinitely.  This is caused by setting the mouse position to (0.0, 0.0) which 
-   //does not work in the case that the window width or height is an odd number.  When the 
+   //drift indefinitely.  This is caused by setting the mouse position to (0.0, 0.0) which
+   //does not work in the case that the window width or height is an odd number.  When the
    //window width or height is odd then the center of the screen is not an even number of pixels.
    //The result is that the mouse will get a difference of 1/width or 1/height for whichever is odd
    //it will then recenter the mouse again and we drift.  This code here uses an accumulated mouse movement
@@ -914,7 +913,7 @@ bool FPSMotionModel::HasMouseMoved(const osg::Vec2& diff)
    int width = 2;
    int height = 2;
 
-   if (viewPtr && 
+   if (viewPtr &&
       viewPtr->GetOsgViewerView() &&
       viewPtr->GetOsgViewerView()->getCamera() &&
       viewPtr->GetOsgViewerView()->getCamera()->getGraphicsContext() &&
@@ -966,7 +965,7 @@ bool FPSMotionModel::OnLookUpDownChanged(double newState, double delta)
    return true;
 }
 
-void FPSMotionModel::SetFallingHeight( float fallingHeight )
+void FPSMotionModel::SetFallingHeight(float fallingHeight)
 {
    mFallingHeight = fallingHeight;
 }

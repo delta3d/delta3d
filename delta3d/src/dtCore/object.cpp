@@ -20,7 +20,7 @@
 
 namespace dtCore
 {
-   
+
    IMPLEMENT_MANAGEMENT_LAYER(Object)
 
    /////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace dtCore
    {
       osg::Node* node = NULL;
       node = Loadable::LoadFile(filename, useCache);
-   
+
       //We should always clear the geometry.  If LoadFile fails, we should have no geometry.
       if (mModel->GetMatrixTransform().getNumChildren() != 0)
       {
@@ -78,7 +78,7 @@ namespace dtCore
          //recenter the geometry about the origin by finding the center of it's
          //bounding box and adding a transform between the loaded group node
          //and the top transform which undo's any offsets
-         if(mRecenterGeometry)
+         if (mRecenterGeometry)
          {
             dtUtil::BoundingBoxVisitor bbv;
             node->accept(bbv);
@@ -101,7 +101,7 @@ namespace dtCore
 
    //////////////////////////////////////////////////////////////////////////////
    void Object::SetScale(const osg::Vec3& xyz)
-   {  
+   {
       mModel->SetScale(xyz);
    }
 
