@@ -165,6 +165,7 @@ void ParticleViewer::UpdateSelectionIndex(int newIndex)
       UpdateParticleTabsValues();
       UpdateCounterTabsValues();
       UpdatePlacerTabsValues();
+      UpdateShooterTabsValues();
    }
 }
 
@@ -652,6 +653,131 @@ void ParticleViewer::MultiSegmentPlacerZValueChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ShooterTypeBoxValueChanged(int newShooter)
+{
+   osgParticle::Shooter* shooter = mLayers[mLayerIndex].mModularEmitter->getShooter();
+
+   switch(newShooter)
+   {
+   case 0:
+      if(!IS_A(shooter, osgParticle::RadialShooter*))
+      {
+         mLayers[mLayerIndex].mModularEmitter->setShooter(new osgParticle::RadialShooter());
+         UpdateRadialShooterValues();
+      }
+      break;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterElevationMinValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef elevationRange = rs->getThetaRange();
+   elevationRange.minimum = newValue;
+   rs->setThetaRange(elevationRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterElevationMaxValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef elevationRange = rs->getThetaRange();
+   elevationRange.maximum = newValue;
+   rs->setThetaRange(elevationRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterAzimuthMinValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef azimuthRange = rs->getPhiRange();
+   azimuthRange.minimum = newValue;
+   rs->setPhiRange(azimuthRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterAzimuthMaxValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef azimuthRange = rs->getPhiRange();
+   azimuthRange.maximum = newValue;
+   rs->setPhiRange(azimuthRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialVelocityMinValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef initialVelocityRange = rs->getInitialSpeedRange();
+   initialVelocityRange.minimum = newValue;
+   rs->setInitialSpeedRange(initialVelocityRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialVelocityMaxValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef initialVelocityRange = rs->getInitialSpeedRange();
+   initialVelocityRange.maximum = newValue;
+   rs->setInitialSpeedRange(initialVelocityRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMinRotationXValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.minimum[0] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMinRotationYValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.minimum[1] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMinRotationZValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.minimum[2] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMaxRotationXValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.maximum[0] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMaxRotationYValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.maximum[1] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RadialShooterInitialMaxRotationZValueChanged(double newValue)
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   rotationalRange.maximum[2] = newValue;
+   rs->setInitialRotationalSpeedRange(rotationalRange);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::MakeCompass()
 {
    dtCore::Compass* compass = new dtCore::Compass(GetCamera());
@@ -864,6 +990,39 @@ void ParticleViewer::UpdateMultiSegmentPlacerValues()
    emit MultiSegmentPlacerXUpdated(vertex[0]);
    emit MultiSegmentPlacerYUpdated(vertex[1]);
    emit MultiSegmentPlacerZUpdated(vertex[2]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateShooterTabsValues()
+{
+   osgParticle::Shooter* shooter = mLayers[mLayerIndex].mModularEmitter->getShooter();
+   if(IS_A(shooter, osgParticle::RadialShooter*))
+   {
+      emit ShooterTypeBoxUpdated(0);
+      UpdateRadialShooterValues();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::UpdateRadialShooterValues()
+{
+   osgParticle::RadialShooter* rs =(osgParticle::RadialShooter*)mLayers[mLayerIndex].mModularEmitter->getShooter();
+   osgParticle::rangef elevationRange = rs->getThetaRange();
+   emit RadialShooterElevationMinUpdated(elevationRange.minimum);
+   emit RadialShooterElevationMaxUpdated(elevationRange.maximum);
+   osgParticle::rangef azimuthRange = rs->getPhiRange();
+   emit RadialShooterAzimuthMinUpdated(azimuthRange.minimum);
+   emit RadialShooterAzimuthMaxUpdated(azimuthRange.maximum);
+   osgParticle::rangef initialVelocityRange = rs->getInitialSpeedRange();
+   emit RadialShooterInitialVelocityMinUpdated(initialVelocityRange.minimum);
+   emit RadialShooterInitialVelocityMaxUpdated(initialVelocityRange.maximum);
+   osgParticle::rangev3 rotationalRange = rs->getInitialRotationalSpeedRange();
+   emit RadialShooterInitialMinRotationXUpdated(rotationalRange.minimum[0]);
+   emit RadialShooterInitialMinRotationYUpdated(rotationalRange.minimum[1]);
+   emit RadialShooterInitialMinRotationZUpdated(rotationalRange.minimum[2]);
+   emit RadialShooterInitialMaxRotationXUpdated(rotationalRange.maximum[0]);
+   emit RadialShooterInitialMaxRotationYUpdated(rotationalRange.maximum[1]);
+   emit RadialShooterInitialMaxRotationZUpdated(rotationalRange.maximum[2]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

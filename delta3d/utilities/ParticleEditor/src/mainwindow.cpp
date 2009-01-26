@@ -353,11 +353,74 @@ void MainWindow::SetupPlacerTabConnections()
 void MainWindow::SetupShooterTab()
 {
    mpShooterTab = new ShooterTab();
+
+   mpShooterTab->SetShooterTypeBox(mUI.ShooterTypeComboBox);
+
+   // Radial Shooter UI
+   mpShooterTab->SetRadialShooterElevationMinSpinBox(mUI.RadialShooterElevationMinSpinBox);
+   mpShooterTab->SetRadialShooterElevationMinSlider(mUI.RadialShooterElevationMinSlider);
+   mpShooterTab->SetRadialShooterElevationMaxSpinBox(mUI.RadialShooterElevationMaxSpinBox);
+   mpShooterTab->SetRadialShooterElevationMaxSlider(mUI.RadialShooterElevationMaxSlider);
+   mpShooterTab->SetRadialShooterAzimuthMinSpinBox(mUI.RadialShooterAzimuthMinSpinBox);
+   mpShooterTab->SetRadialShooterAzimuthMinSlider(mUI.RadialShooterAzimuthMinSlider);
+   mpShooterTab->SetRadialShooterAzimuthMaxSpinBox(mUI.RadialShooterAzimuthMaxSpinBox);
+   mpShooterTab->SetRadialShooterAzimuthMaxSlider(mUI.RadialShooterAzimuthMaxSlider);
+   mpShooterTab->SetRadialShooterInitialVelocityMinSpinBox(mUI.RadialShooterInitialVelocityMinSpinBox);
+   mpShooterTab->SetRadialShooterInitialVelocityMinSlider(mUI.RadialShooterInitialVelocityMinSlider);
+   mpShooterTab->SetRadialShooterInitialVelocityMaxSpinBox(mUI.RadialShooterInitialVelocityMaxSpinBox);
+   mpShooterTab->SetRadialShooterInitialVelocityMaxSlider(mUI.RadialShooterInitialVelocityMaxSlider);
+   mpShooterTab->SetRadialShooterInitialMinRotationXSpinBox(mUI.RadialShooterInitialMinRotationXSpinBox);
+   mpShooterTab->SetRadialShooterInitialMinRotationXSlider(mUI.RadialShooterInitialMinRotationXSlider);
+   mpShooterTab->SetRadialShooterInitialMinRotationYSpinBox(mUI.RadialShooterInitialMinRotationYSpinBox);
+   mpShooterTab->SetRadialShooterInitialMinRotationYSlider(mUI.RadialShooterInitialMinRotationYSlider);
+   mpShooterTab->SetRadialShooterInitialMinRotationZSpinBox(mUI.RadialShooterInitialMinRotationZSpinBox);
+   mpShooterTab->SetRadialShooterInitialMinRotationZSlider(mUI.RadialShooterInitialMinRotationZSlider);
+   mpShooterTab->SetRadialShooterInitialMaxRotationXSpinBox(mUI.RadialShooterInitialMaxRotationXSpinBox);
+   mpShooterTab->SetRadialShooterInitialMaxRotationXSlider(mUI.RadialShooterInitialMaxRotationXSlider);
+   mpShooterTab->SetRadialShooterInitialMaxRotationYSpinBox(mUI.RadialShooterInitialMaxRotationYSpinBox);
+   mpShooterTab->SetRadialShooterInitialMaxRotationYSlider(mUI.RadialShooterInitialMaxRotationYSlider);
+   mpShooterTab->SetRadialShooterInitialMaxRotationZSpinBox(mUI.RadialShooterInitialMaxRotationZSpinBox);
+   mpShooterTab->SetRadialShooterInitialMaxRotationZSlider(mUI.RadialShooterInitialMaxRotationZSlider);
+
+   SetupShooterTabConnections();
+
+   mpShooterTab->SetupUI();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupShooterTabConnections()
 {
+   ///> Connections from UI to particle viewer
+   connect(mUI.ShooterTypeComboBox, SIGNAL(currentIndexChanged(int)), mpParticleViewer, SLOT(ShooterTypeBoxValueChanged(int)));
+   // Radial Shooter UI
+   connect(mUI.RadialShooterElevationMinSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterElevationMinValueChanged(double)));
+   connect(mUI.RadialShooterElevationMaxSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterElevationMaxValueChanged(double)));
+   connect(mUI.RadialShooterAzimuthMinSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterAzimuthMinValueChanged(double)));
+   connect(mUI.RadialShooterAzimuthMaxSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterAzimuthMaxValueChanged(double)));
+   connect(mUI.RadialShooterInitialVelocityMinSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialVelocityMinValueChanged(double)));
+   connect(mUI.RadialShooterInitialVelocityMaxSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialVelocityMaxValueChanged(double)));
+   connect(mUI.RadialShooterInitialMinRotationXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMinRotationXValueChanged(double)));
+   connect(mUI.RadialShooterInitialMinRotationYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMinRotationYValueChanged(double)));
+   connect(mUI.RadialShooterInitialMinRotationZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMinRotationZValueChanged(double)));
+   connect(mUI.RadialShooterInitialMaxRotationXSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMaxRotationXValueChanged(double)));
+   connect(mUI.RadialShooterInitialMaxRotationYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMaxRotationYValueChanged(double)));
+   connect(mUI.RadialShooterInitialMaxRotationZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RadialShooterInitialMaxRotationZValueChanged(double)));
+
+   ///> Connections from particle viewer to UI
+   connect(mpParticleViewer, SIGNAL(PlacerTypeBoxUpdated(int)), mUI.PlacerTypeComboBox, SLOT(setCurrentIndex(int)));
+   // Radial Shooter UI
+   connect(mpParticleViewer, SIGNAL(RadialShooterElevationMinUpdated(double)), mUI.RadialShooterElevationMinSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterElevationMaxUpdated(double)), mUI.RadialShooterElevationMaxSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterAzimuthMinUpdated(double)), mUI.RadialShooterAzimuthMinSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterAzimuthMaxUpdated(double)), mUI.RadialShooterAzimuthMaxSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialVelocityMinUpdated(double)), mUI.RadialShooterInitialVelocityMinSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialVelocityMaxUpdated(double)), mUI.RadialShooterInitialVelocityMaxSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMinRotationXUpdated(double)), mUI.RadialShooterInitialMinRotationXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMinRotationYUpdated(double)), mUI.RadialShooterInitialMinRotationYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMinRotationZUpdated(double)), mUI.RadialShooterInitialMinRotationZSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMaxRotationXUpdated(double)), mUI.RadialShooterInitialMaxRotationXSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMaxRotationYUpdated(double)), mUI.RadialShooterInitialMaxRotationYSpinBox, SLOT(setValue(double)));
+   connect(mpParticleViewer, SIGNAL(RadialShooterInitialMaxRotationZUpdated(double)), mUI.RadialShooterInitialMaxRotationZSpinBox, SLOT(setValue(double)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
