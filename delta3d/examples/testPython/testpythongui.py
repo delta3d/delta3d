@@ -1,5 +1,6 @@
 from Tkinter import *
 
+from PyDtUtil import *
 from PyDtCore import *
 from PyDtABC import *
 

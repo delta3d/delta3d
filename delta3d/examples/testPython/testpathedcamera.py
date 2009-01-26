@@ -1,3 +1,4 @@
+from PyDtUtil import *
 from PyDtCore import *
 from PyDtABC import *
 
@@ -194,7 +195,7 @@ class SplinePathController:
                     self.waypoints[len(self.waypoints)-1].timeCode
                 )
                 
-                self.transform.SetLookAt(
+                self.transform.Set(
                     w.position[0], w.position[1], w.position[2],
                     w.lookAt[0], w.lookAt[1], w.lookAt[2],
                     w.upVector[0], w.upVector[1], w.upVector[2]
