@@ -285,6 +285,8 @@ public slots:
    void OperatorsAccelerationYValueChanged(double newValue);
    void OperatorsAccelerationZValueChanged(double newValue);
    // Force UI
+   void FluidFrictionAirButtonPressed();
+   void FluidFrictionWaterButtonPressed();
    void OperatorsFluidFrictionDensityValueChanged(double newValue);
    void OperatorsFluidFrictionViscosityValueChanged(double newValue);
    void OperatorsFluidFrictionOverrideRadiusValueChanged(double newValue);

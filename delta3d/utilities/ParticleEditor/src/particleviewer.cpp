@@ -901,6 +901,22 @@ void ParticleViewer::OperatorsAccelerationZValueChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::FluidFrictionAirButtonPressed()
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   ffo->setFluidToAir();
+   UpdateFluidFrictionValues();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::FluidFrictionWaterButtonPressed()
+{
+   osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);
+   ffo->setFluidToWater();
+   UpdateFluidFrictionValues();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::OperatorsFluidFrictionDensityValueChanged(double newValue)
 {
    osgParticle::FluidFrictionOperator* ffo = (osgParticle::FluidFrictionOperator*)mLayers[mLayerIndex].mModularProgram->getOperator(mOperatorsIndex);

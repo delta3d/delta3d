@@ -485,6 +485,8 @@ void MainWindow::SetupProgramTabConnections()
    connect(mUI.AccelerationParametersYSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsAccelerationYValueChanged(double)));
    connect(mUI.AccelerationParametersZSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsAccelerationZValueChanged(double)));
    // Fluid Friction UI
+   connect(mUI.FluidFrictionAirButton, SIGNAL(clicked()), mpParticleViewer, SLOT(FluidFrictionAirButtonPressed()));
+   connect(mUI.FluidFrictionWaterButton, SIGNAL(clicked()), mpParticleViewer, SLOT(FluidFrictionWaterButtonPressed()));
    connect(mUI.FluidFrictionDensitySpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionDensityValueChanged(double)));
    connect(mUI.FluidFrictionViscositySpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionViscosityValueChanged(double)));
    connect(mUI.FluidFrictionOverrideRadiusSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(OperatorsFluidFrictionOverrideRadiusValueChanged(double)));
