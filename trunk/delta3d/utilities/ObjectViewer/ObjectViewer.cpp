@@ -52,7 +52,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
    : mCurrentLight(0)
-   , mShouldGenerateTangents(true)
+   , mShouldGenerateTangents(false)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
