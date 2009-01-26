@@ -40,6 +40,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       
       CPPUNIT_TEST(testFileIO);
       CPPUNIT_TEST(testRelativePath);
+      CPPUNIT_TEST(testCopyFileOntoItself);
       //CPPUNIT_TEST(testAbsoluteToRelativePath);
 
    CPPUNIT_TEST_SUITE_END();
@@ -51,6 +52,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
 
       void testFileIO();
       void testRelativePath();
+      void testCopyFileOntoItself();
       //void testAbsoluteToRelativePath();
    
    private:
@@ -307,7 +309,9 @@ void FileUtilsTests::testFileIO()
 
       try 
       {
-         //copy a directory into the parent without contents, so that it would try to recreate the same directory.
+         //Copy a directory into the parent without contents, so that it would try to recreate the same directory.
+         //Note that the directory has already been created previously in this same unit test, so this should not
+         //be allowed because we'd be overwriting a pre-existing directory.         
          fileUtils.DirCopy(Dir1, Dir1, false, false);
          CPPUNIT_FAIL("DirCopy should not be able to overwrite files if overwriting is set to false.");
       } 
@@ -440,6 +444,36 @@ void FileUtilsTests::testRelativePath()
 
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd", 
          std::string("data/map.xsd"), relativePath);
+}
+
+void FileUtilsTests::testCopyFileOntoItself()
+{
+   std::string testPath = DATA_DIR + "/aNewFilePath";
+
+   std::string path1 = testPath + "/aFile.txt";
+   std::string path2 = testPath + "/../aNewFilePath/aFile.txt";
+
+   dtUtil::FileUtils::GetInstance().MakeDirectory(testPath);
+
+   FILE* fp = fopen(path1.c_str(), "w");
+
+   CPPUNIT_ASSERT(fp);
+   
+   fputs("Text for my test file", fp);
+
+   fclose(fp);
+
+   dtUtil::FileUtils::GetInstance().FileCopy(path1, path2, true);
+
+   //make sure we didn't blow the file away
+   dtUtil::FileInfo fi = dtUtil::FileUtils::GetInstance().GetFileInfo(path1);
+
+   CPPUNIT_ASSERT(fi.size > 0);
+
+   //get rid of test file
+   dtUtil::FileUtils::GetInstance().FileDelete(path1);
+   //get rid of test directory
+   dtUtil::FileUtils::GetInstance().DirDelete(testPath, false);
 }
 
 /*void FileUtilsTests::testAbsoluteToRelativePath()
