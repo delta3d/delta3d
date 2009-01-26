@@ -574,7 +574,6 @@ namespace dtUtil
    void FileUtils::DirCopy(const std::string& srcPath,
                            const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
    {
-
       if (!DirExists(srcPath))
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("Source directory does not exist: \"") + srcPath + "\"", __FILE__, __LINE__);
@@ -620,8 +619,16 @@ namespace dtUtil
          {
             const std::string& srcName = osgDB::getSimpleFileName(fullSrcPath);
             fullDestPath += PATH_SEPARATOR + srcName;
+            
+            if(DirExists(fullDestPath) && !bOverwrite)
+            {
+               throw dtUtil::Exception(FileExceptionEnum::IOException,
+                           std::string("Cannot overwrite directory (overwrite flag is false): \"") + srcPath + "\"",
+                           __FILE__, __LINE__);
+            }
+
             if (!DirExists(fullDestPath))
-               MakeDirectory(fullDestPath);
+               MakeDirectory(fullDestPath);            
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -767,12 +774,10 @@ namespace dtUtil
    //-----------------------------------------------------------------------
    bool FileUtils::IsSameFile(const std::string& file1, const std::string& file2) const
    {
-      if (file1 != file2)
-      {
-         return false;         
-      }
-
-      struct stat stat1, stat2;
+      //If path names are different, we still could be pointing at the same file
+      //on disk.
+      struct stat stat1 = {0};
+      struct stat stat2 = {0};
 
       if(stat(file1.c_str(), &stat1) != 0)
       {
@@ -784,10 +789,24 @@ namespace dtUtil
          return false;
       }
 
+//only Unix variants support inodes
+#ifndef WIN32
       if(stat1.st_ino == stat2.st_ino)
       {
          return true;
       }
+#else //WIN32 -- No inodes in Windows -- we'll have to imitate an inode's functionality.
+      if(stat1.st_atime == stat2.st_atime &&
+         stat1.st_ctime == stat2.st_ctime &&
+         stat1.st_mtime == stat2.st_mtime &&
+         stat1.st_gid   == stat2.st_gid   &&
+         stat1.st_uid   == stat2.st_uid   &&
+         stat1.st_mode  == stat2.st_mode  &&
+         stat1.st_size  == stat2.st_size)
+      {
+         return true;
+      }
+#endif
 
       return false;       
    }
