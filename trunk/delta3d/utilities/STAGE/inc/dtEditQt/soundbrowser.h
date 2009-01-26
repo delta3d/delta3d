@@ -32,7 +32,16 @@
 
 #include <dtEditQt/resourceabstractbrowser.h>
 
-#include <al.h>
+#if defined(_MSC_VER)
+#   include <alc.h>
+#   include <al.h>
+#elif defined(__APPLE__)
+#   include <OpenAL/alc.h>
+#   include <OpenAL/al.h>
+#else
+#   include <AL/al.h>
+#   include <AL/alc.h>
+#endif
 
 class QAction;
 class QGroupBox;
