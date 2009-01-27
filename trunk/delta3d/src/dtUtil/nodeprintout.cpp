@@ -23,6 +23,7 @@
 #include <dtUtil/nodeprintout.h>
 #include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
+#include <dtUtil/bits.h>
 
 #include <sstream>
 #include <fstream>
@@ -48,7 +49,9 @@ namespace dtUtil
    //////////////////////////////////////////////////////////////////////////
    std::string NodePrintOut::CollectNodeData( const osg::Node &nodeToPrint,
                                              const std::string &outputFilename /*= ""*/,
-                                             bool printVertData /*= false */ )
+                                             bool printVertData /*= false */,
+                                             unsigned int nodeMask /* 0xFFFFFFFF */
+                                             )
    {
       // Clear any previous data
       for(int i = 0; i < 3; i++)
@@ -57,7 +60,7 @@ namespace dtUtil
       }
 
       mPrintingVerts = printVertData;
-      Analyze(nodeToPrint, "");
+      Analyze(nodeToPrint, "", nodeMask);
 
       if(!outputFilename.empty())
       {
@@ -78,9 +81,15 @@ namespace dtUtil
    }
 
    /// Called from printoutnode user should never call
-   void NodePrintOut::Analyze(const osg::Node& nd, const std::string& indent)
+   //////////////////////////////////////////////////////////////////////////
+   void NodePrintOut::Analyze(const osg::Node& nd, const std::string& indent, unsigned int nodeMask)
    {
-      mOutputStream[0] << indent << "Node - Class Name [" <<  nd.className() << "], Node Name [" << nd.getName() << "]" << std::endl;
+      if (dtUtil::Bits::Has(nd.getNodeMask(), nodeMask) == false)
+      {
+         return;
+      }
+
+      mOutputStream[0] << indent << "Node - Class Name [" <<  nd.className() << "], Node Name [" << nd.getName() << "], Node Mask [0x"<<std::hex<< nd.getNodeMask()<<"]" << std::endl;
 
       const osg::Geode *geode =  dynamic_cast<const osg::Geode *>(&nd);
       if (geode != NULL) 
@@ -96,7 +105,7 @@ namespace dtUtil
             for(unsigned int ic=0; ic<gp->getNumChildren(); ic++) 
             {
                std::string newIndent = indent + "   ";
-               Analyze(*gp->getChild(ic), newIndent);
+               Analyze(*gp->getChild(ic), newIndent, nodeMask);
             }
          }
       }
