@@ -4,7 +4,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QPushButton>
 
-class LayersBrowser : QWidget
+class LayersBrowser : public QObject
 {
    Q_OBJECT
 
@@ -20,12 +20,17 @@ public:
    void SetResetParticleButton(QPushButton* resetParticleButton) { mpResetParticleButton = resetParticleButton; }
 
    void SetupUI();
+signals:
+   void ToggleTabs(bool enabled);
 
 public slots:
+   void ClearLayerList();
+   void AddLayerToLayerList(const QString &layerName);
+   void SelectIndexOfLayersList(int newIndex);
    void NewLayerButtonPushed();
    void TrashLayerButtonPushed();
    void RenameLayerButtonPushed();
-   void ResetParticleButtonPushed();
+   void ToggleLayers(bool enabled);
 
 private:
    QListWidget* mpLayerList;

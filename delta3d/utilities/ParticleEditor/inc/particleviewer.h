@@ -82,7 +82,13 @@ public:
    virtual void Config();
 
 signals:
+   ///> Main Window signals
+   void UpdateWindowTitle(const QString& title);
+
    ///> Layer Browser signals
+   void ClearLayerList();
+   void AddLayerToLayerList(const QString& layerName);
+   void SelectIndexOfLayersList(int newIndex);
    void LayerHiddenChanged(bool hidden);
 
    ///> Particles Tab signals
@@ -182,7 +188,17 @@ signals:
    void OperatorsFluidFrictionOverrideRadiusUpdated(double newValue);
 
 public slots:
+   // Menu Actions
    void CreateNewParticleSystem();
+   void OpenParticleSystem();
+   void ImportParticleSystem();
+   void LoadReferenceObject();
+   void SaveParticleToFile();
+   void SaveParticleAs();
+   void ToggleCompass(bool enabled);
+   void ToggleXYGrid(bool enabled);
+   void ToggleXZGrid(bool enabled);
+   void ToggleYZGrid(bool enabled);
 
    // Layer Browser slots
    void CreateNewParticleLayer();
@@ -294,6 +310,9 @@ public slots:
 private:
    void MakeCompass();
    void MakeGrids();
+   void SetParticleSystemFilename(QString filename);
+   void LoadFile(QString filename, bool import = false);
+   void UpdateLayersList();
    void UpdateParticleTabsValues();
    void UpdateCounterTabsValues();
    void UpdateRandomRatesValues();
@@ -323,7 +342,7 @@ private:
 
    std::vector<ParticleSystemLayer> mLayers;
    osgParticle::ParticleSystemUpdater* mpParticleSystemUpdater;
-   std::string mParticleSystemFilename;
+   QString mParticleSystemFilename;
 
    int mLayerIndex;
    int mMultiSegmentVertexIndex;
