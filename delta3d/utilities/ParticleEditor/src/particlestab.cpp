@@ -24,6 +24,7 @@ void ParticlesTab::SetupUI()
    SetupEmitterConnections();
 
    mpTexturePreview->setPixmap(QPixmap());
+
    ChangeCustomColorFromColor();
    ChangeCustomColorToColor();
 }
@@ -95,15 +96,13 @@ void ParticlesTab::TextureLineEditValueChanged(QString newText)
    image.load(mpTextureLineEdit->text());
    mpTexturePreview->setPixmap(QPixmap::fromImage(image));
 
-   emit TextureChanged(mpTextureLineEdit->text(), mpEmissiveBox->isChecked(), mpLightingBox->isChecked());
+   emit TextureChanged(mpTextureLineEdit->text());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void ParticlesTab::TextureUpdated(QString filename, bool emissive, bool lighting)
+void ParticlesTab::TextureUpdated(QString filename)
 {
    mpTextureLineEdit->setText(filename);
-   mpEmissiveBox->setChecked(emissive);
-   mpLightingBox->setChecked(lighting);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

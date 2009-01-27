@@ -1,6 +1,7 @@
 #ifndef DELTA_PARTICLES_TAB
 #define DELTA_PARTICLES_TAB
 
+#include <texturepreview.h>
 #include <QtGui/QComboBox>
 #include <QtGui/QDoubleSpinBox>
 #include <QtGui/QSlider>
@@ -70,7 +71,7 @@ public:
    void SetupUI();
 
 signals:
-   void TextureChanged(QString filename, bool emissive, bool lighting);
+   void TextureChanged(QString filename);
 
 public slots:
    // Particle UI
@@ -88,7 +89,7 @@ public slots:
    // Texture UI
    void TextureLineEditValueChanged(QString newText);
    void TextureBrowserButtonPressed();
-   void TextureUpdated(QString filename, bool emissive, bool lighting);
+   void TextureUpdated(QString filename);
 
    // Color UI
    void RFromSpinBoxValueChanged(double newValue);

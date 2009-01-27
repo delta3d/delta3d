@@ -24,7 +24,7 @@ namespace psEditor
       Q_OBJECT
 
    public:
-      MainWindow(QMainWindow *parent=NULL);
+      MainWindow(QMainWindow* parent = NULL);
       virtual ~MainWindow(void);
 
       ViewWindow* GetGLWidget() { return mpViewWindow; }

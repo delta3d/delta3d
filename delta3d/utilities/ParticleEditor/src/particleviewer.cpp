@@ -291,6 +291,12 @@ void ParticleViewer::DeleteSelectedLayer()
    mLayers.erase(mLayers.begin() + mLayerIndex);
 
    UpdateLayersList();
+
+   if(mLayerIndex >= static_cast<int>(mLayers.size()))
+   {
+      mLayerIndex = mLayers.size() - 1;
+   }
+   emit SelectIndexOfLayersList(mLayerIndex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -319,9 +325,9 @@ void ParticleViewer::ResetEmitters()
 ////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::UpdateSelectionIndex(int newIndex)
 {
-   mLayerIndex = newIndex;
-   if(0 <= mLayerIndex && mLayerIndex < static_cast<int>(mLayers.size()))
+   if(0 <= newIndex && newIndex < static_cast<int>(mLayers.size()))
    {
+      mLayerIndex = newIndex;
       UpdateParticleTabsValues();
       UpdateCounterTabsValues();
       UpdatePlacerTabsValues();
@@ -426,8 +432,14 @@ void ParticleViewer::SizeToValueChanged(double newValue)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ParticleViewer::TextureChanged(QString filename, bool emissive, bool lighting)
+void ParticleViewer::TextureChanged(QString filename)
 {
+   osg::StateSet* ss = mLayers[mLayerIndex].mParticleSystem->getStateSet();
+   osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
+   bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
+   osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+   bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
+
    mLayers[mLayerIndex].mParticleSystem->setDefaultAttributes(filename.toStdString(), emissive, lighting);
 }
 
@@ -1419,10 +1431,12 @@ void ParticleViewer::UpdateParticleTabsValues()
       }
    }
    osg::BlendFunc* blend = (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
-   bool emissive = blend->getDestination() == osg::BlendFunc::ONE;
+   bool emissive = (blend->getDestination() == osg::BlendFunc::ONE);
    osg::Material* material = (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
-   bool lighting = material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE;
-   emit TextureUpdated(QString::fromStdString(textureFile), emissive, lighting);
+   bool lighting = (material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE);
+   emit TextureUpdated(QString::fromStdString(textureFile));
+   emit EmissiveUpdated(emissive);
+   emit LightingUpdated(lighting);
 
    // Color UI
    osgParticle::rangev4 colorRange = mLayers[mLayerIndex].mpParticle->getColorRange();

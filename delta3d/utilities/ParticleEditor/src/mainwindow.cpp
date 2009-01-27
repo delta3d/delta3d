@@ -5,7 +5,7 @@
 using namespace psEditor;
 
 ///////////////////////////////////////////////////////////////////////////////
-MainWindow::MainWindow(QMainWindow *parent):
+MainWindow::MainWindow(QMainWindow* parent):
 QMainWindow(parent)
 {
    mUI.setupUi(this);
@@ -163,7 +163,7 @@ void MainWindow::SetupParticlesTab()
 
    mpParticlesTab->SetTextureLineEdit(mUI.TextureLineEdit);
    mpParticlesTab->SetTextureButton(mUI.TexturesBrowseButton);
-   mpParticlesTab->SetTexturePreview(mUI.TexturePreview);
+   mpParticlesTab->SetTexturePreview(mUI.TexturePreviewer);
 
    mpParticlesTab->SetRFromSpinBox(mUI.RFromSpinBox);
    mpParticlesTab->SetRFromSlider(mUI.RFromSlider);
@@ -215,7 +215,7 @@ void MainWindow::SetupParticlesTabConnections()
    connect(mUI.SizeToSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(SizeToValueChanged(double)));
 
    // Texture UI
-   connect(mpParticlesTab, SIGNAL(TextureChanged(QString, bool, bool)), mpParticleViewer, SLOT(TextureChanged(QString, bool, bool)));
+   connect(mpParticlesTab, SIGNAL(TextureChanged(QString)), mpParticleViewer, SLOT(TextureChanged(QString)));
 
    // Color UI
    connect(mUI.RFromSpinBox, SIGNAL(valueChanged(double)), mpParticleViewer, SLOT(RFromValueChanged(double)));
@@ -246,7 +246,7 @@ void MainWindow::SetupParticlesTabConnections()
    connect(mpParticleViewer, SIGNAL(SizeToUpdated(double)), mUI.SizeToSpinBox, SLOT(setValue(double)));
 
    // Texture UI
-   connect(mpParticleViewer, SIGNAL(TextureUpdated(QString, bool, bool)), mpParticlesTab, SLOT(TextureUpdated(QString, bool, bool)));
+   connect(mpParticleViewer, SIGNAL(TextureUpdated(QString)), mpParticlesTab, SLOT(TextureUpdated(QString)));
 
    // Color UI
    connect(mpParticleViewer, SIGNAL(RFromUpdated(double)), mUI.RFromSpinBox, SLOT(setValue(double)));

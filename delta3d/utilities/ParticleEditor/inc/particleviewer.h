@@ -104,7 +104,7 @@ signals:
    void SizeFromUpdated(double newValue);
    void SizeToUpdated(double newValue);
    // Texture UI
-   void TextureUpdated(QString filename, bool emissive, bool lighting);
+   void TextureUpdated(QString filename);
    // Color UI
    void RFromUpdated(double newValue);
    void RToUpdated(double newValue);
@@ -221,7 +221,7 @@ public slots:
    void SizeFromValueChanged(double newValue);
    void SizeToValueChanged(double newValue);
    // Texture UI
-   void TextureChanged(QString filename, bool emissive, bool lighting);
+   void TextureChanged(QString filename);
    // Color UI
    void RFromValueChanged(double newValue);
    void RToValueChanged(double newValue);
