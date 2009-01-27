@@ -8,6 +8,8 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <osg/PolygonMode>
+#include <osg/Depth>
+#include <osg/BlendFunc>
 
 #include <dtCore/system.h>
 #include <dtCore/logicalinputdevice.h>
@@ -59,7 +61,7 @@ ObjectMotionModel::~ObjectMotionModel()
    {
       for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
       {
-         mScene->RemoveDrawable(mArrows[arrowIndex].transformable);
+         mScene->RemoveDrawable(mArrows[arrowIndex].transformable.get());
       }
    }
 
@@ -119,6 +121,29 @@ ObjectMotionModel::MotionType ObjectMotionModel::GetMotionType(void)
 void ObjectMotionModel::SetMotionType(ObjectMotionModel::MotionType motionType)
 {
    mMotionType = motionType;
+
+   for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
+   {
+      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCylinder.get());
+      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCone.get());
+      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].rotationRing.get());
+   }
+
+   if (mMotionType == MOTION_TYPE_ROTATION)
+   {
+      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
+      {
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].rotationRing.get());
+      }
+   }
+   else
+   {
+      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
+      {
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +212,7 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                {
                   for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
                   {
-                     if (arrow == mArrows[arrowIndex].transformable)
+                     if (arrow == mArrows[arrowIndex].transformable.get())
                      {
                         mHoverArrow = (ArrowType)arrowIndex;
                         break;
@@ -216,7 +241,7 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
                      {
                         // If we clicked on a motion arrow, lock it to the mouse.
-                        if (arrow == mArrows[arrowIndex].transformable)
+                        if (arrow == mArrows[arrowIndex].transformable.get())
                         {
                            mCurrentArrow = (ArrowType)arrowIndex;
                            mMouseLocked = true;
@@ -272,11 +297,18 @@ void ObjectMotionModel::InitArrows(void)
       osg::StateSet* stateSet = groupNode->getOrCreateStateSet();
       if (stateSet)
       {
-         stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-         stateSet->setRenderBinDetails(99, "DepthSortedBin");
+         //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+         stateSet->setRenderBinDetails(98, "RenderBin");
 
-         osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-         stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+         //osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+         //stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+
+         osg::Depth* depth = new osg::Depth(osg::Depth::ALWAYS);
+         stateSet->setAttribute(depth, osg::StateAttribute::ON);
+
+         osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+         stateSet->setAttribute(blend, osg::StateAttribute::ON);
       }
 
       //mClearNode = new osg::ClearNode();
@@ -297,6 +329,33 @@ void ObjectMotionModel::InitArrows(void)
       //}
    }
 
+   osg::Group* wireNode = new osg::Group();
+   if (wireNode)
+   {
+      // Make this group render top most.
+      osg::StateSet* stateSet = wireNode->getOrCreateStateSet();
+      if (stateSet)
+      {
+         //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+         stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+         stateSet->setRenderBinDetails(99, "RenderBin");
+
+         //osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+         //stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+
+         osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
+         stateSet->setAttribute(depth, osg::StateAttribute::ON);
+
+         osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+         stateSet->setAttribute(blend, osg::StateAttribute::ON);
+      }
+
+      if (groupNode)
+      {
+         groupNode->addChild(wireNode);
+      }
+   }
+
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
       // Create all our objects and nodes.
@@ -306,8 +365,12 @@ void ObjectMotionModel::InitArrows(void)
       osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
       osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.013f, 0.03f);
 
+      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.1f, 0.005f);
+
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
+
+      mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
 
       // Now set up their Hierarchy.
       if (mClearNode)
@@ -316,17 +379,29 @@ void ObjectMotionModel::InitArrows(void)
       }
       else
       {
-         mTargetTransform->AddChild(mArrows[arrowIndex].transformable);
+         mTargetTransform->AddChild(mArrows[arrowIndex].transformable.get());
+      }
+
+      if (wireNode)
+      {
+         wireNode->addChild(mArrows[arrowIndex].transformable->GetOSGNode());
       }
 
       osg::Group* arrowGroup = mArrows[arrowIndex].transformable->GetOSGNode()->asGroup();
       if (arrowGroup)
       {
-         arrowGroup->addChild(mArrows[arrowIndex].arrowGeode);
+         arrowGroup->addChild(mArrows[arrowIndex].arrowGeode.get());
       }
 
-      mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder);
-      mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone);
+      if (mMotionType == MOTION_TYPE_ROTATION)
+      {
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].rotationRing.get());
+      }
+      else
+      {
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
+         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
+      }
 
       mArrows[arrowIndex].arrowGeode->setNodeMask(ARROW_NODE_MASK);
    }
@@ -400,13 +475,23 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
       color.r() = color.r() * alpha;
       color.g() = color.g() * alpha;
       color.b() = color.b() * alpha;
-      mArrows[arrowIndex].arrowCylinder->setColor(color);
+      color.a() = color.a() * alpha;
 
-      color = mArrows[arrowIndex].arrowConeColor;
-      color.r() = color.r() * alpha;
-      color.g() = color.g() * alpha;
-      color.b() = color.b() * alpha;
-      mArrows[arrowIndex].arrowCone->setColor(color);
+      if (mMotionType == MOTION_TYPE_ROTATION)
+      {
+         mArrows[arrowIndex].rotationRing->setColor(color);
+      }
+      else
+      {
+         mArrows[arrowIndex].arrowCylinder->setColor(color);
+
+         color = mArrows[arrowIndex].arrowConeColor;
+         color.r() = color.r() * alpha;
+         color.g() = color.g() * alpha;
+         color.b() = color.b() * alpha;
+         color.a() = color.a() * alpha;
+         mArrows[arrowIndex].arrowCone->setColor(color);
+      }
    }
 }
 
@@ -638,25 +723,25 @@ void ObjectMotionModel::UpdateRotation(void)
       }
    }
 
-   float angle = rotationX;
-   //float angle = 0.0f;
-   //if (camUp * axis > 0.0f)
-   //{
-   //   angle = rotationX;
-   //}
-   //else
-   //{
-   //   angle = -rotationX;
-   //}
+   //float angle = rotationX;
+   float angle = 0.0f;
+   if (camUp * axis > 0.0f)
+   {
+      angle = rotationX;
+   }
+   else
+   {
+      angle = -rotationX;
+   }
 
-   //if (camRight * axis > 0.0f)
-   //{
-   //   angle += rotationY;
-   //}
-   //else
-   //{
-   //   angle -= rotationY;
-   //}
+   if (camRight * axis > 0.0f)
+   {
+      angle += rotationY;
+   }
+   else
+   {
+      angle -= rotationY;
+   }
 
    if (angle != 0)
    {
