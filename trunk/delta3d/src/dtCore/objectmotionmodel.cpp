@@ -339,14 +339,14 @@ void ObjectMotionModel::InitArrows(void)
    // Now position and rotate our axes.
    dtCore::Transform transformX;
    transformX.SetTranslation(0.0f, 0.0f, 0.0f);
-   transformX.SetLookAt(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+   transformX.Set(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
    mArrows[ARROW_TYPE_RIGHT].transformable->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].arrowCylinderColor = osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_RIGHT].arrowConeColor = osg::Vec4(1.0f, 0.3f, 0.3f, 0.5f);
 
    dtCore::Transform transformY;
    transformY.SetTranslation(0.0f, 0.0f, 0.0f);
-   transformY.SetLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
+   transformY.Set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
    mArrows[ARROW_TYPE_AT].transformable->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].arrowCylinderColor = osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_AT].arrowConeColor = osg::Vec4(0.3f, 1.0f, 0.3f, 0.5f);
