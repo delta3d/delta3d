@@ -61,12 +61,16 @@ namespace dtUtil
            * @param nodeToPrint : the node to traverse
            * @param outputFilename : an optional filename to save the output to (default = "")
            * @param printVertData : optionally print out vertex information (default = false)
+           * @param nodeMask : will only print out nodes that have a node mask that share
+           *                   at least one bit.
            * @return The formatted string output.
            *
            */
          std::string CollectNodeData(const osg::Node& nodeToPrint,
                                      const std::string& outputFilename = "",
-                                     bool printVertData = false);
+                                     bool printVertData = false,
+                                     unsigned int nodeMask = 0xFFFFFFFF
+                                     );
 
          /// Returns the file stream
          std::string GetFileOutput() const;
@@ -79,7 +83,7 @@ namespace dtUtil
 
       protected:
          /// Called from printoutnode user should never call
-         void Analyze(const osg::Node& nd, const std::string &indent);
+         void Analyze(const osg::Node& nd, const std::string &indent, unsigned int nodeMask);
 
          /// Called from Analyze user should never call
          void AnalyzeGeode(const osg::Geode& geode, const std::string &indent);
