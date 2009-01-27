@@ -39,7 +39,7 @@ void CameraCallbackContainer::AddCallback(CameraDrawCallback& cb)
 //////////////////////////////////////////////////////////////////////////
 void CameraCallbackContainer::RemoveCallback(CameraDrawCallback &cb)
 {
-   std::vector<RefPtr<CameraDrawCallback> >::const_iterator itr = mCallbacks.begin();
+   std::vector<RefPtr<CameraDrawCallback> >::iterator itr = mCallbacks.begin();
 
    while (itr != mCallbacks.end())
    {
