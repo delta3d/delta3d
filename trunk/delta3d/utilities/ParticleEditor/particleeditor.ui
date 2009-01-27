@@ -1375,7 +1375,7 @@
                      </spacer>
                     </item>
                     <item row="1" column="0" >
-                     <widget class="QLabel" name="TexturePreviewer" >
+                     <widget class="TexturePreview" name="TexturePreviewer" >
                       <property name="sizePolicy" >
                        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                         <horstretch>0</horstretch>
@@ -7005,6 +7005,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TexturePreview</class>
+   <extends>QLabel</extends>
+   <header>texturepreview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="particleeditor.qrc" />
  </resources>

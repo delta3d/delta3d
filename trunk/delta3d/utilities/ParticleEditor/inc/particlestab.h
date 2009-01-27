@@ -37,7 +37,7 @@ public:
    // Texture UI
    void SetTextureLineEdit(QLineEdit* TextureLineEdit) { mpTextureLineEdit = TextureLineEdit; }
    void SetTextureButton(QPushButton* textureButton) { mpTextureButton = textureButton; }
-   void SetTexturePreview(QLabel* texturePreview) { mpTexturePreview = texturePreview; }
+   void SetTexturePreview(TexturePreview* texturePreview) { mpTexturePreview = texturePreview; }
 
    // Color UI
    void SetRFromSpinBox(QDoubleSpinBox* rFromSpinBox) { mpRFromSpinBox = rFromSpinBox; }
@@ -147,7 +147,7 @@ private:
    // Texture UI
    QLineEdit* mpTextureLineEdit;
    QPushButton* mpTextureButton;
-   QLabel* mpTexturePreview;
+   TexturePreview* mpTexturePreview;
 
    // Color UI
    QDoubleSpinBox* mpRFromSpinBox;

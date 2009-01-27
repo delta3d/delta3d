@@ -23,8 +23,6 @@ void ParticlesTab::SetupUI()
    SetupColorConnections();
    SetupEmitterConnections();
 
-   mpTexturePreview->setPixmap(QPixmap());
-
    ChangeCustomColorFromColor();
    ChangeCustomColorToColor();
 }
@@ -92,9 +90,7 @@ void ParticlesTab::SizeToSliderValueChanged(int newValue)
 ///////////////////////////////////////////////////////////////////////////////
 void ParticlesTab::TextureLineEditValueChanged(QString newText)
 {
-   QImage image;
-   image.load(mpTextureLineEdit->text());
-   mpTexturePreview->setPixmap(QPixmap::fromImage(image));
+   mpTexturePreview->SetTexture(newText);
 
    emit TextureChanged(mpTextureLineEdit->text());
 }
