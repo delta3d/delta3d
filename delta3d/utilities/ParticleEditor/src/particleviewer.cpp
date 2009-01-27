@@ -27,6 +27,7 @@
 #include <osgViewer/CompositeViewer>
 
 #include <QtGui/QFileDialog>
+#include <QtCore/QtDebug>
 #include <QtGui/QAction>
 
 #include <dtCore/refptr.h>
@@ -41,8 +42,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 ParticleViewer::ParticleViewer()
 : mpParticleSystemGroup(NULL)
-, mpParticleSystemUpdater(NULL)
 , mpReferenceModel(NULL)
+, mpParticleSystemUpdater(NULL)
 , mLayerIndex(0)
 , mMultiSegmentVertexIndex(0)
 , mOperatorsIndex(0)
@@ -149,7 +150,7 @@ void ParticleViewer::LoadReferenceObject()
       }
       else
       {
-         qWarning("Can't load geometry file: %s", filename.toStdString());
+         qWarning() << "Can't load geometry file:" << filename;
       }
    }
 
@@ -1173,7 +1174,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
       osg::Node* node = osgDB::readNodeFile(filename.toStdString());
       if (node == NULL || !IS_A(node, osg::Group*))
       {
-         qWarning("Invalid particle system: %s", filename.toStdString());
+         qWarning() << "Invalid particle system:" << filename;
          return;
       }
 
@@ -1375,7 +1376,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
       }
       else
       {
-         qWarning("Invalid particle system: %s", filename.toStdString());
+         qWarning() << "Invalid particle system:" << filename;
       }
    }
 }
