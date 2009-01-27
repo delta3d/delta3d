@@ -28,3 +28,4 @@ namespace dtCore
 }
 
 #endif // screenshotcallback_h__
+
