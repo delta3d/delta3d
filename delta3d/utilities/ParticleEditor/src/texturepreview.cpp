@@ -2,7 +2,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "texturepreview.h"
+#include <texturepreview.h>
+#include <QtGui/QImage>
+#include <QtGui/QPainter>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -15,23 +17,25 @@
  * @param h the height of the widget
  * @param label the widget label
  */
-TexturePreview::TexturePreview(int x, int y, int w, int h, const char *label)
-   : Fl_Widget(x, y, w, h, label)
-{}
+TexturePreview::TexturePreview(QWidget* parent /*= NULL*/)
+: QLabel(parent)
+, mImage(NULL)
+{
+}
 
 /**
  * Sets the texture to display.
  *
  * @param texture the texture path
  */
-void TexturePreview::SetTexture(const std::string& texture)
+void TexturePreview::SetTexture(const QString& texture)
 {
    osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
    options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_IMAGES);
 
-   mImage = osgDB::readImageFile(texture, options.get());
-
-   redraw();
+   mImage = osgDB::readImageFile(texture.toStdString(), options.get());
+   
+   repaint();
 }
 
 /**
@@ -54,18 +58,20 @@ std::string TexturePreview::GetTexture()
 /**
  * Draws the widget.
  */
-void TexturePreview::draw()
+void TexturePreview::paintEvent(QPaintEvent* event)
 {
-   if (mImage.valid())
-   {
-      fl_draw_image(drawImageCallback, this, x(), y(), w(), h());
-   }
-   else
-   {
-      fl_color(255, 255, 255);
+   QImage qImage = QImage(event->rect().width(), event->rect().height(), QImage::Format_ARGB32);
+   qImage.fill(qRgb(255, 255, 255));
+   QPainter painter(this);
 
-      fl_rectf(x(), y(), w(), h());
+   if(mImage.valid())
+   {
+      qImage = QImage(mImage->s(), mImage->t(), QImage::Format_ARGB32);
+      DrawLoadedImage(qImage);
+      //qImage.scaled(event->rect().width(), event->rect().height());
    }
+
+   painter.drawImage(QPoint(0, 0), qImage);
 }
 
 /**
@@ -77,46 +83,43 @@ void TexturePreview::draw()
  * @param w the width of the line
  * @param buf the buffer to fill
  */
-void TexturePreview::drawImageCallback(void* data, int x, int y, int w, uchar* buf)
+void TexturePreview::DrawLoadedImage(QImage& image)
 {
-   TexturePreview* self = (TexturePreview*)data;
+   float sStep = (float)mImage->s() / width();
+   float tStep = (float)mImage->t() / height();
+   float s = 0.0f;
+   float t = mImage->t();
 
-   float sStep = (float)self->mImage->s()/self->w(),
-         tStep = (float)self->mImage->t()/self->h(),
-         s = x*sStep;
+   int components = osg::Image::computeNumComponents(mImage->getPixelFormat());
 
-   int t = (self->mImage->t()-1)-(int)(y*tStep),
-       components = osg::Image::computeNumComponents(self->mImage->getPixelFormat()),
-       ptr = 0;
-
-   for (int i = 0; i < w; ++i)
+   for(int x = 0; x < image.height() && s < mImage->s(); ++x)
    {
-      uchar* data = self->mImage->data(int(s), t);
-
-      switch (components)
+      t = mImage->t() - 1;
+      for(int y = 0; y < image.width() && t >= 0; ++y)
       {
-      case 1:
-         buf[ptr++] = data[0];
-         buf[ptr++] = data[0];
-         buf[ptr++] = data[0];
-         break;
+         uchar* data = mImage->data((int)s, (int)t);
+         QColor pixelColor;
+         switch(components)
+         {
+         case 1:
+            pixelColor.setRgb((int)data[0], (int)data[0], (int)data[0]);
+            break;
 
-      case 3:
-         buf[ptr++] = data[0];
-         buf[ptr++] = data[1];
-         buf[ptr++] = data[2];
-         break;
+         case 3:
+            pixelColor.setRgb((int)data[0], (int)data[1], (int)data[2]);
+            break;
 
-      case 4:
-         float alpha = data[3]/255.0f;
-         buf[ptr++] = (uchar)(data[0]*alpha);
-         buf[ptr++] = (uchar)(data[1]*alpha);
-         buf[ptr++] = (uchar)(data[2]*alpha);
-         break;
+         case 4:
+            float alpha = data[3] / 255.0f;
+            pixelColor.setRgb((int)data[0] * alpha, (int)data[1] * alpha, (int)data[2] * alpha);
+            break;
+         }
+         image.setPixel(x, y, pixelColor.rgba());
+         t -= tStep;
       }
-
       s += sStep;
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
