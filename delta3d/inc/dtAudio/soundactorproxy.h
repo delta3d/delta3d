@@ -74,6 +74,7 @@ namespace dtAudio
           static const dtUtil::RefString PROPERTY_MIN_RANDOM_TIME;
           static const dtUtil::RefString PROPERTY_PITCH;
           static const dtUtil::RefString PROPERTY_PLAY_AS_RANDOM;
+          static const dtUtil::RefString PROPERTY_PLAY_AT_STARTUP;
           static const dtUtil::RefString PROPERTY_ROLLOFF_FACTOR;
           static const dtUtil::RefString PROPERTY_SOUND_EFFECT;
           static const dtUtil::RefString PROPERTY_VELOCITY;
@@ -169,6 +170,12 @@ namespace dtAudio
            // properties for variables in this class
            bool IsARandomSoundEffect() const {return mRandomSoundEffect;}
            void SetToHaveRandomSoundEffect(bool value) {mRandomSoundEffect = value;}
+
+           /// Indicates whether or not sound is played at application startup.
+           bool IsPlayedAtStartup() const {return mPlaySoundAtStartup;}
+           
+           /// Set property that determines if a sound is played at startup
+           void SetPlayAtStartup(bool val) {mPlaySoundAtStartup = val;}            
            
            /**
             * Set the minimum seconds to wait between random executions of the sound.
@@ -251,6 +258,9 @@ namespace dtAudio
           * this is so they wont overlap.
           */
          float mOffsetTime;
+
+         /// Flag that determines whether or not the sound begins at app startup
+         bool mPlaySoundAtStartup;
     };
 }
 

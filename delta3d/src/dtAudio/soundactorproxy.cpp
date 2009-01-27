@@ -50,6 +50,7 @@ namespace dtAudio
    const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_RANDOM_TIME("Min Random Time"); // "Min Random Time"
    const dtUtil::RefString SoundActorProxy::PROPERTY_PITCH("Pitch"); // "Pitch"
    const dtUtil::RefString SoundActorProxy::PROPERTY_PLAY_AS_RANDOM("Play As Random SFX"); // "Play As Random SFX"
+   const dtUtil::RefString SoundActorProxy::PROPERTY_PLAY_AT_STARTUP("Play Sound at Startup"); // "Play Sound at Startup"
    const dtUtil::RefString SoundActorProxy::PROPERTY_ROLLOFF_FACTOR("Rolloff Factor"); // "Rolloff Factor"
    const dtUtil::RefString SoundActorProxy::PROPERTY_SOUND_EFFECT("The Sound Effect"); // "The Sound Effect"
    const dtUtil::RefString SoundActorProxy::PROPERTY_VELOCITY("Velocity"); // "Velocity"
@@ -105,6 +106,7 @@ namespace dtAudio
       , mMinRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MIN)
       , mMaxRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MAX)
       , mOffsetTime(0.0f)
+      , mPlaySoundAtStartup(false)
    {
       /**
       * @note You must instantiate, configure, and shutdown the
@@ -142,7 +144,10 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////
     void SoundActorProxy::OnEnteredWorld()
     {
-       PlayQueued(mOffsetTime);
+       if(mPlaySoundAtStartup)
+       {
+          PlayQueued(mOffsetTime);
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -331,6 +336,13 @@ namespace dtAudio
            MakeFunctor(*this, &SoundActorProxy::SetToHaveRandomSoundEffect),
            MakeFunctorRet(*this, &SoundActorProxy::IsARandomSoundEffect),
            "Will have a timer go off and play sound so often", GROUPNAME));
+
+        AddProperty(new BooleanActorProperty(
+           PROPERTY_PLAY_AT_STARTUP,
+           PROPERTY_PLAY_AT_STARTUP,
+           MakeFunctor(*this, &SoundActorProxy::SetPlayAtStartup),
+           MakeFunctorRet(*this, &SoundActorProxy::IsPlayedAtStartup),
+           "Will play sound at startup", GROUPNAME));
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND, 
            PROPERTY_SOUND_EFFECT,
