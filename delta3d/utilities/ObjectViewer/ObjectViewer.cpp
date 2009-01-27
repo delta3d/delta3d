@@ -115,6 +115,7 @@ void ObjectViewer::Config()
 
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
+      lightArrow->SetActive(enabled);
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
       lightArrowTransformable->AddChild(lightArrow.get());
@@ -700,8 +701,6 @@ void ObjectViewer::OnEnterObjectMode()
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
    {
       mLightMotion[lightIndex]->SetEnabled(false);
-
-      mLightArrow[lightIndex]->SetActive(false);
    }
 }
 
@@ -713,8 +712,6 @@ void ObjectViewer::OnEnterLightMode()
    if (mCurrentLight > -1 && mCurrentLight < dtCore::MAX_LIGHTS)
    {
       mLightMotion[mCurrentLight]->SetEnabled(true);
-
-      mLightArrow[mCurrentLight]->SetActive(true);
    }
 }
 
