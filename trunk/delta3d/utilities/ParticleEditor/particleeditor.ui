@@ -1375,7 +1375,7 @@
                      </spacer>
                     </item>
                     <item row="1" column="0" >
-                     <widget class="QLabel" name="TexturePreview" >
+                     <widget class="QLabel" name="TexturePreviewer" >
                       <property name="sizePolicy" >
                        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                         <horstretch>0</horstretch>
