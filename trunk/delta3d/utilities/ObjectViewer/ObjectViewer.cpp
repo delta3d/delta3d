@@ -53,7 +53,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 ObjectViewer::ObjectViewer()
    : mCurrentLight(0)
-   , mShouldGenerateTangents(false)
+   , mShouldGenerateTangents(true)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -907,6 +907,12 @@ void ObjectViewer::GenerateTangentsForObject(dtCore::Object* object)
    for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
    {
       osg::Geometry* geom = geomCollector->mGeomList[geomIndex];
+
+      // Force display lists to OFF and VBO's to ON so that vertex
+      // attributes can be set without disturbing the graphics driver
+      geom->setSupportsDisplayList(false);
+      geom->setUseDisplayList(false);
+      geom->setUseVertexBufferObjects(true);
 
       osg::ref_ptr<osgUtil::TangentSpaceGenerator> tsg = new osgUtil::TangentSpaceGenerator;
       tsg->generate(geom, 0);

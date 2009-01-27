@@ -117,7 +117,7 @@ void ObjectWorkspace::CreateMenus()
 
    mGenerateTangentsAction = settingsMenu->addAction(tr("Generate tangent attribute on geometry load."));
    mGenerateTangentsAction->setCheckable(true);
-   mGenerateTangentsAction->setChecked(false);
+   mGenerateTangentsAction->setChecked(true);
 
    connect(toggleShadeToolbarAction, SIGNAL(triggered()), this, SLOT(OnToggleShadingToolbar()));
    connect(mGenerateTangentsAction, SIGNAL(triggered()), this, SLOT(OnToggleGenerateTangents()));
