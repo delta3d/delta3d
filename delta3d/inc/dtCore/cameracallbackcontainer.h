@@ -8,6 +8,11 @@
 
 #include <vector>
 
+namespace osg
+{
+   class RenderInfo;
+}
+
 namespace dtCore
 {
    class Camera;
