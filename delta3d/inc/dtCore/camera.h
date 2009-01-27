@@ -44,6 +44,8 @@ namespace dtCore
    class DeltaWin;
    class Scene;
    class ScreenShotCallback;
+   class CameraCallbackContainer;
+   class CameraDrawCallback;
 
    /**
     * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to
@@ -219,6 +221,16 @@ namespace dtCore
       // Updates the view matrix via the transformed position.  This is called from CameraSynch.
       void UpdateViewMatrixFromTransform();
 
+      /** Add a postdraw callback to the Camera.
+        * @param cb The callback to trigger during post-draw
+        */
+      void AddPostDrawCallback(dtCore::CameraDrawCallback& cb) const;
+
+      /** Remove a postdraw callback from the Camera.
+        * @param cb The callback to remove
+        */
+      void RemovePostDrawCallback(dtCore::CameraDrawCallback& cb) const;
+
    protected:
 
       ///Override for CameraSynch
@@ -254,6 +266,7 @@ namespace dtCore
       RefPtr<ScreenShotCallback> mScreenShotTaker;
 
       osg::Node::NodeMask mEnabledNodeMask; ///<The last known node mask corresponding to "enabled"
+      RefPtr<CameraCallbackContainer> mCallbackContainer;
    };
 }
 
