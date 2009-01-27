@@ -64,9 +64,17 @@ namespace dtAudio
    // ACTOR CODE
    //////////////////////////////////////////////////////////////////////////////
    SoundActor::SoundActor(dtGame::GameActorProxy &proxy)  
-      : dtGame::GameActor(proxy)
-      , mSound(dtAudio::AudioManager::GetInstance().NewSound())
+      : dtGame::GameActor(proxy)      
    {
+      //make sure AudioManager has been initialized
+      if(!dtAudio::AudioManager::GetInstance().IsInitialized())
+      {
+         dtAudio::AudioManager::Instantiate();
+         dtAudio::AudioManager::GetInstance().Config();
+      }
+
+      mSound = dtAudio::AudioManager::GetInstance().NewSound();
+
       AddChild(mSound.get());
    }
 
