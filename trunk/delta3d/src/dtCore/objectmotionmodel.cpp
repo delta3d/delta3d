@@ -715,6 +715,7 @@ void ObjectMotionModel::UpdateRotation(void)
          rightAxis = targetRight;
          axis.normalize();
          upAxis.normalize();
+         rightAxis.normalize();
          break;
       }
 
@@ -725,6 +726,7 @@ void ObjectMotionModel::UpdateRotation(void)
          rightAxis = -targetAt;
          axis.normalize();
          upAxis.normalize();
+         rightAxis.normalize();
          break;
       }
 
@@ -735,6 +737,7 @@ void ObjectMotionModel::UpdateRotation(void)
          rightAxis = targetRight;
          axis.normalize();
          upAxis.normalize();
+         rightAxis.normalize();
          break;
       }
    default:
@@ -789,7 +792,16 @@ void ObjectMotionModel::UpdateRotation(void)
          angle = -angle;
       }
 
-      angle -= mOriginAngle;
+      if (mCoordinateSpace == WORLD_SPACE)
+      {
+         float originAngle = mOriginAngle;
+         mOriginAngle = angle;
+         angle -= originAngle;
+      }
+      else
+      {
+         angle -= mOriginAngle;
+      }
    }
 
    if (angle != 0)
