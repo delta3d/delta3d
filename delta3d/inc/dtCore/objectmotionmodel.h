@@ -191,10 +191,12 @@ namespace dtCore
 
          struct ArrowData
          {
-            dtCore::Transformable*                 transformable;
-            osg::Geode*                            arrowGeode;
-            osg::ShapeDrawable*                    arrowCylinder;
-            osg::ShapeDrawable*                    arrowCone;
+            dtCore::RefPtr<dtCore::Transformable>  transformable;
+            osg::ref_ptr<osg::Geode>               arrowGeode;
+            osg::ref_ptr<osg::ShapeDrawable>       arrowCylinder;
+            osg::ref_ptr<osg::ShapeDrawable>       arrowCone;
+
+            osg::ref_ptr<osg::ShapeDrawable>       rotationRing;
 
             osg::Vec4                              arrowCylinderColor;
             osg::Vec4                              arrowConeColor;
