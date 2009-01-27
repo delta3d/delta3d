@@ -43,6 +43,7 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mCurrentArrow(ARROW_TYPE_MAX)
    , mMouseDown(false)
    , mMouseLocked(false)
+   , mOriginAngle(0.0f)
 {
    RegisterInstance(this);
 
@@ -255,6 +256,7 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                               osg::Vec2 objectPos = ObjectToScreenCoords(transform.GetTranslation());
                               mMouseOrigin = mMouse->GetPosition();
                               mMouseOffset = objectPos - mMouseOrigin;
+                              mOriginAngle = 0.0f;
                            }
 
                            break;
@@ -665,6 +667,7 @@ void ObjectMotionModel::UpdateRotation(void)
    osg::Vec3 camUp;
    osg::Vec3 camRight;
    osg::Vec3 camAt;
+   osg::Vec3 camPos;
 
    dtCore::Camera* camera = NULL;
    if (mView)
@@ -680,41 +683,58 @@ void ObjectMotionModel::UpdateRotation(void)
    dtCore::Transform camTransform;
    camera->GetTransform(camTransform);
    camTransform.GetOrientation(camRight, camUp, camAt);
+   camPos = camTransform.GetTranslation();
 
    osg::Vec3 targetUp;
    osg::Vec3 targetRight;
    osg::Vec3 targetAt;
+   osg::Vec3 targetPos;
+   dtCore::Transform targetTransform;
    dtCore::Transform transform;
+
+   target->GetTransform(targetTransform);
 
    if (mCoordinateSpace == LOCAL_SPACE)
    {
-      target->GetTransform(transform);
+      transform = targetTransform;
    }
 
    transform.GetOrientation(targetRight, targetUp, targetAt);
+   targetPos = targetTransform.GetTranslation();
 
    osg::Vec3 axis;
+   osg::Vec3 upAxis;
+   osg::Vec3 rightAxis;
 
    switch (mCurrentArrow)
    {
    case ARROW_TYPE_AT:
       {
          axis = targetAt;
+         upAxis = targetUp;
+         rightAxis = targetRight;
          axis.normalize();
+         upAxis.normalize();
          break;
       }
 
    case ARROW_TYPE_RIGHT:
       {
          axis = targetRight;
+         upAxis = targetUp;
+         rightAxis = -targetAt;
          axis.normalize();
+         upAxis.normalize();
          break;
       }
 
    case ARROW_TYPE_UP:
       {
          axis = targetUp;
+         upAxis = -targetAt;
+         rightAxis = targetRight;
          axis.normalize();
+         upAxis.normalize();
          break;
       }
    default:
@@ -723,24 +743,53 @@ void ObjectMotionModel::UpdateRotation(void)
       }
    }
 
-   //float angle = rotationX;
+   // Calculate the angle
    float angle = 0.0f;
-   if (camUp * axis > 0.0f)
-   {
-      angle = rotationX;
-   }
-   else
-   {
-      angle = -rotationX;
-   }
 
-   if (camRight * axis > 0.0f)
+   // Get the mouse vector.
+   osg::Vec3 mouse = GetMouseVector(mMouse->GetPosition());
+
+   // Calculate the mouse collision in the 3D space relative to the plane
+   // of the camera and the desired axis of the object.
+   float fStartOffset   = camPos *    axis;
+   float fDistMod       = mouse *     axis;
+   float fPlaneOffset   = targetPos * axis;
+
+   float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
+
+   // Find the projected point of collision on the plane.
+   osg::Vec3 projection = (mouse * fDistance) + camPos;
+   osg::Vec3 vector     = projection - targetPos;
+
+   vector.normalize();
+
+   float fDotAngle = upAxis * vector;
+   float fDirection = rightAxis * vector;
+
+   // The first update should not cause a rotation to happen,
+   // Instead, it should set the current mouse position to be
+   // the current angle.
+   if (mMouseOffset.x() != 0.0f || mMouseOffset.y() != 0.0f)
    {
-      angle += rotationY;
+      mMouseOffset.x() = 0.0f;
+      mMouseOffset.y() = 0.0f;
+
+      mOriginAngle = acos(fDotAngle);
+      if (fDirection < 0.0f)
+      {
+         mOriginAngle = -mOriginAngle;
+      }
    }
    else
    {
-      angle -= rotationY;
+      angle = acos(fDotAngle);
+
+      if (fDirection < 0.0f)
+      {
+         angle = -angle;
+      }
+
+      angle -= mOriginAngle;
    }
 
    if (angle != 0)
@@ -757,6 +806,7 @@ void ObjectMotionModel::UpdateRotation(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::UpdateScale(void)
 {
+   // TODO: Not currenlty implemented as there may be issues with scaling transformables.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

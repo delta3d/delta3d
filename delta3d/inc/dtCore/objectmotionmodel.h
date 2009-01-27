@@ -220,6 +220,7 @@ namespace dtCore
          bool            mMouseLocked;
          osg::Vec2       mMouseOffset;
          osg::Vec2       mMouseOrigin;
+         float           mOriginAngle;
    };
 } // namespace dtCore
 
