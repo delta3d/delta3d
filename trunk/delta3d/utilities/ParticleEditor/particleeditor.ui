@@ -790,6 +790,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="toolTip" >
+                          <string>The lifetime of each particle (seconds)</string>
+                         </property>
                          <property name="text" >
                           <string>Life(sec)</string>
                          </property>
@@ -850,6 +853,9 @@
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
+                         <property name="toolTip" >
+                          <string>Size at start of lifetime</string>
+                         </property>
                          <property name="text" >
                           <string>Size(m)</string>
                          </property>
@@ -865,6 +871,9 @@
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
+                         </property>
+                         <property name="toolTip" >
+                          <string>Size at end of lifetime</string>
                          </property>
                          <property name="text" >
                           <string>to</string>
@@ -1020,6 +1029,9 @@
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
+                         <property name="toolTip" >
+                          <string>Size at start of lifetime</string>
+                         </property>
                          <property name="maximum" >
                           <number>100</number>
                          </property>
@@ -1056,6 +1068,9 @@
                            <width>48</width>
                            <height>25</height>
                           </size>
+                         </property>
+                         <property name="toolTip" >
+                          <string>The lifetime of each particle (seconds)</string>
                          </property>
                          <property name="alignment" >
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1112,6 +1127,9 @@
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
+                         </property>
+                         <property name="toolTip" >
+                          <string>Size at end of lifetime</string>
                          </property>
                          <property name="maximum" >
                           <number>100</number>
@@ -1178,6 +1196,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="toolTip" >
+                          <string>Size at start of lifetime</string>
+                         </property>
                          <property name="alignment" >
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
@@ -1212,6 +1233,9 @@
                            <height>25</height>
                           </size>
                          </property>
+                         <property name="toolTip" >
+                          <string>Size at end of lifetime</string>
+                         </property>
                          <property name="alignment" >
                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                          </property>
@@ -1233,6 +1257,9 @@
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
+                         </property>
+                         <property name="toolTip" >
+                          <string>The lifetime of each particle (seconds)</string>
                          </property>
                          <property name="maximum" >
                           <number>1000</number>
@@ -1549,6 +1576,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Start color Red</string>
+                      </property>
                       <property name="text" >
                        <string>R</string>
                       </property>
@@ -1570,6 +1600,9 @@
                         <width>0</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>Start color green</string>
                       </property>
                       <property name="text" >
                        <string>G</string>
@@ -1593,6 +1626,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Start color blue</string>
+                      </property>
                       <property name="text" >
                        <string>B</string>
                       </property>
@@ -1615,6 +1651,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Alpha value at start of lifetime</string>
+                      </property>
                       <property name="text" >
                        <string>A</string>
                       </property>
@@ -1625,6 +1664,9 @@
                     </item>
                     <item row="2" column="2" >
                      <widget class="QSlider" name="BFromSlider" >
+                      <property name="toolTip" >
+                       <string>Start color blue</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1638,6 +1680,9 @@
                     </item>
                     <item row="1" column="2" >
                      <widget class="QSlider" name="GFromSlider" >
+                      <property name="toolTip" >
+                       <string>Start color green</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1651,6 +1696,9 @@
                     </item>
                     <item row="0" column="2" >
                      <widget class="QSlider" name="RFromSlider" >
+                      <property name="toolTip" >
+                       <string>Start color Red</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1664,6 +1712,9 @@
                     </item>
                     <item row="3" column="2" >
                      <widget class="QSlider" name="AFromSlider" >
+                      <property name="toolTip" >
+                       <string>Alpha value at start of lifetime</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1694,6 +1745,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>Start color Red</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1729,6 +1783,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Start color green</string>
+                      </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
@@ -1763,6 +1820,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Start color blue</string>
+                      </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
@@ -1796,6 +1856,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>Alpha value at start of lifetime</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1869,6 +1932,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>End color red</string>
+                      </property>
                       <property name="text" >
                        <string>R</string>
                       </property>
@@ -1890,6 +1956,9 @@
                         <width>0</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>End color green</string>
                       </property>
                       <property name="text" >
                        <string>G</string>
@@ -1913,6 +1982,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>End color blue</string>
+                      </property>
                       <property name="text" >
                        <string>B</string>
                       </property>
@@ -1935,6 +2007,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>Alpha value at end of lifetime</string>
+                      </property>
                       <property name="text" >
                        <string>A</string>
                       </property>
@@ -1945,6 +2020,9 @@
                     </item>
                     <item row="2" column="2" >
                      <widget class="QSlider" name="BToSlider" >
+                      <property name="toolTip" >
+                       <string>End color blue</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1958,6 +2036,9 @@
                     </item>
                     <item row="1" column="2" >
                      <widget class="QSlider" name="GToSlider" >
+                      <property name="toolTip" >
+                       <string>End color green</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1971,6 +2052,9 @@
                     </item>
                     <item row="0" column="2" >
                      <widget class="QSlider" name="RToSlider" >
+                      <property name="toolTip" >
+                       <string>End color red</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -1984,6 +2068,9 @@
                     </item>
                     <item row="3" column="2" >
                      <widget class="QSlider" name="AToSlider" >
+                      <property name="toolTip" >
+                       <string>Alpha value at end of lifetime</string>
+                      </property>
                       <property name="maximum" >
                        <number>100</number>
                       </property>
@@ -2014,6 +2101,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>End color red</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2049,6 +2139,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>End color green</string>
+                      </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
@@ -2083,6 +2176,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>End color blue</string>
+                      </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
@@ -2116,6 +2212,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>Alpha value at end of lifetime</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2222,6 +2321,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>The emitter's lifetime (in seconds)</string>
+                      </property>
                       <property name="text" >
                        <string>Life (sec)</string>
                       </property>
@@ -2244,6 +2346,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>The amount of delay before emitting</string>
+                      </property>
                       <property name="text" >
                        <string>Start Time (sec)</string>
                       </property>
@@ -2265,6 +2370,9 @@
                         <width>0</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>How long before the emitter resets (seconds)</string>
                       </property>
                       <property name="text" >
                        <string>Reset Time (sec)</string>
@@ -2305,6 +2413,9 @@
                     </item>
                     <item row="1" column="3" >
                      <widget class="QSlider" name="EmitterStartSlider" >
+                      <property name="toolTip" >
+                       <string>The amount of delay before emitting</string>
+                      </property>
                       <property name="maximum" >
                        <number>1000</number>
                       </property>
@@ -2317,6 +2428,9 @@
                      <widget class="QSlider" name="EmitterLifeSlider" >
                       <property name="enabled" >
                        <bool>false</bool>
+                      </property>
+                      <property name="toolTip" >
+                       <string>The emitter's lifetime (in seconds)</string>
                       </property>
                       <property name="maximum" >
                        <number>1000</number>
@@ -2331,6 +2445,9 @@
                     </item>
                     <item row="2" column="3" >
                      <widget class="QSlider" name="EmitterResetSlider" >
+                      <property name="toolTip" >
+                       <string>How long before the emitter resets (seconds)</string>
+                      </property>
                       <property name="maximum" >
                        <number>1000</number>
                       </property>
@@ -2361,6 +2478,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>The emitter's lifetime (in seconds)</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2396,6 +2516,9 @@
                         <height>25</height>
                        </size>
                       </property>
+                      <property name="toolTip" >
+                       <string>The amount of delay before emitting</string>
+                      </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
@@ -2426,6 +2549,9 @@
                         <width>60</width>
                         <height>25</height>
                        </size>
+                      </property>
+                      <property name="toolTip" >
+                       <string>How long before the emitter resets (seconds)</string>
                       </property>
                       <property name="alignment" >
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2590,6 +2716,9 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip" >
+                     <string>The minimum number of particles/sec output from the Emitter</string>
+                    </property>
                     <property name="text" >
                      <string>Min. Rate (particles/sec)</string>
                     </property>
@@ -2618,6 +2747,9 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip" >
+                     <string>The minimum number of particles/sec output from the Emitter</string>
+                    </property>
                     <property name="alignment" >
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -2637,6 +2769,9 @@
                   </item>
                   <item row="0" column="2" >
                    <widget class="QSlider" name="RandomRateMinRateSlider" >
+                    <property name="toolTip" >
+                     <string>The minimum number of particles/sec output from the Emitter</string>
+                    </property>
                     <property name="maximum" >
                      <number>10000</number>
                     </property>
@@ -2661,6 +2796,9 @@
                       <width>0</width>
                       <height>25</height>
                      </size>
+                    </property>
+                    <property name="toolTip" >
+                     <string>The maximum number of particles/sec output from the Emitter</string>
                     </property>
                     <property name="text" >
                      <string>Max. Rate (particles/sec)</string>
@@ -2690,6 +2828,9 @@
                       <height>25</height>
                      </size>
                     </property>
+                    <property name="toolTip" >
+                     <string>The maximum number of particles/sec output from the Emitter</string>
+                    </property>
                     <property name="alignment" >
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -2709,6 +2850,9 @@
                   </item>
                   <item row="1" column="2" >
                    <widget class="QSlider" name="RandomRateMaxRateSlider" >
+                    <property name="toolTip" >
+                     <string>The maximum number of particles/sec output from the Emitter</string>
+                    </property>
                     <property name="maximum" >
                      <number>10000</number>
                     </property>
@@ -4587,6 +4731,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum elevation (0=up, 3.14=down)</string>
+                          </property>
                           <property name="text" >
                            <string>Min (rad)</string>
                           </property>
@@ -4609,6 +4756,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The maximum elevation (0=up, 3.14=down)</string>
+                          </property>
                           <property name="text" >
                            <string>Max (rad)</string>
                           </property>
@@ -4619,6 +4769,9 @@
                         </item>
                         <item row="0" column="2" >
                          <widget class="QSlider" name="RadialShooterElevationMinSlider" >
+                          <property name="toolTip" >
+                           <string>The minimum elevation (0=up, 3.14=down)</string>
+                          </property>
                           <property name="minimum" >
                            <number>-314</number>
                           </property>
@@ -4650,6 +4803,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum elevation (0=up, 3.14=down)</string>
+                          </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
@@ -4666,6 +4822,9 @@
                         </item>
                         <item row="1" column="2" >
                          <widget class="QSlider" name="RadialShooterElevationMaxSlider" >
+                          <property name="toolTip" >
+                           <string>The maximum elevation (0=up, 3.14=down)</string>
+                          </property>
                           <property name="minimum" >
                            <number>-314</number>
                           </property>
@@ -4699,6 +4858,9 @@
                             <width>60</width>
                             <height>25</height>
                            </size>
+                          </property>
+                          <property name="toolTip" >
+                           <string>The maximum elevation (0=up, 3.14=down)</string>
                           </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -4821,6 +4983,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum azimuth (0=down the X+ axis)</string>
+                          </property>
                           <property name="text" >
                            <string>Min (rad)</string>
                           </property>
@@ -4843,6 +5008,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The maximum azimuth (0=down the -X axis)</string>
+                          </property>
                           <property name="text" >
                            <string>Max (rad)</string>
                           </property>
@@ -4853,6 +5021,9 @@
                         </item>
                         <item row="0" column="2" >
                          <widget class="QSlider" name="RadialShooterAzimuthMinSlider" >
+                          <property name="toolTip" >
+                           <string>The minimum azimuth (0=down the X+ axis)</string>
+                          </property>
                           <property name="minimum" >
                            <number>-628</number>
                           </property>
@@ -4884,6 +5055,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum azimuth (0=down the X+ axis)</string>
+                          </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
@@ -4900,6 +5074,9 @@
                         </item>
                         <item row="1" column="2" >
                          <widget class="QSlider" name="RadialShooterAzimuthMaxSlider" >
+                          <property name="toolTip" >
+                           <string>The maximum azimuth (0=down the -X axis)</string>
+                          </property>
                           <property name="minimum" >
                            <number>-628</number>
                           </property>
@@ -4933,6 +5110,9 @@
                             <width>60</width>
                             <height>25</height>
                            </size>
+                          </property>
+                          <property name="toolTip" >
+                           <string>The maximum azimuth (3.14=down the -X axis)</string>
                           </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -5055,6 +5235,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The maximum starting velocity of each particle</string>
+                          </property>
                           <property name="text" >
                            <string>Max (m/s)</string>
                           </property>
@@ -5077,6 +5260,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum starting velocity of each particle</string>
+                          </property>
                           <property name="text" >
                            <string>Min (m/s)</string>
                           </property>
@@ -5087,6 +5273,9 @@
                         </item>
                         <item row="0" column="2" >
                          <widget class="QSlider" name="RadialShooterInitialVelocityMinSlider" >
+                          <property name="toolTip" >
+                           <string>The minimum starting velocity of each particle</string>
+                          </property>
                           <property name="maximum" >
                            <number>10000</number>
                           </property>
@@ -5118,6 +5307,9 @@
                             <height>25</height>
                            </size>
                           </property>
+                          <property name="toolTip" >
+                           <string>The minimum starting velocity of each particle</string>
+                          </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
@@ -5137,6 +5329,9 @@
                         </item>
                         <item row="1" column="2" >
                          <widget class="QSlider" name="RadialShooterInitialVelocityMaxSlider" >
+                          <property name="toolTip" >
+                           <string>The maximum starting velocity of each particle</string>
+                          </property>
                           <property name="maximum" >
                            <number>10000</number>
                           </property>
@@ -5167,6 +5362,9 @@
                             <width>60</width>
                             <height>25</height>
                            </size>
+                          </property>
+                          <property name="toolTip" >
+                           <string>The maximum starting velocity of each particle</string>
                           </property>
                           <property name="alignment" >
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -5785,6 +5983,86 @@
            <string>Program</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_15" >
+           <item rowspan="3" row="1" column="0" >
+            <spacer name="horizontalSpacer_40" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item rowspan="3" row="1" column="2" >
+            <spacer name="horizontalSpacer_41" >
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="0" colspan="3" >
+            <spacer name="verticalSpacer_16" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="5" column="0" colspan="3" >
+            <spacer name="verticalSpacer_17" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="1" >
+            <spacer name="verticalSpacer_19" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
            <item row="3" column="1" >
             <widget class="QGroupBox" name="OperatorsParametersBox" >
              <property name="sizePolicy" >
@@ -5819,6 +6097,9 @@
                  <layout class="QGridLayout" name="gridLayout_30" >
                   <item row="0" column="0" >
                    <widget class="QLabel" name="ForceParametersXLabel" >
+                    <property name="toolTip" >
+                     <string>A constant force on the X-axis</string>
+                    </property>
                     <property name="text" >
                      <string>X</string>
                     </property>
@@ -5829,6 +6110,9 @@
                   </item>
                   <item row="1" column="0" >
                    <widget class="QLabel" name="ForceParametersYLabel" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Y-axis</string>
+                    </property>
                     <property name="text" >
                      <string>Y</string>
                     </property>
@@ -5839,6 +6123,9 @@
                   </item>
                   <item row="2" column="0" >
                    <widget class="QLabel" name="ForceParametersZLabel" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Z-axis</string>
+                    </property>
                     <property name="text" >
                      <string>Z</string>
                     </property>
@@ -5849,6 +6136,9 @@
                   </item>
                   <item row="0" column="1" >
                    <widget class="QDoubleSpinBox" name="ForceParametersXSpinBox" >
+                    <property name="toolTip" >
+                     <string>A constant force on the X-axis</string>
+                    </property>
                     <property name="alignment" >
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -5868,6 +6158,9 @@
                   </item>
                   <item row="1" column="1" >
                    <widget class="QDoubleSpinBox" name="ForceParametersYSpinBox" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Y-axis</string>
+                    </property>
                     <property name="alignment" >
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -5887,6 +6180,9 @@
                   </item>
                   <item row="2" column="1" >
                    <widget class="QDoubleSpinBox" name="ForceParametersZSpinBox" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Z-axis</string>
+                    </property>
                     <property name="alignment" >
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
@@ -5906,6 +6202,9 @@
                   </item>
                   <item row="0" column="2" >
                    <widget class="QSlider" name="ForceParametersXSlider" >
+                    <property name="toolTip" >
+                     <string>A constant force on the X-axis</string>
+                    </property>
                     <property name="minimum" >
                      <number>-10000</number>
                     </property>
@@ -5919,6 +6218,9 @@
                   </item>
                   <item row="1" column="2" >
                    <widget class="QSlider" name="ForceParametersYSlider" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Y-axis</string>
+                    </property>
                     <property name="minimum" >
                      <number>-10000</number>
                     </property>
@@ -5932,6 +6234,9 @@
                   </item>
                   <item row="2" column="2" >
                    <widget class="QSlider" name="ForceParametersZSlider" >
+                    <property name="toolTip" >
+                     <string>A constant force on the Z-axis</string>
+                    </property>
                     <property name="minimum" >
                      <number>-10000</number>
                     </property>
@@ -6398,38 +6703,6 @@
              </layout>
             </widget>
            </item>
-           <item rowspan="3" row="1" column="0" >
-            <spacer name="horizontalSpacer_40" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item rowspan="3" row="1" column="2" >
-            <spacer name="horizontalSpacer_41" >
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
            <item row="1" column="1" >
             <widget class="QFrame" name="OperatorsFrame" >
              <property name="frameShape" >
@@ -6593,58 +6866,7 @@
              </layout>
             </widget>
            </item>
-           <item row="0" column="0" colspan="3" >
-            <spacer name="verticalSpacer_16" >
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="5" column="0" colspan="3" >
-            <spacer name="verticalSpacer_17" >
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="1" >
-            <spacer name="verticalSpacer_19" >
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
-          <zorder>OperatorsParametersBox</zorder>
-          <zorder>OperatorsFrame</zorder>
-          <zorder>OperatorsStackedWidget</zorder>
          </widget>
         </widget>
        </item>
@@ -6662,22 +6884,6 @@
      <height>26</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile" >
-    <property name="title" >
-     <string>&amp;File</string>
-    </property>
-    <addaction name="actionNew" />
-    <addaction name="actionOpen" />
-    <addaction name="actionOpen_Previous" />
-    <addaction name="actionImport" />
-    <addaction name="separator" />
-    <addaction name="actionLoad_Reference" />
-    <addaction name="separator" />
-    <addaction name="actionSave" />
-    <addaction name="actionSave_As" />
-    <addaction name="separator" />
-    <addaction name="actionQuit" />
-   </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
      <string>&amp;View</string>
@@ -6687,6 +6893,28 @@
     <addaction name="actionXY_Grid" />
     <addaction name="actionYZ_Grid" />
     <addaction name="actionXZ_Grid" />
+   </widget>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuOpen_Previous" >
+     <property name="title" >
+      <string>Open &amp;Previous</string>
+     </property>
+     <addaction name="actionRecent_Project" />
+    </widget>
+    <addaction name="actionNew" />
+    <addaction name="actionOpen" />
+    <addaction name="menuOpen_Previous" />
+    <addaction name="actionImport" />
+    <addaction name="separator" />
+    <addaction name="actionLoad_Reference" />
+    <addaction name="separator" />
+    <addaction name="actionSave" />
+    <addaction name="actionSave_As" />
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuView" />
@@ -6740,14 +6968,6 @@
     <string>&amp;Open...</string>
    </property>
   </action>
-  <action name="actionOpen_Previous" >
-   <property name="text" >
-    <string>Open &amp;Previous</string>
-   </property>
-   <property name="shortcutContext" >
-    <enum>Qt::WindowShortcut</enum>
-   </property>
-  </action>
   <action name="actionImport" >
    <property name="text" >
     <string>&amp;Import...</string>
@@ -6771,6 +6991,17 @@
   <action name="actionQuit" >
    <property name="text" >
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionRecent_Project" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Recent Project</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
  </widget>
