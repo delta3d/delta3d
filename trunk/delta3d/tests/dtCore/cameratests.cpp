@@ -32,6 +32,9 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtCore/cameradrawcallback.h>
+#include <dtCore/cameracallbackcontainer.h>
+#include <dtCore/screenshotcallback.h>
 #include <dtUtil/functor.h>
 #include <dtABC/application.h>
 
@@ -54,6 +57,9 @@ class CameraTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_TEST(TestSettingTheCullingMode);
          CPPUNIT_TEST(TestSupplyingOSGCameraToConstructor);
          CPPUNIT_TEST(TestOnScreen);
+         CPPUNIT_TEST(TestInitialCallbackConditions);
+         CPPUNIT_TEST(TestAddingTwoCallbacks);
+         CPPUNIT_TEST(TestTriggeringCallback);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -85,6 +91,9 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestEnabled();
       void TestCameraSyncCallbacks();
       void TestSettingTheCullingMode();
+      void TestInitialCallbackConditions();
+      void TestAddingTwoCallbacks();
+      void TestTriggeringCallback();
 
       void TestOnScreen()
       {
@@ -318,4 +327,103 @@ void CameraTests::TestSettingTheCullingMode()
    CPPUNIT_ASSERT_EQUAL_MESSAGE("should be COMPUTE_NEAR_FAR_USING_PRIMITIVES",
       osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES,
       osgCam->getComputeNearFarMode() );
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CameraTests::TestInitialCallbackConditions()
+{
+   dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
+   
+   osg::Camera::DrawCallback *osgCallback = cam->GetOSGCamera()->getPostDrawCallback();
+
+   dtCore::CameraCallbackContainer *cont = dynamic_cast<dtCore::CameraCallbackContainer*>(osgCallback);
+
+   CPPUNIT_ASSERT_MESSAGE("The Camera's postdrawcallback isn't set to the correct default type.",
+                           cont != NULL);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The Camera should have at least one initial callback for screenshots.",
+                               false, cont->GetCallbacks().empty());
+
+   dtCore::CameraDrawCallback* cb = cont->GetCallbacks()[0].get();
+
+   dtCore::ScreenShotCallback* screenCB = dynamic_cast<dtCore::ScreenShotCallback*>(cb);
+   CPPUNIT_ASSERT_MESSAGE("The first Camera Callback should be the screenshot callback.",
+                          screenCB != NULL);
+}
+
+class TestCB : public dtCore::CameraDrawCallback
+{
+public:
+   TestCB():
+   mTriggered(false)
+   {
+   }
+
+   virtual void operator () (const dtCore::Camera& camera, osg::RenderInfo& renderInfo) const
+   {
+      const_cast<TestCB*>(this)->mTriggered = true;
+      //mTriggered = true;
+   }
+
+   bool mTriggered;
+
+protected:
+   virtual ~TestCB()
+   {
+   }
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+void CameraTests::TestAddingTwoCallbacks()
+{
+   dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
+
+   dtCore::CameraCallbackContainer *cont = dynamic_cast<dtCore::CameraCallbackContainer*>(cam->GetOSGCamera()->getPostDrawCallback());
+   if (cont == NULL)  { return; }
+
+   const size_t numInitialCallbacks = cont->GetCallbacks().size();
+
+   dtCore::RefPtr<TestCB> cb1 = new TestCB();
+   dtCore::RefPtr<TestCB> cb2 = new TestCB();
+
+   cam->AddPostDrawCallback(*cb1);
+   cam->AddPostDrawCallback(*cb2);
+
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the callbacks added.",
+                           numInitialCallbacks + 2, cont->GetCallbacks().size());
+
+
+   cam->RemovePostDrawCallback(*cb1);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the first callback removed.",
+                                numInitialCallbacks + 1, cont->GetCallbacks().size());
+
+   cam->RemovePostDrawCallback(*cb2);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The CameraCallbackContainer didn't get the second callback removed.",
+                                numInitialCallbacks, cont->GetCallbacks().size());
+}
+
+//////////////////////////////////////////////////////////////////////////
+void CameraTests::TestTriggeringCallback()
+{
+   dtCore::Camera* cam = GetGlobalApplication().GetCamera();
+
+   dtCore::RefPtr<TestCB> cb1 = new TestCB();
+   dtCore::RefPtr<TestCB> cb2 = new TestCB();
+   cam->AddPostDrawCallback(*cb1);
+   cam->AddPostDrawCallback(*cb2);
+
+   dtCore::System::GetInstance().Start();
+   dtCore::System::GetInstance().Step();
+   dtCore::System::GetInstance().Stop();
+ 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The Camera postdraw callback didn't trigger.",
+                                true, cb1->mTriggered);
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The second Camera postdraw callback didn't trigger.",
+                                true, cb2->mTriggered);
+
+   cam->RemovePostDrawCallback(*cb1);
+   cam->RemovePostDrawCallback(*cb1);
 }

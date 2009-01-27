@@ -9,13 +9,14 @@
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtCore/system.h>
 #include <dtCore/collisioncategorydefaults.h>
+#include <dtCore/cameracallbackcontainer.h>
+#include <dtCore/screenshotcallback.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
 
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
-#include <osgDB/WriteFile>
 
 #include <osg/Version>
 
@@ -28,46 +29,6 @@ namespace dtCore
    typedef std::vector<std::pair<dtCore::ObserverPtr<osg::Referenced>, Camera::CameraSyncCallback> > CallbackListType;
    static CallbackListType staticCameraSyncCallbacks;
 
-   class ScreenShotCallback : public osg::Camera::DrawCallback
-   {
-      public:
-         ScreenShotCallback() : mTakeScreenShotNextFrame(false){}
-
-         void SetNameToOutput(const std::string& name)
-         {
-            mTakeScreenShotNextFrame  = true;
-            mNameOfScreenShotToOutput = name;
-         }
-
-         const std::string GetNameToOutput() const { return mNameOfScreenShotToOutput; };
-
-         virtual void operator()(const osg::Camera& camera) const
-         {
-            if (mTakeScreenShotNextFrame)
-            {
-               mTakeScreenShotNextFrame = false;
-               osg::ref_ptr<osg::Image> image = new osg::Image;
-
-               int x = static_cast<int>(camera.getViewport()->x());
-               int y = static_cast<int>(camera.getViewport()->y());
-               unsigned int width = static_cast<unsigned int>(camera.getViewport()->width());
-               unsigned int height = static_cast<unsigned int>(camera.getViewport()->height());
-
-               image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-               image->readPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE);
-               bool status = osgDB::writeImageFile(*image.get(), mNameOfScreenShotToOutput.c_str()); // jpg, rgb, png, bmp
-               if (status == false)
-               {
-                  LOG_ERROR("Can't write out screenshot file: " + mNameOfScreenShotToOutput +
-                            ". Does the osgDB plugin exist?");
-               }
-            }
-         }
-
-      private:
-         mutable bool  mTakeScreenShotNextFrame;
-         std::string mNameOfScreenShotToOutput;
-   };
 
    IMPLEMENT_MANAGEMENT_LAYER(Camera)
 
@@ -78,6 +39,7 @@ namespace dtCore
       , mAddedToSceneGraph(false)
       , mEnable(true)
       , mEnabledNodeMask(0xffffffff)
+      , mCallbackContainer(NULL)
    {
       mOsgCamera->setName(GetName());
 
@@ -97,6 +59,7 @@ namespace dtCore
       , mAddedToSceneGraph(false)
       , mEnable(true)
       , mEnabledNodeMask(0xffffffff)
+      , mCallbackContainer(NULL)
    {
       Ctor();
    }
@@ -113,8 +76,10 @@ namespace dtCore
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
 
-      mScreenShotTaker = new ScreenShotCallback;
-      mOsgCamera->setPostDrawCallback(mScreenShotTaker.get());
+      mCallbackContainer = new CameraCallbackContainer(*this);
+      mOsgCamera->setPostDrawCallback(mCallbackContainer.get());
+      mScreenShotTaker = new ScreenShotCallback();
+      AddPostDrawCallback(*mScreenShotTaker);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -122,6 +87,8 @@ namespace dtCore
    {
       DeregisterInstance(this);
       RemoveSender(&dtCore::System::GetInstance());
+
+      mCallbackContainer->RemoveCallback(*mScreenShotTaker);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -531,6 +498,18 @@ namespace dtCore
       staticCameraSyncCallbacks.erase(
                std::remove_if(staticCameraSyncCallbacks.begin(), staticCameraSyncCallbacks.end(), CameraCallbackHandler(&keyObject)),
                staticCameraSyncCallbacks.end());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Camera::AddPostDrawCallback(dtCore::CameraDrawCallback& cb) const
+   {
+      mCallbackContainer->AddCallback(cb);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Camera::RemovePostDrawCallback(dtCore::CameraDrawCallback& cb) const
+   {
+      mCallbackContainer->RemoveCallback(cb);
    }
 }
 
