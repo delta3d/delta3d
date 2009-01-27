@@ -13,6 +13,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
+#include <dtCore/objectmotionmodel.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtCore/light.h>
@@ -119,7 +120,7 @@ void ObjectViewer::Config()
       lightArrowTransformable->AddChild(lightArrow.get());
       lightArrowTransformable->AddChild(light);
 
-      dtCore::RefPtr<dtCore::OrbitMotionModel> lightMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+      dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
       lightMotion->SetTarget(lightArrowTransformable.get());
       //lightMotion->SetDistance(3.f);
       //lightMotion->SetFocalPoint(osg::Vec3());
@@ -322,11 +323,12 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
 
          for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
          {
-            mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-            mLightMotion[lightIndex]->SetFocalPoint(center);
+            //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+            //mLightMotion[lightIndex]->SetFocalPoint(center);
 
             // Adjust the size of the light arrow
             float arrowScale = radius * 0.5f;
+            mLightMotion[lightIndex]->SetScale(arrowScale);
             mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
          }
       }
@@ -358,11 +360,12 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
 
       for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
       {
-         mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-         mLightMotion[lightIndex]->SetFocalPoint(center);
+         //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
+         //mLightMotion[lightIndex]->SetFocalPoint(center);
 
          // Adjust the size of the light arrow
          float arrowScale = radius * 0.5f;
+         mLightMotion[lightIndex]->SetScale(arrowScale);
          mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
       }
 
@@ -498,17 +501,18 @@ void ObjectViewer::OnSetCurrentLight(int id)
 {
    mCurrentLight = id;
 
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   if (!mModelMotion->IsEnabled())
    {
-      if (id != lightIndex)
+      for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
       {
-         mLightMotion[lightIndex]->SetEnabled(false);
-         mLightArrow[lightIndex]->SetActive(false);
-      }
-      else
-      {
-         mLightMotion[lightIndex]->SetEnabled(true);
-         mLightArrow[lightIndex]->SetActive(true);
+         if (id != lightIndex)
+         {
+            mLightMotion[lightIndex]->SetEnabled(false);
+         }
+         else
+         {
+            mLightMotion[lightIndex]->SetEnabled(true);
+         }
       }
    }
 }
@@ -518,6 +522,7 @@ void ObjectViewer::OnSetLightEnabled(int id, bool enabled)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetEnabled(enabled);
+   mLightArrow[id]->SetActive(enabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -710,6 +715,42 @@ void ObjectViewer::OnEnterLightMode()
       mLightMotion[mCurrentLight]->SetEnabled(true);
 
       mLightArrow[mCurrentLight]->SetActive(true);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnWorldSpaceMode()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnLocalSpaceMode()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetCoordinateSpace(dtCore::ObjectMotionModel::LOCAL_SPACE);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnTranslateMode()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetMotionType(dtCore::ObjectMotionModel::MOTION_TYPE_TRANSLATION);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnRotateMode()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetMotionType(dtCore::ObjectMotionModel::MOTION_TYPE_ROTATION);
    }
 }
 

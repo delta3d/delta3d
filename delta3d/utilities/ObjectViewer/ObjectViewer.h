@@ -48,6 +48,7 @@ struct LightInfo;
 
 namespace dtCore
 {
+   class ObjectMotionModel;
    class OrbitMotionModel;
    class Light;
 }
@@ -112,6 +113,12 @@ public slots:
    void OnEnterObjectMode();
    void OnEnterLightMode();
 
+   // Editing mode slots
+   void OnWorldSpaceMode();
+   void OnLocalSpaceMode();
+   void OnTranslateMode();
+   void OnRotateMode();
+
 signals:
 
    void ShaderLoaded(const std::string& filename, const std::string& shaderGroup, const std::string& shaderName);
@@ -136,7 +143,7 @@ private:
    dtCore::RefPtr<dtCore::Compass> mCompass;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mModelMotion;
-   std::vector<dtCore::RefPtr<dtCore::OrbitMotionModel> > mLightMotion;
+   std::vector<dtCore::RefPtr<dtCore::ObjectMotionModel> > mLightMotion;
 
    dtCore::RefPtr<osg::Group> mShadedScene;
    dtCore::RefPtr<osg::Group> mUnShadedScene;

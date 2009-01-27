@@ -36,7 +36,7 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mScale(1.0f)
    , mClearNode(NULL)
    , mCoordinateSpace(LOCAL_SPACE)
-   , mMotionType(MOTION_TYPE_ROTATION)
+   , mMotionType(MOTION_TYPE_TRANSLATION)
    , mHoverArrow(ARROW_TYPE_MAX)
    , mCurrentArrow(ARROW_TYPE_MAX)
    , mMouseDown(false)
@@ -638,24 +638,25 @@ void ObjectMotionModel::UpdateRotation(void)
       }
    }
 
-   float angle = 0.0f;
-   if (camUp * axis > 0.0f)
-   {
-      angle = rotationX;
-   }
-   else
-   {
-      angle = -rotationX;
-   }
+   float angle = rotationX;
+   //float angle = 0.0f;
+   //if (camUp * axis > 0.0f)
+   //{
+   //   angle = rotationX;
+   //}
+   //else
+   //{
+   //   angle = -rotationX;
+   //}
 
-   if (camRight * axis > 0.0f)
-   {
-      angle += rotationY;
-   }
-   else
-   {
-      angle -= rotationY;
-   }
+   //if (camRight * axis > 0.0f)
+   //{
+   //   angle += rotationY;
+   //}
+   //else
+   //{
+   //   angle -= rotationY;
+   //}
 
    if (angle != 0)
    {
