@@ -106,7 +106,7 @@ namespace dtAudio
       , mMinRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MIN)
       , mMaxRandomTime(SoundActorProxy::DEFAULT_RANDOM_TIME_MAX)
       , mOffsetTime(0.0f)
-      , mPlaySoundAtStartup(false)
+      , mPlaySoundAtStartup(true)
    {
       /**
       * @note You must instantiate, configure, and shutdown the
