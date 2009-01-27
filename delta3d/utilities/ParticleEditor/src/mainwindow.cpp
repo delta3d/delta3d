@@ -1,4 +1,6 @@
 #include <mainwindow.h>
+#include <QtCore/QSettings>
+#include <QtCore/QFileInfo>
 
 using namespace psEditor;
 
@@ -26,8 +28,10 @@ void MainWindow::SetParticleViewer(ParticleViewer* particleViewer)
 void MainWindow::SetupUI()
 {
    connect(mpParticleViewer, SIGNAL(UpdateWindowTitle(const QString&)), this, SLOT(UpdateWindowTitle(const QString&)));
+   connect(mpParticleViewer, SIGNAL(UpdateHistory(const QString&)), this, SLOT(UpdateHistory(const QString&)));
 
    // Pass the UI to the various classes that need their information
+   SetupMenus();
    SetupMenuConnections();
    SetupLayersBrowser();
    SetupParticlesTab();
@@ -44,9 +48,39 @@ void MainWindow::UpdateWindowTitle(const QString& title)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void MainWindow::UpdateHistory(const QString& filename)
+{
+   QSettings settings("MOVES", "Particle Editor");
+   QStringList files = settings.value("recentFileList").toStringList();
+   files.removeAll(filename);
+   files.prepend(filename);
+
+   while (files.size() > 5)
+   {
+      files.removeLast();
+   }
+
+   settings.setValue("recentFileList", files);
+   UpdateRecentFileActions();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupViewWindow()
 {
    mpViewWindow = new ViewWindow(false, dynamic_cast<QWidget*>(mUI.ParticleViewer));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetupMenus()
+{
+   mUI.menuOpen_Previous->clear();
+   for (int actionIndex = 0; actionIndex < 5; actionIndex++)
+   {
+      mpRecentFilesActions[actionIndex] = new QAction(this);
+      mpRecentFilesActions[actionIndex]->setVisible(false);
+      mUI.menuOpen_Previous->addAction(mpRecentFilesActions[actionIndex]);
+   }
+   UpdateRecentFileActions();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,7 +88,10 @@ void MainWindow::SetupMenuConnections()
 {
    connect(mUI.actionNew, SIGNAL(triggered()), mpParticleViewer, SLOT(CreateNewParticleSystem()));
    connect(mUI.actionOpen, SIGNAL(triggered()), mpParticleViewer, SLOT(OpenParticleSystem()));
-   //connect(mUI.actionOpen_Previous, SIGNAL(triggered()), mpParticleViewer, SLOT(QuitProgram()));
+   for (int actionIndex = 0; actionIndex < 5; ++actionIndex)
+   {
+      connect(mpRecentFilesActions[actionIndex], SIGNAL(triggered()), mpParticleViewer, SLOT(OpenRecentParticleSystem()));
+   }
    connect(mUI.actionImport, SIGNAL(triggered()), mpParticleViewer, SLOT(ImportParticleSystem()));
    connect(mUI.actionLoad_Reference, SIGNAL(triggered()), mpParticleViewer, SLOT(LoadReferenceObject()));
    connect(mUI.actionSave, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleToFile()));
@@ -540,6 +577,28 @@ void MainWindow::SetupProgramTabConnections()
    connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionDensityUpdated(double)), mUI.FluidFrictionDensitySpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionViscosityUpdated(double)), mUI.FluidFrictionViscositySpinBox, SLOT(setValue(double)));
    connect(mpParticleViewer, SIGNAL(OperatorsFluidFrictionOverrideRadiusUpdated(double)), mUI.FluidFrictionOverrideRadiusSpinBox, SLOT(setValue(double)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::UpdateRecentFileActions()
+{
+   QSettings settings("MOVES", "Particle Editor");
+   QStringList files = settings.value("recentFileList").toStringList();
+
+   int numRecentFiles = qMin(files.size(), 5);
+
+   for (int actionIndex = 0; actionIndex < numRecentFiles; ++actionIndex)
+   {
+      QString text = tr("&%1 %2").arg(actionIndex + 1).arg(QFileInfo(files[actionIndex]).fileName());
+      mpRecentFilesActions[actionIndex]->setText(text);
+      mpRecentFilesActions[actionIndex]->setData(files[actionIndex]);
+      mpRecentFilesActions[actionIndex]->setVisible(true);
+   }
+
+   for (int fileIndex = numRecentFiles; fileIndex < 5; ++fileIndex)
+   {
+      mpRecentFilesActions[fileIndex]->setVisible(false);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

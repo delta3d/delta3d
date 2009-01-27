@@ -84,6 +84,7 @@ public:
 signals:
    ///> Main Window signals
    void UpdateWindowTitle(const QString& title);
+   void UpdateHistory(const QString& filename);
 
    ///> Layer Browser signals
    void ClearLayerList();
@@ -191,6 +192,7 @@ public slots:
    // Menu Actions
    void CreateNewParticleSystem();
    void OpenParticleSystem();
+   void OpenRecentParticleSystem();
    void ImportParticleSystem();
    void LoadReferenceObject();
    void SaveParticleToFile();

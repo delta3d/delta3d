@@ -33,9 +33,11 @@ namespace psEditor
 
    public slots:
       void UpdateWindowTitle(const QString& title);
+      void UpdateHistory(const QString& filename);
 
    private:
       void SetupViewWindow();
+      void SetupMenus();
       void SetupMenuConnections();
       void SetupLayersBrowser();
       void SetupLayersBrowserConnections();
@@ -49,9 +51,11 @@ namespace psEditor
       void SetupShooterTabConnections();
       void SetupProgramTab();
       void SetupProgramTabConnections();
+      void UpdateRecentFileActions();
 
       Ui::MainWindow mUI;
 
+      QAction*        mpRecentFilesActions[5];
       ParticleViewer* mpParticleViewer;
       ViewWindow*     mpViewWindow;
       LayersBrowser*  mpLayersBrowser;

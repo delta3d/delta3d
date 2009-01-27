@@ -27,6 +27,7 @@
 #include <osgViewer/CompositeViewer>
 
 #include <QtGui/QFileDialog>
+#include <QtGui/QAction>
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
@@ -102,6 +103,17 @@ void ParticleViewer::OpenParticleSystem()
    if(filename != "")
    {
       LoadFile(filename);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::OpenRecentParticleSystem()
+{
+   QAction* action = qobject_cast<QAction*>(sender());
+
+   if (action)
+   {
+      LoadFile(action->data().toString());
    }
 }
 
@@ -1149,7 +1161,7 @@ void ParticleViewer::SetParticleSystemFilename(QString filename)
       QString newWindowTitle("Particle System Editor - ");
       newWindowTitle.append(filename);
       emit UpdateWindowTitle(newWindowTitle);
-      //UpdateHistory(filename);
+      emit UpdateHistory(filename);
    }
 }
 
@@ -1335,7 +1347,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
       }
       if(newParticleSystemUpdater != NULL)
       {
-         int newLayer = 1;
+         int newLayer = 0;
          if(import)
          {
             newLayer = mLayers.size();
