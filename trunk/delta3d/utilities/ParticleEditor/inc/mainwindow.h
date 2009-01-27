@@ -31,8 +31,12 @@ namespace psEditor
       void SetParticleViewer(ParticleViewer* particleViewer);
       void SetupUI();
 
+   public slots:
+      void UpdateWindowTitle(const QString& title);
+
    private:
       void SetupViewWindow();
+      void SetupMenuConnections();
       void SetupLayersBrowser();
       void SetupLayersBrowserConnections();
       void SetupParticlesTab();

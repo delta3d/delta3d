@@ -25,7 +25,10 @@ void MainWindow::SetParticleViewer(ParticleViewer* particleViewer)
 ///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupUI()
 {
+   connect(mpParticleViewer, SIGNAL(UpdateWindowTitle(const QString&)), this, SLOT(UpdateWindowTitle(const QString&)));
+
    // Pass the UI to the various classes that need their information
+   SetupMenuConnections();
    SetupLayersBrowser();
    SetupParticlesTab();
    SetupCounterTab();
@@ -35,9 +38,32 @@ void MainWindow::SetupUI()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void MainWindow::UpdateWindowTitle(const QString& title)
+{
+   setWindowTitle(title);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupViewWindow()
 {
    mpViewWindow = new ViewWindow(false, dynamic_cast<QWidget*>(mUI.ParticleViewer));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetupMenuConnections()
+{
+   connect(mUI.actionNew, SIGNAL(triggered()), mpParticleViewer, SLOT(CreateNewParticleSystem()));
+   connect(mUI.actionOpen, SIGNAL(triggered()), mpParticleViewer, SLOT(OpenParticleSystem()));
+   //connect(mUI.actionOpen_Previous, SIGNAL(triggered()), mpParticleViewer, SLOT(QuitProgram()));
+   connect(mUI.actionImport, SIGNAL(triggered()), mpParticleViewer, SLOT(ImportParticleSystem()));
+   connect(mUI.actionLoad_Reference, SIGNAL(triggered()), mpParticleViewer, SLOT(LoadReferenceObject()));
+   connect(mUI.actionSave, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleToFile()));
+   connect(mUI.actionSave_As, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleAs()));
+   connect(mUI.actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+   connect(mUI.actionCompass, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleCompass(bool)));
+   connect(mUI.actionXY_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleXYGrid(bool)));
+   connect(mUI.actionYZ_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleYZGrid(bool)));
+   connect(mUI.actionXZ_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleXZGrid(bool)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,6 +85,9 @@ void MainWindow::SetupLayersBrowser()
 ///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupLayersBrowserConnections()
 {
+   // Connections from Layer Browser to tabs
+   connect(mpLayersBrowser, SIGNAL(ToggleTabs(bool)), mUI.Tabs, SLOT(setEnabled(bool)));
+
    // Connections from UI to particle viewer
    connect(mUI.LayerList, SIGNAL(currentRowChanged(int)), mpParticleViewer, SLOT(UpdateSelectionIndex(int)));
    connect(mUI.NewLayerButton, SIGNAL(clicked()), mpParticleViewer, SLOT(CreateNewParticleLayer()));
@@ -67,6 +96,9 @@ void MainWindow::SetupLayersBrowserConnections()
    connect(mUI.ResetParticlesButton, SIGNAL(clicked()), mpParticleViewer, SLOT(ResetEmitters()));
 
    // Connections from particle viewer to UI
+   connect(mpParticleViewer, SIGNAL(ClearLayerList()), mpLayersBrowser, SLOT(ClearLayerList()));
+   connect(mpParticleViewer, SIGNAL(AddLayerToLayerList(const QString&)), mpLayersBrowser, SLOT(AddLayerToLayerList(const QString&)));
+   connect(mpParticleViewer, SIGNAL(SelectIndexOfLayersList(int)), mpLayersBrowser, SLOT(SelectIndexOfLayersList(int)));
    connect(mpParticleViewer, SIGNAL(LayerHiddenChanged(bool)), mUI.HideLayerCheckbox, SLOT(setChecked(bool)));
 }
 
