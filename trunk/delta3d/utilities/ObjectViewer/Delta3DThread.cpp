@@ -208,6 +208,12 @@ void Delta3DThread::MakeConnections()
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mLightModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterLightMode()));
    connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));   
+
+   // Editing connections
+   connect((QObject*)mWin->mWorldSpaceAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnWorldSpaceMode()));
+   connect((QObject*)mWin->mLocalSpaceAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnLocalSpaceMode()));
+   connect((QObject*)mWin->mTranslationModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnTranslateMode()));
+   connect((QObject*)mWin->mRotationModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnRotateMode()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

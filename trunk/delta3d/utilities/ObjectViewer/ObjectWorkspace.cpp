@@ -45,6 +45,7 @@ ObjectWorkspace::ObjectWorkspace()
    // Create all program actions
    CreateFileMenuActions();
    CreateModeToolbarActions();
+   CreateEditingToolbarAction();
    CreateDisplayToolbarActions();
    CreateShaderToolbarActions();
 
@@ -166,6 +167,34 @@ void ObjectWorkspace::CreateModeToolbarActions()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::CreateEditingToolbarAction()
+{
+   QActionGroup* coordinateGroup = new QActionGroup(this);
+   coordinateGroup->setExclusive(true);
+
+   QActionGroup* motionGroup = new QActionGroup(this);
+   motionGroup->setExclusive(true);
+
+   QIcon worldSpaceIcon(":/images/worldspace.png");
+   QIcon localSpaceIcon(":/images/localspace.png");
+   QIcon translationModeIcon(":/images/translatemode.png");
+   QIcon rotationModeIcon(":/images/rotatemode.png");
+
+   mWorldSpaceAction = coordinateGroup->addAction(worldSpaceIcon, "World Space");
+   mLocalSpaceAction = coordinateGroup->addAction(localSpaceIcon, "Local Space");
+   mTranslationModeAction = motionGroup->addAction(translationModeIcon, "Translation Mode");
+   mRotationModeAction = motionGroup->addAction(rotationModeIcon, "Rotation Mode");
+
+   mWorldSpaceAction->setCheckable(true);
+   mLocalSpaceAction->setCheckable(true);
+   mTranslationModeAction->setCheckable(true);
+   mRotationModeAction->setCheckable(true);
+
+   mLocalSpaceAction->setChecked(true);
+   mTranslationModeAction->setChecked(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::CreateDisplayToolbarActions()
 {
    // The actiongroup is used to make the action behave like radio buttons
@@ -222,6 +251,14 @@ void ObjectWorkspace::CreateToolbars()
    mModeToolbar = addToolBar("Mode toolbar");
    mModeToolbar->addAction(mObjectModeAction);
    mModeToolbar->addAction(mLightModeAction);
+
+   mCoordinateToolbar = addToolBar("Coordinate Toolbar");
+   mCoordinateToolbar->addAction(mLocalSpaceAction);
+   mCoordinateToolbar->addAction(mWorldSpaceAction);
+
+   mEditingToolbar = addToolBar("Editing Toolbar");
+   mEditingToolbar->addAction(mTranslationModeAction);
+   mEditingToolbar->addAction(mRotationModeAction);
 
    mDisplayToolbar = addToolBar("Display toolbar"); 
    mDisplayToolbar->addAction(mWireframeAction);

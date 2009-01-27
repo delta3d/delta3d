@@ -77,6 +77,7 @@ private:
    void CreateMenus();
    void CreateFileMenuActions();
    void CreateModeToolbarActions();
+   void CreateEditingToolbarAction();
    void CreateDisplayToolbarActions();
    void CreateShaderToolbarActions();
    void CreateToolbars();
@@ -96,6 +97,14 @@ private:
    QAction* mObjectModeAction;
    QAction* mLightModeAction;
 
+   // Coordinate Space Toolbar
+   QAction* mWorldSpaceAction;
+   QAction* mLocalSpaceAction;
+
+   // Editing Toolbar
+   QAction* mTranslationModeAction;
+   QAction* mRotationModeAction;
+
    // Display Toolbar
    QAction* mWireframeAction;
    QAction* mShadedAction;
@@ -109,6 +118,8 @@ private:
    QAction* mOpenVertexShaderAction;
    QAction* mOpenFragmentShaderAction;
 
+   QToolBar* mCoordinateToolbar;
+   QToolBar* mEditingToolbar;
    QToolBar* mDisplayToolbar;
    QToolBar* mShaderToolbar;
    QToolBar* mModeToolbar;
