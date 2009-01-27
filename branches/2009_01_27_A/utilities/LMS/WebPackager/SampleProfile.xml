@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<PackageProfile>
+
+     <Deployment>
+
+          <URL>http://localhost/testAAR</URL>
+
+          <Platform>Windows</Platform>
+          <!--<Platform>Linux</Platform>-->
+
+		  <Keystore>
+		       <File>$(DELTA_ROOT)/utilities/LMS/Java/bmh.keystore</File>
+			   <Key>bmhKey</Key>
+		  </Keystore>
+
+          <JavaLaunchConfig>JavaLaunch.xml</JavaLaunchConfig>
+
+          <InputDirectory location="$(DELTA_ROOT)/utilities/LMS/Java">
+               <JavaLaunch main-class="org.delta3d.lms.JavaLaunch.NativeLibraryLaunch" sign="true">JavaLaunch.jar</JavaLaunch>
+               <JavaMessagingApplet sign="true">MessageApplet.jar</JavaMessagingApplet>
+          </InputDirectory>
+          
+          <InputDirectory location="$(DELTA_ROOT)/utilities/LMS/WebData">
+               <Content type="LaunchPage">TestAARLmsLaunch.htm</Content>
+               <Content ignore=".svn">images/*.*</Content>
+               <Content>TestAARAfterActionReview.htm</Content>
+               <Content>Java5Download.html</Content>
+               <Content>*.js</Content>
+               <Content>*.vb</Content>
+               <Content>*.xsd</Content>
+               <Content>*.dtd</Content>  
+          </InputDirectory>
+
+     </Deployment>
+
+     <Application>
+
+          <ApplicationName>TestAAR</ApplicationName>
+          <ApplicationVendor>Delta3D</ApplicationVendor>
+
+          <ApplicationData>
+          
+               <JarFile name="TestAAR_Data.jar">
+                    <InputDirectory location="$(DELTA_ROOT)">
+                         <Data ignore=".svn">data/gui/*.*</Data>
+                         <Data>data/models/physics*.*</Data>
+                         <Data>data/models/terrain_simple.ive</Data>
+                         <Data>data/map.xsd</Data>
+                    </InputDirectory>
+               </JarFile>
+               
+               <GeneralLaunchParams></GeneralLaunchParams>
+
+          </ApplicationData>
+
+          <ApplicationLibraries>
+          
+			   <JarFile name="TestAAR_MS_Win32.jar" platform="windows">
+					<InputDirectory location="C:/WINDOWS/system32">
+						 <Library>msvcr71.dll</Library>
+						 <Library>msvcr71d.dll</Library>
+						 <Library>msvcp71.dll</Library>
+                         <Library>msvcp71d.dll</Library>
+                         <Library>OpenAL32.dll</Library>
+					</InputDirectory>
+			   </JarFile>
+
+               <JarFile name="TestAAR_ThirdParty_Win32.jar" platform="windows">
+                    <InputDirectory location="$(DELTA_ROOT)/ext/bin">
+
+                         <Library>OpenThreadsWin32d.dll</Library>
+                         <Library>OpenThreadsWin32.dll</Library>
+                         
+                         <Library>ode.dll</Library>
+                         <Library>osg.dll</Library>
+                         <Library>osgd.dll</Library>
+                         <Library>osgDBd.dll</Library>
+                         <Library>osgParticled.dll</Library>
+                         <Library>osgTextd.dll</Library>
+                         <Library>osgUtild.dll</Library>
+                         <Library>osgdb_tgad.dll</Library>
+                         <Library>osgSimd.dll</Library>
+                         <Library>osgFXd.dll</Library>
+                         <Library>osgdb_ived.dll</Library>
+                         
+                         <Library>xerces-c_2_6D.dll</Library>
+                         <Library>CEGUIBase_d.dll</Library>
+                         <Library>CEGUIFalagardBase_d.dll</Library>
+                         <Library>OpenGLGUIRenderer_d.dll</Library>
+                         
+                         <Library>alut.dll</Library>
+                         <Library>Producerd.dll</Library>
+                         <Library>rvrutilsd.dll</Library>
+                         <Library>rcfgscriptd.dll</Library>
+                         <Library>cal3d_d.dll</Library>
+                         <Library>ReplicantBodyd.dll</Library>
+                    </InputDirectory>
+               </JarFile>
+
+			   <JarFile name="TestAAR_ThirdParty_Linux.jar" platform="linux">
+					<InputDirectory location="$(DELTA_ROOT)/bin">
+						<Library>libDummyThirdParty.so</Library>
+					</InputDirectory>
+			   </JarFile>
+			   
+               <JarFile name="TestAAR_Delta3D_Win32.jar" platform="windows">
+                    <InputDirectory location="$(DELTA_ROOT)/bin">
+                         <Library>dtUtild.dll</Library>
+                         <Library>dtCored.dll</Library>
+                         <Library>dtAId.dll</Library>
+                         <Library>dtGUId.dll</Library>
+                         <Library>dtDALd.dll</Library>
+                         <Library>dtABCd.dll</Library>
+                         <Library>dtGamed.dll</Library>
+                         
+                         <Library>dtChard.dll</Library>
+                         <Library>dtAudiod.dll</Library>
+                         <Library>dtActorsd.dll</Library>
+                         <Library>dtLMSd.dll</Library>
+                         <Library>testGameActorLibraryd.dll</Library>
+                    </InputDirectory>
+               </JarFile>
+               
+               <JarFile name="TestAAR_Delta3D_Linux.jar" platform="linux">
+					<InputDirectory location="$(DELTA_ROOT)/bin">
+						<Library>libDummyDelta3D.so</Library>
+					</InputDirectory>
+			   </JarFile>
+
+               <JarFile name="TestAAR_GameLaunch_Win32.jar" platform="windows">
+                    <InputDirectory location="$(DELTA_ROOT)/bin">
+                         <LauncherLibrary entrypoint="true">dtGameLaunchd.dll</LauncherLibrary>
+                    </InputDirectory>
+               </JarFile>
+               
+               <JarFile name="TestAAR_GameLaunch_Linux.jar" platform="linux">
+                    <InputDirectory location="$(DELTA_ROOT)/bin">
+                         <LauncherLibrary entrypoint="true">libDummyGameLaunchd.so</LauncherLibrary>
+                    </InputDirectory>
+               </JarFile>
+
+               <JarFile name="TestAAR_Application_Win32.jar" platform="windows">
+                    <InputDirectory location="$(DELTA_ROOT)/bin">
+                         <GameLibrary entrypoint="true" removeDebugChar="true">testAARd.dll</GameLibrary>
+                    </InputDirectory>
+               </JarFile>
+               
+               <JarFile name="TestAAR_Application_Linux.jar" platform="linux">
+                    <InputDirectory location="$(DELTA_ROOT)/bin">
+                         <GameLibrary entrypoint="true" removeDebugChar="true">libDummyGameAppd.so</GameLibrary>
+                    </InputDirectory>
+               </JarFile>
+
+          </ApplicationLibraries>
+
+     </Application>
+
+     <SCORM>
+          <assessment>
+               <messageformat>
+                    <delimiter>:</delimiter>
+                    <param1>objective</param1>
+                    <param2>event</param2>
+               </messageformat>
+               <sco id="Content 1">
+                  <scolaunchpage>TestAARLmsLaunch.htm</scolaunchpage>
+                  <scolaunchparams></scolaunchparams>
+                  <objectives>
+                     <objective id="Drop 10 boxes" name="Drop 10 boxes" ordered="true"></objective>
+                     <objective id="Move Camera" name="Move Camera" ordered="true"></objective>
+                     <objective id="Place Objects (Ordered)" name="Place Objects (Ordered)" ordered="true">
+                           <objective id="Move the Player (Rollup)" name="Move the Player (Complete 3 of 4)" ordered="true">
+                                 <objective id="Turn Player Right" name="Turn Player Right" ordered="true"></objective>
+                                 <objective id="Turn Player Left" name="Turn Player Left" ordered="true"></objective>
+                                 <objective id="Move Player Forward" name="Move Player Forward" ordered="true"></objective>
+                                 <objective id="Move Player Back" name="Move Player Back" ordered="true"></objective>
+                           </objective>
+                           <objective id="Drop 5 boxes" name="Drop 5 boxes" ordered="true"></objective>
+                     </objective>
+                     <objective id="Start a Record" name="Start a Record" ordered="true"></objective>
+                  </objectives>
+              </sco>
+          </assessment>
+     </SCORM>
+
+</PackageProfile>
