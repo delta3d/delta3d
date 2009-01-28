@@ -30,6 +30,7 @@ namespace psEditor
       ViewWindow* GetGLWidget() { return mpViewWindow; }
       void SetParticleViewer(ParticleViewer* particleViewer);
       void SetupUI();
+      void LoadFile(QString filename, bool import = false);
 
    public slots:
       void UpdateWindowTitle(const QString& title);

@@ -78,6 +78,221 @@ void ParticleViewer::Config()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
+{
+   if(filename != "")
+   {
+      osg::Node* node = osgDB::readNodeFile(filename.toStdString());
+      if (node == NULL || !IS_A(node, osg::Group*))
+      {
+         qWarning() << "Invalid particle system:" << filename;
+         return;
+      }
+
+      osg::Group* newParticleSystemGroup = (osg::Group*)node;
+      std::vector<ParticleSystemLayer> newLayers;
+      osgParticle::ParticleSystemUpdater* newParticleSystemUpdater = NULL;
+      unsigned int i;
+      unsigned int OldWay = 0;
+
+      for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
+      {
+         node = newParticleSystemGroup->getChild(i);
+
+         // Old particle code here
+         if(IS_A(node, osg::Group*))
+         {
+            ++OldWay;
+         }
+      }
+
+      // Recreate the particle system so its children aren't all groups
+      if(newParticleSystemGroup->getNumChildren() == OldWay)
+      {
+         for(unsigned int j = 0; j < OldWay; ++j)
+         {
+            node = newParticleSystemGroup->getChild(j);
+            osg::Group* newerParticleSystemGroup = (osg::Group*)node;
+            for(i = 0; i < newerParticleSystemGroup->getNumChildren(); ++i)
+            {
+               node = newerParticleSystemGroup->getChild(i);
+               if(IS_A(node, osg::Geode*))
+               {
+                  ParticleSystemLayer layer;
+                  layer.mGeode = (osg::Geode*)node;
+                  for(unsigned int j = 0; j < layer.mGeode->getNumDrawables(); ++j)
+                  {
+                     osg::Drawable* drawable = layer.mGeode->getDrawable(j);
+                     if(IS_A(drawable, osgParticle::ParticleSystem*))
+                     {
+                        layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
+                        layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
+                     }
+                  }
+
+                  if(layer.mGeode->getName() == "")
+                  {
+                     char buf[256];
+                     sprintf(buf, "Layer %u", unsigned(newLayers.size() + (import ? mLayers.size() : 0)));
+                     layer.mGeode->setName(buf);
+                  }
+                  newLayers.push_back(layer);
+               }
+               else if(IS_A(node, osgParticle::ParticleSystemUpdater*))
+               {
+                  newParticleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(node);
+               }
+            }
+
+            for(i = 0; i < newerParticleSystemGroup->getNumChildren(); ++i)
+            {
+               node = newerParticleSystemGroup->getChild(i);
+
+               if(IS_A(node, osg::MatrixTransform*))
+               {
+                  osg::MatrixTransform* newEmitterTransform = static_cast<osg::MatrixTransform*>(node);
+                  for(unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
+                  {
+                     osg::Node* childNode = newEmitterTransform->getChild(j);
+                     if(IS_A(childNode, osgParticle::ModularEmitter*))
+                     {
+                        osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
+                        for(unsigned int k = 0; k < newLayers.size(); ++k)
+                        {
+                           if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
+                           {
+                              newLayers[k].mEmitterTransform = newEmitterTransform;
+                              newLayers[k].mModularEmitter = newModularEmitter;
+                              break;
+                           }
+                        }
+                     }
+                  }
+               }
+               else if(IS_A(node, osgParticle::ModularProgram*))
+               {
+                  osgParticle::ModularProgram* newModularProgram = static_cast<osgParticle::ModularProgram*>(node);
+                  for(unsigned int j = 0; j < newLayers.size(); ++j)
+                  {
+                     if(newLayers[j].mParticleSystem == newModularProgram->getParticleSystem())
+                     {
+                        newLayers[j].mModularProgram = newModularProgram;
+                        break;
+                     }
+                  }
+               }
+            }
+         }
+      }
+      // end old way
+      else
+      {
+         for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
+         {
+            node = newParticleSystemGroup->getChild(i);
+            if (IS_A(node, osg::Geode*))
+            {
+               ParticleSystemLayer layer;
+               layer.mGeode = (osg::Geode*)node;
+
+               for(unsigned int j = 0; j < layer.mGeode->getNumDrawables(); ++j)
+               {
+                  osg::Drawable* drawable = layer.mGeode->getDrawable(j);
+                  if (IS_A(drawable, osgParticle::ParticleSystem*))
+                  {
+                     layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
+                     layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
+                  }
+               }
+
+               if(layer.mGeode->getName() == "")
+               {
+                  char buf[256];
+                  sprintf(buf, "Layer %u", unsigned(newLayers.size() + (import ? mLayers.size() : 0)));
+                  layer.mGeode->setName(buf);
+               }
+               newLayers.push_back(layer);
+            }
+            else if(IS_A(node, osgParticle::ParticleSystemUpdater*))
+            {
+               newParticleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(node);
+            }
+         }
+
+         for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
+         {
+            node = newParticleSystemGroup->getChild(i);
+            if (IS_A(node, osg::MatrixTransform*))
+            {
+               osg::MatrixTransform* newEmitterTransform = static_cast<osg::MatrixTransform*>(node);
+               for(unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
+               {
+                  osg::Node* childNode = newEmitterTransform->getChild(j);
+                  if (IS_A(childNode, osgParticle::ModularEmitter*))
+                  {
+                     osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
+                     for(unsigned int k = 0; k < newLayers.size(); ++k)
+                     {
+                        if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
+                        {
+                           newLayers[k].mEmitterTransform = newEmitterTransform;
+                           newLayers[k].mModularEmitter = newModularEmitter;
+                           break;
+                        }
+                     }
+                  }
+               }
+            }
+            else if(IS_A(node, osgParticle::ModularProgram*))
+            {
+               osgParticle::ModularProgram* newModularProgram = static_cast<osgParticle::ModularProgram*>(node);
+               for(unsigned int j = 0; j < newLayers.size(); ++j)
+               {
+                  if(newLayers[j].mParticleSystem == newModularProgram->getParticleSystem())
+                  {
+                     newLayers[j].mModularProgram = newModularProgram;
+                     break;
+                  }
+               }
+            }
+         }
+      }
+      if(newParticleSystemUpdater != NULL)
+      {
+         int newLayer = 0;
+         if(import)
+         {
+            newLayer = mLayers.size();
+            for (i = 0; i < newLayers.size(); ++i)
+            {
+               mpParticleSystemGroup->addChild(newLayers[i].mGeode.get());
+               mpParticleSystemGroup->addChild(newLayers[i].mEmitterTransform.get());
+               mpParticleSystemGroup->addChild(newLayers[i].mModularProgram.get());
+               mpParticleSystemUpdater->addParticleSystem(newLayers[i].mParticleSystem.get());
+               mLayers.push_back(newLayers[i]);
+            }
+            ResetEmitters();
+         }
+         else
+         {
+            mpSceneGroup->removeChild(mpParticleSystemGroup);
+            mpParticleSystemGroup = newParticleSystemGroup;
+            mLayers = newLayers;
+            mpParticleSystemUpdater = newParticleSystemUpdater;
+            mpSceneGroup->addChild(mpParticleSystemGroup);
+         }
+         UpdateLayersList();
+         emit SelectIndexOfLayersList(newLayer);
+         SetParticleSystemFilename(filename);
+      }
+      else
+      {
+         qWarning() << "Invalid particle system:" << filename;
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::CreateNewParticleSystem()
 {
    if(mpParticleSystemGroup != NULL)
@@ -1175,221 +1390,6 @@ void ParticleViewer::SetParticleSystemFilename(QString filename)
       newWindowTitle.append(filename);
       emit UpdateWindowTitle(newWindowTitle);
       emit UpdateHistory(filename);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
-{
-   if(filename != "")
-   {
-      osg::Node* node = osgDB::readNodeFile(filename.toStdString());
-      if (node == NULL || !IS_A(node, osg::Group*))
-      {
-         qWarning() << "Invalid particle system:" << filename;
-         return;
-      }
-
-      osg::Group* newParticleSystemGroup = (osg::Group*)node;
-      std::vector<ParticleSystemLayer> newLayers;
-      osgParticle::ParticleSystemUpdater* newParticleSystemUpdater = NULL;
-      unsigned int i;
-      unsigned int OldWay = 0;
-
-      for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
-      {
-         node = newParticleSystemGroup->getChild(i);
-
-         // Old particle code here
-         if(IS_A(node, osg::Group*))
-         {
-            ++OldWay;
-         }
-      }
-
-      // Recreate the particle system so its children aren't all groups
-      if(newParticleSystemGroup->getNumChildren() == OldWay)
-      {
-         for(unsigned int j = 0; j < OldWay; ++j)
-         {
-            node = newParticleSystemGroup->getChild(j);
-            osg::Group* newerParticleSystemGroup = (osg::Group*)node;
-            for(i = 0; i < newerParticleSystemGroup->getNumChildren(); ++i)
-            {
-               node = newerParticleSystemGroup->getChild(i);
-               if(IS_A(node, osg::Geode*))
-               {
-                  ParticleSystemLayer layer;
-                  layer.mGeode = (osg::Geode*)node;
-                  for(unsigned int j = 0; j < layer.mGeode->getNumDrawables(); ++j)
-                  {
-                     osg::Drawable* drawable = layer.mGeode->getDrawable(j);
-                     if(IS_A(drawable, osgParticle::ParticleSystem*))
-                     {
-                        layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
-                        layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
-                     }
-                  }
-
-                  if(layer.mGeode->getName() == "")
-                  {
-                     char buf[256];
-                     sprintf(buf, "Layer %u", unsigned(newLayers.size() + (import ? mLayers.size() : 0)));
-                     layer.mGeode->setName(buf);
-                  }
-                  newLayers.push_back(layer);
-               }
-               else if(IS_A(node, osgParticle::ParticleSystemUpdater*))
-               {
-                  newParticleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(node);
-               }
-            }
-
-            for(i = 0; i < newerParticleSystemGroup->getNumChildren(); ++i)
-            {
-               node = newerParticleSystemGroup->getChild(i);
-
-               if(IS_A(node, osg::MatrixTransform*))
-               {
-                  osg::MatrixTransform* newEmitterTransform = static_cast<osg::MatrixTransform*>(node);
-                  for(unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
-                  {
-                     osg::Node* childNode = newEmitterTransform->getChild(j);
-                     if(IS_A(childNode, osgParticle::ModularEmitter*))
-                     {
-                        osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
-                        for(unsigned int k = 0; k < newLayers.size(); ++k)
-                        {
-                           if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
-                           {
-                              newLayers[k].mEmitterTransform = newEmitterTransform;
-                              newLayers[k].mModularEmitter = newModularEmitter;
-                              break;
-                           }
-                        }
-                     }
-                  }
-               }
-               else if(IS_A(node, osgParticle::ModularProgram*))
-               {
-                  osgParticle::ModularProgram* newModularProgram = static_cast<osgParticle::ModularProgram*>(node);
-                  for(unsigned int j = 0; j < newLayers.size(); ++j)
-                  {
-                     if(newLayers[j].mParticleSystem == newModularProgram->getParticleSystem())
-                     {
-                        newLayers[j].mModularProgram = newModularProgram;
-                        break;
-                     }
-                  }
-               }
-            }
-         }
-      }
-      // end old way
-      else
-      {
-         for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
-         {
-            node = newParticleSystemGroup->getChild(i);
-            if (IS_A(node, osg::Geode*))
-            {
-               ParticleSystemLayer layer;
-               layer.mGeode = (osg::Geode*)node;
-
-               for(unsigned int j = 0; j < layer.mGeode->getNumDrawables(); ++j)
-               {
-                  osg::Drawable* drawable = layer.mGeode->getDrawable(j);
-                  if (IS_A(drawable, osgParticle::ParticleSystem*))
-                  {
-                     layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
-                     layer.mpParticle = new osgParticle::Particle(layer.mParticleSystem->getDefaultParticleTemplate());
-                  }
-               }
-
-               if(layer.mGeode->getName() == "")
-               {
-                  char buf[256];
-                  sprintf(buf, "Layer %u", unsigned(newLayers.size() + (import ? mLayers.size() : 0)));
-                  layer.mGeode->setName(buf);
-               }
-               newLayers.push_back(layer);
-            }
-            else if(IS_A(node, osgParticle::ParticleSystemUpdater*))
-            {
-               newParticleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(node);
-            }
-         }
-
-         for(i = 0; i < newParticleSystemGroup->getNumChildren(); ++i)
-         {
-            node = newParticleSystemGroup->getChild(i);
-            if (IS_A(node, osg::MatrixTransform*))
-            {
-               osg::MatrixTransform* newEmitterTransform = static_cast<osg::MatrixTransform*>(node);
-               for(unsigned int j = 0; j < newEmitterTransform->getNumChildren(); ++j)
-               {
-                  osg::Node* childNode = newEmitterTransform->getChild(j);
-                  if (IS_A(childNode, osgParticle::ModularEmitter*))
-                  {
-                     osgParticle::ModularEmitter* newModularEmitter = (osgParticle::ModularEmitter*)childNode;
-                     for(unsigned int k = 0; k < newLayers.size(); ++k)
-                     {
-                        if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
-                        {
-                           newLayers[k].mEmitterTransform = newEmitterTransform;
-                           newLayers[k].mModularEmitter = newModularEmitter;
-                           break;
-                        }
-                     }
-                  }
-               }
-            }
-            else if(IS_A(node, osgParticle::ModularProgram*))
-            {
-               osgParticle::ModularProgram* newModularProgram = static_cast<osgParticle::ModularProgram*>(node);
-               for(unsigned int j = 0; j < newLayers.size(); ++j)
-               {
-                  if(newLayers[j].mParticleSystem == newModularProgram->getParticleSystem())
-                  {
-                     newLayers[j].mModularProgram = newModularProgram;
-                     break;
-                  }
-               }
-            }
-         }
-      }
-      if(newParticleSystemUpdater != NULL)
-      {
-         int newLayer = 0;
-         if(import)
-         {
-            newLayer = mLayers.size();
-            for (i = 0; i < newLayers.size(); ++i)
-            {
-               mpParticleSystemGroup->addChild(newLayers[i].mGeode.get());
-               mpParticleSystemGroup->addChild(newLayers[i].mEmitterTransform.get());
-               mpParticleSystemGroup->addChild(newLayers[i].mModularProgram.get());
-               mpParticleSystemUpdater->addParticleSystem(newLayers[i].mParticleSystem.get());
-               mLayers.push_back(newLayers[i]);
-            }
-            ResetEmitters();
-         }
-         else
-         {
-            mpSceneGroup->removeChild(mpParticleSystemGroup);
-            mpParticleSystemGroup = newParticleSystemGroup;
-            mLayers = newLayers;
-            mpParticleSystemUpdater = newParticleSystemUpdater;
-            mpSceneGroup->addChild(mpParticleSystemGroup);
-         }
-         UpdateLayersList();
-         emit SelectIndexOfLayersList(newLayer);
-         SetParticleSystemFilename(filename);
-      }
-      else
-      {
-         qWarning() << "Invalid particle system:" << filename;
-      }
    }
 }
 

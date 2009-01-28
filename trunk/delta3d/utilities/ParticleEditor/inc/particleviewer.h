@@ -80,6 +80,7 @@ public:
    ~ParticleViewer();
 
    virtual void Config();
+   void LoadFile(QString filename, bool import = false);
 
 signals:
    ///> Main Window signals
@@ -313,7 +314,6 @@ private:
    void MakeCompass();
    void MakeGrids();
    void SetParticleSystemFilename(QString filename);
-   void LoadFile(QString filename, bool import = false);
    void UpdateLayersList();
    void UpdateParticleTabsValues();
    void UpdateCounterTabsValues();

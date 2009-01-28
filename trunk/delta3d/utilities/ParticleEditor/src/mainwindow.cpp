@@ -42,6 +42,12 @@ void MainWindow::SetupUI()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void MainWindow::LoadFile(QString filename, bool import/* = false*/)
+{
+   mpParticleViewer->LoadFile(filename, import);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void MainWindow::UpdateWindowTitle(const QString& title)
 {
    setWindowTitle(title);

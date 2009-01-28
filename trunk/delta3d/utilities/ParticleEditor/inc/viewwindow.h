@@ -8,12 +8,15 @@
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
 
-#include <osgViewer/GraphicsWindow>
-
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 
 ////////////////////////////////////////////////////////////////////////////////
+
+namespace osgViewer
+{
+   class GraphicsWindow;
+}
 
 ///Little class used to hold the Delta3D rendering surface
 class ViewWindow : public QGLWidget
