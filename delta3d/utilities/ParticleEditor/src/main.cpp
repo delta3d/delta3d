@@ -46,10 +46,10 @@ int main(int argc, char **argv)
    thread->SetMainWindow(&win);
    thread->run();
 
-   //if (argc >= 2)
-   //{
-   //   win.LoadCharFile(QCoreApplication::arguments().at(1));
-   //}
+   if (argc >= 2)
+   {
+      win.LoadFile(QCoreApplication::arguments().at(1));
+   }
 
    qapp.exec();
 

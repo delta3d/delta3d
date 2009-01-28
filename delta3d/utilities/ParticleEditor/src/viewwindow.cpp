@@ -1,4 +1,8 @@
 #include <viewwindow.h>
+#include <osgViewer/Viewer>
+#include <osgViewer/CompositeViewer>
+#include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/GraphicsWindow>
 
 //////////////////////////////////////////////////////////////////////////////////
 class QtKeyboardMap
