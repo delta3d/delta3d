@@ -141,20 +141,22 @@ BUILD_PYTHON_BINDING(${AI_BINDINGS}
 
 
 ################
-SET(AUDIO_BINDINGS "PyDtAudio")
+IF (DTAUDIO_AVAILABLE)
+	SET(AUDIO_BINDINGS "PyDtAudio")
 
-SET(TARGET_SRC 
-  audiomanagerbindings.cpp
-  dtaudiobindings.cpp
-  listenerbindings.cpp
-  soundeffectbinderbindings.cpp
-) 
+	SET(TARGET_SRC 
+	  audiomanagerbindings.cpp
+	  dtaudiobindings.cpp
+	  listenerbindings.cpp
+	  soundeffectbinderbindings.cpp
+	) 
 
-SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
+	SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
 
-BUILD_PYTHON_BINDING(${AUDIO_BINDINGS} 
-                     ${DTAUDIO_LIBRARY}
-                    )
+	BUILD_PYTHON_BINDING(${AUDIO_BINDINGS} 
+						 ${DTAUDIO_LIBRARY}
+                        )
+ENDIF (DTAUDIO_AVAILABLE)
 
 
 ################
@@ -176,18 +178,20 @@ BUILD_PYTHON_BINDING(${DAL_BINDINGS}
                     )
 
 ################
-SET(ANIM_BINDINGS "PyDtAnim")
+IF (DTANIM_AVAILABLE)
+	SET(ANIM_BINDINGS "PyDtAnim")
 
-SET(TARGET_SRC 
-  dtanimbindings.cpp
-  characterwrapperbindings.cpp
-)
+	SET(TARGET_SRC 
+	  dtanimbindings.cpp
+	  characterwrapperbindings.cpp
+	)
 
-SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
+	SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
 
-BUILD_PYTHON_BINDING(${ANIM_BINDINGS} 
-                     ${DTANIM_LIBRARY}
-                    )
+	BUILD_PYTHON_BINDING(${ANIM_BINDINGS} 
+						 ${DTANIM_LIBRARY}
+						)
+ENDIF (DTANIM_AVAILABLE)
                     
 ################
 
