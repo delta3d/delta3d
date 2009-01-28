@@ -25,7 +25,7 @@ void initEnvironmentBindings()
    void (Environment::*SetAdvFogCtrl1)( const osg::Vec3& ) = &Environment::SetAdvFogCtrl;
    void (Environment::*GetAdvFogCtrl1)( osg::Vec3& ) const = &Environment::GetAdvFogCtrl;
 
-   void (Environment::*GetSunColor1)( osg::Vec3& ) = &Environment::GetSunColor;
+   void (Environment::*GetSunColor1)( osg::Vec3& ) const = &Environment::GetSunColor;
 
    void (Environment::*SetRefLatLong1)( const osg::Vec2& ) = &Environment::SetRefLatLong;
    void (Environment::*GetRefLatLong1)( osg::Vec2& ) const = &Environment::GetRefLatLong;
