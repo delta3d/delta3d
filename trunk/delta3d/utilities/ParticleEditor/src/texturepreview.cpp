@@ -60,15 +60,16 @@ std::string TexturePreview::GetTexture()
  */
 void TexturePreview::paintEvent(QPaintEvent* event)
 {
-   QImage qImage = QImage(event->rect().width(), event->rect().height(), QImage::Format_ARGB32);
+   QImage qImage = QImage(width(), height(), QImage::Format_ARGB32);
    qImage.fill(qRgb(255, 255, 255));
    QPainter painter(this);
 
    if(mImage.valid())
    {
-      qImage = QImage(mImage->s(), mImage->t(), QImage::Format_ARGB32);
+      int w = std::max(mImage->s(), width());
+      int h = std::max(mImage->t(), height());
+      qImage = QImage(w, h, QImage::Format_ARGB32);
       DrawLoadedImage(qImage);
-      //qImage.scaled(event->rect().width(), event->rect().height());
    }
 
    painter.drawImage(QPoint(0, 0), qImage);
@@ -88,14 +89,14 @@ void TexturePreview::DrawLoadedImage(QImage& image)
    float sStep = (float)mImage->s() / width();
    float tStep = (float)mImage->t() / height();
    float s = 0.0f;
-   float t = mImage->t();
+   float t = mImage->t() - tStep;
 
    int components = osg::Image::computeNumComponents(mImage->getPixelFormat());
 
-   for(int x = 0; x < image.height() && s < mImage->s(); ++x)
+   for(int x = 0; x < image.width() && s < mImage->s(); ++x)
    {
-      t = mImage->t() - 1;
-      for(int y = 0; y < image.width() && t >= 0; ++y)
+      t = mImage->t() - tStep;
+      for(int y = 0; y < image.height() && t >= 0; ++y)
       {
          uchar* data = mImage->data((int)s, (int)t);
          QColor pixelColor;
