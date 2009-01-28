@@ -81,24 +81,24 @@ namespace dtCore
       void RemEffect(EnvEffect* effect);
 
       ///Get an Environmental Effect by its index
-      EnvEffect* GetEffect(int idx) { return mEffectList[idx].get(); }
+      EnvEffect* GetEffect(int idx) const;
 
       ///Get the number of Environmental Effects in this Environment
-      int GetNumEffects() { return mEffectList.size(); }
+      int GetNumEffects() const;
 
       ///Set the base color of the sky
       void SetSkyColor(const osg::Vec3& color);
-      void GetSkyColor(osg::Vec3& color) const { color = mSkyColor; }
+      void GetSkyColor(osg::Vec3& color) const;
 
       /** Set the base color of the fog.  This color is then adjusted internally
       * using the time of day.  NOTE: This value is not used for the fog
       * when the FogMode is ADV, but it still can be used by the EnvEffects.
       */
       void SetFogColor(const osg::Vec3& color);
-      void GetFogColor(osg::Vec3& color) const { color = mFogColor; }
+      void GetFogColor(osg::Vec3& color) const;
 
       ///Get the modified color of the fog
-      void GetModFogColor(osg::Vec3& color) const { color = mModFogColor; }
+      void GetModFogColor(osg::Vec3& color) const;
 
       /** Set the fog mode.  Any Drawables added to the Environment will be fogged
       *   based on the FogMode.  The ADV FogMode uses a pixel shader to calculate
@@ -106,41 +106,34 @@ namespace dtCore
       *   OpenGL Fog.
       */
       void SetFogMode(FogMode mode);
-      FogMode GetFogMode() const { return mFogMode; }
+      FogMode GetFogMode() const;
 
       ///Supply the advanced fog control values
-      void SetAdvFogCtrl(const osg::Vec3& src) { mAdvFogCtrl = src; }
-      void GetAdvFogCtrl(osg::Vec3& dst) const { dst = mAdvFogCtrl; }
+      void SetAdvFogCtrl(const osg::Vec3& src);
+      void GetAdvFogCtrl(osg::Vec3& dst) const;
 
       ///Set the fog near value (only used for FogMode::LINEAR
       void SetFogNear(float val);
-      float GetFogNear() const { return mFogNear; }
+      float GetFogNear() const;
 
       //Turn the fog on or off
       void SetFogEnable(bool enable);
-      bool GetFogEnable() const { return mFogEnabled; }
+      bool GetFogEnable() const;
 
       //Set fog Density
       void SetFogDensity(float density);
-      float GetFogDensity();
+      float GetFogDensity() const;
 
       ///Set the visibility distance in meters
       void SetVisibility(float distance);
-      float GetVisibility() const { return mVisibility; }
+      float GetVisibility() const;
 
       ///Get the current color of the sun
-      void GetSunColor(osg::Vec3& color) {color = mSunColor;}
+      void GetSunColor(osg::Vec3& color) const;
 
-      void GetSunAzEl(float& az, float& el) const
-      {
-         az = mSunAzimuth;
-         el = mSunAltitude;
-      }
+      void GetSunAzEl(float& az, float& el) const;
 
-      osg::Vec2 GetSunAzEl() const
-      {
-         return osg::Vec2(mSunAzimuth, mSunAltitude);
-      }
+      osg::Vec2 GetSunAzEl() const;
 
       void Repaint();
 
@@ -169,13 +162,35 @@ namespace dtCore
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong(const osg::Vec2& latLong);
-      void GetRefLatLong(osg::Vec2& latLong) const { latLong = mRefLatLong; }
+      void GetRefLatLong(osg::Vec2& latLong) const;
 
       ///required by DeltaDrawable
-      osg::Node* GetOSGNode() { return mNode.get(); }
-      const osg::Node* GetOSGNode() const { return mNode.get(); }
+      osg::Node* GetOSGNode();
+      const osg::Node* GetOSGNode() const;
 
       void SetOSGNode(osg::Node* pNode);
+
+      /** Replace the internal Group node that contains all the added Drawable
+        * children with the supplied.  This will add all previously added children
+        * to the new node.  
+        * @param pNode The new Group node to use as the parent of all added Drawables.
+        * @see AddChid()
+        */
+      void SetDrawableNode(osg::Group* pNode);
+
+      /** Get a pointer to the internally managed Group node that is the parent
+        * of all added Drawables.
+        * @return The Group node parent of all added Drawables
+        * @see AddChild()
+        */
+      osg::Group* GetDrawableNode() const;
+
+      /** Get a pointer to the Light the Environment is controlling, based on the
+        * ephemeris calculations.  Typically this is the default Light created
+        * by the Scene.
+        * @return The Light the Environment is controlling.  Could be NULL.
+        */
+      Light* GetSkyLight() const;
 
    private:
 

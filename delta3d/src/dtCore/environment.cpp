@@ -54,7 +54,10 @@ Environment::Environment(const std::string& name)
    osg::Node *rootNode = new osg::Group();
    rootNode->setName(name);
    SetOSGNode(rootNode);
+   mEnvEffectNode->setName("EnvEffectNode");
+
    GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
+   mEnvEffectNode->setNodeMask(0xF0000000);
    GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
@@ -191,6 +194,7 @@ void Environment::AddEffect(EnvEffect* effect)
       if (SkyDome* dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
       {
          mSkyDome = dome;
+         mSkyDome->GetOSGNode()->setName("SkyDome");
          mEnvEffectNode->addChild(dome->GetOSGNode());
 
          // add the skydome shader to dome's stateset
@@ -462,7 +466,7 @@ void dtCore::Environment::SetFogDensity(float density)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-float dtCore::Environment::GetFogDensity()
+float dtCore::Environment::GetFogDensity() const
 {
    return mFog->getDensity();
 }
@@ -711,4 +715,140 @@ void dtCore::Environment::SetOSGNode(osg::Node* pNode)
    mNode = pNode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetDrawableNode(osg::Group* pNode)
+{
+   //remove all children from our current drawable node
+   //and add them to the new drawable node
+
+   unsigned int numChildren = mDrawableNode->getNumChildren();
+
+   for (unsigned int i = 0; i < numChildren; i++)
+   {
+      osg::Node* child = mDrawableNode->getChild(i);
+      pNode->addChild(child);
+   }
+   mDrawableNode->removeChildren(0, numChildren);
+   
+   pNode->setStateSet(mDrawableNode->getStateSet());
+   
+   GetOSGNode()->asGroup()->removeChild(mDrawableNode.get());
+   GetOSGNode()->asGroup()->addChild(pNode);
+   mDrawableNode = pNode;   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Group* dtCore::Environment::GetDrawableNode() const
+{
+   return mDrawableNode.get();
+}
+
+//////////////////////////////////////////////////////////////////////////
+Light* dtCore::Environment::GetSkyLight() const
+{
+   return mSkyLight.get();
+}
+
+//////////////////////////////////////////////////////////////////////////
+EnvEffect* dtCore::Environment::GetEffect(int idx) const
+{
+   return mEffectList[idx].get();
+}
+
+//////////////////////////////////////////////////////////////////////////
+int dtCore::Environment::GetNumEffects() const
+{
+   return mEffectList.size();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetSkyColor(osg::Vec3& color) const
+{
+   color = mSkyColor;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetFogColor(osg::Vec3& color) const
+{
+   color = mFogColor;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetModFogColor(osg::Vec3& color) const
+{
+   color = mModFogColor;
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::Environment::FogMode dtCore::Environment::GetFogMode() const
+{
+   return mFogMode;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::SetAdvFogCtrl(const osg::Vec3& src)
+{
+   mAdvFogCtrl = src;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetAdvFogCtrl(osg::Vec3& dst) const
+{
+   dst = mAdvFogCtrl;
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::Environment::GetFogNear() const
+{
+   return mFogNear;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtCore::Environment::GetFogEnable() const
+{
+   return mFogEnabled;
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::Environment::GetVisibility() const
+{
+   return mVisibility;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetSunColor(osg::Vec3& color) const
+{
+   color = mSunColor;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetSunAzEl(float& az, float& el) const
+{
+   az = mSunAzimuth;
+   el = mSunAltitude;
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Vec2 dtCore::Environment::GetSunAzEl() const
+{
+   return osg::Vec2(mSunAzimuth, mSunAltitude);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::Environment::GetRefLatLong(osg::Vec2& latLong) const
+{
+   latLong = mRefLatLong;
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Node* dtCore::Environment::GetOSGNode()
+{
+   return mNode.get();
+}
+
+//////////////////////////////////////////////////////////////////////////
+const osg::Node* dtCore::Environment::GetOSGNode() const
+{
+   return mNode.get();
+}
 ////////////////////////////////////////////////////////////////////////////////
