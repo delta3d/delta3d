@@ -54,6 +54,7 @@
 ObjectViewer::ObjectViewer()
    : mCurrentLight(0)
    , mShouldGenerateTangents(true)
+   , mLightScale(1.0f)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -97,44 +98,10 @@ void ObjectViewer::Config()
    mModelMotion->SetTarget(GetCamera());
    mModelMotion->SetDistance(5.f);
 
-   InitLights();
-
    mWireDecorator  = new osg::Group;
    mShadeDecorator = new osg::Group;
 
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
-   {
-      dtCore::Light* light = GetScene()->GetLight(lightIndex);
-      light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
-      light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
-      light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
-
-      // Infinite lights must start here, point light from the postive y axis
-      light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
-      bool enabled = light->GetEnabled();
-
-      dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
-      lightArrow->LoadFile("examples/data/models/LightArrow.ive");
-      lightArrow->SetActive(enabled);
-
-      dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
-      lightArrowTransformable->AddChild(lightArrow.get());
-      lightArrowTransformable->AddChild(light);
-
-      dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
-      lightMotion->SetTarget(lightArrowTransformable.get());
-      //lightMotion->SetDistance(3.f);
-      //lightMotion->SetFocalPoint(osg::Vec3());
-      //lightMotion->SetLeftRightTranslationAxis(NULL);
-      //lightMotion->SetUpDownTranslationAxis(NULL);
-
-      GetScene()->AddDrawable(lightArrowTransformable.get());
-
-      mLightMotion.push_back(lightMotion);
-      mLightArrowTransformable.push_back(lightArrowTransformable);
-      mLightArrow.push_back(lightArrow);
-      light->SetEnabled(enabled);
-   }
+   InitLights();
 
    GetScene()->GetSceneNode()->addChild(mShadedScene.get());
    GetScene()->GetSceneNode()->addChild(mUnShadedScene.get());
@@ -322,13 +289,24 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          mModelMotion->SetDistance(radius * 2.0f);
          mModelMotion->SetFocalPoint(center);
 
+         // Adjust the size of the light arrow
+         mLightScale = radius * 0.5f;
+
          for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
          {
-            //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-            //mLightMotion[lightIndex]->SetFocalPoint(center);
+            float arrowScale = mLightScale;
 
-            // Adjust the size of the light arrow
-            float arrowScale = radius * 0.5f;
+            //dtCore::Light* light = GetScene()->GetLight(lightIndex);
+            //if (light)
+            //{
+            //   // Infinite lights do not get scaled.
+            //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+            //   if (infiniteLight)
+            //   {
+            //      arrowScale = 1.0f;
+            //   }
+            //}
+
             mLightMotion[lightIndex]->SetScale(arrowScale);
             mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
          }
@@ -359,13 +337,24 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
       mModelMotion->SetDistance(radius * 2.0f);
       mModelMotion->SetFocalPoint(center);
 
+      // Adjust the size of the light arrow
+      mLightScale = radius * 0.5f;
+
       for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
       {
-         //mLightMotion[lightIndex]->SetDistance(radius * 0.5f);
-         //mLightMotion[lightIndex]->SetFocalPoint(center);
+         float arrowScale = mLightScale;
 
-         // Adjust the size of the light arrow
-         float arrowScale = radius * 0.5f;
+         //dtCore::Light* light = GetScene()->GetLight(lightIndex);
+         //if (light)
+         //{
+         //   // Infinite lights do not get scaled.
+         //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+         //   if (infiniteLight)
+         //   {
+         //      arrowScale = 1.0f;
+         //   }
+         //}
+
          mLightMotion[lightIndex]->SetScale(arrowScale);
          mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
       }
@@ -535,11 +524,24 @@ void ObjectViewer::OnSetLightType(int id, int type)
 
    dtCore::Light* newLight = NULL;
 
+   float arrowScale = mLightScale;
+
    switch (type)
    {
    case 0: // Infinite
-      newLight = new dtCore::InfiniteLight(id, lightName.toStdString());
-      break;
+      {
+         newLight = new dtCore::InfiniteLight(id, lightName.toStdString());
+         newLight->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
+         ////arrowScale = 1.0f;
+         //dtCore::Transform transform;
+         //osg::Matrix matrix;
+         ////newLight->GetTransform(transform);
+         ////transform.GetRotation(matrix);
+         //matrix = osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3(1.0f, 0.0f, 0.0f));
+         //transform.SetRotation(matrix);
+         //newLight->SetTransform(transform);
+         break;
+      }
 
    case 1: // Positional
       newLight = new dtCore::PositionalLight(id, lightName.toStdString());
@@ -586,7 +588,13 @@ void ObjectViewer::OnSetLightType(int id, int type)
 
       lightArrowTransformable->AddChild(newLight);
 
+//      dtCore::Transform transform;
+//      lightArrowTransformable->SetTransform(transform);
+
       GetScene()->RegisterLight(newLight);
+
+//      mLightMotion[id]->SetScale(arrowScale);
+//      mLightArrow[id]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
    }
 }
 
@@ -812,14 +820,48 @@ void ObjectViewer::InitGridPlanes()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitLights()
 {
-   for (int lightIndex = 1; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      QString lightName = QString("Light%1").arg(lightIndex);
+      dtCore::Light* light = NULL;
 
-      dtCore::Light* light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
-      GetScene()->AddDrawable(light);
-      GetScene()->RegisterLight(light);
-      light->SetEnabled(false);
+      if (lightIndex > 0 )
+      {
+         QString lightName = QString("Light%1").arg(lightIndex);
+
+         light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
+         GetScene()->RegisterLight(light);
+         light->SetEnabled(false);
+      }
+      else
+      {
+         light = GetScene()->GetLight(lightIndex);
+      }
+
+      light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
+      light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
+      light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+
+      // Infinite lights must start here, point light from the postive y axis
+      light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
+      bool enabled = light->GetEnabled();
+
+      dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
+      lightArrow->LoadFile("examples/data/models/LightArrow.ive");
+      lightArrow->SetActive(enabled);
+
+      dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
+      lightArrowTransformable->AddChild(lightArrow.get());
+      lightArrowTransformable->AddChild(light);
+
+      dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
+      lightMotion->SetTarget(lightArrowTransformable.get());
+
+      GetScene()->AddDrawable(lightArrowTransformable.get());
+
+      mLightMotion.push_back(lightMotion);
+      mLightArrowTransformable.push_back(lightArrowTransformable);
+      mLightArrow.push_back(lightArrow);
+      light->SetEnabled(enabled);
    }
 }
 
@@ -873,6 +915,24 @@ void ObjectViewer::PostFrame(const double)
       {
          dtCore::Transform arrowTransform;
          mLightArrowTransformable[lightIndex]->GetTransform(arrowTransform);
+
+         //// Position all infinite lights in front of the camera.
+         //dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+         //if (infiniteLight)
+         //{
+         //   dtCore::Transform transform;
+         //   GetCamera()->GetTransform(transform);
+
+         //   osg::Vec3 right, up, at;
+         //   transform.GetOrientation(right, up, at);
+         //   osg::Vec3 pos = transform.GetTranslation();
+         //   pos += at * 2.0f;
+         //   pos += right * 0.4f;
+         //   pos -= up * 0.4f;
+
+         //   arrowTransform.SetTranslation(pos);
+         //   mLightArrowTransformable[lightIndex]->SetTransform(arrowTransform);
+         //}
 
          //osg::Vec3 lightPos = arrowTransform.GetTranslation();
 
