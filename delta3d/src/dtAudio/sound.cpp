@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <cfloat>
-#include <dtAudio/dtAudio.h>
+#include <dtAudio/dtaudio.h>
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
@@ -67,8 +67,8 @@ Sound::Sound()
    mRolloff(1.0f),
    mMinGain(0.0f),
    mMaxGain(1.0f),
-   mBuffer(0),
    mSource(0),
+   mBuffer(0),  
    mState(BIT(STOP)),
    mIsInitialized(false)
 {

@@ -11,7 +11,7 @@
 #endif
 
 #include <dtAudio/audiomanager.h>
-#include <dtAudio/dtAudio.h>
+#include <dtAudio/dtaudio.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
