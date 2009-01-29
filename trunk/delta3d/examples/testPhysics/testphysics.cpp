@@ -23,6 +23,7 @@
 #include <dtABC/application.h>
 #include <dtCore/object.h>
 #include <dtCore/odebodywrap.h>
+#include <dtCore/odecontroller.h>
 #include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/scene.h>
@@ -86,6 +87,10 @@ public:
       : Application(configFile)
       , mLimit(50)
    {
+      //setup some default physics values
+      GetScene()->SetGravity(0.0f, 0.0f, -15.0f);
+      GetScene()->GetPhysicsController()->GetWorldWrapper()->SetDamping(0.01f, 0.01f);
+
       RefPtr<Object> obj1 = new Object("Ground");
       RefPtr<Object> obj2 = new Object("FallingCrate");
       RefPtr<Object> obj3 = new Object("GroundCrate");
@@ -134,8 +139,6 @@ public:
       //put the falling crate in the vector of dropped objects
       mObjects.push_back(obj2);
 
-      GetScene()->SetGravity(0.0f, 0.0f, -15.0f);
-
       updater = new Updater(GetScene());
 
       omm = new OrbitMotionModel(GetKeyboard(), GetMouse());
@@ -170,27 +173,6 @@ protected:
          GetScene()->RemoveDrawable(mToRemove.front().get());
          mObjects.pop_front();
          mToRemove.pop();
-      }
-   }
-
-   //apply some linear and angular velocity dampening
-   void DampenBody(Object* obj, float vScale, float aScale)
-   {
-      if (obj->DynamicsEnabled())
-      {
-         ODEBodyWrap* body = obj->GetBodyWrapper();
-         body->ApplyForce(body->GetLinearVelocity() * vScale);
-         body->ApplyTorque(body->GetAngularVelocity() * aScale);
-      }
-   }
-
-   virtual void PostFrame(const double deltaFrameTime)
-   {
-      for (std::deque< RefPtr<Object> >::iterator i = mObjects.begin();
-           i != mObjects.end();
-           ++i)
-      {
-         DampenBody(i->get(), -0.10f, -0.04f);
       }
    }
 

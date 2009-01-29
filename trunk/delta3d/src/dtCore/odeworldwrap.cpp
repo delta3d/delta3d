@@ -89,3 +89,45 @@ void dtCore::ODEWorldWrap::UnRegisterCollidable(Transformable* collidable)
       }
    }
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEWorldWrap::SetDamping(float linearScale, float angularScale)
+{
+   dWorldSetDamping(mWorldID, linearScale, angularScale);
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::ODEWorldWrap::GetLinearDamping() const
+{
+   return dWorldGetLinearDamping(mWorldID);
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::ODEWorldWrap::GetAngularDamping() const
+{
+   return dWorldGetAngularDamping(mWorldID);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEWorldWrap::SetLinearDampingThreshold(float linearThreshold)
+{
+   dWorldSetLinearDampingThreshold(mWorldID, linearThreshold);
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::ODEWorldWrap::GetLinearDampingThreshold() const
+{
+   return dWorldGetLinearDampingThreshold(mWorldID);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEWorldWrap::SetAngularDampingThreshold(float angularThreshold)
+{
+   dWorldSetAngularDampingThreshold(mWorldID, angularThreshold);
+}
+
+//////////////////////////////////////////////////////////////////////////
+float dtCore::ODEWorldWrap::GetAngularDampingThreshold() const
+{
+   return dWorldGetAngularDampingThreshold(mWorldID);
+}

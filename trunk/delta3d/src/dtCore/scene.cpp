@@ -669,6 +669,7 @@ void Scene::SetDatabasePager(dtCore::DatabasePager* pager)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
 double Scene::GetPhysicsStepSize() const
 {
    if (mPhysicsController.valid())
@@ -681,6 +682,7 @@ double Scene::GetPhysicsStepSize() const
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
 void Scene::SetPhysicsStepSize(double stepSize) const
 {
    if (mPhysicsController.valid())
@@ -689,6 +691,11 @@ void Scene::SetPhysicsStepSize(double stepSize) const
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+dtCore::ODEController* Scene::GetPhysicsController() const
+{
+   return mPhysicsController.get();
+}
 
 
 
