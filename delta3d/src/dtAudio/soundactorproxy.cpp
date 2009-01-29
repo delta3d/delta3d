@@ -200,7 +200,7 @@ namespace dtAudio
         // value of true will loop the sound, while a value of false
         // will not loop/stop looping a sound.
         // Default is false
-        AddProperty(new BooleanActorProperty(
+        AddProperty(new IntActorProperty(
            PROPERTY_LOOPING,
            PROPERTY_LOOPING,
             MakeFunctor(*sound, &Sound::SetLooping),
@@ -231,7 +231,7 @@ namespace dtAudio
         // This property toggles whether or not a sound is listerner
         // relative.
         // Default is false
-        AddProperty(new BooleanActorProperty(
+        AddProperty(new IntActorProperty(
            PROPERTY_LISTENER_RELATIVE,
            PROPERTY_LISTENER_RELATIVE,
             MakeFunctor(*sound, &Sound::SetListenerRelative),

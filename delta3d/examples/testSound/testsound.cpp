@@ -53,10 +53,7 @@ TestSoundApp::TestSoundApp(const std::string& configFilename /*= "config.xml"*/)
    // these callbacks are optional
    mSound->SetPlayCallback(SoundStartedCB, this);
    mSound->SetStopCallback(SoundStoppedCB, this);
-
 }
-
-
 
 /**
  * Destructor.
@@ -69,8 +66,6 @@ TestSoundApp::~TestSoundApp()
    // destroy the audio manager
    AudioManager::Destroy();
 }
-
-
 
 /**
  * KeyboardListener override

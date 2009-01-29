@@ -480,7 +480,7 @@ TestAudioApp::ToggleSoundLooping()
    mLooping = !mLooping;
 
    Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
-      " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
+      " ToggleSoundLooping( %d )", (mLooping));
 
    Sound*  snd(NULL);
    SND_ITR iter;
