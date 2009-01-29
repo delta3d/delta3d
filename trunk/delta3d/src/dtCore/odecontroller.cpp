@@ -32,6 +32,9 @@ extern "C" void ODEErrorHandler(int errnum, const char* msg, va_list ap)
 
 bool dtCore::ODEController::kInitialized = false;
 
+const dtUtil::RefString dtCore::ODEController::MESSAGE_COLLISION("collision");
+const dtUtil::RefString dtCore::ODEController::MESSAGE_PHYSICS_STEP("physics_step");
+
 
 //////////////////////////////////////////////////////////////////////////
 dtCore::ODEController::ODEController(dtCore::Base* msgSender):
@@ -292,6 +295,11 @@ const void* dtCore::ODEController::GetUserCollisionData() const
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEController::Step(double stepSize) const
 {
+   if (mMsgSender.valid())
+   {
+      mMsgSender->SendMessage(ODEController::MESSAGE_PHYSICS_STEP, &stepSize);
+   }
+
    if (mSpaceWrapper.valid()) { mSpaceWrapper->Collide(); }
 
    if (mWorldWrapper.valid()) { mWorldWrapper->Step(stepSize); }
@@ -313,7 +321,7 @@ void dtCore::ODEController::DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionD
 
       //if a collision took place and we have a sender pointer,
       //send out the "collision" message
-      mMsgSender->SendMessage("collision", &scd);
+      mMsgSender->SendMessage(ODEController::MESSAGE_COLLISION, &scd);
    }
 }
 

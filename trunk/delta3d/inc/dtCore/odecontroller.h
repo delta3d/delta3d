@@ -31,6 +31,7 @@
 #include <dtCore/odeworldwrap.h>
 #include <dtCore/base.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtUtil/refstring.h>
 #include <vector>
 #include <ode/common.h>
 #include <ode/collision_space.h>
@@ -46,11 +47,20 @@ namespace dtCore
     *  provides a default near collision callback.
     *  Typically used by dtCore::Scene, this class is something like the Facade
     *  pattern and manages both collision detection and physical body operations.
+    *  This class will generate messages and
+    *  will send the messages out via the object supplied in SetMessageSender().
     *
     */
    class DT_CORE_EXPORT ODEController : public osg::Referenced
    {
    public:
+      
+      ///Two object have collided
+      const static dtUtil::RefString MESSAGE_COLLISION;
+
+      ///The physics integrator is about to perform one integration step
+      const static dtUtil::RefString MESSAGE_PHYSICS_STEP;
+
 
       /** Default constructor.  Will create default ODESpaceWrap and ODEWorldWrap
        * instances used for collision and body functionality.
