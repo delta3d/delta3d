@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include <dtAudio/dtAudio.h>
+#include <dtAudio/dtaudio.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
