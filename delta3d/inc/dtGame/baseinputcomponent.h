@@ -51,9 +51,11 @@ namespace dtGame
          BaseInputComponent(const std::string &name = DEFAULT_NAME);
 
          /**
-          * Overridden from base class.  When this component is added to the GM, it 
+          * When this component is added to the GM, it 
           * needs to setup the mouse listener and keyboard listener on this input component. 
           * Do not call this yourself.
+          * If overwriting this method, ensure BaseInputComponent::OnAddedToGM()
+          * gets called or else no input will take place.
           */
          virtual void OnAddedToGM();
 
