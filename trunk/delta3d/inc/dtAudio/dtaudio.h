@@ -26,12 +26,23 @@
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/soundeffectbinder.h>
 
+#include <dtUtil/log.h>
+
 /** The Audio Library contains functionality for controlling the audio playback
 *  in applications.
 */
 namespace dtAudio
 {
-}
+const std::string ERROR_CLEARING_STRING = "Clearing Error code "
+"system at start of method, if this appears then an error occurred before this "
+"method was called.";
+
+//implemented in audiomanager.cpp
+bool CheckForError(const std::string& userMessage,
+                   const std::string& msgFunction,
+                   int lineNumber);
+
+} //namespace dtAudio
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 

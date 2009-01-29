@@ -148,100 +148,11 @@ namespace dtAudio
                loop(AL_FALSE),
                use(0L)
             {}
-         };
-
-         /**
-          * SoundObj is the concrete object associated
-          * with Sound interface that users manipulate.
-          *
-          * The SoundObj is the mechanism that binds
-          * an OpenAL buffer to an OpenAL source for
-          * playing sounds.  Typically a SoundObj always
-          * holds onto a buffer, but it's buffer could be
-          * swapped for another.
-          *
-          * The SoundObj rarely holds onto a source.
-          * Just before playing, the SoundObj gets a new-
-          * recycled source and binds it with the buffer.
-          * Immediately after finished playing, the source
-          * is removed from SoundObj for recycling.
-          */
-         class SoundObj :  public   Sound
-         {
-            DECLARE_MANAGEMENT_LAYER(SoundObj)
-
-            private:
-               typedef  std::queue<const char*>   CMD_QUE;
-
-               struct SourceObj
-               {
-                  SourceObj() :
-                     mSource(0),
-                     mInitialized(false)
-                  {
-                  }
-
-                  ALuint mSource;
-                  bool mInitialized;
-               };
-
-            public:
-                                       SoundObj();
-               virtual                 ~SoundObj();
-
-               /// update messages which set state flags and
-               /// repositions sound if it's a child in scene-space
-               virtual  void           OnMessage( MessageData* data );
-
-               /// override methods for user to query sound state
-               virtual  bool           IsPlaying( void )          const;
-               virtual  bool           IsPaused( void )           const;
-               virtual  bool           IsStopped( void )          const;
-               virtual  bool           IsLooping( void )          const;
-               virtual  bool           IsListenerRelative( void ) const;
-
-               /// set/get next command in this sound's command queue
-                        void           Command( const char* cmd );
-                        const char*    Command( void );
-
-               /// set/get this sounds buffer id
-                        void           Buffer( ALuint buffer );
-                        ALuint         Buffer( void );
-
-               /// set/get this sounds source id
-                        void           Source( ALuint source );
-
-                        /**
-                         * Gets the current source assigned to this SoundObj.
-                         *
-                         * @pre IsInitialized() == true
-                         */
-                        ALuint         Source( void );
-                        void           SetInitialized( bool isInitialized );
-                        bool           IsInitialized() const;
-
-
-               /// set/reset/get various state flags
-                        void           SetState( unsigned int flag );
-                        void           ResetState( unsigned int flag );
-                        bool           GetState( unsigned int flag ) const;
-
-               /// clean up sound for recycling
-                        void           Clear( void );
-
-            private:
-                        CMD_QUE        mCommand;
-                        ALuint         mBuffer;
-                        SourceObj      mSource;
-                        unsigned int   mState;
-         };
+         };         
 
          /**
           * ListenerObj is the concrete object associated
           * with Listener interface that users manipulate.
-          * 
-          * Function calls on the listener are processed
-          * immediately, unlike the SoundObj functions.
           */
          class ListenerObj :  public   Listener
          {
@@ -276,7 +187,7 @@ namespace dtAudio
 
       private:
          typedef  dtCore::RefPtr<AudioManager>          MOB_ptr;
-         typedef  dtCore::RefPtr<SoundObj>              SOB_PTR;
+         typedef  dtCore::RefPtr<Sound>                 SOB_PTR;
          typedef  dtCore::RefPtr<ListenerObj>           LOB_PTR;
 
          typedef  std::map<std::string, BufferData*>  BUF_MAP;
@@ -295,7 +206,7 @@ namespace dtAudio
             STOPPED
          };
       
-         typedef std::map< SoundObj*, SoundState >     SoundObjectStateMap;
+         typedef std::map< Sound*, SoundState >     SoundObjectStateMap;
 
       private:
          static   MOB_ptr                 _Mgr;
@@ -310,16 +221,7 @@ namespace dtAudio
          virtual                    ~AudioManager();
 
       public:
-
-         static const std::string ERROR_CLEARING_STRING;
-         /// This was added to help check for error messages all the time, and have them
-         /// feed through here
-         ///
-         /// Returns true on error, false if no error
-         static   bool  CheckForError( const std::string& userMessage, 
-                                       const std::string& msgFunction,
-                                       int lineNumber);
-
+         
          /// create the singleton and initialize OpenAL
          static   void  Instantiate( void );
 
@@ -391,73 +293,73 @@ namespace dtAudio
          inline   bool              ConfigEAX( bool eax );
 
          /// give a sound the pointer to the buffer it wants
-         inline   void              LoadSound( SoundObj* snd );
+         inline   void              LoadSound( Sound* snd );
 
          /// remove the buffer from a sound
-         inline   void              UnloadSound( SoundObj* snd );
+         inline   void              UnloadSound( Sound* snd );
 
          /// bind a source to the sound's buffer
          /// initialize the source
          /// start sending AudioManager messages to sound
          /// push sound onto the play queue
-         inline   void              PlaySound( SoundObj* snd );
+         inline   void              PlaySound( Sound* snd );
 
          /// push sound onto pause queue
-         inline   void              PauseSound( SoundObj* snd );
+         inline   void              PauseSound( Sound* snd );
 
          /// push sound onto stopped queue
-         inline   void              StopSound( SoundObj* snd );
+         inline   void              StopSound( Sound* snd );
 
          /// push sound onto rewind queue
-         inline   void              RewindSound( SoundObj* snd );
+         inline   void              RewindSound( Sound* snd );
 
          /// set sound's source to looping
-         inline   void              SetLoop( SoundObj* snd );
+         inline   void              SetLoop( Sound* snd );
 
          /// set sound's source to not looping
-         inline   void              ResetLoop( SoundObj* snd );
+         inline   void              ResetLoop( Sound* snd );
 
          /// set sound's source to listener-relative
-         inline   void              SetRelative( SoundObj* snd );
+         inline   void              SetRelative( Sound* snd );
 
          /// set sound's source to not listener-relative
-         inline   void              SetAbsolute( SoundObj* snd );
+         inline   void              SetAbsolute( Sound* snd );
 
          /// set sound source's gain
-         inline   void              SetGain( SoundObj* snd );
+         inline   void              SetGain( Sound* snd );
 
          /// set sound source's pitch
-         inline   void              SetPitch( SoundObj* snd );
+         inline   void              SetPitch( Sound* snd );
 
          /// set sound source's position
-         inline   void              SetPosition( SoundObj* snd );
+         inline   void              SetPosition( Sound* snd );
 
          /// set sound source's direction
-         inline   void              SetDirection( SoundObj* snd );
+         inline   void              SetDirection( Sound* snd );
 
          /// set sound source's velocity
-         inline   void              SetVelocity( SoundObj* snd );
+         inline   void              SetVelocity( Sound* snd );
 
          /// set sound source's reference distance (minimum dist)
-         inline   void              SetReferenceDistance( SoundObj* snd );
+         inline   void              SetReferenceDistance( Sound* snd );
 
          /// set sound source's maximum distance
-         inline   void              SetMaximumDistance( SoundObj* snd );
+         inline   void              SetMaximumDistance( Sound* snd );
 
          /// set sound source's rolloff factor
-         inline   void              SetRolloff( SoundObj* snd );
+         inline   void              SetRolloff( Sound* snd );
 
          /// set sound source's minimum gain
-         inline   void              SetMinimumGain( SoundObj* snd );
+         inline   void              SetMinimumGain( Sound* snd );
 
          /// set sound source's maximum gain
-         inline   void              SetMaximumGain( SoundObj* snd );
+         inline   void              SetMaximumGain( Sound* snd );
 
-         /// give this sound a source
-         inline   bool              GetSource( SoundObj* snd );
+         /// give this sound a source         
+         inline   bool              SetupSource( Sound* snd );
 
          /// take source away from this sound
-         inline   void              FreeSource( SoundObj* snd );
+         inline   void              FreeSource( Sound* snd );
 
       private:
          ALvoid*             mEAXSet;
@@ -480,7 +382,7 @@ namespace dtAudio
          SND_QUE             mSoundRecycle;
          SND_LST             mSoundList;
 
-         SoundObjectStateMap mSoundStateMap; ///Maintains state of each SoundObject
+         SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
                                              ///prior to a system-wide pause message
    };
 };

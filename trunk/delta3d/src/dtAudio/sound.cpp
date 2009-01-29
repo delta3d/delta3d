@@ -3,26 +3,17 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <cfloat>
-#include <dtAudio/audiomanager.h>
+#include <dtAudio/dtAudio.h>
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
+#include <dtCore/system.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/collisioncategorydefaults.h>
-
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/util/XMLString.hpp>
-
-
-// definitions
-#if   defined(WIN32) | defined(_WIN32)
-#pragma warning( disable : 4800 )
-#endif
-
-
-
 
 // namespaces
 using namespace dtAudio;
@@ -43,18 +34,17 @@ const char* Sound::kCommand[kNumCommands]   =
 
 IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
-Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f), mPlaying(false)
+Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f), mPlaying(0)
 {
 }
 
-Sound::FrameData::FrameData(float gain, float pitch, bool playing): mGain(gain), mPitch(pitch), mPlaying(playing)
+Sound::FrameData::FrameData(float gain, float pitch, unsigned int playing): mGain(gain), mPitch(pitch), mPlaying(playing)
 {
 }
 
 Sound::FrameData::~FrameData()
 {
 }
-
 
 /********************************
  ** Protected Member Functions **
@@ -76,7 +66,11 @@ Sound::Sound()
    mMaxDist(FLT_MAX),
    mRolloff(1.0f),
    mMinGain(0.0f),
-   mMaxGain(1.0f)
+   mMaxGain(1.0f),
+   mBuffer(0),
+   mSource(0),
+   mState(BIT(STOP)),
+   mIsInitialized(false)
 {
    RegisterInstance( this );
 
@@ -106,8 +100,6 @@ Sound::~Sound()
     DeregisterInstance(this);
 }
 
-
-
 /**
  * Message handler.
  *
@@ -115,9 +107,100 @@ Sound::~Sound()
  */
 void Sound::OnMessage( MessageData* data )
 {
+   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+   assert( data );   
+
+   if(data->message == dtCore::System::MESSAGE_FRAME)
+   {
+      if ( alIsSource( GetSource() ) == AL_FALSE || !IsInitialized() )
+         // no source, don't bother with positions or direction
+         return;
+
+      // the transform has already been set by parent classes. We just need here to
+      // copy the SoundObj position and direction to the AL object
+
+      // extract current transform from actor
+      dtCore::Transform transform;
+      GetTransform(transform, dtCore::Transformable::ABS_CS);
+
+      // extract separate values for position and direction now
+      osg::Vec3            pos   (0.0f, 0.0f, 0.0f);
+      osg::Vec3            dir   (0.0f, 0.0f, 0.0f);
+
+      transform.GetTranslation(pos);
+      transform.GetRotation(dir);
+
+      // set the values on the sound object      
+      SetPosition( pos );
+      SetDirection( dir );
+
+      return;
+   }
+
+   if ( data->userData != this )
+      return;
+
+   if ( data->message == kCommand[PLAY] )
+   {
+      SetState( PLAY );
+      ResetState( PAUSE );
+      ResetState( STOP );
+
+      if ( mPlayCB )
+      {
+         mPlayCB( static_cast<Sound*>(this), mPlayCBData );
+      }
+      return;
+   }
+
+   if ( data->message == kCommand[PAUSE] )
+   {
+      ResetState( PLAY );
+      SetState( PAUSE );
+      ResetState( STOP );
+      return;
+   }
+
+   if ( data->message == kCommand[STOP] )
+   {
+      ResetState( PLAY );
+      ResetState( PAUSE );
+      SetState( STOP );
+
+      if ( mStopCB )
+      {
+         mStopCB( static_cast<Sound*>(this), mStopCBData );
+      }
+      return;
+   }
+
+   if ( data->message == kCommand[LOOP] )
+   {
+      SetState( LOOP );
+      return;
+   }
+
+   if ( data->message == kCommand[UNLOOP] )
+   {
+      ResetState( LOOP );
+      return;
+   }
+
+   if ( data->message == kCommand[REL] )
+   {
+      SetState( Sound::REL );
+      ResetState( Sound::ABS );
+      return;
+   }
+
+   if ( data->message == kCommand[ABS] )
+   {
+      SetState( Sound::ABS );
+      ResetState( Sound::REL );
+      return;
+   }
+   CheckForError("End of OnMessage", __FUNCTION__, __LINE__);
 }
-
-
 
 /*****************************
  ** Public Member Functions **
@@ -133,14 +216,54 @@ void Sound::LoadFile( const char* file )
    SendMessage( kCommand[LOAD], this );
 }
 
-
-
 /**
  * Unloads the specified sound file.
  */
 void Sound::UnloadFile( void )
 {
    SendMessage( kCommand[UNLOAD], this );
+}
+
+void Sound::Clear(void)
+{
+   mFilename   = "";
+   mBuffer     = 0;
+   mSource     = 0;
+   while ( mCommand.size() )
+   {
+      mCommand.pop();
+   }
+
+   mState      = BIT(STOP);
+
+   mPlayCB     = NULL;
+   mPlayCBData = NULL;
+   mStopCB     = NULL;
+   mStopCBData = NULL;
+
+   if ( GetParent() )
+   {
+      GetParent()->RemoveChild( this );
+   }
+}
+
+void Sound::EnqueueCommand(const char* cmd)
+{
+   if ( cmd == NULL )
+      return;
+
+   mCommand.push( cmd );
+}
+
+const char* Sound::DequeueCommand(void)
+{
+   if ( mCommand.empty() )
+      return   NULL;
+
+   const char* cmd   = mCommand.front();
+   mCommand.pop();
+
+   return   cmd;
 }
 
 /**
@@ -158,8 +281,6 @@ void Sound::SetPlayCallback( CallBack cb, void* param )
    else
       mPlayCBData = NULL;
 }
-
-
 
 /**
  * Set callback for when sound stops playing.
@@ -225,7 +346,7 @@ void Sound::Rewind( void )
  * @param looping true to play the sound in a loop, false
  * otherwise
  */
-void Sound::SetLooping( bool loop /*= true*/ )
+void Sound::SetLooping(int loop /*= 1*/ )
 {
    if( loop )
       SendMessage( kCommand[LOOP], this );
@@ -274,25 +395,12 @@ void Sound::SetPitch( float pitch )
  *
  * @param relative true uses distance modeling
  */
-void Sound::SetListenerRelative( bool relative )
+void Sound::SetListenerRelative(int relative )
 {
    if( relative )
       SendMessage( kCommand[REL], this );
    else
       SendMessage( kCommand[ABS], this );
-}
-
-/**
-  * Get relative to listener position flag.          
-  *
-  * @return relative true uses distance modeling
-  */
-bool Sound::IsListenerRelative(void) const 
-{
-   if(! dtAudio::AudioManager::GetInstance().IsInitialized())
-      return false;
-
-   return dtAudio::AudioManager::GetInstance().GetListenerRelative((Sound*) this);   
 }
 
 /**
@@ -528,7 +636,7 @@ DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER D
    DOMElement* pelement = dtUtil::Serializer::ToFloat(d->mPitch,"Pitch",doc);
    element->appendChild( pelement );
 
-   DOMElement* playelement = dtUtil::Serializer::ToBool(d->mPlaying,"Playing",doc);
+   DOMElement* playelement = dtUtil::Serializer::ToInt(d->mPlaying,"Playing",doc);
    element->appendChild( playelement );
 
    return element;

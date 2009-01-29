@@ -25,8 +25,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <queue>
+
 #include <dtCore/transformable.h>
 #include <dtAudio/export.h>
+
+#ifdef __APPLE__
+  #include <OpenAL/alut.h>
+#else
+  #include <AL/alut.h>
+#endif
 
 #include <osg/Vec3>
 
@@ -92,7 +100,7 @@ namespace dtAudio
       {
       public:
          FrameData();
-         FrameData(float gain, float pitch, bool playing);
+         FrameData(float gain, float pitch, unsigned int playing = 0);
 
       protected:
          ~FrameData();
@@ -103,7 +111,7 @@ namespace dtAudio
 
          friend class Sound;
          float mGain, mPitch;
-         bool mPlaying;
+         unsigned int mPlaying;
       };
 
       enum  Command
@@ -136,14 +144,14 @@ namespace dtAudio
 
       public:
          static   const char* kCommand[kNumCommands];
-
-      protected:
+      
          /**
           * Constructor, user does not create directly
           * instead requests a sound from AudioManager
           */
          Sound();
 
+      protected:
          /**
           * Destructor, user does not delete directly
           * instead frees sound to the AudioManager
@@ -170,12 +178,62 @@ namespace dtAudio
           */
          virtual  void        UnloadFile(void);
 
+         ///clean up Sound for recyclying
+         void Clear(void);
+
+         //Add a command to this Sound's command queue
+         void EnqueueCommand(const char* cmd);
+
+         //Dequeue and return next command in this Sound's command queue
+         const char* DequeueCommand(void);
+
+         /// Get this sound's OpenAL buffer ID
+         ALuint GetBuffer(void) {return mBuffer;}                        
+
          /**
           * Returns the name of the loaded sound file.
           *
           * @return the name of the loaded file
           */
          virtual  const char* GetFilename(void)              {  return   mFilename.c_str();   }
+
+         // Get the state of the indicated flag.
+         unsigned int GetState(unsigned int flag) const {return mState & BIT(flag);}
+
+         /// Returns the OpenAL Source ID associated with the loaded Delta3d Sound object.          
+         ALuint GetSource(void) {return mSource;} 
+
+         /// Get the IsInitialized flag
+         bool IsInitialized(void) {return mIsInitialized;}
+
+         /// get the IsLooping flag
+         int IsLooping(void) const {return GetState(LOOP);}
+
+         ///Get the IsListenerRelative flag
+         int IsListenerRelative(void) const {return GetState(REL);}
+
+         ///Get the IsPaused flag
+         int IsPaused(void) const {return GetState(PAUSE); }
+
+         ///Get the IsPlaying flag
+         int IsPlaying(void) const {return GetState(PLAY); }         
+
+         ///Get the IsStopped flag
+         int IsStopped(void) const {return GetState(STOP);}         
+
+         // Reset indicated flags:
+         void ResetState(unsigned int flag) {mState &= ~BIT(flag);}
+
+         /** Set this sound's OpenAL buffer ID
+          * 
+          *  NOTE: This is an advanced operation!! Typically a Sound's OpenAL
+          *  buffer is set automatically via the AudioManager.  Only tinker with
+          *  OpenAL buffers directly if you know what you are doing.
+          */
+         void  SetBuffer(ALuint b) {mBuffer = b;}
+
+         /// Set the IsInitialized flag
+         void SetInitialized(bool isInit) {mIsInitialized = isInit;}
 
          /**
           * Set callback for when sound starts playing.
@@ -185,6 +243,9 @@ namespace dtAudio
           */
          virtual  void        SetPlayCallback(CallBack cb, void* param);
 
+         // set indicated flags in mState
+         void SetState(unsigned int flag) {mState |= BIT( flag );}
+
          /**
           * Set callback for when sound stops playing.
           *
@@ -192,6 +253,15 @@ namespace dtAudio
           * @param param any supplied user data
           */
          virtual  void        SetStopCallback(CallBack cb, void* param);
+         
+         /**
+          * Sets the OpenAL Source ID associated with the loaded Delta3D Sound object.
+          * 
+          * NOTE: This is an advanced operation!! Typically sounds are loaded 
+          * and sources are set automatically via the AudioManager.  Only tinker
+          * with OpenAL sources directly if you know what you are doing.
+          */
+         void SetSource(ALuint s) {mSource = s;}
 
          /**
           * Starts playing this sound.
@@ -214,33 +284,12 @@ namespace dtAudio
          virtual  void        Rewind(void);
 
          /**
-          * Is sound playing. (overloaded function)
-          *
-          * @return true if playing
-          */
-         virtual  bool        IsPlaying(void)                     const {  return   false;   }
-
-         /**
-          * Is sound paused. (overloaded function)
-          *
-          * @return true if playing
-          */
-         virtual  bool        IsPaused(void)                      const {  return   false;   }
-
-         /**
-          * Is sound stopped. (overloaded function)
-          *
-          * @return true if playing
-          */
-         virtual  bool        IsStopped(void)                     const {  return   true;    }
-
-         /**
           * Sets whether or not to play the sound in a continuous loop.
           *
-          * @param loop true to play the sound in a loop, false
+          * @param loop 1 to play the sound in a loop, 0
           * otherwise
           */
-         virtual  void        SetLooping(bool loop = true);
+         void SetLooping(int loop = 1);
 
          /**
           * Checks whether or not the sound plays in a continuous loop.
@@ -248,7 +297,7 @@ namespace dtAudio
           *
           * @return true if the sound plays in a loop, false otherwise
           */
-         virtual  bool        IsLooping(void)                     const {  return   false;   }
+         //virtual  bool        IsLooping(void)                     const {  return   false;   }
 
          /**
           * Sets the gain of the sound source.
@@ -297,7 +346,7 @@ namespace dtAudio
           * to relative = false when Sounds are created.
           *          
           */
-         virtual void SetListenerRelative(bool relative);
+         virtual void SetListenerRelative(int relative);
 
          ///Deprecated 1/23/2009 in favor of SetListenerRelative
          DEPRECATE_FUNC virtual  void        ListenerRelative( bool relative )
@@ -307,12 +356,6 @@ namespace dtAudio
 
             SetListenerRelative(relative);            
          } 
-
-         /**
-          * Get relative to listener position flag.          
-          *          
-          */
-         virtual  bool        IsListenerRelative(void) const;
 
          /**
           * Set the transform position of sound.
@@ -493,6 +536,13 @@ namespace dtAudio
          float       mMinGain;
          float       mMaxGain;
 
+         std::queue<const char*> mCommand;
+
+         ALuint                  mSource;
+         ALuint                  mBuffer;
+         unsigned int            mState;
+
+         bool                    mIsInitialized;
    };
 } // namespace dtAudio
 
