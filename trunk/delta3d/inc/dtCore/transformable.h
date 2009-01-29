@@ -69,6 +69,7 @@ namespace dtCore
          static CollisionGeomType NONE;
          static CollisionGeomType SPHERE;
          static CollisionGeomType CYLINDER;
+         static CollisionGeomType CCYLINDER;
          static CollisionGeomType CUBE;
          static CollisionGeomType RAY;
          static CollisionGeomType MESH;
@@ -229,6 +230,7 @@ namespace dtCore
        * CUBE     : ( lx, ly, lz )
        * SPHERE   : ( radius )
        * CYLINDER : ( radius, length )
+       * CCYLINDER: ( radius, length )
        * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
        */
       void GetCollisionGeomDimensions(std::vector<float>& dimensions);
@@ -295,6 +297,24 @@ namespace dtCore
        * (if 0, attempt to use own node)
        */
       void SetCollisionBox(osg::Node* node = 0);
+
+      /**
+       * Sets this object's collision geometry to a cylinder
+       * (oriented along the z axis) with the specified radius and length.
+       *
+       * @param radius the radius of the cylinder
+       * @param length the length of the cylinder
+       */
+      void SetCollisionCylinder(float radius, float length);
+
+      /**
+       * Sets this object's collision geometry to a cylinder with
+       * parameters derived from the given OpenSceneGraph node.
+       *
+       * @param node the node from which to obtain the cylinder parameters
+       * (if 0, attempt to use own node)
+       */
+      void SetCollisionCylinder(osg::Node* node = NULL);
 
       /**
        * Sets this object's collision geometry to a capped cylinder
