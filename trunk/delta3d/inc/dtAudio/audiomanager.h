@@ -150,45 +150,10 @@ namespace dtAudio
             {}
          };         
 
-         /**
-          * ListenerObj is the concrete object associated
-          * with Listener interface that users manipulate.
-          */
-         class ListenerObj :  public   Listener
-         {
-            DECLARE_MANAGEMENT_LAYER(ListenerObj)
-
-            public:
-                                 ListenerObj();
-               virtual           ~ListenerObj();
-
-               /// set/get listener's velocity
-               virtual  void     SetVelocity( const osg::Vec3& velocity );
-               virtual  void     GetVelocity( osg::Vec3& velocity )  const;
-               
-
-               /// set/get listener's gain (master volume)
-               virtual  void     SetGain( float gain );
-               virtual  float    GetGain( void )   const;
-
-               /// repositions listener if it's a child in scene-space
-               virtual  void     OnMessage( MessageData* data );
-
-               /// override method so listener knows when it's becomeing a child
-               //virtual  void     SetParent( dtCore::Transformable* parent );
-
-               /// clean up listener for no apparent reason
-               virtual  void     Clear( void );
-
-            private:
-                        ALfloat  mVelo[3L];
-                        ALfloat  mGain;
-         };
-
       private:
-         typedef  dtCore::RefPtr<AudioManager>          MOB_ptr;
-         typedef  dtCore::RefPtr<Sound>                 SOB_PTR;
-         typedef  dtCore::RefPtr<ListenerObj>           LOB_PTR;
+         typedef  dtCore::RefPtr<AudioManager>        MOB_ptr;
+         typedef  dtCore::RefPtr<Sound>               SOB_PTR;
+         typedef  dtCore::RefPtr<Listener>            LOB_PTR;
 
          typedef  std::map<std::string, BufferData*>  BUF_MAP;
 
@@ -234,7 +199,7 @@ namespace dtAudio
          /// access the global Listener
          static   Listener*         GetListener( void );
 
-         /// get the ListenerRelative flag of the indicated flag
+         /// get the ListenerRelative flag of the indicated Sound
          bool                       GetListenerRelative(Sound* sound);
 
          /// initialize AudioManager
@@ -248,7 +213,7 @@ namespace dtAudio
           * handles the timeing messages (pre-post-frame) from the system
           * pushes sounds onto the command queue for later processing
           */
-         virtual  void              OnMessage( MessageData* data );
+         virtual void OnMessage(MessageData* data);
 
          /// create or recycle a new sound for the user
          Sound*            NewSound( void );
@@ -386,8 +351,6 @@ namespace dtAudio
                                              ///prior to a system-wide pause message
    };
 };
-
-
 
 // configuration data
 struct DT_AUDIO_EXPORT AudioConfigData

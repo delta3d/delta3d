@@ -15,7 +15,6 @@
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
-#include <dtUtil/mathdefines.h>
 #include <dtUtil/stringutils.h>
 
 // definitions
@@ -34,7 +33,6 @@ const char*             AudioManager::_EaxSet   = "EAXSet";
 const char*             AudioManager::_EaxGet   = "EAXGet";
 const AudioConfigData   AudioManager::_DefCfg;
 
-IMPLEMENT_MANAGEMENT_LAYER(AudioManager::ListenerObj)
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 namespace dtAudio
@@ -207,7 +205,7 @@ void AudioManager::Instantiate(void)
    _Mgr  = new AudioManager;
    assert(_Mgr.get());
 
-   _Mic  = new ListenerObj;
+   _Mic  = new Listener;
    assert(_Mic.get());
 }
 
@@ -1609,8 +1607,6 @@ void AudioManager::PlaySound(Sound* snd)
    }
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::PauseSound( Sound* snd )
 {
@@ -1624,8 +1620,6 @@ void AudioManager::PauseSound( Sound* snd )
 
    mPauseQueue.push( snd->GetSource() );
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::StopSound( Sound* snd )
@@ -1642,8 +1636,6 @@ void AudioManager::StopSound( Sound* snd )
    mStopQueue.push( src );
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::RewindSound( Sound* snd )
 {
@@ -1658,8 +1650,6 @@ void AudioManager::RewindSound( Sound* snd )
 
    mRewindQueue.push( src );
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetLoop( Sound* snd )
@@ -1683,8 +1673,6 @@ void AudioManager::SetLoop( Sound* snd )
 
    SendMessage( Sound::kCommand[Sound::LOOP], snd );
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::ResetLoop( Sound* snd )
@@ -1768,8 +1756,6 @@ void AudioManager::SetRelative(Sound* snd)
    SendMessage(Sound::kCommand[Sound::REL], snd);
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetAbsolute(Sound* snd)
 {
@@ -1837,8 +1823,6 @@ void AudioManager::SetPitch( Sound* snd )
    SendMessage( Sound::kCommand[Sound::PITCH], snd );
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetPosition( Sound* snd )
 {
@@ -1863,8 +1847,6 @@ void AudioManager::SetPosition( Sound* snd )
    SendMessage( Sound::kCommand[Sound::POSITION], snd );
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetDirection( Sound* snd )
 {
@@ -1887,8 +1869,6 @@ void AudioManager::SetDirection( Sound* snd )
 
    SendMessage( Sound::kCommand[Sound::DIRECTION], snd );
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetVelocity( Sound* snd )
@@ -1914,8 +1894,6 @@ void AudioManager::SetVelocity( Sound* snd )
    SendMessage( Sound::kCommand[Sound::VELOCITY], snd );
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetReferenceDistance( Sound* snd )
 {
@@ -1940,8 +1918,6 @@ void AudioManager::SetReferenceDistance( Sound* snd )
    if (CheckForError("AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error", __FUNCTION__, __LINE__))
       return;
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::SetMaximumDistance( Sound* snd )
@@ -2039,7 +2015,6 @@ void AudioManager::SetMaximumGain( Sound* snd )
    }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 bool AudioManager::SetupSource( Sound* snd )
 {
@@ -2093,144 +2068,4 @@ void AudioManager::FreeSource( Sound* snd )
    mSourceMap[src]   = NULL;
    mAvailable.push( src );
    CheckForError("FreeSource", __FUNCTION__, __LINE__);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// public member functions
-// default consructor
-AudioManager::ListenerObj::ListenerObj()
-:  Listener()
-{
-   RegisterInstance( this );
-
-   Clear();
-   AddSender( &dtCore::System::GetInstance() );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-AudioManager::ListenerObj::~ListenerObj()
-{
-   DeregisterInstance( this );
-
-   RemoveSender( &dtCore::System::GetInstance() );
-   Clear();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
-{
-   mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
-   mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
-   mVelo[2L]   = static_cast<ALfloat>(velocity[2L]);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
-{
-   velocity[0]   = static_cast<double>(mVelo[0]);
-   velocity[1]   = static_cast<double>(mVelo[1]);
-   velocity[2]   = static_cast<double>(mVelo[2]);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ListenerObj::SetGain( float gain )
-{
-   // force gain to range from zero to one
-   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
-   mGain = static_cast<ALfloat>(gain);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-float AudioManager::ListenerObj::GetGain( void )   const
-{
-   return   static_cast<float>(mGain);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ListenerObj::OnMessage( MessageData* data )
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( data );
-
-   if(data->message == dtCore::System::MESSAGE_FRAME)
-   {
-      dtCore::Transform transform;
-      osg::Matrix       matrix;
-      ALfloat           pos[3];
-
-      union orient
-      {
-         ALfloat     ort[6];
-
-         struct
-         {
-            ALfloat  at[3];
-            ALfloat  up[3];
-         };
-      } orient;
-
-      GetTransform( transform );      
-      osg::Vec3 tmp;
-      transform.GetTranslation( tmp );      
-      pos[0] = tmp[0];
-      pos[1] = tmp[1];
-      pos[2] = tmp[2];
-      transform.Get( matrix );
-
-      //assign at and up vectors directly from the matrix
-      orient.at[0] = matrix(1,0);
-      orient.at[1] = matrix(1,1);
-      orient.at[2] = matrix(1,2);
-      orient.up[0] = matrix(2,0);
-      orient.up[1] = matrix(2,1);
-      orient.up[2] = matrix(2,2);
-
-      alListenerfv( AL_POSITION, pos );
-      alListenerfv( AL_ORIENTATION, orient.ort );
-
-      alListenerfv( AL_VELOCITY, mVelo );
-      alListenerf( AL_GAIN, mGain );
-      CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
-   }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ListenerObj::Clear( void )
-{
-   //dtCore::Transformable* parent(GetParent());
-   //if ( parent )
-   //{
-   //   parent->RemoveChild( this );
-   //}
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-
-   union
-   {
-      ALfloat     ort[6];
-      struct
-      {
-         ALfloat  at[3];
-         ALfloat  up[3];
-      };
-   }  orient;
-   orient.ort[0] = 0.0f;
-   orient.ort[1] = 1.0f;
-   orient.ort[2] = 0.0f;
-   orient.ort[3] = 0.0f;
-   orient.ort[4] = 0.0f;
-   orient.ort[5] = 1.0f;
-
-   ALfloat  pos[3L]  = { 0.0f, 0.0f, 0.0f };
-
-   mGain       = 1.0f;
-   mVelo[0L]   =
-   mVelo[1L]   =
-   mVelo[2L]   = 0.0f;
-
-   alListenerf( AL_GAIN, mGain );
-   alListenerfv( AL_VELOCITY, mVelo );
-   alListenerfv( AL_POSITION, pos );
-   alListenerfv( AL_ORIENTATION, orient.ort );
-   CheckForError("AL Listener value changing", __FUNCTION__, __LINE__);
 }

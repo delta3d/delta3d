@@ -26,7 +26,7 @@
 
 #include <osg/Vec3>
 
-namespace   dtAudio
+namespace dtAudio
 {
    /** dtAudio::Listener 
     *
@@ -55,18 +55,19 @@ namespace   dtAudio
    {
       DECLARE_MANAGEMENT_LAYER(Listener)
 
-      protected:
+      public:
          /**
           * Constructor, user does not create directly
           * instead requests the listener from AudioManager
           */
-                        Listener();
+         Listener();
 
+      protected:
          /**
           * Destructor, user does not delete directly
           * AudioManager handles destruction
           */
-         virtual        ~Listener();
+         virtual ~Listener();
 
       public:
          /**
@@ -74,28 +75,37 @@ namespace   dtAudio
           *
           * @param velocity to set
           */
-         virtual  void  SetVelocity( const osg::Vec3& velocity )        = 0;
+         void SetVelocity(const osg::Vec3f& velocity);
        
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
-         virtual  void  GetVelocity( osg::Vec3& velocity )        const = 0;
+         void GetVelocity(osg::Vec3f& velocity) const;
          
          /**
           * Sets the master volume of the listener.
           *
           * @param gain the new gain
           */
-         virtual  void  SetGain( float gain )                        = 0;
+         void SetGain(float gain);
 
          /**
           * Returns the master volume of the listener.
           *
           * @return the current volume
           */
-         virtual  float GetGain()                        const = 0;
+         float GetGain() const;
+
+         /**
+          * Message handler's main job is to reposition listener if it's a child
+          * of a Transformable in scene-space.
+          */
+         virtual void OnMessage(MessageData* data);
+
+         /// clean up listener 
+         void Clear(void);
    };
 }
 
