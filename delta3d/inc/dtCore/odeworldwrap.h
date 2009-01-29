@@ -22,6 +22,7 @@
 #ifndef odeworldwrap_h__
 #define odeworldwrap_h__
 
+#include <dtCore/export.h>
 #include <osg/Referenced>
 #include <osg/Vec3>
 #include <ode/common.h>
@@ -33,7 +34,7 @@ namespace dtCore
    /** Used as a wrapper around ODE world functionality.  Typically not referenced directly
     *  by end user applications.
     */
-   class ODEWorldWrap : public osg::Referenced
+   class DT_CORE_EXPORT ODEWorldWrap : public osg::Referenced
    {
    public:
       ODEWorldWrap();
@@ -72,6 +73,52 @@ namespace dtCore
         * @param collidable A valid object to remove from the physics world.
         */
       void UnRegisterCollidable(Transformable* collidable);
+
+      /** Set the world's default damping parameters.  Bodies will use the world's
+        * parameters by default.  Default scale is zero, meaning no
+        * damping will take place.
+        * @param linearScale the damping scale factor to apply to linear velocities
+        * @param angularScale The angular scale factor to apply to angular velocities
+        */
+      void SetDamping(float linearScale, float angularScale);
+
+      /** Get the world's linear damping scale value.
+        * @return The linear velocity damping scale value
+        */
+      float GetLinearDamping() const;
+
+      /** Get the world's angular damping scale value.
+        * @return The angular velocity damping scale value
+        */
+      float GetAngularDamping() const;
+
+      /** Set the world's linear velocity damping threshold.  If an object's
+        * linear velocity is above this value, the linear damping scale
+        * will be applied.  Default is 0.01
+        * @param linearThreshold The linear velocity threshold above which, the
+        *        body will be dampened.  Use zero to disable damping.
+        * @see SetDamping()
+        */
+      void SetLinearDampingThreshold(float linearThreshold);
+
+      /** Get the world's linear velocity damping threshold.
+        * @return The linear velocity damping threshold.
+        */
+      float GetLinearDampingThreshold() const;
+
+      /** Set the world's angular velocity damping threshold.  If an object's
+        * angular velocity is above this value, the angular damping scale
+        * will be applied.  Default is 0.01
+        * @param angularThreshold The angular velocity threshold above which, the
+        *        body will be dampened.  Use zero to disable damping.
+        * @see SetDamping()
+        */
+      void SetAngularDampingThreshold(float angularThreshold);
+
+      /** Get the world's angular velocity damping threshold.
+        * @return The angular velocity damping threshold.
+        */
+      float GetAngularDampingThreshold() const;
 
    protected:
       virtual ~ODEWorldWrap();

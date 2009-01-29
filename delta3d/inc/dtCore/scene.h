@@ -239,6 +239,9 @@ namespace dtCore
       /// UnRegister a Transformable with the Scene
       void UnRegisterCollidable(Transformable* collidable) const;
 
+      /// Get handle to the internal physics controller (could be NULL)
+      dtCore::ODEController* GetPhysicsController() const;
+
       /// Returns a pointer to the light specified by the param number
       Light* GetLight(const int number) { return mLights[number].get(); }
       const Light* GetLight(const int number) const { return mLights[number].get(); }
