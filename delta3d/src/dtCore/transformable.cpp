@@ -43,6 +43,8 @@ Transformable::CollisionGeomType::SPHERE("SPHERE");
 Transformable::CollisionGeomType
 Transformable::CollisionGeomType::CYLINDER("CYLINDER");
 Transformable::CollisionGeomType
+Transformable::CollisionGeomType::CCYLINDER("CCYLINDER");
+Transformable::CollisionGeomType
 Transformable::CollisionGeomType::CUBE("CUBE");
 Transformable::CollisionGeomType
 Transformable::CollisionGeomType::RAY("RAY");
@@ -456,6 +458,10 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
    {
       return &dtCore::Transformable::CollisionGeomType::CYLINDER;
    }
+   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CCYLINDER)
+   {
+      return &dtCore::Transformable::CollisionGeomType::CCYLINDER;
+   }
    else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CUBE)
    {
       return &dtCore::Transformable::CollisionGeomType::CUBE;
@@ -612,6 +618,44 @@ void Transformable::SetCollisionBox(osg::Node* node)
       RenderCollisionGeometry(mRenderingGeometry);
       SetCollisionDetection(true);
 
+      PrePhysicsStepUpdate();
+   }
+}
+
+/////////////////////////////////////////////////////////////////////
+void Transformable::SetCollisionCylinder(float radius, float length)
+{
+   mGeomWrap->SetCollisionCylinder(radius, length);
+
+   RenderCollisionGeometry(mRenderingGeometry);
+   SetCollisionDetection(true);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
+}
+
+
+/////////////////////////////////////////////////////////////////////
+void Transformable::SetCollisionCylinder(osg::Node* node)
+{
+   if(node == 0)
+   {
+      node = this->GetOSGNode();
+   }
+
+   if(node)
+   {
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      GetMatrixNode()->setMatrix(osg::Matrix::identity());
+
+      mGeomWrap->SetCollisionCylinder(node);
+
+      GetMatrixNode()->setMatrix(oldMatrix);
+
+      RenderCollisionGeometry(mRenderingGeometry);
+      SetCollisionDetection(true);
+
+      // Sync-up the transforms on mGeomID
       PrePhysicsStepUpdate();
    }
 }

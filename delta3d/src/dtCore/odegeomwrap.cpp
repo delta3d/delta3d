@@ -15,6 +15,7 @@ IMPLEMENT_ENUM(CollisionGeomType)
 CollisionGeomType CollisionGeomType::NONE("NONE");
 CollisionGeomType CollisionGeomType::SPHERE("SPHERE");
 CollisionGeomType CollisionGeomType::CYLINDER("CYLINDER");
+CollisionGeomType CollisionGeomType::CCYLINDER("CCYLINDER");
 CollisionGeomType CollisionGeomType::CUBE("CUBE");
 CollisionGeomType CollisionGeomType::RAY("RAY");
 CollisionGeomType CollisionGeomType::MESH("MESH");
@@ -84,8 +85,10 @@ dtCore::CollisionGeomType* dtCore::ODEGeomWrap::GetCollisionGeomType() const
       return &CollisionGeomType::SPHERE;
    case dBoxClass:
       return &CollisionGeomType::CUBE;
-   case dCCylinderClass:
+   case dCylinderClass:
       return &CollisionGeomType::CYLINDER;
+   case dCCylinderClass:
+      return &CollisionGeomType::CCYLINDER;
    case dRayClass:
       return &CollisionGeomType::RAY;
    case dTriMeshClass:
@@ -135,6 +138,15 @@ void dtCore::ODEGeomWrap::GetCollisionGeomDimensions(std::vector<float>& dimensi
             dimensions.push_back(float(sides[i]));
          }
 
+         break;
+      }
+   case dCylinderClass:
+      {
+         dReal radius, length;
+         dGeomCylinderGetParams(id, &radius, &length);
+
+         dimensions.push_back(float(radius));
+         dimensions.push_back(float(length));
          break;
       }
    case dCCylinderClass:
@@ -282,7 +294,7 @@ public:
 
 
 /**
- * Determines the cylinder parameters
+ * Determines the sphere parameters
  */
 class SphereFunctor
 {
@@ -421,15 +433,6 @@ void dtCore::ODEGeomWrap::SetCollisionBox(osg::Node* node)
    }
 }
 
-//////////////////////////////////////////////////////////////////////////
-void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(float radius, float length)
-{
-   mOriginalGeomID = dCreateCCylinder(0, radius, length);
-   dGeomDisable(mOriginalGeomID);
-
-   dGeomTransformSetGeom(mGeomID, dCreateCCylinder(0, radius, length));
-}
-
 /**
  * Determines the cylinder parameters
  */
@@ -485,6 +488,61 @@ public:
       if (tv2.length() > mRadius) { mRadius = tv3.length(); }
    }
 };
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEGeomWrap::SetCollisionCylinder(float radius, float length)
+{
+   mOriginalGeomID = dCreateCylinder(0, radius, length);
+   dGeomDisable(mOriginalGeomID);
+
+   dGeomTransformSetGeom(mGeomID, dCreateCylinder(0, radius, length));
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEGeomWrap::SetCollisionCylinder(osg::Node* node)
+{
+
+   if (node)
+   {
+      DrawableVisitor<CylinderFunctor> cv;
+      node->accept(cv);
+
+      float radius = cv.mFunctor.mRadius;
+      float length = cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ;
+
+      if (radius > 0 && length > 0)
+      {
+         dGeomID subTransformID = dCreateGeomTransform(0);
+
+         dGeomTransformSetCleanup(subTransformID, 1);
+
+         mOriginalGeomID = dCreateCylinder(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ);
+         dGeomDisable(mOriginalGeomID);
+
+         dGeomTransformSetGeom(subTransformID, dCreateCylinder(0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ));
+
+         dGeomTransformSetGeom(mGeomID, subTransformID);
+
+      }
+      else
+      {
+         // This case happens in STAGE when the collision shape property is
+         // parsed _before_ the mesh filename. After the mesh has been
+         // loaded then the box will be recalculated.
+         LOG_INFO("Calculated values for collision cylinder are invalid. If you are reading this from STAGE, don't worry, it just means the collision shape ActorProperty was parsed from XML before the actual mesh. The collision shape will be recalculated when the mesh is loaded.")
+      }
+   }
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(float radius, float length)
+{
+   mOriginalGeomID = dCreateCCylinder(0, radius, length);
+   dGeomDisable(mOriginalGeomID);
+
+   dGeomTransformSetGeom(mGeomID, dCreateCCylinder(0, radius, length));
+}
 
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEGeomWrap::SetCollisionCappedCylinder(osg::Node* node)
@@ -757,19 +815,28 @@ dtCore::RefPtr<osg::Geode> dtCore::ODEGeomWrap::CreateRenderedCollisionGeometry(
             rad), hints));
       }
       break;
-   case dCCylinderClass:
+   case dCylinderClass:
       {
          dReal radius, length;
-         dGeomCCylinderGetParams(GetOriginalGeomID(), &radius, &length);
+         dGeomCylinderGetParams(GetOriginalGeomID(), &radius, &length);
          geode.get()->addDrawable(
             new osg::ShapeDrawable(
             new osg::Cylinder(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
             radius, length), hints));
       }
       break;
+   case dCCylinderClass:
+      {
+         dReal radius, length;
+         dGeomCCylinderGetParams(GetOriginalGeomID(), &radius, &length);
+         geode.get()->addDrawable(
+            new osg::ShapeDrawable(
+            new osg::Capsule(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
+            radius, length), hints));
+      }
+      break;
 
    case dTriMeshClass:
-   case dCylinderClass:
    case dPlaneClass:
       {
          //dVector4 result; //a*x+b*y+c*z = d
