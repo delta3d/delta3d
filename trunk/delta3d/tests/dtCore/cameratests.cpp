@@ -94,6 +94,7 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestInitialCallbackConditions();
       void TestAddingTwoCallbacks();
       void TestTriggeringCallback();
+      void TestOverwritingExistingCallback();
 
       void TestOnScreen()
       {
@@ -336,19 +337,10 @@ void CameraTests::TestInitialCallbackConditions()
    
    osg::Camera::DrawCallback *osgCallback = cam->GetOSGCamera()->getPostDrawCallback();
 
-   dtCore::CameraCallbackContainer *cont = dynamic_cast<dtCore::CameraCallbackContainer*>(osgCallback);
+   CPPUNIT_ASSERT_MESSAGE("Camera should not have any Post Draw callbacks added by default.",
+                                osgCallback == NULL);
 
-   CPPUNIT_ASSERT_MESSAGE("The Camera's postdrawcallback isn't set to the correct default type.",
-                           cont != NULL);
-
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The Camera should have at least one initial callback for screenshots.",
-                               false, cont->GetCallbacks().empty());
-
-   dtCore::CameraDrawCallback* cb = cont->GetCallbacks()[0].get();
-
-   dtCore::ScreenShotCallback* screenCB = dynamic_cast<dtCore::ScreenShotCallback*>(cb);
-   CPPUNIT_ASSERT_MESSAGE("The first Camera Callback should be the screenshot callback.",
-                          screenCB != NULL);
+   cam = NULL;
 }
 
 class TestCB : public dtCore::CameraDrawCallback
@@ -426,4 +418,26 @@ void CameraTests::TestTriggeringCallback()
 
    cam->RemovePostDrawCallback(*cb1);
    cam->RemovePostDrawCallback(*cb1);
+}
+
+class TestOsgCallback : public osg::Camera::DrawCallback
+{
+public:
+   TestOsgCallback() {};
+   virtual ~TestOsgCallback() {};
+   virtual void operator () (osg::RenderInfo& renderInfo) const {};
+};
+
+//////////////////////////////////////////////////////////////////////////
+void CameraTests::TestOverwritingExistingCallback()
+{
+   dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
+   dtCore::RefPtr<TestOsgCallback> cb = new TestOsgCallback();
+
+   cam->GetOSGCamera()->setPostDrawCallback(cb.get());
+
+   dtCore::RefPtr<TestCB> deltaCB = new TestCB();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Should not be able to add a Camera PostDrawCallback since there already is one.",
+                                false, cam->AddPostDrawCallback(*deltaCB));
 }

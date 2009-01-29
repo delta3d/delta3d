@@ -75,11 +75,6 @@ namespace dtCore
       SetClearColor(0.2f, 0.2f, 0.6f, 1.f);
 
       SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_CAMERA);
-
-      mCallbackContainer = new CameraCallbackContainer(*this);
-      mOsgCamera->setPostDrawCallback(mCallbackContainer.get());
-      mScreenShotTaker = new ScreenShotCallback();
-      AddPostDrawCallback(*mScreenShotTaker);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -88,12 +83,33 @@ namespace dtCore
       DeregisterInstance(this);
       RemoveSender(&dtCore::System::GetInstance());
 
-      mCallbackContainer->RemoveCallback(*mScreenShotTaker);
+      if (mCallbackContainer.valid())
+      {
+         if (mScreenShotTaker.valid())
+         {
+            mCallbackContainer->RemoveCallback(*mScreenShotTaker);
+            mScreenShotTaker = NULL;
+         }
+         mCallbackContainer = NULL;
+      }
+      
    }
 
    /////////////////////////////////////////////////////////////////////////////
    const std::string Camera::TakeScreenShot(const std::string& namePrefix)
    {
+      if (mScreenShotTaker.valid() == false)
+      {
+         //create our screen shot taker and add it to the container
+         mScreenShotTaker = new ScreenShotCallback();
+         if (AddPostDrawCallback(*mScreenShotTaker) == false)
+         {
+            //could not add our callback
+            mScreenShotTaker = NULL;
+            return std::string();
+         }
+      }
+
       std::string timeString = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
                                                           dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
       for (unsigned int i = 0 ; i < timeString.length(); ++i)
@@ -501,15 +517,51 @@ namespace dtCore
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Camera::AddPostDrawCallback(dtCore::CameraDrawCallback& cb) const
+   bool Camera::VerifyCallbackContainer()
    {
-      mCallbackContainer->AddCallback(cb);
+      if (GetOSGCamera()->getPostDrawCallback() == NULL)
+      {
+         // 1) No callback yet
+         if (mCallbackContainer.valid() == false)
+         {
+            mCallbackContainer = new CameraCallbackContainer(*this);
+         }
+         GetOSGCamera()->setPostDrawCallback(mCallbackContainer.get());
+
+         return true;
+      }
+
+      if (GetOSGCamera()->getPostDrawCallback() == mCallbackContainer.get())
+      {
+         //2) its our callback
+         return true;
+      }      
+      else   
+      {
+         //3) its not our callback
+         LOG_ERROR("The OSG Camera already has a PostDrawCallback assigned.  Can't replace it.");
+         return false;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void Camera::RemovePostDrawCallback(dtCore::CameraDrawCallback& cb) const
+   bool Camera::AddPostDrawCallback(dtCore::CameraDrawCallback& cb)
    {
+      if (VerifyCallbackContainer() == false) { return false; }
+
+      mCallbackContainer->AddCallback(cb);
+
+      return true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Camera::RemovePostDrawCallback(dtCore::CameraDrawCallback& cb)
+   {
+      if (VerifyCallbackContainer() == false) { return false; }
+
       mCallbackContainer->RemoveCallback(cb);
+
+      return true;
    }
 }
 

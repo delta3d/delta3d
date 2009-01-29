@@ -223,13 +223,15 @@ namespace dtCore
 
       /** Add a postdraw callback to the Camera.
         * @param cb The callback to trigger during post-draw
+        * @return true if cb was added correctly
         */
-      void AddPostDrawCallback(dtCore::CameraDrawCallback& cb) const;
+      bool AddPostDrawCallback(dtCore::CameraDrawCallback& cb);
 
       /** Remove a postdraw callback from the Camera.
         * @param cb The callback to remove
+        * @return true if cb was removed correctly
         */
-      void RemovePostDrawCallback(dtCore::CameraDrawCallback& cb) const;
+      bool RemovePostDrawCallback(dtCore::CameraDrawCallback& cb);
 
    protected:
 
@@ -257,6 +259,12 @@ namespace dtCore
 
       ///Common constructor functionality
       void Ctor();
+
+      /** Verify the CameraCallbackContainer is created and added to the OSG Camera.
+        * If it's not, try to create and add it.
+        * @return true if the container has been created and added to the OSG Camera
+        */
+      bool VerifyCallbackContainer();
 
       RefPtr<osg::Camera> mOsgCamera; // Handle to the osg Camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
