@@ -36,7 +36,6 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mKeyboard(NULL)
    , mMouse(NULL)
    , mScale(1.0f)
-   , mClearNode(NULL)
    , mCoordinateSpace(LOCAL_SPACE)
    , mMotionType(MOTION_TYPE_TRANSLATION)
    , mHoverArrow(ARROW_TYPE_MAX)
@@ -128,6 +127,8 @@ void ObjectMotionModel::SetMotionType(ObjectMotionModel::MotionType motionType)
       mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCylinder.get());
       mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCone.get());
       mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].rotationRing.get());
+      mAngleGeode->removeDrawable(mAngleDrawable.get());
+      mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
    }
 
    if (mMotionType == MOTION_TYPE_ROTATION)
@@ -198,6 +199,12 @@ void ObjectMotionModel::OnMessage(MessageData *data)
          // When the mouse is released, deselect our current arrow.
          if (!bLeftMouse && !bRightMouse)
          {
+            if (mMouseLocked)
+            {
+               mAngleGeode->removeDrawable(mAngleDrawable.get());
+               mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
+            }
+
             mCurrentArrow  = ARROW_TYPE_MAX;
             mMouseDown     = false;
             mMouseLocked   = false;
@@ -300,6 +307,7 @@ void ObjectMotionModel::InitArrows(void)
       if (stateSet)
       {
          //stateSet->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
+         stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
          stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
          stateSet->setRenderBinDetails(98, "RenderBin");
 
@@ -312,23 +320,6 @@ void ObjectMotionModel::InitArrows(void)
          osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
          stateSet->setAttribute(blend, osg::StateAttribute::ON);
       }
-
-      //mClearNode = new osg::ClearNode();
-      //if (mClearNode)
-      //{
-      //   mClearNode->setClearMask(GL_DEPTH_BUFFER_BIT);
-      //   mClearNode->setRequiresClear(true);
-
-      //   groupNode->addChild(mClearNode);
-
-      //   //// Make this group render top most.
-      //   //osg::StateSet* stateSet = mClearNode->getOrCreateStateSet();
-      //   //if (stateSet)
-      //   //{
-      //   //   //stateSet->setRenderBinDetails(99, "DepthRenderBin", osg::StateSet::OVERRIDE_RENDERBIN_DETAILS);
-
-      //   //}
-      //}
    }
 
    osg::Group* wireNode = new osg::Group();
@@ -347,9 +338,6 @@ void ObjectMotionModel::InitArrows(void)
 
          osg::Depth* depth = new osg::Depth(osg::Depth::LEQUAL);
          stateSet->setAttribute(depth, osg::StateAttribute::ON);
-
-         osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-         stateSet->setAttribute(blend, osg::StateAttribute::ON);
       }
 
       if (groupNode)
@@ -367,7 +355,7 @@ void ObjectMotionModel::InitArrows(void)
       osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
       osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.013f, 0.03f);
 
-      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.1f, 0.005f);
+      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.1f, 0.001f);
 
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
@@ -375,14 +363,7 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
 
       // Now set up their Hierarchy.
-      if (mClearNode)
-      {
-         mClearNode->addChild(mArrows[arrowIndex].transformable->GetOSGNode());
-      }
-      else
-      {
-         mTargetTransform->AddChild(mArrows[arrowIndex].transformable.get());
-      }
+      mTargetTransform->AddChild(mArrows[arrowIndex].transformable.get());
 
       if (wireNode)
       {
@@ -407,6 +388,22 @@ void ObjectMotionModel::InitArrows(void)
 
       mArrows[arrowIndex].arrowGeode->setNodeMask(ARROW_NODE_MASK);
    }
+
+   mAngleTransform = new dtCore::Transformable();
+   mAngleGeode = new osg::Geode();
+   mAngleCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.05f), 0.001f, 0.10f);
+   mAngleDrawable = new osg::ShapeDrawable(mAngleCylinder.get());
+
+   mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
+   mTargetTransform->AddChild(mAngleTransform.get());
+
+   mAngleOriginTransform = new dtCore::Transformable();
+   mAngleOriginGeode = new osg::Geode();
+   mAngleOriginCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.05f), 0.001f, 0.10f);
+   mAngleOriginDrawable = new osg::ShapeDrawable(mAngleOriginCylinder.get());
+
+   mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
+   mTargetTransform->AddChild(mAngleOriginTransform.get());
 
    if (IsEnabled() && mScene)
    {
@@ -482,6 +479,12 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
       if (mMotionType == MOTION_TYPE_ROTATION)
       {
          mArrows[arrowIndex].rotationRing->setColor(color);
+
+         if (mCurrentArrow == (ArrowType)arrowIndex)
+         {
+            mAngleDrawable->setColor(color);
+            mAngleOriginDrawable->setColor(color);
+         }
       }
       else
       {
@@ -763,7 +766,6 @@ void ObjectMotionModel::UpdateRotation(void)
    // Find the projected point of collision on the plane.
    osg::Vec3 projection = (mouse * fDistance) + camPos;
    osg::Vec3 vector     = projection - targetPos;
-
    vector.normalize();
 
    float fDotAngle = upAxis * vector;
@@ -774,14 +776,39 @@ void ObjectMotionModel::UpdateRotation(void)
    // the current angle.
    if (mMouseOffset.x() != 0.0f || mMouseOffset.y() != 0.0f)
    {
-      mMouseOffset.x() = 0.0f;
-      mMouseOffset.y() = 0.0f;
+      mMouseOffset.set(0.0f, 0.0f);
 
       mOriginAngle = acos(fDotAngle);
       if (fDirection < 0.0f)
       {
          mOriginAngle = -mOriginAngle;
       }
+
+      mAngleGeode->removeDrawable(mAngleDrawable.get());
+      mAngleGeode->addDrawable(mAngleDrawable.get());
+      mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
+      mAngleOriginGeode->addDrawable(mAngleOriginDrawable.get());
+
+      osg::Matrix matrix;
+
+      if (mCoordinateSpace == LOCAL_SPACE)
+      {
+         target->GetTransform(transform);
+         transform.GetRotation(matrix);
+      }
+
+      if (mCurrentArrow == ARROW_TYPE_UP)
+      {
+         matrix *= matrix.rotate(osg::DegreesToRadians(90.0f), rightAxis);
+      }
+      matrix *= matrix.rotate(mOriginAngle, axis);
+
+      transform.SetRotation(matrix);
+      transform.SetTranslation(osg::Vec3(0,0,0));
+      transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+      transform.SetTranslation(targetPos);
+      mAngleTransform->SetTransform(transform);
+      mAngleOriginTransform->SetTransform(transform);
    }
    else
    {
@@ -802,16 +829,45 @@ void ObjectMotionModel::UpdateRotation(void)
       {
          angle -= mOriginAngle;
       }
-   }
 
-   if (angle != 0)
-   {
-      osg::Matrix matrix;
-      target->GetTransform(transform);
-      transform.GetRotation(matrix);
-      matrix *= matrix.rotate(angle, axis);
-      transform.SetRotation(matrix);
-      target->SetTransform(transform);
+      if (angle != 0)
+      {
+         // Rotate the actual object.
+         osg::Matrix matrix;
+         target->GetTransform(transform);
+         transform.GetRotation(matrix);
+         matrix *= matrix.rotate(angle, axis);
+         transform.SetRotation(matrix);
+         target->SetTransform(transform);
+
+         matrix = matrix.identity();
+         if (mCurrentArrow == ARROW_TYPE_UP)
+         {
+            matrix *= matrix.rotate(osg::DegreesToRadians(90.0f), rightAxis);
+         }
+         matrix *= matrix.rotate(mOriginAngle, axis);
+         
+         // Rotate the compass angle.
+         if (mCoordinateSpace == WORLD_SPACE)
+         {
+            transform.SetRotation(matrix);
+            transform.SetTranslation(osg::Vec3(0,0,0));
+            transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+            transform.SetTranslation(targetPos);
+            mAngleTransform->SetTransform(transform);
+         }
+         else
+         {
+            mAngleOriginTransform->GetTransform(transform);
+            transform.GetRotation(matrix);
+            matrix *= matrix.rotate(-angle, axis);
+            transform.SetRotation(matrix);
+            transform.SetTranslation(osg::Vec3(0,0,0));
+            transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+            transform.SetTranslation(targetPos);
+            mAngleOriginTransform->SetTransform(transform);
+         }
+      }
    }
 }
 

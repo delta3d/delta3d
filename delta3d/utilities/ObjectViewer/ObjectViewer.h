@@ -154,8 +154,9 @@ private:
    std::vector<dtCore::RefPtr<dtCore::Transformable> > mLightArrowTransformable;
    std::vector<dtCore::RefPtr<dtCore::Object> >        mLightArrow;
 
-   int  mCurrentLight;
-   bool mShouldGenerateTangents;
+   int   mCurrentLight;
+   bool  mShouldGenerateTangents;
+   float mLightScale;
 };
 
 #endif // DELTA_OBJECT_VIEWER

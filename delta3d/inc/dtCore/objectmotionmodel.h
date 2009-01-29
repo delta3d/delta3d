@@ -202,8 +202,18 @@ namespace dtCore
             osg::Vec4                              arrowConeColor;
          };
 
+         dtCore::RefPtr<dtCore::Transformable>     mAngleOriginTransform;
+         osg::ref_ptr<osg::Geode>                  mAngleOriginGeode;
+         osg::ref_ptr<osg::Cylinder>               mAngleOriginCylinder;
+         osg::ref_ptr<osg::ShapeDrawable>          mAngleOriginDrawable;
+
+         dtCore::RefPtr<dtCore::Transformable>     mAngleTransform;
+         osg::ref_ptr<osg::Geode>                  mAngleGeode;
+         osg::ref_ptr<osg::Cylinder>               mAngleCylinder;
+         osg::ref_ptr<osg::ShapeDrawable>          mAngleDrawable;
+
          dtCore::RefPtr<dtCore::Transformable>     mTargetTransform;
-         osg::ClearNode*                           mClearNode;
+
          ArrowData   mArrows[ARROW_TYPE_MAX];
          float       mScale;
 
