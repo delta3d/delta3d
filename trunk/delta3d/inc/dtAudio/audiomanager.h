@@ -226,9 +226,23 @@ namespace dtAudio
           */ 
          ALuint            GetSource(Sound* sound);
 
-         ///Pre-load a sound file into a buffer. We still only support .wav's
-         ///but .ogg support is coming soon!
-         bool              LoadFile( const std::string& file );
+         /*
+          * Pre-load a sound file into a buffer. We only support .wav's         
+          * Return the OpenAL buffer ID of the loaded sound data.
+          *
+          * Testing if the returned buffer is invalid can be done with like this:            
+          *    if (alIsBuffer(buf) == AL_FALSE)
+          *
+          * This method is in the AudioManager rather than the Sound class
+          * because one of the AudioManager's main jobs is to manage sound data
+          * buffers.  If muliple sounds use the same buffers then the
+          * AudioManager ensures that these redundant data buffers are shared
+          * by the Sounds and not loaded into memory multiple times.
+          *
+          * @param file File to be loaded into a buffer.
+          * @return OpenAL buffer ID.
+          */
+         ALint LoadFile(const std::string& file);
 
          /// un-load a sound file from a buffer (if use-count is zero)
          bool              UnloadFile( const std::string& file );
@@ -237,22 +251,9 @@ namespace dtAudio
          /// process commands of all sounds in the command queue
          inline   void              PreFrame( const double deltaFrameTime );
 
-         /// process all sounds in the play, pause, stop, and rewind queues
-         /// put active sounds on active list
-         /// remove inactive sounds from active list
-         inline   void              Frame( const double deltaFrameTime );
-
-         /// unbind the source/buffers from all inactive sounds (stopped sounds)
-         /// free the source
-         /// stop sending AudioManager messages to sound
-         inline   void              PostFrame( const double deltaFrameTime );
-
          inline   void              Pause( const double deltaFrameTime );
          /// check if manager has been configured
          inline   bool              Configured( void )   const;
-
-         /// pre-create the specified number of sources
-         inline   bool              ConfigSources( unsigned int num );
 
          /// get the eax function pointers from OpenAL (nothing done with them yet)
          inline   bool              ConfigEAX( bool eax );
@@ -290,51 +291,14 @@ namespace dtAudio
          /// set sound's source to not listener-relative
          inline   void              SetAbsolute( Sound* snd );
 
-         /// set sound source's gain
-         inline   void              SetGain( Sound* snd );
-
-         /// set sound source's pitch
-         inline   void              SetPitch( Sound* snd );
-
-         /// set sound source's position
-         inline   void              SetPosition( Sound* snd );
-
-         /// set sound source's direction
-         inline   void              SetDirection( Sound* snd );
-
-         /// set sound source's velocity
-         inline   void              SetVelocity( Sound* snd );
-
-         /// set sound source's reference distance (minimum dist)
-         inline   void              SetReferenceDistance( Sound* snd );
-
-         /// set sound source's maximum distance
-         inline   void              SetMaximumDistance( Sound* snd );
-
-         /// set sound source's rolloff factor
-         inline   void              SetRolloff( Sound* snd );
-
-         /// set sound source's minimum gain
-         inline   void              SetMinimumGain( Sound* snd );
-
-         /// set sound source's maximum gain
-         inline   void              SetMaximumGain( Sound* snd );
-
-         /// give this sound a source         
-         inline   bool              SetupSource( Sound* snd );
-
-         /// take source away from this sound
-         inline   void              FreeSource( Sound* snd );
-
       private:
          ALvoid*             mEAXSet;
          ALvoid*             mEAXGet;
+         
+         unsigned int        mNumSounds;
+         bool                mIsConfigured;
 
-         ALsizei             mNumSources;
-         ALuint*             mSource;
-
-         SRC_MAP             mSourceMap;
-         SRC_QUE             mAvailable;
+         SRC_MAP             mSourceMap;         
          SRC_QUE             mPlayQueue;
          SRC_QUE             mPauseQueue;
          SRC_QUE             mStopQueue;

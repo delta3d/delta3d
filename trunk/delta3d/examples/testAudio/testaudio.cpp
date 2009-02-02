@@ -318,8 +318,7 @@ void TestAudioApp::LoadPlaySound(const char* fname, unsigned int box /*= 0L*/)
    snd->SetLooping(mLooping);
    if (box)
    {
-      snd->SetMinDistance(30.0f);
-      snd->SetRolloffFactor(10.0f);
+      snd->SetRolloffFactor(0.2f);
    }
    snd->Play();
    mQueued.push(snd);
@@ -490,7 +489,10 @@ TestAudioApp::ToggleSoundLooping()
       snd = *iter;
       assert(snd);
 
-      snd->SetLooping(mLooping);
+      if(! snd->IsStopped())
+      {
+         snd->SetLooping(mLooping);
+      }
    }
 }
 

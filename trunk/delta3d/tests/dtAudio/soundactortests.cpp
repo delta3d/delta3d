@@ -174,8 +174,6 @@ void SoundActorTests::TestProperties()
          proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_LOOPING ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a max distance property.",
          proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_DISTANCE ) != NULL );
-      CPPUNIT_ASSERT_MESSAGE("Sound actor should have a min distance property.",
-         proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MIN_DISTANCE ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a max gain property.",
          proxy->GetProperty( dtAudio::SoundActorProxy::PROPERTY_MAX_GAIN ) != NULL );
       CPPUNIT_ASSERT_MESSAGE("Sound actor should have a min gain property.",

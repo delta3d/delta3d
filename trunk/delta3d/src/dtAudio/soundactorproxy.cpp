@@ -43,7 +43,6 @@ namespace dtAudio
    const dtUtil::RefString SoundActorProxy::PROPERTY_LISTENER_RELATIVE("Listener Relative"); // "Listener Relative"
    const dtUtil::RefString SoundActorProxy::PROPERTY_LOOPING("Looping"); // "Looping"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_DISTANCE("Max Distance"); // "Max Distance"
-   const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_DISTANCE("Min Distance"); // "Min Distance"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_GAIN("Max Gain"); // "Max Gain"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MIN_GAIN("Min Gain"); // "Min Gain"
    const dtUtil::RefString SoundActorProxy::PROPERTY_MAX_RANDOM_TIME("Max Random Time"); // "Max Random Time"
@@ -200,7 +199,7 @@ namespace dtAudio
         // value of true will loop the sound, while a value of false
         // will not loop/stop looping a sound.
         // Default is false
-        AddProperty(new IntActorProperty(
+        AddProperty(new BooleanActorProperty(
            PROPERTY_LOOPING,
            PROPERTY_LOOPING,
             MakeFunctor(*sound, &Sound::SetLooping),
@@ -231,22 +230,12 @@ namespace dtAudio
         // This property toggles whether or not a sound is listerner
         // relative.
         // Default is false
-        AddProperty(new IntActorProperty(
+        AddProperty(new BooleanActorProperty(
            PROPERTY_LISTENER_RELATIVE,
            PROPERTY_LISTENER_RELATIVE,
             MakeFunctor(*sound, &Sound::SetListenerRelative),
             MakeFunctorRet(*sound, &Sound::IsListenerRelative),
             "Toggles if a sound is relative to the listener.", GROUPNAME));
-
-        // This property manipulates the minimum distance of a sound. It uses
-        // a float type to represent the minimum distance.
-        // Default is 1.0f
-        AddProperty(new FloatActorProperty(
-           PROPERTY_MIN_DISTANCE,
-           PROPERTY_MIN_DISTANCE,
-            MakeFunctor(*sound, &Sound::SetMinDistance),
-            MakeFunctorRet(*sound, &Sound::GetMinDistance),
-            "Sets the minimum distance of a sound.", GROUPNAME));
 
         // This property manipulates the maximum distance of a sound. It uses
         // a float type to represent the maximum distance.

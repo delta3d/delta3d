@@ -142,8 +142,6 @@ TestSoundApp::SoundStartedCB(dtAudio::Sound* sound, void* param)
       " \"%s\" has started", sound->GetFilename());
 }
 
-
-
 /**
  * Call back to know when a sound has stopped.
  *

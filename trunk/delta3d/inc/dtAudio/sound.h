@@ -54,7 +54,7 @@ namespace dtAudio
     * dtAudio::Sound is a little more than just an interface to an object
     * held within (and protected) by the dtAudio::AudioManager.
     *
-    * Sound objects are not created directly by the user (new/delete).
+    * Sound objects are not usually created directly by the user (new/delete).
     * Instead the user requests a new sound from the AudioManager:
     *
     *    Sound* mysound = AudioManager::GetInstance().NewSound();
@@ -146,59 +146,69 @@ namespace dtAudio
          static   const char* kCommand[kNumCommands];
       
          /**
-          * Constructor, user does not create directly
-          * instead requests a sound from AudioManager
+          * Constructor.  Typically, user does not create directly
+          * instead requests a sound from AudioManager.  The AudioManager
+          * facilitates sound data buffer management.
           */
          Sound();
 
       protected:
          /**
-          * Destructor, user does not delete directly
-          * instead frees sound to the AudioManager
+          * Destructor. Typically, user does not delete directly
+          * instead frees sound to the AudioManager so that any buffer(s)
+          * that need to be freed also are freed (or not freed... in case
+          * other Sounds are using them).
           */
          virtual ~Sound();
 
          /**
-          * Message handler.
+          * Message handler. 
           *
           * @param data the received message
           */
-         virtual  void        OnMessage(MessageData* data);
+         virtual void OnMessage(MessageData* data);         
+
+         // Get the state of the indicated flag.
+         unsigned int GetState(unsigned int flag) const {return mCommandState & BIT(flag);}
+
+         // set indicated flags in mState
+         void SetState(unsigned int flag);
+
+         // Reset indicated flags:
+         void ResetState(unsigned int flag) {mCommandState &= ~BIT(flag);}
 
       public:
+         void SetPositionFromParent();
+
+         void SetDirectionFromParent();
+
          /**
           * Loads the specified sound file.
           *
           * @param file the name of the file to load
           */
-         virtual  void        LoadFile(const char* file);
+         void LoadFile(const char* file);
 
          /**
           * Unloads the specified sound file.
           */
-         virtual  void        UnloadFile(void);
+         void UnloadFile(void);
 
          ///clean up Sound for recyclying
          void Clear(void);
+         
+         ///Run all commands in the Sound's command queue (also empties the queue)
+         void RunAllCommandsInQueue();
 
-         //Add a command to this Sound's command queue
-         void EnqueueCommand(const char* cmd);
-
-         //Dequeue and return next command in this Sound's command queue
-         const char* DequeueCommand(void);
-
-         /// Get this sound's OpenAL buffer ID
-         ALuint GetBuffer(void) {return mBuffer;}                        
+         /// Get this sound's OpenAL buffer ID          
+         ALint GetBuffer(void);
 
          /**
           * Returns the name of the loaded sound file.
           *
           * @return the name of the loaded file
           */
-         virtual  const char* GetFilename(void)              {  return   mFilename.c_str();   }
-
-         // Get the state of the indicated flag.
-         unsigned int GetState(unsigned int flag) const {return mState & BIT(flag);}
+         const char* GetFilename(void) { return mFilename.c_str(); }
 
          /// Returns the OpenAL Source ID associated with the loaded Delta3d Sound object.          
          ALuint GetSource(void) {return mSource;} 
@@ -207,10 +217,10 @@ namespace dtAudio
          bool IsInitialized(void) {return mIsInitialized;}
 
          /// get the IsLooping flag
-         int IsLooping(void) const {return GetState(LOOP);}
+         bool IsLooping(void) const;
 
          ///Get the IsListenerRelative flag
-         int IsListenerRelative(void) const {return GetState(REL);}
+         bool IsListenerRelative(void) const;
 
          ///Get the IsPaused flag
          int IsPaused(void) const {return GetState(PAUSE); }
@@ -221,16 +231,15 @@ namespace dtAudio
          ///Get the IsStopped flag
          int IsStopped(void) const {return GetState(STOP);}         
 
-         // Reset indicated flags:
-         void ResetState(unsigned int flag) {mState &= ~BIT(flag);}
-
-         /** Set this sound's OpenAL buffer ID
+         /** Set the Sound's OpenAL buffer ID without going through the
+          *  AudioManager.  The typical case is to go through the AudioManager,
+          *  but this method is provided for exception cases.
           * 
           *  NOTE: This is an advanced operation!! Typically a Sound's OpenAL
           *  buffer is set automatically via the AudioManager.  Only tinker with
           *  OpenAL buffers directly if you know what you are doing.
           */
-         void  SetBuffer(ALuint b) {mBuffer = b;}
+         void SetBuffer(ALint b);
 
          /// Set the IsInitialized flag
          void SetInitialized(bool isInit) {mIsInitialized = isInit;}
@@ -241,10 +250,7 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetPlayCallback(CallBack cb, void* param);
-
-         // set indicated flags in mState
-         void SetState(unsigned int flag) {mState |= BIT( flag );}
+         virtual void SetPlayCallback(CallBack cb, void* param);
 
          /**
           * Set callback for when sound stops playing.
@@ -252,7 +258,7 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetStopCallback(CallBack cb, void* param);
+         virtual void SetStopCallback(CallBack cb, void* param);
          
          /**
           * Sets the OpenAL Source ID associated with the loaded Delta3D Sound object.
@@ -264,68 +270,83 @@ namespace dtAudio
          void SetSource(ALuint s) {mSource = s;}
 
          /**
-          * Starts playing this sound.
+          * Tells the AudioManager to start playing this on the next frame step.
           */
-         virtual  void        Play(void);
+         void Play(void);
+
+         ///Starts playing a sound without reference to the AudioManager.
+         void PlayImmediately();
 
          /**
-          * Pauses playing this sound.
+          * Tells the AudioManager to start playing this sound on the next frame step.
           */
-         virtual  void        Pause(void);
+         void Pause(void);
+
+         ///Pauses the sound immediately without reference to the AudioManager.
+         void PauseImmediately();
 
          /**
-          * Stops playing this sound.
+          * Tells the Audio Manager to stop playing the sound at the next frame step.
           */
-         virtual  void        Stop(void);
+         void Stop(void);
 
          /**
-          * Rewinds to the beginning of this sound.
+          * Stops the sound without reference to the AudioManager. Usually you
+          * want to go through the AudioManager but this method is provided for
+          * exceptions to that rule.
           */
-         virtual  void        Rewind(void);
+         void StopImmediately(void);                  
 
+         /**
+          * Tells the AudioManager to rewind to the beginning of this sound.
+          * at the next frame step.
+          */
+         void Rewind(void);
+
+         ///Rewinds a sound immediately without referencing the AudioManager
+         void RewindImmediately();
+         
          /**
           * Sets whether or not to play the sound in a continuous loop.
           *
-          * @param loop 1 to play the sound in a loop, 0
-          * otherwise
-          */
-         void SetLooping(int loop = 1);
-
-         /**
-          * Checks whether or not the sound plays in a continuous loop.
-          * (overloaded function)
+          * NOTE that if you set a sound to loop when it is stopped, it will
+          * start playing.  To prevent this, use the IsStopped() method before
+          * firing the SetLooping method if you want stopped sounds to stay
+          * stopped (you would then need to fire a Play() method sometime
+          * thereafter to get the stopped looping Sound started up).
           *
-          * @return true if the sound plays in a loop, false otherwise
+          * @param loop : True to play the sound in a loop, otherwise false 
+          *               (plays sound one time then stops)          
           */
-         //virtual  bool        IsLooping(void)                     const {  return   false;   }
+         void SetLooping(bool loop = true);
 
          /**
           * Sets the gain of the sound source.
           *
           * @param gain the new gain
           */
-         virtual  void        SetGain(float gain);
+         void SetGain(float gain);
 
          /**
           * Returns the gain of the sound source.
           *
           * @return the current gain
           */
-         virtual  float       GetGain(void)                       const {  return   mGain;    }
+         float GetGain(void) const;
 
          /**
           * Sets the pitch multiplier of the sound source.
           *
           * @param pitch the new pitch
           */
-         virtual  void        SetPitch( float pitch );
+         void SetPitch(float pitch);
 
          /**
           * Returns the pitch multipier of the sound source.
           *
           * @return the current pitch
           */
-         virtual  float       GetPitch(void)                      const {  return   mPitch;   }
+         float GetPitch(void) const;
 
          /**
           * Flags sound to be relative to listener position.
@@ -346,10 +367,10 @@ namespace dtAudio
           * to relative = false when Sounds are created.
           *          
           */
-         virtual void SetListenerRelative(int relative);
+         void SetListenerRelative(bool relative);
 
          ///Deprecated 1/23/2009 in favor of SetListenerRelative
-         DEPRECATE_FUNC virtual  void        ListenerRelative( bool relative )
+         DEPRECATE_FUNC void ListenerRelative( bool relative )
          {
             DEPRECATE("void dtAudio::Sound::ListenerRelative()",
                       "void dtAudio::Sound::SetListenerRelative()");
@@ -364,30 +385,33 @@ namespace dtAudio
           * @param cs : Optional parameter describing the coordinate system of xform
           *             Defaults to ABS_CS.
           */
-         virtual  void        SetTransform(const dtCore::Transform&                  xform,
-                                           dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
+         void        SetTransform(const dtCore::Transform&                  xform,
+                                  dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
 
          /**
-          * Set the position of sound.
+          * Set the position of the Sound
           *
           * @param position to set
           */
-         virtual  void        SetPosition(const osg::Vec3& position);
-
+         void SetPosition(const osg::Vec3& position);
+         
          /**
           * Get the position of sound.
           *
           * @param position to get
           */
-         virtual  void        GetPosition(osg::Vec3& position)    const;
-
+         void GetPosition(osg::Vec3& position)    const;
 
          /**
           * Set the direction of sound.
           *
+          * If this is not zero, then the source is automatically considered as
+          * "directional" by OpenAL, which means its intensity is not the same
+          * in all directions. Check OpenAL specs for details (see AL_DIRECTION).          
+          *
           * @param direction to set
           */
-         virtual  void        SetDirection(const osg::Vec3& direction);
+         void SetDirection(const osg::Vec3& direction);
 
 
          /**
@@ -395,37 +419,28 @@ namespace dtAudio
           *
           * @param direction to get
           */
-         virtual  void        GetDirection(osg::Vec3& direction)  const;
+         void GetDirection(osg::Vec3& direction) const;
 
          /**
           * Set the velocity of sound.
           *
           * @param velocity to set
           */
-         virtual  void        SetVelocity(const osg::Vec3& velocity);
-
+         void SetVelocity(const osg::Vec3& velocity);
 
          /**
           * Get the velocity of sound.
           *
           * @param velocity to get
           */
-         virtual  void        GetVelocity(osg::Vec3& velocity)    const;
-
-         /**
-          * Set the minimum distance that sound plays at max_gain.
-          * Attenuation is not calculated below this distance
-          *
-          * @param dist set to minimum
-          */
-         virtual  void        SetMinDistance(float dist);
+         void GetVelocity(osg::Vec3& velocity) const;
 
          /**
           * Get the minimum distance that sound plays at max_gain.
           *
           * @return distance minimum
           */
-         virtual  float       GetMinDistance(void)                const {  return   mMinDist;   }
+         float GetMinDistance(void) const;
 
          /**
           * Sets the distance where there will no longer be any attenuation of
@@ -434,28 +449,28 @@ namespace dtAudio
           * @see dmINVCLAMP
           * @param dist the maximum distance
           */
-         virtual  void        SetMaxDistance(float dist);
+         void SetMaxDistance(float dist);
 
          /**
           * Get the maximum distance that sound plays at min_gain.
           *
           * @return distance maximum
           */
-         virtual  float       GetMaxDistance(void)                const {  return   mMaxDist;   }
+         float GetMaxDistance(void) const;
 
          /**
           * Set the rolloff factor describing attenuation curve.
           *
           * @param rolloff factor to set
           */
-         virtual  void        SetRolloffFactor(float rolloff);
+         void SetRolloffFactor(float rolloff);
 
          /**
           * Get the rolloff factor describing attenuation curve.
           *
           * @return rolloff factor
           */
-         virtual  float       GetRolloffFactor(void)              const {  return   mRolloff;   }
+         float GetRolloffFactor(void) const;
 
          /**
           * Set the minimum gain that sound plays at.
@@ -463,14 +478,14 @@ namespace dtAudio
           *
           * @param gain set to minimum
           */
-         virtual  void        SetMinGain(float gain);
+         void SetMinGain(float gain);
 
          /**
           * Get the minimum gain that sound plays at.
           *
           * @return gain minimum
           */
-         virtual  float       GetMinGain(void)                    const {  return   mMinGain;   }
+         float GetMinGain(void) const;
 
          /**
           * Set the maximum gain that sound plays at.
@@ -478,14 +493,14 @@ namespace dtAudio
           *
           * @param gain set to maximum
           */
-         virtual  void        SetMaxGain(float gain);
+         void SetMaxGain(float gain);
 
          /**
           * Get the maximum gain that sound plays at.
           *
           * @return gain maximum
           */
-         virtual  float       GetMaxGain(void)                    const {  return   mMaxGain;   }
+         float GetMaxGain(void) const;
 
          /**
           * Generates and returns a key frame that represents the
@@ -512,36 +527,19 @@ namespace dtAudio
          /** turns the FrameData into its XML representation.*/
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
-
       protected:
          std::string mFilename;
          CallBack    mPlayCB;
          void*       mPlayCBData;
          CallBack    mStopCB;
-         void*       mStopCBData;
-         float       mGain;
-         float       mPitch;
-         osg::Vec3   mPos;
-         /// Sets sound direction.
-         /**
-          *  If this is not zero, then the source is automatically considered as
-          *  "directional" by OpenAL, which means its intensity is not the same
-          *  in all directions. Check OpenAL specs for details (see AL_DIRECTION).
-          */
-         osg::Vec3   mDir;
-         osg::Vec3   mVelo;
-         float       mMinDist;
-         float       mMaxDist;
-         float       mRolloff;
-         float       mMinGain;
-         float       mMaxGain;
-
+         void*       mStopCBData;         
+         
          std::queue<const char*> mCommand;
 
-         ALuint                  mSource;
-         ALuint                  mBuffer;
-         unsigned int            mState;
+         unsigned int            mCommandState;
 
+         ALuint                  mSource;
+         ALint                   mBuffer;
          bool                    mIsInitialized;
    };
 } // namespace dtAudio
