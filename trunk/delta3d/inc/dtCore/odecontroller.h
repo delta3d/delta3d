@@ -168,7 +168,7 @@ namespace dtCore
       virtual void DefaultCBFunc(const dtCore::ODESpaceWrap::CollisionData& data);
 
       ///perform one iteration using the supplied step size
-      void Step(double stepSize) const;
+      void Step(double stepSize);
 
    private:
       void Ctor();
