@@ -150,6 +150,14 @@ namespace dtCore
          * @return A DeltaDrawable that was intersected, or NULL
          */
        dtCore::DeltaDrawable* GetMousePickedObject(unsigned int traversalMask = 0xffffffff);
+
+       /** Just like GetMousePickedObject, only that screen coordinates given by position param 
+         * is used instead of mouse position.
+         * @param mousePos The mouse position to use (-1..1), (-1..1)
+         * @param traversalMask : the optional bit mask to use for the intersection traversal
+         * @return A DeltaDrawable that was intersected, or NULL
+         */
+       dtCore::DeltaDrawable* GetPickedObject(const osg::Vec2& mousePos, unsigned int traversalMask);
       
        /** Supply a DatabasePager instance to overwrite the internal default pager.
          * @param pager : A custom DatabasePager (or NULL to disable database paging)
