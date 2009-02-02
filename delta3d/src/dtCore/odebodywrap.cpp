@@ -232,6 +232,25 @@ void dtCore::ODEBodyWrap::ApplyForce(const osg::Vec3& force)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyForceAtPos(const osg::Vec3& force, const osg::Vec3& position)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddForceAtPos(GetBodyID(), force.x(), force.y(), force.z(),
+                         position.x(), position.y(), position.z());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::ODEBodyWrap::ApplyForceAtRelPos(const osg::Vec3& force, const osg::Vec3& relPosition)
+{
+   if (GetBodyID() != 0)
+   {
+      dBodyAddForceAtRelPos(GetBodyID(), force.x(), force.y(), force.z(),
+                           relPosition.x(), relPosition.y(), relPosition.z());
+   }
+}
 
 //////////////////////////////////////////////////////////////////////////
 void dtCore::ODEBodyWrap::ApplyRelForce(const osg::Vec3& relForce)

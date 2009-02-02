@@ -152,11 +152,27 @@ namespace dtCore
       void ApplyForce(const osg::Vec3& force);
 
       /**
+       * Apply a world coordinate force at a world coordinate.
+       * @param force : the world coordinate force to apply
+       * @param position : the world relative position to apply the force to
+       */
+      void ApplyForceAtPos(const osg::Vec3& force,
+                           const osg::Vec3& position);
+
+      /**
        * Apply a force at the center of mass in body relative coordinates.
        *
        * @param relForce : the body relative force to apply
        */
       void ApplyRelForce(const osg::Vec3& relForce);
+
+      /**
+       * Apply a world coordinate force at a body relative position.
+       * @param force : The force relative to the world coordinates
+       * @param relPosition : The body relative position to apply the force to
+       */
+      void ApplyForceAtRelPos(const osg::Vec3& force,
+                              const osg::Vec3& relPosition);
 
       /**
        * Apply a body relative force at a body relative position.
