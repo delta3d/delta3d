@@ -276,13 +276,18 @@ dtCore::DeltaDrawable* View::GetMousePickedObject(unsigned int traversalMask)
 {
    const Mouse* mouse = GetMouse();
    if (mouse == NULL) { return NULL; }
+   return GetPickedObject(mouse->GetPosition(), traversalMask);
+}
 
+////////////////////////////////////////////////////////////////////////////////
+dtCore::DeltaDrawable* View::GetPickedObject(const osg::Vec2& mousePos, unsigned int traversalMask)
+{
    dtCore::Scene* scene = GetScene();
    if (scene == NULL) { return NULL; }
 
    osgUtil::LineSegmentIntersector::Intersections hitList ;
 
-   if (GetMouseIntersections(hitList, mouse->GetPosition(), traversalMask) == false)
+   if (GetMouseIntersections(hitList, mousePos, traversalMask) == false)
    {
       return NULL;
    }
