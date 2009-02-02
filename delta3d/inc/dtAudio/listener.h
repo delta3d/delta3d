@@ -33,7 +33,7 @@ namespace dtAudio
     * dtAudio::Listener is just an interface to the global listener
     * object held within (and protected) by the dtAudio::AudioManager.
     *
-    * The listener is not created directly by the user (new/delete).
+    * The listener is not usually created directly by the user (new/delete).
     * Instead the user requests the listener from the AudioManager:
     *
     *    Listener* global_ear = AudioManager::GetInstance().GetListener();

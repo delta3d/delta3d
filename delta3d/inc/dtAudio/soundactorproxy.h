@@ -67,7 +67,6 @@ namespace dtAudio
           static const dtUtil::RefString PROPERTY_LISTENER_RELATIVE;
           static const dtUtil::RefString PROPERTY_LOOPING;
           static const dtUtil::RefString PROPERTY_MAX_DISTANCE;
-          static const dtUtil::RefString PROPERTY_MIN_DISTANCE;
           static const dtUtil::RefString PROPERTY_MAX_GAIN;
           static const dtUtil::RefString PROPERTY_MIN_GAIN;
           static const dtUtil::RefString PROPERTY_MAX_RANDOM_TIME;
