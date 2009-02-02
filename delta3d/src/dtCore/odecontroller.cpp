@@ -293,7 +293,7 @@ const void* dtCore::ODEController::GetUserCollisionData() const
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtCore::ODEController::Step(double stepSize) const
+void dtCore::ODEController::Step(double stepSize)
 {
    if (mMsgSender.valid())
    {
