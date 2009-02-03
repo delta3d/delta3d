@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* William E. Johnson II
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * William E. Johnson II
+ */
 
 #include <dtAudio/soundactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -63,8 +63,8 @@ namespace dtAudio
    //////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
    //////////////////////////////////////////////////////////////////////////////
-   SoundActor::SoundActor(dtGame::GameActorProxy &proxy)  
-      : dtGame::GameActor(proxy)      
+   SoundActor::SoundActor(dtGame::GameActorProxy& proxy)
+      : dtGame::GameActor(proxy)
    {
       //make sure AudioManager has been initialized
       if(!dtAudio::AudioManager::GetInstance().IsInitialized())
@@ -108,25 +108,25 @@ namespace dtAudio
       , mPlaySoundAtStartup(true)
    {
       /**
-      * @note You must instantiate, configure, and shutdown the
-      * audiomanager in your application
-      * ex.
-      * \code
-      dtAudio::AudioManager::Instantiate();
-      dtAudio::AudioManager::GetManager()->Config(AudioConfigData&)
-      * \endcode
-      */
+       * @note You must instantiate, configure, and shutdown the
+       * audiomanager in your application
+       * ex.
+       * \code
+       dtAudio::AudioManager::Instantiate();
+       dtAudio::AudioManager::GetManager()->Config(AudioConfigData&)
+       * \endcode
+       */
       SetClassName(SoundActorProxy::CLASS_NAME.Get());
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
     SoundActorProxy::~SoundActorProxy()
     {
-         dtAudio::Sound *snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
+         dtAudio::Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
-         if(snd != NULL)
+         if (snd != NULL)
          {
-            if(snd->GetFilename())
+            if (snd->GetFilename())
             {
                snd->UnloadFile();
             }
@@ -153,7 +153,7 @@ namespace dtAudio
     void SoundActorProxy::OnRemovedFromWorld()
     {
        dtAudio::Sound* sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
-       if( sound != NULL )
+       if (sound != NULL)
        {
           sound->Stop();
 
@@ -176,11 +176,11 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::HandleActorTimers(const dtGame::Message& msg)
     {
-       if(msg.GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED)
+       if (msg.GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED)
        {
           Play();
 
-          if(mRandomSoundEffect)
+          if (mRandomSoundEffect)
           {
              PlayQueued(0.0f);
           }
@@ -190,11 +190,11 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::BuildPropertyMap()
     {
-        const dtUtil::RefString &GROUPNAME = "Sound";
+        const dtUtil::RefString& GROUPNAME = "Sound";
         GameActorProxy::BuildPropertyMap();
 
-        Sound *sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
-        
+        Sound* sound = static_cast<SoundActor&>(GetGameActor()).GetSound();
+
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
         // will not loop/stop looping a sound.
@@ -333,26 +333,26 @@ namespace dtAudio
            MakeFunctorRet(*this, &SoundActorProxy::IsPlayedAtStartup),
            "Will play sound at startup", GROUPNAME));
 
-        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND, 
+        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::SOUND,
            PROPERTY_SOUND_EFFECT,
            PROPERTY_SOUND_EFFECT,
-           dtDAL::MakeFunctor(*this, &SoundActorProxy::LoadFile), 
+           dtDAL::MakeFunctor(*this, &SoundActorProxy::LoadFile),
            "Loads the sound for this to use"));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void SoundActorProxy::LoadFile(const std::string &fileName)
+    void SoundActorProxy::LoadFile(const std::string& fileName)
     {
         Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
-        if(!fileName.empty())
+        if (!fileName.empty())
         {
             snd->LoadFile(fileName.c_str());
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void SoundActorProxy::SetDirection(const osg::Vec3 &dir)
+    void SoundActorProxy::SetDirection(const osg::Vec3& dir)
     {
         Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
@@ -370,7 +370,7 @@ namespace dtAudio
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void SoundActorProxy::SetVelocity(const osg::Vec3 &vel)
+    void SoundActorProxy::SetVelocity(const osg::Vec3& vel)
     {
         Sound* snd = static_cast<SoundActor&>(GetGameActor()).GetSound();
 
@@ -398,7 +398,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     void SoundActorProxy::PlayQueued(float offsetSeconds)
     {
-       if(mRandomSoundEffect)
+       if (mRandomSoundEffect)
        {
           offsetSeconds += float(dtUtil::RandFloat(mMinRandomTime, mMaxRandomTime));
        }
@@ -409,7 +409,7 @@ namespace dtAudio
     ///////////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon* SoundActorProxy::GetBillBoardIcon()
     {
-        if(!mBillBoardIcon.valid()) 
+        if (!mBillBoardIcon.valid())
         {
             mBillBoardIcon =
                  new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_SOUND);
@@ -422,7 +422,7 @@ namespace dtAudio
     dtAudio::Sound* SoundActorProxy::GetSound()
     {
        dtAudio::SoundActor* actor = NULL;
-       GetActor( actor );
+       GetActor(actor);
        return actor->GetSound();
     }
 
@@ -430,7 +430,7 @@ namespace dtAudio
     const dtAudio::Sound* SoundActorProxy::GetSound() const
     {
        const dtAudio::SoundActor* actor = NULL;
-       GetActor( actor );
+       GetActor(actor);
        return actor->GetSound();
     }
 }

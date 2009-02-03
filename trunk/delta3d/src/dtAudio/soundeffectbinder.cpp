@@ -33,18 +33,18 @@ IMPLEMENT_MANAGEMENT_LAYER(SoundEffectBinder)
  *
  * @param name the instance name
  */
-SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBinder"*/ )
-:  dtCore::Base(name),
-   mSoundEffectListener(0)
+SoundEffectBinder::SoundEffectBinder(const std::string& name /*= "SoundEffectBinder"*/)
+   : dtCore::Base(name)
+   , mSoundEffectListener(0)
 {
-   dtCore::System*  sys   = &dtCore::System::GetInstance();
-   assert( sys );
+   dtCore::System* sys = &dtCore::System::GetInstance();
+   assert(sys);
 
-   AddSender( sys );
+   AddSender(sys);
 
-   SoundEffectListener::EffectFunctor addEffect( this, &SoundEffectBinder::EffectAdded );
-   SoundEffectListener::EffectFunctor removeEffect( this, &SoundEffectBinder::EffectRemoved );
-   mSoundEffectListener = new SoundEffectListener( addEffect, removeEffect );
+   SoundEffectListener::EffectFunctor addEffect(this, &SoundEffectBinder::EffectAdded);
+   SoundEffectListener::EffectFunctor removeEffect(this, &SoundEffectBinder::EffectRemoved);
+   mSoundEffectListener = new SoundEffectListener(addEffect, removeEffect);
 }
 
 
@@ -55,7 +55,7 @@ SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBi
 SoundEffectBinder::~SoundEffectBinder()
 {
    Shutdown();
-   RemoveSender( &dtCore::System::GetInstance() );
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
 
@@ -65,27 +65,25 @@ SoundEffectBinder::~SoundEffectBinder()
  *
  * @param fxMgr the effect manager to add
  */
-void 
-SoundEffectBinder::Initialize( dtCore::EffectManager* fxMgr /*= NULL*/ )
+void SoundEffectBinder::Initialize(dtCore::EffectManager* fxMgr /*= NULL*/)
 {
-   AddEffectManager( fxMgr );
+   AddEffectManager(fxMgr);
 }
 
 
 
 /**
-* Shutdown the SoundEffectBinder.
-*/
-void 
-SoundEffectBinder::Shutdown( void )
+ * Shutdown the SoundEffectBinder.
+ */
+void SoundEffectBinder::Shutdown(void)
 {
    mQueued.clear();
    mDone.clear();
    mActive.clear();
 
-   for( SFX_MAP::iterator iter(mSfxMap.begin()); iter != mSfxMap.end(); iter++ )
+   for (SFX_MAP::iterator iter(mSfxMap.begin()); iter != mSfxMap.end(); ++iter)
    {
-      delete   iter->second;
+      delete iter->second;
    }
    mSfxMap.clear();
 
@@ -100,20 +98,23 @@ SoundEffectBinder::Shutdown( void )
  *
  * @param fxMgr the effect manager to add
  */
-void 
-SoundEffectBinder::AddEffectManager( dtCore::EffectManager* fxMgr )
+void SoundEffectBinder::AddEffectManager(dtCore::EffectManager* fxMgr)
 {
-   if( fxMgr == NULL )
-      return;
-
-   for( MGR_LST::iterator iter = mFxMgr.begin(); iter != mFxMgr.end(); iter++ )
+   if (fxMgr == NULL)
    {
-      if( *iter == fxMgr )
-         return;
+      return;
    }
 
-   fxMgr->AddEffectListener( mSoundEffectListener.get() );
-   mFxMgr.push_back( fxMgr );
+   for (MGR_LST::iterator iter = mFxMgr.begin(); iter != mFxMgr.end(); ++iter)
+   {
+      if (*iter == fxMgr)
+      {
+         return;
+      }
+   }
+
+   fxMgr->AddEffectListener(mSoundEffectListener.get());
+   mFxMgr.push_back(fxMgr);
 }
 
 
@@ -123,19 +124,22 @@ SoundEffectBinder::AddEffectManager( dtCore::EffectManager* fxMgr )
  *
  * @param fxMgr the effect manager to remove
  */
-void 
-SoundEffectBinder::RemoveEffectManager( dtCore::EffectManager* fxMgr )
+void SoundEffectBinder::RemoveEffectManager(dtCore::EffectManager* fxMgr)
 {
-   if( fxMgr == NULL )
-      return;
-
-   for( MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); iter++ )
+   if (fxMgr == NULL)
    {
-      if( *iter != fxMgr )
-         continue;
+      return;
+   }
 
-      fxMgr->RemoveEffectListener( mSoundEffectListener.get() );
-      mFxMgr.erase( iter );
+   for (MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); ++iter)
+   {
+      if (*iter != fxMgr)
+      {
+         continue;
+      }
+
+      fxMgr->RemoveEffectListener(mSoundEffectListener.get());
+      mFxMgr.erase(iter);
       break;
    }
 }
@@ -148,10 +152,9 @@ SoundEffectBinder::RemoveEffectManager( dtCore::EffectManager* fxMgr )
  * @param fxType the effect type to map
  * @param filename the sound filename corresponding to the effect type
  */
-void 
-SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const std::string& filename )
+void SoundEffectBinder::AddEffectTypeMapping(const std::string& fxType, const std::string& filename)
 {
-   mFileMap[fxType]  = filename;
+   mFileMap[fxType] = filename;
 }
 
 
@@ -160,14 +163,13 @@ SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const std::s
  *
  * @param fxType the effect type to map
  */
-void 
-SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )
+void SoundEffectBinder::RemoveEffectTypeMapping(const std::string& fxType)
 {
-   mFileMap.erase( fxType );
-   RemoveEffectTypeRange( fxType, true );
-   RemoveEffectTypeRange( fxType, false );
+   mFileMap.erase(fxType);
+   RemoveEffectTypeRange(fxType, true);
+   RemoveEffectTypeRange(fxType, false);
 }
-         
+
 /**
  * Maps the specified effect type to and audible range value.
  *
@@ -175,13 +177,16 @@ SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )
  * @param value to map
  * @param minimum range if true, else maximum range
  */
-void 
-SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range /*= true*/ )
+void SoundEffectBinder::AddEffectTypeRange(const std::string& fxType, float value, bool minimum_range /*= true*/)
 {
-   if( minimum_range )
-      mMinDist[fxType]  = value;
+   if (minimum_range)
+   {
+      mMinDist[fxType] = value;
+   }
    else
-      mMaxDist[fxType]  = value;
+   {
+      mMaxDist[fxType] = value;
+   }
 }
 
 
@@ -191,42 +196,46 @@ SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, b
  * @param fxType the effect type to map
  * @param minimum range if true, else maximum range
  */
-void 
-SoundEffectBinder::RemoveEffectTypeRange( const std::string& fxType, bool minimum_range /*= true*/ )
+void SoundEffectBinder::RemoveEffectTypeRange(const std::string& fxType, bool minimum_range /*= true*/)
 {
-   if( minimum_range )
-      mMinDist.erase( fxType );
+   if (minimum_range)
+   {
+      mMinDist.erase(fxType);
+   }
    else
-      mMaxDist.erase( fxType );
+   {
+      mMaxDist.erase(fxType);
+   }
 }
 
 
 /**
-* Called when a message is sent to this object.
-*
-* @param data the message received by this object
-*/
-void 
-SoundEffectBinder::OnMessage( MessageData* data )
+ * Called when a message is sent to this object.
+ *
+ * @param data the message received by this object
+ */
+void SoundEffectBinder::OnMessage(MessageData* data)
 {
-   if( data == NULL )
-      return;
-
-   if( data->message == kPreFrame )
+   if (data == NULL)
    {
-      PreFrame( *static_cast<const double*>(data->userData) );
       return;
    }
 
-   if( data->message == kFrame )
+   if (data->message == kPreFrame)
    {
-      Frame( *static_cast<const double*>(data->userData) );
+      PreFrame(*static_cast<const double*>(data->userData));
       return;
    }
 
-   if( data->message == kPostFrame )
+   if (data->message == kFrame)
    {
-      PostFrame( *static_cast<const double*>(data->userData) );
+      Frame(*static_cast<const double*>(data->userData));
+      return;
+   }
+
+   if (data->message == kPostFrame)
+   {
+      PostFrame(*static_cast<const double*>(data->userData));
       return;
    }
 }
@@ -239,29 +248,34 @@ SoundEffectBinder::OnMessage( MessageData* data )
  * @param fxMgr the effect manager that generated the event
  * @param fx the effect object
  */
-void 
-SoundEffectBinder::EffectAdded( dtCore::EffectManager* fxMgr, dtCore::Effect* fx )
+void SoundEffectBinder::EffectAdded(dtCore::EffectManager* fxMgr, dtCore::Effect* fx)
 {
-   if( ( fxMgr == NULL ) || ( fx == NULL ) )
-      return;
-
-   bool  ignore(true);
-   for( MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); iter++ )
+   if ((fxMgr == NULL) || (fx == NULL))
    {
-      if( *iter != fxMgr )
-         continue;
-
-      ignore   = false;
+      return;
    }
 
-   if( ignore )
-      return;
+   bool ignore(true);
+   for (MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); ++iter)
+   {
+      if (*iter != fxMgr)
+      {
+         continue;
+      }
 
-   dtCore::Detonation* det   = dynamic_cast<dtCore::Detonation*>(fx);
-   if( det != NULL )
+      ignore = false;
+   }
+
+   if (ignore)
+   {
+      return;
+   }
+
+   dtCore::Detonation* det = dynamic_cast<dtCore::Detonation*>(fx);
+   if (det != NULL)
    {
       // handle Detonations differently than regular effects
-      DetonationAdded( fxMgr, det );
+      DetonationAdded(fxMgr, det);
       return;
    }
 
@@ -276,29 +290,34 @@ SoundEffectBinder::EffectAdded( dtCore::EffectManager* fxMgr, dtCore::Effect* fx
  * @param fxMgr the effect manager that generated the event
  * @param fx the effect object
  */
-void 
-SoundEffectBinder::EffectRemoved( dtCore::EffectManager* fxMgr, dtCore::Effect* fx )
+void SoundEffectBinder::EffectRemoved(dtCore::EffectManager* fxMgr, dtCore::Effect* fx)
 {
-   if( ( fxMgr == NULL ) || ( fx == NULL ) )
-      return;
-
-   bool  ignore(true);
-   for( MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); iter++ )
+   if ((fxMgr == NULL) || (fx == NULL))
    {
-      if( *iter != fxMgr )
-         continue;
-
-      ignore   = false;
+      return;
    }
 
-   if( ignore )
-      return;
+   bool ignore(true);
+   for (MGR_LST::iterator iter(mFxMgr.begin()); iter != mFxMgr.end(); ++iter)
+   {
+      if (*iter != fxMgr)
+      {
+         continue;
+      }
 
-   dtCore::Detonation* det   = dynamic_cast<dtCore::Detonation*>(fx);
-   if( det != NULL )
+      ignore = false;
+   }
+
+   if (ignore)
+   {
+      return;
+   }
+
+   dtCore::Detonation* det = dynamic_cast<dtCore::Detonation*>(fx);
+   if (det != NULL)
    {
       // handle Detonations differently than regular effects
-      DetonationRemoved( fxMgr, det );
+      DetonationRemoved(fxMgr, det);
       return;
    }
 
@@ -313,16 +332,15 @@ SoundEffectBinder::EffectRemoved( dtCore::EffectManager* fxMgr, dtCore::Effect* 
  * @param fxMgr the effect manager that generated the event
  * @param fx the detonation object
  */
-void 
-SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx )
+void SoundEffectBinder::DetonationAdded(dtCore::EffectManager* fxMgr, dtCore::Detonation* fx)
 {
-   assert( fxMgr );
-   assert( fx );
+   assert(fxMgr);
+   assert(fx);
 
 
    // locate filename in the map
-   FIL_MAP::iterator iter = mFileMap.find( fx->GetType() );
-   if( iter == mFileMap.end() )
+   FIL_MAP::iterator iter = mFileMap.find(fx->GetType());
+   if (iter == mFileMap.end())
    {
       // sound file is not mapped
       return;
@@ -330,42 +348,42 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
 
 
    // create a new sfx object and load the sound file
-   SfxObj*  sfx   = new SfxObj( iter->second );
-   assert( sfx );
+   SfxObj* sfx = new SfxObj(iter->second);
+   assert(sfx);
 
-   Sound*   snd   = sfx->GetSound();
-   assert( snd );
+   Sound* snd = sfx->GetSound();
+   assert(snd);
 
-   snd->LoadFile( iter->second.c_str() );
-   snd->SetPlayCallback( PlayCB, this );
-   snd->SetStopCallback( StopCB, this );
+   snd->LoadFile(iter->second.c_str());
+   snd->SetPlayCallback(PlayCB, this);
+   snd->SetStopCallback(StopCB, this);
 
-   FLT_MAP::iterator minmax   = mMaxDist.find( fx->GetType() );
-   if( minmax != mMaxDist.end() )
+   FLT_MAP::iterator minmax = mMaxDist.find(fx->GetType());
+   if (minmax != mMaxDist.end())
    {
-      snd->SetMaxDistance( minmax->second );
+      snd->SetMaxDistance(minmax->second);
    }
 
-   dtCore::Transformable*  parent   = fx->GetParent();
-   if( parent )
+   dtCore::Transformable* parent = fx->GetParent();
+   if (parent)
    {
-      //bool success = parent->AddChild( snd );
-      parent->AddChild( snd );
-      
-      dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-      snd->SetTransform( transform, dtCore::Transformable::REL_CS );
+      //bool success = parent->AddChild(snd);
+      parent->AddChild(snd);
+
+      dtCore::Transform transform(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+      snd->SetTransform(transform, dtCore::Transformable::REL_CS);
    }
    else
    {
-      osg::Vec3 pos ( 0.0f, 0.0f, 0.0f );
-      fx->GetPosition( pos );
+      osg::Vec3 pos (0.0f, 0.0f, 0.0f);
+      fx->GetPosition(pos);
 
-      snd->SetPosition( pos );
+      snd->SetPosition(pos);
    }
 
    // map the sfx object and queue up for playing
    mSfxMap[fx] = sfx;
-   sfx->SetList( &mQueued );
+   sfx->SetList(&mQueued);
 }
 
 
@@ -376,22 +394,21 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
  * @param fxMgr the effect manager that generated the event
  * @param fx the detonation object
  */
-void 
-SoundEffectBinder::DetonationRemoved( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx )
+void SoundEffectBinder::DetonationRemoved(dtCore::EffectManager* fxMgr, dtCore::Detonation* fx)
 {
-   assert( fxMgr );
-   assert( fx );
+   assert(fxMgr);
+   assert(fx);
 
    // locate sfx object in the map
-   SFX_MAP::iterator iter(mSfxMap.find( fx ));
-   if( iter == mSfxMap.end() )
+   SFX_MAP::iterator iter(mSfxMap.find(fx));
+   if (iter == mSfxMap.end())
    {
       // sound is not mapped
       return;
    }
 
    // move the sfx object onto the done list for cleanup
-   iter->second->SetList( &mDone );
+   iter->second->SetList(&mDone);
 }
 
 
@@ -399,13 +416,12 @@ SoundEffectBinder::DetonationRemoved( dtCore::EffectManager* fxMgr, dtCore::Deto
 /**
  * Override for preframe
  */
-void 
-SoundEffectBinder::PreFrame( const double deltaFrameTime )
+void SoundEffectBinder::PreFrame(const double deltaFrameTime)
 {
-   while( mQueued.size() )
+   while (mQueued.size())
    {
-      SfxObj*  sfx   = *(mQueued.begin());
-      sfx->SetList( NULL );      // play callback will set sfx on the active list
+      SfxObj* sfx = *(mQueued.begin());
+      sfx->SetList(NULL);      // play callback will set sfx on the active list
       sfx->GetSound()->Play();
    }
 }
@@ -415,24 +431,25 @@ SoundEffectBinder::PreFrame( const double deltaFrameTime )
 /**
  * Override for frame
  */
-void 
-SoundEffectBinder::Frame( const double deltaFrameTime )
+void SoundEffectBinder::Frame(const double deltaFrameTime)
 {
-   SFX_QUE  temp;
+   SFX_QUE temp;
 
-   for( SFX_LST::iterator iter(mActive.begin()); iter != mActive.end(); iter++ )
+   for (SFX_LST::iterator iter(mActive.begin()); iter != mActive.end(); ++iter)
    {
-      SfxObj*  sfx   = *iter;
-      if( sfx->GetSound()->IsPlaying() )
+      SfxObj* sfx = *iter;
+      if (sfx->GetSound()->IsPlaying())
+      {
          continue;
+      }
 
-      temp.push( sfx );
+      temp.push(sfx);
    }
 
-   while( temp.size() )
+   while (temp.size())
    {
-      SfxObj*  sfx   = temp.front();
-      sfx->SetList( &mDone );
+      SfxObj* sfx = temp.front();
+      sfx->SetList(&mDone);
       temp.pop();
    }
 }
@@ -442,25 +459,26 @@ SoundEffectBinder::Frame( const double deltaFrameTime )
 /**
  * Override for postframe
  */
-void
-SoundEffectBinder::PostFrame( const double deltaFrameTime )
+void SoundEffectBinder::PostFrame(const double deltaFrameTime)
 {
-   while( mDone.size() )
+   while (mDone.size())
    {
-      SfxObj*  sfx   = *(mDone.begin());
+      SfxObj* sfx = *(mDone.begin());
       sfx->GetSound()->Stop();
-      sfx->SetList( NULL );
+      sfx->SetList(NULL);
 
-      for( SFX_MAP::iterator iter(mSfxMap.begin()); iter != mSfxMap.end(); iter++ )
+      for (SFX_MAP::iterator iter(mSfxMap.begin()); iter != mSfxMap.end(); ++iter)
       {
-         if( iter->second != sfx )
+         if (iter->second != sfx)
+         {
             continue;
+         }
 
-         mSfxMap.erase( iter );
+         mSfxMap.erase(iter);
          break;
       }
 
-      delete   sfx;
+      delete sfx;
    }
 }
 
@@ -472,27 +490,28 @@ SoundEffectBinder::PostFrame( const double deltaFrameTime )
  * @param Sound pointer to the sound object
  * @param void pointer to the containing SfxObj
  */
-void
-SoundEffectBinder::PlayCB( Sound* sound, void* param )
+void SoundEffectBinder::PlayCB(Sound* sound, void* param)
 {
-   assert( sound );
-   assert( param );
+   assert(sound);
+   assert(param);
 
-   SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter;
+   SoundEffectBinder* binder = static_cast<SoundEffectBinder*>(param);
+   SFX_MAP::iterator iter;
 
-   for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
+   for (iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); ++iter)
    {
-      SfxObj*  sfx(iter->second);
-      assert( sfx );
+      SfxObj* sfx(iter->second);
+      assert(sfx);
 
-      Sound*   snd(sfx->GetSound());
-      assert( snd );
+      Sound* snd(sfx->GetSound());
+      assert(snd);
 
-      if( snd != sound )
+      if (snd != sound)
+      {
          continue;
+      }
 
-      sfx->SetList( &binder->mActive );
+      sfx->SetList(&binder->mActive);
       break;
    }
 }
@@ -505,27 +524,28 @@ SoundEffectBinder::PlayCB( Sound* sound, void* param )
  * @param Sound pointer to the sound object
  * @param void pointer to the containing SfxObj
  */
-void
-SoundEffectBinder::StopCB( Sound* sound, void* param )
+void SoundEffectBinder::StopCB(Sound* sound, void* param)
 {
-   assert( sound );
-   assert( param );
+   assert(sound);
+   assert(param);
 
-   SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter;
+   SoundEffectBinder* binder = static_cast<SoundEffectBinder*>(param);
+   SFX_MAP::iterator iter;
 
-   for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
+   for (iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); ++iter)
    {
-      SfxObj*  sfx(iter->second);
-      assert( sfx );
+      SfxObj* sfx(iter->second);
+      assert(sfx);
 
-      Sound*   snd(sfx->GetSound());
-      assert( snd );
+      Sound* snd(sfx->GetSound());
+      assert(snd);
 
-      if( snd != sound )
+      if (snd != sound)
+      {
          continue;
+      }
 
-      sfx->SetList( &binder->mDone );
+      sfx->SetList(&binder->mDone);
       break;
    }
 }
@@ -540,15 +560,15 @@ SoundEffectBinder::StopCB( Sound* sound, void* param )
  *
  * @param name the instance name
  */
-SoundEffectBinder::SfxObj::SfxObj( const std::string& name /*= "sfxobj"*/ )
-:  Base(name),
-   mSnd(NULL),
-   mList(NULL)
+SoundEffectBinder::SfxObj::SfxObj(const std::string& name /*= "sfxobj"*/)
+   : Base(name)
+   , mSnd(NULL)
+   , mList(NULL)
 {
-   mSnd  = AudioManager::GetInstance().NewSound();
-   assert( mSnd );
+   mSnd = AudioManager::GetInstance().NewSound();
+   assert(mSnd);
 
-   mSnd->SetName( name );
+   mSnd->SetName(name);
 }
 
 
@@ -558,7 +578,7 @@ SoundEffectBinder::SfxObj::SfxObj( const std::string& name /*= "sfxobj"*/ )
  */
 SoundEffectBinder::SfxObj::~SfxObj()
 {
-   AudioManager::GetInstance().FreeSound( mSnd );
+   AudioManager::GetInstance().FreeSound(mSnd);
 }
 
 
@@ -568,26 +588,27 @@ SoundEffectBinder::SfxObj::~SfxObj()
  *
  * @param list the sound effects list this object should put itself on
  */
-void
-SoundEffectBinder::SfxObj::SetList( SFX_LST* list )
+void SoundEffectBinder::SfxObj::SetList(SFX_LST* list)
 {
    // same list?
-   if( mList == list )
+   if (mList == list)
    {
       // then bail out
       return;
    }
 
    // already on a list?
-   if( mList != NULL )
+   if (mList != NULL)
    {
       // then remove ourself from it
-      for( SFX_LST::iterator iter(mList->begin()); iter != mList->end(); iter++ )
+      for (SFX_LST::iterator iter(mList->begin()); iter != mList->end(); ++iter)
       {
-         if( *iter != this )
+         if (*iter != this)
+         {
             continue;
+         }
 
-         mList->erase( iter );
+         mList->erase(iter);
          break;
       }
 
@@ -595,7 +616,7 @@ SoundEffectBinder::SfxObj::SetList( SFX_LST* list )
    }
 
    // not adding to any new list?
-   if( list == NULL )
+   if (list == NULL)
    {
       // then bail out
       return;
@@ -603,13 +624,14 @@ SoundEffectBinder::SfxObj::SetList( SFX_LST* list )
 
    // put ourself on the new list
    mList = list;
-   mList->push_back( this );
+   mList->push_back(this);
 }
 
-SoundEffectBinder::SoundEffectListener::SoundEffectListener(   const EffectFunctor& addEffect,
-                                                               const EffectFunctor& removeEffect ) : dtCore::EffectListener(),
-   mAddEffect( addEffect ),
-   mRemoveEffect( removeEffect )
+SoundEffectBinder::SoundEffectListener::SoundEffectListener(const EffectFunctor& addEffect,
+                                                            const EffectFunctor& removeEffect)
+   : dtCore::EffectListener()
+   , mAddEffect(addEffect)
+   , mRemoveEffect(removeEffect)
 {
 }
 
@@ -617,12 +639,12 @@ SoundEffectBinder::SoundEffectListener::~SoundEffectListener()
 {
 }
 
-void SoundEffectBinder::SoundEffectListener::EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+void SoundEffectBinder::SoundEffectListener::EffectAdded(dtCore::EffectManager* effectManager, dtCore::Effect* effect)
 {
-   mAddEffect( effectManager, effect );
+   mAddEffect(effectManager, effect);
 }
 
-void SoundEffectBinder::SoundEffectListener::EffectRemoved( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+void SoundEffectBinder::SoundEffectListener::EffectRemoved(dtCore::EffectManager* effectManager, dtCore::Effect* effect)
 {
-   mRemoveEffect( effectManager, effect );
+   mRemoveEffect(effectManager, effect);
 }

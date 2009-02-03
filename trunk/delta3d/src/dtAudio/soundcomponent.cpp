@@ -58,13 +58,13 @@ namespace dtAudio
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::AddSoundType( dtAudio::SoundType& newSoundType )
+   bool SoundComponent::AddSoundType(dtAudio::SoundType& newSoundType)
    {
       bool success = true;
 
-      if( NULL == dtAudio::SoundType::GetValueForName( newSoundType.GetName() ) )
+      if (NULL == dtAudio::SoundType::GetValueForName(newSoundType.GetName()))
       {
-         //dtAudio::SoundType::AddInstance( &newSoundType );
+         //dtAudio::SoundType::AddInstance(&newSoundType);
          dtAudio::SoundType::AddNewType(newSoundType);
          success = true;
       }
@@ -73,54 +73,54 @@ namespace dtAudio
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAudio::Sound* SoundComponent::AddSound( const std::string& soundFile,
-      const dtAudio::SoundType& soundType )
+   dtAudio::Sound* SoundComponent::AddSound(const std::string& soundFile,
+      const dtAudio::SoundType& soundType)
    {
-      return AddSound( soundFile, soundFile, soundType );
+      return AddSound(soundFile, soundFile, soundType);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAudio::Sound* SoundComponent::AddSound( const std::string& soundFile, const std::string& soundName,
-      const dtAudio::SoundType& soundType )
+   dtAudio::Sound* SoundComponent::AddSound(const std::string& soundFile, const std::string& soundName,
+      const dtAudio::SoundType& soundType)
    {
       bool success = false;
       dtCore::RefPtr<dtAudio::Sound> sound;
 
-      if( ! dtCore::FindFileInPathList( soundFile ).empty() )
+      if (!dtCore::FindFileInPathList(soundFile).empty())
       {
          // Create the sound object.
          sound = dtAudio::AudioManager::GetInstance().NewSound();
-         sound->LoadFile( soundFile.c_str() );
+         sound->LoadFile(soundFile.c_str());
 
          // Attempt adding it to the map.
-         success = AddSound( *sound, soundName, soundType );
+         success = AddSound(*sound, soundName, soundType);
       }
 
       return success ? sound.get() : NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::AddSound( dtAudio::Sound& sound, const std::string& soundName,
-      const dtAudio::SoundType& soundType )
+   bool SoundComponent::AddSound(dtAudio::Sound& sound, const std::string& soundName,
+      const dtAudio::SoundType& soundType)
    {
       // Attempt adding it to the map.
       bool success = mSoundMap.insert(
-         std::make_pair( soundName, new dtAudio::SoundInfo(soundType,sound) ) ).second;
+         std::make_pair(soundName, new dtAudio::SoundInfo(soundType,sound))).second;
 
       return success;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::RemoveSound( const std::string& soundName )
+   bool SoundComponent::RemoveSound(const std::string& soundName)
    {
       bool success = false;
 
-      SoundInfoMap::iterator foundIter = mSoundMap.find( soundName );
-      if( foundIter != mSoundMap.end() )
+      SoundInfoMap::iterator foundIter = mSoundMap.find(soundName);
+      if (foundIter != mSoundMap.end())
       {
-         dtAudio::Sound *sound = &foundIter->second->GetSound();
+         dtAudio::Sound* sound = &foundIter->second->GetSound();
          dtAudio::AudioManager::GetInstance().FreeSound(sound);
-         mSoundMap.erase( foundIter );
+         mSoundMap.erase(foundIter);
          success = true;
       }
 
@@ -132,7 +132,7 @@ namespace dtAudio
    {
       SoundInfoMap::iterator curSoundInfo = mSoundMap.begin();
       SoundInfoMap::iterator endSoundInfoMap = mSoundMap.end();
-      for( ; curSoundInfo != endSoundInfoMap; ++curSoundInfo )
+      for (; curSoundInfo != endSoundInfoMap; ++curSoundInfo)
       {
          dtAudio::Sound *sound = &curSoundInfo->second->GetSound();
          dtAudio::AudioManager::GetInstance().FreeSound(sound);
@@ -141,90 +141,90 @@ namespace dtAudio
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAudio::SoundInfo* SoundComponent::GetSoundInfo( const std::string& soundName )
+   dtAudio::SoundInfo* SoundComponent::GetSoundInfo(const std::string& soundName)
    {
-      SoundInfoMap::iterator foundIter = mSoundMap.find( soundName );
+      SoundInfoMap::iterator foundIter = mSoundMap.find(soundName);
       return foundIter != mSoundMap.end() ? foundIter->second.get() : NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtAudio::SoundInfo* SoundComponent::GetSoundInfo( const std::string& soundName ) const
+   const dtAudio::SoundInfo* SoundComponent::GetSoundInfo(const std::string& soundName) const
    {
-      SoundInfoMap::const_iterator foundIter = mSoundMap.find( soundName );
+      SoundInfoMap::const_iterator foundIter = mSoundMap.find(soundName);
       return foundIter != mSoundMap.end() ? foundIter->second.get() : NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   dtAudio::Sound* SoundComponent::GetSound( const std::string& soundName )
+   dtAudio::Sound* SoundComponent::GetSound(const std::string& soundName)
    {
-      dtAudio::SoundInfo* soundInfo = GetSoundInfo( soundName );
+      dtAudio::SoundInfo* soundInfo = GetSoundInfo(soundName);
       return soundInfo != NULL ? &soundInfo->GetSound() : NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   const dtAudio::Sound* SoundComponent::GetSound( const std::string& soundName ) const
+   const dtAudio::Sound* SoundComponent::GetSound(const std::string& soundName) const
    {
-      const dtAudio::SoundInfo* soundInfo = GetSoundInfo( soundName );
+      const dtAudio::SoundInfo* soundInfo = GetSoundInfo(soundName);
       return soundInfo != NULL ? &soundInfo->GetSound() : NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::GetSoundsByType( const dtAudio::SoundType& soundType, SoundArray& outArray )
+   void SoundComponent::GetSoundsByType(const dtAudio::SoundType& soundType, SoundArray& outArray)
    {
       SoundInfoMap::iterator curSoundInfo = mSoundMap.begin();
       SoundInfoMap::iterator endSoundInfoMap = mSoundMap.end();
-      for( ; curSoundInfo != endSoundInfoMap; ++curSoundInfo )
+      for (; curSoundInfo != endSoundInfoMap; ++curSoundInfo)
       {
-         if( curSoundInfo->second->GetType() == soundType )
+         if (curSoundInfo->second->GetType() == soundType)
          {
-            outArray.push_back( &curSoundInfo->second->GetSound() );
+            outArray.push_back(&curSoundInfo->second->GetSound());
          }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::GetAllSounds( SoundArray& outArray )
+   void SoundComponent::GetAllSounds(SoundArray& outArray)
    {
       SoundInfoMap::iterator curSoundInfo = mSoundMap.begin();
       SoundInfoMap::iterator endSoundInfoMap = mSoundMap.end();
-      for( ; curSoundInfo != endSoundInfoMap; ++curSoundInfo )
+      for (; curSoundInfo != endSoundInfoMap; ++curSoundInfo)
       {
-         outArray.push_back( &curSoundInfo->second->GetSound() );
+         outArray.push_back(&curSoundInfo->second->GetSound());
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::DoSoundCommand( const dtAudio::SoundCommand& command, const std::string& soundName )
+   bool SoundComponent::DoSoundCommand(const dtAudio::SoundCommand& command, const std::string& soundName)
    {
-      SoundInfo* soundInfo = GetSoundInfo( soundName );
-      return soundInfo != NULL ? DoSoundCommand( command, soundInfo->GetSound() ) : false;
+      SoundInfo* soundInfo = GetSoundInfo(soundName);
+      return soundInfo != NULL ? DoSoundCommand(command, soundInfo->GetSound()) : false;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::DoSoundCommand( const dtAudio::SoundCommand& command, dtAudio::Sound& sound )
+   bool SoundComponent::DoSoundCommand(const dtAudio::SoundCommand& command, dtAudio::Sound& sound)
    {
-      if( command == dtAudio::SoundCommand::SOUND_COMMAND_PLAY )
+      if (command == dtAudio::SoundCommand::SOUND_COMMAND_PLAY)
       {
-         if( ! sound.IsPlaying() )
+         if (!sound.IsPlaying())
          {
             sound.Play();
          }
       }
-      else if( command == dtAudio::SoundCommand::SOUND_COMMAND_PAUSE )
+      else if (command == dtAudio::SoundCommand::SOUND_COMMAND_PAUSE)
       {
-         if( ! sound.IsPaused() && ! sound.IsStopped() )
+         if (!sound.IsPaused() && ! sound.IsStopped())
          {
             sound.Pause();
          }
       }
-      else if( command == dtAudio::SoundCommand::SOUND_COMMAND_STOP )
+      else if (command == dtAudio::SoundCommand::SOUND_COMMAND_STOP)
       {
-         if( ! sound.IsStopped() )
+         if (!sound.IsStopped())
          {
             sound.Stop();
          }
       }
-      else if( command == dtAudio::SoundCommand::SOUND_COMMAND_REWIND )
+      else if (command == dtAudio::SoundCommand::SOUND_COMMAND_REWIND)
       {
          sound.Rewind();
       }
@@ -233,19 +233,19 @@ namespace dtAudio
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   int SoundComponent::DoSoundCommand( const dtAudio::SoundCommand& command, SoundArray& soundArray )
+   int SoundComponent::DoSoundCommand(const dtAudio::SoundCommand& command, SoundArray& soundArray)
    {
       int successes = 0;
 
       dtAudio::Sound* curSound = NULL;
       SoundArray::iterator curSoundIter = soundArray.begin();
       SoundArray::iterator endSoundArray = soundArray.end();
-      for( ; curSoundIter != endSoundArray; ++curSoundIter )
+      for (; curSoundIter != endSoundArray; ++curSoundIter)
       {
          curSound = *curSoundIter;
-         if( curSound != NULL )
+         if (curSound != NULL)
          {
-            if( DoSoundCommand( command, *curSound ) )
+            if (DoSoundCommand(command, *curSound))
             {
                ++successes;
             }
@@ -256,63 +256,63 @@ namespace dtAudio
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::Play( const std::string& soundName )
+   bool SoundComponent::Play(const std::string& soundName)
    {
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_PLAY, soundName );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_PLAY, soundName);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::Stop( const std::string& soundName )
+   bool SoundComponent::Stop(const std::string& soundName)
    {
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundName );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundName);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::Pause( const std::string& soundName )
+   bool SoundComponent::Pause(const std::string& soundName)
    {
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundName );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundName);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool SoundComponent::Rewind( const std::string& soundName )
+   bool SoundComponent::Rewind(const std::string& soundName)
    {
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_REWIND, soundName );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_REWIND, soundName);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   int SoundComponent::PauseAllSoundsByType( const dtAudio::SoundType& soundType )
+   int SoundComponent::PauseAllSoundsByType(const dtAudio::SoundType& soundType)
    {
       SoundArray soundArray;
-      GetSoundsByType( soundType, soundArray );
+      GetSoundsByType(soundType, soundArray);
 
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundArray );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundArray);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    int SoundComponent::PauseAllSounds()
    {
       SoundArray soundArray;
-      GetAllSounds( soundArray );
+      GetAllSounds(soundArray);
 
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundArray );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_PAUSE, soundArray);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   int SoundComponent::StopAllSoundsByType( const dtAudio::SoundType& soundType )
+   int SoundComponent::StopAllSoundsByType(const dtAudio::SoundType& soundType)
    {
       SoundArray soundArray;
-      GetSoundsByType( soundType, soundArray );
+      GetSoundsByType(soundType, soundArray);
 
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundArray );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundArray);
    }
 
    /////////////////////////////////////////////////////////////////////////////
    int SoundComponent::StopAllSounds()
    {
       SoundArray soundArray;
-      GetAllSounds( soundArray );
+      GetAllSounds(soundArray);
 
-      return DoSoundCommand( dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundArray );
+      return DoSoundCommand(dtAudio::SoundCommand::SOUND_COMMAND_STOP, soundArray);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -323,14 +323,14 @@ namespace dtAudio
 
       // Evacuate all the sound actors.
       dtGame::GameManager* gm = GetGameManager();
-      gm->FindActorsByType( *dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray );
+      gm->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
 
       ProxyArray::iterator curProxy = proxyArray.begin();
       ProxyArray::iterator endProxyList = proxyArray.end();
-      for( ; curProxy != endProxyList; ++curProxy )
+      for (; curProxy != endProxyList; ++curProxy)
       {
-         mSoundProxyArray.push_back( static_cast<dtAudio::SoundActorProxy*>(*curProxy) );
-         gm->DeleteActor( *(*curProxy) );
+         mSoundProxyArray.push_back(static_cast<dtAudio::SoundActorProxy*>(*curProxy));
+         gm->DeleteActor(*(*curProxy));
       }
    }
 
@@ -342,28 +342,28 @@ namespace dtAudio
 
       SoundProxyRefArray::iterator curProxy = mSoundProxyArray.begin();
       SoundProxyRefArray::iterator endProxyArray = mSoundProxyArray.end();
-      for( ; curProxy != endProxyArray; ++curProxy )
+      for (; curProxy != endProxyArray; ++curProxy)
       {
-         gm->AddActor( *(*curProxy), false, false );
+         gm->AddActor(*(*curProxy), false, false);
       }
 
       mSoundProxyArray.clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void SoundComponent::GetSoundActorSounds( SoundArray& outArray )
+   void SoundComponent::GetSoundActorSounds(SoundArray& outArray)
    {
       typedef std::vector<dtDAL::ActorProxy*> ProxyArray;
       ProxyArray proxyArray;
-      GetGameManager()->FindActorsByType( *dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray );
+      GetGameManager()->FindActorsByType(*dtAudio::AudioActorRegistry::SOUND_ACTOR_TYPE, proxyArray);
 
       dtAudio::SoundActor* soundActor = NULL;
       ProxyArray::iterator curProxy = proxyArray.begin();
       ProxyArray::iterator endProxyArray = proxyArray.end();
-      for( ; curProxy != endProxyArray; ++curProxy )
+      for (; curProxy != endProxyArray; ++curProxy)
       {
-         (*curProxy)->GetActor( soundActor );
-         outArray.push_back( soundActor->GetSound() );
+         (*curProxy)->GetActor(soundActor);
+         outArray.push_back(soundActor->GetSound());
       }
    }
 

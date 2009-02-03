@@ -1,22 +1,22 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
-*/
+ */
 
 #ifndef  DELTA_LISTENER
 #define  DELTA_LISTENER
@@ -28,7 +28,7 @@
 
 namespace dtAudio
 {
-   /** dtAudio::Listener 
+   /** dtAudio::Listener
     *
     * dtAudio::Listener is just an interface to the global listener
     * object held within (and protected) by the dtAudio::AudioManager.
@@ -51,7 +51,7 @@ namespace dtAudio
     * manually in scene-space without having to make it a child of another
     * object, but any position updates must then be made manually.
     */
-   class DT_AUDIO_EXPORT Listener :   public  dtCore::Transformable
+   class DT_AUDIO_EXPORT Listener : public  dtCore::Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Listener)
 
@@ -76,14 +76,14 @@ namespace dtAudio
           * @param velocity to set
           */
          void SetVelocity(const osg::Vec3f& velocity);
-       
+
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
          void GetVelocity(osg::Vec3f& velocity) const;
-         
+
          /**
           * Sets the master volume of the listener.
           *
@@ -104,11 +104,9 @@ namespace dtAudio
           */
          virtual void OnMessage(MessageData* data);
 
-         /// clean up listener 
+         /// clean up listener
          void Clear(void);
    };
-}
-
-
+} // namespace dtAudio
 
 #endif   // DELTA_LISTENER
