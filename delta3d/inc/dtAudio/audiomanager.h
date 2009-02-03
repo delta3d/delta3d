@@ -93,36 +93,19 @@ namespace dtAudio
     * the AudioManager before loading them into the individual sounds.
     *
     * FOR THE DEVELOPER:
-    * The AudioManager is a repository for all sounds objects, buffers,
-    * sources (sound channels), listeners, etc.  The AudioManager 
-    * hands out interfaces to the various objects for users to manipulate
-    * but it holds all the resources for those objects.
+    * The AudioManager is a repository for all sounds objects and
+    * their corresponding buffer.
     *
-    * When a sound command is requested (play, stop, pitch, etc.) the
-    * AudioManager receives the sound through the sig-slot messaging
-    * system and pushes the sound onto a queue of sounds requesting
-    * command processing.  At pre-frame, the AudioManager process all the
-    * sounds waiting for command processing in the ordered they were queued.
+    * At pre-frame, the AudioManager process all the sounds waiting for
+    * command processing.
     * State commands are commnads to change the state of the sound
     * (play, stop, pause, etc.), but not the value of any of the sounds
     * attributes (gain, pitch, etc.).  Value commands change the value of
-    * a sound's attributes.  If the sound is currently active (has a source)
-    * the value commands are processed immediately, else the value is saved
-    * for when the sound becomes active.  State commands push the sound onto
-    * a queue for further processing at the appropriate time.  For instance,
-    * a play command will bind a sound's source to the sound's buffer and 
-    * then will push the source onto the play queue awaiting to start playing.
+    * a sound's attributes.  State commands are pushed onto the Sound's
+    * command queue for further processing at the appropriate time (frame change).
     *
-    * At frame time, AudioManager process all sources waiting for a state
-    * change.  All sources waiting a stop command get stopped, waiting a
-    * pause command get paused, waiting a rewind command get rewound, and
-    * waiting a play command get played.  Then the AudioManager runs through
-    * all sources in it's active list and removes sources that have finished
-    * playing then puts them in a cleanup list for later cleanup.
-    * 
-    * At post-frame, the AudioManager takes all sources waiting for cleanup
-    * and unbinds the source from it's associated buffer.  The source is then
-    * put in a recycle queue for later use by new sounds.
+    * At frame time, AudioManager process all Sounds with commands in their 
+    * respective queues.      
     *
     */
    class DT_AUDIO_EXPORT AudioManager   :  public   dtCore::Base
@@ -156,12 +139,7 @@ namespace dtAudio
          typedef  dtCore::RefPtr<Listener>            LOB_PTR;
 
          typedef  std::map<std::string, BufferData*>  BUF_MAP;
-
-         typedef  std::map<ALuint, SOB_PTR>           SRC_MAP;
-         typedef  std::queue<ALuint>                  SRC_QUE;
-         typedef  std::vector<ALuint>                 SRC_LST;
-
-         typedef  std::queue<SOB_PTR>                 SND_QUE;
+         
          typedef  std::vector<SOB_PTR>                SND_LST;
 
          enum SoundState
@@ -199,8 +177,8 @@ namespace dtAudio
          /// access the global Listener
          static   Listener*         GetListener( void );
 
-         /// get the ListenerRelative flag of the indicated Sound
-         bool                       GetListenerRelative(Sound* sound);
+         ///Deprecated feb/02/2009 in favor of Sound::IsListenerRelative()
+         DEPRECATE_FUNC bool GetListenerRelative(Sound* sound);
 
          /// initialize AudioManager
          virtual  void              Config( const AudioConfigData& data = _DefCfg );
@@ -221,10 +199,8 @@ namespace dtAudio
          /// free a sound that the user is finished with
          void              FreeSound( Sound* sound );         
 
-         /** Get the underlying ALUT sound source.  Returns -1 if inidcated
-          *  Sound parameter is not found by the AudioManager.
-          */ 
-         ALuint            GetSource(Sound* sound);
+         ///Deprecated feb/02/2009 in favor of Sound::GetSource()
+         DEPRECATE_FUNC ALuint            GetSource(Sound* sound);
 
          /*
           * Pre-load a sound file into a buffer. We only support .wav's         
@@ -248,67 +224,27 @@ namespace dtAudio
          bool              UnloadFile( const std::string& file );
 
       private:
-         /// process commands of all sounds in the command queue
+         /// process commands of all sounds in the sound list
          inline   void              PreFrame( const double deltaFrameTime );
-
-         inline   void              Pause( const double deltaFrameTime );
+         
          /// check if manager has been configured
          inline   bool              Configured( void )   const;
 
          /// get the eax function pointers from OpenAL (nothing done with them yet)
          inline   bool              ConfigEAX( bool eax );
 
-         /// give a sound the pointer to the buffer it wants
-         inline   void              LoadSound( Sound* snd );
-
          /// remove the buffer from a sound
          inline   void              UnloadSound( Sound* snd );
-
-         /// bind a source to the sound's buffer
-         /// initialize the source
-         /// start sending AudioManager messages to sound
-         /// push sound onto the play queue
-         inline   void              PlaySound( Sound* snd );
-
-         /// push sound onto pause queue
-         inline   void              PauseSound( Sound* snd );
-
-         /// push sound onto stopped queue
-         inline   void              StopSound( Sound* snd );
-
-         /// push sound onto rewind queue
-         inline   void              RewindSound( Sound* snd );
-
-         /// set sound's source to looping
-         inline   void              SetLoop( Sound* snd );
-
-         /// set sound's source to not looping
-         inline   void              ResetLoop( Sound* snd );
-
-         /// set sound's source to listener-relative
-         inline   void              SetRelative( Sound* snd );
-
-         /// set sound's source to not listener-relative
-         inline   void              SetAbsolute( Sound* snd );
-
+         
       private:
          ALvoid*             mEAXSet;
          ALvoid*             mEAXGet;
          
          unsigned int        mNumSounds;
-         bool                mIsConfigured;
-
-         SRC_MAP             mSourceMap;         
-         SRC_QUE             mPlayQueue;
-         SRC_QUE             mPauseQueue;
-         SRC_QUE             mStopQueue;
-         SRC_QUE             mRewindQueue;
-         SRC_LST             mActiveList;
+         bool                mIsConfigured;         
 
          BUF_MAP             mBufferMap;
 
-         SND_QUE             mSoundCommand;
-         SND_QUE             mSoundRecycle;
          SND_LST             mSoundList;
 
          SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
@@ -330,7 +266,7 @@ struct DT_AUDIO_EXPORT AudioConfigData
    bool           eax;
    unsigned int   distancemodel;
 
-   AudioConfigData(  unsigned int   ns = 16L,
+   AudioConfigData(  unsigned int   ns = 16,
                      bool           ex = false,
                      unsigned int   dm = dmINVERSE )
    :  numSources(ns),

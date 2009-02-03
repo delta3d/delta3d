@@ -65,10 +65,10 @@ namespace dtAudio
     *
     *    AudioManager::GetInstance().FreeSound( mysound );
     *
-    * Sounds do not directly call the underlying sound-engine functions,
-    * but rather send commands through the sig-slot messaging system
-    * to the AudioManager for processing.  The AudioManager will queue
-    * up the commands for processing at the appropriate times.
+    * Sounds do not usually directly call the underlying sound-engine functions,
+    * but rather send commands to their command queue.  The AudioManager will
+    * run through all Sounds that have been initialized by it and process
+    * their queues at frame time.    
     *
     * Since the Sound commands (play, stop, pitch, etc.) may not happen
     * immediately, Sound has two callback functions which, if set by
