@@ -38,9 +38,9 @@ const std::string ERROR_CLEARING_STRING = "Clearing Error code "
 "method was called.";
 
 //implemented in audiomanager.cpp
-bool CheckForError(const std::string& userMessage,
-                   const std::string& msgFunction,
-                   int lineNumber);
+inline bool CheckForError(const std::string& userMessage,
+                          const std::string& msgFunction,
+                          int lineNumber);
 
 } //namespace dtAudio
 

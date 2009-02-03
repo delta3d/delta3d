@@ -42,7 +42,7 @@ namespace dtAudio
 //in multiple places throughout dtAudio.  It's not in AudioManager because we
 //don't want things like Sound to directly access the AudioManager.
 // Returns true on error, false if no error
-bool CheckForError(const std::string& userMessage,
+inline bool CheckForError(const std::string& userMessage,
                    const std::string& msgFunction,
                    int lineNumber)
 {
@@ -175,38 +175,15 @@ Listener* AudioManager::GetListener(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AudioManager::GetListenerRelative(Sound* sound)
+DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
 {
+   DEPRECATE("AudioManager::GetListenerRelative", "Sound::IsListenerRelative");
+
    //No sound?  Why are you asking about the ListenerRelative flag then?
    if(sound == NULL)
       return false;
    
-   dtCore::RefPtr<dtAudio::Sound> snd = sound;
-   ALuint src = -1;
-   ALint srcRelativeFlag;
-
-   //pull Sound object out of "the list"   
-   std::vector<dtCore::RefPtr<dtAudio::Sound> >::iterator iter;
-   for (iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
-   {
-      if (snd != *iter)
-      {
-         continue;
-      }
-
-      //found it
-      src = (*iter)->GetSource();
-      
-      alGetSourcei(src, AL_SOURCE_RELATIVE, &srcRelativeFlag);
-
-      if (srcRelativeFlag == 0)
-         return false;
-      else
-         return true;
-   }
-
-   //couldn't find Sound in "the list"
-   return false;     
+   return sound->IsListenerRelative();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -266,8 +243,7 @@ void AudioManager::OnMessage(MessageData* data)
          // as normal. In many games, there are sounds that occur during
          // during a pause, such as background music or GUI clicks. So
          // here we just call the normal functions all at once.
-         PreFrame(*static_cast<const double*>(data->userData));
-         //PostFrame(*static_cast<const double*>(data->userData));
+         PreFrame(*static_cast<const double*>(data->userData));         
          return;
       }
 
@@ -280,6 +256,9 @@ void AudioManager::OnMessage(MessageData* data)
          for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++)
          {
             Sound* sob = iter->get();
+
+            if(sob == NULL)
+               continue;            
 
             if (sob->IsPaused())
             {
@@ -294,7 +273,7 @@ void AudioManager::OnMessage(MessageData* data)
                mSoundStateMap.insert(SoundObjectStateMap::value_type(sob, STOPPED));
             }
 
-            PauseSound(sob);
+            sob->PauseImmediately();
          }
       }
 
@@ -308,13 +287,13 @@ void AudioManager::OnMessage(MessageData* data)
             switch (mSoundStateMap[sob])
             {
             case PAUSED:
-               PauseSound( sob );
+               //No need to do anything.
                break;
             case PLAYING:
-               PlaySound( sob );
+               sob->Play();
                break;
             case STOPPED:
-               StopSound( sob );
+               sob->Stop();
                break;
             default:
                break;
@@ -324,6 +303,9 @@ void AudioManager::OnMessage(MessageData* data)
    }
    else
    {
+      //A LOAD request typically comes from a sound when it's loading data from
+      //a file.  We run it through the AudioManager so the sounds data buffer
+      //can be managed (mostly trying to avoid redundant buffers from the same file).
       if(data->message == Sound::kCommand[Sound::LOAD])
       {         
          assert(data->userData);
@@ -356,7 +338,7 @@ Sound* AudioManager::NewSound(void)
    mSoundList.push_back(snd);   
 
    // hand out the interface to the sound
-   return static_cast<Sound*>(snd.get());
+   return (snd.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -391,31 +373,17 @@ void AudioManager::FreeSound(Sound* sound)
    // free the sound's source and buffer   
    UnloadSound(snd.get());
    snd->Clear();
-
-   // recycle this sound
-   mSoundRecycle.push(snd);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ALuint AudioManager::GetSource(Sound* sound)
+DEPRECATE_FUNC ALuint AudioManager::GetSource(Sound* sound)
 {
-   dtCore::RefPtr<dtAudio::Sound> snd = static_cast<Sound*>(sound);
-   ALuint src = -1;
+   DEPRECATE("AudioManager::GetSource","Sound::GetSource");
 
-   //pull Sound out of "the list"   
-   std::vector<dtCore::RefPtr<dtAudio::Sound> >::iterator iter;
-   for (iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
-   {
-      if (snd != *iter)
-      {
-         continue;
-      }
+   if(sound == NULL)
+      return -1;
 
-      src = (*iter)->GetSource();
-      break;
-   }
-
-   return src;
+   return sound->GetSource();   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -571,9 +539,9 @@ bool AudioManager::UnloadFile(const std::string& file)
       return false;
    }
 
-   alDeleteBuffers(1L, &bd->buf);
-   delete bd;
+   alDeleteBuffers(1L, &bd->buf);   
    CheckForError("alDeleteBuffers( 1L, &bd->buf );", __FUNCTION__, __LINE__);
+   delete bd;
 
    mBufferMap.erase(iter);
    return true;
@@ -600,136 +568,7 @@ void AudioManager::PreFrame(const double deltaFrameTime)
       snd->SetDirectionFromParent();
       
       snd->RunAllCommandsInQueue();
-
    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::Pause( const double deltaFrameTime )
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   SRC_LST::iterator             iter;
-   std::stack<SRC_LST::iterator> stk;
-   ALuint                        src(0L);
-   ALint                         state(AL_STOPPED);
-   SOB_PTR                       snd(NULL);
-
-   // signal any sources commanded to stop
-   while ( mStopQueue.size() )
-   {
-      src   = mStopQueue.front();
-      mStopQueue.pop();
-
-      assert( alIsSource( src ) );
-
-      alSourceStop( src );
-   }
-
-   CheckForError("Source stop error", __FUNCTION__, __LINE__);
-
-   // start any new sounds and
-   // remove any sounds that have stopped
-   for ( iter = mActiveList.begin(); iter != mActiveList.end(); iter++ )
-   {
-      src   = *iter;
-      assert( alIsSource( src ) == AL_TRUE );
-
-      alGetSourcei( src, AL_SOURCE_STATE, &state );
-
-      if (CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
-         continue;
-
-      switch( state )
-      {
-         case  AL_PLAYING:
-         case  AL_PAUSED:
-            // don't need to do anything
-            break;
-         case  AL_STOPPED:
-            {
-               // send stopped message
-               snd   = mSourceMap[src];
-               if ( snd.get() )
-               {
-                  SendMessage( Sound::kCommand[Sound::STOP], snd.get() );
-               }
-
-               // save stopped sound iterator for later removal
-               stk.push( iter );
-            }
-            break;
-
-         default:
-            break;
-      }
-   }
-
-   // signal any sources commanded to pause
-   while ( mPauseQueue.size() )
-   {
-      src   = mPauseQueue.front();
-      mPauseQueue.pop();
-
-      assert( alIsSource( src ) );
-
-      alGetSourcei( src, AL_SOURCE_STATE, &state );
-      if (CheckForError("AudioManager: alGetSourcei(AL_SOURCE_STATE) error", __FUNCTION__, __LINE__))
-         continue;
-
-      switch( state )
-      {
-         case  AL_PLAYING:
-            {
-               alSourcePause( src );
-
-               // send pause message
-               snd   = mSourceMap[src];
-               if ( snd.get() )
-               {
-                  SendMessage( Sound::kCommand[Sound::PAUSE], snd.get() );
-               }
-            }
-            break;
-
-         case  AL_PAUSED:
-            {
-               alSourcePlay( src );
-
-               // send pause message
-               snd   = mSourceMap[src];
-               if ( snd.get() )
-               {
-                  SendMessage( Sound::kCommand[Sound::PLAY], snd.get() );
-               }
-            }
-            break;
-
-         default:
-            break;
-      }
-   }
-
-   // signal any sources commanded to rewind
-   while ( mRewindQueue.size() )
-   {
-      src   = mRewindQueue.front();
-      mRewindQueue.pop();
-
-      assert( alIsSource( src ) );
-
-      alSourceRewind( src );
-
-      // send rewind message
-      snd   = mSourceMap[src];
-      if ( snd.get() )
-      {
-         SendMessage( Sound::kCommand[Sound::REWIND], snd.get() );
-      }
-   }
-
-   CheckForError("alSourceRewind error", __FUNCTION__, __LINE__);
-
-   LOGN_ALWAYS("audiomanager.cpp", "paused5");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -802,29 +641,6 @@ bool AudioManager::ConfigEAX( bool eax )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::LoadSound( Sound* snd )
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
-
-   const char* file(static_cast<Sound*>(snd)->GetFilename());
-
-   if ( file == NULL )
-      return;
-
-   LoadFile( file );
-
-   BufferData* bd = mBufferMap[file];
-
-   if ( bd == NULL )
-      return;
-
-   bd->use++;
-   snd->SetBuffer(bd->buf);
-   CheckForError("LoadSound Error", __FUNCTION__, __LINE__);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void AudioManager::UnloadSound( Sound* snd )
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
@@ -872,98 +688,5 @@ void AudioManager::UnloadSound( Sound* snd )
 
    UnloadFile( file );
    CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::PlaySound(Sound* snd)
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   ALuint buf(0);
-   ALuint src(0);
-   bool source_is_new = false;
-
-   assert(snd);  
-
-   snd->Play();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::PauseSound( Sound* snd )
-{
-   assert( snd );
-
-   if ( !snd->IsInitialized() )
-   {
-      // sound is not playing, bail
-      return;
-   }
-
-   mPauseQueue.push( snd->GetSource() );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::StopSound( Sound* snd )
-{
-   assert( snd );
-
-   ALuint src = snd->GetSource();
-   if ( alIsSource( src ) == AL_FALSE || !snd->IsInitialized() )
-   {
-      // sound is not playing, bail
-      return;
-   }
-
-   mStopQueue.push( src );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::RewindSound( Sound* snd )
-{
-   assert( snd );
-
-   ALuint src = snd->GetSource();
-   if ( alIsSource( src ) == AL_FALSE || !snd->IsInitialized() )
-   {
-      // sound is not playing, bail
-      return;
-   }
-
-   mRewindQueue.push( src );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SetLoop( Sound* snd )
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
-
-   snd->SetLooping(true);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::ResetLoop( Sound* snd )
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
-
-   snd->SetLooping(false);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SetRelative(Sound* snd)
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(snd);
-
-   snd->SetListenerRelative(true);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void AudioManager::SetAbsolute(Sound* snd)
-{
-   CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(snd);
-
-   snd->SetListenerRelative(false);
 }
 
