@@ -587,6 +587,19 @@ void Sound::GetVelocity(osg::Vec3& vel) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+DEPRECATE_FUNC float Sound::GetMinDistance(void) const
+{
+   DEPRECATE("Sound::GetMiDistance", "This method will soon be removed.");
+   return 0.0f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DEPRECATE_FUNC void Sound::SetMinDistance(float dist)
+{
+   DEPRECATE("Sound::SetMinDistance", "This method will soon be removed.");
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void Sound::SetMaxDistance(float dist)
 {
    //make sure max distance is never negative

@@ -436,11 +436,15 @@ namespace dtAudio
          void GetVelocity(osg::Vec3& velocity) const;
 
          /**
-          * Get the minimum distance that sound plays at max_gain.
-          *
-          * @return distance minimum
+          * Deprecated 02/04/2009 -- this method is misleading.  It is not 
+          * possible to se a minimum distance via OpenAL.
           */
-         float GetMinDistance(void) const;
+         DEPRECATE_FUNC float GetMinDistance(void) const;
+
+         /** Deprecated 02/04/2009 -- this method never did anything.  It is not
+          *  possible to set a minimum distance via OpenAL.
+          */
+         DEPRECATE_FUNC void SetMinDistance(float dist);
 
          /**
           * Sets the distance where there will no longer be any attenuation of
