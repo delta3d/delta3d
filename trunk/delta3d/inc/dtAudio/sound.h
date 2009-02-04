@@ -116,7 +116,7 @@ namespace dtAudio
 
       enum  Command
       {
-         NONE     = 0L,
+         NONE = 0L,
          LOAD,
          UNLOAD,
          PLAY,
@@ -143,7 +143,7 @@ namespace dtAudio
       };
 
       public:
-         static   const char* kCommand[kNumCommands];
+         static const char* kCommand[kNumCommands];
       
          /**
           * Constructor.  Typically, user does not create directly
@@ -169,13 +169,13 @@ namespace dtAudio
          virtual void OnMessage(MessageData* data);         
 
          // Get the state of the indicated flag.
-         unsigned int GetState(unsigned int flag) const {return mCommandState & BIT(flag);}
+         unsigned int GetState(unsigned int flag) const { return mCommandState & BIT(flag); }
 
          // set indicated flags in mState
          void SetState(unsigned int flag);
 
          // Reset indicated flags:
-         void ResetState(unsigned int flag) {mCommandState &= ~BIT(flag);}
+         void ResetState(unsigned int flag) { mCommandState &= ~BIT(flag); }
 
       public:
          void SetPositionFromParent();
@@ -192,44 +192,41 @@ namespace dtAudio
          /**
           * Unloads the specified sound file.
           */
-         void UnloadFile(void);
+         void UnloadFile();
 
          ///clean up Sound for recyclying
-         void Clear(void);
+         void Clear();
          
          ///Run all commands in the Sound's command queue (also empties the queue)
          void RunAllCommandsInQueue();
 
          /// Get this sound's OpenAL buffer ID          
-         ALint GetBuffer(void);
+         ALint GetBuffer();
 
          /**
           * Returns the name of the loaded sound file.
           *
           * @return the name of the loaded file
           */
-         const char* GetFilename(void) { return mFilename.c_str(); }
-
+         const char* GetFilename() { return mFilename.c_str(); }
          /// Returns the OpenAL Source ID associated with the loaded Delta3d Sound object.          
-         ALuint GetSource(void) {return mSource;} 
+         ALuint GetSource() { return mSource; } 
 
          /// Get the IsInitialized flag
-         bool IsInitialized(void) {return mIsInitialized;}
+         bool IsInitialized() { return mIsInitialized; }
 
          /// get the IsLooping flag
-         bool IsLooping(void) const;
-
+         bool IsLooping() const;
          ///Get the IsListenerRelative flag
-         bool IsListenerRelative(void) const;
-
+         bool IsListenerRelative() const;
          ///Get the IsPaused flag
-         int IsPaused(void) const {return GetState(PAUSE); }
+         int IsPaused() const { return GetState(PAUSE); }
 
          ///Get the IsPlaying flag
-         int IsPlaying(void) const {return GetState(PLAY); }         
+         int IsPlaying() const { return GetState(PLAY); }
 
          ///Get the IsStopped flag
-         int IsStopped(void) const {return GetState(STOP);}         
+         int IsStopped() const { return GetState(STOP); }         
 
          /** Set the Sound's OpenAL buffer ID without going through the
           *  AudioManager.  The typical case is to go through the AudioManager,
@@ -240,9 +237,8 @@ namespace dtAudio
           *  OpenAL buffers directly if you know what you are doing.
           */
          void SetBuffer(ALint b);
-
          /// Set the IsInitialized flag
-         void SetInitialized(bool isInit) {mIsInitialized = isInit;}
+         void SetInitialized(bool isInit) { mIsInitialized = isInit; }
 
          /**
           * Set callback for when sound starts playing.
@@ -267,41 +263,38 @@ namespace dtAudio
           * and sources are set automatically via the AudioManager.  Only tinker
           * with OpenAL sources directly if you know what you are doing.
           */
-         void SetSource(ALuint s) {mSource = s;}
+         void SetSource(ALuint s) { mSource = s; }
 
          /**
           * Tells the AudioManager to start playing this on the next frame step.
           */
-         void Play(void);
-
+         void Play();
          ///Starts playing a sound without reference to the AudioManager.
          void PlayImmediately();
 
          /**
           * Tells the AudioManager to start playing this sound on the next frame step.
           */
-         void Pause(void);
-
+         void Pause();
          ///Pauses the sound immediately without reference to the AudioManager.
          void PauseImmediately();
 
          /**
           * Tells the Audio Manager to stop playing the sound at the next frame step.
           */
-         void Stop(void);
-
+         void Stop();
          /**
           * Stops the sound without reference to the AudioManager. Usually you
           * want to go through the AudioManager but this method is provided for
           * exceptions to that rule.
           */
-         void StopImmediately(void);                  
+         void StopImmediately();
 
          /**
-          * Tells the AudioManager to rewind to the beginning of this sound.
+          * Tells the AudioManager to rewind to the beginning of this sound
           * at the next frame step.
           */
-         void Rewind(void);
+         void Rewind();
 
          ///Rewinds a sound immediately without referencing the AudioManager
          void RewindImmediately();
@@ -326,28 +319,24 @@ namespace dtAudio
           * @param gain the new gain
           */
          void SetGain(float gain);
-
          /**
           * Returns the gain of the sound source.
           *
           * @return the current gain
           */
-         float GetGain(void) const;
-
+         float GetGain() const;
          /**
           * Sets the pitch multiplier of the sound source.
           *
           * @param pitch the new pitch
           */
          void SetPitch(float pitch);
-
          /**
           * Returns the pitch multipier of the sound source.
           *
           * @return the current pitch
           */
-         float GetPitch(void) const;
-
+         float GetPitch() const;
          /**
           * Flags sound to be relative to listener position.
           *
@@ -370,7 +359,7 @@ namespace dtAudio
          void SetListenerRelative(bool relative);
 
          ///Deprecated 1/23/2009 in favor of SetListenerRelative
-         DEPRECATE_FUNC void ListenerRelative( bool relative )
+         DEPRECATE_FUNC void ListenerRelative(bool relative)
          {
             DEPRECATE("void dtAudio::Sound::ListenerRelative()",
                       "void dtAudio::Sound::SetListenerRelative()");
@@ -385,8 +374,8 @@ namespace dtAudio
           * @param cs : Optional parameter describing the coordinate system of xform
           *             Defaults to ABS_CS.
           */
-         void        SetTransform(const dtCore::Transform&                  xform,
-                                  dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
+         void SetTransform(const dtCore::Transform& xform,
+                           dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS);
 
          /**
           * Set the position of the Sound
@@ -400,7 +389,7 @@ namespace dtAudio
           *
           * @param position to get
           */
-         void GetPosition(osg::Vec3& position)    const;
+         void GetPosition(osg::Vec3& position) const;
 
          /**
           * Set the direction of sound.
@@ -437,9 +426,9 @@ namespace dtAudio
 
          /**
           * Deprecated 02/04/2009 -- this method is misleading.  It is not 
-          * possible to se a minimum distance via OpenAL.
+          * possible to set a minimum distance via OpenAL.
           */
-         DEPRECATE_FUNC float GetMinDistance(void) const;
+         DEPRECATE_FUNC float GetMinDistance() const;
 
          /** Deprecated 02/04/2009 -- this method never did anything.  It is not
           *  possible to set a minimum distance via OpenAL.
@@ -460,7 +449,7 @@ namespace dtAudio
           *
           * @return distance maximum
           */
-         float GetMaxDistance(void) const;
+         float GetMaxDistance() const;
 
          /**
           * Set the rolloff factor describing attenuation curve.
@@ -474,7 +463,7 @@ namespace dtAudio
           *
           * @return rolloff factor
           */
-         float GetRolloffFactor(void) const;
+         float GetRolloffFactor() const;
 
          /**
           * Set the minimum gain that sound plays at.
@@ -489,7 +478,7 @@ namespace dtAudio
           *
           * @return gain minimum
           */
-         float GetMinGain(void) const;
+         float GetMinGain() const;
 
          /**
           * Set the maximum gain that sound plays at.
@@ -504,7 +493,7 @@ namespace dtAudio
           *
           * @return gain maximum
           */
-         float GetMaxGain(void) const;
+         float GetMaxGain() const;
 
          /**
           * Generates and returns a key frame that represents the

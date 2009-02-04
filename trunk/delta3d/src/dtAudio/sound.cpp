@@ -20,25 +20,31 @@ using namespace dtAudio;
 XERCES_CPP_NAMESPACE_USE
 
 // static member variables
-const char* Sound::kCommand[kNumCommands]   =
-            {
-               "",            "load",        "unload",
-               "play",        "pause",       "stop",
-               "rewind",      "loop",        "unloop",
-               "queue",       "gain",        "pitch",
-               "position",    "direction",   "velocity",
-               "absolute",    "relative",    "mindist",
-               "maxdist",     "rolloff",     "mingain",
-               "maxgain"
-            };
+const char* Sound::kCommand[kNumCommands] =
+{
+   "",         "load",      "unload",
+   "play",     "pause",     "stop",
+   "rewind",   "loop",      "unloop",
+   "queue",    "gain",      "pitch",
+   "position", "direction", "velocity",
+   "absolute", "relative",  "mindist",
+   "maxdist",  "rolloff",   "mingain",
+   "maxgain"
+};
 
 IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
-Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f), mPlaying(0)
+Sound::FrameData::FrameData()
+   : mGain(0.0f)
+   , mPitch(0.0f)
+   , mPlaying(0)
 {
 }
 
-Sound::FrameData::FrameData(float gain, float pitch, unsigned int playing): mGain(gain), mPitch(pitch), mPlaying(playing)
+Sound::FrameData::FrameData(float gain, float pitch, unsigned int playing)
+   : mGain(gain)
+   , mPitch(pitch)
+   , mPlaying(playing)
 {
 }
 
@@ -52,17 +58,17 @@ Sound::FrameData::~FrameData()
 
 ////////////////////////////////////////////////////////////////////////////////
 Sound::Sound()
-:  Transformable(),
-   mFilename(""),
-   mPlayCB(NULL),
-   mPlayCBData(NULL),
-   mStopCB(NULL),
-   mStopCBData(NULL),      
-   mCommandState(BIT(STOP)),
-   mIsInitialized(false),
-   mBuffer(0)
+   : Transformable()
+   , mFilename("")
+   , mPlayCB(NULL)
+   , mPlayCBData(NULL)
+   , mStopCB(NULL)
+   , mStopCBData(NULL)
+   , mCommandState(BIT(STOP))
+   , mIsInitialized(false)
+   , mBuffer(0)
 {
-   RegisterInstance( this );
+   RegisterInstance(this);
 
    AddSender(&dtCore::System::GetInstance());
 
@@ -104,13 +110,13 @@ void Sound::OnMessage(MessageData* data)
 
    ALint srcState;
 
-   if(data->message == dtCore::System::MESSAGE_POST_FRAME)
+   if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       alGetSourcei(GetSource(), AL_SOURCE_STATE, &srcState);
       CheckForError("Getting source state", __FUNCTION__, __LINE__);
 
-      //if the sound has stopped it needs to be marked stopped
-      if(srcState == AL_STOPPED && !IsStopped())
+      // if the sound has stopped it needs to be marked stopped
+      if (srcState == AL_STOPPED && !IsStopped())
       {        
          Stop();         
       }
@@ -141,56 +147,56 @@ void Sound::SetDirectionFromParent()
    GetTransform(transform, dtCore::Transformable::ABS_CS);
 
    // extract separate values for position and direction now
-   osg::Vec3            dir   (0.0f, 0.0f, 0.0f);
+   osg::Vec3 dir (0.0f, 0.0f, 0.0f);
 
    transform.GetRotation(dir);
 
    // set the value on the sound object      
-   SetDirection( dir );
+   SetDirection(dir);
 }
 
 void Sound::SetState(unsigned int flag)
 {  
-   mCommandState |= BIT( flag );
+   mCommandState |= BIT(flag);
 
    //a few state flags are mutually exclusive
-   if(flag == PLAY)
+   if (flag == PLAY)
    {
       ResetState(STOP);
       ResetState(PAUSE);
       ResetState(REWIND);
    }
-   else if(flag == STOP)
+   else if (flag == STOP)
    {
       ResetState(PLAY);
       ResetState(PAUSE);
       ResetState(REWIND);
    }
-   else if(flag == PAUSE)
+   else if (flag == PAUSE)
    {
       ResetState(PLAY);
       ResetState(STOP);
       ResetState(REWIND);
    }
-   else if(flag == REWIND)
+   else if (flag == REWIND)
    {
       ResetState(PLAY);
       ResetState(PAUSE);
       ResetState(STOP);
    }
-   else if(flag == LOOP)
+   else if (flag == LOOP)
    {
       ResetState(UNLOOP);
    }
-   else if(flag == UNLOOP)
+   else if (flag == UNLOOP)
    {
       ResetState(LOOP);
    }
-   else if(flag == REL)
+   else if (flag == REL)
    {
       ResetState(ABS);
    }
-   else if(flag == ABS)
+   else if (flag == ABS)
    {
       ResetState(REL);
    }
@@ -201,22 +207,22 @@ void Sound::SetState(unsigned int flag)
  ** Public Member Functions **
  *****************************/
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::LoadFile( const char* file )
+void Sound::LoadFile(const char* file)
 {
-   mFilename   = file;
-   SendMessage( kCommand[LOAD], this );
+   mFilename = file;
+   SendMessage(kCommand[LOAD], this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::UnloadFile( void )
+void Sound::UnloadFile()
 {
-   SendMessage( kCommand[UNLOAD], this );
+   SendMessage(kCommand[UNLOAD], this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::Clear(void)
+void Sound::Clear()
 {
-   mFilename   = "";
+   mFilename = "";
 
    //DON'T clear the source ID!  We can reuse it!
    //mSource     = 0;
@@ -226,7 +232,7 @@ void Sound::Clear(void)
       mCommand.pop();
    }
 
-   mCommandState      = BIT(STOP);
+   mCommandState = BIT(STOP);
 
    mPlayCB     = NULL;
    mPlayCBData = NULL;
@@ -235,7 +241,7 @@ void Sound::Clear(void)
 
    if (GetParent())
    {
-      GetParent()->RemoveChild( this );
+      GetParent()->RemoveChild(this);
    }
 }
 
@@ -243,32 +249,32 @@ void Sound::Clear(void)
 void Sound::RunAllCommandsInQueue()
 {
    //fire off queued up commands
-   while(mCommand.size() > 0)
+   while (mCommand.size() > 0)
    {
       const char* nextCmd = mCommand.front();
       mCommand.pop();
 
-      if(nextCmd == kCommand[PLAY])
+      if (nextCmd == kCommand[PLAY])
       {
-         if ( mPlayCB )
+         if (mPlayCB)
          {
-            mPlayCB( static_cast<Sound*>(this), mPlayCBData );
+            mPlayCB(static_cast<Sound*>(this), mPlayCBData);
          }
          PlayImmediately();
       }
-      else if(nextCmd == kCommand[PAUSE])
+      else if (nextCmd == kCommand[PAUSE])
       {
          PauseImmediately();
       }
-      else if(nextCmd == kCommand[STOP])
+      else if (nextCmd == kCommand[STOP])
       {
-         if ( mStopCB )
+         if (mStopCB)
          {
-            mStopCB( static_cast<Sound*>(this), mStopCBData );
+            mStopCB(static_cast<Sound*>(this), mStopCBData);
          }
 
          StopImmediately();
-      }         
+      }
    }
 }
 
@@ -296,7 +302,7 @@ bool Sound::IsLooping() const
    alGetSourcei(mSource, AL_LOOPING, &looping);
    CheckForError("Getting looping flag for source", __FUNCTION__, __LINE__);
 
-   if(looping)
+   if (looping)
    {
       return true;
    }
@@ -314,22 +320,15 @@ bool Sound::IsListenerRelative() const
    CheckForError("Getting listener relative flag for source",
                    __FUNCTION__, __LINE__);
 
-   if(rel)
-   {
-      return true;
-   }
-   else
-   {
-      return false;
-   }
+   return rel != 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetBuffer(ALint b)
 {
-   if(b == 0)
+   if (b == 0)
    {
-      //asume user is resetting buffer
+      // assume user is resetting buffer
       return;
    }
 
@@ -342,7 +341,7 @@ void Sound::SetBuffer(ALint b)
       return;
    }
 
-   if(alIsBuffer(b) == AL_FALSE)
+   if (alIsBuffer(b) == AL_FALSE)
    {      
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Invalid buffer when attempting to set source's buffer");
@@ -357,25 +356,19 @@ void Sound::SetBuffer(ALint b)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::SetPlayCallback( CallBack cb, void* param )
+void Sound::SetPlayCallback(CallBack cb, void* param)
 {
-   mPlayCB  = cb;
+   mPlayCB = cb;
 
-   if( mPlayCB )
-      mPlayCBData = param;
-   else
-      mPlayCBData = NULL;
+   mPlayCBData = mPlayCB ? param : NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::SetStopCallback( CallBack cb, void* param )
+void Sound::SetStopCallback(CallBack cb, void* param)
 {
    mStopCB  = cb;
 
-   if( mStopCB )
-      mStopCBData = param;
-   else
-      mStopCBData = NULL;
+   mStopCBData = mStopCB ? param : NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -390,7 +383,7 @@ void Sound::PlayImmediately()
 {
    // first check if sound has a buffer   
    ALint buf = GetBuffer();
-   if(alIsBuffer(buf) == AL_FALSE)
+   if (alIsBuffer(buf) == AL_FALSE)
    {      
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Invalid buffer when attempting to play sound");
@@ -400,11 +393,11 @@ void Sound::PlayImmediately()
 
    SetState(PLAY);
    alSourcePlay(mSource);
-   CheckForError("Attempting to play source", __FUNCTION__, __LINE__);  
+   CheckForError("Attempting to play source", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::Pause( void )
+void Sound::Pause()
 {   
    SetState(PAUSE);
    mCommand.push(kCommand[PAUSE]);
@@ -419,14 +412,14 @@ void Sound::PauseImmediately()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::Stop(void)
+void Sound::Stop()
 {
    SetState(STOP);
-   mCommand.push(kCommand[STOP]);   
+   mCommand.push(kCommand[STOP]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::StopImmediately(void)
+void Sound::StopImmediately()
 {
    SetState(STOP);
    alSourceStop(mSource);
@@ -434,10 +427,10 @@ void Sound::StopImmediately(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::Rewind( void )
+void Sound::Rewind()
 {
    SetState(REWIND);
-   mCommand.push(kCommand[REWIND]);   
+   mCommand.push(kCommand[REWIND]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -452,10 +445,10 @@ void Sound::RewindImmediately()
 void Sound::SetLooping(bool loop)
 {
    int loopInt;
-   if(loop)
+   if (loop)
    {
       SetState(LOOP);
-      loopInt = 1;      
+      loopInt = 1;
    }
    else
    {
@@ -470,7 +463,7 @@ void Sound::SetLooping(bool loop)
 void Sound::SetGain(float gain)
 {
    // force gain to range from zero to one
-   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>(gain, 0.0f, 1.0f);
    
    alSourcef(mSource, AL_GAIN, gain);
    CheckForError("Attempt to set gain on source", __FUNCTION__, __LINE__);
@@ -486,12 +479,12 @@ float Sound::GetGain() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::SetPitch( float pitch )
+void Sound::SetPitch(float pitch)
 {   
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
    // also, openAL states zero to be invalid   
-   dtUtil::Clamp<float>( pitch, 0.000001f, 2.0f); 
+   dtUtil::Clamp<float>(pitch, 0.000001f, 2.0f); 
 
    alSourcef(mSource, AL_PITCH, pitch);
    CheckForError("Attempt to set pitch on source", __FUNCTION__, __LINE__);
@@ -507,39 +500,32 @@ float Sound::GetPitch() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::SetListenerRelative(bool relative )
+void Sound::SetListenerRelative(bool relative)
 {
-   if( relative )
-   {
-      alSourcei(mSource, AL_SOURCE_RELATIVE, 1);
-   }      
-   else
-   {
-      alSourcei(mSource, AL_SOURCE_RELATIVE, 0);
-   }      
+   alSourcei(mSource, AL_SOURCE_RELATIVE, relative ? 1 : 0);
    CheckForError("Attempt to set listener relative on source",
                   __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void Sound::SetTransform( const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs )
+void Sound::SetTransform(const dtCore::Transform& xform, dtCore::Transformable::CoordSysEnum cs)
 {
    // properly set transform to transformable object
-   dtCore::Transformable::SetTransform( xform, cs );
+   dtCore::Transformable::SetTransform(xform, cs);
 
    // get new transform, and break up into
    // position and direction for sound object
-   dtCore::Transform    transform;
-   osg::Vec3            pos( 0.0f, 0.0f, 0.0f );
-   osg::Vec3            dir( 0.0f, 0.0f, 0.0f );
+   dtCore::Transform transform;
+   osg::Vec3         pos(0.0f, 0.0f, 0.0f);
+   osg::Vec3         dir(0.0f, 0.0f, 0.0f);
 
-   GetTransform( transform, ABS_CS );
+   GetTransform(transform, ABS_CS);
 
-   transform.GetTranslation( pos );
-   transform.GetRotation( dir );
+   transform.GetTranslation(pos);
+   transform.GetRotation(dir);
 
-   SetPosition( pos );
-   SetDirection( dir );
+   SetPosition(pos);
+   SetDirection(dir);
 }
 
 
@@ -587,7 +573,7 @@ void Sound::GetVelocity(osg::Vec3& vel) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DEPRECATE_FUNC float Sound::GetMinDistance(void) const
+DEPRECATE_FUNC float Sound::GetMinDistance() const
 {
    DEPRECATE("Sound::GetMiDistance", "This method will soon be removed.");
    return 0.0f;
@@ -657,7 +643,7 @@ float Sound::GetMinGain() const
    return mg;
 }
 
-////////////////////////////////////////////////////////////////////////////////void
+////////////////////////////////////////////////////////////////////////////////
 void Sound::SetMaxGain(float maxGain)
 {
    dtUtil::Clamp<float>(maxGain, 0.0f, 1.0f);   
@@ -666,13 +652,12 @@ void Sound::SetMaxGain(float maxGain)
    CheckForError("Setting source max gain", __FUNCTION__, __LINE__);
 }
 
-////////////////////////////////////////////////////////////////////////////////void
+////////////////////////////////////////////////////////////////////////////////
 float Sound::GetMaxGain() const
 {
    float mg;
    alGetSourcef(mSource, AL_MAX_GAIN, &mg);
    CheckForError("Getting source max gain", __FUNCTION__, __LINE__);
-
    return mg;
 }
 
@@ -684,41 +669,44 @@ Sound::FrameData* Sound::CreateFrameData() const
 
 void Sound::UseFrameData(const FrameData* fd)
 {
-   this->SetGain( fd->mGain );
-   this->SetPitch( fd->mPitch );
-   if( !this->IsPlaying() )
+   SetGain(fd->mGain);
+   SetPitch(fd->mPitch);
+   if (!IsPlaying())
    {
-      if( fd->mPlaying )
-         this->Play();
+      if (fd->mPlaying)
+      {
+         Play();
+      }
    }
    else  // sound is playing
    {
-      if( !fd->mPlaying )
-         this->Stop();
+      if (!fd->mPlaying)
+      {
+         Stop();
+      }
    }
 }
 
-DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+DOMElement* Sound::Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
 {
-   XMLCh* SOUND = XMLString::transcode( "Sound" );
-   DOMElement* element = doc->createElement( SOUND );
-   XMLString::release( &SOUND );
+   XMLCh* SOUND = XMLString::transcode("Sound");
+   DOMElement* element = doc->createElement(SOUND);
+   XMLString::release(&SOUND);
 
-   XMLCh* MYNAME = XMLString::transcode( this->GetName().c_str() );
-   XMLCh* NAME = XMLString::transcode( "Name" );
-   element->setAttribute( NAME, MYNAME );
-   XMLString::release( &NAME );
-   XMLString::release( &MYNAME );
+   XMLCh* MYNAME = XMLString::transcode(GetName().c_str());
+   XMLCh* NAME = XMLString::transcode("Name");
+   element->setAttribute(NAME, MYNAME);
+   XMLString::release(&NAME);
+   XMLString::release(&MYNAME);
 
-   DOMElement* gelement = dtUtil::Serializer::ToFloat(d->mGain,"Gain",doc);
-   element->appendChild( gelement );
+   DOMElement* gelement = dtUtil::Serializer::ToFloat(d->mGain, "Gain", doc);
+   element->appendChild(gelement);
 
-   DOMElement* pelement = dtUtil::Serializer::ToFloat(d->mPitch,"Pitch",doc);
-   element->appendChild( pelement );
+   DOMElement* pelement = dtUtil::Serializer::ToFloat(d->mPitch, "Pitch", doc);
+   element->appendChild(pelement);
 
    DOMElement* playelement = dtUtil::Serializer::ToInt(d->mPlaying,"Playing",doc);
    element->appendChild( playelement );
 
    return element;
 }
-
