@@ -44,6 +44,9 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mMouseLocked(false)
    , mOriginAngle(0.0f)
 {
+   mSnapRotation = osg::DegreesToRadians(45.0f);
+   mSnapTranslation = 1;
+
    RegisterInstance(this);
 
    SetView(view);
@@ -161,6 +164,18 @@ void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetSnapTranslation(int increment)
+{
+   mSnapTranslation = increment;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetSnapRotation(float degrees)
+{
+   mSnapRotation = osg::DegreesToRadians(degrees);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::OnMessage(MessageData *data)
 {
    if (GetTarget() && IsEnabled() && mTargetTransform.valid())
@@ -195,6 +210,7 @@ void ObjectMotionModel::OnMessage(MessageData *data)
          // Check for mouse press.
          bool bLeftMouse = mMouse->GetButtonState(dtCore::Mouse::LeftButton);
          bool bRightMouse= mMouse->GetButtonState(dtCore::Mouse::RightButton);
+         mSnap = bRightMouse;
 
          // When the mouse is released, deselect our current arrow.
          if (!bLeftMouse && !bRightMouse)
@@ -642,6 +658,12 @@ void ObjectMotionModel::UpdateTranslation(void)
       // Find the translation vector.
       fDistance = axis * vector;
 
+      // Snap
+      if (mSnap)
+      {
+         fDistance = (int)fDistance / mSnapTranslation;
+      }
+
       targetPos += axis * fDistance;
 
       dtCore::Transform transform;
@@ -784,6 +806,13 @@ void ObjectMotionModel::UpdateRotation(void)
          mOriginAngle = -mOriginAngle;
       }
 
+      // Snap angle to 45 degree angles.
+      if (mSnap)
+      {
+         float snaps = ceilf((mOriginAngle - 0.5f) / mSnapRotation);
+         mOriginAngle = (mSnapRotation * snaps);
+      }
+
       mAngleGeode->removeDrawable(mAngleDrawable.get());
       mAngleGeode->addDrawable(mAngleDrawable.get());
       mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
@@ -817,6 +846,13 @@ void ObjectMotionModel::UpdateRotation(void)
       if (fDirection < 0.0f)
       {
          angle = -angle;
+      }
+
+      // Snap angle to 45 degree angles.
+      if (mSnap)
+      {
+         float snaps = ceilf((angle - 0.5f) / mSnapRotation);
+         angle = (mSnapRotation * snaps);
       }
 
       if (mCoordinateSpace == WORLD_SPACE)
