@@ -18,33 +18,33 @@
 #include <dtUtil/stringutils.h>
 
 // definitions
-#if   !  defined(BIT)
-#define  BIT(a)      (1L<<a)
+#if !defined(BIT)
+# define BIT(a) (1L<<a)
 #endif
 
 // name spaces
-using namespace   dtAudio;
-using namespace   dtUtil;
+using namespace dtAudio;
+using namespace dtUtil;
 
-AudioManager::MOB_ptr   AudioManager::_Mgr(NULL);
-AudioManager::LOB_PTR   AudioManager::_Mic(NULL);
-const char*             AudioManager::_EaxVer   = "EAX2.0";
-const char*             AudioManager::_EaxSet   = "EAXSet";
-const char*             AudioManager::_EaxGet   = "EAXGet";
-const AudioConfigData   AudioManager::_DefCfg;
+AudioManager::MOB_ptr AudioManager::_Mgr(NULL);
+AudioManager::LOB_PTR AudioManager::_Mic(NULL);
+const char*           AudioManager::_EaxVer = "EAX2.0";
+const char*           AudioManager::_EaxSet = "EAXSet";
+const char*           AudioManager::_EaxGet = "EAXGet";
+const AudioConfigData AudioManager::_DefCfg;
 
 IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
-namespace dtAudio
-{
+namespace dtAudio {
+
 ////////////////////////////////////////////////////////////////////////////////
 //Utitily function used to work with OpenAL's error messaging system.  It's used
 //in multiple places throughout dtAudio.  It's not in AudioManager because we
 //don't want things like Sound to directly access the AudioManager.
 // Returns true on error, false if no error
 inline bool CheckForError(const std::string& userMessage,
-                   const std::string& msgFunction,
-                   int lineNumber)
+                          const std::string& msgFunction,
+                          int lineNumber)
 {
    ALenum error = alGetError();
    if (error != AL_NO_ERROR)
@@ -68,6 +68,7 @@ inline bool CheckForError(const std::string& userMessage,
    }
    return AL_FALSE;
 }
+
 } //namespace dtAudio
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,9 +103,9 @@ AudioManager::~AudioManager()
    //stop and clear all Sounds
    SND_LST::iterator it;
    for (it = mSoundList.begin(); it != mSoundList.end(); ++it)
-   {         
+   {
       (*it)->StopImmediately();
-      (*it)->SetBuffer(AL_NONE);         
+      (*it)->SetBuffer(AL_NONE);
       (*it)->SetLooping(false);
       (*it)->RewindImmediately();
    }
@@ -137,7 +138,7 @@ AudioManager::~AudioManager()
 
 ////////////////////////////////////////////////////////////////////////////////
 // create the singleton manager
-void AudioManager::Instantiate(void)
+void AudioManager::Instantiate()
 {
    if (_Mgr.get())
    {
@@ -153,7 +154,7 @@ void AudioManager::Instantiate(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 // destroy the singleton manager
-void AudioManager::Destroy(void)
+void AudioManager::Destroy()
 {
    _Mic = NULL;
    _Mgr = NULL;
@@ -161,7 +162,7 @@ void AudioManager::Destroy(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 // static instance accessor
-AudioManager& AudioManager::GetInstance(void)
+AudioManager& AudioManager::GetInstance()
 {
    return *_Mgr;
 }
@@ -169,7 +170,7 @@ AudioManager& AudioManager::GetInstance(void)
 
 ////////////////////////////////////////////////////////////////////////////////
 // static listener accessor
-Listener* AudioManager::GetListener(void)
+Listener* AudioManager::GetListener()
 {
    return static_cast<Listener*>(_Mic.get());
 }
@@ -179,10 +180,12 @@ DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
 {
    DEPRECATE("AudioManager::GetListenerRelative", "Sound::IsListenerRelative");
 
-   //No sound?  Why are you asking about the ListenerRelative flag then?
-   if(sound == NULL)
+   // No sound?  Why are you asking about the ListenerRelative flag then?
+   if (sound == NULL)
+   {
       return false;
-   
+   }
+
    return sound->IsListenerRelative();
 }
 
@@ -191,7 +194,7 @@ DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
 void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   if(mIsConfigured)
+   if (mIsConfigured)
    {
       // already configured
       return;
@@ -243,7 +246,7 @@ void AudioManager::OnMessage(MessageData* data)
          // as normal. In many games, there are sounds that occur during
          // during a pause, such as background music or GUI clicks. So
          // here we just call the normal functions all at once.
-         PreFrame(*static_cast<const double*>(data->userData));         
+         PreFrame(*static_cast<const double*>(data->userData));
          return;
       }
 
@@ -253,12 +256,14 @@ void AudioManager::OnMessage(MessageData* data)
 
          // Pause all sounds that are currently playing, and
          // save their previous state.
-         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++)
+         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
          {
             Sound* sob = iter->get();
 
-            if(sob == NULL)
-               continue;            
+            if (sob == NULL)
+            {
+               continue;
+            }
 
             if (sob->IsPaused())
             {
@@ -280,7 +285,7 @@ void AudioManager::OnMessage(MessageData* data)
       if (data->message == dtCore::System::MESSAGE_PAUSE_END)
       {
          // Restore all paused sounds to their previous state.
-         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++)
+         for (SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
          {
             Sound* sob = iter->get();
 
@@ -306,8 +311,8 @@ void AudioManager::OnMessage(MessageData* data)
       //A LOAD request typically comes from a sound when it's loading data from
       //a file.  We run it through the AudioManager so the sounds data buffer
       //can be managed (mostly trying to avoid redundant buffers from the same file).
-      if(data->message == Sound::kCommand[Sound::LOAD])
-      {         
+      if (data->message == Sound::kCommand[Sound::LOAD])
+      {
          assert(data->userData);
          Sound* snd(static_cast<Sound*>(data->userData));
 
@@ -315,15 +320,15 @@ void AudioManager::OnMessage(MessageData* data)
 
          snd->SetBuffer(buf);
       }
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Sound* AudioManager::NewSound(void)
+Sound* AudioManager::NewSound()
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR snd(NULL);
-  
+
    // create a new sound object if we don't have one
    if (snd.get() == NULL)
    {
@@ -335,10 +340,10 @@ Sound* AudioManager::NewSound(void)
    AddSender(snd.get());
 
    // save the sound
-   mSoundList.push_back(snd);   
+   mSoundList.push_back(snd);
 
    // hand out the interface to the sound
-   return (snd.get());
+   return snd.get();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -347,14 +352,14 @@ void AudioManager::FreeSound(Sound* sound)
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR snd = static_cast<Sound*>(sound);
 
-   if(snd.get() == NULL)
+   if (snd.get() == NULL)
    {
       return;
    }
 
    // remove sound from list
    SND_LST::iterator iter;
-   for (iter = mSoundList.begin(); iter != mSoundList.end(); iter++)
+   for (iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
    {
       if (snd != *iter)
       {
@@ -370,7 +375,7 @@ void AudioManager::FreeSound(Sound* sound)
    snd->RemoveSender(&dtCore::System::GetInstance());
    RemoveSender(snd.get());
 
-   // free the sound's source and buffer   
+   // free the sound's source and buffer
    UnloadSound(snd.get());
    snd->Clear();
 }
@@ -380,10 +385,12 @@ DEPRECATE_FUNC ALuint AudioManager::GetSource(Sound* sound)
 {
    DEPRECATE("AudioManager::GetSource","Sound::GetSource");
 
-   if(sound == NULL)
+   if (sound == NULL)
+   {
       return -1;
+   }
 
-   return sound->GetSource();   
+   return sound->GetSource();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -474,7 +481,10 @@ ALint AudioManager::LoadFile(const std::string& file)
       return -1;
    }
 
-   alBufferData(bd->buf, format, data, size, ALsizei(freq));
+   bd->format = format;
+   bd->freq   = ALsizei(freq);
+   bd->size   = size;
+   alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
    if (CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
    {
       alDeleteBuffers(1L, &bd->buf);
@@ -492,7 +502,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    // This is probably a Windows implementation bug, so let's just leak a
    // bit in the meantime. Hope you bought your Timberlands...
    // -osb
-   
+
    #if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
       //TODO -- figure this out... it doesn't happen in straight OpenAL apps - maday
    if(data != NULL)
@@ -539,7 +549,7 @@ bool AudioManager::UnloadFile(const std::string& file)
       return false;
    }
 
-   alDeleteBuffers(1L, &bd->buf);   
+   alDeleteBuffers(1L, &bd->buf);
    CheckForError("alDeleteBuffers( 1L, &bd->buf );", __FUNCTION__, __LINE__);
    delete bd;
 
@@ -556,32 +566,33 @@ void AudioManager::PreFrame(const double deltaFrameTime)
    const char* cmd(NULL);
 
    // flush all the sound commands
-   for(unsigned int i = 0; i < mSoundList.size(); ++i)
+   for (unsigned int i = 0; i < mSoundList.size(); ++i)
    {
       snd = mSoundList.at(i);
 
-      if ( snd.get() == NULL )
+      if (snd.get() == NULL)
+      {
          continue;
+      }
 
       //Position and direct sound before firing commands
       snd->SetPositionFromParent();
       snd->SetDirectionFromParent();
-      
       snd->RunAllCommandsInQueue();
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AudioManager::Configured( void ) const
+bool AudioManager::Configured() const
 {
    return mIsConfigured;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool AudioManager::ConfigEAX( bool eax )
+bool AudioManager::ConfigEAX(bool eax)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   if ( !eax )
+   if (!eax)
    {
       return false;
    }
@@ -595,42 +606,42 @@ bool AudioManager::ConfigEAX( bool eax )
    #endif
 
    // check for EAX support
-   if ( alIsExtensionPresent(buf) == AL_FALSE )
+   if (alIsExtensionPresent(buf) == AL_FALSE)
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: %s is not available", _EaxVer );
-      return   false;
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer);
+      return false;
    }
 
    #ifndef AL_VERSION_1_1
-   memset( buf, 0L, 32L );
-   memcpy( buf, _EaxSet, std::min( strlen(_EaxSet), size_t(32L) ) );
+   memset(buf, 0L, 32L);
+   memcpy(buf, _EaxSet, std::min( strlen(_EaxSet), size_t(32L)));
    #else
    buf = _EaxSet;
    #endif
 
    // get the eax-set function
    mEAXSet = alGetProcAddress(buf);
-   if ( mEAXSet == 0 )
+   if (mEAXSet == 0)
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: %s is not available", _EaxVer );
-      return   false;
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer);
+      return false;
    }
 
    #ifndef AL_VERSION_1_1
-   memset( buf, 0, 32 );
-   memcpy( buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32) ) );
+   memset(buf, 0, 32);
+   memcpy(buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32)));
    #else
    buf = _EaxVer;
    #endif
 
    // get the eax-get function
    mEAXGet = alGetProcAddress(buf);
-   if ( mEAXGet == 0 )
+   if (mEAXGet == 0)
    {
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: %s is not available", _EaxVer );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer);
       mEAXSet = 0;
       return false;
    }
@@ -641,14 +652,14 @@ bool AudioManager::ConfigEAX( bool eax )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::UnloadSound( Sound* snd )
+void AudioManager::UnloadSound(Sound* snd)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert( snd );
+   assert(snd);
 
    const char* file(static_cast<Sound*>(snd)->GetFilename());
 
-   if ( file == NULL )
+   if (file == NULL)
    {
       return;
    }
@@ -657,18 +668,18 @@ void AudioManager::UnloadSound( Sound* snd )
 
    BufferData* bd = mBufferMap[file];
 
-   if ( bd == NULL )
+   if (bd == NULL)
    {
       return;
    }
 
-   bd->use--;
+   --bd->use;
 
    // If the buffer is not being used by any other sound object...
-   if( bd->use == 0 )
+   if (bd->use == 0)
    {
       ALuint src = snd->GetSource();
-      if ( alIsSource( src ) && snd->IsInitialized() )
+      if (alIsSource(src) && snd->IsInitialized())
       {
          // NOTE: Deleting the buffer will fail if the sound source is still
          // playing and thus result in a very sound memory leak and potentially
@@ -682,11 +693,11 @@ void AudioManager::UnloadSound( Sound* snd )
          //Also ensure the sound's buffer is set to nothing:
          snd->SetBuffer(AL_NONE);
          snd->SetLooping(false);
-         snd->RewindImmediately();     
+         snd->RewindImmediately();
       }
    }
 
-   UnloadFile( file );
+   UnloadFile(file);
    CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
 }
 

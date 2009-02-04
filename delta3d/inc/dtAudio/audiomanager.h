@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef  DELTA_AUDIOMANAGER
 #define  DELTA_AUDIOMANAGER
@@ -108,170 +108,171 @@ namespace dtAudio
     * respective queues.      
     *
     */
-   class DT_AUDIO_EXPORT AudioManager   :  public   dtCore::Base
+   class DT_AUDIO_EXPORT AudioManager : public dtCore::Base
    {
-        DECLARE_MANAGEMENT_LAYER(AudioManager)
+      DECLARE_MANAGEMENT_LAYER(AudioManager)
 
-      private:
-         /**
-          * BufferData is an internal structure
-          * used to identify an OpenAL buffer and
-          * hold reference data associated with it
-          */
-         struct   BufferData
-         {
-            ALuint         buf;
-            const char*    file;
-            ALboolean      loop;
-            unsigned int   use;
+   private:
+      /**
+       * BufferData is an internal structure
+       * used to identify an OpenAL buffer and
+       * hold reference data associated with it
+       */
+      struct BufferData
+      {
+         ALuint       buf;
+         const char*  file;
+         ALboolean    loop;
+         unsigned int use;
+         ALenum       format;
+         ALsizei      freq;
+         ALsizei      size;
 
-            BufferData()
-            :  buf(0L),
-               file(""),
-               loop(AL_FALSE),
-               use(0L)
-            {}
-         };         
+         BufferData()
+            : buf(0L)
+            , file("")
+            , loop(AL_FALSE)
+            , use(0L)
+         {}
+      };         
 
-      private:
-         typedef  dtCore::RefPtr<AudioManager>        MOB_ptr;
-         typedef  dtCore::RefPtr<Sound>               SOB_PTR;
-         typedef  dtCore::RefPtr<Listener>            LOB_PTR;
+   private:
+      typedef dtCore::RefPtr<AudioManager>       MOB_ptr;
+      typedef dtCore::RefPtr<Sound>              SOB_PTR;
+      typedef dtCore::RefPtr<Listener>           LOB_PTR;
 
-         typedef  std::map<std::string, BufferData*>  BUF_MAP;
-         
-         typedef  std::vector<SOB_PTR>                SND_LST;
-
-         enum SoundState
-         {
-            PAUSED,
-            PLAYING,
-            STOPPED
-         };
+      typedef std::map<std::string, BufferData*> BUF_MAP;
       
-         typedef std::map< Sound*, SoundState >     SoundObjectStateMap;
+      typedef std::vector<SOB_PTR>               SND_LST;
 
-      private:
-         static   MOB_ptr                 _Mgr;
-         static   LOB_PTR                 _Mic;
-         static   const char*             _EaxVer;
-         static   const char*             _EaxSet;
-         static   const char*             _EaxGet;
-         static   const AudioConfigData   _DefCfg;
+      enum SoundState
+      {
+         PAUSED,
+         PLAYING,
+         STOPPED
+      };
+   
+      typedef std::map<Sound*, SoundState> SoundObjectStateMap;
 
-      private:
-                                    AudioManager( const std::string& name = "audiomanager" );
-         virtual                    ~AudioManager();
+   private:
+      static MOB_ptr               _Mgr;
+      static LOB_PTR               _Mic;
+      static const char*           _EaxVer;
+      static const char*           _EaxSet;
+      static const char*           _EaxGet;
+      static const AudioConfigData _DefCfg;
 
-      public:
-         
-         /// create the singleton and initialize OpenAL
-         static   void  Instantiate( void );
+   private:
+      AudioManager(const std::string& name = "audiomanager");
+      virtual ~AudioManager();
 
-         /// destroy the singleton and shutdown OpenAL
-         static   void  Destroy( void );
+   public:
+      
+      /// create the singleton and initialize OpenAL
+      static void Instantiate();
 
-         /// access the AudioManager
-         static   AudioManager&     GetInstance( void );
+      /// destroy the singleton and shutdown OpenAL
+      static void Destroy();
 
-         /// access the global Listener
-         static   Listener*         GetListener( void );
+      /// access the AudioManager
+      static AudioManager& GetInstance();
 
-         ///Deprecated feb/02/2009 in favor of Sound::IsListenerRelative()
-         DEPRECATE_FUNC bool GetListenerRelative(Sound* sound);
+      /// access the global Listener
+      static Listener* GetListener();
 
-         /// initialize AudioManager
-         virtual  void              Config( const AudioConfigData& data = _DefCfg );
+      ///Deprecated feb/02/2009 in favor of Sound::IsListenerRelative()
+      DEPRECATE_FUNC bool GetListenerRelative(Sound* sound);
 
-         /// Returns true if initialized
-         bool IsInitialized() const { return _Mgr != NULL; }
+      /// initialize AudioManager
+      virtual void Config(const AudioConfigData& data = _DefCfg);
 
-         /**
-          * receive messages
-          * handles the timeing messages (pre-post-frame) from the system
-          * pushes sounds onto the command queue for later processing
-          */
-         virtual void OnMessage(MessageData* data);
+      /// Returns true if initialized
+      bool IsInitialized() const { return _Mgr != NULL; }
 
-         /// create or recycle a new sound for the user
-         Sound*            NewSound( void );
+      /**
+       * receive messages
+       * handles the timeing messages (pre-post-frame) from the system
+       * pushes sounds onto the command queue for later processing
+       */
+      virtual void OnMessage(MessageData* data);
+      /// create or recycle a new sound for the user
+      Sound* NewSound();
 
-         /// free a sound that the user is finished with
-         void              FreeSound( Sound* sound );         
+      /// free a sound that the user is finished with
+      void FreeSound(Sound* sound);
 
-         ///Deprecated feb/02/2009 in favor of Sound::GetSource()
-         DEPRECATE_FUNC ALuint            GetSource(Sound* sound);
+      ///Deprecated feb/02/2009 in favor of Sound::GetSource()
+      DEPRECATE_FUNC ALuint GetSource(Sound* sound);
 
-         /*
-          * Pre-load a sound file into a buffer. We only support .wav's         
-          * Return the OpenAL buffer ID of the loaded sound data.
-          *
-          * Testing if the returned buffer is invalid can be done with like this:            
-          *    if (alIsBuffer(buf) == AL_FALSE)
-          *
-          * This method is in the AudioManager rather than the Sound class
-          * because one of the AudioManager's main jobs is to manage sound data
-          * buffers.  If muliple sounds use the same buffers then the
-          * AudioManager ensures that these redundant data buffers are shared
-          * by the Sounds and not loaded into memory multiple times.
-          *
-          * @param file File to be loaded into a buffer.
-          * @return OpenAL buffer ID.
-          */
-         ALint LoadFile(const std::string& file);
+      /*
+       * Pre-load a sound file into a buffer. We only support .wav's
+       * Return the OpenAL buffer ID of the loaded sound data.
+       *
+       * Testing if the returned buffer is invalid can be done with like this:
+       *    if (alIsBuffer(buf) == AL_FALSE)
+       *
+       * This method is in the AudioManager rather than the Sound class
+       * because one of the AudioManager's main jobs is to manage sound data
+       * buffers.  If muliple sounds use the same buffers then the
+       * AudioManager ensures that these redundant data buffers are shared
+       * by the Sounds and not loaded into memory multiple times.
+       *
+       * @param file File to be loaded into a buffer.
+       * @return OpenAL buffer ID.
+       */
+      ALint LoadFile(const std::string& file);
 
-         /// un-load a sound file from a buffer (if use-count is zero)
-         bool              UnloadFile( const std::string& file );
+      /// un-load a sound file from a buffer (if use-count is zero)
+      bool UnloadFile(const std::string& file);
 
-      private:
-         /// process commands of all sounds in the sound list
-         inline   void              PreFrame( const double deltaFrameTime );
-         
-         /// check if manager has been configured
-         inline   bool              Configured( void )   const;
+   private:
+      /// process commands of all sounds in the sound list
+      inline void PreFrame(const double deltaFrameTime);
 
-         /// get the eax function pointers from OpenAL (nothing done with them yet)
-         inline   bool              ConfigEAX( bool eax );
+      /// check if manager has been configured
+      inline bool Configured() const;
 
-         /// remove the buffer from a sound
-         inline   void              UnloadSound( Sound* snd );
-         
-      private:
-         ALvoid*             mEAXSet;
-         ALvoid*             mEAXGet;
-         
-         unsigned int        mNumSounds;
-         bool                mIsConfigured;         
+      /// get the eax function pointers from OpenAL (nothing done with them yet)
+      inline bool ConfigEAX(bool eax);
 
-         BUF_MAP             mBufferMap;
+      /// remove the buffer from a sound
+      inline void UnloadSound(Sound* snd);
+   private:
+      ALvoid*             mEAXSet;
+      ALvoid*             mEAXGet;
+      
+      unsigned int        mNumSounds;
+      bool                mIsConfigured;         
 
-         SND_LST             mSoundList;
+      BUF_MAP             mBufferMap;
 
-         SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
-                                             ///prior to a system-wide pause message
+      SND_LST             mSoundList;
+
+      SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
+                                          ///prior to a system-wide pause message
    };
 };
 
 // configuration data
 struct DT_AUDIO_EXPORT AudioConfigData
 {
-   enum           DistanceModel
-                  {
-                     dmNONE      = AL_NONE,
-                     dmINVERSE   = AL_INVERSE_DISTANCE,
-                     dmINVCLAMP  = AL_INVERSE_DISTANCE_CLAMPED,
-                  };
+   enum DistanceModel
+   {
+      dmNONE     = AL_NONE,
+      dmINVERSE  = AL_INVERSE_DISTANCE,
+      dmINVCLAMP = AL_INVERSE_DISTANCE_CLAMPED
+   };
 
-   unsigned int   numSources;
-   bool           eax;
-   unsigned int   distancemodel;
+   unsigned int numSources;
+   bool         eax;
+   unsigned int distancemodel;
 
-   AudioConfigData(  unsigned int   ns = 16,
-                     bool           ex = false,
-                     unsigned int   dm = dmINVERSE )
-   :  numSources(ns),
-      eax(ex),
-      distancemodel(dm)
+   AudioConfigData(unsigned int ns = 16,
+                   bool         ex = false,
+                   unsigned int dm = dmINVERSE)
+      : numSources(ns)
+      , eax(ex)
+      , distancemodel(dm)
    {}
 };
 
