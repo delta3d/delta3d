@@ -146,6 +146,20 @@ namespace dtCore
          void SetCoordinateSpace(CoordinateSpace coordinateSpace);
 
          /**
+         * Sets the snap translation increment.
+         *
+         * @param[in]  increment  The increment length per snap position.
+         */
+         void SetSnapTranslation(int increment);
+
+         /**
+         * Sets the snap rotational degree increment.
+         *
+         * @param[in]  degrees  The number of degrees between snap positions.
+         */
+         void SetSnapRotation(float degrees);
+
+         /**
           * Message handler callback.
           *
           * @param[in] data  The message data
@@ -231,6 +245,10 @@ namespace dtCore
          osg::Vec2       mMouseOffset;
          osg::Vec2       mMouseOrigin;
          float           mOriginAngle;
+
+         int             mSnapTranslation;
+         float           mSnapRotation;
+         bool            mSnap;
    };
 } // namespace dtCore
 
