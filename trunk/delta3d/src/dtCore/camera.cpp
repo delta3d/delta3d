@@ -445,20 +445,8 @@ namespace dtCore
             mOsgCamera->getProjectionMatrix() *= osg::Matrix::scale(1.0/aspectRatioChange, 1.0, 1.0);
          }
 
-         // HACK -- this is a temporary solution to get FLTK guis w/ menu bars playing nice
-         // set the dimensions of the viewport, initialized to the size of the window
-         int x      = 0;
-         int y      = 0;
-         int width  = traits->width;
-         int height = traits->height;
-
-         // offset by toolbar dimensions to help FLTK out
-         width  += 12;
-         height += 31;
-
          // apply viewport dimensions for camera
-         mOsgCamera->setViewport(new osg::Viewport(x, y, width, height));
-         // end HACK
+         mOsgCamera->setViewport(new osg::Viewport(0, 0, traits->width, traits->height));
 
          GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
 
