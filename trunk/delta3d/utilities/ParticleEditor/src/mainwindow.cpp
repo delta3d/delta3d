@@ -102,7 +102,7 @@ void MainWindow::SetupMenuConnections()
    connect(mUI.actionLoad_Reference, SIGNAL(triggered()), mpParticleViewer, SLOT(LoadReferenceObject()));
    connect(mUI.actionSave, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleToFile()));
    connect(mUI.actionSave_As, SIGNAL(triggered()), mpParticleViewer, SLOT(SaveParticleAs()));
-   connect(mUI.actionQuit, SIGNAL(triggered()), this, SLOT(close()));
+   connect(mUI.actionExit, SIGNAL(triggered()), this, SLOT(close()));
    connect(mUI.actionCompass, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleCompass(bool)));
    connect(mUI.actionXY_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleXYGrid(bool)));
    connect(mUI.actionYZ_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleYZGrid(bool)));
