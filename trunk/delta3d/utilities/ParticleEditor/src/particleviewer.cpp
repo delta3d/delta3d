@@ -351,17 +351,25 @@ void ParticleViewer::LoadReferenceObject()
    QString filename = QFileDialog::getOpenFileName(NULL, tr("Load Reference"),
       mParticleSystemFilename, tr("Geometry Files (*.{osg,ive})\tOSG Files (*.osg)\tIVE Files (*.ive)"));
 
+   bool visible = true;
+
    if(filename != "")
    {
       if(mpReferenceModel.valid())
       {
          //remove the existing one from the scene
          mpSceneGroup->removeChild(mpReferenceModel.get());
+
+         //carry over the visibility of the old file to the new one
+         visible = mpReferenceModel->getNodeMask() ? true : false;
       }
       mpReferenceModel = osgDB::readNodeFile(filename.toStdString());
       if(mpReferenceModel.valid())
       {
          mpSceneGroup->addChild(mpReferenceModel.get());
+         emit ReferenceObjectLoaded(filename);
+         
+         ToggleReferenceObject(visible);
       }
       else
       {
@@ -369,6 +377,21 @@ void ParticleViewer::LoadReferenceObject()
       }
    }
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::ToggleReferenceObject(bool enabled)
+{
+   if (mpReferenceModel.valid() == false) { return; }
+
+   if (enabled)
+   {
+      mpReferenceModel->setNodeMask(0xffffffff);
+   }
+   else
+   {
+      mpReferenceModel->setNodeMask(0x0);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

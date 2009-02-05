@@ -35,6 +35,7 @@ namespace psEditor
    public slots:
       void UpdateWindowTitle(const QString& title);
       void UpdateHistory(const QString& filename);
+      void OnReferenceObjectLoaded(const QString &filename);
 
    private:
       void SetupViewWindow();

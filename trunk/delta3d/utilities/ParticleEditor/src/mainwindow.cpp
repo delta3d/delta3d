@@ -29,6 +29,7 @@ void MainWindow::SetupUI()
 {
    connect(mpParticleViewer, SIGNAL(UpdateWindowTitle(const QString&)), this, SLOT(UpdateWindowTitle(const QString&)));
    connect(mpParticleViewer, SIGNAL(UpdateHistory(const QString&)), this, SLOT(UpdateHistory(const QString&)));
+   connect(mpParticleViewer, SIGNAL(ReferenceObjectLoaded(const QString&)), this, SLOT(OnReferenceObjectLoaded(const QString&)));
 
    // Pass the UI to the various classes that need their information
    SetupMenus();
@@ -107,6 +108,7 @@ void MainWindow::SetupMenuConnections()
    connect(mUI.actionXY_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleXYGrid(bool)));
    connect(mUI.actionYZ_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleYZGrid(bool)));
    connect(mUI.actionXZ_Grid, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleXZGrid(bool)));
+   connect(mUI.actionReference_Object, SIGNAL(triggered(bool)), mpParticleViewer, SLOT(ToggleReferenceObject(bool)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -608,3 +610,7 @@ void MainWindow::UpdateRecentFileActions()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnReferenceObjectLoaded(const QString &filename)
+{
+   mUI.actionReference_Object->setEnabled(true);
+}

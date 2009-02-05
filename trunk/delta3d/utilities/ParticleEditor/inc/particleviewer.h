@@ -86,6 +86,7 @@ signals:
    ///> Main Window signals
    void UpdateWindowTitle(const QString& title);
    void UpdateHistory(const QString& filename);
+   void ReferenceObjectLoaded(const QString& filename);
 
    ///> Layer Browser signals
    void ClearLayerList();
@@ -196,6 +197,7 @@ public slots:
    void OpenRecentParticleSystem();
    void ImportParticleSystem();
    void LoadReferenceObject();
+   void ToggleReferenceObject(bool enabled);
    void SaveParticleToFile();
    void SaveParticleAs();
    void ToggleCompass(bool enabled);

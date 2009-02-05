@@ -6893,6 +6893,8 @@
     <addaction name="actionXY_Grid" />
     <addaction name="actionYZ_Grid" />
     <addaction name="actionXZ_Grid" />
+    <addaction name="separator" />
+    <addaction name="actionReference_Object" />
    </widget>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
@@ -7015,6 +7017,20 @@
    </property>
    <property name="visible" >
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionReference_Object" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>&amp;Reference Object</string>
    </property>
   </action>
  </widget>
