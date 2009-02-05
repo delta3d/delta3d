@@ -260,6 +260,11 @@ namespace dtNetGM
        */
       bool IsShuttingDown() { return mShuttingDown; };
 
+      /**
+       * Return hostname of the machine this NetworkComponent is running on.
+       */
+      std::string GetHostName();
+
    private:
       static bool mGneInitialized; // bool indicating GNE initialization
 

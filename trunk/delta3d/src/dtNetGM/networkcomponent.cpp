@@ -539,4 +539,16 @@ namespace dtNetGM
       }
       mMutex.release();
    }
+
+////////////////////////////////////////////////////////////////////////////////
+   std::string NetworkComponent::GetHostName()
+   {
+      const dtGame::MachineInfo* mi = GetMachineInfo(GetGameManager()->GetMachineInfo().GetUniqueId());
+
+      if(mi == NULL)
+         return "";
+      else
+         return mi->GetHostName();
+   }
+
 }
