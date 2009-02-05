@@ -47,6 +47,9 @@ namespace dtUtil
          CPPUNIT_TEST( TestNormalizer );
          CPPUNIT_TEST( TestEquivalentVec2 );
          CPPUNIT_TEST( TestEquivalentVec3);
+         CPPUNIT_TEST( TestEquivalentVecUsingEqualVecs );
+         CPPUNIT_TEST( TestEquivalentVecUsingSlightlyDifferentVecs );
+         CPPUNIT_TEST( TestEquivalentVecUsingVeryDifferentVecs );
          CPPUNIT_TEST( TestEquivalentVec4 );
 		 CPPUNIT_TEST( TestMatrixEulerConversions );
        CPPUNIT_TEST( TestEquivalentReals );
@@ -59,6 +62,9 @@ namespace dtUtil
          void TestNormalizer();
          void TestEquivalentVec2();
          void TestEquivalentVec3();
+         void TestEquivalentVecUsingEqualVecs();
+         void TestEquivalentVecUsingSlightlyDifferentVecs();
+         void TestEquivalentVecUsingVeryDifferentVecs();
          void TestEquivalentVec4();
          void TestEquivalentReals();
 		 void TestMatrixEulerConversions();
@@ -162,6 +168,39 @@ namespace dtUtil
       CPPUNIT_ASSERT(Equivalent(v3da, v3db, 0.1));
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void MathTests::TestEquivalentVecUsingEqualVecs()
+   {
+      const osg::Vec3 v1(1.f, 2.f, 3.f);
+      
+      //easy case, this *better* be true
+      CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare equal Vec3",
+                              Equivalent(v1, v1) == true );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MathTests::TestEquivalentVecUsingSlightlyDifferentVecs()
+   {
+      const osg::Vec3 v1(1.f, 2.f, 3.f);
+      const osg::Vec3 v2(1.0000001f, 2.0000001f, 3.0000001f);
+
+      //numbers are really close, should be equivalent
+      CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare slightly different Vec3",
+                               Equivalent(v1, v2) == true );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MathTests::TestEquivalentVecUsingVeryDifferentVecs()
+   {
+      const osg::Vec3 v1(1.f, 2.f, 3.f);
+      const osg::Vec3 v2(10.f, 20.f, 30.f);
+
+      //numbers are really different, should *not* be equivalent
+      CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare very different Vec3",
+                             Equivalent(v1, v2) == false );
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    void MathTests::TestEquivalentVec4()
    {
       osg::Vec4 v4a(3.31f, 3.32f, 3.33f, 3.34f);
@@ -261,4 +300,5 @@ namespace dtUtil
 
       // Note, this should check doubles also, but I don't know the limit values for this.
    }
+
 }

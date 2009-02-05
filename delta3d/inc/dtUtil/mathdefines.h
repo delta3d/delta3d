@@ -210,9 +210,9 @@ namespace dtUtil
    {
       for (size_t i = 0; i < TVec::num_components; i++)
       {
-         if (Equivalent(lhs[i], rhs[i]))
-            return false;
+         if (!Equivalent(lhs[i], rhs[i])) {return false;}
       }
+
       return true;
    }
 
