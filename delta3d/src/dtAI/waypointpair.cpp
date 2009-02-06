@@ -54,15 +54,21 @@ osg::Vec3 WaypointPair::ClosestPointTo(const osg::Vec3& pPoint)
 }
 
 void WaypointPair::Calculate3DDistance()
-{  
+{
    m3DDistance = osg::Vec3(mTo->GetPosition() - mFrom->GetPosition()).length();
 }
 
 
 void WaypointPair::CalculateSlope()
 {
-   if(GetTo()[0] - GetFrom()[0]) mSlope = 0;
-   else mSlope = (GetTo()[1] - GetFrom()[1]) / (GetTo()[0] - GetFrom()[0]);
+   if (GetTo()[0] - GetFrom()[0])
+   {
+      mSlope = 0;
+   }
+   else
+   {
+      mSlope = (GetTo()[1] - GetFrom()[1]) / (GetTo()[0] - GetFrom()[0]);
+   }
 }
 
 float WaypointPair::GetSlope() const
@@ -92,7 +98,7 @@ const Waypoint* WaypointPair::GetWaypointFrom() const
    return mFrom;
 }
 
-const Waypoint* WaypointPair::GetWaypointTo() const 
+const Waypoint* WaypointPair::GetWaypointTo() const
 {
    return mTo;
 }
@@ -107,4 +113,4 @@ const osg::Vec3& WaypointPair::GetTo() const
    return mTo->GetPosition();
 }
 
-}//namespace dtAI
+} // namespace dtAI

@@ -71,8 +71,11 @@ namespace dtNetGM
       }
 
       // Adjust MachineInfo of the GameManager
-      GetGameManager()->GetMachineInfo().SetHostName(serverConnListener->getLocalAddress().getNameByAddress());
-      GetGameManager()->GetMachineInfo().SetIPAddress(serverConnListener->getLocalAddress().toString());
+      dtGame::GameManager* gameManager = GetGameManager();
+      assert(gameManager);
+      dtGame::MachineInfo& machineInfo = gameManager->GetMachineInfo();
+      machineInfo.SetHostName(serverConnListener->getLocalAddress().getNameByAddress());
+      machineInfo.SetIPAddress(serverConnListener->getLocalAddress().toString());
 
       mMutex.release();
       return ret;
@@ -204,4 +207,4 @@ namespace dtNetGM
       // Accept all connections
       return true;
    }
-}
+} // namespace dtNetGM

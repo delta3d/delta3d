@@ -31,13 +31,13 @@ namespace dtAI
    {
 
    }
-   
+
    struct WorldStateDeleteFunc
    {
       template<class _Type>
          void operator()(_Type p1)
       {
-         delete p1.second; 
+         delete p1.second;
       }
    };
 
@@ -54,11 +54,11 @@ namespace dtAI
 
    WorldState::WorldState(const WorldState& pWS)
    {
-      mCost = pWS.mCost;      
+      mCost = pWS.mCost;
 
       StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
       StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          mStateVariables.insert(StringStateMapping((*iter).first , (*iter).second->Copy()));
          ++iter;
@@ -70,11 +70,11 @@ namespace dtAI
    {
       FreeMem();
 
-      mCost = pWS.mCost;      
+      mCost = pWS.mCost;
 
       StateVarMapping::const_iterator iter = pWS.mStateVariables.begin();
       StateVarMapping::const_iterator endOfList = pWS.mStateVariables.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          mStateVariables.insert(StringStateMapping((*iter).first , (*iter).second->Copy()));
          ++iter;
@@ -93,9 +93,9 @@ namespace dtAI
    }
 
    void WorldState::AddState(const std::string& pName, IStateVariable* pStateVar)
-   {      
+   {
       StateVarMapping::iterator iter = mStateVariables.find(pName);
-      if(iter == mStateVariables.end()) 
+      if (iter == mStateVariables.end())
       {
          mStateVariables.insert(StringStateMapping(pName, pStateVar));
       }
@@ -104,16 +104,22 @@ namespace dtAI
    IStateVariable* WorldState::GetState(const std::string& pState)
    {
       StateVarMapping::iterator iter = mStateVariables.find(pState);
-      if(iter == mStateVariables.end()) return 0;
-      else return (*iter).second;
+      if (iter == mStateVariables.end())
+      {
+         return 0;
+      }
+      return (*iter).second;
    }
 
 
    const IStateVariable* WorldState::GetState(const std::string& pState) const
    {
       StateVarMapping::const_iterator iter = mStateVariables.find(pState);
-      if(iter == mStateVariables.end()) return 0;
-      else return (*iter).second;
+      if (iter == mStateVariables.end())
+      {
+         return 0;
+      }
+      return (*iter).second;
    }
 
    class WorldStatePrintFunc
@@ -133,11 +139,11 @@ namespace dtAI
          std::ostream& mOStream;
    };
 
-   std::ostream& operator << (std::ostream &o, const WorldState &worldState)
+   std::ostream& operator << (std::ostream& o, const WorldState& worldState)
    {
       WorldStatePrintFunc printFunc(o);
       std::for_each(worldState.GetStateVariables().begin(), worldState.GetStateVariables().end(), printFunc);
       return o;
    }
 
-}//namespace dtAI
+} // namespace dtAI

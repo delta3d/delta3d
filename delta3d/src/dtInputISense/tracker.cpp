@@ -19,7 +19,7 @@ void Tracker::CreateInstances()
 
    trackerHandle = ISD_OpenTracker(0, 0, FALSE, FALSE);
 
-   if(trackerHandle > 0)
+   if (trackerHandle > 0)
    {
       new Tracker("tracker", trackerHandle);
    }
@@ -30,7 +30,7 @@ void Tracker::CreateInstances()
  */
 void Tracker::DestroyInstances()
 {
-   while(GetInstanceCount() > 0)
+   while (GetInstanceCount() > 0)
    {
       delete GetInstance(0);
    }
@@ -41,7 +41,7 @@ void Tracker::DestroyInstances()
  */
 void Tracker::PollInstances()
 {
-   for(int i=0;i<GetInstanceCount();i++)
+   for (int i = 0; i < GetInstanceCount(); ++i)
    {
       GetInstance(i)->Poll();
    }
@@ -54,12 +54,12 @@ void Tracker::PollInstances()
  * @param trackerHandle the handle of the tracker device
  */
 Tracker::Tracker(const std::string& name, ISD_TRACKER_HANDLE trackerHandle)
-   : InputDevice(name),
-     mTrackerHandle(trackerHandle)
+   : InputDevice(name)
+   , mTrackerHandle(trackerHandle)
 {
    RegisterInstance(this);
 
-   for(int i=0;i<ISD_MAX_STATIONS;i++)
+   for (int i = 0; i < ISD_MAX_STATIONS; ++i)
    {
       std::ostringstream bufs[6];
 
@@ -68,7 +68,7 @@ Tracker::Tracker(const std::string& name, ISD_TRACKER_HANDLE trackerHandle)
       AddFeature(
          new dtCore::Axis(this, bufs[0].str())
       );
-   
+
       bufs[1] << GetName() << " station " << i << ", y axis";
 
       AddFeature(
@@ -117,13 +117,13 @@ Tracker::~Tracker()
  */
 void Tracker::Poll()
 {
-   if(mTrackerHandle > 0)
+   if (mTrackerHandle > 0)
    {
       ISD_TRACKING_DATA_TYPE data;
 
       ISD_GetTrackingData(mTrackerHandle, &data);
 
-      for(int i=0;i<ISD_MAX_STATIONS;i++)
+      for (int i = 0; i < ISD_MAX_STATIONS; ++i)
       {
          GetAxis(i*6+0)->SetState(data.Station[i].Position[0]);
 

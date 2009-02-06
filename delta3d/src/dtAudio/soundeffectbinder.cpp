@@ -75,7 +75,7 @@ void SoundEffectBinder::Initialize(dtCore::EffectManager* fxMgr /*= NULL*/)
 /**
  * Shutdown the SoundEffectBinder.
  */
-void SoundEffectBinder::Shutdown(void)
+void SoundEffectBinder::Shutdown()
 {
    mQueued.clear();
    mDone.clear();

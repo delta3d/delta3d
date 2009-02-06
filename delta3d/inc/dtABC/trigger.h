@@ -1,22 +1,22 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
-*
-*/
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ */
 
 #ifndef DELTA_TRIGGER
 #define DELTA_TRIGGER
@@ -35,24 +35,24 @@ namespace dtABC
       DECLARE_MANAGEMENT_LAYER(Trigger)
 
    public:
-      Trigger( const std::string& name = "Trigger" );
+      Trigger(const std::string& name = "Trigger");
    protected:
       virtual ~Trigger();
    public:
 
-      virtual void OnMessage( dtCore::Base::MessageData* data );
+      virtual void OnMessage(dtCore::Base::MessageData* data);
 
-      void SetEnabled( bool enabled ) { mEnabled = enabled; }
+      void SetEnabled(bool enabled) { mEnabled = enabled; }
       bool GetEnabled() const { return mEnabled; }
 
-      void SetTimeDelay( double timeDelay ) { mTimeDelay = timeDelay; mTimeLeft = mTimeDelay; }
+      void SetTimeDelay(double timeDelay) { mTimeDelay = timeDelay; mTimeLeft = mTimeDelay; }
       double GetTimeDelay() const { return mTimeDelay; }
 
       double GetTimeLeft() const { return mTimeLeft; }
 
       void Fire();
 
-      void SetAction( Action* action ) { mActionToFire = action; }
+      void SetAction(Action* action) { mActionToFire = action; }
 
       Action* GetAction() { return mActionToFire.get(); }
       const Action* GetAction() const { return mActionToFire.get(); }
@@ -64,39 +64,38 @@ namespace dtABC
        *
        * @return The number of times this trigger will activate before
        * disabling.
-      */
-      int GetTimesActive() const{return mTimesActive;}
+       */
+      int GetTimesActive() const { return mTimesActive; }
 
       /**
        * Sets the number of times this trigger will activate before
-       * becoming disabled. 
+       * becoming disabled.
        *
        * @param pTimesActive The number of times this trigger will activate
        * before becoming disabled. For an infinite number of times, set
        * the value to be negative.
        */
-      void SetTimesActive(int pTimesActive){mTimesActive = pTimesActive;}
+      void SetTimesActive(int pTimesActive) { mTimesActive = pTimesActive; }
 
-      
+
       //this is required by deltadrawable
-      osg::Node* GetOSGNode(){return mNode.get();}
-      const osg::Node* GetOSGNode() const{return mNode.get();}
+      osg::Node* GetOSGNode() { return mNode.get(); }
+      const osg::Node* GetOSGNode() const { return mNode.get(); }
 
 
    private:
 
-      void Update( double time );
+      void Update(double time);
 
    private:
 
-      bool mEnabled;
-      double mTimeDelay;
-      double mTimeLeft;
-      int mTimesActive, mTimesTriggered;
-      dtCore::RefPtr<Action> mActionToFire;
+      bool                      mEnabled;
+      double                    mTimeDelay;
+      double                    mTimeLeft;
+      int                       mTimesActive, mTimesTriggered;
+      dtCore::RefPtr<Action>    mActionToFire;
       dtCore::RefPtr<osg::Node> mNode;
-
    };
-}
+} // namespace dtABC
 
-#endif //DELTA_TRIGGER
+#endif // DELTA_TRIGGER

@@ -152,7 +152,7 @@ namespace dtAudio
       /**
        * Shutdown the SoundEffectBinder.
        */
-      virtual void Shutdown(void);
+      virtual void Shutdown();
 
       /**
        * Adds an effect manager whos effects we'll monitor.
@@ -284,8 +284,6 @@ namespace dtAudio
       FLT_MAP mMinDist;
       FLT_MAP mMaxDist;
    };
-}
-
-
+} // namespace dtAudio
 
 #endif // DELTA_SOUNDEFFECTBINDER
