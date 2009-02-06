@@ -163,8 +163,8 @@ Section "!Delta3D" Delta3DSection
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk" "$INSTDIR"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk" "$INSTDIR\doc\html\index.html"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\STAGE.exe"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\viewer.exe"
-  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\psEditor.exe"
+;  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\viewer.exe"
+;  CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\psEditor.exe"
   CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk" "$INSTDIR\${DELTA_BUILD_DIR}\bin\AnimationViewer.exe"
 
   !insertmacro MUI_STARTMENU_WRITE_END
@@ -333,8 +333,8 @@ Section Uninstall
   Delete "$SMPROGRAMS\$ICONS_GROUP\API Documentation.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Delta3D Directory.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\STAGE.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk"
+  ;Delete "$SMPROGRAMS\$ICONS_GROUP\3D Viewer.lnk"
+  ;Delete "$SMPROGRAMS\$ICONS_GROUP\Particle Editor.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Animation Viewer.lnk"
  
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
