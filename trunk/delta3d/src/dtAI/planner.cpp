@@ -30,7 +30,7 @@ namespace dtAI
       , mConfig()
    {
    }
-   
+
    Planner::~Planner()
    {
       FreeMem();
@@ -42,13 +42,13 @@ namespace dtAI
          void operator()(_Type p1)
       {
          delete p1->mState;
-         delete p1; 
+         delete p1;
       }
    };
 
    void Planner::FreeMem()
    {
-      std::for_each(mOpen.begin(), mOpen.end(), PlannerDeleteFunc());  
+      std::for_each(mOpen.begin(), mOpen.end(), PlannerDeleteFunc());
       mOpen.clear();
       mConfig.mResult.clear();
    }
@@ -56,11 +56,11 @@ namespace dtAI
    void Planner::Reset(const PlannerConfig& pConfig)
    {
       FreeMem();
-      mConfig = pConfig;      
-      
+      mConfig = pConfig;
+
       PlannerNodeLink* pNodeLink = new PlannerNodeLink();
-      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState()); 
-      
+      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState());
+
       mOpen.push_back(pNodeLink);
    }
 
@@ -71,7 +71,7 @@ namespace dtAI
       mHelper = pHelper;
 
       PlannerNodeLink* pNodeLink = new PlannerNodeLink();
-      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState()); 
+      pNodeLink->mState = new WorldState(*mHelper->GetCurrentState());
 
       mOpen.push_back(pNodeLink);
    }
@@ -83,10 +83,10 @@ namespace dtAI
 
       const PlannerNodeLink* pLowest = *iter;
 
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          const PlannerNodeLink* pNLIter = (*iter);
-         if(pNLIter->operator<(*pLowest))
+         if (pNLIter->operator<(*pLowest))
          {
             pLowest = pNLIter;
          }
@@ -130,9 +130,9 @@ namespace dtAI
    {
       Operator::ConditionalList::const_iterator iter =  pOperator->GetPreConditions().begin();
       Operator::ConditionalList::const_iterator endOfList = pOperator->GetPreConditions().end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         if(!((*iter)->Evaluate(pState)))
+         if (!((*iter)->Evaluate(pState)))
          {
             return false;
          }
@@ -145,9 +145,9 @@ namespace dtAI
    {
       std::list<Operator*>::const_iterator iter = pOperators.begin();
       std::list<Operator*>::const_iterator endOfList = pOperators.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         if(CanApplyOperator(*iter, pCurrentState))
+         if (CanApplyOperator(*iter, pCurrentState))
          {
             pOperatorListIn.push_back(*iter);
          }
@@ -163,7 +163,7 @@ namespace dtAI
       for (;;)
       {
 
-         if(mOpen.empty())
+         if (mOpen.empty())
          {
             return NO_PLAN;
          }
@@ -176,9 +176,9 @@ namespace dtAI
          bool pReachedGoal = mHelper->IsDesiredState(pCurrent->mState);
 
          //we have found our desired state
-         if(pReachedGoal || mConfig.mCurrentElapsedTime >= mConfig.mMaxTimePerIteration)
+         if (pReachedGoal || mConfig.mCurrentElapsedTime >= mConfig.mMaxTimePerIteration)
          {
-            while(pCurrent->mOperator)
+            while (pCurrent->mOperator)
             {
                mConfig.mResult.push_front(pCurrent->mOperator);
                pCurrent = pCurrent->mParent;
@@ -187,20 +187,20 @@ namespace dtAI
             mConfig.mTotalElapsedTime += mConfig.mCurrentElapsedTime;
             mConfig.mCurrentElapsedTime = 0.0;
 
-            if(pReachedGoal) return PLAN_FOUND;
+            if (pReachedGoal) return PLAN_FOUND;
             else return PARTIAL_PLAN;
          }
          else
          {
             Remove(pCurrent);
-            
-            std::list<Operator*> pTraverse;            
+
+            std::list<Operator*> pTraverse;
             GetTraversableStates(pCurrent->mState, mHelper->GetOperators(), pTraverse);
 
             std::list<Operator*>::iterator iter = pTraverse.begin();
             std::list<Operator*>::iterator endOfList = pTraverse.end();
 
-            while(iter != endOfList)
+            while (iter != endOfList)
             {
                WorldState* pWS = new WorldState(*(pCurrent->mState));
                PlannerNodeLink* pnl = new PlannerNodeLink();
@@ -225,4 +225,4 @@ namespace dtAI
       return NO_PLAN;
    }
 
-}//namespace dtAI
+} // namespace dtAI

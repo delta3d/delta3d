@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2004-2006 MOVES Institute
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* Bradley Anderegg 03/20/2006
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2006 MOVES Institute
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * Bradley Anderegg 03/20/2006
+ */
 
 #include <dtAI/fsm.h>
 #include <dtUtil/log.h>
@@ -27,7 +27,7 @@ namespace dtAI
    FSM::FSM()
       : mCurrentState(new NPCState(&NPCStateTypes::NPC_STATE_DEFAULT))
       , mFactory(0)
-   {     
+   {
       SetupDefaultFactory();
    }
 
@@ -55,10 +55,10 @@ namespace dtAI
    {
       NPCState* newState = NULL;
 
-      if(mFactory.valid())
+      if (mFactory.valid())
       {
          //for default creation we have to add the type to the object factory
-         if(!mFactory->IsTypeSupported(state->GetName()))
+         if (!mFactory->IsTypeSupported(state->GetName()))
          {
             mFactory->RegisterType<NPCState>(state->GetName());
          }
@@ -86,15 +86,15 @@ void FSM::AddTransition(const NPCEvent* eventType, const NPCState::Type* from, c
    NPCState* realFrom = GetState(from);
    NPCState* realTo = GetState(to);
 
-   if(realFrom != NULL && realTo != NULL)
+   if (realFrom != NULL && realTo != NULL)
    {
       // checking the transition map's keys
       TransitionMap::key_type key(eventType, realFrom);
-      mTransitions.insert(TransitionMap::value_type(key , realTo));      
+      mTransitions.insert(TransitionMap::value_type(key , realTo));
    }
    else
    {
-      LOG_ERROR("Unable to add transition- Event:" 
+      LOG_ERROR("Unable to add transition- Event:"
          + eventType->GetName() + ", from state: " + from->GetName() +
          ", to state: " + to->GetName());
    }
@@ -107,14 +107,14 @@ NPCState* FSM::GetCurrentState()
 
 NPCState* FSM::GetState(const NPCState::Type* pStateType)
 {
-   StateSet::iterator iter = mStates.begin();
-   StateSet::iterator endOfList = mStates.end(); 
+   StateSet::iterator iter      = mStates.begin();
+   StateSet::iterator endOfList = mStates.end();
 
-   while(iter != endOfList)
+   while (iter != endOfList)
    {
-      if( (*iter)->GetName() == pStateType->GetName() )
+      if ((*iter)->GetName() == pStateType->GetName())
       {
-         return const_cast<NPCState*>( (*iter).get() );
+         return const_cast<NPCState*>((*iter).get());
       }
       ++iter;
    }
@@ -131,7 +131,7 @@ void FSM::MakeCurrent(const NPCState::Type* pStateType)
 
 void FSM::OnStateChange(NPCState* pState)
 {
-   if(!pState)
+   if (!pState)
    {
       LOG_ERROR("FSM::OnStateChange, Invalid State: " + pState->GetName());
       return;
@@ -143,7 +143,7 @@ void FSM::OnStateChange(NPCState* pState)
 
 void FSM::Update(double dt)
 {
-   if(mCurrentState.valid() && mCurrentState->GetUpdate().valid())
+   if (mCurrentState.valid() && mCurrentState->GetUpdate().valid())
    {
       mCurrentState->GetUpdate()(dt);
    }
@@ -152,12 +152,12 @@ void FSM::Update(double dt)
 bool FSM::HandleEvent(const NPCEvent* pEvent)
 {
    TransitionMap::key_type key(pEvent, mCurrentState.get());
-   TransitionMap::iterator iter = mTransitions.find( key );
+   TransitionMap::iterator iter = mTransitions.find(key);
 
-   if( iter != mTransitions.end() )
+   if (iter != mTransitions.end())
    {
       NPCState* to = (*iter).second.get();
-      OnStateChange( to );
+      OnStateChange(to);
       return true;
    }
 
@@ -170,4 +170,4 @@ void FSM::SetupDefaultFactory()
    mFactory = new FactoryType();
 }
 
-}//namespace dtAI
+} // namespace dtAI

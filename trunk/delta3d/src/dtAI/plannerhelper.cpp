@@ -38,12 +38,12 @@ namespace dtAI
       template<class _Type>
          void operator()(_Type p1)
       {
-         delete p1; 
+         delete p1;
       }
    };
-   
+
    PlannerHelper::~PlannerHelper()
-   {    
+   {
       //\fix me- this crashes boost python... define ownership of operators
       std::for_each(mOperators.begin(), mOperators.end(), PlannerHelperDeleteFunc());
       mOperators.clear();
@@ -108,9 +108,9 @@ namespace dtAI
       OperatorList::const_iterator iter = mOperators.begin();
       OperatorList::const_iterator endOfList = mOperators.end();
 
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         if((*iter)->GetName() == pName)
+         if ((*iter)->GetName() == pName)
          {
             return *iter;
          }
@@ -119,4 +119,4 @@ namespace dtAI
       return 0;
    }
 
-}//namespace dtAI
+} // namespace dtAI

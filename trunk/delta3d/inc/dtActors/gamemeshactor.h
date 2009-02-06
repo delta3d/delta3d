@@ -18,6 +18,7 @@
  *
  * Curtiss Murphy
  */
+
 #ifndef DELTA_GAMEMESHACTOR_H
 #define DELTA_GAMEMESHACTOR_H
 
@@ -40,8 +41,8 @@ namespace dtActors
 
    /**
     * This class is the game actor for a basic game object that has a single static mesh.
-    * Use this base class if you are using the Game Manager and want to create a 
-    * simple game object that has one mesh.  It is basically a GameActor with the 
+    * Use this base class if you are using the Game Manager and want to create a
+    * simple game object that has one mesh.  It is basically a GameActor with the
     * code from StaticMeshActor in dtActors.
     * @see GameActor
     * @see GameMeshProxy
@@ -49,139 +50,132 @@ namespace dtActors
     */
    class DT_PLUGIN_EXPORT GameMeshActor : public dtGame::GameActor
    {
-      public:
+   public:
+      /**
+       * Constructs a default task actor.
+       * @param proxy The actor proxy owning this task actor.
+       * @param desc An optional description of this task actor.
+       */
+      GameMeshActor(dtGame::GameActorProxy& proxy);
 
-         /**
-          * Constructs a default task actor.
-          * @param proxy The actor proxy owning this task actor.
-          * @param desc An optional description of this task actor.
-          */
-         GameMeshActor(dtGame::GameActorProxy &proxy);
+      /**
+       * Loads a mesh file.
+       * @param fileName The filename of the mesh to load.
+       */
+      virtual void SetMesh(const std::string& meshFile);
 
-        /**
-         * Loads a mesh file.
-         * @param fileName The filename of the mesh to load.
-         */
-        virtual void SetMesh(const std::string &meshFile);
+      /**
+       * Called when the actor has been added to the game manager.
+       */
+      virtual void AddedToScene(dtCore::Scene* scene);
 
-         /**
-          * Called when the actor has been added to the game manager.
-          */
-         virtual void AddedToScene(dtCore::Scene* scene);
+      /**
+       * Sets whether we will use the cache when we load files.  This must be set
+       * before loading the mesh or it will have no effect.  To make this work, the
+       * model is now loaded on entering the world the first time.
+       * @param value new use cache value (default is true)
+       */
+      void SetUseCache(bool value) { mUseCache = value; }
 
-         /**
-          * Sets whether we will use the cache when we load files.  This must be set
-          * before loading the mesh or it will have no effect.  To make this work, the 
-          * model is now loaded on entering the world the first time.
-          * @param value new use cache value (default is true)
-          */
-         void SetUseCache(bool value)
-         {
-            mUseCache = value;
-         }
+      /**
+       * Gets whether we will use the cache when we load files.  This must be set
+       * before loading the mesh or it will have no effect.  To make this work, the
+       * model is now loaded on entering the world the first time.
+       * @return the use cache value (default is true).
+       */
+      bool GetUseCache() const { return mUseCache; }
 
-         /**
-          * Gets whether we will use the cache when we load files.  This must be set
-          * before loading the mesh or it will have no effect.  To make this work, the 
-          * model is now loaded on entering the world the first time.
-          * @return the use cache value (default is true).
-          */
-         bool GetUseCache()
-         {
-            return mUseCache;
-         }
+      /**
+       * Sets the scale on this object
+       * @param xyz The scale vector
+       */
+      void SetScale(const osg::Vec3& xyz);
 
-         /**
-          * Sets the scale on this object
-          * @param xyz The scale vector
-          */
-         void SetScale(const osg::Vec3 &xyz);
+      /**
+       * Returns the scale vector
+       * @return The scale
+       */
+      osg::Vec3 GetScale() const;
 
-         /**
-          * Returns the scale vector
-          * @return The scale
-          */
-         osg::Vec3 GetScale() const;
+      /**
+       * Returns the matrix transform of this object
+       * @return The osg::MatrixTransform
+       */
+      osg::MatrixTransform& GetMatrixTransform();
 
-         /**
-          * Returns the matrix transform of this object
-          * @return The osg::MatrixTransform
-          */
-         osg::MatrixTransform& GetMatrixTransform();
+      /**
+       * Returns the matrix transform of this object
+       * @return The osg::MatrixTransform
+       */
+      const osg::MatrixTransform& GetMatrixTransform() const;
 
-         /**
-          * Returns the matrix transform of this object
-          * @return The osg::MatrixTransform
-          */
-         const osg::MatrixTransform& GetMatrixTransform() const;
+      /**
+       * Sets the models rotation
+       * @param v3 the hpr
+       */
+      void SetModelRotation(const osg::Vec3& v3);
 
-         /**
-          * Sets the models rotation
-          * @param v3 the hpr
-          */
-         void SetModelRotation(const osg::Vec3& v3);
+      /**
+       * Returns the scale vector
+       * @return The scale
+       */
+      osg::Vec3 GetModelRotation();
 
-         /**
-          * Returns the scale vector
-          * @return The scale
-          */
-         osg::Vec3 GetModelRotation();
+      /**
+       * Sets the models translation
+       * @param v3 the xyz
+       */
+      void SetModelTranslation(const osg::Vec3& v3);
 
-         /**
-          * Sets the models translation
-          * @param v3 the xyz
-          */
-         void SetModelTranslation(const osg::Vec3& v3);
+      /**
+       * Returns the scale vector
+       * @return The scale
+       */
+      osg::Vec3 GetModelTranslation();
 
-         /**
-          * Returns the scale vector
-          * @return The scale
-          */
-         osg::Vec3 GetModelTranslation();
+   protected:
 
-      protected:
+      /**
+       * Destroys this actor.
+       */
+      virtual ~GameMeshActor();
 
-         /**
-          * Destroys this actor.
-          */
-         virtual ~GameMeshActor();
+      /**
+       * Inner class for implementing the loadable interface
+       */
+      class GameMeshLoader : public dtCore::Loadable
+      {
+         public:
+            GameMeshLoader() {};
+            ~GameMeshLoader() {};
 
-         /**
-          * Inner class for implementing the loadable interface
-          */
-         class GameMeshLoader : public dtCore::Loadable
-         {
-            public:
-               GameMeshLoader() {};
-               ~GameMeshLoader() {};
+            /**
+             * Sets the mesh file name on the super class.  Provided since the
+             * base class doesn't let you set this without using load.
+             */
+            void SetMeshFilename(const std::string& newFilename)
+            {
+               mFilename = newFilename;
+            }
+      };
 
-               /**
-                * Sets the mesh file name on the super class.  Provided since the 
-                * base class doesn't let you set this without using load.
-                */
-               void SetMeshFilename(const std::string &newFilename)
-               {
-                  mFilename = newFilename;
-               }
-         };
+   private:
+      // Does the work of loading the mesh.
+      void LoadMesh();
 
-      private:
-         // Does the work of loading the mesh. 
-         void LoadMesh();
-         
-         GameMeshLoader mLoader; 
-         dtCore::RefPtr<osg::Node> mMeshNode;
-         // tracks whether we should do a notify when we change the mesh
-         bool mAlreadyInScene;
-         bool mUseCache;
+      GameMeshLoader mLoader;
+      dtCore::RefPtr<osg::Node> mMeshNode;
+      // tracks whether we should do a notify when we change the mesh
+      bool mAlreadyInScene;
+      bool mUseCache;
 
-         dtCore::RefPtr<dtCore::Model> mModel;
+      dtCore::RefPtr<dtCore::Model> mModel;
    };
 
    /**
     * This class is the proxy for a basic game object that has a single static mesh.
-    * Use this base class if you are using the Game Manager and want to create a 
-    * simple game object that has one mesh.  It is basically a GameActorProxy with the 
+    * Use this base class if you are using the Game Manager and want to create a
+    * simple game object that has one mesh.  It is basically a GameActorProxy with the
     * code from StaticMeshActorProxy in dtActors. Note, this class does NOT cache
     * geometry in memory. The reasoning is that since this is a dynamic GameActor
     * that is intended to respond to message and have behavior, changes to its
@@ -193,58 +187,57 @@ namespace dtActors
     */
    class DT_PLUGIN_EXPORT GameMeshActorProxy : public dtGame::GameActorProxy
    {
-      public:
+   public:
 
-         /**
-          * Constructs the proxy.
-          */
-         GameMeshActorProxy();
+      /**
+       * Constructs the proxy.
+       */
+      GameMeshActorProxy();
 
-         /**
-          * Builds the property map for the task actor proxy.  These properties
-          * wrap the specified properties located in the actor.
-          */
-         virtual void BuildPropertyMap();
+      /**
+       * Builds the property map for the task actor proxy.  These properties
+       * wrap the specified properties located in the actor.
+       */
+      virtual void BuildPropertyMap();
 
-         /**
-          * Registers any invokables used by the proxy.  The invokables
-          * allow the actor to hook into the game manager messages system.
-          */
-         virtual void BuildInvokables();
+      /**
+       * Registers any invokables used by the proxy.  The invokables
+       * allow the actor to hook into the game manager messages system.
+       */
+      virtual void BuildInvokables();
 
-         /**
-          * Gets the method by which this static mesh is rendered. This is used by STAGE.
-          * @return If there is no geometry currently assigned, this
-          *  method will return RenderMode::DRAW_BILLBOARD_ICON.  If
-          *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
-          *  is returned.
-          */
-         virtual const ActorProxy::RenderMode& GetRenderMode();
+      /**
+       * Gets the method by which this static mesh is rendered. This is used by STAGE.
+       * @return If there is no geometry currently assigned, this
+       *  method will return RenderMode::DRAW_BILLBOARD_ICON.  If
+       *  there is geometry assigned to this static mesh, RenderMode::DRAW_ACTOR
+       *  is returned.
+       */
+      virtual const ActorProxy::RenderMode& GetRenderMode();
 
-         /**
-          * Gets the billboard used to represent static mesh if this proxy's
-          * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
-          * @return
-          */
-         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+      /**
+       * Gets the billboard used to represent static mesh if this proxy's
+       * render mode is RenderMode::DRAW_BILLBOARD_ICON. Used by STAGE.
+       * @return
+       */
+      virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
+   protected:
 
-      protected:
+      /**
+       * Destroys the proxy.
+       */
+      virtual ~GameMeshActorProxy();
 
-         /**
-          * Destroys the proxy.
-          */
-         virtual ~GameMeshActorProxy();
+      /**
+       * Called by the game manager during creation of the proxy.  This method
+       * creates the real actor and returns it.
+       */
+      virtual void CreateActor();
 
-         /**
-          * Called by the game manager during creation of the proxy.  This method
-          * creates the real actor and returns it.
-          */
-         virtual void CreateActor();
-
-      private:
+   private:
    };
 
-}
+} // namespace dtActors
 
-#endif
+#endif // DELTA_GAMEMESHACTOR_H

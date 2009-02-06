@@ -35,16 +35,16 @@
 
 struct funcCompareAgent
 {
-   funcCompareAgent(const dtAI::BaseNPC* pNPC){mRemoveElement = pNPC;}
+   funcCompareAgent(const dtAI::BaseNPC* pNPC) { mRemoveElement = pNPC; }
 
    template<class T>
    bool operator()(T pObj)
    {
-      if(pObj.second.get() == mRemoveElement)
+      if (pObj.second.get() == mRemoveElement)
       {
          return true;
       }
-      
+
       return false;
    }
 
@@ -67,7 +67,7 @@ namespace dtAI
       , mMaxAgents(std::numeric_limits<unsigned>::max())
    {
    }
-   
+
    AIParticleManager::~AIParticleManager()
    {
       ClearAllAgents();
@@ -90,16 +90,16 @@ namespace dtAI
       mAgents.push_back(std::make_pair(pProbability, pAgent));
       SortAgents();
    }
-   
+
    BaseNPC* AIParticleManager::CloneAgent(BaseNPC* pAgent)
    {
 
       ParticleList::iterator iter = mAgents.begin();
       ParticleList::iterator endOfList = mAgents.end();
 
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
-         if((*iter).second == pAgent)
+         if ((*iter).second == pAgent)
          {
             AgentParticle newAgent = mClone(*iter);
             mAgents.push_back(newAgent);
@@ -110,34 +110,34 @@ namespace dtAI
 
          ++iter;
       }
-      
+
       return 0;
    }
 
    void AIParticleManager::RemoveAgent(BaseNPC* pAgent)
    {
-      if(!InRemoveList(pAgent)) mRemoveList.push_back(pAgent);
+      if (!InRemoveList(pAgent)) { mRemoveList.push_back(pAgent); }
    }
 
    bool AIParticleManager::InRemoveList(const BaseNPC* pNPC) const
    {
       AgentList::const_iterator iter = std::find(mRemoveList.begin(), mRemoveList.end(), pNPC);
 
-      return (iter != mRemoveList.end());
+      return iter != mRemoveList.end();
    }
 
    void AIParticleManager::RemoveAgents(const AgentList& pList)
    {
-      AgentList::const_iterator iter = pList.begin();
+      AgentList::const_iterator iter      = pList.begin();
       AgentList::const_iterator endOfList = pList.end();
 
       float pProbability = 0.0f;
 
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          funcCompareAgent pRemovePred((*iter));
-         ParticleList::iterator agentIter = std::find_if(mAgents.begin(), mAgents.end(), pRemovePred);
-         if(agentIter != mAgents.end())  
+         ParticleList::iterator agentIter = std::find_if (mAgents.begin(), mAgents.end(), pRemovePred);
+         if (agentIter != mAgents.end())
          {
            pProbability += (*agentIter).first;
            mAgents.erase(agentIter);
@@ -160,7 +160,7 @@ namespace dtAI
 
       float remainder = 1.0f - pProbRemoved;
 
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          //re-normalize the probability
          float pNewProb = (*iter).first / remainder;
@@ -177,7 +177,7 @@ namespace dtAI
       float probRemoved = 0.0f;
       //since we are sorted on probability we will remove the least probable agents
       //until we are under our limit
-      while(mAgents.size() > mMaxAgents && !mAgents.empty())
+      while (mAgents.size() > mMaxAgents && !mAgents.empty())
       {
          probRemoved += mAgents.back().first;
          mAgents.pop_back();
@@ -194,21 +194,21 @@ namespace dtAI
 
    void AIParticleManager::UpdateAgents(double dt)
    {
-      
+
       ParticleList::iterator endOfList = mAgents.end();
 
       //we use a for loop here and compare against the new end just an npc added to our list
       //on its update
-      for(ParticleList::iterator iter = mAgents.begin(); iter != mAgents.end(); ++iter)
+      for (ParticleList::iterator iter = mAgents.begin(); iter != mAgents.end(); ++iter)
       {
          BaseNPC* pNPC = (*iter).second.get();
-         
+
          //update each npc
          pNPC->Update(dt);
 
          //if filter returns true that means this npc is no longer valid
          //and we get rid of it
-         if(mFilter(*iter))
+         if (mFilter(*iter))
          {
             mRemoveList.push_back(pNPC);
          }
@@ -220,8 +220,8 @@ namespace dtAI
 
    AIParticleManager::AgentParticle* AIParticleManager::GetAgentParticle(BaseNPC* pNPC)
    {
-      ParticleList::iterator iter = std::find_if(mAgents.begin(), mAgents.end(), funcCompareAgent(pNPC));
-      if(iter == mAgents.end())
+      ParticleList::iterator iter = std::find_if (mAgents.begin(), mAgents.end(), funcCompareAgent(pNPC));
+      if (iter == mAgents.end())
       {
          return 0;
       }
@@ -236,7 +236,7 @@ namespace dtAI
       AgentParticle* pParticleToAdd = GetAgentParticle(pAgentToAddTo);
       AgentParticle* pParticleToDelete = GetAgentParticle(pAgentToDelete);
 
-      if(!pParticleToAdd || !pParticleToDelete)
+      if (!pParticleToAdd || !pParticleToDelete)
       {
          LOG_ERROR("Attempting to combine unknown agents");
          return;
@@ -263,4 +263,4 @@ namespace dtAI
       return mAgents;
    }
 
-}//namespace 
+} // namespace dtAI

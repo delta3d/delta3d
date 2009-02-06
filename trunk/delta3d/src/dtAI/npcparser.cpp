@@ -53,10 +53,10 @@ namespace dtAI
 
 
    NPCParser::NPCParser()
-   : mLineNumber(0)
+      : mLineNumber(0)
    {
    }
-   
+
    NPCParser::~NPCParser()
    {
    }
@@ -65,8 +65,8 @@ namespace dtAI
    bool NPCParser::LoadScript(const std::string& pFilename, BaseNPC* pNPC)
    {
       std::string file = osgDB::findDataFile(pFilename);
-      
-      if(file.empty() )
+
+      if (file.empty())
       {
          LOG_WARNING("The file, " + pFilename + " was not found.")
          return 0;
@@ -74,7 +74,7 @@ namespace dtAI
 
       mFileStream.open(file.c_str());
 
-      if(mFileStream.is_open())
+      if (mFileStream.is_open())
       {
          try
          {
@@ -85,23 +85,23 @@ namespace dtAI
             mCurrentTask = "Parsing NPC Name";
             std::string pNPCName;
             ParseString(pNPCName);
-           
-            if(ParseDelimeter() != TOKEN_OPEN_BRACKET[0]) throw CreateError("Syntax Error: token '[' expected.");
 
-            //world state
+            if (ParseDelimeter() != TOKEN_OPEN_BRACKET[0]) throw CreateError("Syntax Error: token '[' expected.");
+
+            // world state
             mCurrentTask = "Parsing WorldState";
             ParseToken(TOKEN_WORLD_STATE);
-           
+
             mCurrentTask = "Parsing WorldState Expression";
             Expression pWorldState;
             ParseExpression(pWorldState);
             CreateWorldState(pNPC, pWorldState);
 
-            //operators
+            // operators
             std::string pToken;
             ParseString(pToken);
 
-            while(pToken == TOKEN_OPERATOR && mFileStream.good())
+            while (pToken == TOKEN_OPERATOR && mFileStream.good())
             {
                mCurrentTask = "Parsing Operator Name";
                std::string OpName;
@@ -122,25 +122,31 @@ namespace dtAI
                ParseExpression(effect);
 
                ParseToken(TOKEN_COST);
-               int cost = ParseInt();  
+               int cost = ParseInt();
 
                CreateOperator(pNPC, OpName, preConds, interrupt, effect, cost);
-               
+
                pToken.clear();
                ParseString(pToken);
-            }            
+            }
 
 
-            //goals
+            // goals
             mCurrentTask = "Parsing Goals";
 
-            if(pToken != TOKEN_GOALS) throw CreateError("Token Expected, 'Goals'");
-            
+            if (pToken != TOKEN_GOALS)
+            {
+               throw CreateError("Token Expected, 'Goals'");
+            }
+
             Expression pGoals;
             ParseExpression(pGoals);
             CreateGoals(pNPC, pGoals);
 
-            if(ParseDelimeter() != TOKEN_CLOSE_BRACKET[0]) throw CreateError("Syntax Error: token ']' expected,");
+            if (ParseDelimeter() != TOKEN_CLOSE_BRACKET[0])
+            {
+               throw CreateError("Syntax Error: token ']' expected,");
+            }
          }
          catch (NPCParserError& pError)
          {
@@ -157,42 +163,42 @@ namespace dtAI
    void NPCParser::CreateWorldState(BaseNPC* pNPC, Expression& pExr)
    {
       WorldState& pWS = pNPC->GetWSTemplate();
-      Expression::iterator iter = pExr.begin();
+      Expression::iterator iter      = pExr.begin();
       Expression::iterator endOfList = pExr.end();
-      while(iter != endOfList)
-      {       
+      while (iter != endOfList)
+      {
          //error checking
-         if(iter->second.size() != 1)
+         if (iter->second.size() != 1)
          {
             throw CreateError("Syntax Error, WorldState variable: " + iter->first + " expects one argument");
          }
-         else if(iter->second[0].mType != PARAM_BOOL)
+         else if (iter->second[0].mType != PARAM_BOOL)
          {
             throw CreateError("Syntax Error, WorldState variable: " + iter->first + " expects argument to be of type bool");
          }
 
          pWS.AddState(iter->first, new StateVariable(iter->second[0].mBool));
-         
+
          ++iter;
-      }      
+      }
    }
 
    void NPCParser::CreateGoals(BaseNPC* pNPC, Expression& pExr)
-   {      
-      Expression::iterator iter = pExr.begin();
+   {
+      Expression::iterator iter      = pExr.begin();
       Expression::iterator endOfList = pExr.end();
-      while(iter != endOfList)
-      {         
+      while (iter != endOfList)
+      {
          //error checking
-         if(iter->second.size() != 2)
+         if (iter->second.size() != 2)
          {
             throw CreateError("Syntax Error, Goal: " + iter->first + " expecting two arguments");
          }
-         else if(iter->second[0].mType != PARAM_INT)
+         else if (iter->second[0].mType != PARAM_INT)
          {
             throw CreateError("Syntax Error, Goal: " + iter->first + " first argument expects type int");
          }
-         else if(iter->second[1].mType != PARAM_BOOL)
+         else if (iter->second[1].mType != PARAM_BOOL)
          {
             throw CreateError("Syntax Error, Goal: " + iter->first + " second argument expects type bool");
          }
@@ -200,34 +206,34 @@ namespace dtAI
          pNPC->AddGoal(iter->first, new Goal(iter->first, iter->second[1].mBool, iter->second[0].mInt));
 
          ++iter;
-      }      
+      }
    }
 
    void NPCParser::CreateOperator(BaseNPC* pNPC, const std::string& pOpName, Expression& pPreConds, Expression& pInterrupts, Expression& pEffects, int pCost)
    {
       NPCOperator* pOperator = new NPCOperator(pOpName);
-      
+
       //parse preconditions
-      Expression::iterator iter = pPreConds.begin();
+      Expression::iterator iter      = pPreConds.begin();
       Expression::iterator endOfList = pPreConds.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          pOperator->AddPreCondition(CreatePrecondition(*iter));
          ++iter;
       }
 
-      iter = pInterrupts.begin();
+      iter      = pInterrupts.begin();
       endOfList = pInterrupts.end();
-      while(iter != endOfList)
+      while (iter != endOfList)
       {
          pOperator->AddInterrupt(CreatePrecondition(*iter));
          ++iter;
       }
 
-      iter = pEffects.begin();
+      iter      = pEffects.begin();
       endOfList = pEffects.end();
-      while(iter != endOfList)
-      {  
+      while (iter != endOfList)
+      {
          pOperator->AddEffect(CreateEffect(*iter));
          ++iter;
       }
@@ -239,30 +245,30 @@ namespace dtAI
 
    Precondition* NPCParser::CreatePrecondition(ExpressionPair& expr)
    {
-      if(expr.second.size() != 1)
+      if (expr.second.size() != 1)
       {
          throw CreateError("Syntax Error, Conditional: " + expr.first + " expects one argument");
       }
-      else if(expr.second[0].mType != PARAM_BOOL)
+      else if (expr.second[0].mType != PARAM_BOOL)
       {
          throw CreateError("Syntax Error, Conditional: " + expr.first + " expects argument to be of type bool");
       }
 
-      return new Precondition(expr.first, expr.second[0].mBool);      
+      return new Precondition(expr.first, expr.second[0].mBool);
    }
 
    Effect* NPCParser::CreateEffect(ExpressionPair& expr)
    {
-      if(expr.second.size() != 1)
+      if (expr.second.size() != 1)
       {
          throw CreateError("Syntax Error, Effect: " + expr.first + " expects one argument");
       }
-      else if(expr.second[0].mType != PARAM_BOOL)
+      else if (expr.second[0].mType != PARAM_BOOL)
       {
          throw CreateError("Syntax Error, Effect: " + expr.first + " expects argument to be of type bool");
       }
 
-      return new Effect(expr.first, expr.second[0].mBool);      
+      return new Effect(expr.first, expr.second[0].mBool);
    }
 
    void NPCParser::ParseExpression(Expression& pExp)
@@ -270,12 +276,15 @@ namespace dtAI
       std::string pToken;
       char lastDelimeter = ParseDelimeter();
 
-      if(lastDelimeter != TOKEN_OPEN_BRACKET[0]) throw CreateError("NPCParser, Syntax Error: token '[' expected,");
-            
+      if (lastDelimeter != TOKEN_OPEN_BRACKET[0])
+      {
+         throw CreateError("NPCParser, Syntax Error: token '[' expected,");
+      }
+
       do
       {
          ExpressionPair ep;
-         if(!ParseString(pToken))
+         if (!ParseString(pToken))
          {
             lastDelimeter = ParseDelimeter();
             break;
@@ -283,19 +292,19 @@ namespace dtAI
 
          ep.first = pToken;
 
-         if(ParseDelimeter() != TOKEN_OPEN_PAREN[0])
+         if (ParseDelimeter() != TOKEN_OPEN_PAREN[0])
          {
             throw CreateError("Syntax Error, expected token:" + TOKEN_OPEN_PAREN);
          }
 
-         do 
+         do
          {
             ep.second.push_back(ParseParam());
             lastDelimeter = ParseDelimeter();
-         } 
-         while(lastDelimeter == ',');
+         }
+         while (lastDelimeter == ',');
 
-         if(lastDelimeter != TOKEN_CLOSE_PAREN[0])
+         if (lastDelimeter != TOKEN_CLOSE_PAREN[0])
          {
             throw CreateError("NPCParser, Syntax Error: token ')' expected,");
          }
@@ -305,9 +314,9 @@ namespace dtAI
 
          lastDelimeter = ParseDelimeter();
       }
-      while(lastDelimeter == ',');
-            
-      if(lastDelimeter != TOKEN_CLOSE_BRACKET[0])
+      while (lastDelimeter == ',');
+
+      if (lastDelimeter != TOKEN_CLOSE_BRACKET[0])
       {
          throw CreateError("Syntax Error, expected token:" + TOKEN_CLOSE_BRACKET);
       }
@@ -319,17 +328,17 @@ namespace dtAI
 
       ParseString(pStr);
 
-      if(!pStr.empty() && IsDigit(pStr[0]))
+      if (!pStr.empty() && IsDigit(pStr[0]))
       {
          return Param(dtUtil::ToType<int>(pStr));
       }
       else
       {
-         if(pStr == TOKEN_TRUE)
+         if (pStr == TOKEN_TRUE)
          {
             return Param(true);
          }
-         else if(pStr == TOKEN_FALSE)
+         else if (pStr == TOKEN_FALSE)
          {
             return Param(false);
          }
@@ -342,14 +351,14 @@ namespace dtAI
 
    bool NPCParser::IsDigit(const char pChar) const
    {
-      return (pChar >= 48 && pChar <= 57); 
+      return pChar >= 48 && pChar <= 57;
    }
 
    void NPCParser::ParseToken(const std::string& pToken)
    {
       std::string pStr;
       ParseString(pStr);
-      if(pStr != pToken)
+      if (pStr != pToken)
       {
          throw CreateError("Syntax error, token " + pToken + " expected.");
       }
@@ -359,21 +368,21 @@ namespace dtAI
    bool NPCParser::ParseString(std::string& pStr)
    {
       char c = ' ';
-      while(IsWhiteSpace(c) && !IsDelimeter(c)) mFileStream.get(c);
+      while (IsWhiteSpace(c) && !IsDelimeter(c)) mFileStream.get(c);
 
-      if(IsDelimeter(c))
+      if (IsDelimeter(c))
       {
          mFileStream.unget();
          return false;
       }
 
-      while(mFileStream.good() && !IsDelimeter(c) && !IsWhiteSpace(c))
+      while (mFileStream.good() && !IsDelimeter(c) && !IsWhiteSpace(c))
       {
-         if(!IsWhiteSpace(c)) pStr.push_back(c);
+         if (!IsWhiteSpace(c)) pStr.push_back(c);
 
          mFileStream.get(c);
       }
-      
+
       mFileStream.unget();
       return true;
    }
@@ -381,26 +390,29 @@ namespace dtAI
    char NPCParser::ParseDelimeter()
    {
       char pDel = ' ';
-      while(IsWhiteSpace(pDel)) mFileStream >> pDel;
+      while (IsWhiteSpace(pDel))
+      {
+         mFileStream >> pDel;
+      }
       return pDel;
    }
 
    bool NPCParser::IsDelimeter(char c) const
    {
       std::size_t pSize = TOKEN_DELIMETER.find(c);
-      return (pSize != std::string::npos);
+      return pSize != std::string::npos;
    }
 
    bool NPCParser::IsWhiteSpace(char c) const
    {
-      if(c == '\n' || c == '\r') 
+      if (c == '\n' || c == '\r')
       {
          ++mLineNumber;
       }
 
       static dtUtil::IsSpace sIsSpace;
 
-      return(sIsSpace(c) || c == '\n' || c == '\t' || c == ' ' || c == '\r');
+      return sIsSpace(c) || c == '\n' || c == '\t' || c == ' ' || c == '\r';
    }
 
    int NPCParser::ParseInt()
@@ -409,7 +421,7 @@ namespace dtAI
 
       ParseString(pStr);
 
-      if(!pStr.empty() && IsDigit(pStr[0]))
+      if (!pStr.empty() && IsDigit(pStr[0]))
       {
          return dtUtil::ToType<int>(pStr);
       }
@@ -424,7 +436,7 @@ namespace dtAI
       NPCParserError error;
       error.pError = pError;
       error.pLineNumber = 0;
-      return error; 
+      return error;
    }
 
    void NPCParser::PrintError(NPCParserError& pError)
@@ -433,4 +445,4 @@ namespace dtAI
    }
 
 
-}//namespace dtAI
+} // namespace dtAI

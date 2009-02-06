@@ -145,7 +145,7 @@ namespace dtNetGM
              "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
 
 #ifdef _DEBUG
-         if(dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG && !logFile.empty())
+         if (dtUtil::Log::GetInstance().GetLogLevel() == dtUtil::Log::LOG_DEBUG && !logFile.empty())
          {
             GNE::initDebug(GNE::DLEVEL1 | GNE::DLEVEL2 | GNE::DLEVEL3 | GNE::DLEVEL4 | GNE::DLEVEL5, logFile.c_str());
          }
@@ -379,7 +379,7 @@ namespace dtNetGM
 
       if (destinationType == DestinationType::DESTINATION)
       {
-         for(std::vector<NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
+         for (std::vector<NetworkBridge*>::iterator iter = mConnections.begin(); iter != mConnections.end(); iter++)
          {
             if ((*iter)->GetMachineInfo() == *(message.GetDestination()))
             {
@@ -423,7 +423,7 @@ namespace dtNetGM
 
       stream.Write(message.GetMessageType().GetId()); // MessageType.mId
       stream.Write(message.GetSource().GetUniqueId().ToString()); // Source
-      if(message.GetDestination() != NULL)
+      if (message.GetDestination() != NULL)
       {
          stream.Write(message.GetDestination()->GetUniqueId().ToString()); // Destination
       }
@@ -436,7 +436,7 @@ namespace dtNetGM
 
       message.ToDataStream(stream);
 
-      if(message.GetCausingMessage() != NULL)
+      if (message.GetCausingMessage() != NULL)
       {
          stream.AppendDataStream(CreateDataStream(*message.GetCausingMessage()));
          // append causing message??
@@ -458,7 +458,7 @@ namespace dtNetGM
             GetGameManager()->GetMessageFactory().GetMessageTypeById(msgId)))
       {
          LOG_ERROR("Received an unsupported message. MessageId = " + dtUtil::ToString(msgId));
-            return msg;
+         return msg;
       }
 
       // Create Message
@@ -546,9 +546,12 @@ namespace dtNetGM
       const dtGame::MachineInfo* mi = GetMachineInfo(GetGameManager()->GetMachineInfo().GetUniqueId());
 
       if(mi == NULL)
+      {
          return "";
+      }
       else
+      {
          return mi->GetHostName();
+      }
    }
-
-}
+} // namespace dtNetGM

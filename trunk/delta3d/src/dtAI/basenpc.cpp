@@ -1,5 +1,4 @@
 /*
-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 Bradley Anderegg
  *
@@ -33,14 +32,15 @@ namespace dtAI
       , mName(pName)
       , mStateMachine()
       , mPlanner()
-      , mHelper(PlannerHelper::RemainingCostFunctor(this, &BaseNPC::RemainingCost), PlannerHelper::DesiredStateFunctor(this, &BaseNPC::IsDesiredState))
-      , mWSTemplate()      
+      , mHelper(PlannerHelper::RemainingCostFunctor(this, &BaseNPC::RemainingCost),
+                PlannerHelper::DesiredStateFunctor(this, &BaseNPC::IsDesiredState))
+      , mWSTemplate()
       , mGoals()
       , mCurrentGoal(0)
       , mCurrentPlan()
    {
    }
-   
+
    BaseNPC::~BaseNPC()
    {
       mCurrentPlan.clear();
@@ -79,8 +79,11 @@ namespace dtAI
    {
       mSleeping = false;
       mHelper.SetCurrentState(mWSTemplate);
-      if(!mCurrentGoal && !mGoals.empty()) SetGoal(mGoals.begin()->first);
-     
+      if (!mCurrentGoal && !mGoals.empty())
+      {
+         SetGoal(mGoals.begin()->first);
+      }
+
       mStateMachine.MakeCurrent(&NPCStateTypes::NPC_STATE_SPAWN);
    }
 
@@ -96,7 +99,7 @@ namespace dtAI
 
    void BaseNPC::Update(double dt)
    {
-      if(!mSleeping)
+      if (!mSleeping)
       {
          ExecutePlan(dt);
 
@@ -108,12 +111,12 @@ namespace dtAI
    {
       GoalMap::iterator iter = mGoals.find(pGoal);
 
-      if(iter != mGoals.end())
+      if (iter != mGoals.end())
       {
          mCurrentGoal = &(*iter);
          return true;
       }
-      
+
       return false;
    }
 
@@ -138,7 +141,7 @@ namespace dtAI
    void BaseNPC::RegisterAction(const std::string& pName, Action pAction)
    {
       ActionMap::iterator iter = mActions.find(pName);
-      if(iter == mActions.end())
+      if (iter == mActions.end())
       {
          mActions.insert(std::pair<std::string, Action>(pName, pAction));
       }
@@ -154,10 +157,13 @@ namespace dtAI
    }
 
    bool BaseNPC::IsDesiredState(const WorldState* pWS) const
-   {      
-      //if we return false we we be in an endless loop
-      //perhaps print a warning
-      if(!mCurrentGoal) return true;
+   {
+      // if we return false we we be in an endless loop
+      // perhaps print a warning
+      if (!mCurrentGoal)
+      {
+         return true;
+      }
 
       return mCurrentGoal->second->Evaluate(pWS);
    }
@@ -168,12 +174,12 @@ namespace dtAI
       mHelper.AddOperator(pOperator);
    }
 
-   const WorldState& BaseNPC::GetWSTemplate() const 
+   const WorldState& BaseNPC::GetWSTemplate() const
    {
       return mWSTemplate;
    }
 
-   WorldState& BaseNPC::GetWSTemplate() 
+   WorldState& BaseNPC::GetWSTemplate()
    {
       return mWSTemplate;
    }
@@ -186,9 +192,9 @@ namespace dtAI
    void BaseNPC::InitializeFSM()
    {
       NPCState* state_default = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DEFAULT);
-      NPCState* state_spawn = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_SPAWN);
-      NPCState* state_idle = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_IDLE);
-      NPCState* state_die = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DIE);
+      NPCState* state_spawn   = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_SPAWN);
+      NPCState* state_idle    = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_IDLE);
+      NPCState* state_die     = mStateMachine.AddState(&NPCStateTypes::NPC_STATE_DIE);
 
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_SPAWN, state_default->GetType(), state_spawn->GetType());
       mStateMachine.AddTransition(&NPCEvent::NPC_EVENT_DIE, state_idle->GetType(), state_die->GetType());
@@ -197,7 +203,7 @@ namespace dtAI
       //set mSleeping to false and select a new state through the
       //virtual select state mechanism on its first update
       mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->AddEntryCommand(new dtUtil::Command1<void, bool>(dtUtil::Functor<void, TYPELIST_1(bool)>(this, &BaseNPC::SetSleeping), false));
-      mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->SetUpdate(NPCState::UpdateFunctor(this, &BaseNPC::SelectState));   
+      mStateMachine.GetState(&NPCStateTypes::NPC_STATE_SPAWN)->SetUpdate(NPCState::UpdateFunctor(this, &BaseNPC::SelectState));
 
       //when npc is killed it will automatically go to sleep
       mStateMachine.GetState(&NPCStateTypes::NPC_STATE_DIE)->AddEntryCommand(new dtUtil::Command1<void, bool>(dtUtil::Functor<void, TYPELIST_1(bool)>(this, &BaseNPC::SetSleeping), true));
@@ -220,13 +226,13 @@ namespace dtAI
    bool BaseNPC::ExecuteAction(const std::string& pAction, double dt, WorldState* pWS)
    {
       ActionMap::iterator iter = mActions.find(pAction);
-      if(iter != mActions.end())
+      if (iter != mActions.end())
       {
          return ((*iter).second)(dt, pWS);
       }
-      
+
       LOG_ERROR("Attempting to execute an action not registered with BaseNPC: " + mName)
-      
+
       //note we are returning true which will imply that the action has completed
       // if we return false it will keep trying to execute this action which appears
       // not to exist
@@ -237,29 +243,27 @@ namespace dtAI
    {
       Planner::OperatorList::iterator pPlanIter = mCurrentPlan.begin();
 
-      if(pPlanIter != mCurrentPlan.end())
+      if (pPlanIter != mCurrentPlan.end())
       {
-         const Operator* pOperator = *pPlanIter;         
+         const Operator* pOperator = *pPlanIter;
 
          //ExecuteAction will return true when it completes so we can pop that action
          //of the plan... if the action generates a new plan it needs to return false
          //so that we dont loose the first operator of the new plan
          //we should probably make this a critical section or something to prevent this
-         if(ExecuteAction(pOperator->GetName(), dt, mHelper.GetCurrentState()))
-         {           
+         if (ExecuteAction(pOperator->GetName(), dt, mHelper.GetCurrentState()))
+         {
             mCurrentPlan.pop_front();
          }
          //check if we hit any interrupts
          const NPCOperator* pNPCOperator = dynamic_cast<const NPCOperator*>(pOperator);
-         if(pNPCOperator && !pNPCOperator->CheckInterrupts(mHelper.GetCurrentState()))
+         if (pNPCOperator && !pNPCOperator->CheckInterrupts(mHelper.GetCurrentState()))
          {
-            //if so, clear the current plan and generate a new one            
+            //if so, clear the current plan and generate a new one
             GeneratePlan();
          }
       }
 
    }
 
-
-}//namespace dtAI
-
+} // namespace dtAI

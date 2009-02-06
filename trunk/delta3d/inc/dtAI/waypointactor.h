@@ -26,30 +26,30 @@
 #include <dtAI/primitives.h>
 #include <dtCore/transformable.h>
 
-namespace dtAI 
+namespace dtAI
 {
-
    /**
-   * This class is used as the actor for a WaypointActorProxy
-   * its positional data is used to save the actual waypoint data
-   * it is also the class used to interface between 
-   * and the WaypointManager.
-   */
-   class DT_AI_EXPORT WaypointActor: public dtCore::Transformable
+    * This class is used as the actor for a WaypointActorProxy
+    * its positional data is used to save the actual waypoint data
+    * it is also the class used to interface between
+    * and the WaypointManager.
+    */
+   class DT_AI_EXPORT WaypointActor : public dtCore::Transformable
    {
    public:
       WaypointActor();
+
    protected:
       virtual ~WaypointActor();
-   public:
 
-      void SetIndex(WaypointID id){mIndex = id;}
-      WaypointID GetIndex() const{return mIndex;}
+   public:
+      void SetIndex(WaypointID id) { mIndex = id; }
+      WaypointID GetIndex() const { return mIndex; }
 
    private:
       WaypointID mIndex;
-
    };
-}//namespace 
+
+} // namespace dtAI
 
 #endif // __DELTA_WAYPOINTACTOR_H__
