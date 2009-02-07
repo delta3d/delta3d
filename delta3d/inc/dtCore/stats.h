@@ -64,7 +64,7 @@ namespace dtCore
    {
    public: 
 
-      StatsHandler( osgViewer::ViewerBase &viewer );
+      StatsHandler(osgViewer::ViewerBase& viewer);
 
       enum StatsType
       {
@@ -73,7 +73,6 @@ namespace dtCore
          VIEWER_STATS = 2,
          LAST = 3
       };
-
 
       void Reset();
 
@@ -94,7 +93,7 @@ namespace dtCore
 
       void UpdateThreadingModelText();
       void SetUpHUDCamera(osgViewer::ViewerBase* viewer);
-      void PrintOutStats( osgViewer::ViewerBase * viewer );
+      void PrintOutStats(osgViewer::ViewerBase* viewer);
 
       osg::ref_ptr<osgViewer::ViewerBase> mViewer;
 
@@ -106,14 +105,13 @@ namespace dtCore
       osg::ref_ptr<osg::Switch>           mSwitch;
 
       osgViewer::ViewerBase::ThreadingModel mThreadingModel;
-      osg::ref_ptr<osgText::Text>         mThreadingModelText;
+      osg::ref_ptr<osgText::Text>           mThreadingModelText;
 
       unsigned int                        mFrameRateChildNum;
       unsigned int                        mViewerChildNum;
       unsigned int                        mSceneChildNum;
       unsigned int                        mNumBlocks;
       double                              mBlockMultiplier;
-
    };
 }
 
