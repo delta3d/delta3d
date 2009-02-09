@@ -8,6 +8,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
 #include <dtCore/refptr.h>
+#include <dtCore/system.h>
 
 using namespace boost::python;
 using namespace dtABC;
@@ -58,188 +59,216 @@ class ApplicationWrap : public Application, public wrapper<Application>
                   
       }
 
-   virtual bool KeyPressed( const dtCore::Keyboard* keyboard,
-                            int kc )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc )
    {
-      if( override KeyPressed = this->get_override("KeyPressed") )
+      if (override KeyPressed = this->get_override("KeyPressed"))
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( KeyPressed.ptr(), boost::ref(keyboard), kc );
+         return call<bool>(KeyPressed.ptr(), boost::ref(keyboard), kc);
          #else
-         return KeyPressed( boost::ref(keyboard), kc );
+         return KeyPressed(boost::ref(keyboard), kc);
          #endif
       }
-      return Application::KeyPressed( keyboard, kc );
+      return Application::KeyPressed(keyboard, kc);
    }
    
-   virtual bool DefaultKeyPressed( const dtCore::Keyboard* keyboard,
-                                   int kc )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultKeyPressed(const dtCore::Keyboard* keyboard, int kc)
    {
-      return this->Application::KeyPressed( keyboard, kc );
+      return this->Application::KeyPressed(keyboard, kc);
    }
 
-   virtual bool KeyReleased( const dtCore::Keyboard* keyboard,
-      int kc )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool KeyReleased(const dtCore::Keyboard* keyboard, int kc)
    {
-      if( override KeyReleased = this->get_override("KeyReleased") )
+      if (override KeyReleased = this->get_override("KeyReleased"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( KeyReleased.ptr(), boost::ref(keyboard), kc );
-#else
-         return KeyReleased( boost::ref(keyboard), kc );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(KeyReleased.ptr(), boost::ref(keyboard), kc);
+         #else
+         return KeyReleased(boost::ref(keyboard), kc);
+         #endif
       }
-      return Application::KeyReleased( keyboard, kc );
+      return Application::KeyReleased(keyboard, kc);
    }
 
-   virtual bool DefaultKeyReleased( const dtCore::Keyboard* keyboard,
-      int kc )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultKeyReleased(const dtCore::Keyboard* keyboard, int kc)
    {
-      return this->Application::KeyReleased( keyboard, kc );
+      return this->Application::KeyReleased(keyboard, kc);
    }
 
-   virtual bool MouseButtonPressed( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
    {
-      if( override MouseButtonPressed = this->get_override("MouseButtonPressed") )
+      if (override MouseButtonPressed = this->get_override("MouseButtonPressed"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseButtonPressed.ptr(), boost::ref(mouse), button );
-#else
-         return MouseButtonPressed( boost::ref(mouse), button );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(MouseButtonPressed.ptr(), boost::ref(mouse), button);
+         #else
+         return MouseButtonPressed(boost::ref(mouse), button);
+         #endif
       }
-      return Application::MouseButtonPressed( mouse, button );
+      return Application::MouseButtonPressed(mouse, button);
    }
 
-   virtual bool DefaultMouseButtonPressed( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseButtonPressed(const dtCore::Mouse* mouse,
+                                          dtCore::Mouse::MouseButton button)
    {
-      return this->Application::MouseButtonPressed( mouse, button );
+      return this->Application::MouseButtonPressed(mouse, button);
    }
 
-   virtual bool MouseButtonReleased( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseButtonReleased(const dtCore::Mouse* mouse,
+                                    dtCore::Mouse::MouseButton button)
    {
-      if( override MouseButtonReleased = this->get_override("MouseButtonReleased") )
+      if (override MouseButtonReleased = this->get_override("MouseButtonReleased"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseButtonReleased.ptr(), boost::ref(mouse), button );
-#else
-         return MouseButtonReleased( boost::ref(mouse), button );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool> MouseButtonReleased.ptr(), boost::ref(mouse), button);
+         #else
+         return MouseButtonReleased(boost::ref(mouse), button);
+         #endif
       }
-      return Application::MouseButtonReleased( mouse, button );
+      return Application::MouseButtonReleased(mouse, button);
    }
 
-   virtual bool DefaultMouseButtonReleased( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseButtonReleased(const dtCore::Mouse* mouse,
+                                           dtCore::Mouse::MouseButton button)
    {
-      return this->Application::MouseButtonReleased( mouse, button );
+      return this->Application::MouseButtonReleased(mouse, button);
    }
  
-   virtual bool MouseMoved( const dtCore::Mouse* mouse,
-      float x,
-	  float y )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseMoved(const dtCore::Mouse* mouse, float x, float y)
    {
-      if( override MouseMoved = this->get_override("MouseMoved") )
+      if (override MouseMoved = this->get_override("MouseMoved"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseMoved.ptr(), boost::ref(mouse), x, y );
-#else
-         return MouseMoved( boost::ref(mouse), x, y );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(MouseMoved.ptr(), boost::ref(mouse), x, y);
+         #else
+         return MouseMoved(boost::ref(mouse), x, y);
+         #endif
       }
-      return Application::MouseMoved( mouse, x, y );
+      return Application::MouseMoved(mouse, x, y);
    }
 
-   virtual bool DefaultMouseMoved( const dtCore::Mouse* mouse,
-      float x,
-	  float y )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseMoved(const dtCore::Mouse* mouse, float x, float y)
    {
-      return this->Application::MouseMoved( mouse, x, y );
+      return this->Application::MouseMoved(mouse, x, y);
    }
 
-   virtual bool MouseDragged( const dtCore::Mouse* mouse,
-      float x,
-	  float y )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseDragged(const dtCore::Mouse* mouse, float x, float y)
    {
-      if( override MouseDragged = this->get_override("MouseDragged") )
+      if (override MouseDragged = this->get_override("MouseDragged"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseDragged.ptr(), boost::ref(mouse), x, y );
-#else
-         return MouseDragged( boost::ref(mouse), x, y );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(MouseDragged.ptr(), boost::ref(mouse), x, y);
+         #else
+         return MouseDragged(boost::ref(mouse), x, y);
+         #endif
       }
-      return Application::MouseDragged( mouse, x, y );
+      return Application::MouseDragged(mouse, x, y);
    }
 
-   virtual bool DefaultMouseDragged( const dtCore::Mouse* mouse,
-      float x,
-	  float y )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseDragged(const dtCore::Mouse* mouse, float x, float y)
    {
-      return this->Application::MouseDragged( mouse, x, y );
+      return this->Application::MouseDragged(mouse, x, y);
    }
    
-   virtual bool MouseScrolled( const dtCore::Mouse* mouse,
-      int delta )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseScrolled(const dtCore::Mouse* mouse, int delta)
    {
-      if( override MouseScrolled = this->get_override("MouseScrolled") )
+      if (override MouseScrolled = this->get_override("MouseScrolled"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseScrolled.ptr(), boost::ref(mouse), delta );
-#else
-         return MouseScrolled( boost::ref(mouse), delta );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(MouseScrolled.ptr(), boost::ref(mouse), delta);
+         #else  
+         return MouseScrolled(boost::ref(mouse), delta);
+         #endif
       }
-      return Application::MouseScrolled( mouse, delta );
+      return Application::MouseScrolled(mouse, delta);
    }
 
-   virtual bool DefaultMouseScrolled( const dtCore::Mouse* mouse,
-      int delta )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseScrolled(const dtCore::Mouse* mouse, int delta)
    {
-      return this->Application::MouseScrolled( mouse, delta );
+      return this->Application::MouseScrolled(mouse, delta);
    }
 
-   virtual bool MouseButtonDoubleClicked( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button,
-	  int clickCount )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool MouseButtonDoubleClicked(const dtCore::Mouse* mouse,
+                                         dtCore::Mouse::MouseButton button,
+	                                      int clickCount)
    {
-      if( override MouseButtonDoubleClicked = this->get_override("MouseButtonDoubleClicked") )
+      if (override MouseButtonDoubleClicked = this->get_override("MouseButtonDoubleClicked"))
       {
-#if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool>( MouseButtonDoubleClicked.ptr(), boost::ref(mouse), button, clickCount );
-#else
-         return MouseButtonDoubleClicked( boost::ref(mouse), button, clickCount );
-#endif
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>(MouseButtonDoubleClicked.ptr(), boost::ref(mouse), button, clickCount);
+         #else
+         return MouseButtonDoubleClicked(boost::ref(mouse), button, clickCount);
+         #endif
       }
-      return Application::MouseButtonDoubleClicked( mouse, button, clickCount );
+      return Application::MouseButtonDoubleClicked(mouse, button, clickCount);
    }
 
-   virtual bool DefaultMouseButtonDoubleClicked( const dtCore::Mouse* mouse,
-      dtCore::Mouse::MouseButton button,
-	  int clickCount )
+   //////////////////////////////////////////////////////////////////////////
+   virtual bool DefaultMouseButtonDoubleClicked(const dtCore::Mouse* mouse,
+                                                dtCore::Mouse::MouseButton button,
+                                                int clickCount)
    {
-      return this->Application::MouseButtonDoubleClicked( mouse, button, clickCount );
+      return this->Application::MouseButtonDoubleClicked(mouse, button, clickCount);
    }
 
+   //////////////////////////////////////////////////////////////////////////
    virtual void OnCollisionMessage(PythonCollisionData pData)
    {
-      if( override pOverride = this->get_override("OnCollisionMessage") )
+      if(override pOverride = this->get_override("OnCollisionMessage"))
       {
          this->get_override("OnCollisionMessage")(pData);       
       }
    }
 
    protected:
-      
+
+      //////////////////////////////////////////////////////////////////////////
+      virtual void EventTraversal(const double deltaFrameTime)
+      {
+         if (PyObject_HasAttrString(boost::python::detail::wrapper_base_::get_owner(*this),
+                                    "EventTraversal"))
+         {
+            if (override EventTraversal = this->get_override("EventTraversal"))
+            {
+               #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+               call<void>( EventTraversal.ptr(), deltaFrameTime );
+               #else
+               EventTraversal(deltaFrameTime);
+               #endif
+            }
+            else
+            {
+               Application::EventTraversal(deltaFrameTime);
+            }
+         }
+         else
+         {
+            Application::EventTraversal(deltaFrameTime);
+         }
+      }
+
+      //////////////////////////////////////////////////////////////////////////
       virtual void PreFrame(const double deltaFrameTime)
       {
-         if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
-                                    "PreFrame") )
+         if (PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
+                                    "PreFrame"))
          {
-            if( override PreFrame = this->get_override("PreFrame") )
+            if (override PreFrame = this->get_override("PreFrame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
                call<void>( PreFrame.ptr(), deltaFrameTime );
@@ -258,12 +287,13 @@ class ApplicationWrap : public Application, public wrapper<Application>
          }
       }
    
+      //////////////////////////////////////////////////////////////////////////
       virtual void Frame(const double deltaFrameTime)
       {
-         if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
-                                     "Frame") )
+         if (PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
+                                     "Frame"))
          {
-            if( override Frame = this->get_override("Frame") )
+            if (override Frame = this->get_override("Frame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
                call<void>( Frame.ptr(), deltaFrameTime );
@@ -282,12 +312,13 @@ class ApplicationWrap : public Application, public wrapper<Application>
          }
       }
    
+      //////////////////////////////////////////////////////////////////////////
       virtual void PostFrame(const double deltaFrameTime)
       {
-         if( PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
-                                     "PostFrame") )
+         if (PyObject_HasAttrString( boost::python::detail::wrapper_base_::get_owner(*this),
+                                     "PostFrame"))
          {
-            if( override PostFrame = this->get_override("PostFrame") )
+            if (override PostFrame = this->get_override("PostFrame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
                call<void>( PostFrame.ptr(), deltaFrameTime );
@@ -306,23 +337,28 @@ class ApplicationWrap : public Application, public wrapper<Application>
          }
       }
 
-      void OnMessage( MessageData* data )
+      //////////////////////////////////////////////////////////////////////////
+      void OnMessage(MessageData* data)
       {
-         if( data->message == "preframe" )
+         if (data->message == dtCore::System::MESSAGE_EVENT_TRAVERSAL)
          {
-            PreFrame( *static_cast<const double*>(data->userData) );
+            EventTraversal(*static_cast<const double*>(data->userData));
          }
-         else if( data->message == "frame" )
+         else if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
          {
-            Frame( *static_cast<const double*>(data->userData) );
+            PreFrame(*static_cast<const double*>(data->userData));
          }
-         else if( data->message == "postframe" )
+         else if (data->message == System::MESSAGE_FRAME)
          {
-            PostFrame( *static_cast<const double*>(data->userData) );
+            Frame(*static_cast<const double*>(data->userData));
          }
-         else if( data->message == "collision")
+         else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
          {
-             OnCollisionMessage(PythonCollisionData(static_cast< Scene::CollisionData* >( data->userData )));
+            PostFrame(*static_cast<const double*>(data->userData));
+         }
+         else if (data->message == "collision")
+         {
+            OnCollisionMessage(PythonCollisionData(static_cast< Scene::CollisionData* >(data->userData)));
          }
       }
 };

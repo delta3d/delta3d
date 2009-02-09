@@ -10,6 +10,7 @@ BUILD_EXE_EXAMPLE( testPython
 ADD_DEPENDENCIES( testPython
                    PyDtUtil
                    PyDtCore
+                   PyDtABC
                 )
 
 IF (MSVC)
