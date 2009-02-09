@@ -95,6 +95,9 @@ namespace dtCore
             , fullScreen(false)
             , inheritedWindowData(NULL)
             , contextToShare(NULL)
+            , hostName("")
+            , displayNum(0)
+            , screenNum(0)
          {
          }
 
@@ -107,6 +110,10 @@ namespace dtCore
          bool fullScreen;
          osg::Referenced* inheritedWindowData;
          osg::GraphicsContext* contextToShare;
+         std::string hostName;
+         int displayNum;
+         int screenNum;
+
       };
 
       /** 
