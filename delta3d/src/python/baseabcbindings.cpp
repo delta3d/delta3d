@@ -111,6 +111,15 @@ class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
       
    protected:
       
+      virtual void EventTraversal(const double deltaFrameTime)
+      {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( this->get_override("EventTraversal").ptr(), deltaFrameTime );
+         #else
+         this->get_override("EventTraversal")(deltaFrameTime);
+         #endif
+      }
+
       virtual void PreFrame(const double deltaFrameTime)
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
