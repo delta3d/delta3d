@@ -82,10 +82,10 @@ namespace dtGame
       }
 
       dtCore::Transformable* actor = NULL;
-      proxy.GetActor( actor );
+      proxy.GetActor(actor);
 
       osg::Matrix oldMatrix = actor->GetMatrix();
-      actor->SetMatrix( osg::Matrix::identity() );
+      actor->SetMatrix(osg::Matrix::identity());
 
       dtUtil::BoundingBoxVisitor bbv;
       actor->GetOSGNode()->accept(bbv);
@@ -134,12 +134,12 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetActorDetectionPoints( dtDAL::TransformableActorProxy& proxy,
-      GroundClampingData& data, osg::Vec3 outPoints[3] )
+   void DefaultGroundClamper::GetActorDetectionPoints(dtDAL::TransformableActorProxy& proxy,
+      GroundClampingData& data, osg::Vec3 outPoints[3])
    {
       osg::Vec3 modelDimensions = data.GetModelDimensions();
 
-      if( ! data.UseModelDimensions() )
+      if(!data.UseModelDimensions())
       {
          CalculateAndSetBoundingBox(modelDimensions, proxy, data);
       }
@@ -157,10 +157,8 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::OrientTransformToSurfacePoints( dtCore::Transform& xform,
-      osg::Matrix& rotation,
-      const osg::Vec3& location,
-      const osg::Vec3 points[3] )
+   void DefaultGroundClamper::OrientTransformToSurfacePoints(dtCore::Transform& xform,
+      osg::Matrix& rotation, const osg::Vec3& location, const osg::Vec3 points[3])
    {
       osg::Vec3 ab = points[0] - points[2];
       osg::Vec3 ac = points[0] - points[1];
@@ -172,10 +170,8 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::OrientTransform( dtCore::Transform& xform,
-      osg::Matrix& rotation,
-      const osg::Vec3& location,
-      const osg::Vec3& normal )
+   void DefaultGroundClamper::OrientTransform(dtCore::Transform& xform,
+      osg::Matrix& rotation, const osg::Vec3& location, const osg::Vec3& normal)
    {
       osg::Vec3 oldNormal(0, 0, 1);
 
@@ -189,8 +185,8 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::GetSurfacePoints( const dtDAL::TransformableActorProxy& proxy,
-      GroundClampingData& data, const dtCore::Transform& xform, osg::Vec3 inOutPoints[3] )
+   void DefaultGroundClamper::GetSurfacePoints(const dtDAL::TransformableActorProxy& proxy,
+      GroundClampingData& data, const dtCore::Transform& xform, osg::Vec3 inOutPoints[3])
    {
       dtUtil::Log& logger = GetLogger();
       bool debugEnabled = logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG);
@@ -245,7 +241,7 @@ namespace dtGame
             else
             {
                // Get an improvised point and normal if possible.
-               GetMissingHit( proxy, data, inOutPoints[i].z(), inOutPoints[i], normal );
+               GetMissingHit(proxy, data, inOutPoints[i].z(), inOutPoints[i], normal);
 
                std::ostringstream ss;
                ss << "Found no hit on line segment [" << i <<  "] on points:";
@@ -273,8 +269,8 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void DefaultGroundClamper::FinalizeSurfacePoints( dtDAL::TransformableActorProxy& proxy,
-      GroundClampingData& data, osg::Vec3 inOutPoints[3] )
+   void DefaultGroundClamper::FinalizeSurfacePoints(dtDAL::TransformableActorProxy& proxy,
+      GroundClampingData& data, osg::Vec3 inOutPoints[3])
    {
       // No implementation for this class but this method is a placeholder
       // for any possible sub-classes needing to make final adjustments.
@@ -353,7 +349,7 @@ namespace dtGame
       if( (runtimeData.GetLastClampedTime() + GetIntermittentGroundClampingTimeDelta() )<= currentTime)
       {
          runtimeData.SetLastClampedTime(currentTime);
-         mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)) );
+         mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)));
          if(mGroundClampBatch.size() == 32)
          {
             RunClampBatch();
@@ -367,7 +363,8 @@ namespace dtGame
          if(GetLogger().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             std::ostringstream ss;
-            ss << "Using previous offset for actor z \"" << runtimeData.GetLastClampedOffset() << "\".  Starting position is \"" << position << "\".";
+            ss << "Using previous offset for actor z \"" << runtimeData.GetLastClampedOffset() 
+               << "\".  Starting position is \"" << position << "\".";
 
             GetLogger().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
          }
@@ -382,21 +379,24 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void DefaultGroundClamper::RunClampBatch()
    {
-      if(mGroundClampBatch.empty())
+      if (mGroundClampBatch.empty())
+      {
          return;
+      }
 
       dtUtil::Log& logger = GetLogger();
       bool debugEnabled = logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG);
 
       if(mGroundClampBatch.size() > 32)
       {
-         logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Attempted to batch %u entities, when 32 is the max.", mGroundClampBatch.size());        
+         logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+            "Attempted to batch %u entities, when 32 is the max.", mGroundClampBatch.size());        
       }
 
       mIsector->Reset();
       mIsector->SetQueryRoot(GetTerrainActor());
 
-      for(size_t i = 0; i < mGroundClampBatch.size(); ++i)
+      for (size_t i = 0; i < mGroundClampBatch.size(); ++i)
       {
          dtCore::BatchIsector::SingleISector& single = mIsector->EnableAndGetISector(i);
 
@@ -414,7 +414,7 @@ namespace dtGame
       }
 
       bool ignoreEyePoint = GetEyePointActor() == NULL;
-      if(!mIsector->Update(GetLastEyePoint(), ignoreEyePoint))
+      if (!mIsector->Update(GetLastEyePoint(), ignoreEyePoint))
       {
          if(debugEnabled)
          {
@@ -471,7 +471,7 @@ namespace dtGame
             {
                normal.normalize();
                OrientTransform(xform, rotation, hp, normal);
-               runtimeData.SetLastClampedRotation( rotation );
+               runtimeData.SetLastClampedRotation(rotation);
             }
             else
             {
@@ -490,7 +490,7 @@ namespace dtGame
                {
                   normal.normalize();
                   OrientTransform(xform, rotation, hp, normal);
-                  runtimeData.SetLastClampedRotation( rotation );
+                  runtimeData.SetLastClampedRotation(rotation);
                }
                else
                {
@@ -514,7 +514,7 @@ namespace dtGame
    {
       // Get the actor that has the transform data.
       dtCore::Transformable* actor = NULL;
-      proxy.GetActor( actor );
+      proxy.GetActor(actor);
 
       // Get or create the Runtime Data and make sure it exists for any subsequent methods
       // that expect it to be in the Ground Clamping Data.
@@ -526,7 +526,7 @@ namespace dtGame
          = &GetBestClampType(type, proxy, data, transformChanged, velocity);
 
       // Avoid any further processing on certain conditions.
-      if( ! HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampingType::NONE)
+      if(!HasValidSurface() || *clampType == DefaultGroundClamper::GroundClampingType::NONE)
       {
          // If no terrain, just set the position and exit.
          actor->SetTransform(xform, dtCore::Transformable::REL_CS);
@@ -537,9 +537,9 @@ namespace dtGame
       // Use the last clamped rotation only if the transformation has been flagged
       // not to change. Dead Reckoning Helpers set the alter rotation every frame
       // which causes a twitch bug if the following code does not exist.
-      if( ! transformChanged )
+      if(!transformChanged)
       {
-         xform.SetRotation( runtimeData.GetLastClampedRotation() );
+         xform.SetRotation(runtimeData.GetLastClampedRotation());
       }
 
       dtUtil::Log& logger = GetLogger();
@@ -569,7 +569,7 @@ namespace dtGame
                   && distanceToEyeSqr > GetHighResGroundClampingRange2()))
          {
             // this should be moved.
-            mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)) );
+            mGroundClampBatch.push_back(std::make_pair(xform, std::make_pair(&proxy, &data)));
             if (mGroundClampBatch.size() == 32)
             {
                RunClampBatch();
@@ -621,23 +621,22 @@ namespace dtGame
 
    /////////////////////////////////////////////////////////////////////////////
    DefaultGroundClamper::RuntimeData& DefaultGroundClamper::GetOrCreateRuntimeData(
-      dtGame::GroundClampingData& data )
+      dtGame::GroundClampingData& data)
    {
       RuntimeData* runtimeData = dynamic_cast<RuntimeData*>(data.GetUserData());
-      if( runtimeData == NULL )
+      if(runtimeData == NULL)
       {
-         if( data.GetUserData() != NULL )
+         if(data.GetUserData() != NULL)
          {
             std::ostringstream oss;
             oss << "Ground Clamping Data user data is being replaced by a new Runtime Data.";
-            GetLogger().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str() );
+            GetLogger().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, oss.str());
          }
 
-         data.SetUserData( new RuntimeData );
+         data.SetUserData(new RuntimeData);
          runtimeData = static_cast<RuntimeData*>(data.GetUserData());
       }
 
       return *runtimeData;
    }
-
 }

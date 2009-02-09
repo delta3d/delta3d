@@ -106,7 +106,7 @@ namespace dtGame
                 * Set the last matrix that was used to orient the object
                 * during clamping.
                 */
-               void SetLastClampedRotation( const osg::Matrix& rotation )
+               void SetLastClampedRotation(const osg::Matrix& rotation)
                {
                   mLastClampRotation = rotation;
                }
@@ -339,7 +339,6 @@ namespace dtGame
 
          dtCore::RefPtr<dtCore::BatchIsector> mTripleIsector;
          dtCore::RefPtr<dtCore::BatchIsector> mIsector;
-
    };
 
 }

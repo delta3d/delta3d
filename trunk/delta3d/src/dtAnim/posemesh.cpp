@@ -95,17 +95,9 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       model->ClearCycle(animID, 0.0f);
       model->Update(0.0f);
 
-      osg::Vec3 boneForward = finalRotation.inverse() * -osg::Y_AXIS;
-      std::ostringstream oss1;
-      oss1 << "forward = (" << boneForward.x() << ", " << boneForward.y() << ", " << boneForward.z() << ")" << std::endl;
-
       // calculate a vector transformed by the rotation data.
       osg::Vec3 transformed = finalRotation * mNativeForward;
       transformed.normalize();
-
-      oss1 << "transformed = (" << transformed.x() << ", " << transformed.y() << ", " << transformed.z() << ")";
-
-      //std::cout << oss1.str() << std::endl;
 
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
