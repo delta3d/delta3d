@@ -377,14 +377,27 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
 
    //Favor the value of the environment variable "DISPLAY" to set the
-   //diplayNum and the screenNum, unless it fails, in which case use the
+   //diplayNum, screenNum, and host name, unless it fails, in which case use the
    //passed in value.  Format is "host:displayNum.screenNum".
    traits->readDISPLAY();
 
    if (traits->displayNum < 0)
    {
-      traits->displayNum = 0;
+      traits->displayNum = deltaTraits.displayNum;
    }
+
+   if (traits->screenNum < 0)
+   {
+      traits->screenNum = deltaTraits.screenNum;
+   }
+
+   if (traits->hostName.empty())
+   {
+      traits->hostName = deltaTraits.hostName;
+   }
+
+   //if displayNum or screenNum are still undefined, use the default
+   traits->setUndefinedScreenDetailsToDefaultScreen();
 
    traits->windowName = deltaTraits.name;
    traits->x = deltaTraits.x;
@@ -396,7 +409,7 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    traits->windowDecoration = true;
    traits->doubleBuffer = true;
    traits->sharedContext = deltaTraits.contextToShare;
-   traits->screenNum = 0;
+
    traits->sampleBuffers = ds->getMultiSamples();
    traits->samples = ds->getNumMultiSamples();
    traits->inheritedWindowData = deltaTraits.inheritedWindowData;
