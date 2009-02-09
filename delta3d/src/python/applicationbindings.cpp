@@ -127,7 +127,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
       if (override MouseButtonReleased = this->get_override("MouseButtonReleased"))
       {
          #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-         return call<bool> MouseButtonReleased.ptr(), boost::ref(mouse), button);
+         return call<bool>(MouseButtonReleased.ptr(), boost::ref(mouse), button);
          #else
          return MouseButtonReleased(boost::ref(mouse), button);
          #endif
@@ -246,7 +246,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
             if (override EventTraversal = this->get_override("EventTraversal"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-               call<void>( EventTraversal.ptr(), deltaFrameTime );
+               call<void>(EventTraversal.ptr(), deltaFrameTime);
                #else
                EventTraversal(deltaFrameTime);
                #endif
@@ -271,7 +271,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
             if (override PreFrame = this->get_override("PreFrame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-               call<void>( PreFrame.ptr(), deltaFrameTime );
+               call<void>(PreFrame.ptr(), deltaFrameTime);
                #else
                PreFrame(deltaFrameTime);
                #endif
@@ -296,7 +296,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
             if (override Frame = this->get_override("Frame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-               call<void>( Frame.ptr(), deltaFrameTime );
+               call<void>(Frame.ptr(), deltaFrameTime);
                #else
                Frame(deltaFrameTime);
                #endif
@@ -321,7 +321,7 @@ class ApplicationWrap : public Application, public wrapper<Application>
             if (override PostFrame = this->get_override("PostFrame"))
             {
                #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
-               call<void>( PostFrame.ptr(), deltaFrameTime );
+               call<void>(PostFrame.ptr(), deltaFrameTime);
                #else
                PostFrame(deltaFrameTime);
                #endif
