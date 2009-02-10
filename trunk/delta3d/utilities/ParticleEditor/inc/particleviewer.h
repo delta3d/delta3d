@@ -334,6 +334,8 @@ private:
    void UpdateAccelerationValues();
    void UpdateFluidFrictionValues();
 
+   void SetTexturePaths(QString path, bool relativePath);
+
    dtCore::RefPtr<OrbitMotionModel> mMotion;
 
    osg::Group* mpSceneGroup;
