@@ -82,6 +82,8 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
 {
    if(filename != "")
    {
+      QFileInfo fileName = filename;
+
       osg::Node* node = osgDB::readNodeFile(filename.toStdString());
       if (node == NULL || !IS_A(node, osg::Group*))
       {
@@ -183,6 +185,8 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
                }
             }
          }
+
+         SetTexturePaths(fileName.path(), false);
       }
       // end old way
       else
@@ -281,6 +285,7 @@ void ParticleViewer::LoadFile(QString filename, bool import/* = false*/)
             mpParticleSystemUpdater = newParticleSystemUpdater;
             mpSceneGroup->addChild(mpParticleSystemGroup);
          }
+         SetTexturePaths(fileName.path(), false);
          UpdateLayersList();
          emit SelectIndexOfLayersList(newLayer);
          SetParticleSystemFilename(filename);
@@ -403,8 +408,12 @@ void ParticleViewer::SaveParticleToFile()
    }
    else
    {
+      QFileInfo filename = mParticleSystemFilename;
+
+      SetTexturePaths(filename.path(), true);
       ResetEmitters();
       osgDB::writeNodeFile(*mpParticleSystemGroup, mParticleSystemFilename.toStdString());
+      SetTexturePaths(filename.path(), false);
    }
 }
 
@@ -1679,6 +1688,54 @@ void ParticleViewer::UpdateFluidFrictionValues()
    emit OperatorsFluidFrictionDensityUpdated(ffo->getFluidDensity());
    emit OperatorsFluidFrictionViscosityUpdated(ffo->getFluidViscosity());
    emit OperatorsFluidFrictionOverrideRadiusUpdated(ffo->getOverrideRadius());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SetTexturePaths(QString path, bool relativePath)
+{
+   QDir dir(path);
+
+   for (int layerIndex = 0; layerIndex < (int)mLayers.size(); layerIndex++)
+   {
+      osgParticle::ParticleSystem* particleSystem = mLayers[layerIndex].mParticleSystem.get();
+      if (particleSystem)
+      {
+         osg::StateSet* stateSet = particleSystem->getStateSet();
+         if (stateSet)
+         {
+            osg::StateAttribute* stateAttribute = stateSet->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+            if (stateAttribute)
+            {
+               if (IS_A(stateAttribute, osg::Texture2D*))
+               {
+                  osg::Texture2D* texture = (osg::Texture2D*)stateAttribute;
+                  osg::Image* image = texture->getImage();
+                  if (image)
+                  {
+                     QString fileName;
+                     if (relativePath)
+                     {
+                        QString textureFile = image->getFileName().c_str();
+                        fileName = dir.relativeFilePath(textureFile);
+                     }
+                     else
+                     {
+                        QString textureFile = image->getFileName().c_str();
+                        fileName = dir.absoluteFilePath(textureFile);
+                        fileName = QDir::cleanPath(fileName);
+
+                        //QFileInfo textureFile = image->getFileName().c_str();
+                        //fileName = path;
+                        //fileName += "/";
+                        //fileName += textureFile.fileName();
+                     }
+                     image->setFileName(fileName.toStdString());
+                  }
+               }
+            }
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
