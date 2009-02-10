@@ -1,3 +1,4 @@
+#include <cegui/CEGUIExceptions.h>
 #include <dtGUI/resourceprovider.h>
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
@@ -31,8 +32,11 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
       foundFilename = dtCore::FindFileInPathList(foundFilename);
       if(foundFilename.empty())
       {
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-            "dtGUI::ResourceProvider can't find file '%s'", filename.c_str());
+         std::string errorStr = 
+            "dtGUI::ResourceProvider can't find file '" +
+            std::string(filename.c_str()) + "'.";
+
+         throw CEGUI::FileIOException(errorStr);
       }
    }
 
