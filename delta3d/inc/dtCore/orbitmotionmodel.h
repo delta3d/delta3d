@@ -235,6 +235,23 @@ namespace dtCore
                                        double newState,
                                        double delta);
 
+         /**
+         * Sets the min and max elevation limits for the motion model.
+         *
+         * @param[in]  maxLimit  The max limit.
+         * @param[in]  minLimit  The min limit.
+         */
+         void SetElevationMinLimit(float minLimit) {mMinElevationLimit = minLimit;}
+         void SetElevationMaxLimit(float maxLimit) {mMaxElevationLimit = maxLimit;}
+
+         /**
+         * Gets the min and max elevation limits for the motion model.
+         *
+         * @return     The min or max limit.
+         */
+         float GetElevationMinLimit() {return mMinElevationLimit;}
+         float GetElevationMaxLimit() {return mMaxElevationLimit;}
+
       private:
       
          /**
@@ -331,6 +348,12 @@ namespace dtCore
           * The current distance from the focal point.
           */
          float mDistance;
+
+         /**
+         * The min and max limits on the camera elevation.
+         */
+         float mMaxElevationLimit;
+         float mMinElevationLimit;
    };
 }
 
