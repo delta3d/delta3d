@@ -35,14 +35,14 @@
    <animation fileName="ERightMidDown.XAF" />
    
    <animation fileName="EStand_Aim2_Right.XAF" />
-   <animation fileName="EStand_Aim2_Front.XAF" />
-   <animation fileName="EStand_Aim2_Left.XAF" />
-   <animation fileName="EStand_Aim2_RightDw.XAF" />
-   <animation fileName="EStand_Aim2_FrontDw.XAF" />
-   <animation fileName="EStand_Aim2_LeftDw.XAF" />
-   <animation fileName="EStand_Aim2_RightUp.XAF" />
-   <animation fileName="EStand_Aim2_FrontUp.XAF" />
-   <animation fileName="EStand_Aim2_LeftUp.XAF" />
+   <animation fileName="Estand_Aim2_Front.XAF" />
+   <animation fileName="Estand_Aim2_Left.XAF" />
+   <animation fileName="Estand_Aim2_RightDw.XAF" />
+   <animation fileName="Estand_Aim2_FrontDw.XAF" />
+   <animation fileName="Estand_Aim2_LeftDw.XAF" />
+   <animation fileName="Estand_Aim2_RightUp.XAF" />
+   <animation fileName="Estand_Aim2_FrontUp.XAF" />
+   <animation fileName="Estand_Aim2_LeftUp.XAF" />
    
    <animation fileName="AtEase_rightdown.XAF" />
    <animation fileName="AtEase_leftdown.XAF" />
@@ -54,7 +54,7 @@
    <animation fileName="ERunIP_Hold.XAF" name="run"/>   
  
    <animation fileName="Esquat.XAF" /> 
-   <animation fileName="Esquat1a.XAF" />
+   <animation fileName="ESquat1a.XAF" />
    <animation fileName="Esquat2.XAF" />
    <animation fileName="Esquat3.XAF" />  
    
