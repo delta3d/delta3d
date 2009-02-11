@@ -36,6 +36,8 @@ OrbitMotionModel::OrbitMotionModel(Keyboard* keyboard,
    , mAngularRate(90.0f)
    , mLinearRate(1.0f)
    , mDistance(100.0f)
+   , mMaxElevationLimit(89.9f)
+   , mMinElevationLimit(-89.9f)
 {
    RegisterInstance(this);
 
@@ -458,13 +460,13 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
 
          hpr[1] += float(delta * mAngularRate);
 
-         if (hpr[1] < -89.9f)
+         if (hpr[1] < mMinElevationLimit)
          {
-            hpr[1] = -89.9f;
+            hpr[1] = mMinElevationLimit;
          }
-         else if (hpr[1] > 89.9f)
+         else if (hpr[1] > mMaxElevationLimit)
          {
-            hpr[1] = 89.9;
+            hpr[1] = mMaxElevationLimit;
          }
 
          osg::Vec3 offset ( 0.0f, -mDistance, 0.0f );
