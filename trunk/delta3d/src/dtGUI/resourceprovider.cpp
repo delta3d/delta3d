@@ -1,4 +1,4 @@
-#include <cegui/CEGUIExceptions.h>
+#include <CEGUI/CEGUIExceptions.h>
 #include <dtGUI/resourceprovider.h>
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
