@@ -180,7 +180,7 @@ void CubeMapProfile::Config(osg::Group* pGroup)
    osg::Depth* depth = new osg::Depth;
    depth->setFunction(osg::Depth::ALWAYS);
    depth->setRange(1.0,1.0);
-   ss->setAttributeAndModes(depth, osg::StateAttribute::ON );
+   ss->setAttributeAndModes(depth, osg::StateAttribute::ON);
 
    ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
    ss->setMode(GL_FOG,osg::StateAttribute::OFF);
