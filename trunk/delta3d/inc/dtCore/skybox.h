@@ -159,6 +159,11 @@ namespace dtCore
       virtual ~SkyBox();
 
    public:
+
+      /// This will automatically be called to create resources 
+      /// but can be manually called if needed
+      virtual void Config();
+
       /// Must override this to supply the repainting routine
       virtual void Repaint(const osg::Vec3& skyColor,
          const osg::Vec3& fogColor,
@@ -169,8 +174,11 @@ namespace dtCore
       /// Set the texture for this side of the skybox
       void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
+      // Get the current render profile
+      RenderProfile* GetRenderProfile() { return mRenderProfile.get(); }
+
    protected:
-      virtual void Config();
+      
       virtual void CheckHardware();
       virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
 
@@ -180,7 +188,7 @@ namespace dtCore
 
       bool mInitializedTextures;
       std::string mTexList[6];
-      bool mTexPreSetList[6];   
+      bool mTexPreSetList[6];
    };
 }
 
