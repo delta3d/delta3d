@@ -32,20 +32,26 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 	  ADD_SUBDIRECTORY(src/dtGUI)
 	ENDIF (BUILD_GUI) 
 
-	IF (BUILD_HLA)
-	   if (USE_RTIS)
-		  FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
-	   else (USE_RTIS)
-		  if (USE_CERTI)
-			 FIND_PACKAGE(RTICERTI REQUIRED)
-		  else (USE_CERTI)
-				MESSAGE("No HLA RTI selected, choose USE_CERTI or USE_RTIS")
-		  endif (USE_CERTI)
-	   endif (USE_RTIS)
-	  
-	   ADD_SUBDIRECTORY(src/dtHLAGM)
-	   SET(DTHLAGM_AVAILABLE "YES")
-	endif (BUILD_HLA)
+  IF (BUILD_HLA)
+     IF (USE_RTIS)
+       FIND_PACKAGE(RTI-s REQUIRED) #for dtHLAGM
+     ELSE (USE_RTIS)
+      
+       IF (USE_CERTI)
+         FIND_PACKAGE(RTICERTI REQUIRED)
+       ELSE (USE_CERTI)
+      
+         IF (USE_MAK)
+           FIND_PACKAGE(RTIMAK REQUIRED)
+         ELSE (USE_MAK) 
+           MESSAGE("No HLA RTI selected, choose USE_CERTI, USE_RTIS or USE_MAK")
+         ENDIF (USE_MAK)
+       ENDIF (USE_CERTI)
+     ENDIF (USE_RTIS)
+    
+     ADD_SUBDIRECTORY(src/dtHLAGM)
+     SET(DTHLAGM_AVAILABLE "YES")
+  ENDIF (BUILD_HLA)
 
 
 	IF (BUILD_PLIB)
@@ -131,10 +137,11 @@ OPTION(BUILD_WITH_PCH "Enables the building of the Delta3D with precompiled head
 OPTION(BUILD_WITH_QT "Enables the building of projects that require Qt" ON)
 OPTION(BUILD_3DSMAX_PLUGIN "Build the Autodesk 3ds Max exporter plugin" OFF)
 
-if (BUILD_HLA)
+IF (BUILD_HLA)
    OPTION(USE_RTIS "Use RTI-s for the RTI implementation" ON)
    OPTION(USE_CERTI "Use CERTI for the RTI implementation" OFF)
-endif (BUILD_HLA)
+   OPTION(USE_MAK "Use MAK for the RTI implementation" OFF)
+ENDIF (BUILD_HLA)
 
 
 IF (WIN32)
