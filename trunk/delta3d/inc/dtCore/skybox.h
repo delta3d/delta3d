@@ -161,8 +161,6 @@ protected:
    std::string mTexList[6];
    bool mTexPreSetList[6];
 
-   dtCore::RefPtr<osg::Geode> mTempGeode;
-
    ///this is a custom drawable for the AngularMapProfile
    ///and the CubeMapProfile
    class DT_CORE_EXPORT SkyBoxDrawable: public osg::Drawable
