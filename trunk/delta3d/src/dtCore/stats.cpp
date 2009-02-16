@@ -8,6 +8,7 @@
 
 #include <osg/PolygonMode>
 #include <osg/Geometry>
+#include <osg/Version>
 
 namespace dtCore
 {
@@ -37,7 +38,11 @@ bool StatsHandler::SelectNextType()
       UpdateThreadingModelText();
    }
    
-   if (mViewer->getStats() == NULL) 
+   #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+   if (mViewer->getViewerStats() == NULL)
+   #else
+   if (mViewer->getStats() == NULL)
+   #endif
    {
       return false;
    }
@@ -59,16 +64,26 @@ bool StatsHandler::SelectNextType()
    {
    case(NO_STATS):
       {
-         mViewer->getStats()->collectStats("frame_rate",false);
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         mViewer->getViewerStats()->collectStats("frame_rate",false);
+         mViewer->getViewerStats()->collectStats("event",false);
+         mViewer->getViewerStats()->collectStats("update",false);
+         #else
+		   mViewer->getStats()->collectStats("frame_rate",false);
          mViewer->getStats()->collectStats("event",false);
          mViewer->getStats()->collectStats("update",false);
-
+         #endif
          for(osgViewer::ViewerBase::Cameras::iterator itr = cameras.begin();
             itr != cameras.end();
             ++itr)
          {
+            #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
             if ((*itr)->getStats()) (*itr)->getStats()->collectStats("rendering",false);
             if ((*itr)->getStats()) (*itr)->getStats()->collectStats("gpu",false);
+            #else
+            if ((*itr)->getStats()) (*itr)->getStats()->collectStats("rendering",false);
+            if ((*itr)->getStats()) (*itr)->getStats()->collectStats("gpu",false);
+            #endif
          }
 
          mCamera->setNodeMask(0x0); 
@@ -77,8 +92,11 @@ bool StatsHandler::SelectNextType()
       }
    case(FRAME_RATE):
       {
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         mViewer->getViewerStats()->collectStats("frame_rate",true);
+         #else
          mViewer->getStats()->collectStats("frame_rate",true);
-
+         #endif
          mCamera->setNodeMask(0xffffffff);
          mSwitch->setValue(mFrameRateChildNum, true);
          break;
@@ -99,9 +117,13 @@ bool StatsHandler::SelectNextType()
             }
          }
 
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         mViewer->getViewerStats()->collectStats("event",true);
+         mViewer->getViewerStats()->collectStats("update",true);
+         #else
          mViewer->getStats()->collectStats("event",true);
          mViewer->getStats()->collectStats("update",true);
-
+         #endif
          for(osgViewer::ViewerBase::Cameras::iterator itr = cameras.begin();
             itr != cameras.end();
             ++itr)
@@ -568,7 +590,11 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
       frameRateValue->setPosition(pos);
       frameRateValue->setText("0.0");
 
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+      frameRateValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Frame rate",-1, true, 1.0));
+      #else
       frameRateValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Frame rate",-1, true, 1.0));
+      #endif
 
       pos.y() -= characterSize * 1.5f;
    }
@@ -623,11 +649,18 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          eventValue->setPosition(pos);
          eventValue->setText("0.0");
 
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         eventValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Event traversal time taken",-1, false, 1000.0));
+         #else
          eventValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Event traversal time taken",-1, false, 1000.0));
-
+         #endif
          pos.x() = startBlocks;
          osg::Geometry* geometry = CreateGeometry(pos, characterSize *0.8, colorUpdateAlpha, mNumBlocks);
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getViewerStats(), viewer->getViewerStats(), "Event traversal begin time", "Event traversal end time", -1, mNumBlocks));
+         #else
          geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getStats(), viewer->getStats(), "Event traversal begin time", "Event traversal end time", -1, mNumBlocks));
+         #endif
          geode->addDrawable(geometry);
 
          pos.y() -= characterSize*1.5f;
@@ -656,11 +689,19 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          updateValue->setPosition(pos);
          updateValue->setText("0.0");
 
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         updateValue->setDrawCallback(new TextDrawCallback(viewer->getViewerStats(),"Update traversal time taken",-1, false, 1000.0));
+         #else
          updateValue->setDrawCallback(new TextDrawCallback(viewer->getStats(),"Update traversal time taken",-1, false, 1000.0));
+         #endif
 
          pos.x() = startBlocks;
          osg::Geometry* geometry = CreateGeometry(pos, characterSize *0.8, colorUpdateAlpha, mNumBlocks);
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getViewerStats(), viewer->getViewerStats(), "Update traversal begin time", "Update traversal end time", -1, mNumBlocks));
+         #else
          geometry->setDrawCallback(new BlockDrawCallback(this, startBlocks, viewer->getStats(), viewer->getStats(), "Update traversal begin time", "Update traversal end time", -1, mNumBlocks));
+         #endif
          geode->addDrawable(geometry);
 
          pos.y() -= characterSize*1.5f;
@@ -673,7 +714,11 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          citr != cameras.end();
          ++citr)
       {
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         group->addChild(CreateCameraStats(font, pos, startBlocks, aquireGPUStats, characterSize, viewer->getViewerStats(), *citr));
+         #else
          group->addChild(CreateCameraStats(font, pos, startBlocks, aquireGPUStats, characterSize, viewer->getStats(), *citr));
+         #endif
       }
 
       // add frame ticks
@@ -691,7 +736,11 @@ void StatsHandler::SetUpScene(osgViewer::ViewerBase* viewer)
          geode->addDrawable(ticks);
 
          osg::Geometry* frameMarkers = CreateFrameMarkers(pos, height, colourTicks, mNumBlocks + 1);
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+         frameMarkers->setDrawCallback(new FrameMarkerDrawCallback(this, startBlocks, viewer->getViewerStats(), 0, mNumBlocks + 1));
+         #else
          frameMarkers->setDrawCallback(new FrameMarkerDrawCallback(this, startBlocks, viewer->getStats(), 0, mNumBlocks + 1));
+         #endif
          geode->addDrawable(frameMarkers);
       }
 
@@ -936,12 +985,20 @@ osg::Node* StatsHandler::CreateCameraStats(const std::string& font, osg::Vec3& p
 ////////////////////////////////////////////////////////////////////////////////
 void StatsHandler::PrintOutStats( osgViewer::ViewerBase * viewer )
 {
+   #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+   if (viewer->getViewerStats())
+   #else
    if (viewer->getStats())
+   #endif
    {
       osg::notify(osg::NOTICE)<<std::endl<<"Stats report:"<<std::endl;
       typedef std::vector<osg::Stats*> StatsList;
       StatsList statsList;
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+      statsList.push_back(viewer->getViewerStats());
+      #else
       statsList.push_back(viewer->getStats());
+      #endif
 
       osgViewer::ViewerBase::Contexts contexts;
       viewer->getContexts(contexts);
@@ -954,14 +1011,15 @@ void StatsHandler::PrintOutStats( osgViewer::ViewerBase * viewer )
              itr != cameras.end();
             ++itr)
          {
-            if ((*itr)->getStats())
-            {
-               statsList.push_back((*itr)->getStats());
-            }
+            if ((*itr)->getStats()) { statsList.push_back((*itr)->getStats()); }
          }
       }
 
+      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 2  && OSG_VERSION_MINOR >= 8
+      for(int i = viewer->getViewerStats()->getEarliestFrameNumber(); i<= viewer->getViewerStats()->getLatestFrameNumber()-1; ++i)
+      #else
       for(int i = viewer->getStats()->getEarliestFrameNumber(); i<= viewer->getStats()->getLatestFrameNumber()-1; ++i)
+      #endif
       {
          for(StatsList::iterator itr = statsList.begin();
             itr != statsList.end();
