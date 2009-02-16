@@ -73,6 +73,16 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       {
          return mInterface->getNumScreens(screenIdentifier);
       }
+      
+      virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution)
+      {
+         mInterface->getScreenSettings(si, resolution);
+      }
+
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl) 
+      {
+         mInterface->enumerateScreenSettings(si, rl);
+      }
 
       virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
                unsigned int& width, unsigned int& height)
