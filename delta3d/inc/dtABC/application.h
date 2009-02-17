@@ -145,13 +145,13 @@ namespace dtABC
         * @param mouse Handle to the Mouse that triggered this
         * @param button The button index
         */
-      virtual bool MouseButtonPressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+      virtual bool MouseButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
       /** Called when a mouse button is released.  Overwrite for custom functionality.
       * @param mouse Handle to the Mouse that triggered this
       * @param button The button index
       */
-      virtual bool MouseButtonReleased(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button);
+      virtual bool MouseButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
 
       /** Called when a mouse button has been "double-clicked".  Overwrite for custom
         * functionality.
@@ -159,7 +159,7 @@ namespace dtABC
         * @param button The button index
         * @param clickCount : The number of times the button was clicked
         */
-      virtual bool MouseButtonDoubleClicked(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount);
+      virtual bool MouseButtonDoubleClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount);
 
       /** Called when a mouse is moved.  Overwrite for custom functionality.
       * @param mouse Handle to the Mouse that triggered this
@@ -200,13 +200,13 @@ namespace dtABC
       void RemoveConfigPropertyValue(const std::string& name);
 
       /// Add a view to the Viewer
-      void AddView(dtCore::View &view);
+      void AddView(dtCore::View& view);
 
       /// Remove a view to the Viewer
-      void RemoveView(dtCore::View &view);
+      void RemoveView(dtCore::View& view);
 
       // Checks to see if a view is added the application.
-      bool ContainsView(dtCore::View &view);
+      bool ContainsView(dtCore::View& view);
 
       ///Cycle through the statistics modes
       void SetNextStatisticsType();
@@ -215,19 +215,20 @@ namespace dtABC
 
       virtual ~Application();
       
-      virtual  void  EventTraversal( const double deltaSimTime );
+      virtual void EventTraversal(const double deltaSimTime);
 
       ///override for preframe
-      virtual  void  PreFrame( const double deltaSimTime );
+      virtual void PreFrame(const double deltaSimTime);
 
       ///override for frame
-      virtual  void   Frame( const double deltaSimTime );
+      virtual void Frame(const double deltaSimTime);
 
       ///override for postframe
-      virtual  void  PostFrame( const double deltaSimTime );
+      virtual void PostFrame(const double deltaSimTime);
 
       ///Create basic instances and set up system hooks
-      virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
+      virtual void CreateInstances(const std::string& name = "defaultWin", int x = 100, int y = 100, 
+         int width = 640, int height = 480, bool cursor = true, bool fullScreen = false);
 
       /// Read the supplied config file, called from the constructor
       /// Read an existing data file and setup the internal class

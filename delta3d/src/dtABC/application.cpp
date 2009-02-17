@@ -243,19 +243,19 @@ bool Application::KeyReleased(const dtCore::Keyboard* keyboard, int kc)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonPressed(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button)
+bool Application::MouseButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonReleased(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button)
+bool Application::MouseButtonReleased(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button)
 {
    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Application::MouseButtonDoubleClicked(const dtCore::Mouse *mouse, dtCore::Mouse::MouseButton button, int clickCount)
+bool Application::MouseButtonDoubleClicked(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button, int clickCount)
 {
    return false;
 }
