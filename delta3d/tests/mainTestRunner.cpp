@@ -50,6 +50,7 @@
 #include "unittestapplication.h"
 
 #include <osg/GraphicsContext>
+#include <osg/Version>
 
 #include <stdexcept>
 #include <sstream>
@@ -73,7 +74,9 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       {
          return mInterface->getNumScreens(screenIdentifier);
       }
-      
+
+#if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
+
       virtual void getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution)
       {
          mInterface->getScreenSettings(si, resolution);
@@ -83,6 +86,7 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
+#endif
 
       virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
                unsigned int& width, unsigned int& height)
