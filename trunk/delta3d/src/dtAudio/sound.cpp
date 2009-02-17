@@ -333,13 +333,14 @@ void Sound::SetBuffer(ALint b)
    }
 
    // This check was added to prevent a crash-on-exit for OSX -osb
-   ALint bufValue;
-   alGetSourcei(mSource, AL_BUFFER, &bufValue);
-   CheckForError("Checking buffer before attaching it to a source", __FUNCTION__, __LINE__);
-   if (bufValue == 0)
-   {
-      return;
-   }
+   //ALint bufValue;
+   //alGetSourcei(mSource, AL_BUFFER, &bufValue);
+   //CheckForError("Checking buffer before attaching it to a source", __FUNCTION__, __LINE__);
+   //if (bufValue == 0)
+   //{
+   //   std::cout << "alGetSource failed" << std::endl;
+   //   return;
+   //}
 
    if (alIsBuffer(b) == AL_FALSE)
    {      
