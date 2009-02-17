@@ -78,9 +78,6 @@ public:
 
    /*virtual*/ void OnTickLocal(const dtGame::TickMessage& tickMessage);
 
-   /// Update fov lines and other data
-   void UpdateDebugData();
-
    /* virtual */ void AddedToScene(dtCore::Scene* scene);
 
    /// Get the animation model
