@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-  targetNamespace="hlaComponent"
-  elementFormDefault="qualified"
-  attributeFormDefault="unqualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
   <xsd:annotation>
     <xsd:documentation xml:lang="en">
@@ -68,12 +65,20 @@
     <xsd:sequence>
       <xsd:element name="enabled" type="xsd:boolean"/>
       <xsd:element name="space" minOccurs="0" maxOccurs="unbounded">
-        <xsd:attribute name="name" use="required" type="nonEmptyString"/>
-        <xsd:sequence>
-          <xsd:element name="property" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
-            <xsd:attribute name="name" use="required" type="nonEmptyString"/>
-          </xsd:element>
-        </xsd:sequence>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                    <xsd:attribute name="name" use="required" type="nonEmptyString"/>
+                  </xsd:extension>  
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+         <xsd:attribute name="name" use="required" type="nonEmptyString"/>
+        </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
@@ -81,25 +86,26 @@
   <xsd:complexType name="ObjectsType">
     <xsd:sequence>
       <xsd:element name="object" minOccurs="0" maxOccurs="unbounded">  
-        <xsd:attribute name="name" type="xsd:normalizedString"/>
-        <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
             <xsd:choice>
-              <xsd:complexType>
-                <xsd:sequence>
-                  <xsd:element name="objectClass" type="xsd:normalizedString" />
-                  <xsd:element name="actorType" type="xsd:normalizedString"/>
+              <xsd:sequence>
+                <xsd:element name="objectClass" type="xsd:normalizedString" />
+                <xsd:element name="actorType" type="xsd:normalizedString"/>
+                <xsd:choice>
                   <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
-                  <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
-                </xsd:sequence>
-              </xsd:complexType>               
+                  <xsd:element name="localOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+                </xsd:choice>
+                <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+              </xsd:sequence>
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
             <xsd:element name="ddmSpace" type="xsd:normalizedString" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="entityIdAttributeName" type="xsd:normalizedString" minOccurs="0" maxOccurs="1" />
-            <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="TranslationType"/>
+            <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
+          <xsd:attribute name="name" type="xsd:normalizedString"/>
+          <xsd:attribute name="extends" type="xsd:normalizedString"/>
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="objectHandler" minOccurs="0" maxOccurs="unbounded">
@@ -125,22 +131,20 @@
   <xsd:complexType name="InteractionsType">
     <xsd:sequence>
       <xsd:element name="interaction" minOccurs="0" maxOccurs="unbounded">
-        <xsd:attribute name="name" type="xsd:normalizedString"/>
-        <xsd:attribute name="extends" type="xsd:normalizedString"/>
         <xsd:complexType>
           <xsd:sequence>
             <xsd:choice>
-            <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="interactionClass" type="xsd:normalizedString" />
                 <xsd:element name="messageType" type="xsd:normalizedString"/>
               </xsd:sequence>
-            </xsd:complexType>               
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
             <xsd:element name="ddmSpace" type="xsd:normalizedString" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="paramToParam" minOccurs="0" maxOccurs="unbounded" type="TranslationType"/>
+            <xsd:element name="paramToParam" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
+          <xsd:attribute name="name" type="xsd:normalizedString"/>
+          <xsd:attribute name="extends" type="xsd:normalizedString"/>
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="interactionHandler" minOccurs="0" maxOccurs="unbounded">
@@ -174,42 +178,34 @@
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="TranslationType">
+  <xsd:complexType name="OneToOneType">
     <xsd:sequence>
       <xsd:element name="hlaName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="hlaDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
       <xsd:element name="hlaRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-      <xsd:choice>
+      <xsd:element name="gameName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="gameDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
+      <xsd:element name="gameRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+      
+      <xsd:element name="enumerationMapping" minOccurs="0" maxOccurs="1">
         <xsd:complexType>
-          <xsd:sequence>
-            <xsd:element name="gameName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="gameDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
-            <xsd:element name="gameRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="enumerationMapping" minOccurs="0" maxOccurs="1" type="EnumerationMappingType"/>
+          <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="value">
+              <xsd:complexType>
+                <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                    <xsd:attribute name="id" type="xsd:string"/>
+                  </xsd:extension>
+                </xsd:simpleContent>
+              </xsd:complexType>
+            </xsd:element>
           </xsd:sequence>
         </xsd:complexType>
-        <xsd:element name="parameter" minOccurs="1" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="gameName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="gameDataType" type="xsd:string" minOccurs="0" maxOccurs="1"/> 
-              <xsd:element name="gameRequired" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="default" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-              <xsd:element name="enumerationMapping" minOccurs="0" maxOccurs="1" type="EnumerationMappingType"/>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:choice>
+      </xsd:element>
+      
     </xsd:sequence>
   </xsd:complexType>
 
-  <xsd:complexType name="EnumerationMappingType">
-    <xsd:sequence>
-      <xsd:element name="value" type="xsd:string">
-        <xsd:attribute name="id" type="xsd:int"/>        
-      </xsd:element>
-    </xsd:sequence>
-  </xsd:complexType>
 
 </xsd:schema>
