@@ -83,7 +83,7 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 
    // this can't be smart for both 32 and 64 bit types.
    ///\todo find a preprocessor way to assign this constant different for the different precision types.
-   const osg::Vec3::value_type magic_epsilon = 0.00001;
+   const osg::Vec3::value_type magic_epsilon = (osg::Vec3::value_type)0.00001;
 
    if ( osg::equivalent(hpr[0],(osg::Vec3::value_type)0.0,magic_epsilon) )
    {

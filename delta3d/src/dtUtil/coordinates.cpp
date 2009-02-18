@@ -910,7 +910,9 @@ namespace dtUtil
 
       cos_theta = ((sq_cos_theta) < 0.0 ? (0.0) : (sqrtf(sq_cos_theta)));
       if (cos_theta == 0.0) /* Singularity here */
-        cos_theta = 0.000001;
+      {
+        cos_theta = 0.000001f;
+      }
 
       sin_psi = mat(1,0) / cos_theta;
       psi = safeASIN(sin_psi);
