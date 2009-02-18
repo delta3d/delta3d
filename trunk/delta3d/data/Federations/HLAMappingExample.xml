@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<hla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="hlaComponent"
-     xsi:schemaLocation="hlaComponent HLAMapping.xsd">
+<hla  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="HLAMapping.xsd">
         
     <header>
         <name>Test</name>
@@ -155,7 +154,6 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Helicopter</actorType>
             <localOnly>true</localOnly>
-            <ddmSpace>Another Space</ddmSpace>
             <disEntityEnum>
                 <kind>1</kind>
                 <domain>2</domain>
@@ -165,6 +163,7 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum>
+            <ddmSpace>Another Space</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
@@ -179,7 +178,6 @@
             <objectClass>BaseEntity.PhysicalEntity.Platform.Aircraft</objectClass>
             <actorType>TestHLA.Helicopter</actorType>
             <remoteOnly>true</remoteOnly>
-            <ddmSpace>Another Space</ddmSpace>
             <disEntityEnum>
                 <kind>1</kind>
                 <domain>2</domain>
@@ -189,6 +187,7 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum>
+            <ddmSpace>Another Space</ddmSpace>
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
