@@ -235,8 +235,25 @@ namespace dtAudio
       /// get the eax function pointers from OpenAL (nothing done with them yet)
       inline bool ConfigEAX(bool eax);
 
-      /// remove the buffer from a sound
-      inline void UnloadSound(Sound* snd);
+      /**
+       * This method loads a sound buffer from the file specified
+       * in the specified sound object.
+       * @param snd Sound object that specifies the sound file to load.
+       *        It also receives a reference to a new or an existing
+       *        sound buffer.
+       * @return Count of references to the loaded sound buffer; 0 if failed.
+       */
+      inline int LoadSoundBuffer(Sound& snd);
+
+      /**
+       * This method reduces the reference count for the buffer referenced
+       * by the specified sound object. If the reference count results to 0,
+       * the associated sound buffer will be deleted.
+       * @param snd Sound object that specifies the sound file to be unloaded.
+       * @return Remaining count of references to the loaded sound buffer; -1 if failed.
+       */
+      inline int UnloadSound(Sound* snd);
+
    private:
       ALvoid*             mEAXSet;
       ALvoid*             mEAXGet;
