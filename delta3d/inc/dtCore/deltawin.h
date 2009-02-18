@@ -23,6 +23,7 @@
 
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
+#include <dtCore/windowresizecontainer.h>
 #include <dtUtil/deprecationmgr.h>
 #include <vector>                   // for member
 
@@ -241,6 +242,18 @@ namespace dtCore
       /// @param candidate the Resolution to be tested.
       /// @return 'true' when the Resolution is supported.
       bool IsValidResolution(const Resolution& candidate);
+
+      /** Add a window resize callback to the DeltaWin.
+      * @param cb The callback to trigger after a resize
+      * @return true if cb was added correctly
+      */
+      void AddResizeCallback(WindowResizeCallback& cb);
+
+      /** Remove a window resize callback from the DeltaWin.
+      * @param cb The callback to remove
+      * @return true if cb was removed correctly
+      */
+      void RemoveResizeCallback(WindowResizeCallback& cb);
       
    private:
 
@@ -268,6 +281,8 @@ namespace dtCore
 
       bool mIsFullScreen;
       bool mShowCursor;
+
+      dtCore::RefPtr<dtCore::WindowResizeContainer> mResizeCallbackContainer;
 
       // Disallowed to prevent compile errors on VS2003. It apparently
       // creates this functions even if they are not used, and if

@@ -2,6 +2,7 @@
 
 #include <dtCore/deltawin.h>
 #include <dtCore/exceptionenum.h>
+#include <dtCore/windowresizecallback.h>
 #include <dtUtil/log.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/exception.h>
@@ -15,6 +16,20 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
+///Default WindowResizeCallback.  Used to implement the default OSG window resizing
+class DefResizeCB : public WindowResizeCallback
+{
+public:
+   DefResizeCB(){};
+   ~DefResizeCB(){};
+   
+   virtual void operator () (const dtCore::DeltaWin& win, int x, int y, int width, int height)
+   {
+      dtCore::DeltaWin &non_const_win = const_cast<dtCore::DeltaWin&>(win);
+      non_const_win.GetOsgViewerGraphicsWindow()->resizedImplementation(x,y,width,height);
+   }
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
@@ -23,6 +38,8 @@ DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
    , mLastWindowedHeight(480)
    , mIsFullScreen(false)
    , mShowCursor(true)
+   , mResizeCallbackContainer(NULL)
+
 {
    RegisterInstance(this);
    CreateDeltaWindow(windowTraits);
@@ -39,6 +56,7 @@ DeltaWin::DeltaWin(const std::string& name,
    , mLastWindowedHeight(480)
    , mIsFullScreen(false)
    , mShowCursor(true)
+   , mResizeCallbackContainer(NULL)
 {
    RegisterInstance(this);
 
@@ -69,6 +87,12 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
    osg::ref_ptr<osg::GraphicsContext::Traits> osgTraits;
    osgTraits = CreateOSGTraits(windowTraits);
 
+   mResizeCallbackContainer = new WindowResizeContainer(*this);
+
+   //automatically add in our default callback
+   WindowResizeCallback *defCB = new DefResizeCB();
+   mResizeCallbackContainer->AddCallback(*defCB);
+
    mOsgViewerGraphicsWindow = CreateGraphicsWindow(*osgTraits).get();
 
    if (!windowTraits.fullScreen)
@@ -92,6 +116,8 @@ osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::Grap
          "The graphics context could not be created.",
          __FILE__, __LINE__);
    }
+
+   gc->setResizedCallback(mResizeCallbackContainer.get());
 
    osg::ref_ptr<osgViewer::GraphicsWindow> gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
    if (gw != NULL)
@@ -125,6 +151,12 @@ DeltaWin::~DeltaWin()
 {
    KillGLWindow();
    DeregisterInstance(this);
+
+   if (mOsgViewerGraphicsWindow->valid())
+   {
+      mOsgViewerGraphicsWindow->setResizedCallback(NULL);
+      mResizeCallbackContainer = NULL;
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -435,4 +467,15 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    return traits;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaWin::AddResizeCallback(WindowResizeCallback& cb)
+{
+   mResizeCallbackContainer->AddCallback(cb);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaWin::RemoveResizeCallback(WindowResizeCallback& cb)
+{
+   mResizeCallbackContainer->RemoveCallback(cb);
+}
