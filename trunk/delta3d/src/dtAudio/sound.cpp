@@ -93,7 +93,10 @@ Sound::Sound()
 ////////////////////////////////////////////////////////////////////////////////
 Sound::~Sound()
 {
-   alDeleteSources(1, &mSource);
+   if (alIsSource(mSource))
+   {
+      alDeleteSources(1, &mSource);
+   }
    CheckForError("Attempt to delete an OpenAL source", __FUNCTION__, __LINE__);
 
    //tell the system to stop sending me messages.

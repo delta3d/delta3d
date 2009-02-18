@@ -38,9 +38,9 @@ IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 namespace dtAudio {
 
 ////////////////////////////////////////////////////////////////////////////////
-//Utitily function used to work with OpenAL's error messaging system.  It's used
-//in multiple places throughout dtAudio.  It's not in AudioManager because we
-//don't want things like Sound to directly access the AudioManager.
+// Utility function used to work with OpenAL's error messaging system. It's used
+// in multiple places throughout dtAudio. It's not in AudioManager because we
+// don't want things like Sound to directly access the AudioManager.
 // Returns true on error, false if no error
 inline bool CheckForError(const std::string& userMessage,
                           const std::string& msgFunction,
@@ -316,9 +316,7 @@ void AudioManager::OnMessage(MessageData* data)
          assert(data->userData);
          Sound* snd(static_cast<Sound*>(data->userData));
 
-         ALint buf = LoadFile(snd->GetFilename());
-
-         snd->SetBuffer(buf);
+         LoadSoundBuffer(*snd);
       }
    }
 }
@@ -652,16 +650,49 @@ bool AudioManager::ConfigEAX(bool eax)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::UnloadSound(Sound* snd)
+int AudioManager::LoadSoundBuffer(Sound& snd)
+{
+   const char* file = snd.GetFilename();
+   int useCount = 0;
+
+   if (file != NULL)
+   {
+      // Load a new or an existing sound buffer.
+      if (LoadFile(file) > -1)
+      {
+         BufferData* bd = mBufferMap[file];
+         snd.SetBuffer(bd->buf);
+         useCount = (++bd->use);
+      }
+      else
+      {
+         std::ostringstream errorMessage;
+         errorMessage << "Unable to generate a sound buffer for file \""
+            << file << "\"";
+         LOG_ERROR(errorMessage.str());
+      }
+   }
+   else
+   {
+      LOG_ERROR("Sound object does not specify a file name.");
+   }
+
+   return useCount;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int AudioManager::UnloadSound(Sound* snd)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    assert(snd);
 
-   const char* file(static_cast<Sound*>(snd)->GetFilename());
+   int useCount = -1;
+
+   const char* file = snd->GetFilename();
 
    if (file == NULL)
    {
-      return;
+      return useCount;
    }
 
    snd->SetBuffer(0);
@@ -670,16 +701,31 @@ void AudioManager::UnloadSound(Sound* snd)
 
    if (bd == NULL)
    {
-      return;
+      return useCount;
    }
 
-   --bd->use;
+   // Decrease the buffer reference count.
+   if (bd->use > 0)
+   {
+      useCount = (--bd->use);
+   }
+   else // Something is wrong!
+   {
+      std::ostringstream errorMessage;
+      errorMessage << "Sound buffer reference count for file \""
+         << file << "\" was already at: " << bd->use;
+      LOG_ERROR(errorMessage.str());
+
+      // Ensure that the buffer will be stopped,
+      // and deleted in the call to UnloadFile.
+      useCount = bd->use = 0;
+   }
 
    // If the buffer is not being used by any other sound object...
-   if (bd->use == 0)
+   if (useCount == 0)
    {
       ALuint src = snd->GetSource();
-      if (alIsSource(src) && snd->IsInitialized())
+      if (alIsSource(src))
       {
          // NOTE: Deleting the buffer will fail if the sound source is still
          // playing and thus result in a very sound memory leak and potentially
@@ -689,15 +735,22 @@ void AudioManager::UnloadSound(Sound* snd)
          // Therefore:  Ensure the sound source is properly stopped before the
          // sound buffer is deleted.
          snd->StopImmediately();
+         snd->RewindImmediately();
+         snd->SetLooping(false);
 
          //Also ensure the sound's buffer is set to nothing:
          snd->SetBuffer(AL_NONE);
-         snd->SetLooping(false);
-         snd->RewindImmediately();
+
+         // Free the source now so that the buffer can delete properly.
+         snd->SetSource(0);
+         alDeleteSources(1L, &src);
+         CheckForError("Sound source delete error", __FUNCTION__, __LINE__);
       }
    }
 
    UnloadFile(file);
    CheckForError("Unload Sound Error", __FUNCTION__, __LINE__);
+
+   return useCount;
 }
 
