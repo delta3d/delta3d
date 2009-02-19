@@ -84,7 +84,8 @@ namespace dtUtil
          if((dtUtil::Bits::Has(mNodeMask, NodeCollector::GeodeFlag)) && (geode.getName() != mNodeNamesIgnored))
          {
             mNodeManager->AddGeode(geode.getName(), geode);
-            LOG_DEBUG("Added Geode Node: " + geode.getName());
+            dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added Geode Node: " + geode.getName());
          }
          
          traverse(geode);
@@ -102,7 +103,8 @@ namespace dtUtil
         {   
                //Add Group to node collector's std::map
                mNodeManager->AddGroup(group.getName(), group);
-               LOG_DEBUG("Added Group Node: " + group.getName());
+               dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+               logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added Group Node: " + group.getName());
         }
          //Traverse through the Group Nodes Children
          traverse(group);
@@ -123,7 +125,8 @@ namespace dtUtil
          {
             //Add DOFTransform to node collector's std::map
             mNodeManager->AddDOFTransform(transform.getName(), (*DOF));
-            LOG_DEBUG("Added DOFTransform Node: " + transform.getName());
+            dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added DOFTransform Node: " + transform.getName());
          }
          //Traverse through the Transform Nodes Children
          traverse(transform);
@@ -141,7 +144,8 @@ namespace dtUtil
          {
             //Add MatrixTransform to node collector's std::map
             mNodeManager->AddMatrixTransform(matrix_transform.getName(), matrix_transform);
-            LOG_DEBUG("Added MatrixTransform Node: " + matrix_transform.getName());
+            dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added MatrixTransform Node: " + matrix_transform.getName());
          }
          //Traverses through the MatrixTransform Nodes Children
          traverse(matrix_transform);
@@ -159,7 +163,8 @@ namespace dtUtil
          {
             //Add Switch to node collector's std::map
             mNodeManager->AddSwitch(pSwitch.getName(), pSwitch);
-            LOG_DEBUG("Added Switch Node: " + pSwitch.getName());
+            dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added Switch Node: " + pSwitch.getName());
          }
          //Traverses through the Switch Nodes Children
          traverse(pSwitch);
@@ -199,7 +204,8 @@ namespace dtUtil
       }
       else
       {
-         LOG_ERROR("Null Pointer Sent to constructor.");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Null Pointer Sent to constructor.");
       }
    }
 
@@ -215,7 +221,8 @@ namespace dtUtil
       }
       else
       {
-         LOG_ERROR("Null Pointer Sent to function.");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Null Pointer Sent to function.");
       }
    }
 
@@ -238,7 +245,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::AddNode(key, &data, mGeodeNodeMap) )
       {
-         LOG_WARNING("Can NOT add Geode with Duplicate Key: " + key);
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can NOT add Geode with Duplicate Key: " + key);
       }
 
    }
@@ -250,7 +258,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::RemoveNode(key, mGeodeNodeMap) )
       {
-         LOG_DEBUG("Cannot remove geode node \"" + key + "\" because it does not exist");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove geode node \"" + key + "\" because it does not exist");
       }
    }
 
@@ -261,7 +270,8 @@ namespace dtUtil
    {      
       if( !CollectorUtil::AddNode(key, & data, mGroupNodeMap) )
       {
-         LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
       }
    }
 
@@ -272,7 +282,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::RemoveNode(key, mGroupNodeMap) )
       {
-         LOG_DEBUG("Cannot remove group node \"" + key + "\" because it does not exist");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove group node \"" + key + "\" because it does not exist");
       }
    }
 
@@ -283,7 +294,8 @@ namespace dtUtil
    {
       if ( !CollectorUtil::AddNode(key, & data, mTranformNodeMap) )
       {
-         LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
       }
    }
 
@@ -294,7 +306,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::RemoveNode(key, mTranformNodeMap) )
       {
-         LOG_DEBUG("Cannot remove DOF transform node \"" + key + "\" because it does not exist");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove DOF transform node \"" + key + "\" because it does not exist");
       }
    }
 
@@ -305,7 +318,8 @@ namespace dtUtil
    {
      if( !CollectorUtil::AddNode(key, & data, mMatrixTransformNodeMap) )
      {
-        LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+        dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+        logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
      }
    }
 
@@ -316,7 +330,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::RemoveNode(key, mMatrixTransformNodeMap) )
       {
-         LOG_DEBUG("Cannot remove matrix transform node \"" + key + "\" because it does not exist");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Cannot remove matrix transform node \"" + key + "\" because it does not exist");
       }
    }
 
@@ -327,7 +342,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::AddNode(key, & data, mSwitchNodeMap) )
       {
-         LOG_WARNING("Can Not Add Node With Duplicate Key: " + key);
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
       }
    }
 
@@ -338,7 +354,8 @@ namespace dtUtil
    {
       if( !CollectorUtil::RemoveNode(key, mSwitchNodeMap) )
       {
-         LOG_DEBUG("Cannot remove switch node \"" + key + "\" because it does not exist");
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove switch node \"" + key + "\" because it does not exist");
       }
    }
 
