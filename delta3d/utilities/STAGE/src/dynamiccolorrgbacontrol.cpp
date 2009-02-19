@@ -39,6 +39,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 #include <QtGui/QColorDialog>
 #include <QtGui/QColor>
 #include <QtGui/QGridLayout>
@@ -79,19 +80,19 @@ namespace dtEditQt {
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create R
-            rElement = new DynamicColorElementControl(myProperty, 0, "R");
+            rElement = new DynamicColorElementControl(myProperty, 0, "Red");
             rElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(rElement);
             // create G
-            gElement = new DynamicColorElementControl(myProperty, 1, "G");
+            gElement = new DynamicColorElementControl(myProperty, 1, "Green");
             gElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(gElement);
             // create B
-            bElement = new DynamicColorElementControl(myProperty, 2, "B");
+            bElement = new DynamicColorElementControl(myProperty, 2, "Blue");
             bElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(bElement);
             // create A
-            aElement = new DynamicColorElementControl(myProperty, 3, "A");
+            aElement = new DynamicColorElementControl(myProperty, 3, "Alpha");
             aElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(aElement);
         } 
@@ -232,23 +233,29 @@ namespace dtEditQt {
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicColorRGBAControl::colorPickerPressed() 
     {
-        // get the current value.
+        // get the current value, as floats
         osg::Vec4 vectorValue = myProperty->GetValue();
-        QColor startColor(DynamicColorElementControl::convertColorFloatToInt(vectorValue[0]), 
-            DynamicColorElementControl::convertColorFloatToInt(vectorValue[1]), 
-            DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]));
+
+        //clamp to ensure its in the 0..1 range for Qt to use
+        for (unsigned int i=0; i<vectorValue.num_components; i++)
+        {
+           dtUtil::Clamp(vectorValue[i], 0.f, 1.f);
+        }
+
+        QColor startColor;
+        startColor.setRgbF(vectorValue[0], vectorValue[1], vectorValue[2], vectorValue[3]);
 
         // show the dialog.  Blocks for user input.
-        QColor result = QColorDialog::getColor(startColor, EditorData::GetInstance().getMainWindow());
+        bool ok;
+        QRgb rgba = QColorDialog::getRgba(startColor.rgba(), &ok, EditorData::GetInstance().getMainWindow());
 
         // if the user pressed, OK, we set the color and assume it changed
-        if (result.isValid()) 
+        if (ok) 
         {
-            osg::Vec4 propColor = myProperty->GetValue();  // we at least need the old alpha
-            propColor[0] = DynamicColorElementControl::convertColorIntToFloat(result.red());
-            propColor[1] = DynamicColorElementControl::convertColorIntToFloat(result.green());
-            propColor[2] = DynamicColorElementControl::convertColorIntToFloat(result.blue());
-            // plus alpha...  remains the same.
+            QColor result;
+            result.setRgba(rgba);
+            osg::Vec4d propColor;
+            result.getRgbF(&propColor[0], &propColor[1], &propColor[2], &propColor[3]);
 
             std::string oldValue = myProperty->ToString();
             myProperty->SetValue(propColor);
