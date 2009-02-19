@@ -353,16 +353,19 @@ namespace dtEditQt
        QLineEdit *editX = new QLineEdit(this);
        editX->setToolTip(tr("X"));
        editX->setValidator(new QDoubleValidator(minValue, maxValue, 2, editX));
+       editX->setMinimumWidth(25);
        mPositionEditWidgets.push_back(editX);
 
        QLineEdit *editY = new QLineEdit(this);
        editY->setToolTip(tr("Y"));
        editY->setValidator(new QDoubleValidator(minValue, maxValue, 2, editY));
+       editY->setMinimumWidth(25);
        mPositionEditWidgets.push_back(editY);
 
        QLineEdit *editZ = new QLineEdit(this);
        editZ->setToolTip(tr("Z"));
        editZ->setValidator(new QDoubleValidator(minValue, maxValue, 2, editZ));
+       editZ->setMinimumWidth(25);
        mPositionEditWidgets.push_back(editZ);
 
        layout->addWidget(editX);
