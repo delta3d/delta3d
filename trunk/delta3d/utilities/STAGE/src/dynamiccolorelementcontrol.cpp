@@ -104,8 +104,6 @@ namespace dtEditQt
             if (result != getValue()) {
                 setValue(result);
                 dataChanged = true;
-            } else {
-                LOG_ERROR("updateData() failed to convert our value successfully");
             }
         }
 
@@ -128,8 +126,8 @@ namespace dtEditQt
     {
         // create and init the edit box
         temporaryEditControl = new SubQSpinBox(parent, this);
-        temporaryEditControl->setMinimum(0);
-        temporaryEditControl->setMaximum(255);
+        temporaryEditControl->setMinimum(-512);
+        temporaryEditControl->setMaximum(512);
         //control->
 
         if (!initialized)  {
@@ -162,7 +160,7 @@ namespace dtEditQt
         //    tooltip = colorRGB->getDescription();
         //}
 
-        tooltip += " [Type: " + label;
+        tooltip += " " + label;
         return QString(tr(tooltip.c_str()));
     }
 
@@ -252,11 +250,6 @@ namespace dtEditQt
     {
         // convert 0 to 1 to 0 to 255 with a round for display
         int result = (int) (value * 255 + 0.5);
-        // clamp it to 0, 255, just in case
-        // Note - I tried to use std::min and std::max, but ended up having trouble due to windows
-        // and linux headers.  Settled on old school cause it compiles.
-        int temp = (result > 0) ? result : 0; // std::max(result, 0);
-        result = (temp < 255) ? temp : 255; // std::min(temp, 255); 
         return result;
     }
 
@@ -264,11 +257,6 @@ namespace dtEditQt
     {
         // convert 0 to 255 back to 0 to 1. 
         float result = (float) (value / 255.0);
-        // clamp it to 0.0, 1.0, just in case
-        // Note - I tried to use std::min and std::max, but ended up having trouble due to windows
-        // and linux headers.  Settled on old school cause it compiles.
-        float temp = (0.0 > result) ? 0.0 : result; // std::min(0.0, result);
-        result = (temp < 1.0) ? temp : 1.0; // std::max(temp, 1.0);
         return result;
     }
 
