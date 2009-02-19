@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * allTests - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * Copyright (C) 2005-2009, Alion Science and Technology Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * @author Eddie Johnson and David Guthrie
+ * @author Eddie Johnson and David Guthrie and Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix-src.h>
@@ -64,6 +64,7 @@
 #include <dtGame/defaultmessageprocessor.h>
 
 #include <testGameActorLibrary/testgameactorlibrary.h>
+#include <testGameActorLibrary/testgameactor.h>
 
 #include "testcomponent.h"
 
@@ -104,6 +105,7 @@ class MessageTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(TestDefaultMessageProcessorWithLocalActorUpdates);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithRemoteActorDeletes);
       CPPUNIT_TEST(TestDefaultMessageProcessorWithLocalActorDeletes);
+      CPPUNIT_TEST(TestRemoteActorCreatesFromPrototype);
       CPPUNIT_TEST(TestGameEventMessage);
       CPPUNIT_TEST(TestActorEnteredWorldMessage);
 
@@ -133,6 +135,7 @@ public:
    void TestDefaultMessageProcessorWithLocalActorUpdates();
    void TestDefaultMessageProcessorWithRemoteActorDeletes();
    void TestDefaultMessageProcessorWithLocalActorDeletes();
+   void TestRemoteActorCreatesFromPrototype();
    void TestGameEventMessage();
    void TestActorEnteredWorldMessage();
 
@@ -1738,6 +1741,93 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    }
 
 }
+
+/////////////////////////////////////////////////////////////////////
+void MessageTests::TestRemoteActorCreatesFromPrototype()
+{
+
+   // This test focuses only on the prototype part since the tests above hit the essentials.
+   // We are just testing that an actor create message will create an remote actor using the prototype.
+
+   dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
+
+   dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
+   CPPUNIT_ASSERT(type != NULL);
+
+   // Create a prototype actor to work with.
+   dtCore::RefPtr<TestGameActorProxy1> prototypeProxy;
+   mGameManager->CreateActor(*type.get(), prototypeProxy);
+   CPPUNIT_ASSERT(prototypeProxy != NULL);
+   dtCore::RefPtr<TestGameActor1> prototypeActor = dynamic_cast<TestGameActor1*>(prototypeProxy->GetActor());
+   prototypeActor->SetName("Test1Prototype");
+   prototypeActor->SetTickLocals(59);
+   prototypeActor->SetTickRemotes(41);
+   dtCore::UniqueId prototypeId = dtCore::UniqueId("ABCDEFG");
+   prototypeActor->SetUniqueId(prototypeId);
+   mGameManager->AddActorAsAPrototype(*prototypeProxy.get());
+
+   // Now we need to actually create an actor from our prototype. Use that to populate a create message.
+   // Note, we don't actually add our temp actor to the GM. It acts like a 'remote' actor on another system.
+   dtCore::RefPtr<dtDAL::ActorProxy> tempBogusPrototype = mGameManager->CreateActorFromPrototype(prototypeId);
+   dtCore::RefPtr<dtGame::GameActorProxy> tempBogusGameProxy = dynamic_cast<dtGame::GameActorProxy*>(tempBogusPrototype.get());
+   dtCore::RefPtr<TestGameActor1> tempBogusActor = dynamic_cast<TestGameActor1*>(tempBogusPrototype->GetActor());
+   tempBogusActor->SetTickLocals(11);
+   tempBogusActor->SetName("MyUpdateActor");
+   dtCore::UniqueId createdId = dtCore::UniqueId("1234567890");
+   tempBogusActor->SetUniqueId(createdId);
+
+   // Create an actor update message to simulate the creation process from a remote system
+   // To do that, we populate the TickLocal property (plus name and Id).
+   dtCore::RefPtr<dtGame::ActorUpdateMessage> actorCreateMsg =
+      static_cast<dtGame::ActorUpdateMessage*>(mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED).get());
+   std::vector<std::string> params;
+   params.push_back("Local Tick Count");
+   tempBogusGameProxy->PopulateActorUpdate(*actorCreateMsg, params);
+   //make it remote
+   actorCreateMsg->SetSource(*new dtGame::MachineInfo());
+
+
+   // Send it!
+   mGameManager->SendMessage(*actorCreateMsg);
+   SLEEP(10);
+   dtCore::System::GetInstance().Step();
+
+
+   // The create message had a 'local tick' on it, but nothing else. So, when we send it, we should get a 
+   // new actor with the right name & actorid. The tick remote should be what was on the prototype (41), 
+   // but the tick local we set manually to 11. 
+
+
+   dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(createdId);
+   dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote->GetActor());
+
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have been created.", gapRemote != NULL);
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as our prototype.", 
+      gapRemote->GetActorType() == prototypeProxy->GetActorType());
+
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - name. ", 
+      prototypeProxy->GetName() == "Test1Prototype");
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - name.", 
+      gapRemote->GetName() == "MyUpdateActor");
+
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - uniqueid. ", 
+      prototypeProxy->GetId() == prototypeId);
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - uniqueid.", 
+      gapRemote->GetId() == createdId);
+
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - tick locals. ", 
+      prototypeActor->GetTickLocals() == 59);
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - tick locals.", 
+      gapRemoteActor->GetTickLocals() == 11);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The remote actor should have the value from the prototype - tick remotes. ", 
+      prototypeActor->GetTickRemotes(), gapRemoteActor->GetTickRemotes());
+
+   CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
+   CPPUNIT_ASSERT_MESSAGE("The created actor should not be published.", !gapRemote->IsPublished());
+}
+
 
 void MessageTests::TestActorEnteredWorldMessage()
 {

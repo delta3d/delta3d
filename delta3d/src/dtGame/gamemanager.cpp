@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * Matthew W. Campbell, William E. Johnson II, David Guthrie
+ * Matthew W. Campbell, William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix-src.h>
@@ -1078,6 +1078,14 @@ namespace dtGame
          if (gap != NULL)
          {
             gap->SetGameManager(this);
+
+            // Actors created from prototype hold onto the prototype name - for use
+            // across networks, via replay, and so forth.
+            dtGame::GameActor *gameActor = dynamic_cast<dtGame::GameActor*>(gap->GetActor());
+            if (gameActor != NULL)
+            {
+               gameActor->SetPrototypeName(ourObject->GetName());
+            }
          }
          return temp;
       }
