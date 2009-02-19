@@ -83,7 +83,9 @@ class GameManagerTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(GameManagerTests);
 
-        CPPUNIT_TEST(TestTemplatedActorMethods);
+        CPPUNIT_TEST(TestFindActorByType);
+        CPPUNIT_TEST(TestFindActorByWrongType);
+        CPPUNIT_TEST(TestFindActorByName);
 
         CPPUNIT_TEST(TestDataStream);
 
@@ -115,7 +117,9 @@ public:
    void setUp();
    void tearDown();
 
-   void TestTemplatedActorMethods();
+   void TestFindActorByType();
+   void TestFindActorByWrongType();
+   void TestFindActorByName();
 
    void TestDataStream();
 
@@ -243,60 +247,96 @@ void GameManagerTests::tearDown()
 }
 
 /////////////////////////////////////////////////
-void GameManagerTests::TestTemplatedActorMethods()
+void GameManagerTests::TestFindActorByType()
 {
-   const unsigned short int numProxies = 20;
+   const unsigned short int numProxies = 10;
    std::vector<dtDAL::ActorProxy*> proxies;
    for (unsigned short int i = 0; i < numProxies; ++i)
    {
       dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
       mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
       CPPUNIT_ASSERT(p != NULL);
-      //proxies.push_back(p);
       mManager->AddActor(*p, false, false);
    }
 
-   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> testEvent;
-   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, testEvent);
-   CPPUNIT_ASSERT(testEvent != NULL);
-   //proxies.push_back(p);
-   mManager->AddActor(*testEvent, false, false);
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> testEventProxy;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, testEventProxy);
+   CPPUNIT_ASSERT(testEventProxy != NULL);
+   mManager->AddActor(*testEventProxy, false, false);
 
-   dtActors::GameMeshActorProxy* shouldBeValid = NULL;
-   dtActors::TaskActorGameEventProxy* shouldBeValid2 = NULL;
-
+   dtActors::GameMeshActorProxy* meshActorProxy = NULL;
    mManager->FindActorsByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, proxies);
-   mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, shouldBeValid);
-   CPPUNIT_ASSERT(shouldBeValid != NULL);
+   CPPUNIT_ASSERT_MESSAGE("The GameManager didn't find the actor by type", !proxies.empty());
 
-   CPPUNIT_ASSERT(!proxies.empty());
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", shouldBeValid == proxies[0]);
+   mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, meshActorProxy);
+   CPPUNIT_ASSERT_MESSAGE("The GameManager didn't find the single actor type.", meshActorProxy != NULL);
+
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", meshActorProxy == proxies[0]);
 
    for (size_t i = proxies.size() - 1; i >= 1; --i)
    {
-      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid != proxies[i]);
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", meshActorProxy != proxies[i]);
+   }
+}
+
+/////////////////////////////////////////////////
+void GameManagerTests::TestFindActorByWrongType()
+{
+   dtCore::RefPtr<dtActors::GameMeshActorProxy> meshActorProxy;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, meshActorProxy);
+   CPPUNIT_ASSERT(meshActorProxy != NULL);
+   mManager->AddActor(*meshActorProxy, false, false);
+
+   const std::string eventName = "testEvent";
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> gameEventProxy;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, gameEventProxy);
+   CPPUNIT_ASSERT(gameEventProxy != NULL);
+   gameEventProxy->SetName(eventName);
+   mManager->AddActor(*gameEventProxy, false, false);
+
+   //should not be able to mix up variable type and queried actor types
+   dtActors::TaskActorGameEventProxy* testEventProxy = NULL;
+   mManager->FindActorByType(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, testEventProxy);
+   CPPUNIT_ASSERT_MESSAGE("The GameManager returned back a proxy of the wrong type", testEventProxy == NULL);
+
+   //should not be able to mix up variable type and queried actor types
+   dtActors::GameMeshActorProxy* testMeshProxy = NULL;
+   mManager->FindActorByName(eventName, testMeshProxy);
+   CPPUNIT_ASSERT_MESSAGE("GameManager returned back a proxy of the wrong type.", testMeshProxy == NULL);
+}
+
+/////////////////////////////////////////////////
+void GameManagerTests::TestFindActorByName()
+{
+   const unsigned short int numProxies = 10;
+   for (unsigned short int i = 0; i < numProxies; ++i)
+   {
+      dtCore::RefPtr<dtActors::GameMeshActorProxy> p;
+      mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE, p);
+      CPPUNIT_ASSERT(p != NULL);
+      mManager->AddActor(*p, false, false);
    }
 
-   proxies.clear();
-   CPPUNIT_ASSERT(proxies.empty());
+   const std::string eventName = "testEvent";
+   dtCore::RefPtr<dtActors::TaskActorGameEventProxy> gameEventProxy;
+   mManager->CreateActor(*dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE, gameEventProxy);
+   CPPUNIT_ASSERT(gameEventProxy != NULL);
+   gameEventProxy->SetName(eventName);
+   mManager->AddActor(*gameEventProxy, false, false);
 
-   std::string searchName = shouldBeValid->GetName();
-   // make the event have the same name.
-   testEvent->SetName(searchName);
+   std::vector<dtDAL::ActorProxy*> proxies;
+   mManager->FindActorsByName(eventName, proxies);
+   CPPUNIT_ASSERT_MESSAGE("GameManager failed to find the actor by name.", !proxies.empty());
 
-   shouldBeValid = NULL;
+   dtActors::TaskActorGameEventProxy* testGameEventProxy = NULL;
+   mManager->FindActorByName(eventName, testGameEventProxy);
+   CPPUNIT_ASSERT_MESSAGE("GameManager failed to find the single actor by name.", testGameEventProxy != NULL);
 
-   mManager->FindActorsByName(searchName, proxies);
-   mManager->FindActorByName(searchName, shouldBeValid);
-   mManager->FindActorByName(searchName, shouldBeValid2);
-
-   CPPUNIT_ASSERT(!proxies.empty());
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list and not NULL", shouldBeValid == proxies[0]);
-   CPPUNIT_ASSERT_MESSAGE("The result should equal the one task event proxy and not NULL", shouldBeValid2 == testEvent);
+   CPPUNIT_ASSERT_MESSAGE("The result should equal the first in the list", testGameEventProxy == proxies[0]);
 
    for (size_t i = proxies.size() - 1; i >= 1; --i)
    {
-      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", shouldBeValid != proxies[i]);
+      CPPUNIT_ASSERT_MESSAGE("The result should not equal any other proxies except the first", testGameEventProxy != proxies[i]);
    }
 }
 
