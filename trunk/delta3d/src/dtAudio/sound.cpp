@@ -426,8 +426,11 @@ void Sound::Stop()
 void Sound::StopImmediately()
 {
    SetState(STOP);
-   alSourceStop(mSource);
-   CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
+   if(alIsSource(mSource))
+   {
+      alSourceStop(mSource);
+      CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
