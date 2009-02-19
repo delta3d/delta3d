@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II and David Guthrie
+ * William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
 #ifndef DELTA_ACTORUPDATEMESSAGE
@@ -47,6 +47,7 @@ namespace dtGame
          static const dtUtil::RefString NAME_PARAMETER;
          static const dtUtil::RefString ACTOR_TYPE_NAME_PARAMETER;
          static const dtUtil::RefString ACTOR_TYPE_CATEGORY_PARAMETER;
+         static const dtUtil::RefString PROTOTYPE_NAME_PARAMETER;
          static const dtUtil::RefString UPDATE_GROUP_PARAMETER;
 
          /// Constructor
@@ -158,6 +159,21 @@ namespace dtGame
           * @param newActorType the actor type on this actor
           */
          void SetActorType(const dtDAL::ActorType& newActorType);
+
+         /**
+          * This value is used for updating/creating remote actors that need to be recreated from prototype
+          * @return The name of the prototype this actor is created from, if any. 
+          */
+         const std::string& GetPrototypeName() const;
+
+         /**
+         * This value is used for updating/creating remote actors that need to be recreated from prototype
+         * This value comes from the actor, but is set automatically by the GM when an actor is created
+         * from a prototype. If the prototype is non-null, then when the actor is created by the message
+         * processor, then it will attempt to look up the prototype first. Extremely useful for networking.
+         * @param newName The name of the prototype this actor is created from, if any.
+         */
+         void SetPrototypeName(const std::string& newPrototypeName);
 
       protected:
 

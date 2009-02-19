@@ -146,6 +146,21 @@ namespace dtGame
 
       virtual void OnShaderGroupChanged();
 
+      /**
+      * See GetPrototypeName().
+      * @param prototypeName The prototype that was used to create this actor. Set by the GM.
+      */
+      void SetPrototypeName(const std::string& prototypeName);
+
+      /**
+      * This value is used for updating/creating remote actors that need to be recreated from prototype
+      * This value is set automatically by the GM when an actor is created from prototype. 
+      * If the prototype is non-null, then when the actor is created by the message
+      * processor, it will attempt to look up the prototype first. Extremely useful for networking.
+      * @return The prototype that was used to create this actor. Set by the GM.
+      */
+      std::string GetPrototypeName() const { return mPrototypeName; }
+
    protected:
 
       /// Destructor
@@ -177,6 +192,7 @@ namespace dtGame
       bool mRemote;
       std::string mShaderGroup;
       dtUtil::Log& mLogger;
+      std::string mPrototypeName;
    };
 
    /**

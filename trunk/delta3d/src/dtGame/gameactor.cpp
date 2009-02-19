@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II and David Guthrie
+ * William E. Johnson II, David Guthrie, Curtiss Murphy
  */
 
 #include <prefix/dtgameprefix-src.h>
@@ -210,19 +210,10 @@ namespace dtGame
    /////////////////////////////////////////////////////////////////////////////
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string>& propNames, bool limitProperties)
    {
-      StringMessageParameter* nameParam = static_cast<StringMessageParameter*>(update.GetParameter("Name"));
-      if (nameParam != NULL)
-      {
-         nameParam->SetValue(GetName());
-      }
+      update.SetName(GetName());
+      update.SetActorType(GetActorType());
 
-      StringMessageParameter* typeParam = static_cast<StringMessageParameter*>(update.GetParameter("Actor Type Name"));
-      if (typeParam != NULL)
-         typeParam->SetValue(GetActorType().GetName());
-
-      StringMessageParameter* catParam = static_cast<StringMessageParameter*>(update.GetParameter("Actor Type Category"));
-      if (catParam != NULL)
-         catParam->SetValue(GetActorType().GetCategory());
+      update.SetPrototypeName(GetGameActor().GetPrototypeName());
 
       update.SetSendingActorId(GetId());
       update.SetAboutActorId(GetId());
@@ -610,10 +601,12 @@ namespace dtGame
    const std::string GameActor::NULL_PROXY_ERROR("The actor proxy for a game actor is NULL.  This usually happens if the actor is held in RefPtr, but not the proxy.");
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy),
-   mPublished(false),
-   mRemote(false),
-   mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
+   GameActor::GameActor(GameActorProxy& proxy) 
+      : mProxy(&proxy)
+      , mPublished(false)
+      , mRemote(false)
+      , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
+      , mPrototypeName("")
    {
    }
 
@@ -712,4 +705,11 @@ namespace dtGame
          return;
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActor::SetPrototypeName(const std::string& prototypeName)
+   {
+      mPrototypeName = prototypeName;
+   }
+
 }

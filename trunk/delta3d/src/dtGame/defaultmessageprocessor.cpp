@@ -1,6 +1,6 @@
 /*
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2005, BMH Associates, Inc.
+ * Copyright (C) 2005-2009, Alion Science and Technology.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * William E. Johnson II
+ * William E. Johnson II, Curtiss Murphy
  */
 #include <prefix/dtgameprefix-src.h>
 #include <dtGame/defaultmessageprocessor.h>
@@ -39,16 +39,19 @@ namespace dtGame
 {
    const std::string DefaultMessageProcessor::DEFAULT_NAME = "DefaultMessageProcessor";
 
+   ///////////////////////////////////////////////////////////////////////////////
    DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name) : GMComponent(name)
    {
 
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    DefaultMessageProcessor::~DefaultMessageProcessor()
    {
 
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessMessage(const Message &msg)
    {
       //bool remote = false;
@@ -98,27 +101,49 @@ namespace dtGame
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg) 
    {
       const std::string &typeName = msg.GetActorTypeName();
       const std::string &catName = msg.GetActorTypeCategory();
+      const std::string &prototypeName = msg.GetPrototypeName();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
       dtCore::RefPtr<const dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
 
-      if (!type.valid())
+      // If the message has a prototype, then use it to create the actor 
+      if (!prototypeName.empty())
       {
-         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
-           + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
+         dtGame::GameActorProxy* prototypeProxy = NULL;
+         GetGameManager()->FindPrototypeByName(prototypeName, prototypeProxy);
+         if (prototypeProxy == NULL)
+         {
+            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The prototypeName parameter with value \"" 
+               + prototypeName + "\" is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
+         }
+
+         gap = dynamic_cast<dtGame::GameActorProxy*>
+            (GetGameManager()->CreateActorFromPrototype(prototypeProxy->GetId()).get());
+      }
+
+      // Regular create (ie no prototype)
+      else 
+      {
+         if (!type.valid())
+         {
+            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
+              + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
+         }
+         gap = GetGameManager()->CreateRemoteGameActor(*type);
       }
            
-      gap = GetGameManager()->CreateRemoteGameActor(*type);
       //Change the id to match the one this is ghosting.
       gap->SetId(msg.GetAboutActorId());         
      
       return gap;
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessRemoteUpdateActor(const ActorUpdateMessage &msg, GameActorProxy *ap)
    {
       //dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
@@ -131,6 +156,7 @@ namespace dtGame
       ap->ApplyActorUpdate(msg);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessRemoteDeleteActor(const ActorDeletedMessage &msg)
    {
       dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
@@ -143,6 +169,7 @@ namespace dtGame
       GetGameManager()->DeleteActor(*ap);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessCreateActor(const ActorUpdateMessage &msg)
    {
       GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
@@ -151,7 +178,6 @@ namespace dtGame
          //just to make sure the message is actually remote
          if (msg.GetSource() != GetGameManager()->GetMachineInfo())
          {
-      
             try
             {
                dtCore::RefPtr<GameActorProxy> gap = ProcessRemoteCreateActor(msg);
@@ -178,6 +204,7 @@ namespace dtGame
       }
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessUpdateActor(const ActorUpdateMessage &msg)
    {
       GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
@@ -192,6 +219,7 @@ namespace dtGame
          ProcessCreateActor(msg);   
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessDeleteActor(const ActorDeletedMessage &msg)
    {
       GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
@@ -210,25 +238,30 @@ namespace dtGame
    }
 
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessPauseCommand(const Message& msg)
    {
       GetGameManager()->SetPaused(true);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessResumeCommand(const Message& msg)
    {
       GetGameManager()->SetPaused(false);
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessTimeChangeCommand(const TimeChangeMessage& msg)
    {
       GetGameManager()->ChangeTimeSettings(msg.GetSimulationTime(), msg.GetTimeScale(), (Timer_t)(msg.GetSimulationClockTime() * 1000000));
    }
 
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message &msg)
    {
    }
       
+   ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message &msg)
    {
    }
