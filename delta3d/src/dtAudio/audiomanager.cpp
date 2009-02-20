@@ -80,6 +80,8 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/)
    , mEAXGet(NULL)
    , mNumSounds(0)
    , mIsConfigured(false)
+   , mDevice(0)
+   , mContext(0)
 {
    RegisterInstance(this);
 
@@ -129,6 +131,22 @@ AudioManager::~AudioManager()
    CheckForError("alutExit()", __FUNCTION__, __LINE__);
 
    RemoveSender(&dtCore::System::GetInstance());
+
+   alcMakeContextCurrent(NULL);
+   CheckForError("Attempted to change current OpenAL context to nothing.",
+                   __FUNCTION__, __LINE__);
+   if (mContext)
+   {
+      alcDestroyContext(mContext);
+      CheckForError("Attempted to destroy current OpenAL context.",
+                     __FUNCTION__, __LINE__);
+   }
+   
+   if (mDevice)
+   {
+      alcCloseDevice(mDevice);
+      CheckForError("Attempted to close OpenAL device.", __FUNCTION__, __LINE__);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,6 +212,26 @@ void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
       // already configured
       return;
    }
+
+   mDevice = alcOpenDevice(NULL);
+   if (mDevice == NULL)
+   {      
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't open audio device.\n");
+   }
+
+   mContext = alcCreateContext(mDevice, NULL);
+   if (!mContext)
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't create audio context.\n");
+   }
+
+   if(!alcMakeContextCurrent(mContext))
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't make audio context current.\n");
+   }     
 
    // set up the distance model
    switch (data.distancemodel)
