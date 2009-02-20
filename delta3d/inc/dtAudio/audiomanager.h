@@ -177,6 +177,20 @@ namespace dtAudio
       /// returns the OpenAL sound device the AudioManager is using
       ALCdevice* GetDevice() {return mDevice;}
 
+      /// returns the OpenAL context the AudioManager is using
+      ALCcontext* GetContext() {return mContext;}
+
+      /** This is an advanced operation that normally isn't necessary! Typically
+       *  the default device and context are sufficient.  If you do use this
+       *  method make sure you brush up on your OpenAL first!
+       *
+       *  Set the OpenAL device the AudioManger is using.
+       *  Also sets up an OpenAL context for this device.
+       *  (Preexisting context and device are closed before doing the preceeding)
+       *
+       */      
+      void SetOpenALDevice(const ALCchar* deviceName);
+
       /// access the AudioManager
       static AudioManager& GetInstance();
 
@@ -284,6 +298,18 @@ namespace dtAudio
        */
       inline bool ReleaseSoundBuffer(ALuint bufferHandle, const std::string& errorMessage,
          const std::string& callerFunctionName, int callerFunctionLineNum );
+
+      /// Open an OpenAL device for the AudioManager to use
+      void OpenDevice(const ALCchar* deviceName = 0);
+   
+      /// Create an OpenAL context using the current device
+      void CreateContext();
+
+      /// close and cleanup current OpenAL sound device the AudioManager is using
+      void CloseDevice();      
+   
+      /// close and cleanup current OpenAL sound context the AudioManager is using
+      void CloseContext();
 
    private:
       ALvoid*             mEAXSet;
