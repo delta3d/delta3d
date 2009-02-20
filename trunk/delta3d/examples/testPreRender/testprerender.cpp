@@ -151,7 +151,13 @@ void TestPreRender::CreateTextureScene()
    dtDAL::Project::GetInstance().SetContext(contextName, true);
 
    // Load the map into our custom scene
-   dtDAL::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
+   dtDAL::Map& map = dtDAL::Project::GetInstance().LoadMapIntoScene("MyCoolMap", *mTextureScene);
+
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+   map.FindProxies(container, "", "", "", "dtCore::SkyBox");
+   
+   // Add the skybox to the main scene as well
+   GetScene()->AddDrawable(container[0]->GetActor());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +191,7 @@ void TestPreRender::CreateTextureTarget(int width, int height)
    mTextureTarget->setResizeNonPowerOfTwoHint(false);
    mTextureTarget->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_BORDER);
    mTextureTarget->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_BORDER);
-   mTextureTarget->setBorderColor(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
+   mTextureTarget->setBorderColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
