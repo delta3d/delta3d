@@ -1,4 +1,4 @@
-#include <QtGUI/QApplication>
+#include <QtGui/QApplication>
 #include <QtOpenGL/QGLContext>
 #include <QtGui/QDockWidget>
 #include <QtCore/QFileInfo>
