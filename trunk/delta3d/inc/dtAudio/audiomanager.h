@@ -174,6 +174,9 @@ namespace dtAudio
       /// destroy the singleton and shutdown OpenAL
       static void Destroy();
 
+      /// returns the OpenAL sound device the AudioManager is using
+      ALCdevice* GetDevice() {return mDevice;}
+
       /// access the AudioManager
       static AudioManager& GetInstance();
 
@@ -295,6 +298,9 @@ namespace dtAudio
 
       SoundObjectStateMap mSoundStateMap; ///Maintains state of each Sound object
                                           ///prior to a system-wide pause message
+
+      ALCdevice*          mDevice;
+      ALCcontext*         mContext;      
    };
 };
 
