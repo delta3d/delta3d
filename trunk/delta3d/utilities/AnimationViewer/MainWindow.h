@@ -23,7 +23,7 @@ class QDoubleSpinBox;
 
 namespace dtQt
 {
-   class OSGAdapterWidget;
+   class ViewWindow;
 }
 
 namespace dtAnim
@@ -40,7 +40,7 @@ public:
    MainWindow();
    ~MainWindow();
 
-   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
+   dtQt::ViewWindow* GetGLWidget() { return mGLWidget; }
 
    void LoadCharFile(const QString& filename);
 
@@ -150,7 +150,7 @@ private:
    PoseMeshScene*      mPoseMeshScene;
    PoseMeshProperties* mPoseMeshProperties;
 
-   dtQt::OSGAdapterWidget* mGLWidget;
+   dtQt::ViewWindow* mGLWidget;
 
 private slots:
    void OnOpenCharFile();

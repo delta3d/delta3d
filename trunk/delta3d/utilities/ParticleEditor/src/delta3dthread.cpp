@@ -1,4 +1,5 @@
 #include <delta3dthread.h>
+#include <dtCore/deltawin.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
@@ -84,7 +85,7 @@ void Delta3DThread::run()
    }
 
    //need to set the current context so that all the open gl stuff in osg can initialize.
-   ViewWindow& glWidget = *mWin->GetGLWidget();
+   dtQt::ViewWindow& glWidget = *mWin->GetGLWidget();
    //glWidget.ThreadedInitializeGL();
    //glWidget.ThreadedMakeCurrent();
    

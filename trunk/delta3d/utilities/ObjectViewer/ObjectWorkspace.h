@@ -31,7 +31,7 @@ class QToolBar;
 
 namespace dtQt
 {
-   class OSGAdapterWidget;
+   class ViewWindow;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public:
    ObjectWorkspace();
    ~ObjectWorkspace();
 
-   dtQt::OSGAdapterWidget* GetGLWidget() { return mGLWidget; }
+   dtQt::ViewWindow* GetGLWidget() { return mGLWidget; }
    QObject* GetResourceObject();
 
    virtual void dragEnterEvent(QDragEnterEvent* event);
@@ -131,7 +131,7 @@ private:
 
    QList<std::string> mAdditionalShaderFiles;
 
-   dtQt::OSGAdapterWidget* mGLWidget;
+   dtQt::ViewWindow* mGLWidget;
 
 private slots:
 

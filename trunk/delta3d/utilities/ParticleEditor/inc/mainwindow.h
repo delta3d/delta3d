@@ -2,14 +2,13 @@
 #define ___MAIN_WINDOW_H___
 
 #include <particleviewer.h>
-#include <viewwindow.h>
+#include <dtQt/viewwindow.h>
 #include <layersbrowser.h>
 #include <particlestab.h>
 #include <countertab.h>
 #include <placertab.h>
 #include <shootertab.h>
 #include <programtab.h>
-#include <viewwindow.h>
 #include "ui_particleeditor.h"
 
 #include <QtGui/QWidget>
@@ -27,7 +26,7 @@ namespace psEditor
       MainWindow(QMainWindow* parent = NULL);
       virtual ~MainWindow(void);
 
-      ViewWindow* GetGLWidget() { return mpViewWindow; }
+      dtQt::ViewWindow* GetGLWidget() { return mpViewWindow; }
       void SetParticleViewer(ParticleViewer* particleViewer);
       void SetupUI();
       void LoadFile(QString filename, bool import = false);
@@ -59,7 +58,7 @@ namespace psEditor
 
       QAction*        mpRecentFilesActions[5];
       ParticleViewer* mpParticleViewer;
-      ViewWindow*     mpViewWindow;
+      dtQt::ViewWindow*     mpViewWindow;
       LayersBrowser*  mpLayersBrowser;
       ParticlesTab*   mpParticlesTab;
       CounterTab*     mpCounterTab;
