@@ -104,10 +104,8 @@ AudioManager::~AudioManager()
    SND_LST::iterator it;
    for (it = mSoundList.begin(); it != mSoundList.end(); ++it)
    {
-      (*it)->StopImmediately();
-      (*it)->SetBuffer(AL_NONE);
-      (*it)->SetLooping(false);
-      (*it)->RewindImmediately();
+      ReleaseSoundSource(**it, "Error freeing source in Audio Manager destructor.",
+         __FUNCTION__, __LINE__);
    }
 
    // delete the buffers
@@ -120,12 +118,9 @@ AudioManager::~AudioManager()
       }
 
       iter->second = NULL;
-      if(alIsBuffer(bd->buf) != AL_FALSE)
-      {
-         alDeleteBuffers(1, &bd->buf);
-      }
+
+      ReleaseSoundBuffer(bd->buf, "alDeleteBuffers(1, &bd->buf )", __FUNCTION__, __LINE__);
       delete bd;
-      CheckForError("alDeleteBuffers(1, &bd->buf )", __FUNCTION__, __LINE__);
    }
    mBufferMap.clear();
    mSoundList.clear();
@@ -473,9 +468,9 @@ ALint AudioManager::LoadFile(const std::string& file)
          CheckForError("AudioManager: alutLoadMemoryFromFile error", __FUNCTION__, __LINE__);
       #endif // ALUT_API_MAJOR_VERSION
 
-      alDeleteBuffers(1L, &bd->buf);
+      ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error", __FUNCTION__, __LINE__);
       delete bd;
-      CheckForError("alDeleteBuffers error", __FUNCTION__, __LINE__);
+
       return -1;
    }
 
@@ -485,7 +480,9 @@ ALint AudioManager::LoadFile(const std::string& file)
    alBufferData(bd->buf, bd->format, data, bd->size, bd->freq);
    if (CheckForError("AudioManager: alBufferData error ", __FUNCTION__, __LINE__))
    {
-      alDeleteBuffers(1L, &bd->buf);
+      ReleaseSoundBuffer(bd->buf, "alDeleteBuffers error prior to deleting data.",
+         __FUNCTION__, __LINE__);
+
       free(data);
       data = NULL;
 
@@ -547,8 +544,7 @@ bool AudioManager::UnloadFile(const std::string& file)
       return false;
    }
 
-   alDeleteBuffers(1L, &bd->buf);
-   CheckForError("alDeleteBuffers( 1L, &bd->buf );", __FUNCTION__, __LINE__);
+   ReleaseSoundBuffer(bd->buf, "alDeleteBuffers( 1L, &bd->buf );", __FUNCTION__, __LINE__);
    delete bd;
 
    mBufferMap.erase(iter);
@@ -695,7 +691,7 @@ int AudioManager::UnloadSound(Sound* snd)
       return useCount;
    }
 
-   snd->SetBuffer(0);
+   snd->SetBuffer(AL_NONE);
 
    BufferData* bd = mBufferMap[file];
 
@@ -724,28 +720,7 @@ int AudioManager::UnloadSound(Sound* snd)
    // If the buffer is not being used by any other sound object...
    if (useCount == 0)
    {
-      ALuint src = snd->GetSource();
-      if (alIsSource(src))
-      {
-         // NOTE: Deleting the buffer will fail if the sound source is still
-         // playing and thus result in a very sound memory leak and potentially
-         // mess up the the use of the sources for sounds; sources that should
-         // have been freed will essentially become locked.
-         //
-         // Therefore:  Ensure the sound source is properly stopped before the
-         // sound buffer is deleted.
-         snd->StopImmediately();
-         snd->RewindImmediately();
-         snd->SetLooping(false);
-
-         //Also ensure the sound's buffer is set to nothing:
-         snd->SetBuffer(AL_NONE);
-
-         // Free the source now so that the buffer can delete properly.
-         snd->SetSource(0);
-         alDeleteSources(1L, &src);
-         CheckForError("Sound source delete error", __FUNCTION__, __LINE__);
-      }
+      ReleaseSoundSource(*snd, "Sound source delete error", __FUNCTION__, __LINE__);
    }
 
    UnloadFile(file);
@@ -754,3 +729,64 @@ int AudioManager::UnloadSound(Sound* snd)
    return useCount;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessage,
+   const std::string& callerFunctionName, int callerFunctionLineNum )
+{
+   bool success = false;
+
+   ALuint src = snd.GetSource();
+   if (alIsSource(src))
+   {
+      // NOTE: Deleting the buffer will fail if the sound source is still
+      // playing and thus result in a very sound memory leak and potentially
+      // mess up the the use of the sources for sounds; sources that should
+      // have been freed will essentially become locked.
+      //
+      // Therefore:  Ensure the sound source is properly stopped before the
+      // sound buffer is deleted.
+      snd.StopImmediately();
+      snd.RewindImmediately();
+      snd.SetLooping(false);
+
+      //Also ensure the sound's buffer is set to nothing:
+      snd.SetBuffer(AL_NONE);
+
+      // Free the source now so that the buffer can delete properly.
+      snd.SetSource(AL_NONE);
+      alDeleteSources(1L, &src);
+
+      // Determine if OpenAL has encountered an error.
+      success = CheckForError(errorMessage, callerFunctionName, callerFunctionLineNum);
+   }
+   else
+   {
+      std::ostringstream logMessage;
+      logMessage << "Sound source was invalid for sound \"" << snd.GetFilename() << "\".";
+      dtUtil::Log::GetInstance().LogMessage(callerFunctionName,
+         callerFunctionLineNum, logMessage.str(), dtUtil::Log::LOG_WARNING);
+   }
+
+   return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool AudioManager::ReleaseSoundBuffer(ALuint bufferHandle, const std::string& errorMessage,
+   const std::string& callerFunctionName, int callerFunctionLineNum )
+{
+   bool success = false;
+   if (alIsBuffer(bufferHandle) == AL_TRUE)
+   {
+      alDeleteBuffers(1L, &bufferHandle);
+
+      // Determine if OpenAL has encountered an error.
+      success = CheckForError(errorMessage, callerFunctionName, callerFunctionLineNum);
+   }
+   else
+   {
+      dtUtil::Log::GetInstance().LogMessage(callerFunctionName,
+         callerFunctionLineNum, "Sound buffer was invalid.", dtUtil::Log::LOG_WARNING);
+   }
+
+   return success;
+}
