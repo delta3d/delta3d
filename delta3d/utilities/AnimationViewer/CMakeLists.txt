@@ -36,6 +36,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTCORE_LIBRARY}
                        ${DTANIM_LIBRARY}
                        ${DTABC_LIBRARY}
+                       ${DTQT_LIBRARY}
                      )           
 
 

@@ -1,5 +1,5 @@
 #include "ObjectWorkspace.h"
-#include "OSGAdapterWidget.h"
+#include <dtQt/viewwindow.h>
 #include "DialogProjectContext.h"
 #include "ResourceDock.h"
 
@@ -55,7 +55,7 @@ ObjectWorkspace::ObjectWorkspace()
 
    QWidget* glParent = new QWidget(this);
 
-   mGLWidget = new dtQt::OSGAdapterWidget(false, this);
+   mGLWidget = new dtQt::ViewWindow(false, this);
 
    QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
    hbLayout->setMargin(0);

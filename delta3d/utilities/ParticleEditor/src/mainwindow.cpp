@@ -74,7 +74,7 @@ void MainWindow::UpdateHistory(const QString& filename)
 ///////////////////////////////////////////////////////////////////////////////
 void MainWindow::SetupViewWindow()
 {
-   mpViewWindow = new ViewWindow(false, dynamic_cast<QWidget*>(mUI.ParticleViewer));
+   mpViewWindow = new dtQt::ViewWindow(false, dynamic_cast<QWidget*>(mUI.ParticleViewer));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

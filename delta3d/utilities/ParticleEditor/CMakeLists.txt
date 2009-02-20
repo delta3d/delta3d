@@ -34,6 +34,7 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTUTIL_LIBRARY}
                       ${DTCORE_LIBRARY}
                       ${DTABC_LIBRARY}
+                      ${DTQT_LIBRARY}
                      )
 IF(WIN32)
   TARGET_LINK_LIBRARIES(${LIB_NAME} User32 Gdi32 shell32 Advapi32 ole32 Ws2_32 Comctl32)

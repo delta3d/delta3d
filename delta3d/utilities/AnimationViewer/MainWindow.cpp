@@ -4,7 +4,7 @@
 #include "PoseMeshScene.h"
 #include "PoseMeshProperties.h"
 #include "PoseMeshItem.h"
-#include "OSGAdapterWidget.h"
+#include <dtQt/viewwindow.h>
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
@@ -13,6 +13,7 @@
 
 #include <dtUtil/fileutils.h>
 
+#include <QtGui/QApplication>
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
 #include <QtGui/QFileDialog>
@@ -111,7 +112,7 @@ MainWindow::MainWindow()
 
    QWidget* glParent = new QWidget(this);
 
-   mGLWidget = new dtQt::OSGAdapterWidget(false, glParent);
+   mGLWidget = new dtQt::ViewWindow(false, glParent);
 
    QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
    hbLayout->setMargin(0);
