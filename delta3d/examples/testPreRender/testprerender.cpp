@@ -95,7 +95,15 @@ bool TestPreRender::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          this->Quit();
          verdict = true;
          break;
-      }     
+      }
+   case osgGA::GUIEventAdapter::KEY_Return:
+
+      if (keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Alt_L) ||
+          keyboard->GetKeyState(osgGA::GUIEventAdapter::KEY_Alt_R))
+      {
+         bool onOrOff = !GetWindow()->GetFullScreenMode();
+         GetWindow()->SetFullScreenMode(onOrOff);
+      }
    }
 
    return verdict;
@@ -178,6 +186,15 @@ void TestPreRender::CreateTextureTarget(int width, int height)
    mTextureTarget->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP_TO_BORDER);
    mTextureTarget->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP_TO_BORDER);
    mTextureTarget->setBorderColor(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TestPreRender::~TestPreRender()
+{
+   // This needs to be done in order to ensure that our
+   // manually loaded map can properly deallocate resources
+   dtDAL::Project& project = dtDAL::Project::GetInstance();
+   project.CloseAllMaps(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

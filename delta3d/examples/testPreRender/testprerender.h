@@ -39,7 +39,7 @@ public:
 
 protected:
 
-   virtual ~TestPreRender(){}
+   virtual ~TestPreRender();
 
 public:  
 
