@@ -254,6 +254,34 @@ namespace dtAudio
        */
       inline int UnloadSound(Sound* snd);
 
+      /**
+       * This method ensures that the sound object is properly stopped and its
+       * source released. Calls to this method usually appear before deleting
+       * the sound object's shared sound buffer.
+       * @param snd Sound object that is to have its source properly released.
+       * @param errorMessae Error message that should be logged if the operation fails.
+       * @param callerFunctionName Name of the function/method that is calling
+       *        this method. This is needed for checking OpenAL error state.
+       * @param callerFunctionLineNum Line number of the function/method that
+       *        is calling this method. This is needed for checking OpenAL error state.
+       * @return TRUE if release was successful.
+       */
+      inline bool ReleaseSoundSource(Sound& snd, const std::string& errorMessage,
+         const std::string& callerFunctionName, int callerFunctionLineNum );
+
+      /**
+       * This method performs the actual deletion of the the sound buffer.
+       * @param bufferHandle Handle of the sound buffer to be deleted.
+       * @param errorMessae Error message that should be logged if the operation fails.
+       * @param callerFunctionName Name of the function/method that is calling
+       *        this method. This is needed for checking OpenAL error state.
+       * @param callerFunctionLineNum Line number of the function/method that
+       *        is calling this method. This is needed for checking OpenAL error state.
+       * @return TRUE if release was successful.
+       */
+      inline bool ReleaseSoundBuffer(ALuint bufferHandle, const std::string& errorMessage,
+         const std::string& callerFunctionName, int callerFunctionLineNum );
+
    private:
       ALvoid*             mEAXSet;
       ALvoid*             mEAXGet;
