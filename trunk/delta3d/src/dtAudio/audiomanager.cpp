@@ -132,21 +132,8 @@ AudioManager::~AudioManager()
 
    RemoveSender(&dtCore::System::GetInstance());
 
-   alcMakeContextCurrent(NULL);
-   CheckForError("Attempted to change current OpenAL context to nothing.",
-                   __FUNCTION__, __LINE__);
-   if (mContext)
-   {
-      alcDestroyContext(mContext);
-      CheckForError("Attempted to destroy current OpenAL context.",
-                     __FUNCTION__, __LINE__);
-   }
-   
-   if (mDevice)
-   {
-      alcCloseDevice(mDevice);
-      CheckForError("Attempted to close OpenAL device.", __FUNCTION__, __LINE__);
-   }
+   CloseContext();
+   CloseDevice();   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +158,17 @@ void AudioManager::Destroy()
 {
    _Mic = NULL;
    _Mgr = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetOpenALDevice(const ALCchar* deviceName)
+{
+   //first make sure we cleanup the device and context we were using before
+   CloseContext();
+   CloseDevice();
+
+   OpenDevice(deviceName);
+   CreateContext();   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,25 +211,8 @@ void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
       return;
    }
 
-   mDevice = alcOpenDevice(NULL);
-   if (mDevice == NULL)
-   {      
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
-                      "AudioManager can't open audio device.\n");
-   }
-
-   mContext = alcCreateContext(mDevice, NULL);
-   if (!mContext)
-   {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
-                      "AudioManager can't create audio context.\n");
-   }
-
-   if(!alcMakeContextCurrent(mContext))
-   {
-      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
-                      "AudioManager can't make audio context current.\n");
-   }     
+   OpenDevice();
+   CreateContext();   
 
    // set up the distance model
    switch (data.distancemodel)
@@ -827,4 +808,57 @@ bool AudioManager::ReleaseSoundBuffer(ALuint bufferHandle, const std::string& er
    }
 
    return success;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::OpenDevice(const ALCchar* deviceName)
+{
+   mDevice = alcOpenDevice(deviceName);
+   if (mDevice == NULL)
+   {      
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't open audio device.\n");
+   }
+}
+   
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::CreateContext()
+{
+   mContext = alcCreateContext(mDevice, NULL);
+   if (!mContext)
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't create audio context.\n");
+   }
+
+   if(!alcMakeContextCurrent(mContext))
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
+                      "AudioManager can't make audio context current.\n");
+   }     
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::CloseDevice()
+{
+   if (mDevice)
+   {
+      alcCloseDevice(mDevice);
+      CheckForError("Attempted to close OpenAL device.", __FUNCTION__, __LINE__);
+   }
+}
+   
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::CloseContext()
+{
+   alcMakeContextCurrent(NULL);
+   CheckForError("Attempted to change current OpenAL context to nothing.",
+                   __FUNCTION__, __LINE__);
+   if (mContext)
+   {
+      alcDestroyContext(mContext);
+      CheckForError("Attempted to destroy current OpenAL context.",
+                     __FUNCTION__, __LINE__);
+   }   
 }
