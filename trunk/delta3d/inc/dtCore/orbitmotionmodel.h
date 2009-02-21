@@ -236,6 +236,20 @@ namespace dtCore
                                        double delta);
 
          /**
+         * Sets the mouse sensitivity.
+         *
+         * @param[in]  sensitivity  The new sensitivity of the mouse.
+         */
+         void SetMouseSensitivity(float sensitivity) {mMouseSensitivity = sensitivity;}
+
+         /**
+         * Gets the current mouse sensitivity.
+         *
+         * @return     The current sensitivity.
+         */
+         float GetMouseSensitivity() {return mMouseSensitivity;}
+
+         /**
          * Sets the min and max elevation limits for the motion model.
          *
          * @param[in]  maxLimit  The max limit.
@@ -348,6 +362,11 @@ namespace dtCore
           * The current distance from the focal point.
           */
          float mDistance;
+
+         /**
+         * The sensitivity of the mouse.
+         */
+         float mMouseSensitivity;
 
          /**
          * The min and max limits on the camera elevation.

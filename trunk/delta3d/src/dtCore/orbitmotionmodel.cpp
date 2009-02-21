@@ -36,6 +36,7 @@ OrbitMotionModel::OrbitMotionModel(Keyboard* keyboard,
    , mAngularRate(90.0f)
    , mLinearRate(1.0f)
    , mDistance(100.0f)
+   , mMouseSensitivity(1.0f)
    , mMaxElevationLimit(89.9f)
    , mMinElevationLimit(-89.9f)
 {
@@ -420,6 +421,8 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
                                         double newState,
                                         double delta)
 {
+   delta = delta * (double)mMouseSensitivity;
+
    if (GetTarget() != 0 && IsEnabled())
    {
       Transform transform;
