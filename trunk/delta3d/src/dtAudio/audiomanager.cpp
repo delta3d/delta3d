@@ -540,21 +540,11 @@ ALint AudioManager::LoadFile(const std::string& file)
       return -1;
    }
 
-   // The ALUT documentation says you are "free" to free the allocated
-   // memory after it has been copied to the OpenAL buffer. See:
-   // http://www.openal.org/openal_webstf/specs/alut.html#alutLoadMemoryFromFile
-   // This works fine on Linux, but crashes with a heap error on Windows.
-   // This is probably a Windows implementation bug, so let's just leak a
-   // bit in the meantime. Hope you bought your Timberlands...
-   // -osb
-
-   #if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
-      //TODO -- figure this out... it doesn't happen in straight OpenAL apps - maday
    if(data != NULL)
    {
+      alutUnloadWAV(format, data, size, freq);
       free(data);
-   }
-   #endif
+   }   
 
    mBufferMap[file] = bd;
    bd->file = mBufferMap.find(file)->first.c_str();
