@@ -211,8 +211,11 @@ void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
       return;
    }
 
-   OpenDevice();
-   CreateContext();   
+   //Should be opened elsewhere (either by alutInit (in constructor)
+   // or by SetOpenALDevice)
+   //OpenDevice();
+   //Context is automagically setup by alutInit or a call to SetOpenALDevice
+   //CreateContext();   
 
    // set up the distance model
    switch (data.distancemodel)
