@@ -88,7 +88,11 @@ namespace dtNetGM
       }
 
       // Forward all messages to the appropriate function
-      if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
+      if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
+      {
+         ProcessTickLocal(static_cast<const dtGame::TickMessage&>(message));
+      }
+      else if (message.GetMessageType() == dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION)
       {
          ProcessNetClientRequestConnection(static_cast<const MachineInfoMessage&>(message));
       }
@@ -112,6 +116,23 @@ namespace dtNetGM
       {
          ProcessNetServerRejectMessage(static_cast<const dtGame::ServerMessageRejected&>(message));
       }
+   }
+
+   void NetworkComponent::ProcessTickLocal(const dtGame::TickMessage& msg)
+   {
+      // safely push all the received messages onto the GameManager message queue
+      mBufferMutex.acquire();
+
+      while(!mMessageBuffer.empty())
+      {
+         // pass the message to the GM 
+         const dtGame::Message* pMessageRef = mMessageBuffer.front().get();
+         GetGameManager()->SendMessage(*pMessageRef);
+         // remove from the local storage
+         mMessageBuffer.pop();
+      }
+
+      mBufferMutex.release();
    }
 
    void NetworkComponent::SetConnectionParameters(bool reliable, int bandWidthIn, int bandWidthOut)
@@ -322,8 +343,11 @@ namespace dtNetGM
       }
       else
       {
-         // Send the Message to our GameManagerMessageProcessor
-         GetGameManager()->SendMessage(message);
+         // Store the message on the local buffer
+         // Message queue will be forwarded to the GM on the next frame tick
+         mBufferMutex.acquire();
+         mMessageBuffer.push(&message);
+         mBufferMutex.release();
       }
 
       mMutex.release();

@@ -108,6 +108,12 @@ namespace dtNetGM
       virtual void ProcessMessage(const dtGame::Message& message);
 
       /**
+      * Processes a MessageType::TICK_LOCAL Message.
+      * @param msg The message
+      */
+      virtual void ProcessTickLocal(const dtGame::TickMessage& msg);
+
+      /**
        * Processes a MessageType::NETCLIENT_REQUEST_CONNECTION Message.
        * @param msg The message
        */
@@ -319,6 +325,10 @@ namespace dtNetGM
 
       // Mutex
       GNE::Mutex mMutex;
+      // local buffer to store messages received from the network.
+      std::queue<dtCore::RefPtr<const dtGame::Message> > mMessageBuffer;
+      // mutex for accessing the GameManager message queue
+      GNE::Mutex mBufferMutex;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT
