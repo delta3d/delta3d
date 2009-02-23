@@ -163,13 +163,13 @@ namespace dtAudio
       static const AudioConfigData _DefCfg;
 
    private:
-      AudioManager(const std::string& name = "audiomanager");
+      AudioManager(const std::string& name = "audiomanager", ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
       virtual ~AudioManager();
 
    public:
       
       /// create the singleton and initialize OpenAL
-      static void Instantiate();
+      static void Instantiate( const std::string& name = "audiomanager", ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
 
       /// destroy the singleton and shutdown OpenAL
       static void Destroy();
