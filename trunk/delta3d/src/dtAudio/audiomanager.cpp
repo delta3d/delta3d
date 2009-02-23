@@ -74,7 +74,8 @@ inline bool CheckForError(const std::string& userMessage,
 ////////////////////////////////////////////////////////////////////////////////
 // public member functions
 // default consructor
-AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/)
+AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
+                           ALCdevice* dev /* = NULL */, ALCcontext* cntxt /* = NULL */)
    : Base(name)
    , mEAXSet(NULL)
    , mEAXGet(NULL)
@@ -88,17 +89,34 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/)
    AddSender(&dtCore::System::GetInstance());
 
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   if (alutInit(NULL, NULL) == AL_FALSE)
+
+   if (dev == NULL && cntxt == NULL)
    {
-      std::cout << "Error initializing alut" << std::cout;
-      CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
+      if (alutInit(NULL, NULL) == AL_FALSE)
+      {
+         std::cout << "Error initializing alut" << std::cout;
+         CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
+      }
+      CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
+
+      mContext = alcGetCurrentContext();
+      CheckForError("Trying to get context. ", __FUNCTION__, __LINE__);
+
+      mDevice = alcGetContextsDevice(mContext);
+      CheckForError("Trying to get context's device. ", __FUNCTION__, __LINE__);
    }
+   else
+   {
+      if(alutInitWithoutContext(NULL, NULL) == AL_FALSE)
+      {
+         std::cout << "Error initializing alut" << std::cout;
+         CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
+      }
+      CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
 
-   mContext = alcGetCurrentContext();
-   CheckForError("Trying to get context. ", __FUNCTION__, __LINE__);
-
-   mDevice = alcGetContextsDevice(mContext);
-   CheckForError("Trying to get context's device. ", __FUNCTION__, __LINE__);
+      mDevice = dev;
+      mContext = cntxt;
+   }   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,14 +166,14 @@ AudioManager::~AudioManager()
 
 ////////////////////////////////////////////////////////////////////////////////
 // create the singleton manager
-void AudioManager::Instantiate()
+void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCcontext* cntxt)
 {
    if (_Mgr.get())
    {
       return;
    }
 
-   _Mgr  = new AudioManager;
+   _Mgr  = new AudioManager(name, dev, cntxt);
    assert(_Mgr.get());
 
    _Mic  = new Listener;
