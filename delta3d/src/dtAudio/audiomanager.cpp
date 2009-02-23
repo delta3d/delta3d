@@ -542,8 +542,12 @@ ALint AudioManager::LoadFile(const std::string& file)
 
    if(data != NULL)
    {
+      //Data has been copied to the OpenAL buffer...
+      //so we don't need the ALUT wav data anymore.
+      //If we don't unload from alut before the free() call, then we crash.
       alutUnloadWAV(format, data, size, freq);
       free(data);
+      data = NULL;
    }   
 
    mBufferMap[file] = bd;
