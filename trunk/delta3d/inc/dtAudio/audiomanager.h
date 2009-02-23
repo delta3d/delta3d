@@ -162,14 +162,32 @@ namespace dtAudio
       static const char*           _EaxGet;
       static const AudioConfigData _DefCfg;
 
-   private:
-      AudioManager(const std::string& name = "audiomanager", ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
+   private:      
+      AudioManager(const std::string& name = "audiomanager",
+                   ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
       virtual ~AudioManager();
 
    public:
       
-      /// create the singleton and initialize OpenAL
-      static void Instantiate( const std::string& name = "audiomanager", ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
+      /** Create the singleton and initialize OpenAL and ALUT.
+       *
+       *  Specifying the OpenAL device and context is considered an advaced,
+       *  operation.  Be sure that you know what you're doing before you try it!
+       *  Usually you don't need to specify the device and context.  Typically,
+       *  the AudioManager creates them automatically.
+       *
+       *  Note that if you are going to supply a custom device you must ALSO
+       *  supply a custom context, and vice versa.  When you supply the custom
+       *  device and context, the AudioManager assumes that they've been opened,
+       *  initialized, and that the context has been set to the current OpenAL
+       *  context.
+       *
+       *@param name - The name of the AudioManager instance.
+       *@param dev  - The OpenAL device to be used by the AudioManager.
+       *@param cntxt - The OpenAL context to be used by the AudioManager.
+       */
+      static void Instantiate(const std::string& name = "audiomanager",
+                              ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
 
       /// destroy the singleton and shutdown OpenAL
       static void Destroy();
