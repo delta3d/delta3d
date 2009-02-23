@@ -93,6 +93,12 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/)
       std::cout << "Error initializing alut" << std::cout;
       CheckForError("alutInit(NULL, NULL)", __FUNCTION__, __LINE__);
    }
+
+   mContext = alcGetCurrentContext();
+   CheckForError("Trying to get context. ", __FUNCTION__, __LINE__);
+
+   mDevice = alcGetContextsDevice(mContext);
+   CheckForError("Trying to get context's device. ", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,13 +133,17 @@ AudioManager::~AudioManager()
    mBufferMap.clear();
    mSoundList.clear();
 
-   alutExit();
-   CheckForError("alutExit()", __FUNCTION__, __LINE__);
-
-   RemoveSender(&dtCore::System::GetInstance());
-
+   //close context and device in case they were not opened by ALUT
    CloseContext();
-   CloseDevice();   
+   CloseDevice();
+
+   alutExit();
+   //If using custom device and context calls via straght OpenAL (w/o ALUT)
+   //then alutExit may get confused when attempting to close context or
+   //device.  If so, I don't want to hear an error about it as it doesn't matter.
+   //CheckForError("alutExit()", __FUNCTION__, __LINE__);
+      
+   RemoveSender(&dtCore::System::GetInstance());        
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -849,6 +859,7 @@ void AudioManager::CloseDevice()
    {
       alcCloseDevice(mDevice);
       CheckForError("Attempted to close OpenAL device.", __FUNCTION__, __LINE__);
+      mDevice = NULL;
    }
 }
    
@@ -863,5 +874,6 @@ void AudioManager::CloseContext()
       alcDestroyContext(mContext);
       CheckForError("Attempted to destroy current OpenAL context.",
                      __FUNCTION__, __LINE__);
+      mContext = NULL;
    }   
 }
