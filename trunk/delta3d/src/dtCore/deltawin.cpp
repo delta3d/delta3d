@@ -15,21 +15,29 @@ using namespace dtCore;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
-
-///Default WindowResizeCallback.  Used to implement the default OSG window resizing
-class DefResizeCB : public WindowResizeCallback
+namespace dtCore
 {
-public:
-   DefResizeCB(){};
-   ~DefResizeCB(){};
-   
-   virtual void operator () (const dtCore::DeltaWin& win, int x, int y, int width, int height)
+   ///Default WindowResizeCallback.  Used to implement the default OSG window resizing
+   class DefResizeCB : public WindowResizeCallback
    {
-      dtCore::DeltaWin &non_const_win = const_cast<dtCore::DeltaWin&>(win);
-      non_const_win.GetOsgViewerGraphicsWindow()->resizedImplementation(x,y,width,height);
-   }
-};
+   public:
+      DefResizeCB(){};
+      ~DefResizeCB(){};
 
+      virtual void operator () (const dtCore::DeltaWin& win, int x, int y, int width, int height)
+      {
+         dtCore::DeltaWin& non_const_win = const_cast<dtCore::DeltaWin&>(win);
+         if (non_const_win.GetOsgViewerGraphicsWindow() != NULL)
+         {
+            non_const_win.GetOsgViewerGraphicsWindow()->resizedImplementation(x, y, width, height);
+         }
+         else
+         {
+            LOG_ERROR("In the default resize callback of deltawin, GetOsgViewerGraphicsWindow() is NULL.  This is a bug.");
+         }
+      }
+   };
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 DeltaWin::DeltaWin(const DeltaWinTraits& windowTraits)
@@ -90,10 +98,10 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
    mResizeCallbackContainer = new WindowResizeContainer(*this);
 
    //automatically add in our default callback
-   WindowResizeCallback *defCB = new DefResizeCB();
+   WindowResizeCallback* defCB = new DefResizeCB();
    mResizeCallbackContainer->AddCallback(*defCB);
 
-   mOsgViewerGraphicsWindow = CreateGraphicsWindow(*osgTraits).get();
+   CreateGraphicsWindow(*osgTraits);
 
    if (!windowTraits.fullScreen)
    {
@@ -106,7 +114,7 @@ void DeltaWin::CreateDeltaWindow(const DeltaWinTraits& windowTraits)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const
+void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits)
 {
    osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(&traits);
 
@@ -119,16 +127,14 @@ osg::ref_ptr<osgViewer::GraphicsWindow> DeltaWin::CreateGraphicsWindow(osg::Grap
 
    gc->setResizedCallback(mResizeCallbackContainer.get());
 
-   osg::ref_ptr<osgViewer::GraphicsWindow> gw = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
-   if (gw != NULL)
+   mOsgViewerGraphicsWindow = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
+   if (mOsgViewerGraphicsWindow.valid() != NULL)
    {
-      gw->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
+      mOsgViewerGraphicsWindow->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
                                                                       traits.width, traits.height);
-      gw->realize();
-      gw->makeCurrent();
+      mOsgViewerGraphicsWindow->realize();
+      mOsgViewerGraphicsWindow->makeCurrent();
    }
-
-   return gw;
 }
 
 
@@ -479,3 +485,4 @@ void dtCore::DeltaWin::RemoveResizeCallback(WindowResizeCallback& cb)
 {
    mResizeCallbackContainer->RemoveCallback(cb);
 }
+

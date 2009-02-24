@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -49,8 +49,8 @@ namespace dtCore
    * The DeltaWin class is used as a canvas for the dtCore::Cameras to render upon.
    * The DeltaWin can be positioned and sized using SetPosition(), set to be fullscreen using
    * SetFullScreenMode(), and the cursor can be hidden using ShowCursor().
-   * A DeltaWin can be embedded inside an existing window by derived from, or use, 
-   * an osgViewer::EmbeddedGraphicsWindow, then passing the EmbeddedGraphicsWindow 
+   * A DeltaWin can be embedded inside an existing window by derived from, or use,
+   * an osgViewer::EmbeddedGraphicsWindow, then passing the EmbeddedGraphicsWindow
    * to the DeltaWin constructor, note you need to pass it to the dtCore::Camera too.
    * See dtABC::Widget for more information.
    *
@@ -69,7 +69,7 @@ namespace dtCore
 
    public:
 
-      /** 
+      /**
       * Traits - Set of window specific properties that control appearance and behavior.
       *
       * @param name the name of the class as well as the window title
@@ -79,7 +79,7 @@ namespace dtCore
       * @param height the height of the window in pixels
       * @param cursor true if you wish to use the default cursor, false if not
       * @param fullScreen true if this window should be displayed fullscreen
-      * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window  
+      * @param inheritedWindowData the inheritedWindowData use to embedded the window in GUI window
       */
       struct DeltaWinTraits
       {
@@ -117,28 +117,28 @@ namespace dtCore
 
       };
 
-      /** 
+      /**
        * Constructor that uses custom traits
-       *     
+       *
        * @param windowTraits : the properties used to create the window.
        */
       DeltaWin(const DeltaWinTraits& windowTraits = DeltaWinTraits());
 
       /// DEPRECATED 01/14/09 in favor of dtCore::DeltaWin(const DeltaWinTraits& windowTraits)
-      DEPRECATE_FUNC DeltaWin(const std::string& name, 
-               int x = 0, int y = 0, 
-               int width = 640, int height = 480, 
+      DEPRECATE_FUNC DeltaWin(const std::string& name,
+               int x = 0, int y = 0,
+               int width = 640, int height = 480,
                bool cursor = true, bool fullScreen = false,
                osg::Referenced* inheritedWindowData = NULL);
 
-      /** 
+      /**
       * Constructor
       *
       * @param name : the name of the class as well as the window title
-      * @param gw : the GraphicsWindow use by this instance  
+      * @param gw : the GraphicsWindow use by this instance
       */
       DeltaWin(const std::string& name, osgViewer::GraphicsWindow& gw);
-      
+
    protected:
 
       virtual ~DeltaWin();
@@ -174,23 +174,23 @@ namespace dtCore
 
       ///Draw the cursor or not
       void ShowCursor(bool show = true);
-      
+
       ///Is the cursor being drawn or not?
       bool GetShowCursor() const { return mShowCursor; }
 
       ///Set the full screen mode.  If enabled, this will resize the window to fill the display and remove the window border.
       void SetFullScreenMode(bool enable = true);
-  
+
       ///Is the window currently in fullscreen mode?
       bool GetFullScreenMode() const { return mIsFullScreen; }
-      
+
       void KillGLWindow();
-      
+
       ///The the title on the DeltaWin border
       void SetWindowTitle(const std::string& title);
 
       const std::string GetWindowTitle() const;
-      
+
       ///Set the size and position of the DeltaWin
       struct PositionSize
       {
@@ -200,7 +200,7 @@ namespace dtCore
          int mHeight;
       };
 
-      /** 
+      /**
        * Set the position and size of the DeltaWin in screen coordinates
        * @param x The left edge of the window in screen coordinates
        * @param y The bottom edge of the window in screen coordinates
@@ -216,7 +216,7 @@ namespace dtCore
 
       ///Get a handle to the underlying GraphicsWindow
       osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() { return mOsgViewerGraphicsWindow.get(); }
-      const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }      
+      const osgViewer::GraphicsWindow* GetOsgViewerGraphicsWindow() const { return mOsgViewerGraphicsWindow.get(); }
 
 
       /// The data structure modeling monitor resolution
@@ -231,7 +231,7 @@ namespace dtCore
       typedef std::vector<Resolution> ResolutionVec;
 
       //TODO: put these into a dtCore::Display class
-      static ResolutionVec GetResolutions();              
+      static ResolutionVec GetResolutions();
       static Resolution GetCurrentResolution();
       static bool ChangeScreenResolution(int width, int height, int colorDepth, int refreshRate);
       static bool ChangeScreenResolution(Resolution res);
@@ -254,7 +254,7 @@ namespace dtCore
       * @return true if cb was removed correctly
       */
       void RemoveResizeCallback(WindowResizeCallback& cb);
-      
+
    private:
 
       int mLastWindowedWidth;
@@ -263,20 +263,20 @@ namespace dtCore
       void CreateDeltaWindow(const DeltaWinTraits& windowTraits);
 
       ///Convenient method to create a GraphicsWindow
-      osg::ref_ptr<osgViewer::GraphicsWindow> CreateGraphicsWindow(osg::GraphicsContext::Traits& traits) const;
+      void CreateGraphicsWindow(osg::GraphicsContext::Traits& traits);
 
       static int CalcRefreshRate(int width, int height, int dotclock);
 
-      osg::ref_ptr<osg::GraphicsContext::Traits> CreateTraits(const std::string& name = "defaulWindow", 
-                                                              int x = 500, int y = 500, 
-                                                              int width = 640, int height = 480, 
+      osg::ref_ptr<osg::GraphicsContext::Traits> CreateTraits(const std::string& name = "defaulWindow",
+                                                              int x = 500, int y = 500,
+                                                              int width = 640, int height = 480,
                                                               unsigned int screenNum = 0,
-                                                              bool cursor = true, 
+                                                              bool cursor = true,
                                                               osg::Referenced * inheritedWindowData = NULL) const;
 
       ///Little utility used to convert the supplied parameters into a OSG Trait.
       osg::ref_ptr<osg::GraphicsContext::Traits> CreateOSGTraits(const DeltaWinTraits& deltaTraits) const;
-      
+
       dtCore::RefPtr<osgViewer::GraphicsWindow> mOsgViewerGraphicsWindow;
 
       bool mIsFullScreen;
