@@ -1033,8 +1033,19 @@ namespace dtDAL
 
          virtual void CopyFrom(const NamedParameter& otherParam);
 
+         /**
+          * Sets the resource descriptor.  This value copied if not null.
+          * You should create one on the stack, and then pass it with &.
+          * The method takes NULL so that the parameter can have an empty value.
+          */
          void SetValue(const dtDAL::ResourceDescriptor* descriptor);
 
+         /**
+          * This returns a pointer to a stack created data member, so you should copy it
+          * via copy constructor and hold onto it that way.  If you hold onto the
+          * point, you could get deleted out from under you.
+          * @return the resource descriptor or NULL.
+          */
          const dtDAL::ResourceDescriptor* GetValue() const;
 
          const std::vector<dtDAL::ResourceDescriptor>& GetValueList() const;
