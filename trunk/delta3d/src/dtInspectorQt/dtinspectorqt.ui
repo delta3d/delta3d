@@ -1,0 +1,379 @@
+<ui version="4.0" >
+ <class>InspectorWidget</class>
+ <widget class="QMainWindow" name="InspectorWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>392</width>
+    <height>541</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="MinimumExpanding" hsizetype="Preferred" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>dtInspectorQt</string>
+  </property>
+  <property name="autoFillBackground" >
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QHBoxLayout" name="horizontalLayout" >
+    <item>
+     <widget class="QListWidget" name="itemList" >
+      <property name="minimumSize" >
+       <size>
+        <width>121</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>121</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QScrollArea" name="scrollArea" >
+      <property name="verticalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="widgetResizable" >
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>229</width>
+         <height>465</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4" >
+        <item>
+         <widget class="QGroupBox" name="baseGroupBox" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Base</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout" >
+           <item row="0" column="1" >
+            <widget class="QLineEdit" name="baseNameText" />
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>Name:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_8" >
+             <property name="text" >
+              <string>Ref Count:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLabel" name="baseRefCountLabel" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="text" >
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="drawableGroupBox" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Drawable</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2" >
+           <item row="1" column="1" >
+            <widget class="QListWidget" name="drawableChildList" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_9" >
+             <property name="text" >
+              <string>Children:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_10" >
+             <property name="text" >
+              <string>Parent:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="drawableParentLabel" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="transformableGroupBox" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Transformable</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3" >
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_2" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>X</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QDoubleSpinBox" name="transXEdit" >
+             <property name="minimum" >
+              <double>-999999.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>999999.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3" >
+            <widget class="QLabel" name="label_5" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>H</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4" >
+            <widget class="QDoubleSpinBox" name="transHEdit" >
+             <property name="minimum" >
+              <double>-360.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>360.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" >
+            <widget class="QLabel" name="label_3" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Y</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" >
+            <widget class="QDoubleSpinBox" name="transYEdit" >
+             <property name="minimum" >
+              <double>-999999.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>999999.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3" >
+            <widget class="QLabel" name="label_6" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>P</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="4" >
+            <widget class="QDoubleSpinBox" name="transPEdit" >
+             <property name="minimum" >
+              <double>-360.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>360.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" >
+            <widget class="QLabel" name="label_4" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Z</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1" >
+            <widget class="QDoubleSpinBox" name="transZEdit" >
+             <property name="minimum" >
+              <double>-999999.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>999999.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3" >
+            <widget class="QLabel" name="label_7" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>R</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="4" >
+            <widget class="QDoubleSpinBox" name="transREdit" >
+             <property name="minimum" >
+              <double>-360.000000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>360.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4" >
+            <widget class="QRadioButton" name="transRELRadioButton" >
+             <property name="text" >
+              <string>REL</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QRadioButton" name="transABSRadioButton" >
+             <property name="text" >
+              <string>ABS</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>392</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <tabstops>
+  <tabstop>baseNameText</tabstop>
+  <tabstop>transXEdit</tabstop>
+  <tabstop>transYEdit</tabstop>
+  <tabstop>transZEdit</tabstop>
+  <tabstop>transHEdit</tabstop>
+  <tabstop>transPEdit</tabstop>
+  <tabstop>transREdit</tabstop>
+  <tabstop>itemList</tabstop>
+  <tabstop>scrollArea</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
