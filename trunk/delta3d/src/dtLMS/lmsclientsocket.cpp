@@ -30,7 +30,7 @@
 #include <cstring>
 #include <cstdlib>
 
-#if !defined (WIN32) && defined (_WIN32) && !defined (__WIN32__)
+#ifndef DELTA_WIN32
    #include <sys/types.h>
    #include <sys/socket.h>
    #include <sys/wait.h>
