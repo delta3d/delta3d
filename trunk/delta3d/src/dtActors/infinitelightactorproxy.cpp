@@ -35,11 +35,12 @@ namespace dtActors
     {
         const std::string GROUPNAME = "Light";
         BaseLightActorProxy::BuildPropertyMap();
+        TransformableActorProxy::BuildPropertyMap();
 
-        //Infinite lights only have a direction property so add it.
-        AddProperty(new dtDAL::Vec3ActorProperty("Direction","Direction",
-            dtDAL::MakeFunctor(*this,&InfiniteLightActorProxy::SetDirection),
-            dtDAL::MakeFunctorRet(*this,&InfiniteLightActorProxy::GetDirection),
-            "Determines the direction that the light is pointing.",GROUPNAME));
+        ////Infinite lights only have a direction property so add it.
+        //AddProperty(new dtDAL::Vec3ActorProperty("Direction","Direction",
+        //    dtDAL::MakeFunctor(*this,&InfiniteLightActorProxy::SetDirection),
+        //    dtDAL::MakeFunctorRet(*this,&InfiniteLightActorProxy::GetDirection),
+        //    "Determines the direction that the light is pointing.",GROUPNAME));
     }
 }

@@ -51,6 +51,11 @@ namespace dtActors
         virtual bool IsPlaceable() const { return false; }
 
         /**
+        * Determines if the translation should be shown in the actor properties.
+        */
+        virtual bool IsTranslationPropertyShown() const { return false; }
+
+        /**
          * Registers this actor's properties.
          */
         virtual void BuildPropertyMap();
@@ -59,8 +64,10 @@ namespace dtActors
          * Sets the direction the infinite light is pointing.
          * @param dir The direction to set.
          */
-        void SetDirection(const osg::Vec3 &dir) 
+        DEPRECATE_FUNC void SetDirection(const osg::Vec3 &dir) 
         {
+           DEPRECATE("InfiniteLightActorProxy::SetDirection", "Transformable::SetTransform");
+
             dtCore::InfiniteLight *l = dynamic_cast<dtCore::InfiniteLight *>(GetActor());
             if (l == NULL) 
             {
@@ -75,9 +82,11 @@ namespace dtActors
          * Gets the direction the infinite light is pointing.
          * @return The current direction
          */
-        osg::Vec3 GetDirection() const 
+        DEPRECATE_FUNC osg::Vec3 GetDirection() const 
         {
-            const dtCore::InfiniteLight *l = dynamic_cast<const dtCore::InfiniteLight *>(GetActor());
+           DEPRECATE("InfiniteLightActorProxy::GetDirection", "Transformable::GetTransform");
+
+           const dtCore::InfiniteLight *l = dynamic_cast<const dtCore::InfiniteLight *>(GetActor());
             if (l == NULL) 
             {
                 throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
