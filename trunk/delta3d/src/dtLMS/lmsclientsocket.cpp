@@ -27,6 +27,8 @@
 #include <ctime>
 #include <sstream>
 
+#include <dtUtil/macros.h>
+
 #include <cstring>
 #include <cstdlib>
 
