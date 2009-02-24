@@ -56,17 +56,23 @@ namespace dtDAL
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
       
-      AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
-                                        MakeFunctor(*this, &TransformableActorProxy::SetRotation),
-                                        MakeFunctorRet(*this, &TransformableActorProxy::GetRotation),
-                                        "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
-                                        GROUPNAME));
+      if (IsRotationPropertyShown())
+      {
+         AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
+            MakeFunctor(*this, &TransformableActorProxy::SetRotation),
+            MakeFunctorRet(*this, &TransformableActorProxy::GetRotation),
+            "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
+            GROUPNAME));
+      }
 
-      AddProperty(new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
-                                        MakeFunctor(*this, &TransformableActorProxy::SetTranslation),
-                                        MakeFunctorRet(*this, &TransformableActorProxy::GetTranslation),
-                                        "Sets the location of a transformable in 3D space.",
-                                        GROUPNAME));
+      if (IsTranslationPropertyShown())
+      {
+         AddProperty(new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
+            MakeFunctor(*this, &TransformableActorProxy::SetTranslation),
+            MakeFunctorRet(*this, &TransformableActorProxy::GetTranslation),
+            "Sets the location of a transformable in 3D space.",
+            GROUPNAME));
+      }
 
       AddProperty(new BooleanActorProperty(PROPERTY_NORMAL_RESCALING, PROPERTY_NORMAL_RESCALING,
                                            MakeFunctor(*trans, &dtCore::Transformable::SetNormalRescaling),

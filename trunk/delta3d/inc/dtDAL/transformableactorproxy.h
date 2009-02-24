@@ -64,6 +64,16 @@ namespace dtDAL
          virtual bool IsPlaceable() const { return true; }
 
          /**
+         * Determines if the translation should be shown in the actor properties.
+         */
+         virtual bool IsTranslationPropertyShown() const { return true; }
+
+         /**
+         * Determines if the rotation should be shown in the actor properties.
+         */
+         virtual bool IsRotationPropertyShown() const { return true; }
+
+         /**
           * Sets the rotation of an object.
           * @param rotation the desired rotation
           */
