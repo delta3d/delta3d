@@ -83,7 +83,7 @@ namespace dtNetGM
       }
       mClient->connect();
 
-      LOG_INFO("Connecting to server at: " + address.toString());
+      LOG_ALWAYS("Connecting to server at: " + address.toString());
 
       mClient->waitForConnect();
 
@@ -91,7 +91,7 @@ namespace dtNetGM
       {
          GetGameManager()->GetMachineInfo().SetHostName(mClient->getLocalAddress(IsReliable()).getNameByAddress());
          GetGameManager()->GetMachineInfo().SetIPAddress(mClient->getLocalAddress(IsReliable()).toString());
-         LOG_INFO("Network is connected");
+         LOG_ALWAYS("Network is connected");
       }
       else
       {
@@ -107,7 +107,7 @@ namespace dtNetGM
       mAcceptedClient = false;
       networkBridge.SetClientConnected(false);
 
-      LOG_INFO("Disconnected from Server: " + networkBridge.GetHostDescription());
+      LOG_ALWAYS("Disconnected from Server: " + networkBridge.GetHostDescription());
 
       RemoveConnection(networkBridge.GetMachineInfo());
    }
@@ -117,7 +117,7 @@ namespace dtNetGM
       mAcceptedClient = true;
 
       mMachineInfoServer = new dtGame::MachineInfo("Server");
-      *mMachineInfoServer = *msg.GetMachineInfo();
+      *mMachineInfoServer = msg.GetSource();
 
       LOG_INFO("Connection accepted by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}");
    }

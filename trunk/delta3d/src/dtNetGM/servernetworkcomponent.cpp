@@ -67,7 +67,7 @@ namespace dtNetGM
       }
       else
       {
-         LOG_INFO("Listening for connections on port: " + dtUtil::ToString<int>(portNum));
+         LOG_ALWAYS("Listening for connections on port: " + dtUtil::ToString<int>(portNum));
       }
 
       // Adjust MachineInfo of the GameManager
@@ -118,24 +118,23 @@ namespace dtNetGM
    void ServerNetworkComponent::ProcessNetClientRequestConnection(const MachineInfoMessage& msg)
    {
       std::string rejectReason = "";
-      bool acceptClient = AcceptClient(*msg.GetMachineInfo(), rejectReason);
+      bool acceptClient = AcceptClient(msg.GetSource(), rejectReason);
 
       if (acceptClient)
       {
          // Inform connected clients of new client
-         SendInfoClientConnectedMessage(*msg.GetMachineInfo());
+         SendInfoClientConnectedMessage(msg.GetSource());
 
          // Generate a NETSERVER_ACCEPT_CONNECTION message
          // send the MachineInfo of our server to  the new client
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
          MachineInfoMessage* acceptMsg = static_cast<MachineInfoMessage*>(message.get());
          acceptMsg->SetDestination(&msg.GetSource());
-         acceptMsg->SetMachineInfo(GetGameManager()->GetMachineInfo());
          SendNetworkMessage(*acceptMsg);
 
          // inform new client of connected clients
-         SendConnectedClientMessage(*msg.GetMachineInfo());
-         GetConnection(*msg.GetMachineInfo())->SetClientConnected(true);
+         SendConnectedClientMessage(msg.GetSource());
+         GetConnection(msg.GetSource())->SetClientConnected(true);
       }
       else
       {

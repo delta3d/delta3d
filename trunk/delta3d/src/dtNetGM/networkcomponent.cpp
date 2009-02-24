@@ -306,7 +306,7 @@ namespace dtNetGM
             message = CreateMessage(dataStream, networkBridge);
             // Set the MachineInfo of the NetworkBridge
             const MachineInfoMessage* machineMsg = static_cast<const MachineInfoMessage*> (message.get());
-            networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
+            networkBridge.SetMachineInfo(machineMsg->GetSource());
 
             dataStream.Rewind();
          }
@@ -377,7 +377,7 @@ namespace dtNetGM
       else
       {
          // trying to send a message across the network to ourselves
-         if (message.GetDestination()->GetUniqueId() == GetGameManager()->GetMachineInfo().GetUniqueId())
+         if (*message.GetDestination() == GetGameManager()->GetMachineInfo())
          {
             GetGameManager()->SendMessage(message);
          }
@@ -496,7 +496,19 @@ namespace dtNetGM
 
       // Source
       dataStream.Read(szUniqueId);
-      msg->SetSource(*GetMachineInfo(dtCore::UniqueId(szUniqueId)));
+
+      const dtGame::MachineInfo* machInfo = GetMachineInfo(dtCore::UniqueId(szUniqueId));
+
+      if (machInfo != NULL)
+      {
+         msg->SetSource(*machInfo);
+      }
+      else
+      {
+         // It's either from a host that this client is talking to, or it could be the
+         // first message to come over.  Either way, the machine info for the source may not be NULL.
+         msg->SetSource(networkBridge.GetMachineInfo());
+      }
 
       // Destination
       dataStream.Read(szUniqueId);
