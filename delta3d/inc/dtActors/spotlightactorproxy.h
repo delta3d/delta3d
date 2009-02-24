@@ -52,6 +52,11 @@ namespace dtActors
         virtual bool IsPlaceable() const { return true; }
 
         /**
+        * Determines if the rotation should be shown in the actor properties.
+        */
+        virtual bool IsRotationPropertyShown() const { return true; }
+
+        /**
         * Gets the billboard icon for lights. Normally this wouldn't be here
         * as it's inherited from BaseLightActorProxy. But since this inheritence
         * chain uses virtual inheritence and MSVC spits a warning, this should
