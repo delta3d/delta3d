@@ -983,9 +983,6 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    if (infiniteLight)
    {
       typeString = "Infinite";
-      float azimuth = 0.0f;
-      float elevation = 0.0f;
-      infiniteLight->GetAzimuthElevation(azimuth, elevation);
 
       // If the light changed types somewhere, make sure we re-do the custom data.
       if (typeString != mLightItems[lightIndex].type->text(1))
@@ -998,12 +995,11 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
       {
          mLightItems[lightIndex].custom = CreateTreeItem(tr("Custom"), tr(""), Qt::ItemIsEnabled, mLightItems[lightIndex].light);
 
-         CreateTreeItem(tr("Azimuth"), QString("%1").arg(azimuth), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
-         CreateTreeItem(tr("Elevation"), QString("%1").arg(elevation), Qt::ItemIsEnabled | Qt::ItemIsEditable, mLightItems[lightIndex].custom);
+         QTreeWidgetItem* item = new QTreeWidgetItem(mLightItems[lightIndex].custom);
+         item->setText(0, tr("Position Locked"));
+         item->setText(1, "Disabled");
+         item->setFlags(Qt::ItemIsEnabled);
       }
-
-      mLightItems[lightIndex].custom->child(0)->setText(1, QString("%1").arg(azimuth));
-      mLightItems[lightIndex].custom->child(1)->setText(1, QString("%1").arg(elevation));
    }
    else
    {
@@ -1224,13 +1220,9 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
       int lightID = GetLightIDFromItem(item);
 
       // Infinite Light Properties
-      if (item->text(0) == QString("Azimuth"))
+      if (item->text(0) == QString("Position Locked"))
       {
-         emit SetLightAzimuth(lightID, item->text(1).toFloat());
-      }
-      else if (item->text(0) == QString("Elevation"))
-      {
-         emit SetLightElevation(lightID, item->text(1).toFloat());
+         // TODO: Lock the position of the light to the camera.
       }
       // Spot Light Properties
       else if (item->text(0) == QString("Cut off"))

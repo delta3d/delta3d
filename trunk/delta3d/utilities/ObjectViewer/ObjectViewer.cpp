@@ -150,6 +150,8 @@ void ObjectViewer::OnLoadShaderFile(const QString& filename)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnLoadMapFile(const std::string& filename)
 {
+   ClearLights();
+
    OnUnloadGeometryFile();
 
    dtCore::RefPtr<dtDAL::Map> map;
@@ -159,7 +161,8 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
    {
       QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-      map = &dtDAL::Project::GetInstance().GetMap(filename);
+      //map = &dtDAL::Project::GetInstance().GetMap(filename);
+      map = &dtDAL::Project::GetInstance().LoadMapIntoScene(filename, *GetScene());
    }
    catch (dtUtil::Exception &e)
    {
@@ -216,6 +219,8 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
    if (mMap.valid())
    {
       mMap->SetModified(false);
+
+      InitLights();
 
       bool bFirstBoundSet = false;
       osg::Vec3 minBounds;
@@ -531,15 +536,7 @@ void ObjectViewer::OnSetLightType(int id, int type)
    case 0: // Infinite
       {
          newLight = new dtCore::InfiniteLight(id, lightName.toStdString());
-         newLight->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
-         ////arrowScale = 1.0f;
-         //dtCore::Transform transform;
-         //osg::Matrix matrix;
-         ////newLight->GetTransform(transform);
-         ////transform.GetRotation(matrix);
-         //matrix = osg::Matrix::rotate(osg::DegreesToRadians(90.0f), osg::Vec3(1.0f, 0.0f, 0.0f));
-         //transform.SetRotation(matrix);
-         //newLight->SetTransform(transform);
+         //newLight->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
          break;
       }
 
@@ -588,6 +585,20 @@ void ObjectViewer::OnSetLightType(int id, int type)
 
       lightArrowTransformable->AddChild(newLight);
 
+      dtCore::RefPtr<dtCore::Object> lightArrow = mLightArrow[id];
+      if (lightArrow.valid())
+      {
+         dtCore::Transform transform;
+
+         if (type == 0)
+         {
+            // Infinite lights are pointing down the Z axis.
+            transform.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(-90.0f), osg::X_AXIS));
+         }
+
+         lightArrow->SetTransform(transform, dtCore::Transformable::REL_CS);
+      }
+
 //      dtCore::Transform transform;
 //      lightArrowTransformable->SetTransform(transform);
 
@@ -617,32 +628,6 @@ void ObjectViewer::OnSetSpecular(int id, const osg::Vec4& color)
 {
    dtCore::Light* light = GetScene()->GetLight(id);
    light->SetSpecular(color);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnSetLightAzimuth(int id, float azimuth)
-{
-   dtCore::InfiniteLight* light = dynamic_cast<dtCore::InfiniteLight*>(GetScene()->GetLight(id));
-   if (light)
-   {
-      float oldAzimuth = 0.0f;
-      float elevation = 0.0f;
-      light->GetAzimuthElevation(oldAzimuth, elevation);
-      light->SetAzimuthElevation(azimuth, elevation);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnSetLightElevation(int id, float elevation)
-{
-   dtCore::InfiniteLight* light = dynamic_cast<dtCore::InfiniteLight*>(GetScene()->GetLight(id));
-   if (light)
-   {
-      float azimuth = 0.0f;
-      float oldElevation = 0.0f;
-      light->GetAzimuthElevation(azimuth, oldElevation);
-      light->SetAzimuthElevation(azimuth, elevation);
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -822,38 +807,50 @@ void ObjectViewer::InitLights()
 {
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      dtCore::Light* light = NULL;
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
 
-      if (lightIndex > 0 )
+      if (!light)
       {
          QString lightName = QString("Light%1").arg(lightIndex);
 
          light = new dtCore::InfiniteLight(lightIndex, lightName.toStdString());
          GetScene()->RegisterLight(light);
          light->SetEnabled(false);
-      }
-      else
-      {
-         light = GetScene()->GetLight(lightIndex);
+
+         light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
+         light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
+         light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+
+         // Infinite lights must start here, point light from the positive y axis
+         //light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
       }
 
-      light->SetAmbient(0.2f, 0.2f, 0.2f, 1.f);
-      light->SetDiffuse(1.0f, 1.0f, 1.0f, 1.0f);
-      light->SetSpecular(1.0f, 1.0f, 1.0f, 1.0f);
-
-      // Infinite lights must start here, point light from the postive y axis
-      light->GetLightSource()->getLight()->setPosition(osg::Vec4(-osg::Y_AXIS, 0.0f));
       bool enabled = light->GetEnabled();
 
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
       lightArrow->SetActive(enabled);
 
+      dtCore::Transform transform;
+
+      // Infinite lights point in a different direction than others.
+      if (dynamic_cast<dtCore::InfiniteLight*>(light))
+      {
+         transform.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(-90.0f), osg::X_AXIS));
+         lightArrow->SetTransform(transform);
+      }
+
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
       lightArrowTransformable->AddChild(lightArrow.get());
       lightArrowTransformable->AddChild(light);
 
+      // Copy the transform from the light to the attached transformable.
+      light->GetTransform(transform);
+      light->SetTransform(dtCore::Transform());
+      lightArrowTransformable->SetTransform(transform);
+
       dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
+      lightMotion->SetEnabled(false);
       lightMotion->SetTarget(lightArrowTransformable.get());
 
       GetScene()->AddDrawable(lightArrowTransformable.get());
@@ -863,6 +860,52 @@ void ObjectViewer::InitLights()
       mLightArrow.push_back(lightArrow);
       light->SetEnabled(enabled);
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::ReInitLights()
+{
+   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
+   {
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+
+      if (!light)
+      {
+         continue;
+      }
+
+      bool enabled = light->GetEnabled();
+      dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = mLightArrowTransformable[lightIndex];
+
+      // Copy the transform from the light to the attached transformable.
+      dtCore::Transform transform;
+      light->GetTransform(transform);
+      light->SetTransform(dtCore::Transform());
+      lightArrowTransformable->SetTransform(transform);
+
+      dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = mLightMotion[lightIndex];
+      lightMotion->SetEnabled(false);
+
+      light->SetEnabled(enabled);
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::ClearLights()
+{
+   for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+   {
+      mLightMotion[lightIndex]->SetEnabled(false);
+   }
+
+   for (int lightIndex = 0; lightIndex < (int)mLightArrowTransformable.size(); lightIndex++)
+   {
+      GetScene()->RemoveDrawable(mLightArrowTransformable[lightIndex].get());
+   }
+
+   mLightMotion.clear();
+   mLightArrowTransformable.clear();
+   mLightArrow.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

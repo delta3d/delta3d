@@ -183,12 +183,6 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetSpecular(int, const osg::Vec4&)));
 
-   connect(mWin->GetResourceObject(), SIGNAL(SetLightAzimuth(int, float)),
-      mViewer.get(), SLOT(OnSetLightAzimuth(int, float)));
-
-   connect(mWin->GetResourceObject(), SIGNAL(SetLightElevation(int, float)),
-      mViewer.get(), SLOT(OnSetLightElevation(int, float)));
-
    connect(mWin->GetResourceObject(), SIGNAL(SetLightCutoff(int, float)),
       mViewer.get(), SLOT(OnSetLightCutoff(int, float)));
 
