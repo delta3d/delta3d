@@ -101,8 +101,6 @@ public slots:
    void OnSetAmbient(int id, const osg::Vec4& color);
    void OnSetDiffuse(int id, const osg::Vec4& color);
    void OnSetSpecular(int id, const osg::Vec4& color);
-   void OnSetLightAzimuth(int id, float azimuth);
-   void OnSetLightElevation(int id, float elevation);
    void OnSetLightCutoff(int id, float cutoff);
    void OnSetLightExponent(int id, float exponent);
    void OnSetLightConstant(int id, float constant);
@@ -129,6 +127,9 @@ protected:
    void InitWireDecorator();
    void InitGridPlanes();
    void InitLights();
+   void ReInitLights();
+
+   void ClearLights();
 
    void clearProxies( const std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >& proxies);
 

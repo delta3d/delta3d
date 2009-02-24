@@ -140,8 +140,6 @@ signals:
    void SetAmbient(int id, const osg::Vec4& ambient);
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);
-   void SetLightAzimuth(int id, float azimuth);
-   void SetLightElevation(int id, float elevation);
    void SetLightCutoff(int id, float cutoff);
    void SetLightExponent(int id, float exponent);
    void SetLightConstant(int id, float constant);
