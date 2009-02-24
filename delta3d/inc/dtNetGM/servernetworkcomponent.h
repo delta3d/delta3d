@@ -57,7 +57,7 @@ namespace dtNetGM
    public:
       /**
        * Start a Server
-       * @param The protnumber used by the server
+       * @param The port number used by the server
        */
       bool SetupServer(int portNum);
 
