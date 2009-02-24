@@ -47,8 +47,10 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InfiniteLight::SetAzimuthElevation(float az, float el)
+   DEPRECATE_FUNC void InfiniteLight::SetAzimuthElevation(float az, float el)
    {
+      DEPRECATE("InfiniteLight::SetAzimuthElevation", "Transformable::SetTransform");
+
       // create the directional vector
       osg::Vec4 direction(sinf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
                           cosf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
@@ -59,14 +61,16 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InfiniteLight::SetAzimuthElevation(const osg::Vec2& azEl)
+   DEPRECATE_FUNC void InfiniteLight::SetAzimuthElevation(const osg::Vec2& azEl)
    {
       SetAzimuthElevation(azEl[0], azEl[1]);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void InfiniteLight::GetAzimuthElevation(float& az, float& el) const
+   DEPRECATE_FUNC void InfiniteLight::GetAzimuthElevation(float& az, float& el) const
    {
+      DEPRECATE("InfiniteLight::GetAzimuthElevation", "Transformable::GetTransform");
+
       osg::Vec4 xyz = mLightSource->getLight()->getPosition();
       xyz.normalize();
 
@@ -84,7 +88,7 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 InfiniteLight::GetAzimuthElevation() const
+   DEPRECATE_FUNC osg::Vec2 InfiniteLight::GetAzimuthElevation() const
    {
       osg::Vec2 azEl;
       GetAzimuthElevation(azEl[0], azEl[1]);
