@@ -38,8 +38,8 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(int argc, char** argv)
-      : dtABC::Application("config.xml")
+   GameApplication::GameApplication(int argc, char** argv, dtCore::DeltaWin* window)
+      : dtABC::Application("config.xml", window)
       , mArgc(argc)
       , mArgv(argv)
       , mEntryPoint(NULL)

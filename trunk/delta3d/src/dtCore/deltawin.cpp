@@ -446,6 +446,7 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    traits->stencil = ds->getMinimumNumStencilBits();
    traits->windowDecoration = true;
    traits->doubleBuffer = true;
+   traits->supportsResize = deltaTraits.supportResize;
    traits->sharedContext = deltaTraits.contextToShare;
 
    traits->sampleBuffers = ds->getMultiSamples();
