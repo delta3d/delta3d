@@ -1,7 +1,7 @@
 #ifndef imanager_h__
 #define imanager_h__
 
-#include <qtCore/QObject>
+#include <QtCore/QObject>
 
 namespace dtCore
 {

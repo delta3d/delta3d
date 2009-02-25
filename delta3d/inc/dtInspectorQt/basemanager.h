@@ -4,7 +4,7 @@
 #include <dtInspectorQt/imanager.h>
 #include "ui_dtinspectorqt.h"
 #include <dtCore/observerptr.h>
-#include <qtCore/QObject>
+#include <QtCore/QObject>
 #include <dtCore/base.h>
 
 
