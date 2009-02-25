@@ -241,16 +241,20 @@ namespace dtAudio
        * Values greater than 1.0 ted to maximimze the Doppler effect.
        * Negative values raise an AL_INVALID_VALUE error.
        *   
-       * Note that OpenAL calculates the doppler effect like this:
+       * An very simiplified summary of OpenAL calculation for the Doppler effect:
        *
        * shift = DOPPLER_FACTOR * freq * (DOPPLER_VELOCITY - l.velocity) / (DOPPLER_VELOCITY + s.velocity)  
+       *
+       * More detailed calculation specs are in the OpenAL Programmers Guide available at:
+       * http://connect.creativelabs.com/openal
        *
        * where l is the listener and s is a sound source.
        */
       void SetDopplerFactor(float f);
 
       /**
-       * Set the speed of sound used in OpenAL Doppler calculations.       
+       * Set the speed of sound used in OpenAL Doppler calculations.
+       * Note that OpenAL's default value is 343.3
        */
       void SetSpeedOfSound(float s);
 
