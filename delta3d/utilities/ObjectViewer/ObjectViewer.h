@@ -98,6 +98,8 @@ public slots:
    void OnSetCurrentLight(int id);
    void OnSetLightEnabled(int id, bool enabled);
    void OnSetLightType(int id, int type);
+   void OnSetLightPosition(int id, const osg::Vec3& position);
+   void OnSetLightRotation(int id, const osg::Vec3& rotation);
    void OnSetAmbient(int id, const osg::Vec4& color);
    void OnSetDiffuse(int id, const osg::Vec4& color);
    void OnSetSpecular(int id, const osg::Vec4& color);
