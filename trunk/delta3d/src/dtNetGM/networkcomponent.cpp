@@ -125,7 +125,7 @@ namespace dtNetGM
 
       while(!mMessageBuffer.empty())
       {
-         // pass the message to the GM 
+         // pass the message to the GM
          const dtGame::Message* pMessageRef = mMessageBuffer.front().get();
          GetGameManager()->SendMessage(*pMessageRef);
          // remove from the local storage
@@ -305,8 +305,11 @@ namespace dtNetGM
          {
             message = CreateMessage(dataStream, networkBridge);
             // Set the MachineInfo of the NetworkBridge
-            const MachineInfoMessage* machineMsg = static_cast<const MachineInfoMessage*> (message.get());
-            networkBridge.SetMachineInfo(machineMsg->GetSource());
+            MachineInfoMessage* machineMsg = static_cast<MachineInfoMessage*> (message.get());
+            networkBridge.SetMachineInfo(*machineMsg->GetMachineInfo());
+            // The source is probably up at this point because only the unique id of the machine info would be set at
+            // this point, so setting it from the one of the message will clean that up.
+            machineMsg->SetSource(networkBridge.GetMachineInfo());
 
             dataStream.Rewind();
          }
