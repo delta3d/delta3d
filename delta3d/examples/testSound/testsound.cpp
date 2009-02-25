@@ -181,6 +181,9 @@ main(int argc, const char* argv[])
                                dtCore::GetDeltaRootPath() + "/examples/testSound" + ";");
 
    RefPtr<TestSoundApp> app = new TestSoundApp("config.xml");
+
+   std::cout << "Push spacebar to hear one sound.  Push any other key to hear the other.\n";
+
    app->Run();
 
    return 0;
