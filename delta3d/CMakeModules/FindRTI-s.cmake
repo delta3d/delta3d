@@ -12,6 +12,8 @@
 #
 # Created by David Guthrie. 
 
+OPTION(RTIS_SINGLE_LIBRARY "flags the build to assume that rtis is built as one single library" OFF)
+
 FIND_PATH(RTIS_ROOT_DIR NAMES include/1.3/RTI.hh
    PATHS 
    $ENV{RTI} 
