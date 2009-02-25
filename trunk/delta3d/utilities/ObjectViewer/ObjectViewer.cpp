@@ -609,6 +609,24 @@ void ObjectViewer::OnSetLightType(int id, int type)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightPosition(int id, const osg::Vec3& position)
+{
+   dtCore::Transform transform;
+   mLightArrowTransformable[id]->GetTransform(transform);
+   transform.SetTranslation(position);
+   mLightArrowTransformable[id]->SetTransform(transform);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectViewer::OnSetLightRotation(int id, const osg::Vec3& rotation)
+{
+   dtCore::Transform transform;
+   mLightArrowTransformable[id]->GetTransform(transform);
+   transform.SetRotation(rotation);
+   mLightArrowTransformable[id]->SetTransform(transform);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::OnSetAmbient(int id, const osg::Vec4& color)
 {

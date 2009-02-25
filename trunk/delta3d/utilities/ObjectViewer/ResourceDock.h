@@ -137,6 +137,8 @@ signals:
    void SetCurrentLight(int id);
    void SetLightEnabled(int id, bool enabled);
    void SetLightType(int id, int type);
+   void SetLightPosition(int id, const osg::Vec3& position);
+   void SetLightRotation(int id, const osg::Vec3& rotation);
    void SetAmbient(int id, const osg::Vec4& ambient);
    void SetDiffuse(int id, const osg::Vec4& diffuse);
    void SetSpecular(int id, const osg::Vec4& specular);

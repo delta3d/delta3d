@@ -174,6 +174,12 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(SetLightType(int, int)),
       mViewer.get(), SLOT(OnSetLightType(int, int)));
 
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightPosition(int, const osg::Vec3&)),
+      mViewer.get(), SLOT(OnSetLightPosition(int, const osg::Vec3&)));
+
+   connect(mWin->GetResourceObject(), SIGNAL(SetLightRotation(int, const osg::Vec3&)),
+      mViewer.get(), SLOT(OnSetLightRotation(int, const osg::Vec3&)));
+
    connect(mWin->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
            mViewer.get(), SLOT(OnSetAmbient(int, const osg::Vec4&)));
 

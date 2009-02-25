@@ -973,6 +973,7 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    const osg::Vec3& position = lightInfo.transform->GetTranslation();
    osg::Vec3 right, up, rotation;
    lightInfo.transform->GetOrientation(right, up, rotation);
+   lightInfo.transform->GetRotation(rotation);
    const osg::Vec4& ambient  = osgLight->getAmbient();
    const osg::Vec4& diffuse  = osgLight->getDiffuse();
    const osg::Vec4& specular = osgLight->getSpecular();
@@ -1194,6 +1195,10 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
       if (item->checkState(0) == Qt::Checked)
       {
          int lightID = GetLightIDFromItem(item);
+         if (lightID == -1)
+         {
+            return;
+         }
 
          QTreeWidgetItemIterator treeIter(mLightTreeWidget);
 
@@ -1218,9 +1223,29 @@ void ResourceDock::OnLightItemChanged(QTreeWidgetItem* item, int column)
    else if (column == 1)
    {
       int lightID = GetLightIDFromItem(item);
+      if (lightID == -1)
+      {
+         return;
+      }
 
       // Infinite Light Properties
-      if (item->text(0) == QString("Position Locked"))
+      if (item->parent() && item->parent()->text(0) == QString("Position"))
+      {
+         osg::Vec3 position;
+         position.x() = item->parent()->child(0)->text(1).toFloat();
+         position.y() = item->parent()->child(1)->text(1).toFloat();
+         position.z() = item->parent()->child(2)->text(1).toFloat();
+         emit SetLightPosition(lightID, position);
+      }
+      else if (item->parent() && item->parent()->text(0) == QString("Rotation"))
+      {
+         osg::Vec3 rotation;
+         rotation.x() = item->parent()->child(0)->text(1).toFloat();
+         rotation.y() = item->parent()->child(1)->text(1).toFloat();
+         rotation.z() = item->parent()->child(2)->text(1).toFloat();
+         emit SetLightRotation(lightID, rotation);
+      }
+      else if (item->text(0) == QString("Position Locked"))
       {
          // TODO: Lock the position of the light to the camera.
       }
@@ -1398,60 +1423,36 @@ void ResourceDock::CreateLightItems()
 ///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 {
-   QTreeWidgetItem* position = new QTreeWidgetItem(parent);
-   position->setText(0, "Position");  
-   position->setFlags(Qt::ItemIsEnabled);
-
-   QTreeWidgetItem* xItem = new QTreeWidgetItem(position);
-   QTreeWidgetItem* yItem = new QTreeWidgetItem(position);
-   QTreeWidgetItem* zItem = new QTreeWidgetItem(position);
-
-   xItem->setText(0, "x");
-   yItem->setText(0, "y");
-   zItem->setText(0, "z");       
-
+   QTreeWidgetItem* position = CreateTreeItem("Position", "", Qt::ItemIsEnabled, parent);
+   QTreeWidgetItem* xItem = CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
+   QTreeWidgetItem* yItem = CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
+   QTreeWidgetItem* zItem = CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
    return position;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::CreateRotationItem(QTreeWidgetItem* parent)
 {
-   QTreeWidgetItem* rotation = new QTreeWidgetItem(parent);
-   rotation->setText(0, "Rotation");  
-   rotation->setFlags(Qt::ItemIsEnabled);
-
-   QTreeWidgetItem* xItem = new QTreeWidgetItem(rotation);
-   QTreeWidgetItem* yItem = new QTreeWidgetItem(rotation);
-   QTreeWidgetItem* zItem = new QTreeWidgetItem(rotation);
-
-   xItem->setText(0, "x");
-   yItem->setText(0, "y");
-   zItem->setText(0, "z");
-
+   QTreeWidgetItem* rotation = CreateTreeItem("Rotation", "", Qt::ItemIsEnabled, parent);
+   QTreeWidgetItem* xItem = CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   QTreeWidgetItem* yItem = CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   QTreeWidgetItem* zItem = CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
    return rotation;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWidgetItem* parent)
 {
-   QTreeWidgetItem* colorItem = new QTreeWidgetItem(parent);
-   colorItem->setText(0, name.c_str());
-   colorItem->setFlags(Qt::ItemIsEnabled);
+   QTreeWidgetItem* colorItem = CreateTreeItem(name.c_str(), "", Qt::ItemIsEnabled, parent);
+   QTreeWidgetItem* redItem   = CreateTreeItem("r", "", Qt::ItemIsEnabled, colorItem);
+   QTreeWidgetItem* greenItem = CreateTreeItem("g", "", Qt::ItemIsEnabled, colorItem);
+   QTreeWidgetItem* blueItem  = CreateTreeItem("b", "", Qt::ItemIsEnabled, colorItem);
+   QTreeWidgetItem* alphaItem  = CreateTreeItem("a", "", Qt::ItemIsEnabled, colorItem);
 
    QColor color;
    QPixmap colorPicker(16, 16);
    colorPicker.fill(color);
    colorItem->setIcon(1, colorPicker);
-
-   QTreeWidgetItem* redItem   = new QTreeWidgetItem(colorItem);
-   QTreeWidgetItem* greenItem = new QTreeWidgetItem(colorItem);
-   QTreeWidgetItem* blueItem  = new QTreeWidgetItem(colorItem);
-   QTreeWidgetItem* alphaItem = new QTreeWidgetItem(colorItem);
-
-   redItem->setText(0, "r");
-   greenItem->setText(0, "g");
-   blueItem->setText(0, "b");
-   alphaItem->setText(0, "a");
 
    return colorItem;
 }
@@ -1520,11 +1521,13 @@ int ResourceDock::GetLightIDFromItem(QTreeWidgetItem* item)
       if (light.light    == item ||
           light.type     == item ||
           light.position == item ||
+          light.rotation == item ||
           light.ambient  == item ||
           light.diffuse  == item ||
           light.specular == item ||
           light.custom   == item ||
           light.position->indexOfChild(item) != -1 ||
+          light.rotation->indexOfChild(item) != -1 ||
           light.ambient->indexOfChild(item) != -1  ||
           light.diffuse->indexOfChild(item) != -1  ||
           light.specular->indexOfChild(item) != -1 ||
