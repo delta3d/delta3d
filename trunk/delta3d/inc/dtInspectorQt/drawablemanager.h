@@ -1,7 +1,7 @@
 #ifndef drawablemanager_h__
 #define drawablemanager_h__
 
-#include <qtCore/QObject>
+#include <QtCore/QObject>
 #include <dtInspectorQt/imanager.h>
 #include "ui_dtinspectorqt.h"
 #include <dtCore/deltadrawable.h>
