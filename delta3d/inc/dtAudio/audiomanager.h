@@ -218,8 +218,41 @@ namespace dtAudio
       ///Deprecated feb/02/2009 in favor of Sound::IsListenerRelative()
       DEPRECATE_FUNC bool GetListenerRelative(Sound* sound);
 
-      /// initialize AudioManager
-      virtual void Config(const AudioConfigData& data = _DefCfg);
+      ///Deprecated feb/02/2009 All neccessary intialization is taken care of
+      // in AudioManager::Instantiate and configuration parameters for distance
+      // model are handled by SetDistanceModel.  ConfigEAX is still available for
+      // configuring EAX.
+      DEPRECATE_FUNC virtual void Config(const AudioConfigData& data = _DefCfg);
+
+      /**
+       * Sets the OpenAL distance model.  Possible parameter values are:
+       * AL_INVERSE_DISTANCE, AL_INVERSE_DISTANCE_CLAMPED, AL_LINEAR_DISTANCE,
+       * AL_LINEAR_DISTANCE_CLAMPED, AL_EXPONENT_DISTANCE,
+       * AL_EXPONENT_DISTANCE_CLAMPED, or AL_NONE
+       */
+      void SetDistanceModel(ALenum dm);
+
+      /**
+       * Set the OpenAL Doppler factor.
+       *
+       * 0 disables Doppler effect.
+       * Values between 0.0 and 1.0 tend to minimize the Doppler effect.
+       * 1.0 is the default value.
+       * Values greater than 1.0 ted to maximimze the Doppler effect.
+       * Negative values raise an AL_INVALID_VALUE error.
+       *   
+       * Note that OpenAL calculates the doppler effect like this:
+       *
+       * shift = DOPPLER_FACTOR * freq * (DOPPLER_VELOCITY - l.velocity) / (DOPPLER_VELOCITY + s.velocity)  
+       *
+       * where l is the listener and s is a sound source.
+       */
+      void SetDopplerFactor(float f);
+
+      /**
+       * Set the speed of sound used in OpenAL Doppler calculations.       
+       */
+      void SetSpeedOfSound(float s);
 
       /// Returns true if initialized
       bool IsInitialized() const { return _Mgr != NULL; }
@@ -349,7 +382,10 @@ namespace dtAudio
 };
 
 // configuration data
-struct DT_AUDIO_EXPORT AudioConfigData
+///Deprecated feb/24/2009 -- setting Distance model with method now,
+// numSources is not something OpenAL lets you configure,
+// and EAX is handled via ConfigEAX
+DEPRECATE_FUNC struct DT_AUDIO_EXPORT AudioConfigData
 {
    enum DistanceModel
    {
@@ -368,7 +404,10 @@ struct DT_AUDIO_EXPORT AudioConfigData
       : numSources(ns)
       , eax(ex)
       , distancemodel(dm)
-   {}
+   {
+      DEPRECATE("AudioConfigData",
+       "AudioConfigData is to be removed. Configuration data is to be set directly in AudioManager now.");
+   }
 };
 
 

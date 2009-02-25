@@ -230,8 +230,10 @@ DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
 
 ////////////////////////////////////////////////////////////////////////////////
 // manager configuration
-void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
+DEPRECATE_FUNC void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
 {
+   DEPRECATE("AudioManager::Config",  "All neccessary intialization is taken care of elsewhere now.");      
+
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if (mIsConfigured)
    {
@@ -239,7 +241,7 @@ void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
       return;
    }
 
-   //Should be opened elsewhere (either by alutInit (in constructor)
+   //Should be opened elsewhere (either automatically by alutInit (in constructor)
    // or by SetOpenALDevice)
    //OpenDevice();
    //Context is automagically setup by alutInit or a call to SetOpenALDevice
@@ -268,6 +270,29 @@ void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
    CheckForError("ConfigEAX( data.eax )", __FUNCTION__, __LINE__);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void AudioManager::SetDistanceModel(ALenum dm)
+{
+   CheckForError("Cleanup al error.", __FUNCTION__, __LINE__);
+   alDistanceModel(dm);
+   CheckForError("alDistanceModel()", __FUNCTION__, __LINE__);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void SetDopplerFactor(float f)
+{
+   CheckForError("Cleanup OpenAL error.", __FUNCTION__, __LINE__);
+   alDopplerFactor(f);
+   CheckForError("alDopplerFactor", __FUNCTION__, __LINE__);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void SetSpeedOfSound(float s)
+{
+   CheckForError("Cleanup OpenAL error.", __FUNCTION__, __LINE__);
+   alSpeedOfSound(s);
+   CheckForError("alSpeedOfSound", __FUNCTION__, __LINE__);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // message receiver

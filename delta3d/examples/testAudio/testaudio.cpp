@@ -63,9 +63,6 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/)
 
    AudioManager::Instantiate();
 
-   AudioConfigData data;//(32L, true);
-   AudioManager::GetInstance().Config(data);
-
    for (unsigned int ii(0L); ii < kNumSoundFiles; ii++)
    {
       AudioManager::GetInstance().LoadFile(kSoundFile[ii]);

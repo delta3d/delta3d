@@ -33,8 +33,7 @@ TestSoundApp::TestSoundApp(const std::string& configFilename /*= "config.xml"*/)
    , mSound(NULL)
 {
    // create and configure the audio manager
-   AudioManager::Instantiate();
-   AudioManager::GetInstance().Config();
+   AudioManager::Instantiate();   
 
    // pre-load the sound files
    // (an optional optimization)
