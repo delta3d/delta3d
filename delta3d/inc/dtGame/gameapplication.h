@@ -56,7 +56,7 @@ namespace dtGame
           * @param argc the number of arguments
           * @param argv An array of string pointers with the command line data.
           */
-         GameApplication(int argc, char** argv);
+         GameApplication(int argc, char** argv, dtCore::DeltaWin* window = NULL);
       
          /**
           * Configures the application, loads the game library,
