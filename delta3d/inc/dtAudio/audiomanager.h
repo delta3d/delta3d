@@ -245,10 +245,11 @@ namespace dtAudio
        *
        * shift = DOPPLER_FACTOR * freq * (DOPPLER_VELOCITY - l.velocity) / (DOPPLER_VELOCITY + s.velocity)  
        *
+       * where l is the listener and s is a sound source.
+       *
        * More detailed calculation specs are in the OpenAL Programmers Guide available at:
        * http://connect.creativelabs.com/openal
        *
-       * where l is the listener and s is a sound source.
        */
       void SetDopplerFactor(float f);
 
