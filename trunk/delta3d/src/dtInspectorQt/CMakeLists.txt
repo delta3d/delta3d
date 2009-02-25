@@ -1,20 +1,3 @@
-#copied from FindQt4.cmake, in CMake 2.4.8.  Used here for compatability with CMake < 2.4.8
-MACRO (QT4_EXTRACT_OPTIONS qt4_files qt4_options)
-  SET(${qt4_files} ${ARGN})
-  SET(${qt4_options})
-  LIST(FIND ${qt4_files} OPTIONS _index)
-  IF(NOT _index EQUAL -1)
-    LIST(REMOVE_ITEM ${qt4_files} OPTIONS)
-    LIST(LENGTH ${qt4_files} _length)
-    WHILE(_length GREATER ${_index})
-      LIST(GET ${qt4_files} ${_index} _opt_value)
-      LIST(REMOVE_AT ${qt4_files} ${_index})
-      LIST(APPEND ${qt4_options} ${_opt_value})
-      LIST(LENGTH ${qt4_files} _length)
-    ENDWHILE(_length GREATER ${_index})
-  ENDIF(NOT _index EQUAL -1)
-ENDMACRO (QT4_EXTRACT_OPTIONS)
-  
   # QT4_WRAP_UI(outfiles inputfile ... )
 # Custom macro to place the generated .h file into the /inc/dtInspector folder
 MACRO (DELTA_QT4_WRAP_UI outfiles )
