@@ -832,6 +832,17 @@ int main()
 
    RefPtr<TestAudioApp> app = new TestAudioApp("config.xml");
 
+   std::cout << "Key you can push: \n\n";
+   std::cout << "0-9 set the gain (volume) of sounds.\n";
+   std::cout << "+ and - increase/decrease pitch.\n";
+   std::cout << "A plays a 'pow' sound.\n";
+   std::cout << "S plays a 'boom' sound.\n";
+   std::cout << "D plays a helicopter hum that is attached to the helicopter.\n";
+   std::cout << "F plays a horn sounds that is attached to the vehicle.\n";
+   std::cout << "L sets sounds to looping.\n";
+   std::cout << "Spacebar stops all sounds.\n";
+   std::cout << "Esc exits application.\n";
+
    app->Run();
 
    return 0;
