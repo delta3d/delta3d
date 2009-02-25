@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>0</y>
+         <y>-71</y>
          <width>229</width>
-         <height>465</height>
+         <height>536</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -326,6 +326,96 @@
              </property>
              <property name="checked" >
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="sceneGroupBox" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title" >
+           <string>Scene</string>
+          </property>
+          <property name="checkable" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_4" >
+           <item row="1" column="1" >
+            <widget class="QListWidget" name="sceneChildList" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_11" >
+             <property name="text" >
+              <string>Children:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QCheckBox" name="sceneLightToggle" >
+             <property name="text" >
+              <string>Scene Light</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" >
+            <widget class="QComboBox" name="sceneModeCombo" >
+             <item>
+              <property name="text" >
+               <string>POINT</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FILL</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QComboBox" name="sceneFaceCombo" >
+             <item>
+              <property name="text" >
+               <string>FRONT</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>BACK</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FRONT_AND_BACK</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_12" >
+             <property name="text" >
+              <string>Face:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" >
+            <widget class="QLabel" name="label_13" >
+             <property name="text" >
+              <string>Mode:</string>
              </property>
             </widget>
            </item>
