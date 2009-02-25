@@ -69,8 +69,7 @@ namespace dtAudio
       //make sure AudioManager has been initialized
       if(!dtAudio::AudioManager::GetInstance().IsInitialized())
       {
-         dtAudio::AudioManager::Instantiate();
-         dtAudio::AudioManager::GetInstance().Config();
+         dtAudio::AudioManager::Instantiate();       
       }
 
       mSound = dtAudio::AudioManager::GetInstance().NewSound();
