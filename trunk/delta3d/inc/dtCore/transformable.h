@@ -37,6 +37,7 @@ struct dContact;
 namespace dtCore
 {
    class ODEGeomWrap;
+   class PointAxis;
 
    /**
     * The Transformable class is the base class of anything that can move in the
@@ -485,6 +486,9 @@ namespace dtCore
        * If we're rendering the proxy node
        */
       bool mRenderProxyNode;
+
+      ///used for the rendering of the proxy node
+      dtCore::RefPtr<PointAxis> mPointAxis;
 
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();

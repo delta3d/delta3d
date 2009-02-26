@@ -133,6 +133,12 @@ void Transformable::Ctor()
 Transformable::~Transformable()
 {
    mGeomWrap = NULL;
+   if (mPointAxis.valid())
+   {
+      SetProxyNode(NULL);
+      RemoveChild(mPointAxis.get());
+      mPointAxis = NULL;
+   }
 
    DeregisterInstance(this);
 }
@@ -366,13 +372,21 @@ void Transformable::RenderProxyNode(const bool enable)
 {
    if(enable)
    {
+      mPointAxis = new PointAxis();
+      mPointAxis->Enable(PointAxis::X);
+      mPointAxis->Enable(PointAxis::Y);
+      mPointAxis->Enable(PointAxis::Z);
+      mPointAxis->Enable(PointAxis::LABEL_X);
+      mPointAxis->Enable(PointAxis::LABEL_Y);
+      mPointAxis->Enable(PointAxis::LABEL_Z);
+
       // Make sphere
       float radius = 0.5f;
 
       osg::Sphere* sphere = new osg::Sphere(osg::Vec3( 0.0, 0.0, 0.0 ), radius);
 
       osg::Geode* proxyGeode = new osg::Geode();
-      SetProxyNode(proxyGeode);
+      mPointAxis->GetMatrixNode()->addChild(proxyGeode);
 
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.5f);
@@ -390,27 +404,19 @@ void Transformable::RenderProxyNode(const bool enable)
       polyoffset->setFactor(-1.0f);
       polyoffset->setUnits(-1.0f);
 
-      osg::StateSet *ss = GetProxyNode()->getOrCreateStateSet();
+      osg::StateSet *ss = mPointAxis->GetOSGNode()->getOrCreateStateSet();
       ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       ss->setMode(GL_BLEND, osg::StateAttribute::ON);
       ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
       ss->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-      GetMatrixNode()->addChild(GetProxyNode());
-
-      PointAxis* paxis = new PointAxis();
-      paxis->Enable(PointAxis::X);
-      paxis->Enable(PointAxis::Y);
-      paxis->Enable(PointAxis::Z);
-      paxis->Enable(PointAxis::LABEL_X);
-      paxis->Enable(PointAxis::LABEL_Y);
-      paxis->Enable(PointAxis::LABEL_Z);
-
-      AddChild(paxis);
+      AddChild(mPointAxis.get());
+      SetProxyNode(mPointAxis->GetOSGNode());
    }
    else
    {
-      GetMatrixNode()->removeChild(GetProxyNode());
+      RemoveChild(mPointAxis.get());
+      mPointAxis = NULL;
    }
 
    mRenderProxyNode = enable;
