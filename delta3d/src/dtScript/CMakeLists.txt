@@ -19,12 +19,11 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                        OSGDB_LIBRARY
                        OSGGA_LIBRARY
                        OPENTHREADS_LIBRARY
-                       )
+                       PYTHON_LIBRARY)
                        
 TARGET_LINK_LIBRARIES( ${LIB_NAME}                       
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
-                       optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG_LIBRARY}
                       )
                       
 SET_TARGET_PROPERTIES(${LIB_NAME}
