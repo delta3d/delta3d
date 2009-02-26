@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -38,6 +38,11 @@
 #include <osg/NodeVisitor>
 #include <osgDB/WriteFile>
 #include <dtCore/transformable.h>
+
+#include <osg/Program>
+#include <osg/Shader>
+#include <dtUtil/macros.h>
+#include <cstdio>
 
 #include <dtDAL/actorproxyicon.h>
 
@@ -141,8 +146,8 @@ namespace dtEditQt {
                 return;
         }
 
-        this->selectionVisitor.setRestoreMode(false);
-        drawable->GetOSGNode()->accept(this->selectionVisitor);
+        //this->selectionVisitor.setRestoreMode(false);
+        //drawable->GetOSGNode()->accept(this->selectionVisitor);
         this->selectionDecorator->addChild(drawable->GetOSGNode());
         if (!this->overlayGroup->containsNode(this->selectionDecorator.get()))
             this->overlayGroup->addChild(this->selectionDecorator.get());
@@ -157,8 +162,8 @@ namespace dtEditQt {
         if (!this->selectionDecorator.valid())
             setupSelectionDecorator();
 
-        this->selectionVisitor.setRestoreMode(true);
-        drawable->GetOSGNode()->accept(this->selectionVisitor);
+        //this->selectionVisitor.setRestoreMode(true);
+        //drawable->GetOSGNode()->accept(this->selectionVisitor);
         this->selectionDecorator->removeChild(drawable->GetOSGNode());
     }
 
@@ -225,8 +230,11 @@ namespace dtEditQt {
         }
 
         this->currentActorSelection.clear();
-        this->selectionVisitor.reset();
+        //this->selectionVisitor.reset();
     }
+
+    static const std::string COLOR_SHADER_FORMAT =
+       "void main (void) { gl_FragColor = vec4(%f, %f, %f, 1.0); }";
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::setupSelectionDecorator()
@@ -248,6 +256,15 @@ namespace dtEditQt {
         this->selectionMaterial->setDiffuse(osg::Material::FRONT,color);
         this->selectionMaterial->setDiffuse(osg::Material::BACK,color);
 
+        dtCore::RefPtr<osg::Program> program = new osg::Program();
+        dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+
+        char shaderText[255];
+        snprintf(shaderText, 255, COLOR_SHADER_FORMAT.c_str(), qtColor.redF(), qtColor.greenF(), qtColor.blueF());
+        fragShader->setShaderSource(std::string(shaderText));
+        program->addShader(fragShader.get());
+        ss->setAttributeAndModes(program.get(), turnOn);
+
         //Create the required state attributes for wireframe overlay selection.
         osg::PolygonOffset* po = new osg::PolygonOffset;
         osg::PolygonMode *pm = new osg::PolygonMode();
@@ -264,7 +281,6 @@ namespace dtEditQt {
         for (int i=0; i<ViewportManager::GetInstance().getNumTextureUnits(); i++) {
             ss->setTextureMode(i,GL_TEXTURE_1D,turnOff);
             ss->setTextureMode(i,GL_TEXTURE_2D,turnOff);
-            //ss->setTextureMode(i,GL_TEXTURE_3D,turnOff);
         }
 
         this->selectionDecorator->setStateSet(ss);
