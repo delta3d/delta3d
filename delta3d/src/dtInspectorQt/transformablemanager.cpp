@@ -1,4 +1,5 @@
 #include <dtInspectorQt/transformablemanager.h>
+#include <dtCore/odegeomwrap.h>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::TransformableManager::TransformableManager(Ui::InspectorWidget &ui)
@@ -12,6 +13,8 @@ dtInspectorQt::TransformableManager::TransformableManager(Ui::InspectorWidget &u
    connect(mUI->transREdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
    connect(mUI->transABSRadioButton, SIGNAL(clicked()), this, SLOT(Update()));
    connect(mUI->transRELRadioButton, SIGNAL(clicked()), this, SLOT(Update()));
+   connect(mUI->transCollisionToggle, SIGNAL(stateChanged(int)), this, SLOT(OnCollisionDetection(int)));
+   connect(mUI->transRenderToggle, SIGNAL(stateChanged(int)), this, SLOT(OnRenderCollision(int)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,6 +59,10 @@ void dtInspectorQt::TransformableManager::Update()
       mUI->transHEdit->setValue(hpr[0]);
       mUI->transPEdit->setValue(hpr[1]);
       mUI->transREdit->setValue(hpr[2]);
+
+      //collision detection
+      mUI->transCollisionToggle->setChecked(mOperateOn->GetGeomWrapper()->GetCollisionDetection());
+      mUI->transRenderToggle->setChecked(mOperateOn->GetRenderCollisionGeometry());
    }
    else
    {
@@ -83,5 +90,23 @@ void dtInspectorQt::TransformableManager::OnXYZHPRChanged(double val)
       {
          mOperateOn->SetTransform(xform, dtCore::Transformable::REL_CS);
       }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::TransformableManager::OnCollisionDetection(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->GetGeomWrapper()->SetCollisionDetection(checked ? true : false);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::TransformableManager::OnRenderCollision(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->RenderCollisionGeometry(checked ? true : false);
    }
 }
