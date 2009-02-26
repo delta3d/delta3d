@@ -20,7 +20,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -51,108 +51,108 @@ namespace osg
 
 namespace dtEditQt
 {
-    ///////////////////////////////////////////////////////////////////////////////
-    /**
-     * This node visitor is invoked when we select an object in the scene.  This
-     * ensures that the color binding on the object does not affect the wireframe
-     * overlay used to convey selected objects.
-     */
-    class ExtractSelectionVisitor : public osg::NodeVisitor {
-    public:
-        /**
-         * Constructs the visitor object.
-         */
-        ExtractSelectionVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-        {
-            this->copyOp = osg::CopyOp::DEEP_COPY_OBJECTS |
-                    osg::CopyOp::DEEP_COPY_NODES | osg::CopyOp::DEEP_COPY_DRAWABLES;
-        }
-
-        /**
-         * Empty destructor.
-         */
-        virtual ~ExtractSelectionVisitor() { }
-
-        /**
-         * Resets the visitor so it can be reused for another traversal.
-         */
-        virtual void reset() {
-            this->selectionCopies.clear();
-        }
-
-        /**
-         * If this is set to true, the old geodes will be used to replace the copies
-         * created in a previous traversal.
-         * @param on
-         */
-        void setRestoreMode(bool on) {
-            this->restoreMode = on;
-        }
-
-        /**
-         * Copies the incoming geode and turns off any color binding that
-         * may have been set on the copy.
-         * @param geode
-         */
-        virtual void apply(osg::Geode &geode)
-        {
-            unsigned int i;
-            osg::Geode *copyGeode;
-
-            if (geode.getName() == dtCore::Transformable::COLLISION_GEODE_ID || 
-                geode.getName() == dtABC::BezierController::BEZIER_CONTROLLER_GEODE_ID )
-                return;
-
-            if (restoreMode)
-            { //Restore the geodes we made copies of.
-                std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> >::iterator itor =
-                        this->selectionCopies.find(&geode);
-
-                if (itor != this->selectionCopies.end())
-                {
-                    replaceGeode(&geode,itor->second.get());
-                }
-            }
-            else
-            {
-                copyGeode = new osg::Geode(geode,this->copyOp);
-
-                //Save our original geode along with the copy.
-                this->selectionCopies.insert(std::make_pair(copyGeode,&geode));
-
-                //Make sure we turn off color binding so the wireframe color is
-                //correct.
-                for (i=0; i<copyGeode->getNumDrawables(); i++)
-                {
-                    osg::Geometry *geom = copyGeode->getDrawable(i)->asGeometry();
-                    if (geom != NULL) {
-                        geom->setColorBinding(osg::Geometry::BIND_OFF);
-                    }
-                }
-
-                //Replace the original geode with the new copy.
-                replaceGeode(&geode,copyGeode);
-            }
-        }
-
-        /**
-         * Replaces a geode in the scene graph.
-         * @param oldGeode The geode to replace.
-         * @param newGeode The new geode.
-         */
-        void replaceGeode(osg::Geode *oldGeode, osg::Geode *newGeode)
-        {
-            osg::Node::ParentList parentList = oldGeode->getParents();
-            for (unsigned int i=0; i<parentList.size(); i++) {
-                parentList[i]->replaceChild(oldGeode,newGeode);
-            }
-        }
-
-    private:
-        osg::CopyOp copyOp;
-        bool restoreMode;
-        std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> > selectionCopies;
-    };
+//    ///////////////////////////////////////////////////////////////////////////////
+//    /**
+//     * This node visitor is invoked when we select an object in the scene.  This
+//     * ensures that the color binding on the object does not affect the wireframe
+//     * overlay used to convey selected objects.
+//     */
+//    class ExtractSelectionVisitor : public osg::NodeVisitor {
+//    public:
+//        /**
+//         * Constructs the visitor object.
+//         */
+//        ExtractSelectionVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+//        {
+//            this->copyOp = osg::CopyOp::DEEP_COPY_OBJECTS |
+//                    osg::CopyOp::DEEP_COPY_NODES | osg::CopyOp::DEEP_COPY_DRAWABLES;
+//        }
+//
+//        /**
+//         * Empty destructor.
+//         */
+//        virtual ~ExtractSelectionVisitor() { }
+//
+//        /**
+//         * Resets the visitor so it can be reused for another traversal.
+//         */
+//        virtual void reset() {
+//            this->selectionCopies.clear();
+//        }
+//
+//        /**
+//         * If this is set to true, the old geodes will be used to replace the copies
+//         * created in a previous traversal.
+//         * @param on
+//         */
+//        void setRestoreMode(bool on) {
+//            this->restoreMode = on;
+//        }
+//
+//        /**
+//         * Copies the incoming geode and turns off any color binding that
+//         * may have been set on the copy.
+//         * @param geode
+//         */
+//        virtual void apply(osg::Geode &geode)
+//        {
+//            unsigned int i;
+//            osg::Geode *copyGeode;
+//
+//            if (geode.getName() == dtCore::Transformable::COLLISION_GEODE_ID ||
+//                geode.getName() == dtABC::BezierController::BEZIER_CONTROLLER_GEODE_ID )
+//                return;
+//
+//            if (restoreMode)
+//            { //Restore the geodes we made copies of.
+//                std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> >::iterator itor =
+//                        this->selectionCopies.find(&geode);
+//
+//                if (itor != this->selectionCopies.end())
+//                {
+//                    replaceGeode(&geode,itor->second.get());
+//                }
+//            }
+//            else
+//            {
+//                copyGeode = new osg::Geode(geode,this->copyOp);
+//
+//                //Save our original geode along with the copy.
+//                this->selectionCopies.insert(std::make_pair(copyGeode,&geode));
+//
+//                //Make sure we turn off color binding so the wireframe color is
+//                //correct.
+//                for (i=0; i<copyGeode->getNumDrawables(); i++)
+//                {
+//                    osg::Geometry *geom = copyGeode->getDrawable(i)->asGeometry();
+//                    if (geom != NULL) {
+//                        geom->setColorBinding(osg::Geometry::BIND_OFF);
+//                    }
+//                }
+//
+//                //Replace the original geode with the new copy.
+//                replaceGeode(&geode,copyGeode);
+//            }
+//        }
+//
+//        /**
+//         * Replaces a geode in the scene graph.
+//         * @param oldGeode The geode to replace.
+//         * @param newGeode The new geode.
+//         */
+//        void replaceGeode(osg::Geode *oldGeode, osg::Geode *newGeode)
+//        {
+//            osg::Node::ParentList parentList = oldGeode->getParents();
+//            for (unsigned int i=0; i<parentList.size(); i++) {
+//                parentList[i]->replaceChild(oldGeode,newGeode);
+//            }
+//        }
+//
+//    private:
+//        osg::CopyOp copyOp;
+//        bool restoreMode;
+//        std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> > selectionCopies;
+//    };
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -302,7 +302,7 @@ namespace dtEditQt
         osg::ref_ptr<osg::Material> selectionMaterial;
 
         ActorProxyList currentActorSelection;
-        ExtractSelectionVisitor selectionVisitor;
+        //ExtractSelectionVisitor selectionVisitor;
         bool multiSelectMode;
     };
 
