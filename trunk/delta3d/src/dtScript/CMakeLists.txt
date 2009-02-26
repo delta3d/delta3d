@@ -14,16 +14,18 @@ ADD_LIBRARY(${LIB_NAME} SHARED
  
 INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_PATH} )
 
-LINK_WITH_VARIABLES(${LIB_NAME}
-                       OSG_LIBRARY
-                       OSGDB_LIBRARY
-                       OSGGA_LIBRARY
-                       OPENTHREADS_LIBRARY
-                       PYTHON_LIBRARY)
+#Use the debug python library, should it exist, otherwise, use the release version
+SET (PYTHON_DEBUG ${PYTHON_DEBUG_LIBRARY})
+
+IF (NOT PYTHON_DEBUG)
+  SET (PYTHON_DEBUG ${PYTHON_LIBRARY})
+ENDIF (NOT PYTHON_DEBUG)
+
                        
-TARGET_LINK_LIBRARIES( ${LIB_NAME}                       
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
+                       optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
                       )
                       
 SET_TARGET_PROPERTIES(${LIB_NAME}
