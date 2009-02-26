@@ -21,6 +21,8 @@ namespace dtInspectorQt
 
    protected slots:
       void OnXYZHPRChanged(double val);
+      void OnCollisionDetection(int checked);
+      void OnRenderCollision(int checked);
       void Update();
    	
    private:
