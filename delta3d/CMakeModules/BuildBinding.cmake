@@ -18,11 +18,21 @@ MACRO (BUILD_PYTHON_BINDING TGTNAME)
       TARGET_LINK_LIBRARIES( ${TGTNAME} ${varname} )
   ENDFOREACH(varname)
   
+
   LINK_WITH_VARIABLES( ${TGTNAME} 
                        BOOST_PYTHON_LIBRARY
-                       PYTHON_LIBRARY
                      )
+                     
+  #Use the debug python library, should it exist, otherwise, use the release version
+  SET (PYTHON_DEBUG ${PYTHON_DEBUG_LIBRARY})
 
+  IF (NOT PYTHON_DEBUG)
+    SET (PYTHON_DEBUG ${PYTHON_LIBRARY})
+  ENDIF (NOT PYTHON_DEBUG)
+
+  TARGET_LINK_LIBRARIES( ${TGTNAME}
+                         optimized ${PYTHON_LIBRARY} debug ${PYTHON_DEBUG}
+                       )
 
   IF (WIN32)
     SET_TARGET_PROPERTIES( ${TGTNAME} PROPERTIES SUFFIX ".pyd")
