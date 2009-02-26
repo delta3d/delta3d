@@ -20,6 +20,11 @@ namespace dtInspectorQt
    	~DrawableManager();
 
       virtual void OperateOn(dtCore::Base* b);
+
+   protected slots:
+      void OnRenderProxyNode(int checked);
+      void OnActive(int checked);
+
    	
    private:
       Ui::InspectorWidget* mUI;
