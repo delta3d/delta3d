@@ -1,9 +1,12 @@
 #include <dtInspectorQt/drawablemanager.h>
+#include <dtCore/scene.h>
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::DrawableManager::DrawableManager(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   connect(mUI->drawableActiveToggle, SIGNAL(stateChanged(int)), this, SLOT(OnActive(int)));
+   connect(mUI->drawableProxyNodeToggle, SIGNAL(stateChanged(int)), this, SLOT(OnRenderProxyNode(int)));
 
 }
 
@@ -45,9 +48,39 @@ void dtInspectorQt::DrawableManager::Update()
       }
       mUI->drawableParentLabel->setText(QString::fromStdString(parentName));
 
+
+      //parent scene
+      std::string parentSceneName;
+      if (mOperateOn->GetSceneParent() != NULL)
+      {
+         parentSceneName = mOperateOn->GetSceneParent()->GetName();
+      }
+      mUI->drawableParentSceneLabel->setText(QString::fromStdString(parentSceneName));
+
+      //Active
+      mUI->drawableActiveToggle->setChecked(mOperateOn->GetActive());
    }
    else
    {
       mUI->drawableGroupBox->hide();
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DrawableManager::OnRenderProxyNode(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->RenderProxyNode(checked ? true : false);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::DrawableManager::OnActive(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetActive(checked ? true : false);
+   }
+
 }
