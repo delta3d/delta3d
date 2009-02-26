@@ -1,3 +1,4 @@
+#include <QtGui/QApplication>
 #include <dtInspectorQt/inspectorqt.h>
 #include <dtInspectorQt/inspectorwindow.h>
 #include <dtCore/system.h>

@@ -3,7 +3,8 @@
 
 #include <dtInspectorQt/export.h>
 #include <dtCore/base.h>
-#include <QtGui/QApplication>
+
+class QApplication;
 
 namespace dtInspectorQt
 {
