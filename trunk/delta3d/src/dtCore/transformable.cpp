@@ -415,8 +415,11 @@ void Transformable::RenderProxyNode(const bool enable)
    }
    else
    {
-      RemoveChild(mPointAxis.get());
-      mPointAxis = NULL;
+      if (mPointAxis.valid())
+      {
+         RemoveChild(mPointAxis.get());
+         mPointAxis = NULL;
+      }
    }
 
    mRenderProxyNode = enable;
