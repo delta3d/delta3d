@@ -390,7 +390,7 @@ namespace dtAudio
 ///Deprecated feb/24/2009 -- setting Distance model with method now,
 // numSources is not something OpenAL lets you configure,
 // and EAX is handled via ConfigEAX
-DEPRECATE_FUNC struct DT_AUDIO_EXPORT AudioConfigData
+struct DT_AUDIO_EXPORT AudioConfigData
 {
    enum DistanceModel
    {
