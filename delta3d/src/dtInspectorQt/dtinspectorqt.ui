@@ -56,7 +56,7 @@
          <x>0</x>
          <y>-241</y>
          <width>260</width>
-         <height>716</height>
+         <height>800</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -471,6 +471,42 @@
           </layout>
           <zorder>frame</zorder>
           <zorder>frame_3</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="physicalGroupBox" >
+          <property name="title" >
+           <string>Physical</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6" >
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_18" >
+             <property name="text" >
+              <string>Mass:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QCheckBox" name="physicalDynamicsToggle" >
+             <property name="toolTip" >
+              <string>Enable Collision Detection</string>
+             </property>
+             <property name="text" >
+              <string>Enable Dynamics</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QDoubleSpinBox" name="physicalMassEdit" >
+             <property name="minimum" >
+              <double>0.010000000000000</double>
+             </property>
+             <property name="maximum" >
+              <double>1000000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
