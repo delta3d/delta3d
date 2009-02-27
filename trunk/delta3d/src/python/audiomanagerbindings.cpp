@@ -9,7 +9,7 @@ using namespace boost::python;
 using namespace dtCore;
 using namespace dtAudio;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
 void initAudioManagerBindings()
 {
@@ -98,7 +98,7 @@ void initAudioManagerBindings()
          .value("kNumCommands", Sound::kNumCommands)
          .export_values();
    }
-     
+
    AudioManager* (*AudioManagerGI1)(int) = &AudioManager::GetInstance;
    AudioManager* (*AudioManagerGI2)(std::string) = &AudioManager::GetInstance;
    
@@ -108,19 +108,19 @@ void initAudioManagerBindings()
       .def("GetInstance", AudioManagerGI1, return_internal_reference<>())
       .def("GetInstance", AudioManagerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("Instantiate", &AudioManager::Instantiate)
+      //.def("Instantiate", &AudioManager::Instantiate)
       .staticmethod("Instantiate")
       .def("Destroy", &AudioManager::Destroy)
       .staticmethod("Destroy")
       .def("GetListener", &AudioManager::GetListener, return_value_policy<reference_existing_object>())
       .staticmethod("GetListener")
-      .def("Config", &AudioManager::Config, C_overloads())
+      //.def("Config", &AudioManager::Config, C_overloads())
       .def("NewSound", &AudioManager::NewSound, return_internal_reference<>())
       .def("FreeSound", &AudioManager::FreeSound)
       .def("LoadFile", &AudioManager::LoadFile)
       .def("UnloadFile", &AudioManager::UnloadFile);
    
-   {
+   /*{
       scope ACD_scope = class_<AudioConfigData>("AudioConfigData", init<optional<unsigned int, bool, unsigned int> >())
          .def_readwrite("numSources", &AudioConfigData::numSources)
          .def_readwrite("eax", &AudioConfigData::eax)
@@ -131,5 +131,5 @@ void initAudioManagerBindings()
          .value("dmINVERSE", AudioConfigData::dmINVERSE)
          .value("dmINVCLAMP", AudioConfigData::dmINVCLAMP)
          .export_values();
-   }
+   }*/
 }
