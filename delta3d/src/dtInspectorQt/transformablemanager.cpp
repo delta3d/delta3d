@@ -15,6 +15,8 @@ dtInspectorQt::TransformableManager::TransformableManager(Ui::InspectorWidget &u
    connect(mUI->transRELRadioButton, SIGNAL(clicked()), this, SLOT(Update()));
    connect(mUI->transCollisionToggle, SIGNAL(stateChanged(int)), this, SLOT(OnCollisionDetection(int)));
    connect(mUI->transRenderToggle, SIGNAL(stateChanged(int)), this, SLOT(OnRenderCollision(int)));
+   connect(mUI->transCategoryEdit, SIGNAL(textChanged(const QString&)), this, SLOT(OnCategoryBits(const QString&)));
+   connect(mUI->transCollideEdit, SIGNAL(textChanged(const QString&)), this, SLOT(OnCollideBits(const QString&)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,10 @@ void dtInspectorQt::TransformableManager::Update()
       //collision detection
       mUI->transCollisionToggle->setChecked(mOperateOn->GetGeomWrapper()->GetCollisionDetection());
       mUI->transRenderToggle->setChecked(mOperateOn->GetRenderCollisionGeometry());
+
+      //bits
+      mUI->transCategoryEdit->setText(QString::number(mOperateOn->GetGeomWrapper()->GetCollisionCategoryBits()));
+      mUI->transCollideEdit->setText(QString::number(mOperateOn->GetGeomWrapper()->GetCollisionCollideBits()));
    }
    else
    {
@@ -108,5 +114,23 @@ void dtInspectorQt::TransformableManager::OnRenderCollision(int checked)
    if (mOperateOn.valid())
    {
       mOperateOn->RenderCollisionGeometry(checked ? true : false);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::TransformableManager::OnCategoryBits(const QString& text)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->GetGeomWrapper()->SetCollisionCategoryBits(text.toULong());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::TransformableManager::OnCollideBits(const QString& text)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->GetGeomWrapper()->SetCollisionCollideBits(text.toULong());
    }
 }

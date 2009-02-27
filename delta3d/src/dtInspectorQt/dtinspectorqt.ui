@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-174</y>
+         <y>-241</y>
          <width>260</width>
-         <height>650</height>
+         <height>716</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -185,15 +185,6 @@
             </widget>
            </item>
           </layout>
-          <zorder>drawableChildList</zorder>
-          <zorder>label_9</zorder>
-          <zorder>label_10</zorder>
-          <zorder>drawableParentLabel</zorder>
-          <zorder>label_14</zorder>
-          <zorder>drawableParentSceneLabel</zorder>
-          <zorder>drawableActiveToggle</zorder>
-          <zorder>drawableProxyNodeToggle</zorder>
-          <zorder>transformableGroupBox</zorder>
          </widget>
         </item>
         <item>
@@ -422,14 +413,8 @@
              <property name="frameShadow" >
               <enum>QFrame::Plain</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" >
-              <property name="topMargin" >
-               <number>2</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>2</number>
-              </property>
-              <item>
+             <layout class="QGridLayout" name="gridLayout_5" >
+              <item row="0" column="0" >
                <widget class="QCheckBox" name="transCollisionToggle" >
                 <property name="toolTip" >
                  <string>Enable Collision Detection</string>
@@ -439,7 +424,7 @@
                 </property>
                </widget>
               </item>
-              <item>
+              <item row="0" column="2" >
                <widget class="QCheckBox" name="transRenderToggle" >
                 <property name="toolTip" >
                  <string>Render the assigned collision shape</string>
@@ -449,10 +434,43 @@
                 </property>
                </widget>
               </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_16" >
+                <property name="text" >
+                 <string>Category Bits:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="label_17" >
+                <property name="text" >
+                 <string>Collide Bits:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2" >
+               <widget class="QLineEdit" name="transCategoryEdit" >
+                <property name="text" >
+                 <string/>
+                </property>
+                <property name="maxLength" >
+                 <number>32767</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2" >
+               <widget class="QLineEdit" name="transCollideEdit" >
+                <property name="text" >
+                 <string/>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>
           </layout>
+          <zorder>frame</zorder>
+          <zorder>frame_3</zorder>
          </widget>
         </item>
         <item>
@@ -543,14 +561,6 @@
             </widget>
            </item>
           </layout>
-          <zorder>sceneChildList</zorder>
-          <zorder>label_11</zorder>
-          <zorder>sceneLightToggle</zorder>
-          <zorder>sceneModeCombo</zorder>
-          <zorder>sceneFaceCombo</zorder>
-          <zorder>label_12</zorder>
-          <zorder>label_13</zorder>
-          <zorder>frame_2</zorder>
          </widget>
         </item>
         <item>

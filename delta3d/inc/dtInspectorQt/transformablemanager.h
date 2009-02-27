@@ -23,6 +23,8 @@ namespace dtInspectorQt
       void OnXYZHPRChanged(double val);
       void OnCollisionDetection(int checked);
       void OnRenderCollision(int checked);
+      void OnCategoryBits(const QString& text);
+      void OnCollideBits(const QString& text);
       void Update();
    	
    private:
