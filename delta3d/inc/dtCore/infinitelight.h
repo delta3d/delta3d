@@ -62,21 +62,11 @@ namespace dtCore
 
    public:
 
-      /// Change the azimuth and elevation of the light (aka heading and pitch)
-      /// This is where azimuth and elevation are defined in Delta3D.
-      /// The derivation of equations for x,y,z assume that
-      /// when azimuth and elevation are both 0,
-      /// the directional unit vector is along the y-axis.
-      /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
-      /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
-      /// @pre el<=90.0 && el>-90
+      /// Deprecated 2/28/09
       DEPRECATE_FUNC void SetAzimuthElevation(float az, float el);
       DEPRECATE_FUNC void SetAzimuthElevation(const osg::Vec2& azEl);
 
-      /// Values returned may be different than those set due to math limitations, but
-      /// they are guarunteed to be equal internally.
-      /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
-      /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
+      /// Deprecated 2/28/09
       DEPRECATE_FUNC void GetAzimuthElevation(float& az, float& el) const;
       DEPRECATE_FUNC osg::Vec2 GetAzimuthElevation() const;
    };

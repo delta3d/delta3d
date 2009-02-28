@@ -110,9 +110,9 @@ void dtCore::ODESpaceWrap::DefaultNearCallback(void* data, dGeomID o1, dGeomID o
          for (int i = 0; i < numContacts; ++i)
          {
             contact.surface.mode       = dContactBounce;
-            contact.surface.mu         = 1000.0;
-            contact.surface.bounce     = 0.75;
-            contact.surface.bounce_vel = 0.001;
+            contact.surface.mu         = (dReal)1000.0;
+            contact.surface.bounce     = (dReal)0.75;
+            contact.surface.bounce_vel = (dReal)0.001;
 
             contact.geom = contactGeoms[i];
 

@@ -27,7 +27,7 @@ namespace dtActors
 {
     void CloudPlaneActorProxy::CreateActor()
     {
-        SetActor(*new dtCore::CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800));
+        SetActor(*new dtCore::CloudPlane(6, 0.5f, 6, 1.f, 0.3f, 0.96f, 256, 1800.f));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -389,7 +389,7 @@ void ShaderParameterTests::TestVec4Parameter()
       CPPUNIT_ASSERT_EQUAL(true, param->IsShared());
       param->SetShared(false);
 
-      osg::Vec4 testVec4(2.3, 338.9, 83.8, 93.9);
+      osg::Vec4 testVec4(2.3f, 338.9f, 83.8f, 93.9f);
       param->SetValue(testVec4);
       CPPUNIT_ASSERT_EQUAL(std::string("test"), param->GetName());
       CPPUNIT_ASSERT_EQUAL(testVec4, param->GetValue());

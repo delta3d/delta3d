@@ -47,6 +47,14 @@ namespace dtCore
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   /// Change the azimuth and elevation of the light (aka heading and pitch)
+   /// This is where azimuth and elevation are defined in Delta3D.
+   /// The derivation of equations for x,y,z assume that
+   /// when azimuth and elevation are both 0,
+   /// the directional unit vector is along the y-axis.
+   /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
+   /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
+   /// @pre el<=90.0 && el>-90
    DEPRECATE_FUNC void InfiniteLight::SetAzimuthElevation(float az, float el)
    {
       DEPRECATE("InfiniteLight::SetAzimuthElevation", "Transformable::SetTransform");
@@ -63,10 +71,20 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    DEPRECATE_FUNC void InfiniteLight::SetAzimuthElevation(const osg::Vec2& azEl)
    {
-      SetAzimuthElevation(azEl[0], azEl[1]);
+      // create the directional vector
+      osg::Vec4 direction(sinf(osg::DegreesToRadians(azEl[0]))*cosf(osg::DegreesToRadians(azEl[1])),
+         cosf(osg::DegreesToRadians(azEl[0]))*cosf(osg::DegreesToRadians(azEl[1])),
+         sinf(osg::DegreesToRadians(azEl[1])),
+         0.0f );  //force w=0.0f to ensure "infinite" light
+
+      mLightSource->getLight()->setPosition(direction);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   /// Values returned may be different than those set due to math limitations, but
+   /// they are guarunteed to be equal internally.
+   /// @param az The azimuth angle (degrees), e.g. the swing in the y-x plane.
+   /// @param el The elevation angle (degrees), e.g. the swing up or down from the y-x plane.
    DEPRECATE_FUNC void InfiniteLight::GetAzimuthElevation(float& az, float& el) const
    {
       DEPRECATE("InfiniteLight::GetAzimuthElevation", "Transformable::GetTransform");
@@ -90,8 +108,25 @@ namespace dtCore
    ////////////////////////////////////////////////////////////////////////////////
    DEPRECATE_FUNC osg::Vec2 InfiniteLight::GetAzimuthElevation() const
    {
-      osg::Vec2 azEl;
-      GetAzimuthElevation(azEl[0], azEl[1]);
-      return azEl;
+      float az, el;
+
+      osg::Vec4 xyz = mLightSource->getLight()->getPosition();
+      xyz.normalize();
+
+      float x(xyz[0]);
+      if( x < 0.0f )
+      {
+         az = 360.0 + osg::RadiansToDegrees(atan2f(x , xyz[1]));
+      }
+      else
+      {
+         az = osg::RadiansToDegrees(atan2f(x , xyz[1]));
+      }
+
+      el = osg::RadiansToDegrees(asinf(xyz[2]));
+
+
+
+      return osg::Vec2(az, el);
    }
 }

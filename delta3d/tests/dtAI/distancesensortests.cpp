@@ -175,7 +175,7 @@ namespace dtAI
 
       void TestVecFunctor()
       {
-         const osg::Vec3 testVec(0.0, 1.0, 2.2);
+         const osg::Vec3 testVec(0.0f, 1.0f, 2.2f);
          EvaluateVec3<> ev3(testVec);
          osg::Vec3 result;
          ev3(result);

@@ -473,7 +473,7 @@ namespace dtUtil
           *        of 100000 meters to 1 meter in powers of 10.
           */
          static const std::string ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
-                                                   char northSouthZone, unsigned resolution) throw(dtUtil::Exception);
+                                                   char northSouthZone, unsigned resolution);
 
 
          /**
@@ -481,8 +481,7 @@ namespace dtUtil
           */
          static void ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,
                                       const std::string& mgrs, unsigned& zone,
-                                      double& easting, double& northing)
-            throw(dtUtil::Exception);
+                                      double& easting, double& northing);
 
 
          /**

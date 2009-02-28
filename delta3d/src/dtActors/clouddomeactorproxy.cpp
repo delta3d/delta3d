@@ -30,7 +30,7 @@ namespace dtActors
 {
     void CloudDomeActorProxy::CreateActor()
     {
-        SetActor(*new CloudDome(6, 1, 6, 1, .3, 0.96, 256, 1800));
+        SetActor(*new CloudDome(6, 1, 6.f, 1.f, 0.3f, 0.96f, 256.f, 1800));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

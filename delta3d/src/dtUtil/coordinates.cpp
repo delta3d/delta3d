@@ -1089,7 +1089,7 @@ namespace dtUtil
 
    /////////////////////////////////////////////////////////////////////////////
    const std::string Coordinates::ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
-                                                   char northSouthZone, unsigned resolution) throw(dtUtil::Exception)
+                                                   char northSouthZone, unsigned resolution)
    {
        static long resolutionDivisor[6] = {100000, 10000, 1000, 100, 10, 1};
        static char gridLetters[24] =  {'A', 'B', 'C', 'D', 'E', 'F',
@@ -1146,8 +1146,7 @@ namespace dtUtil
    /////////////////////////////////////////////////////////////////////////////
    void Coordinates::ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,
                                       const std::string& mgrs,
-                                      unsigned& zone, double& easting, double& northing )
-      throw(dtUtil::Exception)
+                                      unsigned& zone, double& easting, double& northing )      
    {
       //Numbers used to scale utm to meters
       static long resolutionDivisor[6] = {100000, 10000, 1000, 100, 10, 1};
