@@ -358,7 +358,7 @@ bool dtCore::ODEBodyWrap::GetAutoDisableFlag() const
 {
    if (GetBodyID() != 0)
    {
-      return dBodyGetAutoDisableFlag(GetBodyID());
+      return dBodyGetAutoDisableFlag(GetBodyID()) ? true : false;
    }
 
    return false;

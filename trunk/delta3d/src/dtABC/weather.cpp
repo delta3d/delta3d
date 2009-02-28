@@ -121,7 +121,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
       {
          if (!mClouds[CLOUD_FEW-1].valid())
          {
-            mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f,
+            mClouds[CLOUD_FEW-1] = new dtCore::CloudPlane(6, 0.75f, 2, 1.f, 0.2f, 0.96f, 512, 1100.f,
                "Clouds Few", textureDirectory);//few
          }
          mEnvironment->AddEffect( mClouds[CLOUD_FEW-1].get() );
@@ -131,7 +131,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
       {
          if (!mClouds[CLOUD_SCATTERED-1].valid())
          {
-            mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f,
+            mClouds[CLOUD_SCATTERED-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.f, 0.3f, 0.97f,  512, 1000.f,
                "Clouds Scattered", textureDirectory);// scattered
          }
          mEnvironment->AddEffect( mClouds[CLOUD_SCATTERED-1].get() );
@@ -141,7 +141,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
       {
          if (!mClouds[CLOUD_BROKEN-1].valid())
          {
-            mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f,
+            mClouds[CLOUD_BROKEN-1] = new dtCore::CloudPlane(6, 0.5f, 4, 1.f, 0.3f, 0.96f,  512, 800.f,
                "Clouds Broken", textureDirectory); //broken
          }
          mEnvironment->AddEffect( mClouds[CLOUD_BROKEN-1].get() );
@@ -151,7 +151,7 @@ void Weather::SetBasicCloudType(const CloudType type, const std::string &texture
       {
          if (!mClouds[CLOUD_OVERCAST-1].valid())
          {
-            mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f,
+            mClouds[CLOUD_OVERCAST-1] = new dtCore::CloudPlane(6, 0.4f, 6, 1.f, 0.2f, 0.98f,  512, 600.f,
                "Clouds Overcast", textureDirectory);//overcast
          }
          mEnvironment->AddEffect( mClouds[CLOUD_OVERCAST-1].get() );

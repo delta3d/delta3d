@@ -15,19 +15,19 @@ MakeSkyDome::MakeSkyDome(const SkyDome &skyDome, float radius)
    , mGeom(new osg::Geometry())
    , mSkyDome(&skyDome)
 {
-   mLevelHeight.push_back(-9.0);
-   mLevelHeight.push_back(-9.0);
-   mLevelHeight.push_back(0.0);
-   mLevelHeight.push_back(7.2);
-   mLevelHeight.push_back(15.0);
-   mLevelHeight.push_back(90.0);
+   mLevelHeight.push_back(-9.0f);
+   mLevelHeight.push_back(-9.0f);
+   mLevelHeight.push_back(0.0f);
+   mLevelHeight.push_back(7.2f);
+   mLevelHeight.push_back(15.0f);
+   mLevelHeight.push_back(90.0f);
 
-   mCCArray.push_back(osg::Vec3(0.15, 0.25, 0.1));
-   mCCArray.push_back(osg::Vec3(0.6, 0.6, 0.7));
-   mCCArray.push_back(osg::Vec3(0.4, 0.4, 0.7));
-   mCCArray.push_back(osg::Vec3(0.2, 0.2, 0.6));
-   mCCArray.push_back(osg::Vec3(0.1, 0.1, 0.6));
-   mCCArray.push_back(osg::Vec3(0.1, 0.1, 0.7));
+   mCCArray.push_back(osg::Vec3(0.15f, 0.25f, 0.1f));
+   mCCArray.push_back(osg::Vec3(0.6f, 0.6f, 0.7f));
+   mCCArray.push_back(osg::Vec3(0.4f, 0.4f, 0.7f));
+   mCCArray.push_back(osg::Vec3(0.2f, 0.2f, 0.6f));
+   mCCArray.push_back(osg::Vec3(0.1f, 0.1f, 0.6f));
+   mCCArray.push_back(osg::Vec3(0.1f, 0.1f, 0.7f));
    
    mCoordArray = new osg::Vec3Array(VERTS_IN_CIRCUM * mLevelHeight.size());
    mColorArray = new osg::Vec4Array(VERTS_IN_CIRCUM * mLevelHeight.size());

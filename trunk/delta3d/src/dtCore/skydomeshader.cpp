@@ -110,7 +110,7 @@ SkyDomeShader::SkyDomeShader()
       "   END  \n";
    mDomeFP->setFragmentProgram( data2 );
 
-   lambda = osg::Vec3(1.0 / 650e-9,1.0 / 570e-9,1.0 / 475e-9);
+   lambda = osg::Vec3(1.0f/650e-9f, 1.0f/570e-9f, 1.0f/475e-9f);
 
    for (int i = 0; i < 3; i++)
    {
@@ -119,13 +119,13 @@ SkyDomeShader::SkyDomeShader()
    }
 
    //constants
-    n = 1.003; //refractive index of air
-    pn = 0.035; //depolarization factor of air
+   n = 1.003f; //refractive index of air
+   pn = 0.035f; //depolarization factor of air
 
    mBrightness = 0.125f;
    mContrast = 0.15f;
 
-   greenstein = 0.8 * 1.5; ///< Magic number
+   greenstein = 0.8f * 1.5f; ///< Magic number
 }
 
 SkyDomeShader::~SkyDomeShader()

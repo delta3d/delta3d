@@ -74,7 +74,7 @@ namespace dtDAL
          dtDAL::ActorProxyIcon::ActorProxyIconConfig config;
          config.mForwardVector = false;
          config.mUpVector = false;
-         config.mScale = 0.1;
+         config.mScale = 0.1f;
 
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_WAYPOINT, config);
       }

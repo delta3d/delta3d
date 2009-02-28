@@ -301,7 +301,7 @@ void CoordinateTests::TestGeocentricToCartesianUTMConversions()
 
    {
       osg::Vec3d testLoc(-2.32164e6, -4.74037e6, 3.56934e6);
-      osg::Vec3 testRot(-1.1564, 0.833645, -2.42036f);
+      osg::Vec3 testRot(-1.1564f, 0.833645f, -2.42036f);
 
       osg::Vec3 result = converter->ConvertToLocalTranslation(testLoc);
       osg::Vec3 resultRot = converter->ConvertToLocalRotation(testRot[0], testRot[1], testRot[2]);
@@ -383,9 +383,9 @@ void CoordinateTests::TestGeodeticToCartesianFlatEarthConversions()
       osg::Vec3 result = converter->ConvertToLocalTranslation(testLoc);
       osg::Vec3 resultRot = converter->ConvertToLocalRotation(testRot[0], testRot[1], testRot[2]);
 
-      CPPUNIT_ASSERT(dtUtil::Equivalent(result, osg::Vec3(165820.781, 33336.0039, 44.002552f), 1e-4f));
+      CPPUNIT_ASSERT(dtUtil::Equivalent(result, osg::Vec3(165820.781f, 33336.0039f, 44.002552f), 1e-4f));
 
-      CPPUNIT_ASSERT(dtUtil::Equivalent(resultRot, osg::Vec3(-0.0828478411, -0.37814188, -0.121647872), 1e-4f));
+      CPPUNIT_ASSERT(dtUtil::Equivalent(resultRot, osg::Vec3(-0.0828478411f, -0.37814188f, -0.121647872f), 1e-4f));
 
       osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
       osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
@@ -599,7 +599,7 @@ void CoordinateTests::TestUTMToCartesianUTMConversions()
       && osg::equivalent(expectedRot[1], resultRot[1], 1e-2f)
       && osg::equivalent(expectedRot[2], resultRot[2], 1e-2f));
 
-   osg::Vec3 locOffset(562078.225268, 3788040.632974, -32.0);
+   osg::Vec3 locOffset(562078.225268f, 3788040.632974f, -32.0f);
    converter->SetLocalOffset(locOffset);
 
    result = converter->ConvertToLocalTranslation(testLoc);

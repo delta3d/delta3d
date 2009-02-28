@@ -222,10 +222,10 @@ void StringUtilTests::TestToString()
       testString = dtUtil::ToString<double>( 19.23 ); 
       CPPUNIT_ASSERT(testString == "19.23");
 
-      testString = dtUtil::ToString<float>( 0.0 ); //RRN This returns "0"; should return "0.0"? If so, uncomment the next line
+      testString = dtUtil::ToString<float>(0.0f); //RRN This returns "0"; should return "0.0"? If so, uncomment the next line
       //CPPUNIT_ASSERT(testString == "0.0");
 
-      testString = dtUtil::ToString<float>( 19.23 ); 
+      testString = dtUtil::ToString<float>(19.23f); 
       CPPUNIT_ASSERT(testString == "19.23");
 
       testString = dtUtil::ToString<int>( 0 );
