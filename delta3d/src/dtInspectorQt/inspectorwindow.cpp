@@ -1,5 +1,6 @@
 #include <dtInspectorQt/inspectorwindow.h>
 #include <dtInspectorQt/basemanager.h>
+#include <dtInspectorQt/cameramanager.h>
 #include <dtInspectorQt/drawablemanager.h>
 #include <dtInspectorQt/transformablemanager.h>
 #include <dtInspectorQt/physicalmanager.h>
@@ -21,6 +22,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new TransformableManager(ui));
    mManagerContainer.push_back(new PhysicalManager(ui));
    mManagerContainer.push_back(new SceneManager(ui));
+   mManagerContainer.push_back(new CameraManager(ui));
 
    UpdateInstances();
 
