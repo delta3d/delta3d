@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>551</height>
+    <width>426</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -42,10 +42,10 @@
     <item>
      <widget class="QScrollArea" name="scrollArea" >
       <property name="verticalScrollBarPolicy" >
-       <enum>Qt::ScrollBarAlwaysOn</enum>
+       <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
       <property name="horizontalScrollBarPolicy" >
-       <enum>Qt::ScrollBarAlwaysOn</enum>
+       <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
       <property name="widgetResizable" >
        <bool>true</bool>
@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-241</y>
-         <width>260</width>
-         <height>800</height>
+         <y>-268</y>
+         <width>263</width>
+         <height>1014</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -474,6 +474,162 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="cameraGroupBox" >
+          <property name="title" >
+           <string>Camera</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_7" >
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="cameraEnabledToggle" >
+             <property name="text" >
+              <string>Enabled</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QWidget" native="1" name="widget_2" >
+             <layout class="QHBoxLayout" name="horizontalLayout_2" >
+              <item>
+               <widget class="QRadioButton" name="cameraPerspToggle" >
+                <property name="text" >
+                 <string>Persp</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="cameraOrthoToggle" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Ortho</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="cameraFrustumToggle" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Frustum</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QFrame" name="cameraPerspGroup" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_8" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>2</number>
+              </property>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_15" >
+                <property name="text" >
+                 <string>Vertial:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_20" >
+                <property name="text" >
+                 <string>Aspect:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QDoubleSpinBox" name="cameraAspectEdit" >
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QDoubleSpinBox" name="cameraVertEdit" >
+                <property name="maximum" >
+                 <double>360.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QWidget" native="1" name="widget_3" >
+             <layout class="QGridLayout" name="gridLayout_9" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>2</number>
+              </property>
+              <item row="0" column="1" >
+               <widget class="QDoubleSpinBox" name="cameraNearClipEdit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="maximum" >
+                 <double>999999.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_19" >
+                <property name="text" >
+                 <string>Near:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QDoubleSpinBox" name="cameraFarClipEdit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="maximum" >
+                 <double>999999.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_21" >
+                <property name="text" >
+                 <string>Far:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+          <zorder>cameraEnabledToggle</zorder>
+          <zorder>cameraPerspToggle</zorder>
+          <zorder>cameraOrthoToggle</zorder>
+          <zorder>cameraFrustumToggle</zorder>
+          <zorder>cameraPerspGroup</zorder>
+          <zorder>doubleSpinBox_4</zorder>
+          <zorder>widget_2</zorder>
+          <zorder>cameraNearEdit</zorder>
+          <zorder>cameraFarEdit</zorder>
+          <zorder>widget_3</zorder>
+          <zorder>widget_3</zorder>
+          <zorder>cameraVertEdit</zorder>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="physicalGroupBox" >
           <property name="title" >
            <string>Physical</string>
@@ -623,7 +779,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>423</width>
+     <width>426</width>
      <height>21</height>
     </rect>
    </property>
