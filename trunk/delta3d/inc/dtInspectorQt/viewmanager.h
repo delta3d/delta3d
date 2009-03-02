@@ -50,6 +50,8 @@ namespace dtInspectorQt
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::View> mOperateOn;
 
+      void Update();
+
    };
 }  
 #endif //viewmanager_h__
