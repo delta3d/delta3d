@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
-    <height>641</height>
+    <width>482</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-1034</y>
-         <width>298</width>
-         <height>1694</height>
+         <y>-1428</y>
+         <width>319</width>
+         <height>2020</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -1116,6 +1116,231 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="lightGroupBox" >
+          <property name="title" >
+           <string>Light</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <item>
+            <widget class="QCheckBox" name="lightEnabledToggle" >
+             <property name="text" >
+              <string>Enabled</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" native="1" name="widget_7" >
+             <layout class="QGridLayout" name="gridLayout_16" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_58" >
+                <property name="text" >
+                 <string>Light Number:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QSpinBox" name="lightNumberEdit" >
+                <property name="maximum" >
+                 <number>7</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_59" >
+                <property name="text" >
+                 <string>Mode:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QComboBox" name="lightModeCombo" >
+                <item>
+                 <property name="text" >
+                  <string>GLOBAL</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>LOCAL</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_44" >
+             <property name="text" >
+              <string>Ambient:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_6" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_6" >
+              <item>
+               <widget class="QLabel" name="label_41" >
+                <property name="text" >
+                 <string>R:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightAmbRedEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_42" >
+                <property name="text" >
+                 <string>G:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightAmbGreenEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_43" >
+                <property name="text" >
+                 <string>B:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightAmbBlueEdit" />
+              </item>
+              <item>
+               <widget class="QToolButton" name="lightAmbPushbutton" >
+                <property name="text" >
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_45" >
+             <property name="text" >
+              <string>Diffuse:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_8" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_8" >
+              <item>
+               <widget class="QLabel" name="label_51" >
+                <property name="text" >
+                 <string>R:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightDiffRedEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_52" >
+                <property name="text" >
+                 <string>G:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightDiffGreenEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_53" >
+                <property name="text" >
+                 <string>B:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightDiffBlueEdit" />
+              </item>
+              <item>
+               <widget class="QToolButton" name="lightDiffPushbutton" >
+                <property name="text" >
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_54" >
+             <property name="text" >
+              <string>Specular:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="frame_9" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_9" >
+              <item>
+               <widget class="QLabel" name="label_55" >
+                <property name="text" >
+                 <string>R:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightSpecRedEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_56" >
+                <property name="text" >
+                 <string>G:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightSpecGreenEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_57" >
+                <property name="text" >
+                 <string>B:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="lightSpecBlueEdit" />
+              </item>
+              <item>
+               <widget class="QToolButton" name="lightSpecPushbutton" >
+                <property name="text" >
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer" >
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
@@ -1139,7 +1364,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>461</width>
+     <width>482</width>
      <height>21</height>
     </rect>
    </property>
