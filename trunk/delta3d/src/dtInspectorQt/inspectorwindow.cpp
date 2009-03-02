@@ -7,7 +7,7 @@
 #include <dtInspectorQt/physicalmanager.h>
 #include <dtInspectorQt/scenemanager.h>
 #include <dtInspectorQt/transformablemanager.h>
-
+#include <dtInspectorQt/viewmanager.h>
 
 #include <dtCore/base.h>
 #include <dtCore/uniqueid.h>
@@ -27,6 +27,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new PhysicalManager(ui));
    mManagerContainer.push_back(new SceneManager(ui));
    mManagerContainer.push_back(new TransformableManager(ui));
+   mManagerContainer.push_back(new ViewManager(ui));
 
    UpdateInstances();
 
