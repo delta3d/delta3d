@@ -1,6 +1,7 @@
 #include <dtInspectorQt/inspectorwindow.h>
 #include <dtInspectorQt/basemanager.h>
 #include <dtInspectorQt/cameramanager.h>
+#include <dtInspectorQt/clouddomemanager.h>
 #include <dtInspectorQt/deltawinmanager.h>
 #include <dtInspectorQt/drawablemanager.h>
 #include <dtInspectorQt/environmentmanager.h>
@@ -24,6 +25,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    BaseManager* baseMgr = new BaseManager(ui);
    mManagerContainer.push_back(baseMgr);
    mManagerContainer.push_back(new CameraManager(ui));
+   mManagerContainer.push_back(new CloudDomeManager(ui));
    mManagerContainer.push_back(new DeltaWinManager(ui));
    mManagerContainer.push_back(new DrawableManager(ui));
    mManagerContainer.push_back(new EnvironmentManager(ui));
