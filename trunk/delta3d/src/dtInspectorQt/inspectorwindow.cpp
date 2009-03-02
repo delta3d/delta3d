@@ -5,6 +5,7 @@
 #include <dtInspectorQt/transformablemanager.h>
 #include <dtInspectorQt/physicalmanager.h>
 #include <dtInspectorQt/scenemanager.h>
+#include <dtInspectorQt/particlesystemmanager.h>
 
 
 #include <dtCore/base.h>
@@ -23,6 +24,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new PhysicalManager(ui));
    mManagerContainer.push_back(new SceneManager(ui));
    mManagerContainer.push_back(new CameraManager(ui));
+   mManagerContainer.push_back(new ParticleSystemManager(ui));
 
    UpdateInstances();
 
