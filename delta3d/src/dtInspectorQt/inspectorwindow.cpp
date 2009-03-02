@@ -3,6 +3,7 @@
 #include <dtInspectorQt/cameramanager.h>
 #include <dtInspectorQt/deltawinmanager.h>
 #include <dtInspectorQt/drawablemanager.h>
+#include <dtInspectorQt/environmentmanager.h>
 #include <dtInspectorQt/particlesystemmanager.h>
 #include <dtInspectorQt/physicalmanager.h>
 #include <dtInspectorQt/scenemanager.h>
@@ -23,6 +24,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new CameraManager(ui));
    mManagerContainer.push_back(new DeltaWinManager(ui));
    mManagerContainer.push_back(new DrawableManager(ui));
+   mManagerContainer.push_back(new EnvironmentManager(ui));
    mManagerContainer.push_back(new ParticleSystemManager(ui));
    mManagerContainer.push_back(new PhysicalManager(ui));
    mManagerContainer.push_back(new SceneManager(ui));
