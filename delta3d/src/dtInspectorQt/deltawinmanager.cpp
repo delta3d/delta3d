@@ -17,7 +17,6 @@ dtInspectorQt::DeltaWinManager::DeltaWinManager(Ui::InspectorWidget& ui)
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::DeltaWinManager::~DeltaWinManager()
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,7 +33,7 @@ void dtInspectorQt::DeltaWinManager::OnFullScreenToggle(int checked)
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->SetFullScreenMode(checked);
+      mOperateOn->SetFullScreenMode(checked ? true : false);
    }
 }
 
@@ -43,7 +42,7 @@ void dtInspectorQt::DeltaWinManager::OnCursorToggle(int checked)
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->ShowCursor(checked);
+      mOperateOn->ShowCursor(checked ? true : false);
    }
 }
 

@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-1428</y>
-         <width>319</width>
-         <height>2020</height>
+         <y>-1200</y>
+         <width>317</width>
+         <height>2118</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -897,6 +897,13 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="2" >
+               <widget class="QLabel" name="label_37" >
+                <property name="text" >
+                 <string>Visibility:</string>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="3" >
                <widget class="QDoubleSpinBox" name="envFogVisibilityEdit" >
                 <property name="decimals" >
@@ -907,18 +914,10 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="2" >
-               <widget class="QLabel" name="label_37" >
-                <property name="text" >
-                 <string>Visibility:</string>
-                </property>
-               </widget>
-              </item>
              </layout>
              <zorder>envFogToggle</zorder>
              <zorder>label_37</zorder>
              <zorder>envFogVisibilityEdit</zorder>
-             <zorder>envDateTimeEdit</zorder>
             </widget>
            </item>
            <item row="2" column="0" >
@@ -945,7 +944,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envFogRedEdit" />
+               <widget class="QDoubleSpinBox" name="envFogRedEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_31" >
@@ -955,7 +961,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envFogGreenEdit" />
+               <widget class="QDoubleSpinBox" name="envFogGreenEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_32" >
@@ -965,7 +978,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envFogBlueEdit" />
+               <widget class="QDoubleSpinBox" name="envFogBlueEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QToolButton" name="envFogColorButton" >
@@ -1001,7 +1021,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envSkyRedEdit" />
+               <widget class="QDoubleSpinBox" name="envSkyRedEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_34" >
@@ -1011,7 +1038,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envSkyGreenEdit" />
+               <widget class="QDoubleSpinBox" name="envSkyGreenEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_35" >
@@ -1021,7 +1055,14 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="envSkyBlueEdit" />
+               <widget class="QDoubleSpinBox" name="envSkyBlueEdit" >
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QToolButton" name="envSkyColorButton" >
@@ -1365,7 +1406,7 @@
      <x>0</x>
      <y>0</y>
      <width>482</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

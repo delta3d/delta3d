@@ -23,6 +23,7 @@
 
 #include <dtInspectorQt/imanager.h>
 #include <QtCore/QObject>
+#include <QtGui/QDateTimeEdit>
 #include <dtCore/observerptr.h>
 #include <dtCore/environment.h>
 
@@ -45,8 +46,18 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnFogToggled(int checked);
+      void OnVisibilityChanged(double newValue);
+      void OnFogColorChanged(double newValue);
+      void OnFogColorPickerClicked();
+      void OnSkyColorChanged(double newValue);
+      void OnSkyColorPickerClicked();
+      void OnDateTimeChanged(QDateTime newDateTime);
+      void OnRefPositionChanged(double newValue);
 
    private:
+      void Update();
+
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::Environment> mOperateOn;
 
