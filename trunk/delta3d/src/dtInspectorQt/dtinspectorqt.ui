@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
+    <width>425</width>
     <height>612</height>
    </rect>
   </property>
@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-643</y>
-         <width>274</width>
-         <height>1165</height>
+         <y>-295</y>
+         <width>262</width>
+         <height>1302</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -474,6 +474,107 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="winGroupBox" >
+          <property name="title" >
+           <string>DeltaWin</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_11" >
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="winFullscreenToggle" >
+             <property name="text" >
+              <string>FullScreen</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QCheckBox" name="winCursorToggle" >
+             <property name="text" >
+              <string>Cursor</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_22" >
+             <property name="text" >
+              <string>Title:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLineEdit" name="winTitleEdit" />
+           </item>
+           <item row="2" column="0" colspan="2" >
+            <widget class="QWidget" native="1" name="widget_4" >
+             <layout class="QGridLayout" name="gridLayout_10" >
+              <item row="0" column="1" >
+               <widget class="QSpinBox" name="winXEdit" >
+                <property name="minimum" >
+                 <number>-5000</number>
+                </property>
+                <property name="maximum" >
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QSpinBox" name="winYEdit" >
+                <property name="minimum" >
+                 <number>-5000</number>
+                </property>
+                <property name="maximum" >
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_23" >
+                <property name="text" >
+                 <string>X:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_24" >
+                <property name="text" >
+                 <string>Y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QSpinBox" name="winWidthEdit" >
+                <property name="maximum" >
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1" >
+               <widget class="QSpinBox" name="winHeightEdit" >
+                <property name="maximum" >
+                 <number>5000</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="label_25" >
+                <property name="text" >
+                 <string>Width:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" >
+               <widget class="QLabel" name="label_26" >
+                <property name="text" >
+                 <string>Height:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="cameraGroupBox" >
           <property name="title" >
            <string>Camera</string>
@@ -615,10 +716,6 @@
             </widget>
            </item>
           </layout>
-          <zorder>cameraEnabledToggle</zorder>
-          <zorder>cameraPerspGroup</zorder>
-          <zorder>widget_2</zorder>
-          <zorder>widget_3</zorder>
          </widget>
         </item>
         <item>
@@ -794,8 +891,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>426</width>
-     <height>26</height>
+     <width>425</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
