@@ -45,8 +45,14 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnFullScreenToggle(int checked);
+      void OnCursorToggle(int checked);
+      void OnTitleChanged(const QString& title);
+      void OnPositionChanged();
 
    private:
+      void Update();
+
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::DeltaWin> mOperateOn;
 
