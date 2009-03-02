@@ -7,6 +7,7 @@
 #include <dtInspectorQt/particlesystemmanager.h>
 #include <dtInspectorQt/physicalmanager.h>
 #include <dtInspectorQt/scenemanager.h>
+#include <dtInspectorQt/skydomemanager.h>
 #include <dtInspectorQt/transformablemanager.h>
 #include <dtInspectorQt/viewmanager.h>
 
@@ -28,6 +29,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new ParticleSystemManager(ui));
    mManagerContainer.push_back(new PhysicalManager(ui));
    mManagerContainer.push_back(new SceneManager(ui));
+   mManagerContainer.push_back(new SkyDomeManager(ui));
    mManagerContainer.push_back(new TransformableManager(ui));
    mManagerContainer.push_back(new ViewManager(ui));
 
