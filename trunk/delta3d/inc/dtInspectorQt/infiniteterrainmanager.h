@@ -45,8 +45,17 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnSegmentSizeChanged();
+      void OnSegmentDivisionsChanged();
+      void OnHorizontalScaleChanged();
+      void OnVerticalScaleChanged();
+      void OnBuildDistanceChanged();
+      void OnSmoothCollisionsToggled(int checked);
+      void OnRegenerate();
 
    private:
+      void Update();
+
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::InfiniteTerrain> mOperateOn;
 
