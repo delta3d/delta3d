@@ -113,7 +113,7 @@ class OSGHelper : public HelperObject {
 		OSGHelper(TSTR name);
 		~OSGHelper();		
 
-		int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
+		virtual int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
 };
 
 class OSGHelperClassDesc:public ClassDesc2 {

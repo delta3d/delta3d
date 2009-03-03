@@ -36,6 +36,10 @@ public:
 	void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 	Class_ID ClassID() {return DOFTRANSFORM_CLASS_ID;}
 	RefTargetHandle Clone(RemapDir& remap);
+   /*virtual*/ int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
+   void DrawAnAxis( ViewExp *vpt, Point3 axis );
+   void DrawAxis(ViewExp *vpt, const Matrix3 &tm, float length);
+   void Text( ViewExp *vpt, TCHAR *str, Point3 &pt );
 };
 
 class DOFTransformClassDesc:public OSGHelperClassDesc {
@@ -60,11 +64,7 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 										 P_AUTO_CONSTRUCT + P_AUTO_UI, PBLOCK_REF , 
 										 
 										 // rollout
-										 IDD_DOFTRANSFORM, IDS_DOF, 0, 0, &theHelperProc,		
-										 doftrans_nodes,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_DOF_NODES,
-										 p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
-										 p_prompt,		IDS_PICK_GEOM_OBJECT,
-										 end,
+										 IDD_DOFTRANSFORM, IDS_DOF, 0, 0, NULL,											 
 
 										 // mult order
 										 dof_mult_order,		 	_T("Mult Order"),		TYPE_INT, 	P_ANIMATABLE,	IDS_BILL_MODE,
@@ -205,7 +205,6 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 
 void DOFTransform::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
 	editOb   = this;
 	DOFTransDesc.BeginEditParams(ip, this, flags, prev);	
 }
@@ -213,7 +212,6 @@ void DOFTransform::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){
 void DOFTransform::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
 	editOb   = NULL;
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
 	DOFTransDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }
@@ -224,4 +222,89 @@ RefTargetHandle DOFTransform::Clone(RemapDir& remap){
 	newob->ReplaceReference(0, pblock2->Clone(remap));
 	BaseClone(this, newob, remap);
 	return(newob);
+}
+
+
+void DOFTransform::DrawAnAxis( ViewExp *vpt, Point3 axis )
+{
+   Point3 v1, v2, v[3];	
+   v1 = axis * (float)0.9;
+   if ( axis.x != 0.0 || axis.y != 0.0 ) {
+      v2 = Point3( axis.y, -axis.x, axis.z ) * (float)0.1;
+   } else {
+      v2 = Point3( axis.x, axis.z, -axis.y ) * (float)0.1;
+   }
+
+   v[0] = Point3(0.0,0.0,0.0);
+   v[1] = axis;
+   vpt->getGW()->polyline( 2, v, NULL, NULL, FALSE, NULL );	
+   v[0] = axis;
+   v[1] = v1+v2;
+   vpt->getGW()->polyline( 2, v, NULL, NULL, FALSE, NULL );
+   v[0] = axis;
+   v[1] = v1-v2;
+   vpt->getGW()->polyline( 2, v, NULL, NULL, FALSE, NULL );
+}
+
+void DOFTransform::Text( ViewExp *vpt, TCHAR *str, Point3 &pt )
+{	
+   vpt->getGW()->text( &pt, str );	
+}
+
+
+void DOFTransform::DrawAxis(ViewExp *vpt, const Matrix3 &tm, float length)
+{
+   Matrix3 tmn = tm;
+   float zoom;
+
+   //scale to always be the same size on screen
+   zoom = vpt->GetScreenScaleFactor(tmn.GetTrans()) * 0.005f;
+   tmn.Scale( Point3(zoom,zoom,zoom) );
+   
+
+   vpt->getGW()->setTransform( tmn );		
+
+   Text( vpt, _T("x"), Point3(length,0.0f,0.0f) ); 
+   DrawAnAxis( vpt, Point3(length,0.0f,0.0f) );	
+
+   Text( vpt, _T("y"), Point3(0.0f,length,0.0f) ); 
+   DrawAnAxis( vpt, Point3(0.0f,length,0.0f) );	
+
+   Text( vpt, _T("z"), Point3(0.0f,0.0f,length) ); 
+   DrawAnAxis( vpt, Point3(0.0f,0.0f,length) );
+}
+
+int DOFTransform::DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt){
+
+   Color color(inode->GetWireColor()); 
+
+   Matrix3 tm(1);
+   Point3 pt(0,0,0);
+   Point3 pts[5];
+
+   vpt->getGW()->setTransform(tm);	
+   tm = inode->GetObjectTM(t);
+
+   if (inode->Selected()) {
+      vpt->getGW()->setColor( TEXT_COLOR, GetUIColor(COLOR_SELECTION) );
+      vpt->getGW()->setColor( LINE_COLOR, GetUIColor(COLOR_SELECTION) );
+   } 
+   else if (!inode->IsFrozen() && !inode->Dependent()) {
+      vpt->getGW()->setColor( TEXT_COLOR, color);
+      vpt->getGW()->setColor( LINE_COLOR, color);
+   }	
+
+   DrawAxis(vpt, tm, 30.0f);
+
+   vpt->getGW()->setTransform(tm);
+
+   if (!inode->IsFrozen() && !inode->Dependent() && !inode->Selected()) {
+      vpt->getGW()->setColor( LINE_COLOR, color);
+   }
+
+   vpt->getGW()->marker(&pt,X_MRKR);
+   vpt->getGW()->text( &pt , name );
+
+
+   return 1;
 }
