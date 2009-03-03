@@ -54,8 +54,8 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-2551</y>
-         <width>329</width>
+         <y>-2587</y>
+         <width>336</width>
          <height>3163</height>
         </rect>
        </property>
@@ -848,13 +848,6 @@
                </widget>
               </item>
              </layout>
-             <zorder>label_64</zorder>
-             <zorder>label_70</zorder>
-             <zorder>objectScaleXEdit</zorder>
-             <zorder>label_65</zorder>
-             <zorder>objectScaleYEdit</zorder>
-             <zorder>label_66</zorder>
-             <zorder>objectScaleZEdit</zorder>
             </widget>
            </item>
            <item row="5" column="0" >
@@ -2091,7 +2084,11 @@
             </widget>
            </item>
            <item row="5" column="1" >
-            <widget class="QDoubleSpinBox" name="cloudDomeScaleEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeScaleEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="5" column="2" >
             <widget class="QLabel" name="label_86" >
@@ -2101,7 +2098,11 @@
             </widget>
            </item>
            <item row="5" column="3" >
-            <widget class="QDoubleSpinBox" name="cloudDomeExpEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeExpEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="6" column="0" >
             <widget class="QLabel" name="label_87" >
@@ -2111,7 +2112,11 @@
             </widget>
            </item>
            <item row="6" column="1" >
-            <widget class="QDoubleSpinBox" name="cloudDomeCutoffEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeCutoffEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="6" column="2" >
             <widget class="QLabel" name="label_90" >
@@ -2121,7 +2126,11 @@
             </widget>
            </item>
            <item row="6" column="3" >
-            <widget class="QDoubleSpinBox" name="cloudDomeBiasEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeBiasEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="7" column="0" >
             <widget class="QLabel" name="label_88" >
@@ -2131,7 +2140,11 @@
             </widget>
            </item>
            <item row="7" column="1" >
-            <widget class="QDoubleSpinBox" name="cloudDomeXEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeXEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="7" column="2" >
             <widget class="QLabel" name="label_89" >
@@ -2141,7 +2154,11 @@
             </widget>
            </item>
            <item row="7" column="3" >
-            <widget class="QDoubleSpinBox" name="cloudDomeYEdit" />
+            <widget class="QDoubleSpinBox" name="cloudDomeYEdit" >
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
            </item>
            <item row="2" column="0" colspan="4" >
             <widget class="QFrame" name="frame_11" >
@@ -2160,7 +2177,17 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="cloudDomeRedEdit" />
+               <widget class="QDoubleSpinBox" name="cloudDomeRedEdit" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_92" >
@@ -2170,7 +2197,17 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="cloudDomeGreenEdit" />
+               <widget class="QDoubleSpinBox" name="cloudDomeGreenEdit" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_93" >
@@ -2180,7 +2217,17 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="cloudDomeBlueEdit" />
+               <widget class="QDoubleSpinBox" name="cloudDomeBlueEdit" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QToolButton" name="cloudDomeColorButton" >

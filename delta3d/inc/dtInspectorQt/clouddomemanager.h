@@ -45,10 +45,15 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
-
+      void OnEnabled(int state);
+      void OnColorChanged(double);
+      void OnPickColor();
+      void OnParametersChanged(double val);
    private:
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::CloudDome> mOperateOn;
+
+      void Update();
 
    };
 }  
