@@ -46,6 +46,7 @@ namespace dtInspectorQt
 
    protected slots:
       void OnColorChanged(double val);
+      void OnColorPickerClicked();
 
    private:
       Ui::InspectorWidget* mUI;

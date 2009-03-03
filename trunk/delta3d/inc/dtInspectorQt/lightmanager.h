@@ -25,6 +25,8 @@
 #include <QtCore/QObject>
 #include <dtCore/observerptr.h>
 #include <dtCore/light.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/spotlight.h>
 
 namespace Ui
 {
@@ -45,6 +47,7 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      // General Light slots
       void OnEnabled(int checked);
       void OnLightNumberChanged(int newValue);
       void OnModeChanged(const QString& newValue);
@@ -55,12 +58,23 @@ namespace dtInspectorQt
       void OnSpecularChanged(double newValue);
       void OnSpecularColorChooserClicked();
 
+      // Positional light slots
+      void OnAttenuationChanged(double newValue);
+
+      // Spotlight slots
+      void OnSpotCutoffChanged(double newValue);
+      void OnSpotExponentChanged(double newValue);
+
    private:
       void Update();
+      void UpdateGeneralLightProperties();
+      void UpdatePositionalLightProperties();
+      void UpdateSpotLightProperties();
 
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::Light> mOperateOn;
-
+      dtCore::ObserverPtr<dtCore::PositionalLight> mPositionalLight;
+      dtCore::ObserverPtr<dtCore::SpotLight> mSpotLight;
    };
 }  
 #endif //lightmanager_h__

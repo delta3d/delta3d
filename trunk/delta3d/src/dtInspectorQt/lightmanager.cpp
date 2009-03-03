@@ -6,6 +6,7 @@
 dtInspectorQt::LightManager::LightManager(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   // General light connections
    connect(mUI->lightEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->lightNumberEdit, SIGNAL(valueChanged(int)), this, SLOT(OnLightNumberChanged(int)));
    connect(mUI->lightModeCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(OnModeChanged(const QString&)));
@@ -21,6 +22,15 @@ dtInspectorQt::LightManager::LightManager(Ui::InspectorWidget& ui)
    connect(mUI->lightSpecGreenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnSpecularChanged(double)));
    connect(mUI->lightSpecBlueEdit, SIGNAL(valueChanged(double)), this, SLOT(OnSpecularChanged(double)));
    connect(mUI->lightSpecPushbutton, SIGNAL(clicked()), this, SLOT(OnSpecularColorChooserClicked()));
+
+   // Positional light connections
+   connect(mUI->positionalLightConstAttenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnAttenuationChanged(double)));
+   connect(mUI->positionalLightLinearAttenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnAttenuationChanged(double)));
+   connect(mUI->positionalLightQuadAttenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnAttenuationChanged(double)));
+
+   // Spotlight connections
+   connect(mUI->spotlightCutoffEdit, SIGNAL(valueChanged(double)), this, SLOT(OnSpotCutoffChanged(double)));
+   connect(mUI->spotlightExponentEdit, SIGNAL(valueChanged(double)), this, SLOT(OnSpotExponentChanged(double)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -144,44 +154,120 @@ void dtInspectorQt::LightManager::OnSpecularColorChooserClicked()
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::OnAttenuationChanged(double newValue)
+{
+   if (mPositionalLight.valid())
+   {
+      mPositionalLight->SetAttenuation(mUI->positionalLightConstAttenEdit->value(),
+         mUI->positionalLightLinearAttenEdit->value(), mUI->positionalLightQuadAttenEdit->value());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::OnSpotCutoffChanged(double newValue)
+{
+   if (mSpotLight.valid())
+   {
+      mSpotLight->SetSpotCutoff(mUI->spotlightCutoffEdit->value());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::OnSpotExponentChanged(double newValue)
+{
+   if (mSpotLight.valid())
+   {
+      mSpotLight->SetSpotExponent(mUI->spotlightExponentEdit->value());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::LightManager::Update()
 {
    if (mOperateOn.valid())
    {
-      mUI->lightGroupBox->show();
-
-      mUI->lightEnabledToggle->setChecked(mOperateOn->GetEnabled());
-      mUI->lightNumberEdit->setValue(mOperateOn->GetNumber());
-
-      if (mOperateOn->GetLightingMode()==dtCore::Light::GLOBAL)
+      UpdateGeneralLightProperties();
+      dtCore::PositionalLight* positionalLight = dynamic_cast<dtCore::PositionalLight*>(mOperateOn.get());
+      if (positionalLight != NULL)
       {
-         mUI->lightModeCombo->setCurrentIndex(mUI->lightModeCombo->findText("GLOBAL"));
+         mPositionalLight = positionalLight;
+         UpdatePositionalLightProperties();
       }
       else
       {
-         mUI->lightModeCombo->setCurrentIndex(mUI->lightModeCombo->findText("LOCAL"));
+         mUI->positionalLightGroupBox->hide();
       }
 
-      float r,g,b,a;
-      mOperateOn->GetAmbient(r, g, b, a);
-      mUI->lightAmbRedEdit->setValue(r);
-      mUI->lightAmbGreenEdit->setValue(g);
-      mUI->lightAmbBlueEdit->setValue(b);
-
-      mOperateOn->GetSpecular(r, g, b, a);
-      mUI->lightDiffRedEdit->setValue(r);
-      mUI->lightDiffGreenEdit->setValue(g);
-      mUI->lightDiffBlueEdit->setValue(b);
-
-      mOperateOn->GetDiffuse(r, g, b, a);
-      mUI->lightSpecRedEdit->setValue(r);
-      mUI->lightSpecGreenEdit->setValue(g);
-      mUI->lightSpecBlueEdit->setValue(b);
+      dtCore::SpotLight* spotlight = dynamic_cast<dtCore::SpotLight*>(mOperateOn.get());
+      if (spotlight != NULL)
+      {
+         mSpotLight = spotlight;
+         UpdateSpotLightProperties();
+      }
+      else
+      {
+         mUI->spotlightGroupBox->hide();
+      }
    }
    else
    {
       mUI->lightGroupBox->hide();
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::UpdateGeneralLightProperties()
+{
+   mUI->lightGroupBox->show();
+
+   mUI->lightEnabledToggle->setChecked(mOperateOn->GetEnabled());
+   mUI->lightNumberEdit->setValue(mOperateOn->GetNumber());
+
+   if (mOperateOn->GetLightingMode()==dtCore::Light::GLOBAL)
+   {
+      mUI->lightModeCombo->setCurrentIndex(mUI->lightModeCombo->findText("GLOBAL"));
+   }
+   else
+   {
+      mUI->lightModeCombo->setCurrentIndex(mUI->lightModeCombo->findText("LOCAL"));
+   }
+
+   float r,g,b,a;
+   mOperateOn->GetAmbient(r, g, b, a);
+   mUI->lightAmbRedEdit->setValue(r);
+   mUI->lightAmbGreenEdit->setValue(g);
+   mUI->lightAmbBlueEdit->setValue(b);
+
+   mOperateOn->GetSpecular(r, g, b, a);
+   mUI->lightDiffRedEdit->setValue(r);
+   mUI->lightDiffGreenEdit->setValue(g);
+   mUI->lightDiffBlueEdit->setValue(b);
+
+   mOperateOn->GetDiffuse(r, g, b, a);
+   mUI->lightSpecRedEdit->setValue(r);
+   mUI->lightSpecGreenEdit->setValue(g);
+   mUI->lightSpecBlueEdit->setValue(b);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::UpdatePositionalLightProperties()
+{
+   mUI->positionalLightGroupBox->show();
+
+   float con, lin, quad;
+   mPositionalLight->GetAttenuation(con, lin, quad);
+   mUI->positionalLightConstAttenEdit->setValue(con);
+   mUI->positionalLightLinearAttenEdit->setValue(lin);
+   mUI->positionalLightQuadAttenEdit->setValue(quad);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LightManager::UpdateSpotLightProperties()
+{
+   mUI->spotlightGroupBox->show();
+
+   mUI->spotlightCutoffEdit->setValue(mSpotLight->GetSpotCutoff());
+   mUI->spotlightExponentEdit->setValue(mSpotLight->GetSpotExponent());
 }
 
 //////////////////////////////////////////////////////////////////////////
