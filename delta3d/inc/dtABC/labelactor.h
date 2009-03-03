@@ -152,6 +152,13 @@ namespace dtABC
          void SetTextAlignment(AlignmentType alignment);
          AlignmentType GetTextAlignment() const;
 
+         /** 
+          * Enable the text geometry to be shaded by Lights.  Defaults to false.
+          * @param enable True to enable shading by the Lights
+          */
+         void SetEnableLighting(bool enable);
+         bool GetEnableLighting();
+
          /**
           * Creates the properties that any proxy may need to map to this actor.
           * This is handy if using an extended proxy that does not require

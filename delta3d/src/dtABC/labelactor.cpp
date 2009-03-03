@@ -105,6 +105,7 @@ namespace dtABC
       osg::StateSet* states = root->getOrCreateStateSet();
       states->setMode(GL_BLEND,osg::StateAttribute::ON);
       states->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+      states->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
       // Setup the geometry
       mBackdrop->setNormalArray(norms.get());
@@ -333,5 +334,21 @@ namespace dtABC
    LabelActor::AlignmentType LabelActor::GetTextAlignment() const
    {
       return LabelActor::AlignmentType(mTextNode->getAlignment());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetEnableLighting(bool enable)
+   {
+      osg::StateSet* states = GetOSGNode()->getOrCreateStateSet();
+      states->setMode(GL_LIGHTING, enable ? osg::StateAttribute::ON : osg::StateAttribute::OFF);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool LabelActor::GetEnableLighting()
+   {
+      osg::StateSet* states = GetOSGNode()->getOrCreateStateSet();
+      osg::StateAttribute::GLModeValue mode = states->getMode(GL_LIGHTING);
+
+      return (mode ? true : false);
    }
 }
