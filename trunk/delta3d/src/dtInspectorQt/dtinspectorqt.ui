@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-1200</y>
-         <width>317</width>
-         <height>2118</height>
+         <y>-1602</y>
+         <width>319</width>
+         <height>2194</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -915,9 +915,6 @@
                </widget>
               </item>
              </layout>
-             <zorder>envFogToggle</zorder>
-             <zorder>label_37</zorder>
-             <zorder>envFogVisibilityEdit</zorder>
             </widget>
            </item>
            <item row="2" column="0" >
@@ -1382,6 +1379,122 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox" >
+          <property name="title" >
+           <string>System</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_17" >
+           <item row="2" column="0" >
+            <widget class="QFrame" name="frame_7" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_18" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>2</number>
+              </property>
+              <item row="0" column="0" >
+               <widget class="QCheckBox" name="checkBox_2" >
+                <property name="text" >
+                 <string>Fixed Time Steps</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_47" >
+                <property name="text" >
+                 <string>Set Frame Rate:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_2" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_3" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="label_48" >
+                <property name="text" >
+                 <string>Max Between Draws:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QWidget" native="1" name="widget_8" >
+             <layout class="QGridLayout" name="gridLayout_19" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>2</number>
+              </property>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_46" >
+                <property name="text" >
+                 <string>Time Scale:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QDoubleSpinBox" name="doubleSpinBox" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QWidget" native="1" name="widget_9" >
+             <layout class="QHBoxLayout" name="horizontalLayout_7" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>2</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="checkBox_3" >
+                <property name="enabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="text" >
+                 <string>Is Running</string>
+                </property>
+                <property name="checkable" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox" >
+                <property name="text" >
+                 <string>Paused</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer" >
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
@@ -1406,7 +1519,7 @@
      <x>0</x>
      <y>0</y>
      <width>482</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
