@@ -11,6 +11,12 @@ using namespace dtAudio;
 
 //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
+void AudioManagerInstantiate1(const std::string& n="AudioManager") 
+{
+    dtAudio::AudioManager::Instantiate(n);
+}
+
+
 void initAudioManagerBindings()
 {
    Sound* (*SoundGI1)(int) = &Sound::GetInstance;
@@ -27,6 +33,7 @@ void initAudioManagerBindings()
    void (Sound::*SetVelocity1)( const osg::Vec3& ) = &Sound::SetVelocity;
 
    void (Sound::*GetVelocity1)( osg::Vec3& ) const = &Sound::GetVelocity;
+
 
    {
       scope Sound_scope = class_<Sound, bases<Transformable>, dtCore::RefPtr<Sound>, boost::noncopyable>("Sound", no_init)
@@ -109,6 +116,7 @@ void initAudioManagerBindings()
       .def("GetInstance", AudioManagerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
       //.def("Instantiate", &AudioManager::Instantiate)
+      .def("Instantiate", &AudioManagerInstantiate1)
       .staticmethod("Instantiate")
       .def("Destroy", &AudioManager::Destroy)
       .staticmethod("Destroy")
