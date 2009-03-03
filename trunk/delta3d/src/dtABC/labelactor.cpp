@@ -47,8 +47,8 @@ namespace dtABC
    const dtUtil::RefString LabelActor::PROPERTY_BACK_VISIBLE("Back Visible");
 
    /////////////////////////////////////////////////////////////////////////////
-   LabelActor::LabelActor()
-      : BaseClass()
+   LabelActor::LabelActor(const std::string& name)
+      : BaseClass(name)
       , mBackdropDims(DEFAULT_BACK_SIZE)
       , mTextNode(new osgText::Text)
       , mBackdrop(new osg::Geometry)
