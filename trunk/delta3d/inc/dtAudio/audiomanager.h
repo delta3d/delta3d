@@ -186,8 +186,20 @@ namespace dtAudio
        *@param dev  - The OpenAL device to be used by the AudioManager.
        *@param cntxt - The OpenAL context to be used by the AudioManager.
        */
-      static void Instantiate(const std::string& name = "audiomanager",
-                              ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
+      static void Instantiate(const std::string& name,
+                              ALCdevice* dev, ALCcontext* cntxt);
+
+      /** Create the singleton and initialize OpenAL and ALUT.
+       *
+       * This is provided to faciliate Python bindings to the audiomanager due
+       * to some "non open" portions of OpenAL (i.e. -- look at the header
+       * alc.h and tell me what an ALCcontext and ALCdevice are).
+       * 
+       *@param name - The name of the AudioManager instance.
+       *@param dev  - The OpenAL device to be used by the AudioManager.
+       *@param cntxt - The OpenAL context to be used by the AudioManager.
+       */
+      static void Instantiate(const std::string& name = "audiomanager");
 
       /// destroy the singleton and shutdown OpenAL
       static void Destroy();
