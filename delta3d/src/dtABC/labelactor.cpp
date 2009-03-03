@@ -76,6 +76,7 @@ namespace dtABC
       root->addChild(geode.get());
 
       // Format the text.
+      mTextNode->setDrawMode(osgText::Text::TEXT);
       mTextNode->setAlignment(osgText::TextBase::CENTER_CENTER);
       SetFont(DEFAULT_FONT.Get());
       SetFontSize(DEFAULT_FONT_SIZE);
@@ -322,4 +323,15 @@ namespace dtABC
          group));
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetTextAlignment(AlignmentType alignment)
+   {
+      mTextNode->setAlignment(osgText::TextBase::AlignmentType(alignment));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   LabelActor::AlignmentType LabelActor::GetTextAlignment() const
+   {
+      return LabelActor::AlignmentType(mTextNode->getAlignment());
+   }
 }
