@@ -1379,7 +1379,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox" >
+         <widget class="QGroupBox" name="sysGroupBox" >
           <property name="title" >
            <string>System</string>
           </property>
@@ -1400,7 +1400,7 @@
                <number>2</number>
               </property>
               <item row="0" column="0" >
-               <widget class="QCheckBox" name="checkBox_2" >
+               <widget class="QCheckBox" name="sysFixedTimeStepToggle" >
                 <property name="text" >
                  <string>Fixed Time Steps</string>
                 </property>
@@ -1414,14 +1414,14 @@
                </widget>
               </item>
               <item row="1" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBox_2" >
+               <widget class="QDoubleSpinBox" name="sysFrameRateEdit" >
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
                </widget>
               </item>
               <item row="2" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBox_3" >
+               <widget class="QDoubleSpinBox" name="sysMaxDrawEdit" >
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
@@ -1454,7 +1454,7 @@
                </widget>
               </item>
               <item row="0" column="1" >
-               <widget class="QDoubleSpinBox" name="doubleSpinBox" />
+               <widget class="QDoubleSpinBox" name="sysTimeScaleEdit" />
               </item>
              </layout>
             </widget>
@@ -1469,7 +1469,7 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="checkBox_3" >
+               <widget class="QCheckBox" name="sysRunningToggle" >
                 <property name="enabled" >
                  <bool>true</bool>
                 </property>
@@ -1482,7 +1482,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox" >
+               <widget class="QCheckBox" name="sysPausedToggle" >
                 <property name="text" >
                  <string>Paused</string>
                 </property>
