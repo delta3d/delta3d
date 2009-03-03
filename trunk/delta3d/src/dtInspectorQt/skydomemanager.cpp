@@ -5,13 +5,14 @@
 dtInspectorQt::SkyDomeManager::SkyDomeManager(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
-
+   connect(mUI->envSkyRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
+   connect(mUI->envSkyGreenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
+   connect(mUI->envSkyBlueEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
 }
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::SkyDomeManager::~SkyDomeManager()
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
