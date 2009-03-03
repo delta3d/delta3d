@@ -38,6 +38,13 @@ namespace dtActors
    const osg::Vec4 LabelActor::DEFAULT_COLOR_TEXT(1.0f, 1.0f, 1.0f, 1.0f);
    const osg::Vec4 LabelActor::DEFAULT_COLOR_BACK(0.0f, 0.0f, 0.0f, 1.0f);
    const osg::Vec2 LabelActor::DEFAULT_BACK_SIZE(1.0f, 1.0f);
+   const dtUtil::RefString LabelActor::PROPERTY_TEXT("Text");
+   const dtUtil::RefString LabelActor::PROPERTY_FONT("Font");
+   const dtUtil::RefString LabelActor::PROPERTY_FONT_SIZE("Font Size");
+   const dtUtil::RefString LabelActor::PROPERTY_TEXT_COLOR("Text Color");
+   const dtUtil::RefString LabelActor::PROPERTY_BACK_COLOR("Back Color");
+   const dtUtil::RefString LabelActor::PROPERTY_BACK_SIZE("Back Size");
+   const dtUtil::RefString LabelActor::PROPERTY_BACK_VISIBLE("Back Visible");
 
    /////////////////////////////////////////////////////////////////////////////
    LabelActor::LabelActor()
@@ -255,16 +262,16 @@ namespace dtActors
 
       // STRING PROPERTIES
       outProperties.push_back(new StringActorProperty(
-         LabelActorProxy::PROPERTY_TEXT.Get(),
-         LabelActorProxy::PROPERTY_TEXT.Get(),
+         LabelActor::PROPERTY_TEXT.Get(),
+         LabelActor::PROPERTY_TEXT.Get(),
          StringActorProperty::SetFuncType(this, &LabelActor::SetText), 
          StringActorProperty::GetFuncType(this, &LabelActor::GetText),
          "Label text.",
          group));
 
       outProperties.push_back(new StringActorProperty(
-         LabelActorProxy::PROPERTY_FONT.Get(),
-         LabelActorProxy::PROPERTY_FONT.Get(),
+         LabelActor::PROPERTY_FONT.Get(),
+         LabelActor::PROPERTY_FONT.Get(),
          StringActorProperty::SetFuncType(this, &LabelActor::SetFont), 
          StringActorProperty::GetFuncType(this, &LabelActor::GetFont),
          "Font for label text.",
@@ -272,8 +279,8 @@ namespace dtActors
 
       // FLOAT PROPERTIES
       outProperties.push_back(new FloatActorProperty(
-         LabelActorProxy::PROPERTY_FONT_SIZE.Get(),
-         LabelActorProxy::PROPERTY_FONT_SIZE.Get(),
+         LabelActor::PROPERTY_FONT_SIZE.Get(),
+         LabelActor::PROPERTY_FONT_SIZE.Get(),
          FloatActorProperty::SetFuncType(this, &LabelActor::SetFontSize), 
          FloatActorProperty::GetFuncType(this, &LabelActor::GetFontSize),
          "Height of the text characters.",
@@ -281,16 +288,16 @@ namespace dtActors
 
       // VEC4 PROPERTIES
       outProperties.push_back(new Vec4ActorProperty(
-         LabelActorProxy::PROPERTY_TEXT_COLOR.Get(),
-         LabelActorProxy::PROPERTY_TEXT_COLOR.Get(),
+         LabelActor::PROPERTY_TEXT_COLOR.Get(),
+         LabelActor::PROPERTY_TEXT_COLOR.Get(),
          Vec4ActorProperty::SetFuncType(this, &LabelActor::SetTextColor), 
          Vec4ActorProperty::GetFuncType(this, &LabelActor::GetTextColor),
          "Text color.",
          group));
 
       outProperties.push_back(new Vec4ActorProperty(
-         LabelActorProxy::PROPERTY_BACK_COLOR.Get(),
-         LabelActorProxy::PROPERTY_BACK_COLOR.Get(),
+         LabelActor::PROPERTY_BACK_COLOR.Get(),
+         LabelActor::PROPERTY_BACK_COLOR.Get(),
          Vec4ActorProperty::SetFuncType(this, &LabelActor::SetBackColor), 
          Vec4ActorProperty::GetFuncType(this, &LabelActor::GetBackColor),
          "Fill color behind the text.",
@@ -298,8 +305,8 @@ namespace dtActors
 
       // VEC2 PROPERTIES
       outProperties.push_back(new Vec2ActorProperty(
-         LabelActorProxy::PROPERTY_BACK_SIZE.Get(),
-         LabelActorProxy::PROPERTY_BACK_SIZE.Get(),
+         LabelActor::PROPERTY_BACK_SIZE.Get(),
+         LabelActor::PROPERTY_BACK_SIZE.Get(),
          Vec2ActorProperty::SetFuncType(this, &LabelActor::SetBackSize), 
          Vec2ActorProperty::GetFuncType(this, &LabelActor::GetBackSize),
          "Dimensions of the text background.",
@@ -307,75 +314,12 @@ namespace dtActors
 
       // BOOLEAN PROPERTIES
       outProperties.push_back(new BooleanActorProperty(
-         LabelActorProxy::PROPERTY_BACK_VISIBLE.Get(),
-         LabelActorProxy::PROPERTY_BACK_VISIBLE.Get(),
+         LabelActor::PROPERTY_BACK_VISIBLE.Get(),
+         LabelActor::PROPERTY_BACK_VISIBLE.Get(),
          BooleanActorProperty::SetFuncType(this, &LabelActor::SetBackVisible), 
          BooleanActorProperty::GetFuncType(this, &LabelActor::IsBackVisible),
          "Determines if the text background should be visible.",
          group));
-   }
-
-
-
-   /////////////////////////////////////////////////////////////////////////////
-   // PROXY CODE
-   /////////////////////////////////////////////////////////////////////////////
-   const dtUtil::RefString LabelActorProxy::CLASS_NAME("dtActors::LabelActor");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_TEXT("Text");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_FONT("Font");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_FONT_SIZE("Font Size");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_TEXT_COLOR("Text Color");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_BACK_COLOR("Back Color");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_BACK_SIZE("Back Size");
-   const dtUtil::RefString LabelActorProxy::PROPERTY_BACK_VISIBLE("Back Visible");
-
-   /////////////////////////////////////////////////////////////////////////////
-   LabelActorProxy::LabelActorProxy()
-      : BaseClass()
-   {
-      SetClassName(CLASS_NAME.Get());
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   LabelActorProxy::~LabelActorProxy()
-   {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void LabelActorProxy::CreateActor()
-   {
-      SetActor(*new LabelActor);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void LabelActorProxy::BuildPropertyMap()
-   {
-      BaseClass::BuildPropertyMap();
-
-      LabelActor* actor = NULL;
-      GetActor(actor);
-
-      // Get the properties for the actor.
-      LabelActor::ActorPropertyArray properties;
-      actor->CreateActorProperties(properties);
-
-      // Add the properties to the proxy.
-      LabelActor::ActorPropertyArray::iterator curProperty = properties.begin();
-      LabelActor::ActorPropertyArray::iterator endPropertyArray = properties.end();
-      for (; curProperty != endPropertyArray; ++curProperty)
-      {
-         AddProperty(curProperty->get());
-      }
-
-      // REMOVE USELESS PROPERTIES - These properties really should not show in
-      // STAGE and ought to be completely removed from the object.
-      // However, the overhead is part of sub-classing GameActor.
-      RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
-      RemoveProperty(TransformableActorProxy::PROPERTY_ENABLE_COLLISION);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_TYPE);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_RADIUS);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_LENGTH);
-      RemoveProperty(TransformableActorProxy::PROPERTY_COLLISION_BOX);
    }
 
 }

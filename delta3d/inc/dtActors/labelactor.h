@@ -28,9 +28,9 @@
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
 #include <dtDAL/plugin_export.h>
+#include <dtDAL/actorproperty.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
-#include <dtDAL/transformableactorproxy.h>
 
 
 
@@ -43,6 +43,15 @@ namespace dtActors
    {
       public:
          typedef dtCore::Transformable BaseClass;
+
+         static const dtUtil::RefString PROPERTY_TEXT;
+         static const dtUtil::RefString PROPERTY_FONT;
+         static const dtUtil::RefString PROPERTY_FONT_SIZE;
+         static const dtUtil::RefString PROPERTY_TEXT_COLOR;
+         static const dtUtil::RefString PROPERTY_BACK_COLOR;
+         static const dtUtil::RefString PROPERTY_BACK_SIZE;
+         static const dtUtil::RefString PROPERTY_BACK_VISIBLE;
+
 
          static const dtUtil::RefString DEFAULT_FONT;
          static const float DEFAULT_FONT_SIZE;
@@ -143,34 +152,6 @@ namespace dtActors
 
 
 
-   /////////////////////////////////////////////////////////////////////////////
-   // PROXY CODE
-   /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT LabelActorProxy : public dtDAL::TransformableActorProxy
-   {
-      public:
-         typedef dtDAL::TransformableActorProxy BaseClass;
-
-         static const dtUtil::RefString CLASS_NAME;
-         static const dtUtil::RefString PROPERTY_TEXT;
-         static const dtUtil::RefString PROPERTY_FONT;
-         static const dtUtil::RefString PROPERTY_FONT_SIZE;
-         static const dtUtil::RefString PROPERTY_TEXT_COLOR;
-         static const dtUtil::RefString PROPERTY_BACK_COLOR;
-         static const dtUtil::RefString PROPERTY_BACK_SIZE;
-         static const dtUtil::RefString PROPERTY_BACK_VISIBLE;
-
-         LabelActorProxy();
-
-         virtual void CreateActor();
-
-         virtual void BuildPropertyMap();
-
-      protected:
-         virtual ~LabelActorProxy();
-
-      private:
-   };
 
 }
 
