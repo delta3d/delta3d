@@ -120,6 +120,38 @@ namespace dtABC
          void SetBackVisible(bool visible);
          bool IsBackVisible() const;
 
+         enum AlignmentType
+         {
+            LEFT_TOP,
+            LEFT_CENTER,
+            LEFT_BOTTOM,
+
+            CENTER_TOP,
+            CENTER_CENTER,
+            CENTER_BOTTOM,
+
+            RIGHT_TOP,
+            RIGHT_CENTER,
+            RIGHT_BOTTOM,
+
+            LEFT_BASE_LINE,
+            CENTER_BASE_LINE,
+            RIGHT_BASE_LINE,
+
+            LEFT_BOTTOM_BASE_LINE,
+            CENTER_BOTTOM_BASE_LINE,
+            RIGHT_BOTTOM_BASE_LINE,
+
+            BASE_LINE = LEFT_BASE_LINE /// default.
+         };
+
+         /** 
+          * Adjust how the text is aligned/justified.
+          * @param alignment The alignment to use
+          */
+         void SetTextAlignment(AlignmentType alignment);
+         AlignmentType GetTextAlignment() const;
+
          /**
           * Creates the properties that any proxy may need to map to this actor.
           * This is handy if using an extended proxy that does not require
