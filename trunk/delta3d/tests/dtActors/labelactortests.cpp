@@ -34,7 +34,7 @@
 #include <vector>
 #include <map>
 #include <dtABC/application.h>
-#include <dtActors/labelactor.h>
+#include <dtABC/labelactor.h>
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/globals.h>
@@ -116,8 +116,8 @@ void LabelActorTests::TestLabelActorProperties()
    try
    {
       // Get the actor from the proxy.
-      LabelActor* actor = NULL;
-      const LabelActor* actorConst = NULL;
+      dtABC::LabelActor* actor = NULL;
+      const dtABC::LabelActor* actorConst = NULL;
       mLabelProxy->GetActor(actor);
       actorConst = actor;
 
@@ -132,16 +132,16 @@ void LabelActorTests::TestLabelActorProperties()
       actor->SetText(testString);
       CPPUNIT_ASSERT(actorConst->GetText() == testString);
 
-      CPPUNIT_ASSERT(actorConst->GetFontSize() == LabelActor::DEFAULT_FONT_SIZE);
+      CPPUNIT_ASSERT(actorConst->GetFontSize() == dtABC::LabelActor::DEFAULT_FONT_SIZE);
       actor->SetFontSize(5.0f);
       CPPUNIT_ASSERT(actorConst->GetFontSize() == 5.0f);
 
-      CPPUNIT_ASSERT(actorConst->GetBackSize() == LabelActor::DEFAULT_BACK_SIZE);
-      CPPUNIT_ASSERT(actorConst->GetBackWidth() == LabelActor::DEFAULT_BACK_SIZE.x());
+      CPPUNIT_ASSERT(actorConst->GetBackSize() == dtABC::LabelActor::DEFAULT_BACK_SIZE);
+      CPPUNIT_ASSERT(actorConst->GetBackWidth() == dtABC::LabelActor::DEFAULT_BACK_SIZE.x());
       actor->SetBackWidth(testSize.x());
       CPPUNIT_ASSERT(actorConst->GetBackWidth() == testSize.x());
 
-      CPPUNIT_ASSERT(actorConst->GetBackHeight() == LabelActor::DEFAULT_BACK_SIZE.y());
+      CPPUNIT_ASSERT(actorConst->GetBackHeight() == dtABC::LabelActor::DEFAULT_BACK_SIZE.y());
       actor->SetBackHeight(testSize.y());
       CPPUNIT_ASSERT(actorConst->GetBackHeight() == testSize.y());
 
@@ -150,11 +150,11 @@ void LabelActorTests::TestLabelActorProperties()
       actor->SetBackSize(testSize);
       CPPUNIT_ASSERT(actorConst->GetBackSize() == testSize);
 
-      CPPUNIT_ASSERT(actorConst->GetTextColor() == LabelActor::DEFAULT_COLOR_TEXT);
+      CPPUNIT_ASSERT(actorConst->GetTextColor() == dtABC::LabelActor::DEFAULT_COLOR_TEXT);
       actor->SetTextColor(testTextColor);
       CPPUNIT_ASSERT(actorConst->GetTextColor() == testTextColor);
 
-      CPPUNIT_ASSERT(actorConst->GetBackColor() == LabelActor::DEFAULT_COLOR_BACK);
+      CPPUNIT_ASSERT(actorConst->GetBackColor() == dtABC::LabelActor::DEFAULT_COLOR_BACK);
       actor->SetBackColor(testBackColor);
       CPPUNIT_ASSERT(actorConst->GetBackColor() == testBackColor);
 
@@ -162,7 +162,7 @@ void LabelActorTests::TestLabelActorProperties()
       actor->SetBackVisible(false);
       CPPUNIT_ASSERT(!actorConst->IsBackVisible());
 
-      CPPUNIT_ASSERT(actorConst->GetFont() == LabelActor::DEFAULT_FONT.Get());
+      CPPUNIT_ASSERT(actorConst->GetFont() == dtABC::LabelActor::DEFAULT_FONT.Get());
       actor->SetFont(testString);
       CPPUNIT_ASSERT(actorConst->GetFont() == testString);
    }
@@ -180,10 +180,10 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
    try
    {
       // Get the actor from the proxy.
-      LabelActor* actor = NULL;
+      dtABC::LabelActor* actor = NULL;
       mLabelProxy->GetActor(actor);
 
-      LabelActor::ActorPropertyArray propArray;
+      dtABC::LabelActor::ActorPropertyArray propArray;
       actor->CreateActorProperties(propArray);
 
       typedef std::map<dtUtil::RefString, dtDAL::ActorProperty*> PropertyMap;
@@ -191,8 +191,8 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
 
       // Convert the array to a map keyed on the property names.
       dtDAL::ActorProperty* curProp = NULL; // use this for code readability.
-      LabelActor::ActorPropertyArray::iterator curPropIter = propArray.begin();
-      LabelActor::ActorPropertyArray::iterator endPropArray = propArray.end();
+      dtABC::LabelActor::ActorPropertyArray::iterator curPropIter = propArray.begin();
+      dtABC::LabelActor::ActorPropertyArray::iterator endPropArray = propArray.end();
       for (; curPropIter != endPropArray; ++curPropIter)
       {
          curProp = curPropIter->get(); // This is better for code readability.
@@ -200,13 +200,13 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
       }
 
       PropertyMap::iterator endMap = propMap.end(); // This is for better code readability.
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_TEXT) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_FONT) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_FONT_SIZE) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_SIZE) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_TEXT_COLOR) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_COLOR) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_VISIBLE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_TEXT) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_FONT) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_FONT_SIZE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_BACK_SIZE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_TEXT_COLOR) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_BACK_COLOR) != endMap);
+      CPPUNIT_ASSERT(propMap.find(dtABC::LabelActor::PROPERTY_BACK_VISIBLE) != endMap);
    }
    catch (const dtUtil::Exception& e)
    {
