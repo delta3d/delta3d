@@ -59,7 +59,7 @@ namespace dtABC
          static const osg::Vec4 DEFAULT_COLOR_BACK;
          static const osg::Vec2 DEFAULT_BACK_SIZE;
 
-         LabelActor();
+         LabelActor(const std::string& name = "LabelActor");
 
          /**
           * Set the text that is to appear on the label.
