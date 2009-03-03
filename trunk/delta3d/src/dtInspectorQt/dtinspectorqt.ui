@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-2053</y>
+         <y>-2269</y>
          <width>329</width>
-         <height>2645</height>
+         <height>2861</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -1838,6 +1838,240 @@
              <property name="text" >
               <string>Regenerate</string>
              </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="weatherGroupBox" >
+          <property name="title" >
+           <string>Weather</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_25" >
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_72" >
+             <property name="text" >
+              <string>Cloud Type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QComboBox" name="weatherCloudCombo" >
+             <item>
+              <property name="text" >
+               <string>CLEAR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FEW</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>SCATTERED</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>BROKEN</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>OVERCAST</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_73" >
+             <property name="text" >
+              <string>Wind Type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QComboBox" name="weatherWindCombo" >
+             <item>
+              <property name="text" >
+               <string>NONE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>BREEZE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LIGHT</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>MODERATE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>HEAVY</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>SEVERE</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_74" >
+             <property name="text" >
+              <string>Visibility Type:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QComboBox" name="weatherVisibilityCombo" >
+             <item>
+              <property name="text" >
+               <string>UNLIMITED</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FAR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>MODERATE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LIMTED</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CLOSE</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="5" column="0" >
+            <widget class="QLabel" name="label_82" >
+             <property name="text" >
+              <string>Time Period:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" >
+            <widget class="QComboBox" name="weatherTimeCombo" >
+             <item>
+              <property name="text" >
+               <string>DAWN</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>DAY</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>DUSK</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>NIGHT</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="6" column="0" >
+            <widget class="QLabel" name="label_83" >
+             <property name="text" >
+              <string>Season:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" >
+            <widget class="QComboBox" name="weatherSeasonCombo" >
+             <item>
+              <property name="text" >
+               <string>SPRING</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>SUMMER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FALL</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>WINTER</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="7" column="0" >
+            <widget class="QLabel" name="label_84" >
+             <property name="text" >
+              <string>Environment:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1" >
+            <widget class="QLineEdit" name="weatherEnvEdit" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_75" >
+             <property name="text" >
+              <string>Theme:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QComboBox" name="weatherThemeCombo" >
+             <item>
+              <property name="text" >
+               <string>CUSTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CLEAR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FAIR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>FOGGY</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RAINY</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
