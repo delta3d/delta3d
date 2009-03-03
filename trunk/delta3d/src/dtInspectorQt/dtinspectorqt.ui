@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-1602</y>
+         <y>-1795</y>
          <width>319</width>
-         <height>2194</height>
+         <height>2387</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -1489,6 +1489,79 @@
                </widget>
               </item>
              </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="infTerGroupBox" >
+          <property name="title" >
+           <string>InfiniteTerrain</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_20" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_49" >
+             <property name="text" >
+              <string>Segment Size:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QDoubleSpinBox" name="infTerSegSizeEdit" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_50" >
+             <property name="text" >
+              <string>Segment Divisions:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QSpinBox" name="infTerSegDivEdit" />
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_60" >
+             <property name="text" >
+              <string>Horizontal Scale:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QDoubleSpinBox" name="infTerHorizEdit" />
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="label_61" >
+             <property name="text" >
+              <string>Vertical Scale:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QDoubleSpinBox" name="infTerVertEdit" />
+           </item>
+           <item row="4" column="0" >
+            <widget class="QLabel" name="label_62" >
+             <property name="text" >
+              <string>Build Distance:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" >
+            <widget class="QDoubleSpinBox" name="infTerDistanceEdit" />
+           </item>
+           <item row="5" column="0" >
+            <widget class="QCheckBox" name="infTerSmoothToggle" >
+             <property name="text" >
+              <string>Smooth Collisions</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" >
+            <widget class="QPushButton" name="infTerRegenButton" >
+             <property name="text" >
+              <string>Regenerate</string>
+             </property>
             </widget>
            </item>
           </layout>
