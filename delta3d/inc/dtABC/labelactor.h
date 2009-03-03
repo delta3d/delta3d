@@ -27,19 +27,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // INCLUDE DIRECTIVES
 ////////////////////////////////////////////////////////////////////////////////
-#include <dtDAL/plugin_export.h>
+#include <dtABC/export.h>
 #include <dtDAL/actorproperty.h>
 #include <osgText/Text>
 #include <dtCore/transformable.h>
 
 
 
-namespace dtActors
+namespace dtABC
 {
    /////////////////////////////////////////////////////////////////////////////
    // ACTOR CODE
    /////////////////////////////////////////////////////////////////////////////
-   class DT_PLUGIN_EXPORT LabelActor : public dtCore::Transformable
+   class DT_ABC_EXPORT LabelActor : public dtCore::Transformable
    {
       public:
          typedef dtCore::Transformable BaseClass;
@@ -149,10 +149,5 @@ namespace dtActors
          dtCore::RefPtr<osg::Vec3Array> mBackdropVerts;
          std::string mFontFile;
    };
-
-
-
-
 }
-
 #endif

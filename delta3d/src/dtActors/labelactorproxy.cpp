@@ -1,5 +1,5 @@
 #include <dtActors/labelactorproxy.h>
-#include <dtActors/labelactor.h>
+#include <dtABC/labelactor.h>
 
 namespace dtActors
 {
@@ -25,7 +25,7 @@ namespace dtActors
    /////////////////////////////////////////////////////////////////////////////
    void LabelActorProxy::CreateActor()
    {
-      SetActor(*new LabelActor);
+      SetActor(*new dtABC::LabelActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -33,16 +33,16 @@ namespace dtActors
    {
       BaseClass::BuildPropertyMap();
 
-      LabelActor* actor = NULL;
+      dtABC::LabelActor* actor = NULL;
       GetActor(actor);
 
       // Get the properties for the actor.
-      LabelActor::ActorPropertyArray properties;
+      dtABC::LabelActor::ActorPropertyArray properties;
       actor->CreateActorProperties(properties);
 
       // Add the properties to the proxy.
-      LabelActor::ActorPropertyArray::iterator curProperty = properties.begin();
-      LabelActor::ActorPropertyArray::iterator endPropertyArray = properties.end();
+      dtABC::LabelActor::ActorPropertyArray::iterator curProperty = properties.begin();
+      dtABC::LabelActor::ActorPropertyArray::iterator endPropertyArray = properties.end();
       for (; curProperty != endPropertyArray; ++curProperty)
       {
          AddProperty(curProperty->get());
