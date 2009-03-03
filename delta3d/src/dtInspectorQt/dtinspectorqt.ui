@@ -56,7 +56,7 @@
          <x>0</x>
          <y>0</y>
          <width>367</width>
-         <height>3300</height>
+         <height>3505</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -1711,6 +1711,112 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="positionalLightGroupBox" >
+          <property name="title" >
+           <string>PositionalLight</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_23" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_67" >
+             <property name="text" >
+              <string>Constant Attentuation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_68" >
+             <property name="text" >
+              <string>Linear Attenuation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_69" >
+             <property name="text" >
+              <string>Quadratic Attenuation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QDoubleSpinBox" name="positionalLightConstAttenEdit" >
+             <property name="decimals" >
+              <number>3</number>
+             </property>
+             <property name="maximum" >
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="singleStep" >
+              <double>0.100000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QDoubleSpinBox" name="positionalLightLinearAttenEdit" >
+             <property name="decimals" >
+              <number>3</number>
+             </property>
+             <property name="maximum" >
+              <double>100.000000000000000</double>
+             </property>
+             <property name="singleStep" >
+              <double>0.010000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QDoubleSpinBox" name="positionalLightQuadAttenEdit" >
+             <property name="decimals" >
+              <number>3</number>
+             </property>
+             <property name="maximum" >
+              <double>10.000000000000000</double>
+             </property>
+             <property name="singleStep" >
+              <double>0.001000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="spotlightGroupBox" >
+          <property name="title" >
+           <string>SpotLight</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_29" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_99" >
+             <property name="text" >
+              <string>Spot Cutoff:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_100" >
+             <property name="text" >
+              <string>Spot Exponent:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QDoubleSpinBox" name="spotlightCutoffEdit" >
+             <property name="maximum" >
+              <double>1000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QDoubleSpinBox" name="spotlightExponentEdit" >
+             <property name="maximum" >
+              <double>1000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="sysGroupBox" >
           <property name="title" >
            <string>System</string>
@@ -2449,6 +2555,8 @@
      </widget>
     </item>
    </layout>
+   <zorder>itemList</zorder>
+   <zorder>scrollArea</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
