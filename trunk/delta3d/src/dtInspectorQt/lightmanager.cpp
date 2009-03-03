@@ -212,6 +212,8 @@ void dtInspectorQt::LightManager::Update()
    else
    {
       mUI->lightGroupBox->hide();
+      mUI->positionalLightGroupBox->hide();
+      mUI->spotlightGroupBox->hide();
    }
 }
 
