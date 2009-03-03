@@ -707,7 +707,7 @@ osg::ref_ptr<osg::Group> OSGExp::createGroupFromHelper(osg::Group* rootTransform
 
 
 
-osg::ref_ptr<osg::MatrixTransform> OSGExp::createDOFFromHelper(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(osg::Group* parent, INode* node, Object* obj, TimeValue t){
 	osg::ref_ptr<osgSim::DOFTransform> pDOF = new osgSim::DOFTransform();
 	pDOF->setName(node->GetName());
 	// Set static datavariance for better performance
@@ -786,30 +786,35 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createDOFFromHelper(osg::Group* rootT
 
 	pDOF->setCurrentScale(osg::Vec3(1.0f, 1.0f, 1.0f));
 	
-	osg::Matrix pivotTransform = convertMat(node->GetNodeTM(t));
-	osg::Matrix pivotTransform_inverse;
-	pivotTransform_inverse.invert(pivotTransform);
+	//osg::Matrix pivotTransform = convertMat(node->GetNodeTM(t));
+	//osg::Matrix pivotTransform_inverse;
+	//pivotTransform_inverse.invert(pivotTransform);
 
-	osg::ref_ptr<osg::MatrixTransform> dofParent = new osg::MatrixTransform(pivotTransform);
-	osg::ref_ptr<osg::MatrixTransform> dofChild = new osg::MatrixTransform(pivotTransform_inverse);
+   //an osg DOFTransform does not have a matrix but our helper object does
+   //so we make a matrix transform above the DOF, this will also set the point
+   //at which the DOF's pivot around
+   osg::Matrix transform = getNodeTransform(node, t);
+	osg::ref_ptr<osg::MatrixTransform> dofParent = new osg::MatrixTransform(transform);
+	//osg::ref_ptr<osg::MatrixTransform> dofChild = new osg::MatrixTransform(pivotTransform_inverse);
 
-	if(pblock2)
-	{
-		for(int n=0; n<pblock2->Count(doftrans_nodes); n++)
-		{
-			INode* dofChildNode = pblock2->GetINode(doftrans_nodes, t,n);					
-			osg::ref_ptr<osg::Node> newChild = createGeomObjectForHelperObjects(rootTransform, dofChildNode, obj, t);
-		
-			if(newChild.valid())
-			{	
-				dofChild->addChild(newChild.get());	
-			}
-		}
-	}
+	//if(pblock2)
+	//{
+	//	for(int n=0; n<pblock2->Count(doftrans_nodes); n++)
+	//	{
+	//		INode* dofChildNode = pblock2->GetINode(doftrans_nodes, t,n);					
+	//		osg::ref_ptr<osg::Node> newChild = createGeomObjectForHelperObjects(rootTransform, dofChildNode, obj, t);
+	//	
+	//		if(newChild.valid())
+	//		{	
+	//			dofChild->addChild(newChild.get());	
+	//		}
+	//	}
+	//}
 
-	pDOF->addChild(dofChild.get());
+	//pDOF->addChild(dofChild.get());
+   parent->addChild(dofParent.get());
 	dofParent->addChild(pDOF.get());
-	return dofParent;
+	return pDOF.get();
 }
 
 

@@ -159,7 +159,7 @@ class OSGExp : public SceneExport {
 		osg::ref_ptr<osgSim::VisibilityGroup> createVisibilityGroupFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
 		osg::ref_ptr<osg::Node>				createGeomObjectForHelperObjects(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
 		osg::ref_ptr<osg::Group>			createGroupFromHelper(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
-		osg::ref_ptr<osg::MatrixTransform>	createDOFFromHelper(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
+		osg::ref_ptr<osg::Transform>	createDOFFromHelper(osg::Group* parent, INode* node, Object* obj, TimeValue t);
 
 		osg::ref_ptr<osg::Node>	traverseNode(osg::Group* rootTransform, INode* node, TimeValue t);
 

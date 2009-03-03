@@ -416,9 +416,10 @@ osg::ref_ptr<osg::Node> OSGExp::createHelperObject(osg::Group* rootTransform, IN
 		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createGroupFromHelper(rootTransform, node, obj, t).get())); 
 	}
 
-	else if (id == DOFTRANSFORM_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createDOFFromHelper(rootTransform, node, obj, t).get())); 
-	}
+   //the dof helper is handled as a special case
+	//else if (id == DOFTRANSFORM_CLASS_ID){
+	//	return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createDOFFromHelper(rootTransform, node, obj, t).get())); 
+	//}
 
 	return osg::ref_ptr<osg::Node>(NULL);
 }

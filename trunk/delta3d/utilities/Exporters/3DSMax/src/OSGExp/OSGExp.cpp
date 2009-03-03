@@ -777,13 +777,19 @@ BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* pa
 					}
 					break;
 				case HELPER_CLASS_ID:
-                    if(_options->getExportPointHelpers() && os.obj->ClassID() == Class_ID(POINTHELP_CLASS_ID,0)) {
-                        child=createPointFromHelperObject(rootTransform,node,os.obj,_ip->GetTime()).get();
-                        parent->addChild(child.get());
-                    }
-					else if (_options->getExportHelpers() && !Util::isReferencedByHelperObjects(node, _helperIDs)){
-						rootTransform->addChild(createHelperObject(rootTransform, node, os.obj, _ip->GetTime()).get());
-					}
+               if(_options->getExportPointHelpers() && os.obj->ClassID() == Class_ID(POINTHELP_CLASS_ID,0)) 
+               {
+                  child = createPointFromHelperObject(rootTransform,node,os.obj,_ip->GetTime()).get();
+                  parent->addChild(child.get());
+               }
+               else if(_options->getExportHelpers() && os.obj->ClassID() == DOFTRANSFORM_CLASS_ID && !Util::isReferencedByHelperObjects(node, _helperIDs)) 
+               {
+                  child = createDOFFromHelper(parent, node, os.obj, _ip->GetTime()).get();                  
+               }
+		         else if (_options->getExportHelpers() && !Util::isReferencedByHelperObjects(node, _helperIDs))
+               {
+			         rootTransform->addChild(createHelperObject(rootTransform, node, os.obj, _ip->GetTime()).get());
+		         }
 					break;
 			}
 		}
