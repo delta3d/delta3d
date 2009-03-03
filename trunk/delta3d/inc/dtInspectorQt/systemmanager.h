@@ -45,8 +45,15 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnPaused(int checked);
+      void OnTimeScaleChanged(double newValue);
+      void OnFixedTimeStepsToggled(int checked);
+      void OnSetFrameRateChanged(double newValue);
+      void OnMaxBetweenDrawsChanged(double newValue);
 
    private:
+      void Update();
+
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::System> mOperateOn;
 
