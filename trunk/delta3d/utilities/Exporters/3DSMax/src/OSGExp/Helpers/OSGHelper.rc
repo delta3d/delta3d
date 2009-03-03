@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+#include "./Helpers/resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -72,6 +72,10 @@ END
 //
 // Dialog
 //
+
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
 
 IDD_PANEL DIALOG  0, 0, 108, 156
 STYLE DS_SETFONT | WS_CHILD | WS_VISIBLE
