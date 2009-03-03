@@ -46,10 +46,16 @@ namespace dtInspectorQt
 
    protected slots:
 
+      void OnThemeChanged(int index);
+      void OnCloudTypeChanged(int index);
+      void OnWindTypeChanged(int index);
+      void OnVisibilityTypeChanged(int index);
+      void OnTimeSeasonChanged(int);
+
    private:
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtABC::Weather> mOperateOn;
-
+      void Update();
    };
 }  
 #endif //weathermanager_h__
