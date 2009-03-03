@@ -165,12 +165,7 @@ AudioManager::~AudioManager()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void AudioManager::Instantiate(const std::string& name)
-{
-   Instantiate(name, NULL, NULL);
-}
-
-////////////////////////////////////////////////////////////////////////////////
+// create the singleton manager
 void AudioManager::Instantiate(const std::string& name, ALCdevice* dev, ALCcontext* cntxt)
 {
    if (_Mgr.get())
