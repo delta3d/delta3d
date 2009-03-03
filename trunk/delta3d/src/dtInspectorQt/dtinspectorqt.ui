@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>462</width>
+    <width>492</width>
     <height>652</height>
    </rect>
   </property>
@@ -54,8 +54,8 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-854</y>
-         <width>299</width>
+         <y>-2053</y>
+         <width>329</width>
          <height>2645</height>
         </rect>
        </property>
@@ -1867,7 +1867,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>462</width>
+     <width>492</width>
      <height>21</height>
     </rect>
    </property>
@@ -1880,5 +1880,38 @@
   <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>sysFixedTimeStepToggle</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sysFrameRateEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>176</x>
+     <y>340</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>357</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sysFixedTimeStepToggle</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sysMaxDrawEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>227</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>324</x>
+     <y>391</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
