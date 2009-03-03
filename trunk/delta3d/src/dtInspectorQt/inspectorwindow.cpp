@@ -5,6 +5,7 @@
 #include <dtInspectorQt/deltawinmanager.h>
 #include <dtInspectorQt/drawablemanager.h>
 #include <dtInspectorQt/environmentmanager.h>
+#include <dtInspectorQt/infiniteterrainmanager.h>
 #include <dtInspectorQt/lightmanager.h>
 #include <dtInspectorQt/objectmanager.h>
 #include <dtInspectorQt/particlesystemmanager.h>
@@ -32,6 +33,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mManagerContainer.push_back(new DeltaWinManager(ui));
    mManagerContainer.push_back(new DrawableManager(ui));
    mManagerContainer.push_back(new EnvironmentManager(ui));
+   mManagerContainer.push_back(new InfiniteTerrainManager(ui));
    mManagerContainer.push_back(new LightManager(ui));
    mManagerContainer.push_back(new ObjectManager(ui));
    mManagerContainer.push_back(new ParticleSystemManager(ui));
