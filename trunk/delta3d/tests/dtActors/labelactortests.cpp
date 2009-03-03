@@ -35,6 +35,7 @@
 #include <map>
 #include <dtABC/application.h>
 #include <dtActors/labelactor.h>
+#include <dtActors/labelactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
@@ -199,13 +200,13 @@ void LabelActorTests::TestLabelActorCreateActorProperties()
       }
 
       PropertyMap::iterator endMap = propMap.end(); // This is for better code readability.
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_TEXT) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_FONT) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_FONT_SIZE) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_BACK_SIZE) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_TEXT_COLOR) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_BACK_COLOR) != endMap);
-      CPPUNIT_ASSERT(propMap.find(LabelActorProxy::PROPERTY_BACK_VISIBLE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_TEXT) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_FONT) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_FONT_SIZE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_SIZE) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_TEXT_COLOR) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_COLOR) != endMap);
+      CPPUNIT_ASSERT(propMap.find(LabelActor::PROPERTY_BACK_VISIBLE) != endMap);
    }
    catch (const dtUtil::Exception& e)
    {

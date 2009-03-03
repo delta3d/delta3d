@@ -54,7 +54,7 @@
 #include <dtActors/distancesensoractor.h>
 #include <dtDAL/waypointactorproxy.h>
 #include <dtActors/waypointvolumeactor.h>
-#include <dtActors/labelactor.h>
+#include <dtActors/labelactorproxy.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
