@@ -45,8 +45,19 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnEnabled(int checked);
+      void OnLightNumberChanged(int newValue);
+      void OnModeChanged(const QString& newValue);
+      void OnAmbientChanged(double newValue);
+      void OnAmbientColorChooserClicked();
+      void OnDiffuseChanged(double newValue);
+      void OnDiffuseColorChooserClicked();
+      void OnSpecularChanged(double newValue);
+      void OnSpecularColorChooserClicked();
 
    private:
+      void Update();
+
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::Light> mOperateOn;
 
