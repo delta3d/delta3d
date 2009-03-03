@@ -45,10 +45,16 @@ namespace dtInspectorQt
       virtual void OperateOn(dtCore::Base* b);
 
    protected slots:
+      void OnScaleChanged(double val);
+      void OnOffsetChanged(double val);
+      void OnFilenameChanged();
+      void OnFindFile();
 
    private:
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::Object> mOperateOn;
+
+      void Update();
 
    };
 }  
