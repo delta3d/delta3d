@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-2269</y>
+         <y>-2551</y>
          <width>329</width>
-         <height>2861</height>
+         <height>3163</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -2072,6 +2072,203 @@
                <string>RAINY</string>
               </property>
              </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="cloudDomeGroupBox" >
+          <property name="title" >
+           <string>CloudDome</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_26" >
+           <item row="5" column="0" >
+            <widget class="QLabel" name="label_85" >
+             <property name="text" >
+              <string>Scale:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" >
+            <widget class="QDoubleSpinBox" name="cloudDomeScaleEdit" />
+           </item>
+           <item row="5" column="2" >
+            <widget class="QLabel" name="label_86" >
+             <property name="text" >
+              <string>Exponent:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="3" >
+            <widget class="QDoubleSpinBox" name="cloudDomeExpEdit" />
+           </item>
+           <item row="6" column="0" >
+            <widget class="QLabel" name="label_87" >
+             <property name="text" >
+              <string>Cutoff:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" >
+            <widget class="QDoubleSpinBox" name="cloudDomeCutoffEdit" />
+           </item>
+           <item row="6" column="2" >
+            <widget class="QLabel" name="label_90" >
+             <property name="text" >
+              <string>Bias:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="3" >
+            <widget class="QDoubleSpinBox" name="cloudDomeBiasEdit" />
+           </item>
+           <item row="7" column="0" >
+            <widget class="QLabel" name="label_88" >
+             <property name="text" >
+              <string>Speed X:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1" >
+            <widget class="QDoubleSpinBox" name="cloudDomeXEdit" />
+           </item>
+           <item row="7" column="2" >
+            <widget class="QLabel" name="label_89" >
+             <property name="text" >
+              <string>Speed Y:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="3" >
+            <widget class="QDoubleSpinBox" name="cloudDomeYEdit" />
+           </item>
+           <item row="2" column="0" colspan="4" >
+            <widget class="QFrame" name="frame_11" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_10" >
+              <item>
+               <widget class="QLabel" name="label_91" >
+                <property name="text" >
+                 <string>R:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="cloudDomeRedEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_92" >
+                <property name="text" >
+                 <string>G:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="cloudDomeGreenEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_93" >
+                <property name="text" >
+                 <string>B:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="cloudDomeBlueEdit" />
+              </item>
+              <item>
+               <widget class="QToolButton" name="cloudDomeColorButton" >
+                <property name="text" >
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="cloudDomeEnableToggle" >
+             <property name="text" >
+              <string>Enable</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_94" >
+             <property name="text" >
+              <string>Cloud Color:</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="skyDomeGroupBox" >
+          <property name="title" >
+           <string>SkyDome</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_28" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="label_98" >
+             <property name="text" >
+              <string>Base Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QFrame" name="frame_12" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_11" >
+              <item>
+               <widget class="QLabel" name="label_95" >
+                <property name="text" >
+                 <string>R:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="skyDomeRedEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_96" >
+                <property name="text" >
+                 <string>G:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="skyDomeGreenEdit" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_97" >
+                <property name="text" >
+                 <string>B:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="skyDomeBlueEdit" />
+              </item>
+              <item>
+               <widget class="QToolButton" name="skyDomeColorButton" >
+                <property name="text" >
+                 <string>...</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
