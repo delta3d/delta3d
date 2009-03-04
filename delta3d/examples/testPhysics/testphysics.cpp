@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/object.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/odecontroller.h>
@@ -153,6 +153,8 @@ public:
 
       osg::Vec3 origin(0.0f, 0.0f, 0.0f);
       omm->SetDistance((camLoc - origin).length());
+
+      CreateHelpLabel();
    }
 
 protected:
@@ -306,6 +308,11 @@ protected:
             verdict = true;
             break;
          }
+         case osgGA::GUIEventAdapter::KEY_F1:
+         {
+            mLabel->SetActive(!mLabel->GetActive());
+            break;
+         }
          default:
          {
             break;
@@ -353,6 +360,34 @@ protected:
    }
 
    private:
+      void CreateHelpLabel()
+      {
+         mLabel = new dtABC::LabelActor();
+         osg::Vec2 testSize(24.0f, 5.5f);
+         mLabel->SetBackSize(testSize);
+         mLabel->SetFontSize(0.8f);
+         mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+         mLabel->SetText(CreateHelpLabelText());
+         mLabel->SetEnableDepthTesting(false);
+
+         GetCamera()->AddChild(mLabel.get());
+         dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
+         mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+         AddDrawable(GetCamera());
+      }
+
+      std::string CreateHelpLabelText()
+      {
+         std::string testString("");
+         testString += "F1: Toggle Help Screen\n";
+         testString += "\n";
+         testString += "b: Add box at mouse position\n";
+         testString += "c: Add cylinder at mouse position\n";
+         testString += "s: Add sphere at mouse position\n";
+         testString += "p: Pause System\n";
+
+         return testString;
+      }
 
    const unsigned int mLimit;
 
@@ -362,6 +397,7 @@ protected:
 
    RefPtr<Updater> updater;
    RefPtr<OrbitMotionModel> omm;
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 };
 
 

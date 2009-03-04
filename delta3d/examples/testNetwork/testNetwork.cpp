@@ -38,6 +38,8 @@ TestNetwork::TestNetwork(const std::string& hostName,
       mNet->SetupClient(hostName, 4444);
       GetWindow()->SetWindowTitle("I'm a Client: " + GetUniqueId().ToString());
    }
+
+   CreateHelpLabel();
 }
 
 void TestNetwork::Config()
@@ -73,6 +75,11 @@ bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          GNE::PingPacket ping;
          mNet->SendPacket("all", ping);
          verdict = true;
+      } break;
+
+   case osgGA::GUIEventAdapter::KEY_F1:
+      {
+         mLabel->SetActive(!mLabel->GetActive());
       } break;
 
    default:
@@ -122,3 +129,30 @@ void TestNetwork::SendPosition()
    PositionPacket packet(xyz, hpr, GetUniqueId().ToString());
    mNet->SendPacket("all", packet);
 }
+
+void TestNetwork::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(21.5f, 3.0f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 11.5f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+std::string TestNetwork::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "P: Ping network with a packet\n";
+
+   return testString;
+}
+

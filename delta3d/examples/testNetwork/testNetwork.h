@@ -24,6 +24,7 @@
 #define DELTA_TestNetwork
 
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/refptr.h>
 #include <dtNet/dtnet.h>
 #include <dtCore/flymotionmodel.h>
@@ -51,14 +52,15 @@ class TestNetwork : public dtABC::Application
       virtual void Quit();
 
    private:
+      void SendPosition();
+      void CreateHelpLabel();
+      std::string CreateHelpLabelText();
 
       dtCore::RefPtr<MyNetwork> mNet; ///<Reference the NetMgr derived class
       std::string mHostName; ///<The hostname to connect to (if we're a client)
       dtCore::RefPtr<dtCore::Object> mTerrain; ///<Ground
       dtCore::RefPtr<dtCore::FlyMotionModel> mMotion; ///<Motion model
-
-      void SendPosition();
-
+      dtCore::RefPtr<dtABC::LabelActor> mLabel; ///<Help Label
 };
 
 #endif // DELTA_TestNetwork
