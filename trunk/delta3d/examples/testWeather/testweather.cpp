@@ -19,9 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-#include <dtInspector/inspector.h>
-
 #include <dtCore/environment.h>
 #include <dtCore/globals.h>
 #include <dtCore/infiniteterrain.h>
@@ -29,6 +26,7 @@
 #include <dtCore/refptr.h>
 
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtABC/weather.h>
 
 using namespace dtABC;
@@ -55,11 +53,10 @@ public:
 
       AddDrawable(weather->GetEnvironment());
 
+      CreateHelpLabel();
+
       orbit = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
       orbit->SetTarget(GetCamera());
-
-      dtInspector::Inspector* ui = new dtInspector::Inspector();
-      ui = ui; //no-op to prevent warning for unused variable
    }
 protected:
    virtual ~TestWeatherApp() {}
@@ -71,17 +68,19 @@ protected:
       {
       case osgGA::GUIEventAdapter::KEY_Escape:    Quit();        verdict=true;  break;
 
-      case osgGA::GUIEventAdapter::KEY_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); verdict=true;  break;
-      case osgGA::GUIEventAdapter::KEY_F2: weather->SetBasicVisibilityType(Weather::VIS_FAR);       verdict=true;  break;
-      case osgGA::GUIEventAdapter::KEY_F3: weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  verdict=true;  break;
-      case osgGA::GUIEventAdapter::KEY_F4: weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   verdict=true;  break;
-      case osgGA::GUIEventAdapter::KEY_F5: weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     verdict=true;  break;
+      case osgGA::GUIEventAdapter::KEY_F1: mLabel->SetActive(!mLabel->GetActive()); verdict=true; break;
 
-      case '1': weather->SetBasicCloudType(Weather::CLOUD_CLEAR);      verdict=true;  break;
-      case '2': weather->SetBasicCloudType(Weather::CLOUD_FEW);        verdict=true;  break;
-      case '3': weather->SetBasicCloudType(Weather::CLOUD_SCATTERED);  verdict=true;  break;
-      case '4': weather->SetBasicCloudType(Weather::CLOUD_BROKEN);     verdict=true;  break;
-      case '5': weather->SetBasicCloudType(Weather::CLOUD_OVERCAST);   verdict=true;  break;
+      case '1': weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); verdict=true;  break;
+      case '2': weather->SetBasicVisibilityType(Weather::VIS_FAR);       verdict=true;  break;
+      case '3': weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  verdict=true;  break;
+      case '4': weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   verdict=true;  break;
+      case '5': weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     verdict=true;  break;
+
+      case '!': weather->SetBasicCloudType(Weather::CLOUD_CLEAR);      verdict=true;  break;
+      case '@': weather->SetBasicCloudType(Weather::CLOUD_FEW);        verdict=true;  break;
+      case '#': weather->SetBasicCloudType(Weather::CLOUD_SCATTERED);  verdict=true;  break;
+      case '$': weather->SetBasicCloudType(Weather::CLOUD_BROKEN);     verdict=true;  break;
+      case '%': weather->SetBasicCloudType(Weather::CLOUD_OVERCAST);   verdict=true;  break;
       default:
          break;
       }
@@ -90,10 +89,46 @@ protected:
    }
 
 private:
+   void CreateHelpLabel()
+   {
+      mLabel = new LabelActor();
+      osg::Vec2 testSize(24.5f, 13.5f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      osg::StateSet* state = mLabel->GetOSGNode()->getOrCreateStateSet();
+      state->setMode(GL_DEPTH_TEST , osg::StateAttribute::OFF);
+
+      GetCamera()->AddChild(mLabel.get());
+      Transform labelOffset(-17.0f, 50.0f, 6.5f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
+
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "1: Unlimited Visibility\n";
+      testString += "2: Far Visibility\n";
+      testString += "3: Moderate Visibility\n";
+      testString += "4: Limited Visibility\n";
+      testString += "5: Close Visibility\n";
+      testString += "\n";
+      testString += "Shift + 1: No Clouds Shift\n";
+      testString += "Shift + 2: Few Clouds\n";
+      testString += "Shift + 3: Scattered Clouds\n";
+      testString += "Shift + 4: Broken Clouds\n";
+      testString += "Shift + 5: Overcast Clouds";
+
+      return testString;
+   }
+
    RefPtr<InfiniteTerrain> terr;
    RefPtr<Weather> weather;
    RefPtr<OrbitMotionModel> orbit;
-
+   RefPtr<LabelActor> mLabel;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
