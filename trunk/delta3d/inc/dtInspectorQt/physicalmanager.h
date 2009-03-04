@@ -33,3 +33,4 @@ namespace dtInspectorQt
    };
 }
 #endif // physicalmanager_h__
+
