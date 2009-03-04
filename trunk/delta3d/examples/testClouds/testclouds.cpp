@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-#include <dtInspector/inspector.h>
 #include <osgGA/GUIEventAdapter>
 
 #include <dtABC/application.h>
@@ -89,17 +88,13 @@ protected:
             this->Quit();
             verdict = true;
          } break;
-      case 'h':
-         {
-            dtInspector::Inspector* ui = new dtInspector::Inspector();
-            ui->Show(); //to prevent unused variable warnings
-            verdict = true;
-         } break;
+
       case osgGA::GUIEventAdapter::KEY_F1: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
       case osgGA::GUIEventAdapter::KEY_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
       case osgGA::GUIEventAdapter::KEY_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
       case osgGA::GUIEventAdapter::KEY_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
       case osgGA::GUIEventAdapter::KEY_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
+
       case 'p':
          {
             if (isDomeEnabled)
