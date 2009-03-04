@@ -15,8 +15,8 @@ Language and requires a graphics card which supports GLSL.
 
 Controls
 --------
-F1-F5  -  Set visibility (F1:unlimited - F5:close)
-H      -  Bring up the Inspector
+F1     -  Display the help text
+F2-F6  -  Set visibility (F2:unlimited - F6:close)
 P      -  Turn off cloud dome
 D      -  Turn on cloud dome
 +|-    -  Increase|decrease number of cloud layers

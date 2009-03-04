@@ -24,6 +24,7 @@
 
 #include <dtABC/application.h>
 #include <dtABC/weather.h>
+#include <dtABC/labelactor.h>
 
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/orbitmotionmodel.h>
@@ -71,6 +72,8 @@ public:
 
       orbit = new OrbitMotionModel(GetKeyboard(), GetMouse());
       orbit->SetTarget(GetCamera());
+
+      CreateHelpLabel();
    }
 
    ~TestCloudsApp()
@@ -89,11 +92,13 @@ protected:
             verdict = true;
          } break;
 
-      case osgGA::GUIEventAdapter::KEY_F1: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
-      case osgGA::GUIEventAdapter::KEY_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
-      case osgGA::GUIEventAdapter::KEY_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
-      case osgGA::GUIEventAdapter::KEY_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
-      case osgGA::GUIEventAdapter::KEY_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
+      case osgGA::GUIEventAdapter::KEY_F1: mLabel->SetActive(!mLabel->GetActive()); verdict=true; break;
+
+      case osgGA::GUIEventAdapter::KEY_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
+      case osgGA::GUIEventAdapter::KEY_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
+      case osgGA::GUIEventAdapter::KEY_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
+      case osgGA::GUIEventAdapter::KEY_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
+      case osgGA::GUIEventAdapter::KEY_F6: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
 
       case 'p':
          {
@@ -142,6 +147,41 @@ protected:
       return verdict;
    }
 
+   void CreateHelpLabel()
+   {
+      mLabel = new LabelActor();
+      osg::Vec2 testSize(19.5f, 10.5f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
+      mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      mLabel->SetEnableDepthTesting(false);
+      mLabel->SetBackVisible(false);
+
+      GetCamera()->AddChild(mLabel.get());
+      Transform labelOffset(-17.0f, 50.0f, 7.75f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
+
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "F2-F6  -  Set visibility (F2:unlimited - F6:close)\n";
+      testString += "p      -  Turn off cloud dome\n";
+      testString += "d      -  Turn on cloud dome\n";
+      testString += "+|-    -  Increase|decrease number of cloud layers\n";
+      testString += "Esc    -  Exit\n";
+      testString += "\n";
+      testString += "Left Mouse Button    -  Rotate View\n";
+      testString += "Right Mouse Button   -  Translate View\n";
+      testString += "Middle Mouse Button  -  Zoom View\n";
+
+      return testString;
+   }
+
 private:
    RefPtr<InfiniteTerrain> terr;
    RefPtr<Weather> weather;
@@ -151,6 +191,7 @@ private:
    RefPtr<dtCore::CloudPlane> cp[3];
    int cloudLayers;
    bool isDomeEnabled;
+   RefPtr<LabelActor> mLabel;
 
 };
 
