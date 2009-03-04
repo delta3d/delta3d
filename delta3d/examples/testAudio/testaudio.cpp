@@ -90,6 +90,8 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/)
       mSFXBinder->AddEffectTypeMapping(kFxDetonationType[EXPLODE], kSoundFile[1L]);
       mSFXBinder->AddEffectTypeRange(kFxDetonationType[EXPLODE], 35.0f);
    }
+
+   CreateHelpLabel();
 }
 
 
@@ -157,115 +159,105 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, int key)
 
    switch (key)
    {
-      case  'a':
+      case 'a':
          LoadPlaySound(kSoundFile[0L]);
          verdict = true;
          break;
 
-      case  's':
+      case 's':
          mFXMgr->AddDetonation(pos, kFxDetonationType[EXPLODE]);
          verdict = true;
          break;
 
-      case  'd':
+      case 'd':
          LoadPlaySound(kSoundFile[2L], TRUCK);
          verdict = true;
          break;
 
-      case  'f':
+      case 'f':
          LoadPlaySound(kSoundFile[3L], HELO);
          verdict = true;
          break;
 
-      case  '0':
-      case  osgGA::GUIEventAdapter::KEY_KP_Insert:
+      case '0':
          ChangeSoundGain(0.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '1':
-      case  osgGA::GUIEventAdapter::KEY_KP_End:
+      case '1':
          ChangeSoundGain(1.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '2':
-      case  osgGA::GUIEventAdapter::KEY_KP_Down:
+      case '2':
          ChangeSoundGain(2.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '3':
-      case  osgGA::GUIEventAdapter::KEY_KP_Page_Down:
+      case '3':
          ChangeSoundGain(3.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '4':
-      case  osgGA::GUIEventAdapter::KEY_KP_Left:
+      case '4':
          ChangeSoundGain(4.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '5':
-      case  osgGA::GUIEventAdapter::KEY_KP_Begin:
+      case '5':
          ChangeSoundGain(5.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '6':
-      case  osgGA::GUIEventAdapter::KEY_KP_Right:
+      case '6':
          ChangeSoundGain(6.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '7':
-      case  osgGA::GUIEventAdapter::KEY_KP_Home:
+      case '7':
          ChangeSoundGain(7.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '8':
-      case  osgGA::GUIEventAdapter::KEY_KP_Up:
+      case '8':
          ChangeSoundGain(8.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '9':
-      case  osgGA::GUIEventAdapter::KEY_KP_Page_Up:
+      case '9':
          ChangeSoundGain(9.0f / 9.0f);
          verdict = true;
          break;
 
-      case  '-':
-      case  osgGA::GUIEventAdapter::KEY_KP_Subtract:
+      case '-':
+      case osgGA::GUIEventAdapter::KEY_KP_Subtract:
          ChangeSoundPitch(0.9f);
          verdict = true;
          break;
 
-      case  '=':
-      case  osgGA::GUIEventAdapter::KEY_KP_Add:
+      case '=':
+      case osgGA::GUIEventAdapter::KEY_KP_Add:
          ChangeSoundPitch(1.1f);
          verdict = true;
          break;
 
-      case  'l':
+      case 'l':
          ToggleSoundLooping();
          verdict = true;
          break;
 
-      case  osgGA::GUIEventAdapter::KEY_Pause:
+      case osgGA::GUIEventAdapter::KEY_Pause:
          PauseAllSounds();
          verdict = true;
          break;
 
-      case  osgGA::GUIEventAdapter::KEY_Return:
-      case  osgGA::GUIEventAdapter::KEY_KP_Enter:
+      case osgGA::GUIEventAdapter::KEY_Return:
+      case osgGA::GUIEventAdapter::KEY_KP_Enter:
          RewindAllSounds();
          verdict = true;
          break;
 
-      case  ' ':
+      case ' ':
          StopAllSounds();
          verdict = true;
          break;
@@ -292,6 +284,11 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, int key)
             verdict = true;
          } break;
 
+      case osgGA::GUIEventAdapter::KEY_F1:
+      {
+         mLabel->SetActive(!mLabel->GetActive());
+         break;
+      }
       default:
          break;
    }
@@ -822,6 +819,42 @@ void TestAudioApp::StopRecording()
 {
    LOG_INFO("Stopping Recording.")
    mRecorder->Stop();
+}
+
+void TestAudioApp::CreateHelpLabel()
+{
+   mLabel = new LabelActor();
+   osg::Vec2 testSize(21.0f, 11.0f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   Transform labelOffset(-17.0f, 50.0f, 7.5f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+std::string TestAudioApp::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "0-9: Change volume\n";
+   testString += "+/-: Increase/Decrease pitch\n";
+   testString += "a: Play gunfire sound\n";
+   testString += "s: Play explosion sound\n";
+   testString += "d: Play helicopter hum sound\n";
+   testString += "f: Play vehicle horn sound\n";
+   testString += "l: Set sounds to loop\n";
+   testString += "r: Record sounds\n";
+   testString += "y: Save soundrecord.xml\n";
+   testString += "Space: Stops all sounds\n";
+   testString += "Pause: Pause all sounds\n";
+
+   return testString;
 }
 
 int main()
