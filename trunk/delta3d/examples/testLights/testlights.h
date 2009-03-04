@@ -28,6 +28,7 @@
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 
 class TestLightsApp : public dtABC::Application
 {
@@ -50,6 +51,8 @@ public:
    void PreFrame( const double deltaFrameTime );
 
 private:
+   void CreateHelpLabel();
+   std::string CreateHelpLabelText();
 
    //static values between 0-360 used to calculate new colors + positions
    static float countOne;
@@ -64,6 +67,8 @@ private:
    dtCore::RefPtr<dtCore::InfiniteLight> mGlobalInfinite;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mOmm;
+
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 };
 
 #endif // DELTA_TESTLIGHTS
