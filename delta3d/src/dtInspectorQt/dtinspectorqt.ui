@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>492</width>
-    <height>652</height>
+    <width>512</width>
+    <height>672</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>395</width>
-         <height>3906</height>
+         <y>-3112</y>
+         <width>349</width>
+         <height>3776</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -2550,28 +2550,116 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="0" colspan="2" >
+           <item row="0" column="2" >
+            <widget class="QPlainTextEdit" name="labelActorTextEdit" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_116" >
+             <property name="text" >
+              <string>Text Alignment:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2" >
+            <widget class="QComboBox" name="labelActorAlignmentCombo" >
+             <property name="currentIndex" >
+              <number>9</number>
+             </property>
+             <item>
+              <property name="text" >
+               <string>LEFT TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BOTTOM BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BOTTOM BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BOTTOM BASE LINE</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_113" >
+             <property name="text" >
+              <string>Font Size:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" >
+            <widget class="QDoubleSpinBox" name="labelActorFontSizeEdit" />
+           </item>
+           <item row="4" column="0" colspan="3" >
             <widget class="QLabel" name="label_102" >
              <property name="text" >
               <string>Backdrop Size:</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="0" colspan="2" >
-            <widget class="QLabel" name="label_103" >
-             <property name="text" >
-              <string>Text Color:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0" colspan="2" >
-            <widget class="QLabel" name="label_104" >
-             <property name="text" >
-              <string>Backdrop Color:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0" colspan="2" >
+           <item row="5" column="0" colspan="3" >
             <widget class="QFrame" name="frame_14" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2601,9 +2689,21 @@
                <widget class="QDoubleSpinBox" name="labelActorBackdropHeightEdit" />
               </item>
              </layout>
+             <zorder>label_105</zorder>
+             <zorder>labelActorBackdropWidthEdit</zorder>
+             <zorder>label_108</zorder>
+             <zorder>labelActorBackdropHeightEdit</zorder>
+             <zorder>checkBox</zorder>
             </widget>
            </item>
-           <item row="7" column="0" colspan="2" >
+           <item row="6" column="0" colspan="3" >
+            <widget class="QLabel" name="label_103" >
+             <property name="text" >
+              <string>Text Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="3" >
             <widget class="QFrame" name="frame_15" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2690,7 +2790,14 @@
              </layout>
             </widget>
            </item>
-           <item row="9" column="0" colspan="2" >
+           <item row="8" column="0" colspan="3" >
+            <widget class="QLabel" name="label_104" >
+             <property name="text" >
+              <string>Backdrop Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0" colspan="3" >
             <widget class="QFrame" name="frame_16" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2777,113 +2884,31 @@
              </layout>
             </widget>
            </item>
-           <item row="2" column="0" >
-            <widget class="QLabel" name="label_113" >
-             <property name="text" >
-              <string>Font Size:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1" >
-            <widget class="QDoubleSpinBox" name="labelActorFontSizeEdit" />
-           </item>
-           <item row="0" column="1" >
-            <widget class="QPlainTextEdit" name="labelActorTextEdit" />
-           </item>
-           <item row="1" column="0" >
-            <widget class="QLabel" name="label_116" >
-             <property name="text" >
-              <string>Text Alignment:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" >
-            <widget class="QComboBox" name="labelActorAlignmentCombo" >
-             <property name="currentIndex" >
-              <number>9</number>
-             </property>
-             <item>
-              <property name="text" >
-               <string>LEFT TOP</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>LEFT CENTER</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>LEFT BOTTOM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>CENTER TOP</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>CENTER CENTER</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>CENTER BOTTOM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>RIGHT TOP</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>RIGHT CENTER</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>RIGHT BOTTOM</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>LEFT BASE LINE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>CENTER BASE LINE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>RIGHT BASE LINE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>LEFT BOTTOM BASE LINE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>CENTER BOTTOM BASE LINE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>RIGHT BOTTOM BASE LINE</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="3" column="0" colspan="2" >
-            <widget class="QCheckBox" name="labelActorLightingToggle" >
-             <property name="text" >
-              <string>Lighting Enabled</string>
-             </property>
+           <item row="3" column="0" colspan="3" >
+            <widget class="QWidget" native="1" name="widget_11" >
+             <layout class="QGridLayout" name="gridLayout_34" >
+              <item row="0" column="0" >
+               <widget class="QCheckBox" name="labelActorLightingToggle" >
+                <property name="text" >
+                 <string>Lighting Enabled</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QCheckBox" name="labelActorDepthToggle" >
+                <property name="text" >
+                 <string>Depth Testing</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QCheckBox" name="labelActorBackToggle" >
+                <property name="text" >
+                 <string>Backdrop</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
@@ -2913,8 +2938,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>492</width>
-     <height>26</height>
+     <width>512</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

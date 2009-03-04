@@ -97,8 +97,7 @@ private:
       mLabel->SetFontSize(0.8f);
       mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
       mLabel->SetText(CreateHelpLabelText());
-      osg::StateSet* state = mLabel->GetOSGNode()->getOrCreateStateSet();
-      state->setMode(GL_DEPTH_TEST , osg::StateAttribute::OFF);
+      mLabel->SetEnableDepthTesting(false);
 
       GetCamera()->AddChild(mLabel.get());
       Transform labelOffset(-17.0f, 50.0f, 7.75f, 0.0f, 90.0f, 0.0f);

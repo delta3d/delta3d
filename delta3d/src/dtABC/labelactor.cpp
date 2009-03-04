@@ -351,4 +351,20 @@ namespace dtABC
 
       return (mode ? true : false);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void LabelActor::SetEnableDepthTesting(bool enable)
+   {
+      osg::StateSet* states = GetOSGNode()->getOrCreateStateSet();
+      states->setMode(GL_DEPTH_TEST, enable ? osg::StateAttribute::ON : osg::StateAttribute::OFF);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool LabelActor::GetEnableDepthTesting()
+   {
+      osg::StateSet* states = GetOSGNode()->getOrCreateStateSet();
+      osg::StateAttribute::GLModeValue mode = states->getMode(GL_DEPTH_TEST);
+
+      return (mode ? true : false);
+   }
 }

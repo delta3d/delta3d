@@ -22,6 +22,8 @@ dtInspectorQt::LabelActorManager::LabelActorManager(Ui::InspectorWidget& ui)
    connect(mUI->labelActorBackdropBlueEdit, SIGNAL(valueChanged(double)), this, SLOT(OnBackdropColorChanged(double)));
    connect(mUI->labelActorBackdropAlphaEdit, SIGNAL(valueChanged(double)), this, SLOT(OnBackdropColorChanged(double)));
    connect(mUI->labelActorBackdropColorButton, SIGNAL(clicked()), this, SLOT(OnBackdropColorPickerClicked()));
+   connect(mUI->labelActorBackToggle, SIGNAL(stateChanged(int)), this, SLOT(OnBackdropToggled(int)));
+   connect(mUI->labelActorDepthToggle, SIGNAL(stateChanged(int)), this, SLOT(OnDepthTestingToggled(int)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -148,6 +150,8 @@ void dtInspectorQt::LabelActorManager::Update()
       mUI->labelActorFontSizeEdit->setValue(mOperateOn->GetFontSize());
       mUI->labelActorAlignmentCombo->setCurrentIndex(mOperateOn->GetTextAlignment());
       mUI->labelActorLightingToggle->setChecked(mOperateOn->GetEnableLighting());
+      mUI->labelActorBackToggle->setChecked(mOperateOn->IsBackVisible());
+      mUI->labelActorDepthToggle->setChecked(mOperateOn->GetEnableDepthTesting());
 
       osg::Vec2 size = mOperateOn->GetBackSize();
       mUI->labelActorBackdropWidthEdit->setValue(size[0]);
@@ -164,10 +168,29 @@ void dtInspectorQt::LabelActorManager::Update()
       mUI->labelActorBackdropGreenEdit->setValue(backdropColor[1]);
       mUI->labelActorBackdropBlueEdit->setValue(backdropColor[2]);
       mUI->labelActorBackdropAlphaEdit->setValue(backdropColor[3]);
+
+
    }
    else
    {
       mUI->labelActorGroupBox->hide();
+   }
+}
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LabelActorManager::OnBackdropToggled(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetBackVisible(checked ? true : false);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LabelActorManager::OnDepthTestingToggled(int checked)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetEnableDepthTesting(checked ? true : false);
    }
 }
 
