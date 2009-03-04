@@ -25,11 +25,11 @@
  *
  * Matthew W. Campbell
  */
-
 #include <osg/ApplicationUsage>
 #include <osg/ArgumentParser>
 
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtABC/weather.h>
 
 #include <dtCore/refptr.h>
@@ -371,6 +371,11 @@ public:
 
          verdict = true;
          break;
+
+      case osgGA::GUIEventAdapter::KEY_F1:
+         mLabel->SetActive(!mLabel->GetActive());
+         break;
+
       default:
          verdict = dtABC::Application::KeyPressed(keyBoard,key);
          break;
@@ -506,6 +511,38 @@ public:
       mLongitude = longitude;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void CreateHelpLabel()
+   {
+      mLabel = new dtABC::LabelActor();
+      osg::Vec2 testSize(19.0f, 5.0f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
+      mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      mLabel->SetEnableDepthTesting(false);
+
+      GetCamera()->AddChild(mLabel.get());
+      dtCore::Transform labelOffset(-17.0f, 22.5f, 10.5f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "f: Hold for faster fly speed\n";
+      testString += "g: Toggle slow fly speed\n";
+      testString += "Enter: Toggle statistics\n";
+      testString += "Space: Toggle wireframe\n";
+
+      return testString;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
 private:
 
    // Motion Model
@@ -524,6 +561,8 @@ private:
    dtCore::RefPtr<dtTerrain::ColorMapDecorator> mColorMapDecorator;
 
    dtCore::RefPtr<dtTerrain::SoarXTerrainRenderer> mRenderer;
+
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 
    // LCC Types
    std::vector<dtTerrain::LCCType> mLCCType;
@@ -639,6 +678,7 @@ int main(int argc, char** argv)
       app->SetEnableVegetation(vegetation);
       app->SetGeospecificDrapePath(drapeImagePath);
       app->CreateTerrain();
+      app->CreateHelpLabel();
       app->Config();
       app->Run();
    }
