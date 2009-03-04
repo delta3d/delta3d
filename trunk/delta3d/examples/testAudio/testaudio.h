@@ -30,6 +30,7 @@
 #include <dtCore/globals.h>
 #include <dtAudio/sound.h>
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/recorder.h>
 #include <dtCore/refptr.h>
 
@@ -100,6 +101,9 @@ public:
    bool KeyPressed(const dtCore::Keyboard* keyboard, int key);
 
 private:
+   void CreateHelpLabel();
+   std::string CreateHelpLabelText();
+
    inline void LoadPlaySound( const char* fname, unsigned int box = 0L );
    inline void StopAllSounds( void );
    inline void FreeAllStoppedSounds( bool forced = false );
@@ -132,15 +136,16 @@ private:
    bool                          mLooping;
    dtAudio::Listener*            mMic;
 
-   OBJ_PTR                       mGfxObj[kNumGfx];
-   PAR_PTR                       mPSysA;
-   PAR_PTR                       mPSysC;
-   FXM_PTR                       mFXMgr;
-   BIN_PTR                       mSFXBinder;
-   OMM_PTR                       mOribitMotionModel;
-   unsigned int                  mSmokeCountA;
-   unsigned int                  mSmokeCountC;
-   dtCore::RefPtr<SoundRecorder> mRecorder;
+   OBJ_PTR                           mGfxObj[kNumGfx];
+   PAR_PTR                           mPSysA;
+   PAR_PTR                           mPSysC;
+   FXM_PTR                           mFXMgr;
+   BIN_PTR                           mSFXBinder;
+   OMM_PTR                           mOribitMotionModel;
+   unsigned int                      mSmokeCountA;
+   unsigned int                      mSmokeCountC;
+   dtCore::RefPtr<SoundRecorder>     mRecorder;
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 };
 
 #endif  // DELTA_TEST_AUDIO
