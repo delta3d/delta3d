@@ -92,15 +92,16 @@ private:
    void CreateHelpLabel()
    {
       mLabel = new LabelActor();
-      osg::Vec2 testSize(24.5f, 13.5f);
+      osg::Vec2 testSize(19.5f, 10.5f);
       mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
       mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
       mLabel->SetText(CreateHelpLabelText());
       osg::StateSet* state = mLabel->GetOSGNode()->getOrCreateStateSet();
       state->setMode(GL_DEPTH_TEST , osg::StateAttribute::OFF);
 
       GetCamera()->AddChild(mLabel.get());
-      Transform labelOffset(-17.0f, 50.0f, 6.5f, 0.0f, 90.0f, 0.0f);
+      Transform labelOffset(-17.0f, 50.0f, 7.75f, 0.0f, 90.0f, 0.0f);
       mLabel->SetTransform(labelOffset, Transformable::REL_CS);
       AddDrawable(GetCamera());
    }
