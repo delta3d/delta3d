@@ -5,7 +5,6 @@
 
 #include <osgGA/GUIEventAdapter>
 
-
 using namespace dtABC;
 using namespace dtCore;
 
@@ -77,6 +76,8 @@ void TestLightsApp::Config()
    distance = sqrt(distance);
 
    mOmm->SetDistance(distance);
+
+   CreateHelpLabel();
 }
 
 bool TestLightsApp::KeyPressed(const Keyboard* keyboard, int key)
@@ -113,6 +114,9 @@ bool TestLightsApp::KeyPressed(const Keyboard* keyboard, int key)
    case '4':
       mGlobalInfinite->SetEnabled(!mGlobalInfinite->GetEnabled());
       verdict = true;
+      break;
+   case osgGA::GUIEventAdapter::KEY_F1:
+      mLabel->SetActive(!mLabel->GetActive());
       break;
    default:
       break;
@@ -163,6 +167,34 @@ void TestLightsApp::PreFrame(const double deltaFrameTime)
    mGlobalInfinite->SetAzimuthElevation(th, tp); //change direction
 }
 
+void TestLightsApp::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(23.5f, 5.5f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+std::string TestLightsApp::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "1: Toggle Spot Light\n";
+   testString += "2: Toggle Positional Light\n";
+   testString += "3: Toggle Positional Light's Mode\n";
+   testString += "4: Toggle Infinite Light\n";
+
+   return testString;
+}
 
 int main(int argc, const char* argv[])
 {
