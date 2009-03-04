@@ -31,8 +31,8 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GMStatistics::GMStatistics() :
-        mStatsLastFragmentDump(0)
+   GMStatistics::GMStatistics() 
+      : mStatsLastFragmentDump(0)
       , mStatsNumProcMessages(0)
       , mStatsNumSendNetworkMessages(0)
       , mStatsNumFrames(0)
@@ -109,7 +109,6 @@ namespace dtGame
          mDebugLoggerInformation.insert(std::make_pair(uniqueIDToFind, toPushDebugInfo));
       }
    }
-
 
    //////////////////////////////////////////////////////////////////////////////
    void GMStatistics::DebugStatisticsTurnOn(bool logComponents, bool logActors,
@@ -322,19 +321,19 @@ namespace dtGame
          // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
          // because mClock on system is only updated at the start of the whole tick.
          dtCore::Timer_t frameTickStop = mStatsTickClock.Tick();
-         double fragmentDelta =
-            mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
+         double fragmentDelta = mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
 
          mStatsCumGMProcessTime +=
             dtCore::Timer_t(mStatsTickClock.DeltaMicro(frameTickStart, frameTickStop));
 
-         if (fragmentDelta < 0) // handle wierd case of wrap around (just to be safe)
+         // handle weird case of wrap around (just to be safe)
+         if (fragmentDelta < 0)
+         {
             mStatsLastFragmentDump = frameTickStop;
-
+         }
          else if (fragmentDelta >= (mStatisticsInterval * 1000000))
          {
-            dtCore::Timer_t realTimeElapsed =
-               dtCore::Timer_t(mStatsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop));
+            dtCore::Timer_t realTimeElapsed = dtCore::Timer_t(fragmentDelta);
 
             DebugStatisticsPrintOut(realTimeElapsed, ourGm);
             mStatsLastFragmentDump  = frameTickStop;

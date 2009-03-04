@@ -107,25 +107,22 @@ namespace dtGame
          {
             public:
 
-               LogDebugInformation(const std::string &name, 
-                        const dtCore::UniqueId &uniqueID, 
-                        bool isComponent) : 
-                           mTotalTime(0.0f),
-                           mTickLocalTime(0.0f),
-                           mTimesThrough(1), 
-                           mNameOfLogInfo(name), 
-                           mUniqueID(uniqueID), 
-                           mIsComponent(isComponent)
-                           {
+               LogDebugInformation(const std::string& name, const dtCore::UniqueId &uniqueID, bool isComponent) 
+                  : mTotalTime(0.0f)
+                  , mTickLocalTime(0.0f)
+                  , mTimesThrough(1)
+                  , mNameOfLogInfo(name)
+                  , mUniqueID(uniqueID)
+                  , mIsComponent(isComponent)
+               {
+               }
 
-                           }
-
-               float          mTotalTime;
-               float          mTickLocalTime;
-               unsigned int   mTimesThrough;
-               std::string    mNameOfLogInfo;
+               float             mTotalTime;
+               float             mTickLocalTime;
+               unsigned int      mTimesThrough;
+               std::string       mNameOfLogInfo;
                dtCore::UniqueId  mUniqueID;
-               bool           mIsComponent;
+               bool              mIsComponent;
 
             protected:
 
@@ -145,6 +142,7 @@ namespace dtGame
          bool                 mPrintFileToConsole;                                  ///< if the information goes to console or file
          bool                 mDoStatsOnTheComponents;                              ///< do we fill in the information for the components.
          bool                 mDoStatsOnTheActors;                                  ///< Do we fill in information for the actors
+
          std::map<dtCore::UniqueId, dtCore::RefPtr<LogDebugInformation> > mDebugLoggerInformation; ///< hold onto all the information.
          ////////////////////////////////////////////////
    };

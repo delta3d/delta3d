@@ -120,15 +120,15 @@ namespace dtAnim
       *  @return outTriangle struct containing the nearest triangle and it's location
       */
       void GetTargetTriangleData(const float azimuth,
-                                 const float elevation,                                                     
-                                 TargetTriangle &outTriangle) const;
+                                 const float elevation,
+                                 TargetTriangle& outTriangle) const;
 
       /**
       *  FindCelestialTriangleID Looks up a celestial triangle from a mesh using azimuth and elevation  
       *  @param azimuth the horizontal angle of interest
       *  @param elevation the vertical angle of interest
       */
-      int FindCelestialTriangleID(float azimuth, float elevation) const;
+      int FindPoseTriangleID(float azimuth, float elevation) const;
 
       /**
       * GetIndexPairsForTriangle Look up the indices for a triangle and 
@@ -138,10 +138,10 @@ namespace dtAnim
       * @param pair1 the second pair(edge)
       * @param pair2 the thris pair(edge)
       */
-      void GetIndexPairsForTriangle(int triangleID,                                     
-                                    MeshIndexPair &pair0,
-                                    MeshIndexPair &pair1,
-                                    MeshIndexPair &pair2) const;   
+      void GetIndexPairsForTriangle(int triangleID, 
+                                    MeshIndexPair& pair0,
+                                    MeshIndexPair& pair1,
+                                    MeshIndexPair& pair2) const;   
 
    private:
 
@@ -160,12 +160,12 @@ namespace dtAnim
       Barycentric2DVector mBarySpaces;  
 
       // the model should be made const later
-      void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper *model,
-                                 const std::vector<std::string> &animNames,
-                                 std::vector<unsigned int> &animIDs) const;
+      void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
+                                 const std::vector<std::string>& animNames,
+                                 std::vector<unsigned int>& animIDs) const;
 
-      void ExtractNativeForward(dtAnim::Cal3DModelWrapper *model,
-                                osg::Vec3 &outNativeForward);
+      void ExtractNativeForward(dtAnim::Cal3DModelWrapper* model,
+                                osg::Vec3& outNativeForward);
 
    };
 }

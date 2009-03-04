@@ -59,7 +59,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
    model->Update(0.0f);
 
    // Allocate space for osg to triangulate our verts
-   std::vector<osg::Vec3> celestialPoints;
+   std::vector<osg::Vec3> posePoints;
 
    typedef std::map<unsigned int, unsigned int> AnimVertMap;
    AnimVertMap vertMap;
@@ -131,7 +131,7 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       // - osg::PI_2
       osg::Vec3 newVertPoint(az, el, 0.f);
 
-      celestialPoints.push_back(newVertPoint);
+      posePoints.push_back(newVertPoint);
 
       // add a (az,el) vertex
       PoseMesh::Vertex* newVert = new PoseMesh::Vertex(newVertPoint, *anim);
@@ -341,7 +341,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
                                      const float elevation,
                                      TargetTriangle& outTriangle) const
 {
-   int triangleID = FindCelestialTriangleID(azimuth, elevation);
+   int triangleID = FindPoseTriangleID(azimuth, elevation);
 
    // At this point, we know if we're in or out
    outTriangle.mIsInside = (triangleID != -1);
@@ -392,7 +392,7 @@ void PoseMesh::GetTargetTriangleData(const float azimuth,
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Algorithm in detail at http://www.blackpawn.com/texts/pointinpoly/default.html
-int PoseMesh::FindCelestialTriangleID(float azimuth, float elevation) const
+int PoseMesh::FindPoseTriangleID(float azimuth, float elevation) const
 {
    const PoseMesh::TriangleVector& triangles = GetTriangles();
    unsigned int numTris = triangles.size();
