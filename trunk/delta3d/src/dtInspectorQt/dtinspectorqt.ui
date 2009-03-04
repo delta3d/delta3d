@@ -56,7 +56,7 @@
          <x>0</x>
          <y>0</y>
          <width>395</width>
-         <height>3854</height>
+         <height>3906</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -2550,28 +2550,28 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0" >
+           <item row="4" column="0" colspan="2" >
             <widget class="QLabel" name="label_102" >
              <property name="text" >
               <string>Backdrop Size:</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0" >
+           <item row="6" column="0" colspan="2" >
             <widget class="QLabel" name="label_103" >
              <property name="text" >
               <string>Text Color:</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="0" >
+           <item row="8" column="0" colspan="2" >
             <widget class="QLabel" name="label_104" >
              <property name="text" >
               <string>Backdrop Color:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="0" colspan="2" >
+           <item row="5" column="0" colspan="2" >
             <widget class="QFrame" name="frame_14" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2603,7 +2603,7 @@
              </layout>
             </widget>
            </item>
-           <item row="5" column="0" colspan="2" >
+           <item row="7" column="0" colspan="2" >
             <widget class="QFrame" name="frame_15" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2690,7 +2690,7 @@
              </layout>
             </widget>
            </item>
-           <item row="7" column="0" colspan="2" >
+           <item row="9" column="0" colspan="2" >
             <widget class="QFrame" name="frame_16" >
              <property name="frameShape" >
               <enum>QFrame::StyledPanel</enum>
@@ -2777,18 +2777,114 @@
              </layout>
             </widget>
            </item>
-           <item row="1" column="0" >
+           <item row="2" column="0" >
             <widget class="QLabel" name="label_113" >
              <property name="text" >
               <string>Font Size:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1" >
+           <item row="2" column="1" >
             <widget class="QDoubleSpinBox" name="labelActorFontSizeEdit" />
            </item>
            <item row="0" column="1" >
             <widget class="QPlainTextEdit" name="labelActorTextEdit" />
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="label_116" >
+             <property name="text" >
+              <string>Text Alignment:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QComboBox" name="labelActorAlignmentCombo" >
+             <property name="currentIndex" >
+              <number>9</number>
+             </property>
+             <item>
+              <property name="text" >
+               <string>LEFT TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT TOP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT CENTER</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BOTTOM</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>LEFT BOTTOM BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>CENTER BOTTOM BASE LINE</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>RIGHT BOTTOM BASE LINE</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2" >
+            <widget class="QCheckBox" name="labelActorLightingToggle" >
+             <property name="text" >
+              <string>Lighting Enabled</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -2838,12 +2934,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>317</x>
-     <y>-525</y>
+     <x>248</x>
+     <y>-587</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>474</x>
-     <y>-500</y>
+     <x>419</x>
+     <y>-562</y>
     </hint>
    </hints>
   </connection>
@@ -2854,12 +2950,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>317</x>
-     <y>-525</y>
+     <x>248</x>
+     <y>-587</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>474</x>
-     <y>-473</y>
+     <x>419</x>
+     <y>-535</y>
     </hint>
    </hints>
   </connection>
