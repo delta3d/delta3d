@@ -54,6 +54,8 @@ namespace dtInspectorQt
       void OnTextColorPickerClicked();
       void OnBackdropColorChanged(double newValue);
       void OnBackdropColorPickerClicked();
+      void OnBackdropToggled(int checked);
+      void OnDepthTestingToggled(int checked);
 
    private:
       void Update();

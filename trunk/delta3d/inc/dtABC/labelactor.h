@@ -159,6 +159,16 @@ namespace dtABC
          void SetEnableLighting(bool enable);
          bool GetEnableLighting();
 
+         /** 
+          * Enable the depth testing for the LabelActor.  This will affect whether
+          * or not the label can be covered by other geometry in the Scene.  Defaults
+          * to true.
+          * @param enable True to allow other geometry to render on top, false
+          *               to always render the text on top.
+          */
+         void SetEnableDepthTesting(bool enable);
+         bool GetEnableDepthTesting();
+
          /**
           * Creates the properties that any proxy may need to map to this actor.
           * This is handy if using an extended proxy that does not require
