@@ -70,6 +70,7 @@ void dtInspectorQt::LabelActorManager::OnLightingToggled(int checked)
 {
    if (mOperateOn.valid())
    {
+      mOperateOn->SetEnableLighting(checked ? true : false);
    }
 }
 
@@ -146,7 +147,7 @@ void dtInspectorQt::LabelActorManager::Update()
       mUI->labelActorTextEdit->setPlainText(QString::fromStdString(mOperateOn->GetText()));
       mUI->labelActorFontSizeEdit->setValue(mOperateOn->GetFontSize());
       mUI->labelActorAlignmentCombo->setCurrentIndex(mOperateOn->GetTextAlignment());
-      //mUI->labelActorLightingToggle->setChecked(mOperateOn->GetLightingEnabled());
+      mUI->labelActorLightingToggle->setChecked(mOperateOn->GetEnableLighting());
 
       osg::Vec2 size = mOperateOn->GetBackSize();
       mUI->labelActorBackdropWidthEdit->setValue(size[0]);
