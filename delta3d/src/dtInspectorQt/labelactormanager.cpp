@@ -7,7 +7,9 @@ dtInspectorQt::LabelActorManager::LabelActorManager(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
    connect(mUI->labelActorTextEdit, SIGNAL(textChanged()), this, SLOT(OnTextChanged()));
+   connect(mUI->labelActorAlignmentCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(OnAlignmentChanged(int)));
    connect(mUI->labelActorFontSizeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnFontSizeChanged(double)));
+   connect(mUI->labelActorLightingToggle, SIGNAL(stateChanged(int)), this, SLOT(OnLightingToggled(int)));
    connect(mUI->labelActorBackdropWidthEdit, SIGNAL(valueChanged(double)), this, SLOT(OnBackdropSizeChanged(double)));
    connect(mUI->labelActorBackdropHeightEdit, SIGNAL(valueChanged(double)), this, SLOT(OnBackdropSizeChanged(double)));
    connect(mUI->labelActorTextRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnTextColorChanged(double)));
@@ -46,11 +48,28 @@ void dtInspectorQt::LabelActorManager::OnTextChanged()
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LabelActorManager::OnAlignmentChanged(int newAlignment)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetTextAlignment(static_cast<dtABC::LabelActor::AlignmentType>(newAlignment));
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::LabelActorManager::OnFontSizeChanged(double newValue)
 {
    if (mOperateOn.valid())
    {
       mOperateOn->SetFontSize(newValue);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::LabelActorManager::OnLightingToggled(int checked)
+{
+   if (mOperateOn.valid())
+   {
    }
 }
 
@@ -126,6 +145,8 @@ void dtInspectorQt::LabelActorManager::Update()
 
       mUI->labelActorTextEdit->setPlainText(QString::fromStdString(mOperateOn->GetText()));
       mUI->labelActorFontSizeEdit->setValue(mOperateOn->GetFontSize());
+      mUI->labelActorAlignmentCombo->setCurrentIndex(mOperateOn->GetTextAlignment());
+      //mUI->labelActorLightingToggle->setChecked(mOperateOn->GetLightingEnabled());
 
       osg::Vec2 size = mOperateOn->GetBackSize();
       mUI->labelActorBackdropWidthEdit->setValue(size[0]);

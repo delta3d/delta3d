@@ -46,7 +46,9 @@ namespace dtInspectorQt
 
    protected slots:
       void OnTextChanged();
+      void OnAlignmentChanged(int newAlignment);
       void OnFontSizeChanged(double newValue);
+      void OnLightingToggled(int checked);
       void OnBackdropSizeChanged(double newValue);
       void OnTextColorChanged(double newValue);
       void OnTextColorPickerClicked();
