@@ -4,5 +4,4 @@ BUILD_EXE_EXAMPLE( testClouds
                    ${DTUTIL_LIBRARY}
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
-                   ${DTINSPECTOR_LIBRARY}
                  )
