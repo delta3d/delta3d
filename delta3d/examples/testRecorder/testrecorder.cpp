@@ -74,6 +74,11 @@ bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          verdict = true;
       }; break;
 
+   case osgGA::GUIEventAdapter::KEY_F1:
+      {
+         mLabel->SetActive(!mLabel->GetActive());
+      } break;
+
    default:   // don't care about the key
       {
          verdict = BaseClass::KeyPressed(keyboard,key);
@@ -100,4 +105,36 @@ void TestRecorder::SetupScene()
 {
    // use the infinite terrain class, add it to the scene
    AddDrawable(mTerrain.get());
+
+   CreateHelpLabel();
 }
+
+void TestRecorder::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(19.0f, 5.5f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+std::string TestRecorder::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "r: Toggle recording\n";
+   testString += "f: Save recording to file\n";
+   testString += "l: Load recording from file\n";
+   testString += "p: Play loaded recording\n";
+
+   return testString;
+}
+

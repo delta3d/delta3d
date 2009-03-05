@@ -27,6 +27,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/globals.h>
 #include <dtCore/object.h>
 #include <osg/Drawable>
@@ -64,6 +65,8 @@ public:
       GetCamera()->SetTransform(xform);
 
       GetWindow()->SetWindowTitle("testShaders");
+
+      CreateHelpLabel();
    }
 
 protected:
@@ -120,6 +123,11 @@ public:
          }
          verdict = true;
       }
+      else if (key == osgGA::GUIEventAdapter::KEY_F1)
+      {
+         mLabel->SetActive(!mLabel->GetActive());
+         verdict = true;
+      }
 
       return verdict;
    }
@@ -137,8 +145,35 @@ public:
    }
 
 private:
+   void CreateHelpLabel()
+   {
+      mLabel = new dtABC::LabelActor();
+      osg::Vec2 testSize(17.0f, 2.5f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
+      mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      mLabel->SetEnableDepthTesting(false);
+
+      GetCamera()->AddChild(mLabel.get());
+      dtCore::Transform labelOffset(-17.0f, 50.0f, 11.75f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
+
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "Space: Toggle Shaders\n";
+
+      return testString;
+   }
 
    RefPtr<dtCore::Object> mObject;
+
+   RefPtr<dtABC::LabelActor> mLabel;
 
    float                  mTotalTime;
    bool                   mEnabled;

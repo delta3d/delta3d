@@ -24,6 +24,7 @@
 #define DELTA_TEST_BUMPMAP
 
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/object.h>
 #include <dtCore/shaderparamvec4.h>
 #include <dtCore/shaderparamint.h>
@@ -53,7 +54,7 @@ public:
    virtual void PreFrame(const double deltaFrameTime);
 
 private:
-   
+
    dtCore::RefPtr<dtCore::Object> mSphere;
    dtCore::RefPtr<dtCore::Object> mCustomObject;
    dtCore::RefPtr<dtCore::Object> mLightObject;
@@ -68,10 +69,13 @@ private:
    dtCore::RefPtr<dtCore::ShaderParamInt>  mSphereShaderMode;
    dtCore::RefPtr<dtCore::ShaderParamVec4> mLightPosition;
    dtCore::RefPtr<dtCore::OrbitMotionModel> mOrbitMotion;
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 
    void GenerateTangentsForObject(dtCore::Object* object);
    void AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode);
    void CenterCameraOnObject(dtCore::Object* object);
+   void CreateHelpLabel();
+   std::string CreateHelpLabelText();
 };
 
 #endif // DELTA_TEST_BUMPMAP

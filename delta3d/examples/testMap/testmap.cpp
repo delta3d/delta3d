@@ -31,6 +31,7 @@
 /// Demo application illustrating map loading and actor manipulation
 #include <dtABC/application.h>
 #include <dtABC/beziercontroller.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtDAL/project.h>
@@ -80,6 +81,8 @@ public:
             }
          }
       }
+
+      CreateHelpLabel();
    }
 
    virtual bool KeyReleased(const dtCore::Keyboard* keyboard, int kc)
@@ -87,6 +90,11 @@ public:
       if (kc == 'r')
       {
          Reset();
+         return true;
+      }
+      else if (kc == osgGA::GUIEventAdapter::KEY_F1)
+      {
+         mLabel->SetActive(!mLabel->GetActive());
          return true;
       }
       else
@@ -119,9 +127,35 @@ protected:
    }
 
 private:
+   void CreateHelpLabel()
+   {
+      mLabel = new dtABC::LabelActor();
+      osg::Vec2 testSize(27.0f, 2.5f);
+      mLabel->SetBackSize(testSize);
+      mLabel->SetFontSize(0.8f);
+      mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+      mLabel->SetText(CreateHelpLabelText());
+      mLabel->SetEnableDepthTesting(false);
+
+      GetCamera()->AddChild(mLabel.get());
+      dtCore::Transform labelOffset(-17.0f, 50.0f, 11.75f, 0.0f, 90.0f, 0.0f);
+      mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+      AddDrawable(GetCamera());
+   }
+
+   std::string CreateHelpLabelText()
+   {
+      std::string testString("");
+      testString += "F1: Toggle Help Screen\n";
+      testString += "\n";
+      testString += "r: Reset Helicopter (if at end of cycle)\n";
+
+      return testString;
+   }
 
    RefPtr<MotionModel> mMotionModel;
    RefPtr<Map> mMap;
+   RefPtr<dtABC::LabelActor> mLabel;
 };
 
 int main()

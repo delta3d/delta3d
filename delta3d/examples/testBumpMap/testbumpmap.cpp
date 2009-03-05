@@ -19,7 +19,6 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-
 #include "testbumpmap.h"
 
 #include <dtUtil/geometrycollector.h>
@@ -76,6 +75,8 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
 
    // Adjust the positioning of the camera depending on the size of the object
    CenterCameraOnObject(mCustomObject.get());
+
+   CreateHelpLabel();
 }
 
 
@@ -173,10 +174,16 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
       {
          int value = key - 48;
 
-         // Offset the ascii value to get the numberic one
+         // Offset the ascii value to get the numeric one
          mCustomShaderMode->SetValue(value);
          mSphereShaderMode->SetValue(value);
 
+         break;
+      }
+
+   case osgGA::GUIEventAdapter::KEY_F1:
+      {
+         mLabel->SetActive(!mLabel->GetActive());
          break;
       }
    }
@@ -275,6 +282,35 @@ void TestBumpMapApp::CenterCameraOnObject(dtCore::Object* object)
    mOrbitMotion->SetFocalPoint(center);  
 
    GetCamera()->SetTransform(cameraTransform);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void TestBumpMapApp::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(20.5f, 3.5f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 11.25f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::string TestBumpMapApp::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "Space: Toggle sphere/cube\n";
+   testString += "0-9: Set Shader Mode to 0-9\n";
+
+   return testString;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
