@@ -123,6 +123,7 @@ namespace dtEditQt {
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicColorRGBAControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         const osg::Vec4 &vectorValue = myProperty->GetValue();
 
         QString display;
@@ -142,7 +143,7 @@ namespace dtEditQt {
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicColorRGBAControl::updateModelFromEditor(QWidget *widget)
     {
-        return false;
+        return DynamicAbstractControl::updateModelFromEditor(widget);
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +280,8 @@ namespace dtEditQt {
     void DynamicColorRGBAControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (mTemporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
         {
             mTemporaryEditOnlyTextLabel->setText(getValueAsString());

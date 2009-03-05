@@ -89,6 +89,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicLabelControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         return valueAsString;
     }
 

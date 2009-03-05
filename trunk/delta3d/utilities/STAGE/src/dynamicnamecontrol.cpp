@@ -72,6 +72,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicNameControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+ 
         bool dataChanged = false;
         std::string oldName;
 
@@ -143,6 +145,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicNameControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         return QString(tr(proxy->GetName().c_str()));
     }
 

@@ -254,6 +254,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicVectorElementControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+ 
         bool dataChanged = false;
 
         if (widget != NULL && widget == temporaryEditControl) 
@@ -422,6 +424,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVectorElementControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
+
         double value = getValue();
         return QString::number(value, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
     }
@@ -629,6 +633,8 @@ namespace dtEditQt
     void DynamicVectorElementControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (temporaryEditControl != NULL && proxy == this->proxy) 
         {
             if (whichType == VEC2 && property == vec2Prop) 

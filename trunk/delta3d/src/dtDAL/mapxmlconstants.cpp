@@ -105,6 +105,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_GROUP_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_PARAMETER_ELEMENT = NULL;
 
@@ -117,6 +118,10 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_COLOR_G_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_COLOR_B_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_COLOR_A_ELEMENT = NULL;
+
+   XMLCh* MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_ARRAY_ELEMENT = NULL;
 
 
    void MapXMLConstants::StaticInit()
@@ -179,6 +184,7 @@ namespace dtDAL
       ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT = xercesc::XMLString::transcode("resource");
       ACTOR_PROPERTY_ACTOR_ID_ELEMENT = xercesc::XMLString::transcode("actorId");
       ACTOR_PROPERTY_GROUP_ELEMENT = xercesc::XMLString::transcode("group");
+      ACTOR_PROPERTY_ARRAY_ELEMENT = xercesc::XMLString::transcode("array");
 
       ACTOR_PROPERTY_PARAMETER_ELEMENT = xercesc::XMLString::transcode("parameter");
 
@@ -191,6 +197,10 @@ namespace dtDAL
       ACTOR_COLOR_G_ELEMENT = xercesc::XMLString::transcode("valueG");
       ACTOR_COLOR_B_ELEMENT = xercesc::XMLString::transcode("valueB");
       ACTOR_COLOR_A_ELEMENT = xercesc::XMLString::transcode("valueA");
+
+      ACTOR_ARRAY_SIZE_ELEMENT = xercesc::XMLString::transcode("size");
+      ACTOR_ARRAY_INDEX_ELEMENT = xercesc::XMLString::transcode("index");
+      ACTOR_ARRAY_ELEMENT = xercesc::XMLString::transcode("element");
    }
 
    void MapXMLConstants::StaticShutdown()
@@ -253,6 +263,7 @@ namespace dtDAL
       xercesc::XMLString::release(&ACTOR_PROPERTY_ACTOR_ID_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_GAMEEVENT_ELEMENT);
       xercesc::XMLString::release(&ACTOR_PROPERTY_GROUP_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_PROPERTY_ARRAY_ELEMENT);
 
       xercesc::XMLString::release(&ACTOR_PROPERTY_PARAMETER_ELEMENT);
 

@@ -51,6 +51,7 @@
 #include <dtEditQt/dynamicvec2control.h>
 #include <dtEditQt/dynamicvec4control.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
+#include <dtEditQt/dynamicarraycontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
@@ -157,12 +158,24 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
         controlFactory->RegisterType<DynamicGroupPropertyControl>(&(dtDAL::DataType::GROUP));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SKELETAL_MESH));
+        controlFactory->RegisterType<DynamicArrayControl>(&(dtDAL::DataType::ARRAY));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     PropertyEditor::~PropertyEditor()
     {
       delete rootProperty;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    DynamicAbstractControl* PropertyEditor::CreatePropertyObject(dtDAL::ActorProperty* prop)
+    {
+       if (prop)
+       {
+          return controlFactory->CreateObject(&prop->GetPropertyType());
+       }
+
+       return NULL;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -387,7 +400,7 @@ namespace dtEditQt
             {
                 // first create the control.  Sometimes the controls aren't creatable, so
                 // check that first before we do other work.  Excepts if it fails
-                newControl = controlFactory->CreateObject(&curProp->GetPropertyType());
+                newControl = CreatePropertyObject(curProp);
                 if (newControl == NULL)
                 {
                     LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetDataType().GetName());

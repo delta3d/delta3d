@@ -29,6 +29,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
@@ -121,30 +122,30 @@ namespace  dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-   bool MapContentHandler::IsPropertyCorrectType()
+   bool MapContentHandler::IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty)
    {
-      if (mActorProperty == NULL || mActorPropertyType == NULL || mActorProxy == NULL)
+      if (actorProperty == NULL || (*dataType) == NULL || mActorProxy == NULL)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Call made to %s with content handler in incorrect state.", __FUNCTION__);
          return false;
       }
-      bool result = mActorProperty->GetDataType() == *mActorPropertyType;
+      bool result = actorProperty->GetDataType() == *(*dataType);
       if (!result)
       {
-         if ( (*mActorPropertyType == DataType::VEC2 && (mActorProperty->GetDataType() == DataType::VEC2D || mActorProperty->GetDataType() == DataType::VEC2F)) ||
-              (*mActorPropertyType == DataType::VEC3 && (mActorProperty->GetDataType() == DataType::VEC3D || mActorProperty->GetDataType() == DataType::VEC3F)) ||
-              (*mActorPropertyType == DataType::VEC4 && (mActorProperty->GetDataType() == DataType::VEC4D || mActorProperty->GetDataType() == DataType::VEC4F)) )
+         if ( (*(*dataType) == DataType::VEC2 && (actorProperty->GetDataType() == DataType::VEC2D || actorProperty->GetDataType() == DataType::VEC2F)) ||
+              (*(*dataType) == DataType::VEC3 && (actorProperty->GetDataType() == DataType::VEC3D || actorProperty->GetDataType() == DataType::VEC3F)) ||
+              (*(*dataType) == DataType::VEC4 && (actorProperty->GetDataType() == DataType::VEC4D || actorProperty->GetDataType() == DataType::VEC4F)) )
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                 "Differentiating between a osg::vecf/osg::vecd and a osg::vec. Correcting.");
-            mActorPropertyType = &mActorProperty->GetDataType();
+            (*dataType) = &actorProperty->GetDataType();
             return true;
          }
 
          mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                              "Parameter/Property %s of actor %s was saved as type %s, but is now of type %s. Data will be ignored",
-                             mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
-                             mActorPropertyType->GetName().c_str(), mActorProperty->GetDataType().GetName().c_str());
+                             actorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                             (*dataType)->GetName().c_str(), actorProperty->GetDataType().GetName().c_str());
       }
       return result;
    }
@@ -275,7 +276,8 @@ namespace  dtDAL
          }
          else
          {
-            if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+            // Make sure we don't try and change the current property if we are loading properties from an array.
+            if (mInArrayProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
             {
                std::string propName = dtUtil::XMLStringConverter(chars).ToString();
                mActorProperty = mActorProxy->GetProperty(propName);
@@ -287,7 +289,8 @@ namespace  dtDAL
             }
             else if (mActorProperty != NULL)
             {
-               if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               // Make sure we don't try and change the current property if we are loading properties from an array.
+               if (mInArrayProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                {
                   std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
                   mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
@@ -310,7 +313,7 @@ namespace  dtDAL
                                          dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
 
                   //we now have the property, the type, and the data.
-                  ParsePropertyData(dataValue);
+                  ParsePropertyData(dataValue, &mActorPropertyType, mActorProperty.get());
                }
             }
          }
@@ -498,15 +501,80 @@ namespace  dtDAL
       }
    }
 
-   /////////////////////////////////////////////////////////////////
-   void MapContentHandler::ParsePropertyData(std::string& dataValue)
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParseArray(std::string& dataValue, ArrayActorPropertyBase* arrayProp)
    {
-      if (!IsPropertyCorrectType())
+      xmlCharString& topEl = mElements.top();
+
+      // Find the property we want to edit based on how deep the array is nested.
+      for (int nestIndex = 1; nestIndex < mInArrayProperty; nestIndex++)
+      {
+         arrayProp = static_cast<ArrayActorPropertyBase*>(arrayProp->GetArrayProperty());
+      }
+
+      if (!arrayProp)
+      {
+         return;
+      }
+
+      // Array Size
+      if (topEl == MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT)
+      {
+         int arraySize;
+         std::istringstream stream;
+         stream.str(dataValue);
+         stream >> arraySize;
+
+         // Add more elements.
+         arrayProp->SetIndex(0);
+         while (arraySize > arrayProp->GetArraySize())
+         {
+            arrayProp->Insert(0);
+         }
+
+         // Remove extra elements.
+         while (arraySize < arrayProp->GetArraySize())
+         {
+            arrayProp->Remove(0);
+         }
+      }
+      // Set current Array Index
+      else if (topEl == MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT)
+      {
+         int index;
+         std::istringstream stream;
+         stream.str(dataValue);
+         stream >> index;
+         arrayProp->SetIndex(index);
+      }
+      // Skipped elements.
+      else if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+      {
+      }
+      // Unrecognized elements are checked with the array's property type
+      else
+      {
+         ActorProperty* prop = arrayProp->GetArrayProperty();
+         if (prop)
+         {
+            DataType* propType = &prop->GetDataType();
+            ParsePropertyData(dataValue, &propType, prop);
+         }
+      }
+   }
+
+   /////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParsePropertyData(std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty)
+   {
+      if (!IsPropertyCorrectType(dataType, actorProperty))
          return;
 
       xmlCharString& topEl = mElements.top();
 
-      switch (mActorPropertyType->GetTypeId())
+      switch ((*dataType)->GetTypeId())
       {
          case DataType::FLOAT_ID:
          case DataType::DOUBLE_ID:
@@ -516,19 +584,19 @@ namespace  dtDAL
          case DataType::BOOLEAN_ID:
          case DataType::ENUMERATION_ID:
          {
-            if (!mActorProperty->FromString(dataValue))
+            if (!actorProperty->FromString(dataValue))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                    "Failed Setting value %s for property type %s named %s on actor named %s",
-                                   dataValue.c_str(), mActorPropertyType->GetName().c_str(),
-                                   mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
+                                   dataValue.c_str(), (*dataType)->GetName().c_str(),
+                                   actorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
             }
-            mActorPropertyType = NULL;
+            (*dataType) = NULL;
             break;
          }
          case DataType::GAMEEVENT_ID:
          {
-            GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*mActorProperty);
+            GameEventActorProperty& geProp = static_cast<GameEventActorProperty&>(*actorProperty);
             if (!dtUtil::trim(dataValue).empty())
             {
                GameEvent *e = mMap->GetEventManager().FindEvent(dtCore::UniqueId(dataValue));
@@ -541,19 +609,19 @@ namespace  dtDAL
                   geProp.SetValue(NULL);
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                       "Game Event referenced in actor property %s on proxy of type \"%s\" was not found.",
-                                      mActorProperty->GetName().c_str(), mActorProxy->GetActorType().GetFullName().c_str());
+                                      actorProperty->GetName().c_str(), mActorProxy->GetActorType().GetFullName().c_str());
                }
             }
             else
             {
                geProp.SetValue(NULL);
             }
-            mActorPropertyType = NULL;
+            (*dataType) = NULL;
             break;
          }
          case DataType::VEC2_ID:
          {
-            Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*mActorProperty);
+            Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*actorProperty);
             osg::Vec2 vec = p.GetValue();
             ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
@@ -561,7 +629,7 @@ namespace  dtDAL
          }
          case DataType::VEC2F_ID:
          {
-            Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*mActorProperty);
+            Vec2fActorProperty& p = static_cast<Vec2fActorProperty&>(*actorProperty);
             osg::Vec2f vec = p.GetValue();
             ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
@@ -569,7 +637,7 @@ namespace  dtDAL
          }
          case DataType::VEC2D_ID:
          {
-            Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*mActorProperty);
+            Vec2dActorProperty& p = static_cast<Vec2dActorProperty&>(*actorProperty);
             osg::Vec2d vec = p.GetValue();
             ParseVec(dataValue, vec, 2);
             p.SetValue(vec);
@@ -577,7 +645,7 @@ namespace  dtDAL
          }
          case DataType::VEC3_ID:
          {
-            Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*mActorProperty);
+            Vec3ActorProperty& p = static_cast<Vec3ActorProperty&>(*actorProperty);
             osg::Vec3 vec = p.GetValue();
             ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
@@ -585,7 +653,7 @@ namespace  dtDAL
          }
          case DataType::VEC3F_ID:
          {
-            Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*mActorProperty);
+            Vec3fActorProperty& p = static_cast<Vec3fActorProperty&>(*actorProperty);
             osg::Vec3f vec = p.GetValue();
             ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
@@ -593,7 +661,7 @@ namespace  dtDAL
          }
          case DataType::VEC3D_ID:
          {
-            Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*mActorProperty);
+            Vec3dActorProperty& p = static_cast<Vec3dActorProperty&>(*actorProperty);
             osg::Vec3d vec = p.GetValue();
             ParseVec(dataValue, vec, 3);
             p.SetValue(vec);
@@ -601,7 +669,7 @@ namespace  dtDAL
          }
          case DataType::VEC4_ID:
          {
-            Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*mActorProperty);
+            Vec4ActorProperty& p = static_cast<Vec4ActorProperty&>(*actorProperty);
             osg::Vec4 vec = p.GetValue();
             ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
@@ -609,7 +677,7 @@ namespace  dtDAL
          }
          case DataType::VEC4F_ID:
          {
-            Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*mActorProperty);
+            Vec4fActorProperty& p = static_cast<Vec4fActorProperty&>(*actorProperty);
             osg::Vec4f vec = p.GetValue();
             ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
@@ -617,7 +685,7 @@ namespace  dtDAL
          }
          case DataType::VEC4D_ID:
          {
-            Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*mActorProperty);
+            Vec4dActorProperty& p = static_cast<Vec4dActorProperty&>(*actorProperty);
             osg::Vec4d vec = p.GetValue();
             ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
@@ -625,7 +693,7 @@ namespace  dtDAL
          }
          case DataType::RGBACOLOR_ID:
          {
-            ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*mActorProperty);
+            ColorRgbaActorProperty& p = static_cast<ColorRgbaActorProperty&>(*actorProperty);
             osg::Vec4 vec = p.GetValue();
             ParseVec(dataValue, vec, 4);
             p.SetValue(vec);
@@ -637,10 +705,10 @@ namespace  dtDAL
             dtUtil::trim(dataValue);
             if (!dataValue.empty() && dataValue != "NULL")
             {
-               mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
+               mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
 
             }
-            mActorPropertyType = NULL;
+            (*dataType) = NULL;
             break;
          }
          case DataType::GROUP_ID:
@@ -648,22 +716,28 @@ namespace  dtDAL
             ///Nothing Useful happens here.
             break;
          }
+         case DataType::ARRAY_ID:
+         {
+            ArrayActorPropertyBase& arrayProp = static_cast<ArrayActorPropertyBase&>(*actorProperty);
+            ParseArray(dataValue, &arrayProp);
+            break;
+         }
          default:
          {
-            if (mActorPropertyType->IsResource())
+            if ((*dataType)->IsResource())
             {
-               ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*mActorProperty);
+               ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*actorProperty);
                if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                {
                   if (dataValue != p.GetDataType().GetName())
                   {
                      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                          "Save file expected resource property %s on actor named %s to have type %s, but it is %s.",
-                                         mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
+                                         actorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
                                          dataValue.c_str(), p.GetDataType().GetName().c_str());
                      //make it ignore the rest of the mElements.
                      p.SetValue(NULL);
-                     mActorPropertyType = NULL;
+                     (*dataType) = NULL;
                   }
                }
                else if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_DISPLAY_ELEMENT)
@@ -688,7 +762,7 @@ namespace  dtDAL
             {
                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                   "DataType \"%s\" is not supported in the map loading code.  The data has been ignored.",
-                  mActorPropertyType->GetName().c_str());
+                  (*dataType)->GetName().c_str());
             }
          }
       }
@@ -979,6 +1053,11 @@ namespace  dtDAL
          return &DataType::GROUP;
       }
       else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+      {
+         return &DataType::ARRAY;
+      }
+      else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
       {
          //Need the character contents to know the type, so this will be
@@ -1067,6 +1146,11 @@ namespace  dtDAL
                          ClearParameterValues();
                          mParameterStack.push(new NamedGroupParameter(mActorProperty->GetName()));
 
+                     }
+                     else if (XMLString::compareString(localname,
+                                                         MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+                     {
+                        mInArrayProperty++;
                      }
                   }
                }
@@ -1316,6 +1400,7 @@ namespace  dtDAL
       mDescriptorDisplayName.clear();
 
       mInGroupProperty = false;
+      mInArrayProperty = 0;
       while (!mParameterStack.empty())
       {
          mParameterStack.pop();
@@ -1514,9 +1599,13 @@ namespace  dtDAL
    //////////////////////////////////////////////////////////////////////////
    void MapContentHandler::EndActorPropertySection(const XMLCh* const localname)
    {
-      if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      if (mInArrayProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
       {
          EndActorPropertyElement();
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+      {
+         mInArrayProperty--;
       }
       else if (mInGroupProperty)
       {
@@ -1543,7 +1632,7 @@ namespace  dtDAL
       {
          if (mActorProperty != NULL)
          {
-            if (mActorPropertyType != NULL)
+            if (mActorPropertyType != NULL && mInArrayProperty == 0)
             {
                // parse the end element into a data type to see if it's an end property element.
                dtDAL::DataType* d = ParsePropertyType(localname, false);

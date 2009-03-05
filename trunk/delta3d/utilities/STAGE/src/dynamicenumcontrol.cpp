@@ -94,6 +94,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicEnumControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+ 
         bool dataChanged = false;
 
         if (widget != NULL)
@@ -178,6 +180,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicEnumControl::getValueAsString()
     {
+        DynamicAbstractControl::getValueAsString();
         dtUtil::Enumeration &value = myProperty->GetEnumValue();
         return QString(value.GetName().c_str());
     }
@@ -217,6 +220,8 @@ namespace dtEditQt
     void DynamicEnumControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         dtDAL::AbstractEnumActorProperty *changedProp = 
             dynamic_cast<dtDAL::AbstractEnumActorProperty *>(property.get());
 

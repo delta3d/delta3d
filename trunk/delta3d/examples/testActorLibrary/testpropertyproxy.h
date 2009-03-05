@@ -32,6 +32,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/namedparameter.h>
+#include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/gameevent.h>
 #include <dtUtil/enumeration.h>
@@ -437,6 +438,30 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       void SetTestGroup(const dtDAL::NamedGroupParameter& groupParam) { mGroupParam = new dtDAL::NamedGroupParameter(groupParam); }
       dtCore::RefPtr<dtDAL::NamedGroupParameter> GetTestGroup() { return mGroupParam; }
 
+      // Array of strings
+      void StringArraySetIndex(int index);
+      std::string StringArrayGetDefault();
+      std::vector<std::string>& StringArrayGetValue();
+      void SetStringArrayValue(const std::string& value);
+      std::string GetStringArrayValue();
+
+      // Array of colors
+      void ColorArraySetIndex(int index);
+      osg::Vec4 ColorArrayGetDefault();
+      std::vector<osg::Vec4>& ColorArrayGetValue();
+      void SetColorArrayValue(const osg::Vec4& value);
+      osg::Vec4 GetColorArrayValue();
+
+      // Array of Arrays of Ints.
+      void IntArraySetIndex(int index);
+      int IntArrayGetDefault();
+      std::vector<int>& IntArrayGetValue();
+      void ArrayArraySetIndex(int index);
+      std::vector<int> ArrayArrayGetDefault();
+      std::vector<std::vector<int> >& ArrayArrayGetValue();
+      void SetIntArrayValue(int value);
+      int GetIntArrayValue();
+
    protected:
        virtual ~ExampleTestPropertyProxy() { }
 
@@ -464,7 +489,14 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       std::string mTexture;
       dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
       dtCore::RefPtr<dtDAL::NamedGroupParameter> mGroupParam;
-      
+      std::vector<std::string>      mStringArray;
+      int                           mStringArrayIndex;
+      std::vector<osg::Vec4>        mColorArray;
+      int                           mColorArrayIndex;
+      std::vector<std::vector<int>> mArrayIntArray;
+      int                           mIntArrayIndex;
+      int                           mArrayArrayIndex;
+
       static const std::string GROUPNAME;
 };
 

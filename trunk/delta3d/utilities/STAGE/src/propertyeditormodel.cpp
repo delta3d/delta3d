@@ -191,6 +191,34 @@ namespace dtEditQt
         return QAbstractItemModel::headerData(section, orientation, role);
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    bool PropertyEditorModel::insertRows(int position, int rows, const QModelIndex &parent)
+    {
+       beginInsertRows(parent, position, position+rows-1);
+       endInsertRows();
+       return true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    bool PropertyEditorModel::removeRows(int position, int rows, const QModelIndex &parent)
+    {
+       DynamicAbstractControl *property = privateData(parent);
+       int childCount = property->getChildCount();
+       for (int childIndex = 0; childIndex < childCount; childIndex++)
+       {
+          DynamicAbstractControl* child = property->getChild(childIndex);
+
+          if (child->getChildCount() > 0)
+          {
+             removeRows(0, child->getChildCount(), indexOf(child));
+          }
+       }
+
+       beginRemoveRows(parent, position, position+rows-1);
+       endRemoveRows();
+       return true;
+    }
+
     /////////////////////////////////////////////////////////////////////////////////
     Qt::ItemFlags PropertyEditorModel::flags(const QModelIndex &index) const
     {

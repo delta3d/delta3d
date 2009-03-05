@@ -112,6 +112,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicResourceControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
+ 
         // if we have no current resource, show special text that indicates the type
         dtDAL::ResourceDescriptor *resource = myProperty->GetValue();
         QString resourceTag;
@@ -166,7 +168,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicResourceControl::updateModelFromEditor(QWidget *widget)
     {
-        return false;
+        return DynamicAbstractControl::updateModelFromEditor(widget);
     }
 
 
@@ -368,6 +370,8 @@ namespace dtEditQt
     void DynamicResourceControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         // update our label
         if (mTemporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
         {

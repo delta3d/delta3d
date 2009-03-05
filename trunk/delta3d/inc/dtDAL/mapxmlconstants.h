@@ -104,6 +104,7 @@ namespace dtDAL
          static XMLCh* ACTOR_PROPERTY_ACTOR_ID_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_GAMEEVENT_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_GROUP_ELEMENT;
+         static XMLCh* ACTOR_PROPERTY_ARRAY_ELEMENT;
 
          static XMLCh* ACTOR_PROPERTY_PARAMETER_ELEMENT;
 
@@ -116,6 +117,10 @@ namespace dtDAL
          static XMLCh* ACTOR_COLOR_G_ELEMENT;
          static XMLCh* ACTOR_COLOR_B_ELEMENT;
          static XMLCh* ACTOR_COLOR_A_ELEMENT;
+
+         static XMLCh* ACTOR_ARRAY_SIZE_ELEMENT;
+         static XMLCh* ACTOR_ARRAY_INDEX_ELEMENT;
+         static XMLCh* ACTOR_ARRAY_ELEMENT;
 
          /**
           * this is called automatically on startup.

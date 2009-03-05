@@ -90,6 +90,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicFloatControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+ 
         bool dataChanged = false;
 
         if (widget != NULL && widget == temporaryEditControl) 
@@ -172,6 +174,7 @@ namespace dtEditQt
 
     const QString DynamicFloatControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         float floatValue = myProperty->GetValue();
         return QString::number(floatValue, 'f', NUM_DECIMAL_DIGITS_FLOAT);
     }
@@ -200,6 +203,8 @@ namespace dtEditQt
     void DynamicFloatControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
         {
             updateEditorFromModel(temporaryEditControl);
