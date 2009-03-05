@@ -45,6 +45,8 @@ namespace dtABC
    const dtUtil::RefString LabelActor::PROPERTY_BACK_COLOR("Back Color");
    const dtUtil::RefString LabelActor::PROPERTY_BACK_SIZE("Back Size");
    const dtUtil::RefString LabelActor::PROPERTY_BACK_VISIBLE("Back Visible");
+   const dtUtil::RefString LabelActor::PROPERTY_LIGHTING_ENABLED("Lighting Enabled");
+   const dtUtil::RefString LabelActor::PROPERTY_DEPTH_TESTING_ENABLED("Depth Testing Enabled");
 
    /////////////////////////////////////////////////////////////////////////////
    LabelActor::LabelActor(const std::string& name)
@@ -320,6 +322,22 @@ namespace dtABC
          BooleanActorProperty::SetFuncType(this, &LabelActor::SetBackVisible), 
          BooleanActorProperty::GetFuncType(this, &LabelActor::IsBackVisible),
          "Determines if the text background should be visible.",
+         group));
+
+      outProperties.push_back(new BooleanActorProperty(
+         LabelActor::PROPERTY_LIGHTING_ENABLED.Get(),
+         LabelActor::PROPERTY_LIGHTING_ENABLED.Get(),
+         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableLighting), 
+         BooleanActorProperty::GetFuncType(this, &LabelActor::GetEnableLighting),
+         "Enable or disable the ability to be affected by OpenGL lighting.",
+         group));
+
+      outProperties.push_back(new BooleanActorProperty(
+         LabelActor::PROPERTY_DEPTH_TESTING_ENABLED.Get(),
+         LabelActor::PROPERTY_DEPTH_TESTING_ENABLED.Get(),
+         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableDepthTesting), 
+         BooleanActorProperty::GetFuncType(this, &LabelActor::GetEnableDepthTesting),
+         "Enable or disable the OpenGL depth testing.",
          group));
    }
 

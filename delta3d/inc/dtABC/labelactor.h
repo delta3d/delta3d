@@ -51,6 +51,8 @@ namespace dtABC
          static const dtUtil::RefString PROPERTY_BACK_COLOR;
          static const dtUtil::RefString PROPERTY_BACK_SIZE;
          static const dtUtil::RefString PROPERTY_BACK_VISIBLE;
+         static const dtUtil::RefString PROPERTY_LIGHTING_ENABLED;
+         static const dtUtil::RefString PROPERTY_DEPTH_TESTING_ENABLED;
 
 
          static const dtUtil::RefString DEFAULT_FONT;
