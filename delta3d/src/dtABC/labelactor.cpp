@@ -105,7 +105,6 @@ namespace dtABC
       osg::StateSet* states = root->getOrCreateStateSet();
       states->setMode(GL_BLEND,osg::StateAttribute::ON);
       states->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-      states->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
       // Setup the geometry
       mBackdrop->setNormalArray(norms.get());
