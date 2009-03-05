@@ -1,6 +1,5 @@
 # Locate cppunit
 # This module defines
-# FLTK_LIBRARY
 # CPPUNIT_FOUND, if false, do not try to link to cppunit 
 # CPPUNIT_INCLUDE_DIR, where to find the headers
 #
