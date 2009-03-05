@@ -153,7 +153,7 @@ protected:
       osg::Vec2 testSize(19.5f, 10.5f);
       mLabel->SetBackSize(testSize);
       mLabel->SetFontSize(0.8f);
-      mLabel->SetTextAlignment(LabelActor::LEFT_CENTER);
+      mLabel->SetTextAlignment(LabelActor::AlignmentEnum::LEFT_CENTER);
       mLabel->SetText(CreateHelpLabelText());
       mLabel->SetEnableDepthTesting(false);
       mLabel->SetBackVisible(false);

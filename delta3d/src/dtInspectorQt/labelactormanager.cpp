@@ -54,7 +54,8 @@ void dtInspectorQt::LabelActorManager::OnAlignmentChanged(int newAlignment)
 {
    if (mOperateOn.valid())
    {
-      mOperateOn->SetTextAlignment(static_cast<dtABC::LabelActor::AlignmentType>(newAlignment));
+      osgText::TextBase::AlignmentType type = static_cast<osgText::TextBase::AlignmentType>(newAlignment);
+      mOperateOn->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::FromOSGType(type));
    }
 }
 
@@ -148,7 +149,7 @@ void dtInspectorQt::LabelActorManager::Update()
 
       mUI->labelActorTextEdit->setPlainText(QString::fromStdString(mOperateOn->GetText()));
       mUI->labelActorFontSizeEdit->setValue(mOperateOn->GetFontSize());
-      mUI->labelActorAlignmentCombo->setCurrentIndex(mOperateOn->GetTextAlignment());
+      mUI->labelActorAlignmentCombo->setCurrentIndex(mOperateOn->GetTextAlignment().ToOSGType());
       mUI->labelActorLightingToggle->setChecked(mOperateOn->GetEnableLighting());
       mUI->labelActorBackToggle->setChecked(mOperateOn->IsBackVisible());
       mUI->labelActorDepthToggle->setChecked(mOperateOn->GetEnableDepthTesting());

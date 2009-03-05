@@ -115,7 +115,7 @@ void TestRecorder::CreateHelpLabel()
    osg::Vec2 testSize(19.0f, 5.5f);
    mLabel->SetBackSize(testSize);
    mLabel->SetFontSize(0.8f);
-   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::LEFT_CENTER);
    mLabel->SetText(CreateHelpLabelText());
    mLabel->SetEnableDepthTesting(false);
 

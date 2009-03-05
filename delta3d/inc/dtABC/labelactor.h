@@ -53,6 +53,7 @@ namespace dtABC
          static const dtUtil::RefString PROPERTY_BACK_VISIBLE;
          static const dtUtil::RefString PROPERTY_LIGHTING_ENABLED;
          static const dtUtil::RefString PROPERTY_DEPTH_TESTING_ENABLED;
+         static const dtUtil::RefString PROPERTY_TEXT_ALIGNMENT;
 
 
          static const dtUtil::RefString DEFAULT_FONT;
@@ -121,38 +122,53 @@ namespace dtABC
           */
          void SetBackVisible(bool visible);
          bool IsBackVisible() const;
-
-         enum AlignmentType
+         
+         class DT_ABC_EXPORT AlignmentEnum : public dtUtil::Enumeration
          {
-            LEFT_TOP,
-            LEFT_CENTER,
-            LEFT_BOTTOM,
+            DECLARE_ENUM(AlignmentEnum)
+         public:
+            static AlignmentEnum LEFT_TOP;
+            static AlignmentEnum LEFT_CENTER;
+            static AlignmentEnum LEFT_BOTTOM;
 
-            CENTER_TOP,
-            CENTER_CENTER,
-            CENTER_BOTTOM,
+            static AlignmentEnum CENTER_TOP;
+            static AlignmentEnum CENTER_CENTER;
+            static AlignmentEnum CENTER_BOTTOM;
 
-            RIGHT_TOP,
-            RIGHT_CENTER,
-            RIGHT_BOTTOM,
+            static AlignmentEnum RIGHT_TOP;
+            static AlignmentEnum RIGHT_CENTER;
+            static AlignmentEnum RIGHT_BOTTOM;
 
-            LEFT_BASE_LINE,
-            CENTER_BASE_LINE,
-            RIGHT_BASE_LINE,
+            static AlignmentEnum LEFT_BASE_LINE;
+            static AlignmentEnum CENTER_BASE_LINE;
+            static AlignmentEnum RIGHT_BASE_LINE;
 
-            LEFT_BOTTOM_BASE_LINE,
-            CENTER_BOTTOM_BASE_LINE,
-            RIGHT_BOTTOM_BASE_LINE,
+            static AlignmentEnum LEFT_BOTTOM_BASE_LINE;
+            static AlignmentEnum CENTER_BOTTOM_BASE_LINE;
+            static AlignmentEnum RIGHT_BOTTOM_BASE_LINE;
 
-            BASE_LINE = LEFT_BASE_LINE /// default.
+            static AlignmentEnum BASE_LINE;
+
+            ///Conversion from AlignmenEnum to OSG's AlignmentType
+            osgText::TextBase::AlignmentType ToOSGType() const;
+
+            ///Conversion form OSG's AlignmentType to corresponding AlignmentEnum
+            static AlignmentEnum& FromOSGType(osgText::TextBase::AlignmentType type);
+
+         private:
+            AlignmentEnum(const std::string& name): dtUtil::Enumeration(name)
+            {
+               AddInstance(this);;
+            }
          };
 
          /** 
           * Adjust how the text is aligned/justified.
           * @param alignment The alignment to use
           */
-         void SetTextAlignment(AlignmentType alignment);
-         AlignmentType GetTextAlignment() const;
+         void SetTextAlignment(AlignmentEnum& alignment);
+         AlignmentEnum& GetTextAlignment() const;
+
 
          /** 
           * Enable the text geometry to be shaded by Lights.  Defaults to false.
