@@ -47,6 +47,74 @@ namespace dtABC
    const dtUtil::RefString LabelActor::PROPERTY_BACK_VISIBLE("Back Visible");
    const dtUtil::RefString LabelActor::PROPERTY_LIGHTING_ENABLED("Lighting Enabled");
    const dtUtil::RefString LabelActor::PROPERTY_DEPTH_TESTING_ENABLED("Depth Testing Enabled");
+   const dtUtil::RefString LabelActor::PROPERTY_TEXT_ALIGNMENT("Text Alignment");
+
+   //ENUM CODE 
+   IMPLEMENT_ENUM(dtABC::LabelActor::AlignmentEnum)
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_TOP("LEFT_TOP");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_CENTER("LEFT_CENTER");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_BOTTOM("LEFT_BOTTOM");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::CENTER_TOP("CENTER_TOP");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::CENTER_CENTER("CENTER_CENTER");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::CENTER_BOTTOM("CENTER_BOTTOM");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::RIGHT_TOP("RIGHT_TOP");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::RIGHT_CENTER("RIGHT_CENTER");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::RIGHT_BOTTOM("RIGHT_BOTTOM");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_BASE_LINE("LEFT_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::CENTER_BASE_LINE("CENTER_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::RIGHT_BASE_LINE("RIGHT_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_BOTTOM_BASE_LINE("LEFT_BOTTOM_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::CENTER_BOTTOM_BASE_LINE("CENTER_BOTTOM_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::RIGHT_BOTTOM_BASE_LINE("RIGHT_BOTTOM_BASE_LINE");
+   dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::BASE_LINE("BASE_LINE");
+
+   //////////////////////////////////////////////////////////////////////////
+   osgText::TextBase::AlignmentType LabelActor::AlignmentEnum::ToOSGType() const
+   {
+      osgText::TextBase::AlignmentType type;
+      if (*this == AlignmentEnum::LEFT_TOP) {type = osgText::TextBase::LEFT_TOP;}
+      if (*this == AlignmentEnum::LEFT_CENTER) {type = osgText::TextBase::LEFT_CENTER;}
+      if (*this == AlignmentEnum::LEFT_BOTTOM) {type = osgText::TextBase::LEFT_CENTER;}
+      if (*this == AlignmentEnum::CENTER_TOP) {type = osgText::TextBase::CENTER_TOP;}
+      if (*this == AlignmentEnum::CENTER_CENTER) {type = osgText::TextBase::CENTER_CENTER;}
+      if (*this == AlignmentEnum::CENTER_BOTTOM) {type = osgText::TextBase::CENTER_CENTER;}
+      if (*this == AlignmentEnum::RIGHT_TOP) {type = osgText::TextBase::RIGHT_TOP;}
+      if (*this == AlignmentEnum::RIGHT_CENTER) {type = osgText::TextBase::RIGHT_CENTER;}
+      if (*this == AlignmentEnum::RIGHT_BOTTOM) {type = osgText::TextBase::RIGHT_CENTER;}
+      if (*this == AlignmentEnum::LEFT_BASE_LINE) {type = osgText::TextBase::LEFT_BASE_LINE;}
+      if (*this == AlignmentEnum::CENTER_BASE_LINE) {type = osgText::TextBase::CENTER_BASE_LINE;}
+      if (*this == AlignmentEnum::RIGHT_BASE_LINE) {type = osgText::TextBase::RIGHT_BASE_LINE;}
+      if (*this == AlignmentEnum::LEFT_BOTTOM_BASE_LINE) {type = osgText::TextBase::LEFT_BOTTOM_BASE_LINE;}
+      if (*this == AlignmentEnum::CENTER_BOTTOM_BASE_LINE) {type = osgText::TextBase::CENTER_BOTTOM_BASE_LINE;}
+      if (*this == AlignmentEnum::RIGHT_BOTTOM_BASE_LINE) {type = osgText::TextBase::RIGHT_BOTTOM_BASE_LINE;}
+      if (*this == AlignmentEnum::BASE_LINE) {type = osgText::TextBase::BASE_LINE;}
+
+      return type;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   LabelActor::AlignmentEnum& LabelActor::AlignmentEnum::FromOSGType(osgText::TextBase::AlignmentType type)
+   {
+      switch(type)
+      {
+      case osgText::TextBase::LEFT_TOP: {return AlignmentEnum::LEFT_TOP;} 	break;
+      case osgText::TextBase::LEFT_CENTER: {return AlignmentEnum::LEFT_CENTER;} 	break;
+      case osgText::TextBase::LEFT_BOTTOM: {return AlignmentEnum::LEFT_BOTTOM;} 	break;
+      case osgText::TextBase::CENTER_TOP: {return AlignmentEnum::CENTER_TOP;} 	break;
+      case osgText::TextBase::CENTER_CENTER: {return AlignmentEnum::CENTER_CENTER;} 	break;
+      case osgText::TextBase::CENTER_BOTTOM: {return AlignmentEnum::CENTER_BOTTOM;} 	break;
+      case osgText::TextBase::RIGHT_TOP: {return AlignmentEnum::RIGHT_TOP;} 	break;
+      case osgText::TextBase::RIGHT_CENTER: {return AlignmentEnum::RIGHT_CENTER;} 	break;
+      case osgText::TextBase::RIGHT_BOTTOM: {return AlignmentEnum::RIGHT_BOTTOM;} 	break;
+      case osgText::TextBase::LEFT_BASE_LINE: {return AlignmentEnum::LEFT_BASE_LINE;} 	break;
+      case osgText::TextBase::CENTER_BASE_LINE: {return AlignmentEnum::CENTER_BASE_LINE;} 	break;
+      case osgText::TextBase::RIGHT_BASE_LINE: {return AlignmentEnum::RIGHT_BASE_LINE;} 	break;
+      case osgText::TextBase::LEFT_BOTTOM_BASE_LINE: {return AlignmentEnum::LEFT_BOTTOM_BASE_LINE;} 	break;
+      case osgText::TextBase::CENTER_BOTTOM_BASE_LINE: {return AlignmentEnum::CENTER_BOTTOM_BASE_LINE;} 	break;
+      case osgText::TextBase::RIGHT_BOTTOM_BASE_LINE: {return AlignmentEnum::RIGHT_BOTTOM_BASE_LINE;} 	break;
+      default: return AlignmentEnum::LEFT_BASE_LINE;  break;
+      }
+   }
 
    /////////////////////////////////////////////////////////////////////////////
    LabelActor::LabelActor(const std::string& name)
@@ -339,18 +407,28 @@ namespace dtABC
          BooleanActorProperty::GetFuncType(this, &LabelActor::GetEnableDepthTesting),
          "Enable or disable the OpenGL depth testing.",
          group));
+
+      // ENUM PROPERTIES
+      outProperties.push_back(new EnumActorProperty<AlignmentEnum>(
+         LabelActor::PROPERTY_TEXT_ALIGNMENT.Get(),
+         LabelActor::PROPERTY_TEXT_ALIGNMENT.Get(),
+         MakeFunctor(*this,&LabelActor::SetTextAlignment),
+         MakeFunctorRet(*this,&LabelActor::GetTextAlignment),
+         "Sets the text alignment type.", 
+         group));
+
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void LabelActor::SetTextAlignment(AlignmentType alignment)
+   void LabelActor::SetTextAlignment(AlignmentEnum& alignment)
    {
-      mTextNode->setAlignment(osgText::TextBase::AlignmentType(alignment));
+      mTextNode->setAlignment(alignment.ToOSGType());
    }
 
    //////////////////////////////////////////////////////////////////////////
-   LabelActor::AlignmentType LabelActor::GetTextAlignment() const
+   LabelActor::AlignmentEnum& LabelActor::GetTextAlignment() const
    {
-      return LabelActor::AlignmentType(mTextNode->getAlignment());
+      return LabelActor::AlignmentEnum::FromOSGType(mTextNode->getAlignment());
    }
 
    //////////////////////////////////////////////////////////////////////////
