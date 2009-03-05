@@ -27,6 +27,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/camera.h>
 #include "aicharacter.h"
 
@@ -48,18 +49,19 @@ class TestAI : public dtABC::Application
       virtual void PreFrame( const double deltaFrameTime );
      
    private:
-
       void LoadDemoMap(const std::string& pStr);
       bool GoToWaypoint(int pNum);
- 
+      void CreateHelpLabel();
+      std::string CreateHelpLabelText();
+
       float mSpeed;
       bool mDrawNavMesh;
       std::string mMapFilename;
       dtCore::RefPtr<dtCore::Camera> mOverheadCamera;
       dtCore::RefPtr<dtAI::AICharacter> mCharacter;
+      dtCore::RefPtr<dtABC::LabelActor> mLabel;
       dtAI::Waypoint* mCurrentWaypoint;
       osg::Matrix mCameraOffset; 
-   
 };
 
 #endif // DELTA_TestAI

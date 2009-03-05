@@ -30,6 +30,7 @@
 #include <string>                   // for member
 
 #include <dtABC/application.h>      // for base class
+#include <dtABC/labelactor.h>       // for member
 #include <dtCore/recorder.h>        // for member
 #include "camerarecorderadaptor.h"  // for member
 
@@ -63,11 +64,15 @@ protected:
    void SetupScene();
 
 private:
+   void CreateHelpLabel();
+   std::string CreateHelpLabelText();
+
    typedef dtCore::Recorder<CameraRecorderAdaptor,CameraRecorderAdaptor::FrameData> CameraRecorder;
    dtCore::RefPtr<CameraRecorder> mRecorder;
    dtCore::RefPtr<CameraRecorderAdaptor> mRecordable;
    dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
    dtCore::RefPtr<dtCore::InfiniteTerrain> mTerrain;
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
    std::string mFileHandle;
 };
 

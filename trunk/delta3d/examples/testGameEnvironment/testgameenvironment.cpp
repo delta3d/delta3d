@@ -25,8 +25,8 @@
  *
  * William E. Johnson II
  */
-
 #include <dtABC/application.h>
+#include <dtABC/labelactor.h>
 #include <dtCore/environment.h>
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/flymotionmodel.h>
@@ -59,16 +59,16 @@ class TestGameEnvironmentApp : public dtABC::Application
 
          mGM->AddActor(*proxy);
 
-         proxy = mGM->CreateActor("dtcore.Environment", "Environment");
-         if (!proxy.valid())
+         mEnvironmentActorProxy = static_cast<dtActors::BasicEnvironmentActorProxy*>(mGM->CreateActor("dtcore.Environment", "Environment").get());
+         if (!mEnvironmentActorProxy.valid())
          {
             LOG_ERROR("Failed to create the environment proxy. Aborting.");
             Quit();
          }
 
-         mEnvironmentActor = static_cast<dtActors::BasicEnvironmentActor*>(proxy->GetActor());
+         mEnvironmentActor = static_cast<dtActors::BasicEnvironmentActor*>(mEnvironmentActorProxy->GetActor());
 
-         mGM->SetEnvironmentActor(static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()));
+         mGM->SetEnvironmentActor(mEnvironmentActorProxy.get());
 
          mFMM = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
          mFMM->SetTarget(GetCamera());
@@ -77,6 +77,8 @@ class TestGameEnvironmentApp : public dtABC::Application
 
          dtCore::Transform transform(0.0f, 0.0f, 30.0f);
          GetCamera()->SetTransform(transform);
+
+         CreateHelpLabel();
       }
 
       virtual void Config()
@@ -162,7 +164,7 @@ class TestGameEnvironmentApp : public dtABC::Application
             {
                dtActors::BasicEnvironmentActorProxy* proxy =
                   mGM->GetEnvironmentActor() == NULL ?
-                  static_cast<dtActors::BasicEnvironmentActorProxy*>(&mEnvironmentActor->GetGameActorProxy()) :
+                  mEnvironmentActorProxy.get() :
                   NULL;
 
                mGM->SetEnvironmentActor(proxy);
@@ -172,6 +174,11 @@ class TestGameEnvironmentApp : public dtABC::Application
             case osgGA::GUIEventAdapter::KEY_Escape:
             {
                Quit();
+               break;
+            }
+            case osgGA::GUIEventAdapter::KEY_F1:
+            {
+               mLabel->SetActive(!mLabel->GetActive());
                break;
             }
             default:
@@ -191,11 +198,46 @@ class TestGameEnvironmentApp : public dtABC::Application
       }
 
    private:
+      void CreateHelpLabel()
+      {
+         mLabel = new dtABC::LabelActor();
+         osg::Vec2 testSize(24.0f, 9.0f);
+         mLabel->SetBackSize(testSize);
+         mLabel->SetFontSize(0.8f);
+         mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+         mLabel->SetText(CreateHelpLabelText());
+         mLabel->SetEnableDepthTesting(false);
+
+         GetCamera()->AddChild(mLabel.get());
+         dtCore::Transform labelOffset(-17.0f, 50.0f, 8.5f, 0.0f, 90.0f, 0.0f);
+         mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+         AddDrawable(GetCamera());
+      }
+
+      std::string CreateHelpLabelText()
+      {
+         std::string testString("");
+         testString += "F1: Toggle Help Screen\n";
+         testString += "\n";
+         testString += "1: Toggle Clouds\n";
+         testString += "2: Toggle Fog\n";
+         testString += "3: Close Visibility\n";
+         testString += "4: Moderate Visibility\n";
+         testString += "5: Unlimited Visibility\n";
+         testString += "6: Toggle Rainy/Fair Theme\n";
+         testString += "7: Toggle Night/Day\n";
+         testString += "8: Toggle Severe/No Wind\n";
+         testString += "Space: Toggle EnvironmentActor\n";
+
+         return testString;
+      }
 
       dtCore::RefPtr<dtGame::GameManager> mGM;
+      dtCore::RefPtr<dtActors::BasicEnvironmentActorProxy> mEnvironmentActorProxy;
       dtCore::RefPtr<dtActors::BasicEnvironmentActor> mEnvironmentActor;
       dtCore::RefPtr<dtCore::InfiniteTerrain> mTerrain;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
+      dtCore::RefPtr<dtABC::LabelActor> mLabel;
 };
 
 

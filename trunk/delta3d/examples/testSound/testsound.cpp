@@ -52,6 +52,8 @@ TestSoundApp::TestSoundApp(const std::string& configFilename /*= "config.xml"*/)
    // these callbacks are optional
    mSound->SetPlayCallback(SoundStartedCB, this);
    mSound->SetStopCallback(SoundStoppedCB, this);
+
+   CreateHelpLabel();
 }
 
 /**
@@ -108,6 +110,11 @@ bool TestSoundApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          // set to free the sounds after playing.
          // this allows the AudioManager to recycle sound objects.
          handled = true;
+      } break;
+
+   case osgGA::GUIEventAdapter::KEY_F1:
+      {
+         mLabel->SetActive(!mLabel->GetActive());
       } break;
 
    default:
@@ -167,6 +174,39 @@ TestSoundApp::SoundStoppedCB(dtAudio::Sound* sound, void* param)
    AudioManager::GetInstance().FreeSound(sound);
 }
 
+/**
+ * Function that creates the label that explains keyboard inputs
+ */
+void TestSoundApp::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(24.5f, 3.5f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 11.25f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+/**
+ * Function that creates the text for the help label
+ */
+std::string TestSoundApp::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "Space: Play explosion sound\n";
+   testString += "Any other key: Play gunfire sound\n";
+
+   return testString;
+}
+
 /// A simple application that demonstrates the most basic methods
 /// for managing sounds.  This application just loads sounds and
 /// plays them.  It doesn't demonstrate more advanced functions.
@@ -188,3 +228,4 @@ main(int argc, const char* argv[])
 
    return 0;
 }
+

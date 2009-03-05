@@ -115,6 +115,8 @@ void TestAI::Config()
 
    //seed the random generator
    srand(4);
+
+   CreateHelpLabel();
 }
 
 bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -128,11 +130,21 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          {
             GetCamera()->SetEnabled(false);
             mOverheadCamera->SetEnabled(true);
+            if (mLabel->GetActive())
+            {
+               GetCamera()->RemoveChild(mLabel.get());
+               mOverheadCamera->AddChild(mLabel.get());
+            }
          }
          else
          {
             mOverheadCamera->SetEnabled(false);
             GetCamera()->SetEnabled(true);
+            if (mLabel->GetActive())
+            {
+               mOverheadCamera->RemoveChild(mLabel.get());
+               GetCamera()->AddChild(mLabel.get());
+            }
          }
          return true;
       }
@@ -169,6 +181,27 @@ bool TestAI::KeyPressed(const dtCore::Keyboard* keyboard, int key)
       case osgGA::GUIEventAdapter::KEY_Escape:
          {
             Quit();
+            return true;
+         }
+
+      case osgGA::GUIEventAdapter::KEY_F1:
+         {
+            mLabel->SetActive(!mLabel->GetActive());
+            if (mLabel->GetActive())
+            {
+               if (GetCamera()->GetEnabled() &&
+                  GetCamera()->GetChildIndex(mLabel.get()) == GetCamera()->GetNumChildren())
+               {
+                  mOverheadCamera->RemoveChild(mLabel.get());
+                  GetCamera()->AddChild(mLabel.get());
+               }
+               else if (mOverheadCamera->GetEnabled() &&
+                  mOverheadCamera->GetChildIndex(mLabel.get()) == mOverheadCamera->GetNumChildren())
+               {
+                  GetCamera()->RemoveChild(mLabel.get());
+                  mOverheadCamera->AddChild(mLabel.get());
+               }
+            }
             return true;
          }
 
@@ -236,6 +269,35 @@ bool TestAI::GoToWaypoint(int pWaypointNum)
       }
    }
    return false;
+}
+
+void TestAI::CreateHelpLabel()
+{
+   mLabel = new dtABC::LabelActor();
+   osg::Vec2 testSize(32.0f, 5.5f);
+   mLabel->SetBackSize(testSize);
+   mLabel->SetFontSize(0.8f);
+   mLabel->SetTextAlignment(dtABC::LabelActor::LEFT_CENTER);
+   mLabel->SetText(CreateHelpLabelText());
+   mLabel->SetEnableDepthTesting(false);
+
+   GetCamera()->AddChild(mLabel.get());
+   dtCore::Transform labelOffset(-17.0f, 50.0f, 10.5f, 0.0f, 90.0f, 0.0f);
+   mLabel->SetTransform(labelOffset, dtCore::Transformable::REL_CS);
+   AddDrawable(GetCamera());
+}
+
+std::string TestAI::CreateHelpLabelText()
+{
+   std::string testString("");
+   testString += "F1: Toggle Help Screen\n";
+   testString += "\n";
+   testString += "Space: Toggle overhead/first person camera\n";
+   testString += "n: Toggle navmesh\n";
+   testString += "a: Zoom in overhead camera\n";
+   testString += "z: Zoom out overhead camera\n";
+
+   return testString;
 }
 
 

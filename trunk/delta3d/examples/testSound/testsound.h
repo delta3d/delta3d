@@ -24,8 +24,7 @@
 
 #include "dtAudio/dtaudio.h"
 #include <dtABC/application.h>
-
-
+#include <dtABC/labelactor.h>
 
 /// TestSoundApp class, the main application class
 
@@ -111,9 +110,23 @@ private:
 
 private:
    /**
-   * A single sound this app holds onto for the durration.
+    * Function that creates the label that explains keyboard inputs
+    */
+   void CreateHelpLabel();
+   /**
+    * Function that creates the text for the help label
+    */
+   std::string CreateHelpLabelText();
+
+   /**
+   * A single sound this app holds onto for the duration.
    */
    dtAudio::Sound*   mSound;
+
+   /**
+    * The LabelActor that displays the keyboard functionality for this test
+    */
+   dtCore::RefPtr<dtABC::LabelActor> mLabel;
 };
 
 #endif // DELTA_TEST_SOUND_APP
