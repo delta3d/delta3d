@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * An FLTK widget that displays a preview of an OSG image.
+ * An widget that displays a preview of an OSG image.
  */
 class TexturePreview : public QLabel
 {
