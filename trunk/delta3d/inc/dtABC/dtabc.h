@@ -30,7 +30,6 @@
 #include <dtABC/curvenode.h>
 #include <dtABC/event.h>
 #include <dtABC/export.h>
-#include <dtABC/fl_dt_window.h>
 #include <dtABC/motionaction.h>
 #include <dtABC/pathpoint.h>
 #include <dtABC/pathpointconverter.h>
@@ -51,7 +50,6 @@ namespace dtABC
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
-#undef _AUTOLIBNAME4
 #undef _AUTOLIBNAME5
 #undef _AUTOLIBNAME6
 #undef _AUTOLIBNAME7
@@ -59,11 +57,9 @@ namespace dtABC
 
 #if defined(_DEBUG)
    #define _AUTOLIBNAME1   "dtABCd.lib"
-   #define _AUTOLIBNAME4   "fltkd.lib"
    #define _AUTOLIBNAME8   "xerces-c_2D.lib"
 #else 
    #define _AUTOLIBNAME1   "dtABC.lib"  
-   #define _AUTOLIBNAME4   "fltk.lib"
    #define _AUTOLIBNAME8   "xerces-c_2.lib"
 #endif
 
@@ -73,7 +69,6 @@ namespace dtABC
 
 #ifndef _NOAUTOLIBMSG
    #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME6 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME7 )
@@ -81,7 +76,6 @@ namespace dtABC
 #endif
 
 #pragma  comment( lib, _AUTOLIBNAME1 )
-#pragma  comment( lib, _AUTOLIBNAME4 )
 #pragma  comment( lib, _AUTOLIBNAME5 )
 #pragma  comment( lib, _AUTOLIBNAME6 )
 #pragma  comment( lib, _AUTOLIBNAME7 )
