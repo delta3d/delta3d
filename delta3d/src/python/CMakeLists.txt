@@ -212,7 +212,7 @@ ENDIF(BUILD_PLIB)
 
 
 ################
-SET(INSPECTOR_BINDINGS "PyDtInspector")
+SET(INSPECTOR_BINDINGS "PyDtInspectorQt")
 
 SET(TARGET_SRC 
   dtinspectorbindings.cpp
@@ -221,7 +221,7 @@ SET(TARGET_SRC
 SET(TARGET_H ${CMAKE_SOURCE_DIR}/inc/python/dtpython.h)
 
 BUILD_PYTHON_BINDING(${INSPECTOR_BINDINGS} 
-                     ${DTINSPECTOR_LIBRARY}
+                     ${DTINSPECTORQT_LIBRARY}
                     )
 
 
