@@ -89,6 +89,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicStringControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+        
         bool dataChanged = false;
 
         if (widget != NULL) 
@@ -159,6 +161,7 @@ namespace dtEditQt
 
     const QString DynamicStringControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         return QString(tr(myProperty->GetValue().c_str()));
     }
 
@@ -189,6 +192,8 @@ namespace dtEditQt
     void DynamicStringControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
         {
             updateEditorFromModel(temporaryEditControl);

@@ -57,6 +57,7 @@ namespace dtDAL
    DataType DataType::ENUMERATION("ENUMERATION",  "Enumeration", false, ENUMERATION_ID);
    DataType DataType::GAME_EVENT("GAME_EVENT", "Game Event", false, GAMEEVENT_ID);
    DataType DataType::GROUP("GROUP", "Group", false, GROUP_ID);
+   DataType DataType::ARRAY("ARRAY", "Array", false, ARRAY_ID);
    DataType DataType::ACTOR("ACTOR", "Actor", false, ACTOR_ID);
 
    DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, STATICMESH_ID);

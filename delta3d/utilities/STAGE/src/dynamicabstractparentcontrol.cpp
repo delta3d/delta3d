@@ -55,10 +55,12 @@ namespace dtEditQt
         std::vector<DynamicAbstractControl *>::iterator childIter;
 
         // remove all the controls from the inner layout
-        for (childIter = children.begin(); childIter != children.end(); ++childIter) {
+        for (childIter = children.begin(); childIter != children.end(); ++childIter)
+        {
             DynamicAbstractControl *control = (*childIter);    
 
-            if (control != NULL) {
+            if (control != NULL)
+            {
                 // Groups delete their children in the destructor.
                 delete control;              
             }

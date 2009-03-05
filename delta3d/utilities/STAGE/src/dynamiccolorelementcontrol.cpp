@@ -94,6 +94,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicColorElementControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+
         bool dataChanged = false;
 
         if (widget != NULL) {
@@ -167,6 +169,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicColorElementControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         int value = getValue();
         return QString::number(value);
     }
@@ -237,6 +240,8 @@ namespace dtEditQt
     void DynamicColorElementControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (temporaryEditControl != NULL && proxy == this->proxy && property == colorRGBA) 
         {
             updateEditorFromModel(temporaryEditControl);

@@ -63,8 +63,9 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicAbstractControl::updateModelFromEditor(QWidget *widget)
     {
-        // do nothing here, but allows controls without an editor to not have to override it
-        return false;
+       // Notify the parent that the control is about to be updated.
+       NotifyParentOfPreUpdate();
+       return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -110,6 +111,12 @@ namespace dtEditQt
         return 0;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    void DynamicAbstractControl::OnChildPreUpdate(DynamicAbstractControl *child)
+    {
+       NotifyParentOfPreUpdate();
+    }
+
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicAbstractControl::getDisplayName()
     {
@@ -125,6 +132,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicAbstractControl::getValueAsString() 
     {
+        NotifyParentOfPreUpdate();
         return QString("");
     }
 

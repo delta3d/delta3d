@@ -86,6 +86,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicGameEventControl::updateModelFromEditor(QWidget *widget)
    {
+      DynamicAbstractControl::updateModelFromEditor(widget);
+
       bool dataChanged = false;
 
       if (widget != NULL)
@@ -181,6 +183,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGameEventControl::getValueAsString()
    {
+      DynamicAbstractControl::getValueAsString();
       return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("<None>");
    }
 
@@ -219,6 +222,8 @@ namespace dtEditQt
    void DynamicGameEventControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
+      DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
       dtDAL::GameEventActorProperty *changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
 
       if (temporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 

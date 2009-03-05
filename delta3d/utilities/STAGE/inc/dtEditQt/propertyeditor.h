@@ -50,6 +50,7 @@ class QGroupBox;
 namespace dtDAL
 {
    class DataType;
+   ActorProperty;
 }
 
 namespace dtEditQt
@@ -104,6 +105,8 @@ namespace dtEditQt
                toFill.push_back(selectedActors[i].get());
             }
          }
+
+         DynamicAbstractControl* CreatePropertyObject(dtDAL::ActorProperty* prop);
 
       public slots:
 

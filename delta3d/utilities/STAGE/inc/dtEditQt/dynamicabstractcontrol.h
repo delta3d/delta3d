@@ -155,6 +155,13 @@ namespace dtEditQt
         virtual int getChildCount();
 
         /**
+        * This will be called by the child to notify their parent when they are being edited.
+        * This function should be overwritten if the parent needs to know when any of its
+        * children are about to be edited.
+        */
+        virtual void OnChildPreUpdate(DynamicAbstractControl *child);
+
+        /**
          * Essentially returns a displayable string.  Each control needs to handle this specially, since
          * some controls have properties and some don't.  Ie, a group control doesn't have a real
          * property under it, nor does the X and Y values of Vec3. Default is "".
@@ -252,6 +259,19 @@ namespace dtEditQt
          */
         virtual void installEventFilterOnControl(QObject *filterObj);
 
+        /**
+        * This will notify the parent that the child is about to be updated.
+        */
+        virtual void NotifyParentOfPreUpdate()
+        {
+           // Notify the parent that a change is about to occur.
+           DynamicAbstractControl* parent = getParent();
+           if (parent)
+           {
+              parent->OnChildPreUpdate(this);
+           }
+        }
+
     public slots:
 
         /**
@@ -275,7 +295,7 @@ namespace dtEditQt
         virtual void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property)
         {
-            // do nothing
+           NotifyParentOfPreUpdate();
         }
         /** 
          * This method is called by one of the Sub Widgets from DynamicSubWidgets.h from the 

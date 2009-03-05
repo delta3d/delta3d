@@ -90,6 +90,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicDoubleControl::updateModelFromEditor(QWidget *widget)
     {
+        DynamicAbstractControl::updateModelFromEditor(widget);
+ 
         bool dataChanged = false;
 
         if (widget != NULL) 
@@ -168,6 +170,7 @@ namespace dtEditQt
 
     const QString DynamicDoubleControl::getValueAsString() 
     {
+        DynamicAbstractControl::getValueAsString();
         double doubleValue = myProperty->GetValue();
         return QString::number(doubleValue, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
     }
@@ -196,6 +199,8 @@ namespace dtEditQt
     void DynamicDoubleControl::actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
         dtCore::RefPtr<dtDAL::ActorProperty> property)
     {
+        DynamicAbstractControl::actorPropertyChanged(proxy, property);
+
         if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
         {
             updateEditorFromModel(temporaryEditControl);

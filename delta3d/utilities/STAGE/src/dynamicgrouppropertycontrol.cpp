@@ -143,6 +143,7 @@ namespace dtEditQt
       if (mGroupProperty == NULL)
          return tr("");    
 
+      DynamicAbstractControl::getValueAsString();
       return QString(tr(mGroupProperty->GetValue()->GetName().c_str()));
    }
    

@@ -29,6 +29,8 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
@@ -51,7 +53,8 @@ ExampleTestPropertyProxy::TestEnum ExampleTestPropertyProxy::TestEnum::OPTION6("
 ///////////////////////////////////////////////////////////////////////////////
 ExampleTestPropertyProxy::ExampleTestPropertyProxy()
   : mInt(0), mReadOnlyInt(5), mFloat(0.0), mDouble(0.0), mLong(0), mBool(0),
-  mString(""), mEnum(&TestEnum::OPTION1), mGroupParam(new dtDAL::NamedGroupParameter("test"))
+  mString(""), mEnum(&TestEnum::OPTION1), mGroupParam(new dtDAL::NamedGroupParameter("test")),
+  mStringArrayIndex(0), mIntArrayIndex(0), mArrayArrayIndex(0)
 {
    SetClassName("dtCore::ExampleTestPropertyProxy");
 }
@@ -183,8 +186,231 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestGameEvent),
       "Holds a test game event property", GROUPNAME));
 
+   mGroupParam->AddParameter("FloatParam", dtDAL::DataType::FLOAT);
+   mGroupParam->AddParameter("IntParam", dtDAL::DataType::INT);
+   mGroupParam->AddParameter("StringParam", dtDAL::DataType::STRING);
+
    AddProperty(new GroupActorProperty("TestGroup", "Test Group Property",
       MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestGroup),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestGroup),
       "Holds a test group", GROUPNAME));
+
+   mStringArray.push_back("First Element");
+   mStringArray.push_back("Second Element");
+   mStringArray.push_back("Third Element");
+   mStringArray.push_back("Fourth Element");
+   mStringArray.push_back("Fifth Element");
+   mStringArray.push_back("Sixth Element");
+
+   StringActorProperty* stringProp2 = new StringActorProperty(
+      "ArrayString", "Array String",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::SetStringArrayValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetStringArrayValue),
+      "Holds the strings used in the Array", GROUPNAME);
+
+   ArrayActorPropertyBase* arrayStringProp = new ArrayActorProperty<std::string>(
+      "TestStringArray", "Test String Array", "Holds a test array of Strings",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::StringArraySetIndex),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetDefault),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetValue),
+      stringProp2, GROUPNAME);
+
+   arrayStringProp->SetMinArraySize(2);
+   arrayStringProp->SetMaxArraySize(10);
+   
+   AddProperty(arrayStringProp);
+
+   ColorRgbaActorProperty* colorProp = new ColorRgbaActorProperty(
+      "ArrayColor", "Array Color",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::SetColorArrayValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetColorArrayValue),
+      "Holds the color used in the array", GROUPNAME);
+
+   ArrayActorPropertyBase* arrayColorProp = new ArrayActorProperty<osg::Vec4>(
+      "TestColorArray", "Fixed Position Test Color Array", "Holds a test array of Colors that cannot be reordered",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::ColorArraySetIndex),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetDefault),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetValue),
+      colorProp, GROUPNAME, "", false);
+
+   AddProperty(arrayColorProp);
+
+   std::vector<int> a;
+   a.push_back(1);
+   a.push_back(2);
+   a.push_back(3);
+   a.push_back(4);
+   a.push_back(5);
+   a.push_back(6);
+   mArrayIntArray.push_back(a);
+   mArrayIntArray.push_back(a);
+   mArrayIntArray.push_back(a);
+   mArrayIntArray.push_back(a);
+   mArrayIntArray.push_back(a);
+
+   IntActorProperty* intProp = new IntActorProperty(
+      "ArrayInt", "Array Int",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::SetIntArrayValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetIntArrayValue),
+      "Holds the int used in the double array", GROUPNAME);
+
+   ArrayActorPropertyBase* arrayIntProp = new ArrayActorProperty<int>(
+      "TestIntArray", "Test Int Array", "Holds an array of Ints",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::IntArraySetIndex),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetDefault),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetValue),
+      intProp, GROUPNAME);
+
+   ArrayActorPropertyBase* arrayArrayProp = new ArrayActorProperty<std::vector<int>>(
+      "TestArrayArray", "Test Array of Arrays", "Holds an array of arrays",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::ArrayArraySetIndex),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetDefault),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetValue),
+      arrayIntProp, GROUPNAME);
+
+   AddProperty(arrayArrayProp);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::StringArraySetIndex(int index)
+{
+   mStringArrayIndex = index;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::string ExampleTestPropertyProxy::StringArrayGetDefault()
+{
+   return "Default";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<std::string>& ExampleTestPropertyProxy::StringArrayGetValue()
+{
+   return mStringArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::SetStringArrayValue(const std::string& value)
+{
+   if (mStringArrayIndex < (int)mStringArray.size())
+   {
+      mStringArray[mStringArrayIndex] = value;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::string ExampleTestPropertyProxy::GetStringArrayValue()
+{
+   if (mStringArrayIndex < (int)mStringArray.size())
+   {
+      return mStringArray[mStringArrayIndex];
+   }
+   return "";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::ColorArraySetIndex(int index)
+{
+   mColorArrayIndex = index;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Vec4 ExampleTestPropertyProxy::ColorArrayGetDefault()
+{
+   osg::Vec4 color;
+   color.r() = 0.5f;
+   color.g() = 0.5f;
+   color.b() = 0.5f;
+   color.a() = 1.0f;
+   return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<osg::Vec4>& ExampleTestPropertyProxy::ColorArrayGetValue()
+{
+   return mColorArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::SetColorArrayValue(const osg::Vec4& value)
+{
+   if (mColorArrayIndex < (int)mColorArray.size())
+   {
+      mColorArray[mColorArrayIndex] = value;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+osg::Vec4 ExampleTestPropertyProxy::GetColorArrayValue()
+{
+   if (mColorArrayIndex < (int)mColorArray.size())
+   {
+      return mColorArray[mColorArrayIndex];
+   }
+   return ColorArrayGetDefault();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::IntArraySetIndex(int index)
+{
+   mIntArrayIndex = index;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int ExampleTestPropertyProxy::IntArrayGetDefault()
+{
+   return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<int>& ExampleTestPropertyProxy::IntArrayGetValue()
+{
+   return mArrayIntArray[mArrayArrayIndex];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::ArrayArraySetIndex(int index)
+{
+   mArrayArrayIndex = index;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<int> ExampleTestPropertyProxy::ArrayArrayGetDefault()
+{
+   std::vector<int> default;
+   return default;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::vector<std::vector<int> >& ExampleTestPropertyProxy::ArrayArrayGetValue()
+{
+   return mArrayIntArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::SetIntArrayValue(int value)
+{
+   if (mArrayArrayIndex < (int)mArrayIntArray.size())
+   {
+      if (mIntArrayIndex < (int)mArrayIntArray[mArrayArrayIndex].size())
+      {
+         mArrayIntArray[mArrayArrayIndex][mIntArrayIndex] = value;
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int ExampleTestPropertyProxy::GetIntArrayValue()
+{
+   if (mArrayArrayIndex < (int)mArrayIntArray.size())
+   {
+      if (mIntArrayIndex < (int)mArrayIntArray[mArrayArrayIndex].size())
+      {
+         return mArrayIntArray[mArrayArrayIndex][mIntArrayIndex];
+      }
+   }
+
+   return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////

@@ -50,6 +50,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
@@ -671,6 +672,12 @@ namespace dtDAL
             EndElement();
             break;
          }
+         case DataType::ARRAY_ID:
+         {
+            // BeginElement(MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT);
+            // TODO ARRAY: Save an array that was part of a group.
+            break;
+         }
          default:
          {
             if (dataType.IsResource())
@@ -733,6 +740,38 @@ namespace dtDAL
       snprintf(numberConversionBuffer, bufferMax, "%f", val[3]);
       AddCharacters(numberConversionBuffer);
       EndElement();
+
+      EndElement();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapWriter::WriteArray(const ArrayActorPropertyBase& arrayProp, char* numberConversionBuffer, size_t bufferMax)
+   {
+      BeginElement(MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT);
+
+      BeginElement(MapXMLConstants::ACTOR_ARRAY_SIZE_ELEMENT);
+      int arraySize = arrayProp.GetArraySize();
+      snprintf(numberConversionBuffer, bufferMax, "%d", arraySize);
+      AddCharacters(numberConversionBuffer);
+      EndElement();
+
+      // Save out the data for each index.
+      for (int index = 0; index < arraySize; index++)
+      {
+         // Save out the index number.
+         BeginElement(MapXMLConstants::ACTOR_ARRAY_ELEMENT);
+
+         BeginElement(MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT);
+         snprintf(numberConversionBuffer, bufferMax, "%d", index);
+         AddCharacters(numberConversionBuffer);
+         EndElement();
+
+         // Write the data for the current property.
+         arrayProp.SetIndex(index);
+         WriteProperty(*arrayProp.GetArrayProperty());
+
+         EndElement();
+      }
 
       EndElement();
    }
@@ -854,6 +893,11 @@ namespace dtDAL
                }
             }
             EndElement();
+            break;
+         }
+         case DataType::ARRAY_ID:
+         {
+            WriteArray(static_cast<const ArrayActorPropertyBase&>(property), numberConversionBuffer, bufferMax);
             break;
          }
          default:

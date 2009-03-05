@@ -51,6 +51,7 @@ namespace dtDAL
    class Map;
    class NamedParameter;
    class NamedGroupParameter;
+   class ArrayActorPropertyBase;
    class DataType;
 
    /**
@@ -217,6 +218,7 @@ namespace dtDAL
          bool mInActorProperty;
          bool mPreparingProp;
          bool mInGroupProperty;
+         int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
 
          std::string mLibName;
          std::string mLibVersion;
@@ -267,18 +269,20 @@ namespace dtDAL
          //reset/clear all of the parameter data/state variables
          void ClearParameterValues();
          //returns true if a property in the actor is the same as the XML expects and adjusts the value.
-         bool IsPropertyCorrectType();
+         bool IsPropertyCorrectType(dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
          //Called from characters when the state says we are inside an actor element.
          void ActorCharacters(const XMLCh* const chars);
          //Called from characters when the state says we are inside a parameter of a group actor property.
          void ParameterCharacters(const XMLCh* const chars);
          //parses the text data from the xml and stores it in the property.
-         void ParsePropertyData(std::string& dataValue);
+         void ParsePropertyData(std::string& dataValue, dtDAL::DataType** dataType, dtDAL::ActorProperty* actorProperty);
          //parses the text data from the xml and stores it in the property.
          void ParseParameterData(std::string& dataValue);
          //parses one item out of the xml and stores it in the proper element of the osg Vec#.
          template <typename VecType>
          void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize);
+         //parses the data for an array property.
+         void ParseArray(std::string& dataValue, ArrayActorPropertyBase* arrayProp);
          //processes the mActorLinking multimap to set ActorActorProperties.
          void LinkActors();
          //processes the mGroupProperties multimap to set GroupActorProperties.

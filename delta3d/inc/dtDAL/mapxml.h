@@ -51,6 +51,7 @@ namespace dtDAL
    class DataType;
    class NamedParameter;
    class MapContentHandler;
+   class ArrayActorPropertyBase;
    
    /**
     * @class MapParser
@@ -191,6 +192,7 @@ namespace dtDAL
             
          template <typename Type>
          void WriteColorRGBA(const Type& holder, char* numberConversionBuffer, size_t bufferMax);
+         void WriteArray(const ArrayActorPropertyBase& arrayProp, char* numberConversionBuffer, size_t bufferMax);
          
          void WriteSimple(const AbstractParameter& holder);
 

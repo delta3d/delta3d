@@ -178,6 +178,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec3Control::getValueAsString()
     {
+       DynamicAbstractControl::getValueAsString();
+
        osg::Vec3 testVect;
        bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
 

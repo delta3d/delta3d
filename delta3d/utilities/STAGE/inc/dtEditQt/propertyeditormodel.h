@@ -145,8 +145,9 @@ namespace dtEditQt
 
         virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-        //virtual bool removeRows(int position, int rows, const QModelIndex &parent);
-      
+        virtual bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+        virtual bool removeRows(int position, int rows, const QModelIndex &parent);
+
     protected:
         //inline IProperty *childAt(IProperty *parent, int pos) const
         // {

@@ -159,6 +159,8 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec2Control::getValueAsString()
     {
+       DynamicAbstractControl::getValueAsString();
+
        osg::Vec3 testVect;
        bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
        const unsigned int NUM_DECIMAL_DIGITS = isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
