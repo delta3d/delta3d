@@ -4,17 +4,14 @@
 
 #include <python/dtpython.h>
 
-#include <dtInspector/inspector.h>
+#include <dtInspectorQt/inspectorqt.h>
 
 using namespace boost::python;
-using namespace dtCore;
-using namespace dtInspector;
+using namespace dtInspectorQt;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(S_overloads, Show, 0, 1)
 
-BOOST_PYTHON_MODULE(PyDtInspector)
+BOOST_PYTHON_MODULE(PyDtInspectorQt)
 {
-   class_<Inspector, boost::noncopyable>("Inspector")
-      .def("Show", &Inspector::Show, S_overloads())
-      .def("IsShown", &Inspector::IsShown);
+   class_<InspectorQt, bases<dtCore::Base>, dtCore::RefPtr<InspectorQt>, boost::noncopyable>("InspectorQt",init<int&,char**>())
+      .def(init<int&, char**>());
 }
