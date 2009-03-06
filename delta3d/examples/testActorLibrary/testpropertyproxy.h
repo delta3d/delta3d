@@ -493,7 +493,7 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       int                           mStringArrayIndex;
       std::vector<osg::Vec4>        mColorArray;
       int                           mColorArrayIndex;
-      std::vector<std::vector<int>> mArrayIntArray;
+      std::vector<std::vector<int> > mArrayIntArray;
       int                           mIntArrayIndex;
       int                           mArrayArrayIndex;
 

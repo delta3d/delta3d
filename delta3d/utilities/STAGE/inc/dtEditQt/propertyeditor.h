@@ -50,7 +50,7 @@ class QGroupBox;
 namespace dtDAL
 {
    class DataType;
-   ActorProperty;
+   class ActorProperty;
 }
 
 namespace dtEditQt

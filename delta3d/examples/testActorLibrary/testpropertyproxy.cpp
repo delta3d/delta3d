@@ -261,7 +261,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetValue),
       intProp, GROUPNAME);
 
-   ArrayActorPropertyBase* arrayArrayProp = new ArrayActorProperty<std::vector<int>>(
+   ArrayActorPropertyBase* arrayArrayProp = new ArrayActorProperty<std::vector<int> >(
       "TestArrayArray", "Test Array of Arrays", "Holds an array of arrays",
       MakeFunctor(*this, &ExampleTestPropertyProxy::ArrayArraySetIndex),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetDefault),
@@ -377,8 +377,8 @@ void ExampleTestPropertyProxy::ArrayArraySetIndex(int index)
 ////////////////////////////////////////////////////////////////////////////////
 std::vector<int> ExampleTestPropertyProxy::ArrayArrayGetDefault()
 {
-   std::vector<int> default;
-   return default;
+   std::vector<int> def;
+   return def;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -414,3 +414,4 @@ int ExampleTestPropertyProxy::GetIntArrayValue()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
