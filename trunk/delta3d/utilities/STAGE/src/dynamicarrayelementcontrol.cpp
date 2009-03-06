@@ -134,6 +134,8 @@ namespace dtEditQt
       connect(mCopyButton, SIGNAL(clicked()), this, SLOT(onCopyClicked()));
       connect(mDeleteButton, SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
 
+      mTextLabel->setToolTip(getDescription());
+
       grid->addWidget(mTextLabel, 0, 0, 1, 1);
       grid->addWidget(mShiftUpButton, 0, 1, 1, 1);
       grid->addWidget(mShiftDownButton, 0, 2, 1, 1);
@@ -185,7 +187,17 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicArrayElementControl::getDescription()
    {
-      return QString("This is an index in the array");
+      if(mProperty.valid())
+      {
+         return QString(tr(mProperty->GetDescription().c_str())) + QString("  [Type: ") +
+            QString(tr(mProperty->GetDataType().GetName().c_str())) + QString(" Index: ") +
+            QString::number(mIndex) + QString("]");
+      }
+      else
+      {
+         LOG_ERROR("Dynamic array control has an invalid property type");
+         return tr("");
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////////

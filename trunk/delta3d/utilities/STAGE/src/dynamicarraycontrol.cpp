@@ -114,6 +114,8 @@ namespace dtEditQt
       connect(mAddButton, SIGNAL(clicked()), this, SLOT(onAddClicked()));
       connect(mClearButton, SIGNAL(clicked()), this, SLOT(onClearClicked()));
 
+      mTextLabel->setToolTip(getDescription());
+
       grid->addWidget(mTextLabel, 0, 0, 1, 1);
       grid->addWidget(mAddButton, 0, 1, 1, 1);
       grid->addWidget(mClearButton, 0, 2, 1, 1);
@@ -158,8 +160,8 @@ namespace dtEditQt
    {
       if(mProperty.valid())
       {
-         std::string tooltip = mProperty->GetDescription();
-         return QString(tr(tooltip.c_str()));
+         return QString(tr(mProperty->GetDescription().c_str())) + QString("  [Type: ") +
+            QString(tr(mProperty->GetDataType().GetName().c_str())) + QString("]");
       }
       else
       {
