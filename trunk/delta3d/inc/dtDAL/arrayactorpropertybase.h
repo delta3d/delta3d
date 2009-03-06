@@ -102,9 +102,6 @@ namespace dtDAL
             LOG_ERROR("Property types are incompatible. Cannot make copy.");
             return;
          }
-
-         const ArrayActorPropertyBase& prop =
-            static_cast<const ArrayActorPropertyBase& >(otherProp);
       }
 
       /**
