@@ -46,8 +46,35 @@
 
 #include <osg/Vec3>
 
-// forward references
-struct AudioConfigData;
+// configuration data
+///Deprecated feb/24/2009 -- setting Distance model with method now,
+// numSources is not something OpenAL lets you configure,
+// and EAX is handled via ConfigEAX
+struct DT_AUDIO_EXPORT AudioConfigData
+{
+   enum DistanceModel
+   {
+      dmNONE     = AL_NONE,
+      dmINVERSE  = AL_INVERSE_DISTANCE,
+      dmINVCLAMP = AL_INVERSE_DISTANCE_CLAMPED
+   };
+
+   unsigned int numSources;
+   bool         eax;
+   unsigned int distancemodel;
+
+   AudioConfigData(unsigned int ns = 16,
+      bool         ex = false,
+      unsigned int dm = dmINVERSE)
+      : numSources(ns)
+      , eax(ex)
+      , distancemodel(dm)
+   {
+      DEPRECATE("AudioConfigData",
+                "n/a");
+   }
+};
+
 
 namespace dtAudio
 {
@@ -160,7 +187,6 @@ namespace dtAudio
       static const char*           _EaxVer;
       static const char*           _EaxSet;
       static const char*           _EaxGet;
-      static const AudioConfigData _DefCfg;
 
    private:      
       AudioManager(const std::string& name = "audiomanager",
@@ -222,7 +248,7 @@ namespace dtAudio
       // in AudioManager::Instantiate and configuration parameters for distance
       // model are handled by SetDistanceModel.  ConfigEAX is still available for
       // configuring EAX.
-      DEPRECATE_FUNC virtual void Config(const AudioConfigData& data = _DefCfg);
+      DEPRECATE_FUNC virtual void Config(const AudioConfigData& data = AudioConfigData());
 
       /**
        * Sets the OpenAL distance model.  Possible parameter values are:
@@ -384,35 +410,6 @@ namespace dtAudio
       ALCdevice*          mDevice;
       ALCcontext*         mContext;      
    };
-};
-
-// configuration data
-///Deprecated feb/24/2009 -- setting Distance model with method now,
-// numSources is not something OpenAL lets you configure,
-// and EAX is handled via ConfigEAX
-struct DT_AUDIO_EXPORT AudioConfigData
-{
-   enum DistanceModel
-   {
-      dmNONE     = AL_NONE,
-      dmINVERSE  = AL_INVERSE_DISTANCE,
-      dmINVCLAMP = AL_INVERSE_DISTANCE_CLAMPED
-   };
-
-   unsigned int numSources;
-   bool         eax;
-   unsigned int distancemodel;
-
-   AudioConfigData(unsigned int ns = 16,
-                   bool         ex = false,
-                   unsigned int dm = dmINVERSE)
-      : numSources(ns)
-      , eax(ex)
-      , distancemodel(dm)
-   {
-      DEPRECATE("AudioConfigData",
-       "AudioConfigData is to be removed. Configuration data is to be set directly in AudioManager now.");
-   }
 };
 
 
