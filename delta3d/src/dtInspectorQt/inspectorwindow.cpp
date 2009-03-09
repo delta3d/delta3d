@@ -1,22 +1,22 @@
 #include <dtInspectorQt/inspectorwindow.h>
-#include <dtInspectorQt/basemanager.h>
-#include <dtInspectorQt/cameramanager.h>
-#include <dtInspectorQt/clouddomemanager.h>
-#include <dtInspectorQt/deltawinmanager.h>
-#include <dtInspectorQt/drawablemanager.h>
-#include <dtInspectorQt/environmentmanager.h>
-#include <dtInspectorQt/infiniteterrainmanager.h>
-#include <dtInspectorQt/labelactormanager.h>
-#include <dtInspectorQt/lightmanager.h>
-#include <dtInspectorQt/objectmanager.h>
-#include <dtInspectorQt/particlesystemmanager.h>
-#include <dtInspectorQt/physicalmanager.h>
-#include <dtInspectorQt/scenemanager.h>
-#include <dtInspectorQt/skydomemanager.h>
-#include <dtInspectorQt/systemmanager.h>
-#include <dtInspectorQt/transformablemanager.h>
-#include <dtInspectorQt/viewmanager.h>
-#include <dtInspectorQt/weathermanager.h>
+#include <dtInspectorQt/baseview.h>
+#include <dtInspectorQt/cameraview.h>
+#include <dtInspectorQt/clouddomeview.h>
+#include <dtInspectorQt/deltawinview.h>
+#include <dtInspectorQt/drawableview.h>
+#include <dtInspectorQt/environmentview.h>
+#include <dtInspectorQt/infiniteterrainview.h>
+#include <dtInspectorQt/labelactorview.h>
+#include <dtInspectorQt/lightview.h>
+#include <dtInspectorQt/objectview.h>
+#include <dtInspectorQt/particlesystemview.h>
+#include <dtInspectorQt/physicalview.h>
+#include <dtInspectorQt/sceneview.h>
+#include <dtInspectorQt/skydomeview.h>
+#include <dtInspectorQt/systemview.h>
+#include <dtInspectorQt/transformableview.h>
+#include <dtInspectorQt/viewview.h>
+#include <dtInspectorQt/weatherview.h>
 
 #include <dtCore/base.h>
 #include <dtCore/uniqueid.h>
@@ -27,25 +27,25 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
 {
    ui.setupUi(this);
 
-   BaseManager* baseMgr = new BaseManager(ui);
-   mManagerContainer.push_back(baseMgr);
-   mManagerContainer.push_back(new CameraManager(ui));
-   mManagerContainer.push_back(new CloudDomeManager(ui));
-   mManagerContainer.push_back(new DeltaWinManager(ui));
-   mManagerContainer.push_back(new DrawableManager(ui));
-   mManagerContainer.push_back(new EnvironmentManager(ui));
-   mManagerContainer.push_back(new InfiniteTerrainManager(ui));
-   mManagerContainer.push_back(new LabelActorManager(ui));
-   mManagerContainer.push_back(new LightManager(ui));
-   mManagerContainer.push_back(new ObjectManager(ui));
-   mManagerContainer.push_back(new ParticleSystemManager(ui));
-   mManagerContainer.push_back(new PhysicalManager(ui));
-   mManagerContainer.push_back(new SceneManager(ui));
-   mManagerContainer.push_back(new SkyDomeManager(ui));
-   mManagerContainer.push_back(new SystemManager(ui));
-   mManagerContainer.push_back(new TransformableManager(ui));
-   mManagerContainer.push_back(new ViewManager(ui));
-   mManagerContainer.push_back(new WeatherManager(ui));
+   BaseView* baseMgr = new BaseView(ui);
+   mViewContainer.push_back(baseMgr);
+   mViewContainer.push_back(new CameraView(ui));
+   mViewContainer.push_back(new CloudDomeView(ui));
+   mViewContainer.push_back(new DeltaWinView(ui));
+   mViewContainer.push_back(new DrawableView(ui));
+   mViewContainer.push_back(new EnvironmentView(ui));
+   mViewContainer.push_back(new InfiniteTerrainView(ui));
+   mViewContainer.push_back(new LabelActorView(ui));
+   mViewContainer.push_back(new LightView(ui));
+   mViewContainer.push_back(new ObjectView(ui));
+   mViewContainer.push_back(new ParticleSystemView(ui));
+   mViewContainer.push_back(new PhysicalView(ui));
+   mViewContainer.push_back(new SceneView(ui));
+   mViewContainer.push_back(new SkyDomeView(ui));
+   mViewContainer.push_back(new SystemView(ui));
+   mViewContainer.push_back(new TransformableView(ui));
+   mViewContainer.push_back(new ViewView(ui));
+   mViewContainer.push_back(new WeatherView(ui));
 
    UpdateInstances();
 
@@ -55,9 +55,9 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
 
 dtInspectorQt::InspectorWindow::~InspectorWindow()
 {
-   while (!mManagerContainer.empty())
+   while (!mViewContainer.empty())
    {
-      delete mManagerContainer.takeFirst();
+      delete mViewContainer.takeFirst();
    }
 }
 
@@ -81,9 +81,9 @@ void dtInspectorQt::InspectorWindow::OnSelection(QListWidgetItem* current, QList
 
    dtCore::Base* b = dtCore::Base::GetInstance(row);
 
-   for (int i=0; i<mManagerContainer.size(); ++i)
+   for (int i=0; i<mViewContainer.size(); ++i)
    {
-      mManagerContainer.at(i)->OperateOn(b);
+      mViewContainer.at(i)->OperateOn(b);
    }
 }
 

@@ -1,5 +1,5 @@
-#ifndef Manager_h__
-#define Manager_h__
+#ifndef inspectorqt_h__
+#define inspectorqt_h__
 
 #include <dtInspectorQt/export.h>
 #include <dtCore/base.h>
@@ -39,4 +39,4 @@ namespace dtInspectorQt
       QApplication *mApp;
    };
 }
-#endif // Manager_h__
+#endif // inspectorqt_h__
