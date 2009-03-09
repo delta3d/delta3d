@@ -3,29 +3,24 @@
 
 // [!output PROJECT_NAME].cpp : declares the interface of the application
 
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+#include <dtABC/application.h>
 
 class [!output PROJECT_NAME] : public dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER( [!output PROJECT_NAME] )
-
    public:
-      [!output PROJECT_NAME]( const std::string& configFilename = "config.xml" );
-      ~[!output PROJECT_NAME]();
-   
+      [!output PROJECT_NAME](const std::string& configFilename = "config.xml");
+ 
       virtual void Config();
 
-      virtual bool KeyPressed(const dtCore::Keyboard*  keyboard, 
-                                Producer::KeyboardKey  key,
-                                Producer::KeyCharacter character );
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
 
-      virtual void PreFrame( const double deltaFrameTime );
-      virtual void Frame( const double deltaFrameTime );
-      virtual void PostFrame( const double deltaFrameTime );
+      virtual void PreFrame(const double deltaFrameTime);
+      virtual void PostFrame(const double deltaFrameTime);
 
+   protected:
+     virtual ~[!output PROJECT_NAME]();
+      
    private:
-   
       //place member variables here
    
 };
