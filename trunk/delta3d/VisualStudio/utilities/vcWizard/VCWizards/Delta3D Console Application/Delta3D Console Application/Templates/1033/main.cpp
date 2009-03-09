@@ -1,6 +1,7 @@
 // main.cpp : defines the entry point for the console application.
 
 #include "[!output PROJECT_NAME].h"
+#include <dtCore/globals.h>
 
 int main()
 {
