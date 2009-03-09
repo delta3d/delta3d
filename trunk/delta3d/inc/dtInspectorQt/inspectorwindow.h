@@ -1,5 +1,5 @@
-#ifndef inspector_h__
-#define inspector_h__
+#ifndef inspectorwindow_h__
+#define inspectorwindow_h__
 
 #include "ui_dtinspectorqt.h"
 #include <dtInspectorQt/export.h>
@@ -13,7 +13,7 @@ namespace dtCore
 
 namespace dtInspectorQt
 {
-   class IManager;
+   class IView;
 
    ///The rendered Qt window for InspectorQt.  Uses a .ui file to define the widgets.
    class DT_INSPECTORQT_EXPORT InspectorWindow : public QMainWindow
@@ -32,8 +32,8 @@ namespace dtInspectorQt
    private:
       Ui::InspectorWidget ui;
 
-      QList<IManager*> mManagerContainer;
+      QList<IView*> mViewContainer;
       void UpdateInstances();
    };
 }
-#endif // inspector_h__
+#endif // inspectorwindow_h__
