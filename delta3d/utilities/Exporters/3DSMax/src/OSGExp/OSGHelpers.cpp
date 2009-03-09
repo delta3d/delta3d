@@ -710,8 +710,8 @@ osg::ref_ptr<osg::Group> OSGExp::createGroupFromHelper(osg::Group* rootTransform
 osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(osg::Group* parent, INode* node, Object* obj, TimeValue t){
 	osg::ref_ptr<osgSim::DOFTransform> pDOF = new osgSim::DOFTransform();
 	pDOF->setName(node->GetName());
-	// Set static datavariance for better performance
-	pDOF->setDataVariance(osg::Object::STATIC);
+	// Set dynamic datavariance so the optimizer doesn't try to remove this dof
+	pDOF->setDataVariance(osg::Object::DYNAMIC);
 	// Use default node mask
 	if(_options->getUseDefaultNodeMaskValue())
 		pDOF->setNodeMask(_options->getDefaultNodeMaskValue());
@@ -732,7 +732,7 @@ osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(osg::Group* parent, INo
 		pblock2->GetValue(dof_min_hpr_p, t, minHPR[1], iv);
 		pblock2->GetValue(dof_min_hpr_r, t, minHPR[2], iv);
 
-		pblock2->GetValue(dof_max_hpr_h, t, maxHPR[0], iv);
+		pblock2->GetValue(dof_max_hpr_h, t, maxHPR[0], iv); 
 		pblock2->GetValue(dof_max_hpr_p, t, maxHPR[1], iv);
 		pblock2->GetValue(dof_max_hpr_r, t, maxHPR[2], iv);
 
