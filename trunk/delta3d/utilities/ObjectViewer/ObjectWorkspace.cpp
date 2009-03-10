@@ -278,11 +278,12 @@ void ObjectWorkspace::OnInitialization()
 {
    QSettings settings("MOVES", "Shader Viewer");
    QStringList files = settings.value("projectContextPath").toStringList();
-
-   // If the user has not selected a project context, have them do so now
+   
    if (files.empty())
    {
-      mContextPath = GetContextPathFromUser();
+      //If the user has not selected a project context, then just let them do it later.
+      //mContextPath = GetContextPathFromUser();  (this had been causing a crash)
+      return;
    }
    else
    {
