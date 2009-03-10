@@ -431,9 +431,10 @@ namespace dtEditQt
 
          osg::Vec3 translation = tProxy->GetTranslation();
          const osg::BoundingSphere &bs = tProxy->GetActor()->GetOSGNode()->getBound();
+         float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
          float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
          if (offset <= 0.0f)
-            offset = 10.0f;
+            offset = actorCreationOffset;
 
          getCamera()->setPosition(translation);
          if (this->viewPortType == ViewportManager::ViewportType::PERSPECTIVE)
