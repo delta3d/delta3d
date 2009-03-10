@@ -742,11 +742,12 @@ namespace dtEditQt
 
       //Create our offset vector which is used to jitter the cloned
       //proxies providing better feedback to the user.
+      float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
       osg::Vec3 offset;
       if (worldCam != NULL)
-         offset = worldCam->getRightDir()* 5;
+         offset = worldCam->getRightDir()* actorCreationOffset;
       else
-         offset = osg::Vec3(5, 0, 0);
+         offset = osg::Vec3(actorCreationOffset, 0, 0);
 
       // We're about to do a LOT of work, especially if lots of things are select
       // so, start a change transaction.

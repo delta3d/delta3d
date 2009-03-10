@@ -498,6 +498,7 @@ namespace dtEditQt
             settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS,editorData.getLoadLastProject());
             settings.setValue(EditorSettings::LOAD_RECENT_MAPS,editorData.getLoadLastMap());
             settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
+            settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
             settings.setValue(EditorSettings::SAVE_MILLISECONDS,EditorActions::GetInstance().saveMilliSeconds);
             settings.setValue(EditorSettings::SELECTION_COLOR,editorData.getSelectionColor());
         settings.endGroup();
@@ -809,6 +810,16 @@ namespace dtEditQt
             bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA).toBool();
             EditorData::GetInstance().setRigidCamera(rigidCamera);
             perspView->onEditorPreferencesChanged();
+        }
+
+        if(settings.contains(EditorSettings::ACTOR_CREATION_OFFSET))
+        {
+           bool success;
+           float actorCreationOffset = (float) settings.value(EditorSettings::ACTOR_CREATION_OFFSET).toDouble(&success);
+           if (success)
+           {
+              EditorData::GetInstance().SetActorCreationOffset(actorCreationOffset);
+           }
         }
 
         if(settings.contains(EditorSettings::SAVE_MILLISECONDS))

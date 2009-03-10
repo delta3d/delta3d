@@ -52,6 +52,7 @@ namespace dtEditQt
       loadLastProject(true), 
       loadLastMap(true), 
       rigidCamera(true), 
+      mActorCreationDistance(5.0),
       selectionColor(Qt::red)    
    {
       LOG_INFO("Initializing Editor Data.");

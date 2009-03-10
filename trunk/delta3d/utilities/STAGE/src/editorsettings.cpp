@@ -70,6 +70,7 @@ namespace dtEditQt
    const QString EditorSettings::SAVE_MILLISECONDS("Autosave_delay");
    const QString EditorSettings::SELECTION_COLOR("Selection_Color");
    const QString EditorSettings::RIGID_CAMERA("Rigid_Camera_Movement");
+   const QString EditorSettings::ACTOR_CREATION_OFFSET("Actor_Creation_Offset");
 
    const QString EditorSettings::EXTERNAL_TOOLS("ExternalTools");
    const QString EditorSettings::EXTERNAL_TOOL_TITLE("Title");

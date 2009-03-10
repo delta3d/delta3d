@@ -327,10 +327,16 @@ namespace dtEditQt
       
       // Accessor
       inline bool getRigidCamera() const { return rigidCamera; }
-      
+
       // Mutator
       inline void setRigidCamera(bool enable) { rigidCamera = enable; }
       
+      // Accessor
+      inline float GetActorCreationOffset() const { return mActorCreationDistance; }
+
+      // Mutator
+      inline void SetActorCreationOffset(const float actorCreationDistance) { mActorCreationDistance = actorCreationDistance; }
+
       ///@return the ui registry for group actor properties
       GroupUIRegistry& GetGroupUIRegistry();
    
@@ -384,6 +390,7 @@ namespace dtEditQt
       unsigned int numRecentProjects;
       
       bool loadLastProject, loadLastMap, rigidCamera;
+      float mActorCreationDistance;
       QColor selectionColor;
    };
 }
