@@ -47,7 +47,7 @@ void TestNestedView::Config()
    GetCamera()->SetClearColor(1.0f, 0.0f, 0.0f, 1.0f);
    
    //Default view frame bin
-   GetView()->SetFrameBin(0);
+   GetView()->SetRenderOrder(0);
 
    //Create second view, using the Application's Scene
    mView2 = new View("View 2");
@@ -66,7 +66,7 @@ void TestNestedView::Config()
    mView2->SetCamera(mCam2.get());
    
    //2nd view frame bin
-   GetView()->SetFrameBin(1);
+   GetView()->SetRenderOrder(1);
 
    //Create a third View, using the Application's Scene
    mView3 = new View("View 3");
@@ -85,7 +85,7 @@ void TestNestedView::Config()
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    //3rd view frame bin
-   GetView()->SetFrameBin(2);   
+   GetView()->SetRenderOrder(2);   
 }
 
 bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -97,26 +97,26 @@ bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
       return handled;
    }
 
-   if (GetView()->GetFrameBin() == 0)
+   if (GetView()->GetRenderOrder() == 0)
    {
-      GetView()->SetFrameBin(1);
-      mView2->SetFrameBin(2);
-      mView3->SetFrameBin(0);
+      GetView()->SetRenderOrder(1);
+      mView2->SetRenderOrder(2);
+      mView3->SetRenderOrder(0);
       std::cout << "\nBlue on bottom, Red next, Green on top.\n";
    }
-   else if (GetView()->GetFrameBin() == 1)
+   else if (GetView()->GetRenderOrder() == 1)
    {
-      GetView()->SetFrameBin(2);
-      mView2->SetFrameBin(0);
-      mView3->SetFrameBin(1);
+      GetView()->SetRenderOrder(2);
+      mView2->SetRenderOrder(0);
+      mView3->SetRenderOrder(1);
 
       std::cout << "\nGreen on bottom, Blue next, Red on top.\n";
    }
    else
    {
-      GetView()->SetFrameBin(0);
-      mView2->SetFrameBin(1);
-      mView3->SetFrameBin(2);
+      GetView()->SetRenderOrder(0);
+      mView2->SetRenderOrder(1);
+      mView3->SetRenderOrder(2);
 
       std::cout << "\nRed on bottom, Green next, Blue on top.\n";
    }

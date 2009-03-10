@@ -23,7 +23,7 @@ View::View(const std::string& name, bool useSceneLight)
    : Base(name)
    , mOsgViewerView(new osgViewer::View)
    , mTargetFrameRate(60.0)
-   , mFrameBin(0)
+   , mRenderOrder(0)
    , mPager(NULL)
 {
    Ctor(useSceneLight);
@@ -34,7 +34,7 @@ View::View(osgViewer::View* view, const std::string& name, bool useSceneLight)
    : Base(name)
    , mOsgViewerView(view)
    , mTargetFrameRate(60.0)
-   , mFrameBin(0)
+   , mRenderOrder(0)
    , mPager(NULL)
 {
    assert(mOsgViewerView.valid());
@@ -74,11 +74,32 @@ View::~View()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void View::SetFrameBin( unsigned int frameBin )
+DEPRECATE_FUNC void View::SetFrameBin( unsigned int frameBin )
 {
-   mFrameBin = frameBin;
-   
-   GetCamera()->GetOSGCamera()->setRenderOrder(osg::Camera::NESTED_RENDER, frameBin);
+   DEPRECATE("View::SetFrameBin", "View::SetRenderOrder");
+
+   SetRenderOrder(frameBin);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+DEPRECATE_FUNC unsigned int View::GetFrameBin() const
+{
+   DEPRECATE("View::GetFrameBin", "View::GetFrameBin");
+
+   return GetRenderOrder();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void View::SetRenderOrder(unsigned int rOrder)
+{
+   mRenderOrder = rOrder;   
+   GetCamera()->GetOSGCamera()->setRenderOrder(osg::Camera::NESTED_RENDER, rOrder);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+unsigned int View::GetRenderOrder() const
+{
+   return mRenderOrder;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

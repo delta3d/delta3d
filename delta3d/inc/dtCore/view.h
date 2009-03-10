@@ -25,6 +25,7 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/databasepager.h>
+#include <dtUtil/deprecationmgr.h>
 #include <osg/Referenced>
 #include <osgViewer/View>
 
@@ -64,8 +65,23 @@ namespace dtCore
       */
 //      void ResetCameraScenes(Scene* sceneRootChanged);
 
-      void SetFrameBin( unsigned int frameBin );
-      unsigned int GetFrameBin() const { return mFrameBin; }
+      ///Deprecated Mar 10 2009 in favor of SetRenderOrder
+      DEPRECATE_FUNC void SetFrameBin( unsigned int frameBin );
+
+      ///Deprecated Mar 10 2009 in favor of GetRenderOrder
+      DEPRECATE_FUNC unsigned int GetFrameBin() const;
+
+      /**
+       * SetRenderOrder take an integer argument to designate the order this View 
+       * is rendered in relation to other Views.  Higher numbers go first.
+       */
+      void SetRenderOrder(unsigned int rOrder);
+
+      /**
+       * Get the rank of this View's render order.  
+       * Higher numbers get rendered first.
+       */
+      unsigned int GetRenderOrder() const;
       
       
       bool AddSlave(Camera* camera);
@@ -211,7 +227,7 @@ namespace dtCore
       RefPtr<dtCore::KeyboardMouseHandler> mKeyboardMouseHandler;
       
       double mTargetFrameRate;
-      unsigned int mFrameBin;
+      unsigned int mRenderOrder;  //higher numbers get rendered FIRST
 
       RefPtr<DatabasePager> mPager; ///< The pager this View will use (could be NULL)
    };
