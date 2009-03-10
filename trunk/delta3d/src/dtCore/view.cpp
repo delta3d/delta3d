@@ -74,6 +74,14 @@ View::~View()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void View::SetFrameBin( unsigned int frameBin )
+{
+   mFrameBin = frameBin;
+   
+   GetCamera()->GetOSGCamera()->setRenderOrder(osg::Camera::NESTED_RENDER, frameBin);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 bool View::AddSlave(Camera* camera)
 {
    if (camera == NULL)

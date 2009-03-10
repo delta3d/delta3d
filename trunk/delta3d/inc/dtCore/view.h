@@ -64,7 +64,7 @@ namespace dtCore
       */
 //      void ResetCameraScenes(Scene* sceneRootChanged);
 
-      void SetFrameBin( unsigned int frameBin ) { mFrameBin = frameBin; }
+      void SetFrameBin( unsigned int frameBin );
       unsigned int GetFrameBin() const { return mFrameBin; }
       
       
