@@ -41,8 +41,6 @@ void TestNestedView::Config()
                             DEFAULT_VIEW_HEIGHT + DEFAULT_VIEW_HEIGHT / 2);
 
    //set the first Camera position
-   Transform transform(0.0f, -30.0f, 5.0f);
-   GetCamera()->SetTransform(transform);
    GetCamera()->SetAspectRatio(DEFAULT_ASPECT_RATIO);
    GetCamera()->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 4.0f, 0.0f,   
                                                               (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
@@ -61,10 +59,9 @@ void TestNestedView::Config()
    //create second Camera, added to second View
    mCam2 = new Camera("Camera 2");
    mCam2->SetWindow(GetWindow());   
-   mCam2->SetTransform(transform);
    mCam2->SetClearColor(0.f, 1.0f, 0.f, 1.f);
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
-   mCam2->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 2.0f, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
+   mCam2->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 2.0f, (float) DEFAULT_VIEW_HEIGHT / 4.0f,
                                      (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
    mView2->SetCamera(mCam2.get());
    
@@ -84,7 +81,6 @@ void TestNestedView::Config()
    mCam3->SetWindow(GetWindow());
    mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
                                      (float) DEFAULT_VIEW_WIDTH, (float) DEFAULT_VIEW_HEIGHT));
-   mCam3->SetTransform(transform);
    mCam3->SetClearColor(0.f, 0.f, 1.0f, 1.f);
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
