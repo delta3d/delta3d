@@ -59,7 +59,10 @@ void BaseABC::Quit()
 ////////////////////////////////////////////////////////////////////////////////
 void BaseABC::SetCamera(dtCore::Camera* camera)
 {
-   GetView()->SetCamera(camera);
+   if (GetView() != NULL)
+   {
+      GetView()->SetCamera(camera);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,15 +84,19 @@ void BaseABC::SetWindow(dtCore::DeltaWin* win)
 ////////////////////////////////////////////////////////////////////////////////
 void BaseABC::AddDrawable(DeltaDrawable* obj)
 {
-   assert(obj);
-   GetScene()->AddDrawable(obj);
+   if (GetScene() != NULL)
+   {
+      GetScene()->AddDrawable(obj);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void BaseABC::RemoveDrawable(DeltaDrawable* obj)
 {
-   assert(obj);
-   GetScene()->RemoveDrawable(obj);
+   if (GetScene() != NULL)
+   {
+      GetScene()->RemoveDrawable(obj);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +129,15 @@ void BaseABC::CreateInstances()
    mViewList[0]->SetCamera(new dtCore::Camera("defaultCam"));
    mViewList[0]->SetScene(new dtCore::Scene("defaultScene"));
 
-   GetKeyboard()->SetName("defaultKeyboard");
-   GetMouse()->SetName("defaultMouse");
+   if (GetKeyboard() != NULL)
+   {
+      GetKeyboard()->SetName("defaultKeyboard");
+   }
+
+   if (GetMouse() != NULL)
+   {
+      GetMouse()->SetName("defaultMouse");
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,4 +196,114 @@ dtDAL::Map& BaseABC::LoadMap(const std::string& name, bool addBillBoards)
    dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
    LoadMap(map, addBillBoards);
    return map;
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::View* dtABC::BaseABC::GetView()
+{
+   if (!mViewList.empty())
+   {
+      return mViewList[0].get();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const dtCore::View* dtABC::BaseABC::GetView() const
+{
+   if (!mViewList.empty())
+   {
+      return mViewList[0].get();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtABC::BaseABC::SetView(dtCore::View* view)
+{
+   mViewList[0] = view;
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::Camera* dtABC::BaseABC::GetCamera()
+{
+   if (GetView() != NULL)
+   {
+      return GetView()->GetCamera();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const dtCore::Camera* dtABC::BaseABC::GetCamera() const
+{
+   if (GetView() != NULL)
+   {
+      return GetView()->GetCamera();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::Scene* dtABC::BaseABC::GetScene()
+{
+   if (GetView() != NULL)
+   {
+      return GetView()->GetScene();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtABC::BaseABC::SetScene(dtCore::Scene* scene)
+{
+   if (GetView() != NULL)
+   {
+      GetView()->SetScene(scene);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::Keyboard* dtABC::BaseABC::GetKeyboard()
+{
+   if (GetView() != NULL)
+   {
+      return GetView()->GetKeyboard();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtABC::BaseABC::SetKeyboard(dtCore::Keyboard* keyboard)
+{
+   if (GetView() != NULL)
+   {
+      GetView()->SetKeyboard(keyboard);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+dtCore::Mouse* dtABC::BaseABC::GetMouse()
+{
+   if (GetView() != NULL)
+   {
+      return GetView()->GetMouse();
+   }
+
+   return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtABC::BaseABC::SetMouse(dtCore::Mouse* mouse)
+{
+   if (GetView() != NULL)
+   {
+      GetView()->SetMouse(mouse);
+   }
 }

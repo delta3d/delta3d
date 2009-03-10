@@ -69,19 +69,18 @@ namespace dtABC
       ///Remove a visual object from the Scene
       virtual void RemoveDrawable(dtCore::DeltaDrawable* obj);
 
-
       ///Get the first view or create a default View
-      dtCore::View* GetView() { return  mViewList[0].get(); }
+      dtCore::View* GetView();
       ///Get the (const) first view
-      const dtCore::View* GetView() const { return  mViewList[0].get(); }
+      const dtCore::View* GetView() const;
 
       ///Set the first view
-      void SetView(dtCore::View* view) { mViewList[0] = view; }
+      void SetView(dtCore::View* view);
 
       ///Get the default Application Camera
-      dtCore::Camera* GetCamera() { return GetView()->GetCamera(); }
+      dtCore::Camera* GetCamera();
       ///Get the default (const) Application Camera
-      const dtCore::Camera* GetCamera() const { return GetView()->GetCamera(); }
+      const dtCore::Camera* GetCamera() const;
       ///Get the default Application Camera
       void SetCamera(dtCore::Camera* camera);
 
@@ -91,20 +90,20 @@ namespace dtABC
       void SetWindow(dtCore::DeltaWin* win);
 
       ///Get the default Application Scene
-      dtCore::Scene* GetScene() { return GetView()->GetScene(); }
+      dtCore::Scene* GetScene();
       ///Set the default Application Scene
-      void SetScene(dtCore::Scene* scene) { GetView()->SetScene(scene); }
+      void SetScene(dtCore::Scene* scene);
 
 
       ///Get the default Application Keyboard
-      dtCore::Keyboard* GetKeyboard() { return GetView()->GetKeyboard(); }
+      dtCore::Keyboard* GetKeyboard();
       ///Set the default Application Scene
-      void SetKeyboard(dtCore::Keyboard* keyboard) { GetView()->SetKeyboard(keyboard); }
+      void SetKeyboard(dtCore::Keyboard* keyboard);
 
       ///Get the default Application Mouse
-      dtCore::Mouse* GetMouse() {  return GetView()->GetMouse();}
+      dtCore::Mouse* GetMouse();
       ///Set the default Application Scene
-      void SetMouse(dtCore::Mouse* mouse) { GetView()->SetMouse(mouse); }
+      void SetMouse(dtCore::Mouse* mouse);
 
 
       /// Loads a map by name into an application.  If the map is already opened, the currently
