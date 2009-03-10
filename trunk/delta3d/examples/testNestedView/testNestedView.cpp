@@ -13,7 +13,7 @@ using namespace dtCore;
 using namespace dtABC;
 
 // Default window sizing properties
-const int DEFAULT_WIN_X   = 660;
+const int DEFAULT_WIN_X   = 60;
 const int DEFAULT_WIN_Y   = 30;
 const int DEFAULT_VIEW_WIDTH      = 640;
 const int DEFAULT_VIEW_HEIGHT     = 480;
@@ -36,13 +36,16 @@ void TestNestedView::Config()
    //change the title of the pre-built Window 
    //(this already has a Camera and Scene assignApped to it)
    GetWindow()->SetWindowTitle("testNestedView");
-   GetWindow()->SetPosition(DEFAULT_WIN_X, DEFAULT_WIN_Y, DEFAULT_VIEW_WIDTH, DEFAULT_VIEW_HEIGHT * 2);
+   GetWindow()->SetPosition(DEFAULT_WIN_X, DEFAULT_WIN_Y, 
+                            DEFAULT_VIEW_WIDTH + DEFAULT_VIEW_WIDTH / 2,
+                            DEFAULT_VIEW_HEIGHT + DEFAULT_VIEW_HEIGHT / 2);
 
    //set the first Camera position
    Transform transform(0.0f, -30.0f, 5.0f);
    GetCamera()->SetTransform(transform);
    GetCamera()->SetAspectRatio(DEFAULT_ASPECT_RATIO);
-   GetCamera()->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 0.0, (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
+   GetCamera()->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 4.0f, 0.0f,   
+                                                              (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
    GetCamera()->SetClearColor(1.0f, 0.0f, 0.0f, 1.0f);
    
    //Default view frame bin
@@ -61,7 +64,8 @@ void TestNestedView::Config()
    mCam2->SetTransform(transform);
    mCam2->SetClearColor(0.f, 1.0f, 0.f, 1.f);
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
-   mCam2->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 300.0, (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
+   mCam2->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 2.0f, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
+                                     (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
    mView2->SetCamera(mCam2.get());
    
    //2nd view frame bin
@@ -78,18 +82,14 @@ void TestNestedView::Config()
    mCam3 = new Camera("Camera 3");
    mView3->SetCamera(mCam3.get());
    mCam3->SetWindow(GetWindow());
-   mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, 480.0, (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
+   mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
+                                     (float) DEFAULT_VIEW_WIDTH, (float) DEFAULT_VIEW_HEIGHT));
    mCam3->SetTransform(transform);
    mCam3->SetClearColor(0.f, 0.f, 1.0f, 1.f);
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    //3rd view frame bin
-   GetView()->SetFrameBin(2);
-   
-   //setup scene here
-   RefPtr<Object> terr = new Object();
-   terr->LoadFile("models/terrain_simple.ive");
-   GetScene()->AddDrawable(terr.get());   
+   GetView()->SetFrameBin(2);   
 }
 
 bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
