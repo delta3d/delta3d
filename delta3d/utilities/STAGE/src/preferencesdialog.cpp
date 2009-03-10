@@ -24,7 +24,7 @@
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
-* William E. Johnson II
+* William E. Johnson II, Curtiss Murphy
 */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QGridLayout>
@@ -41,6 +41,7 @@
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
 #include <QtGui/QGroupBox>
+#include <QtGui/QLineEdit>
 
 #include <dtEditQt/preferencesdialog.h>
 #include <dtEditQt/editordata.h>
@@ -48,6 +49,7 @@
 
 namespace dtEditQt
 {
+   //////////////////////////////////////////////////////////////////
     PreferencesDialog::PreferencesDialog(QWidget *parent) : 
        QDialog(parent), 
        mProjectCheck(NULL), 
@@ -69,11 +71,18 @@ namespace dtEditQt
         mRigidCamCheck      = new QCheckBox;
         mSaveMins           = new QSpinBox;
 
+        mActorOffsetDistance = new QLineEdit;
+        QDoubleValidator *validator = new QDoubleValidator(mActorOffsetDistance);
+        validator->setDecimals(4);
+        mActorOffsetDistance->setValidator(validator);
+
+
         mProjectCheck->setToolTip(tr("Enables the loading of the most recently loaded project on startup."));
         mMapCheck->setToolTip(tr("Enables the loading of most recently used map on startup. Note that a map cannot be loaded without a project."));
         mRigidCamCheck->setToolTip(tr("Enables the rigid body movement of the camera in a scene."));
         mColor->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
         mSaveMins->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
+        mActorOffsetDistance->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
 
         vLay->addWidget(group);
 
@@ -100,6 +109,11 @@ namespace dtEditQt
         label->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
         grid->addWidget(label, 4, 0);
         grid->addWidget(mColor, 4, 2);
+
+        label = new QLabel(tr("Actor Creation Offset"));
+        label->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
+        grid->addWidget(label, 5, 0);
+        grid->addWidget(mActorOffsetDistance, 5, 2);
 
         mSaveMins->setMinimum(0);
         mSaveMins->setMaximum(60);
@@ -131,16 +145,18 @@ namespace dtEditQt
         bool rigidCamera = EditorData::GetInstance().getRigidCamera();
 
         mProjectCheck->setChecked(loadProject);
-        
         mMapCheck->setChecked((loadProject && loadMap));
-        
         mRigidCamCheck->setChecked(rigidCamera);
-        
+
+        float actorOffsetDistance = EditorData::GetInstance().GetActorCreationOffset();
+        mActorOffsetDistance->setText(QString::number(actorOffsetDistance, 'f', 5));
+
         setModal(true);
         //resize(200, 300);
         setFixedSize(325, 300);
     }
 
+    //////////////////////////////////////////////////////////////////
     void PreferencesDialog::onLastProjectCheckBox(int state)
     {
        bool isChecked = state == Qt::Checked;
@@ -151,6 +167,7 @@ namespace dtEditQt
        }
     }
 
+    //////////////////////////////////////////////////////////////////
     void PreferencesDialog::onLastMapCheckBox(int state)
     {
        bool isChecked = state == Qt::Checked;
@@ -161,6 +178,7 @@ namespace dtEditQt
        }
     }
 
+    //////////////////////////////////////////////////////////////////
     void PreferencesDialog::onColorSelect()
     {
         QColor selectedColor = QColorDialog::getColor(EditorData::GetInstance().getSelectionColor(), this);
@@ -169,6 +187,7 @@ namespace dtEditQt
         setNewPalette();
     }
 
+    //////////////////////////////////////////////////////////////////
     void PreferencesDialog::onOk()
     {
         EditorData::GetInstance().setLoadLastProject(mProjectCheck->isChecked());
@@ -181,9 +200,19 @@ namespace dtEditQt
             EditorActions::GetInstance().saveMilliSeconds = milliSecs;
             EditorActions::GetInstance().getTimer()->setInterval(milliSecs);
         }
+
+        // Creation offset.
+        bool success = false;
+        float result = mActorOffsetDistance->text().toFloat(&success);
+        if (success) 
+        {
+           EditorData::GetInstance().SetActorCreationOffset(result);
+        }
+
         accept();
     }
 
+    //////////////////////////////////////////////////////////////////
     void PreferencesDialog::setNewPalette()
     {
         QColor selectedColor = EditorData::GetInstance().getSelectionColor();

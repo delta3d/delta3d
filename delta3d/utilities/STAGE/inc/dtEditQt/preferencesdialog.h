@@ -36,6 +36,7 @@ class QCheckBox;
 class QPushButton;
 class QResizeEvent;
 class QSpinBox;
+class QLineEdit;
 
 namespace dtEditQt
 {
@@ -74,6 +75,7 @@ namespace dtEditQt
          QCheckBox   *mRigidCamCheck;
          QPushButton *mColor;
          QSpinBox    *mSaveMins;
+         QLineEdit   *mActorOffsetDistance;
 
          /// Helper method to set the new color palette and text
          void setNewPalette();

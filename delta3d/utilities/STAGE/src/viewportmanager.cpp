@@ -40,6 +40,7 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/editorevents.h>
+#include <dtEditQt/editordata.h>
 
 namespace dtEditQt
 {
@@ -413,9 +414,10 @@ namespace dtEditQt
             //just created at the origin.
             std::string oldValue = prop->ToString();
 
+            float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
             float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
             if (offset <= 0.0f)
-                offset = 10.0f;
+                offset = actorCreationOffset;
             tProxy->SetTranslation(pos+(viewDir*offset*2));
 
             std::string newValue = prop->ToString();
