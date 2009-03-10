@@ -2,11 +2,14 @@
 #define baseview_h__
 
 #include <dtInspectorQt/iview.h>
-#include "ui_dtinspectorqt.h"
 #include <dtCore/observerptr.h>
 #include <QtCore/QObject>
 #include <dtCore/base.h>
 
+namespace Ui
+{
+   class InspectorWidget;
+}
 
 namespace dtInspectorQt
 {

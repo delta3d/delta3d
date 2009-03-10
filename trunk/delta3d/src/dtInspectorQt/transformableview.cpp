@@ -1,5 +1,6 @@
 #include <dtInspectorQt/transformableview.h>
 #include <dtCore/odegeomwrap.h>
+#include "ui_dtinspectorqt.h"
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::TransformableView::TransformableView(Ui::InspectorWidget &ui)

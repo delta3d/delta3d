@@ -1,35 +1,65 @@
-  # QT4_WRAP_UI(outfiles inputfile ... )
-# Custom macro to place the generated .h file into the /inc/dtInspector folder
-MACRO (DELTA_QT4_WRAP_UI outfiles )
-  QT4_EXTRACT_OPTIONS(ui_files ui_options ${ARGN})
-
-  FOREACH (it ${ui_files})
-    GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
-    GET_FILENAME_COMPONENT(infile ${it} ABSOLUTE)
-    SET(outfile ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME}/ui_${outfile}.h)
-    ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
-      COMMAND ${QT_UIC_EXECUTABLE}
-      ARGS ${ui_options} -o ${outfile} ${infile}
-      MAIN_DEPENDENCY ${infile})
-    SET(${outfiles} ${${outfiles}} ${outfile})
-  ENDFOREACH (it)
-
-ENDMACRO (DELTA_QT4_WRAP_UI)
-
 SET(LIB_NAME     dtInspectorQt)
 
 
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
-SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
-file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
+
+SET(LIB_PUBLIC_HEADERS
+    ${HEADER_PATH}/baseview.h
+    ${HEADER_PATH}/cameraview.h
+    ${HEADER_PATH}/clouddomeview.h
+    ${HEADER_PATH}/deltawinview.h
+    ${HEADER_PATH}/drawableview.h
+    ${HEADER_PATH}/environmentview.h
+    ${HEADER_PATH}/export.h
+    ${HEADER_PATH}/infiniteterrainview.h
+    ${HEADER_PATH}/inspectorqt.h
+    ${HEADER_PATH}/inspectorwindow.h
+    ${HEADER_PATH}/iview.h
+    ${HEADER_PATH}/labelactorview.h
+    ${HEADER_PATH}/lightview.h
+    ${HEADER_PATH}/objectview.h
+    ${HEADER_PATH}/particlesystemview.h
+    ${HEADER_PATH}/physicalview.h
+    ${HEADER_PATH}/sceneview.h
+    ${HEADER_PATH}/skydomeview.h
+    ${HEADER_PATH}/systemview.h
+    ${HEADER_PATH}/transformableview.h
+    ${HEADER_PATH}/viewview.h
+    ${HEADER_PATH}/weatherview.h
+)
+
+SET(LIB_SOURCES 
+    baseview.cpp
+    cameraview.cpp
+    clouddomeview.cpp
+    CMakeLists.txt
+    deltawinview.cpp
+    drawableview.cpp
+    dtinspectorqt.ui
+    environmentview.cpp
+    infiniteterrainview.cpp
+    inspectorqt.cpp
+    inspectorwindow.cpp
+    labelactorview.cpp
+    lightview.cpp
+    objectview.cpp
+    particlesystemview.cpp
+    physicalview.cpp
+    sceneview.cpp
+    skydomeview.cpp
+    systemview.cpp
+    transformableview.cpp
+    viewview.cpp
+    weatherview.cpp
+)
 
 INCLUDE_DIRECTORIES(${HEADER_PATH}
                     ${QT_INCLUDE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR} # for ui*.h files
                    )
 
 QT4_WRAP_CPP(MOC_SOURCES ${LIB_PUBLIC_HEADERS})
-DELTA_QT4_WRAP_UI(UI_SOURCES dtinspectorqt.ui)
+QT4_WRAP_UI(UI_SOURCES dtinspectorqt.ui)
 
 ADD_LIBRARY(${LIB_NAME} SHARED
     ${LIB_PUBLIC_HEADERS} 

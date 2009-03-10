@@ -1,4 +1,6 @@
 #include <dtInspectorQt/baseview.h>
+#include "ui_dtinspectorqt.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::BaseView::BaseView(Ui::InspectorWidget& ui)

@@ -1,3 +1,4 @@
+#include "ui_dtinspectorqt.h"
 #include <dtInspectorQt/drawableview.h>
 #include <dtCore/scene.h>
 
