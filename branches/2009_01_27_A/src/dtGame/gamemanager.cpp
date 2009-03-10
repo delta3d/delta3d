@@ -434,8 +434,9 @@ namespace dtGame
    void GameManager::RemoveDeletedActors()
    {
       // DELETE ACTORS
-      unsigned int deleteListSize = mDeleteList.size();
-      for (unsigned int i = 0; i < deleteListSize; ++i)
+      // IT IS CRUCIAL TO NOT SAVE OFF THE SIZE OR CHANGE THIS TO AN ITERATOR
+      // BECAUSE ACTORS CAN DELETE OTHER ACTORS IN THE ON REMOVED FROM WORLD
+      for (unsigned int i = 0; i < mDeleteList.size(); ++i)
       {
          GameActorProxy& gameActorProxy = *mDeleteList[i];
 
@@ -1213,17 +1214,25 @@ namespace dtGame
       {
          id = itor->first;
          GameActorProxy& gameActorProxy = *itor->second;
-         mDeleteList.push_back(itor->second);
-         gameActorProxy.SetIsInGM(false);
-
-         // Remote actors are deleted in response to a delete message, so sending another is silly.
-         // Also, this doen't currently send messages when closing a map, so check here for that state.
-         if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+         if (gameActorProxy.IsInGM()) 
          {
-            dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
-            msg->SetAboutActorId(id);
+            mDeleteList.push_back(itor->second);
+            gameActorProxy.SetIsInGM(false);
 
-            SendMessage(*msg);
+            // Remote actors are deleted in response to a delete message, so sending another is silly.
+            // Also, this doen't currently send messages when closing a map, so check here for that state.
+            if (!gameActorProxy.IsRemote() && mMapChangeStateData->GetCurrentState() == MapChangeStateData::MapChangeState::IDLE)
+            {
+               dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
+               msg->SetAboutActorId(id);
+
+               SendMessage(*msg);
+            }
+         }
+         else
+         {
+            LOG_ERROR("Deleting Actor twice: \"" + id.ToString() + "\" Name: \"" + gameActorProxy.GetName() +
+               "\" Type: \"" + gameActorProxy.GetActorType().GetFullName() + "\".");
          }
       }
    }
