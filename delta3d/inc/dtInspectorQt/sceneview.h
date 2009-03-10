@@ -3,9 +3,13 @@
 
 #include <QtCore/QObject>
 #include <dtInspectorQt/iview.h>
-#include "ui_dtinspectorqt.h"
 #include <dtCore/scene.h>
 #include <dtCore/observerptr.h>
+
+namespace Ui
+{
+   class InspectorWidget;
+}
 
 
 namespace dtInspectorQt

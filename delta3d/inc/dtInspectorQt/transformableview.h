@@ -4,7 +4,11 @@
 #include <dtInspectorQt/iview.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/transformable.h>
-#include "ui_dtinspectorqt.h"
+
+namespace Ui
+{
+   class InspectorWidget;
+}
 
 namespace dtInspectorQt
 {

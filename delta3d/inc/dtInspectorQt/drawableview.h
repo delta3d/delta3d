@@ -3,10 +3,13 @@
 
 #include <QtCore/QObject>
 #include <dtInspectorQt/iview.h>
-#include "ui_dtinspectorqt.h"
 #include <dtCore/deltadrawable.h>
 #include <dtCore/observerptr.h>
 
+namespace Ui
+{
+   class InspectorWidget;
+}
 
 namespace dtInspectorQt
 {

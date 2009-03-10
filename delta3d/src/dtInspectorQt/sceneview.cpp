@@ -1,4 +1,5 @@
 #include <dtInspectorQt/sceneview.h>
+#include "ui_dtinspectorqt.h"
 
 //////////////////////////////////////////////////////////////////////////
 dtInspectorQt::SceneView::SceneView(Ui::InspectorWidget& ui)
