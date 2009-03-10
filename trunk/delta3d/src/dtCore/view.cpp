@@ -84,7 +84,7 @@ DEPRECATE_FUNC void View::SetFrameBin( unsigned int frameBin )
 ////////////////////////////////////////////////////////////////////////////////
 DEPRECATE_FUNC unsigned int View::GetFrameBin() const
 {
-   DEPRECATE("View::GetFrameBin", "View::GetFrameBin");
+   DEPRECATE("View::GetFrameBin", "View::GetRenderOrder");
 
    return GetRenderOrder();
 }
