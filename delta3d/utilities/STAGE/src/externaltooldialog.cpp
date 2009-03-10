@@ -404,8 +404,8 @@ void dtEditQt::ExternalToolDialog::ClearAndAddDefaultDelta3DTools()
 
    {//Viewer
       ExternalTool* viewer = mTools->at(0);
-      viewer->SetTitle(tr("Viewer"));
-      viewer->SetCmd(FindDelta3DTool("Viewer"));
+      viewer->SetTitle(tr("Object Viewer"));
+      viewer->SetCmd(FindDelta3DTool("ObjectViewer"));
       viewer->SetIcon(QString::fromStdString(UIResources::ICON_EDITOR_VIEWER));
       viewer->GetAction()->setVisible(true);
    }
@@ -421,7 +421,7 @@ void dtEditQt::ExternalToolDialog::ClearAndAddDefaultDelta3DTools()
    {//particle system editor
       ExternalTool* psEditor = mTools->at(2);
       psEditor->SetTitle(tr("Particle Editor"));
-      psEditor->SetCmd(FindDelta3DTool("psEditor"));
+      psEditor->SetCmd(FindDelta3DTool("ParticleEditor"));
       psEditor->SetIcon(QString::fromStdString(UIResources::ICON_EDITOR_PARTICLE_SYSTEM));
       psEditor->GetAction()->setVisible(true);
    }
