@@ -7,7 +7,7 @@
 dtInspectorQt::ViewView::ViewView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
-
+   connect(mUI->viewRenderOrderEdit, SIGNAL(valueChanged(int)), this, SLOT(OnRenderOrderChanged(int)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -49,10 +49,21 @@ void dtInspectorQt::ViewView::Update()
       {
          mUI->viewSceneEdit->setText(QString::fromStdString(scene->GetName()));
       }
+
+      mUI->viewRenderOrderEdit->setValue(mOperateOn->GetRenderOrder());
    }
    else
    {
       mUI->viewGroupBox->hide();
    }
 
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::ViewView::OnRenderOrderChanged(int order)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetRenderOrder(order);
+   }
 }

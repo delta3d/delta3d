@@ -46,6 +46,8 @@ namespace dtInspectorQt
 
    protected slots:
 
+      void OnRenderOrderChanged(int order);
+
    private:
       Ui::InspectorWidget* mUI;
       dtCore::ObserverPtr<dtCore::View> mOperateOn;

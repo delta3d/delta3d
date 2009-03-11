@@ -54,9 +54,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>-3112</y>
+         <y>-1211</y>
          <width>349</width>
-         <height>3776</height>
+         <height>3802</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4" >
@@ -1126,7 +1126,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1" >
+           <item row="0" column="2" >
             <widget class="QLineEdit" name="viewCameraEdit" >
              <property name="enabled" >
               <bool>false</bool>
@@ -1140,10 +1140,24 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1" >
+           <item row="1" column="2" >
             <widget class="QLineEdit" name="viewSceneEdit" >
              <property name="enabled" >
               <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" >
+            <widget class="QSpinBox" name="viewRenderOrderEdit" >
+             <property name="maximum" >
+              <number>9999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="label_117" >
+             <property name="text" >
+              <string>Render Order:</string>
              </property>
             </widget>
            </item>
@@ -2689,11 +2703,6 @@
                <widget class="QDoubleSpinBox" name="labelActorBackdropHeightEdit" />
               </item>
              </layout>
-             <zorder>label_105</zorder>
-             <zorder>labelActorBackdropWidthEdit</zorder>
-             <zorder>label_108</zorder>
-             <zorder>labelActorBackdropHeightEdit</zorder>
-             <zorder>checkBox</zorder>
             </widget>
            </item>
            <item row="6" column="0" colspan="3" >
