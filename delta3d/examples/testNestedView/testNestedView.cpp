@@ -66,7 +66,7 @@ void TestNestedView::Config()
    mView2->SetCamera(mCam2.get());
    
    //2nd view frame bin
-   GetView()->SetRenderOrder(1);
+   mView2->SetRenderOrder(1);
 
    //Create a third View, using the Application's Scene
    mView3 = new View("View 3");
@@ -85,7 +85,7 @@ void TestNestedView::Config()
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    //3rd view frame bin
-   GetView()->SetRenderOrder(2);   
+   mView3->SetRenderOrder(2);   
 }
 
 bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -124,7 +124,7 @@ bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    return true;
 }
 
-int main()
+int main(int argc, char **argv)
 {
    //set data search path to parent directory and delta3d/data
    dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/data" + ";");
