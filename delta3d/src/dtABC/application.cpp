@@ -544,13 +544,25 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
 ////////////////////////////////////////////////////////
 void Application::AddView(dtCore::View &view)
 {
-   if (mCompositeViewer.get() == NULL)
+   if (mCompositeViewer.valid() == false)
    {
       mCompositeViewer = new osgViewer::CompositeViewer;
    }
 
    mCompositeViewer->addView(view.GetOsgViewerView());
    mViewList.push_back(&view);
+
+   //By adding our internal listeners to added Views, all input from all
+   //Views will be routed to the Application.
+   if (view.GetKeyboard() != NULL)
+   {
+      view.GetKeyboard()->AddKeyboardListener(mKeyboardListener.get());
+   }
+
+   if (view.GetMouse() != NULL)
+   {
+      view.GetMouse()->AddMouseListener(mMouseListener.get());
+   }
 }
 
 ////////////////////////////////////////////////////////
@@ -566,6 +578,16 @@ void Application::RemoveView(dtCore::View &view)
    ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), &view);
    if (it != mViewList.end())
    {
+      if (view.GetKeyboard() != NULL)
+      {
+         view.GetKeyboard()->RemoveKeyboardListener(mKeyboardListener.get());
+      }
+
+      if (view.GetMouse() != NULL)
+      {
+         view.GetMouse()->RemoveMouseListener(mMouseListener.get());
+      }
+
       mViewList.erase(it);
       mCompositeViewer->removeView(view.GetOsgViewerView());
    }
