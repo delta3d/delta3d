@@ -3,10 +3,12 @@
 
 #include <osg/Referenced>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class RenderInfo;
 }
+/// @endcond
 
 namespace dtCore
 {

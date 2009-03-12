@@ -8,10 +8,12 @@
 
 #include <vector>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class RenderInfo;
 }
+/// @endcond
 
 namespace dtCore
 {

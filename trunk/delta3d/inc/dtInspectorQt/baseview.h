@@ -6,10 +6,12 @@
 #include <QtCore/QObject>
 #include <dtCore/base.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class InspectorWidget;
 }
+/// @endcond
 
 namespace dtInspectorQt
 {

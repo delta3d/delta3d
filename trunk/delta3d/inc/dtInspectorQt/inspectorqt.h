@@ -6,6 +6,9 @@
 
 class QApplication;
 
+/** A dynamic library that allows developers to interact with Delta3D class instances
+  * at runtime, via a Qt UI.
+  */
 namespace dtInspectorQt
 {
 

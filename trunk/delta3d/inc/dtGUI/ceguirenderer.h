@@ -9,12 +9,15 @@
 
 #include <CEGUI/CEGUIRenderer.h>
 
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class Base;
    class Texture;
    class ImageCodec;
 }
+/// @endcond
 
 #if defined(_MSC_VER)
 #   pragma warning(push)

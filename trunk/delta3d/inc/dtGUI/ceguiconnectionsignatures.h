@@ -2,11 +2,13 @@
 #define DTHUD_CEGUICONNECTIONSIGNATURES_H
 
 #include <string>
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class EventSet;
    class EventArgs;
 }
+/// @endcond
 
 namespace dtGUI
 {

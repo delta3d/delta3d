@@ -28,10 +28,12 @@
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class InspectorWidget;
 }
+/// @endcond
 
 namespace dtInspectorQt
 {

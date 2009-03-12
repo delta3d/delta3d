@@ -1,4 +1,4 @@
-/** Delta3D Open Source Game and Simulation Engine
+/* Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2004-2006 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under

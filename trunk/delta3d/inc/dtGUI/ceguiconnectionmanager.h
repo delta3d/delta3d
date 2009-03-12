@@ -15,10 +15,13 @@
 #include <CEGUI/CEGUISubscriberSlot.h>
 #include <dtUtil/log.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class EventArgs;
 }
+/// @endcond
+
 
 namespace dtGUI
 {
