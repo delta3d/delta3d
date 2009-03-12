@@ -29,8 +29,9 @@ class TestNestedView : public dtABC::Application
       dtCore::RefPtr<dtCore::Camera>   mCam2;
       dtCore::RefPtr<dtCore::Camera>   mCam3;
       
-      dtCore::RefPtr<dtCore::View> mView2;
-      dtCore::RefPtr<dtCore::View> mView3;      
+      dtCore::RefPtr<dtCore::View> mRedView;
+      dtCore::RefPtr<dtCore::View> mGreenView;
+      dtCore::RefPtr<dtCore::View> mBlueView;
 };
 
 #endif // DELTA_testMultiWin
