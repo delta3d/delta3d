@@ -289,7 +289,16 @@ void Application::CreateInstances(const std::string& name, int x, int y, int wid
 
    if (mWindow == NULL)
    {
-       mWindow = new dtCore::DeltaWin(name, x, y, width, height, cursor, fullScreen);
+      dtCore::DeltaWin::DeltaWinTraits traits;
+      traits.name = name;
+      traits.x = x;
+      traits.y = y;
+      traits.width = width;
+      traits.height = height;
+      traits.showCursor = cursor;
+      traits.fullScreen = fullScreen;
+
+      mWindow = new dtCore::DeltaWin(traits);
    }
 
    GetCamera()->SetWindow(mWindow.get());
