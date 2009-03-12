@@ -75,9 +75,9 @@ namespace dtCore
        * SetRenderOrder take an integer argument to designate the order this View 
        * is rendered in relation to other Views.  
        *  
-       * Higher numbers go first.  Example:  I have two Views called ViewA
-       * and ViewB.  If I call ViewA.SetRenderOrder(0) and then call
-       * ViewB.SetRenderOrder(1) then ViewA will get rendered after ViewB.
+       * Lower numbers get rendered first.  Example:  I have two Views called
+       * ViewA and ViewB.  If I call ViewA.SetRenderOrder(0) and then call
+       * ViewB.SetRenderOrder(1) then ViewA will get rendered before ViewB.
        * 
        * @param rOrderNum : Designates the order that this View get rendered in
        *  relation to other views.  
@@ -87,7 +87,7 @@ namespace dtCore
 
       /**
        * Get the rank of this View's render order.  
-       * Higher numbers get rendered first (see comments of SetRenderOrder).
+       * Lower numbers get rendered first (see comments of SetRenderOrder).
        *
        * @return the the View's ranking in the rendering
        * order queue (see comments of SetRenderOrder).
