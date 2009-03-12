@@ -10,10 +10,21 @@
 
 #define USE_TABLE 1
 
+#define THREAD_SAFETY 1
+
+#if THREAD_SAFETY
+#include <OpenThreads/Mutex>
+#endif
+
 namespace dtUtil
 {
    static size_t StringCount = 0;
 #if USE_TABLE
+
+#if THREAD_SAFETY
+   static OpenThreads::Mutex gStringSetMutex;
+#endif
+
 #ifdef __GNUG__
    struct hashString
    {
@@ -23,7 +34,7 @@ namespace dtUtil
 
    static __gnu_cxx::hash_set<std::string, hashString> StringSet(3000);
 #elif defined(_MSC_VER)
-   static stdext::hash_set<std::string> StringSet;   
+   static stdext::hash_set<std::string> StringSet;
 #else
    static std::set<std::string> StringSet;
 #endif
@@ -102,9 +113,20 @@ namespace dtUtil
    void RefString::Intern(const std::string& value)
    {
 #if USE_TABLE
+
+#if THREAD_SAFETY
+      // for thread safety, lock this section
+      gStringSetMutex.lock();
+#endif
+
       //One can only insert a string once, but it will still return the iterator.
       mString = &(*StringSet.insert(value).first);
       StringCount = StringSet.size();
+      
+#if THREAD_SAFETY
+      gStringSetMutex.unlock();
+#endif
+
 #else
       if (mString != NULL)
       {
