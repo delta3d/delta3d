@@ -5,10 +5,12 @@
 #include <osg/Texture2D>
 #include <CEGUI/CEGUITexture.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class GraphicsContext;
 }
+/// @endcond
 
 namespace dtGUI
 {

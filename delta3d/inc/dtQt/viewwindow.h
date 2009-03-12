@@ -14,11 +14,14 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osgViewer
 {
    class GraphicsWindow;
 }
+/// @endcond
 
+/** Contains classes that help integrate Delta3D with Qt */
 namespace dtQt
 {
    ///Little class used to hold the Delta3D rendering surface

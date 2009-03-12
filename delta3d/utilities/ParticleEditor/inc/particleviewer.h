@@ -15,10 +15,12 @@
 
 #include <dtABC/application.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class MatrixTransform;
 }
+/// @endcond
 
 ////////////////////////////////////////////////////////////////////////////////
 

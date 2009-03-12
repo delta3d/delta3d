@@ -20,6 +20,7 @@ namespace dtCore
     class DeltaDrawable;
 }
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 //OpenSceneGraph declarations:
 #include <osg/Drawable>
 namespace osg
@@ -37,7 +38,7 @@ namespace CEGUI
     class WindowManager;
     class EventArgs;
 }
-
+/// @endcond
 
 
 namespace dtGUI

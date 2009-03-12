@@ -4,10 +4,12 @@
 #include <dtCore/observerptr.h>
 #include <dtCore/physical.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class InspectorWidget;
 }
+/// @endcond
 
 namespace dtInspectorQt
 {

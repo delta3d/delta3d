@@ -6,10 +6,12 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/observerptr.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class InspectorWidget;
 }
+/// @endcond
 
 namespace dtInspectorQt
 {
