@@ -37,7 +37,7 @@ void initDeltaWinBindings()
    
 
    scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin>, boost::noncopyable >("DeltaWin")
-      .def(init<optional<const std::string&, int, int, int, int, bool, bool> >())
+      .def(init<optional<const dtCore::DeltaWin::DeltaWinTraits&> >())
       .def(init<const std::string&,osgViewer::GraphicsWindow&>())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
