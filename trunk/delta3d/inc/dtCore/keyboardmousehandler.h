@@ -32,24 +32,27 @@
 namespace dtCore
 {
 
+   ///Routes the OSG keyboard/mouse input events to the internal
+   ///Mouse and Keyboard instances.
    class KeyboardMouseHandler : public osgGA::GUIEventHandler
    {
       public:
    
-         KeyboardMouseHandler(dtCore::View * view);
+         KeyboardMouseHandler(dtCore::View* view);
          KeyboardMouseHandler(Keyboard* keyboard, Mouse* mouse);
    
-         virtual bool handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, osg::Object *,
+         virtual bool handle(const osgGA::GUIEventAdapter& ea, 
+                             osgGA::GUIActionAdapter& aa, osg::Object*,
                              osg::NodeVisitor *);
    
-         void SetKeyboard(Keyboard* kb) { mKeyboard = kb; }
-         Keyboard* GetKeyboard() { return mKeyboard.get(); }
-         const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
+         void SetKeyboard(Keyboard* kb);
+         Keyboard* GetKeyboard();
+         const Keyboard* GetKeyboard() const;
    
          void SetMouse(Mouse* m);
          
-         Mouse* GetMouse() { return mMouse.get(); }
-         const Mouse* GetMouse() const { return mMouse.get(); }
+         Mouse* GetMouse();
+         const Mouse* GetMouse() const;
             
       protected:
          virtual ~KeyboardMouseHandler();
@@ -57,7 +60,7 @@ namespace dtCore
          friend class View;
    
          /// define the mView
-         void SetView(dtCore::View * view);
+         void SetView(dtCore::View* view);
            
       private:
    
