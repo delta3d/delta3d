@@ -47,14 +47,15 @@ void TestNestedView::Config()
    GetCamera()->SetClearColor(1.0f, 0.0f, 0.0f, 1.0f);
    
    //Default view frame bin
-   GetView()->SetRenderOrder(0);
+   mRedView = GetView();
+   mRedView->SetRenderOrder(0);
 
    //Create second view, using the Application's Scene
-   mView2 = new View("View 2");
+   mGreenView = new View("View 2");
 
    //use the default, pre-built Scene
-   mView2->SetScene(GetScene());
-   this->AddView(*mView2);      
+   mGreenView->SetScene(GetScene());
+   this->AddView(*mGreenView);
 
    //create second Camera, added to second View
    mCam2 = new Camera("Camera 2");
@@ -63,21 +64,21 @@ void TestNestedView::Config()
    mCam2->SetAspectRatio(DEFAULT_ASPECT_RATIO);
    mCam2->GetOSGCamera()->setViewport(new osg::Viewport((float) DEFAULT_VIEW_WIDTH / 2.0f, (float) DEFAULT_VIEW_HEIGHT / 4.0f,
                                      (float)DEFAULT_VIEW_WIDTH, (float)DEFAULT_VIEW_HEIGHT));
-   mView2->SetCamera(mCam2.get());
+   mGreenView->SetCamera(mCam2.get());
    
    //2nd view frame bin
-   mView2->SetRenderOrder(1);
+   mGreenView->SetRenderOrder(1);
 
    //Create a third View, using the Application's Scene
-   mView3 = new View("View 3");
+   mBlueView = new View("View 3");
 
    //use the default, pre-built Scene
-   mView3->SetScene(GetScene());
-   this->AddView(*mView3);
+   mBlueView->SetScene(GetScene());
+   this->AddView(*mBlueView);
 
    //create a third Camera, added to third View, sharing the second Window
    mCam3 = new Camera("Camera 3");
-   mView3->SetCamera(mCam3.get());
+   mBlueView->SetCamera(mCam3.get());
    mCam3->SetWindow(GetWindow());
    mCam3->GetOSGCamera()->setViewport(new osg::Viewport(0.0, (float) DEFAULT_VIEW_HEIGHT / 2.0f,
                                      (float) DEFAULT_VIEW_WIDTH, (float) DEFAULT_VIEW_HEIGHT));
@@ -85,7 +86,7 @@ void TestNestedView::Config()
    mCam3->SetAspectRatio(DEFAULT_ASPECT_RATIO);
 
    //3rd view frame bin
-   mView3->SetRenderOrder(2);   
+   mBlueView->SetRenderOrder(2);   
 }
 
 bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
@@ -97,26 +98,26 @@ bool TestNestedView::KeyPressed(const dtCore::Keyboard* keyboard, int key)
       return handled;
    }
 
-   if (GetView()->GetRenderOrder() == 0)
+   if (mRedView->GetRenderOrder() == 0)
    {
-      GetView()->SetRenderOrder(1);
-      mView2->SetRenderOrder(2);
-      mView3->SetRenderOrder(0);
+      mRedView->SetRenderOrder(1);
+      mGreenView->SetRenderOrder(2);
+      mBlueView->SetRenderOrder(0);
       std::cout << "\nBlue on bottom, Red next, Green on top.\n";
    }
-   else if (GetView()->GetRenderOrder() == 1)
+   else if (mRedView->GetRenderOrder() == 1)
    {
-      GetView()->SetRenderOrder(2);
-      mView2->SetRenderOrder(0);
-      mView3->SetRenderOrder(1);
+      mRedView->SetRenderOrder(2);
+      mGreenView->SetRenderOrder(0);
+      mBlueView->SetRenderOrder(1);
 
       std::cout << "\nGreen on bottom, Blue next, Red on top.\n";
    }
    else
    {
-      GetView()->SetRenderOrder(0);
-      mView2->SetRenderOrder(1);
-      mView3->SetRenderOrder(2);
+      mRedView->SetRenderOrder(0);
+      mGreenView->SetRenderOrder(1);
+      mBlueView->SetRenderOrder(2);
 
       std::cout << "\nRed on bottom, Green next, Blue on top.\n";
    }
@@ -134,9 +135,8 @@ int main(int argc, char **argv)
 
    //configuring the application
    app->Config();   
-
-   std::cout << "\nNOTE: The mouse must at near the bottom of the window for key presses to work.\n\n";
-   std::cout << "Push any key to cycle which view is 'on top.'\n\n";
+   
+   std::cout << "\nPush any key to cycle which view is 'on top.'\n\n";
    std::cout << "Push Escape to exit app.\n";
 
    // running the simulation loop
