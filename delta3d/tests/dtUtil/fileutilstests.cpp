@@ -46,6 +46,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       //CPPUNIT_TEST(testAbsoluteToRelativePath);
       CPPUNIT_TEST(testDirectoryContentsWithOneFilter);
       CPPUNIT_TEST(testDirectoryContentsWithTwoFilters);
+      CPPUNIT_TEST(testDirectoryContentsWithDuplicateFilter);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -60,6 +61,7 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       //void testAbsoluteToRelativePath();
       void testDirectoryContentsWithOneFilter();
       void testDirectoryContentsWithTwoFilters();
+      void testDirectoryContentsWithDuplicateFilter();
    
    private:
 
@@ -566,3 +568,21 @@ void FileUtilsTests::testDirectoryContentsWithTwoFilters()
    }
 
 }
+
+//////////////////////////////////////////////////////////////////////////
+void FileUtilsTests::testDirectoryContentsWithDuplicateFilter()
+{
+   dtUtil::FileExtensionList singleExtension;
+   singleExtension.push_back(".cpp");
+   const dtUtil::DirectoryContents singleFilterList = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, singleExtension);
+
+   dtUtil::FileExtensionList duplicateExtension;
+   duplicateExtension.push_back(".cpp"); 
+   duplicateExtension.push_back(".cpp"); //add another of the same
+
+   const dtUtil::DirectoryContents duplicateFilter = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, duplicateExtension);
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("DirGetFiles() should not count duplicate extensions",
+                                 singleFilterList.size(), duplicateFilter.size());
+}
+
