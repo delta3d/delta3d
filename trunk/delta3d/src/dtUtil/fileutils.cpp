@@ -544,6 +544,9 @@ namespace dtUtil
             if (getFileExtensionIncludingDot((*dirItr)) == (*extItr))
             {
                filteredContents.push_back((*dirItr));
+               //stop when we find at least one match, to avoid duplicate file entries, in
+               //case extensions contains duplicate entries.
+               break; 
             }
             ++extItr;
          }
