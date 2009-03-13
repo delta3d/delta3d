@@ -33,6 +33,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/globals.h>
+#include <osgDB/FileNameUtils>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
@@ -42,6 +43,8 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       CPPUNIT_TEST(testRelativePath);
       CPPUNIT_TEST(testCopyFileOntoItself);
       //CPPUNIT_TEST(testAbsoluteToRelativePath);
+      CPPUNIT_TEST(testDirectoryContentsWithOneFilter);
+      CPPUNIT_TEST(testDirectoryContentsWithTwoFilters);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -54,6 +57,8 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
       void testRelativePath();
       void testCopyFileOntoItself();
       //void testAbsoluteToRelativePath();
+      void testDirectoryContentsWithOneFilter();
+      void testDirectoryContentsWithTwoFilters();
    
    private:
 
@@ -495,3 +500,53 @@ void FileUtilsTests::testCopyFileOntoItself()
       CPPUNIT_FAIL(e.What());
    }
 }*/
+
+//////////////////////////////////////////////////////////////////////////
+void FileUtilsTests::testDirectoryContentsWithOneFilter()
+{   
+   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
+   const size_t numAllFiles = allContents.size();
+
+   dtUtil::FileExtensionList extensions;
+   extensions.push_back(".cpp");
+
+   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+   CPPUNIT_ASSERT_MESSAGE("DirGetFiles() with filtering didn't appear to filter on one extension.",
+                          numAllFiles > cppContents.size());
+
+   dtUtil::DirectoryContents::const_iterator itr = cppContents.begin();
+   while (itr != cppContents.end())
+   {
+      CPPUNIT_ASSERT_MESSAGE("DirGetFiles() returned back a file that didn't match the supplied extension",
+                             osgDB::getFileExtensionIncludingDot((*itr)) == ".cpp");
+      ++itr;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void FileUtilsTests::testDirectoryContentsWithTwoFilters()
+{
+   const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
+   const size_t numAllFiles = allContents.size();
+
+   dtUtil::FileExtensionList extensions;
+   extensions.push_back(".cpp");
+   const dtUtil::DirectoryContents cppContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+
+   extensions.push_back(".h");
+   const dtUtil::DirectoryContents cppHContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, extensions);
+
+   //should be more cpp & h files than just cpp files
+   CPPUNIT_ASSERT_MESSAGE("DirGetFiles() with filtering didn't appear to filter with two extensions.",
+                           cppHContents.size() > cppContents.size());
+
+   dtUtil::DirectoryContents::const_iterator itr = cppHContents.begin();
+   while (itr != cppHContents.end())
+   {
+      CPPUNIT_ASSERT_MESSAGE("DirGetFiles() returned back a file that didn't match the supplied extensions",
+         osgDB::getFileExtensionIncludingDot((*itr)) == ".cpp" ||
+         osgDB::getFileExtensionIncludingDot((*itr)) == ".h");
+      ++itr;
+   }
+
+}

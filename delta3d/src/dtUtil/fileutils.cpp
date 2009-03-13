@@ -498,17 +498,45 @@ namespace dtUtil
    }
 
    //-----------------------------------------------------------------------
-   DirectoryContents FileUtils::DirGetFiles( const std::string& path ) const
+   DirectoryContents FileUtils::DirGetFiles(const std::string& path, 
+                                            const FileExtensionList& extensions) const
    {
       FileInfo ft = GetFileInfo(path);
       if (ft.fileType == FILE_NOT_FOUND)
+      {
          throw dtUtil::Exception(FileExceptionEnum::FileNotFound,
                 std::string("Path not Found: \"") + path + "\".", __FILE__, __LINE__);
+      }
       else if (ft.fileType == REGULAR_FILE)
+      {
          throw dtUtil::Exception(FileExceptionEnum::IOException,
                 std::string("Path does not specify a directory: \"") + path + "\".", __FILE__, __LINE__);
+      }
 
-      return osgDB::getDirectoryContents(path);
+      DirectoryContents dirContents = osgDB::getDirectoryContents(path);
+      if (extensions.empty())
+      {
+         return dirContents;
+      }
+
+      DirectoryContents filteredContents;
+      //iterate over contents, looking for files that have the requested extensions
+      DirectoryContents::iterator dirItr = dirContents.begin();
+      while (dirItr != dirContents.end())
+      {
+         FileExtensionList::const_iterator extItr = extensions.begin();
+         while (extItr != extensions.end())
+         {
+            if (osgDB::getFileExtensionIncludingDot((*dirItr)) == (*extItr))
+            {
+               filteredContents.push_back((*dirItr));
+            }
+            ++extItr;
+         }
+         ++dirItr;
+      }
+      
+      return filteredContents;     
    }
 
    //-----------------------------------------------------------------------
