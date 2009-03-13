@@ -40,7 +40,9 @@ namespace dtDAL
       mEventManager = new MapGameEvents(*this);
    }
    
-   Map::~Map() {}
+   Map::~Map() 
+   {
+   }
    
    Map::MapGameEvents::MapGameEvents(Map& parent): GameEventManager(), mParent(parent)
    {}
@@ -98,10 +100,12 @@ namespace dtDAL
       if (mFileName.empty())
          return;
       
-      //see if the file already has the extension.  Note also that MAP_FILE_EXTENSION
-      // has a "." but osgDB.get... doesn't return one, hence the substr(1)
-      if ((osgDB::getLowerCaseFileExtension(mFileName)) != MAP_FILE_EXTENSION.substr(1))
+      //see if the file already has an extension. If it does, just use it. If
+      //not, tack on the officially sanctioned extension.
+      if (osgDB::getFileExtension(mFileName).empty())
+      {
          mFileName += MAP_FILE_EXTENSION;
+      }
    }
    
    void Map::FindProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container,
