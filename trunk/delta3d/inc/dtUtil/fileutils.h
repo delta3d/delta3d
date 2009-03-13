@@ -34,6 +34,7 @@ namespace dtUtil
    class Log;
    
    typedef std::vector<std::string> DirectoryContents;
+   typedef std::vector<std::string> FileExtensionList;
 
    enum FileType
    {
@@ -185,12 +186,13 @@ namespace dtUtil
          /**
           * Note: throws exceptions of type dtUtil::Exception
           * @param path the path to the directory to list the contents of.
+          * @param extensions Optional list of file extensions to filter on, including the "dot". (e.g., ".txt", ".xml")
           * @return a vector of file names.
           * @throws FileExceptionEnum::FileNotFound if the path does not exist.
           * @throws FileExceptionEnum::IOException if the path is not an actual directory
-          * 
           */
-         DirectoryContents DirGetFiles( const std::string& path ) const;
+         DirectoryContents DirGetFiles(const std::string& path, 
+                                       const FileExtensionList& extensions = FileExtensionList()) const;
 
          /**
           * @param path the path to the directory to get the subdirectories for.
