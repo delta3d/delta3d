@@ -34,6 +34,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/globals.h>
 #include <osgDB/FileNameUtils>
+#include <osg/Version>
 
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
@@ -82,6 +83,21 @@ const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
+
+//////////////////////////////////////////////////////////////////////////
+std::string getFileExtensionIncludingDot(const std::string& fileName)
+{
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 6
+   //copied from osgDB/FileNameUtils.cpp (v2.8.0)
+   std::string::size_type dot = fileName.find_last_of('.');
+   if (dot==std::string::npos) return std::string("");
+   return std::string(fileName.begin()+dot,fileName.end());
+#else
+   return osgDB::getFileExtensionIncludingDot(fileName);
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////
 void FileUtilsTests::setUp() 
 {
    try 
@@ -518,7 +534,7 @@ void FileUtilsTests::testDirectoryContentsWithOneFilter()
    while (itr != cppContents.end())
    {
       CPPUNIT_ASSERT_MESSAGE("DirGetFiles() returned back a file that didn't match the supplied extension",
-                             osgDB::getFileExtensionIncludingDot((*itr)) == ".cpp");
+                             getFileExtensionIncludingDot((*itr)) == ".cpp");
       ++itr;
    }
 }
@@ -544,8 +560,8 @@ void FileUtilsTests::testDirectoryContentsWithTwoFilters()
    while (itr != cppHContents.end())
    {
       CPPUNIT_ASSERT_MESSAGE("DirGetFiles() returned back a file that didn't match the supplied extensions",
-         osgDB::getFileExtensionIncludingDot((*itr)) == ".cpp" ||
-         osgDB::getFileExtensionIncludingDot((*itr)) == ".h");
+         getFileExtensionIncludingDot((*itr)) == ".cpp" ||
+         getFileExtensionIncludingDot((*itr)) == ".h");
       ++itr;
    }
 
