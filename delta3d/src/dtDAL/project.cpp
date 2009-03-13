@@ -372,16 +372,15 @@ namespace dtDAL
 
          try
          {
-            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY);
+            dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
+            extensions.push_back(dtDAL::Map::MAP_FILE_EXTENSION);
+            //extensions.push_back(".xml");
+
+            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY, extensions);
 
             for (dtUtil::DirectoryContents::const_iterator fileIter = contents.begin(); fileIter < contents.end(); ++fileIter)
             {
                const std::string& filename = *fileIter;
-
-               if (filename.size() < 4 || filename.substr(filename.size()-4) != ".xml")
-               {
-                  continue;
-               }
 
                std::string fullPath = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + filename;
                if (fileUtils.GetFileInfo(fullPath).fileType == dtUtil::REGULAR_FILE)

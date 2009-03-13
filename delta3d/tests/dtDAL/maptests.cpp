@@ -626,12 +626,14 @@ void MapTests::TestMapLibraryHandling()
     {
        dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-       std::string mapName("Neato Map");
-       std::string mapFileName("neatomap");
+       const std::string mapName("Neato Map");
+       const std::string mapFileName("neatomap");
 
        dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+       const std::string fileNameToTest = mapFileName + dtDAL::Map::MAP_FILE_EXTENSION;
 
-       CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
+       CPPUNIT_ASSERT_EQUAL_MESSAGE("A newly created Map doesn't have the expected generated filename.",
+                                    fileNameToTest, map->GetFileName());
 
        map->AddLibrary(mExampleLibraryName, "1.0");
        dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
@@ -747,8 +749,6 @@ void MapTests::TestMapSaveAndLoad()
         std::string mapFileName("neatomap");
 
         dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
-
-        CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
 
         project.SaveMapBackup(*map);
 
@@ -1134,14 +1134,17 @@ void MapTests::TestMapSaveAndLoad()
         std::string newAuthor("Dr. Eddie");
 
         map->SetAuthor(newAuthor);
-
+        
+        const std::string filenameBeforeBackup = map->GetFileName();;
         project.SaveMapBackup(*map);
 
-        CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
+        CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after preforming a backup",
+                                      filenameBeforeBackup, map->GetFileName());
 
         map = &project.OpenMapBackup(newMapName);
 
-        CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
+        CPPUNIT_ASSERT_EQUAL_MESSAGE("Map filename should not have changed after loading a backup.",
+                                      filenameBeforeBackup, map->GetFileName());
         CPPUNIT_ASSERT_MESSAGE(newAuthor + " should be the author of the map.", map->GetAuthor() == newAuthor);
 
         CPPUNIT_ASSERT_MESSAGE("Loading a backup map should load as modified.", map->IsModified());
@@ -1236,8 +1239,6 @@ void MapTests::TestMapSaveAndLoadEvents()
       const std::string mapFileName("neatomap");
 
       dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
-
-      CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
 
       map->SetDescription("Teague is league with a \"t\".");
       
