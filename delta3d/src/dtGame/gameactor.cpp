@@ -626,7 +626,7 @@ namespace dtGame
    void GameActor::OnTickRemote(const TickMessage& tickMessage)
    {
       //Call to support older code.
-      TickLocal(tickMessage);
+      TickRemote(tickMessage);
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
