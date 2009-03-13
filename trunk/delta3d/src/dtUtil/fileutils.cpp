@@ -21,7 +21,7 @@
 
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/macros.h>
-
+#include <osg/Version>
 
 #ifdef DELTA_WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -497,7 +497,21 @@ namespace dtUtil
       return result;
    }
 
-   //-----------------------------------------------------------------------
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string getFileExtensionIncludingDot(const std::string& fileName)
+   {
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR <= 2  && OSG_VERSION_MINOR <= 6
+      //copied from osgDB/FileNameUtils.cpp (v2.8.0)
+      std::string::size_type dot = fileName.find_last_of('.');
+      if (dot==std::string::npos) return std::string("");
+      return std::string(fileName.begin()+dot,fileName.end());
+#else
+      return osgDB::getFileExtensionIncludingDot(fileName);
+#endif
+   }
+
+   //////////////////////////////////////////////////////////////////////////
    DirectoryContents FileUtils::DirGetFiles(const std::string& path, 
                                             const FileExtensionList& extensions) const
    {
@@ -527,7 +541,7 @@ namespace dtUtil
          FileExtensionList::const_iterator extItr = extensions.begin();
          while (extItr != extensions.end())
          {
-            if (osgDB::getFileExtensionIncludingDot((*dirItr)) == (*extItr))
+            if (getFileExtensionIncludingDot((*dirItr)) == (*extItr))
             {
                filteredContents.push_back((*dirItr));
             }
