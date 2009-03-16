@@ -26,7 +26,6 @@
 
 #include <osg/Referenced>
 #include <dtDAL/functor.h>
-#include <dtDAL/actorproxy.h>
 #include <dtDAL/export.h>
 #include <dtDAL/abstractparameter.h>
 #include <dtUtil/log.h>

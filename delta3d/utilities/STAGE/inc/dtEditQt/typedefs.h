@@ -30,6 +30,7 @@
 #include <QtCore/QMetaType>
 #include <dtCore/refptr.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
 #include <vector>
 
 typedef dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr;

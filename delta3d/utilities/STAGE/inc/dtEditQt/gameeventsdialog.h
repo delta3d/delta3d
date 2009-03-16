@@ -36,7 +36,6 @@
 #include <QtGui/QWidget>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
-#include <dtDAL/actorproxy.h>
 
 class QTableWidget;
 class QGridLayout;

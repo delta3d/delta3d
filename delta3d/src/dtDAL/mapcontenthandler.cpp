@@ -1561,6 +1561,7 @@ namespace  dtDAL
       if (mActorProxy != NULL)
       {
          mMap->AddProxy(*mActorProxy);
+         mActorProxy->OnMapLoadEnd(); //notify ActorProxy we're done loading it
       }
       mActorProxy = NULL;
       mInActor = false;
