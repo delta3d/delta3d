@@ -32,6 +32,7 @@
 #include <osg/Vec2d>
 #include <dtCore/deltadrawable.h>
 #include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/genericactorproperty.h>
 #include <dtDAL/datatype.h>

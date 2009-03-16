@@ -213,7 +213,7 @@ namespace dtDAL
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
-          * @param name Name of the resouce to retrieve.
+          * @param name Name of the resource to retrieve.
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
@@ -221,7 +221,7 @@ namespace dtDAL
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
-          * @param name Name of the resouce to retrieve.
+          * @param name Name of the resource to retrieve.
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
@@ -229,7 +229,7 @@ namespace dtDAL
 
          /**
           * Sets a resource in the map
-          * @param name The name of the resouce
+          * @param name The name of the resource
           * @param source The pointer to resource descriptor
           */
          void SetResource(const std::string& name, ResourceDescriptor* source);
@@ -345,7 +345,7 @@ namespace dtDAL
           * proxy to create its properties.  Methods implementing this should
           * be sure to call their parent class's buildPropertyMap method to
           * ensure all properties in the proxy inheritance hierarchy are
-          * correcly added to the property map.
+          * correctly added to the property map.
           */
          virtual void BuildPropertyMap() = 0;
 
@@ -371,6 +371,13 @@ namespace dtDAL
           * Called when this actor is removed from a map
           */
          virtual void OnRemove() const;
+
+         /**
+          *  Called when this ActorProxy has finished loading from a Map and
+          *  all Property values have been assigned.  Overwrite for custom
+          *  behavior.
+          */
+         virtual void OnMapLoadEnd();
 
          /**
           * Creates a copy of this actor proxy and returns it.  The method uses the
@@ -430,7 +437,7 @@ namespace dtDAL
          /**
           * Each actor proxy may have a billboard associated with it.  Billboards
           * are displayed in place of the actual actor if the actor has no
-          * displable qualities.  For example, if a static mesh has no mesh
+          * displayable qualities.  For example, if a static mesh has no mesh
           * currently assigned to it, the billboard will display instead.
           */
          dtCore::RefPtr<ActorProxyIcon> mBillBoardIcon;
@@ -454,7 +461,7 @@ namespace dtDAL
          ///vector of properties (for order).
          PropertyVectorType mProperties;
 
-         /// Map of propery names to resource values
+         /// Map of property names to resource values
          ResourceMapType mResourceMap;
 
          /// Map of property names to actor proxy values

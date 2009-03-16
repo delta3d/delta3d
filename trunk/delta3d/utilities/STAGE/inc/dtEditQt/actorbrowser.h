@@ -35,7 +35,6 @@
 
 #include <dtCore/refptr.h>
 #include <dtUtil/tree.h>
-#include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
 #include <dtEditQt/actortypetreewidget.h>
 

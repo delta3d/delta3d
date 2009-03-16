@@ -32,7 +32,6 @@
 
 #include <QtGui/QDialog>
 #include <vector>
-#include <dtDAL/actorproxy.h>
 
 class QListWidget;
 class QGridLayout;

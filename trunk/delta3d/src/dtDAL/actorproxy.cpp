@@ -142,21 +142,21 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ResourceDescriptor* ActorProxy::GetResource(const std::string &name)
+   ResourceDescriptor* ActorProxy::GetResource(const std::string& name)
    {
       ResourceMapType::iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? &itor->second : NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ResourceDescriptor* ActorProxy::GetResource(const std::string &name) const
+   const ResourceDescriptor* ActorProxy::GetResource(const std::string& name) const
    {
       ResourceMapType::const_iterator itor = mResourceMap.find(name);
       return itor != mResourceMap.end() ? &itor->second : NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetResource(const std::string &name, ResourceDescriptor *source)
+   void ActorProxy::SetResource(const std::string& name, ResourceDescriptor* source)
    {
       if (source == NULL)
       {
@@ -212,7 +212,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::AddProperty(ActorProperty *newProp)
+   void ActorProxy::AddProperty(ActorProperty* newProp)
    {
       if(newProp == NULL)
       {
@@ -262,7 +262,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProperty* ActorProxy::GetProperty(const std::string &name)
+   ActorProperty* ActorProxy::GetProperty(const std::string& name)
    {
       PropertyMapType::iterator itor =
          mPropertyMap.find(name);
@@ -274,7 +274,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   const ActorProperty* ActorProxy::GetProperty(const std::string &name) const
+   const ActorProperty* ActorProxy::GetProperty(const std::string& name) const
    {
       PropertyMapType::const_iterator itor =
          mPropertyMap.find(name);
@@ -286,7 +286,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::GetPropertyList(std::vector<const ActorProperty *> &propList) const
+   void ActorProxy::GetPropertyList(std::vector<const ActorProperty*> &propList) const
    {
       propList.clear();
       propList.reserve(mProperties.size());
@@ -299,7 +299,7 @@ namespace dtDAL
 
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::GetPropertyList(std::vector<ActorProperty *> &propList)
+   void ActorProxy::GetPropertyList(std::vector<ActorProperty*> &propList)
    {
       propList.clear();
       propList.reserve(mProperties.size());
@@ -336,7 +336,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetBillBoardIcon(ActorProxyIcon *icon)
+   void ActorProxy::SetBillBoardIcon(ActorProxyIcon* icon)
    {
       mBillBoardIcon = icon;
    }
@@ -420,7 +420,7 @@ namespace dtDAL
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::SetActorType(const ActorType &type)
+   void ActorProxy::SetActorType(const ActorType& type)
    {
       mActorType = &type;
    }
@@ -431,8 +431,14 @@ namespace dtDAL
 
    }
 
+   //////////////////////////////////////////////////////////////////////////
    const bool ActorProxy::IsInSTAGE() const
    {
       return dtDAL::Project::GetInstance().GetEditMode();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorProxy::OnMapLoadEnd()
+   {
    }
 }
