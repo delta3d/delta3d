@@ -42,7 +42,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void GroupUIRegistry::RegisterPlugin(GroupUIPlugin& plugin)
    {
-      LOG_ALWAYS("Got a GroupUIPlugin with name \"" + plugin.GetName() + "\".");
+      LOG_DEBUG("Got a GroupUIPlugin with name \"" + plugin.GetName() + "\".");
       mPlugins.insert(std::make_pair(plugin.GetName(), &plugin));
    }
    
