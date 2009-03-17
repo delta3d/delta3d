@@ -51,7 +51,7 @@ namespace dtLMS
          /**
           * Constructs the LmsComponent
           */
-         LmsComponent(const std::string &name = DEFAULT_NAME);
+         LmsComponent(const std::string& name = DEFAULT_NAME);
 
          /**
           * Constructs the LmsComponent
@@ -61,7 +61,7 @@ namespace dtLMS
           * @param reverseBytes If true, Informs the server that it needs to reverse the byte order
           *    for multi-byte messages (big/little endian issue)
           */
-         LmsComponent(const std::string &host, int port, bool reverseBytes);
+         LmsComponent(const std::string& host, int port, bool reverseBytes);
 
          /**
           * Called when a message arrives at the Game Manager.  These messages are trapped
@@ -70,7 +70,7 @@ namespace dtLMS
           *
           * @param message The message being propogated by the game manager.
           */
-         virtual void ProcessMessage(const dtGame::Message &message);
+         virtual void ProcessMessage(const dtGame::Message& message);
 
          /**
           * This attempts to connect to an lms messaging applet running on the specified host over
@@ -90,7 +90,7 @@ namespace dtLMS
          /// const accessor for mClientSocket
          const LmsClientSocket* GetLmsClientSocket() const { return mClientSocket; }
 
-         void GetMessageVector(std::vector<LmsMessage> &toFill); 
+         void GetMessageVector(std::vector<LmsMessage>& toFill); 
          
       protected:
          
@@ -109,7 +109,7 @@ namespace dtLMS
           *
           * @param proxy The GameActorProxy containing the task that has been updated.
           */
-         void SendLmsUpdate(dtGame::GameActorProxy &proxy);
+         void SendLmsUpdate(dtGame::GameActorProxy& proxy);
 
          /**
           * This utility method creates an 'OBJECTIVE_COMPLETION' type LmsMessage object that can be
@@ -138,7 +138,7 @@ namespace dtLMS
          std::vector<LmsMessage> mMessageVector;
 
          ///networking code
-         LmsClientSocket *mClientSocket;
+         LmsClientSocket* mClientSocket;
 
          ///stores the previous task values, so that we know what has changed when
          ///we receive a task update message; this is needed because we only
@@ -151,5 +151,6 @@ namespace dtLMS
          bool mReverseBytes; ///used to inform server that it needs to reverse the byte order (big/little endian issue)
          bool mNeedValidSocket;
    };
-}
-#endif
+} // namespace dtLMS
+
+#endif // DELTA_LMS_COMPONENT

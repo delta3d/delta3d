@@ -27,7 +27,7 @@
 
 namespace dtLMS
 {
-   /*
+   /**
     * This class is an enumeration which defines the values of lms messages
     * that can be sent to or received from the lms messaging applet. It contains
     * inner classes for Simulation, Launch Page, and Objective Completion messages.
@@ -36,7 +36,7 @@ namespace dtLMS
    {
    public:
 
-      /*
+      /**
        * This class is an enumeration which defines the valid simulation status
        * values of lms messages that can be sent to the lms messaging applet.
        */
@@ -52,8 +52,8 @@ namespace dtLMS
          protected:
 
          /// Constructor
-         SimulationValue(const std::string &name) :
-                  dtUtil::Enumeration(name)
+         SimulationValue(const std::string& name)
+            : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
@@ -63,7 +63,7 @@ namespace dtLMS
 
       };
 
-      /*
+      /**
        * This class is an enumeration which defines the valid launch page values of
        * lms messages that can be received from the lms messaging applet.
        */
@@ -78,18 +78,17 @@ namespace dtLMS
          protected:
 
          /// Constructor
-         LaunchPageValue(const std::string &name) :
-                  dtUtil::Enumeration(name)
+         LaunchPageValue(const std::string& name)
+            : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
 
          /// Destructor
          virtual ~LaunchPageValue() { }
-
       };
 
-      /*
+      /**
        * This class is an enumeration which defines the valid objective completion values 
        * of lms messages that can be sent to the lms messaging applet.
        */
@@ -104,17 +103,17 @@ namespace dtLMS
          protected:
 
          /// Constructor
-         ObjectiveCompletionValue(const std::string &name) :
-                  dtUtil::Enumeration(name)
+         ObjectiveCompletionValue(const std::string& name)
+            : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
 
          /// Destructor
          virtual ~ObjectiveCompletionValue() { }
-
       };
    };
-}
 
-#endif
+} // namespace dtLMS
+
+#endif // DELTA_LMS_MESSAGE_VALUE

@@ -56,9 +56,9 @@ namespace dtLMS
        *      OBJECTIVE_SCORE type messages, this will be the string form of a float
        *      value.
        */
-      LmsMessage(const std::string &senderID,
-                 const LmsMessageType &type,
-                 const std::string &value);
+      LmsMessage(const std::string& senderID,
+                 const LmsMessageType& type,
+                 const std::string& value);
 
       /**
        * Constructor used to create objective messages, where an ID, message type,
@@ -75,10 +75,10 @@ namespace dtLMS
        * @param taskID The ID value of the LMS objective being updated. This generally
        *      should be the ID value of the TaskActor sending the update message.
        */
-      LmsMessage(const std::string &senderID,
-                 const LmsMessageType &type,
-                 const std::string &value,
-                 const std::string &objectiveID);
+      LmsMessage(const std::string& senderID,
+                 const LmsMessageType& type,
+                 const std::string& value,
+                 const std::string& objectiveID);
 
       /**
        * Constructor used to create an lms message from an appropriately delimited string.
@@ -87,7 +87,7 @@ namespace dtLMS
        * @ param messageString The delimited string to create the LmsMessage from. Must be
        *      in the proper delimited format per the LMS messaging protocol.
        */
-      LmsMessage(const std::string &messageString);
+      LmsMessage(const std::string& messageString);
 
       /**
        * Destructor
@@ -101,7 +101,7 @@ namespace dtLMS
        * @ param messageString The delimited string to create the LmsMessage from. Must be
        *      in the proper delimited format per the LMS messaging protocol.
        */
-      void BuildFromString(const std::string &messageString);
+      void BuildFromString(const std::string& messageString);
 
       /**
        * This public method will create and return an appropriately delimited string
@@ -114,22 +114,22 @@ namespace dtLMS
 
       const std::string& GetSenderID() const { return mSenderID; }
       std::string& GetSenderID() { return mSenderID; }
-      void SetSenderID(const std::string &senderID) { mSenderID = senderID; }
+      void SetSenderID(const std::string& senderID) { mSenderID = senderID; }
 
-      const std::string& GetValue() const {return mValue;}
-      std::string& GetValue()  {return mValue;}
-      void SetValue(const std::string &value) {mValue = value;}
+      const std::string& GetValue() const { return mValue; }
+      std::string& GetValue()  { return mValue; }
+      void SetValue(const std::string& value) { mValue = value; }
 
-      const std::string& GetObjectiveID() const {return mObjectiveID;}
-      std::string& GetObjectiveID() {return mObjectiveID;}
-      void SetObjectiveID(std::string objectiveID) {mObjectiveID = objectiveID;}
+      const std::string& GetObjectiveID() const { return mObjectiveID; }
+      std::string& GetObjectiveID() { return mObjectiveID; }
+      void SetObjectiveID(std::string objectiveID) { mObjectiveID = objectiveID; }
 
-      const std::string& GetDelimiter() const {return mDelimiter;}
-      std::string& GetDelimiter() {return mDelimiter;}
-      void SetDelimiter(const std::string &delimiter) {mDelimiter = delimiter;}
+      const std::string& GetDelimiter() const { return mDelimiter; }
+      std::string& GetDelimiter() { return mDelimiter; }
+      void SetDelimiter(const std::string& delimiter) { mDelimiter = delimiter; }
 
-      const LmsMessageType& GetMessageType() const {return *mType;}
-      void SetMessageType(const LmsMessageType &type) {mType = &type;}
+      const LmsMessageType& GetMessageType() const { return *mType; }
+      void SetMessageType(const LmsMessageType& type) { mType = &type; }
 
    // member variables
    private:
@@ -139,5 +139,6 @@ namespace dtLMS
       std::string mDelimiter;      // delimiter character used in string form of LMS messages. Defaults to ":".
       const LmsMessageType* mType; // type of the LMS message
    };
-}
-#endif
+} // namespace dtLMS
+
+#endif // DELTA_LMS_MESSAGE

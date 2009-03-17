@@ -55,22 +55,22 @@ namespace dtLMS
           * @param reverseBytes A flag to tell the LmsServerSocket if the byte order should
           *      be reversed (big/little endian issue).
           */
-         LmsClientSocket(const std::string &host, int port, bool reverseBytes);
+         LmsClientSocket(const std::string& host, int port, bool reverseBytes);
 
          //mEndOfMessageChar
-         char GetEndOfMessageChar() {return mEndOfMessageChar;}
-         void SetEndOfMessageChar(char endOfMessageChar) {mEndOfMessageChar = endOfMessageChar;}
+         char GetEndOfMessageChar() { return mEndOfMessageChar; }
+         void SetEndOfMessageChar(char endOfMessageChar) { mEndOfMessageChar = endOfMessageChar; }
 
          //mClientState
-         const LmsConnectionState* GetClientState() {return mClientState;}
-         void SetClientState(const LmsConnectionState* clientState) {mClientState = clientState;}
+         const LmsConnectionState* GetClientState() { return mClientState; }
+         void SetClientState(const LmsConnectionState* clientState) { mClientState = clientState; }
 
          //mClientID
          const std::string& GetClientID() const {return mClientID;}
 
          void Connect();
 
-         void SendLmsMessage(const LmsMessage &lmsMessage);
+         void SendLmsMessage(const LmsMessage& lmsMessage);
          LmsMessage ReceiveLmsMessage();
 
          void Disconnect(bool normal = true);
@@ -98,7 +98,7 @@ namespace dtLMS
          /**
           * The private method that actually sends data over the socket.
           */
-         void SendString(const std::string &sendString);
+         void SendString(const std::string& sendString);
 
          /**
           * The private method that actually receives data over the socket. This method blocks
@@ -110,20 +110,20 @@ namespace dtLMS
 
       private:
 
-         static const unsigned int BUFFSIZE = 64000; //message buffer size
-         static const unsigned int MAX_RECEIVE_LENGTH = 1024; //used in case sender forgets EndOfMessageChar
+         static const unsigned int BUFFSIZE = 64000; // message buffer size
+         static const unsigned int MAX_RECEIVE_LENGTH = 1024; // used in case sender forgets EndOfMessageChar
 
          int mPort;
          int mSocket;
-         char mEndOfMessageChar; //character used by protocol to mark the end of a message
-         std::string mClientID; //the ID created by the LmsClientSocket upon instantiation
-         std::string mServerID; //the ID returned by the Lms server
-         bool mReverseBytes; //a flag to denote if the byte order should be reversed
-         hostent *mHostent; //host structure
-         sockaddr_in mAddress; //socket address structure
-         double mBuffer[BUFFSIZE]; //message buffer
-         const LmsConnectionState* mClientState; //the state of the LmsClientSocket
+         char mEndOfMessageChar; // character used by protocol to mark the end of a message
+         std::string mClientID; // the ID created by the LmsClientSocket upon instantiation
+         std::string mServerID; // the ID returned by the Lms server
+         bool mReverseBytes; // a flag to denote if the byte order should be reversed
+         hostent* mHostent; // host structure
+         sockaddr_in mAddress; // socket address structure
+         double mBuffer[BUFFSIZE]; // message buffer
+         const LmsConnectionState* mClientState; // the state of the LmsClientSocket
    };
-}
+} // namespace dtLMS
 
-#endif
+#endif // DELTA_LMS_CLIENT_SOCKET
