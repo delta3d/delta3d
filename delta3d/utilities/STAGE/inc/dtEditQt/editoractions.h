@@ -415,6 +415,10 @@ signals:
           */
          void changeMaps(dtDAL::Map *oldMap, dtDAL::Map *newMap);
 
+         void HandleMissingLibraries(const dtDAL::Map& newMap) const;
+
+         void HandleMissingActorsTypes(const dtDAL::Map& newMap) const;
+
          /**
           * If the current map is valid and has been modified, this method will
           * prompt the user for asking to save the changes.
