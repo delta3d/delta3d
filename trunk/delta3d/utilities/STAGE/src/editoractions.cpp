@@ -1262,26 +1262,10 @@ namespace dtEditQt
       //Load the new map into the current scene.
       if (newMap != NULL)
       {
-         const std::vector<std::string>
-               & missingLibs = newMap->GetMissingLibraries();
-
-         if (!missingLibs.empty())
+         if (newMap->HasLoadingErrors())
          {
-            QString
-                  errors(tr("The following libraries listed in the map could not be loaded:\n\n"));
-            for (unsigned i = 0; i < missingLibs.size(); ++i)
-            {
-               std::string
-                     nativeName = dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(missingLibs[i]);
-               errors.append(nativeName.c_str());
-               errors.append("\n");
-            }
-
-            errors.append("\nThis could happen for a number of reasons. Please ensure that the name is correct, ");
-            errors.append("the library is in the path (or the working directory), the library can load correctly, and dependent libraries are available.");
-            errors.append("If you save this map, the library and any actors referenced by the library will be lost.");
-
-            QMessageBox::warning((QWidget *)EditorData::GetInstance().getMainWindow(), tr("Missing Libraries"), errors, tr("OK"));
+            HandleMissingLibraries(*newMap);
+            HandleMissingActorsTypes(*newMap);
          }
 
          try
@@ -1432,6 +1416,54 @@ namespace dtEditQt
       delete dialog;
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::HandleMissingLibraries(const dtDAL::Map& newMap) const
+   {
+      const std::vector<std::string>& missingLibs = newMap.GetMissingLibraries();
+
+      if (!missingLibs.empty())
+      {
+         QString errors(tr("The following libraries listed in the map could not be loaded:\n\n"));
+
+         for (size_t i = 0; i < missingLibs.size(); ++i)
+         {
+            std::string nativeName = dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(missingLibs[i]);
+            errors.append(nativeName.c_str());
+            errors.append("\n");
+         }
+
+         errors.append("\nThis could happen for a number of reasons. Please ensure that the name is correct, ");
+         errors.append("the library is in the path (or the working directory), the library can load correctly, and dependent libraries are available.");
+         errors.append("If you save this map, the library and any actors referenced by the library will be lost.");
+
+         QMessageBox::warning(EditorData::GetInstance().getMainWindow(), tr("Missing Libraries"), errors, tr("OK"));
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void EditorActions::HandleMissingActorsTypes(const dtDAL::Map& newMap) const
+   {
+      const std::set<std::string>& missingActorTypes = newMap.GetMissingActorTypes();
+
+      if (!missingActorTypes.empty())
+      {
+         QString errors(tr("The following ActorTypes listed in the map could not be created:\n\n"));
+
+         std::set<std::string>::const_iterator itr = missingActorTypes.begin();
+         while(itr != missingActorTypes.end())
+         {
+            errors.append((*itr).c_str());
+            errors.append("\n");
+            ++itr;
+         }
+
+         errors.append("\nThis could happen if the ActorType has changed names, or");
+         errors.append(" if the Actor has been removed from the actor library or registry.");
+         errors.append(" If you save this map, any actors of this ActorType will be lost.");
+
+         QMessageBox::warning(EditorData::GetInstance().getMainWindow(), tr("Missing ActorTypes"), errors, tr("OK"));
+      }
+   }
 }
 
 

@@ -88,106 +88,102 @@ namespace dtDAL
          /**
           * @return the mName of the map.
           */
-         const std::string& GetName() const { return mName; }
+         const std::string& GetName() const;
 
          /**
           * @return the mName of the map when it was last saved/originally created.
           */
-         const std::string& GetSavedName() const { return mSavedName; }
+         const std::string& GetSavedName() const;
 
          /**
           * Sets the maps mName
           * @param newmName the mName to assign
           */
-         void SetName(const std::string& newName) { mModified = true; mName = newName; }
+         void SetName(const std::string& newName);
 
          /**
           * @return the file mName the map was saved to.
           */
-         const std::string& GetFileName() const { return mFileName; }
+         const std::string& GetFileName() const;
 
          /**
           * @return The map description.  This is intended to be a short description.
           */
-         const std::string& GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const;
 
          /**
           * Sets the description text.
           * @param newDescription the new text.
           */
-         void SetDescription(const std::string& newDescription) { mModified = true;  mDescription = newDescription; }
+         void SetDescription(const std::string& newDescription);
 
          /**
           * @return The map's author.
           */
-         const std::string& GetAuthor() const { return mAuthor; }
+         const std::string& GetAuthor() const;
 
          /**
           * Sets the map's author.
           * @param newAuthor the author's mName.
           */
-         void SetAuthor(const std::string& newAuthor) { mModified = true; mAuthor = newAuthor; }
+         void SetAuthor(const std::string& newAuthor);
 
 
          /**
          * @return The name of the file containing waypoints or pathnodes
          */
-         const std::string& GetPathNodeFileName() const { return mPathNodeFile; }
+         const std::string& GetPathNodeFileName() const;
 
          /**
          * Sets the name of the file used for loading and saving pathnodes.
          * @param newFilename the new filename.
          */
-         void SetPathNodeFileName(const std::string& newFilename) { mModified = true;  mPathNodeFile = newFilename; }
+         void SetPathNodeFileName(const std::string& newFilename);
 
          /**
          * @return whether or not we will create a navmesh on map save
          */
-         bool GetCreateNavMesh()const {return mCreateNavMesh;}
+         bool GetCreateNavMesh() const;
 
          /**
          * Sets whether or not we create a NavMesh on save
          * used with waypoints
          */
-         void SetCreateNavMesh(bool pNavMesh){mCreateNavMesh = pNavMesh;}
+         void SetCreateNavMesh(bool pNavMesh);
 
          /**
           * @return The map comments.  This is intended to be the long comments.
           */
-         const std::string& GetComment() const { return mComment; }
+         const std::string& GetComment() const;
 
          /**
           * Sets the comments.
           * @param newComment the new comment text.
           */
-         void SetComment(const std::string& newComment) { mModified = true; mComment = newComment; }
+         void SetComment(const std::string& newComment);
 
          /**
           * @return the copyright information for the map.
           */
-         const std::string& GetCopyright() const { return mCopyright; }
+         const std::string& GetCopyright() const;
 
          /**
           * Sets the copyright information.
           * @param newCopyright the new copyright information.
           */
-         void SetCopyright(const std::string& newCopyright) { mModified = true; mCopyright = newCopyright; }
+         void SetCopyright(const std::string& newCopyright);
 
          /**
           * @return the date and time the map was created as a UTC formatted string.
           */
-         const std::string& GetCreateDateTime() const { return mCreateDateTime; }
+         const std::string& GetCreateDateTime() const;
 
          /**
           * Sets the create date time for map based on the first time it was saved.
           * The value is not validated, but it is expected to be a UTC formatted string.
           * @param newCreateDateTime the new create date time value.
           */
-         void SetCreateDateTime(const std::string& newCreateDateTime)
-         {
-            mModified = true;
-            mCreateDateTime = newCreateDateTime;
-         }
+         void SetCreateDateTime(const std::string& newCreateDateTime);
 
          /**
           * Searches all open maps to find the proxy with the given unique id.
@@ -264,12 +260,12 @@ namespace dtDAL
          /**
           * @return a vector of ref pointers to the all the proxies in the map.
           */
-         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& GetAllProxies() const { return mProxyMap; }
+         const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& GetAllProxies() const;
 
          /**
           * @return fills a vector with ref pointers to all the proxies in the map.
           */
-         void GetAllProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container) { FindProxies(container, ""); }
+         void GetAllProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container);
 
          /**
           * Adds a new proxy to the map.
@@ -292,7 +288,7 @@ namespace dtDAL
          /**
           * @return a set of all the names of the classes the proxies in this map wrap or inherit from.
           */
-         const std::set<std::string>& GetProxyActorClasses() const { return mProxyActorClasses; }
+         const std::set<std::string>& GetProxyActorClasses() const;
 
          /**
           * rebuilds the list of classes of the actor proxies since items are not removed when
@@ -303,54 +299,41 @@ namespace dtDAL
          /**
           * @return true if this map has been modified since it was loaded.
           */
-         bool IsModified() const { return mModified; }
+         bool IsModified() const;
 
          /**
           * Sets the map modified status.
           * @param val True modified, false otherwise.
           */
-         void SetModified(bool val) { mModified = val; }
+         void SetModified(bool val);
 
-         bool HasLoadingErrors() 
-         {
-            return mMissingLibraries.size() > 0 || mMissingActorTypes.size() > 0;
-         }
+         bool HasLoadingErrors() const;
 
-         const std::vector<std::string>& GetMissingLibraries() { return mMissingLibraries; }
+         const std::vector<std::string>& GetMissingLibraries() const;
 
-         const std::set<std::string>& GetMissingActorTypes() { return mMissingActorTypes; }
+         const std::set<std::string>& GetMissingActorTypes() const;
 
          /**
           * @return a map of library mNames mapped to their version numbers.  These are the libraries the map depends on.
           */
-         const std::map<std::string, std::string>& GetLibraryVersionMap() const { return mLibraryVersionMap; }
+         const std::map<std::string, std::string>& GetLibraryVersionMap() const;
 
          /**
           * @return A list of library mNames in the order they should be loaded.
           */
-         const std::vector<std::string>& GetAllLibraries() const { return mLibraryOrder; }
+         const std::vector<std::string>& GetAllLibraries() const;
 
          /**
           * @param mName the mName of the library.
           * @return true if this map loads the given library.
           */
-         bool HasLibrary(const std::string& mName) const 
-         {
-            return mLibraryVersionMap.find(mName) != mLibraryVersionMap.end();
-         }
+         bool HasLibrary(const std::string& mName) const;
 
          /**
           * @param mName the mName of the library to query.
           * @return the version of the library passed in or "" if that library is not referenced by the map.
           */
-         const std::string GetLibraryVersion(const std::string& mName) const 
-         {
-            std::map<std::string, std::string>::const_iterator i = mLibraryVersionMap.find(mName);
-            if (i == mLibraryVersionMap.end())
-               return std::string("");
-
-            return i->second;
-         }
+         const std::string GetLibraryVersion(const std::string& mName) const;
 
          /**
           * Inserts a library with the given mName at the given position.  If a library of the given mName is already in the map,
@@ -397,14 +380,14 @@ namespace dtDAL
           * Returns the environment actor of this map or NULL if no environment is set
           * @return A pointer to the environment actor or NULL
           */
-         ActorProxy* GetEnvironmentActor() { return mEnvActor.get(); }
+         ActorProxy* GetEnvironmentActor();
 
          /**
           * const version of the above function
           * Returns the environment actor of this map or NULL if no environment is set
           * @return A pointer to the environment actor or NULL
           */
-         const ActorProxy* GetEnvironmentActor() const { return mEnvActor.get(); }
+         const ActorProxy* GetEnvironmentActor() const;
 
          ///@return the GameEventManager that holds the game events for this map.
          GameEventManager& GetEventManager();
@@ -432,7 +415,7 @@ namespace dtDAL
           * of maps since they may have had the name changed and need this set.
           * @param newSavedname the new file name.
           */
-         void SetSavedName(const std::string& newSavedName) { mSavedName = newSavedName; }
+         void SetSavedName(const std::string& newSavedName);
 
          /**
           * Clears the modified flag on this map and clears the lists of missing libraries

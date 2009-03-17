@@ -407,4 +407,212 @@ namespace dtDAL
       mEnvActor = envActor;
       AddProxy(*mEnvActor);
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& Map::GetMissingLibraries() const
+   {
+      return mMissingLibraries;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::set<std::string>& Map::GetMissingActorTypes() const
+   {
+      return mMissingActorTypes;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetName() const
+   {
+      return mName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetSavedName() const
+   {
+      return mSavedName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetName(const std::string& newName)
+   {
+      mModified = true; mName = newName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetFileName() const
+   {
+      return mFileName;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetDescription() const
+   {
+      return mDescription;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetDescription(const std::string& newDescription)
+   {
+      mModified = true;
+      mDescription = newDescription;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetAuthor() const
+   {
+      return mAuthor;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetAuthor(const std::string& newAuthor)
+   {
+      mModified = true;
+      mAuthor = newAuthor;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetPathNodeFileName() const
+   {
+      return mPathNodeFile;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetPathNodeFileName(const std::string& newFilename)
+   {
+      mModified = true;
+      mPathNodeFile = newFilename;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Map::GetCreateNavMesh() const
+   {
+      return mCreateNavMesh;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetCreateNavMesh(bool pNavMesh)
+   {
+      mCreateNavMesh = pNavMesh;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetComment() const
+   {
+      return mComment;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetComment(const std::string& newComment)
+   {
+      mModified = true;
+      mComment = newComment;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetCopyright() const
+   {
+      return mCopyright;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetCopyright(const std::string& newCopyright)
+   {
+      mModified = true;
+      mCopyright = newCopyright;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string& Map::GetCreateDateTime() const
+   {
+      return mCreateDateTime;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetCreateDateTime(const std::string& newCreateDateTime)
+   {
+      mModified = true;
+      mCreateDateTime = newCreateDateTime;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& Map::GetAllProxies() const
+   {
+      return mProxyMap;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::GetAllProxies(std::vector<dtCore::RefPtr<ActorProxy> >& container)
+   {
+      FindProxies(container, "");
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::set<std::string>& Map::GetProxyActorClasses() const
+   {
+      return mProxyActorClasses;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Map::IsModified() const
+   {
+      return mModified;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetModified(bool val)
+   {
+      mModified = val;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Map::HasLoadingErrors() const
+   {
+      return mMissingLibraries.size() > 0 || mMissingActorTypes.size() > 0;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::map<std::string, std::string>& Map::GetLibraryVersionMap() const
+   {
+      return mLibraryVersionMap;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::vector<std::string>& Map::GetAllLibraries() const
+   {
+      return mLibraryOrder;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool Map::HasLibrary(const std::string& mName) const
+   {
+      return mLibraryVersionMap.find(mName) != mLibraryVersionMap.end();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const std::string Map::GetLibraryVersion(const std::string& mName) const
+   {
+      std::map<std::string, std::string>::const_iterator i = mLibraryVersionMap.find(mName);
+      if (i == mLibraryVersionMap.end())
+         return std::string("");
+
+      return i->second;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   ActorProxy* Map::GetEnvironmentActor()
+   {
+      return mEnvActor.get();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   const ActorProxy* Map::GetEnvironmentActor() const
+   {
+      return mEnvActor.get();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void Map::SetSavedName(const std::string& newSavedName)
+   {
+      mSavedName = newSavedName;
+   }
 }
