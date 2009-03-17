@@ -44,4 +44,4 @@
 #  endif
 #endif
 
-#endif
+#endif // DELTA_LMS_EXPORT

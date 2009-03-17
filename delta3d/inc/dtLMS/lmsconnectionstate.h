@@ -27,7 +27,7 @@
 
 namespace dtLMS
 {
-   /*
+   /**
     * This class is an enumeration which stores the connection state of
     * the LmsClientSocket.
     */
@@ -46,16 +46,15 @@ namespace dtLMS
       protected:
 
       /// Constructor
-      LmsConnectionState(const std::string &name) :
-               dtUtil::Enumeration(name)
+      LmsConnectionState(const std::string& name)
+         : dtUtil::Enumeration(name)
       {
          AddInstance(this);
       }
 
       /// Destructor
       virtual ~LmsConnectionState() { }
-
    };
-}
+} // namespace dtLMS
 
-#endif
+#endif // DELTA_LMS_CONNECTION_STATE

@@ -27,7 +27,7 @@
 
 namespace dtLMS
 {
-   /*
+   /**
     * This class is an enumeration which defines the types of lms messages
     * that can be sent to the lms messaging applet.
     */
@@ -45,16 +45,15 @@ namespace dtLMS
       protected:
 
       /// Constructor
-      LmsMessageType(const std::string &name) :
-               dtUtil::Enumeration(name)
+      LmsMessageType(const std::string& name)
+         : dtUtil::Enumeration(name)
       {
          AddInstance(this);
       }
 
       /// Destructor
       virtual ~LmsMessageType() { }
-
    };
-}
+} // namespace dtLMS
 
-#endif
+#endif // DELTA_LMS_MESSAGE_TYPE

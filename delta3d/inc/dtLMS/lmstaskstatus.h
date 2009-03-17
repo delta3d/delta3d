@@ -34,27 +34,31 @@ namespace dtLMS
    class DT_LMS_EXPORT LmsTaskStatus
    {
       public:
-         /*
+         /**
           * Constructs the LmsTaskStatus object and initializes
           * the member variables.
           */
-         LmsTaskStatus() : mCompleted(false), mScore(0.0f) {}
+         LmsTaskStatus()
+            : mCompleted(false)
+            , mScore(0.0f)
+         {}
 
-         /*
+         /**
           * Destucts the LmsTaskStatus object.
           */
          ~LmsTaskStatus() {}
 
-         bool GetCompleted() {return mCompleted;}
-         void SetCompleted(bool completed) {mCompleted = completed;}
+         bool GetCompleted() { return mCompleted; }
+         void SetCompleted(bool completed) { mCompleted = completed; }
 
-         float GetScore() {return mScore;}
-         void SetScore(float score) {mScore = score;}
+         float GetScore() { return mScore; }
+         void SetScore(float score) { mScore = score; }
 
       private:
-         
          bool mCompleted;
          float mScore;
    };
-}
-#endif
+
+} // namespace dtLMS
+
+#endif // DELTA_LMS_TASK_STATUS

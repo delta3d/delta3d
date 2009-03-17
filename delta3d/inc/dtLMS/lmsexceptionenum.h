@@ -27,26 +27,27 @@
 
 namespace dtLMS
 {
-   /*
+   /**
     * This class is an enumeration which defines LmsClientSocket exceptions.
     */
    class DT_LMS_EXPORT LmsExceptionEnum : public dtUtil::Enumeration
    {
       DECLARE_ENUM(LmsExceptionEnum);
-      public:
-         ///Exception enumeration used for general game manager exceptions.
-         static LmsExceptionEnum LMS_CONNECTION_EXCEPTION;
+   public:
+      ///Exception enumeration used for general game manager exceptions.
+      static LmsExceptionEnum LMS_CONNECTION_EXCEPTION;
 
-         ///Exception enumeration used for method invalid parameters.
-         static LmsExceptionEnum INVALID_LMS_MESSAGE_EXCEPTION;
-         
-      protected:
-         LmsExceptionEnum(const std::string &name) : Enumeration(name)
-         {
-            AddInstance(this);
-         }
+      ///Exception enumeration used for method invalid parameters.
+      static LmsExceptionEnum INVALID_LMS_MESSAGE_EXCEPTION;
+      
+   protected:
+      LmsExceptionEnum(const std::string& name)
+         : Enumeration(name)
+      {
+         AddInstance(this);
+      }
    };
+} // namespace dtLMS
 
-}
-
-#endif /*DELTA_GAME_LMS_throw dtUtil::ExceptionION_ENUM*/
+#endif // DELTA_LMS_EXCEPTION_ENUM
+/*DELTA_GAME_LMS_throw dtUtil::ExceptionION_ENUM*/
