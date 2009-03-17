@@ -55,9 +55,9 @@ namespace dtEditQt
       mActorCreationDistance(5.0),
       selectionColor(Qt::red)    
    {
-      LOG_INFO("Initializing Editor Data.");
+      LOG_DEBUG("Initializing Editor Data.");
 
-      LOG_ALWAYS("--- Registering Static Group UI Plugins ---");      
+      LOG_DEBUG("--- Registering Static Group UI Plugins ---");      
       const QObjectList& staticPluginList = QPluginLoader::staticInstances();
       for (QObjectList::const_iterator i = staticPluginList.constBegin(); i != staticPluginList.constEnd(); ++i)
       {
@@ -66,7 +66,7 @@ namespace dtEditQt
          if (groupUI != NULL)
             mGroupUIRegistry->RegisterPlugin(*groupUI);
       }
-      LOG_ALWAYS("--- Finished Registering Static Group UI Plugins ---");      
+      LOG_DEBUG("--- Finished Registering Static Group UI Plugins ---");      
    }
 
    ///////////////////////////////////////////////////////////////////////////////
