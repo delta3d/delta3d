@@ -104,6 +104,16 @@ HUD::~HUD()
       m_pCamera->removeChild(m_pInternalGraph);
    }
 
+   if (CEGUI::System::getSingletonPtr() != NULL)
+   {
+      CEGUI::Renderer *rend = CEGUI::System::getSingletonPtr()->getRenderer();
+      delete(CEGUI::System::getSingletonPtr()); 
+      if (rend != NULL)
+      {
+         delete rend;
+      }
+   }
+
    DeregisterInstance(this);
    RemoveSender(&dtCore::System::GetInstance());
 }
