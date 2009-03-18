@@ -128,6 +128,15 @@ namespace dtDAL
          const ActorType* FindActorType(const std::string &category,
                                   const std::string &name);
 
+
+         /** 
+          *  Given the supplied ActorType full name, see if an ActorType
+          *  replacement has been registered.
+          * @param fullName : The fullName of an older, deprecated ActorType
+          * @return The full ActorType name to use instead (or empty, if nothing is registered)
+          */
+         std::string FindActorTypeReplacement(const std::string& fullName) const;
+
          /**
           * Creates a new actor proxy.  The actor type is used by the library
           * manager to determine which type of actor proxy to create.
@@ -209,6 +218,8 @@ namespace dtDAL
 
          ///Maps an actor type to the registry that created it.
          ActorTypeMap mActors;
+         
+         ActorPluginRegistry::ActorTypeReplacements mReplacementActors;
 
          ///List of the currently loaded actor registries.
          RegistryMap mRegistries;

@@ -99,6 +99,23 @@ namespace dtDAL
           */
          void GetSupportedActorTypes(std::vector<dtCore::RefPtr<const ActorType> >& actors);
 
+         /** 
+           * Container of <old, new> ActorType names.  First entry is the full name of the
+           * old ActorType.  Second entry is the full name of the new ActorType to
+           * use instead.
+           */
+         typedef std::vector<std::pair<std::string, std::string> > ActorTypeReplacements;
+
+         /** 
+          * Get the ActorTypeReplacements for this ActorPluginRegistry.  This list
+          * is used to provide some backwards compatibility with applications or maps
+          * referring to older, deprecated ActorTypes.  Override in derived classes
+          * if previous ActorTypes have been modified and backwards compatibility is 
+          * desired.
+          * @param The container to fill out with ActorType replacements
+          */
+         virtual void GetReplacementActorTypes(ActorTypeReplacements &replacements) const;
+
          /**
           * Checks to see if this registry supports the given actor type.
           * @param type The type to check support for.

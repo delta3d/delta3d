@@ -44,4 +44,9 @@ namespace dtDAL
       proxy->Init(type);
       return proxy;
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorPluginRegistry::GetReplacementActorTypes(ActorPluginRegistry::ActorTypeReplacements &replacements) const
+   {
+   }
 }
