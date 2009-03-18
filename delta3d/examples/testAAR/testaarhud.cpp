@@ -550,12 +550,13 @@ int TestAARHUD::RecursivelyAddTasks(const std::string& indent, int curIndex,
       totalNumAdded += 1;
 
       // recurse for each child
-      const std::vector< dtCore::RefPtr<dtActors::TaskActorProxy> >& children = taskProxy->GetAllSubTasks();
+      std::vector<const dtActors::TaskActorProxy*> children;
+      taskProxy->GetAllSubTasks(children);
       if (!children.empty())
       {
          for (int i = 0; i < (int)children.size(); i ++)
          {
-            const dtActors::TaskActorProxy* childProxy = dynamic_cast<const dtActors::TaskActorProxy *> (children[i].get());
+            const dtActors::TaskActorProxy* childProxy = dynamic_cast<const dtActors::TaskActorProxy *> (children[i]);
             totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted);
          }
       }

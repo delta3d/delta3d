@@ -54,8 +54,9 @@ namespace dtActors
       //This method is called when a child task has changed its score.  Need to
       //loop through the children of this task.  For any that are complete, we
       //need to factor that in to the score of this task.
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
+      std::vector<TaskActorProxy*> subTasks;
+      GetAllSubTasks(subTasks);
+      std::vector<TaskActorProxy*>::const_iterator itor;
       TaskActor *taskActor = NULL;
       float totalWeightedScore = 0.0f;
       float totalWeight = 0.0f;

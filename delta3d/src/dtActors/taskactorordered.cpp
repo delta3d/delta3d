@@ -86,8 +86,9 @@ namespace dtActors
    bool TaskActorOrderedProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
    {
       TaskActor *myActor;
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
+      std::vector<TaskActorProxy*> subTasks;
+      GetAllSubTasks(subTasks);
+      std::vector<TaskActorProxy*>::const_iterator itor;
       bool result = false;
 
       // If we're already failed, then no way are we approving the request.
@@ -99,7 +100,7 @@ namespace dtActors
       //completed.  If not we have to reject.
       for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
       {
-         const TaskActorProxy &task = *itor->get();
+         const TaskActorProxy &task = *(*itor);
 
          //If we encounter a task before the task in question that has not yet been
          //completed, we cannot continue.
@@ -123,7 +124,7 @@ namespace dtActors
 
          //If we got here, then all the tasks before the current task have been completed.
          //So we can accept it and stopping checking...
-         if(itor->get() == &childTask)
+         if((*itor) == &childTask)
          {
             result = true;
             break;
@@ -143,8 +144,9 @@ namespace dtActors
       //This method is called when a child task has changed its score.  Need to
       //loop through the children of this task.  For any that are complete, we
       //need to factor that in to the score of this task.
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
+      std::vector<TaskActorProxy*> subTasks;
+      GetAllSubTasks(subTasks);
+      std::vector<TaskActorProxy*>::const_iterator itor;
       TaskActor *taskActor = NULL;
       float totalWeightedScore = 0.0f;
       float totalWeight = 0.0f;
@@ -175,8 +177,9 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    bool TaskActorOrderedProxy::IsChildTaskAllowedToChange(const TaskActorProxy &childTask) const
    {
-      const std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks = GetAllSubTasks();
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::const_iterator itor;
+      std::vector<const TaskActorProxy*> subTasks;
+      GetAllSubTasks(subTasks);
+      std::vector<const TaskActorProxy*>::const_iterator itor;
       bool parentGivesOK = true; // no parent means we have approval.
       bool bOKToChangeChildTask = false;
 
@@ -200,7 +203,7 @@ namespace dtActors
          //completed.  If not we have to reject.
          for(itor=subTasks.begin(); itor!=subTasks.end(); ++itor)
          {
-            const TaskActorProxy &task = *itor->get();
+            const TaskActorProxy &task = *(*itor);
 
             //If we got here, then all the tasks before the current task have been completed.
             //So we can accept it and stopping checking...
