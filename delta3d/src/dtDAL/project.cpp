@@ -374,7 +374,7 @@ namespace dtDAL
          {
             dtUtil::FileExtensionList extensions; ///list of acceptable file extensions
             extensions.push_back(dtDAL::Map::MAP_FILE_EXTENSION);
-            //extensions.push_back(".xml");
+            extensions.push_back(".xml");
 
             const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY, extensions);
 

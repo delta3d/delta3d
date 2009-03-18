@@ -30,7 +30,7 @@
 
 namespace dtDAL 
 {
-   const std::string Map::MAP_FILE_EXTENSION(".xml");
+   const std::string Map::MAP_FILE_EXTENSION(".dtmap");
    
    Map::Map(const std::string& mFileName, const std::string& name) : 
       mModified(true), mName(name) 
