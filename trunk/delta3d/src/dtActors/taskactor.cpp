@@ -20,6 +20,9 @@
  */
 #include <dtActors/taskactor.h>
 
+#include <dtGame/invokable.h>
+#include <dtGame/messagetype.h>
+
 #include <dtGame/basemessages.h>
 #include <dtGame/exceptionenum.h>
 #include <dtGame/gamemanager.h>
@@ -27,6 +30,7 @@
 
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
@@ -173,6 +177,7 @@ namespace dtActors
 
    //////////////////////////////////////////////////////////////////////////////
    TaskActorProxy::TaskActorProxy()
+      : mSubTaskIndex(0)
    {
       SetClassName(TaskActorProxy::CLASS_NAME);
       mParentTaskProxy = NULL;
@@ -246,11 +251,24 @@ namespace dtActors
          "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
 
-      //SubTasks property.
-      AddProperty(new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
-         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
-         "The list of subtasks.", GROUPNAME, "TaskChildren"));
+      dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
+         *this, "Task", "Task",
+         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTask),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTask),
+         "dtActors::TaskActor", "A sub task", GROUPNAME);
+
+      AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
+         "TaskList", "Task List", "List of sub tasks",
+         dtDAL::MakeFunctor(*this, &TaskActorProxy::TaskArraySetIndex),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetDefault),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetValue),
+         actorProp, GROUPNAME));
+
+      ////SubTasks property.
+      //AddProperty(new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
+      //   dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
+      //   dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
+      //   "The list of subtasks.", GROUPNAME, "TaskChildren"));
 
       // Notify Completed Event
       AddProperty(new dtDAL::GameEventActorProperty(*this, 
@@ -298,6 +316,29 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::OnEnteredWorld()
    {
+      dtGame::Invokable* mapLoadedInvoke = new dtGame::Invokable("MapLoaded",
+         dtDAL::MakeFunctor(*this, &TaskActorProxy::OnMapLoaded));
+
+      AddInvokable(*mapLoadedInvoke);
+
+      RegisterForMessages(dtGame::MessageType::INFO_MAP_LOADED, "MapLoaded");
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::OnMapLoaded(const dtGame::Message& msg)
+   {
+      for (int taskIndex = 0; taskIndex < (int)mSubTasks.size(); taskIndex++)
+      {
+         TaskActorProxy* subTask = GetProxyById(mSubTasks[taskIndex]);
+
+         if (subTask)
+         {
+            if (subTask->GetParentTask())
+               subTask->GetParentTask()->RemoveSubTask(*subTask);
+
+            subTask->SetParentTaskProxy(this);
+         }
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -368,63 +409,70 @@ namespace dtActors
          subTask.GetParentTask()->RemoveSubTask(subTask);
 
       subTask.SetParentTaskProxy(this);
-      mSubTaskProxies.push_back(&subTask);
+      mSubTasks.push_back(subTask.GetId());
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTask(const TaskActorProxy &subTask)
    {
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      std::vector<dtCore::UniqueId>::iterator itor;
 
-      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
-         if ((*itor)->GetId() == subTask.GetId())
+         if ((*itor) == subTask.GetId())
             break;
       }
 
-      if (itor == mSubTaskProxies.end())
+      if (itor == mSubTasks.end())
       {
          LOG_WARNING("Task: " + subTask.GetGameActor().GetName() + " is not a sub task of task: " +
             GetGameActor().GetName() + "  Cannot remove.");
       }
       else
       {
-         (*itor)->SetParentTaskProxy(NULL);
-         mSubTaskProxies.erase(itor);
+         TaskActorProxy* proxy = GetProxyById((*itor));
+         if (proxy)
+         {
+            proxy->SetParentTaskProxy(NULL);
+         }
+         mSubTasks.erase(itor);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTask(const std::string &name)
    {
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
-      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      TaskActorProxy* proxy = NULL; 
+      std::vector<dtCore::UniqueId>::iterator itor;
+      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
-         if ((*itor)->GetName() == name)
+         proxy = GetProxyById((*itor));
+         if (proxy->GetName() == name)
             break;
       }
 
-      if (itor == mSubTaskProxies.end())
+      if (itor == mSubTasks.end())
       {
          LOG_WARNING("Task: " + name + " is not a sub task of task: " +
             GetGameActor().GetName() + "  Cannot remove.");
       }
-      else
+      else if (proxy)
       {
-         (*itor)->SetParentTaskProxy(NULL);
-         mSubTaskProxies.erase(itor);
+         proxy->SetParentTaskProxy(NULL);
+         mSubTasks.erase(itor);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
    TaskActorProxy *TaskActorProxy::FindSubTask(const std::string &name)
    {
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      std::vector<dtCore::UniqueId>::iterator itor;
 
-      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
-         if((*itor)->GetName() == name)
-            return (*itor).get();
+         TaskActorProxy* proxy = GetProxyById((*itor)); 
+         if(proxy->GetName() == name)
+            return proxy;
       }
       return NULL;
    }
@@ -432,34 +480,54 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    TaskActorProxy *TaskActorProxy::FindSubTask(const dtCore::UniqueId &id)
    {
-      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
-      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      std::vector<dtCore::UniqueId>::iterator itor;
+      for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
-         if((*itor)->GetId() == id)
-            return (*itor).get();
+         TaskActorProxy* proxy = GetProxyById((*itor)); 
+         if(proxy->GetId() == id)
+            return proxy;
       }
       return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   TaskActorProxy* TaskActorProxy::GetProxyById(dtCore::UniqueId id) const
+   {
+      TaskActorProxy* proxy = NULL;
+      if (IsInGM())
+      {
+         GetGameManager()->FindGameActorById(id, proxy);
+      }
+      else 
+      {
+         dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(*this);
+         if (map != NULL)
+         {
+            map->GetProxyById(id, proxy);
+         }
+      }
+      return proxy;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::GetAllSubTasks(std::vector<TaskActorProxy*>& toFill)
    {
-      toFill.reserve(mSubTaskProxies.size());
+      toFill.reserve(mSubTasks.size());
       toFill.clear();
-      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         toFill.push_back(mSubTaskProxies[i].get());
+         toFill.push_back(GetProxyById(mSubTasks[i]));
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::GetAllSubTasks(std::vector<const TaskActorProxy*>& toFill) const
    {
-      toFill.reserve(mSubTaskProxies.size());
+      toFill.reserve(mSubTasks.size());
       toFill.clear();
-      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         toFill.push_back(mSubTaskProxies[i].get());
+         toFill.push_back(GetProxyById(mSubTasks[i]));
       }
    }
 
@@ -468,12 +536,16 @@ namespace dtActors
    {
       //first remove all subtasks, even if the parameter may have some
       //of the same tasks in it.
-      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
-         mSubTaskProxies[i]->SetParentTaskProxy(NULL);
+         TaskActorProxy* proxy = GetProxyById(mSubTasks[i]);
+         if (proxy)
+         {
+            proxy->SetParentTaskProxy(NULL);
+         }
       }
       
-      mSubTaskProxies.clear();
+      mSubTasks.clear();
       
       std::vector<const dtDAL::NamedParameter*> toFill;
       subTasks.GetParameters(toFill);
@@ -507,22 +579,22 @@ namespace dtActors
       }      
    }
    
-   //////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<dtDAL::NamedGroupParameter> TaskActorProxy::GetSubTaskGroup() const
    {
       dtCore::RefPtr<dtDAL::NamedGroupParameter> result = new dtDAL::NamedGroupParameter("SubTasks");
       std::ostringstream ss;
       
-      ss << mSubTaskProxies.size();
+      ss << mSubTasks.size();
       unsigned stringLength = ss.str().size();
       
-      for (unsigned i = 0; i < mSubTaskProxies.size(); ++i)
+      for (unsigned i = 0; i < mSubTasks.size(); ++i)
       {
          ss.str("");
          ss << i;
          std::string s = ss.str();
          s.insert(s.begin(), stringLength - s.size(), '0');
-         result->AddParameter(*new dtDAL::NamedActorParameter(s, mSubTaskProxies[i]->GetId()));
+         result->AddParameter(*new dtDAL::NamedActorParameter(s, mSubTasks[i]));
       }
       return result;
    }
@@ -553,5 +625,52 @@ namespace dtActors
          eventMessage->SetGameEvent( gameEvent );
          gm->SendMessage( *eventMessage );
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::SetSubTask(dtCore::UniqueId value)
+   {
+      if (mSubTaskIndex < (int)mSubTasks.size())
+      {
+         mSubTasks[mSubTaskIndex] = value;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId TaskActorProxy::GetSubTask()
+   {
+      if (mSubTaskIndex < (int)mSubTasks.size())
+      {
+         return mSubTasks[mSubTaskIndex];
+      }
+
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::TaskArraySetIndex(int index)
+   {
+      mSubTaskIndex = index;
+
+      // Get the actor at the current index and put it into the non-index slot.
+      std::string name = "Task";
+      name += dtUtil::ToString(mSubTaskIndex);
+      dtDAL::ActorProxy* proxy = GetLinkedActor(name);
+      if (proxy)
+      {
+         SetLinkedActor("Task", proxy);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId TaskActorProxy::TaskArrayGetDefault()
+   {
+      return "";
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::UniqueId>& TaskActorProxy::TaskArrayGetValue()
+   {
+      return mSubTasks;
    }
 }

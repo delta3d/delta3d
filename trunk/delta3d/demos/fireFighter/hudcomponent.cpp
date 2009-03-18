@@ -869,12 +869,13 @@ unsigned int HUDComponent::RecursivelyAddTasks(const std::string& indent,
       totalNumAdded++;
 
       // recurse for each child
-      const std::vector<dtCore::RefPtr<dtActors::TaskActorProxy> >& children = taskProxy->GetAllSubTasks();
+      std::vector<const dtActors::TaskActorProxy*> children;
+      taskProxy->GetAllSubTasks(children);
       if (!children.empty())
       {
          for (unsigned int i = 0; i < children.size(); i++)
          {
-            const dtActors::TaskActorProxy* childProxy = static_cast<const dtActors::TaskActorProxy*>(children[i].get());
+            const dtActors::TaskActorProxy* childProxy = children[i];
             totalNumAdded += RecursivelyAddTasks(indent + "     ", curIndex + totalNumAdded, childProxy, numCompleted, parent);
          }
       }

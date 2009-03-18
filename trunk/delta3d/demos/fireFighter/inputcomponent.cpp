@@ -637,11 +637,12 @@ void InputComponent::ProcessTasks()
 
    // Mission failed?
    // Process the subtasks
-   const std::vector<RefPtr<dtActors::TaskActorProxy> >& tasks = mMission->GetAllSubTasks();
+   std::vector<dtActors::TaskActorProxy*> tasks;
+   mMission->GetAllSubTasks(tasks);
    for (unsigned int i = 0; i < tasks.size(); i++)
    {
       // Ensure this subtask isn't another parent task
-      const dtActors::TaskActorOrderedProxy* orderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(tasks[i].get());
+      const dtActors::TaskActorOrderedProxy* orderedTask = dynamic_cast<const dtActors::TaskActorOrderedProxy*>(tasks[i]);
       if (orderedTask != NULL)
       {
          const dtActors::TaskActorProxy* failedTask = orderedTask->GetFailingTaskProxy();

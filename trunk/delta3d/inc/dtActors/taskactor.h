@@ -419,13 +419,18 @@ namespace dtActors
           */
          TaskActorProxy* FindSubTask(const dtCore::UniqueId &id);
 
+         ///**
+         // * @return A const list of sub tasks owned by this task.
+         // */
+         //const std::vector<dtCore::RefPtr<TaskActorProxy> > &GetAllSubTasks() const
+         //{
+         //   return mSubTaskProxies;
+         //}
+
          /**
-          * @return A const list of sub tasks owned by this task.
-          */
-         const std::vector<dtCore::RefPtr<TaskActorProxy> > &GetAllSubTasks() const
-         {
-            return mSubTaskProxies;
-         }
+         * Gets the proxy for the given Id
+         */
+         TaskActorProxy* GetProxyById(dtCore::UniqueId id) const;
 
          /**
           * Fills the specified vector with all of this task's direct children.
@@ -441,7 +446,7 @@ namespace dtActors
           * Gets the number of sub tasks owned by this task.
           * @return The number of sub tasks.
           */
-         unsigned GetSubTaskCount() const { return unsigned(mSubTaskProxies.size()); }
+         unsigned GetSubTaskCount() const { return unsigned(mSubTasks.size()); }
 
          /**
           * Gets whether or not this task is a top level task.  A top level task is a task
@@ -522,10 +527,28 @@ namespace dtActors
          virtual void OnEnteredWorld();
 
          /**
+         * Called when the map has been loaded.
+         */
+         void OnMapLoaded(const dtGame::Message& msg);
+
+         /**
           * Sets the parent task to this one.  Called when a subtask is added.
           * @param The parent task.
           */
          void SetParentTaskProxy(TaskActorProxy* parent) { mParentTaskProxy = parent; }
+
+         /**
+         * Set and Get functors for the Task Actor property.
+         */
+         void SetSubTask(dtCore::UniqueId value);
+         dtCore::UniqueId GetSubTask();
+
+         /**
+         * Array actor property functors.
+         */
+         void TaskArraySetIndex(int index);
+         dtCore::UniqueId TaskArrayGetDefault();
+         std::vector<dtCore::UniqueId>& TaskArrayGetValue();
 
       private:
 
@@ -533,7 +556,9 @@ namespace dtActors
          TaskActorProxy* mParentTaskProxy;
 
          // List of subtasks or child tasks of this task.
-         std::vector<dtCore::RefPtr<TaskActorProxy> > mSubTaskProxies;
+         std::vector<dtCore::UniqueId>                mSubTasks;
+         //std::vector<dtCore::RefPtr<TaskActorProxy> > mSubTaskProxies;
+         int                                          mSubTaskIndex;
    };
 
 }
