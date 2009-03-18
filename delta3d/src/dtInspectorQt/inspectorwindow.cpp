@@ -54,6 +54,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    connect(ui.itemList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(OnSelection(QListWidgetItem*,QListWidgetItem*)));
    connect(ui.actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
    connect(ui.actionClose, SIGNAL(triggered()), this, SLOT(close()));
+   connect(ui.actionRebuild_List, SIGNAL(triggered()), this, SLOT(UpdateInstances()));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
 }
 
@@ -69,6 +70,8 @@ dtInspectorQt::InspectorWindow::~InspectorWindow()
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
+   ui.itemList->clear(); //remove any previous entries
+
    for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
    {
       dtCore::Base *o = dtCore::Base::GetInstance(i);

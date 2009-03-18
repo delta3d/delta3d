@@ -2957,6 +2957,7 @@
      <string>&amp;View</string>
     </property>
     <addaction name="actionRefresh_Item"/>
+    <addaction name="actionRebuild_List"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -2982,6 +2983,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionRebuild_List">
+   <property name="text">
+    <string>Rebuild &amp;List</string>
    </property>
   </action>
  </widget>
