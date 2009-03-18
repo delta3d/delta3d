@@ -681,6 +681,25 @@ namespace dtDAL
    };
 
    /**
+   * @class ArrayMessageParameter
+   */
+   class DT_DAL_EXPORT NamedArrayParameter: public NamedGenericParameter<std::string>
+   {
+      public:
+         NamedArrayParameter(const dtUtil::RefString& name);
+
+         virtual const std::string ToString() const;
+         virtual bool FromString(const std::string& value);
+
+         virtual void SetFromProperty(const dtDAL::ActorProperty& property);
+         virtual void ApplyValueToProperty(dtDAL::ActorProperty& property) const;
+
+      protected:
+         NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name);
+         virtual ~NamedArrayParameter();
+   };
+
+   /**
      * @class EnumMessageParameter
      * The EnumMessageParameter works like the string message parameter because there is no way for the message to
      * efficiently know how to fetch proper enumeration object when the data is populated from a string or stream.

@@ -38,6 +38,7 @@ namespace dtGame
    typedef dtDAL::NamedFloatParameter             FloatMessageParameter;
    typedef dtDAL::NamedDoubleParameter            DoubleMessageParameter;
    typedef dtDAL::NamedStringParameter            StringMessageParameter;
+   typedef dtDAL::NamedArrayParameter             ArrayMessageParameter;
    typedef dtDAL::NamedEnumParameter              EnumMessageParameter;
    typedef dtDAL::NamedActorParameter             ActorMessageParameter;
    typedef dtDAL::NamedGameEventParameter         GameEventMessageParameter;

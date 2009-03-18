@@ -24,6 +24,7 @@
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorpropertybase.h>
 
 namespace dtDAL
 {
@@ -170,6 +171,9 @@ namespace dtDAL
          break;
       case dtDAL::DataType::GROUP_ID:
          param = new NamedGroupParameter(name);
+         break;
+      case dtDAL::DataType::ARRAY_ID:
+         param = new NamedArrayParameter(name);
          break;
       case dtDAL::DataType::STATICMESH_ID:
       case dtDAL::DataType::TEXTURE_ID:
@@ -871,6 +875,55 @@ namespace dtDAL
          SetValue(value);
       }
 
+      return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedArrayParameter::NamedArrayParameter(const dtUtil::RefString& name)
+      : NamedGenericParameter<std::string>(DataType::ARRAY, name, "", false)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedArrayParameter::NamedArrayParameter(DataType& dataType, const dtUtil::RefString& name)
+      : NamedGenericParameter<std::string>(dataType, name, "", false)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedArrayParameter::~NamedArrayParameter()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedArrayParameter::SetFromProperty(const dtDAL::ActorProperty& property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::ArrayActorPropertyBase *ap = static_cast<const dtDAL::ArrayActorPropertyBase*> (&property);
+      SetValue(ap->ToString());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedArrayParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::ArrayActorPropertyBase *ap = static_cast<dtDAL::ArrayActorPropertyBase*> (&property);
+      ap->FromString(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string NamedArrayParameter::ToString() const
+   {
+      return GetValue();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedArrayParameter::FromString(const std::string& value)
+   {
+      SetValue(value);
       return true;
    }
 

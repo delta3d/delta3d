@@ -26,6 +26,7 @@
 *
 * William E. Johnson II
 */
+#include <dtDAL/project.h>
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicactorcontrol.h>
 #include <dtEditQt/editordata.h>
@@ -40,11 +41,12 @@
 
 namespace dtEditQt
 {
-   DynamicActorControl::DynamicActorControl():
-      myProperty(NULL), 
-      mTemporaryWrapper(NULL), 
-      mTemporaryEditControl(NULL), 
-      mTemporaryGotoButton(NULL)  
+   DynamicActorControl::DynamicActorControl()
+      : myProperty(NULL)
+      , myIdProperty(NULL)
+      , mTemporaryWrapper(NULL)
+      , mTemporaryEditControl(NULL)
+      , mTemporaryGotoButton(NULL)
    {
    }
 
@@ -60,6 +62,7 @@ namespace dtEditQt
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ACTOR)
       {
          myProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
+         myIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
       }
       else
@@ -78,10 +81,13 @@ namespace dtEditQt
          //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         if(myProperty->GetValue() != NULL)
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
-         else
-            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
+         dtDAL::ActorProxy* proxy = getActorProxy();
+         if (proxy)
+         {
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(proxy->GetName().c_str()));
+            return;
+         }
+         mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
       }
    }
 
@@ -100,13 +106,15 @@ namespace dtEditQt
          QString selection = mTemporaryEditControl->currentText();
          //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
          std::string selectionString = selection.toStdString();
-         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "<None>";
+         
+         dtDAL::ActorProxy* proxy = getActorProxy();
+         std::string previousString = proxy? proxy->GetName() : "<None>";
 
          // set our value to our object
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, getActorProperty(), previousString, selectionString);
 
             dtDAL::Map *curMap = EditorData::GetInstance().getCurrentMap();
             if(curMap == NULL)
@@ -116,7 +124,16 @@ namespace dtEditQt
 
             // Find our matching proxy with this name - "<None>" ends up as NULl cause no match 
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
-            GetActorProxies(proxies, myProperty->GetDesiredActorClass());
+            std::string proxyClass;
+            if (myProperty)
+            {
+               proxyClass = myProperty->GetDesiredActorClass();
+            }
+            else if (myIdProperty)
+            {
+               proxyClass = myIdProperty->GetDesiredActorClass();
+            }
+            GetActorProxies(proxies, proxyClass);
             dtDAL::ActorProxy *proxy = NULL;
             for(unsigned int i = 0; i < proxies.size(); i++)
             {
@@ -126,7 +143,15 @@ namespace dtEditQt
                   break;
                }
             }
-            myProperty->SetValue(proxy);
+
+            if (myProperty)
+            {
+               myProperty->SetValue(proxy);
+            }
+            else if (myIdProperty)
+            {
+               myIdProperty->SetValue(proxy->GetId());
+            }
 
             dataChanged = true;
          }
@@ -135,7 +160,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, getActorProperty());
       }
 
       return dataChanged;    
@@ -167,7 +192,16 @@ namespace dtEditQt
       connect(mTemporaryGotoButton, SIGNAL(clicked()), this, SLOT(onGotoClicked()));
       
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > names;
-      GetActorProxies(names, myProperty->GetDesiredActorClass());
+      std::string proxyClass;
+      if (myProperty)
+      {
+         proxyClass = myProperty->GetDesiredActorClass();
+      }
+      else if (myIdProperty)
+      {
+         proxyClass = myIdProperty->GetDesiredActorClass();
+      }
+      GetActorProxies(names, proxyClass);
 
       // Insert the None option at the end of the list
       QStringList sortedNames;
@@ -198,16 +232,43 @@ namespace dtEditQt
       return wrapper;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProxy* DynamicActorControl::getActorProxy()
+   {
+      if (myProperty)
+      {
+         return myProperty->GetValue();
+      }
+
+      if (myIdProperty)
+      {
+         return myIdProperty->GetActorProxy();
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* DynamicActorControl::getActorProperty()
+   {
+      if (myProperty)
+      {
+         return myProperty;
+      }
+      
+      return myIdProperty;
+   }
+
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDisplayName()
    {
-      return tr(myProperty->GetLabel().c_str());
+      return tr(getActorProperty()->GetLabel().c_str());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicActorControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetDataType().GetName() + "]";
+      std::string tooltip = getActorProperty()->GetDescription() + "  [Type: " + getActorProperty()->GetDataType().GetName() + "]";
       return tr(tooltip.c_str());
    }
 
@@ -216,7 +277,8 @@ namespace dtEditQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("<None>");
+      dtDAL::ActorProxy* proxy = getActorProxy();
+      return proxy != NULL ? QString(proxy->GetName().c_str()) : QString("<None>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +320,7 @@ namespace dtEditQt
 
       dtDAL::ActorActorProperty *changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
 
-      if (mTemporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == this->proxy && changedProp == getActorProperty()) 
       {
          updateEditorFromModel(mTemporaryEditControl);
       }
@@ -267,14 +329,15 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::onGotoClicked()
    {
-      if(myProperty->GetValue() != NULL)
+      dtDAL::ActorProxy* proxy = getActorProxy();
+      if(proxy != NULL)
       {
-         dtCore::RefPtr<dtDAL::ActorProxy> proxy(myProperty->GetValue());
+         dtCore::RefPtr<dtDAL::ActorProxy> refProxy(proxy);
          
-         EditorEvents::GetInstance().emitGotoActor(proxy);
+         EditorEvents::GetInstance().emitGotoActor(refProxy);
 
          std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > vec;
-         vec.push_back(proxy);
+         vec.push_back(refProxy);
 
          EditorEvents::GetInstance().emitActorsSelected(vec);
       }

@@ -36,6 +36,7 @@
 namespace dtDAL
 {
    class ActorActorProperty;
+   class ActorIDActorProperty;
 }
 
 namespace dtEditQt
@@ -73,6 +74,16 @@ namespace dtEditQt
           * @see DynamicAbstractControl#createEditor
           */
          virtual QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index);
+
+         /**
+         * Retrieves the Actor from the ID.
+         */
+         dtDAL::ActorProxy* getActorProxy();
+
+         /**
+         * Retrieves the current actor property.
+         */
+         dtDAL::ActorProperty* getActorProperty();
 
          /**
           * @see DynamicAbstractControl#getDisplayName
@@ -134,6 +145,7 @@ namespace dtEditQt
          void GetActorProxies(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill, const std::string &className);
 
          dtDAL::ActorActorProperty *myProperty;
+         dtDAL::ActorIDActorProperty *myIdProperty;
 
          // This pointer is not really in our control.  It is constructed in the createEditor() 
          // method and destroyed whenever QT feels like it (mostly when the control looses focus). 

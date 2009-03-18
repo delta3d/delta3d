@@ -77,6 +77,12 @@ namespace dtEditQt
         parent = newParent;
         proxy = newProxy;
         model = newModel;
+
+        // Set the tooltip description on the control.
+        if (model)
+        {
+           model->setDescription(this);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +151,7 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicAbstractControl::isControlDoesCustomPainting(int column)
     {
-        return false;
+       return false;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
