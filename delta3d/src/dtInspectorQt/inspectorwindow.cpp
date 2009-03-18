@@ -53,6 +53,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
 
    connect(ui.itemList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(OnSelection(QListWidgetItem*,QListWidgetItem*)));
    connect(ui.actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
+   connect(ui.actionClose, SIGNAL(triggered()), this, SLOT(close()));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
 }
 
