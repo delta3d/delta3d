@@ -29,12 +29,12 @@ namespace dtInspectorQt
       void OnSelection(QListWidgetItem* current, QListWidgetItem* prev);
       void RefreshCurrentItem();
       void OnNameChanged(const QString& text);
+      void UpdateInstances();
 
    private:
       Ui::InspectorWidget ui;
 
       QList<IView*> mViewContainer;
-      void UpdateInstances();
    };
 }
 #endif // inspectorwindow_h__
