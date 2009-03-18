@@ -276,7 +276,7 @@ void ObjectWorkspace::CreateToolbars()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::OnInitialization()
 {
-   QSettings settings("MOVES", "Shader Viewer");
+   QSettings settings("MOVES", "Object Viewer");
    QStringList files = settings.value("projectContextPath").toStringList();
    
    if (files.empty())
@@ -542,7 +542,7 @@ std::string ObjectWorkspace::GetContextPathFromUser()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SaveCurrentContextPath()
 {
-   QSettings settings("MOVES", "Shader Viewer");
+   QSettings settings("MOVES", "Object Viewer");
 
    try
    {      
@@ -560,7 +560,7 @@ void ObjectWorkspace::SaveCurrentContextPath()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectWorkspace::SaveCurrentShaderFiles()
 {
-   QSettings settings("MOVES", "Shader Viewer");
+   QSettings settings("MOVES", "Object Viewer");
 
    try
    {
