@@ -27,6 +27,7 @@ namespace dtInspectorQt
    
    public slots:
       void OnSelection(QListWidgetItem* current, QListWidgetItem* prev);
+      void RefreshCurrentItem();
       void OnNameChanged(const QString& text);
 
    private:

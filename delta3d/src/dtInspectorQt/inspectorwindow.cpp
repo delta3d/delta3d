@@ -48,11 +48,15 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mViewContainer.push_back(new WeatherView(ui));
 
    UpdateInstances();
+   ui.itemList->setCurrentRow(0);
+   RefreshCurrentItem();
 
    connect(ui.itemList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(OnSelection(QListWidgetItem*,QListWidgetItem*)));
+   connect(ui.actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
 }
 
+//////////////////////////////////////////////////////////////////////////
 dtInspectorQt::InspectorWindow::~InspectorWindow()
 {
    while (!mViewContainer.empty())
@@ -61,6 +65,7 @@ dtInspectorQt::InspectorWindow::~InspectorWindow()
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
    for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
@@ -71,23 +76,13 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
 
       ui.itemList->addItem(item);
    }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnSelection(QListWidgetItem* current, QListWidgetItem* prev)
 {
-   int row = ui.itemList->currentRow();
-
-   dtCore::Base* b = dtCore::Base::GetInstance(row);
-
-   for (int i=0; i<mViewContainer.size(); ++i)
-   {
-      mViewContainer.at(i)->OperateOn(b);
-   }
+   RefreshCurrentItem();
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
@@ -96,3 +91,17 @@ void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
    item->setText(text);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
+{
+   int row = ui.itemList->currentRow();
+   if (row < 0) { return; }
+
+   dtCore::Base* b = dtCore::Base::GetInstance(row);
+
+   for (int i=0; i<mViewContainer.size(); ++i)
+   {
+      mViewContainer.at(i)->OperateOn(b);
+   }
+
+}
