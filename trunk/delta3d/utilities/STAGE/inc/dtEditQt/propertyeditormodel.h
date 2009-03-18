@@ -132,6 +132,8 @@ namespace dtEditQt
         virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
         virtual QModelIndex parent(const QModelIndex &index) const;
 
+        virtual void setDescription(DynamicAbstractControl* control);
+
         virtual int rowCount(const QModelIndex &parent) const;
         virtual int columnCount(const QModelIndex &parent) const;
         virtual bool hasChildren(const QModelIndex &parent) const

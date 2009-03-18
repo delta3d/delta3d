@@ -88,7 +88,6 @@ namespace dtEditQt
       protected:
          virtual void drawDecoration(QPainter *painter, const QStyleOptionViewItem &option,
                const QRect &rect, const QPixmap &pixmap) const;
-
    };
 
 }

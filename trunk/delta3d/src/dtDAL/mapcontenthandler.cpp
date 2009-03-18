@@ -705,8 +705,21 @@ namespace  dtDAL
             dtUtil::trim(dataValue);
             if (!dataValue.empty() && dataValue != "NULL")
             {
-               mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
-
+               ActorIDActorProperty* p = dynamic_cast<ActorIDActorProperty*>(actorProperty);
+               if (p)
+               {
+                  if (!p->FromString(dataValue))
+                  {
+                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                        "Failed Setting value %s for property type %s named %s on actor named %s",
+                        dataValue.c_str(), (*dataType)->GetName().c_str(),
+                        actorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
+                  }
+               }
+               else
+               {
+                  mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(actorProperty->GetName(), dtCore::UniqueId(dataValue))));
+               }
             }
             (*dataType) = NULL;
             break;

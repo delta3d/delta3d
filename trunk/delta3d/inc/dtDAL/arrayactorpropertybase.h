@@ -25,6 +25,9 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/export.h>
 
+#define OPEN_CHAR '«'
+#define CLOSE_CHAR '»'
+
 namespace dtDAL
 {
    /**
@@ -79,7 +82,95 @@ namespace dtDAL
        */
       virtual bool FromString(const std::string& value)
       {
-         return false;
+         if (!mPropertyType.valid())
+         {
+            return false;
+         }
+
+         std::string data = value;
+
+         // First read the total size of the array.
+         std::string token = TakeToken(data);
+
+         int arraySize = atoi(token.c_str());
+         for (int index = 0; index < arraySize; index++)
+         {
+            SetIndex(index);
+            token = TakeToken(data);
+            mPropertyType->FromString(token);
+         }
+
+         return true;
+      }
+
+      /**
+      * Reads the next token form the given string data.
+      * This will also remove the token from the data string
+      * and return you the token (with the open and close characters removed).
+      * The beginning of the data string must always begin with
+      * an opening character or this will cause problems.
+      *
+      * @param[in]  data  The string data.
+      *
+      * @return            The first token from the string data.
+      */
+      std::string TakeToken(std::string& data)
+      {
+         std::string returnData;
+
+         // If the first character in the data string is not the opening character,
+         //  we will just assume the entire data string is the token.
+         if (data.c_str()[0] != OPEN_CHAR)
+         {
+            returnData = data;
+            data = "";
+         }
+
+         int depth = 0;
+         int dataIndex = 0;
+         int dataSize = (int)data.length();
+         while (data.length() > 0)
+         {
+            bool appendChar = true;
+
+            // Opening characters increase the depth counter.
+            if (data[dataIndex] == OPEN_CHAR)
+            {
+               depth++;
+
+               if (depth == 1)
+               {
+                  appendChar = false;
+               }
+            }
+            // Closing characters decrease the depth counter.
+            else if (data[dataIndex] == CLOSE_CHAR)
+            {
+               depth--;
+
+               if (depth == 0)
+               {
+                  appendChar = false;
+               }
+            }
+
+            // All other characters are added to the return buffer.
+            if (appendChar)
+            {
+               returnData.append(data.c_str(), 1);
+            }
+
+            // Remove the left most character from the data string.
+            data = &data[1];
+
+            // We are done once our depth returns to 0.
+            if (depth <= 0)
+            {
+               break;
+            }
+         }
+
+         return returnData;
       }
 
       /**
@@ -88,7 +179,30 @@ namespace dtDAL
        */
       virtual const std::string ToString() const
       {
-         return "";
+         if (!mPropertyType.valid())
+         {
+            return "";
+         }
+
+         // Iterate through each index in the array and append the strings.
+         int arraySize = GetArraySize();
+
+         char buffer[20] = {0,};
+         std::string data;
+         data += OPEN_CHAR;
+         sprintf_s(buffer, "%d", arraySize);
+         data += buffer;
+         data += CLOSE_CHAR;
+
+         for (int index = 0; index < arraySize; index++)
+         {
+            SetIndex(index);
+            data += OPEN_CHAR;
+            data += mPropertyType->ToString();
+            data += CLOSE_CHAR;
+         }
+
+         return data;
       }
 
       /**

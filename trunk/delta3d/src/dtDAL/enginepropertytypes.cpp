@@ -127,6 +127,164 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
+   bool ActorIDActorProperty::FromString(const std::string& value)
+   {
+      if (IsReadOnly())
+         return false;
+
+      if (value.empty() || value == "NULL")
+      {
+         SetValue(dtCore::UniqueId());
+         return true;
+      }
+
+      dtCore::UniqueId newIdValue = value;
+      SetValue(newIdValue);
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   const std::string ActorIDActorProperty::ToString() const
+   {
+      dtCore::UniqueId id = GetValue();
+      return id.ToString();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor()
+   {
+      dtDAL::ActorProxy* proxy = GetActorProxy();
+      if (proxy)
+      {
+         return proxy->GetActor();
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   const dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor() const
+   {
+      const dtDAL::ActorProxy* proxy = GetActorProxy();
+      if (proxy)
+      {
+         return proxy->GetActor();
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy()
+   {
+      dtCore::UniqueId idValue = GetValue();
+      try
+      {
+         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+
+         if (map == NULL)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+               __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
+               GetName().c_str());
+            return false;
+         }
+
+         ActorProxy* proxyValue = map->GetProxyById(idValue);
+         if (proxyValue == NULL)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+               __FUNCTION__, __LINE__, "Actor with ID %s not found.  Setting property %s with string value failed.",
+               idValue.ToString().c_str(), GetName().c_str());
+            return false;
+         }
+
+         return proxyValue;
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+               __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+               GetName().c_str(), ex.What().c_str());
+         }
+         else
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+               __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+               GetName().c_str(), ex.What().c_str());
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const dtDAL::ActorProxy* ActorIDActorProperty::GetActorProxy() const
+   {
+      dtCore::UniqueId idValue = GetValue();
+      try
+      {
+         Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+
+         if (map == NULL)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+               __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
+               GetName().c_str());
+            return false;
+         }
+
+         ActorProxy* proxyValue = map->GetProxyById(idValue);
+         if (proxyValue == NULL)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+               __FUNCTION__, __LINE__, "Actor with ID %s not found.  Setting property %s with string value failed.",
+               idValue.ToString().c_str(), GetName().c_str());
+            return false;
+         }
+
+         return proxyValue;
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+               __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+               GetName().c_str(), ex.What().c_str());
+         }
+         else
+         {
+            dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+               __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+               GetName().c_str(), ex.What().c_str());
+         }
+      }
+
+      return NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ActorIDActorProperty::SetValue(dtCore::UniqueId value)
+   {
+      if (IsReadOnly())
+      {
+         LOG_WARNING("SetValue has been called on a property that is read only.");
+         return;
+      }
+
+      SetIdFunctor(value);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   dtCore::UniqueId ActorIDActorProperty::GetValue() const
+   {
+      return GetIdFunctor();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
    bool GameEventActorProperty::FromString(const std::string& value)
    {
       GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));

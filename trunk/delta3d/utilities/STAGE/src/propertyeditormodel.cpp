@@ -100,6 +100,11 @@ namespace dtEditQt
         return indexOf(prop->getParent());
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    void PropertyEditorModel::setDescription(DynamicAbstractControl* control)
+    {
+    }
+
     /////////////////////////////////////////////////////////////////////////////////
     int PropertyEditorModel::rowCount(const QModelIndex &parent) const
     {

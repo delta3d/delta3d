@@ -149,6 +149,122 @@ namespace dtDAL
 
    ////////////////////////////////////////////////////////////////////////////
    /**
+   * This actor property represents an actor
+   */
+   ////////////////////////////////////////////////////////////////////////////
+   class DT_DAL_EXPORT ActorIDActorProperty : public ActorProperty
+   {
+   public:
+      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::UniqueId)> SetFuncType;
+      typedef dtUtil::Functor<dtCore::UniqueId, TYPELIST_0()> GetFuncType;
+      ActorIDActorProperty(ActorProxy& actorProxy,
+         const dtUtil::RefString& name,
+         const dtUtil::RefString& label,
+         SetFuncType Set,
+         GetFuncType Get,
+         const dtUtil::RefString& desiredActorClass = "",
+         const dtUtil::RefString& desc = "",
+         const dtUtil::RefString& groupName = "")
+         : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
+         , mProxy(&actorProxy)
+         , SetIdFunctor(Set)
+         , GetIdFunctor(Get)
+         , mDesiredActorClass(desiredActorClass)
+      {
+
+      }
+
+      /**
+      * Copies an ActorActorProperty value to this one from the property
+      * specified. This method fails if otherProp is not an ActorActorProperty.
+      * @param otherProp The property to copy the value from.
+      */
+      virtual void CopyFrom(const ActorProperty& otherProp)
+      {
+         if (GetDataType() != otherProp.GetDataType())
+         {
+            LOG_ERROR("Property types are incompatible. Cannot make copy.");
+            return;
+         }
+
+         const ActorIDActorProperty& prop =
+            static_cast<const ActorIDActorProperty& >(otherProp);
+
+         SetValue(prop.GetValue());
+      }
+
+      /**
+      * Sets the value of this property by calling the set functor
+      * assigned to this property.
+      * Hack for the resource class
+      * @param value the value to set or NULL to clear it.  The passed in pointer is
+      * not stored.  The values are extracted and stored in a separate object.
+      */
+      void SetValue(dtCore::UniqueId value);
+
+      /**
+      * Gets the value proxy assiged to this property.
+      * Hack for the resource class
+      * @return the currently set ActorProxy for this property.
+      */
+      dtCore::UniqueId GetValue() const;
+
+      /**
+      * Gets the drawable that this property is representing
+      * @return The actor
+      */
+      dtCore::DeltaDrawable* GetRealActor();
+
+      /**
+      * Gets the drawable that this property is representing
+      * @return The actor
+      */
+      const dtCore::DeltaDrawable* GetRealActor() const;
+
+      /**
+      * Gets the actor proxy that this property is representing
+      * @return The actor proxy.
+      */
+      dtDAL::ActorProxy* GetActorProxy();
+
+      /**
+      * Gets the actor proxy that this property is representing
+      * @return The actor proxy.
+      */
+      const dtDAL::ActorProxy* GetActorProxy() const;
+
+      /**
+      * Sets the value of the property based on a string.
+      * The string should be the both the unique id and the display string separated by a comma.
+      * @note Returns false it the property is read only
+      * @param value the value to set.
+      * @return false if the value does not reference an existing proxy or the proxy is of the wrong class.
+      */
+      virtual bool FromString(const std::string& value);
+
+      /**
+      * @return a string version of the data.  This value can be used when calling FromString.
+      * @see #FromString
+      */
+      virtual const std::string ToString() const;
+
+      /**
+      * @return the class of proxy this expects so that the UI can filter the list.
+      */
+      const std::string& GetDesiredActorClass() const { return mDesiredActorClass; }
+
+   private:
+      ActorProxy* mProxy;
+      SetFuncType SetIdFunctor;
+      GetFuncType GetIdFunctor;
+      dtUtil::RefString mDesiredActorClass;
+
+   protected:
+      virtual ~ActorIDActorProperty() { }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////
+   /**
     * This actor property represents a game event property.
     *
     */
