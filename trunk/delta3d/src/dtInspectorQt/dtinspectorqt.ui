@@ -2954,19 +2954,34 @@
    </property>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="actionRefresh_Item"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionClose"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionRefresh_Item">
    <property name="text">
-    <string>Refresh Item</string>
+    <string>&amp;Refresh Item</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
    </property>
   </action>
  </widget>
@@ -2984,12 +2999,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>-587</y>
+     <x>308</x>
+     <y>2609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>-562</y>
+     <x>456</x>
+     <y>2633</y>
     </hint>
    </hints>
   </connection>
@@ -3000,12 +3015,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>-587</y>
+     <x>308</x>
+     <y>2609</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>-535</y>
+     <x>456</x>
+     <y>2659</y>
     </hint>
    </hints>
   </connection>
