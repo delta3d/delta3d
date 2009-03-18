@@ -69,6 +69,9 @@ namespace dtDAL
          ++itor;
       }
       mRegistries.clear();
+
+      //remove any registered ActorType replacements
+      mReplacementActors.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -178,6 +181,11 @@ namespace dtDAL
       std::vector<dtCore::RefPtr<const ActorType> > actorTypes;
       entry.registry->RegisterActorTypes();
       entry.registry->GetSupportedActorTypes(actorTypes);
+      
+      dtDAL::ActorPluginRegistry::ActorTypeReplacements replacements;
+      entry.registry->GetReplacementActorTypes(replacements);
+      mReplacementActors.insert(mReplacementActors.end(), replacements.begin(), replacements.end());
+      
       int numUniqueActors = 0;
       for (unsigned int i=0; i<actorTypes.size(); i++)
       {
@@ -231,6 +239,22 @@ namespace dtDAL
       }
       else
          return NULL;
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   std::string LibraryManager::FindActorTypeReplacement(const std::string& fullName) const
+   {
+      ActorPluginRegistry::ActorTypeReplacements::const_iterator itr = mReplacementActors.begin();
+      while (itr != mReplacementActors.end())
+      {
+         if ((*itr).first == fullName)
+         {
+            return((*itr).second);
+         }
+         ++itr;
+      }
+
+      return std::string();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -395,4 +419,5 @@ namespace dtDAL
          LOG_WARNING("Failed loading optional library '" + libName + "'.  Some actors may not be available.");
       }
    }
+
 }
