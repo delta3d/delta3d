@@ -217,8 +217,16 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
 
    arrayStringProp->SetMinArraySize(2);
    arrayStringProp->SetMaxArraySize(10);
-   
+
    AddProperty(arrayStringProp);
+
+   std::string arrayString = arrayStringProp->ToString();
+   arrayStringProp->FromString(arrayString);
+
+   mColorArray.push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+   mColorArray.push_back(osg::Vec4(0.1f, 1.0f, 0.1f, 1.0f));
+   mColorArray.push_back(osg::Vec4(1.0f, 0.5f, 0.5f, 1.0f));
+   mColorArray.push_back(osg::Vec4(0.5f, 1.0f, 1.0f, 0.5f));
 
    ColorRgbaActorProperty* colorProp = new ColorRgbaActorProperty(
       "ArrayColor", "Array Color",
@@ -234,6 +242,9 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       colorProp, GROUPNAME, "", false);
 
    AddProperty(arrayColorProp);
+
+   arrayString = arrayColorProp->ToString();
+   arrayColorProp->FromString(arrayString);
 
    std::vector<int> a;
    a.push_back(1);
@@ -269,6 +280,9 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       arrayIntProp, GROUPNAME);
 
    AddProperty(arrayArrayProp);
+
+   arrayString = arrayArrayProp->ToString();
+   arrayArrayProp->FromString(arrayString);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
