@@ -76,6 +76,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
+#include <dtDAL/librarymanager.h>
 #include <dtCore/globals.h>
 
 #include <sstream>
@@ -1447,19 +1448,27 @@ namespace dtEditQt
 
       if (!missingActorTypes.empty())
       {
-         QString errors(tr("The following ActorTypes listed in the map could not be created:\n\n"));
+         QString errors;
+         errors = tr("The following ActorTypes listed in the map could not be created.  ");
+         errors += tr("This could happen if the ActorType has changed names, or");
+         errors += tr(" if the Actor has been removed from the actor library or registry.");
+         errors += tr("\nIf you save this map, any actors of these ActorType will be lost:\n\n");
 
          std::set<std::string>::const_iterator itr = missingActorTypes.begin();
          while(itr != missingActorTypes.end())
          {
-            errors.append((*itr).c_str());
+            errors += QString::fromStdString((*itr));
+
+            std::string replacement = dtDAL::LibraryManager::GetInstance().FindActorTypeReplacement((*itr));
+            if (!replacement.empty())
+            {
+               errors += tr(" (replace with ") + QString::fromStdString(replacement) + ")";
+            }
+
             errors.append("\n");
             ++itr;
          }
 
-         errors.append("\nThis could happen if the ActorType has changed names, or");
-         errors.append(" if the Actor has been removed from the actor library or registry.");
-         errors.append(" If you save this map, any actors of this ActorType will be lost.");
 
          QMessageBox::warning(EditorData::GetInstance().getMainWindow(), tr("Missing ActorTypes"), errors, tr("OK"));
       }
