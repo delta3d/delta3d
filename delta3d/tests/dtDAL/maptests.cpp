@@ -1487,6 +1487,7 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       dtDAL::GroupActorProperty* groupProp = NULL;
       proxy->GetProperty("SubTasks", groupProp);
+      CPPUNIT_ASSERT_MESSAGE("The 'SubTasks' GroupActorProperty was not found in the Task Actor", groupProp != NULL);
       groupProp->SetValue(*expectedResult);
 
       dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
