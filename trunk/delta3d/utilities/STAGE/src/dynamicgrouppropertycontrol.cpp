@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* David Guthrie
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David Guthrie
+ */
 #include <prefix/dtstageprefix-src.h>
 
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
@@ -46,11 +46,12 @@
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicGroupPropertyControl::DynamicGroupPropertyControl(): mGroupProperty(NULL)
+   DynamicGroupPropertyControl::DynamicGroupPropertyControl()
+      : mGroupProperty(NULL)
    {
    }
 
@@ -60,7 +61,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::addChildControl(DynamicAbstractControl *child, PropertyEditorModel *model)
+   void DynamicGroupPropertyControl::addChildControl(DynamicAbstractControl* child, PropertyEditorModel* model)
    {
       // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
       // the property editor, you need to work with the begin/endinsertrows methods of model.
@@ -69,12 +70,12 @@ namespace dtEditQt
          children.push_back(child);
       }
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicGroupPropertyControl::createEditor(QWidget *parent, 
-      const QStyleOptionViewItem &option, const QModelIndex &index)
+   QWidget* DynamicGroupPropertyControl::createEditor(QWidget* parent, 
+      const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget *wrapper = new QWidget(parent);
+      QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
@@ -98,10 +99,10 @@ namespace dtEditQt
 
       return wrapper;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGroupPropertyControl::initializeData(DynamicAbstractControl *newParent,
-        PropertyEditorModel *newModel, dtDAL::ActorProxy *newProxy, dtDAL::ActorProperty *newProperty)
+   void DynamicGroupPropertyControl::initializeData(DynamicAbstractControl* newParent,
+      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
       // all cases in Linux with gcc4.  So we replaced it with a static cast.   
@@ -117,86 +118,97 @@ namespace dtEditQt
             propertyName + "\" is not the correct type.");
       }
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupPropertyControl::getDisplayName()
    {
       if (mGroupProperty == NULL)
-         return tr("");    
+      {
+         return tr("");
+      }
       return tr(mGroupProperty->GetLabel().c_str());
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupPropertyControl::getDescription() 
    {
       if (mGroupProperty == NULL)
-         return tr("");    
+      {
+         return tr("");
+      }
 
       std::string tooltip = mGroupProperty->GetDescription() + "  [Type: " + 
          mGroupProperty->GetDataType().GetName() + "]";
       return tr(tooltip.c_str());
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupPropertyControl::getValueAsString() 
    {
       if (mGroupProperty == NULL)
-         return tr("");    
+      {
+         return tr("");
+      }
 
       DynamicAbstractControl::getValueAsString();
       return QString(tr(mGroupProperty->GetValue()->GetName().c_str()));
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicGroupPropertyControl::isEditable()
    {
       if (mGroupProperty == NULL)
-         return false;    
+      {
+         return false;
+      }
 
       return !mGroupProperty->IsReadOnly() &&
          //It's only editable if a plugin for the property's editor type is registered.
          GetPlugin() != NULL;
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    GroupUIPlugin* DynamicGroupPropertyControl::GetPlugin()
    {
       if (mGroupProperty == NULL)
+      {
          return NULL;
+      }
+
       return EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
    }
-   
+
    /////////////////////////////////////////////////////////////////////////////////
    // SLOTS                                                           //////////////
    /////////////////////////////////////////////////////////////////////////////////
-   
+
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGroupPropertyControl::updateData(QWidget *widget)
+   bool DynamicGroupPropertyControl::updateData(QWidget* widget)
    {
       return true;
    }
-      
+
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicGroupPropertyControl::EditClicked()
    {
       if (mGroupProperty == NULL)
       {
          QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
-                 tr("Error"),tr("No Group Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
+            tr("Error"),tr("No Group Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
-      
+
       GroupUIPlugin* plugin = GetPlugin();
       QWidget* pluginWidget = plugin->CreateWidget(EditorData::GetInstance().getMainWindow());
       if (pluginWidget == NULL)
       {
          QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
-                 tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),QMessageBox::Ok, QMessageBox::Ok);
+            tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
-      
+
       plugin->UpdateWidgetFromModel(*pluginWidget, *mGroupProperty->GetValue());
-      
+
       QDialog* dialog = dynamic_cast<QDialog*>(pluginWidget);
       if (dialog != NULL)
       {
@@ -217,8 +229,8 @@ namespace dtEditQt
       else
       {
          QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
-                 tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
+            tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
       }
    }
-   
-}
+
+} // namespace dtEditQt

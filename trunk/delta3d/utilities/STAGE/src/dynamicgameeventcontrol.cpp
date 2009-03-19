@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* @author William E. Johnson II
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * @author William E. Johnson II
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/editordata.h>
@@ -40,18 +40,17 @@
 
 namespace dtEditQt
 {
+
    DynamicGameEventControl::DynamicGameEventControl() 
    {
-
    }
 
    DynamicGameEventControl::~DynamicGameEventControl()
    {
-
    }
 
-   void DynamicGameEventControl::initializeData(DynamicAbstractControl *newParent,
-      PropertyEditorModel *newModel, dtDAL::ActorProxy *newProxy, dtDAL::ActorProperty *newProperty)
+   void DynamicGameEventControl::initializeData(DynamicAbstractControl* newParent,
+      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
       // Note - Unlike the other properties, we can't static or reinterpret cast this object.
       // We need to dynamic cast it...
@@ -69,22 +68,26 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGameEventControl::updateEditorFromModel(QWidget *widget)
+   void DynamicGameEventControl::updateEditorFromModel(QWidget* widget)
    {
       if (widget != NULL)
       {
          //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         if(myProperty->GetValue() != NULL)
+         if (myProperty->GetValue() != NULL)
+         {
             temporaryEditControl->setCurrentIndex(temporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
+         }
          else
+         {
             temporaryEditControl->setCurrentIndex(temporaryEditControl->findText("<None>"));
+         }
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGameEventControl::updateModelFromEditor(QWidget *widget)
+   bool DynamicGameEventControl::updateModelFromEditor(QWidget* widget)
    {
       DynamicAbstractControl::updateModelFromEditor(widget);
 
@@ -106,14 +109,14 @@ namespace dtEditQt
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
 
-            dtDAL::GameEvent *eventToSet = NULL;
+            dtDAL::GameEvent* eventToSet = NULL;
             //std::vector<dtDAL::GameEvent*> events;
-            dtDAL::Map &curMap = *EditorData::GetInstance().getCurrentMap();
+            dtDAL::Map& curMap = *EditorData::GetInstance().getCurrentMap();
             //curMap.GetEventManager().GetAllEvents(events);
             eventToSet = curMap.GetEventManager().FindEvent(selectionString);
-            //for(unsigned int i = 0; i < events.size(); i++)
+            //for (unsigned int i = 0; i < events.size(); i++)
             //{
-            //   if(events[i]->GetName() == selectionString)
+            //   if (events[i]->GetName() == selectionString)
             //   {  
             //      eventToSet = events[i];
             //      break;
@@ -133,9 +136,8 @@ namespace dtEditQt
       return dataChanged;    
    }
 
-
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicGameEventControl::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index)
+   QWidget* DynamicGameEventControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       temporaryEditControl = new SubQComboBox(parent, this);
       if (!initialized)
@@ -145,12 +147,14 @@ namespace dtEditQt
       }
 
       std::vector<dtDAL::GameEvent*> events;
-      dtDAL::Map &map = *EditorData::GetInstance().getCurrentMap();
+      dtDAL::Map& map = *EditorData::GetInstance().getCurrentMap();
       map.GetEventManager().GetAllEvents(events);
 
       QStringList sortedEventNames;
-      for(unsigned int i = 0; i < events.size(); i++)
+      for (unsigned int i = 0; i < events.size(); ++i)
+      {
          sortedEventNames.append(QString(events[i]->GetName().c_str()));
+      }
       sortedEventNames.sort();
       // Insert the None option at the end of the list
       QStringList listPlusNone;
@@ -207,7 +211,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicGameEventControl::updateData(QWidget *widget)
+   bool DynamicGameEventControl::updateData(QWidget* widget)
    {
       if (initialized || widget == NULL)
       {
@@ -224,11 +228,12 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      dtDAL::GameEventActorProperty *changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
+      dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
 
       if (temporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 
       {
          updateEditorFromModel(temporaryEditControl);
       }
    }
-}
+
+} // namespace dtEditQt

@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Jeffrey Houde
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Jeffrey Houde
+ */
 
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QWidget>
@@ -46,8 +46,9 @@
 #include <QtGui/QPushButton>
 #include <dtEditQt/editorevents.h>
 
-namespace dtEditQt 
+namespace dtEditQt
 {
+
    ///////////////////////////////////////////////////////////////////////////////
    DynamicArrayControl::DynamicArrayControl()
       : mWrapper(NULL)
@@ -63,8 +64,8 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicArrayControl::initializeData(DynamicAbstractControl *newParent,
-      PropertyEditorModel *newModel, dtDAL::ActorProxy *newProxy, dtDAL::ActorProperty *newProperty)
+   void DynamicArrayControl::initializeData(DynamicAbstractControl* newParent,
+      PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
       // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
       // all cases in Linux with gcc4.  So we replaced it with a static cast.   
@@ -85,9 +86,9 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicArrayControl::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index)
+   QWidget* DynamicArrayControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      QWidget *wrapper = new QWidget(parent);
+      QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
@@ -106,18 +107,18 @@ namespace dtEditQt
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       setBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      mAddButton = new SubQPushButton(tr("Add"), wrapper, this);
+      mAddButton   = new SubQPushButton(tr("Add"),   wrapper, this);
       mClearButton = new SubQPushButton(tr("Clear"), wrapper, this);
 
       UpdateButtonStates();
 
-      connect(mAddButton, SIGNAL(clicked()), this, SLOT(onAddClicked()));
+      connect(mAddButton,   SIGNAL(clicked()), this, SLOT(onAddClicked()));
       connect(mClearButton, SIGNAL(clicked()), this, SLOT(onClearClicked()));
 
       mTextLabel->setToolTip(getDescription());
 
-      grid->addWidget(mTextLabel, 0, 0, 1, 1);
-      grid->addWidget(mAddButton, 0, 1, 1, 1);
+      grid->addWidget(mTextLabel,   0, 0, 1, 1);
+      grid->addWidget(mAddButton,   0, 1, 1, 1);
       grid->addWidget(mClearButton, 0, 2, 1, 1);
       grid->setColumnMinimumWidth(1, mAddButton->sizeHint().width() / 2);
       grid->setColumnMinimumWidth(2, mClearButton->sizeHint().width() / 2);
@@ -130,13 +131,13 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicArrayControl::handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint)
+   void DynamicArrayControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
       if (widget == mWrapper)
       {
-         mWrapper = NULL;
-         mTextLabel = NULL;
-         mAddButton = NULL;
+         mWrapper     = NULL;
+         mTextLabel   = NULL;
+         mAddButton   = NULL;
          mClearButton = NULL;
       }
    }
@@ -175,17 +176,17 @@ namespace dtEditQt
    {
       DynamicAbstractControl::getValueAsString();
 
-      if(mProperty.valid())
+      if (mProperty.valid())
       {
          int arrayCount = mProperty->GetArraySize();
-         int minCount = mProperty->GetMinArraySize();
-         int maxCount = mProperty->GetMaxArraySize();
+         int minCount   = mProperty->GetMinArraySize();
+         int maxCount   = mProperty->GetMaxArraySize();
 
          QString minText("0");
-         if (minCount > 0) minText = QString::number(minCount);
+         if (minCount >  0) { minText = QString::number(minCount); }
 
          QString maxText("*");
-         if (maxCount > -1) maxText = QString::number(maxCount);
+         if (maxCount > -1) { maxText = QString::number(maxCount); }
 
          return QString::number(arrayCount) + " Elements (" + minText + "-" + maxText + ")";
       }
@@ -257,7 +258,7 @@ namespace dtEditQt
    // SLOTS
    /////////////////////////////////////////////////////////////////////////////////
 
-   bool DynamicArrayControl::updateData(QWidget *widget)
+   bool DynamicArrayControl::updateData(QWidget* widget)
    {
       // this guy doesn't have any editors.  All the data is edited in child controls
       return false;
@@ -316,4 +317,5 @@ namespace dtEditQt
          mClearButton->setDisabled(false);
       }
    }
-}
+
+} // namespace dtEditQt
