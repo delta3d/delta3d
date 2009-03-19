@@ -1450,6 +1450,7 @@ void ParticleViewer::UpdateParticleTabsValues()
 {
    // Particle UI
    emit LayerHiddenChanged(mLayers[mLayerIndex].mModularEmitter->isEnabled());
+   emit LayerRenderBinChanged(mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->getBinNumber());
    emit AlignmentUpdated((int)mLayers[mLayerIndex].mParticleSystem->getParticleAlignment());
    emit ShapeUpdated(mLayers[mLayerIndex].mpParticle->getShape());
    emit LifeUpdated(mLayers[mLayerIndex].mpParticle->getLifeTime());
@@ -1748,4 +1749,12 @@ void ParticleViewer::SetTexturePaths(QString path, bool relativePath)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::SetParticleLayerRenderBin(int value)
+{
+   if (mLayerIndex < mLayers.size())
+   {
+      mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->setBinNumber(value);
+   }
+}
 ////////////////////////////////////////////////////////////////////////////////
