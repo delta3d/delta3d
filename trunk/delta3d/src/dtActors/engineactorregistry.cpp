@@ -46,8 +46,8 @@
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorordered.h>
-#include <dtActors/basicenvironmentactorproxy.h>
-#include <dtActors/envactor.h>
+#include <dtActors/weatherenvironmentactor.h>
+#include <dtActors/skydomeenvironmentactor.h>
 #include <dtActors/coordinateconfigactor.h>
 #include <dtActors/playerstartactorproxy.h>
 #include <dtActors/gamemeshactor.h>
@@ -81,8 +81,8 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::AUTOTRIGGER_ACTOR_TYPE(new dtDAL::ActorType("AutoTrigger", "dtcore.Triggers", "dtABC::AutoTrigger Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::CAMERA_ACTOR_TYPE(new dtDAL::ActorType("Camera", "dtcore", "dtCore::Camera Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtDAL::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtDAL::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("WeatherEnvironment", "dtcore.Environment", "dtCore::Environment controlled by dtABC::Weather"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKYDOME_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("SkyDomeEnvironment", "dtcore.Environment", "dtCore::Environment plus a SkyDome"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
@@ -94,6 +94,12 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(
       new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", 
       "Game Actor that wraps and triggers a dtAI distance sensor."));
+
+
+   /// deprecated types
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENV_ACTOR_TYPE(new dtDAL::ActorType("Env", "dtcore.Environment", "dtCore::Environment Actor."));
+
 
    extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
    {
@@ -165,8 +171,8 @@ namespace dtActors
       mActorFactory->RegisterType<AutoTriggerActorProxy>(AUTOTRIGGER_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CameraActorProxy>(CAMERA_ACTOR_TYPE.get());
       mActorFactory->RegisterType<TripodActorProxy>(TRIPOD_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<BasicEnvironmentActorProxy>(ENVIRONMENT_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<EnvActorProxy>(ENV_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<WeatherEnvironmentActorProxy>(WEATHER_ENVIRONMENT_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<SkyDomeEnvironmentActorProxy>(SKYDOME_ENVIRONMENT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
       mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
@@ -179,4 +185,10 @@ namespace dtActors
       mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   void EngineActorRegistry::GetReplacementActorTypes(dtDAL::ActorPluginRegistry::ActorTypeReplacements &replacements) const
+   {
+      replacements.push_back(std::make_pair(ENVIRONMENT_ACTOR_TYPE->GetFullName(), WEATHER_ENVIRONMENT_ACTOR_TYPE->GetFullName()));
+      replacements.push_back(std::make_pair(ENV_ACTOR_TYPE->GetFullName(), SKY_DOME_ACTOR_TYPE->GetFullName()));
+   }
 }

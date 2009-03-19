@@ -34,7 +34,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtDAL/actorproxy.h>
-#include <dtActors/basicenvironmentactorproxy.h>
+#include <dtActors/weatherenvironmentactor.h>
+#include <dtACtors/engineactorregistry.h>
 #include <dtUtil/exception.h>
 #include <dtGame/gamemanager.h>
 #include <osgGA/GUIEventAdapter>
@@ -59,14 +60,14 @@ class TestGameEnvironmentApp : public dtABC::Application
 
          mGM->AddActor(*proxy);
 
-         mEnvironmentActorProxy = static_cast<dtActors::BasicEnvironmentActorProxy*>(mGM->CreateActor("dtcore.Environment", "Environment").get());
+         mGM->CreateActor(*dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE, mEnvironmentActorProxy);
          if (!mEnvironmentActorProxy.valid())
          {
             LOG_ERROR("Failed to create the environment proxy. Aborting.");
             Quit();
          }
 
-         mEnvironmentActor = static_cast<dtActors::BasicEnvironmentActor*>(mEnvironmentActorProxy->GetActor());
+         mEnvironmentActor = static_cast<dtActors::WeatherEnvironmentActor*>(mEnvironmentActorProxy->GetActor());
 
          mGM->SetEnvironmentActor(mEnvironmentActorProxy.get());
 
@@ -104,17 +105,17 @@ class TestGameEnvironmentApp : public dtABC::Application
             }
             case '3':
             {
-               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_CLOSE);
+               mEnvironmentActor->SetWeatherVisibility(dtActors::WeatherEnvironmentActor::VisibilityTypeEnum::VISIBILITY_CLOSE);
                break;
             }
             case '4':
             {
-               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_MODERATE);
+               mEnvironmentActor->SetWeatherVisibility(dtActors::WeatherEnvironmentActor::VisibilityTypeEnum::VISIBILITY_MODERATE);
                break;
             }
             case '5':
             {
-               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED);
+               mEnvironmentActor->SetWeatherVisibility(dtActors::WeatherEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED);
                break;
             }
             case '6':
@@ -122,11 +123,11 @@ class TestGameEnvironmentApp : public dtABC::Application
                static bool enable = true;
                if (enable)
                {
-                  mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_RAINY);
+                  mEnvironmentActor->SetWeatherTheme(dtActors::WeatherEnvironmentActor::WeatherThemeEnum::THEME_RAINY);
                }
                else
                {
-                  mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_FAIR);
+                  mEnvironmentActor->SetWeatherTheme(dtActors::WeatherEnvironmentActor::WeatherThemeEnum::THEME_FAIR);
                }
 
                enable = !enable;
@@ -137,11 +138,11 @@ class TestGameEnvironmentApp : public dtABC::Application
                static bool enable = true;
                if (enable)
                {
-                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_NIGHT, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_WINTER);
+                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::WeatherEnvironmentActor::TimePeriodEnum::TIME_NIGHT, dtActors::WeatherEnvironmentActor::SeasonEnum::SEASON_WINTER);
                }
                else
                {
-                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_DAY, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER);
+                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::WeatherEnvironmentActor::TimePeriodEnum::TIME_DAY, dtActors::WeatherEnvironmentActor::SeasonEnum::SEASON_SUMMER);
                }
 
                enable = !enable;
@@ -152,17 +153,17 @@ class TestGameEnvironmentApp : public dtABC::Application
                static bool enable = true;
                if (enable)
                {
-                  mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_SEVERE);
+                  mEnvironmentActor->SetWindType(dtActors::WeatherEnvironmentActor::WindTypeEnum::WIND_SEVERE);
                }
                else
                {
-                  mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_NONE);
+                  mEnvironmentActor->SetWindType(dtActors::WeatherEnvironmentActor::WindTypeEnum::WIND_NONE);
                }
                break;
             }
             case ' ':
             {
-               dtActors::BasicEnvironmentActorProxy* proxy =
+               dtActors::WeatherEnvironmentActorProxy* proxy =
                   mGM->GetEnvironmentActor() == NULL ?
                   mEnvironmentActorProxy.get() :
                   NULL;
@@ -233,8 +234,8 @@ class TestGameEnvironmentApp : public dtABC::Application
       }
 
       dtCore::RefPtr<dtGame::GameManager> mGM;
-      dtCore::RefPtr<dtActors::BasicEnvironmentActorProxy> mEnvironmentActorProxy;
-      dtCore::RefPtr<dtActors::BasicEnvironmentActor> mEnvironmentActor;
+      dtCore::RefPtr<dtActors::WeatherEnvironmentActorProxy> mEnvironmentActorProxy;
+      dtCore::RefPtr<dtActors::WeatherEnvironmentActor> mEnvironmentActor;
       dtCore::RefPtr<dtCore::InfiniteTerrain> mTerrain;
       dtCore::RefPtr<dtCore::FlyMotionModel> mFMM;
       dtCore::RefPtr<dtABC::LabelActor> mLabel;

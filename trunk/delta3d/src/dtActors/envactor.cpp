@@ -15,6 +15,9 @@ mSkyDome(NULL)
    //Add the Environment as a child to EnvActor, so when EnvActor
    //gets added to the scene, so does the Environment
    AddChild( mEnv.get() );
+
+   DEPRECATE("dtActors::EnvActor()",
+             "dtActors::SkyDomeEnvironmentActor()");
 }
 
 
@@ -138,6 +141,8 @@ bool EnvActor::GetSkyDomeEnable() const
 /************************************************************************/
 EnvActorProxy::EnvActorProxy()
 {
+   DEPRECATE("dtActors::EnvActorProxy()",
+             "dtActors::SkyDomeEnvironmentProxy()");
 }
 
 EnvActorProxy::~EnvActorProxy()
