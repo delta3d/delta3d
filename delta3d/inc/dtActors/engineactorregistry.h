@@ -62,8 +62,8 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> AUTOTRIGGER_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> CAMERA_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> TRIPOD_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> ENVIRONMENT_ACTOR_TYPE;
-       static dtCore::RefPtr<dtDAL::ActorType> ENV_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> WEATHER_ENVIRONMENT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> SKYDOME_ENVIRONMENT_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> COORDINATE_CONFIG_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> PLAYER_START_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> GAME_MESH_ACTOR_TYPE;
@@ -81,6 +81,16 @@ namespace dtActors
          * Registers the actor types representing the core engine objects.
          */
         void RegisterActorTypes();
+
+        /** 
+          * Get the list of deprecated ActorType names; provided for backwards
+          * compatibility.
+          */
+        virtual void GetReplacementActorTypes(dtDAL::ActorPluginRegistry::ActorTypeReplacements &replacements) const;
+    private:
+       static dtCore::RefPtr<dtDAL::ActorType> ENVIRONMENT_ACTOR_TYPE; ///<deprecated 3/18/09
+       static dtCore::RefPtr<dtDAL::ActorType> ENV_ACTOR_TYPE; ///<deprecated 3/18/09
+
     };
 }
 

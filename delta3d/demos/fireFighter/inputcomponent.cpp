@@ -49,7 +49,6 @@
 #include <dtActors/taskactorrollup.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtActors/engineactorregistry.h>
-#include <dtActors/basicenvironmentactorproxy.h>
 
 #include <osgViewer/View>
 

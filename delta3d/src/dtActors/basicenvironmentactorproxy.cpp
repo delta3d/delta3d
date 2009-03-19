@@ -32,6 +32,8 @@ namespace dtActors
    /////////////////////////////////////////////////////////////
    BasicEnvironmentActorProxy::BasicEnvironmentActorProxy()
    {
+      DEPRECATE("dtActors::BasicEnvironmentActorProxy()",
+                "dtActors::WeatherEnvironmentActorProxy()");
       SetClassName("dtCore::Environment");
    }
 
@@ -162,6 +164,9 @@ namespace dtActors
       AddChild(mWeather->GetEnvironment());
       EnableFog(false);
       EnableCloudPlane(false);
+
+      DEPRECATE("dtActors::BasicEnvironmentActor()",
+                "dtActors::WeatherEnvironmentActor()");
    }
 
    BasicEnvironmentActor::~BasicEnvironmentActor()

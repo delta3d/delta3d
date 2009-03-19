@@ -4,6 +4,7 @@
 #include <dtDAL/plugin_export.h>
 #include <dtGame/environmentactor.h>
 #include <dtCore/refptr.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -16,7 +17,8 @@ namespace dtActors
    class DT_PLUGIN_EXPORT EnvActor : public dtGame::IEnvGameActor
    {
    public:
-      EnvActor( dtGame::GameActorProxy &proxy );
+      ///Deprecated 3/18/09, in favor of dtActors::SkyDomeEnvironmentProxy
+      DEPRECATE_FUNC EnvActor( dtGame::GameActorProxy &proxy );
       virtual ~EnvActor();
 
 
@@ -99,10 +101,11 @@ namespace dtActors
    };
 
 
+   ///deprecated 3/18/09, in favor of dtActors::SkyDomeEnvironmentActorProxy
    class DT_PLUGIN_EXPORT EnvActorProxy : public dtGame::IEnvGameActorProxy
    {
    public:
-      EnvActorProxy();
+      DEPRECATE_FUNC EnvActorProxy();
 
      virtual void BuildPropertyMap();
      virtual void CreateActor();

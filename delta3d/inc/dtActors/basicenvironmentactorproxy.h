@@ -25,9 +25,11 @@
 #include <dtGame/environmentactor.h>
 #include <dtABC/weather.h>
 #include <dtCore/cloudplane.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtActors
 {
+   /// deprecated 3/18/09, in favor of dtActors::WeatherEnvironmentActor
    class DT_PLUGIN_EXPORT BasicEnvironmentActor : public dtGame::IEnvGameActor
    {
       public:
@@ -185,8 +187,8 @@ namespace dtActors
                dtABC::Weather::WindType mWindType;
          };
 
-         /// Constructor
-         BasicEnvironmentActor(dtGame::GameActorProxy &proxy);
+         /// Deprecated 3/18/09
+         DEPRECATE_FUNC BasicEnvironmentActor(dtGame::GameActorProxy &proxy);
 
          /**
            * Adds an actor proxy to the internal hierarchy of the environment
