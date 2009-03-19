@@ -539,7 +539,7 @@ void ParticleViewer::DeleteSelectedLayer()
 
    UpdateLayersList();
 
-   if(mLayerIndex >= static_cast<int>(mLayers.size()))
+   if(mLayerIndex >= mLayers.size())
    {
       mLayerIndex = mLayers.size() - 1;
    }
@@ -558,6 +558,16 @@ void ParticleViewer::ToggleSelectedLayerHidden()
       mLayers[mLayerIndex].mModularEmitter->setEnabled(true);
    }
 }
+
+//////////////////////////////////////////////////////////////////////////
+void ParticleViewer::RenameParticleLayer(const QString& name)
+{
+   if (mLayerIndex < mLayers.size())
+   {
+      mLayers[mLayerIndex].mGeode->setName(name.toStdString());
+   }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void ParticleViewer::ResetEmitters()

@@ -133,6 +133,7 @@ void MainWindow::SetupLayersBrowserConnections()
    // Connections from Layer Browser to tabs
    connect(mpLayersBrowser, SIGNAL(ToggleTabs(bool)), mUI.Tabs, SLOT(setEnabled(bool)));
 
+   connect(mpLayersBrowser, SIGNAL(RenameLayer(const QString&)), mpParticleViewer, SLOT(RenameParticleLayer(const QString&)));
    // Connections from UI to particle viewer
    connect(mUI.LayerList, SIGNAL(currentRowChanged(int)), mpParticleViewer, SLOT(UpdateSelectionIndex(int)));
    connect(mUI.NewLayerButton, SIGNAL(clicked()), mpParticleViewer, SLOT(CreateNewParticleLayer()));

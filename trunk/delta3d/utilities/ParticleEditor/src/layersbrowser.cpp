@@ -76,6 +76,7 @@ void LayersBrowser::RenameLayerButtonPushed()
    if(!newText.isEmpty())
    {
       mpLayerList->currentItem()->setText(newText);
+      emit RenameLayer(newText);
    }
 }
 
