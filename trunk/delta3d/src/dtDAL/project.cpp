@@ -445,6 +445,12 @@ namespace dtDAL
             map->ClearModified();
          }
 
+         // If the map has a temporary property, we should mark it modified.
+         if (mParser->HasDeprecatedProperty())
+         {
+            map->SetModified(true);
+         }
+
          map->AddMissingLibraries(mParser->GetMissingLibraries());
          map->AddMissingActorTypes(mParser->GetMissingActorTypes());
 

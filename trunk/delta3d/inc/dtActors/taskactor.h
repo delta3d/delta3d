@@ -310,6 +310,19 @@ namespace dtActors
          virtual bool IsPlaceable() const { return false; };
 
          /**
+         * This function queries the proxy with any properties not
+         * found in the property list. If a property was previously
+         * removed from the proxy, but is still important to load,
+         * then this function should return a property of
+         * the appropriate type to be used when loading the map.
+         *
+         * @param[in]  name  The name of the property queried for.
+         *
+         * @return           A property, or NULL if none is needed.
+         */
+         virtual dtDAL::ActorProperty* GetDeprecatedProperty(const std::string& name);
+
+         /**
           * This method is called by a child task on its parent to request
           * from its parent permission to change its score.  This method allows
           * the parent task control over whether or not its children may be changed.

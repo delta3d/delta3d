@@ -1317,7 +1317,6 @@ void MapTests::TestMapSaveAndLoadGroup()
       static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource1", dtDAL::DataType::STATIC_MESH)).SetValue(&rd);
       static_cast<dtDAL::NamedResourceParameter&>(*expectedResult->AddParameter("SillyResource2", dtDAL::DataType::TEXTURE)).SetValue(NULL);
       dtDAL::NamedGroupParameter& internalGroup = static_cast<dtDAL::NamedGroupParameter&>(*expectedResult->AddParameter("SillyGroup", dtDAL::DataType::GROUP));
-      static_cast<dtDAL::NamedArrayParameter&>(*internalGroup.AddParameter("CuteArray", dtDAL::DataType::ARRAY)).SetValue("");
       static_cast<dtDAL::NamedEnumParameter&>(*internalGroup.AddParameter("CuteEnum", dtDAL::DataType::ENUMERATION)).SetValue("Just a string");
       static_cast<dtDAL::NamedGameEventParameter&>(*internalGroup.AddParameter("CuteEvent", dtDAL::DataType::GAME_EVENT)).SetValue(ge->GetUniqueId());
       static_cast<dtDAL::NamedActorParameter&>(*internalGroup.AddParameter("CuteActor", dtDAL::DataType::ACTOR)).SetValue(proxy->GetId());

@@ -268,7 +268,6 @@ namespace  dtDAL
          {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 "Actor proxy is NULL, but code has entered the actor property section");
-
          }
          if (mInGroupProperty)
          {
@@ -281,11 +280,23 @@ namespace  dtDAL
             {
                std::string propName = dtUtil::XMLStringConverter(chars).ToString();
                mActorProperty = mActorProxy->GetProperty(propName);
+
+               // If the property was not found, attempt to get a temporary one instead.
+               if (!mActorProperty.valid())
+               {
+                  mActorProperty = mActorProxy->GetDeprecatedProperty(propName);
+                  if (mActorProperty.valid())
+                  {
+                     mHasDeprecatedProperty = true;
+                  }
+               }
+
                if (mActorProperty == NULL)
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                       "In actor property section, actor property for name \"%s\" was not found on actor proxy \"%s\".",
                                       propName.c_str(), mActorProxy->GetName().c_str());
-
+               }
             }
             else if (mActorProperty != NULL)
             {
@@ -296,21 +307,25 @@ namespace  dtDAL
                   mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
 
                   if (mActorPropertyType == NULL)
+                  {
                      mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                          "No resource type found for type specified in mMap xml \"%s.\"",
                                          resourceTypeString.c_str());
+                  }
                }
                else if (mActorPropertyType != NULL)
                {
                   std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
                   if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  {
                      mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                          "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
                                          mActorProperty->GetName().c_str(),
                                          mActorProperty->GetDataType().GetName().c_str(),
                                          mActorPropertyType->GetName().c_str(),
                                          dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
+                  }
 
                   //we now have the property, the type, and the data.
                   ParsePropertyData(dataValue, &mActorPropertyType, mActorProperty.get());
@@ -1449,8 +1464,13 @@ namespace  dtDAL
          std::string& propertyName = data.first;
          dtCore::RefPtr<dtDAL::NamedGroupParameter>& propValue = data.second;
 
-         ActorProperty* property = proxyToModify->GetProperty(propertyName);
-         if (property == NULL)
+         dtCore::RefPtr<ActorProperty> property = proxyToModify->GetProperty(propertyName);
+         if (!property.valid())
+         {
+            property = proxyToModify->GetDeprecatedProperty(propertyName);
+         }
+
+         if (!property.valid())
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
                                 "Proxy with ID %s was defined to have group property %s set with actor %s, but the property does not exist on the proxy.",
@@ -1458,7 +1478,7 @@ namespace  dtDAL
             continue;
          }
 
-         GroupActorProperty* gap = dynamic_cast<GroupActorProperty*>(property);
+         GroupActorProperty* gap = dynamic_cast<GroupActorProperty*>(property.get());
          if (gap == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
@@ -1526,7 +1546,11 @@ namespace  dtDAL
 
 
    /////////////////////////////////////////////////////////////////
-   MapContentHandler::MapContentHandler() : mActorProxy(NULL), mActorPropertyType(NULL), mActorProperty(NULL)
+   MapContentHandler::MapContentHandler()
+      : mActorProxy(NULL)
+      , mActorPropertyType(NULL)
+      , mActorProperty(NULL)
+      , mHasDeprecatedProperty(false)
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
