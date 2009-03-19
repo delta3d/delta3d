@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -252,7 +252,7 @@ namespace dtEditQt
 
       if (currMap.valid())
       {
-         dtDAL::ActorProxy* proxy = currMap->GetProxyById(event->objectId);
+         dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->objectId));
 
          // delete is special since the proxy is always NULL :)
          if (event->type == ChangeEvent::PROXY_DELETED)

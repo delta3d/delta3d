@@ -40,7 +40,7 @@ namespace dtCore
          UniqueId();
          UniqueId(const UniqueId& toCopy) { mId = toCopy.mId; }
 
-         UniqueId(const std::string& stringId) : mId(stringId) {}
+         explicit UniqueId(const std::string& stringId) : mId(stringId) {}
          virtual ~UniqueId() {}
 
          bool operator== ( const UniqueId& rhs ) const { return mId == rhs.mId; }
