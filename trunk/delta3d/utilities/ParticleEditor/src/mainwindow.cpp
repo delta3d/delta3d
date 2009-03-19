@@ -132,20 +132,23 @@ void MainWindow::SetupLayersBrowserConnections()
 {
    // Connections from Layer Browser to tabs
    connect(mpLayersBrowser, SIGNAL(ToggleTabs(bool)), mUI.Tabs, SLOT(setEnabled(bool)));
-
    connect(mpLayersBrowser, SIGNAL(RenameLayer(const QString&)), mpParticleViewer, SLOT(RenameParticleLayer(const QString&)));
+
+   
    // Connections from UI to particle viewer
    connect(mUI.LayerList, SIGNAL(currentRowChanged(int)), mpParticleViewer, SLOT(UpdateSelectionIndex(int)));
    connect(mUI.NewLayerButton, SIGNAL(clicked()), mpParticleViewer, SLOT(CreateNewParticleLayer()));
    connect(mUI.TrashLayerButton, SIGNAL(clicked()), mpParticleViewer, SLOT(DeleteSelectedLayer()));
    connect(mUI.HideLayerCheckbox, SIGNAL(clicked()), mpParticleViewer, SLOT(ToggleSelectedLayerHidden()));
    connect(mUI.ResetParticlesButton, SIGNAL(clicked()), mpParticleViewer, SLOT(ResetEmitters()));
+   connect(mUI.LayerRenderBinEntry, SIGNAL(valueChanged(int)), mpParticleViewer, SLOT(SetParticleLayerRenderBin(int)));
 
    // Connections from particle viewer to UI
    connect(mpParticleViewer, SIGNAL(ClearLayerList()), mpLayersBrowser, SLOT(ClearLayerList()));
    connect(mpParticleViewer, SIGNAL(AddLayerToLayerList(const QString&)), mpLayersBrowser, SLOT(AddLayerToLayerList(const QString&)));
    connect(mpParticleViewer, SIGNAL(SelectIndexOfLayersList(int)), mpLayersBrowser, SLOT(SelectIndexOfLayersList(int)));
    connect(mpParticleViewer, SIGNAL(LayerHiddenChanged(bool)), mUI.HideLayerCheckbox, SLOT(setChecked(bool)));
+   connect(mpParticleViewer, SIGNAL(LayerRenderBinChanged(int)), mUI.LayerRenderBinEntry, SLOT(setValue(int)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

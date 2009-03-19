@@ -95,6 +95,7 @@ signals:
    void AddLayerToLayerList(const QString& layerName);
    void SelectIndexOfLayersList(int newIndex);
    void LayerHiddenChanged(bool hidden);
+   void LayerRenderBinChanged(int renderbin);
 
    ///> Particles Tab signals
    // Particle UI
@@ -214,6 +215,7 @@ public slots:
    void ResetEmitters();
    void UpdateSelectionIndex(int newIndex);
    void RenameParticleLayer(const QString& name);
+   void SetParticleLayerRenderBin(int value);
 
    ///> Particles Tab slots
    // Particle UI
