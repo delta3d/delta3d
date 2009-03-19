@@ -41,6 +41,8 @@
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/project.h>
 
+#include <dtActors/engineactorregistry.h>
+
 #include <dtUtil/log.h>
 
 #include <iostream>
@@ -958,11 +960,11 @@ void ProxyTest::TestProxies()
       for(unsigned int i = 0; i < actors.size(); i++)
       {
          // In order to keep the tests fasts, we skip the nasty slow ones.
-         if (actors[i]->GetName() == "Cloud Plane" ||
-             actors[i]->GetName() == "Cloud Dome"  ||
-             actors[i]->GetName() == "Environment" || 
+         if (actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
+             actors[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
+             actors[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() || 
              actors[i]->GetName() == "Test Environment Actor" ||
-             actors[i]->GetName() == "Sound Actor") 
+             actors[i]->GetName() == "Sound Actor") //can't use the ActorType here; it adds a dependency to dtAudio, which might not exist
             continue;
          
          proxy = libMgr.CreateActorProxy(*actors[i]).get();
