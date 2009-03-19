@@ -16,6 +16,11 @@ void AudioManagerInstantiate1(const std::string& n="AudioManager")
     dtAudio::AudioManager::Instantiate(n);
 }
 
+void AudioManagerInstantiate2() 
+{
+    dtAudio::AudioManager::Instantiate();
+}
+
 
 void initAudioManagerBindings()
 {
@@ -116,6 +121,7 @@ void initAudioManagerBindings()
       .def("GetInstance", AudioManagerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")      
       .def("Instantiate", &AudioManagerInstantiate1)
+      .def("Instantiate", &AudioManagerInstantiate2)
       .staticmethod("Instantiate")
       .def("Destroy", &AudioManager::Destroy)
       .staticmethod("Destroy")
