@@ -35,7 +35,7 @@
 #include <dtCore/scene.h>
 #include <dtDAL/actorproxy.h>
 #include <dtActors/weatherenvironmentactor.h>
-#include <dtACtors/engineactorregistry.h>
+#include <dtActors/engineactorregistry.h>
 #include <dtUtil/exception.h>
 #include <dtGame/gamemanager.h>
 #include <osgGA/GUIEventAdapter>
