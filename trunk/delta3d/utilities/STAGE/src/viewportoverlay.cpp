@@ -63,7 +63,9 @@ namespace dtEditQt
       mSelectionDecorator = NULL;
       setupSelectionDecorator();
       if (!mOverlayGroup->containsNode(mSelectionDecorator.get()))
+      {
          mOverlayGroup->addChild(mSelectionDecorator.get());
+      }
       listenForEvents();
    }
 
@@ -74,20 +76,21 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ViewportOverlay::ViewportOverlay(const ViewportOverlay &rhs)
+   ViewportOverlay::ViewportOverlay(const ViewportOverlay& rhs)
    {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   ViewportOverlay &ViewportOverlay::operator=(const ViewportOverlay &rhs)
+   ViewportOverlay& ViewportOverlay::operator=(const ViewportOverlay& rhs)
    {
       return *this;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::onActorsSelected(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
+   void ViewportOverlay::onActorsSelected(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
-      if (actors.empty()) {
+      if (actors.empty())
+      {
          clearCurrentSelection();
          EditorActions::GetInstance().actionEditDeleteActor->setEnabled(false);
          EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(false);
@@ -97,33 +100,48 @@ namespace dtEditQt
          return;
       }
 
-      if (!mMultiSelectMode )
+      if (!mMultiSelectMode)
+      {
          clearCurrentSelection();
+      }
 
-      for (unsigned int i=0; i<actors.size(); i++) {
-         const dtDAL::ActorProxy::RenderMode &renderMode = actors[i]->GetRenderMode();
-         dtDAL::ActorProxyIcon *billBoardIcon = NULL;
+      for (unsigned int i = 0; i < actors.size(); ++i)
+      {
+         const dtDAL::ActorProxy::RenderMode& renderMode = actors[i]->GetRenderMode();
+         dtDAL::ActorProxyIcon* billBoardIcon = NULL;
 
-         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) {
+         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         {
             billBoardIcon = actors[i]->GetBillBoardIcon();
             if (billBoardIcon != NULL)
+            {
                select(actors[i]->GetBillBoardIcon()->GetDrawable());
+            }
             else
+            {
                LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
+            }
          }
-         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) {
+         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+         {
             select(actors[i]->GetActor());
          }
-         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) {
+         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+         {
             billBoardIcon = actors[i]->GetBillBoardIcon();
             if (billBoardIcon != NULL)
+            {
                select(actors[i]->GetBillBoardIcon()->GetDrawable());
+            }
             else
+            {
                LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
+            }
 
             select(actors[i]->GetActor());
          }
-         else {
+         else
+         {
             select(actors[i]->GetActor());
          }
 
@@ -138,7 +156,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::select(dtCore::DeltaDrawable *drawable)
+   void ViewportOverlay::select(dtCore::DeltaDrawable* drawable)
    {
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
       {
@@ -154,33 +172,34 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::unSelect(dtCore::DeltaDrawable *drawable)
+   void ViewportOverlay::unSelect(dtCore::DeltaDrawable* drawable)
    {
       if (drawable == NULL || drawable->GetOSGNode() == NULL)
+      {
          return;
+      }
 
       mSelectionDecorator->removeChild(drawable->GetOSGNode());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool ViewportOverlay::isActorSelected(dtDAL::ActorProxy *proxy) const
+   bool ViewportOverlay::isActorSelected(dtDAL::ActorProxy* proxy) const
    {
       ActorProxyList::const_iterator itor = this->currentActorSelection.find(proxy);
-      if (itor != this->currentActorSelection.end())
-         return true;
-      else
-         return false;
+      return (itor != this->currentActorSelection.end());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy *proxy, bool clearAll)
+   void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll)
    {
       ActorProxyList::iterator itor = this->currentActorSelection.find(proxy);
       if (itor == this->currentActorSelection.end())
+      {
          return;
+      }
 
-      const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
-      dtDAL::ActorProxyIcon *billBoardIcon = NULL;
+      const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
+      dtDAL::ActorProxyIcon* billBoardIcon = NULL;
 
       //Make sure we remove the correct drawable from the selection list depending
       //on the render mode of the actor.
@@ -232,7 +251,7 @@ namespace dtEditQt
       ActorProxyList::iterator itor = this->currentActorSelection.begin();
       while (itor != this->currentActorSelection.end())
       {
-         removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy *>(itor->get()),false);
+         removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy*>(itor->get()), false);
          ++itor;
       }
 
@@ -274,14 +293,14 @@ namespace dtEditQt
       {
          //Create the required state attributes for wireframe overlay selection.
          osg::PolygonOffset* po = new osg::PolygonOffset;
-         osg::PolygonMode *pm = new osg::PolygonMode();
+         osg::PolygonMode* pm = new osg::PolygonMode();
 
          pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
          po->setFactor(-1.0f);
          po->setUnits(-1.0f);
 
-         ss->setAttributeAndModes(pm,turnOn);
-         ss->setAttributeAndModes(po,turnOn);
+         ss->setAttributeAndModes(pm, turnOn);
+         ss->setAttributeAndModes(po, turnOn);
       }
    }
 
@@ -294,12 +313,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::listenForEvents()
    {
-      EditorEvents &ge = EditorEvents::GetInstance();
+      EditorEvents& ge = EditorEvents::GetInstance();
 
-      connect(&ge,SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-               this,SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
+      connect(&ge,   SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+               this, SLOT(onActorsSelected(ActorProxyRefPtrVector&)));
 
-      connect(&ge, SIGNAL(editorPreferencesChanged()),
-               this,SLOT(onEditorPreferencesChanged()));
+      connect(&ge,   SIGNAL(editorPreferencesChanged()),
+               this, SLOT(onEditorPreferencesChanged()));
    }
-}
+
+} // namespace dtEditQt

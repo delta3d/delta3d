@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Matthew W. Campbell
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <osg/Math>
 #include <dtEditQt/stagecamera.h>
@@ -50,7 +50,7 @@ namespace dtEditQt
       this->projType = PERSPECTIVE;
       this->camPitch = this->camYaw = this->camRoll = 0.0;
       resetRotation();
-      setPosition(osg::Vec3(0,0,0));
+      setPosition(osg::Vec3(0, 0, 0));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -72,16 +72,16 @@ namespace dtEditQt
    void StageCamera::pitch(double degrees)
    {
       osg::Quat q;
-      q.makeRotate(osg::DegreesToRadians(-degrees),getRightDir());
+      q.makeRotate(osg::DegreesToRadians(-degrees), getRightDir());
       rotate(q);
 
       this->camPitch += degrees;
-      
+
       if (this->camPitch < 0.0)
       {
          this->camPitch += 360.0;
       }
-      
+
       if (this->camPitch > 360.0)
       {
          this->camPitch -= 360.0;
@@ -92,7 +92,7 @@ namespace dtEditQt
    void StageCamera::yaw(double degrees)
    {
       osg::Quat q;
-      q.makeRotate(osg::DegreesToRadians(-degrees),osg::Vec3(0,0,1));
+      q.makeRotate(osg::DegreesToRadians(-degrees), osg::Vec3(0, 0, 1));
       rotate(q);
 
       this->camYaw += degrees;
@@ -112,7 +112,7 @@ namespace dtEditQt
    void StageCamera::roll(double degrees)
    {
       osg::Quat q;
-      q.makeRotate(osg::DegreesToRadians(-degrees),getViewDir());
+      q.makeRotate(osg::DegreesToRadians(-degrees), getViewDir());
       rotate(q);
 
       this->camRoll += degrees;
@@ -132,25 +132,25 @@ namespace dtEditQt
    void StageCamera::makeOrtho(double left, double right, double bottom, double top,
       double nearZ, double farZ)
    {
-      this->orthoLeft = left;
-      this->orthoRight = right;
-      this->orthoBottom = bottom;
-      this->orthoTop = top;
-      this->zNear = nearZ;
-      this->zFar = farZ;
+      this->orthoLeft              = left;
+      this->orthoRight             = right;
+      this->orthoBottom            = bottom;
+      this->orthoTop               = top;
+      this->zNear                  = nearZ;
+      this->zFar                   = farZ;
       this->updateProjectionMatrix = true;
-      this->projType = ORTHOGRAPHIC;
+      this->projType               = ORTHOGRAPHIC;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::makePerspective(double fovY, double aspect, double nearZ, double farZ)
    {
-      this->fovY = fovY;
-      this->aspectRatio = aspect;
-      this->zNear = nearZ;
-      this->zFar = farZ;
+      this->fovY                   = fovY;
+      this->aspectRatio            = aspect;
+      this->zNear                  = nearZ;
+      this->zFar                   = farZ;
       this->updateProjectionMatrix = true;
-      this->projType = PERSPECTIVE;
+      this->projType               = PERSPECTIVE;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -195,21 +195,21 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::rotate(const osg::Quat& q)
    {
-      this->orientation = q*this->orientation;
+      this->orientation = q * this->orientation;
       this->updateWorldViewMatrix = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void StageCamera::resetRotation()
    {
-      this->orientation = osg::Quat(osg::DegreesToRadians(-90.0),osg::Vec3(1,0,0));
+      this->orientation = osg::Quat(osg::DegreesToRadians(-90.0), osg::Vec3(1, 0, 0));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    osg::Quat StageCamera::getOrientation() const
    {
       osg::Quat q;
-      q.makeRotate(osg::DegreesToRadians(90.0),getRightDir());
+      q.makeRotate(osg::DegreesToRadians(90.0), getRightDir());
       q *= this->orientation;
       return q;
    }
@@ -218,7 +218,7 @@ namespace dtEditQt
    void StageCamera::zoom(double amount)
    {
       this->zoomFactor *= amount;
-      
+
       if (this->zoomFactor < 0.0001)
       {
          this->zoomFactor = 0.0001;
@@ -317,7 +317,7 @@ namespace dtEditQt
       }
       else
       {
-         dtCore::Transformable *transformable =
+         dtCore::Transformable* transformable =
             dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
 
          if (transformable != NULL) 
@@ -349,9 +349,9 @@ namespace dtEditQt
    void StageCamera::detachActorProxy(dtDAL::TransformableActorProxy* proxy)
    {
       std::list<ActorAttachment>::iterator itor;
-      for (itor=this->attachedProxies.begin(); itor!=this->attachedProxies.end(); ++itor)
+      for (itor = this->attachedProxies.begin(); itor != this->attachedProxies.end(); ++itor)
       {
-         dtDAL::TransformableActorProxy *toRemove = itor->actor.get();
+         dtDAL::TransformableActorProxy* toRemove = itor->actor.get();
          if (toRemove == proxy) 
          {
             this->attachedProxies.erase(itor);
@@ -376,25 +376,26 @@ namespace dtEditQt
 
       std::list<ActorAttachment>::iterator itor;
       osg::Quat camLookInv = getOrientation().conj();
-      osg::Vec3 camHPR = osg::Vec3(this->camYaw,this->camPitch,this->camRoll);
+      osg::Vec3 camHPR = osg::Vec3(this->camYaw, this->camPitch, this->camRoll);
 
       for (itor=this->attachedProxies.begin(); itor != this->attachedProxies.end(); ++itor)
       {
          dtDAL::TransformableActorProxy* tProxy = itor->actor.get();
-         osg::Vec3 deltaHPR,tPos,actorHPR;
-         osg::Quat pitchRotate,yawRotate;
+         osg::Vec3 deltaHPR, tPos, actorHPR;
+         osg::Quat pitchRotate, yawRotate;
          osg::Matrix newRotationMat;
 
          deltaHPR = camHPR - itor->initialCameraHPR;
-         yawRotate.makeRotate(osg::DegreesToRadians(deltaHPR[0]),osg::Vec3(0.0f, 0.0f, 1.0f));
-         pitchRotate.makeRotate(osg::DegreesToRadians(deltaHPR[1]),getRightDir());
+         yawRotate.makeRotate(osg::DegreesToRadians(deltaHPR[0]), osg::Vec3(0.0f, 0.0f, 1.0f));
+         pitchRotate.makeRotate(osg::DegreesToRadians(deltaHPR[1]), getRightDir());
          newRotationMat.makeRotate(itor->rotationOffset * camLookInv);
-         dtUtil::MatrixUtil::MatrixToHpr(actorHPR,newRotationMat);
-         tPos = (yawRotate*pitchRotate*itor->positionOffset);
+         dtUtil::MatrixUtil::MatrixToHpr(actorHPR, newRotationMat);
+         tPos = (yawRotate * pitchRotate * itor->positionOffset);
          tPos += this->position;
 
          tProxy->SetTranslation(tPos);
          tProxy->SetRotationFromMatrix(newRotationMat);
       }
    }
-}
+
+} // namespace dtEditQt
