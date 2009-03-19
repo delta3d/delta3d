@@ -45,7 +45,7 @@ namespace dtDAL
          return true;
       }
 
-      dtCore::UniqueId newIdValue = value;
+      dtCore::UniqueId newIdValue(value);
       try
       {
          Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
@@ -138,7 +138,7 @@ namespace dtDAL
          return true;
       }
 
-      dtCore::UniqueId newIdValue = value;
+      dtCore::UniqueId newIdValue(value);
       SetValue(newIdValue);
       return true;
    }

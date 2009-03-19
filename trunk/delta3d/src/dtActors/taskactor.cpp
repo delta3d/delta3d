@@ -644,7 +644,7 @@ namespace dtActors
          return mSubTasks[mSubTaskIndex];
       }
 
-      return dtCore::UniqueId();
+      return dtCore::UniqueId("");
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -665,7 +665,7 @@ namespace dtActors
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::UniqueId TaskActorProxy::TaskArrayGetDefault()
    {
-      return dtCore::UniqueId();
+      return dtCore::UniqueId("");
    }
 
    ////////////////////////////////////////////////////////////////////////////////

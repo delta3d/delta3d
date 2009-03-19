@@ -1389,13 +1389,13 @@ void GMLoggerTests::TestLoggerKeyframeListMessage()
          kf.SetName("FrameOne" + num);
          kf.SetDescription("Description One" + num);
          kf.SetSimTimeStamp(i*10.0f);
-         kf.SetUniqueId("UniqueID" + num);
+         kf.SetUniqueId(dtCore::UniqueId("UniqueID" + num));
 
          dtGame::LogKeyframe::NameVector mapNames;
          mapNames.push_back("ActiveMap" + num);
          kf.SetActiveMaps(mapNames);
 
-         kf.SetTagUniqueId("TagUniqueID" + num);
+         kf.SetTagUniqueId(dtCore::UniqueId("TagUniqueID" + num));
          testList.push_back(kf);
       }
 
@@ -1486,7 +1486,7 @@ void GMLoggerTests::TestLoggerTagListMessage()
          tag.SetName("Tag" + num);
          tag.SetDescription("Description" + num);
          tag.SetSimTimeStamp(i*10.0f);
-         tag.SetUniqueId("UniqueID" + num);
+         tag.SetUniqueId(dtCore::UniqueId("UniqueID" + num));
 
          if ((i%2) == 0)
          {
@@ -1497,7 +1497,7 @@ void GMLoggerTests::TestLoggerTagListMessage()
             tag.SetCaptureKeyframe(false);
          }
 
-         tag.SetKeyframeUniqueId("KeyframeUniqueID" + num);
+         tag.SetKeyframeUniqueId(dtCore::UniqueId("KeyframeUniqueID" + num));
          testList.push_back(tag);
       }
 
@@ -1641,7 +1641,7 @@ void GMLoggerTests::TestLoggerGetTags()
 
          CPPUNIT_ASSERT(osg::equivalent(tagSimTimes[i], tagList[i].GetSimTimeStamp(), 0.00001));
          CPPUNIT_ASSERT_MESSAGE("Tag unique id was not correct",
-            tagList[i].GetUniqueId() == std::string("TagUniqueId" + count));
+            tagList[i].GetUniqueId().ToString() == std::string("TagUniqueId" + count));
          if ((i%2) == 0)
          {
             CPPUNIT_ASSERT_MESSAGE("Tag capture keyframe was not correct.",
