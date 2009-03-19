@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Curtiss Murphy
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Curtiss Murphy
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QComboBox>
 #include <QtGui/QDirModel>
@@ -47,116 +47,120 @@
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
-    ///////////////////////////////////////////////////////////////////////////////
-    ActorGlobalBrowser::ActorGlobalBrowser(QWidget *parent)
-        :QWidget(parent)
-    {
-        QVBoxLayout *vbox = new QVBoxLayout(this);
-        vbox->addWidget(resultsGroup(), 1, 0);
-        vbox->setSpacing(0);
-        vbox->setMargin(3);
+   ///////////////////////////////////////////////////////////////////////////////
+   ActorGlobalBrowser::ActorGlobalBrowser(QWidget* parent)
+      : QWidget(parent)
+   {
+      QVBoxLayout* vbox = new QVBoxLayout(this);
+      vbox->addWidget(resultsGroup(), 1, 0);
+      vbox->setSpacing(0);
+      vbox->setMargin(3);
 
-        // connect 
-        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
-            this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
-            this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
-            this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
-            this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
-            this, SLOT(refreshAll()));
-        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
-            this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
-        connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
-            this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
-        
-        connect(&EditorEvents::GetInstance(), 
-           SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)), 
-           this, 
-           SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+      // connect 
+      connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
+         this, SLOT(refreshAll()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
+         this, SLOT(refreshAll()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
+         this, SLOT(refreshAll()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
+         this, SLOT(refreshAll()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
+         this, SLOT(refreshAll()));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
+         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
+         this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
 
-        connect(&EditorEvents::GetInstance(), 
-           SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
-           this, 
-           SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
-    }
+      connect(&EditorEvents::GetInstance(), 
+         SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)), 
+         this, 
+         SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
-    ///////////////////////////////////////////////////////////////////////////////
-    ActorGlobalBrowser::~ActorGlobalBrowser()
-    {
-    }
+      connect(&EditorEvents::GetInstance(), 
+         SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
+         this, 
+         SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    QGroupBox *ActorGlobalBrowser::resultsGroup()
-    {
-        QGroupBox *groupBox = new QGroupBox(tr("Global Actors"),this);
+   ///////////////////////////////////////////////////////////////////////////////
+   ActorGlobalBrowser::~ActorGlobalBrowser()
+   {
+   }
 
-        resultsTable = new ActorResultsTable(true, false, groupBox);
+   ///////////////////////////////////////////////////////////////////////////////
+   QGroupBox* ActorGlobalBrowser::resultsGroup()
+   {
+      QGroupBox* groupBox = new QGroupBox(tr("Global Actors"),this);
 
-        QVBoxLayout *vbox = new QVBoxLayout(groupBox);
-        vbox->addWidget(resultsTable, 1, 0); // take the rest of the space
-        vbox->setSpacing(2);
-        vbox->setMargin(2);
+      resultsTable = new ActorResultsTable(true, false, groupBox);
 
-        return groupBox;
-    }
+      QVBoxLayout* vbox = new QVBoxLayout(groupBox);
+      vbox->addWidget(resultsTable, 1, 0); // take the rest of the space
+      vbox->setSpacing(2);
+      vbox->setMargin(2);
 
+      return groupBox;
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // SLOTS
-    ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   // SLOTS
+   ///////////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::refreshAll()
-    {
-        EditorData::GetInstance().getMainWindow()->startWaitCursor();
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorGlobalBrowser::refreshAll()
+   {
+      EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-        std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
-        dtDAL::Map *map = EditorData::GetInstance().getCurrentMap();
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > globalProxies;
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
 
-        // empty out our table, just in case - Must happen BEFORE libraries are removed
-        resultsTable->clearAll();
+      // empty out our table, just in case - Must happen BEFORE libraries are removed
+      resultsTable->clearAll();
 
-        if(map != NULL) 
-        {
-           map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
+      if (map != NULL) 
+      {
+         map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
 
-           resultsTable->addProxies(globalProxies);
-        }
+         resultsTable->addProxies(globalProxies);
+      }
 
-        EditorData::GetInstance().getMainWindow()->endWaitCursor();
-    }
+      EditorData::GetInstance().getMainWindow()->endWaitCursor();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
-    {
-        if(!proxy->IsPlaceable())
-           resultsTable->addProxy(proxy);
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorGlobalBrowser::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+   {
+      if (!proxy->IsPlaceable())
+      {
+         resultsTable->addProxy(proxy);
+      }
 
-        //refreshAll();
-    }
+      //refreshAll();
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
-    {
-       if(!proxy->IsPlaceable())
-          resultsTable->actorProxyAboutToBeDestroyed(proxy);
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorGlobalBrowser::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   {
+      if (!proxy->IsPlaceable())
+      {
+         resultsTable->actorProxyAboutToBeDestroyed(proxy);
+      }
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
-    {
-       resultsTable->HandleProxyUpdated(proxy);
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
+   {
+      resultsTable->HandleProxyUpdated(proxy);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
-    {
-       resultsTable->HandleProxyUpdated(proxy);
-    }
-}
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
+   {
+      resultsTable->HandleProxyUpdated(proxy);
+   }
+
+} // namespace dtEditQt
