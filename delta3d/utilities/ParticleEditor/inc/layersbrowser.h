@@ -22,6 +22,7 @@ public:
    void SetupUI();
 signals:
    void ToggleTabs(bool enabled);
+   void RenameLayer(const QString& name);
 
 public slots:
    void ClearLayerList();

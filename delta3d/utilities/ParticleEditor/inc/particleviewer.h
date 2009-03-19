@@ -213,6 +213,7 @@ public slots:
    void ToggleSelectedLayerHidden();
    void ResetEmitters();
    void UpdateSelectionIndex(int newIndex);
+   void RenameParticleLayer(const QString& name);
 
    ///> Particles Tab slots
    // Particle UI
@@ -352,7 +353,7 @@ private:
    osgParticle::ParticleSystemUpdater* mpParticleSystemUpdater;
    QString mParticleSystemFilename;
 
-   int mLayerIndex;
+   unsigned int mLayerIndex;
    int mMultiSegmentVertexIndex;
    int mOperatorsIndex;
 };
