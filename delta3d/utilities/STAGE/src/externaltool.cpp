@@ -7,12 +7,11 @@
 
 //////////////////////////////////////////////////////////////////////////
 dtEditQt::ExternalTool::ExternalTool()
-:
- mAction(new QAction(NULL))
- , mCommand(QString())
- , mArgs(QString())
- , mIconFilename(QString())
- , mProcess(new QProcess())
+   : mAction(new QAction(NULL))
+   , mCommand(QString())
+   , mArgs(QString())
+   , mIconFilename(QString())
+   , mProcess(new QProcess())
 {
    mAction->setText("defaultTitle");
    connect(mAction, SIGNAL(triggered()), this, SLOT(OnStartTool()));
@@ -61,8 +60,8 @@ void dtEditQt::ExternalTool::OnStartTool()
       return;
    }
 
-   //Automatically surround the command with quotes, for those OS's that have
-   //spaces in the path.
+   // Automatically surround the command with quotes, for those OS's that have
+   // spaces in the path.
    const QString withQuotes = QString("\"%1\"").arg(mCommand);
 
    mProcess->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -74,7 +73,6 @@ void dtEditQt::ExternalTool::OnStartTool()
       QMessageBox::warning(NULL, tr("External Tool"), 
                          tr("Failed to start tool.  Does file exist?\n") + mCommand);
    }
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,7 +95,7 @@ const QString& dtEditQt::ExternalTool::GetCmd() const
 
 
 //////////////////////////////////////////////////////////////////////////
-void dtEditQt::ExternalTool::SetArgs(const QString &args)
+void dtEditQt::ExternalTool::SetArgs(const QString& args)
 {
    mArgs = args;
 }
