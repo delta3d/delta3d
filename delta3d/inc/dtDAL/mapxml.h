@@ -95,6 +95,8 @@ namespace dtDAL
          const std::set<std::string>& GetMissingActorTypes(); 
          const std::vector<std::string>& GetMissingLibraries();
 
+         bool HasDeprecatedProperty() const;
+
          MapParser();
 
    protected:

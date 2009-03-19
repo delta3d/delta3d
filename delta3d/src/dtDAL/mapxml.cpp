@@ -233,9 +233,9 @@ namespace dtDAL
    }
 
    /////////////////////////////////////////////////////////////////
-   MapParser::MapParser() :
-      mHandler(new MapContentHandler()),
-      mParsing(false)
+   MapParser::MapParser()
+      : mHandler(new MapContentHandler())
+      , mParsing(false)
    {
       mLogger = &dtUtil::Log::GetInstance(logName);
 
@@ -285,6 +285,12 @@ namespace dtDAL
    const std::vector<std::string>& MapParser::GetMissingLibraries()
    {
       return mHandler->GetMissingLibraries();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool MapParser::HasDeprecatedProperty() const
+   {
+      return mHandler->HasDeprecatedProperty();
    }
 
    /////////////////////////////////////////////////////////////////

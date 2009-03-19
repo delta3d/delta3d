@@ -285,6 +285,12 @@ namespace dtDAL
          return itor->second.get();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   ActorProperty* ActorProxy::GetDeprecatedProperty(const std::string& name)
+   {
+      return NULL;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::GetPropertyList(std::vector<const ActorProperty*> &propList) const
    {

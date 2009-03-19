@@ -180,6 +180,11 @@ namespace dtDAL
          bool HasFoundMapName() const { return mFoundMapName; };
 
          /**
+         * Returns whether or not the map had a temporary property in it.
+         */
+         bool HasDeprecatedProperty() const { return mHasDeprecatedProperty; }
+
+         /**
           * note: store a RefPtr to this map immediately because reparsing with this handler
           * would otherwise cause it to be deleted.
           * @return a handle to the map parsed, or NULL if no map has been created.
@@ -218,6 +223,7 @@ namespace dtDAL
          bool mInActorProperty;
          bool mPreparingProp;
          bool mInGroupProperty;
+         bool mHasDeprecatedProperty;
          int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
 
          std::string mLibName;

@@ -251,24 +251,20 @@ namespace dtActors
          "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
 
+      // A Task in the Task List
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
          *this, "Task", "Task",
          dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTask),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTask),
          "dtActors::TaskActor", "A sub task", GROUPNAME);
 
+      // The Task List.
       AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
          "TaskList", "Task List", "List of sub tasks",
          dtDAL::MakeFunctor(*this, &TaskActorProxy::TaskArraySetIndex),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetDefault),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetValue),
          actorProp, GROUPNAME));
-
-      ////SubTasks property.
-      //AddProperty(new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List",
-      //   dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
-      //   dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
-      //   "The list of subtasks.", GROUPNAME, "TaskChildren"));
 
       // Notify Completed Event
       AddProperty(new dtDAL::GameEventActorProperty(*this,
@@ -311,6 +307,26 @@ namespace dtActors
    void TaskActorProxy::BuildInvokables()
    {
       dtGame::GameActorProxy::BuildInvokables();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProperty* TaskActorProxy::GetDeprecatedProperty(const std::string& name)
+   {
+      dtDAL::ActorProperty* prop = dtGame::GameActorProxy::GetDeprecatedProperty(name);
+
+      if (!prop)
+      {
+         if (name == "SubTasks")
+         {
+            //SubTasks property.
+            prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
+               dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
+               dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
+               "The list of subtasks.", "BaseTask", "TaskChildren");
+         }
+      }
+
+      return prop;
    }
 
    //////////////////////////////////////////////////////////////////////////////

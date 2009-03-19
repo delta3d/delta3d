@@ -194,6 +194,20 @@ namespace dtDAL
          ActorProperty* GetProperty(const std::string& name);
 
          /**
+         * This function queries the proxy with any properties not
+         * found in the property list. If a property was previously
+         * removed from the proxy, but is still important to load,
+         * then this function should return a temporary property of
+         * the appropriate type to be used when loading the map.
+         *
+         * @param[in]  name  The name of the property queried for.
+         *
+         * @return           A temporary property, or NULL if
+         *                   none is needed.
+         */
+         virtual ActorProperty* GetDeprecatedProperty(const std::string& name);
+
+         /**
           * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
           * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
           */

@@ -99,7 +99,6 @@ namespace dtDAL
           */
          void SetReadOnly(bool readOnly) { mReadOnly = readOnly; }
 
-
          /**
           * Set the group name
           * @param name The desired group name
