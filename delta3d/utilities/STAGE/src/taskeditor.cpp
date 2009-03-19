@@ -1,32 +1,33 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* William E. Johnson II 
-* David Guthrie
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * William E. Johnson II
+ * David Guthrie
+ */
+
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/taskeditor.h>
 
@@ -59,17 +60,18 @@
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   TaskEditor::TaskEditor(QWidget *parent) : QDialog(parent)
+   TaskEditor::TaskEditor(QWidget* parent)
+      : QDialog(parent)
    {
       //dtUtil::Log::GetInstance("taskeditor.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
-      QGroupBox   *group = new QGroupBox(tr("Tasks"));
-      QGridLayout *grid  = new QGridLayout(group);
+      QGroupBox*   group = new QGroupBox(tr("Tasks"));
+      QGridLayout* grid  = new QGridLayout(group);
 
-      QVBoxLayout *rightSideLayout = new QVBoxLayout;
-      QLabel      *child       = new QLabel(tr("Children")); 
+      QVBoxLayout* rightSideLayout = new QVBoxLayout;
+      QLabel*      child = new QLabel(tr("Children"));
       grid->addWidget(child, 0, 0);
 
-     
+
       mChildrenView = new QTableWidget(NULL);
       mChildrenView->setSelectionMode(QAbstractItemView::SingleSelection);
       mChildrenView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -78,7 +80,7 @@ namespace dtEditQt
       grid->addWidget(mChildrenView, 1, 0);
 
       mAddExisting = new QPushButton(tr("Add Existing"));
-      
+
       mComboBox = new QComboBox;
       mComboBox->setEditable(false);
 
@@ -90,10 +92,10 @@ namespace dtEditQt
       rightSideLayout->addWidget(mComboBox);
       rightSideLayout->addWidget(mShowTasksWithParents);
       rightSideLayout->addStretch(1);
-      
+
       grid->addLayout(rightSideLayout, 0, 1, 2, 1);
 
-      QHBoxLayout *buttonLayout = new QHBoxLayout;
+      QHBoxLayout* buttonLayout = new QHBoxLayout;
       mMoveUp = new QPushButton(tr("Move Up"));
       mMoveDown = new QPushButton(tr("Move Down"));
       buttonLayout->addWidget(mMoveUp);
@@ -104,15 +106,16 @@ namespace dtEditQt
       mRemoveChild = new QPushButton(tr("Remove Child"));
       grid->addWidget(mRemoveChild, 3, 0);
 
-      QHBoxLayout *okCancelLayout = new QHBoxLayout;
-      QPushButton *ok = new QPushButton(tr("OK")), *cancel = new QPushButton(tr("Cancel"));
+      QHBoxLayout* okCancelLayout = new QHBoxLayout;
+      QPushButton* ok             = new QPushButton(tr("OK"));
+      QPushButton* cancel         = new QPushButton(tr("Cancel"));
       okCancelLayout->addStretch(1);
       okCancelLayout->addWidget(ok);
       okCancelLayout->addStretch(1);
       okCancelLayout->addWidget(cancel);
       okCancelLayout->addStretch(1);
-      
-      QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
+      QVBoxLayout* mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(group);
       mainLayout->addLayout(okCancelLayout);
 
@@ -125,13 +128,13 @@ namespace dtEditQt
 
       connect(mShowTasksWithParents, SIGNAL(stateChanged(int)), this, SLOT(OnShowTasksWithParentsChanged(int)));
 
-      connect(mMoveUp,      SIGNAL(clicked()), this, SLOT(OnMoveUpClicked()));
-      connect(mMoveDown,    SIGNAL(clicked()), this, SLOT(OnMoveDownClicked()));
-      connect(mRemoveChild, SIGNAL(clicked()), this, SLOT(OnRemoveChildClicked()));
-      connect(ok,           SIGNAL(clicked()), this, SLOT(OnOkClicked()));
-      connect(cancel,       SIGNAL(clicked()), this, SLOT(close()));      
-      connect(mChildrenView,   SIGNAL(itemSelectionChanged()), this, SLOT(EnableEditButtons()));
-      
+      connect(mMoveUp,       SIGNAL(clicked()), this, SLOT(OnMoveUpClicked()));
+      connect(mMoveDown,     SIGNAL(clicked()), this, SLOT(OnMoveDownClicked()));
+      connect(mRemoveChild,  SIGNAL(clicked()), this, SLOT(OnRemoveChildClicked()));
+      connect(ok,            SIGNAL(clicked()), this, SLOT(OnOkClicked()));
+      connect(cancel,        SIGNAL(clicked()), this, SLOT(close()));
+      connect(mChildrenView, SIGNAL(itemSelectionChanged()), this, SLOT(EnableEditButtons()));
+
       RefreshComboBox("");
    }
 
@@ -145,7 +148,7 @@ namespace dtEditQt
    {
       LOGN_DEBUG("taskeditor.cpp", "Populate Children");
       mChildrenView->clear();
-      
+
       mChildrenView->setColumnCount(2);
       mChildrenView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
       mChildrenView->horizontalHeader()->setFixedHeight(20);
@@ -157,11 +160,15 @@ namespace dtEditQt
       mChildrenView->setHorizontalHeaderLabels(names);
 
       names.clear();
-      
-      if(mChildrenView->currentItem() == NULL)
+
+      if (mChildrenView->currentItem() == NULL)
+      {
          DisableEditButtons();
+      }
       else
+      {
          mChildrenView->setItemSelected(mChildrenView->currentItem(), true);
+      }
 
       dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
       if (m == NULL)
@@ -170,12 +177,12 @@ namespace dtEditQt
          return;
       }
       dtDAL::Map& currMap = *m;
-      
+
       if (mChildren.valid())
       {
          std::vector<dtDAL::NamedParameter*> toFill;
          mChildren->GetParameters(toFill);
-         
+
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
             dtDAL::NamedParameter* np = toFill[i];
@@ -189,7 +196,7 @@ namespace dtEditQt
                }
             }
          }
-         BlankRowLabels();         
+         BlankRowLabels();
       }
    }
 
@@ -198,29 +205,37 @@ namespace dtEditQt
    {
       QStringList names;
       QString blank(tr(""));
-      
+
       for (int i = 0; i < mChildrenView->rowCount(); ++i)
+      {
          names.push_back(blank);
-         
+      }
+
       mChildrenView->setVerticalHeaderLabels(names);
    }
 
    void TaskEditor::SwapRows(int firstRow, int secondRow)
    {
       if (firstRow == secondRow)
+      {
          return;
+      }
       if (firstRow < 0 || firstRow >= mChildrenView->rowCount())
+      {
          return;
+      }
       if (secondRow < 0 || secondRow >= mChildrenView->rowCount())
+      {
          return;
-  
+      }
+
       //have to copy the items because when you call setItem, the old item is deleted.
-      QTableWidgetItem *nm1 = new QTableWidgetItem(*mChildrenView->item(firstRow, 0));
-      QTableWidgetItem *type1 = new QTableWidgetItem(*mChildrenView->item(firstRow, 1));      
-      QTableWidgetItem *nm2 = new QTableWidgetItem(*mChildrenView->item(secondRow, 0));
-      QTableWidgetItem *type2 = new QTableWidgetItem(*mChildrenView->item(secondRow, 1));
-      mChildrenView->setItem(firstRow, 0, nm2);
-      mChildrenView->setItem(firstRow, 1, type2);
+      QTableWidgetItem* nm1   = new QTableWidgetItem(*mChildrenView->item(firstRow,  0));
+      QTableWidgetItem* type1 = new QTableWidgetItem(*mChildrenView->item(firstRow,  1));
+      QTableWidgetItem* nm2   = new QTableWidgetItem(*mChildrenView->item(secondRow, 0));
+      QTableWidgetItem* type2 = new QTableWidgetItem(*mChildrenView->item(secondRow, 1));
+      mChildrenView->setItem(firstRow,  0, nm2);
+      mChildrenView->setItem(firstRow,  1, type2);
       mChildrenView->setItem(secondRow, 0, nm1);
       mChildrenView->setItem(secondRow, 1, type1);
    }
@@ -229,9 +244,9 @@ namespace dtEditQt
    void TaskEditor::AddItemToList(dtDAL::ActorProxy& proxy)
    {
       const dtDAL::ActorType& at = proxy.GetActorType();
-      QTableWidgetItem *nm = new QTableWidgetItem;
-      QTableWidgetItem *type = new QTableWidgetItem;
-   
+      QTableWidgetItem* nm       = new QTableWidgetItem;
+      QTableWidgetItem* type     = new QTableWidgetItem;
+
       nm->setText(tr(proxy.GetName().c_str()));
       nm->setData(Qt::UserRole, QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(&proxy)));
       type->setText(tr((at.GetFullName()).c_str()));
@@ -242,7 +257,7 @@ namespace dtEditQt
       mChildrenView->setItem(row, 0, nm);
       mChildrenView->setItem(row, 1, type);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    bool TaskEditor::HasChild(dtDAL::ActorProxy& proxyToTest)
    {
@@ -252,56 +267,60 @@ namespace dtEditQt
          if (item != NULL)
          {
             QVariant v = item->data(Qt::UserRole);
-            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value<dtCore::RefPtr<dtDAL::ActorProxy> >();
+            dtCore::RefPtr<dtDAL::ActorProxy> proxy = v.value< dtCore::RefPtr<dtDAL::ActorProxy> >();
             if (proxy->GetId() == proxyToTest.GetId())
+            {
                return true;
+            }
          }
       }
       return false;
-   }   
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void TaskEditor::RefreshComboBox(const QString &itemName)
+   void TaskEditor::RefreshComboBox(const QString& itemName)
    {
       LOGN_DEBUG("taskeditor.cpp", "Refresh Combo Box");
       mComboBox->clear();
       dtDAL::Map* m = EditorData::GetInstance().getCurrentMap();
-      
+
       if (m == NULL)
       {
          LOG_ERROR("Unable read lookup the task actor types because the current map is NULL.");
          return;
       }
-      
+
       const std::string topLevelProperty("IsTopLevel");
-      
+
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
       std::vector<dtDAL::ActorProxy*> selectedActors;
       m->FindProxies(toFill, "", "dtcore.Tasks", "Task Actor");
       EditorData::GetInstance().GetSelectedActors(selectedActors);
-      
+
       for (unsigned i = 0; i < toFill.size(); ++i)
       {
          dtDAL::ActorProxy* ap = toFill[i].get();
          bool isRemoved = mRemovedTasks.find(ap) != mRemovedTasks.end();
          // We don't want to see actors with parents unless it has been removed from the current parent actor
-         // or the checkbox has been selected by the user to explicitly show them. 
+         // or the checkbox has been selected by the user to explicitly show them.
          if (!isRemoved && mShowTasksWithParents->checkState() == Qt::Unchecked)
          {
-            dtDAL::BooleanActorProperty* bap = static_cast<dtDAL::BooleanActorProperty*>(ap->GetProperty(topLevelProperty)); 
+            dtDAL::BooleanActorProperty* bap = static_cast<dtDAL::BooleanActorProperty*>(ap->GetProperty(topLevelProperty));
             if (bap == NULL)
             {
-               LOG_ERROR("A task actor named \"" + ap->GetName() + "\" with type \"" + ap->GetActorType().GetCategory() 
-                  + "." + ap->GetActorType().GetName() + "\" was found that doesn't have an \"" 
+               LOG_ERROR("A task actor named \"" + ap->GetName() + "\" with type \"" + ap->GetActorType().GetCategory()
+                  + "." + ap->GetActorType().GetName() + "\" was found that doesn't have an \""
                   + topLevelProperty + "\" property.  Ignoring.");
                continue;
             }
-               
+
             //don't add non-top-level tasks to the list.
             if (!bap->GetValue())
+            {
                continue;
+            }
          }
-   
+
          bool isSelected = false;
          for (unsigned j = 0; j < selectedActors.size(); ++j)
          {
@@ -310,15 +329,15 @@ namespace dtEditQt
                isSelected = true;
                break;
             }
-         } 
-                  
+         }
+
          if (!isSelected && !HasChild(*ap))
          {
             //TODO if it's not the currently selected actor
-            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap)); 
+            QVariant v = QVariant::fromValue(dtCore::RefPtr<dtDAL::ActorProxy>(ap));
             mComboBox->addItem(tr(ap->GetName().c_str()), v);
          }
-         
+
       }
    }
 
@@ -374,7 +393,7 @@ namespace dtEditQt
       LOGN_DEBUG("taskeditor.cpp", "Okay Clicked");
       accept();
    }
-   
+
    void TaskEditor::OnShowTasksWithParentsChanged(int state)
    {
       LOGN_DEBUG("taskeditor.cpp", "ShowTasksWithParents changed.");
@@ -389,7 +408,7 @@ namespace dtEditQt
       mMoveDown->setDisabled(false);
       mRemoveChild->setDisabled(false);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::DisableEditButtons()
    {
@@ -414,12 +433,14 @@ namespace dtEditQt
          //remove the item being added from the removed list, if necessary.
          std::set<dtCore::RefPtr<dtDAL::ActorProxy> >::iterator itor = mRemovedTasks.find(proxy);
          if (itor != mRemovedTasks.end())
+         {
             mRemovedTasks.erase(itor);
+         }
 
          RefreshComboBox("");
-      } 
+      }
    }
-         
+
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::OnComboSelectionChanged(int index)
    {
@@ -440,7 +461,7 @@ namespace dtEditQt
       mChildren = new dtDAL::NamedGroupParameter(children);
       PopulateChildren();
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void TaskEditor::GetTaskChildren(dtDAL::NamedGroupParameter& toFill) const
    {
@@ -459,5 +480,5 @@ namespace dtEditQt
          }
       }
    }
-   
-}
+
+} // namespace dtEditQt

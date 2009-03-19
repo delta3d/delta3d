@@ -1,28 +1,28 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2007-2008, MOVES Institute
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* Michael Guerrero
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2007-2008, MOVES Institute
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Michael Guerrero
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <QtCore/QDir>
 #include <QtGui/QHeaderView>
@@ -73,10 +73,9 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   SkeletalMeshBrowser::SkeletalMeshBrowser(dtDAL::DataType &type,QWidget *parent)
-      : ResourceAbstractBrowser(&type,parent)
+   SkeletalMeshBrowser::SkeletalMeshBrowser(dtDAL::DataType& type, QWidget* parent)
+      : ResourceAbstractBrowser(&type, parent)
    {
-
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
@@ -89,7 +88,7 @@ namespace dtEditQt
       camera = new StageCamera();
       camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
 
-      QSplitter *splitter = new QSplitter(Qt::Vertical,this);
+      QSplitter* splitter = new QSplitter(Qt::Vertical,this);
 
       splitter->addWidget(previewGroup());
       splitter->addWidget(listGroup());
@@ -99,8 +98,8 @@ namespace dtEditQt
 
       // setup the grid layouts
       grid = new QGridLayout(this);
-      grid->addWidget(splitter,0,0);
-      grid->addWidget(standardButtons(QString("Resource Tools")),1,0,Qt::AlignCenter);
+      grid->addWidget(splitter, 0, 0);
+      grid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
 
       createActions();
       createContextMenu();
@@ -111,31 +110,33 @@ namespace dtEditQt
       // This corrects the stretch for the last row
       grid->setRowStretch(1,0);
    }
-   ///////////////////////////////////////////////////////////////////////////////
-   SkeletalMeshBrowser::~SkeletalMeshBrowser(){}
-   ///////////////////////////////////////////////////////////////////////////////
-   QGroupBox *SkeletalMeshBrowser::previewGroup()
-   {
-      QGroupBox *groupBox = new QGroupBox(tr("Preview"));
 
-      QGridLayout *grid = new QGridLayout(groupBox);
+   ///////////////////////////////////////////////////////////////////////////////
+   SkeletalMeshBrowser::~SkeletalMeshBrowser() {}
+
+   ///////////////////////////////////////////////////////////////////////////////
+   QGroupBox* SkeletalMeshBrowser::previewGroup()
+   {
+      QGroupBox* groupBox = new QGroupBox(tr("Preview"));
+
+      QGridLayout* grid = new QGridLayout(groupBox);
 
       // New reference of the viewport manager singleton
-      ViewportManager &vpMgr = ViewportManager::GetInstance();
+      ViewportManager& vpMgr = ViewportManager::GetInstance();
 
       // Create the perspective viewport for the static mesh preview window
-      perspView = (PerspectiveViewport *)vpMgr.createViewport("Preview",
+      perspView = (PerspectiveViewport*)vpMgr.createViewport("Preview",
          ViewportManager::ViewportType::PERSPECTIVE);
 
       // Assign the viewport a new scene
       perspView->setScene(meshScene.get());
 
-      //By default, perspective viewports have their camera set to the world view
-      //camera.  The world view camera is what is used in the main perspective view.
+      // By default, perspective viewports have their camera set to the world view
+      // camera.  The world view camera is what is used in the main perspective view.
       perspView->setCamera(camera.get());
 
-      //No need for an overlay for this viewport since we cannot select meshes
-      //in the preview window.
+      // No need for an overlay for this viewport since we cannot select meshes
+      // in the preview window.
       perspView->setOverlay(NULL);
 
       // Disable the interaction modes
@@ -147,93 +148,101 @@ namespace dtEditQt
       perspView->setCameraMode();
 
       // Create a viewport container for our static mesh window
-      container = new ViewportContainer(perspView,groupBox);
+      container = new ViewportContainer(perspView, groupBox);
       container->setViewport(perspView);
 
-      grid->addWidget(container,0,0);
+      grid->addWidget(container, 0, 0);
       return groupBox;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
-   QGroupBox *SkeletalMeshBrowser::listGroup()
+   QGroupBox* SkeletalMeshBrowser::listGroup()
    {
-      QGroupBox *groupBox = new QGroupBox(tr("Skeletal Meshes"));
-      QGridLayout *grid = new QGridLayout(groupBox);
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QGroupBox*   groupBox = new QGroupBox(tr("Skeletal Meshes"));
+      QGridLayout* grid     = new QGridLayout(groupBox);
+      QHBoxLayout* hbox     = new QHBoxLayout();
 
       // Checkbox for auto preview
-      previewChk = new QCheckBox(tr("Auto Preview"),groupBox);
-      connect(previewChk,SIGNAL(stateChanged(int)),this,SLOT(checkBoxSelected()));
+      previewChk = new QCheckBox(tr("Auto Preview"), groupBox);
+      connect(previewChk,SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
       previewChk->setChecked(false);
 
       // Preview button for a selected mesh
-      previewBtn = new QPushButton("Preview",groupBox);
+      previewBtn = new QPushButton("Preview", groupBox);
       connect(previewBtn, SIGNAL(clicked()), this, SLOT(displaySelection()));
       previewBtn->setDisabled(true);
 
-      hbox->addWidget(previewChk,0,Qt::AlignLeft);
-      hbox->addWidget(previewBtn,0,Qt::AlignRight);
-      grid->addLayout(hbox,0,0);
-      grid->addWidget(tree,1,0);
+      hbox->addWidget(previewChk, 0, Qt::AlignLeft);
+      hbox->addWidget(previewBtn, 0, Qt::AlignRight);
+      grid->addLayout(hbox, 0, 0);
+      grid->addWidget(tree, 1, 0);
 
       return groupBox;
    }
    ///////////////////////////////////////////////////////////////////////////////
    // Keyboard Event filter
    ///////////////////////////////////////////////////////////////////////////////
-   bool SkeletalMeshBrowser::eventFilter(QObject *obj, QEvent *e)
+   bool SkeletalMeshBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree) {
+      if (obj == tree)
+      {
          //For some reason, KeyPress is getting defined by something...
          //Without this undef, it will not compile under Linux..
          //It would be great if someone could figure out exactly what's
          //going on.
 #undef KeyPress
-         if (e->type() == QEvent::KeyPress) {
-            QKeyEvent *keyEvent = (QKeyEvent *)e;
-            switch(keyEvent->key())
+         if (e->type() == QEvent::KeyPress)
+         {
+            QKeyEvent* keyEvent = (QKeyEvent *)e;
+            switch (keyEvent->key())
             {
-            case Qt::Key_Return :
-               if(selection->isResource()){
+            case Qt::Key_Return:
+               if (selection->isResource())
+               {
                   selectionChanged();
                   displaySelection();
                }
                break;
             case Qt::Key_Enter:
-               if(selection->isResource()){
+               if (selection->isResource())
+               {
                   selectionChanged();
                   displaySelection();
                }
                break;
             default:
-               return tree->eventFilter(obj,e);
+               return tree->eventFilter(obj, e);
             }
          }
-         else{
+         else
+         {
             // pass the event on to the parent class
             return tree->eventFilter(obj, e);
          }
       }
       return false;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::createActions()
    {
       ResourceAbstractBrowser::createActions();
 
-      setCreateAction = new QAction(tr("&Create Actor"),getCurrentParent());
+      setCreateAction = new QAction(tr("&Create Actor"), getCurrentParent());
       setCreateAction->setCheckable(false);
-      connect(setCreateAction, SIGNAL(triggered()),this,SLOT(createActor()));
+      connect(setCreateAction, SIGNAL(triggered()), this, SLOT(createActor()));
       setCreateAction->setEnabled(false);
 
       // Allow the preview of the scene graph for an ive file
       setSGPreviewAction = new QAction(tr("Preview Scene Graph"), getCurrentParent());
       //setSGPreviewAction->setCheckable(false);
-      connect(setSGPreviewAction, SIGNAL(triggered()),this,SLOT(viewSceneGraph()));
+      connect(setSGPreviewAction, SIGNAL(triggered()), this, SLOT(viewSceneGraph()));
       //setSGPreviewAction->setEnabled(false);
 
       setOSGDump = new QAction(tr("Preview File"), getCurrentParent());
       connect(setOSGDump, SIGNAL(triggered()), this, SLOT(viewOSGContents()));
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::createContextMenu()
    {
@@ -242,20 +251,21 @@ namespace dtEditQt
       contextMenu->addAction(setSGPreviewAction);
       contextMenu->addAction(setOSGDump);
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    // Slots
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::displaySelection()
    {
-      ResourceTreeWidget *selection = currentSelection();
+      ResourceTreeWidget* selection = currentSelection();
       bool validFile = false;
 
-      if(selection != NULL)
+      if (selection != NULL)
       {
          QString file;
          QString context;
 
-         dtDAL::Project &project = dtDAL::Project::GetInstance();
+         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
          // Find the currently selected tree item
          dtDAL::ResourceDescriptor resource = EditorData::GetInstance().getCurrentMeshResource();
@@ -265,24 +275,24 @@ namespace dtEditQt
             file = QString(project.GetResourcePath(resource).c_str());
             validFile = true;
          }
-         catch (dtUtil::Exception &)
+         catch (dtUtil::Exception&)
          {
             validFile = false;
          }
 
-         if(file != NULL && validFile==true)
+         if (file != NULL && validFile == true)
          {
             context = QString(project.GetContext().c_str());
             // The following is performed to comply with linux and windows file systems
-            file = context+"\\"+file;
-            file.replace("\\","/");
+            file = context + "\\" + file;
+            file.replace("\\", "/");
 
-            if(meshScene->GetDrawableIndex(previewObject.get())==(unsigned)meshScene->GetNumberOfAddedDrawable())
+            if (meshScene->GetDrawableIndex(previewObject.get()) == (unsigned)meshScene->GetNumberOfAddedDrawable())
             {
                meshScene->AddDrawable(previewObject.get());
             }
 
-            //Load the new file.
+            // Load the new file.
             previewObject->LoadFile(file.toStdString());
             previewObject->RecenterGeometryUponLoad();
             perspView->refresh();
@@ -294,6 +304,7 @@ namespace dtEditQt
          }
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::selectionChanged()
    {
@@ -307,18 +318,18 @@ namespace dtEditQt
       meshScene->RemoveDrawable(previewObject.get());
       perspView->refresh();
 
-      if(selection != NULL)
+      if (selection != NULL)
       {
-         if(selection->isResource())
+         if (selection->isResource())
          {
             // auto preview
-            if(previewChk->isChecked())
+            if (previewChk->isChecked())
             {
                displaySelection();
             }
             previewBtn->setDisabled(false);
 
-            if(EditorData::GetInstance().getCurrentMap() != NULL)
+            if (EditorData::GetInstance().getCurrentMap() != NULL)
             {
                setCreateAction->setEnabled(true);
             }
@@ -331,12 +342,13 @@ namespace dtEditQt
          }
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::checkBoxSelected()
    {
-      if(previewChk->isChecked())
+      if (previewChk->isChecked())
       {
-         if(selection->isResource())
+         if (selection->isResource())
          {
             // preview current item
             selectionChanged();
@@ -344,18 +356,20 @@ namespace dtEditQt
          }
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::doubleClickEvent()
    {
-      if(selection->isResource())
+      if (selection->isResource())
       {
          displaySelection();
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::deleteItemEvent()
    {
-      if(selection->isResource())
+      if (selection->isResource())
       {
          // When any item is selected, clear the scene
          meshScene->RemoveDrawable(previewObject.get());
@@ -363,12 +377,13 @@ namespace dtEditQt
          previewBtn->setDisabled(true);
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::createActor()
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      if(selection->isResource())
+      if (selection->isResource())
       {
          LOG_INFO("User Created an Actor - Slot");
 
@@ -381,7 +396,7 @@ namespace dtEditQt
          * actor of this type.
          */
          dtCore::RefPtr<const dtDAL::ActorType> meshActor =
-            dtDAL::LibraryManager::GetInstance().FindActorType("Animation","Animation");
+            dtDAL::LibraryManager::GetInstance().FindActorType("Animation", "Animation");
 
          // create our new actor proxy from the mesh actor type that was
          // found by the results of our hard coded search above.
@@ -396,7 +411,7 @@ namespace dtEditQt
             if (proxy.valid())
             {
                // grab the actor property type
-               dtDAL::ResourceActorProperty *resourceProp = dynamic_cast<dtDAL::ResourceActorProperty *>
+               dtDAL::ResourceActorProperty* resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>
                   (proxy->GetProperty("Skeletal Mesh"));
 
                if (resourceProp != NULL)
@@ -418,7 +433,7 @@ namespace dtEditQt
                EditorEvents::GetInstance().emitEndChangeTransaction();
 
                // Now, let the world that it should select the new actor proxy.
-               std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+               std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
 
                actors.push_back(proxy);
                EditorEvents::GetInstance().emitActorsSelected(actors);
@@ -427,12 +442,13 @@ namespace dtEditQt
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void SkeletalMeshBrowser::viewSceneGraph()
    {
       QString resourceName;
       // Make sure we have a valid resource
-      if(selection->isResource())
+      if (selection->isResource())
       {
          QDialog dlg(this);
          dlg.setModal(true);
@@ -440,15 +456,15 @@ namespace dtEditQt
          dlg.setMinimumSize(400, 400);
          dlg.setSizeGripEnabled(true);
 
-         QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
-         QTextEdit *text = new QTextEdit(&dlg);
-         QPushButton *close = new QPushButton(tr("Close"), &dlg);
+         QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
+         QTextEdit*   text    = new QTextEdit(&dlg);
+         QPushButton* close   = new QPushButton(tr("Close"), &dlg);
 
-         dtDAL::ResourceDescriptor &rd = selection->getResourceDescriptor();
+         dtDAL::ResourceDescriptor& rd = selection->getResourceDescriptor();
          const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
 
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
-         osg::Node *node = obj->LoadFile(fileName);
+         osg::Node* node = obj->LoadFile(fileName);
 
          // If the file was successfully loaded, continue
          if (node)
@@ -456,7 +472,7 @@ namespace dtEditQt
             dtCore::RefPtr<dtUtil::NodePrintOut> nodepo = new dtUtil::NodePrintOut;
 
             text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
-            text->setText( tr(nodepo->CollectNodeData(*node).c_str()) );
+            text->setText(tr(nodepo->CollectNodeData(*node).c_str()));
 
             obj = NULL;
             nodepo = NULL;
@@ -475,7 +491,7 @@ namespace dtEditQt
    {
       QString resourceName;
       // Make sure we have a valid resource
-      if(selection->isResource())
+      if (selection->isResource())
       {
          QDialog dlg(this);
          dlg.setModal(true);
@@ -483,17 +499,17 @@ namespace dtEditQt
          dlg.setMinimumSize(400, 400);
          dlg.setSizeGripEnabled(true);
 
-         QVBoxLayout *vLayout = new QVBoxLayout(&dlg);
-         QTextEdit *text = new QTextEdit(&dlg);
-         QPushButton *close = new QPushButton(tr("Close"), &dlg);
+         QVBoxLayout* vLayout = new QVBoxLayout(&dlg);
+         QTextEdit*   text    = new QTextEdit(&dlg);
+         QPushButton* close   = new QPushButton(tr("Close"), &dlg);
 
          text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
 
-         dtDAL::ResourceDescriptor &rd = selection->getResourceDescriptor();
+         dtDAL::ResourceDescriptor& rd = selection->getResourceDescriptor();
          const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
 
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
-         osg::Node *node = obj->LoadFile(fileName);
+         osg::Node* node = obj->LoadFile(fileName);
 
          // If the file was successfully loaded, continue
          if (node)
@@ -516,4 +532,5 @@ namespace dtEditQt
          }
       }
    }
-}
+
+} // namespace dtEditQt
