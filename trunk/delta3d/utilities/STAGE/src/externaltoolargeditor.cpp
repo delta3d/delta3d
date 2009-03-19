@@ -2,15 +2,15 @@
 #include <dtEditQt/externaltoolargparser.h>
 
 //////////////////////////////////////////////////////////////////////////
-dtEditQt::ExternalToolArgEditor::ExternalToolArgEditor(const QList<const ExternalToolArgParser*> &parsers,
+dtEditQt::ExternalToolArgEditor::ExternalToolArgEditor(const QList<const ExternalToolArgParser*>& parsers,
                                                        const QString& args,
                                                        QWidget* parent)
-: QDialog(parent)
+   : QDialog(parent)
 {
    ui.setupUi(this);
    ui.argEdit->setText(args);
 
-   for (int parserIdx=0; parserIdx<parsers.size(); ++parserIdx)
+   for (int parserIdx = 0; parserIdx < parsers.size(); ++parserIdx)
    {     
       QListWidgetItem* item = new QListWidgetItem(ui.parserList);
       const ExternalToolArgParser* p = parsers.at(parserIdx);

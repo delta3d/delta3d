@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Matthew W. Campbell
+ */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMainWindow>
 #include <QtCore/QTimer>
@@ -41,13 +41,12 @@
 namespace dtEditQt
 {
 
-   //Singleton instance of the event manager.
+   // Singleton instance of the event manager.
    dtCore::RefPtr<EditorEvents> EditorEvents::instance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorEvents::EditorEvents()
    {
-
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +55,7 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorEvents::emitActorsSelected(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &actors)
+   void EditorEvents::emitActorsSelected(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
       LOG_INFO("Emitting UI event - [actorsSelected]");
       emit selectedActors(actors);
@@ -114,7 +113,7 @@ namespace dtEditQt
    {
       LOG_INFO("Emitting UI event - [projectChanged]");
       emit projectChanged();
-      //emit
+      // emit
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -147,19 +146,19 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
-         dtCore::RefPtr<dtDAL::ActorProperty> property)
+      dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
-      //I removed logging from this event.  This is called when the user
-      //manipulates actors in the viewports which means the log file is going to have
-      //a ton of messages for this event, thus in my opinion, polluting the
-      //log file and causing unneeded disk IO. -Matt
+      // I removed logging from this event.  This is called when the user
+      // manipulates actors in the viewports which means the log file is going to have
+      // a ton of messages for this event, thus in my opinion, polluting the
+      // log file and causing unneeded disk IO. -Matt
       //LOG_INFO("Emitting UI event - [actorPropertyChanged]");
       emit actorPropertyChanged(proxy, property);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorEvents::emitActorPropertyAboutToChange(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
-         dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
+      dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
    {
       // no logging here, just like with property changed.
       // note, if this is not sent out before a property changed event (see above)
@@ -251,12 +250,13 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorEvents &EditorEvents::GetInstance()
+   EditorEvents& EditorEvents::GetInstance()
    {
       if (EditorEvents::instance.get() == NULL)
+      {
          EditorEvents::instance = new EditorEvents();
+      }
       return *(EditorEvents::instance.get());
    }
 
-
-}
+} // namespace dtEditQt
