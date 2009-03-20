@@ -1424,9 +1424,9 @@ void ResourceDock::CreateLightItems()
 QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* position = CreateTreeItem("Position", "", Qt::ItemIsEnabled, parent);
-   QTreeWidgetItem* xItem = CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
-   QTreeWidgetItem* yItem = CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
-   QTreeWidgetItem* zItem = CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
+   CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
+   CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
+   CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, position);
    return position;
 }
 
@@ -1434,9 +1434,9 @@ QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 QTreeWidgetItem* ResourceDock::CreateRotationItem(QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* rotation = CreateTreeItem("Rotation", "", Qt::ItemIsEnabled, parent);
-   QTreeWidgetItem* xItem = CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
-   QTreeWidgetItem* yItem = CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
-   QTreeWidgetItem* zItem = CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
    return rotation;
 }
 
@@ -1444,10 +1444,10 @@ QTreeWidgetItem* ResourceDock::CreateRotationItem(QTreeWidgetItem* parent)
 QTreeWidgetItem* ResourceDock::CreateColorItem(const std::string& name, QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* colorItem = CreateTreeItem(name.c_str(), "", Qt::ItemIsEnabled, parent);
-   QTreeWidgetItem* redItem   = CreateTreeItem("r", "", Qt::ItemIsEnabled, colorItem);
-   QTreeWidgetItem* greenItem = CreateTreeItem("g", "", Qt::ItemIsEnabled, colorItem);
-   QTreeWidgetItem* blueItem  = CreateTreeItem("b", "", Qt::ItemIsEnabled, colorItem);
-   QTreeWidgetItem* alphaItem  = CreateTreeItem("a", "", Qt::ItemIsEnabled, colorItem);
+   CreateTreeItem("r", "", Qt::ItemIsEnabled, colorItem);
+   CreateTreeItem("g", "", Qt::ItemIsEnabled, colorItem);
+   CreateTreeItem("b", "", Qt::ItemIsEnabled, colorItem);
+   CreateTreeItem("a", "", Qt::ItemIsEnabled, colorItem);
 
    QColor color;
    QPixmap colorPicker(16, 16);

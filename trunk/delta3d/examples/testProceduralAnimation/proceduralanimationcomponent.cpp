@@ -140,8 +140,6 @@ void ProceduralAnimationComponent::CreateIKActorsForAesthetics()
    gcData.SetAdjustRotationToGround(false);
    gcData.SetUseModelDimensions(false);
 
-   dtGame::GameManager& gameManager = *GetGameManager();
-
    const int HORIZONTAL_ELEMENTS = 5;
    const int VERTICAL_ELEMENTS = 5;
    const float ELEMENT_SPACE = 4.0f;
@@ -173,9 +171,6 @@ void ProceduralAnimationComponent::CreateIKActorsForAesthetics()
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationComponent::InitializeIKActors()
 {
-   dtGame::GameManager* gm = GetGameManager();
-   dtABC::Application& app = GetGameManager()->GetApplication();
-
    // Give all IK actors access to the database
    for (size_t actorIndex = 0; actorIndex < mActorList.size(); ++actorIndex)
    {      

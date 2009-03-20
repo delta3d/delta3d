@@ -545,7 +545,6 @@ void FileUtilsTests::testDirectoryContentsWithOneFilter()
 void FileUtilsTests::testDirectoryContentsWithTwoFilters()
 {
    const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
-   const size_t numAllFiles = allContents.size();
 
    dtUtil::FileExtensionList extensions;
    extensions.push_back(".cpp");
