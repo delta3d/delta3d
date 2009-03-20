@@ -441,24 +441,28 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       // Array of strings
       void StringArraySetIndex(int index);
       std::string StringArrayGetDefault();
-      std::vector<std::string>& StringArrayGetValue();
+      std::vector<std::string> StringArrayGetValue();
+      void StringArraySetValue(const std::vector<std::string>& value);
       void SetStringArrayValue(const std::string& value);
       std::string GetStringArrayValue();
 
       // Array of colors
       void ColorArraySetIndex(int index);
       osg::Vec4 ColorArrayGetDefault();
-      std::vector<osg::Vec4>& ColorArrayGetValue();
+      std::vector<osg::Vec4> ColorArrayGetValue();
+      void ColorArraySetValue(const std::vector<osg::Vec4>& value);
       void SetColorArrayValue(const osg::Vec4& value);
       osg::Vec4 GetColorArrayValue();
 
       // Array of Arrays of Ints.
       void IntArraySetIndex(int index);
       int IntArrayGetDefault();
-      std::vector<int>& IntArrayGetValue();
+      std::vector<int> IntArrayGetValue();
+      void IntArraySetValue(const std::vector<int>& value);
       void ArrayArraySetIndex(int index);
       std::vector<int> ArrayArrayGetDefault();
-      std::vector<std::vector<int> >& ArrayArrayGetValue();
+      std::vector<std::vector<int> > ArrayArrayGetValue();
+      void ArrayArraySetValue(const std::vector<std::vector<int> >& value);
       void SetIntArrayValue(int value);
       int GetIntArrayValue();
 

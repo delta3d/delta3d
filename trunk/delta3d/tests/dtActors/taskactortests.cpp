@@ -41,6 +41,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/namedparameter.h>
@@ -335,14 +336,21 @@ void TaskActorTests::TestTaskSubTasks()
       CPPUNIT_ASSERT_MESSAGE("Number of child tasks should have been 25, and the GetAllSubTasks method should clear before filling.", 
          children.size() == 25);
 
-      dtDAL::GroupActorProperty* subTasksGroup = dynamic_cast<dtDAL::GroupActorProperty*>(mParentProxy->GetProperty("SubTasks"));
-      CPPUNIT_ASSERT(subTasksGroup != NULL);
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam = subTasksGroup->GetValue();
-      CPPUNIT_ASSERT(subTasksGroupParam.valid());
-   
-      CPPUNIT_ASSERT_MESSAGE("Number of child tasks in the group property should be 25.", subTasksGroupParam->GetParameterCount() == 25);
-      std::vector<dtDAL::NamedParameter*> subTaskActorIds;
-      subTasksGroupParam->GetParameters(subTaskActorIds);
+      dtDAL::ArrayActorProperty<dtCore::UniqueId>* subTaskArray = dynamic_cast<dtDAL::ArrayActorProperty<dtCore::UniqueId>*>(mParentProxy->GetProperty("SubTaskList"));
+      CPPUNIT_ASSERT(subTaskArray != NULL);
+
+      std::vector<dtCore::UniqueId> subTasks = subTaskArray->GetValue();
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> subTaskArrayParam = new dtDAL::NamedArrayParameter("TaskParam");
+      subTaskArrayParam->SetFromProperty(*subTaskArray);
+      CPPUNIT_ASSERT(subTaskArrayParam.valid());
+      subTaskArrayParam->ApplyValueToProperty(*subTaskArray);
+
+      CPPUNIT_ASSERT_MESSAGE("Number of child tasks in the group property should be 25.", subTaskArray->GetArraySize() == 25);
+
+      dtDAL::ActorIDActorProperty* taskProp = dynamic_cast<dtDAL::ActorIDActorProperty*>(subTaskArray->GetArrayProperty());
+      CPPUNIT_ASSERT_MESSAGE("The properties in the subtasks array prop should all be of type ActorIDActorProperty.",
+         taskProp != NULL);
 
       //Make sure the parent was set correctly and that we can find the task.
       for (unsigned i = 0; i < 25; i++)
@@ -350,14 +358,12 @@ void TaskActorTests::TestTaskSubTasks()
          CPPUNIT_ASSERT_MESSAGE("Parent was not set correctly.",children[i]->GetParentTask() == mParentProxy.get());
          CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
             mParentProxy->FindSubTask(children[i]->GetId()) != NULL);
-         CPPUNIT_ASSERT_MESSAGE("Should have found the task by unique id.",
+         CPPUNIT_ASSERT_MESSAGE("Should have found the task by name.",
             mParentProxy->FindSubTask(children[i]->GetName()) != NULL);
          
-         dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
-         CPPUNIT_ASSERT_MESSAGE("The parameters in the subtasks group prop should all be NamedActorParameters.",
-            subTaskActorParam != NULL);
+         subTaskArray->SetIndex(i);
          CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
-            children[i]->GetId() == subTaskActorParam->GetValue());
+            children[i]->GetId() == taskProp->GetValue());
       }
 
       for (unsigned i = 0; i < 25; i += 2)
@@ -380,29 +386,31 @@ void TaskActorTests::TestTaskSubTasks()
       CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left.",
          mParentProxy->GetSubTaskCount() == 0);
       
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> subTasksGroupParam2 = subTasksGroup->GetValue();
-      CPPUNIT_ASSERT(subTasksGroupParam2.valid());
+      std::vector<dtCore::UniqueId> subTasks2 = subTaskArray->GetValue();
       CPPUNIT_ASSERT_MESSAGE("There should be no more child tasks left when looking in the group property.", 
-         subTasksGroupParam2->GetParameterCount() == 0);
+         subTasks2.size() == 0);
       
-      subTasksGroup->SetValue(*subTasksGroupParam);
+      subTaskArray->SetValue(subTasks);
       mParentProxy->GetAllSubTasks(children);
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the subtasks via the property should populate the list of children.", 
-         subTasksGroupParam->GetParameterCount(), (unsigned int) children.size());
+         subTasks.size(), children.size());
       
       for (unsigned i = 0; i < children.size(); i++)
       {
-         dtDAL::NamedActorParameter* subTaskActorParam = dynamic_cast<dtDAL::NamedActorParameter*>(subTaskActorIds[i]);
          CPPUNIT_ASSERT_MESSAGE("The SubTasks in the group property should have the same id's and be in the same order as the list on the proxy.",
-            children[i]->GetId() == subTaskActorParam->GetValue());
+            children[i]->GetId() == subTasks[i]);
       }
 
-      subTasksGroupParam2 = subTasksGroup->GetValue();
+      subTasks2 = subTaskArray->GetValue();
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> subTaskArrayParam2 = new dtDAL::NamedArrayParameter("TaskParam2");
+      subTaskArrayParam2->SetFromProperty(*subTaskArray);
+      CPPUNIT_ASSERT(subTaskArrayParam2.valid());
+
       CPPUNIT_ASSERT_MESSAGE("The old and new subtask group parameters should be equal but they are: \n  Old:\n"+
-         subTasksGroupParam->ToString() +
+         subTaskArrayParam->ToString() +
          "\nand\n  New:\n" +
-         subTasksGroupParam2->ToString(),
-         *subTasksGroupParam == *subTasksGroupParam2);
+         subTaskArrayParam2->ToString(),
+         *subTaskArrayParam == *subTaskArrayParam2);
    }
    catch (const dtUtil::Exception& e)
    {
@@ -481,24 +489,24 @@ void TaskActorTests::TestGroupPropertySubTasks()
    try
    {
       CreateParentChildProxies();
-      dtDAL::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTasks");
+      dtDAL::ActorProperty* subTasksProp = mParentProxy->GetProperty("SubTaskList");
       CPPUNIT_ASSERT(subTasksProp != NULL);
-      CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtDAL::DataType::GROUP);
+      CPPUNIT_ASSERT(subTasksProp->GetDataType() == dtDAL::DataType::ARRAY);
       
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedValue = new dtDAL::NamedGroupParameter("SubTasks"); 
+      std::vector<dtCore::UniqueId> subTasks;
+      subTasks.push_back(mChildProxy1->GetId());
+      subTasks.push_back(mChildProxy2->GetId());
+      subTasks.push_back(mChildProxy3->GetId());
       
-      dtCore::RefPtr<dtDAL::NamedActorParameter> temp;
-      temp = new dtDAL::NamedActorParameter("0", mChildProxy1->GetId());
-      expectedValue->AddParameter(*temp);
-      temp = new dtDAL::NamedActorParameter("1", mChildProxy2->GetId());
-      expectedValue->AddParameter(*temp);
-      temp = new dtDAL::NamedActorParameter("2", mChildProxy3->GetId());
-      expectedValue->AddParameter(*temp);
-      
-      dtDAL::GroupActorProperty* gap = static_cast<dtDAL::GroupActorProperty*>(subTasksProp);
-      gap->SetValue(*expectedValue);
-      
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualValue = gap->GetValue();
+      dtDAL::ArrayActorProperty<dtCore::UniqueId>* ap = static_cast<dtDAL::ArrayActorProperty<dtCore::UniqueId>*>(subTasksProp);
+      ap->SetValue(subTasks);
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> expectedValue = new dtDAL::NamedArrayParameter("SubTaskList");
+      expectedValue->SetFromProperty(*ap);
+
+      dtCore::RefPtr<dtDAL::NamedArrayParameter> actualValue = new dtDAL::NamedArrayParameter("SubTaskList2");
+      actualValue = expectedValue.get();
+
       std::ostringstream ss;
       ss << "Setting the list of task children and then getting it should yield the same list: \nActual:\n";
       ss << actualValue->ToString();
@@ -516,11 +524,9 @@ void TaskActorTests::TestGroupPropertySubTasks()
 
 
       ///Now change the value and make sure the removed one's don't have their parent's still set set.
-      expectedValue = new dtDAL::NamedGroupParameter("test"); 
-      
-      temp = new dtDAL::NamedActorParameter("1", mChildProxy1->GetId());
-      expectedValue->AddParameter(*temp);
-      gap->SetValue(*expectedValue);
+      subTasks.clear();
+      subTasks.push_back(mChildProxy1->GetId());
+      ap->SetValue(subTasks);
 
       CPPUNIT_ASSERT_MESSAGE("Resetting the parent of a proxy should leave its parent pointer (mChildProxy1).", 
          mChildProxy1->GetParentTask() == mParentProxy.get());

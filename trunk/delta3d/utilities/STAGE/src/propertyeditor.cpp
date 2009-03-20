@@ -404,20 +404,14 @@ namespace dtEditQt
          {
             // first create the control.  Sometimes the controls aren't creatable, so
             // check that first before we do other work.  Excepts if it fails
-            newControl = controlFactory->CreateObject(&curProp->GetPropertyType());
+            newControl = CreatePropertyObject(curProp);
             if (newControl == NULL)
             {
-               // first create the control.  Sometimes the controls aren't creatable, so
-               // check that first before we do other work.  Excepts if it fails
-               newControl = CreatePropertyObject(curProp);
-               if (newControl == NULL)
-               {
-                  LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetDataType().GetName());
-               }
-               else
-               {
-                  newControl->setTreeView(propertyTree);
-               }
+               LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetDataType().GetName());
+            }
+            else
+            {
+               newControl->setTreeView(propertyTree);
 
                // Work with the group.  Requires finding an existing group or creating one,
                // and eventually adding our new control to that group control

@@ -55,6 +55,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
+#include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/gameeventmanager.h>
@@ -1468,31 +1469,29 @@ void MapTests::TestMapSaveAndLoadActorGroups()
 
       map->AddProxy(*proxy);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> expectedResult = new dtDAL::NamedGroupParameter("TestGroup");
-
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > subTasks;
+      std::vector<dtCore::UniqueId> subTasks;
       //all of these actors are added to the map AFTER the main proxy
       //so they won't be loaded yet when the map is loaded.
       //This tests that the group property will load correctly regardless of actor ordering.
       std::ostringstream ss;
       for (unsigned i = 0; i < 10; ++i)
       {
-         subTasks.push_back(libraryManager.CreateActorProxy(*at));
-         map->AddProxy(*subTasks[i]);
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy = libraryManager.CreateActorProxy(*at);
+         subTasks.push_back(proxy->GetId());
+         map->AddProxy(*proxy);
          ss.str("");
          ss << i;
-         expectedResult->AddParameter(ss.str(), dtDAL::DataType::ACTOR)->FromString(subTasks[i]->GetId().ToString());
       }
 
-      dtDAL::GroupActorProperty* groupProp = NULL;
-      proxy->GetProperty("SubTasks", groupProp);
-      CPPUNIT_ASSERT_MESSAGE("The 'SubTasks' GroupActorProperty was not found in the Task Actor", groupProp != NULL);
-      groupProp->SetValue(*expectedResult);
+      dtDAL::ArrayActorProperty<dtCore::UniqueId>* arrayProp = NULL;
+      proxy->GetProperty("SubTaskList", arrayProp);
+      CPPUNIT_ASSERT_MESSAGE("The 'SubTaskList' ArrayActorProperty was not found in the Task Actor", arrayProp != NULL);
+      arrayProp->SetValue(subTasks);
 
-      dtCore::RefPtr<dtDAL::NamedGroupParameter> actualResult = groupProp->GetValue();
+      std::vector<dtCore::UniqueId> actualResult = arrayProp->GetValue();
 
-      CPPUNIT_ASSERT_EQUAL(expectedResult->GetParameterCount(), actualResult->GetParameterCount());      
-      CPPUNIT_ASSERT(*expectedResult == *actualResult);
+      CPPUNIT_ASSERT_EQUAL(subTasks.size(), actualResult.size());      
+      CPPUNIT_ASSERT(subTasks == actualResult);
       project.SaveMap(*map);
       project.CloseMap(*map);
       
@@ -1501,12 +1500,11 @@ void MapTests::TestMapSaveAndLoadActorGroups()
       //Here the old proxy will be deleted, but we get the id for it to load the new instance in the map.
       proxy = map->GetProxyById(proxy->GetId());
       CPPUNIT_ASSERT(proxy.valid());
-      proxy->GetProperty("SubTasks", groupProp);
-      actualResult = groupProp->GetValue();
+      proxy->GetProperty("SubTaskList", arrayProp);
+      actualResult = arrayProp->GetValue();
       
-      CPPUNIT_ASSERT_EQUAL(expectedResult->GetParameterCount() , actualResult->GetParameterCount());      
-      CPPUNIT_ASSERT_MESSAGE(actualResult->ToString(),*expectedResult == *actualResult);
-      
+      CPPUNIT_ASSERT_EQUAL(subTasks.size() , actualResult.size());      
+      CPPUNIT_ASSERT(subTasks == actualResult);
    } 
    catch (const dtUtil::Exception& e) 
    {
