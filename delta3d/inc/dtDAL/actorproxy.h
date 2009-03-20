@@ -187,25 +187,12 @@ namespace dtDAL
 
          /**
           * Gets a property of the requested name.
+          *
           * @param name Name of the property to retrieve.
           * @return A pointer to the property object or NULL if it
           * is not found.
           */
          ActorProperty* GetProperty(const std::string& name);
-
-         /**
-         * This function queries the proxy with any properties not
-         * found in the property list. If a property was previously
-         * removed from the proxy, but is still important to load,
-         * then this function should return a temporary property of
-         * the appropriate type to be used when loading the map.
-         *
-         * @param[in]  name  The name of the property queried for.
-         *
-         * @return           A temporary property, or NULL if
-         *                   none is needed.
-         */
-         virtual ActorProperty* GetDeprecatedProperty(const std::string& name);
 
          /**
           * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
@@ -224,6 +211,20 @@ namespace dtDAL
           * is not found.
           */
          const ActorProperty* GetProperty(const std::string& name) const;
+
+         /**
+         * This function queries the proxy with any properties not
+         * found in the property list. If a property was previously
+         * removed from the proxy, but is still important to load,
+         * then this function should return a temporary property of
+         * the appropriate type to be used when loading the map.
+         *
+         * @param[in]  name  The name of the property queried for.
+         *
+         * @return           A temporary property, or NULL if
+         *                   none is needed.
+         */
+         virtual dtCore::RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
@@ -360,6 +361,9 @@ namespace dtDAL
           * be sure to call their parent class's buildPropertyMap method to
           * ensure all properties in the proxy inheritance hierarchy are
           * correctly added to the property map.
+          *
+          * @see GetDeprecatedProperty to handle old properties that need
+          *       to be removed.
           */
          virtual void BuildPropertyMap() = 0;
 

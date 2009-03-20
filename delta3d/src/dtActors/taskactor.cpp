@@ -260,10 +260,11 @@ namespace dtActors
 
       // The Task List.
       AddProperty(new dtDAL::ArrayActorProperty<dtCore::UniqueId>(
-         "TaskList", "Task List", "List of sub tasks",
+         "SubTaskList", "Sub Task List", "List of sub tasks",
          dtDAL::MakeFunctor(*this, &TaskActorProxy::TaskArraySetIndex),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetDefault),
          dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArrayGetValue),
+         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::TaskArraySetValue),
          actorProp, GROUPNAME));
 
       // Notify Completed Event
@@ -310,19 +311,25 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* TaskActorProxy::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<dtDAL::ActorProperty> TaskActorProxy::GetDeprecatedProperty(const std::string& name)
    {
-      dtDAL::ActorProperty* prop = dtGame::GameActorProxy::GetDeprecatedProperty(name);
+      dtCore::RefPtr<dtDAL::ActorProperty> prop = dtGame::GameActorProxy::GetDeprecatedProperty(name);
 
-      if (!prop)
+      if (!prop.valid())
       {
          if (name == "SubTasks")
          {
-            //SubTasks property.
+            // The SubTasks property was changed from a GroupActorProperty to
+            // an ArrayActorProperty.
             prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
                dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
                dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
                "The list of subtasks.", "BaseTask", "TaskChildren");
+         }
+         else if (name == "TaskList")
+         {
+            // We have renamed this property, so redirect it.
+            return GetProperty("SubTaskList");
          }
       }
 
@@ -429,6 +436,25 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::AddSubTask(dtCore::UniqueId id)
+   {
+      if (FindSubTask(id) != NULL)
+         throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER,
+         "Cannot add a duplicate sub task." , __FILE__, __LINE__);
+
+      mSubTasks.push_back(id);
+
+      TaskActorProxy* proxy = GetProxyById(id);
+      if (proxy)
+      {
+         if (proxy->GetParentTask() != NULL)
+            proxy->GetParentTask()->RemoveSubTask(*proxy);
+
+         proxy->SetParentTaskProxy(this);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTask(const TaskActorProxy &subTask)
    {
       std::vector<dtCore::UniqueId>::iterator itor;
@@ -499,9 +525,10 @@ namespace dtActors
       std::vector<dtCore::UniqueId>::iterator itor;
       for (itor=mSubTasks.begin(); itor!=mSubTasks.end(); ++itor)
       {
-         TaskActorProxy* proxy = GetProxyById((*itor));
-         if(proxy->GetId() == id)
-            return proxy;
+         if ((*itor) == id)
+         {
+            return GetProxyById((*itor));
+         }
       }
       return NULL;
    }
@@ -685,8 +712,31 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   std::vector<dtCore::UniqueId>& TaskActorProxy::TaskArrayGetValue()
+   std::vector<dtCore::UniqueId> TaskActorProxy::TaskArrayGetValue()
    {
       return mSubTasks;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::TaskArraySetValue(const std::vector<dtCore::UniqueId>& value)
+   {
+      //first remove all subtasks, even if the parameter may have some
+      //of the same tasks in it.
+      for (unsigned i = 0; i < mSubTasks.size(); ++i)
+      {
+         TaskActorProxy* proxy = GetProxyById(mSubTasks[i]);
+         if (proxy)
+         {
+            proxy->SetParentTaskProxy(NULL);
+         }
+      }
+      mSubTasks.clear();
+
+      // Now add all the tasks.
+      for (int index = 0; index < (int)value.size(); index++)
+      {
+         dtCore::UniqueId id = value[index];
+         AddSubTask(id);
+      }
    }
 }

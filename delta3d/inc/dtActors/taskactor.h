@@ -320,7 +320,7 @@ namespace dtActors
          *
          * @return           A property, or NULL if none is needed.
          */
-         virtual dtDAL::ActorProperty* GetDeprecatedProperty(const std::string& name);
+         virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          /**
           * This method is called by a child task on its parent to request
@@ -405,6 +405,14 @@ namespace dtActors
           * @param subTask The task to add as a subtask to this one.
           */
          void AddSubTask(TaskActorProxy &subTask);
+
+         /**
+         * Adds a new sub task to this task.  If the subtask is already a subtask
+         * of a different parent, the subtask is reparented and its old parent task
+         * is notified.
+         * @param id  The id of the task to add as a subtask to this one.
+         */
+         void AddSubTask(dtCore::UniqueId id);
 
          /**
           * Removes an existing task from this task's list of children.
@@ -561,7 +569,8 @@ namespace dtActors
          */
          void TaskArraySetIndex(int index);
          dtCore::UniqueId TaskArrayGetDefault();
-         std::vector<dtCore::UniqueId>& TaskArrayGetValue();
+         std::vector<dtCore::UniqueId> TaskArrayGetValue();
+         void TaskArraySetValue(const std::vector<dtCore::UniqueId>& value);
 
       private:
 

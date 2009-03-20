@@ -286,9 +286,10 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   ActorProperty* ActorProxy::GetDeprecatedProperty(const std::string& name)
+   dtCore::RefPtr<ActorProperty> ActorProxy::GetDeprecatedProperty(const std::string& name)
    {
-      return NULL;
+      dtCore::RefPtr<ActorProperty> prop = NULL;
+      return prop;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////

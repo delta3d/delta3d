@@ -35,7 +35,8 @@ namespace dtDAL
    class ArrayActorProperty : public ArrayActorPropertyBase
    {
    public:
-      typedef dtUtil::Functor<std::vector<T>&, TYPELIST_0()> GetArrayFuncType;
+      typedef dtUtil::Functor<std::vector<T>, TYPELIST_0()> GetArrayFuncType;
+      typedef dtUtil::Functor<void, TYPELIST_1(const std::vector<T>&)> SetArrayFuncType;
       typedef dtUtil::Functor<T, TYPELIST_0()> GetDefaultFuncType;
       typedef dtUtil::Functor<void, TYPELIST_1(int)> SetIndexFuncType;
 
@@ -59,6 +60,7 @@ namespace dtDAL
                          SetIndexFuncType setIndexFunc,
                          GetDefaultFuncType getDefaultFunc,
                          GetArrayFuncType getArrayFunc,
+                         SetArrayFuncType setArrayFunc,
                          ActorProperty* propertyType,
                          const std::string& groupName,
                          const std::string& editorType = "",
@@ -68,15 +70,24 @@ namespace dtDAL
           , mSetIndexFunc(setIndexFunc)
           , mGetDefaultFunc(getDefaultFunc)
           , mGetArrayFunc(getArrayFunc)
+          , mSetArrayFunc(setArrayFunc)
       {
       }
 
       /**
       * Gets the array.
       */
-      virtual std::vector<T>& GetValue()
+      virtual std::vector<T> GetValue()
       {
          return mGetArrayFunc();
+      }
+
+      /**
+      * Sets the array.
+      */
+      virtual void SetValue(const std::vector<T>& value)
+      {
+         mSetArrayFunc(value);
       }
 
       /**
@@ -120,15 +131,16 @@ namespace dtDAL
          }
 
          SetIndex(index);
-         std::vector<T>& array = GetValue();
+         std::vector<T> value = GetValue();
          if (index < GetArraySize())
          {
-            array.insert(array.begin() + index, GetDefault());
+            value.insert(value.begin() + index, GetDefault());
          }
          else
          {
-            array.push_back(GetDefault());
+            value.push_back(GetDefault());
          }
+         SetValue(value);
          return true;
       }
 
@@ -149,11 +161,12 @@ namespace dtDAL
          }
 
          SetIndex(index);
-         std::vector<T>& array = GetValue();
+         std::vector<T> value = GetValue();
          if (index < GetArraySize())
          {
-            array.erase(array.begin() + index);
+            value.erase(value.begin() + index);
          }
+         SetValue(value);
          return true;
       }
 
@@ -185,13 +198,14 @@ namespace dtDAL
       */
       virtual void Swap(int first, int second)
       {
-         std::vector<T>& array = GetValue();
+         std::vector<T> value = GetValue();
          if (first < GetArraySize() && second < GetArraySize())
          {
-            T data = array[first];
-            array[first] = array[second];
-            array[second] = data;
+            T data = value[first];
+            value[first] = value[second];
+            value[second] = data;
          }
+         SetValue(value);
       }
 
       /**
@@ -202,11 +216,12 @@ namespace dtDAL
       */
       virtual void Copy(int src, int dst)
       {
-         std::vector<T>& array = GetValue();
+         std::vector<T> value = GetValue();
          if (src < GetArraySize() && dst < GetArraySize())
          {
-            array[dst] = array[src];
+            value[dst] = value[src];
          }
+         SetValue(value);
       }
 
    protected:
@@ -232,6 +247,13 @@ namespace dtDAL
       * @return  Should return a reference to the array data.
       */
       GetArrayFuncType mGetArrayFunc;
+
+      /**
+      * Functor to set the contents of the array.
+      *
+      * @param[in]  value  The array to set with.
+      */
+      SetArrayFuncType mSetArrayFunc;
    };
 }
 #endif

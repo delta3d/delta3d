@@ -213,6 +213,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctor(*this, &ExampleTestPropertyProxy::StringArraySetIndex),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetDefault),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArrayGetValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::StringArraySetValue),
       stringProp2, GROUPNAME);
 
    arrayStringProp->SetMinArraySize(2);
@@ -239,6 +240,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctor(*this, &ExampleTestPropertyProxy::ColorArraySetIndex),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetDefault),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArraySetValue),
       colorProp, GROUPNAME, "", false);
 
    AddProperty(arrayColorProp);
@@ -270,6 +272,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctor(*this, &ExampleTestPropertyProxy::IntArraySetIndex),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetDefault),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArrayGetValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::IntArraySetValue),
       intProp, GROUPNAME);
 
    ArrayActorPropertyBase* arrayArrayProp = new ArrayActorProperty<std::vector<int> >(
@@ -277,6 +280,7 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
       MakeFunctor(*this, &ExampleTestPropertyProxy::ArrayArraySetIndex),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetDefault),
       MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArrayGetValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ArrayArraySetValue),
       arrayIntProp, GROUPNAME);
 
    AddProperty(arrayArrayProp);
@@ -298,9 +302,15 @@ std::string ExampleTestPropertyProxy::StringArrayGetDefault()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<std::string>& ExampleTestPropertyProxy::StringArrayGetValue()
+std::vector<std::string> ExampleTestPropertyProxy::StringArrayGetValue()
 {
    return mStringArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::StringArraySetValue(const std::vector<std::string>& value)
+{
+   mStringArray = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -340,9 +350,15 @@ osg::Vec4 ExampleTestPropertyProxy::ColorArrayGetDefault()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<osg::Vec4>& ExampleTestPropertyProxy::ColorArrayGetValue()
+std::vector<osg::Vec4> ExampleTestPropertyProxy::ColorArrayGetValue()
 {
    return mColorArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::ColorArraySetValue(const std::vector<osg::Vec4>& value)
+{
+   mColorArray = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -377,9 +393,15 @@ int ExampleTestPropertyProxy::IntArrayGetDefault()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<int>& ExampleTestPropertyProxy::IntArrayGetValue()
+std::vector<int> ExampleTestPropertyProxy::IntArrayGetValue()
 {
    return mArrayIntArray[mArrayArrayIndex];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::IntArraySetValue(const std::vector<int>& value)
+{
+   mArrayIntArray[mArrayArrayIndex] = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,9 +418,15 @@ std::vector<int> ExampleTestPropertyProxy::ArrayArrayGetDefault()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<std::vector<int> >& ExampleTestPropertyProxy::ArrayArrayGetValue()
+std::vector<std::vector<int> > ExampleTestPropertyProxy::ArrayArrayGetValue()
 {
    return mArrayIntArray;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::ArrayArraySetValue(const std::vector<std::vector<int> >& value)
+{
+   mArrayIntArray = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
