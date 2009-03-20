@@ -92,7 +92,6 @@ void SoundComponentTests::setUp()
       CPPUNIT_ASSERT_MESSAGE("Could not find actor type.",mSndActorType.valid());
 
       dtAudio::AudioManager::Instantiate();
-      dtAudio::AudioManager::GetInstance().Config(/*AudioConfigData(32)*/);
 
       dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
       dtCore::System::GetInstance().Start();

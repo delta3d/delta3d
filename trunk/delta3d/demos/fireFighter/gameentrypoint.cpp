@@ -53,7 +53,6 @@ extern "C" FIRE_FIGHTER_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint
 FireFighterGameEntryPoint::FireFighterGameEntryPoint() : mUseLMS(true)
 {
    dtAudio::AudioManager::Instantiate();
-   dtAudio::AudioManager::GetInstance().Config(AudioConfigData(32));
 }
 
 FireFighterGameEntryPoint::~FireFighterGameEntryPoint()
