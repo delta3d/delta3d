@@ -80,7 +80,6 @@ void FireFighterMessageTests::setUp()
    mGM = new dtGame::GameManager(*mApp->GetScene());
    mGM->SetApplication(*mApp);
    dtAudio::AudioManager::Instantiate();
-   dtAudio::AudioManager::GetInstance().Config();
    mGM->LoadActorRegistry("fireFighter");
    //dtDAL::Project::GetInstance().SetContext("../demos/fireFighter/fireFighterProject");
 }
