@@ -370,6 +370,11 @@ void Transformable::RemoveChild(DeltaDrawable* child)
 ////////////////////////////////////////////////////////////////////////////
 void Transformable::RenderProxyNode(const bool enable)
 {
+   if (enable == GetIsRenderingProxyNode())
+   {
+      return; //nothing to do here
+   }
+
    if(enable)
    {
       mPointAxis = new PointAxis();
