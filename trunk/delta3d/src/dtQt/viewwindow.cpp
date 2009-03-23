@@ -113,6 +113,9 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    // no button is pressed.  The motion models depend
    // on tracking the mouse location to work properly.
    setMouseTracking(true);
+   
+   //allow keyboard input to come through this widget (via user click or tab)
+   setFocusPolicy(Qt::StrongFocus);
 }
 
 //////////////////////////////////////////////////////////////////////////////////
