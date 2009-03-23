@@ -358,6 +358,26 @@ namespace dtDAL
          mActors.erase(dtCore::RefPtr<const ActorType>(actorItor->get()));
       }
 
+      ///remove the actor type unloadedReplacements supported by this registry
+      ActorPluginRegistry::ActorTypeReplacements unloadedReplacements;
+      regEntry.registry->GetReplacementActorTypes(unloadedReplacements);
+
+      ActorPluginRegistry::ActorTypeReplacements::iterator unloadedReplacementsItr = unloadedReplacements.begin();
+      while (unloadedReplacementsItr != unloadedReplacements.end())
+      {
+         ActorPluginRegistry::ActorTypeReplacements::iterator found;
+         found = std::find(mReplacementActors.begin(),
+                           mReplacementActors.end(),
+                           (*unloadedReplacementsItr));
+
+         if (found != mReplacementActors.end())
+         {
+            //found an entry in our list, erase it
+            mReplacementActors.erase(found);
+         }
+         ++unloadedReplacementsItr;
+      }
+
       mRegistries.erase(regItor);
 
       //Now that all references are gone, take the pointer to the registry so that we can
