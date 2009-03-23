@@ -161,6 +161,12 @@ void DeltaDrawable::RenderProxyNode(bool enable)
    }
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
+{
+   return mProxyNode.valid();
+}
+
 /**
  * Notifies this drawable object that it has been added to
  * a scene.  This is typically called from Scene::AddDrawable().
@@ -334,4 +340,52 @@ void dtCore::DeltaDrawable::RemoveSwitchNode()
       (*parentItr)->addChild(GetOSGNode());
       ++parentItr;
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::SetParent(DeltaDrawable* parent)
+{
+   mParent = parent;
+}
+
+//////////////////////////////////////////////////////////////////////////
+DeltaDrawable* dtCore::DeltaDrawable::GetParent()
+{
+   return mParent;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const DeltaDrawable* dtCore::DeltaDrawable::GetParent() const
+{
+   return mParent;
+}
+
+//////////////////////////////////////////////////////////////////////////
+Scene* dtCore::DeltaDrawable::GetSceneParent()
+{
+   return mParentScene;
+}
+
+//////////////////////////////////////////////////////////////////////////
+const Scene* dtCore::DeltaDrawable::GetSceneParent() const
+{
+   return mParentScene;
+}
+
+//////////////////////////////////////////////////////////////////////////
+unsigned int dtCore::DeltaDrawable::GetNumChildren() const
+{
+   return mChildList.size();
+}
+
+//////////////////////////////////////////////////////////////////////////
+osg::Node* dtCore::DeltaDrawable::GetProxyNode()
+{
+   return mProxyNode.get();
+}
+
+//////////////////////////////////////////////////////////////////////////
+const osg::Node* dtCore::DeltaDrawable::GetProxyNode() const
+{
+   return mProxyNode.get();
 }
