@@ -632,7 +632,8 @@ void GameManagerTests::TestActorSearching()
       for (unsigned int i = 0; i < typeVec.size() && i < 5; ++i)
       {
          // In order to keep the tests fasts, we skip the nasty slow ones.
-         if (typeVec[i]->GetName() == "Cloud Plane" || typeVec[i]->GetName() == "Environment" ||
+         if (typeVec[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() ||
+            typeVec[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() ||
             typeVec[i]->GetName() == "Test Environment Actor")
          {
             ++numActorsSkipped;

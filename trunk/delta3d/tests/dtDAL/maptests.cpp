@@ -65,6 +65,7 @@
 
 #include <testActorLibrary/testactorlib.h>
 #include <testActorLibrary/testdalenvironmentactor.h>
+#include <dtActors/engineactorregistry.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -231,9 +232,9 @@ void MapTests::createActors(dtDAL::Map& map)
    for (unsigned int i=0; i < actorTypes.size(); ++i)
    {
       // In order to keep the tests fasts, we skip the nasty slow ones.
-      if (actorTypes[i]->GetName() == "Cloud Plane" || 
-          actorTypes[i]->GetName() == "Cloud Dome" ||
-          actorTypes[i]->GetName() == "Environment" || 
+      if (actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_PLANE_ACTOR_TYPE->GetName() || 
+          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::CLOUD_DOME_ACTOR_TYPE->GetName()  ||
+          actorTypes[i]->GetName() == dtActors::EngineActorRegistry::WEATHER_ENVIRONMENT_ACTOR_TYPE->GetName() || 
           actorTypes[i]->GetName() == "Test Environment Actor" ||
           actorTypes[i]->GetName() == "Waypoint" ||
           actorTypes[i]->GetName() == "Sound Actor") 
