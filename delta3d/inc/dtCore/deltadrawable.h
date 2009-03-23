@@ -62,29 +62,29 @@ namespace dtCore
          virtual const osg::Node* GetOSGNode() const = 0;
          
          ///Supply the Scene this Drawable has been added to
-         virtual void AddedToScene( Scene* scene );
+         virtual void AddedToScene(Scene* scene);
 
          ///Override function for derived object to know when attaching to scene
-         virtual void SetParent( DeltaDrawable* parent ) { mParent = parent; }
+         virtual void SetParent(DeltaDrawable* parent);
 
-         DeltaDrawable* GetParent() { return mParent; }
-         const DeltaDrawable* GetParent() const { return mParent; }         
+         DeltaDrawable* GetParent();
+         const DeltaDrawable* GetParent() const;         
          
          ///Get a pointer to the Scene this Drawable has been added to
-         Scene* GetSceneParent() { return mParentScene; }
-         const Scene* GetSceneParent() const { return mParentScene; }
+         Scene* GetSceneParent();
+         const Scene* GetSceneParent() const;
 
          ///Add a child to this DeltaDrawable
-         virtual bool AddChild( DeltaDrawable *child );
+         virtual bool AddChild(DeltaDrawable* child);
 
          ///Remove a DeltaDrawable child
-         virtual void RemoveChild( DeltaDrawable *child );
+         virtual void RemoveChild(DeltaDrawable* child);
 
          ///Remove this DeltaDrawable from it's parent
          void Emancipate();
 
          ///Return the number of DeltaDrawable children added
-         unsigned int GetNumChildren() const { return mChildList.size(); }
+         unsigned int GetNumChildren() const;
 
          /**
           * Get the child specified by index (0 to number of children-1)
@@ -93,7 +93,7 @@ namespace dtCore
           * @return DeltaDrawable* : The DeltaDrawable at idx, or NULL if that 
           * index does not exist.
           */
-         DeltaDrawable* GetChild( unsigned int idx );
+         DeltaDrawable* GetChild(unsigned int idx);
 
          /**
           * Get the const child specified by index (0 to number of children-1)
@@ -102,14 +102,14 @@ namespace dtCore
           * @return const DeltaDrawable* : The DeltaDrawable at idx, or NULL if that 
           * index does not exist.
           */
-         const DeltaDrawable* GetChild( unsigned int idx ) const;
+         const DeltaDrawable* GetChild(unsigned int idx) const;
 
          /** 
           * Get the index number of child. Return a value between
           * 0 and the number of children-1 if found, if not found then
           * return the number of children.
           */
-         unsigned int GetChildIndex( const DeltaDrawable* child ) const;
+         unsigned int GetChildIndex(const DeltaDrawable* child) const;
 
          /**
           * Check if the supplied DeltaDrawable can actually be a child of this instance.
@@ -117,16 +117,32 @@ namespace dtCore
           * @param child : The child to test
           * @return true if the supplied parameter can be a child
           */
-         bool CanBeChild( DeltaDrawable *child ) const;
+         bool CanBeChild(DeltaDrawable* child) const;
 
-         virtual void RenderProxyNode( bool enable = true );
+         /** 
+          * Render the "proxy" node for this DeltaDrawable, which represents an
+          * alternative graphical representation for this object.  Some objects,
+          * such as Cameras, don't have an actual rendered geometry.  This is a
+          * means to view such objects.  Derivatives will need to overwrite and 
+          * implement their own custom proxy node rendering.
+          * @param enable To enable or disable the rendering of this DeltaDrawable
+          */
+         virtual void RenderProxyNode(bool enable = true);
+
+         /** 
+          * Check if this DeltaDrawable is currently rendering it's proxy node.
+          * Derivatives might need to overwrite this method to provide custom
+          * checking.
+          * @return If this DeltaDrawable is currently rendering it's proxy node
+          */
+         virtual bool GetIsRenderingProxyNode() const;
 
          /**
            * Get the bounding sphere information for this Drawable.
            * @param center : pointer to fill out with the sphere's center position
            * @param radius : float pointer to fill out with the sphere's radius
            */
-         void GetBoundingSphere( osg::Vec3 *center, float *radius );
+         void GetBoundingSphere(osg::Vec3* center, float* radius);
 
          /**
           * Make this DeltaDrawable "active" or "inactive".  The default 
@@ -149,12 +165,12 @@ namespace dtCore
 
       protected:
 
-         DeltaDrawable( const std::string& name = "DeltaDrawable" );
+         DeltaDrawable(const std::string& name = "DeltaDrawable");
          virtual ~DeltaDrawable();
 
-         osg::Node* GetProxyNode() { return mProxyNode.get(); }         
-         const osg::Node* GetProxyNode() const { return mProxyNode.get(); }
-         void SetProxyNode( osg::Node* proxyNode );
+         osg::Node* GetProxyNode();         
+         const osg::Node* GetProxyNode() const;
+         void SetProxyNode(osg::Node* proxyNode);
 
          /// Callback which is called when this 
          /// drawable's parent is removed
@@ -166,8 +182,8 @@ namespace dtCore
          // creates this functions even if they are not used, and if
          // this class is forward declared, these implicit functions will
          // cause compiler errors for missing calls to "ref".
-         DeltaDrawable& operator=( const DeltaDrawable& ); 
-         DeltaDrawable( const DeltaDrawable& );
+         DeltaDrawable& operator=(const DeltaDrawable&); 
+         DeltaDrawable(const DeltaDrawable&);
 
          ///Insert a new Switch Node above GetOSGNode() and below it's parents
          void InsertSwitchNode();
@@ -182,7 +198,7 @@ namespace dtCore
 
          Scene* mParentScene; ///< The Scene this Drawable was added to (Weak pointer to prevent circular reference).
 
-         RefPtr<osg::Node> mProxyNode;
+         RefPtr<osg::Node> mProxyNode; ///< Handle to the rendered proxy node (or NULL)
 
          bool mIsActive; ///<Is this DeltaDrawable active (rendering)
    };

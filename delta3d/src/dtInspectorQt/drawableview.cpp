@@ -60,6 +60,9 @@ void dtInspectorQt::DrawableView::Update()
 
       //Active
       mUI->drawableActiveToggle->setChecked(mOperateOn->GetActive());
+
+      //proxy node
+      mUI->drawableProxyNodeToggle->setChecked(mOperateOn->GetIsRenderingProxyNode());
    }
    else
    {
