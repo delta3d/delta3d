@@ -174,10 +174,9 @@ class TestAI(Application):
             self.mOverheadCamera.SetTransform(trans)
             verdict = 1
       return verdict     
-
-SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" +
-                        GetDeltaDataPathList() + ";" +
-                        GetDeltaDataPathList() + "/demoMap/Particles" )
+                        
+SetDataFilePathList (   GetDeltaDataPathList() + ";" +
+                        GetDeltaRootPath() + "/examples/data/;" )
 
 app = TestAI('testMap.xml')
 
