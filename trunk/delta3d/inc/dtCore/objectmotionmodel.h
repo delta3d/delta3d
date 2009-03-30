@@ -118,6 +118,22 @@ namespace dtCore
          virtual void SetScale(float scale);
 
          /**
+         * Gets the current scale of the model.
+         */
+         virtual float GetScale(void) {return mScale;}
+
+         /**
+         * Calculates the desired scale based on auto scale.
+         */
+         float GetAutoScaleSize(void);
+
+         /**
+         * Sets whether the motion model should be scaled
+         * based on distance from the camera.
+         */
+         virtual void SetAutoScaleEnabled(bool enabled) {mAutoScale=enabled;}
+
+         /**
          * Gets the current motion type of the motion model.
          *
          * @return    The current motion type.
@@ -165,6 +181,11 @@ namespace dtCore
           * @param[in] data  The message data
           */
          virtual void OnMessage(MessageData* data);
+
+         /**
+         * Retrieves the internal transform node for the motion model.
+         */
+         dtCore::Transformable* GetTransformable(void) {return mTargetTransform.get();}
 
       protected:
 
@@ -245,6 +266,8 @@ namespace dtCore
          osg::Vec2       mMouseOffset;
          osg::Vec2       mMouseOrigin;
          float           mOriginAngle;
+
+         bool            mAutoScale;
 
          int             mSnapTranslation;
          float           mSnapRotation;

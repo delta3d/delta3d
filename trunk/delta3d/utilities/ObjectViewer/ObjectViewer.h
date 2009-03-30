@@ -159,7 +159,7 @@ private:
 
    int   mCurrentLight;
    bool  mShouldGenerateTangents;
-   float mLightScale;
+   //float mLightScale;
 };
 
 #endif // DELTA_OBJECT_VIEWER
