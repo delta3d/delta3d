@@ -64,7 +64,7 @@ namespace dtHLAGM
          std::string msg(message);
          LOG_ERROR("Error during parser initialization!: "+ msg)
          xercesc_dt::XMLString::release( &message );
-         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION, 
+         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_INTERNAL_EXCEPTION,
             "Error, unable to initialize Xerces XML parser.  Aborting.", __FILE__, __LINE__);
       }
 
@@ -78,7 +78,7 @@ namespace dtHLAGM
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgSAX2CoreNameSpaces, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesSchema, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesSchemaFullChecking, true);
-      mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesValidationErrorAsFatal, true); 
+      mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesValidationErrorAsFatal, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgSAX2CoreNameSpacePrefixes, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesUseCachedGrammarInParse, true);
       mXercesParser->setFeature(xercesc_dt::XMLUni::fgXercesCacheGrammarFromParse, true);
@@ -89,7 +89,7 @@ namespace dtHLAGM
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
              "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.");
-         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, 
+         throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION,
             "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.", __FILE__, __LINE__);
       }
 
@@ -97,15 +97,15 @@ namespace dtHLAGM
       xercesc_dt::LocalFileInputSource inputSource(schemaFileNameXMLCh);
       //cache the schema
       mXercesParser->loadGrammar(inputSource, xercesc_dt::Grammar::SchemaGrammarType, true);
- 
+
       xercesc_dt::XMLString::release(&schemaFileNameXMLCh);
    }
-   
+
    HLAComponentConfig::~HLAComponentConfig()
    {
       delete mXercesParser;
    }
-   
+
    void HLAComponentConfig::LoadConfiguration(HLAComponent& translator, const std::string& dataFilePath)
    {
         try
@@ -117,10 +117,10 @@ namespace dtHLAGM
                    "XML configuration file \"%s\" not found.  Aborting.", dataFilePath.c_str());
                throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Error, unable to load required file \"" + dataFilePath  +  "\".  Aborting.", __FILE__, __LINE__);
             }
-            
+
             if (translator.GetGameManager() == NULL)
-               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Translators must be associated with a game manager before.  Aborting.", __FILE__, __LINE__);               
-            
+               throw dtUtil::Exception(dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION, "Translators must be associated with a game manager before.  Aborting.", __FILE__, __LINE__);
+
             mHandler->SetTargetTranslator(translator);
             mXercesParser->setContentHandler(mHandler.get());
             mXercesParser->setErrorHandler(mHandler.get());
