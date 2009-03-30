@@ -43,6 +43,7 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mMouseDown(false)
    , mMouseLocked(false)
    , mOriginAngle(0.0f)
+   , mAutoScale(true)
 {
    mSnapRotation = osg::DegreesToRadians(45.0f);
    mSnapTranslation = 1;
@@ -112,6 +113,37 @@ void ObjectMotionModel::SetEnabled(bool enabled)
 void ObjectMotionModel::SetScale(float scale)
 {
    mScale = scale;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float ObjectMotionModel::GetAutoScaleSize(void)
+{
+   dtCore::Camera* camera = NULL;
+   if (mView)
+   {
+      camera = mView->GetCamera();
+   }
+
+   if (!camera)
+   {
+      return GetScale();
+   }
+
+   dtCore::Transform camTransform;
+   camera->GetTransform(camTransform);
+   osg::Vec3 camPos = camTransform.GetTranslation();
+
+   dtCore::Transformable* target = GetTarget();
+   if (!target)
+   {
+      return GetScale();
+   }
+
+   dtCore::Transform targetTransform;
+   target->GetTransform(targetTransform);
+
+   osg::Vec3 VecToTarget = targetTransform.GetTranslation() - camPos;
+   return GetScale() * VecToTarget.length();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,7 +231,8 @@ void ObjectMotionModel::OnMessage(MessageData *data)
             position = targetTransform.GetTranslation();
          }
 
-         transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+         float scale = GetAutoScaleSize();
+         transform.Rescale(osg::Vec3(scale, scale, scale));
          transform.SetTranslation(position);
 
         mTargetTransform->SetTransform(transform);
@@ -368,7 +401,7 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].transformable   = new dtCore::Transformable();
       mArrows[arrowIndex].arrowGeode      = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.005f, 0.1f);
       osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.013f, 0.03f);
 
       osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.1f, 0.001f);
@@ -834,7 +867,9 @@ void ObjectMotionModel::UpdateRotation(void)
 
       transform.SetRotation(matrix);
       transform.SetTranslation(osg::Vec3(0,0,0));
-      transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+
+      float scale = GetAutoScaleSize();
+      transform.Rescale(osg::Vec3(scale, scale, scale));
       transform.SetTranslation(targetPos);
       mAngleTransform->SetTransform(transform);
       mAngleOriginTransform->SetTransform(transform);
@@ -883,12 +918,14 @@ void ObjectMotionModel::UpdateRotation(void)
          }
          matrix *= matrix.rotate(mOriginAngle, axis);
          
+         float scale = GetAutoScaleSize();
+
          // Rotate the compass angle.
          if (mCoordinateSpace == WORLD_SPACE)
          {
             transform.SetRotation(matrix);
             transform.SetTranslation(osg::Vec3(0,0,0));
-            transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+            transform.Rescale(osg::Vec3(scale, scale, scale));
             transform.SetTranslation(targetPos);
             mAngleTransform->SetTransform(transform);
          }
@@ -899,7 +936,7 @@ void ObjectMotionModel::UpdateRotation(void)
             matrix *= matrix.rotate(-angle, axis);
             transform.SetRotation(matrix);
             transform.SetTranslation(osg::Vec3(0,0,0));
-            transform.Rescale(osg::Vec3(mScale, mScale, mScale));
+            transform.Rescale(osg::Vec3(scale, scale, scale));
             transform.SetTranslation(targetPos);
             mAngleOriginTransform->SetTransform(transform);
          }

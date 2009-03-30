@@ -54,7 +54,7 @@
 ObjectViewer::ObjectViewer()
    : mCurrentLight(0)
    , mShouldGenerateTangents(true)
-   , mLightScale(1.0f)
+   //, mLightScale(1.0f)
 {
    mShadedScene   = new osg::Group;
    mUnShadedScene = new osg::Group;
@@ -295,26 +295,26 @@ void ObjectViewer::OnLoadMapFile(const std::string& filename)
          mModelMotion->SetFocalPoint(center);
 
          // Adjust the size of the light arrow
-         mLightScale = radius * 0.5f;
+         //mLightScale = radius * 0.5f;
 
-         for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
-         {
-            float arrowScale = mLightScale;
+         //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+         //{
+         //   float arrowScale = mLightScale;
 
-            //dtCore::Light* light = GetScene()->GetLight(lightIndex);
-            //if (light)
-            //{
-            //   // Infinite lights do not get scaled.
-            //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-            //   if (infiniteLight)
-            //   {
-            //      arrowScale = 1.0f;
-            //   }
-            //}
+         //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
+         //   //if (light)
+         //   //{
+         //   //   // Infinite lights do not get scaled.
+         //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+         //   //   if (infiniteLight)
+         //   //   {
+         //   //      arrowScale = 1.0f;
+         //   //   }
+         //   //}
 
-            mLightMotion[lightIndex]->SetScale(arrowScale);
-            mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-         }
+         //   //mLightMotion[lightIndex]->SetScale(arrowScale);
+         //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+         //}
       }
    }
 }
@@ -342,27 +342,27 @@ void ObjectViewer::OnLoadGeometryFile(const std::string& filename)
       mModelMotion->SetDistance(radius * 2.0f);
       mModelMotion->SetFocalPoint(center);
 
-      // Adjust the size of the light arrow
-      mLightScale = radius * 0.5f;
+      //// Adjust the size of the light arrow
+      //mLightScale = radius * 0.5f;
 
-      for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
-      {
-         float arrowScale = mLightScale;
+      //for (int lightIndex = 0; lightIndex < (int)mLightMotion.size(); lightIndex++)
+      //{
+      //   float arrowScale = mLightScale;
 
-         //dtCore::Light* light = GetScene()->GetLight(lightIndex);
-         //if (light)
-         //{
-         //   // Infinite lights do not get scaled.
-         //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
-         //   if (infiniteLight)
-         //   {
-         //      arrowScale = 1.0f;
-         //   }
-         //}
+      //   //dtCore::Light* light = GetScene()->GetLight(lightIndex);
+      //   //if (light)
+      //   //{
+      //   //   // Infinite lights do not get scaled.
+      //   //   dtCore::InfiniteLight* infiniteLight = dynamic_cast<dtCore::InfiniteLight*>(light);
+      //   //   if (infiniteLight)
+      //   //   {
+      //   //      arrowScale = 1.0f;
+      //   //   }
+      //   //}
 
-         mLightMotion[lightIndex]->SetScale(arrowScale);
-         mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
-      }
+      //   mLightMotion[lightIndex]->SetScale(arrowScale);
+      //   mLightArrow[lightIndex]->SetScale(osg::Vec3(arrowScale, arrowScale, arrowScale));
+      //}
 
       if (mShouldGenerateTangents)
       {
@@ -529,7 +529,7 @@ void ObjectViewer::OnSetLightType(int id, int type)
 
    dtCore::Light* newLight = NULL;
 
-   float arrowScale = mLightScale;
+   //float arrowScale = mLightScale;
 
    switch (type)
    {
@@ -848,6 +848,7 @@ void ObjectViewer::InitLights()
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
       lightArrow->SetActive(enabled);
+      lightArrow->SetScale(osg::Vec3(0.5f, 0.5f, 0.5f));
 
       dtCore::Transform transform;
 
@@ -859,7 +860,7 @@ void ObjectViewer::InitLights()
       }
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
-      lightArrowTransformable->AddChild(lightArrow.get());
+//      lightArrowTransformable->AddChild(lightArrow.get());
       lightArrowTransformable->AddChild(light);
 
       // Copy the transform from the light to the attached transformable.
@@ -870,6 +871,13 @@ void ObjectViewer::InitLights()
       dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
       lightMotion->SetEnabled(false);
       lightMotion->SetTarget(lightArrowTransformable.get());
+
+      dtCore::Transformable* objectTransformable = lightMotion->GetTransformable();
+      if (objectTransformable)
+      {
+         objectTransformable->AddChild(lightArrow.get());
+         //objectTransformable->GetOSGNode()->AddChild(lightArrow.get()->GetOSGNode());
+      }
 
       GetScene()->AddDrawable(lightArrowTransformable.get());
 
