@@ -46,7 +46,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ActorPluginRegistry::GetReplacementActorTypes(ActorPluginRegistry::ActorTypeReplacements &replacements) const
+   void ActorPluginRegistry::GetReplacementActorTypes(ActorPluginRegistry::ActorTypeReplacements& replacements) const
    {
    }
 }
