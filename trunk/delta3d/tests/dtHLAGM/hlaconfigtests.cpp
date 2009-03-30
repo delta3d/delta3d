@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -78,7 +78,7 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
       void TestBrokenHLAMappingNoActorType();
       void TestBrokenHLAMappingOverloadedLocalMapping();
       void TestBrokenHLAMappingOverloadedRemoteMapping();
-      
+
    private:
       dtUtil::Log* logger;
       dtCore::RefPtr<dtHLAGM::HLAComponent> mTranslator;
@@ -88,11 +88,11 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
       std::vector<const dtHLAGM::ObjectToActor*> mToFillOta;
       //to be filled with all mappings to make sure the GetAllInteractionToMessageMappings method works.
       std::vector<const dtHLAGM::InteractionToMessage*> mToFillItm;
-      
+
       static const char* const mHLAActorRegistry;
 
       void TestBroken(const std::string& brokenFile, const std::string& failMessage);
-      
+
       void CheckObjectToActorMapping(
          const std::string& category,
          const std::string& name,
@@ -103,7 +103,7 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
          bool remoteOnly,
          bool localOnly,
          const std::vector<dtHLAGM::AttributeToPropertyList>& props);
-      
+
       void CheckInteractionToMessageMapping(
          const dtGame::MessageType& messageType,
          const std::string& interactionName,
@@ -122,7 +122,7 @@ const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibrary";
 void HLAConfigTests::setUp()
 {
 
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + dtCore::GetDeltaRootPath() + "/tests/data");
    std::string logName("HLAConfigTest");
    //Uncomment this to turn on config xml logging.
    //dtUtil::Log::GetInstance("hlafomconfigxml.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
@@ -132,7 +132,7 @@ void HLAConfigTests::setUp()
    mCalc->SetName("Geographic");
    mTranslator->GetDDMSubscriptionCalculators().AddCalculator(*mCalc);
 
-   
+
    mGameManager = new dtGame::GameManager(*GetGlobalApplication().GetScene());
    mGameManager->SetApplication(GetGlobalApplication());
 
@@ -145,7 +145,7 @@ void HLAConfigTests::tearDown()
 
    mToFillOta.clear();
    mToFillItm.clear();
-   
+
    if(mGameManager.valid())
    {
       if(mGameManager->GetRegistry(mHLAActorRegistry) != NULL)
@@ -169,7 +169,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
    dtCore::RefPtr<const dtDAL::ActorType> type = mGameManager->FindActorType(category, name);
    CPPUNIT_ASSERT(type.valid());
 
-   dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa; 
+   dtCore::RefPtr<const dtHLAGM::ObjectToActor> otoa;
    if (localOnly)
    {
       otoa = static_cast<const dtHLAGM::HLAComponent*>(mTranslator.get())->GetActorMapping(*type);
@@ -177,7 +177,7 @@ void HLAConfigTests::CheckObjectToActorMapping(
       //make absolutely sure we call the const version of the method.
       dtCore::RefPtr<dtHLAGM::ObjectToActor> otoaNonConst = mTranslator->GetActorMapping(*type);
       CPPUNIT_ASSERT(otoa.get() == otoaNonConst.get());
-   
+
       CPPUNIT_ASSERT_MESSAGE("Object to actor mapping for type " + type->GetCategory() + "." + type->GetName() + " should exist.",
          otoa != NULL);
    }
@@ -188,11 +188,11 @@ void HLAConfigTests::CheckObjectToActorMapping(
       //make absolutely sure we call the const version of the method.
       dtCore::RefPtr<dtHLAGM::ObjectToActor> otoaNonConst = mTranslator->GetObjectMapping(objectClassName, entityType);
       CPPUNIT_ASSERT(otoa.get() == otoaNonConst.get());
-   
+
       CPPUNIT_ASSERT_MESSAGE("Object to actor mapping for type " + type->GetCategory() + "." + type->GetName() + " should exist.",
          otoa != NULL);
    }
-   
+
    if (localOnly)
    {
       CPPUNIT_ASSERT_MESSAGE("If the mapping is local only, fetching by class name should not return the same mapping object.",
@@ -241,9 +241,9 @@ void HLAConfigTests::CheckObjectToActorMapping(
       CPPUNIT_ASSERT_MESSAGE(ss.str(),  props[i] == propsActual[i]);
    }
 
-   CPPUNIT_ASSERT_MESSAGE("Mapping of " + type->GetCategory() + "." + type->GetName() + " to object class " + 
-            objectClassName + 
-            " should have been returned by GetAllObjectToActorMappings", 
+   CPPUNIT_ASSERT_MESSAGE("Mapping of " + type->GetCategory() + "." + type->GetName() + " to object class " +
+            objectClassName +
+            " should have been returned by GetAllObjectToActorMappings",
             std::find(mToFillOta.begin(), mToFillOta.end(), otoa.get()) != mToFillOta.end());
 }
 
@@ -278,9 +278,9 @@ void HLAConfigTests::CheckInteractionToMessageMapping(
       ss << "ParameterToParameter " << i << " with name " << params[i].GetHLAName() << " should match the one in the mapping with name " << paramsActual[i].GetHLAName() << ". " << paramsActual[i];
       CPPUNIT_ASSERT_MESSAGE(ss.str(),  params[i] == paramsActual[i]);
    }
-   
-   CPPUNIT_ASSERT_MESSAGE("Mapping of " + messageType.GetName() + " to interaction " + interactionName + 
-            " should have been returned by GetAllInteractionToMessageMappings", 
+
+   CPPUNIT_ASSERT_MESSAGE("Mapping of " + messageType.GetName() + " to interaction " + interactionName +
+            " should have been returned by GetAllInteractionToMessageMappings",
             std::find(mToFillItm.begin(), mToFillItm.end(), itom.get()) != mToFillItm.end());
 }
 
@@ -292,7 +292,10 @@ void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string
 
    try
    {
-      config.LoadConfiguration(*mTranslator, brokenFile);
+      std::string path = dtCore::FindFileInPathList(brokenFile);
+      CPPUNIT_ASSERT(dtUtil::FileUtils::GetInstance().FileExists(path));
+
+      config.LoadConfiguration(*mTranslator, path);
       CPPUNIT_FAIL(failMessage);
    }
    catch (const dtUtil::Exception& ex)
@@ -304,19 +307,19 @@ void HLAConfigTests::TestBroken(const std::string& brokenFile, const std::string
 
 void HLAConfigTests::TestBrokenHLAMappingNoActorType()
 {
-   TestBroken("BrokenHLAMappingNoActorType.xml", 
+   TestBroken("BrokenHLAMappingNoActorType.xml",
             "It should fail to load the mapping file because an actor type in the file is invalid.");
 }
 
 void HLAConfigTests::TestBrokenHLAMappingOverloadedLocalMapping()
 {
-   TestBroken("BrokenHLAMappingOverloadingLocal.xml", 
+   TestBroken("BrokenHLAMappingOverloadingLocal.xml",
             "It should fail to load the mapping file because two local mappings share the same actor type.");
 }
 
 void HLAConfigTests::TestBrokenHLAMappingOverloadedRemoteMapping()
 {
-   TestBroken("BrokenHLAMappingOverloadingRemote.xml", 
+   TestBroken("BrokenHLAMappingOverloadingRemote.xml",
             "It should fail to load the mapping file because two remote mappings share the same dis id and object class.");
 }
 
@@ -338,11 +341,11 @@ void HLAConfigTests::TestConfigure()
          CPPUNIT_ASSERT_MESSAGE("the exception should have been an XML_CONFIG_EXCEPTION",
             ex.TypeEnum() == dtHLAGM::ExceptionEnum::XML_CONFIG_EXCEPTION);
       }
-      
+
       mGameManager->AddComponent(*mTranslator, dtGame::GameManager::ComponentPriority::NORMAL);
 
       config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
-      
+
       mTranslator->GetAllObjectToActorMappings(mToFillOta);
       mTranslator->GetAllInteractionToMessageMappings(mToFillItm);
 
@@ -372,13 +375,13 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Entity Type", dtDAL::DataType::ENUMERATION, "", false)); 
+                  "Entity Type", dtDAL::DataType::ENUMERATION, "", false));
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("EntityIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
-            attrToProp.GetParameterDefinitions().push_back(dtHLAGM::OneToManyMapping::ParameterDefinition("sendingActorId", dtDAL::DataType::ACTOR, "", true)); 
+            attrToProp.GetParameterDefinitions().push_back(dtHLAGM::OneToManyMapping::ParameterDefinition("sendingActorId", dtDAL::DataType::ACTOR, "", true));
             props.push_back(attrToProp);
          }
 
@@ -392,7 +395,7 @@ void HLAConfigTests::TestConfigure()
             pd.AddEnumerationMapping("2", "Damaged");
             pd.AddEnumerationMapping("3", "Destroyed");
 
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -400,21 +403,21 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("", dtHLAGM::AttributeType::UNKNOWN, false);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mesh", dtDAL::DataType::STATIC_MESH, "StaticMeshes:articulation_test.ive", false);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -423,7 +426,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp( entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Entity Type As String", dtDAL::DataType::STRING, "", false)); 
+                  "Entity Type As String", dtDAL::DataType::STRING, "", false));
             props.push_back(attrToProp);
          }
 
@@ -432,7 +435,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp(mappingHLAAttrName, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
             attrToProp.GetParameterDefinitions().push_back(
                dtHLAGM::OneToManyMapping::ParameterDefinition(
-                  "Object Mapping Name", dtDAL::DataType::STRING, "", false)); 
+                  "Object Mapping Name", dtDAL::DataType::STRING, "", false));
             props.push_back(attrToProp);
          }
 
@@ -447,7 +450,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp(entityTypeHLAAttrName, dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Entity Type", dtDAL::DataType::ENUMERATION, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -455,7 +458,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("EntityIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("sendingActorId", dtDAL::DataType::ACTOR, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -469,7 +472,7 @@ void HLAConfigTests::TestConfigure()
             pd.AddEnumerationMapping("2", "Damaged");
             pd.AddEnumerationMapping("3", "Destroyed");
 
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -477,21 +480,21 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("WorldLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
          {
             dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
 
@@ -516,7 +519,18 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::AttributeToPropertyList attrToProp("VelocityVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Velocity Vector", dtDAL::DataType::VEC3D, "", false);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
+            props.push_back(attrToProp);
+         }
+
+         {
+            dtHLAGM::AttributeToPropertyList attrToProp("AccelerationVector", dtHLAGM::RPRAttributeType::VELOCITY_VECTOR_TYPE, false);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd0("accelX", dtDAL::DataType::FLOAT, "", false);
+            attrToProp.GetParameterDefinitions().push_back(pd0);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd1("accelY", dtDAL::DataType::FLOAT, "", false);
+            attrToProp.GetParameterDefinitions().push_back(pd1);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd2("accelZ", dtDAL::DataType::FLOAT, "", false);
+            attrToProp.GetParameterDefinitions().push_back(pd2);
             props.push_back(attrToProp);
          }
 
@@ -528,7 +542,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
@@ -542,7 +556,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::AttributeToPropertyList attrToProp("Orientation", dtHLAGM::RPRAttributeType::EULER_ANGLES_TYPE, true);
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3, "", true);
-            attrToProp.GetParameterDefinitions().push_back(pd); 
+            attrToProp.GetParameterDefinitions().push_back(pd);
             props.push_back(attrToProp);
          }
          // Test a NULL dis id.
@@ -554,7 +568,7 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::ParameterToParameterList paramToParam("DetonationLocation", dtHLAGM::RPRAttributeType::WORLD_COORDINATE_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Location", dtDAL::DataType::VEC3, "", true);
-            paramToParam.GetParameterDefinitions().push_back(pd); 
+            paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
 
@@ -566,24 +580,24 @@ void HLAConfigTests::TestConfigure()
          {
             dtHLAGM::ParameterToParameterList paramToParam("FiringObjectIdentifier", dtHLAGM::RPRAttributeType::ENTITY_IDENTIFIER_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("aboutActorId", dtDAL::DataType::ACTOR, "", true);
-            paramToParam.GetParameterDefinitions().push_back(pd); 
+            paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
          {
             dtHLAGM::ParameterToParameterList paramToParam("FireControlSolutionRange", dtHLAGM::RPRAttributeType::FLOAT_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("LateTime", dtDAL::DataType::FLOAT, "", true);
-            paramToParam.GetParameterDefinitions().push_back(pd); 
+            paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
          {
             dtHLAGM::ParameterToParameterList paramToParam("MunitionType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtDAL::DataType::ENUMERATION, "LARGE EXPLOSION", true);
-            
+
             pd.AddEnumerationMapping("2 2 225 2 2 0 0", "LARGE BULLET");
             pd.AddEnumerationMapping("2 9 225 2 14 0 0", "SHORT SMOKE");
             pd.AddEnumerationMapping("2 9 225 2 14 1 0", "LONG SMOKE");
 
-            paramToParam.GetParameterDefinitions().push_back(pd); 
+            paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
 
          }
@@ -593,7 +607,7 @@ void HLAConfigTests::TestConfigure()
             dtHLAGM::ParameterToParameterList paramToParam(
                dtHLAGM::HLAComponent::PARAM_NAME_MAPPING_NAME, dtHLAGM::RPRAttributeType::STRING_TYPE, false);
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Mapping Name", dtDAL::DataType::STRING, "", false);
-            paramToParam.GetParameterDefinitions().push_back(pd); 
+            paramToParam.GetParameterDefinitions().push_back(pd);
             params.push_back(paramToParam);
          }
 

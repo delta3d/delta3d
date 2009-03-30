@@ -217,7 +217,27 @@
                 <gameName>Velocity Vector</gameName>
                 <gameDataType>VEC3D</gameDataType>
                 <default></default>
-            </attrToProp>            
+            </attrToProp>
+            <!-- this is an example for the unit tests 
+                 to handle.  The handler for VELOCITY_VECTOR_TYPE current 
+                 doesn't support having three parameters. SPATIAL_TYPE does,
+                 however, work with it.-->            
+            <attrToProp>
+                <hlaName>AccelerationVector</hlaName>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
+                <parameter>
+                   <gameName>accelX</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+                <parameter>
+                   <gameName>accelY</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+                <parameter>
+                   <gameName>accelZ</gameName>
+                   <gameDataType>FLOAT</gameDataType>
+                </parameter>
+            </attrToProp>
         </object>
 
         <object>
