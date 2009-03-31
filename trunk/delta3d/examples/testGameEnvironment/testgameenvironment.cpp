@@ -208,6 +208,7 @@ class TestGameEnvironmentApp : public dtABC::Application
          mLabel->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::LEFT_CENTER);
          mLabel->SetText(CreateHelpLabelText());
          mLabel->SetEnableDepthTesting(false);
+         mLabel->SetEnableLighting(false);
 
          GetCamera()->AddChild(mLabel.get());
          dtCore::Transform labelOffset(-17.0f, 50.0f, 8.5f, 0.0f, 90.0f, 0.0f);
