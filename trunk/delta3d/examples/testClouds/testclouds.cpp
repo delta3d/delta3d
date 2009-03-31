@@ -157,6 +157,7 @@ protected:
       mLabel->SetText(CreateHelpLabelText());
       mLabel->SetEnableDepthTesting(false);
       mLabel->SetBackVisible(false);
+      mLabel->SetEnableLighting(false);
 
       GetCamera()->AddChild(mLabel.get());
       Transform labelOffset(-17.0f, 50.0f, 7.75f, 0.0f, 90.0f, 0.0f);

@@ -521,6 +521,7 @@ public:
       mLabel->SetTextAlignment(dtABC::LabelActor::AlignmentEnum::LEFT_CENTER);
       mLabel->SetText(CreateHelpLabelText());
       mLabel->SetEnableDepthTesting(false);
+      mLabel->SetEnableLighting(false);
 
       GetCamera()->AddChild(mLabel.get());
       dtCore::Transform labelOffset(-17.0f, 22.5f, 10.5f, 0.0f, 90.0f, 0.0f);
