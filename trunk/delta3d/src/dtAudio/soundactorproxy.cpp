@@ -82,7 +82,7 @@ namespace dtAudio
    {
       if(mSound.valid())
       {
-         dtAudio::AudioManager::GetInstance().FreeSound(mSound);
+         dtAudio::AudioManager::GetInstance().FreeSound(mSound.get());
       }
    }
 
