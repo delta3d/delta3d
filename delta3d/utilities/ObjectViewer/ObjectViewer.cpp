@@ -744,24 +744,6 @@ void ObjectViewer::OnLocalSpaceMode()
    }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnTranslateMode()
-{
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
-   {
-      mLightMotion[lightIndex]->SetMotionType(dtCore::ObjectMotionModel::MOTION_TYPE_TRANSLATION);
-   }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectViewer::OnRotateMode()
-{
-   for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; lightIndex++)
-   {
-      mLightMotion[lightIndex]->SetMotionType(dtCore::ObjectMotionModel::MOTION_TYPE_ROTATION);
-   }
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 void ObjectViewer::InitWireDecorator()
 {
@@ -848,7 +830,6 @@ void ObjectViewer::InitLights()
       dtCore::RefPtr<dtCore::Object> lightArrow = new dtCore::Object;
       lightArrow->LoadFile("examples/data/models/LightArrow.ive");
       lightArrow->SetActive(enabled);
-      lightArrow->SetScale(osg::Vec3(0.5f, 0.5f, 0.5f));
 
       dtCore::Transform transform;
 
@@ -860,7 +841,7 @@ void ObjectViewer::InitLights()
       }
 
       dtCore::RefPtr<dtCore::Transformable> lightArrowTransformable = new dtCore::Transformable;
-//      lightArrowTransformable->AddChild(lightArrow.get());
+      lightArrowTransformable->AddChild(lightArrow.get());
       lightArrowTransformable->AddChild(light);
 
       // Copy the transform from the light to the attached transformable.
@@ -871,13 +852,13 @@ void ObjectViewer::InitLights()
       dtCore::RefPtr<dtCore::ObjectMotionModel> lightMotion = new dtCore::ObjectMotionModel(GetView());
       lightMotion->SetEnabled(false);
       lightMotion->SetTarget(lightArrowTransformable.get());
+      lightMotion->SetScale(0.5f);
 
-      dtCore::Transformable* objectTransformable = lightMotion->GetTransformable();
-      if (objectTransformable)
-      {
-         objectTransformable->AddChild(lightArrow.get());
-         //objectTransformable->GetOSGNode()->AddChild(lightArrow.get()->GetOSGNode());
-      }
+      //dtCore::Transformable* objectTransformable = lightMotion->GetTransformable();
+      //if (objectTransformable)
+      //{
+      //   objectTransformable->AddChild(lightArrow.get());
+      //}
 
       GetScene()->AddDrawable(lightArrowTransformable.get());
 
@@ -978,8 +959,11 @@ void ObjectViewer::PostFrame(const double)
    // Broadcast the current state of all the lights in the scene
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
-      dtCore::Light* light = GetScene()->GetLight(lightIndex);
+      // Update the scale of the light arrow to match the current scale of the motion model.
+      float lightScale = mLightMotion[lightIndex]->GetAutoScaleSize();
+      mLightArrow[lightIndex]->SetScale(osg::Vec3(lightScale, lightScale, lightScale));
 
+      dtCore::Light* light = GetScene()->GetLight(lightIndex);
       if (light)
       {
          dtCore::Transform arrowTransform;

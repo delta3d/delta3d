@@ -33,11 +33,12 @@ const float SENSITIVITY = 5.0f;
 ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    : MotionModel("ObjectMotionModel")
    , mView(NULL)
+   , mScene(NULL)
    , mKeyboard(NULL)
    , mMouse(NULL)
    , mScale(1.0f)
    , mCoordinateSpace(LOCAL_SPACE)
-   , mMotionType(MOTION_TYPE_TRANSLATION)
+   , mMotionType(MOTION_TYPE_MAX)
    , mHoverArrow(ARROW_TYPE_MAX)
    , mCurrentArrow(ARROW_TYPE_MAX)
    , mMouseDown(false)
@@ -65,7 +66,8 @@ ObjectMotionModel::~ObjectMotionModel()
    {
       for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
       {
-         mScene->RemoveDrawable(mArrows[arrowIndex].transformable.get());
+         mScene->RemoveDrawable(mArrows[arrowIndex].translationTransform.get());
+         mScene->RemoveDrawable(mArrows[arrowIndex].rotationTransform.get());
       }
    }
 
@@ -77,6 +79,14 @@ ObjectMotionModel::~ObjectMotionModel()
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::SetView(dtCore::View* view)
 {
+   // First remove this model from the current view scene.
+   bool bWasEnabled = false;
+   if (IsEnabled())
+   {
+      bWasEnabled = true;
+      SetEnabled(false);
+   }
+
    mView = view;
 
    if (mView)
@@ -84,6 +94,11 @@ void ObjectMotionModel::SetView(dtCore::View* view)
       mScene = mView->GetScene();
       mKeyboard = mView->GetKeyboard();
       mMouse = mView->GetMouse();
+
+      if (bWasEnabled)
+      {
+         SetEnabled(true);
+      }
    }
 }
 
@@ -95,7 +110,7 @@ void ObjectMotionModel::SetEnabled(bool enabled)
       MotionModel::SetEnabled(enabled);
 
       // Make sure our arrows are in the scene.
-      if (mScene)
+      if (mScene && mTargetTransform.valid())
       {
          if (IsEnabled())
          {
@@ -144,43 +159,6 @@ float ObjectMotionModel::GetAutoScaleSize(void)
 
    osg::Vec3 VecToTarget = targetTransform.GetTranslation() - camPos;
    return GetScale() * VecToTarget.length();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-ObjectMotionModel::MotionType ObjectMotionModel::GetMotionType(void)
-{
-   return mMotionType;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::SetMotionType(ObjectMotionModel::MotionType motionType)
-{
-   mMotionType = motionType;
-
-   for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
-   {
-      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCylinder.get());
-      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].arrowCone.get());
-      mArrows[arrowIndex].arrowGeode->removeDrawable(mArrows[arrowIndex].rotationRing.get());
-      mAngleGeode->removeDrawable(mAngleDrawable.get());
-      mAngleOriginGeode->removeDrawable(mAngleOriginDrawable.get());
-   }
-
-   if (mMotionType == MOTION_TYPE_ROTATION)
-   {
-      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
-      {
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].rotationRing.get());
-      }
-   }
-   else
-   {
-      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
-      {
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
-      }
-   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -264,15 +242,22 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                dtCore::DeltaDrawable* arrow = mView->GetMousePickedObject(ARROW_NODE_MASK);
 
                mHoverArrow = ARROW_TYPE_MAX;
+               mMotionType = MOTION_TYPE_MAX;
 
                if (arrow)
                {
                   for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
                   {
-                     if (arrow == mArrows[arrowIndex].transformable.get())
+                     if (arrow == mArrows[arrowIndex].translationTransform.get())
                      {
                         mHoverArrow = (ArrowType)arrowIndex;
+                        mMotionType = MOTION_TYPE_TRANSLATION;
                         break;
+                     }
+                     else if (arrow == mArrows[arrowIndex].rotationTransform.get())
+                     {
+                        mHoverArrow = (ArrowType)arrowIndex;
+                        mMotionType = MOTION_TYPE_ROTATION;
                      }
                   }
                }
@@ -298,10 +283,20 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                      for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
                      {
                         // If we clicked on a motion arrow, lock it to the mouse.
-                        if (arrow == mArrows[arrowIndex].transformable.get())
+                        if (arrow == mArrows[arrowIndex].translationTransform.get() ||
+                           arrow == mArrows[arrowIndex].rotationTransform.get())
                         {
                            mCurrentArrow = (ArrowType)arrowIndex;
                            mMouseLocked = true;
+
+                           if (arrow == mArrows[arrowIndex].translationTransform.get())
+                           {
+                              mMotionType = MOTION_TYPE_TRANSLATION;
+                           }
+                           else if (arrow == mArrows[arrowIndex].rotationTransform.get())
+                           {
+                              mMotionType = MOTION_TYPE_ROTATION;
+                           }
 
                            // Get the offset mouse position.
                            dtCore::Transformable* target = GetTarget();
@@ -314,6 +309,8 @@ void ObjectMotionModel::OnMessage(MessageData *data)
                               mMouseOffset = objectPos - mMouseOrigin;
                               mOriginAngle = 0.0f;
                            }
+
+                           SetArrowHighlight(mCurrentArrow);
 
                            break;
                         }
@@ -395,52 +392,70 @@ void ObjectMotionModel::InitArrows(void)
       }
    }
 
+   float ringLength    = 0.09f;
+   float ringVisibleThickness = 0.002f;
+   float ringSelectionThickness = 0.02f;
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
       // Create all our objects and nodes.
-      mArrows[arrowIndex].transformable   = new dtCore::Transformable();
-      mArrows[arrowIndex].arrowGeode      = new osg::Geode();
+      mArrows[arrowIndex].translationTransform   = new dtCore::Transformable();
+      mArrows[arrowIndex].rotationTransform      = new dtCore::Transformable();
+      mArrows[arrowIndex].arrowGeode             = new osg::Geode();
+      mArrows[arrowIndex].rotationGeode          = new osg::Geode();
+      mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.005f, 0.1f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
       osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.013f, 0.03f);
 
-      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.1f, 0.001f);
+//      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
+      osg::TriangleMesh* ring = GenerateRing(ringLength - ringVisibleThickness, ringLength + ringVisibleThickness, 40);
+      osg::TriangleMesh* selectionRing = GenerateRing(ringLength - ringSelectionThickness, ringLength + ringSelectionThickness, 40);
 
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
 
       mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
+      osg::ShapeDrawable* rotationSelectionRing = new osg::ShapeDrawable(selectionRing);
+      rotationSelectionRing->setColor(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
       // Now set up their Hierarchy.
-      mTargetTransform->AddChild(mArrows[arrowIndex].transformable.get());
+      mTargetTransform->AddChild(mArrows[arrowIndex].translationTransform.get());
+      mTargetTransform->AddChild(mArrows[arrowIndex].rotationTransform.get());
 
       if (wireNode)
       {
-         wireNode->addChild(mArrows[arrowIndex].transformable->GetOSGNode());
+         wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
+         wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
       }
 
-      osg::Group* arrowGroup = mArrows[arrowIndex].transformable->GetOSGNode()->asGroup();
+      osg::Group* arrowGroup = mArrows[arrowIndex].translationTransform->GetOSGNode()->asGroup();
       if (arrowGroup)
       {
          arrowGroup->addChild(mArrows[arrowIndex].arrowGeode.get());
       }
 
-      if (mMotionType == MOTION_TYPE_ROTATION)
+      osg::Group* rotationGroup = mArrows[arrowIndex].rotationTransform->GetOSGNode()->asGroup();
+      if (rotationGroup)
       {
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].rotationRing.get());
-      }
-      else
-      {
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
-         mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
+         rotationGroup->addChild(mArrows[arrowIndex].rotationGeode.get());
+         rotationGroup->addChild(mArrows[arrowIndex].rotationSelectionGeode.get());
       }
 
+      mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
+      mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
+
       mArrows[arrowIndex].arrowGeode->setNodeMask(ARROW_NODE_MASK);
+
+      mArrows[arrowIndex].rotationGeode->addDrawable(mArrows[arrowIndex].rotationRing.get());
+      mArrows[arrowIndex].rotationGeode->setNodeMask(ARROW_NODE_MASK);
+
+      mArrows[arrowIndex].rotationSelectionGeode->addDrawable(rotationSelectionRing);
+      mArrows[arrowIndex].rotationSelectionGeode->setNodeMask(ARROW_NODE_MASK);
    }
 
    mAngleTransform = new dtCore::Transformable();
    mAngleGeode = new osg::Geode();
-   mAngleCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.05f), 0.001f, 0.10f);
+   mAngleCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringLength * 0.5f), 0.001f, ringLength);
    mAngleDrawable = new osg::ShapeDrawable(mAngleCylinder.get());
 
    mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
@@ -448,7 +463,7 @@ void ObjectMotionModel::InitArrows(void)
 
    mAngleOriginTransform = new dtCore::Transformable();
    mAngleOriginGeode = new osg::Geode();
-   mAngleOriginCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.05f), 0.001f, 0.10f);
+   mAngleOriginCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringLength * 0.5f), 0.001f, ringLength);
    mAngleOriginDrawable = new osg::ShapeDrawable(mAngleOriginCylinder.get());
 
    mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
@@ -463,22 +478,89 @@ void ObjectMotionModel::InitArrows(void)
    dtCore::Transform transformX;
    transformX.SetTranslation(0.0f, 0.0f, 0.0f);
    transformX.Set(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-   mArrows[ARROW_TYPE_RIGHT].transformable->SetTransform(transformX);
+   mArrows[ARROW_TYPE_RIGHT].translationTransform->SetTransform(transformX);
+   mArrows[ARROW_TYPE_RIGHT].rotationTransform->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].arrowCylinderColor = osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_RIGHT].arrowConeColor = osg::Vec4(1.0f, 0.3f, 0.3f, 0.5f);
 
    dtCore::Transform transformY;
    transformY.SetTranslation(0.0f, 0.0f, 0.0f);
    transformY.Set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
-   mArrows[ARROW_TYPE_AT].transformable->SetTransform(transformY);
+   mArrows[ARROW_TYPE_AT].translationTransform->SetTransform(transformY);
+   mArrows[ARROW_TYPE_AT].rotationTransform->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].arrowCylinderColor = osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_AT].arrowConeColor = osg::Vec4(0.3f, 1.0f, 0.3f, 0.5f);
 
    dtCore::Transform transformZ;
    transformZ.SetTranslation(0.0f, 0.0f, 0.0f);
-   mArrows[ARROW_TYPE_UP].transformable->SetTransform(transformZ);
+   mArrows[ARROW_TYPE_UP].translationTransform->SetTransform(transformZ);
+   mArrows[ARROW_TYPE_UP].rotationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.0f, 0.0f, 1.0f, 0.5f);
    mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.5f);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRadius, int segments)
+{
+   osg::Vec3Array* vertices = new osg::Vec3Array();
+   osg::IntArray* indices   = new osg::IntArray();
+
+   osg::TriangleMesh* mesh = new osg::TriangleMesh();
+
+   // 4 segments minimum.
+   segments = segments < 4? 4: segments;
+
+   // Determine how many degrees each segment will be.
+   float segmentAngle = osg::DegreesToRadians(360.0f) / segments;
+
+   // Now iterate through each segment.
+   int vertexIndex = 0;
+
+   osg::Vec3 minVertex = osg::Vec3(minRadius, 0.0f, 0.0f);
+   osg::Vec3 maxVertex = osg::Vec3(maxRadius, 0.0f, 0.0f);
+   osg::Vec3 axis = osg::Vec3(0.0f, 0.0f, 1.0f);
+
+   osg::Matrix rotationMatrix;
+   for (int segmentIndex = 0; segmentIndex < segments; segmentIndex++)
+   {
+      rotationMatrix = rotationMatrix.rotate(segmentAngle * segmentIndex, axis);
+
+      osg::Vec3 vert = minVertex * rotationMatrix;
+      vertices->push_back(vert);
+      indices->push_back((int)vertices->size()-1);
+
+      // Once we get to our second segment, we need to start connecting
+      // with our previous segments.
+      if (segmentIndex > 0)
+      {
+         indices->push_back((int)vertices->size()-1);
+         indices->push_back((int)vertices->size()-2);
+      }
+
+      vert = maxVertex * rotationMatrix;
+      vertices->push_back(vert);
+      indices->push_back((int)vertices->size()-1);
+
+      // Once we get to our second segment, we need to start
+      // our next triangle from the current two points.
+      if (segmentIndex > 0)
+      {
+         indices->push_back((int)vertices->size()-2);
+         indices->push_back((int)vertices->size()-1);
+      }
+   }
+
+   // Now connect the ends of the strip together.
+   indices->push_back(0);
+   indices->push_back(0);
+   indices->push_back((int)vertices->size()-1);
+   indices->push_back(1);
+
+   mesh->setVertices(vertices);
+   mesh->setIndices(indices);
+
+   return mesh;
 }
 
 
@@ -513,38 +595,44 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
 
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
-      float alpha = 0.5f;
-      if (arrowType == (ArrowType)arrowIndex)
-      {
-         alpha = 1.0f;
-      }
-
       osg::Vec4 color = mArrows[arrowIndex].arrowCylinderColor;
-      color.r() = color.r() * alpha;
-      color.g() = color.g() * alpha;
-      color.b() = color.b() * alpha;
-      color.a() = color.a() * alpha;
+      color.r() = color.r() * 0.5f;
+      color.g() = color.g() * 0.5f;
+      color.b() = color.b() * 0.5f;
+      color.a() = color.a();
 
-      if (mMotionType == MOTION_TYPE_ROTATION)
+      mArrows[arrowIndex].rotationRing->setColor(color);
+      //mAngleDrawable->setColor(color);
+      //mAngleOriginDrawable->setColor(color);
+
+      mArrows[arrowIndex].arrowCylinder->setColor(color);
+
+      color = mArrows[arrowIndex].arrowConeColor;
+      color.r() = color.r() * 0.5f;
+      color.g() = color.g() * 0.5f;
+      color.b() = color.b() * 0.5f;
+      color.a() = color.a();
+      mArrows[arrowIndex].arrowCone->setColor(color);
+
+      osg::Vec4 highlightColor = mArrows[arrowIndex].arrowCylinderColor;
+
+      if (arrowIndex == mHoverArrow)
       {
-         mArrows[arrowIndex].rotationRing->setColor(color);
-
-         if (mCurrentArrow == (ArrowType)arrowIndex)
+         if (mMotionType == MOTION_TYPE_ROTATION)
          {
-            mAngleDrawable->setColor(color);
-            mAngleOriginDrawable->setColor(color);
-         }
-      }
-      else
-      {
-         mArrows[arrowIndex].arrowCylinder->setColor(color);
+            mArrows[arrowIndex].rotationRing->setColor(highlightColor);
 
-         color = mArrows[arrowIndex].arrowConeColor;
-         color.r() = color.r() * alpha;
-         color.g() = color.g() * alpha;
-         color.b() = color.b() * alpha;
-         color.a() = color.a() * alpha;
-         mArrows[arrowIndex].arrowCone->setColor(color);
+            if (mCurrentArrow == (ArrowType)arrowIndex)
+            {
+               mAngleDrawable->setColor(highlightColor);
+               mAngleOriginDrawable->setColor(highlightColor);
+            }
+         }
+         else if (mMotionType == MOTION_TYPE_TRANSLATION)
+         {
+            mArrows[arrowIndex].arrowCylinder->setColor(highlightColor);
+            mArrows[arrowIndex].arrowCone->setColor(mArrows[arrowIndex].arrowConeColor);
+         }
       }
    }
 }
