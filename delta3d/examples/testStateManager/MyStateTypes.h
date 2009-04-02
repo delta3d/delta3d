@@ -24,6 +24,8 @@
 
 #include <dtABC/state.h>
 
+////////////////////////////////////////////////////////////////////////////////
+
 class MyStateType : public dtABC::State::Type
 {
    DECLARE_ENUM(MyStateType); 
@@ -37,14 +39,18 @@ protected:
    virtual ~MyStateType();
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Shell : public dtABC::State
 { 
 public:
-   Shell(const std::string& name = "Shell" );
-   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
+   Shell(const std::string& name = "Shell");
+   virtual void HandleEvent(dtABC::Event* event = 0) {}
 protected:
    virtual ~Shell() {}
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 class Options : public dtABC::State
 {
@@ -55,6 +61,8 @@ protected:
    virtual ~Options() {}
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Game : public dtABC::State
 {
 public:
@@ -63,5 +71,7 @@ public:
 protected:
    virtual ~Game() {}
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif // MYSTATETYPES_INC
