@@ -101,10 +101,6 @@ private:
    QAction* mWorldSpaceAction;
    QAction* mLocalSpaceAction;
 
-   // Editing Toolbar
-   QAction* mTranslationModeAction;
-   QAction* mRotationModeAction;
-
    // Display Toolbar
    QAction* mWireframeAction;
    QAction* mShadedAction;
@@ -119,7 +115,6 @@ private:
    QAction* mOpenFragmentShaderAction;
 
    QToolBar* mCoordinateToolbar;
-   QToolBar* mEditingToolbar;
    QToolBar* mDisplayToolbar;
    QToolBar* mShaderToolbar;
    QToolBar* mModeToolbar;

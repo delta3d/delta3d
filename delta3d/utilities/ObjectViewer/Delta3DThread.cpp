@@ -225,8 +225,6 @@ void Delta3DThread::MakeConnections()
    // Editing connections
    connect((QObject*)mWin->mWorldSpaceAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnWorldSpaceMode()));
    connect((QObject*)mWin->mLocalSpaceAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnLocalSpaceMode()));
-   connect((QObject*)mWin->mTranslationModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnTranslateMode()));
-   connect((QObject*)mWin->mRotationModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnRotateMode()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
