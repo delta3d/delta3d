@@ -1434,9 +1434,9 @@ QTreeWidgetItem* ResourceDock::CreatePositionItem(QTreeWidgetItem* parent)
 QTreeWidgetItem* ResourceDock::CreateRotationItem(QTreeWidgetItem* parent)
 {
    QTreeWidgetItem* rotation = CreateTreeItem("Rotation", "", Qt::ItemIsEnabled, parent);
-   CreateTreeItem("x", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
-   CreateTreeItem("y", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
-   CreateTreeItem("z", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("h", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("p", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
+   CreateTreeItem("r", "", Qt::ItemIsEnabled | Qt::ItemIsEditable, rotation);
    return rotation;
 }
 
