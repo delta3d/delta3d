@@ -8,6 +8,12 @@ using namespace dtGUI;
 
 CEGUIMouseListener::CEGUIMouseListener(HUD *pGui):
 m_pGUI(pGui)
+,mWidth(0)
+,mHeight(0)
+,mHalfWidth(0)
+,mHalfHeight(0)
+,mMouseX(0)
+,mMouseY(0)
 {
 }
 
