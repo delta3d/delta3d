@@ -1523,15 +1523,19 @@ namespace  dtDAL
                                 id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
             continue;
          }
-         ActorProperty* property = proxyToModify->GetProperty(propertyName);
-         if (property == NULL)
+         dtCore::RefPtr<ActorProperty> property = proxyToModify->GetProperty(propertyName);
+         if (!property.valid())
+         {
+            property = proxyToModify->GetDeprecatedProperty(propertyName);
+         }
+         if (!property.valid())
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
                                 "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property does not exist on the proxy.",
                                 id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
             continue;
          }
-         ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(property);
+         ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(property.get());
          if (aap == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
