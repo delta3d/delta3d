@@ -11,10 +11,7 @@ using namespace dtInputPLIB;
 IMPLEMENT_MANAGEMENT_LAYER(Joystick)
 
 
-/**
- * Creates instances of Joystick corresponding to each
- * connected joystick device.
- */
+//////////////////////////////////////////////////////
 void Joystick::CreateInstances()
 {
    bool keepGoing = true;
@@ -41,9 +38,7 @@ void Joystick::CreateInstances()
    }
 }
 
-/**
- * Destroys all Joystick instances.
- */
+//////////////////////////////////////////////////////
 void Joystick::DestroyInstances()
 {
    while (GetInstanceCount()> 0)
@@ -52,9 +47,7 @@ void Joystick::DestroyInstances()
    }
 }
 
-/**
- * Polls all Joystick instances.
- */
+//////////////////////////////////////////////////////
 void Joystick::PollInstances()
 {
    for (int i=0; i<GetInstanceCount();i++)
@@ -63,12 +56,7 @@ void Joystick::PollInstances()
    }
 }
 
-/**
- * Constructor.
- *
- * @param name the instance name
- * @param joystick the underlying PLIB joystick object
- */
+//////////////////////////////////////////////////////
 Joystick::Joystick(std::string name, jsJoystick* joystick) :
    InputDevice(name), mJoystick(joystick)
 {
@@ -99,9 +87,7 @@ Joystick::Joystick(std::string name, jsJoystick* joystick) :
    }
 }
 
-/**
- * Destructor.
- */
+//////////////////////////////////////////////////////
 Joystick::~Joystick()
 {
    DeregisterInstance(this);
@@ -109,13 +95,16 @@ Joystick::~Joystick()
    delete mJoystick;
 }
 
-/**
- * Manually polls the state of this joystick, updating
- * all of its features.
- */
+//////////////////////////////////////////////////////
+const std::string Joystick::GetDeviceName() const
+{
+   return mJoystick->getName();
+}
+
+//////////////////////////////////////////////////////
 void Joystick::Poll()
 {
-   const unsigned int numAxes = mJoystick->getNumAxes(); 
+   const unsigned int numAxes = mJoystick->getNumAxes();
 
 #if defined(PLIB_MAJOR_VERSION) && PLIB_MAJOR_VERSION >= 1 && defined(PLIB_MINOR_VERSION) & PLIB_MINOR_VERSION >= 8 && defined(PLIB_TINY_VERSION) && PLIB_TINY_VERSION >=5
    const unsigned int numButtons = mJoystick->getNumButtons();
