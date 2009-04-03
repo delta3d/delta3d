@@ -29,7 +29,6 @@
 
 #include <dtCore/refptr.h>
 
-#include <dtGame/baseinputcomponent.h>
 #include <dtGame/gmcomponent.h>
 
 #include <dtAnim/animationhelper.h>
