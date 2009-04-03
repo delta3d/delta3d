@@ -134,19 +134,21 @@ namespace dtAnim
 
    ////////////////////////////////////////////////////////////////////////////////////////
    SubmeshDrawable::SubmeshDrawable(Cal3DModelWrapper* wrapper, unsigned mesh, unsigned Submesh)
-      : mMeshID(mesh), mSubmeshID(Submesh), mMeshVBO(0), mMeshIndices(0), mCurrentLOD(1.0f)
+      : mMeshID(mesh)
+      , mSubmeshID(Submesh)
+      , mMeshVBO(0)
+      , mMeshIndices(0)
+      , mCurrentLOD(1.0f)
       , mInitalized(false)
       , mVBOContextID(-1)
       , mWrapper(wrapper)
+      , mMeshNormals(NULL)
+      , mMeshTextureCoordinates(NULL)
+      , mMeshFaces(NULL)
    {
       setUseDisplayList(false);
       setUseVertexBufferObjects(true);
       SetUpMaterial();
-
-      mMeshVertices           = 0;
-      mMeshNormals            = 0;
-      mMeshTextureCoordinates = 0;
-      mMeshFaces              = 0;
 
       osg::StateSet* ss = getOrCreateStateSet();
       ss->setAttributeAndModes(new osg::CullFace);
@@ -183,13 +185,10 @@ namespace dtAnim
          }
       }
 
-      if (mMeshVertices) 
-      {
-         delete [] mMeshVertices;
-         delete [] mMeshNormals;
-         delete [] mMeshFaces;
-         delete [] mMeshTextureCoordinates;
-      }
+      delete [] mMeshVertices;
+      delete [] mMeshNormals;
+      delete [] mMeshFaces;
+      delete [] mMeshTextureCoordinates;
    }
 
    ////////////////////////////////////////////////////////////////////////////////////////
@@ -373,165 +372,13 @@ namespace dtAnim
    ////////////////////////////////////////////////////////////////////////////////////////
    void SubmeshDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
    {
-      osg::State& state = *renderInfo.getState();
-      if (getUseVertexBufferObjects() && state.isVertexBufferObjectSupported()) 
+      if (VBOAvailable(renderInfo)) 
       {
-         //bind the VBO's
-         state.disableAllVertexArrays();
-
-         bool initializedThisDraw = false;
-         if (!mInitalized)
-         {
-            InitVertexBuffers(state);
-            mInitalized = true;
-            initializedThisDraw = true;
-         }
-
-         // begin the rendering loop
-         if(mWrapper->BeginRenderingQuery())
-         {
-            // select mesh and Submesh for further data access
-            if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
-            {
-               SubmeshUserData* userData = 
-                  dynamic_cast<SubmeshUserData*>(renderInfo.getUserData());
-
-               float finalLOD = 0.0;
-               if (userData != NULL)
-               {
-                  finalLOD = userData->mLOD;
-               }
-               else
-               {
-                  finalLOD = GetCurrentLOD();
-               }
-
-               /// the inverse of ((index + 1) / LOD_COUNT) = lodfloat as seen in InitVertexBuffers.
-
-               unsigned lodIndex = unsigned((float(LOD_COUNT) * finalLOD) - 1.0f);
-               dtUtil::Clamp(lodIndex, 0U, LOD_COUNT - 1U);
-
-               ///quantify the lod floating point number.
-               finalLOD = (float(lodIndex + 1) / float(LOD_COUNT));
-
-               mWrapper->SetLODLevel(finalLOD);
-
-               const Extensions* glExt = getExtensions(state.getContextID(), true);
-
-               glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mMeshVBO);
-               if (!initializedThisDraw)
-               {
-                  float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
-
-                  ///offset into the vbo to fill the correct lod.
-                  vertexArray += mVertexOffsets[lodIndex] * STRIDE;
-
-                  mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
-
-                  // get the transformed normals of the Submesh
-                  mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
-                  glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
-               }
-
-               unsigned offset = mVertexOffsets[lodIndex] * STRIDE;
-
-               state.setVertexPointer(3, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(0 + offset));
-
-               state.setNormalPointer(GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(3 + offset));
-               state.setTexCoordPointer(0, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(6 + offset));
-               state.setTexCoordPointer(1, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(8 + offset));
-
-               //make the call to render
-               glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
-
-               glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
-                        GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
-
-               glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-               glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-
-               // This data could potential cause problems
-               // so we clear it out here (i.e CEGUI incompatible)
-               state.setVertexPointer(NULL);
-
-               state.setNormalPointer(NULL);
-               state.setTexCoordPointer(0, NULL);
-               state.setTexCoordPointer(1, NULL);
-            }
-         }
-
-         // end the rendering
-         mWrapper->EndRenderingQuery();
+         DrawUsingVBO(renderInfo);
       }
       else 
       {
-         // VBO's arn't available, so use conventional rendering path.
-         // begin the rendering loop
-         if(mWrapper->BeginRenderingQuery())
-         {
-            // select mesh and submesh for further data access
-            if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
-            {
-               int vertexCount = mWrapper->GetVertexCount();
-               int faceCount = mWrapper->GetFaceCount();
-               if (!mMeshVertices) 
-               {
-                  mMeshVertices           = new float[vertexCount*3];
-                  mMeshNormals            = new float[vertexCount*3];
-                  mMeshTextureCoordinates = new float[vertexCount*2];
-                  mMeshFaces              = new int[faceCount*3];
-                  mWrapper->GetFaces(mMeshFaces);
-               }
-
-               // get the transformed vertices of the submesh
-               vertexCount = mWrapper->GetVertices(mMeshVertices);
-
-               // get the transformed normals of the submesh
-               mWrapper->GetNormals(mMeshNormals);
-
-               // get the texture coordinates of the submesh
-               // this is still buggy, it renders only the first texture.
-               // it should be a loop rendering each texture on its own texture unit
-               unsigned tcount = mWrapper->GetTextureCoords(0, mMeshTextureCoordinates);
-
-               // flip vertical coordinates
-               for (int i = 1; i < vertexCount * 2; i += 2)
-               {
-                  mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
-               }
-
-               // set the vertex and normal buffers
-               state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
-               state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
-
-               // set the texture coordinate buffer and state if necessary
-               if((mWrapper->GetMapCount() > 0) && (tcount > 0))
-               {
-                  // set the texture coordinate buffer
-                  state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
-               }
-
-               // White 
-               glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-               // draw the submesh
-               if(sizeof(CalIndex) == sizeof(short))
-               {
-                  glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, mMeshFaces);
-               }
-               else
-               {
-                  glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, mMeshFaces);
-               }
-
-               // get the faces of the submesh for the next frame
-               faceCount = mWrapper->GetFaces(mMeshFaces);
-            }
-
-            // end the rendering
-            mWrapper->EndRenderingQuery();
-         }
+         DrawUsingPrimitives(renderInfo);
       }
    }
 
@@ -583,5 +430,186 @@ namespace dtAnim
    osg::Object* SubmeshDrawable::cloneType() const
    {
       return new SubmeshDrawable(mWrapper.get(), mMeshID, mSubmeshID);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   bool SubmeshDrawable::VBOAvailable(const osg::RenderInfo& renderInfo) const
+   {
+      const osg::State *state = renderInfo.getState();
+      if (state != NULL)
+      {
+         return getUseVertexBufferObjects() && state->isVertexBufferObjectSupported();
+      }
+      else
+      {
+         return false;
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SubmeshDrawable::DrawUsingVBO(osg::RenderInfo &renderInfo) const
+   {
+      osg::State& state = *renderInfo.getState();
+
+      //bind the VBO's
+      state.disableAllVertexArrays();
+
+      bool initializedThisDraw = false;
+      if (!mInitalized)
+      {
+         InitVertexBuffers(state);
+         mInitalized = true;
+         initializedThisDraw = true;
+      }
+
+      // begin the rendering loop
+      if(mWrapper->BeginRenderingQuery())
+      {
+         // select mesh and Submesh for further data access
+         if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+         {
+            SubmeshUserData* userData = 
+               dynamic_cast<SubmeshUserData*>(renderInfo.getUserData());
+
+            float finalLOD = 0.0;
+            if (userData != NULL)
+            {
+               finalLOD = userData->mLOD;
+            }
+            else
+            {
+               finalLOD = GetCurrentLOD();
+            }
+
+            /// the inverse of ((index + 1) / LOD_COUNT) = lodfloat as seen in InitVertexBuffers.
+
+            unsigned lodIndex = unsigned((float(LOD_COUNT) * finalLOD) - 1.0f);
+            dtUtil::Clamp(lodIndex, 0U, LOD_COUNT - 1U);
+
+            ///quantify the lod floating point number.
+            finalLOD = (float(lodIndex + 1) / float(LOD_COUNT));
+
+            mWrapper->SetLODLevel(finalLOD);
+
+            const Extensions* glExt = getExtensions(state.getContextID(), true);
+
+            glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, mMeshVBO);
+            if (!initializedThisDraw)
+            {
+               float* vertexArray = reinterpret_cast<float*>(glExt->glMapBuffer(GL_ARRAY_BUFFER_ARB, GL_READ_WRITE_ARB));
+
+               ///offset into the vbo to fill the correct lod.
+               vertexArray += mVertexOffsets[lodIndex] * STRIDE;
+
+               mWrapper->GetVertices(vertexArray, STRIDE_BYTES);
+
+               // get the transformed normals of the Submesh
+               mWrapper->GetNormals(vertexArray + 3, STRIDE_BYTES);
+               glExt->glUnmapBuffer(GL_ARRAY_BUFFER_ARB);
+            }
+
+            unsigned offset = mVertexOffsets[lodIndex] * STRIDE;
+
+            state.setVertexPointer(3, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(0 + offset));
+
+            state.setNormalPointer(GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(3 + offset));
+            state.setTexCoordPointer(0, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(6 + offset));
+            state.setTexCoordPointer(1, 2, GL_FLOAT, STRIDE_BYTES, BUFFER_OFFSET(8 + offset));
+
+            //make the call to render
+            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, mMeshIndices);
+
+            glDrawElements(GL_TRIANGLES, mFaceCount[lodIndex] * 3U, (sizeof(CalIndex) < 4) ?
+                           GL_UNSIGNED_SHORT: GL_UNSIGNED_INT, INDEX_OFFSET(3U * mFaceOffsets[lodIndex]));
+
+            glExt->glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+            glExt->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+
+            // This data could potential cause problems
+            // so we clear it out here (i.e CEGUI incompatible)
+            state.setVertexPointer(NULL);
+
+            state.setNormalPointer(NULL);
+            state.setTexCoordPointer(0, NULL);
+            state.setTexCoordPointer(1, NULL);
+         }
+      }
+
+      // end the rendering
+      mWrapper->EndRenderingQuery();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void SubmeshDrawable::DrawUsingPrimitives(osg::RenderInfo &renderInfo) const
+   {
+      osg::State& state = *renderInfo.getState();
+
+      // VBO's arn't available, so use conventional rendering path.
+      // begin the rendering loop
+      if(mWrapper->BeginRenderingQuery())
+      {
+         // select mesh and submesh for further data access
+         if(mWrapper->SelectMeshSubmesh(mMeshID, mSubmeshID))
+         {
+            int vertexCount = mWrapper->GetVertexCount();
+            int faceCount = mWrapper->GetFaceCount();
+            if (!mMeshVertices) 
+            {
+               mMeshVertices           = new float[vertexCount*3];
+               mMeshNormals            = new float[vertexCount*3];
+               mMeshTextureCoordinates = new float[vertexCount*2];
+               mMeshFaces              = new int[faceCount*3];
+               mWrapper->GetFaces(mMeshFaces);
+            }
+
+            // get the transformed vertices of the submesh
+            vertexCount = mWrapper->GetVertices(mMeshVertices);
+
+            // get the transformed normals of the submesh
+            mWrapper->GetNormals(mMeshNormals);
+
+            // get the texture coordinates of the submesh
+            // this is still buggy, it renders only the first texture.
+            // it should be a loop rendering each texture on its own texture unit
+            unsigned tcount = mWrapper->GetTextureCoords(0, mMeshTextureCoordinates);
+
+            // flip vertical coordinates
+            for (int i = 1; i < vertexCount * 2; i += 2)
+            {
+               mMeshTextureCoordinates[i] = 1.0f - mMeshTextureCoordinates[i];
+            }
+
+            // set the vertex and normal buffers
+            state.setVertexPointer(3, GL_FLOAT, 0, mMeshVertices);
+            state.setNormalPointer(GL_FLOAT, 0, mMeshNormals);
+
+            // set the texture coordinate buffer and state if necessary
+            if((mWrapper->GetMapCount() > 0) && (tcount > 0))
+            {
+               // set the texture coordinate buffer
+               state.setTexCoordPointer(0, 2, GL_FLOAT, 0, mMeshTextureCoordinates);
+            }
+
+            // White 
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+            // draw the submesh
+            if(sizeof(CalIndex) == sizeof(short))
+            {
+               glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, mMeshFaces);
+            }
+            else
+            {
+               glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, mMeshFaces);
+            }
+
+            // get the faces of the submesh for the next frame
+            faceCount = mWrapper->GetFaces(mMeshFaces);
+         }
+
+         // end the rendering
+         mWrapper->EndRenderingQuery();
+      }
    }
 } // namespace dtAnim
