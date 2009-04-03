@@ -57,7 +57,6 @@ int main(int argc, char** argv)
    while (!showUsage && appToLoad.empty() && curArg <= argc)
    {
       std::string curArgv = argv[curArg];
-      std::cout << "curArg " << curArgv << std::endl;
       if (!curArgv.empty())
       {
          if (curArgv == "--configFileName")
@@ -65,7 +64,6 @@ int main(int argc, char** argv)
             if (curArg < argc)
             {
                configFileName = argv[curArg + 1];
-               std::cout << "c " << configFileName << std::endl;
                ++curArg;
             }
             else
@@ -81,7 +79,6 @@ int main(int argc, char** argv)
          else
          {
             appToLoad = curArgv;
-            std::cout << "a " << appToLoad << std::endl;
          }
       }
       ++curArg;
