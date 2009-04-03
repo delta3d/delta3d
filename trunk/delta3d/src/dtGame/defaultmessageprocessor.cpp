@@ -4,9 +4,9 @@
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -57,19 +57,19 @@ namespace dtGame
       //bool remote = false;
       if (GetGameManager() == NULL)
       {
-         LOG_ERROR("This component is not assigned to a GameManager, but received a message.  It will be ignored.");         
+         LOG_ERROR("This component is not assigned to a GameManager, but received a message.  It will be ignored.");
          return;
-      }  
-             
+      }
+
       if (msg.GetDestination() != NULL && GetGameManager()->GetMachineInfo() != *msg.GetDestination())
       {
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            LOG_DEBUG("Received message has a destination set to a different machine that this one. It will be ignored.");         
+            LOG_DEBUG("Received message has a destination set to a different machine that this one. It will be ignored.");
             return;
          }
       }
-      
+
       if (msg.GetMessageType() == MessageType::INFO_ACTOR_CREATED)
          ProcessCreateActor(static_cast<const ActorUpdateMessage&>(msg));
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
@@ -81,10 +81,10 @@ namespace dtGame
       else if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
             msg.GetMessageType() == MessageType::TICK_REMOTE)
          ProcessTick(static_cast<const TickMessage&>(msg));
-      else 
+      else
       {
          //remote = GetGameManager()->GetMachineInfo() != msg.GetSource();
-         
+
          if (msg.GetMessageType() == MessageType::COMMAND_PAUSE)
             ProcessPauseCommand(msg);
          else if (msg.GetMessageType() == MessageType::COMMAND_RESUME)
@@ -93,7 +93,7 @@ namespace dtGame
             ProcessRestartCommand(static_cast<const RestartMessage&>(msg));
          else if (msg.GetMessageType() == MessageType::COMMAND_SET_TIME)
             ProcessTimeChangeCommand(static_cast<const TimeChangeMessage&>(msg));
-         else 
+         else
          {
             LOG_DEBUG("The default message component is processing an unhandled local message");
             ProcessUnhandledLocalMessage(msg);
@@ -102,23 +102,21 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg) 
+   dtCore::RefPtr<GameActorProxy> DefaultMessageProcessor::ProcessRemoteCreateActor(const ActorUpdateMessage& msg)
    {
-      const std::string &typeName = msg.GetActorTypeName();
-      const std::string &catName = msg.GetActorTypeCategory();
-      const std::string &prototypeName = msg.GetPrototypeName();
+      const std::string& prototypeName = msg.GetPrototypeName();
 
       dtCore::RefPtr<dtGame::GameActorProxy> gap;
-      dtCore::RefPtr<const dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
+      dtCore::RefPtr<const dtDAL::ActorType> type = msg.GetActorType();
 
-      // If the message has a prototype, then use it to create the actor 
+      // If the message has a prototype, then use it to create the actor
       if (!prototypeName.empty())
       {
          dtGame::GameActorProxy* prototypeProxy = NULL;
          GetGameManager()->FindPrototypeByName(prototypeName, prototypeProxy);
          if (prototypeProxy == NULL)
          {
-            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The prototypeName parameter with value \"" 
+            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The prototypeName parameter with value \""
                + prototypeName + "\" is invalid. No such prototype exists. Remote actor will not be created.", __FILE__, __LINE__);
          }
 
@@ -127,19 +125,22 @@ namespace dtGame
       }
 
       // Regular create (ie no prototype)
-      else 
+      else
       {
          if (!type.valid())
          {
-            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
+            const std::string& typeName = msg.GetActorTypeName();
+            const std::string& catName = msg.GetActorTypeCategory();
+
+            throw dtUtil::Exception(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \""
               + catName + "." + typeName + "\" are invalid because no such actor type is registered.", __FILE__, __LINE__);
          }
          gap = GetGameManager()->CreateRemoteGameActor(*type);
       }
-           
+
       //Change the id to match the one this is ghosting.
-      gap->SetId(msg.GetAboutActorId());         
-     
+      gap->SetId(msg.GetAboutActorId());
+
       return gap;
    }
 
@@ -165,7 +166,7 @@ namespace dtGame
          LOG_WARNING("Actor deleted msg does not specify a valid actor.");
          return;
       }
-      
+
       GetGameManager()->DeleteActor(*ap);
    }
 
@@ -189,7 +190,7 @@ namespace dtGame
             }
             catch (const dtUtil::Exception& ex)
             {
-               LOG_ERROR(ex.TypeEnum().GetName() 
+               LOG_ERROR(ex.TypeEnum().GetName()
                   + " exception encountered trying to create a remote actor.  The actor will be ignored. Message: " + ex.What());
             }
          }
@@ -198,7 +199,7 @@ namespace dtGame
       {
          ProcessLocalCreateActor(msg);
       }
-      else 
+      else
       {
          ProcessRemoteUpdateActor(msg, proxy);
       }
@@ -216,7 +217,7 @@ namespace dtGame
             ProcessLocalUpdateActor(msg);
       }
       else
-         ProcessCreateActor(msg);   
+         ProcessCreateActor(msg);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -260,7 +261,7 @@ namespace dtGame
    void DefaultMessageProcessor::ProcessUnhandledLocalMessage(const Message &msg)
    {
    }
-      
+
    ///////////////////////////////////////////////////////////////////////////////
    void DefaultMessageProcessor::ProcessUnhandledRemoteMessage(const Message &msg)
    {
