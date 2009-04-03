@@ -142,6 +142,7 @@ namespace dtAnim
       , mInitalized(false)
       , mVBOContextID(-1)
       , mWrapper(wrapper)
+      , mMeshVertices(NULL)
       , mMeshNormals(NULL)
       , mMeshTextureCoordinates(NULL)
       , mMeshFaces(NULL)
