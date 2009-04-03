@@ -54,17 +54,17 @@ int main(int argc, char** argv)
    int curArg = 1;
    std::string configFileName("config.xml");
 
-   while (!showUsage && appToLoad.empty() && curArg <= argc)
+   while (!showUsage && appToLoad.empty() && curArg < argc)
    {
       std::string curArgv = argv[curArg];
       if (!curArgv.empty())
       {
          if (curArgv == "--configFileName")
          {
+            ++curArg;
             if (curArg < argc)
             {
-               configFileName = argv[curArg + 1];
-               ++curArg;
+               configFileName = argv[curArg];
             }
             else
             {
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
    //The loop always overruns by one, so subtract it back off.
    --curArg;
 
-   if (showUsage)
+   if (appToLoad.empty() || showUsage)
    {
       ShowUsageAndExit();
    }
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
    argv = argv + curArg;
    try
    {
-      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv);
+      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv, configFileName);
       app->SetGameLibraryName(appToLoad);
       app->Config();
       app->Run();
