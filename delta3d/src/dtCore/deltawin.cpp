@@ -238,10 +238,6 @@ void DeltaWin::SetPosition(int x, int y, int width, int height)
 void DeltaWin::SetPosition(const DeltaWin::PositionSize& positionSize)
 {
    SetPosition(positionSize.mX, positionSize.mY, positionSize.mWidth, positionSize.mHeight);
-
-   // Save the window size in case we have to restore it later
-   mLastWindowedWidth  = positionSize.mWidth;
-   mLastWindowedHeight = positionSize.mHeight;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
