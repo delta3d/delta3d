@@ -12,12 +12,12 @@ MACRO(ADD_DELTA3D_SUBFOLDERS)
 	  SET(DTAUDIO_AVAILABLE "YES")
 	ENDIF (BUILD_AUDIO)
 
-	IF (BUILD_BINDINGS) 
-	  FIND_PACKAGE(Boost)      #for dtNet, dtNetGM, Python bindings
-	  FIND_PACKAGE(PythonLibs) #for Python bindings
-	  ADD_SUBDIRECTORY(src/python)
-	  ADD_SUBDIRECTORY(src/dtScript)
-	ENDIF (BUILD_BINDINGS)
+    IF (BUILD_BINDINGS) 
+      FIND_PACKAGE(Boost COMPONENTS python REQUIRED)      #for dtNet, dtNetGM, Python bindings  
+      FIND_PACKAGE(PythonLibs) #for Python bindings
+      ADD_SUBDIRECTORY(src/python)
+      ADD_SUBDIRECTORY(src/dtScript)
+    ENDIF (BUILD_BINDINGS)
 
 	IF (BUILD_DIS)  
 	  FIND_PACKAGE(DIS)     #for dtDIS
