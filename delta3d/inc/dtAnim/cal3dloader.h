@@ -56,7 +56,7 @@ namespace dtAnim
          Cal3DLoader();
          
          ///Load an animated entity definition file and return the Cal3DModelWrapper
-         bool Load(const std::string &filename, Cal3DModelData*& data_in);        
+         bool Load(const std::string& filename, Cal3DModelData*& data_in);        
 
          ///empty all containers of CalCoreModels and the stored textures
          void PurgeAllCaches();
@@ -65,14 +65,14 @@ namespace dtAnim
          virtual ~Cal3DLoader();
 
       private:
-         CalCoreModel* GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string &path );
+         CalCoreModel* GetCoreModel(CharacterFileHandler& handler, const std::string &filename, const std::string& path);
 
          //damned unpleasant place to load texture files.  Needs to be handled some other way
-         void LoadAllTextures(CalCoreModel& model, const std::string &path);
+         void LoadAllTextures(CalCoreModel& model, const std::string& path);
 
          void LoadModelData(CharacterFileHandler& handler, CalCoreModel& model, Cal3DModelData& modelData);
 
-         typedef std::map< std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
+         typedef std::map<std::string, osg::ref_ptr<osg::Texture2D> > TextureMap;
          typedef TextureMap::allocator_type::value_type TextureMapping;
          TextureMap mTextures;
  
