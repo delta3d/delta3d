@@ -307,6 +307,7 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
       {
          std::string errorMessage("Unable to find animation id by name: ");
          errorMessage.append(animNames[animIndex]);
+         errorMessage.append(".  The animation needs to exist in the main .xml file.");
 
          throw dtUtil::Exception(errorMessage, __FILE__, __LINE__);
       }
