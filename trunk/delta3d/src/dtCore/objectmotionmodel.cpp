@@ -19,6 +19,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/transform.h>
 #include <dtUtil/bits.h>
 #include <dtCore/deltawin.h>
 
@@ -1005,7 +1006,7 @@ void ObjectMotionModel::UpdateRotation(void)
             matrix *= matrix.rotate(osg::DegreesToRadians(90.0f), rightAxis);
          }
          matrix *= matrix.rotate(mOriginAngle, axis);
-         
+
          float scale = GetAutoScaleSize();
 
          // Rotate the compass angle.

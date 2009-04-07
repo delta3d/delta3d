@@ -28,6 +28,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/transform.h>
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
@@ -36,10 +37,10 @@
 #include <osgGA/GUIEventAdapter>
 
 ////////////////////////////////////////////////////////////////////////////////
-TestPreRender::TestPreRender(const std::string& mainSceneObjectName, 
+TestPreRender::TestPreRender(const std::string& mainSceneObjectName,
                              const std::string& configFilename /*= "config.xml"*/)
    : Application(configFilename)
-{      
+{
    LoadGeometry(mainSceneObjectName);
 
    dtCore::Transform objectTransform;
@@ -60,7 +61,7 @@ TestPreRender::TestPreRender(const std::string& mainSceneObjectName,
    mTextureView->SetScene(mTextureScene.get());
    mTextureView->SetCamera(mTextureCamera.get());
 
-   AddView(*mTextureView);  
+   AddView(*mTextureView);
 
    // Give the camera a texture to render to
    mTextureCamera->GetOSGCamera()->attach(osg::Camera::COLOR_BUFFER, mTextureTarget.get());
@@ -121,8 +122,8 @@ void TestPreRender::PreFrame(const double deltaFrameTime)
    dtCore::Transform objectTransform;
    mBoxObject->GetTransform(objectTransform);
    objectTransform.SetRotation(rotateMat);
-    
-   mBoxObject->SetTransform(objectTransform);  
+
+   mBoxObject->SetTransform(objectTransform);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -155,14 +156,14 @@ void TestPreRender::CreateTextureScene()
 
    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
    map.FindProxies(container, "", "", "", "dtCore::SkyBox");
-   
+
    // Add the skybox to the main scene as well
    GetScene()->AddDrawable(container[0]->GetActor());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestPreRender::CreateTextureCamera(int width, int height)
-{  
+{
    // Create the delta camera
    mTextureCamera = new dtCore::Camera("Texture Camera");
    mTextureCamera->SetWindow(GetWindow());
@@ -220,7 +221,7 @@ int main(int argc, char* argv[])
                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/testPreRender");
 
-   // We need to set custom display settings before the creating the app   
+   // We need to set custom display settings before the creating the app
    osg::DisplaySettings* display = osg::DisplaySettings::instance();
    display->setMinimumNumStencilBits(8);
 

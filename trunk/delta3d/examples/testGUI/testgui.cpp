@@ -31,6 +31,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 #include <dtGUI/scriptmodule.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtUtil/log.h>

@@ -3,6 +3,7 @@
 #include "testsound.h"
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 #include <dtUtil/log.h>
 
 // namespaces
@@ -33,7 +34,7 @@ TestSoundApp::TestSoundApp(const std::string& configFilename /*= "config.xml"*/)
    , mSound(NULL)
 {
    // create and configure the audio manager
-   AudioManager::Instantiate();   
+   AudioManager::Instantiate();
 
    // pre-load the sound files
    // (an optional optimization)

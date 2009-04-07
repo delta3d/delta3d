@@ -21,23 +21,30 @@
 #ifndef DELTA_TRANSFORMABLE
 #define DELTA_TRANSFORMABLE
 
-#include <osg/MatrixTransform>
-#include <osg/Geode>
-
 #include <ode/common.h>
 #include <dtCore/deltadrawable.h>
-#include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/deprecationmgr.h>
 
+//Must include because it's a typedef
+#include <osg/Matrix>
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 struct dContact;
+namespace osg
+{
+   class MatrixTransform;
+}
+
 /// @endcond
+
 
 namespace dtCore
 {
    class ODEGeomWrap;
    class PointAxis;
+
+   class Transform;
+   class TransformableImpl;
 
    /**
     * The Transformable class is the base class of anything that can move in the
@@ -107,7 +114,7 @@ namespace dtCore
 
    protected:
 
-      ///DEPRECATED 1/13/09.  Method is not required anymore      
+      ///DEPRECATED 1/13/09.  Method is not required anymore
       DEPRECATE_FUNC void ReplaceMatrixNode(TransformableNode* matrixTransform);
 
       virtual ~Transformable();
@@ -167,16 +174,10 @@ namespace dtCore
       virtual void GetTransform(Transform& xform, CoordSysEnum cs = ABS_CS) const;
 
       ///Convenience function to return back the internal matrix transform node
-      TransformableNode* GetMatrixNode()
-      {
-         return mNode.get();
-      }
+      TransformableNode* GetMatrixNode();
 
       ///Convenience function to return back the internal matrix transform node
-      const TransformableNode* GetMatrixNode() const
-      {
-         return mNode.get();
-      }
+      const TransformableNode* GetMatrixNode() const;
 
       /// @returns the matrix for this transformable.  Call this instead of getMatrixNode->getMatrix
       const osg::Matrix& GetMatrix() const;
@@ -188,7 +189,7 @@ namespace dtCore
       virtual void RenderProxyNode(bool enable = true);
 
       /// Returns if we are rendering the proxy node
-      virtual bool GetIsRenderingProxyNode() const { return mRenderProxyNode; }
+      virtual bool GetIsRenderingProxyNode() const;
 
       /**
        * Gets the world coordinate matrix for the supplied node.
@@ -403,7 +404,7 @@ namespace dtCore
        * Are we currently rendering the collision geometry?
        * @return True if we are rendering collision geometry.
        */
-      bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
+      bool GetRenderCollisionGeometry() const;
 
       /**
        * This typically gets called from Scene::AddDrawable().
@@ -449,13 +450,13 @@ namespace dtCore
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
-      /** 
+      /**
        * Get the const internal ODE Geom wrapper object.
        * @return The ODE Geom collision wrapper
        */
       const ODEGeomWrap* GetGeomWrapper() const;
 
-      /** 
+      /**
       * Get the internal ODE Geom wrapper object.
       * @return The ODE Geom collision wrapper
       */
@@ -463,32 +464,7 @@ namespace dtCore
 
    private:
       void Ctor();
-
-      dtCore::RefPtr<ODEGeomWrap> mGeomWrap;
-
-
-      /**
-       *  Pointer to the collision geometry representation
-       */
-      RefPtr<osg::Geode> mGeomGeod;
-
-      /**
-      * The node passed on GetOSGNode()
-      */
-      RefPtr<TransformableNode> mNode;
-
-      /**
-       * If we're rendering the collision geometry.
-       */
-      bool mRenderingGeometry;
-
-      /**
-       * If we're rendering the proxy node
-       */
-      bool mRenderProxyNode;
-
-      ///used for the rendering of the proxy node
-      dtCore::RefPtr<PointAxis> mPointAxis;
+      TransformableImpl* mImpl;
 
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();

@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -45,6 +45,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/globals.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/transform.h>
 
 #include <dtCore/infinitelight.h>
 #include <dtCore/positionallight.h>
@@ -256,20 +257,20 @@ ResourceDock::ResourceDock()
 {
    setWindowTitle(tr("Resources"));
    setMouseTracking(true);
-  
+
    mGeometryTreeWidget = new GeometryTree(this);
-   mShaderTreeWidget   = new ShaderTree(this);  
-   mLightTreeWidget    = new QTreeWidget(this);  
+   mShaderTreeWidget   = new ShaderTree(this);
+   mLightTreeWidget    = new QTreeWidget(this);
 
    mGeometryTreeWidget->headerItem()->setText(0, "");
    mShaderTreeWidget->headerItem()->setText(0, "");
    mLightTreeWidget->headerItem()->setText(0, "");
 
-   connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-           this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int))); 
+   connect(mGeometryTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+           this, SLOT(OnGeometryItemChanged(QTreeWidgetItem*, int)));
 
-   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-      this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int))); 
+   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+      this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 
    connect(mShaderTreeWidget, SIGNAL(itemSelectionChanged()),
       this, SLOT(OnShaderSelectionChanged()));
@@ -277,8 +278,8 @@ ResourceDock::ResourceDock()
    connect(mLightTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
            this, SLOT(OnLightItemClicked(QTreeWidgetItem*, int)));
 
-   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-           this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+           this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));
 
    mTabs = new QTabWidget;
    mTabs->addTab(mGeometryTreeWidget, tr("Geometry"));
@@ -319,7 +320,7 @@ QTreeWidgetItem* ResourceDock::FindMapItem(std::string fullName) const
             // Case insensitive comparison
             if (fullName == fullName)
             {
-               return geometryItem; 
+               return geometryItem;
             }
          }
       }
@@ -355,7 +356,7 @@ QTreeWidgetItem* ResourceDock::FindGeometryItem(const std::string& fullName) con
             // Case insensitive comparison
             if (currentPath == findPath)
             {
-               return geometryItem; 
+               return geometryItem;
             }
          }
       }
@@ -465,13 +466,13 @@ void ResourceDock::ReselectCurrentShaderItem()
 
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::SetGeometry(const std::string& fullName, bool shouldDisplay) const
-{  
+{
    QTreeWidgetItem* geometryItem = FindGeometryItem(fullName);
-   
+
    if (geometryItem)
    {
       SetGeometry(geometryItem, shouldDisplay);
-   }   
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -496,7 +497,7 @@ void ResourceDock::OnNewMap(const std::string& mapName)
    QTreeWidgetItem* listItem = FindMapItem("");
    if (listItem)
    {
-      listItem->addChild(mapItem);    
+      listItem->addChild(mapItem);
       listItem->setExpanded(true);
    }
 }
@@ -517,7 +518,7 @@ void ResourceDock::OnNewGeometry(const std::string& path, const std::string& fil
    QTreeWidgetItem* listItem = FindGeometryItem("");
    if (listItem)
    {
-      listItem->addChild(geometryItem);   
+      listItem->addChild(geometryItem);
       listItem->setExpanded(true);
    }
 }
@@ -561,7 +562,7 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
             // The full path is stored in the tooltip
             QString geomName = item->toolTip(0);
             emit LoadGeometry(geomName.toStdString());
-            
+
             // In case we are switching from a map, we need to fix the lights as
             // the map would probably have removed a few.
             emit FixLights();
@@ -575,7 +576,7 @@ void ResourceDock::OnGeometryItemChanged(QTreeWidgetItem* item, int column)
          // the map would probably have removed a few.
          emit FixLights();
       }
-   }  
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -600,7 +601,7 @@ void ResourceDock::OnSaveAs()
          QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
          dtCore::RefPtr<dtCore::Object> saveObject = new dtCore::Object;
          osg::Node *node = saveObject->LoadFile(fileInfo.filePath().toStdString());
- 
+
          if (node)
          {
             fileInfo = filename;
@@ -631,7 +632,7 @@ void ResourceDock::OnSaveAs()
 void ResourceDock::OnNewShader(const std::string& filename, const std::string& shaderGroup, const std::string& shaderProgram)
 {
    // We don't want this signal emitted when we're adding a shader
-   disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+   disconnect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
               this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 
    // Get the file item.
@@ -687,7 +688,7 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
 
       if (shaderProgram == programItem->text(0).toStdString())
       {
-         connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+         connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
             this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
          // The program already exists, so we don't want to add it again.
          return;
@@ -703,7 +704,7 @@ void ResourceDock::OnNewShader(const std::string& filename, const std::string& s
 
    groupItem->addChild(programItem);
 
-   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
+   connect(mShaderTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
            this, SLOT(OnShaderItemChanged(QTreeWidgetItem*, int)));
 }
 
@@ -750,20 +751,20 @@ void ResourceDock::OnShaderSelectionChanged()
 
                if (programItem == selectedItem)
                {
-                  dtCore::ShaderProgram *program = 
+                  dtCore::ShaderProgram *program =
                      shaderManager.FindShaderPrototype(programItem->text(0).toStdString(), groupItem->text(0).toStdString());
                   if (program)
                   {
                      const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
                      const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-                     
+
                      bool vertexEnabled = vertShaderList.size()? true: false;
                      bool fragmentEnabled = fragShaderList.size()? true: false;
-                     
+
                      ToggleVertexShaderSources(vertexEnabled);
                      ToggleFragmentShaderSources(fragmentEnabled);
                      mShaderTreeWidget->SetShaderSourceEnabled(vertexEnabled, fragmentEnabled);
-                  }  
+                  }
                   return;
                }
             }
@@ -775,7 +776,7 @@ void ResourceDock::OnShaderSelectionChanged()
 
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
-{ 
+{
    if (column == 0)
    {
       dtCore::ShaderManager& shaderManager = dtCore::ShaderManager::GetInstance();
@@ -826,7 +827,7 @@ void ResourceDock::OnShaderItemChanged(QTreeWidgetItem* item, int column)
 
          emit RemoveShader();
       }
-   }  
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -915,13 +916,13 @@ void ResourceDock::OnOpenCurrentVertexShaderSources()
    {
       QTreeWidgetItem* currentItem = itemList.at(0);
 
-      dtCore::ShaderProgram *program = 
+      dtCore::ShaderProgram *program =
          shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
 
       if (program)
       {
          const std::vector<std::string>& vertShaderList = program->GetVertexShaders();
-         OpenFilesInTextEditor(vertShaderList);     
+         OpenFilesInTextEditor(vertShaderList);
       }
    }
 }
@@ -937,13 +938,13 @@ void ResourceDock::OnOpenCurrentFragmentShaderSources()
    {
       QTreeWidgetItem* currentItem = itemList.at(0);
 
-      dtCore::ShaderProgram *program = 
+      dtCore::ShaderProgram *program =
          shaderManager.FindShaderPrototype(currentItem->text(0).toStdString(), currentItem->parent()->text(0).toStdString());
 
       if (program)
       {
          const std::vector<std::string>& fragShaderList = program->GetFragmentShaders();
-         OpenFilesInTextEditor(fragShaderList);     
+         OpenFilesInTextEditor(fragShaderList);
       }
    }
 }
@@ -952,10 +953,10 @@ void ResourceDock::OnOpenCurrentFragmentShaderSources()
 void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
 {
    // disconnect the item changed trigger so we don't get infinite item changed events.
-   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));
 
-   int lightIndex = lightInfo.light->GetNumber();  
+   int lightIndex = lightInfo.light->GetNumber();
 
    const osg::LightSource* osgSource = lightInfo.light->GetLightSource();
    const osg::Light* osgLight = osgSource->getLight();
@@ -1071,15 +1072,15 @@ void ResourceDock::OnLightUpdate(const LightInfo& lightInfo)
    SetColorItem(mLightItems[lightIndex].specular, specular);
 
    //std::ostringstream oss;
-   //oss << "light #" << lightNumber << ": (" 
-   //    << position.x() << ", " << position.y() << ", " << position.z() 
+   //oss << "light #" << lightNumber << ": ("
+   //    << position.x() << ", " << position.y() << ", " << position.z()
    //    << ")";
 
-   //std::cout << oss.str() << std::endl;   
+   //std::cout << oss.str() << std::endl;
 
    // Reconnect the item changed event.
-   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1181,10 +1182,10 @@ void ResourceDock::OnLightItemClicked(QTreeWidgetItem* item, int column)
                {
                   emit SetSpecular(lightID, lightColor);
                }
-            }         
+            }
          }
       }
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1378,8 +1379,8 @@ void ResourceDock::CreateLightItems()
    mLightTreeWidget->setHeaderLabels(headerLables);
 
    // disconnect the item changed trigger so we don't get infinite item changed events.
-   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+   disconnect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));
 
    for (int lightIndex = 0; lightIndex < dtCore::MAX_LIGHTS; ++lightIndex)
    {
@@ -1387,7 +1388,7 @@ void ResourceDock::CreateLightItems()
       oss << "Light" << lightIndex;
 
       QTreeWidgetItem* newLightItem = new QTreeWidgetItem;
-      newLightItem->setText(0, oss.str().c_str());  
+      newLightItem->setText(0, oss.str().c_str());
       newLightItem->setText(1, "Disabled");
       newLightItem->setFlags(Qt::ItemIsSelectable |
                              Qt::ItemIsUserCheckable |
@@ -1395,8 +1396,8 @@ void ResourceDock::CreateLightItems()
       newLightItem->setCheckState(0, Qt::Unchecked);
 
       QTreeWidgetItem* type = new QTreeWidgetItem(newLightItem);
-      type->setText(0, "Type");  
-      type->setText(1, "Infinite");    
+      type->setText(0, "Type");
+      type->setText(1, "Infinite");
       type->setFlags(Qt::ItemIsEnabled);
 
       mLightTreeWidget->addTopLevelItem(newLightItem);
@@ -1413,11 +1414,11 @@ void ResourceDock::CreateLightItems()
 
    // Set the default light to "on"
    QTreeWidgetItem* light0 = mLightItems[0].light;
-   light0->setText(1, "Enabled");   
+   light0->setText(1, "Enabled");
    light0->setCheckState(0, Qt::Checked);
 
-   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), 
-      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int))); 
+   connect(mLightTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)),
+      this, SLOT(OnLightItemChanged(QTreeWidgetItem*, int)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1475,12 +1476,12 @@ void ResourceDock::SetPositionItem(QTreeWidgetItem* item, const osg::Vec3& posit
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color)
 {
-   QColor qtColor(color.x() * 255, 
+   QColor qtColor(color.x() * 255,
                   color.y() * 255,
                   color.z() * 255,
                   color.w() * 255);
 
-//   QBrush newBrush(QColor::fromRgbF(color.x(), color.y(), color.z(), color.a()));    
+//   QBrush newBrush(QColor::fromRgbF(color.x(), color.y(), color.z(), color.a()));
 //   item->setBackground(1, newBrush);
 
    QPixmap colorFill(16, 16);
@@ -1500,16 +1501,16 @@ void ResourceDock::SetColorItem(QTreeWidgetItem* item, const osg::Vec4& color)
 
 ///////////////////////////////////////////////////////////////////////////////
 void ResourceDock::OpenFilesInTextEditor(const std::vector<std::string>& fileList)
-{   
+{
    for (size_t fileIndex = 0; fileIndex < fileList.size(); ++fileIndex)
    {
-      std::string fileName = dtCore::FindFileInPathList(fileList[fileIndex]);      
+      std::string fileName = dtCore::FindFileInPathList(fileList[fileIndex]);
 
       TextEdit* editor = new TextEdit;
       editor->resize(700, 800);
       editor->load(fileName.c_str());
       editor->show();
-   }      
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

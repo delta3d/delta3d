@@ -6,10 +6,11 @@
 #include <dtAudio/dtaudio.h>
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
-#include <dtUtil/serializer.h>
 #include <dtCore/system.h>
-#include <dtUtil/mathdefines.h>
+#include <dtCore/transform.h>
 #include <dtCore/collisioncategorydefaults.h>
+#include <dtUtil/mathdefines.h>
+#include <dtUtil/serializer.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -73,19 +74,19 @@ Sound::Sound()
    AddSender(&dtCore::System::GetInstance());
 
    alGenSources(1, &mSource);
-   CheckForError("Attempt to create an OpenAL source", __FUNCTION__, __LINE__);   
+   CheckForError("Attempt to create an OpenAL source", __FUNCTION__, __LINE__);
 
    SetPosition(osg::Vec3(0.0f, 0.0f, 0.0f));
    SetDirection(osg::Vec3(0.0f, 0.0f, 0.0f));
    SetVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
 
    SetGain(1.0f);
-   SetPitch(1.0f);   
+   SetPitch(1.0f);
    SetRolloffFactor(1.0f);
-   
+
    SetMaxDistance(FLT_MAX);
    SetMinGain(0.0f);
-   SetMaxGain(1.0f);      
+   SetMaxGain(1.0f);
 
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_SOUND);
 }
@@ -109,7 +110,7 @@ Sound::~Sound()
 void Sound::OnMessage(MessageData* data)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   assert(data); 
+   assert(data);
 
    ALint srcState;
 
@@ -120,8 +121,8 @@ void Sound::OnMessage(MessageData* data)
 
       // if the sound has stopped it needs to be marked stopped
       if (srcState == AL_STOPPED && !IsStopped())
-      {        
-         Stop();         
+      {
+         Stop();
       }
    }
 }
@@ -135,11 +136,11 @@ void Sound::SetPositionFromParent()
    // extract current transform from actor
    dtCore::Transform transform;
    GetTransform(transform, dtCore::Transformable::ABS_CS);
-   
-   osg::Vec3 pos(0.0f, 0.0f, 0.0f);   
-   transform.GetTranslation(pos);      
 
-   // set the value on the sound object      
+   osg::Vec3 pos(0.0f, 0.0f, 0.0f);
+   transform.GetTranslation(pos);
+
+   // set the value on the sound object
    SetPosition(pos);
 }
 
@@ -154,12 +155,12 @@ void Sound::SetDirectionFromParent()
 
    transform.GetRotation(dir);
 
-   // set the value on the sound object      
+   // set the value on the sound object
    SetDirection(dir);
 }
 
 void Sound::SetState(unsigned int flag)
-{  
+{
    mCommandState |= BIT(flag);
 
    //a few state flags are mutually exclusive
@@ -301,7 +302,7 @@ ALint Sound::GetBuffer()
 bool Sound::IsLooping() const
 {
    ALint looping;
-   
+
    alGetSourcei(mSource, AL_LOOPING, &looping);
    CheckForError("Getting looping flag for source", __FUNCTION__, __LINE__);
 
@@ -346,7 +347,7 @@ void Sound::SetBuffer(ALint b)
    //}
 
    if (alIsBuffer(b) == AL_FALSE)
-   {      
+   {
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Invalid buffer when attempting to set source's buffer");
       // no buffer, bail
@@ -377,18 +378,18 @@ void Sound::SetStopCallback(CallBack cb, void* param)
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::Play()
-{   
+{
    SetState(PLAY);
-   mCommand.push(kCommand[PLAY]);   
+   mCommand.push(kCommand[PLAY]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::PlayImmediately()
 {
-   // first check if sound has a buffer   
+   // first check if sound has a buffer
    ALint buf = GetBuffer();
    if (alIsBuffer(buf) == AL_FALSE)
-   {      
+   {
       dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                   "Invalid buffer when attempting to play sound");
       // no buffer, bail
@@ -402,7 +403,7 @@ void Sound::PlayImmediately()
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::Pause()
-{   
+{
    SetState(PAUSE);
    mCommand.push(kCommand[PAUSE]);
 }
@@ -471,7 +472,7 @@ void Sound::SetGain(float gain)
 {
    // force gain to range from zero to one
    dtUtil::Clamp<float>(gain, 0.0f, 1.0f);
-   
+
    alSourcef(mSource, AL_GAIN, gain);
    CheckForError("Attempt to set gain on source", __FUNCTION__, __LINE__);
 }
@@ -487,11 +488,11 @@ float Sound::GetGain() const
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetPitch(float pitch)
-{   
+{
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
-   // also, openAL states zero to be invalid   
-   dtUtil::Clamp<float>(pitch, 0.000001f, 2.0f); 
+   // also, openAL states zero to be invalid
+   dtUtil::Clamp<float>(pitch, 0.000001f, 2.0f);
 
    alSourcef(mSource, AL_PITCH, pitch);
    CheckForError("Attempt to set pitch on source", __FUNCTION__, __LINE__);
@@ -545,14 +546,14 @@ void Sound::SetPosition(const osg::Vec3& pos)
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::GetPosition(osg::Vec3& pos) const
-{   
+{
    alGetSource3f(mSource, AL_POSITION, &pos[0], &pos[1], &pos[2]);
-   CheckForError("Getting source position", __FUNCTION__, __LINE__); 
+   CheckForError("Getting source position", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetDirection(const osg::Vec3& dir)
-{   
+{
    //SendMessage( kCommand[DIRECTION], this );
    alSource3f(mSource, AL_DIRECTION, dir[0], dir[1], dir[2]);
    CheckForError("Setting source direction", __FUNCTION__, __LINE__);
@@ -569,14 +570,14 @@ void Sound::GetDirection(osg::Vec3& dir) const
 void Sound::SetVelocity(const osg::Vec3& vel)
 {
    alSource3f(mSource, AL_VELOCITY, vel[0], vel[1], vel[2]);
-   CheckForError("Setting source velocity", __FUNCTION__, __LINE__);   
+   CheckForError("Setting source velocity", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::GetVelocity(osg::Vec3& vel) const
 {
    alGetSource3f(mSource, AL_VELOCITY, &vel[0], &vel[1], &vel[2]);
-   CheckForError("Getting source velocity", __FUNCTION__, __LINE__);   
+   CheckForError("Getting source velocity", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -627,7 +628,7 @@ float Sound::GetRolloffFactor() const
    float r;
    alGetSourcef(mSource, AL_ROLLOFF_FACTOR, &r);
    CheckForError("Getting source rolloff", __FUNCTION__, __LINE__);
-   
+
    return r;
 }
 
@@ -635,7 +636,7 @@ float Sound::GetRolloffFactor() const
 void Sound::SetMinGain(float minGain)
 {
    dtUtil::Clamp<float>(minGain, 0.0f, 1.0f);
-   
+
    alSourcef(mSource, AL_MIN_GAIN, minGain);
    CheckForError("Setting source min gain", __FUNCTION__, __LINE__);
 }
@@ -653,7 +654,7 @@ float Sound::GetMinGain() const
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetMaxGain(float maxGain)
 {
-   dtUtil::Clamp<float>(maxGain, 0.0f, 1.0f);   
+   dtUtil::Clamp<float>(maxGain, 0.0f, 1.0f);
 
    alSourcef(mSource, AL_MAX_GAIN, maxGain);
    CheckForError("Setting source max gain", __FUNCTION__, __LINE__);

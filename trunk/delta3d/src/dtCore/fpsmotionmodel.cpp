@@ -16,6 +16,7 @@
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtCore/isector.h>
+#include <dtCore/transform.h>
 #include <dtUtil/mathdefines.h>
 
 #include <osg/Quat>

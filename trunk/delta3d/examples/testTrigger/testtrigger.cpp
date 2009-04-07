@@ -2,6 +2,7 @@
 
 #include <dtCore/keyboard.h>
 #include <dtCore/camera.h>
+#include <dtCore/transform.h>
 
 using namespace dtCore;
 using namespace dtABC;

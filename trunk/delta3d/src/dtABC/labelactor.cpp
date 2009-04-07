@@ -25,6 +25,8 @@
 #include <osg/Geometry>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtABC/labelactor.h>
+#include <osg/MatrixTransform>
+#include <osg/Geode>
 
 
 
@@ -49,7 +51,7 @@ namespace dtABC
    const dtUtil::RefString LabelActor::PROPERTY_DEPTH_TESTING_ENABLED("Depth Testing Enabled");
    const dtUtil::RefString LabelActor::PROPERTY_TEXT_ALIGNMENT("Text Alignment");
 
-   //ENUM CODE 
+   //ENUM CODE
    IMPLEMENT_ENUM(dtABC::LabelActor::AlignmentEnum)
    dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_TOP("LEFT_TOP");
    dtABC::LabelActor::AlignmentEnum dtABC::LabelActor::AlignmentEnum::LEFT_CENTER("LEFT_CENTER");
@@ -335,7 +337,7 @@ namespace dtABC
       outProperties.push_back(new StringActorProperty(
          LabelActor::PROPERTY_TEXT.Get(),
          LabelActor::PROPERTY_TEXT.Get(),
-         StringActorProperty::SetFuncType(this, &LabelActor::SetText), 
+         StringActorProperty::SetFuncType(this, &LabelActor::SetText),
          StringActorProperty::GetFuncType(this, &LabelActor::GetText),
          "Label text.",
          group));
@@ -343,7 +345,7 @@ namespace dtABC
       outProperties.push_back(new StringActorProperty(
          LabelActor::PROPERTY_FONT.Get(),
          LabelActor::PROPERTY_FONT.Get(),
-         StringActorProperty::SetFuncType(this, &LabelActor::SetFont), 
+         StringActorProperty::SetFuncType(this, &LabelActor::SetFont),
          StringActorProperty::GetFuncType(this, &LabelActor::GetFont),
          "Font for label text.",
          group));
@@ -352,7 +354,7 @@ namespace dtABC
       outProperties.push_back(new FloatActorProperty(
          LabelActor::PROPERTY_FONT_SIZE.Get(),
          LabelActor::PROPERTY_FONT_SIZE.Get(),
-         FloatActorProperty::SetFuncType(this, &LabelActor::SetFontSize), 
+         FloatActorProperty::SetFuncType(this, &LabelActor::SetFontSize),
          FloatActorProperty::GetFuncType(this, &LabelActor::GetFontSize),
          "Height of the text characters.",
          group));
@@ -361,7 +363,7 @@ namespace dtABC
       outProperties.push_back(new Vec4ActorProperty(
          LabelActor::PROPERTY_TEXT_COLOR.Get(),
          LabelActor::PROPERTY_TEXT_COLOR.Get(),
-         Vec4ActorProperty::SetFuncType(this, &LabelActor::SetTextColor), 
+         Vec4ActorProperty::SetFuncType(this, &LabelActor::SetTextColor),
          Vec4ActorProperty::GetFuncType(this, &LabelActor::GetTextColor),
          "Text color.",
          group));
@@ -369,7 +371,7 @@ namespace dtABC
       outProperties.push_back(new Vec4ActorProperty(
          LabelActor::PROPERTY_BACK_COLOR.Get(),
          LabelActor::PROPERTY_BACK_COLOR.Get(),
-         Vec4ActorProperty::SetFuncType(this, &LabelActor::SetBackColor), 
+         Vec4ActorProperty::SetFuncType(this, &LabelActor::SetBackColor),
          Vec4ActorProperty::GetFuncType(this, &LabelActor::GetBackColor),
          "Fill color behind the text.",
          group));
@@ -378,7 +380,7 @@ namespace dtABC
       outProperties.push_back(new Vec2ActorProperty(
          LabelActor::PROPERTY_BACK_SIZE.Get(),
          LabelActor::PROPERTY_BACK_SIZE.Get(),
-         Vec2ActorProperty::SetFuncType(this, &LabelActor::SetBackSize), 
+         Vec2ActorProperty::SetFuncType(this, &LabelActor::SetBackSize),
          Vec2ActorProperty::GetFuncType(this, &LabelActor::GetBackSize),
          "Dimensions of the text background.",
          group));
@@ -387,7 +389,7 @@ namespace dtABC
       outProperties.push_back(new BooleanActorProperty(
          LabelActor::PROPERTY_BACK_VISIBLE.Get(),
          LabelActor::PROPERTY_BACK_VISIBLE.Get(),
-         BooleanActorProperty::SetFuncType(this, &LabelActor::SetBackVisible), 
+         BooleanActorProperty::SetFuncType(this, &LabelActor::SetBackVisible),
          BooleanActorProperty::GetFuncType(this, &LabelActor::IsBackVisible),
          "Determines if the text background should be visible.",
          group));
@@ -395,7 +397,7 @@ namespace dtABC
       outProperties.push_back(new BooleanActorProperty(
          LabelActor::PROPERTY_LIGHTING_ENABLED.Get(),
          LabelActor::PROPERTY_LIGHTING_ENABLED.Get(),
-         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableLighting), 
+         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableLighting),
          BooleanActorProperty::GetFuncType(this, &LabelActor::GetEnableLighting),
          "Enable or disable the ability to be affected by OpenGL lighting.",
          group));
@@ -403,7 +405,7 @@ namespace dtABC
       outProperties.push_back(new BooleanActorProperty(
          LabelActor::PROPERTY_DEPTH_TESTING_ENABLED.Get(),
          LabelActor::PROPERTY_DEPTH_TESTING_ENABLED.Get(),
-         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableDepthTesting), 
+         BooleanActorProperty::SetFuncType(this, &LabelActor::SetEnableDepthTesting),
          BooleanActorProperty::GetFuncType(this, &LabelActor::GetEnableDepthTesting),
          "Enable or disable the OpenGL depth testing.",
          group));
@@ -414,7 +416,7 @@ namespace dtABC
          LabelActor::PROPERTY_TEXT_ALIGNMENT.Get(),
          MakeFunctor(*this,&LabelActor::SetTextAlignment),
          MakeFunctorRet(*this,&LabelActor::GetTextAlignment),
-         "Sets the text alignment type.", 
+         "Sets the text alignment type.",
          group));
 
    }

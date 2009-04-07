@@ -32,6 +32,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtCore/transform.h>
 #include <dtCore/cameradrawcallback.h>
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/screenshotcallback.h>

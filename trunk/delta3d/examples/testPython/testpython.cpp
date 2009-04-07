@@ -4,6 +4,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/object.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transform.h>
 
 #include <dtABC/application.h>
 
@@ -19,7 +20,7 @@ public:
    TestPythonApp( const std::string& configFile = "config.xml" )
       :  Application( configFile ),
          mScriptManager( 0 )
-   {     
+   {
       Object* obj = new Object( "UH-1N" );
 
       obj->LoadFile( "models/uh-1n.ive" );
@@ -30,7 +31,7 @@ public:
       AddDrawable(obj);
 
       mScriptManager = new dtScript::ScriptManager();
-      
+
       // Pre-load the Python script
       std::string filename = dtCore::FindFileInPathList( "flyhelo.py" );
 
@@ -46,7 +47,7 @@ protected:
    virtual ~TestPythonApp() {}
 
 public:
-   
+
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc )
    {
       bool verdict(false);
@@ -68,13 +69,13 @@ public:
             break;
          }
          default:
-         {         
+         {
          }
       }
 
       return verdict;
    }
-   
+
 private:
 
    dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;

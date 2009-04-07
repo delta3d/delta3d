@@ -7,6 +7,7 @@
 #include <dtCore/camera.h>//due to include of scene.h
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/collisioncategorydefaults.h>
+#include <dtCore/transform.h>
 
 #include <dtUtil/boundingshapeutils.h>
 #include <dtUtil/polardecomp.h>

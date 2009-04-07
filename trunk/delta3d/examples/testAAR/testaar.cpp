@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -38,6 +38,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
+#include <dtCore/transform.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/project.h>
 #include <dtGame/gamemanager.h>
@@ -67,7 +68,7 @@ TestAAR::TestAAR()
    : mLmsComponent(new dtLMS::LmsComponent("TestAARLmsComponent"))
    , mUseLMS(false)
 {
-   
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -98,7 +99,7 @@ void TestAAR::Initialize(dtGame::GameApplication& app, int argc, char** argv)
 void TestAAR::OnStartup(dtGame::GameApplication& app)
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
                                dtCore::GetDeltaRootPath() + "/examples/data;" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/imagesets;" +
                                dtCore::GetDeltaRootPath() + "/examples/data/gui/schemes;" +
@@ -115,19 +116,19 @@ void TestAAR::OnStartup(dtGame::GameApplication& app)
    {
       LOG_ERROR("Can't find the project context: " + e.What());
    }
-   
+
    dtGame::GameManager& gameManager = *app.GetGameManager();
 
    // Add Component - Input Component
    dtCore::RefPtr<dtGame::LogController> logCtrl = new dtGame::LogController("LogController");
    dtCore::RefPtr<dtGame::BinaryLogStream> logStream = new dtGame::BinaryLogStream(gameManager.GetMessageFactory());
    dtCore::RefPtr<dtGame::ServerLoggerComponent> srvrLog = new dtGame::ServerLoggerComponent(*logStream, "ServerLogger");
-   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(*app.GetWindow(),  *app.GetKeyboard(), *app.GetMouse(),                                                      
+   dtCore::RefPtr<TestAARHUD> hudComp = new TestAARHUD(*app.GetWindow(),  *app.GetKeyboard(), *app.GetMouse(),
                                                        *logCtrl, *mLmsComponent, *srvrLog);
 
    dtCore::RefPtr<TestAARInput> inputComp = new TestAARInput("TestInputComponent", *logCtrl, *hudComp);
    dtCore::RefPtr<TestAARMessageProcessor> mp = new TestAARMessageProcessor(*mLmsComponent, *logCtrl, *srvrLog);
-  
+
    gameManager.AddComponent(*mp, dtGame::GameManager::ComponentPriority::HIGHEST);
    gameManager.AddComponent(*mLmsComponent, dtGame::GameManager::ComponentPriority::NORMAL);
    gameManager.AddComponent(*inputComp, dtGame::GameManager::ComponentPriority::NORMAL);
@@ -178,7 +179,7 @@ void TestAAR::ParseCommandLineOptions(int argc, char** argv) const
    if (argParser.read("-h") || argParser.read("--help") || argParser.argc() == 0)
    {
       argParser.getApplicationUsage()->write(std::cerr);
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
          "Command Line Error.", __FILE__, __LINE__);
    }
 
@@ -187,7 +188,7 @@ void TestAAR::ParseCommandLineOptions(int argc, char** argv) const
    if (argParser.errors())
    {
       argParser.writeErrorMessages(std::cout);
-      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, 
+      throw dtUtil::Exception(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
          "Command Line Error.", __FILE__, __LINE__);
    }
 }

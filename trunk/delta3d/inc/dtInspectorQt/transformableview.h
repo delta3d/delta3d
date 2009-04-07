@@ -32,7 +32,7 @@ namespace dtInspectorQt
       void OnCategoryBits(const QString& text);
       void OnCollideBits(const QString& text);
       void Update();
-   	
+
    private:
       dtCore::ObserverPtr<dtCore::Transformable> mOperateOn;
       Ui::InspectorWidget* mUI;

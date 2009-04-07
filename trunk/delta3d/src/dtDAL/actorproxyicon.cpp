@@ -22,6 +22,7 @@
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <osg/Geometry>
 #include <osg/Image>
 #include <osg/Texture2D>
@@ -82,7 +83,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename, 
+   ActorProxyIcon::ActorProxyIcon(const std::string& iconImageFilename,
                                   const ActorProxyIconConfig& pConfig)
       : mIconImageFile(iconImageFilename)
       , mConfig(pConfig)
@@ -258,7 +259,7 @@ namespace dtDAL
          trans.SetTranslation(newPos);
          mArrowNode->SetTransform(trans);
       }
-      
+
       if(mConfig.mUpVector)
       {
          mArrowNodeUp->GetTransform(trans);
@@ -286,20 +287,20 @@ namespace dtDAL
          tx.SetRotation(hpr);
          mArrowNode->SetTransform(tx);
       }
-     
+
       if(mConfig.mUpVector)
       {
          tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
          mArrowNodeUp->SetTransform(tx);
       }
-      
+
    }
 
    //////////////////////////////////////////////////////////////////////////
    void ActorProxyIcon::SetActorRotation(const osg::Matrix &mat)
    {
       dtCore::Transform tx;
-      
+
       if(mConfig.mForwardVector)
       {
          mArrowNode->GetTransform(tx);

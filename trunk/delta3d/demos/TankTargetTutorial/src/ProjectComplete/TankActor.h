@@ -31,6 +31,7 @@
 #include <dtActors/gamemeshactor.h>
 #include <dtCore/particlesystem.h>
 #include <dtCore/isector.h>
+#include <dtCore/transform.h>
 #include <osgSim/DOFTransform>
 
 /**

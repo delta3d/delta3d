@@ -4,28 +4,29 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <dtCore/transformable.h>
-#include "export.h"
-#include "action.h"
-#include "pathpoint.h"
+#include <dtCore/transform.h>
+#include <dtABC/export.h>
+#include <dtABC/action.h>
+#include <dtABC/pathpoint.h>
 
 
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
+/*
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2004-2005 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
 * any later version.
 *
 * This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * Bradley Anderegg
 */
@@ -53,7 +54,7 @@ public:
    void SetLocalTransform(const dtCore::Transform& mat){mLocalTransform = mat;}
    const dtCore::Transform& GetLocalTransform() const {return mLocalTransform;}
 
-   
+
    const dtCore::Transformable* GetParent() const {return mParent.get();}
    dtCore::Transformable* GetParent() {return mParent.get();}
 
@@ -76,7 +77,7 @@ protected:
    */
    void StepObject(const PathPoint& p);
 
-  
+
 private:
 
    void SetTrack(const osg::Vec3& forwardVector, osg::Matrix& mat);
@@ -90,18 +91,18 @@ protected:
    * on update, if we want a scale or offset from origin, etc.
    */
    dtCore::Transform                         mLocalTransform;
-  
+
    /***
    * The TargetObject is the object we are moving
    */
    dtCore::RefPtr<dtCore::Transformable>     mTargetObject;
 
    /***
-   * If we want to have motion relative to another transform we can 
+   * If we want to have motion relative to another transform we can
    * set this here
    */
    dtCore::RefPtr<dtCore::Transformable>     mParent;
-   osg::Vec3                                 mInitialParentPos;  
+   osg::Vec3                                 mInitialParentPos;
    PARENT_RELATION                           mParentRelation;
 
 };

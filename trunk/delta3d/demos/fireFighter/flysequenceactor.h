@@ -23,6 +23,7 @@
 
 #include <dtGame/gameactor.h>
 #include <fireFighter/export.h>
+#include <dtCore/transform.h>
 
 // Forward declarations
 namespace dtGame

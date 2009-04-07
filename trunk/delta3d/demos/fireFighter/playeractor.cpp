@@ -34,6 +34,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/transform.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/invokable.h>
