@@ -56,7 +56,7 @@ void TestLightsApp::Config()
    // create an infinite light
    mGlobalInfinite = new InfiniteLight(4, "GlobalInfiniteLight");
    GetScene()->AddDrawable(mGlobalInfinite.get());
-   mGlobalInfinite->SetEnabled(false);
+   mGlobalInfinite->SetEnabled(true);
 
    // set camera stuff
    trans.Set(30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f);
@@ -163,8 +163,8 @@ void TestLightsApp::PreFrame(const double deltaFrameTime)
 
    float th = countOne;
    float tp = countTwo;
-
-   mGlobalInfinite->SetAzimuthElevation(th, tp); //change direction
+   
+   mGlobalInfinite->SetTransform(dtCore::Transform(0.0f, 0.0f, 0.0f, th, tp));
 }
 
 void TestLightsApp::CreateHelpLabel()
