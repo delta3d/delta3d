@@ -86,6 +86,8 @@ void Delta3DThread::run()
 
    //need to set the current context so that all the open gl stuff in osg can initialize.
    dtQt::ViewWindow& glWidget = *mWin->GetGLWidget();
+   glWidget.setMinimumWidth(glWidget.parentWidget()->width());
+   glWidget.setMinimumHeight(glWidget.parentWidget()->height());
    //glWidget.ThreadedInitializeGL();
    //glWidget.ThreadedMakeCurrent();
    

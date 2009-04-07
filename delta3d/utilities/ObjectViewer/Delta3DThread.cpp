@@ -104,6 +104,10 @@ void Delta3DThread::run()
    //need to set the current context so that all the open gl stuff in osg can initialize.
    dtQt::ViewWindow& glWidget = *mWin->GetGLWidget();
    
+   // Set a custom size for the viewport
+   glWidget.setMinimumWidth(700);
+   glWidget.setMinimumHeight(550);
+   
    mViewer = new ObjectViewer();
 
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
