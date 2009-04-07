@@ -10,6 +10,9 @@ using namespace dtCore;
 
 void initInfiniteLightBindings()
 {
+/* 
+All the Az/El functions have been removed in favor of using the InfiniteLight's transform.
+
    void (InfiniteLight::*SetAzimuthElevation1)(float, float) = &InfiniteLight::SetAzimuthElevation;
    void (InfiniteLight::*SetAzimuthElevation2)(const osg::Vec2&) = &InfiniteLight::SetAzimuthElevation;
    osg::Vec2 (InfiniteLight::*GetAzimuthElevation1)() const = &InfiniteLight::GetAzimuthElevation;
@@ -18,5 +21,6 @@ void initInfiniteLightBindings()
       .def("SetAzimuthElevation", SetAzimuthElevation1)
       .def("SetAzimuthElevation", SetAzimuthElevation2)
       .def("GetAzimuthElevation", GetAzimuthElevation1)
-      ;
+   ;
+*/
 }

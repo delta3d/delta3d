@@ -60,44 +60,6 @@ namespace dtActors
          */
         virtual void BuildPropertyMap();
 
-        /**
-         * Sets the direction the infinite light is pointing.
-         * @param dir The direction to set.
-         */
-        DEPRECATE_FUNC void SetDirection(const osg::Vec3 &dir) 
-        {
-           DEPRECATE("InfiniteLightActorProxy::SetDirection", "Transformable::SetTransform");
-
-            dtCore::InfiniteLight *l = dynamic_cast<dtCore::InfiniteLight *>(GetActor());
-            if (l == NULL) 
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::InfiniteLight.", __FILE__, __LINE__);
-            }
-
-            l->SetAzimuthElevation(dir[2],dir[0]);
-        }
-
-        /**
-         * Gets the direction the infinite light is pointing.
-         * @return The current direction
-         */
-        DEPRECATE_FUNC osg::Vec3 GetDirection() const 
-        {
-           DEPRECATE("InfiniteLightActorProxy::GetDirection", "Transformable::GetTransform");
-
-           const dtCore::InfiniteLight *l = dynamic_cast<const dtCore::InfiniteLight *>(GetActor());
-            if (l == NULL) 
-            {
-                throw dtUtil::Exception(dtDAL::ExceptionEnum::InvalidActorException,
-                    "Actor should be type dtCore::InfiniteLight.", __FILE__, __LINE__);
-            }
-
-            float h,p;
-            l->GetAzimuthElevation(h,p);
-            return osg::Vec3(p, 0.0f, h);
-        }
-
     protected:
 
         /**
