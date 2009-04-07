@@ -32,6 +32,7 @@
 #include <dtCore/cloudplane.h>
 #include <dtCore/environment.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transform.h>
 
 #include <dtUtil/log.h>
 

@@ -34,6 +34,7 @@
 
 #include <dtDAL/enginepropertytypes.h>
 
+#include <dtCore/transform.h>
 #include <dtGame/messagetype.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>

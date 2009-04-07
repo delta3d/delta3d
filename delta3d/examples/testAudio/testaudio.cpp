@@ -11,6 +11,7 @@
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/transform.h>
 #include <osgGA/GUIEventAdapter>
 
 // name spaces

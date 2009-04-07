@@ -26,6 +26,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/odegeomwrap.h>
+#include <dtCore/transform.h>
 
 class PhysicalTests : public CPPUNIT_NS::TestFixture
 {
@@ -63,7 +64,7 @@ void PhysicalTests::TestGeomInit()
    trans->SetCollisionSphere(1.f);
    trans->SetCollisionDetection(true);
 
-   const dGeomID geomID = trans->GetGeomID(); 
+   const dGeomID geomID = trans->GetGeomID();
    CPPUNIT_ASSERT_MESSAGE("Physical has no geom ID", geomID != 0);
 
    Transform physXform;

@@ -4,6 +4,7 @@
 
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/transform.h>
 
 #include <osg/Vec3>
 

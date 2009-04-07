@@ -12,6 +12,7 @@
 
 #include <dtCore/motionmodel.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 
 #include <osg/Vec3>

@@ -4,6 +4,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/effectmanager.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
@@ -57,26 +58,26 @@ namespace dtCore
    class DetonationUpdateCallback : public osg::NodeCallback
    {
       public:
-      
-         DetonationUpdateCallback(Detonation* detonation) : 
+
+         DetonationUpdateCallback(Detonation* detonation) :
             mDetonation(detonation)
          {
          }
-         
+
          virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
          {
             assert( mDetonation.valid() );
 
             osg::Vec3 position;
-            
+
             mDetonation->GetPosition(position);
-            
+
             if(mDetonation->GetParent() != 0)
             {
                Transform transform;
-               
+
                mDetonation->GetParent()->GetTransform(transform);
-               
+
                osg::Matrix mat;
                transform.Get(mat);
                dtUtil::MatrixUtil::TransformVec3(position, mat);
@@ -84,12 +85,12 @@ namespace dtCore
 
             PositionVisitor pv = PositionVisitor( osg::Vec3(position[0], position[1], position[2] ) );
             node->accept( pv );
-            
+
             traverse(node, nv);
          }
-         
+
       private:
-      
+
          dtCore::RefPtr<Detonation> mDetonation;
    };
 
@@ -102,7 +103,7 @@ namespace dtCore
    EffectManager::EffectManager(const std::string& name) : DeltaDrawable(name),
       mLastTime(0.0)
    {
-      RegisterInstance(this);     
+      RegisterInstance(this);
       mGroup = new osg::Group;
       AddSender(&System::GetInstance());
    }
@@ -123,10 +124,10 @@ namespace dtCore
     * @param detonationName the detonation name to map
     * @param filename the filename corresponding to the detonation type
     */
-   void EffectManager::AddDetonationTypeMapping(const std::string& detonationName, 
+   void EffectManager::AddDetonationTypeMapping(const std::string& detonationName,
                                                 const std::string& filename)
    {
-      // Use operator[] since we want to insert/replace 
+      // Use operator[] since we want to insert/replace
       mDetonationTypeFilenameMap[detonationName] = filename;
    }
 
@@ -198,12 +199,12 @@ namespace dtCore
             node = osgDB::readNodeFile( psFile, options.get() );
          }
 
-         if (!node.valid() ) 
+         if (!node.valid() )
          {
             LOG_WARNING("Can't load particle effect:" + found->second);
             return 0;
          }
-        
+
          Detonation* detonation = new Detonation(node.get(), timeToLive, position, detonationName, parent);
 
          if(parent != 0)
@@ -215,7 +216,7 @@ namespace dtCore
             PositionVisitor pv = PositionVisitor( osg::Vec3( position[0], position[1], position[2] ) );
             node->accept( pv );
          }
-         
+
          AddEffect(detonation);
 
          return detonation;
@@ -256,7 +257,7 @@ namespace dtCore
     * @param effect the effect to remove
     */
    void EffectManager::RemoveEffect(Effect* effect)
-   {      
+   {
       // Replace with a for_each algorithm
       for(  EffectVector::iterator it = mEffects.begin();
             it != mEffects.end();
@@ -281,7 +282,7 @@ namespace dtCore
          }
       }
    }
-   
+
    template< typename T >
    struct IsPointer : public std::binary_function< dtCore::RefPtr<T>, T*, bool >
    {
@@ -298,8 +299,8 @@ namespace dtCore
     */
    void EffectManager::AddEffectListener( EffectListener* effectListener )
    {
-      EffectListenerVector::iterator found = std::find_if(  mEffectListeners.begin(), 
-                                                            mEffectListeners.end(), 
+      EffectListenerVector::iterator found = std::find_if(  mEffectListeners.begin(),
+                                                            mEffectListeners.end(),
                                                             std::bind2nd( IsPointer<EffectListener>(),
                                                                           effectListener ) );
       if( found == mEffectListeners.end() )
@@ -393,13 +394,13 @@ namespace dtCore
          for( unsigned int i = 0; i < group->getNumChildren(); i++ )
          {
             osg::Node* node = group->getChild(i);
-            
+
             // Factor out these dynamic_casts with a visitor
-            if( dynamic_cast<osgParticle::Emitter*>(node) )  
+            if( dynamic_cast<osgParticle::Emitter*>(node) )
             {
                nodesToRemove.push_back(node);
             }
-            else if( dynamic_cast<osg::Group*>(node) ) 
+            else if( dynamic_cast<osg::Group*>(node) )
             {
                DeleteParticleEmitters(node);
             }
@@ -438,7 +439,7 @@ namespace dtCore
             {
                assert( it->valid() );
                double ttl = (*it)->GetTimeToLive();
-               
+
                if(ttl != 0.0)
                {
                   ttl -= delta;
@@ -498,7 +499,7 @@ namespace dtCore
       else if( stringType == "WP" )
       {
          return WP;
-      }      
+      }
       else if( stringType == "VT" )
       {
          return VT;
@@ -516,7 +517,7 @@ namespace dtCore
          return HighExplosiveDetonation;
       }
    }
-   
+
    std::string DetonationTypeToString( DetonationType detonationType )
    {
       switch( detonationType )
@@ -540,17 +541,17 @@ namespace dtCore
          {
             return "VT";
             break;
-         }         
+         }
          case ICM:
          {
             return "ICM";
             break;
-         }         
+         }
          case M825:
          {
             return "M825";
             break;
-         }         
+         }
          default:
          {
             return "HighExplosiveDetonation";
@@ -594,7 +595,7 @@ namespace dtCore
       return mNode.get();
    }
 
-   /** 
+   /**
     * Sets the remaining lifespan of this effect.
     *
     * @param timeToLive the remaining lifespan, in seconds,

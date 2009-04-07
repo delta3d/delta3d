@@ -36,6 +36,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <osgGA/GUIEventAdapter>
 

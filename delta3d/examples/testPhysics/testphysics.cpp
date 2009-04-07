@@ -29,6 +29,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtUtil/mathdefines.h>
 #include <ode/ode.h>
 #include <cassert>

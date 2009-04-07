@@ -24,6 +24,7 @@
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transform.h>
 
 #include <dtABC/application.h>
 #include <dtABC/labelactor.h>

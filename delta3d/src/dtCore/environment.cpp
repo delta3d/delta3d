@@ -11,6 +11,7 @@
 #include <dtCore/skydomeshader.h>
 #include <dtCore/sunlightshader.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtUtil/log.h>
 #include <dtUtil/mathdefines.h>
 #include <osg/Fog>
@@ -180,9 +181,9 @@ void Environment::AddedToScene(Scene* scene)
 ////////////////////////////////////////////////////////////////////////////////
 void Environment::AddEffect(EnvEffect* effect)
 {
-   if (!effect) 
+   if (!effect)
    {
-      return; 
+      return;
    }
 
    // we add EnvEffects to our "mEnvEffectNode"
@@ -217,9 +218,9 @@ void Environment::AddEffect(EnvEffect* effect)
 ////////////////////////////////////////////////////////////////////////////////
 void Environment::RemEffect(EnvEffect* effect)
 {
-   if (!effect) 
+   if (!effect)
    {
-      return; 
+      return;
    }
 
    EnvEffectList::iterator it = std::find(mEffectList.begin(), mEffectList.end(), effect);
@@ -286,9 +287,9 @@ void Environment::OnMessage(MessageData* data)
    else if (data->message == dtCore::System::MESSAGE_POST_FRAME)
    {
       // remove any EnvEffects that need removing
-      if (mToBeRemoved.size() > 0) 
+      if (mToBeRemoved.size() > 0)
       {
-         RemoveEffectCache(); 
+         RemoveEffectCache();
       }
    }
    else if (data->message == dtCore::System::MESSAGE_EXIT)
@@ -729,12 +730,12 @@ void dtCore::Environment::SetDrawableNode(osg::Group* pNode)
       pNode->addChild(child);
    }
    mDrawableNode->removeChildren(0, numChildren);
-   
+
    pNode->setStateSet(mDrawableNode->getStateSet());
-   
+
    GetOSGNode()->asGroup()->removeChild(mDrawableNode.get());
    GetOSGNode()->asGroup()->addChild(pNode);
-   mDrawableNode = pNode;   
+   mDrawableNode = pNode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

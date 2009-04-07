@@ -30,6 +30,7 @@
 #include <osg/Math>
 #include <dtEditQt/stagecamera.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 #include <dtDAL/actorproxyicon.h>
@@ -238,14 +239,14 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    const osg::Matrix& StageCamera::getProjectionMatrix()
    {
-      if (this->updateProjectionMatrix) 
+      if (this->updateProjectionMatrix)
       {
-         if (this->projType == PERSPECTIVE) 
+         if (this->projType == PERSPECTIVE)
          {
             this->projectionMat.makePerspective(this->fovY, this->aspectRatio,
                this->zNear, this->zFar);
          }
-         else if (this->projType == ORTHOGRAPHIC) 
+         else if (this->projType == ORTHOGRAPHIC)
          {
             this->projectionMat.makeOrtho(this->orthoLeft / this->zoomFactor,
                this->orthoRight / this->zoomFactor,
@@ -298,7 +299,7 @@ namespace dtEditQt
          osg::Vec3 billBoardPos;
          dtDAL::ActorProxyIcon* billBoard = proxy->GetBillBoardIcon();
 
-         if (billBoard != NULL) 
+         if (billBoard != NULL)
          {
             billBoardPos = proxy->GetTranslation();
             toAttach.actor = proxy;
@@ -308,7 +309,7 @@ namespace dtEditQt
             rotOffset.set(billBoard->GetActorRotation());
             toAttach.rotationOffset = rotOffset * getOrientation();
          }
-         else 
+         else
          {
             LOG_ERROR("Proxy " + proxy->GetName() + " is using billboard render"
                " mode but does not have a valid billboard.");
@@ -320,7 +321,7 @@ namespace dtEditQt
          dtCore::Transformable* transformable =
             dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
 
-         if (transformable != NULL) 
+         if (transformable != NULL)
          {
             dtCore::Transform tx;
             osg::Vec3 tPos;
@@ -335,7 +336,7 @@ namespace dtEditQt
             toAttach.rotationOffset = rotOffset * getOrientation();
             toAttach.initialCameraHPR = osg::Vec3(this->camYaw,this->camPitch,this->camRoll);
          }
-         else 
+         else
          {
             LOG_ERROR("Unable to attach proxy to camera.  Actor is not a transformable.");
             return;
@@ -352,7 +353,7 @@ namespace dtEditQt
       for (itor = this->attachedProxies.begin(); itor != this->attachedProxies.end(); ++itor)
       {
          dtDAL::TransformableActorProxy* toRemove = itor->actor.get();
-         if (toRemove == proxy) 
+         if (toRemove == proxy)
          {
             this->attachedProxies.erase(itor);
             break;

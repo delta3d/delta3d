@@ -23,6 +23,7 @@
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxyicon.h>
+#include <dtCore/transform.h>
 
 #include <osg/MatrixTransform>
 
@@ -33,10 +34,10 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::GameMeshActor(dtGame::GameActorProxy &proxy) : 
-      dtGame::GameActor(proxy), 
+   GameMeshActor::GameMeshActor(dtGame::GameActorProxy &proxy) :
+      dtGame::GameActor(proxy),
       mAlreadyInScene(false),
-      mUseCache(true), 
+      mUseCache(true),
       mModel(new dtCore::Model)
    {
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
@@ -50,7 +51,7 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::SetMesh(const std::string &meshFile)
    {
-      // Make sure the mesh changed. 
+      // Make sure the mesh changed.
       if (mLoader.GetFilename() != meshFile)
       {
          mLoader.SetMeshFilename(meshFile);
@@ -74,7 +75,7 @@ namespace dtActors
          {
             mModel->GetMatrixTransform().removeChild(mMeshNode.get());
          }
-         
+
          mModel->GetMatrixTransform().addChild(model);
          mModel->SetDirty();
 
@@ -88,7 +89,7 @@ namespace dtActors
       }
 
       // send out an ActorUpdateMessage
-      // GameMeshActor no longer does this by default. It is possible that the property was 
+      // GameMeshActor no longer does this by default. It is possible that the property was
       // set using a message, and it is almost certain that the user does not want to do a full
       // actor update.
       // if (mAlreadyInWorld)
@@ -100,8 +101,8 @@ namespace dtActors
    void GameMeshActor::AddedToScene(dtCore::Scene* scene)
    {
       dtGame::GameActor::AddedToScene(scene);
-      
-      // Don't load the mesh if we're not 
+
+      // Don't load the mesh if we're not
       // really being added to the scene
       if (scene != NULL)
       {
@@ -111,12 +112,12 @@ namespace dtActors
          {
             LoadMesh();
          }
-      }     
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::SetScale(const osg::Vec3 &xyz)
-   {  
+   {
       mModel->SetScale(xyz);
    }
 
@@ -211,14 +212,14 @@ namespace dtActors
          "static mesh", "Static Mesh", dtDAL::MakeFunctor(myActor, &GameMeshActor::SetMesh),
          "The static mesh resource that defines the geometry", GROUPNAME));
 
-      AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache", 
+      AddProperty(new dtDAL::BooleanActorProperty("use cache object", "Use Model Cache",
          dtDAL::MakeFunctor(myActor, &GameMeshActor::SetUseCache),
          dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetUseCache),
          "Indicates whether we will try to use the cache when we load our model.", GROUPNAME));
 
-      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale", 
-         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetScale), 
-         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale), 
+      AddProperty(new dtDAL::Vec3ActorProperty("Scale", "Scale",
+         dtDAL::MakeFunctor(myActor, &GameMeshActor::SetScale),
+         dtDAL::MakeFunctorRet(myActor, &GameMeshActor::GetScale),
          "Scales this visual model", "Transformable"));
    }
 
@@ -260,7 +261,7 @@ namespace dtActors
    dtDAL::ActorProxyIcon *GameMeshActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);   
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
 
       return mBillBoardIcon.get();
    }

@@ -22,12 +22,10 @@
 #ifndef DELTA_GAMEACTOR
 #define DELTA_GAMEACTOR
 
-#include <dtUtil/exception.h>
 #include <dtCore/observerptr.h>
 #include <dtCore/physical.h>
 #include <dtDAL/physicalactorproxy.h>
 #include <dtGame/export.h>
-#include <dtGame/exceptionenum.h>
 
 namespace dtUtil
 {
@@ -59,30 +57,12 @@ namespace dtGame
       /**
        * @return the GameActorProxy for this game actor.
        */
-      GameActorProxy& GetGameActorProxy()
-      {
-         if (!mProxy.valid())
-         {
-            throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
-                     NULL_PROXY_ERROR,
-                     __FILE__, __LINE__);
-         }
-         return *mProxy;
-      }
+      GameActorProxy& GetGameActorProxy();
 
       /**
        * @return the GameActorProxy for this game actor.
        */
-      const GameActorProxy& GetGameActorProxy() const
-      {
-         if (!mProxy.valid())
-         {
-            throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
-                     NULL_PROXY_ERROR,
-                     __FILE__, __LINE__);
-         }
-         return *mProxy;
-      }
+      const GameActorProxy& GetGameActorProxy() const;
 
       /**
        * Returns if the actor is remote
@@ -154,7 +134,7 @@ namespace dtGame
 
       /**
       * This value is used for updating/creating remote actors that need to be recreated from prototype
-      * This value is set automatically by the GM when an actor is created from prototype. 
+      * This value is set automatically by the GM when an actor is created from prototype.
       * If the prototype is non-null, then when the actor is created by the message
       * processor, it will attempt to look up the prototype first. Extremely useful for networking.
       * @return The prototype that was used to create this actor. Set by the GM.
