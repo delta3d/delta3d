@@ -104,10 +104,7 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    , mDrawOnSeparateThread(drawOnSeparateThread)
 {
    mTimer.setInterval(10);
-   setAutoBufferSwap(!drawOnSeparateThread);
-
-   setMinimumWidth(700);
-   setMinimumHeight(550);
+   setAutoBufferSwap(!drawOnSeparateThread);  
 
    // This enables us to track mouse movement even when
    // no button is pressed.  The motion models depend
