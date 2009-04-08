@@ -26,10 +26,15 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string>
-#include <iostream>
+
+#include <iosfwd>
 
 #include <dtCore/export.h>
-#include <dtUtil/datastream.h>
+
+namespace dtUtil
+{
+   class DataStream;
+}
 
 namespace dtCore
 {
@@ -48,64 +53,34 @@ namespace dtCore
          bool operator< ( const UniqueId& rhs ) const  { return mId <  rhs.mId; }
          bool operator> ( const UniqueId& rhs ) const  { return mId >  rhs.mId; }
 
-         const std::string& ToString() const { return mId; }
+         const std::string& ToString() const;
 
          /**
           * The assignment operator is public so that unique id's can be changed if they are
           * member variables.  Use const to control when they are changed.
           */
-         UniqueId& operator=(const UniqueId& rhs)
-         {
-            if (this == &rhs)
-            {
-               return *this;
-            }
-
-            mId = rhs.mId;
-            return *this;
-         }
+         UniqueId& operator=(const UniqueId& rhs);
 
          /**
           * The assignment operator is public so that unique id's can be changed if they are
           * member variables.  Use const to control when they are changed.
           */
-         UniqueId& operator=(const std::string& rhs)
-         {
-            mId = rhs;
-            return *this;
-         }
+         UniqueId& operator=(const std::string& rhs);
 
     protected:
          std::string mId;
    };
 
-   inline std::ostream& operator << (std::ostream& o, const UniqueId& id)
-   {
-      o << id.ToString();
-      return o;
-   }
+   ////////////////////////////////////////////////////
+   /////////////  Stream Operators        /////////////
+   ////////////////////////////////////////////////////
+   std::ostream& operator << (std::ostream& o, const UniqueId& id);
 
-   inline std::istream& operator >> (std::istream& i, UniqueId& id)
-   {
-      std::string value;
-      i >> value;
-      id = value;
-      return i;
-   }
+   std::istream& operator >> (std::istream& i, UniqueId& id);
 
-   inline dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const UniqueId& id)
-   {
-      ds << id.ToString();
-      return ds;
-   }
+   dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const UniqueId& id);
 
-   inline dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id)
-   {
-      std::string value;
-      ds >> value;
-      id = value;
-      return ds;
-   }
+   dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id);
 }
 
 #endif // DELTA_UNIQUEID

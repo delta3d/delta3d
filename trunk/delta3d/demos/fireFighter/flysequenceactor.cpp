@@ -34,6 +34,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
 #include <dtDAL/actorproxyicon.h>
+#include <fstream>
 
 ///////////////////////////////////////////////////////////
 FlySequenceActorProxy::FlySequenceActorProxy()

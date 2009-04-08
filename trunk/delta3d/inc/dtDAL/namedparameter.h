@@ -38,6 +38,7 @@
 #include <osg/Vec2d>
 #include <osg/Vec3d>
 #include <osg/Vec4d>
+#include <map>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/datastream.h>

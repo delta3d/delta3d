@@ -31,6 +31,7 @@
 #include <dtUtil/functor.h>
 #include <dtUtil/funbind.h>
 #include <dtUtil/command.h>
+#include <dtCore/refptr.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <osg/Math>
 
@@ -46,9 +47,9 @@ static int f2ii(int i, int j) { return i + j; }
 char bf1(char c) { return c; }
 double bf2(int i, double f) { return f + i; }
 double bf3(int i, char c, double f) { return f + i + int(c); }
-double bf5(int i, char c, int j, double f, int k) 
-{ 
-   return f + i + int(c) + j + k; 
+double bf5(int i, char c, int j, double f, int k)
+{
+   return f + i + int(c) + j + k;
 }
 
 /**
@@ -96,12 +97,12 @@ private:
       static long instances_;
       FunBig() { ++instances_; }
       FunBig(int i0, int i1, int i2) : i0_(i0), i1_(i1), i2_(i2) { ++instances_; }
-      FunBig(FunBig const& f) : i0_(f.i0_), i1_(f.i1_), i2_(f.i2_) 
-      { 
+      FunBig(FunBig const& f) : i0_(f.i0_), i1_(f.i1_), i2_(f.i2_)
+      {
          memcpy(&c0_[0], &f.c0_[0], sizeof(c0_));
          memcpy(&c1_[0], &f.c1_[0], sizeof(c1_));
-         memcpy(&c2_[0], &f.c2_[0], sizeof(c2_)); 
-         ++instances_; 
+         memcpy(&c2_[0], &f.c2_[0], sizeof(c2_));
+         ++instances_;
       }
       ~FunBig() { --instances_; }
       int operator()() const { return i0_; }
@@ -126,7 +127,7 @@ private:
       int f2defvolatile(int i, long j) volatile { return i + j; }
       int f2defconstvolatile(int i, long j) const volatile { return i + j; }
       virtual int f2defvirt(int i, long j) { return i + j; }
-      virtual int f2defvirtconst(int i, long j) const { return i + j; } 
+      virtual int f2defvirtconst(int i, long j) const { return i + j; }
    };
 
    struct C : public A
@@ -136,14 +137,14 @@ private:
 
    struct M
    {
-      char c_[128]; 
+      char c_[128];
    };
 
    struct V
    {
       virtual ~V() {}
       virtual int f2virta(int i, long j) = 0;
-      char c_[2]; 
+      char c_[2];
    };
 
    struct D : public M, virtual public V, virtual public A
@@ -151,7 +152,7 @@ private:
       virtual ~D() {}
       virtual void f2() { }
       virtual int f2defvirt(int i, long j) { return i + j + 1; }
- 
+
       int f2def(int i, long j) { return i + j + 3; }
       virtual int f2virta(int i, long j) { return i + j + 2; }
    };
@@ -185,13 +186,13 @@ long FunctorTests::FunBig::instances_ = 0;
 CPPUNIT_TEST_SUITE_REGISTRATION(FunctorTests);
 
 ///////////////////////////////////////////////////////////////////////////////
-void FunctorTests::setUp() 
+void FunctorTests::setUp()
 {
    f0 = Functor0(&f0def);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void FunctorTests::tearDown() 
+void FunctorTests::tearDown()
 {
 }
 
@@ -241,13 +242,13 @@ void FunctorTests::TestNonMemberFunctors()
    Functor2 fn2def(&f2def);
    CPPUNIT_ASSERT(fn2def(1, 1) == 2);
    CPPUNIT_ASSERT(fn2def(1, 2) == 3);
-   // op= 
+   // op=
    // Functor2 fn2 = f2def;	// error - no explicit op=
    Functor2 fn2 = Functor2(&f2def);
    CPPUNIT_ASSERT(fn2(1, 1) == 2);
    CPPUNIT_ASSERT(fn2(1, 2) == 3);
-   // invalid fun ctors and op() 
-   // Functor2 f2_(f1def);	// error - no such ctor 
+   // invalid fun ctors and op()
+   // Functor2 f2_(f1def);	// error - no such ctor
    Functor2 f2_(&f2def);
    // f2_();	// error - no internal implementation for such op()
    // f2_(1);	// error - no internal implementation for such op()
@@ -311,14 +312,14 @@ void FunctorTests::TestMemberFunctors()
    A const ac;
    Functor2 f2memfnconst_(&ac, &A::f2defconst);
    CPPUNIT_ASSERT(f2memfnconst_(1, 1) == 2);
-   CPPUNIT_ASSERT(f2memfnconst_(1, 2) == 3);	
+   CPPUNIT_ASSERT(f2memfnconst_(1, 2) == 3);
    // Functor2 _f2memfnconst_(&ac, &A::f2def);			// error - in FunctorCall<> could not convert pointer-to-member
    Functor2 f2memfnvolatile(&a, &A::f2defvolatile);
    CPPUNIT_ASSERT(f2memfnvolatile(1, 1) == 2);
-   CPPUNIT_ASSERT(f2memfnvolatile(1, 2) == 3);	
+   CPPUNIT_ASSERT(f2memfnvolatile(1, 2) == 3);
    Functor2 f2defconstvolatile(&a, &A::f2defconstvolatile);
    CPPUNIT_ASSERT(f2defconstvolatile(1, 1) == 2);
-   CPPUNIT_ASSERT(f2defconstvolatile(1, 2) == 3);	
+   CPPUNIT_ASSERT(f2defconstvolatile(1, 2) == 3);
    Functor2 f2memfnvirt(&a, &A::f2defvirt);
    CPPUNIT_ASSERT(f2memfnvirt(1, 1) == 2);
    CPPUNIT_ASSERT(f2memfnvirt(1, 2) == 3);
@@ -371,7 +372,7 @@ void FunctorTests::TestBinding()
    typedef TYPELIST_3(int, char, double) TestTL3;
    Functor<double, TestTL3> bfun3(&bf3);
    CPPUNIT_ASSERT( osg::equivalent( bfun3(1, 'A', 2.1), bf3(1, 'A', 2.1) ) );
-   
+
    typedef TYPELIST_2(Int2Type<0>, Int2Type<2>) TestIdsTL;
    typedef BoundTL2<TestTL3, TestIdsTL>::Result TestBTL2;
    typedef UnboundTL2<TestTL3, TestIdsTL>::Result TestUBTL2;

@@ -1,20 +1,20 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004-2005 MOVES Institute 
+/*
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2004-2005 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
 * any later version.
 *
 * This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 */
 
@@ -24,6 +24,8 @@
 #include <dtCore/export.h>
 #include <dtUtil/macros.h>
 #include <dtCore/transformable.h>
+
+#include <osg/Vec4>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -66,7 +68,7 @@ namespace dtCore
 
       ///Copy constructor from an osg::LightSource
       Light( const osg::LightSource& lightSource, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
-      
+
    protected:
 
       virtual ~Light() = 0;
@@ -84,12 +86,12 @@ namespace dtCore
 
       ///Change lighting mode to GLOBAL or LOCAL mode
       void SetLightingMode( LightingMode mode );
-      
+
       LightingMode GetLightingMode() const { return mLightingMode; }
 
       ///Turn light on or off
       void SetEnabled( bool enabled );
-      
+
       bool GetEnabled() { return mEnabled; }
 
       /**
@@ -107,32 +109,32 @@ namespace dtCore
       ///sets the ambient light color
       void SetAmbient( float r, float g, float b, float a );
       void SetAmbient(const osg::Vec4& rgba);
-      
+
       ///gets the ambient light color
       void GetAmbient( float& r, float& g, float& b, float& a ) const;
       const osg::Vec4& GetAmbient() const;
-      
+
       ///sets the diffuse light color
       void SetDiffuse( float r, float g, float b, float a );
       void SetDiffuse(const osg::Vec4& rgba);
-      
+
       ///Gets the diffuse light color
       void GetDiffuse( float& r, float& g, float& b, float& a ) const;
       const osg::Vec4& GetDiffuse() const;
-      
+
       ///sets the specular light color
       void SetSpecular( float r, float g, float b, float a );
       void SetSpecular(const osg::Vec4& rgba);
-      
+
       ///gets the specular light color
       void GetSpecular( float& r, float& g, float& b, float& a ) const;
       const osg::Vec4& GetSpecular() const;
 
       ///adds the light to the root node of the scene
       virtual void AddedToScene( Scene* scene );
-  
+
       ///adds a drawable as a child of this node
-      virtual bool AddChild( DeltaDrawable *child ); 
+      virtual bool AddChild( DeltaDrawable *child );
       ///removes a drawable as a child of this node
       virtual void RemoveChild( DeltaDrawable *child );
 

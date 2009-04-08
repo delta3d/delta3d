@@ -4,6 +4,8 @@
 #include <osgViewer/ViewerEventHandlers>
 #include <osgViewer/GraphicsWindow>
 
+#include <dtUtil/log.h>
+
 using namespace dtQt;
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +106,13 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    , mDrawOnSeparateThread(drawOnSeparateThread)
 {
    mTimer.setInterval(10);
-   setAutoBufferSwap(!drawOnSeparateThread);  
+   setAutoBufferSwap(!drawOnSeparateThread);
 
    // This enables us to track mouse movement even when
    // no button is pressed.  The motion models depend
    // on tracking the mouse location to work properly.
    setMouseTracking(true);
-   
+
    //allow keyboard input to come through this widget (via user click or tab)
    setFocusPolicy(Qt::StrongFocus);
 
@@ -161,7 +163,7 @@ void ViewWindow::ThreadedInitializeGL()
    mThreadGLContext = new QGLContext(QGLFormat::defaultFormat(), this);
    if (!mThreadGLContext->create(context()))
    {
-      std::cerr << "broken!" << std::endl;
+      LOG_ERROR("Thread Failed to initialize");
    }
 
    setContext(mThreadGLContext, context(), false);
@@ -193,7 +195,7 @@ void ViewWindow::ThreadedUpdateGL()
 {
    if (mDoResize)
    {
-      mDoResize = NULL;
+      mDoResize = false;
       resizeGLImpl(width(), height());
    }
 

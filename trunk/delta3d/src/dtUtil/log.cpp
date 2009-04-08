@@ -22,12 +22,16 @@
 #include <dtUtil/log.h>
 #include <dtUtil/bits.h>
 
+#include <dtCore/refptr.h>
+
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <cstdarg>
 #include <ctime>
+#include <map>
 
-namespace dtUtil 
+namespace dtUtil
 {
    const std::string Log::mDefaultName("__+default+__");
    static const char *sLogFileName = "delta3d_log.html";
@@ -40,23 +44,23 @@ namespace dtUtil
 
    //////////////////////////////////////////////////////////////////////////
 
-   class LogManager: public osg::Referenced 
+   class LogManager: public osg::Referenced
    {
    public:
       std::ofstream logFile;
 
-      LogManager() 
+      LogManager()
       {
          //std::cout << "Creating logger" << std::endl;
 
-         if (!logFile.is_open()) 
+         if (!logFile.is_open())
          {
             OpenFile();
          }
          //std::cout.flush();
       }
 
-      ~LogManager() 
+      ~LogManager()
       {
          mInstances.clear();
          //std::cout << "BEING DESTROYED - LogManager" << std::endl;
@@ -79,7 +83,7 @@ namespace dtUtil
       void OpenFile()
       {
          //std::cout << "LogManager try to open file to " << sLogFileName << std::endl;
-         if (logFile.is_open()) 
+         if (logFile.is_open())
          {
             logFile << "<p>Change to log file: "<< sLogFileName<< std::endl;
             TimeTag("At ");
@@ -89,12 +93,12 @@ namespace dtUtil
 
          //First attempt to create the log file.
          logFile.open(sLogFileName);
-         if (!logFile.is_open()) 
+         if (!logFile.is_open())
          {
             std::cout << "could not open file \""<<sLogFileName<<"\"" << std::endl;
             return;
-         } 
-         else 
+         }
+         else
          {
             //std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
          }
@@ -122,7 +126,7 @@ namespace dtUtil
 
          time(&cTime);
          t = localtime(&cTime);
-         logFile << prefix 
+         logFile << prefix
             << std::setw(2) << std::setfill('0') << (1900+t->tm_year) << "/"
             << std::setw(2) << std::setfill('0') << t->tm_mon << "/"
             << std::setw(2) << std::setfill('0') << t->tm_mday << " "
@@ -133,15 +137,15 @@ namespace dtUtil
          logFile.flush();
       }
 
-      bool AddInstance(const std::string& name, Log* log) 
+      bool AddInstance(const std::string& name, Log* log)
       {
          return mInstances.insert(std::make_pair(name, dtCore::RefPtr<Log>(log))).second;
       }
 
-      Log* GetInstance(const std::string& name) 
+      Log* GetInstance(const std::string& name)
       {
          std::map<std::string, dtCore::RefPtr<Log> >::iterator i = mInstances.find(name);
-         if (i == mInstances.end()) 
+         if (i == mInstances.end())
          {
             return NULL;
          }
@@ -203,7 +207,7 @@ namespace dtUtil
    void Log::LogMessage(const std::string &source, int line, const std::string &msg,
                 LogMessageType msgType) const
    {
-      if (mOutputStreamBit == Log::NO_OUTPUT) 
+      if (mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (msgType < mLevel)
@@ -254,7 +258,7 @@ namespace dtUtil
             manager->logFile << ":" << line;
 
          manager->logFile << "&gt; " << msg << "</font></b><br>" << std::endl;
-        
+
          manager->logFile.flush(); //Make sure everything is written, in case of a crash.
       }
 
@@ -278,7 +282,7 @@ namespace dtUtil
       time_t cTime;
       std::string color;
 
-      if (mOutputStreamBit == Log::NO_OUTPUT) 
+      if (mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (msgType < mLevel)
@@ -360,7 +364,7 @@ namespace dtUtil
       time_t cTime;
       std::string color;
 
-      if (mOutputStreamBit == Log::NO_OUTPUT) 
+      if (mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (msgType < mLevel)
@@ -407,7 +411,7 @@ namespace dtUtil
             << std::setw(2) << std::setfill('0') << t->tm_min << ":"
             << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
             << source << ":" << line << "&gt; " << buffer << "</font></b><br>" << std::endl;
- 
+
          manager->logFile.flush();
       }
 
@@ -423,8 +427,8 @@ namespace dtUtil
 
    }
 
-   void Log::LogMessage(LogMessageType msgType, 
-                        const std::string &source, 
+   void Log::LogMessage(LogMessageType msgType,
+                        const std::string &source,
                         int line,
                         const std::string &msg) const
    {
@@ -432,7 +436,7 @@ namespace dtUtil
       time_t cTime;
       std::string color;
 
-      if (mOutputStreamBit == Log::NO_OUTPUT) 
+      if (mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (msgType < mLevel)
@@ -497,7 +501,7 @@ namespace dtUtil
       if (!manager->logFile.is_open())
          return;
 
-      if (mOutputStreamBit == Log::NO_OUTPUT) 
+      if (mOutputStreamBit == Log::NO_OUTPUT)
          return;
 
       if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
@@ -518,7 +522,7 @@ namespace dtUtil
       if (manager == NULL)
          manager = new LogManager;
       Log* l = manager->GetInstance(name);
-      if (l == NULL) 
+      if (l == NULL)
       {
          l = new Log(name);
          manager->AddInstance(name, l);
@@ -545,7 +549,7 @@ namespace dtUtil
 
       return lev;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    Log::LogMessageType Log::GetLogLevelForString( const std::string& levelString) const
    {
@@ -559,15 +563,15 @@ namespace dtUtil
          return LOG_INFO;
       else if (levelString == "Debug" || levelString == "DEBUG")
          return LOG_DEBUG;
-         
+
       else return LOG_WARNING;
    }
 
    /** Tell the Log where to send output messages.  The supplied parameter is a
-    *  bitwise combination of OutputStreamOptions.  The default is STANDARD, which 
+    *  bitwise combination of OutputStreamOptions.  The default is STANDARD, which
     *  directs messages to both the console and the output file.
     *  For example, to tell the Log to output to the file and console:
-    *  \code 
+    *  \code
     *   dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::TO_FILE | dtUtil::Log::TO_CONSOLE);
     *  \endcode
     *  \param option A bitwise combination of options.
