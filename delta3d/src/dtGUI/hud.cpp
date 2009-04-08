@@ -40,6 +40,7 @@ using namespace dtGUI;
 //default path where to find the layout/looknfeel/../images-files
 std::string HUD::FilePath=std::string("./data/gui/");
 
+bool dtGUI::HUD::SystemAndRendererCreatedByHUD = false;
 
 /********************************************************************************
                               DELTA-implementation
@@ -66,6 +67,7 @@ HUD::HUD(osg::Camera* pTargetCamera, dtCore::Keyboard* pObservedKeyboard, dtCore
 
    SetMouse(pObservedMouse);
    SetKeyboard(pObservedKeyboard);
+
    _SetupSystemAndRenderer();
    _SetupDefaultUI();
 }
@@ -106,11 +108,18 @@ HUD::~HUD()
 
    if (CEGUI::System::getSingletonPtr() != NULL)
    {
-      CEGUI::Renderer *rend = CEGUI::System::getSingletonPtr()->getRenderer();
-      delete(CEGUI::System::getSingletonPtr()); 
-      if (rend != NULL)
+      // We are only responsible for destroying resources we created
+      if (SystemAndRendererCreatedByHUD)
       {
-         delete rend;
+         CEGUI::System* system = CEGUI::System::getSingletonPtr();
+         CEGUI::Renderer* renderer = system->getRenderer();
+
+         if (renderer != NULL)
+         {
+            delete renderer;
+         }
+
+         delete system;
       }
    }
 
@@ -167,7 +176,7 @@ Widget* HUD::CreateWidget(Widget* pParentWidget, const std::string& sWidgetTypeN
 ////////////////////////////////////////////////////////////////////////////////
 Widget* HUD::LoadLayout(Widget* pParentWidget, const std::string& sFileName, const std::string& sPrefix)
 {
-   Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout( sFileName, GetCEGUIPrefix(m_pRootsheet) + sPrefix );
+   Widget* pNewLayout = CEGUI::WindowManager::getSingleton().loadWindowLayout(sFileName, GetCEGUIPrefix(m_pRootsheet) + sPrefix);
    pParentWidget->addChildWindow(pNewLayout);
    return pNewLayout;
 }
@@ -284,6 +293,8 @@ void HUD::_SetupSystemAndRenderer()
       pRP->setResourceGroupDirectory("fonts", FilePath + "/fonts/");
 
       new CEGUI::System(pRenderer, pRP);
+
+      SystemAndRendererCreatedByHUD = true;
    }
 }
 
