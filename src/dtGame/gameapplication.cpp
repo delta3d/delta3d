@@ -38,8 +38,8 @@ namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(int argc, char** argv, dtCore::DeltaWin* window)
-      : dtABC::Application("config.xml", window)
+   GameApplication::GameApplication(int argc, char** argv, const std::string& configFileName, dtCore::DeltaWin* window)
+      : dtABC::Application(configFileName, window)
       , mArgc(argc)
       , mArgv(argv)
       , mEntryPoint(NULL)
@@ -177,7 +177,7 @@ namespace dtGame
       catch (const dtUtil::Exception& ex)
       {
          // force console logging to be on so you don't miss this critical exception.
-         dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::STANDARD); 
+         dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::STANDARD);
          ex.LogException(dtUtil::Log::LOG_ERROR);
          std::cerr << "The Game Manager got an exception and will now shut down ... " << std::endl;
 

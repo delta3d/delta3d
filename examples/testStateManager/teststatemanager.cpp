@@ -13,6 +13,7 @@ void LOG(const std::string& msg)
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS,"",msg.c_str());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 StateWalker::StateWalker(dtABC::StateManager* gm)
    : BaseClass()
    , mStateManager(gm)
@@ -38,12 +39,14 @@ StateWalker::StateWalker(dtABC::StateManager* gm)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 StateWalker::~StateWalker()
 {
    mStateManager->RemoveSender(this);
    RemoveSender(&dtCore::System::GetInstance());
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void StateWalker::OnMessage(dtCore::Base::MessageData* msg)
 {
    if (msg->message == dtCore::System::MESSAGE_PRE_FRAME)
@@ -52,6 +55,7 @@ void StateWalker::OnMessage(dtCore::Base::MessageData* msg)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void StateWalker::DisplayEventChoicesAndWaitForInput()
 {
    if (!mStateManager->GetCurrentState())
@@ -110,12 +114,14 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 // --- "extra" choices --- //
 void StateWalker::DisplayExtraEventChoices(unsigned int index)
 {
    LOG(dtUtil::ToString(index) + ": " + "Quit");
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void StateWalker::HandleExtraEventChoices(unsigned int eventvecsize, unsigned int choice)
 {
    if (choice == eventvecsize)

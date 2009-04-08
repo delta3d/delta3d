@@ -60,26 +60,26 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
   * @param sm : The ScriptModule to use for CEGUI script processing
   * @exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
   */
-CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win,
-                           dtCore::Keyboard *keyboard,
-                           dtCore::Mouse *mouse,
-                           dtGUI::BaseScriptModule *sm):
-   DeltaDrawable("CEUIDrawable"),
-   mUI(NULL),
-   mRenderer(new dtGUI::CEGUIRenderer(0)),
-   mScriptModule(sm),
-   mProjection(new osg::Projection()),
-   mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
-   mWindow(win),
-   mMouse(mouse),
-   mKeyboard(keyboard),
-   mWidth(0),
-   mHeight(0),
-   mAutoResize(true),
-   mKeyboardListener(new CEGUIKeyboardListener()),
-   mMouseListener(new CEGUIMouseListener()) 
+CEUIDrawable::CEUIDrawable(dtCore::DeltaWin* win,
+                           dtCore::Keyboard* keyboard,
+                           dtCore::Mouse* mouse,
+                           dtGUI::BaseScriptModule* sm)
+   : DeltaDrawable("CEUIDrawable")
+   , mUI(NULL)
+   , mRenderer(new dtGUI::CEGUIRenderer(0))
+   , mScriptModule(sm)
+   , mProjection(new osg::Projection())
+   , mTransform(new osg::MatrixTransform(osg::Matrix::identity()))
+   , mWindow(win)
+   , mMouse(mouse)
+   , mKeyboard(keyboard)
+   , mWidth(0)
+   , mHeight(0)
+   , mAutoResize(true)
+   , mKeyboardListener(new CEGUIKeyboardListener())
+   , mMouseListener(new CEGUIMouseListener()) 
 {
-   AddSender( &dtCore::System::GetInstance() );
+   AddSender(&dtCore::System::GetInstance());
 
    RegisterInstance(this);
    
@@ -89,9 +89,10 @@ CEUIDrawable::CEUIDrawable(dtCore::DeltaWin *win,
    Config();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CEUIDrawable::~CEUIDrawable()
 {
-   RemoveSender( &dtCore::System::GetInstance() );
+   RemoveSender(&dtCore::System::GetInstance());
    DeregisterInstance(this);
    
    SetOSGNode(NULL);
@@ -101,6 +102,7 @@ CEUIDrawable::~CEUIDrawable()
    //ShutdownGUI();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /** 
 *  \exception dtUtil::Exception Gets thrown if CEGUI cannot be initialized
 */
@@ -125,7 +127,7 @@ void CEUIDrawable::Config()
             new CEGUI::System(mRenderer, new dtGUI::ResourceProvider());
          }
       }
-      catch(CEGUI::Exception &e)
+      catch(CEGUI::Exception& e)
       {
          dtUtil::Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
             "CEGUI says: %s", e.getMessage().c_str());
@@ -134,32 +136,30 @@ void CEUIDrawable::Config()
             "Can't initialize dtGUI system. UI operations will fail!", __FILE__, __LINE__);
       }
    }
-
     
    if (mMouse.valid())
    {
-      if( mMouse->GetListeners().empty() )
+      if(mMouse->GetListeners().empty())
       {
-         mMouse->AddMouseListener( mMouseListener.get() );
+         mMouse->AddMouseListener(mMouseListener.get());
       }
       else
       {
-         mMouse->InsertMouseListener( mMouse->GetListeners().front() , mMouseListener.get() );
+         mMouse->InsertMouseListener(mMouse->GetListeners().front(), mMouseListener.get());
       }  
    }
 
    if (mKeyboard.valid())
    {
-      if( mKeyboard->GetListeners().empty() )
+      if(mKeyboard->GetListeners().empty())
       {
-         mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
+         mKeyboard->AddKeyboardListener(mKeyboardListener.get());
       }
       else
       {
-         mKeyboard->InsertKeyboardListener( mKeyboard->GetListeners().front() , mKeyboardListener.get() );
+         mKeyboard->InsertKeyboardListener(mKeyboard->GetListeners().front(), mKeyboardListener.get());
       }
    }
-
 
    int x(0), y(0), w(0), h(0);
    mWindow->GetPosition(x, y, w, h);
@@ -173,7 +173,7 @@ void CEUIDrawable::Config()
    osg::StateSet* stateset = mGeode->getOrCreateStateSet();
    stateset->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
 
-   stateset->setRenderBinDetails(11,"RenderBin");
+   stateset->setRenderBinDetails(11, "RenderBin");
    stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
 
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
@@ -181,32 +181,36 @@ void CEUIDrawable::Config()
    mGeode->setStateSet(stateset);
 
    osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
-   mGeode->addDrawable( osgCEUI.get() ); //add our osg node here
+   mGeode->addDrawable(osgCEUI.get()); //add our osg node here
 
-   mTransform->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
-   mTransform->addChild( mGeode.get() );
+   mTransform->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+   mTransform->addChild(mGeode.get());
 
-   mProjection->addChild( mTransform.get() );
+   mProjection->addChild(mTransform.get());
 
-   SetOSGNode( mProjection.get() );
+   SetOSGNode(mProjection.get());
 }
 
-void CEUIDrawable::SetRenderBinDetails( int binNumber, const std::string& binName )
+////////////////////////////////////////////////////////////////////////////////
+void CEUIDrawable::SetRenderBinDetails(int binNumber, const std::string& binName)
 {
-   return mGeode->getStateSet()->setRenderBinDetails( binNumber, binName );
+   return mGeode->getStateSet()->setRenderBinDetails(binNumber, binName);
 }
 
-bool CEUIDrawable::AddChild(DeltaDrawable *child)
+////////////////////////////////////////////////////////////////////////////////
+bool CEUIDrawable::AddChild(DeltaDrawable* child)
 {
    // Add the child's graphics node to our's
-   if( DeltaDrawable::AddChild(child) ) 
+   if(DeltaDrawable::AddChild(child)) 
    {
-      mTransform->addChild( child->GetOSGNode() );
+      mTransform->addChild(child->GetOSGNode());
       return true;
    }
+
    return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**  Display the properties associated with the supplied CEGUI::Window to the 
   *  console.  Useful to find all the text names of the properties and see what
   *  the current values of the properties are.
@@ -215,10 +219,10 @@ bool CEUIDrawable::AddChild(DeltaDrawable *child)
   * @param onlyNonDefault : Display only properties that are not default values
   *                          (default=true)
   */
-void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
+void CEUIDrawable::DisplayProperties(CEGUI::Window* window, bool onlyNonDefault)
 {
    // Log all its properties + values
-   dtUtil::Log *log = &dtUtil::Log::GetInstance();
+   dtUtil::Log* log = &dtUtil::Log::GetInstance();
 
    #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
    CEGUI::PropertySet::Iterator itr = window->getPropertyIterator();
@@ -229,7 +233,7 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
    {
       try 
       {
-         if ( onlyNonDefault && !window->isPropertyDefault(itr.getCurrentKey()) )
+         if (onlyNonDefault && !window->isPropertyDefault(itr.getCurrentKey()))
          {
             {
                log->LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
@@ -238,7 +242,7 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
                         window->getProperty(itr.getCurrentKey()).c_str());
             }
          }
-         else if ( !onlyNonDefault )
+         else if (!onlyNonDefault)
          {
             log->LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
                      "%s, Prop: %s, %s", window->getName().c_str(),
@@ -256,11 +260,12 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
    }
 }
 
-void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
+////////////////////////////////////////////////////////////////////////////////
+void CEUIDrawable::OnMessage(dtCore::Base::MessageData* data)
 {
    if(data->message == dtCore::System::MESSAGE_PRE_FRAME)
    {  
-      if ( (GetAutoResizing() == true) && (mWindow.valid()) )
+      if ((GetAutoResizing() == true) && (mWindow.valid()))
       {
          int x,y,w,h;
          mWindow->GetPosition(x, y, w, h);
@@ -276,18 +281,19 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
       const double deltaTime = *static_cast<const double*>(data->userData);
 
       ///\todo must we really cast here?
-      mUI->injectTimePulse( static_cast<float>(deltaTime) );
+      mUI->injectTimePulse(static_cast<float>(deltaTime));
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CEUIDrawable::SetRenderingSize(int width, int height)
 {
    try 
    {
       mWidth = width;
       mHeight = height;
-      mRenderer->setDisplaySize( CEGUI::Size(width, height) );
-      mMouseListener->SetWindowSize( width , height );
+      mRenderer->setDisplaySize(CEGUI::Size(width, height));
+      mMouseListener->SetWindowSize(width, height);
    }
    catch (const CEGUI::Exception& ex)
    {
@@ -296,46 +302,66 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CEUIDrawable::ShutdownGUI()
 {
    if (mMouse.valid())
    {
-      mMouse->RemoveMouseListener( mMouseListener.get() );
+      mMouse->RemoveMouseListener(mMouseListener.get());
    }
 
    if (mKeyboard.valid())
    {
-      mKeyboard->RemoveKeyboardListener( mKeyboardListener.get() );
+      mKeyboard->RemoveKeyboardListener(mKeyboardListener.get());
    }
    
    delete mUI;
    mUI = NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 // implementation details for private class
 CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(const CEUIDrawable::osgCEUIDrawable& drawable,
-                                               const osg::CopyOp& copyop) : mUI(NULL)
+                                               const osg::CopyOp& copyop) 
+   : mUI(NULL)
 {
 }
 
-CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(CEGUI::System *ui) :  mUI(ui)
+////////////////////////////////////////////////////////////////////////////////
+CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(CEGUI::System* ui) 
+   : mUI(ui)
 {
    this->setSupportsDisplayList(false);
    this->setUseDisplayList(false);
 }
 
-CEUIDrawable::osgCEUIDrawable::~osgCEUIDrawable() {}
+////////////////////////////////////////////////////////////////////////////////
+CEUIDrawable::osgCEUIDrawable::~osgCEUIDrawable() 
+{
+}
 
-osg::Object* CEUIDrawable::osgCEUIDrawable::cloneType() const { return new osgCEUIDrawable(mUI); }
-osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
+////////////////////////////////////////////////////////////////////////////////
+osg::Object* CEUIDrawable::osgCEUIDrawable::cloneType() const 
+{
+   return new osgCEUIDrawable(mUI); 
+}
 
-void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderInfo) const
+////////////////////////////////////////////////////////////////////////////////
+osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) const
+{ 
+   return new osgCEUIDrawable(*this,copyop); 
+}        
+
+////////////////////////////////////////////////////////////////////////////////
+void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo& renderInfo) const
 {
    //tell the UI to update and to render
    if(!mUI) 
+   {
       return;
+   }
  
-   osg::State & state = *renderInfo.getState();
+   osg::State& state = *renderInfo.getState();
 
    // If vertex arrays are enabled, CEGUI will eventually cause a crash that can appear
    // in other parts of OSG (for instance a large terrain database). Added calls to 
@@ -349,9 +375,11 @@ void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::RenderInfo & renderI
 
    state.setActiveTextureUnit(0);
    glEnable(GL_TEXTURE_2D);
-   reinterpret_cast<CEGUIRenderer *>(CEGUI::System::getSingleton().getRenderer())->SetGraphicsContext(state.getGraphicsContext());
+   reinterpret_cast<CEGUIRenderer*>(CEGUI::System::getSingleton().getRenderer())->SetGraphicsContext(state.getGraphicsContext());
 
    mUI->getSingletonPtr()->renderGUI();
    state.dirtyAllVertexArrays();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 

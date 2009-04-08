@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -39,6 +39,7 @@
 #include <dtCore/system.h>
 #include <dtCore/object.h>
 #include <dtCore/scene.h>
+#include <dtCore/transform.h>
 #include <dtGame/logcontroller.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/logkeyframe.h>
@@ -58,9 +59,9 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
-TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent& lmsComp, 
-                                                 dtGame::LogController& logCtrl, 
-                                                 dtGame::ServerLoggerComponent& srvrCtrl) 
+TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent& lmsComp,
+                                                 dtGame::LogController& logCtrl,
+                                                 dtGame::ServerLoggerComponent& srvrCtrl)
    : mLogController(&logCtrl)
    , mLmsComponent(&lmsComp)
    , mLastAutoRequestStatus(0.0)
@@ -124,7 +125,7 @@ void TestAARMessageProcessor::ProcessMessage(const dtGame::Message& msg)
    {
       Reset();
    }
-   
+
    dtGame::DefaultMessageProcessor::ProcessMessage(msg);
 }
 
@@ -138,10 +139,10 @@ void TestAARMessageProcessor::OnAddedToGM()
 }
 
 //////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<dtGame::GameActorProxy> 
-TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName, 
-                                              float velocity, 
-                                              float turnRate, 
+dtCore::RefPtr<dtGame::GameActorProxy>
+TestAARMessageProcessor::CreateNewMovingActor(const std::string& meshName,
+                                              float velocity,
+                                              float turnRate,
                                               bool bSetLocation,
                                               bool ignoreRecording)
 {
@@ -394,7 +395,7 @@ void TestAARMessageProcessor::Reset()
       LOG_ERROR("Failed to find the terrain model.");
    }
    else
-   {   
+   {
       terrain->LoadFile(path);
       GetGameManager()->GetScene().AddDrawable(terrain.get());
    }
@@ -428,14 +429,14 @@ void TestAARMessageProcessor::Reset()
    if (toFill.size() == 0)
    {
       LOG_ERROR("Unable to find the \"Move Camera\" task.  The application will likely fail.");
-      return;      
+      return;
    }
 
    mTaskMoveCameraProxy = dynamic_cast<dtActors::TaskActorProxy*>(toFill[0]);
    if (mTaskMoveCameraProxy == NULL)
    {
       LOG_ERROR("The \"Move Camera\" actor was found but it is not a task.  The application will likely fail.");
-      return;      
+      return;
    }
    mTaskMoveCamera = &static_cast<dtActors::TaskActor&>(mTaskMoveCameraProxy->GetGameActor());
 }
@@ -509,7 +510,7 @@ void TestAARMessageProcessor::UpdatePlayerActor(const dtGame::ActorUpdateMessage
 
    dtDAL::FloatActorProperty* playerVelocity = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("velocity"));
    dtDAL::FloatActorProperty* playerTurnRate = static_cast<dtDAL::FloatActorProperty*>(mPlayer->GetProperty("turnrate"));
- 
+
    const dtGame::MessageParameter* mp = aum.GetUpdateParameter("Velocity");
    if (mp != NULL)
    {

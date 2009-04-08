@@ -1,5 +1,6 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/positionallight.h>
+#include <dtCore/transform.h>
 
 #include <dtUtil/matrixutil.h>
 #include <dtCore/collisioncategorydefaults.h>
@@ -33,7 +34,7 @@ public:
 
       osg::Matrix absMatrix;
       Transformable::GetAbsoluteMatrix( mPositionalLight->GetMatrixNode(), absMatrix );
-            
+
       osg::Light* osgLight = mPositionalLight->GetLightSource()->getLight();
 
       float x, y, z, h, p, r;
@@ -56,7 +57,7 @@ PositionalLight::PositionalLight( int number, const std::string& name, LightingM
    :  Light( number, name, mode )
 {
    mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
-   
+
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_POSITIONALLIGHT);
 }
 
@@ -75,7 +76,7 @@ PositionalLight::~PositionalLight()
 
 /**
  * Determines how fast the light fades as one moves away from the light. It is
- * determined by the following equation: 
+ * determined by the following equation:
  *
  * attenuation factor = 1 / ( constant + linear*(distance) + quadratic*(distance^2) )
  *

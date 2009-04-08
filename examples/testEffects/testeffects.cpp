@@ -26,6 +26,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/object.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/transform.h>
 #include <cmath>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>

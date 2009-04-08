@@ -11,6 +11,7 @@
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/screenshotcallback.h>
+#include <dtCore/transform.h>
 #include <dtUtil/datetime.h>
 #include <dtUtil/log.h>
 #include <dtUtil/functor.h>
@@ -92,7 +93,7 @@ namespace dtCore
          }
          mCallbackContainer = NULL;
       }
-      
+
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -220,7 +221,7 @@ namespace dtCore
 
             // Find the transform in World coorindates, but leave
             // on the osg::CameraNode.
-            absMat.set(osg::computeLocalToWorld(nodePath));            
+            absMat.set(osg::computeLocalToWorld(nodePath));
          }
          else
          {
@@ -415,7 +416,7 @@ namespace dtCore
    /////////////////////////////////////////////////////////////////////////////
    void Camera::SetWindow(DeltaWin* win)
    {
-      if (mWindow == win) 
+      if (mWindow == win)
       {
          return;
       }
@@ -523,8 +524,8 @@ namespace dtCore
       {
          //2) its our callback
          return true;
-      }      
-      else   
+      }
+      else
       {
          //3) its not our callback
          LOG_ERROR("The OSG Camera already has a PostDrawCallback assigned.  Can't replace it.");

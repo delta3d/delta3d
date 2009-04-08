@@ -1,4 +1,5 @@
 #include <dtInspectorQt/transformableview.h>
+#include <dtCore/transform.h>
 #include <dtCore/odegeomwrap.h>
 #include "ui_dtinspectorqt.h"
 
@@ -30,7 +31,7 @@ dtInspectorQt::TransformableView::~TransformableView()
 void dtInspectorQt::TransformableView::OperateOn(dtCore::Base* b)
 {
    dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(b);
-   
+
    mOperateOn = trans;
    Update();
 }
@@ -74,7 +75,7 @@ void dtInspectorQt::TransformableView::Update()
    else
    {
       mUI->transformableGroupBox->hide();
-   } 
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////

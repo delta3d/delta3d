@@ -66,7 +66,7 @@ namespace dtCore
       ///Set both translation and rotation methods
       virtual void Set(const osg::Vec3& xyz, const osg::Matrix& rotation);
       ///Set both translation and rotation methods
-      virtual void Set(const osg::Matrix& mat );
+      virtual void Set(const osg::Matrix& mat);
 
       ///Set both translation and rotation using target(lookat) and position
       void Set(const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec);

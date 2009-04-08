@@ -20,20 +20,6 @@
  */
 
 #include <dtAnim/animationcomponent.h>
-#include <dtAnim/cal3danimator.h>
-#include <dtAnim/animnodebuilder.h>
-#include <dtAnim/sequencemixer.h>
-#include <dtAnim/cal3dmodelwrapper.h>
-#include <dtAnim/animdriver.h>
-#include <dtAnim/animationsequence.h>
-#include <dtAnim/attachmentcontroller.h>
-
-#include <dtUtil/hotspotdefinition.h>
-
-#include <dtDAL/actortype.h>
-
-#include <dtGame/gameactor.h>
-#include <dtGame/messagetype.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/defaultgroundclamper.h>
 

@@ -172,9 +172,6 @@ void ObjectWorkspace::CreateEditingToolbarAction()
    QActionGroup* coordinateGroup = new QActionGroup(this);
    coordinateGroup->setExclusive(true);
 
-   QActionGroup* motionGroup = new QActionGroup(this);
-   motionGroup->setExclusive(true);
-
    QIcon worldSpaceIcon(":/images/worldspace.png");
    QIcon localSpaceIcon(":/images/localspace.png");
    QIcon translationModeIcon(":/images/translatemode.png");
@@ -182,16 +179,11 @@ void ObjectWorkspace::CreateEditingToolbarAction()
 
    mWorldSpaceAction = coordinateGroup->addAction(worldSpaceIcon, "World Space");
    mLocalSpaceAction = coordinateGroup->addAction(localSpaceIcon, "Local Space");
-   mTranslationModeAction = motionGroup->addAction(translationModeIcon, "Translation Mode");
-   mRotationModeAction = motionGroup->addAction(rotationModeIcon, "Rotation Mode");
 
    mWorldSpaceAction->setCheckable(true);
    mLocalSpaceAction->setCheckable(true);
-   mTranslationModeAction->setCheckable(true);
-   mRotationModeAction->setCheckable(true);
 
    mLocalSpaceAction->setChecked(true);
-   mTranslationModeAction->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,10 +247,6 @@ void ObjectWorkspace::CreateToolbars()
    mCoordinateToolbar = addToolBar("Coordinate Toolbar");
    mCoordinateToolbar->addAction(mLocalSpaceAction);
    mCoordinateToolbar->addAction(mWorldSpaceAction);
-
-   mEditingToolbar = addToolBar("Editing Toolbar");
-   mEditingToolbar->addAction(mTranslationModeAction);
-   mEditingToolbar->addAction(mRotationModeAction);
 
    mDisplayToolbar = addToolBar("Display toolbar"); 
    mDisplayToolbar->addAction(mWireframeAction);

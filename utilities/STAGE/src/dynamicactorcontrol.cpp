@@ -332,6 +332,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicActorControl::onGotoClicked()
    {
+      NotifyParentOfPreUpdate();
       dtDAL::ActorProxy* proxy = getActorProxy();
       if (proxy != NULL)
       {

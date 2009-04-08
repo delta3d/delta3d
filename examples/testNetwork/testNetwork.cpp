@@ -2,6 +2,7 @@
 #include "packets.h"
 
 #include <dtCore/deltawin.h>
+#include <dtCore/transform.h>
 
 using namespace dtCore;
 using namespace dtABC;

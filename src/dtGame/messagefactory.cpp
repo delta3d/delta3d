@@ -34,9 +34,9 @@ namespace dtGame
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED("Type already registered");
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED("Type not registered");
 
-   MessageFactory::MessageFactory(const std::string &name,
+   MessageFactory::MessageFactory(const std::string& name,
                                   const MachineInfo& machine,
-                                  const std::string &desc) :
+                                  const std::string& desc) :
    mName(name),
    mDescription(desc),
    mMachine(&machine)
@@ -122,17 +122,17 @@ namespace dtGame
 
    }
 
-   bool MessageFactory::IsMessageTypeSupported(const MessageType &msg) const 
+   bool MessageFactory::IsMessageTypeSupported(const MessageType &msg) const
    {
       return mMessageFactory->IsTypeSupported(&msg);
    }
 
-   void MessageFactory::GetSupportedMessageTypes(std::vector<const MessageType*> &vec) 
+   void MessageFactory::GetSupportedMessageTypes(std::vector<const MessageType*>& vec)
    {
       mMessageFactory->GetSupportedTypes(vec);
    }
 
-   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType &msgType)  
+   dtCore::RefPtr<Message> MessageFactory::CreateMessage(const MessageType& msgType)
    {
       Message *msg = mMessageFactory->CreateObject(&msgType);
 
@@ -172,7 +172,7 @@ namespace dtGame
       return theClone;
    }
 
-   const MessageType &MessageFactory::GetMessageTypeById(unsigned short id) const 
+   const MessageType& MessageFactory::GetMessageTypeById(unsigned short id) const
    {
       std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
       if (itor == mIdMap.end())
@@ -186,7 +186,7 @@ namespace dtGame
       return *itor->second;
    }
 
-   const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const 
+   const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const
    {
       for (std::map<unsigned short, const MessageType*>::const_iterator i = mIdMap.begin(); i != mIdMap.end(); ++i)
       {

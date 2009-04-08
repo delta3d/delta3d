@@ -193,7 +193,7 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateNode(Cal3DModelWrapper* pWrappe
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo) 
 {
    if (pWrapper == NULL)
    {
@@ -219,7 +219,8 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
          for (int submeshId = 0; submeshId < submeshCount; submeshId++)
          {
             dtAnim::SubmeshDrawable *submesh = new dtAnim::SubmeshDrawable(pWrapper, meshId, submeshId);
-            submesh->SetBoundingBox(boundingBox);
+            submesh->SetBoundingBox(boundingBox); 
+            submesh->setUseVertexBufferObjects(vbo);
             geode->addDrawable(submesh);
          }
       }
@@ -230,6 +231,16 @@ dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWr
    pWrapper->Update(0);
 
    return geode;
+}
+
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftware(Cal3DModelWrapper* pWrapper)
+{
+   return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, true);
+}
+
+dtCore::RefPtr<osg::Node> AnimNodeBuilder::CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper)
+{
+   return AnimNodeBuilder::CreateSoftwareInternal(pWrapper, false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

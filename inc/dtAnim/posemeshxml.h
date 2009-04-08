@@ -88,7 +88,7 @@ namespace dtAnim
       const PoseMeshDataVector& GetData() { return mMeshDataList; }
 
    private:
-      PoseMeshFileHandler(const PoseMeshFileHandler& );
+      PoseMeshFileHandler(const PoseMeshFileHandler&);
 
       PoseMeshDataVector mMeshDataList;
       PoseMeshData       mCurrentData;

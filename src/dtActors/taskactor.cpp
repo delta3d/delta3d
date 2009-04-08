@@ -541,14 +541,6 @@ namespace dtActors
       {
          GetGameManager()->FindGameActorById(id, proxy);
       }
-      else
-      {
-         dtDAL::Map* map = dtDAL::Project::GetInstance().GetMapForActorProxy(*this);
-         if (map != NULL)
-         {
-            map->GetProxyById(id, proxy);
-         }
-      }
       return proxy;
    }
 

@@ -6,6 +6,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/transform.h>
 
 #include <osgViewer/CompositeViewer>
 
@@ -35,7 +36,7 @@ void TestMultiWin::Config()
    //call the parent Config()
    dtABC::Application::Config();
 
-   //change the title of the pre-built Window 
+   //change the title of the pre-built Window
    //(this already has a Camera and Scene assignApped to it)
    GetWindow()->SetWindowTitle("testMultWin - Window 1");
    GetWindow()->SetPosition(DEFAULT_FIRST_WIN_X, DEFAULT_FIRST_WIN_Y, DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT);
@@ -89,7 +90,7 @@ void TestMultiWin::Config()
 
    mMotion3 = new OrbitMotionModel(mView3->GetKeyboard(), mView3->GetMouse());
    mMotion3->SetTarget(mCam3.get());
-   
+
    //setup scene here
    RefPtr<Object> terr = new Object();
    terr->LoadFile("models/terrain_simple.ive");

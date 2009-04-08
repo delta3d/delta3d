@@ -2,7 +2,7 @@
 
 // State stuff
 IMPLEMENT_ENUM(MyStateType);
-MyStateType::MyStateType( const std::string& name ) : dtABC::State::Type(name) { AddInstance(this); }
+MyStateType::MyStateType(const std::string& name) : dtABC::State::Type(name) { AddInstance(this); }
 MyStateType::~MyStateType() {}
 
 const MyStateType MyStateType::SHELL("SHELL");

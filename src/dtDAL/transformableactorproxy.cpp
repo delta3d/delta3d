@@ -24,6 +24,7 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtCore/scene.h>
 #include <dtUtil/matrixutil.h>
 
@@ -38,7 +39,7 @@ namespace dtDAL
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_RADIUS("Collision Radius");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_LENGTH("Collision Length");
    const dtUtil::RefString TransformableActorProxy::PROPERTY_COLLISION_BOX("Collision Box");
-   
+
    //////////////////////////////////////////////////////
    TransformableActorProxy::TransformableActorProxy()
    {
@@ -55,7 +56,7 @@ namespace dtDAL
       static const dtUtil::RefString COLLISION_GROUP = "ODE Collision";
 
       dtCore::Transformable *trans = static_cast<dtCore::Transformable*>(GetActor());
-      
+
       if (IsRotationPropertyShown())
       {
          AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
@@ -137,7 +138,7 @@ namespace dtDAL
    void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
    {
       dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
-      
+
       osg::Vec3 hpr = rotation;
 
       //Normalize the rotation.
@@ -201,7 +202,7 @@ namespace dtDAL
    void TransformableActorProxy::SetTranslation(const osg::Vec3 &translation)
    {
       dtCore::Transformable *t = static_cast<dtCore::Transformable*>(GetActor());
-      
+
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
       osg::Vec3 oldTrans;
@@ -225,7 +226,7 @@ namespace dtDAL
    osg::Vec3 TransformableActorProxy::GetTranslation() const
    {
       const dtCore::Transformable *t = static_cast<const dtCore::Transformable*>(GetActor());
-      
+
       dtCore::Transform trans;
       t->GetTransform(trans, dtCore::Transformable::REL_CS);
       osg::Vec3 result;

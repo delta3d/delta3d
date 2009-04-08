@@ -31,7 +31,7 @@ public:
    static const MyEventType ALT;
    static const MyEventType START;
 protected:
-   MyEventType( const std::string& name );
+   MyEventType(const std::string& name);
    virtual ~MyEventType();
 };
 

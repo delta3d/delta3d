@@ -118,6 +118,9 @@ namespace dtAnim
 
       private:
          SubmeshDrawable();   ///< not implemented by design
+         bool VBOAvailable(const osg::RenderInfo& renderInfo) const;
+         void DrawUsingVBO(osg::RenderInfo &renderInfo) const;
+         void DrawUsingPrimitives(osg::RenderInfo &renderInfo) const;
 
          unsigned mMeshID;
          unsigned mSubmeshID;
@@ -143,6 +146,12 @@ namespace dtAnim
          osg::BoundingBox mBoundingBox;
 
          void SetUpMaterial();
+
+         // Old, compatible rendering path
+         mutable float* mMeshVertices;
+         mutable float* mMeshNormals;
+         mutable float* mMeshTextureCoordinates;
+         mutable int* mMeshFaces;
    };
 
    class SubmeshDirtyCallback: public osg::Drawable::UpdateCallback 

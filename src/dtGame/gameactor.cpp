@@ -31,6 +31,7 @@
 #include <dtGame/gmcomponent.h>
 #include <dtGame/invokable.h>
 #include <dtGame/basemessages.h>
+#include <dtGame/exceptionenum.h>
 
 #include <dtCore/shadergroup.h>
 #include <dtCore/shaderprogram.h>
@@ -39,6 +40,7 @@
 #include <dtDAL/exceptionenum.h>
 
 #include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 
 namespace dtGame
 {
@@ -59,7 +61,7 @@ namespace dtGame
    ///////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////
-   GameActorProxy::GameActorProxy() 
+   GameActorProxy::GameActorProxy()
       : mParent(NULL)
       , ownership(&GameActorProxy::Ownership::SERVER_LOCAL)
       , mLogger(dtUtil::Log::GetInstance("gameactor.cpp"))
@@ -601,7 +603,7 @@ namespace dtGame
    const std::string GameActor::NULL_PROXY_ERROR("The actor proxy for a game actor is NULL.  This usually happens if the actor is held in RefPtr, but not the proxy.");
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-   GameActor::GameActor(GameActorProxy& proxy) 
+   GameActor::GameActor(GameActorProxy& proxy)
       : mProxy(&proxy)
       , mPublished(false)
       , mRemote(false)
@@ -613,6 +615,30 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////////////////////////////
    GameActor::~GameActor()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   GameActorProxy& GameActor::GetGameActorProxy()
+   {
+      if (!mProxy.valid())
+      {
+         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+                  NULL_PROXY_ERROR,
+                  __FILE__, __LINE__);
+      }
+      return *mProxy;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////
+   const GameActorProxy& GameActor::GetGameActorProxy() const
+   {
+      if (!mProxy.valid())
+      {
+         throw dtUtil::Exception(ExceptionEnum::INVALID_ACTOR_STATE,
+                  NULL_PROXY_ERROR,
+                  __FILE__, __LINE__);
+      }
+      return *mProxy;
    }
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/positionallight.h>
+#include <dtCore/transform.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/basemessages.h>

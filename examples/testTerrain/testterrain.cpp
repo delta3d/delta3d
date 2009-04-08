@@ -36,6 +36,7 @@
 #include <dtCore/environment.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 
 #include <dtTerrain/terrain.h>
 #include <dtTerrain/dtedterrainreader.h>

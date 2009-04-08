@@ -31,6 +31,7 @@
 #include <dtCore/keyboardmousehandler.h>  //due to including scene.h
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtCore/isector.h>
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>

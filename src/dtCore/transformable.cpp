@@ -5,6 +5,7 @@
 #include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/odegeomwrap.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
@@ -90,16 +91,61 @@ namespace dtCore
 }
 
 /////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+namespace dtCore
+{
+   class TransformableImpl
+   {
+   public:
+      TransformableImpl(Transformable::TransformableNode& node)
+      : mGeomWrap(new ODEGeomWrap())
+      , mGeomGeod(NULL)
+      , mNode(&node)
+      , mRenderingGeometry(false)
+      , mRenderProxyNode(false)
+      {
+
+      }
+      dtCore::RefPtr<ODEGeomWrap> mGeomWrap;
+
+
+      /**
+       *  Pointer to the collision geometry representation
+       */
+      RefPtr<osg::Geode> mGeomGeod;
+
+      /**
+      * The node passed on GetOSGNode()
+      */
+      RefPtr<Transformable::TransformableNode> mNode;
+
+      /**
+       * If we're rendering the collision geometry.
+       */
+      bool mRenderingGeometry;
+
+      /**
+       * If we're rendering the proxy node
+       */
+      bool mRenderProxyNode;
+
+      ///used for the rendering of the proxy node
+      dtCore::RefPtr<PointAxis> mPointAxis;
+
+   };
+}
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
 Transformable::Transformable(const std::string& name)
    : DeltaDrawable(name)
-   , mGeomWrap(new ODEGeomWrap())
-   , mGeomGeod(NULL)
-   , mNode(new TransformableNode)
-   , mRenderingGeometry(false)
-   , mRenderProxyNode(false)
+   , mImpl(new TransformableImpl(*new TransformableNode))
 {
    //set the name of the node
-   mNode->setName(GetName());
+   mImpl->mNode->setName(GetName());
 
    Ctor();
 }
@@ -107,12 +153,9 @@ Transformable::Transformable(const std::string& name)
 /////////////////////////////////////////////////////////////
 Transformable::Transformable(TransformableNode& node, const std::string& name)
    : DeltaDrawable(name)
-   , mGeomWrap(new ODEGeomWrap())
-   , mGeomGeod(NULL)
-   , mNode(&node)
-   , mRenderingGeometry(false)
-   , mRenderProxyNode(false)
+   , mImpl(new TransformableImpl(node))
 {
+   //Should we set the name on the node now?
    Ctor();
 }
 
@@ -132,27 +175,30 @@ void Transformable::Ctor()
 /////////////////////////////////////////////////////////////
 Transformable::~Transformable()
 {
-   mGeomWrap = NULL;
-   if (mPointAxis.valid())
+   mImpl->mGeomWrap = NULL;
+   if (mImpl->mPointAxis.valid())
    {
       SetProxyNode(NULL);
-      RemoveChild(mPointAxis.get());
-      mPointAxis = NULL;
+      RemoveChild(mImpl->mPointAxis.get());
+      mImpl->mPointAxis = NULL;
    }
 
    DeregisterInstance(this);
+
+   delete mImpl;
+   mImpl = NULL;
 }
 
 /////////////////////////////////////////////////////////////
 osg::Node* Transformable::GetOSGNode()
 {
-   return mNode.get();
+   return mImpl->mNode.get();
 }
 
 /////////////////////////////////////////////////////////////
 const osg::Node* Transformable::GetOSGNode() const
 {
-   return mNode.get();
+   return mImpl->mNode.get();
 }
 
 /////////////////////////////////////////////////////////////
@@ -213,7 +259,7 @@ void Transformable::ReplaceMatrixNode(TransformableNode* matrixTransform)
    }
 
    // Replace the node pointer
-   mNode = matrixTransform;
+   mImpl->mNode = matrixTransform;
 
    // Preseve normal rescaling property
    SetNormalRescaling(normalRescaling);
@@ -334,15 +380,27 @@ void Transformable::GetTransform(Transform& xform, CoordSysEnum cs) const
 }
 
 ////////////////////////////////////////////////////////////////////////////
+Transformable::TransformableNode* Transformable::GetMatrixNode()
+{
+   return mImpl->mNode.get();
+}
+
+////////////////////////////////////////////////////////////////////////////
+const Transformable::TransformableNode* Transformable::GetMatrixNode() const
+{
+   return mImpl->mNode.get();
+}
+
+////////////////////////////////////////////////////////////////////////////
 const osg::Matrix& Transformable::GetMatrix() const
 {
-   return mNode->getMatrix();
+   return mImpl->mNode->getMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////
 void Transformable::SetMatrix(const osg::Matrix& mat)
 {
-   mNode->setMatrix(mat);
+   mImpl->mNode->setMatrix(mat);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -377,13 +435,13 @@ void Transformable::RenderProxyNode(const bool enable)
 
    if(enable)
    {
-      mPointAxis = new PointAxis();
-      mPointAxis->Enable(PointAxis::X);
-      mPointAxis->Enable(PointAxis::Y);
-      mPointAxis->Enable(PointAxis::Z);
-      mPointAxis->Enable(PointAxis::LABEL_X);
-      mPointAxis->Enable(PointAxis::LABEL_Y);
-      mPointAxis->Enable(PointAxis::LABEL_Z);
+      mImpl->mPointAxis = new PointAxis();
+      mImpl->mPointAxis->Enable(PointAxis::X);
+      mImpl->mPointAxis->Enable(PointAxis::Y);
+      mImpl->mPointAxis->Enable(PointAxis::Z);
+      mImpl->mPointAxis->Enable(PointAxis::LABEL_X);
+      mImpl->mPointAxis->Enable(PointAxis::LABEL_Y);
+      mImpl->mPointAxis->Enable(PointAxis::LABEL_Z);
 
       // Make sphere
       float radius = 0.5f;
@@ -391,7 +449,7 @@ void Transformable::RenderProxyNode(const bool enable)
       osg::Sphere* sphere = new osg::Sphere(osg::Vec3( 0.0, 0.0, 0.0 ), radius);
 
       osg::Geode* proxyGeode = new osg::Geode();
-      mPointAxis->GetMatrixNode()->addChild(proxyGeode);
+      mImpl->mPointAxis->GetMatrixNode()->addChild(proxyGeode);
 
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.5f);
@@ -409,26 +467,33 @@ void Transformable::RenderProxyNode(const bool enable)
       polyoffset->setFactor(-1.0f);
       polyoffset->setUnits(-1.0f);
 
-      osg::StateSet *ss = mPointAxis->GetOSGNode()->getOrCreateStateSet();
+      osg::StateSet *ss = mImpl->mPointAxis->GetOSGNode()->getOrCreateStateSet();
       ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
       ss->setMode(GL_BLEND, osg::StateAttribute::ON);
       ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
       ss->setAttributeAndModes(polyoffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
-      AddChild(mPointAxis.get());
-      SetProxyNode(mPointAxis->GetOSGNode());
+      AddChild(mImpl->mPointAxis.get());
+      SetProxyNode(mImpl->mPointAxis->GetOSGNode());
    }
    else
    {
-      if (mPointAxis.valid())
+      if (mImpl->mPointAxis.valid())
       {
-         RemoveChild(mPointAxis.get());
-         mPointAxis = NULL;
+         RemoveChild(mImpl->mPointAxis.get());
+         mImpl->mPointAxis = NULL;
       }
    }
 
-   mRenderProxyNode = enable;
+   mImpl->mRenderProxyNode = enable;
 }
+
+////////////////////////////////////////////////////////////////////////////
+bool Transformable::GetIsRenderingProxyNode() const
+{
+   return mImpl->mRenderProxyNode;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////
 void Transformable::SetNormalRescaling(const bool enable)
@@ -460,31 +525,31 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
    //ugly bit of code used to convert the ODEGeomWrap enums to Transformable enums.
    //This is here to keep from breaking existing Transformable clients.
 
-   if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::NONE)
+   if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::NONE)
    {
       return &dtCore::Transformable::CollisionGeomType::NONE;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::SPHERE)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::SPHERE)
    {
       return &dtCore::Transformable::CollisionGeomType::SPHERE;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CYLINDER)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CYLINDER)
    {
       return &dtCore::Transformable::CollisionGeomType::CYLINDER;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CCYLINDER)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CCYLINDER)
    {
       return &dtCore::Transformable::CollisionGeomType::CCYLINDER;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CUBE)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::CUBE)
    {
       return &dtCore::Transformable::CollisionGeomType::CUBE;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::RAY)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::RAY)
    {
       return &dtCore::Transformable::CollisionGeomType::RAY;
    }
-   else if (mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::MESH)
+   else if (mImpl->mGeomWrap->GetCollisionGeomType() == &dtCore::CollisionGeomType::MESH)
    {
       return &dtCore::Transformable::CollisionGeomType::MESH;
    }
@@ -500,59 +565,59 @@ void Transformable::GetCollisionGeomDimensions(std::vector<float>& dimensions)
    // Sync up ODE with our OSG transforms.
    PrePhysicsStepUpdate();
 
-   mGeomWrap->GetCollisionGeomDimensions(dimensions);
+   mImpl->mGeomWrap->GetCollisionGeomDimensions(dimensions);
  }
 
 ///////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCategoryBits(unsigned long bits)
 {
-   mGeomWrap->SetCollisionCategoryBits(bits);
+   mImpl->mGeomWrap->SetCollisionCategoryBits(bits);
 }
 
 ////////////////////////////////////////////////////////////////////////
 unsigned long Transformable::GetCollisionCategoryBits() const
 {
-   return mGeomWrap->GetCollisionCategoryBits();
+   return mImpl->mGeomWrap->GetCollisionCategoryBits();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCollideBits(unsigned long bits)
 {
-   mGeomWrap->SetCollisionCollideBits(bits);
+   mImpl->mGeomWrap->SetCollisionCollideBits(bits);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 unsigned long Transformable::GetCollisionCollideBits() const
 {
-   return mGeomWrap->GetCollisionCollideBits();
+   return mImpl->mGeomWrap->GetCollisionCollideBits();
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionDetection(bool enabled)
 {
-   mGeomWrap->SetCollisionDetection(enabled);
+   mImpl->mGeomWrap->SetCollisionDetection(enabled);
 }
 
 ////////////////////////////////////////////////////////////////
 bool Transformable::GetCollisionDetection() const
 {
-   return mGeomWrap->GetCollisionDetection();
+   return mImpl->mGeomWrap->GetCollisionDetection();
 }
 
 
 dGeomID Transformable::GetGeomID() const
 {
-   return mGeomWrap->GetGeomID();
+   return mImpl->mGeomWrap->GetGeomID();
 }
 
 
 ////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionGeom(dGeomID geom)
 {
-   mGeomWrap->SetCollisionGeom(geom);
+   mImpl->mGeomWrap->SetCollisionGeom(geom);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
 
    // Sync-up the transforms on mGeomID
    PrePhysicsStepUpdate();
@@ -561,11 +626,11 @@ void Transformable::SetCollisionGeom(dGeomID geom)
 ////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionSphere(float radius)
 {
-   mGeomWrap->SetCollisionSphere(radius);
+   mImpl->mGeomWrap->SetCollisionSphere(radius);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
 
-   mGeomWrap->SetCollisionDetection(true);
+   mImpl->mGeomWrap->SetCollisionDetection(true);
 
    // Sync-up the transforms on mGeomID
    PrePhysicsStepUpdate();
@@ -587,13 +652,13 @@ void Transformable::SetCollisionSphere(osg::Node* node)
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
 
-      mGeomWrap->SetCollisionSphere(node);
+      mImpl->mGeomWrap->SetCollisionSphere(node);
 
       GetMatrixNode()->setMatrix(oldMatrix);
 
-      RenderCollisionGeometry(mRenderingGeometry);
+      RenderCollisionGeometry(mImpl->mRenderingGeometry);
 
-      mGeomWrap->SetCollisionDetection(true);
+      mImpl->mGeomWrap->SetCollisionDetection(true);
 
       // Sync-up the transforms on mGeomID
       PrePhysicsStepUpdate();
@@ -603,9 +668,9 @@ void Transformable::SetCollisionSphere(osg::Node* node)
 /////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionBox(float lx, float ly, float lz)
 {
-   mGeomWrap->SetCollisionBox(lx, ly, lz);
+   mImpl->mGeomWrap->SetCollisionBox(lx, ly, lz);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
    SetCollisionDetection(true);
 
    // Sync-up the transforms on mGeomID
@@ -625,11 +690,11 @@ void Transformable::SetCollisionBox(osg::Node* node)
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
 
-      mGeomWrap->SetCollisionBox(node);
+      mImpl->mGeomWrap->SetCollisionBox(node);
 
       GetMatrixNode()->setMatrix(oldMatrix);
 
-      RenderCollisionGeometry(mRenderingGeometry);
+      RenderCollisionGeometry(mImpl->mRenderingGeometry);
       SetCollisionDetection(true);
 
       PrePhysicsStepUpdate();
@@ -639,9 +704,9 @@ void Transformable::SetCollisionBox(osg::Node* node)
 /////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCylinder(float radius, float length)
 {
-   mGeomWrap->SetCollisionCylinder(radius, length);
+   mImpl->mGeomWrap->SetCollisionCylinder(radius, length);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
    SetCollisionDetection(true);
 
    // Sync-up the transforms on mGeomID
@@ -662,11 +727,11 @@ void Transformable::SetCollisionCylinder(osg::Node* node)
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
 
-      mGeomWrap->SetCollisionCylinder(node);
+      mImpl->mGeomWrap->SetCollisionCylinder(node);
 
       GetMatrixNode()->setMatrix(oldMatrix);
 
-      RenderCollisionGeometry(mRenderingGeometry);
+      RenderCollisionGeometry(mImpl->mRenderingGeometry);
       SetCollisionDetection(true);
 
       // Sync-up the transforms on mGeomID
@@ -677,9 +742,9 @@ void Transformable::SetCollisionCylinder(osg::Node* node)
 /////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionCappedCylinder(float radius, float length)
 {
-   mGeomWrap->SetCollisionCappedCylinder(radius, length);
+   mImpl->mGeomWrap->SetCollisionCappedCylinder(radius, length);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
    SetCollisionDetection(true);
 
    // Sync-up the transforms on mGeomID
@@ -700,11 +765,11 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
 
-      mGeomWrap->SetCollisionCappedCylinder(node);
+      mImpl->mGeomWrap->SetCollisionCappedCylinder(node);
 
       GetMatrixNode()->setMatrix(oldMatrix);
 
-      RenderCollisionGeometry(mRenderingGeometry);
+      RenderCollisionGeometry(mImpl->mRenderingGeometry);
       SetCollisionDetection(true);
 
       // Sync-up the transforms on mGeomID
@@ -715,9 +780,9 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 /////////////////////////////////////////////////////////////////////
 void Transformable::SetCollisionRay(float length)
 {
-   mGeomWrap->SetCollisionRay(length);
+   mImpl->mGeomWrap->SetCollisionRay(length);
 
-   RenderCollisionGeometry(mRenderingGeometry);
+   RenderCollisionGeometry(mImpl->mRenderingGeometry);
    SetCollisionDetection(true);
 
    // Sync-up the transforms on mGeomID
@@ -742,11 +807,11 @@ void Transformable::SetCollisionMesh(osg::Node* node)
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix(osg::Matrix::identity());
 
-      mGeomWrap->SetCollisionMesh(node);
+      mImpl->mGeomWrap->SetCollisionMesh(node);
 
       GetMatrixNode()->setMatrix(oldMatrix);
 
-      RenderCollisionGeometry(mRenderingGeometry);
+      RenderCollisionGeometry(mImpl->mRenderingGeometry);
       SetCollisionDetection(true);
    }
 }
@@ -754,18 +819,18 @@ void Transformable::SetCollisionMesh(osg::Node* node)
 /////////////////////////////////////////////////////////////
 void Transformable::ClearCollisionGeometry()
 {
-   mGeomWrap->ClearCollisionGeometry();
+   mImpl->mGeomWrap->ClearCollisionGeometry();
 
    //If the collision geometry is valid, this implies the user has
    //enabled render collision geometry.  Therefore, we just remove
    //the drawables from the geode.  When the user turns off render
    //collision geometry, that will remove the geode from this node.
-   if(mGeomGeod.valid())
+   if(mImpl->mGeomGeod.valid())
    {
       #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
-      mGeomGeod->removeDrawables(0,mGeomGeod->getNumDrawables());
+      mImpl->mGeomGeod->removeDrawables(0,mImpl->mGeomGeod->getNumDrawables());
       #else
-      mGeomGeod->removeDrawable(0,mGeomGeod->getNumDrawables());
+      mImpl->mGeomGeod->removeDrawable(0,mImpl->mGeomGeod->getNumDrawables());
       #endif
    }
 }
@@ -773,13 +838,13 @@ void Transformable::ClearCollisionGeometry()
 /////////////////////////////////////////////////////////////
 void Transformable::PrePhysicsStepUpdate()
 {
-   if (mGeomWrap->GetCollisionDetection() == false) {return;}
+   if (mImpl->mGeomWrap->GetCollisionDetection() == false) {return;}
 
    Transform transform;
 
    this->GetTransform(transform, Transformable::ABS_CS);
 
-   mGeomWrap->UpdateGeomTransform(transform);
+   mImpl->mGeomWrap->UpdateGeomTransform(transform);
 }
 
 /////////////////////////////////////////////////////////////
@@ -792,30 +857,36 @@ void Transformable::RenderCollisionGeometry(bool enable)
       return;
    }
 
-   mRenderingGeometry = enable;
+   mImpl->mRenderingGeometry = enable;
 
    if(enable)
    {
       //If there is already an existing rendering of the collision geometry,
       //remove it before adding a new one.
-      if (mGeomGeod.valid())
+      if (mImpl->mGeomGeod.valid())
       {
          RemoveRenderedCollisionGeometry();
       }
 
-      mGeomGeod = mGeomWrap->CreateRenderedCollisionGeometry();
+      mImpl->mGeomGeod = mImpl->mGeomWrap->CreateRenderedCollisionGeometry();
 
-      if (mGeomGeod.valid())
+      if (mImpl->mGeomGeod.valid())
       {
-         mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
+         mImpl->mGeomGeod->setName(Transformable::COLLISION_GEODE_ID);
 
-         xform->addChild(mGeomGeod.get());
+         xform->addChild(mImpl->mGeomGeod.get());
       }
    } //end if enabled==true
    else
    {
       this->RemoveRenderedCollisionGeometry();
    }
+}
+
+/////////////////////////////////////////////////////////////
+bool Transformable::GetRenderCollisionGeometry() const
+{
+   return mImpl->mRenderingGeometry;
 }
 
 /////////////////////////////////////////////////////////////
@@ -846,21 +917,21 @@ void Transformable::AddedToScene(Scene* scene)
 ///////////////////////////////////////////////////////////////
 void Transformable::RemoveRenderedCollisionGeometry()
 {
-   if(mGeomGeod.valid())
+   if(mImpl->mGeomGeod.valid())
    {
-      GetMatrixNode()->removeChild(mGeomGeod.get());
-      mGeomGeod = 0;
+      GetMatrixNode()->removeChild(mImpl->mGeomGeod.get());
+      mImpl->mGeomGeod = 0;
    }
 }
 
 //////////////////////////////////////////////////////////////////////////
 const ODEGeomWrap* Transformable::GetGeomWrapper() const
 {
-   return mGeomWrap.get();
+   return mImpl->mGeomWrap.get();
 }
 
 //////////////////////////////////////////////////////////////////////////
 ODEGeomWrap* Transformable::GetGeomWrapper()
 {
-   return mGeomWrap.get();
+   return mImpl->mGeomWrap.get();
 }

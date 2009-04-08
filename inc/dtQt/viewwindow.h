@@ -11,6 +11,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
+#include <dtCore/base.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +26,7 @@ namespace osgViewer
 namespace dtQt
 {
    ///Little class used to hold the Delta3D rendering surface
-   class DT_QT_EXPORT ViewWindow : public QGLWidget
+   class DT_QT_EXPORT ViewWindow : public QGLWidget, dtCore::Base
    {
       Q_OBJECT
 
@@ -42,6 +43,8 @@ namespace dtQt
       void ThreadedInitializeGL();
       void ThreadedMakeCurrent();
 
+      virtual void OnMessage(MessageData*);
+
       public slots:
          //does the actual painting.
          void ThreadedUpdateGL();
@@ -49,6 +52,7 @@ namespace dtQt
    protected:
 
       //This draws, but only if .
+      virtual void glDraw();
       virtual void paintGL();
       void paintGLImpl();
 

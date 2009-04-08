@@ -33,8 +33,7 @@ namespace dtCore
     * previously a sub-class of DeltaDrawable). This means InfintieTerrain is now also
     * a Transformable and has all the Transform and collision-related API. These functions
     * are undefined for this class since InfiniteLight technically does not have a XYZ
-    * location in the world. SetRotation current does not affect the direction of the light.
-    * In future versions, this will be refactored to a cleaner design.
+    * location in the world. SetRotation is used for the direction of the light.    
     */
    class DT_CORE_EXPORT InfiniteLight : public Light
    {
@@ -54,21 +53,11 @@ namespace dtCore
       /**
        * Constructor for an osg::LightSource
        */
-      InfiniteLight(const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL );
+      InfiniteLight(const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL);
 
    protected:
 
       virtual ~InfiniteLight();
-
-   public:
-
-      /// Deprecated 2/28/09
-      DEPRECATE_FUNC void SetAzimuthElevation(float az, float el);
-      DEPRECATE_FUNC void SetAzimuthElevation(const osg::Vec2& azEl);
-
-      /// Deprecated 2/28/09
-      DEPRECATE_FUNC void GetAzimuthElevation(float& az, float& el) const;
-      DEPRECATE_FUNC osg::Vec2 GetAzimuthElevation() const;
    };
 
 }
