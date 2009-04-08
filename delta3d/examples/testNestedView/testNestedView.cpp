@@ -9,6 +9,8 @@
 
 #include <osgViewer/CompositeViewer>
 
+#include <iostream>
+
 using namespace dtCore;
 using namespace dtABC;
 

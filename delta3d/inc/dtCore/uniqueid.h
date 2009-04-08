@@ -74,13 +74,13 @@ namespace dtCore
    ////////////////////////////////////////////////////
    /////////////  Stream Operators        /////////////
    ////////////////////////////////////////////////////
-   std::ostream& operator << (std::ostream& o, const UniqueId& id);
+   DT_CORE_EXPORT std::ostream& operator << (std::ostream& o, const UniqueId& id);
 
-   std::istream& operator >> (std::istream& i, UniqueId& id);
+   DT_CORE_EXPORT std::istream& operator >> (std::istream& i, UniqueId& id);
 
-   dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const UniqueId& id);
+   DT_CORE_EXPORT dtUtil::DataStream& operator << (dtUtil::DataStream& ds, const UniqueId& id);
 
-   dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id);
+   DT_CORE_EXPORT dtUtil::DataStream& operator >> (dtUtil::DataStream& ds, UniqueId& id);
 }
 
 #endif // DELTA_UNIQUEID

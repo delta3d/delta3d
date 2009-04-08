@@ -46,6 +46,8 @@
 #include <CEGUI/CEGUIEventArgs.h>
 #include <dtGUI/ceuidrawable.h>
 
+#include <iostream>
+
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtUtil;

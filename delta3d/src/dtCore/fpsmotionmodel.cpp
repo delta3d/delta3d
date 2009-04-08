@@ -17,11 +17,13 @@
 #include <dtCore/transformable.h>
 #include <dtCore/isector.h>
 #include <dtCore/transform.h>
+
 #include <dtUtil/mathdefines.h>
+#include <dtUtil/matrixutil.h>
 
 #include <osg/Quat>
-#include <dtUtil/matrixutil.h>
 #include <cmath>
+#include <iostream>
 
 namespace dtCore
 {
