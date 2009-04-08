@@ -52,6 +52,9 @@ public:
       mKeyMap[Qt::Key_F19            ] = osgGA::GUIEventAdapter::KEY_F19;
       mKeyMap[Qt::Key_F20            ] = osgGA::GUIEventAdapter::KEY_F20;
 
+      mKeyMap[Qt::Key_Alt            ] = osgGA::GUIEventAdapter::KEY_Alt_L;
+      mKeyMap[Qt::Key_Shift          ] = osgGA::GUIEventAdapter::KEY_Shift_L;
+
       mKeyMap[Qt::Key_hyphen         ] = '-';
       mKeyMap[Qt::Key_Equal         ] = '=';
 
