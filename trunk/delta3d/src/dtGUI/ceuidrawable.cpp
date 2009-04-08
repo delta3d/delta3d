@@ -315,7 +315,12 @@ void CEUIDrawable::ShutdownGUI()
       mKeyboard->RemoveKeyboardListener(mKeyboardListener.get());
    }
    
-   delete mUI;
+   // Only delete if it still exists
+   if (CEGUI::System::getSingletonPtr())
+   {
+      delete mUI;
+   }
+
    mUI = NULL;
 }
 
