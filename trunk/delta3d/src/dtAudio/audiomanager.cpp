@@ -17,6 +17,8 @@
 #include <dtCore/globals.h>
 #include <dtUtil/stringutils.h>
 
+#include <iostream>
+
 // definitions
 #if !defined(BIT)
 # define BIT(a) (1L<<a)
@@ -115,7 +117,7 @@ AudioManager::AudioManager(const std::string& name /*= "audiomanager"*/,
 
       mDevice = dev;
       mContext = cntxt;
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,8 +161,8 @@ AudioManager::~AudioManager()
    //then alutExit may get confused when attempting to close context or
    //device.  If so, I don't want to hear an error about it as it doesn't matter.
    //CheckForError("alutExit()", __FUNCTION__, __LINE__);
-      
-   RemoveSender(&dtCore::System::GetInstance());        
+
+   RemoveSender(&dtCore::System::GetInstance());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +197,7 @@ void AudioManager::SetOpenALDevice(const ALCchar* deviceName)
    CloseDevice();
 
    OpenDevice(deviceName);
-   CreateContext();   
+   CreateContext();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +233,7 @@ DEPRECATE_FUNC bool AudioManager::GetListenerRelative(Sound* sound)
 // manager configuration
 DEPRECATE_FUNC void AudioManager::Config(const AudioConfigData& data /*= _DefCfg*/)
 {
-   DEPRECATE("AudioManager::Config",  "All neccessary intialization is taken care of elsewhere now.");      
+   DEPRECATE("AudioManager::Config",  "All neccessary intialization is taken care of elsewhere now.");
 
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    if (mIsConfigured)
@@ -244,7 +246,7 @@ DEPRECATE_FUNC void AudioManager::Config(const AudioConfigData& data /*= _DefCfg
    // or by SetOpenALDevice)
    //OpenDevice();
    //Context is automagically setup by alutInit or a call to SetOpenALDevice
-   //CreateContext();   
+   //CreateContext();
 
    // set up the distance model
    switch (data.distancemodel)
@@ -576,7 +578,7 @@ ALint AudioManager::LoadFile(const std::string& file)
    //this is weird ... it doesn't happen in straight OpenAL apps ...
    // I think it's something to do with ALUT - maday
    if(data != NULL)
-   {      
+   {
       free(data);
    }
    #endif
@@ -632,7 +634,6 @@ void AudioManager::PreFrame(const double deltaFrameTime)
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
    SOB_PTR     snd(NULL);
-   const char* cmd(NULL);
 
    // flush all the sound commands
    for (unsigned int i = 0; i < mSoundList.size(); ++i)
@@ -871,12 +872,12 @@ void AudioManager::OpenDevice(const ALCchar* deviceName)
 {
    mDevice = alcOpenDevice(deviceName);
    if (mDevice == NULL)
-   {      
+   {
       Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't open audio device.\n");
    }
 }
-   
+
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::CreateContext()
 {
@@ -891,7 +892,7 @@ void AudioManager::CreateContext()
    {
       Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__,
                       "AudioManager can't make audio context current.\n");
-   }     
+   }
 
 }
 
@@ -905,7 +906,7 @@ void AudioManager::CloseDevice()
       mDevice = NULL;
    }
 }
-   
+
 ////////////////////////////////////////////////////////////////////////////////
 void AudioManager::CloseContext()
 {
@@ -918,5 +919,5 @@ void AudioManager::CloseContext()
       CheckForError("Attempted to destroy current OpenAL context.",
                      __FUNCTION__, __LINE__);
       mContext = NULL;
-   }   
+   }
 }
