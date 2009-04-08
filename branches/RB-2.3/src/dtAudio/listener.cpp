@@ -6,6 +6,7 @@
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtCore/collisioncategorydefaults.h>
 
 #include <dtUtil/mathdefines.h>
@@ -36,7 +37,7 @@ Listener::~Listener()
 
 ////////////////////////////////////////////////////////////////////////////////
 void Listener::SetVelocity(const osg::Vec3f& velocity)
-{   
+{
    alListener3f(AL_VELOCITY,
                 static_cast<ALfloat>(velocity[0]),
                 static_cast<ALfloat>(velocity[1]),
@@ -58,14 +59,14 @@ void Listener::SetGain(float gain)
 {
    // force gain to range from zero to one
    dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
-   
+
    alListenerf(AL_GAIN, gain);
    CheckForError("OpenAL Listener gain value changing", __FUNCTION__, __LINE__);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 float Listener::GetGain(void) const
-{   
+{
    float g;
    alGetListenerf(AL_GAIN, &g);
    CheckForError("OpenAL Listener getting gain value", __FUNCTION__, __LINE__);
@@ -96,9 +97,9 @@ void Listener::OnMessage(MessageData* data)
          };
       } orient;
 
-      GetTransform( transform );      
+      GetTransform( transform );
       osg::Vec3 tmp;
-      transform.GetTranslation( tmp );      
+      transform.GetTranslation( tmp );
       pos[0] = tmp[0];
       pos[1] = tmp[1];
       pos[2] = tmp[2];

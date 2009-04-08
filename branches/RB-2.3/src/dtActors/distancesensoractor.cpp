@@ -21,6 +21,7 @@
 
 #include <dtActors/distancesensoractor.h>
 #include <dtCore/scene.h>
+#include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>
 
 #include <dtGame/message.h>

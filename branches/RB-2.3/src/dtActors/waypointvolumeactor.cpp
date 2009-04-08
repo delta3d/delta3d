@@ -1,6 +1,6 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2008 MOVES Institute 
+* Copyright (C) 2008 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@
 */
 #include <dtActors/waypointvolumeactor.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtCore/transform.h>
 
 #include <assert.h>
 
@@ -28,10 +29,10 @@ namespace dtActors
    IMPLEMENT_MANAGEMENT_LAYER(WaypointVolumeActor)
 
    //////////////////////////////////////////////////////////////////////////////
-   WaypointVolumeActor::WaypointVolumeActor(const std::string &name) 
+   WaypointVolumeActor::WaypointVolumeActor(const std::string &name)
    {
       RegisterInstance(this);
-      SetName("VolumeActor");      
+      SetName("VolumeActor");
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ namespace dtActors
 
    //////////////////////////////////////////////////////////////////////////////
    bool WaypointVolumeActor::IsPointInVolume(float x, float y, float z)
-   {  
+   {
       Transformable::CollisionGeomType *type = GetCollisionGeomType();
 
       std::vector<float> dimensions;
@@ -67,7 +68,7 @@ namespace dtActors
          rotation.invert(rotation);
 
          point -= translation;
-         point = point * rotation;      
+         point = point * rotation;
 
          osg::Vec3 botLeft(-halfWidth, -halfLength, -halfHeight);
          osg::Vec3 topRight(halfWidth, halfLength, halfHeight);
@@ -102,7 +103,7 @@ namespace dtActors
 
       return false;
    }
-  
+
    ////////////////////////////END WaypointVolumeActor///////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
@@ -130,8 +131,8 @@ namespace dtActors
       AddProperty(new dtDAL::FloatActorProperty("name","label",
          dtDAL::MakeFunctor(volume, &WaypointVolumeActor::SetWaypointSpacing),
          dtDAL::MakeFunctorRet(volume, &WaypointVolumeActor::GetWaypointSpacing),
-         "Sets/gets the spacing between waypoints in explorer tool.",GROUPNAME));    
-   }   
+         "Sets/gets the spacing between waypoints in explorer tool.",GROUPNAME));
+   }
 
    //////////////////////////////////////////////////////////////////////////////
    void WaypointVolumeActorProxy::OnEnteredWorld()

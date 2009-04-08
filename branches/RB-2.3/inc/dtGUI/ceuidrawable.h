@@ -78,27 +78,27 @@ namespace dtGUI
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
       ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
-      CEUIDrawable(dtCore::DeltaWin *win,
-                  dtCore::Keyboard *keyboard,
-                  dtCore::Mouse *mouse,
-                  dtGUI::BaseScriptModule *sm=0);
+      CEUIDrawable(dtCore::DeltaWin* win,
+                  dtCore::Keyboard* keyboard,
+                  dtCore::Mouse* mouse,
+                  dtGUI::BaseScriptModule* sm = 0);
 
    protected:
       virtual ~CEUIDrawable();
 
    public:
       ///Get a pointer to the underlying CEGUI::System
-      CEGUI::System* GetUI() {return mUI;}
+      CEGUI::System* GetUI() { return mUI; }
 
       ///Get a pointer to the underlying Renderer
-      dtGUI::CEGUIRenderer* GetRenderer() {return mRenderer;}
-      const dtGUI::CEGUIRenderer* GetRenderer() const {return mRenderer;}
+      dtGUI::CEGUIRenderer* GetRenderer() { return mRenderer; }
+      const dtGUI::CEGUIRenderer* GetRenderer() const { return mRenderer; }
 
       /// Attaches the Delta3D child's OSG graphics Node
-      bool AddChild(dtCore::DeltaDrawable *child);
+      bool AddChild(dtCore::DeltaDrawable* child);
 
       ///Display all the properties of the supplied CEGUI::Window
-      static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
+      static void DisplayProperties(CEGUI::Window* window, bool onlyNonDefault = true);
 
       /// Not usually needed, but this getter is provided for unusual scenarios.
       osg::Projection* GetProjectionNode() { return mProjection.get(); }
@@ -113,12 +113,12 @@ namespace dtGUI
       /// @see SetAutoResizing()
       /// @param width : the width of the rendered area (pixels)
       /// @param height : the heigh tof hte rendered area (pixels)
-      void SetRenderingSize( int width, int height );
+      void SetRenderingSize(int width, int height);
 
       /// Automatically notify CEGUI of DeltaWin resizes (enabled by default)
-      void SetAutoResizing(bool enable=true) {mAutoResize=enable;}
+      void SetAutoResizing(bool enable = true) { mAutoResize = enable; }
 
-      bool GetAutoResizing() const {return mAutoResize;}
+      bool GetAutoResizing() const { return mAutoResize; }
 
       const CEGUIMouseListener* GetMouseListener() const { return mMouseListener.get(); }
       const CEGUIKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
@@ -131,21 +131,21 @@ namespace dtGUI
       osg::Node* GetOSGNode(){return mNode.get();}
       const osg::Node* GetOSGNode() const{return mNode.get();}
 
-      void SetOSGNode(osg::Node* pNode){mNode = pNode;}
+      void SetOSGNode(osg::Node* pNode) { mNode = pNode; }
 
       /**
        * Set the render bin details on the contained geode's state set.
        * @param binNumber Order of the bin in relation to other bins.
        * @param binName Name of the bin.
        */
-      void SetRenderBinDetails( int binNumber, const std::string& binName );
+      void SetRenderBinDetails(int binNumber, const std::string& binName);
 
 
    protected: 
 
-      void OnMessage(dtCore::Base::MessageData *data);
+      void OnMessage(dtCore::Base::MessageData* data);
       
-      CEGUI::System *mUI; ///<Pointer to the CUI_UI
+      CEGUI::System* mUI; ///<Pointer to the CUI_UI
 
       CEGUIRenderer* mRenderer; ///<The opengl renderer we're using
       dtGUI::BaseScriptModule* mScriptModule;
@@ -178,17 +178,17 @@ namespace dtGUI
       {
       public:
          osgCEUIDrawable(const osgCEUIDrawable& drawable,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
-         osgCEUIDrawable(CEGUI::System *ui);
+         osgCEUIDrawable(CEGUI::System* ui);
 
          virtual osg::Object* cloneType() const;
          virtual osg::Object* clone(const osg::CopyOp& copyop) const;
-         virtual void drawImplementation(osg::RenderInfo & renderInfo) const;
+         virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
 
       protected:
          virtual ~osgCEUIDrawable();
 
       private:
-         CEGUI::System *mUI; ///< osgCEUIDrawable's pointer to CEGUI
+         CEGUI::System* mUI; ///< osgCEUIDrawable's pointer to CEGUI
       };
 
       ///setup the internals
@@ -199,6 +199,6 @@ namespace dtGUI
       dtCore::RefPtr<CEGUIKeyboardListener> mKeyboardListener;
       dtCore::RefPtr<CEGUIMouseListener> mMouseListener;
    };
-}//namespace dtGUI
+} //namespace dtGUI
 
 #endif // DELTA_CEUIDRAWABLE

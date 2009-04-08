@@ -15,6 +15,8 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboardmousehandler.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/transform.h>
+
 #include <dtUtil/bits.h>
 
 using namespace dtCore;

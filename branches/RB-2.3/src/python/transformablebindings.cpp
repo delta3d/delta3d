@@ -4,6 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <osg/MatrixTransform>
 #include <dtCore/scene.h>
 #include <ode/contact.h> //for dContact
@@ -144,7 +145,7 @@ void initTransformableBindings()
       .def("RenderCollisionGeometry", &Transformable::RenderCollisionGeometry)
       .def("GetRenderCollisionGeometry", &Transformable::GetRenderCollisionGeometry)
       .def("GetOSGNode", GetOSGNode1, return_value_policy<reference_existing_object>())
-      .def("GetOSGNode", GetOSGNode2, return_value_policy<reference_existing_object>())      
+      .def("GetOSGNode", GetOSGNode2, return_value_policy<reference_existing_object>())
       ;
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")

@@ -5,6 +5,7 @@
 #include <dtCore/keyboardmousehandler.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 
 
@@ -146,12 +147,12 @@ void RTSMotionModel::OnMessage(MessageData *data)
    else if (mUseSimTimeForSpeed)
    {
       // 0 is sim time
-      delta = timeChange[0]; 
+      delta = timeChange[0];
    }
    else
    {
       // 1 is real time
-      delta = timeChange[1]; 
+      delta = timeChange[1];
    }
 
    // get the current position and orientation

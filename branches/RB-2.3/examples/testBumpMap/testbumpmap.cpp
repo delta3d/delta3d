@@ -27,6 +27,7 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
+#include <dtCore/transform.h>
 
 #include <osg/Drawable>
 #include <osg/Program>
@@ -38,7 +39,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName, 
+TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
                                const std::string& configFilename /*= "config.xml"*/,
                                bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
@@ -46,32 +47,32 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
    , mUsePrecomputedTangents(usePrecomputedTangents)
-{ 
+{
    //load the xml file which specifies our shaders
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
    sm.LoadShaderDefinitions("shaders/ShaderDefinitions.xml");
 
    // Load our art assets
    LoadTextures();
-   LoadGeometry(customObjectName);  
+   LoadGeometry(customObjectName);
 
    dtCore::ShaderParamInt* customMode = NULL;
    dtCore::ShaderParamInt* sphereMode = NULL;
 
    // Assign the bump shader to the nodes
    AssignShaderToObject(mSphere.get(), sphereMode);
-   AssignShaderToObject(mCustomObject.get(), customMode);  
+   AssignShaderToObject(mCustomObject.get(), customMode);
 
    // Store pointers to the mode for toggling different paths in the shader
    mCustomShaderMode = customMode;
    mSphereShaderMode = sphereMode;
 
    dtCore::Transform objectTransform;
-   mCustomObject->GetTransform(objectTransform);     
+   mCustomObject->GetTransform(objectTransform);
 
    // Apply the motion model to control the light centered around our object
    mOrbitMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
-   mOrbitMotion->SetTarget(GetScene()->GetLight(0));    
+   mOrbitMotion->SetTarget(GetScene()->GetLight(0));
 
    // Adjust the positioning of the camera depending on the size of the object
    CenterCameraOnObject(mCustomObject.get());
@@ -82,7 +83,7 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
-{   
+{
    // Load a sphere a second object to see the effect on
    // NOTE! This model mirrors the uv coords so the lighting
    // will be incorrect on the backside.
@@ -92,17 +93,17 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
    AddDrawable(mSphere.get());
 
    mCustomObject = new dtCore::Object("Custom");
-   mCustomObject->LoadFile(customObjectName);  
+   mCustomObject->LoadFile(customObjectName);
    AddDrawable(mCustomObject.get());
 
    // Load some geometry to represent the direction of the light
    mLightObject = new dtCore::Object("Light Arrow");
    mLightObject->LoadFile("models/LightArrow.ive");
    mLightObject->SetScale(osg::Vec3(0.5f, 0.5f, 0.5f));
-   
+
    AddDrawable(mLightObject.get());
 
-   dtCore::Light* light = GetScene()->GetLight(0); 
+   dtCore::Light* light = GetScene()->GetLight(0);
 
    // Infinite lights must start here, point light from the postive y axis
    light->GetLightSource()->getLight()->setPosition(osg::Vec4(osg::Y_AXIS, 0.0f));
@@ -114,7 +115,7 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::LoadTextures()
-{   
+{
    osg::Image* diffuseImage = osgDB::readImageFile("textures/sheetmetal.tga");
    osg::Image* normalImage  = osgDB::readImageFile("textures/delta3d_logo_normal_map.tga");
 
@@ -147,7 +148,7 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
          this->Quit();
          verdict = true;
          break;
-      }     
+      }
    case osgGA::GUIEventAdapter::KEY_Space:
       {
          static bool renderToggle = false;
@@ -166,7 +167,7 @@ bool TestBumpMapApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
    case '2':
    case '3':
    case '4':
-   case '5':  
+   case '5':
    case '6':
    case '7':
    case '8':
@@ -205,7 +206,7 @@ void TestBumpMapApp::PreFrame(const double deltaFrameTime)
 
    // lazily set both
    mCustomObject->SetTransform(objectTransform);
-   mSphere->SetTransform(objectTransform);   
+   mSphere->SetTransform(objectTransform);
 
    // Update the transform of the light arrow to match the light position
    dtCore::Transform lightTransform;
@@ -226,7 +227,7 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
    {
       // Get all geometry in the graph to apply the shader to
       osg::ref_ptr<dtUtil::GeometryCollector> geomCollector = new dtUtil::GeometryCollector;
-      object->GetOSGNode()->accept(*geomCollector);        
+      object->GetOSGNode()->accept(*geomCollector);
 
       // Calculate tangent vectors for all faces and store them as vertex attributes
       for (size_t geomIndex = 0; geomIndex < geomCollector->mGeomList.size(); ++geomIndex)
@@ -241,15 +242,15 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
             geom->setVertexAttribData(6, osg::Geometry::ArrayData(tsg->getTangentArray(), osg::Geometry::BIND_PER_VERTEX, GL_FALSE));
          }
       }
-   }  
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::ShaderParamInt*& outMode)
 {
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();
-  
-   std::string shaderName = (mUsePrecomputedTangents) ? "TestBumpMap": "AttributelessBump"; 
+
+   std::string shaderName = (mUsePrecomputedTangents) ? "TestBumpMap": "AttributelessBump";
 
    dtCore::ShaderProgram* sp = sm.FindShaderPrototype(shaderName, "TestShaders");
 
@@ -257,7 +258,7 @@ void TestBumpMapApp::AssignShaderToObject(dtCore::Object* object, dtCore::Shader
    {
       dtCore::ShaderProgram* boundProgram = sm.AssignShaderFromPrototype(*sp, *object->GetOSGNode());
 
-      osg::Program* osgProgram = boundProgram->GetShaderProgram();    
+      osg::Program* osgProgram = boundProgram->GetShaderProgram();
       outMode = dynamic_cast<dtCore::ShaderParamInt*>(boundProgram->FindParameter("mode"));
 
       // Hook up the vertex attrib to the location where it was created
@@ -279,7 +280,7 @@ void TestBumpMapApp::CenterCameraOnObject(dtCore::Object* object)
 
    // Move our light icon to the outer bounds of the object
    mOrbitMotion->SetDistance(radius);
-   mOrbitMotion->SetFocalPoint(center);  
+   mOrbitMotion->SetFocalPoint(center);
 
    GetCamera()->SetTransform(cameraTransform);
 }

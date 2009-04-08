@@ -28,12 +28,12 @@
 #include <dtCore/observerptr.h>
 
 namespace dtGame
-{  
+{
    class GameEntryPoint;
-   
+
    /**
     * @class GameApplication
-    * Base application for a GameManager app.  It loads a game entry point library to use at startup.  
+    * Base application for a GameManager app.  It loads a game entry point library to use at startup.
     */
    class DT_GAME_EXPORT GameApplication: public dtABC::Application
    {
@@ -55,9 +55,11 @@ namespace dtGame
           * Constructor.  It takes the command line parameters.
           * @param argc the number of arguments
           * @param argv An array of string pointers with the command line data.
+          * @param configFileName the name of the xml config file.  Defaults to config.xml
+          * @param window a window instance ot use instead of creating one.
           */
-         GameApplication(int argc, char** argv, dtCore::DeltaWin* window = NULL);
-      
+         GameApplication(int argc, char** argv, const std::string& configFileName = "config.xml", dtCore::DeltaWin* window = NULL);
+
          /**
           * Configures the application, loads the game library,
           * and calls the entry point to configure the game.
@@ -66,36 +68,36 @@ namespace dtGame
           * - "DestroyGameEntryPoint", with the signature of DestroyEntryPointFn
           */
          virtual void Config();
-         
+
          ///@return the platform independent library name.
          const std::string& GetGameLibraryName() const { return mLibName; }
-         
-         ///Sets the name of the library to load that has the game.  This should be a platform independent name (no lib, .so, .dll, etc.).  
+
+         ///Sets the name of the library to load that has the game.  This should be a platform independent name (no lib, .so, .dll, etc.).
          void SetGameLibraryName(const std::string& newName) { mLibName = newName; }
-         
+
          /// @return the game manager used by the application.
          dtGame::GameManager* GetGameManager() { return mGameManager.get(); }
 
-         /** 
-          * Override the default, internally created GameManager with the 
+         /**
+          * Override the default, internally created GameManager with the
           * supplied parameter.  Useful if you have a GameManager derivative
           * this class should use instead of the default.
           * @param gameManager : the GameManager this instance should use
           */
          void SetGameManager(dtGame::GameManager &gameManager);
-         
+
       protected:
-         
+
          ///Destructor
          virtual ~GameApplication();
-      
+
       private:
-      
+
          std::string mLibName;
-      
+
          int mArgc;
          char** mArgv;
-         
+
          dtCore::RefPtr<dtGame::GameManager> mGameManager;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> mEntryPointLib;
          dtGame::GameEntryPoint* mEntryPoint;

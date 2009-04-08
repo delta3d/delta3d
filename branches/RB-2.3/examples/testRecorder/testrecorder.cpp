@@ -12,6 +12,7 @@
 #include "testrecorder.h"
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/camera.h>
+#include <dtCore/transform.h>
 
 TestRecorder::TestRecorder(const std::string& config)
    : BaseClass(config)

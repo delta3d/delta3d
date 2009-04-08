@@ -5,6 +5,7 @@
 #include <dtCore/physical.h>
 #include <dtCore/odebodywrap.h>
 #include <dtCore/collisioncategorydefaults.h>
+#include <dtCore/transform.h>
 #include <ode/collision.h>
 #include <ode/objects.h>
 
@@ -30,7 +31,7 @@ Physical::Physical( TransformableNode &node, const std::string &name )
 Physical::~Physical()
 {
    mBodyWrap = NULL;
-   
+
    DeregisterInstance(this);
 }
 
@@ -46,7 +47,7 @@ void Physical::SetBodyID( dBodyID bodyID )
 
    if( bodyID != 0 )
    {
-      // Copy position and rotation of geometry over to 
+      // Copy position and rotation of geometry over to
       const dReal* position = dGeomGetPosition( GetGeomID() );
       mBodyWrap->SetPosition(osg::Vec3(position[0], position[1], position[2]));
 
@@ -191,7 +192,7 @@ void Physical::PrePhysicsStepUpdate()
 {
    //Check to see if we need to update the ODE body to match
    //our current Transform.  This is in case the user set the Transform
-   //manually.  If the dynamics aren't enabled, then pass the call to 
+   //manually.  If the dynamics aren't enabled, then pass the call to
    //Transform in case it wants to do something.
 
    if (mBodyWrap->DynamicsEnabled())
@@ -205,7 +206,7 @@ void Physical::PrePhysicsStepUpdate()
    }
    else
    {
-      //otherwise, collision detection might be enabled so let 
+      //otherwise, collision detection might be enabled so let
       //Transformable do it's thing.
       Transformable::PrePhysicsStepUpdate();
    }
@@ -218,7 +219,7 @@ void Physical::PrePhysicsStepUpdate()
  * position into the user-accessible transformation.
  */
 void Physical::PostPhysicsStepUpdate()
-{  
+{
    if( DynamicsEnabled() )
    {
       const dReal* position = dBodyGetPosition(mBodyWrap->GetBodyID());
@@ -238,7 +239,7 @@ void Physical::PostPhysicsStepUpdate()
       newRotation(1,2) = rotation[9];
       newRotation(2,2) = rotation[10];
 
-      dtCore::Transform newTransform;     
+      Transform newTransform;
       newTransform.SetTranslation(position[0], position[1], position[2]);
       newTransform.SetRotation(newRotation);
 

@@ -7,6 +7,7 @@
 #include "testai.h"
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 #include <dtDAL/map.h>
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>

@@ -134,20 +134,6 @@ namespace dtCore
          virtual void SetAutoScaleEnabled(bool enabled) {mAutoScale=enabled;}
 
          /**
-         * Gets the current motion type of the motion model.
-         *
-         * @return    The current motion type.
-         */
-         MotionType GetMotionType(void);
-
-         /**
-         * Sets the current motion type of the motion model.
-         *
-         * @param[in]  motionType  The new motion type.
-         */
-         void SetMotionType(MotionType motionType);
-
-         /**
          * Gets the current coordinate space.
          *
          * @return  The current coordinate space.
@@ -197,6 +183,17 @@ namespace dtCore
          virtual void InitArrows(void);
 
          /**
+         * Generates a triangle mesh used for the rotation rings.
+         *
+         * @param[in]   minRadius  The inner radius of the ring.
+         * @param[in]   maxRadius  The outer radius of the ring.
+         * @param[in]   segments   The number of vertices around the ring.
+         *
+         * @return                 The generated TriangleMesh.
+         */
+         virtual osg::TriangleMesh* GenerateRing(float minRadius, float maxRadius, int segments);
+
+         /**
          * Converts the current mouse position to a 3D vector in the world.
          *
          * @param[in]  mousePos  The position of the mouse.
@@ -226,11 +223,14 @@ namespace dtCore
 
          struct ArrowData
          {
-            dtCore::RefPtr<dtCore::Transformable>  transformable;
+            dtCore::RefPtr<dtCore::Transformable>  translationTransform;
+            dtCore::RefPtr<dtCore::Transformable>  rotationTransform;
             osg::ref_ptr<osg::Geode>               arrowGeode;
             osg::ref_ptr<osg::ShapeDrawable>       arrowCylinder;
             osg::ref_ptr<osg::ShapeDrawable>       arrowCone;
 
+            osg::ref_ptr<osg::Geode>               rotationGeode;
+            osg::ref_ptr<osg::Geode>               rotationSelectionGeode;
             osg::ref_ptr<osg::ShapeDrawable>       rotationRing;
 
             osg::Vec4                              arrowCylinderColor;

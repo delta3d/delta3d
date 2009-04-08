@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
    ObjectWorkspace win;
    win.show();
 
-   Delta3DThread *thread = new Delta3DThread(&qapp);
+   Delta3DThread* thread = new Delta3DThread(&qapp);
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
 

@@ -22,6 +22,7 @@
 #include <dtAnim/characterwrapper.h>
 #include <osg/Math>
 #include <dtCore/isector.h>
+#include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
 #include <dtAnim/sequencemixer.h>
 #include <osg/MatrixTransform>

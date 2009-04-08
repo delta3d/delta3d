@@ -29,6 +29,7 @@
 #include <dtAI/sensor.h>
 
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 #include <osg/MatrixTransform>
 
 #include <dtUtil/typetraits.h>

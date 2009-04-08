@@ -21,6 +21,7 @@
 
 #include "proceduralanimationactor.h"
 
+#include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/gameactor.h>
@@ -45,7 +46,7 @@ ProceduralAnimationActorProxy::ProceduralAnimationActorProxy()
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationActorProxy::~ProceduralAnimationActorProxy()
-{   
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,8 +57,8 @@ void ProceduralAnimationActorProxy::BuildInvokables()
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActorProxy::BuildPropertyMap()
-{ 
-   dtAnim::AnimationGameActorProxy::BuildPropertyMap();  
+{
+   dtAnim::AnimationGameActorProxy::BuildPropertyMap();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,16 +96,16 @@ ProceduralAnimationActor::ProceduralAnimationActor(ProceduralAnimationActorProxy
 
 ////////////////////////////////////////////////////////////////////////////////
 ProceduralAnimationActor::~ProceduralAnimationActor()
-{   
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::OnEnteredWorld()
-{     
+{
    AnimationGameActor::OnEnteredWorld();
- 
+
    // Make sure we receive the tick messages
-   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL, 
+   GetGameActorProxy().RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
       dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
 }
 
@@ -128,7 +129,7 @@ void ProceduralAnimationActor::SetPoseMeshDatabase(dtAnim::PoseMeshDatabase* pos
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::SetTarget(const dtCore::Transformable* target, osg::Vec3* offset)
-{   
+{
    mCurrentTarget = target;
 
    if (offset != NULL)
@@ -146,19 +147,19 @@ void ProceduralAnimationActor::SetBlendTime(float blendTime)
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::AssemblePoseData()
 {
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::LEFT_EYE] = 
+   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::LEFT_EYE] =
       mPoseMeshDatabase->GetPoseMeshByName("Poses_LeftEye");
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::RIGHT_EYE] = 
+   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::RIGHT_EYE] =
       mPoseMeshDatabase->GetPoseMeshByName("Poses_RightEye");
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD] = 
+   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::HEAD] =
       mPoseMeshDatabase->GetPoseMeshByName("Poses_Head");
 
    mMarinePoseData.mPoseMeshes[ProceduralAnimationData::TORSO] =
       mPoseMeshDatabase->GetPoseMeshByName("Poses_Torso");
 
-   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN] = 
+   mMarinePoseData.mPoseMeshes[ProceduralAnimationData::GUN] =
       mPoseMeshDatabase->GetPoseMeshByName("Poses_Gun");
 }
 
@@ -176,7 +177,7 @@ void ProceduralAnimationActor::OnTickLocal(const dtGame::TickMessage& tickMessag
 
 ////////////////////////////////////////////////////////////////////////////////
 void ProceduralAnimationActor::TickIK(float dt)
-{  
+{
    dtCore::Transform targetTransform;
    mCurrentTarget->GetTransform(targetTransform);
 
@@ -249,7 +250,7 @@ void ProceduralAnimationActor::TickIK(float dt)
 
       // Only shoot when in sight and standing still
       if (gunTarget.mIsInside)
-      {  
+      {
          // do something here?
       }
       else
@@ -272,7 +273,7 @@ void ProceduralAnimationActor::TickIK(float dt)
          hpr.x() += 100.0f * dt * rotationSign;
          currentTransform.SetRotation(hpr);
          SetTransform(currentTransform);
-      }         
+      }
    }
 }
 

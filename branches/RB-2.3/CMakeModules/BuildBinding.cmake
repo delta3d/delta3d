@@ -18,11 +18,11 @@ MACRO (BUILD_PYTHON_BINDING TGTNAME)
       TARGET_LINK_LIBRARIES( ${TGTNAME} ${varname} )
   ENDFOREACH(varname)
   
-
-  LINK_WITH_VARIABLES( ${TGTNAME} 
-                       BOOST_PYTHON_LIBRARY
-                     )
-                     
+ 
+  TARGET_LINK_LIBRARIES( ${TGTNAME}
+                         ${Boost_PYTHON_LIBRARY}
+                        )
+                        
   #Use the debug python library, should it exist, otherwise, use the release version
   SET (PYTHON_DEBUG ${PYTHON_DEBUG_LIBRARY})
 

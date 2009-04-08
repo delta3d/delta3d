@@ -33,9 +33,11 @@
 #include <dtCore/deltawin.h>
 #include <dtActors/taskactorgameevent.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/exception.h>
 #include <dtABC/application.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtGame/taskcomponent.h>
+#include <dtGame/exceptionenum.h>
 #include <dtDAL/gameevent.h>
 #include <dtLMS/lmscomponent.h>
 

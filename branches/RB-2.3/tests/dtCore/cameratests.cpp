@@ -32,6 +32,7 @@
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtCore/transform.h>
 #include <dtCore/cameradrawcallback.h>
 #include <dtCore/cameracallbackcontainer.h>
 #include <dtCore/screenshotcallback.h>
@@ -99,9 +100,12 @@ class CameraTests : public CPPUNIT_NS::TestFixture
       void TestOnScreen()
       {
          dtCore::Camera& camera = *GetGlobalApplication().GetCamera();
+         camera.SetPerspectiveParams(60.0, 1.33, 1.0, 2000.0);
          dtCore::Transform xform;
-         xform.SetTranslation(osg::Vec3(0.0, 0.0, 0.0));
+         xform.MakeIdentity();
          camera.SetTransform(xform);
+         camera.UpdateViewMatrixFromTransform();
+
          osg::Vec3 testPos(0.0, 5.0, 0.0);
 
          osg::Vec3d screenPos;
@@ -334,7 +338,7 @@ void CameraTests::TestSettingTheCullingMode()
 void CameraTests::TestInitialCallbackConditions()
 {
    dtCore::RefPtr<dtCore::Camera> cam = new dtCore::Camera();
-   
+
    osg::Camera::DrawCallback *osgCallback = cam->GetOSGCamera()->getPostDrawCallback();
 
    CPPUNIT_ASSERT_MESSAGE("Camera should not have any Post Draw callbacks added by default.",
@@ -410,7 +414,7 @@ void CameraTests::TestTriggeringCallback()
    dtCore::System::GetInstance().Start();
    dtCore::System::GetInstance().Step();
    dtCore::System::GetInstance().Stop();
- 
+
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The Camera postdraw callback didn't trigger.",
                                 true, cb1->mTriggered);
    CPPUNIT_ASSERT_EQUAL_MESSAGE("The second Camera postdraw callback didn't trigger.",

@@ -116,8 +116,6 @@ public slots:
    // Editing mode slots
    void OnWorldSpaceMode();
    void OnLocalSpaceMode();
-   void OnTranslateMode();
-   void OnRotateMode();
 
 signals:
 

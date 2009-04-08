@@ -2,6 +2,7 @@
 #include "packets.h"
 #include <osg/io_utils>
 #include <dtUtil/stringutils.h>
+#include <dtCore/transform.h>
 
 using namespace dtUtil;
 using namespace dtCore;

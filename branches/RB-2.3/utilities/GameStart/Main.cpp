@@ -34,24 +34,70 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 
+#include <iostream>
+#include <cstdlib>
+
+void ShowUsageAndExit()
+{
+   std::cerr << "Usage: GameStart [--configFileName <file>] <AppLibraryName> [App Library args]\n";
+   std::cerr << "   Note: AppLibraryName should not have the extension or Unix library prefix on it.\n";
+   std::cerr << "   For example libMyApp.so, MyApp.dll, or libMyApp.dylib would all be loaded as 'GameStart MyApp'." << std::endl;
+   exit(1);
+}
+
 int main(int argc, char** argv)
 {
-   if (argc < 2)
+   bool showUsage = false;
+
+   std::string appToLoad;
+
+   int curArg = 1;
+   std::string configFileName("config.xml");
+
+   while (!showUsage && appToLoad.empty() && curArg < argc)
    {
-      LOG_ERROR("A valid application library is required to run GameStart. Please specify it as the first command line parameter.");
-      return -1;
+      std::string curArgv = argv[curArg];
+      if (!curArgv.empty())
+      {
+         if (curArgv == "--configFileName")
+         {
+            ++curArg;
+            if (curArg < argc)
+            {
+               configFileName = argv[curArg];
+            }
+            else
+            {
+               showUsage = true;
+            }
+         }
+         else if (curArgv[0] == '-')
+         {
+            std::cerr << "Unknown option: " << curArgv << std::endl;
+            showUsage = true;
+         }
+         else
+         {
+            appToLoad = curArgv;
+         }
+      }
+      ++curArg;
    }
 
-   std::string executable(argv[0]);
-   char* appToLoad = argv[1];
-   argv[1] = argv[0];
-   argv++;
-   --argc;
+   //The loop always overruns by one, so subtract it back off.
+   --curArg;
 
+   if (appToLoad.empty() || showUsage)
+   {
+      ShowUsageAndExit();
+   }
+
+   argc -= curArg;
+   argv = argv + curArg;
    try
    {
-      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv);
-      app->SetGameLibraryName(std::string(appToLoad));
+      dtCore::RefPtr<dtGame::GameApplication> app = new dtGame::GameApplication(argc, argv, configFileName);
+      app->SetGameLibraryName(appToLoad);
       app->Config();
       app->Run();
       app = NULL;

@@ -32,6 +32,7 @@
 #include <dtCore/shaderprogram.h>
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/transform.h>
 #include <dtDAL/resourcedescriptor.h>
 
 ///////////////////////////////////////////////////////////////////////////////

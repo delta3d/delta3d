@@ -47,6 +47,7 @@
 #include <dtEditQt/stagecamera.h>
 
 #include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 
 #include <osg/BoundingSphere>
 #include <osg/Node>

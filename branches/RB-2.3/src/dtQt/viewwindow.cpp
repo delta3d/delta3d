@@ -104,10 +104,7 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    , mDrawOnSeparateThread(drawOnSeparateThread)
 {
    mTimer.setInterval(10);
-   setAutoBufferSwap(!drawOnSeparateThread);
-
-   setMinimumWidth(700);
-   setMinimumHeight(550);
+   setAutoBufferSwap(!drawOnSeparateThread);  
 
    // This enables us to track mouse movement even when
    // no button is pressed.  The motion models depend
@@ -116,6 +113,8 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    
    //allow keyboard input to come through this widget (via user click or tab)
    setFocusPolicy(Qt::StrongFocus);
+
+   AddSender(&dtCore::System::GetInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -174,6 +173,21 @@ void ViewWindow::ThreadedMakeCurrent()
    mThreadGLContext->makeCurrent();
 }
 
+//////////////////////////////////////////////////////////////////////////
+void ViewWindow::OnMessage(MessageData* data)
+{
+   if (data->message == dtCore::System::MESSAGE_FRAME)
+   {
+      if (doubleBuffer())
+      {
+         swapBuffers();
+      }
+      else
+      {
+         glFlush();
+      }
+   }
+}
 //////////////////////////////////////////////////////////////////////////////////
 void ViewWindow::ThreadedUpdateGL()
 {
@@ -188,6 +202,18 @@ void ViewWindow::ThreadedUpdateGL()
    mThreadGLContext->swapBuffers();
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////
+void ViewWindow::glDraw()
+{
+   if (!mDrawOnSeparateThread)
+   {
+      if (!isValid())
+         return;
+      makeCurrent();
+      paintGL();
+   }
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 void ViewWindow::paintGL()

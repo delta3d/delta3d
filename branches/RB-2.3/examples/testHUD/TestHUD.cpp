@@ -6,6 +6,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 #include <dtDAL/project.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/map.h>
@@ -103,7 +104,7 @@ void TestHUD::_ConfigScene()
 int main()
 {
    std::string dataPath = dtCore::GetDeltaDataPathList();
-   dtCore::SetDataFilePathList(dataPath + ";" + 
+   dtCore::SetDataFilePathList(dataPath + ";" +
       dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
    //dtGUI::HUD::SetFilePath( dtCore::GetDeltaRootPath() + "/examples/data/cegui" );

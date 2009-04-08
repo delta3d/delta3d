@@ -29,6 +29,7 @@
 
 #include <dtCore/globals.h>
 #include <dtCore/refptr.h>
+#include <dtCore/transform.h>
 
 #include <osg/Math>
 #include <osg/io_utils>
@@ -50,7 +51,7 @@ namespace dtAnim
       void setUp();
       void tearDown();
 
-      void TestCharacterWrapper(); 
+      void TestCharacterWrapper();
 
       dtCore::RefPtr<CharacterWrapper> mCharacter;
 
@@ -60,14 +61,14 @@ namespace dtAnim
    CPPUNIT_TEST_SUITE_REGISTRATION( CharacterWrapperTests );
 
    void CharacterWrapperTests::setUp()
-   {      
+   {
       dtDAL::Project::GetInstance().SetContext(dtCore::GetDeltaRootPath() + "/examples/data/demoMap");
 
       std::string modelPath = dtCore::FindFileInPathList("SkeletalMeshes/marine_test.xml");
       CPPUNIT_ASSERT(!modelPath.empty());
 
       mCharacter = new CharacterWrapper(modelPath);
-      
+
    }
 
    void CharacterWrapperTests::tearDown()
@@ -91,7 +92,7 @@ namespace dtAnim
       mCharacter->GetTransform(tx);
       tx.SetTranslation(pos);
       mCharacter->SetTransform(tx);
-      
+
       //float speed = 1.0f;
       mCharacter->SetHeading(0.0f);
       mCharacter->SetRotationSpeed(0.0f);
@@ -107,11 +108,11 @@ namespace dtAnim
 
       mCharacter->SetHeading(90.0f);
       mCharacter->RotateToPoint(osg::Vec3(0.0f, 1.0f, 0.0f), 1.0f);
-      CPPUNIT_ASSERT_EQUAL(0.0f, mCharacter->GetHeading()); 
+      CPPUNIT_ASSERT_EQUAL(0.0f, mCharacter->GetHeading());
 
       mCharacter->PlayAnimation("Walk");
       mCharacter->Update(0.1f);
       CPPUNIT_ASSERT_EQUAL(true, mCharacter->IsAnimationPlaying("Walk"));
-     
-   } 
+
+   }
 }

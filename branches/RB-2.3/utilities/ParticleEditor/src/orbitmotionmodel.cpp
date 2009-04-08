@@ -1,6 +1,7 @@
 #include <orbitmotionmodel.h>
 
 #include <dtUtil/matrixutil.h>
+#include <dtCore/transform.h>
 
 //////////////////////////////////////////////////////////////////////////////////
 OrbitMotionModel::OrbitMotionModel(dtCore::Mouse* mouse, dtCore::Transformable* target)

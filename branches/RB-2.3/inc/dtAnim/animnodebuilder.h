@@ -106,6 +106,7 @@ public:
    dtCore::RefPtr<osg::Node> CreateNode(Cal3DModelWrapper* pWrapper);
 
    virtual dtCore::RefPtr<osg::Node> CreateSoftware(Cal3DModelWrapper* pWrapper);
+   virtual dtCore::RefPtr<osg::Node> CreateSoftwareNoVBO(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateHardware(Cal3DModelWrapper* pWrapper);
    virtual dtCore::RefPtr<osg::Node> CreateNULL(Cal3DModelWrapper* pWrapper);
 
@@ -124,6 +125,8 @@ protected:
    AnimNodeBuilder& operator=(const AnimNodeBuilder&);
 
    dtCore::ShaderProgram* LoadShaders(Cal3DModelData& modelData, osg::Geode& geode) const;
+
+   virtual dtCore::RefPtr<osg::Node> CreateSoftwareInternal(Cal3DModelWrapper* pWrapper, bool vbo);
 
 private:
 

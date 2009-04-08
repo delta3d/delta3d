@@ -36,14 +36,14 @@ void Usage()
 
 int main(int argc, char* argv[])
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
-                                dtCore::GetDeltaRootPath() + "/examples/testStateManager" + ";" );
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/testStateManager" + ";");
 
    // This is a console app, so we don't want to shutdown if there are no windows.
-   dtCore::System::GetInstance().SetShutdownOnWindowClose( false );
+   dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
 
    dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
-   dtCore::RefPtr<StateWalker> app = new StateWalker( mgr.get() );
+   dtCore::RefPtr<StateWalker> app = new StateWalker(mgr.get());
 
    if (argc > 1)
    {
