@@ -22,12 +22,8 @@
 #define DELTA_LOG
 
 #include <string>
-#include <map>
-#include <fstream>
-#include <cstdarg>
 
 #include <osg/Referenced>
-#include <dtCore/refptr.h>
 #include <dtUtil/export.h>
 
 namespace dtUtil

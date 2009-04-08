@@ -31,6 +31,7 @@
 #include <dtDAL/export.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
+#include <osg/Referenced>
 
 #include <xercesc/sax2/ContentHandler.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>

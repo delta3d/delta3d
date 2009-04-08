@@ -25,11 +25,12 @@
 #include <dtCore/timer.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
+#include <osg/Referenced>
 #include <string>
 #include <map>
 
 // this is purposely not exported, should only be used by the GM
-namespace dtGame 
+namespace dtGame
 {
    class GameManager;
 
@@ -46,9 +47,9 @@ namespace dtGame
                   bool isComponent, bool ticklocal);
 
          /**
-          * Gets the interval (in seconds) used for writing out GM Statistics. This 
+          * Gets the interval (in seconds) used for writing out GM Statistics. This
           * is usually a debug setting that can be used to see how much work the GM is doing
-          * as compared to how much work your scene is doing.  If this is > 0, and the 
+          * as compared to how much work your scene is doing.  If this is > 0, and the
           * appropriate log level is on, the GM will output statistics periodically
           * Default is 0.
           */
@@ -61,9 +62,9 @@ namespace dtGame
 
          /**
           * Records statistics about different components and actors.
-          * Sets the interval (in seconds) used for writing out GM Statistics. This 
+          * Sets the interval (in seconds) used for writing out GM Statistics. This
           * is usually a debug setting that can be used to see how much work the GM is doing
-          * as compared to how much work your scene is doing.  If this is > 0, and the 
+          * as compared to how much work your scene is doing.  If this is > 0, and the
           * appropriate log level is on, the GM will output statistics periodically
           * @param logComponents log timing for components
           * @param logActors log timing for actors
@@ -71,8 +72,8 @@ namespace dtGame
           * @param toConsole true to print to console, false to print to file
           * @param path if toConsole == false, print to this file.
           */
-         void DebugStatisticsTurnOn(bool logComponents, bool logActors, 
-                  const int statisticsInterval, bool toConsole = true, 
+         void DebugStatisticsTurnOn(bool logComponents, bool logActors,
+                  const int statisticsInterval, bool toConsole = true,
                   const std::string& path = "gamemanagerDebugInfo.txt");
 
          /// Turn off statistics information - params to log before stopping, and if user wants to clear history
@@ -82,9 +83,9 @@ namespace dtGame
          void DebugStatisticsPrintOut(const float gmPercentTime, const GameManager& ourGm);
 
          /**
-          * Internal timer statistics calculation.  Computes what percent the partial time 
+          * Internal timer statistics calculation.  Computes what percent the partial time
           * is of the total time. Basically (1.0 - ((total - partial) / total)) * 100.
-          * Result is truncated to something like: 98.5, 42.3, ... 
+          * Result is truncated to something like: 98.5, 42.3, ...
           * @param total The total value used to determine the percentage
           * @param partial The partial amount that we are using for the percentage
           */
@@ -107,7 +108,7 @@ namespace dtGame
          {
             public:
 
-               LogDebugInformation(const std::string& name, const dtCore::UniqueId &uniqueID, bool isComponent) 
+               LogDebugInformation(const std::string& name, const dtCore::UniqueId &uniqueID, bool isComponent)
                   : mTotalTime(0.0f)
                   , mTickLocalTime(0.0f)
                   , mTimesThrough(1)
