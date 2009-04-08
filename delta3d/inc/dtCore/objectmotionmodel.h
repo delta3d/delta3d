@@ -103,6 +103,18 @@ namespace dtCore
          virtual void SetView(dtCore::View* view = NULL);
 
          /**
+         * Sets the current scene node.
+         */
+         virtual void SetSceneNode(osg::Group* sceneNode = NULL);
+
+         /**
+         * Sets the current camera.
+         *
+         * @param[in]  camera  The camera.
+         */
+         virtual void SetCamera(dtCore::Camera* camera = NULL);
+
+         /**
          * Enables or disables this motion model.
          *
          * @param[in] enabled  True to enable this motion model, false
@@ -126,6 +138,11 @@ namespace dtCore
          * Calculates the desired scale based on auto scale.
          */
          float GetAutoScaleSize(void);
+
+         /**
+         * Retrieves the distance of the camera to the target.
+         */
+         float GetCameraDistanceToTarget(void);
 
          /**
          * Sets whether the motion model should be scaled
@@ -162,16 +179,53 @@ namespace dtCore
          void SetSnapRotation(float degrees);
 
          /**
+         * Sets the current mouse position.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         *
+         * @param[in]  pos            The position of the mouse (must be in delta normalized format -1 to 1).
+         *
+         * @return                    Returns true if the mouse is locked or hovering
+         *                            a widget that belongs to the motion model.
+         */
+         bool SetMousePosition(osg::Vec2 pos);
+
+         /**
+         * Gets the current position of the mouse.
+         *
+         * @return    The position of the mouse.
+         */
+         osg::Vec2 GetMousePosition(void);
+
+         /**
+         * Presses the left mouse button.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         */
+         void OnLeftMousePressed(void);
+
+         /**
+         * Releases the left mouse button.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         */
+         void OnLeftMouseReleased(void);
+
+         /**
+         * Presses the right mouse button.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         */
+         void OnRightMousePressed(void);
+
+         /**
+         * Releases the right mouse button.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         */
+         void OnRightMouseReleased(void);
+
+         /**
           * Message handler callback.
           *
           * @param[in] data  The message data
           */
-         virtual void OnMessage(MessageData* data);
-
-         /**
-         * Retrieves the internal transform node for the motion model.
-         */
-         dtCore::Transformable* GetTransformable(void) {return mTargetTransform.get();}
+         void OnMessage(MessageData* data);
 
       protected:
 
@@ -206,6 +260,27 @@ namespace dtCore
          * Converts a 3D object position to window screen coordinates.
          */
          osg::Vec2 ObjectToScreenCoords(osg::Vec3 objectPosition);
+
+         /**
+         * Does a collision test to see if the mouse has picked
+         * one of the widgets of this motion model.
+         * mMotionType and mHoverArrow will be set to
+         * the proper types based on collision.
+         *
+         * @param[in]  mousePos  The position of the mouse.
+         *
+         * @return               The drawable widget that was picked.
+         */
+         dtCore::DeltaDrawable* MousePick(osg::Vec2 mousePos);
+
+         /**
+         * Tests if a given delta drawable belongs to this motion model.
+         *
+         * @param[in]  drawable  The drawable to test.
+         *
+         * @return               True if the drawable belongs to this motion model.
+         */
+         bool HighlightWidgets(dtCore::DeltaDrawable* drawable);
 
          /**
          * Sets an arrow as highlighted or not.
@@ -252,15 +327,21 @@ namespace dtCore
          ArrowData   mArrows[ARROW_TYPE_MAX];
          float       mScale;
 
-         dtCore::View*  mView;
-         dtCore::Scene* mScene;
-         Keyboard*      mKeyboard;
-         Mouse*         mMouse;
+         dtCore::View*   mView;
+         osg::Group*     mSceneNode;
+         Mouse*          mMouse;
+
+         dtCore::Camera* mCamera;
+
+         osg::Vec2       mMousePos;
 
          CoordinateSpace mCoordinateSpace;
          MotionType      mMotionType;
          ArrowType       mHoverArrow;
-         ArrowType       mCurrentArrow;
+
+         bool            mLeftMouse;
+         bool            mRightMouse;
+
          bool            mMouseDown;
          bool            mMouseLocked;
          osg::Vec2       mMouseOffset;
