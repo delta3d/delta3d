@@ -113,6 +113,8 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    
    //allow keyboard input to come through this widget (via user click or tab)
    setFocusPolicy(Qt::StrongFocus);
+
+   AddSender(&dtCore::System::GetInstance());
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +173,21 @@ void ViewWindow::ThreadedMakeCurrent()
    mThreadGLContext->makeCurrent();
 }
 
+//////////////////////////////////////////////////////////////////////////
+void ViewWindow::OnMessage(MessageData* data)
+{
+   if (data->message == dtCore::System::MESSAGE_FRAME)
+   {
+      if (doubleBuffer())
+      {
+         swapBuffers();
+      }
+      else
+      {
+         glFlush();
+      }
+   }
+}
 //////////////////////////////////////////////////////////////////////////////////
 void ViewWindow::ThreadedUpdateGL()
 {
@@ -185,6 +202,18 @@ void ViewWindow::ThreadedUpdateGL()
    mThreadGLContext->swapBuffers();
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////
+void ViewWindow::glDraw()
+{
+   if (!mDrawOnSeparateThread)
+   {
+      if (!isValid())
+         return;
+      makeCurrent();
+      paintGL();
+   }
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 void ViewWindow::paintGL()
