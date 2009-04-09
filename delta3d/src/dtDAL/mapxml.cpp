@@ -66,6 +66,8 @@
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
+#include <iostream>
+
 XERCES_CPP_NAMESPACE_USE
 
 namespace dtDAL

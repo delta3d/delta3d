@@ -33,12 +33,15 @@
 #include <dtCore/generickeyboardlistener.h>
 #include <dtCore/globals.h>
 #include <dtCore/scene.h>
+#include <dtCore/databasepager.h>
+
 #include <dtUtil/fileutils.h>                  // for verification when writing the config file
 #include <dtUtil/stringutils.h>                // for dtUtil::ToInt
 #include <dtUtil/xercesparser.h>               // for parsing
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/librarysharingmanager.h>      // make sure this gets configured properly.
 #include <dtUtil/log.h>
+
 #include <osgDB/DatabasePager>
 #include <osgViewer/View>
 #include <osg/Version>

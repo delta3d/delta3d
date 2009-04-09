@@ -5,6 +5,7 @@
 #include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtUtil/log.h>
 #include <osg/Node>
+#include <osg/Switch>
 
 using namespace dtCore;
 using namespace dtUtil;

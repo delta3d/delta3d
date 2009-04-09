@@ -26,21 +26,19 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
-#include <dtCore/refptr.h>
-#include <dtCore/view.h>
-#include <dtCore/light.h>
-#include <dtCore/deltadrawable.h>
-#include <dtCore/databasepager.h>
+
+#include <osg/Vec3>
 
 #include <dtUtil/deprecationmgr.h>
 
 #include <ode/common.h>
 #include <ode/collision_space.h>
 
-#include <osg/NodeVisitor>
-#include <osg/Vec3>
-#include <osg/observer_ptr>
-
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -63,6 +61,12 @@ namespace dtCore
 {
    class Transformable;
    class ODEController;
+   class DatabasePager;
+   class DeltaDrawable;
+   class Light;
+   class View;
+
+   class SceneImpl;
 
    /**
     *  Scene: This class encapsulates the root of the delta scene graph
@@ -72,24 +76,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Scene)
 
    public:
-
-      class DT_CORE_EXPORT ParticleSystemFreezer : public osg::NodeVisitor
-      {
-      public:
-
-         ParticleSystemFreezer();
-         void SetFreezing(bool freeze) { mFreezing = freeze; }
-         bool GetFreezing() const { return mFreezing; }
-
-         virtual void apply(osg::Node& node);
-
-      private:
-
-         bool mFreezing;
-
-         typedef std::map<osgParticle::ParticleSystem*, bool> ParticleSystemBoolMap;
-         ParticleSystemBoolMap mPreviousFrozenState;
-      };
 
       enum Mode
       {
@@ -126,8 +112,7 @@ namespace dtCore
 
    public:
       ///Get a pointer to the internal scene node
-      osg::Group* GetSceneNode() { return (mSceneNode.get()); }
-
+      osg::Group* GetSceneNode();
       /**
        *  This function will remove all children of the current scene node,
        *  and add them to this new node, and then set the current scene node to
@@ -172,7 +157,8 @@ namespace dtCore
 
       //Set the State for rendering.  Wireframe, Fill polygons, or vertex points.
       void SetRenderState(Face face, Mode mode);
-      const std::pair<Face,Mode> GetRenderState() const { return std::make_pair(mRenderFace, mRenderMode); }
+      ///Get a pointer to the internal scene node
+      const std::pair<Face,Mode> GetRenderState() const;
 
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain(float x, float y);
@@ -243,8 +229,8 @@ namespace dtCore
       dtCore::ODEController* GetPhysicsController() const;
 
       /// Returns a pointer to the light specified by the param number
-      Light* GetLight(const int number) { return mLights[number].get(); }
-      const Light* GetLight(const int number) const { return mLights[number].get(); }
+      Light* GetLight(const int number);
+      const Light* GetLight(const int number) const;
       /// Returns a pointer to the light specified by the current string
       Light* GetLight(const std::string& name);
       const Light* GetLight(const std::string& name) const;
@@ -295,28 +281,9 @@ namespace dtCore
       void GetDrawableChildren(std::vector<dtCore::DeltaDrawable*>& children,
                                dtCore::DeltaDrawable& parent) const;
 
-      ///The physics controller to use for physics integration (can be NULL)
-      dtCore::RefPtr<ODEController> mPhysicsController;
-
       void UpdateViewSet();
 
-      RefPtr<osg::Group> mSceneNode; ///<This will be our Scene
-
-      typedef std::vector< RefPtr<Light> > LightVector;
-      LightVector mLights; ///<Contains all light associated with this scene
-
-      typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
-      DrawableList mAddedDrawables; ///<The list of Drawable directly added
-
-      typedef std::list<osg::observer_ptr<View> > ViewSet;
-      ViewSet mViewSet;
-
-      Mode mRenderMode;
-      Face mRenderFace;
-
-      ParticleSystemFreezer mFreezer;
-
-      dtCore::RefPtr<dtCore::DatabasePager> mPager;
+      SceneImpl* mImpl;
    };
 }
 

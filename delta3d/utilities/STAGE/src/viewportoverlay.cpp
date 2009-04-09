@@ -42,6 +42,7 @@
 #include <osg/Program>
 #include <osg/Shader>
 #include <dtUtil/macros.h>
+#include <dtUtil/log.h>
 #include <cstdio>
 
 #include <dtDAL/actorproxyicon.h>

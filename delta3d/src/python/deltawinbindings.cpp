@@ -6,6 +6,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <osgViewer/GraphicsWindow>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -34,7 +35,7 @@ void initDeltaWinBindings()
    DeltaWin::PositionSize (DeltaWin::*GetPosition1)() = &DeltaWin::GetPosition;
 
    osgViewer::GraphicsWindow* (DeltaWin::*GetOsgViewerGraphicsWindow1)() = &DeltaWin::GetOsgViewerGraphicsWindow;
-   
+
 
    scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin>, boost::noncopyable >("DeltaWin")
       .def(init<optional<const dtCore::DeltaWin::DeltaWinTraits&> >())
@@ -65,7 +66,7 @@ void initDeltaWinBindings()
       .def("IsValidResolution", IVR2)
       .def("IsValidResolution", IVR3)
       .def("IsValidResolution", IVR4)
-      .def("GetOsgViewerGraphicsWindow", GetOsgViewerGraphicsWindow1, return_internal_reference<>())  
+      .def("GetOsgViewerGraphicsWindow", GetOsgViewerGraphicsWindow1, return_internal_reference<>())
       ;
 
    class_<DeltaWin::PositionSize>("PositionSize")

@@ -27,6 +27,8 @@
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
 
+#include <iostream>
+
 #include "testClient.h"
 
 //////////////////////////////////////////////////////////////////////////

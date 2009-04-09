@@ -60,77 +60,77 @@ namespace dtDAL
       if (IsRotationPropertyShown())
       {
          AddProperty(new Vec3ActorProperty(PROPERTY_ROTATION, PROPERTY_ROTATION,
-            MakeFunctor(*this, &TransformableActorProxy::SetRotation),
-            MakeFunctorRet(*this, &TransformableActorProxy::GetRotation),
-            "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
-            GROUPNAME));
+                  Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetRotation),
+                  Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetRotation),
+                  "Sets the amount of rotation on a transformable. Represented with pitch, yaw, and roll.",
+                  GROUPNAME));
       }
 
       if (IsTranslationPropertyShown())
       {
          AddProperty(new Vec3ActorProperty(PROPERTY_TRANSLATION, PROPERTY_TRANSLATION,
-            MakeFunctor(*this, &TransformableActorProxy::SetTranslation),
-            MakeFunctorRet(*this, &TransformableActorProxy::GetTranslation),
-            "Sets the location of a transformable in 3D space.",
-            GROUPNAME));
+                  Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetTranslation),
+                  Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetTranslation),
+                  "Sets the location of a transformable in 3D space.",
+                  GROUPNAME));
       }
 
       AddProperty(new BooleanActorProperty(PROPERTY_NORMAL_RESCALING, PROPERTY_NORMAL_RESCALING,
-                                           MakeFunctor(*trans, &dtCore::Transformable::SetNormalRescaling),
-                                           MakeFunctorRet(*trans, &dtCore::Transformable::GetNormalRescaling),
-                                           "Enables the automatic scaling of normals when a Transformable is scaled",
-                                           GROUPNAME));
+               BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::SetNormalRescaling),
+               BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetNormalRescaling),
+               "Enables the automatic scaling of normals when a Transformable is scaled",
+               GROUPNAME));
 
       //COLLISION PROPS...
       AddProperty(new BooleanActorProperty("Show Collision Geometry", "ODE Show Collision Geometry",
-                                           MakeFunctor(*this, &TransformableActorProxy::SetRenderCollisionGeometry),
-                                           MakeFunctorRet(*this, &TransformableActorProxy::GetRenderCollisionGeometry),
-                                           "Enables/Disables the rendering of collision geometry assigned to this actor (using ODE).",
-                                           COLLISION_GROUP));
+               BooleanActorProperty::SetFuncType(this, &TransformableActorProxy::SetRenderCollisionGeometry),
+               BooleanActorProperty::GetFuncType(this, &TransformableActorProxy::GetRenderCollisionGeometry),
+               "Enables/Disables the rendering of collision geometry assigned to this actor (using ODE).",
+               COLLISION_GROUP));
 
       AddProperty(new EnumActorProperty<dtCore::Transformable::CollisionGeomType>(
-                     PROPERTY_COLLISION_TYPE,"ODE Collision Type",
-                     MakeFunctor(*this,&TransformableActorProxy::SetCollisionType),
-                     MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionType),
-                     "Sets the type of geometry to use for collision detection (using ODE)",
-                     COLLISION_GROUP));
+               PROPERTY_COLLISION_TYPE,"ODE Collision Type",
+               EnumActorProperty<dtCore::Transformable::CollisionGeomType>::SetFuncType(this,&TransformableActorProxy::SetCollisionType),
+               EnumActorProperty<dtCore::Transformable::CollisionGeomType>::GetFuncType(this,&TransformableActorProxy::GetCollisionType),
+               "Sets the type of geometry to use for collision detection (using ODE)",
+               COLLISION_GROUP));
 
       AddProperty(new FloatActorProperty(PROPERTY_COLLISION_RADIUS,"ODE Collision Radius",
-                                         MakeFunctor(*this,&TransformableActorProxy::SetCollisionRadius),
-                                         MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionRadius),
-                                         "Sets the radius for collision calculations (using ODE). This value is used differently "
-                                         "depending on the type of collision assigned to this actor.  For example, "
-                                         "if the collision type is set to SPHERE, this will be the sphere's radius.",
-                                         COLLISION_GROUP));
+               FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionRadius),
+               FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionRadius),
+               "Sets the radius for collision calculations (using ODE). This value is used differently "
+               "depending on the type of collision assigned to this actor.  For example, "
+               "if the collision type is set to SPHERE, this will be the sphere's radius.",
+               COLLISION_GROUP));
 
       AddProperty(new FloatActorProperty(PROPERTY_COLLISION_LENGTH,"ODE Collision Length",
-                                         MakeFunctor(*this,&TransformableActorProxy::SetCollisionLength),
-                                         MakeFunctorRet(*this,&TransformableActorProxy::GetCollisionLength),
-                                         "Sets the length of the collision geometry (using ODE). This value is used differently "
-                                         "depending on the type of collision assigned to this actor.  For example, "
-                                         "if the collision type is set to CYLINDER, this will be the cylinder's length.",
-                                         COLLISION_GROUP));
+               FloatActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionLength),
+               FloatActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionLength),
+               "Sets the length of the collision geometry (using ODE). This value is used differently "
+               "depending on the type of collision assigned to this actor.  For example, "
+               "if the collision type is set to CYLINDER, this will be the cylinder's length.",
+               COLLISION_GROUP));
 
       AddProperty(new Vec3ActorProperty(PROPERTY_COLLISION_BOX,"ODE Collision Box",
-                                        MakeFunctor(*this, &TransformableActorProxy::SetCollisionBoxDims),
-                                        MakeFunctorRet(*this, &TransformableActorProxy::GetCollisionBoxDims),
-                                        "Sets the size of the bounding box used for collision detection (using ODE).  This property "
-                                        "is used if the collision type is set to BOX.",
-                                        COLLISION_GROUP));
+               Vec3ActorProperty::SetFuncType(this, &TransformableActorProxy::SetCollisionBoxDims),
+               Vec3ActorProperty::GetFuncType(this, &TransformableActorProxy::GetCollisionBoxDims),
+               "Sets the size of the bounding box used for collision detection (using ODE).  This property "
+               "is used if the collision type is set to BOX.",
+               COLLISION_GROUP));
 
       AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_COLLISION, "ODE Collision Enable",
-                                          MakeFunctor(*trans, &dtCore::Transformable::SetCollisionDetection),
-                                          MakeFunctorRet(*trans, &dtCore::Transformable::GetCollisionDetection),
-                                          "Enables collision detection on this actor (using ODE).",
-                                          COLLISION_GROUP));
+               BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::SetCollisionDetection),
+               BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetCollisionDetection),
+               "Enables collision detection on this actor (using ODE).",
+               COLLISION_GROUP));
 
 
       static const dtUtil::RefString RENDER_PROXY_NODE_DESC("Enables the rendering of the proxy node for this Transformable");
       AddProperty(new BooleanActorProperty(PROPERTY_RENDER_PROXY_NODE, PROPERTY_RENDER_PROXY_NODE,
-         MakeFunctor(*trans, &dtCore::Transformable::RenderProxyNode),
-         MakeFunctorRet(*trans, &dtCore::Transformable::GetIsRenderingProxyNode),
-         RENDER_PROXY_NODE_DESC,
-         GROUPNAME));
+               BooleanActorProperty::SetFuncType(trans, &dtCore::Transformable::RenderProxyNode),
+               BooleanActorProperty::GetFuncType(trans, &dtCore::Transformable::GetIsRenderingProxyNode),
+               RENDER_PROXY_NODE_DESC,
+               GROUPNAME));
 
    }
 
@@ -166,7 +166,7 @@ namespace dtDAL
 
       //If we have a billboard update its rotation as well.
       if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-          GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+               GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
@@ -212,7 +212,7 @@ namespace dtDAL
 
       //If we have a billboard update its position as well.
       if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
-          GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+               GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
@@ -337,14 +337,14 @@ namespace dtDAL
 
       phys->ClearCollisionGeometry();
       if (mCollisionBoxDims.x() == 0.0f || mCollisionBoxDims.y() == 0.0f ||
-          mCollisionBoxDims.z() == 0.0f)
+               mCollisionBoxDims.z() == 0.0f)
       {
          phys->SetCollisionBox(NULL);
       }
       else
       {
          phys->SetCollisionBox(mCollisionBoxDims.x(),mCollisionBoxDims.y(),
-                               mCollisionBoxDims.z());
+                  mCollisionBoxDims.z());
       }
    }
 

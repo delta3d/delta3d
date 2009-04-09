@@ -20,6 +20,8 @@
 #include <osg/MatrixTransform>
 
 #include <osg/Version>
+#include <osg/GraphicsContext>
+#include <osgViewer/GraphicsWindow>
 
 #include <cassert>
 

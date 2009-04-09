@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <iostream>
 
 #include <dtGUI/ceguiconnectionsignatures.h>
 

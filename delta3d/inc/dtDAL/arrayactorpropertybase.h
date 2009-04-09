@@ -25,10 +25,12 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/export.h>
 
+#include <dtUtil/log.h>
+
 #include <dtUtil/macros.h>
 
-#define OPEN_CHAR '«'
-#define CLOSE_CHAR '»'
+const char OPEN_CHAR='ï¿½';
+const char CLOSE_CHAR='ï¿½';
 
 namespace dtDAL
 {

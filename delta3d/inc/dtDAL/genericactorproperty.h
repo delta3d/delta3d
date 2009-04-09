@@ -24,6 +24,8 @@
 
 
 #include <dtDAL/actorproperty.h>
+#include <dtUtil/functor.h>
+#include <dtUtil/log.h>
 
 namespace dtDAL
 {

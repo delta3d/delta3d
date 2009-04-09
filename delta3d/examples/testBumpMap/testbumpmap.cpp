@@ -28,7 +28,9 @@
 #include <dtCore/scene.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/transform.h>
+#include <dtCore/light.h>
 
+#include <osg/LightSource>
 #include <osg/Drawable>
 #include <osg/Program>
 #include <osg/Texture2D>

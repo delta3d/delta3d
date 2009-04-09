@@ -1,4 +1,6 @@
 #include <dtInspectorQt/sceneview.h>
+#include <dtCore/refptr.h>
+#include <dtCore/deltadrawable.h>
 #include "ui_dtinspectorqt.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,6 +98,6 @@ void dtInspectorQt::SceneView::OnRenderStateChanged(int mode)
       default: break;
       }
 
-      mOperateOn->SetRenderState(faceEnum, modeEnum);      
+      mOperateOn->SetRenderState(faceEnum, modeEnum);
    }
 }

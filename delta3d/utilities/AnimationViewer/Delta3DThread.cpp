@@ -5,6 +5,7 @@
 #include "Viewer.h"
 #include <dtCore/system.h>
 #include <dtCore/deltawin.h>
+#include <osgViewer/GraphicsWindow>
 
 #include <dtQt/viewwindow.h>
 
@@ -16,8 +17,8 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface(&oldInterface)
       {
       }
-      
-      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
+
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
          osg::GraphicsContext::ScreenIdentifier())
       {
          return mInterface->getNumScreens(screenIdentifier);
@@ -29,19 +30,19 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface->getScreenSettings(si, resolution);
       }
 
-      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl) 
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl)
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
       #endif
 
-      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int& width, unsigned int& height)
       {
          mInterface->getScreenResolution(screenIdentifier, width, height);
       }
 
-      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int width, unsigned int height)
       {
          return mInterface->setScreenResolution(screenIdentifier, width, height);
@@ -95,11 +96,11 @@ void Delta3DThread::run()
    dtQt::ViewWindow& glWidget = *mWin->GetGLWidget();
    //glWidget.ThreadedInitializeGL();
    //glWidget.ThreadedMakeCurrent();
-   
+
    mViewer = new Viewer();
 
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
-   
+
    mViewer->Config();
 
    connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
@@ -111,11 +112,11 @@ void Delta3DThread::run()
 
    connect(mViewer.get(), SIGNAL(MeshLoaded(int,const QString&)), mWin, SLOT(OnNewMesh(int,const QString&)));
 
-   connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)), 
+   connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
            mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));
 
-   connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )), 
-           mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));   
+   connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )),
+           mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
    connect(mWin, SIGNAL(ShowMesh(int)), mViewer.get(), SLOT(OnShowMesh(int)));
    connect(mWin, SIGNAL(HideMesh(int)), mViewer.get(), SLOT(OnHideMesh(int)));

@@ -15,29 +15,30 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * David Guthrie
  */
 #ifndef DELTA_GROUP_ACTOR_PROPERTY
 #define DELTA_GROUP_ACTOR_PROPERTY
 
-#include <string> 
+#include <string>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/export.h>
+#include <dtUtil/functor.h>
 
 namespace dtDAL
 {
    /**
     * @brief An actor property that contains a structure of NamedParameter Objects.
-    * 
+    *
     * This actor property solves the concept of both structures and lists in actor properties.
     * This property gets and sets a NamedGroupParameter, which can hold any number of other NamedParameters.
     * This is passed to the functors for the actor property which must then handle the data in way that makes
     * sense the actor.  Additionally, a string name can be passed to the property in the constructor
     *
     * @note When loading and saving GroupActorProperties, only the NamedParameter types that have associated actor property types
-    *       can be saved.  The rest will be ignored.  There are no plans no solve this issue. 
+    *       can be saved.  The rest will be ignored.  There are no plans no solve this issue.
     * @note Also, note that currently Vec3d and Vec3f parameters will be loaded as Vec3. There are plans to fix this.
     */
    class DT_DAL_EXPORT GroupActorProperty : public ActorProperty
@@ -105,7 +106,7 @@ namespace dtDAL
          const std::string& GetEditorType() const { return mEditorType; };
 
      protected:
-     
+
          virtual ~GroupActorProperty();
 
       private:

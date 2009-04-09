@@ -58,6 +58,7 @@
 
 #include <osg/Version>
 #include <sstream>
+#include <iostream>
 
 // helper func that should be somewhere
 std::string vec3dToString(const osg::Vec3d& pt)

@@ -27,6 +27,8 @@
 #include <dtABC/application.h>
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/refptr.h>
+#include <osg/Texture2D>
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,14 +36,14 @@ class TestPreRender : public dtABC::Application
 {
 public:
 
-   TestPreRender(const std::string& mainSceneObjectName, 
+   TestPreRender(const std::string& mainSceneObjectName,
                  const std::string& configFilename = "config.xml");
 
 protected:
 
    virtual ~TestPreRender();
 
-public:  
+public:
 
    void LoadGeometry(const std::string& customObjectName);
 
@@ -50,10 +52,10 @@ public:
    virtual void PreFrame(const double deltaFrameTime);
 
 private:
-   
+
    dtCore::RefPtr<dtCore::Object> mBoxObject;
 
-   dtCore::RefPtr<dtCore::OrbitMotionModel> mOrbitMotion; 
+   dtCore::RefPtr<dtCore::OrbitMotionModel> mOrbitMotion;
 
    // Offscreen rendering resources
    dtCore::RefPtr<dtCore::Scene>  mTextureScene;

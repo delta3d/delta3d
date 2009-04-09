@@ -91,4 +91,12 @@ namespace dtUtil
                mType.GetName().c_str());
       }
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   DT_UTIL_EXPORT std::ostream& operator << (std::ostream& o, const Exception& ex)
+   {
+      o << ex.ToString();
+      return o;
+   }
+
 } // namespace dtUtil

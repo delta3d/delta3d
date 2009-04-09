@@ -37,6 +37,8 @@
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 
+#include <iostream>
+
 using namespace dtCore;
 using namespace dtDAL;
 using namespace dtABC;

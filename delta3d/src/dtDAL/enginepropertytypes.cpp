@@ -32,6 +32,38 @@
 
 namespace dtDAL
 {
+   ////////////////////////////////////////////////////////////////////////////
+   ActorActorProperty::ActorActorProperty(ActorProxy& actorProxy,
+                     const dtUtil::RefString& name,
+                     const dtUtil::RefString& label,
+                     SetFuncType Set,
+                     GetFuncType Get,
+                     const dtUtil::RefString& desiredActorClass,
+                     const dtUtil::RefString& desc,
+                     const dtUtil::RefString& groupName)
+      : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
+      , mProxy(&actorProxy)
+      , SetPropFunctor(Set)
+      , GetActorFunctor(Get)
+      , mDesiredActorClass(desiredActorClass)
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ActorActorProperty::CopyFrom(const ActorProperty& otherProp)
+   {
+      if (GetDataType() != otherProp.GetDataType())
+      {
+         LOG_ERROR("Property types are incompatible. Cannot make copy.");
+         return;
+      }
+
+      const ActorActorProperty& prop =
+         static_cast<const ActorActorProperty& >(otherProp);
+
+      SetValue(prop.GetValue());
+   }
 
    ////////////////////////////////////////////////////////////////////////////
    bool ActorActorProperty::FromString(const std::string& value)
@@ -126,6 +158,39 @@ namespace dtDAL
       return mProxy->GetLinkedActor(GetName());
    }
 
+   ////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
+   ActorIDActorProperty::ActorIDActorProperty(ActorProxy& actorProxy,
+      const dtUtil::RefString& name,
+      const dtUtil::RefString& label,
+      SetFuncType Set,
+      GetFuncType Get,
+      const dtUtil::RefString& desiredActorClass,
+      const dtUtil::RefString& desc,
+      const dtUtil::RefString& groupName)
+      : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
+      , mProxy(&actorProxy)
+      , SetIdFunctor(Set)
+      , GetIdFunctor(Get)
+      , mDesiredActorClass(desiredActorClass)
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ActorIDActorProperty::CopyFrom(const ActorProperty& otherProp)
+   {
+      if (GetDataType() != otherProp.GetDataType())
+      {
+         LOG_ERROR("Property types are incompatible. Cannot make copy.");
+         return;
+      }
+
+      const ActorIDActorProperty& prop =
+         static_cast<const ActorIDActorProperty& >(otherProp);
+
+      SetValue(prop.GetValue());
+   }
    ////////////////////////////////////////////////////////////////////////////
    bool ActorIDActorProperty::FromString(const std::string& value)
    {
@@ -303,6 +368,35 @@ namespace dtDAL
    const std::string GameEventActorProperty::ToString() const
    {
       return GetValue() == NULL ? "" : GetValue()->GetUniqueId().ToString();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////
+   ResourceActorProperty::ResourceActorProperty(ActorProxy& actorProxy,
+                         DataType& type,
+                         const dtUtil::RefString& name,
+                         const dtUtil::RefString& label,
+                         SetFuncType Set,
+                         const dtUtil::RefString& desc,
+                         const dtUtil::RefString& groupName)
+      : ActorProperty(type, name, label, desc, groupName)
+      , mProxy(&actorProxy)
+      , SetPropFunctor(Set)
+   {
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ResourceActorProperty::CopyFrom(const ActorProperty& otherProp)
+   {
+      if (GetDataType() != otherProp.GetDataType())
+      {
+         LOG_ERROR("Property types are incompatible. Cannot make copy.");
+      }
+
+      const ResourceActorProperty& prop =
+         static_cast<const ResourceActorProperty&>(otherProp);
+
+      SetValue(prop.GetValue());
    }
 
    ////////////////////////////////////////////////////////////////////////////
