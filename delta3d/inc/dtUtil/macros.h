@@ -147,6 +147,7 @@
    #undef GetClassName
    #undef SendMessage
    #undef CreateFont
+   #undef GetTimeFormat
 
 #endif
 
