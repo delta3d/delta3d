@@ -21,6 +21,7 @@
 #include <osg/VertexProgram>
 
 #include <cmath>
+#include <algorithm>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -602,8 +603,8 @@ void dtCore::Environment::UpdateSkyLight()
    if (mSkyLight.valid())
    {
       if (InfiniteLight* sun = static_cast<InfiniteLight*>(mSkyLight.get()))
-      {	
-         sun->SetTransform(dtCore::Transform(0.0f, 0.0f, 0.0f, mSunAzimuth - 180.0f, mSunAltitude - 180.0f));         
+      {
+         sun->SetTransform(dtCore::Transform(0.0f, 0.0f, 0.0f, mSunAzimuth - 180.0f, mSunAltitude - 180.0f));
       }
    }
 }
