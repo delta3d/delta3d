@@ -174,7 +174,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void MapChangeStateData::LoadSingleMapIntoGM(const std::string& mapName)
    {
-      dtDAL::Map &map = dtDAL::Project::GetInstance().GetMap(mapName);
+      dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(mapName);
       //add all the events in the map to the game manager.
       std::vector<dtDAL::GameEvent* > events;
       map.GetEventManager().GetAllEvents(events);
@@ -184,8 +184,9 @@ namespace dtGame
       std::vector<dtDAL::GameEvent*>::const_iterator iend = events.end();
       for (; i != iend; ++i)
       {
-         if (mainGEM.FindEvent((*i)->GetUniqueId()) == NULL)
-            mainGEM.AddEvent(**i);
+         dtDAL::GameEvent* currEvent = *i;
+         if (mainGEM.FindEvent(currEvent->GetUniqueId()) == NULL)
+            mainGEM.AddEvent(*currEvent);
       }
 
       if (map.GetEnvironmentActor() != NULL)

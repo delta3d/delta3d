@@ -1,5 +1,8 @@
 #include <delta3dthread.h>
 #include <dtCore/deltawin.h>
+
+#include <osg/Version>
+
 #include <osgViewer/GraphicsWindow>
 
 ////////////////////////////////////////////////////////////////////////////////

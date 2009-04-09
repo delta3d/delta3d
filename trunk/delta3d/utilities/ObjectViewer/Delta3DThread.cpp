@@ -10,6 +10,8 @@
 #include <dtCore/deltawin.h>
 #include <osgViewer/GraphicsWindow>
 
+#include <osg/Version>
+
 #include <dtQt/viewwindow.h>
 
 

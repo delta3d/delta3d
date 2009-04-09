@@ -42,6 +42,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include <string>
+#include <algorithm>
 
 extern dtABC::Application& GetGlobalApplication();
 
