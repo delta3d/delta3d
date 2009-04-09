@@ -247,6 +247,14 @@ namespace dtAudio
       void AddSoundActorsToWorld();
 
       /**
+       * Clear the container that is temporarily holding on to any sound actors that
+       * have been evacuated from the world by a call to RemoveSoundActorsFromWorld.
+       * This will cause the sounds actors to be deleted if no other references point
+       * to the sound acors' proxies.
+       */
+      void ClearSoundActorArray();
+
+      /**
        * Access all sounds held by Sound Actors in the Game Manager.
        * @param outArray Container to capture all sound objects in Sound Actors.
        */
