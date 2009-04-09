@@ -347,6 +347,16 @@ void SoundComponentTests::TestSoundActorManagement()
       mSndComp->GetSoundActorSounds( soundArray );
       CPPUNIT_ASSERT( int(soundArray.size()) == soundActorCount );
       soundArray.clear();
+
+
+      // Sound Actor Deletion.
+      mSndComp->RemoveSoundActorsFromWorld();
+      mSndComp->ClearSoundActorArray();
+      dtCore::System::GetInstance().Step();
+      mSndComp->GetSoundActorSounds( soundArray );
+      CPPUNIT_ASSERT( GetGMSoundActorCount() == 0 );
+      CPPUNIT_ASSERT( mSndComp->GetSoundActorContainedCount() == 0 );
+      CPPUNIT_ASSERT( soundArray.size() == 0 );
    }
    catch (const dtUtil::Exception& e)
    {

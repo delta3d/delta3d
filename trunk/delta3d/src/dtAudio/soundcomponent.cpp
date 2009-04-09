@@ -347,6 +347,12 @@ namespace dtAudio
          gm->AddActor(*(*curProxy), false, false);
       }
 
+      ClearSoundActorArray();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void SoundComponent::ClearSoundActorArray()
+   {
       mSoundProxyArray.clear();
    }
 
