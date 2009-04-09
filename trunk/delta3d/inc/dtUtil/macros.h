@@ -135,6 +135,19 @@
    #ifndef snprintf
       #define snprintf _snprintf
    #endif
+
+   // Identifier was truncated to '255' characters in the debug information
+   #pragma warning( disable:4786 )
+   // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
+   #pragma warning(disable : 4251)
+
+   #define WIN32_LEAN_AND_MEAN
+   #define NOMINMAX
+   #include <windows.h>
+   #undef GetClassName
+   #undef SendMessage
+   #undef CreateFont
+
 #endif
 
 // Eliminate compiler warnings for unused variables
