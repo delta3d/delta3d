@@ -1,5 +1,6 @@
 #include <delta3dthread.h>
 #include <dtCore/deltawin.h>
+#include <osgViewer/GraphicsWindow>
 
 ////////////////////////////////////////////////////////////////////////////////
 class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
@@ -9,8 +10,8 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface(&oldInterface)
       {
       }
-      
-      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
+
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
          osg::GraphicsContext::ScreenIdentifier())
       {
          return mInterface->getNumScreens(screenIdentifier);
@@ -22,19 +23,19 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface->getScreenSettings(si, resolution);
       }
 
-      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl) 
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl)
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
 #endif
 
-      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int& width, unsigned int& height)
       {
          mInterface->getScreenResolution(screenIdentifier, width, height);
       }
 
-      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int width, unsigned int height)
       {
          return mInterface->setScreenResolution(screenIdentifier, width, height);
@@ -90,11 +91,11 @@ void Delta3DThread::run()
    glWidget.setMinimumHeight(glWidget.parentWidget()->height());
    //glWidget.ThreadedInitializeGL();
    //glWidget.ThreadedMakeCurrent();
-   
+
    mpViewer = new ParticleViewer();
 
    glWidget.SetGraphicsWindow(*mpViewer->GetWindow()->GetOsgViewerGraphicsWindow());
-   
+
    mpViewer->Config();
 
    mWin->SetParticleViewer(mpViewer);

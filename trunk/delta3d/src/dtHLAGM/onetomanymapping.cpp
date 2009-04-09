@@ -20,6 +20,7 @@
  */
 
 #include <dtHLAGM/onetomanymapping.h>
+#include <iostream>
 
 namespace dtHLAGM
 {
@@ -42,7 +43,7 @@ namespace dtHLAGM
       mHLAEnumerationMapping.clear();
       mGameEnumerationMapping.clear();
    }
-   
+
    bool OneToManyMapping::ParameterDefinition::GetHLAEnumerationValue(const std::string& gameValue, std::string& hlaValue) const
    {
       std::map<std::string, std::string>::const_iterator i = mGameEnumerationMapping.find(gameValue);
@@ -80,16 +81,16 @@ namespace dtHLAGM
       os << "Required For HLA: " << otmm.IsRequiredForHLA() << std::endl;
       os << "Invalid: " << otmm.IsInvalid() << std::endl;
       os << "Parameters Begin: " << std::endl << std::endl;
-      
+
       const std::vector<OneToManyMapping::ParameterDefinition>& pds = otmm.GetParameterDefinitions();
-      
+
       std::vector<OneToManyMapping::ParameterDefinition>::const_iterator i = pds.begin();
       for (;i != pds.end(); ++i)
       {
          os << *i << std::endl;
       }
       os << std::endl << "Parameters End: " << std::endl;
-      
+
       return os;
    }
 
@@ -106,7 +107,7 @@ namespace dtHLAGM
       {
          os << "  HLA Value: " << i->first << " maps to Game Value: " << i->second << std::endl;
       }
-      
+
       return os;
    }
 }

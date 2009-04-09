@@ -38,7 +38,7 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/gameevent.h>
 #include <dtDAL/export.h>
-#include <dtUtil/log.h>
+#include <dtDAL/functor.h>
 
 namespace dtDAL
 {
@@ -60,34 +60,14 @@ namespace dtDAL
                            GetFuncType Get,
                            const dtUtil::RefString& desiredActorClass = "",
                            const dtUtil::RefString& desc = "",
-                           const dtUtil::RefString& groupName = "")
-            : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
-            , mProxy(&actorProxy)
-            , SetPropFunctor(Set)
-            , GetActorFunctor(Get)
-            , mDesiredActorClass(desiredActorClass)
-         {
-
-         }
+                           const dtUtil::RefString& groupName = "");
 
          /**
           * Copies an ActorActorProperty value to this one from the property
           * specified. This method fails if otherProp is not an ActorActorProperty.
           * @param otherProp The property to copy the value from.
           */
-         virtual void CopyFrom(const ActorProperty& otherProp)
-         {
-            if (GetDataType() != otherProp.GetDataType())
-            {
-               LOG_ERROR("Property types are incompatible. Cannot make copy.");
-               return;
-            }
-
-            const ActorActorProperty& prop =
-               static_cast<const ActorActorProperty& >(otherProp);
-
-            SetValue(prop.GetValue());
-         }
+         virtual void CopyFrom(const ActorProperty& otherProp);
 
          /**
           * Sets the value of this property by calling the set functor
@@ -116,8 +96,8 @@ namespace dtDAL
           * @return The actor
           */
          const dtCore::DeltaDrawable* GetRealActor() const;
-
          /**
+
           * Sets the value of the property based on a string.
           * The string should be the both the unique id and the display string separated by a comma.
           * @note Returns false it the property is read only
@@ -164,34 +144,14 @@ namespace dtDAL
          GetFuncType Get,
          const dtUtil::RefString& desiredActorClass = "",
          const dtUtil::RefString& desc = "",
-         const dtUtil::RefString& groupName = "")
-         : ActorProperty(DataType::ACTOR, name, label, desc, groupName)
-         , mProxy(&actorProxy)
-         , SetIdFunctor(Set)
-         , GetIdFunctor(Get)
-         , mDesiredActorClass(desiredActorClass)
-      {
-
-      }
+         const dtUtil::RefString& groupName = "");
 
       /**
       * Copies an ActorActorProperty value to this one from the property
       * specified. This method fails if otherProp is not an ActorActorProperty.
       * @param otherProp The property to copy the value from.
       */
-      virtual void CopyFrom(const ActorProperty& otherProp)
-      {
-         if (GetDataType() != otherProp.GetDataType())
-         {
-            LOG_ERROR("Property types are incompatible. Cannot make copy.");
-            return;
-         }
-
-         const ActorIDActorProperty& prop =
-            static_cast<const ActorIDActorProperty& >(otherProp);
-
-         SetValue(prop.GetValue());
-      }
+      virtual void CopyFrom(const ActorProperty& otherProp);
 
       /**
       * Sets the value of this property by calling the set functor
@@ -327,30 +287,14 @@ namespace dtDAL
                                const dtUtil::RefString& label,
                                SetFuncType Set,
                                const dtUtil::RefString& desc = "",
-                               const dtUtil::RefString& groupName = "")
-            : ActorProperty(type, name, label, desc, groupName)
-            , mProxy(&actorProxy)
-            , SetPropFunctor(Set)
-         {
-         }
+                               const dtUtil::RefString& groupName = "");
 
          /**
           * Copies a ResourceActorProperty value to this one from the property
           * specified. This method fails if otherProp is not a ResourceActorProperty.
           * @param otherProp The property to copy the value from.
           */
-         virtual void CopyFrom(const ActorProperty& otherProp)
-         {
-            if (GetDataType() != otherProp.GetDataType())
-            {
-               LOG_ERROR("Property types are incompatible. Cannot make copy.");
-            }
-
-            const ResourceActorProperty& prop =
-               static_cast<const ResourceActorProperty&>(otherProp);
-
-            SetValue(prop.GetValue());
-         }
+         virtual void CopyFrom(const ActorProperty& otherProp);
 
          /**
           * Sets the value of this property by calling the set functor

@@ -34,7 +34,7 @@ namespace dtDAL
    void PhysicalActorProxy::BuildPropertyMap()
    {
       static const dtUtil::RefString GROUPNAME("ODE Physics");
-        
+
       TransformableActorProxy::BuildPropertyMap();
 
       dtCore::Physical *phys = static_cast<dtCore::Physical*>(GetActor());
@@ -42,19 +42,19 @@ namespace dtDAL
       static const dtUtil::RefString ODE_PREFIX("ODE ");
       //PHYSICS PROPS...
       AddProperty(new BooleanActorProperty(PROPERTY_ENABLE_DYNAMICS, ODE_PREFIX + PROPERTY_ENABLE_DYNAMICS,
-                                           MakeFunctor(*phys, &dtCore::Physical::EnableDynamics),
-                                           MakeFunctorRet(*phys, &dtCore::Physical::DynamicsEnabled),
-                                           "Enables physics calculations on this actor (using ODE).", GROUPNAME));
+               BooleanActorProperty::SetFuncType(phys, &dtCore::Physical::EnableDynamics),
+               BooleanActorProperty::GetFuncType(phys, &dtCore::Physical::DynamicsEnabled),
+               "Enables physics calculations on this actor (using ODE).", GROUPNAME));
 
       AddProperty(new FloatActorProperty(PROPERTY_MASS, ODE_PREFIX + PROPERTY_MASS,
-                                         MakeFunctor(*this, &PhysicalActorProxy::SetMass),
-                                         MakeFunctorRet(*this, &PhysicalActorProxy::GetMass),
-                                         "Sets the mass of this actor (using ODE).",GROUPNAME));
+               FloatActorProperty::SetFuncType(this, &PhysicalActorProxy::SetMass),
+               FloatActorProperty::GetFuncType(this, &PhysicalActorProxy::GetMass),
+               "Sets the mass of this actor (using ODE).",GROUPNAME));
 
       AddProperty(new Vec3ActorProperty(PROPERTY_CENTER_OF_GRAVITY, ODE_PREFIX + PROPERTY_CENTER_OF_GRAVITY,
-                                        MakeFunctor(*this, &PhysicalActorProxy::SetCenterOfGravity),
-                                        MakeFunctorRet(*this, &PhysicalActorProxy::GetCenterOfGravity),
-                                        "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
+               Vec3ActorProperty::SetFuncType(this, &PhysicalActorProxy::SetCenterOfGravity),
+               Vec3ActorProperty::GetFuncType(this, &PhysicalActorProxy::GetCenterOfGravity),
+               "Sets the center of gravity for this actor (using ODE).", GROUPNAME));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ namespace dtDAL
    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity() const
    {
       const dtCore::Physical *phys = static_cast<const dtCore::Physical*>(GetActor());
- 
+
       osg::Vec3 r;
       phys->GetCenterOfGravity(r);
       return r;

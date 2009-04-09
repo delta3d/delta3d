@@ -1,5 +1,6 @@
 #include <cassert>
 #include <stack>
+#include <iostream>
 
 #include "testaudio.h"
 

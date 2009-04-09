@@ -8,6 +8,7 @@
 #include "ObjectWorkspace.h"
 #include <dtCore/system.h>
 #include <dtCore/deltawin.h>
+#include <osgViewer/GraphicsWindow>
 
 #include <dtQt/viewwindow.h>
 
@@ -20,8 +21,8 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface(&oldInterface)
       {
       }
-      
-      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier = 
+
+      virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =
          osg::GraphicsContext::ScreenIdentifier())
       {
          return mInterface->getNumScreens(screenIdentifier);
@@ -33,19 +34,19 @@ class EmbeddedWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemI
          mInterface->getScreenSettings(si, resolution);
       }
 
-      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl) 
+      virtual void enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl)
       {
          mInterface->enumerateScreenSettings(si, rl);
       }
 #endif
 
-      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual void getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int& width, unsigned int& height)
       {
          mInterface->getScreenResolution(screenIdentifier, width, height);
       }
 
-      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier, 
+      virtual bool setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
                unsigned int width, unsigned int height)
       {
          return mInterface->setScreenResolution(screenIdentifier, width, height);
@@ -103,22 +104,22 @@ void Delta3DThread::run()
 
    //need to set the current context so that all the open gl stuff in osg can initialize.
    dtQt::ViewWindow& glWidget = *mWin->GetGLWidget();
-   
+
    // Set a custom size for the viewport
    glWidget.setMinimumWidth(700);
    glWidget.setMinimumHeight(550);
-   
+
    mViewer = new ObjectViewer();
 
    glWidget.SetGraphicsWindow(*mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
-   
+
    mViewer->Config();
 
-   MakeConnections();    
+   MakeConnections();
 
-   dtCore::System::GetInstance().Start();  
+   dtCore::System::GetInstance().Start();
    QFileInfo fileInfo(mStartupFile.c_str());
-   
+
    mWin->OnInitialization();
 
    if (fileInfo.fileName().endsWith(QString("xml"), Qt::CaseInsensitive))
@@ -135,13 +136,13 @@ void Delta3DThread::run()
 void Delta3DThread::MakeConnections()
 {
    // Menu connections
-   connect(mWin, SIGNAL(LoadShaderDefinition(const QString&)), 
+   connect(mWin, SIGNAL(LoadShaderDefinition(const QString&)),
       mViewer.get(), SLOT(OnLoadShaderFile(const QString&)));
-   
-   connect((QObject*)mWin, SIGNAL(SetGenerateTangentAttribute(bool)), 
+
+   connect((QObject*)mWin, SIGNAL(SetGenerateTangentAttribute(bool)),
       mViewer.get(), SLOT(OnSetGenerateTangentAttribute(bool)));
 
-   connect(mWin, SIGNAL(ReloadShaderDefinition()), 
+   connect(mWin, SIGNAL(ReloadShaderDefinition()),
       mWin->GetResourceObject(), SLOT(OnReloadShaderFiles()));
 
    // Resource dock connections
@@ -154,11 +155,11 @@ void Delta3DThread::MakeConnections()
    connect(mWin->GetResourceObject(), SIGNAL(UnloadGeometry()),
       mViewer.get(), SLOT(OnUnloadGeometryFile()));
 
-   connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string&, const std::string&, const std::string&)), 
+   connect(mViewer.get(), SIGNAL(ShaderLoaded(const std::string&, const std::string&, const std::string&)),
       mWin->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&, const std::string&)));
 
-   connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)), 
-      mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));  
+   connect(mWin->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)),
+      mViewer.get(), SLOT(OnApplyShader(const std::string&, const std::string&)));
 
    connect(mViewer.get(), SIGNAL(LightUpdate(const LightInfo&)),
       mWin->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
@@ -224,7 +225,7 @@ void Delta3DThread::MakeConnections()
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mLightModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterLightMode()));
-   connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));   
+   connect((QObject*)mWin->mObjectModeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnEnterObjectMode()));
 
    // Editing connections
    connect((QObject*)mWin->mWorldSpaceAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnWorldSpaceMode()));

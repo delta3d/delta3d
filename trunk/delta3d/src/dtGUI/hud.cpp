@@ -32,6 +32,7 @@
 #include <osg/State>
 #include <osg/Camera>
 #include <osg/Texture2D>
+#include <osg/Geode>
 
 #include <sstream>
 

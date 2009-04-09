@@ -414,8 +414,8 @@ namespace dtABC
       outProperties.push_back(new EnumActorProperty<AlignmentEnum>(
          LabelActor::PROPERTY_TEXT_ALIGNMENT.Get(),
          LabelActor::PROPERTY_TEXT_ALIGNMENT.Get(),
-         MakeFunctor(*this,&LabelActor::SetTextAlignment),
-         MakeFunctorRet(*this,&LabelActor::GetTextAlignment),
+         EnumActorProperty<AlignmentEnum>::SetFuncType(this,&LabelActor::SetTextAlignment),
+         EnumActorProperty<AlignmentEnum>::GetFuncType(this,&LabelActor::GetTextAlignment),
          "Sets the text alignment type.",
          group));
 

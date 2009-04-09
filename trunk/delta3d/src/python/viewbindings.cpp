@@ -4,6 +4,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <osgViewer/View>
 
 using namespace boost::python;
 using namespace dtCore;

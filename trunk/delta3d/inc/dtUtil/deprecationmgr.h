@@ -25,27 +25,8 @@
 #include <dtUtil/macros.h>
 #include <dtUtil/export.h>
 
-#if defined(DELTA_WIN32)
-   // Identifier was truncated to '255' characters in the debug information
-   #pragma warning( disable:4786 )
-   // disable warning for stl classes "needs to have dll-interface to be used by clients of class"
-   #pragma warning(disable : 4251)
-
-   #define WIN32_LEAN_AND_MEAN
-   #include <windows.h>
-   #undef GetClassName
-   #undef SendMessage
-   #undef CreateFont
-#else
-   #include <iostream>
-   #include <csignal>
-#endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
-#include <string>
 #include <map>
 #include <set>
-#include <sstream>
-
 
 //This will generate a compile-time warning when a function is prefaced.
 #if defined (DELTA_WIN32)
@@ -62,7 +43,7 @@
       DeprecationMgr::GetInstance().AddDeprecatedFunction(a, b, fptr); \
    }
 #elif defined (_DEBUG) && defined (__GNUC__)
-   static void* GetEBP() 
+   static void* GetEBP()
    {
      void* ebp;
      __asm__ __volatile__(

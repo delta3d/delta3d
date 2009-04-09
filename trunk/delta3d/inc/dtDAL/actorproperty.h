@@ -22,13 +22,11 @@
 #ifndef DELTA_ACTORPROPERTY
 #define DELTA_ACTORPROPERTY
 
-#include <iostream>
+#include <iosfwd>
 
 #include <osg/Referenced>
-#include <dtDAL/functor.h>
 #include <dtDAL/export.h>
 #include <dtDAL/abstractparameter.h>
-#include <dtUtil/log.h>
 
 
 namespace dtDAL
@@ -117,20 +115,14 @@ namespace dtDAL
           * @param precision The amount of numeric percision.
           * @note This value defaults to 16.
           */
-         inline void SetNumberPrecision(unsigned int precision)
-         {
-            mNumberPrecision = precision;
-         }
+         void SetNumberPrecision(unsigned int precision);
 
          /**
           * Gets the current floating point precision value on this
           * parameter.
           * @return The current number precision.
           */
-         inline unsigned int GetNumberPrecision() const
-         {
-            return mNumberPrecision;
-         }
+         unsigned int GetNumberPrecision() const;
 
       protected:
 
@@ -143,25 +135,17 @@ namespace dtDAL
                        const dtUtil::RefString& label,
                        const dtUtil::RefString& desc,
                        const dtUtil::RefString& groupName,
-                       bool  readOnly = false)
-            : AbstractParameter(dataType, name)
-            , mLabel(label)
-            , mDescription(desc)
-            , mNumberPrecision(16)
-            , mReadOnly(readOnly)
-         {
-            groupName->empty() ? SetGroupName("Base") : SetGroupName(groupName);
-         }
+                       bool  readOnly = false);
 
-         /// The name of the property's group
-         dtUtil::RefString mGroupName;
 
          /**
           * Protected since actor properties are smart pointers.
           */
-         virtual ~ActorProperty() { }
+         virtual ~ActorProperty();
 
       private:
+         /// The name of the property's group
+         dtUtil::RefString mGroupName;
 
          ///Label for use in UI applications that which to display the property.
          dtUtil::RefString mLabel;
@@ -180,29 +164,18 @@ namespace dtDAL
          /**
           * hidden copy constructor
           */
-         ActorProperty(const ActorProperty& toCopy):
-            AbstractParameter(GetDataType(), GetName()) { }
+         ActorProperty(const ActorProperty& toCopy);
 
          /**
           * hidden operator=
           */
-         ActorProperty& operator=(const ActorProperty&) { return *this; }
+         ActorProperty& operator=(const ActorProperty&);
 
    };
 
-   inline std::ostream& operator << (std::ostream& o, const ActorProperty& prop)
-   {
-      o << prop.ToString();
-      return o;
-   }
+   DT_DAL_EXPORT std::ostream& operator << (std::ostream& o, const ActorProperty& prop);
 
-   inline std::istream& operator >> (std::istream& i, ActorProperty& prop)
-   {
-      std::string value;
-      i >> value;
-      prop.FromString(value);
-      return i;
-   }
+   DT_DAL_EXPORT std::istream& operator >> (std::istream& i, ActorProperty& prop);
 }
 
 #endif

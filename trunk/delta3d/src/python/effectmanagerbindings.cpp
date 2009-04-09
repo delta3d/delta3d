@@ -6,6 +6,7 @@
 #include <dtCore/effectmanager.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <osg/Node>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -19,7 +20,7 @@ class EffectManagerWrap : public EffectManager, public wrapper<EffectManager>
       }
 
       Detonation* AddDetonation1( const osg::Vec3& position )
-      { 
+      {
          return AddDetonation( position );
       }
 
@@ -43,7 +44,7 @@ void initEffectManagerBindings()
 {
    EffectManager* (*EffectManagerGI1)(int) = &EffectManager::GetInstance;
    EffectManager* (*EffectManagerGI2)(std::string) = &EffectManager::GetInstance;
-  
+
    enum_<DetonationType>("DetonationType")
       .value("HighExplosiveDetonation", HighExplosiveDetonation)
       .value("SmokeDetonation", SmokeDetonation)
@@ -52,7 +53,7 @@ void initEffectManagerBindings()
    void (EffectManager::*AddDetonationTypeMapping2)(const std::string&, const std::string&) = &EffectManager::AddDetonationTypeMapping;
 
    void (EffectManager::*RemoveDetonationTypeMapping2)(const std::string&) = &EffectManager::RemoveDetonationTypeMapping;
-  
+
    class_<EffectManagerWrap, bases<DeltaDrawable>, dtCore::RefPtr<EffectManagerWrap>, boost::noncopyable >("EffectManager", init<optional<const std::string&> >())
       .def("GetInstanceCount", &EffectManager::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -64,13 +65,13 @@ void initEffectManagerBindings()
       .def("GetEffectCount", &EffectManager::GetEffectCount)
       .def("GetEffect", &EffectManager::GetEffect, return_internal_reference<>())
       .def("AddDetonation", &EffectManagerWrap::AddDetonation1, return_internal_reference<>())
-      .def("AddDetonation", &EffectManagerWrap::AddDetonation2, return_internal_reference<>())      
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation2, return_internal_reference<>())
       .def("AddDetonation", &EffectManagerWrap::AddDetonation3, return_internal_reference<>())
-      .def("AddDetonation", &EffectManagerWrap::AddDetonation4, return_internal_reference<>())      
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation4, return_internal_reference<>())
       .def("RemoveEffect", &EffectManager::RemoveEffect)
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);
-      
+
    class_<EffectListener, dtCore::RefPtr<EffectListener>, boost::noncopyable>("EffectListener", no_init)
       .def("EffectAdded", pure_virtual(&EffectListener::EffectAdded) )
       .def("EffectRemoved", pure_virtual(&EffectListener::EffectRemoved) );
@@ -85,7 +86,7 @@ void initEffectManagerBindings()
       .def("GetTimeToLive", &Effect::GetTimeToLive)
       .def("SetDying", &Effect::SetDying)
       .def("IsDying", &Effect::IsDying);
-      
+
    void (Detonation::*GetPosition1)(osg::Vec3& res) const = &Detonation::GetPosition;
    const osg::Vec3& (Detonation::*GetPosition2)() const = &Detonation::GetPosition;
 

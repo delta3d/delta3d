@@ -22,6 +22,8 @@
 #include <dtUtil/matrixutil.h>
 
 #include <osg/Quat>
+#include <osgViewer/View>
+
 #include <cmath>
 #include <iostream>
 

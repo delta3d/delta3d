@@ -4,6 +4,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/globals.h>
 #include <dtCore/transform.h>
+#include <iostream>
 #include <dtUtil/log.h>
 
 // namespaces

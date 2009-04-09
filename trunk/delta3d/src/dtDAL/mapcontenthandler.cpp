@@ -1240,7 +1240,7 @@ namespace  dtDAL
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::endElement( const XMLCh* const uri,
                                        const XMLCh* const localname,
-                                       const XMLCh* const qname) 
+                                       const XMLCh* const qname)
    {
       if (mElements.empty())
       {
@@ -1551,10 +1551,10 @@ namespace  dtDAL
 
    /////////////////////////////////////////////////////////////////
    MapContentHandler::MapContentHandler()
-      : mActorProxy(NULL)
+      : mHasDeprecatedProperty(false)
+      , mActorProxy(NULL)
       , mActorPropertyType(NULL)
       , mActorProperty(NULL)
-      , mHasDeprecatedProperty(false)
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);

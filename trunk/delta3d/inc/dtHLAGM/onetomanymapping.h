@@ -24,7 +24,7 @@
 
 #include <string>
 #include <map>
-#include <iostream>
+#include <iosfwd>
 #include <dtDAL/datatype.h>
 #include <dtCore/refptr.h>
 #include <dtHLAGM/export.h>
@@ -42,7 +42,7 @@ namespace dtHLAGM
    class DT_HLAGM_EXPORT OneToManyMapping
    {
       public:
-      
+
          class DT_HLAGM_EXPORT ParameterDefinition
          {
             public:
@@ -52,7 +52,7 @@ namespace dtHLAGM
                   mRequiredForGame(false)
                {}
 
-               ParameterDefinition(const std::string& name, 
+               ParameterDefinition(const std::string& name,
                      dtDAL::DataType& type,
                      const std::string& defaultValue,
                      bool required):
@@ -163,7 +163,7 @@ namespace dtHLAGM
                 * AddEnumerationMapping.
                 */
                void ClearEnumerationMapping();
-               
+
                /**
                 * Get the HLA value for an enumeration based on the given string game value.
                 * @return true if the string value has been mapped or false if not.
@@ -197,7 +197,7 @@ namespace dtHLAGM
                {
                   return mGameEnumerationMapping;
                }
-               
+
                bool operator==(const ParameterDefinition& compareTo) const;
 
             private:
@@ -353,9 +353,9 @@ namespace dtHLAGM
          const std::vector<ParameterDefinition>& GetParameterDefinitions() const { return mGameParameters; };
 
          virtual bool operator==(const OneToManyMapping& compareTo) const;
-         
+
       protected:
-         
+
          ///The HLA field name.
          std::string mHLAName;
 
@@ -370,9 +370,9 @@ namespace dtHLAGM
 
          // Flag for marking this mapping as a special case, such as an incoming-only mapping.
          bool mSpecial;
-         
+
          //A vector of the game parameter definitions for this mapping to use.
-         std::vector<ParameterDefinition> mGameParameters; 
+         std::vector<ParameterDefinition> mGameParameters;
    };
 
    DT_HLAGM_EXPORT std::ostream& operator << (std::ostream& os, const OneToManyMapping& otmm);

@@ -23,7 +23,7 @@
 #define DELTA_EXCEPTION
 
 #include <string>
-#include <iostream>
+#include <iosfwd>
 #include <dtUtil/export.h>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
@@ -86,12 +86,12 @@ namespace dtUtil
          /*
           * @return the message to be displayed when this exception is thrown.
           */
-         const std::string &What() const { return mMessage; }
+         const std::string& What() const { return mMessage; }
 
          /*
           * @return the filename associated with this exception.
           */
-         const std::string &File() const { return mFileName; }
+         const std::string& File() const { return mFileName; }
 
          /**
           * @return the line number associated with this exception.
@@ -141,11 +141,7 @@ namespace dtUtil
          unsigned int mLineNum;
    };
 
-   inline std::ostream& operator << (std::ostream& o, const Exception& ex)
-   {
-      o << ex.ToString();
-      return o;
-   }
+   DT_UTIL_EXPORT std::ostream& operator << (std::ostream& o, const Exception& ex);
 
 }
 

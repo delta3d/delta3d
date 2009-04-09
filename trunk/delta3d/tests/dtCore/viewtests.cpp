@@ -25,7 +25,11 @@
 #include <dtCore/view.h>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
+#include <dtCore/refptr.h>
 #include <osg/Version>
+
+#include <dtCore/databasepager.h>
+#include <osgDB/DatabasePager>
 
 namespace dtTest
 {

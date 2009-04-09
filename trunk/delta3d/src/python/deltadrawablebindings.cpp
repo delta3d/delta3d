@@ -5,6 +5,7 @@
 #include <python/dtpython.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
+//#include <osgViewer/GraphicsWindow>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -21,7 +22,7 @@ class DeltaDrawableWrap : public DeltaDrawable
       {
           call_method<void>(mSelf, "SetParent", parent);
       }
-      
+
       void DefaultSetParent(DeltaDrawable* parent)
       {
          DeltaDrawable::SetParent(parent);
@@ -72,7 +73,7 @@ void initDeltaDrawableBindings()
       .def("GetParent", GetParent1, return_internal_reference<>())
       .def("GetParent", GetParent2, return_internal_reference<>())
       .def("GetSceneParent", GetSceneParent1, return_internal_reference<>())
-      .def("GetSceneParent", GetSceneParent2, return_internal_reference<>())      
+      .def("GetSceneParent", GetSceneParent2, return_internal_reference<>())
       .def("GetNumChildren", &DeltaDrawable::GetNumChildren)
       .def("GetChild", GetChild1, return_internal_reference<>())
 	  .def("GetChild", GetChild2, return_internal_reference<>())
