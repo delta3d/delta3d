@@ -24,6 +24,7 @@
 #include <osgViewer/GraphicsWindow>
 
 #include <cassert>
+#include <algorithm>
 
 using namespace dtUtil;
 
