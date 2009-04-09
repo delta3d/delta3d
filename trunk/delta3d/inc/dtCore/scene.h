@@ -34,11 +34,7 @@
 #include <ode/common.h>
 #include <ode/collision_space.h>
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <osg/GL>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
