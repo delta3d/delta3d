@@ -15,6 +15,11 @@
 
 #include <osgViewer/CompositeViewer>
 
+//a windows compile error work around.
+#ifdef SendMessage
+#undef SendMessage
+#endif
+
 /** name spaces */
 using namespace   dtABC;
 using namespace   dtCore;
