@@ -95,7 +95,6 @@ namespace dtEditQt
       LOG_INFO("Initializing Editor Actions.");
       setupFileActions();
       setupEditActions();
-      setupSelectionActions();
       setupWindowActions();
       SetupToolsActions();
       setupHelpActions();
@@ -282,44 +281,6 @@ namespace dtEditQt
       actionEditRedo->setShortcut(tr("Ctrl+Y"));
       actionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
       connect(actionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
-   void EditorActions::setupSelectionActions()
-   {
-      // The actor selection tools need to be in an action group since they are
-      // mutually exclusive.
-      modeToolsGroup = new QActionGroup(this);
-
-      actionSelectionCamera =new QAction(QIcon(UIResources::ICON_TOOLMODE_CAMERA.c_str()),tr("&Camera"), modeToolsGroup);
-      actionSelectionCamera->setShortcut(tr("Ctrl+Shift+C"));
-      actionSelectionCamera->setCheckable(true);
-      actionSelectionCamera->setActionGroup(modeToolsGroup);
-      actionSelectionCamera->setStatusTip(tr("Use this tool to navigate through the world."));
-
-      actionSelectionSelectActor =new QAction(QIcon(UIResources::ICON_TOOLMODE_SELECT.c_str()),tr("&Select Actor(s)"), modeToolsGroup);
-      actionSelectionSelectActor->setShortcut(tr("Ctrl+Shift+S"));
-      actionSelectionSelectActor->setCheckable(true);
-      actionSelectionSelectActor->setActionGroup(modeToolsGroup);
-      actionSelectionSelectActor->setStatusTip(tr("Use this tool to pick actors in the scene."));
-
-      actionSelectionTranslateActor =new QAction(QIcon(UIResources::ICON_TOOLMODE_TRANSLATE.c_str()),tr("&Translate Actor(s)"), modeToolsGroup);
-      actionSelectionTranslateActor->setShortcut(tr("Ctrl+Shift+T"));
-      actionSelectionTranslateActor->setCheckable(true);
-      actionSelectionTranslateActor->setActionGroup(modeToolsGroup);
-      actionSelectionTranslateActor->setStatusTip(tr("Use this tool to move the current actor selection."));
-
-      actionSelectionRotateActor =new QAction(QIcon(UIResources::ICON_TOOLMODE_ROTATE.c_str()), tr("&Rotate Actor(s)"), modeToolsGroup);
-      actionSelectionRotateActor->setShortcut(tr("Ctrl+Shift+R"));
-      actionSelectionRotateActor->setCheckable(true);
-      actionSelectionRotateActor->setActionGroup(modeToolsGroup);
-      actionSelectionRotateActor->setStatusTip(tr("Use this tool to rotate the current actor selection."));
-
-      actionSelectionScaleActor =new QAction(QIcon(UIResources::ICON_TOOLMODE_SCALE.c_str()), tr("&Scale Actor(s)"), modeToolsGroup);
-      actionSelectionScaleActor->setShortcut(tr("Ctrl+Shift+Z"));
-      actionSelectionScaleActor->setCheckable(true);
-      actionSelectionScaleActor->setActionGroup(modeToolsGroup);
-      actionSelectionScaleActor->setStatusTip(tr("Use this tool to scale the current actor selection."));
    }
 
    //////////////////////////////////////////////////////////////////////////////

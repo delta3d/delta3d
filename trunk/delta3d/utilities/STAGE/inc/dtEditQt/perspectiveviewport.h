@@ -29,7 +29,7 @@
 #ifndef DELTA_PERSPECTIVE_VIEWPORT
 #define DELTA_PERSPECTIVE_VIEWPORT
 
-#include <dtEditQt/viewport.h>
+#include <dtEditQt/editorviewport.h>
 
 namespace dtEditQt
 {
@@ -38,34 +38,31 @@ namespace dtEditQt
     * This class provides a 3D first person style view into the scene.  Its camera
     * mode allows the user to fly around a scene and view it from any angle.
     */
-   class PerspectiveViewport : public Viewport
+   class PerspectiveViewport : public EditorViewport
    {
       Q_OBJECT
       public:
 
          /**
-          * Enumerates the specific types of interactions a perspective viewport
-          * supports.  These extend the interactions of the base viewport.  For example,
-          * when the overall mode is camera mode, the perspective viewport supports
-          * more specific behavior.
-          */
-         class InteractionModeExt : public dtUtil::Enumeration
+         * Enumerates the specific types of interactions a perspective viewport
+         * supports.  These extend the interactions of the base viewport.  For example,
+         * when the overall mode is camera mode, the perspective viewport supports
+         * more specific behavior.
+         */
+         class CameraMode : public dtUtil::Enumeration
          {
-            DECLARE_ENUM(InteractionModeExt);
-            public:
-               static const InteractionModeExt CAMERA_TRANSLATE;
-               static const InteractionModeExt CAMERA_NAVIGATE;
-               static const InteractionModeExt CAMERA_LOOK;
-               static const InteractionModeExt ACTOR_AXIS_X;
-               static const InteractionModeExt ACTOR_AXIS_Y;
-               static const InteractionModeExt ACTOR_AXIS_Z;
-               static const InteractionModeExt NOTHING;
+            DECLARE_ENUM(CameraMode);
+         public:
+            static const CameraMode CAMERA_TRANSLATE;
+            static const CameraMode CAMERA_NAVIGATE;
+            static const CameraMode CAMERA_LOOK;
+            static const CameraMode NOTHING;
 
-            private:
-               InteractionModeExt(const std::string &name) : dtUtil::Enumeration(name)
-               {
-                  AddInstance(this);
-               }
+         private:
+            CameraMode(const std::string &name) : dtUtil::Enumeration(name)
+            {
+               AddInstance(this);
+            }
          };
 
          /**
@@ -84,34 +81,26 @@ namespace dtEditQt
          void moveCamera(float dx, float dy);
 
          /**
-          * Sets whether or not an actor should be linked to the camera when
-          * in translate mode.
-          * @param value True if the actor should be linked to the camera.
-          * @note
-          *  This interaction behavior allows the user to move actors in the scene
-          *  by merely moving the camera.  If this property is true, setting the
-          *  current interaction move to actor translation mode will enable this
-          *  behavior.
-          */
-         void setMoveActorWithCamera(bool value) {
-            this->attachActorToCamera = value;
-         }
+         * Sets the scene to be rendered by this viewport.
+         * @param scene The new scene to be rendered.
+         */
+         virtual void setScene(dtCore::Scene *scene);
 
          /**
-          * Gets whether or not an actor should be linked to the camera when
-          * in translate mode.
-          * @return True if enabled.
-          */
-         bool getMoveActorWithCamera() const {
-            return this->attachActorToCamera;
-         }
+         * Initializes the viewport.  This just sets the render style to be
+         * textured and un-lit.
+         */
+         void initializeGL();
+
+         /**
+         * Sets the perspective projection viewing parameters of this viewport's
+         * camera.
+         * @param width The new width of the viewport.
+         * @param height The new height of the viewport.
+         */
+         void resizeGL(int width, int height);
 
          public slots:
-
-            /**
-             * Puts the perspective viewport options in sync with the editor preferences.
-             */
-            void onEditorPreferencesChanged();
 
          protected:
             /**
@@ -127,20 +116,6 @@ namespace dtEditQt
              * Destroys the viewport.
              */
             virtual ~PerspectiveViewport() { }
-
-            /**
-             * Initializes the viewport.  This just sets the render style to be
-             * textured and un-lit.
-             */
-            void initializeGL();
-
-            /**
-             * Sets the perspective projection viewing parameters of this viewport's
-             * camera.
-             * @param width The new width of the viewport.
-             * @param height The new height of the viewport.
-             */
-            void resizeGL(int width, int height);
 
             /**
              * Called when the user presses a key on the keyboard in the viewport.
@@ -218,71 +193,11 @@ namespace dtEditQt
              */
             void attachCurrentSelectionToCamera();
 
-            /**
-             * This method is called during mouse movement events if the viewport is
-             * currently in the manipulation mode that translates the current actor
-             * selection.  This method then goes through the current actor selection
-             * and translates each one based on delta mouse movements.
-             * @param e The mouse move event.
-             * @param dx The change along the mouse x axis.
-             * @param dy The change along the mouse y axis.
-             */
-            void translateCurrentSelection(QMouseEvent *e, float dx, float dy);
-
-            /**
-             * This method is called during mouse movement events if the viewport is
-             * currently in the manipulation mode that rotates the current actor
-             * selection.  This method then goes through the current actor selection
-             * and rotates each one based on delta mouse movements.
-             * @note
-             *  If there is only one actor selected, the rotation is about its local center.
-             *  However, if there are multiple actors selected, the rotation is about the
-             *  center point of the selection.
-             * @param e The mouse move event.
-             * @param dx The change along the mouse x axis.
-             * @param dy The change along the mouse y axis.
-             */
-            void rotateCurrentSelection(QMouseEvent *e, float dx, float dy);
-
-            /**
-            * This method is called during mouse movement events if the viewport is
-            * currently in the manipulation mode that scales the current actor
-            * selection.  This method then goes through the current actor selection
-            * and scales each one based on delta mouse movements.
-            * @note
-            *  If there is only one actor selected, the scaling is about its local center.
-            *  However, if there are multiple actors selected, the scaling is about the
-            *  center point of the selection.
-            * @param e The mouse move event.
-            * @param dx The change along the mouse x axis.
-            * @param dy The change along the mouse y axis.
-            */
-            void scaleCurrentSelection(QMouseEvent *e, float dx, float dy);
-
-            /**
-             * Sets up this viewport to listen for global UI events being generated by
-             * the level editor.
-             */
-            virtual void connectInteractionModeSlots();
-
-            /**
-             * Stops listening to global UI events being generated by the level
-             * editor.
-             */
-            virtual void disconnectInteractionModeSlots();
-
          private:
-            const InteractionModeExt *currentMode;
-            bool attachActorToCamera;
-            float translationDeltaX;
-            float translationDeltaY;
-            float translationDeltaZ;
-            float rotationDeltaX;
-            float rotationDeltaY;
-            float rotationDeltaZ;
-
             ///Allow the ViewportManager access to it can create perspective viewports.
             friend class ViewportManager;
+
+            const CameraMode *cameraMode;
    };
 }
 

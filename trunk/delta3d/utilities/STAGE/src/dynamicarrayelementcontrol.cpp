@@ -278,7 +278,6 @@ namespace dtEditQt
          return;
       }
 
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Swap(mIndex, mIndex - 1);
       parent->resizeChildren(true, true);
@@ -299,7 +298,6 @@ namespace dtEditQt
          return;
       }
 
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Swap(mIndex, mIndex + 1);
       parent->resizeChildren(true, true);
@@ -323,7 +321,6 @@ namespace dtEditQt
          return;
       }
 
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Insert(mIndex);
       mProperty->Copy(mIndex + 1, mIndex);
@@ -349,7 +346,6 @@ namespace dtEditQt
          return;
       }
 
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Remove(mIndex);
       UpdateButtonStates();

@@ -144,9 +144,6 @@ namespace dtEditQt
       perspView->setAutoSceneUpdate(false);
       perspView->setEnableKeyBindings(false);
 
-      // Enable camera mode for this view
-      perspView->setCameraMode();
-
       // Create a viewport container for our static mesh window
       container = new ViewportContainer(perspView, groupBox);
       container->setViewport(perspView);

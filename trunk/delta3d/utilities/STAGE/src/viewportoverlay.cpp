@@ -90,6 +90,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::onActorsSelected(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
+      ViewportManager::GetInstance().refreshActorSelection(actors);
+
       if (actors.empty())
       {
          clearCurrentSelection();

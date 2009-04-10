@@ -29,8 +29,8 @@
 
 #include <dtUtil/macros.h>
 
-const char OPEN_CHAR='�';
-const char CLOSE_CHAR='�';
+const char OPEN_CHAR = 1;
+const char CLOSE_CHAR = 2;
 
 namespace dtDAL
 {

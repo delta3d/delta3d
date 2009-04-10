@@ -174,6 +174,19 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
+   {
+      std::map<std::string, Viewport*>::iterator itor;
+      for (itor = this->viewportList.begin(); itor != this->viewportList.end(); ++itor)
+      {
+         if (itor->second->getAutoInteractionMode())
+         {
+            itor->second->refreshActorSelection(actors);
+         }
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::refreshAllViewports()
    {

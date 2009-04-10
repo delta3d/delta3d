@@ -35,6 +35,8 @@
 #include <osg/Quat>
 #include <osg/Matrix>
 #include <list>
+#include <dtCore/refptr.h>
+#include <dtCore/camera.h>
 
 #include <dtDAL/transformableactorproxy.h>
 
@@ -148,6 +150,11 @@ namespace dtEditQt
       void setAspectRatio(double ratio);
 
       /**
+      * Gets the horizonal aspect ratio of this camera.
+      */
+      double getAspectRatio() {return this->aspectRatio;}
+
+      /**
       * Sets the value of the near clipping plane of this camera.  Anything
       * closer than or behind this point are clipped away.
       * @param value The new value.
@@ -243,6 +250,11 @@ namespace dtEditQt
          double& nearZ, double& farZ);
 
       /**
+      * Retrieves the delta representation of the camera.
+      */
+      dtCore::Camera* getDeltaCamera() {return this->deltaCamera.get();}
+
+      /**
       * Updates the camera's viewing and projection matrices.  Also updates
       * any actors currently attached to it.
       */
@@ -270,6 +282,11 @@ namespace dtEditQt
       * on this camera.
       */
       void updateActorAttachments();
+
+      /**
+      * Updates the delta camera.
+      */
+      void updateDeltaCamera();
 
       /**
       * Returns a count of the number of actor proxies currently attached to this
@@ -327,6 +344,8 @@ signals:
       bool updateWorldViewMatrix;
 
       ProjectionType projType;
+
+      dtCore::RefPtr<dtCore::Camera> deltaCamera;
 
       ///A list of transformable actor proxies currently attached to the camera.
       std::list<ActorAttachment> attachedProxies;

@@ -40,6 +40,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    StageCamera::StageCamera()
+      : deltaCamera(new dtCore::Camera("StageCamera"))
    {
       this->updateProjectionMatrix = true;
       this->updateWorldViewMatrix = true;
@@ -234,6 +235,7 @@ namespace dtEditQt
       getProjectionMatrix();
       getWorldViewMatrix();
       updateActorAttachments();
+      updateDeltaCamera();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -397,6 +399,33 @@ namespace dtEditQt
          tProxy->SetTranslation(tPos);
          tProxy->SetRotationFromMatrix(newRotationMat);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void StageCamera::updateDeltaCamera()
+   {
+      if (!this->deltaCamera.valid())
+      {
+         return;
+      }
+
+      if (this->projType == PERSPECTIVE)
+      {
+         this->deltaCamera->GetOSGCamera()->setProjectionMatrixAsPerspective(this->fovY, 1.0f, this->zNear, this->zFar);
+      }
+      else
+      {
+         this->deltaCamera->GetOSGCamera()->setProjectionMatrix(getProjectionMatrix());
+      }
+
+      this->deltaCamera->GetOSGCamera()->setViewMatrix(getWorldViewMatrix());
+
+      dtCore::Transform transform;
+      this->deltaCamera->GetTransform(transform);
+      //transform.SetRotation(this->orientation);
+      transform.SetRotation(getYaw(), getPitch(), getRoll());
+      transform.SetTranslation(this->position);
+      this->deltaCamera->SetTransform(transform);
    }
 
 } // namespace dtEditQt

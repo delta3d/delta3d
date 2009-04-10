@@ -31,7 +31,7 @@
 
 #include <QtGui/QCursor>
 #include <dtUtil/enumeration.h>
-#include "dtEditQt/viewport.h"
+#include "dtEditQt/editorviewport.h"
 
 namespace dtEditQt
 {
@@ -41,7 +41,7 @@ namespace dtEditQt
     * along each of the 3D axis.
     * @see OrthoViewType
     */
-   class OrthoViewport : public Viewport
+   class OrthoViewport : public EditorViewport
    {
       Q_OBJECT
 
@@ -85,19 +85,16 @@ namespace dtEditQt
           * when the overall mode is camera mode, the orthographic viewport supports
           * more specific behavior.
           */
-         class InteractionModeExt : public dtUtil::Enumeration
+         class CameraMode : public dtUtil::Enumeration
          {
-            DECLARE_ENUM(InteractionModeExt);
+            DECLARE_ENUM(CameraMode);
             public:
-               static const InteractionModeExt CAMERA_PAN;
-               static const InteractionModeExt CAMERA_ZOOM;
-               static const InteractionModeExt ACTOR_AXIS_HORIZ;
-               static const InteractionModeExt ACTOR_AXIS_VERT;
-               static const InteractionModeExt ACTOR_AXIS_BOTH;
-               static const InteractionModeExt NOTHING;
+               static const CameraMode CAMERA_PAN;
+               static const CameraMode CAMERA_ZOOM;
+               static const CameraMode NOTHING;
 
             private:
-               InteractionModeExt(const std::string &name) : dtUtil::Enumeration(name)
+               CameraMode(const std::string &name) : dtUtil::Enumeration(name)
                {
                   AddInstance(this);
                }
@@ -232,66 +229,15 @@ namespace dtEditQt
              */
             void endActorMode(QMouseEvent *e);
 
-            /**
-             * This method is called during mouse movement events if the viewport is
-             * currently in the manipulation mode that translates the current actor
-             * selection.  This method then goes through the current actor selection
-             * and translates each one based on delta mouse movements.
-             * @note
-             *  Since these viewports are orthographic, when actors are translated,
-             *  they are restricted to movement on the plane the orthographic view
-             *  is aligned with.
-             * @param e The mouse move event.
-             * @param dx The change along the mouse x axis.
-             * @param dy The change along the mouse y axis.
-             */
-            void translateCurrentSelection(QMouseEvent *e, float dx, float dy);
-
-            /**
-             * This method is called during mouse movement events if the viewport is
-             * currently in the manipulation mode that rotates the current actor
-             * selection.  This method then goes through the current actor selection
-             * and rotates each one based on delta mouse movements.
-             * @note
-             *  If there is only one actor selected, the rotation is about its local center.
-             *  However, if there are multiple actors selected, the rotation is about the
-             *  center point of the selection.
-             * @param e The mouse move event.
-             * @param dx The change along the mouse x axis.
-             * @param dy The change along the mouse y axis.
-             */
-            void rotateCurrentSelection(QMouseEvent *e, float dx, float dy);
-
-            /**
-            * This method is called during mouse movement events if the viewport is
-            * currently in the manipulation mode that scales the current actor
-            * selection.  This method then goes through the current actor selection
-            * and scales each one based on delta mouse movements.
-            * @note
-            *  If there is only one actor selected, the scaling is about its local center.
-            *  However, if there are multiple actors selected, the scaling is about the
-            *  center point of the selection.
-            * @param e The mouse move event.
-            * @param dx The change along the mouse x axis.
-            * @param dy The change along the mouse y axis.
-            */
-            void scaleCurrentSelection(QMouseEvent *e, float dx, float dy);
-
             void warpWorldCamera(int x, int y);
 
          private:
-            const InteractionModeExt *currentMode;
+            ///Allow the ViewportManager access to it can create perspective viewports.
+            friend class ViewportManager;
+
+            const CameraMode *cameraMode;
             const OrthoViewType *viewType;
             osg::Vec3 zoomToPosition;
-            float translationDeltaX;
-            float translationDeltaY;
-            float translationDeltaZ;
-            float rotationDeltaX;
-            float rotationDeltaY;
-            float rotationDeltaZ;
-
-            //Allow the ViewportManager access to this class.
-            friend class ViewportManager;
    };
 }
 

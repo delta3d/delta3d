@@ -203,7 +203,6 @@ namespace dtEditQt
          QMenu *fileMenu;
          QMenu *editMenu;
          QMenu *projectMenu;
-         QMenu *selectionMenu;
          QMenu *windowMenu;
          QMenu *helpMenu;
          QMenu *recentProjs;
@@ -213,7 +212,6 @@ namespace dtEditQt
          QToolBar *fileToolBar;
          QToolBar *editToolBar;
          QToolBar *undoToolBar;
-         QToolBar *selectionToolBar;
          QToolBar *mExternalToolsToolBar;
 
          PerspectiveViewport *perspView;

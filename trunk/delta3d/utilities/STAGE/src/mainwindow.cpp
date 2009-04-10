@@ -89,7 +89,6 @@ namespace dtEditQt
       //EditorData::GetInstance().setUndoManager(new UndoManager());
 
       // Make sure some default UI states are correctly initialized.
-      EditorActions::GetInstance().actionSelectionCamera->setChecked(true);
       setWindowTitle(tr("STAGE"));
       EditorData::GetInstance().setMainWindow(this);
 
@@ -142,13 +141,6 @@ namespace dtEditQt
       editMenu->addSeparator();
       editMenu->addAction(editorActions.actionFileEditPreferences);
 
-      selectionMenu = menuBar()->addMenu(tr("&Selection"));
-      selectionMenu->addAction(editorActions.actionSelectionCamera);
-      selectionMenu->addAction(editorActions.actionSelectionSelectActor);
-      selectionMenu->addAction(editorActions.actionSelectionTranslateActor);
-      selectionMenu->addAction(editorActions.actionSelectionRotateActor);
-      selectionMenu->addAction(editorActions.actionSelectionScaleActor);
-
       windowMenu = menuBar()->addMenu(tr("&Window"));
       windowMenu->addAction(editorActions.actionWindowsPropertyEditor);
       windowMenu->addAction(editorActions.actionWindowsActorSearch);
@@ -191,16 +183,6 @@ namespace dtEditQt
       undoToolBar->addAction(EditorActions::GetInstance().actionEditUndo);
       undoToolBar->addAction(EditorActions::GetInstance().actionEditRedo);
       addToolBar(undoToolBar);
-
-      selectionToolBar = new QToolBar(this);
-      selectionToolBar->setObjectName("SelectionToolBar");
-      selectionToolBar->setWindowTitle(tr("Selection Toolbar"));
-      selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionCamera);
-      selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionSelectActor);
-      selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionTranslateActor);
-      selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionRotateActor);
-      selectionToolBar->addAction(EditorActions::GetInstance().actionSelectionScaleActor);
-      addToolBar(selectionToolBar);
 
       mExternalToolsToolBar = new QToolBar(this);
       mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
@@ -314,12 +296,6 @@ namespace dtEditQt
       EditorActions::GetInstance().actionEditMapLibraries->setEnabled(hasBoth);
       EditorActions::GetInstance().actionEditTaskEditor->setEnabled(hasBoth);
 
-      EditorActions::GetInstance().actionSelectionCamera->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionSelectionSelectActor->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionSelectionTranslateActor->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionSelectionRotateActor->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionSelectionScaleActor->setEnabled(hasBoth);
-
       EditorActions::GetInstance().actionWindowsActorSearch->setEnabled(hasBoth);
       EditorActions::GetInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
       EditorActions::GetInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
@@ -335,7 +311,6 @@ namespace dtEditQt
       mainViewportParent->setEnabled(hasBoth);
       editMenu->setEnabled(hasBoth);
       windowMenu->setEnabled(hasBoth);
-      selectionMenu->setEnabled(hasBoth);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
