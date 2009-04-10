@@ -28,17 +28,17 @@
 #include <osg/MatrixTransform>
 
 namespace dtActors
-{
+{  
    //////////////////////////////////////////////////////////////////////////////
    /////////////////////////// BEGIN ACTOR //////////////////////////////////////
    //////////////////////////////////////////////////////////////////////////////
 
    //////////////////////////////////////////////////////////////////////////////
-   GameMeshActor::GameMeshActor(dtGame::GameActorProxy &proxy) :
-      dtGame::GameActor(proxy),
-      mAlreadyInScene(false),
-      mUseCache(true),
-      mModel(new dtCore::Model)
+   GameMeshActor::GameMeshActor(dtGame::GameActorProxy& proxy) 
+      : dtGame::GameActor(proxy)
+      , mAlreadyInScene(false)
+      , mUseCache(true)
+      , mModel(new dtCore::Model)
    {
       GetMatrixNode()->addChild(&mModel->GetMatrixTransform());
    }
@@ -49,7 +49,7 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetMesh(const std::string &meshFile)
+   void GameMeshActor::SetMesh(const std::string& meshFile)
    {
       // Make sure the mesh changed.
       if (mLoader.GetFilename() != meshFile)
@@ -81,7 +81,7 @@ namespace dtActors
 
          mMeshNode = model;
 
-         GetGameActorProxy().SetCollisionType( GetGameActorProxy().GetCollisionType() );
+         GetGameActorProxy().SetCollisionType(GetGameActorProxy().GetCollisionType());
       }
       else
       {
@@ -94,7 +94,6 @@ namespace dtActors
       // actor update.
       // if (mAlreadyInWorld)
       //    GetGameActorProxy().NotifyFullActorUpdate();
-
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -116,7 +115,7 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void GameMeshActor::SetScale(const osg::Vec3 &xyz)
+   void GameMeshActor::SetScale(const osg::Vec3& xyz)
    {
       mModel->SetScale(xyz);
    }
@@ -206,7 +205,7 @@ namespace dtActors
 
       dtGame::GameActorProxy::BuildPropertyMap();
 
-      GameMeshActor &myActor = static_cast<GameMeshActor &>(GetGameActor());
+      GameMeshActor& myActor = static_cast<GameMeshActor &>(GetGameActor());
 
       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
          "static mesh", "Static Mesh", dtDAL::MakeFunctor(myActor, &GameMeshActor::SetMesh),
@@ -243,27 +242,32 @@ namespace dtActors
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const dtDAL::ActorProxy::RenderMode &GameMeshActorProxy::GetRenderMode()
+   const dtDAL::ActorProxy::RenderMode& GameMeshActorProxy::GetRenderMode()
    {
-      dtDAL::ResourceDescriptor *resource = GetResource("static mesh");
+      dtDAL::ResourceDescriptor* resource = GetResource("static mesh");
       if (resource != NULL)
       {
          if (resource->GetResourceIdentifier().empty() || GetActor()->GetOSGNode() == NULL)
+         {
                return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
+         }
          else
+         {
                return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR;
+         }
       }
       else
          return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon *GameMeshActorProxy::GetBillBoardIcon()
+   dtDAL::ActorProxyIcon* GameMeshActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
+      {
          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH);
+      }
 
       return mBillBoardIcon.get();
    }
-
 }
