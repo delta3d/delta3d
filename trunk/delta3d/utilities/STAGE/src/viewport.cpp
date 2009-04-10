@@ -824,7 +824,7 @@ namespace dtEditQt
    void Viewport::onEndChangeTransaction()
    {
       inChangeTransaction = false;
-      ViewportManager::GetInstance().refreshAllViewports();
+//      ViewportManager::GetInstance().refreshAllViewports();
    }
 
 } // namespace dtEditQt
