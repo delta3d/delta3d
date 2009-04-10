@@ -78,11 +78,13 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(Viewport::InteractionMode);
+   const Viewport::InteractionMode Viewport::InteractionMode::NOTHING("NOTHING");
    const Viewport::InteractionMode Viewport::InteractionMode::CAMERA("CAMERA");
+   const Viewport::InteractionMode Viewport::InteractionMode::ACTOR("ACTOR");
    const Viewport::InteractionMode Viewport::InteractionMode::SELECT_ACTOR("SELECT_ACTOR");
-   const Viewport::InteractionMode Viewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
-   const Viewport::InteractionMode Viewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
-   const Viewport::InteractionMode Viewport::InteractionMode::SCALE_ACTOR("SCALE_ACTOR");
+   //const Viewport::InteractionMode Viewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
+   //const Viewport::InteractionMode Viewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
+   //const Viewport::InteractionMode Viewport::InteractionMode::SCALE_ACTOR("SCALE_ACTOR");
    ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -98,10 +100,11 @@ namespace dtEditQt
       , initialized(false)
       , enableKeyBindings(true)
       , mIsector(new dtCore::Isector())
+      , isMouseTrapped(false)
    {
       this->frameStamp = new osg::FrameStamp();
       this->mouseSensitivity = 10.0f;
-      this->interactionMode = &InteractionMode::CAMERA;
+      this->interactionMode = &InteractionMode::NOTHING;
       this->renderStyle = &RenderStyle::WIREFRAME;
 
       this->rootNodeGroup = new osg::Group();
@@ -112,7 +115,7 @@ namespace dtEditQt
       this->sceneView->setSceneData(this->rootNodeGroup.get());
       setOverlay(ViewportManager::GetInstance().getViewportOverlay());
 
-      setMouseTracking(false);
+      setMouseTracking(true);
       this->cacheMouseLocation = true;
 
       connect(&mTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -218,6 +221,11 @@ namespace dtEditQt
       }
 
       renderFrame();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Viewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
+   {
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -357,52 +365,21 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::pick(int x, int y)
    {
-      if (!this->mScene.valid())
-      {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
-               "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
-      }
-
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
       if (!currMap.valid() || getCamera()== NULL)
       {
          return;
       }
 
-      // Before we do any intersection tests, make sure the billboards are updated
-      // to reflect their orientation in this viewport.
-      getCamera()->update();
-      if (getAutoSceneUpdate())
-      {
-         updateActorProxyBillboards();
-      }
-
-      mIsector->Reset();
-      mIsector->SetScene( getScene());
       std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toSelect;
-      osg::Vec3 nearPoint, farPoint;
-      int yLoc = int(this->sceneView->getViewport()->height()-y);
 
-      this->sceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
-      mIsector->SetStartPosition(nearPoint);
-      mIsector->SetDirection(farPoint-nearPoint);
-
-      // If we found no intersections no need to continue so emit an empty selection
-      // and return.
-      if (!mIsector->Update())
+      dtCore::DeltaDrawable* drawable = getPickDrawable(x, y);
+      if (!drawable)
       {
          EditorEvents::GetInstance().emitActorsSelected(toSelect);
          return;
       }
 
-      if (mIsector->GetClosestDeltaDrawable()== NULL)
-      {
-         LOG_ERROR("Intersection query reported an intersection but returned an "
-               "invalid DeltaDrawable.");
-         return;
-      }
-
-      dtCore::DeltaDrawable* drawable = mIsector->GetClosestDeltaDrawable();
       ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
       ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
@@ -461,6 +438,56 @@ namespace dtEditQt
       }
 
       EditorEvents::GetInstance().emitActorsSelected(toSelect);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
+   {
+      if (!this->mScene.valid())
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
+            "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
+         return NULL;
+      }
+
+      dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+      if (!currMap.valid() || getCamera()== NULL)
+      {
+         return NULL;
+      }
+
+      // Before we do any intersection tests, make sure the billboards are updated
+      // to reflect their orientation in this viewport.
+      getCamera()->update();
+      if (getAutoSceneUpdate())
+      {
+         updateActorProxyBillboards();
+      }
+
+      mIsector->Reset();
+      mIsector->SetScene( getScene());
+      osg::Vec3 nearPoint, farPoint;
+      int yLoc = int(this->sceneView->getViewport()->height()-y);
+
+      this->sceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
+      mIsector->SetStartPosition(nearPoint);
+      mIsector->SetDirection(farPoint-nearPoint);
+
+      // If we found no intersections no need to continue so emit an empty selection
+      // and return.
+      if (!mIsector->Update())
+      {
+         return NULL;
+      }
+
+      if (mIsector->GetClosestDeltaDrawable()== NULL)
+      {
+         LOG_ERROR("Intersection query reported an intersection but returned an "
+            "invalid DeltaDrawable.");
+         return NULL;
+      }
+
+      return mIsector->GetClosestDeltaDrawable();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -528,11 +555,13 @@ namespace dtEditQt
       QPoint center((x()+width())/2, (y()+height())/2);
       lastMouseUpdateLocation = center;
       QCursor::setPos(mapToGlobal(center));
+      isMouseTrapped = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::releaseMouseCursor(const QPoint& mousePosition)
    {
+      isMouseTrapped = false;
       setCursor(this->oldMouseCursor);
 
       if (mousePosition.x() != -1 && mousePosition.y() != -1)
@@ -566,25 +595,27 @@ namespace dtEditQt
 
       onMouseMoveEvent(e, dx, dy);
 
-      QPoint center((x()+width())/2, (y()+height())/2);
+      QPoint mousePos = e->pos();
 
-      float dxCenter = std::abs(float(e->pos().x() - center.x()));
-      float dyCenter = std::abs(float(e->pos().y() - center.y()));
+      if (isMouseTrapped)
+      {
+         QPoint center((x()+width())/2, (y()+height())/2);
 
-      if (dxCenter > (width()/2) || dyCenter > (height()/2))
-      {
-         // Moving the mouse back to the center makes the movement recurse
-         // so this is a flag to prevent the recursion
-         mouseMoving = true;
-         QCursor::setPos(mapToGlobal(center));
-         lastMouseUpdateLocation = center;
-         mouseMoving = false;
+         float dxCenter = std::abs(float(e->pos().x() - center.x()));
+         float dyCenter = std::abs(float(e->pos().y() - center.y()));
+
+         if (dxCenter > (width()/2) || dyCenter > (height()/2))
+         {
+            // Moving the mouse back to the center makes the movement recurse
+            // so this is a flag to prevent the recursion
+            mouseMoving = true;
+            QCursor::setPos(mapToGlobal(center));
+            mousePos = center;
+            mouseMoving = false;
+         }
       }
-      else
-      {
-         lastMouseUpdateLocation.setX(e->pos().x());
-         lastMouseUpdateLocation.setY(e->pos().y());
-      }
+
+      lastMouseUpdateLocation = mousePos;
 
       refresh();
    }
@@ -605,48 +636,11 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::setCameraMode()
-   {
-      this->interactionMode = &InteractionMode::CAMERA;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::setActorSelectMode()
-   {
-      this->interactionMode = &InteractionMode::SELECT_ACTOR;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::setActorTranslateMode()
-   {
-      this->interactionMode = &InteractionMode::TRANSLATE_ACTOR;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::setActorRotateMode()
-   {
-      this->interactionMode = &InteractionMode::ROTATE_ACTOR;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::setActorScaleMode()
-   {
-      this->interactionMode = &InteractionMode::SCALE_ACTOR;
-   }
-
-
-   ///////////////////////////////////////////////////////////////////////////////
    void Viewport::connectInteractionModeSlots()
    {
       // Connect the global actions we want to track.
       EditorActions& ga = EditorActions::GetInstance();
       EditorEvents&  ge = EditorEvents::GetInstance();
-
-      connect(ga.actionSelectionCamera,         SIGNAL(triggered()), this, SLOT(setCameraMode()));
-      connect(ga.actionSelectionSelectActor,    SIGNAL(triggered()), this, SLOT(setActorSelectMode()));
-      connect(ga.actionSelectionTranslateActor, SIGNAL(triggered()), this, SLOT(setActorTranslateMode()));
-      connect(ga.actionSelectionRotateActor,    SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
-      connect(ga.actionSelectionScaleActor,     SIGNAL(triggered()), this, SLOT(setActorScaleMode()));
 
       connect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)),          this, SLOT(onGotoActor(ActorProxyRefPtr)));
       connect(&ge, SIGNAL(gotoPosition(double, double, double)), this, SLOT(onGotoPosition(double,double,double)));
@@ -661,42 +655,7 @@ namespace dtEditQt
       EditorActions &ga = EditorActions::GetInstance();
       EditorEvents  &ge = EditorEvents::GetInstance();
 
-      disconnect(ga.actionSelectionCamera,         SIGNAL(triggered()), this, SLOT(setCameraMode()));
-      disconnect(ga.actionSelectionSelectActor,    SIGNAL(triggered()), this, SLOT(setActorSelectMode()));
-      disconnect(ga.actionSelectionTranslateActor, SIGNAL(triggered()), this, SLOT(setActorTranslateMode()));
-      disconnect(ga.actionSelectionRotateActor,    SIGNAL(triggered()), this, SLOT(setActorRotateMode()));
-      disconnect(ga.actionSelectionScaleActor,     SIGNAL(triggered()), this, SLOT(setActorScaleMode()));
-
       disconnect(&ge, SIGNAL(gotoActor(ActorProxyRefPtr)), this, SLOT(onGotoActor(ActorProxyRefPtr)));
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void Viewport::syncWithModeActions()
-   {
-      if (this->useAutoInteractionMode)
-      {
-         QAction* action = EditorActions::GetInstance().modeToolsGroup->checkedAction();
-         if (action == EditorActions::GetInstance().actionSelectionCamera)
-         {
-            setCameraMode();
-         }
-         else if (action == EditorActions::GetInstance().actionSelectionSelectActor)
-         {
-            setActorSelectMode();
-         }
-         else if (action == EditorActions::GetInstance().actionSelectionTranslateActor)
-         {
-            setActorTranslateMode();
-         }
-         else if (action == EditorActions::GetInstance().actionSelectionRotateActor)
-         {
-            setActorRotateMode();
-         }
-         else if (action == EditorActions::GetInstance().actionSelectionScaleActor)
-         {
-            setActorScaleMode();
-         }
-      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

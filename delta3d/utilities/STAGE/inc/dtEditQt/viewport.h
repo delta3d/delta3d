@@ -36,6 +36,7 @@
 
 #include <map>
 
+#include <dtABC/application.h>
 #include <osgUtil/SceneView>
 #include <dtCore/base.h>
 #include <dtCore/system.h>
@@ -46,6 +47,7 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
+#include <dtCore/objectmotionmodel.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -115,11 +117,22 @@ namespace dtEditQt
         {
             DECLARE_ENUM(InteractionMode);
         public:
+
+            /**
+            * Default interaction mode when mouse buttons are not pressed.
+            */
+            static const InteractionMode NOTHING;
+
             /**
              * If in this mode, user input is translated into camera movement,
              * thus allowing the user to navigate the current scene.
              */
             static const InteractionMode CAMERA;
+
+            /**
+            * This mode allows selected actors to be moved.
+            */
+            static const InteractionMode ACTOR;
 
             /**
              * This mode allows the user to select actor(s) in the scene.  When
@@ -132,19 +145,19 @@ namespace dtEditQt
              * This mode allows the selected actor(s) to be repositioned in the
              * scene by using the mouse and dragging them to a new position.
              */
-            static const InteractionMode TRANSLATE_ACTOR;
+            //static const InteractionMode TRANSLATE_ACTOR;
 
             /**
              * This mode allows the selected actor(s) to be rotated about own
              * local axis or pivot point.
              */
-            static const InteractionMode ROTATE_ACTOR;
+            //static const InteractionMode ROTATE_ACTOR;
 
             /**
              * This mode allows the selected actor(s) to be either uniformly scaled,
              * or scaled along either the X,Y or Z axis.
              */
-            static const InteractionMode SCALE_ACTOR;
+            //static const InteractionMode SCALE_ACTOR;
 
         private:
             InteractionMode(const std::string &name) : dtUtil::Enumeration(name)
@@ -240,6 +253,16 @@ namespace dtEditQt
         virtual void pick(int x, int y);
 
         /**
+        * Projects the 2D window coordinates into the current scene and determines
+        * if a ray whose origin is at the projected point intersects any actors
+        * in the current scene.  Window coordinates are such that the origin is
+        * in the upper left corner of the window.
+        * @param x Horizonal window coordinate.
+        * @param y Vertical window coordinate.
+        */
+        dtCore::DeltaDrawable* getPickDrawable(int x, int y);
+
+        /**
          * After each mouse move event, this method will reset the cursor position to
          * the center of the viewport.  This is useful for tracking mouse delta movements
          * when the actual position of the mouse cursor is not relavent.
@@ -258,7 +281,7 @@ namespace dtEditQt
          * Sets the scene to be rendered by this viewport.
          * @param scene The new scene to be rendered.
          */
-        void setScene(dtCore::Scene *scene);
+        virtual void setScene(dtCore::Scene *scene);
 
         /**
          * Gets the scene currently being rendered by this viewport.
@@ -347,6 +370,13 @@ namespace dtEditQt
         }
 
         /**
+        * Sets the current interaction mode.
+        */
+        void setInteractionMode(const InteractionMode& mode){
+           this->interactionMode = &mode;
+        }
+
+        /**
          * Returns whether or not the viewport has been initialized.
          * @return True if the viewport has been initialized.
          */
@@ -355,9 +385,16 @@ namespace dtEditQt
         }
 
         /**
+        * Refreshes the viewport with a new set of selected actors.
+        *
+        * @param[in]  actors  The list of all actors being selected.
+        */
+        virtual void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
+
+        /**
          * Tells the viewport to repaint itself.
          */
-        void refresh();
+        virtual void refresh();
 
         /**
          * Sets the background color of this viewport.
@@ -367,20 +404,6 @@ namespace dtEditQt
         void setClearColor(const osg::Vec4 &color);
 
     public slots:
-        ///Sets the current interaction mode to CAMERA.
-        void setCameraMode();
-
-        ///Sets the current interation mode to SELECT_ACTOR.
-        void setActorSelectMode();
-
-        ///Sets the current interaction mode to TRANSLATE_ACTOR.
-        void setActorTranslateMode();
-
-        ///Sets the current interaction mode to ROTATE_ACTOR.
-        void setActorRotateMode();
-
-        ///Sets the current interaction mode to SCALE_ACTOR.
-        void setActorScaleMode();
 
         ///Moves the camera such that the actor is clearly visible.
         void onGotoActor(ActorProxyRefPtr proxy);
@@ -466,12 +489,6 @@ namespace dtEditQt
         virtual void disconnectInteractionModeSlots();
 
         /**
-         * Makes sure the current interaction mode is in sync with the active action
-         * object in EditorActions.
-         */
-        void syncWithModeActions();
-
-        /**
          * Updates a property on the current actor selection.
          * @param propName The name of the property to update.
          * @note
@@ -529,6 +546,9 @@ namespace dtEditQt
          */
         bool inChangeTransaction;
 
+    protected:
+        osg::Group* GetRootNode() {return this->rootNodeGroup.get();}
+
     private:
         ///Sets up the initial render state of this viewport.
         void setupInitialRenderState();
@@ -551,6 +571,7 @@ namespace dtEditQt
         QCursor oldMouseCursor;
         QPoint oldMouseLocation;
         bool cacheMouseLocation;
+        bool isMouseTrapped;
 
         QPoint lastMouseUpdateLocation;
         QTimer mTimer;

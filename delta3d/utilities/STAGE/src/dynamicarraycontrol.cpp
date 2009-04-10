@@ -206,10 +206,13 @@ namespace dtEditQt
    {
       int childCount = getChildCount();
       int size = mProperty->GetArraySize();
+      bool dataChanged = false;
 
       PropertyEditorModel* model = getModel();
       if (model)
       {
+         std::string oldValue = mProperty->ToString();
+
          // If we are removing, clear all the children and then add the proper amount back.
          // This is done so all items will be refreshed.
          if (size < childCount || forceRefresh)
@@ -245,12 +248,22 @@ namespace dtEditQt
                UpdateButtonStates();
             }
          }
+
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, mProperty,
+            oldValue, mProperty->ToString());
+
+         dataChanged = true;
       }
 
       // update our label
       if (mTextLabel !=  NULL) 
       {
          mTextLabel->setText(getValueAsString());
+      }
+
+      if (dataChanged)
+      {
+         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       }
    }
 
@@ -267,7 +280,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::onAddClicked()
    {
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Insert(mProperty->GetArraySize());
       resizeChildren();
@@ -276,7 +288,6 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void DynamicArrayControl::onClearClicked()
    {
-      EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
       NotifyParentOfPreUpdate();
       mProperty->Clear();
       resizeChildren();

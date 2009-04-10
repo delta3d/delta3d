@@ -199,21 +199,6 @@ namespace dtEditQt
          // Action - Project - Change project context.
          //QAction *actionProjectChangeContext;
 
-         // Selection - Camera - Puts the editor viewports into camera mode.
-         QAction *actionSelectionCamera;
-
-         // Selection - Translate - Puts the editor viewports in translate actor mode.
-         QAction *actionSelectionTranslateActor;
-
-         // Selection - Rotate - Puts the editor viewports in translate actor mode.
-         QAction *actionSelectionRotateActor;
-
-         // Selection - Scale - Puts the editor viewports in scale actor mode.
-         QAction *actionSelectionScaleActor;
-
-         // Selection - Pick - Puts the editor viewports in select actor mode.
-         QAction *actionSelectionSelectActor;
-
          // Action - Property Editor - Hides/Brings back the property editor window
          QAction *actionWindowsPropertyEditor;
 
@@ -225,9 +210,6 @@ namespace dtEditQt
 
          // Action - Reset Windows - Resets the docking windows to a default state
          QAction *actionWindowsResetWindows; 
-
-         // Since mode tools are mutually exclusive, add them to a group..
-         QActionGroup *modeToolsGroup;
 
          // Add a new external tool
          QAction *actionAddTool;
@@ -438,7 +420,6 @@ signals:
 
          void setupFileActions();
          void setupEditActions();
-         void setupSelectionActions();
          void SetupToolsActions();
          void setupHelpActions();
          void setupWindowActions();

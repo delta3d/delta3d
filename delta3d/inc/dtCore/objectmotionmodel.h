@@ -41,7 +41,6 @@
 
 namespace dtCore
 {
-   class Keyboard;
    class Mouse;
 
    /**
@@ -179,17 +178,6 @@ namespace dtCore
          void SetSnapRotation(float degrees);
 
          /**
-         * Sets the current mouse position.
-         * Should only use this if Delta3D is not receiving a regular tick update.
-         *
-         * @param[in]  pos            The position of the mouse (must be in delta normalized format -1 to 1).
-         *
-         * @return                    Returns true if the mouse is locked or hovering
-         *                            a widget that belongs to the motion model.
-         */
-         bool SetMousePosition(osg::Vec2 pos);
-
-         /**
          * Gets the current position of the mouse.
          *
          * @return    The position of the mouse.
@@ -227,9 +215,23 @@ namespace dtCore
           */
          void OnMessage(MessageData* data);
 
-      protected:
+         /**
+         * Updates the motion model.
+         * Should only use this if Delta3D is not receiving a regular tick update.
+         *
+         * @param[in]  pos  The current position of the mouse.
+         *
+         * @return          Returns true if the mouse is locked or hovering
+         *                  a widget that belongs to the motion model.
+         */
+         bool Update(osg::Vec2 pos);
 
-      private:
+         /**
+         * Updates position the motion model widgets.
+         */
+         void UpdateWidgets(void);
+
+      protected:
 
          /**
          * Initialize our three Axes arrows.
@@ -257,21 +259,32 @@ namespace dtCore
          osg::Vec3 GetMouseVector(osg::Vec2 mousePos);
 
          /**
-         * Converts a 3D object position to window screen coordinates.
-         */
-         osg::Vec2 ObjectToScreenCoords(osg::Vec3 objectPosition);
-
-         /**
          * Does a collision test to see if the mouse has picked
          * one of the widgets of this motion model.
          * mMotionType and mHoverArrow will be set to
          * the proper types based on collision.
          *
-         * @param[in]  mousePos  The position of the mouse.
-         *
-         * @return               The drawable widget that was picked.
+         * @return  The drawable widget that was picked.
          */
-         dtCore::DeltaDrawable* MousePick(osg::Vec2 mousePos);
+         dtCore::DeltaDrawable* MousePick(void);
+
+         /**
+         * Calculates the 3D collision line that represents the mouse.
+         *
+         * @param[in]  mousePos  The position of the mouse in screen coords.
+         * @param[in]  start     The start position of the line.
+         * @param[in]  end       The end position of the line.
+         */
+         virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+
+         /**
+         * Calculates the screen coordinates of a 3d position in the world.
+         *
+         * @param[in]  objectPos  The position of the object in 3d space.
+         *
+         * @return                The position of the object in screen coords.
+         */
+         virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
          /**
          * Tests if a given delta drawable belongs to this motion model.
@@ -295,6 +308,28 @@ namespace dtCore
          void UpdateTranslation(void);
          void UpdateRotation(void);
          void UpdateScale(void);
+
+         /**
+         * This callback handles the actual translation of the target.
+         *
+         * @param[in]  delta  The amount of translation to be performed.
+         */
+         virtual void OnTranslate(osg::Vec3 delta);
+
+         /**
+         * This callback handles the actual rotation of the target.
+         *
+         * @param[in]  delta  The amount of rotation to apply.
+         * @param[in]  axis   The axis of rotation.
+         */
+         virtual void OnRotate(float delta, osg::Vec3 axis);
+
+         /**
+         * This callback handles the action scale of the target.
+         *
+         * @param[in]  delta  The amount of scale to apply.
+         */
+         virtual void OnScale(osg::Vec3 delta);
 
          struct ArrowData
          {
@@ -324,8 +359,8 @@ namespace dtCore
 
          dtCore::RefPtr<dtCore::Transformable>     mTargetTransform;
 
-         ArrowData   mArrows[ARROW_TYPE_MAX];
-         float       mScale;
+         ArrowData       mArrows[ARROW_TYPE_MAX];
+         float           mScale;
 
          dtCore::View*   mView;
          osg::Group*     mSceneNode;
@@ -334,6 +369,7 @@ namespace dtCore
          dtCore::Camera* mCamera;
 
          osg::Vec2       mMousePos;
+         bool            mIsPixelMousePos;
 
          CoordinateSpace mCoordinateSpace;
          MotionType      mMotionType;

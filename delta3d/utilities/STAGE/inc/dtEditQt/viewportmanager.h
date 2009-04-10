@@ -98,6 +98,13 @@ namespace dtEditQt
             QWidget* parent = NULL);
 
         /**
+        * Gets a handle to the master view.
+        */
+        dtCore::View* getMasterView() {
+           return this->mMasterView.get();
+        }
+
+        /**
          * Gets a handle to the master scene.  Once the handle is retrieved, use it to
          * add/remove objects from the scene.
          * @return A pointer to the master scene.
@@ -199,6 +206,13 @@ namespace dtEditQt
          * to be refreshed, and the viewports to be updated.
          */
         void onCurrentMapChanged();
+
+        /**
+        * Refreshes viewports with a new set of selected actors.
+        *
+        * @param[in]  actors  The list of all actors being selected.
+        */
+        void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
 
         /**
          * Causes a redraw of all viewports that are connected to the viewport manager
