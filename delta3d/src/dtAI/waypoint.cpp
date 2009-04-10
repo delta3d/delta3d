@@ -29,6 +29,7 @@
 
 namespace dtAI
 {
+   /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint()
       : mID(0)
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
@@ -38,11 +39,13 @@ namespace dtAI
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint(const WaypointActor* pActor)
    {
       Set(pActor);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint(const osg::Vec3& pPos)
       : mID(0)
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
@@ -52,20 +55,24 @@ namespace dtAI
       mPosition = pPos;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    Waypoint::~Waypoint()
    {
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool Waypoint::operator==(const Waypoint& pWay) const
    {
       return dtUtil::Equivalent(mPosition, pWay.mPosition);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool Waypoint::operator!=(const Waypoint& pWay) const
    {
       return !(operator==(pWay));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::Set(const WaypointActor* pActor)
    {
       osg::Matrix tranform = pActor->GetMatrixNode()->getMatrix();
@@ -74,33 +81,39 @@ namespace dtAI
       mPosition[2] = tranform(3,2);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3& Waypoint::GetPosition() const
    {
       return mPosition;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::SetPosition(const osg::Vec3& pVec)
    {
       mPosition = pVec;
    }
 
-   void Waypoint::SetID( WaypointID ID )
+   /////////////////////////////////////////////////////////////////////////////
+   void Waypoint::SetID(WaypointID ID)
    {
       mID = ID;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    dtAI::WaypointID Waypoint::GetID() const
    {
       return mID;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::SetRenderFlag(RenderFlag rf) const
    {
       mRenderFlag = rf;
       SetColorFromRenderFlag();
    }
 
-   void Waypoint::SetColor(const osg::Vec3 &color) const
+   /////////////////////////////////////////////////////////////////////////////
+   void Waypoint::SetColor(const osg::Vec3& color) const
    {
       mColor = color;
 
@@ -109,11 +122,13 @@ namespace dtAI
       mRenderFlag = RENDER_CUSTOM;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Vec3& Waypoint::GetColor() const
    {
       return mColor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::SetGradient(float pGradient) const
    {
       mGradient = pGradient;
@@ -128,21 +143,25 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float Waypoint::GetGradient() const
    {
       return mGradient;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::SetAlpha(float newAlpha) const
    {
       mAlpha = newAlpha;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    float Waypoint::GetAlpha() const
    {
       return mAlpha;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void Waypoint::SetColorFromRenderFlag() const
    {
       switch (mRenderFlag)
@@ -176,5 +195,7 @@ namespace dtAI
          LOG_WARNING("Trying to set unknown render flag.");
       }
    }
+
+   /////////////////////////////////////////////////////////////////////////////
 
 } // namespace dtAI
