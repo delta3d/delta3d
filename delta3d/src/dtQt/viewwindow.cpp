@@ -108,7 +108,7 @@ ViewWindow::ViewWindow(bool drawOnSeparateThread, QWidget* parent,
    , mThreadGLContext(NULL)
    , mDrawOnSeparateThread(drawOnSeparateThread)
 {
-   mTimer.setInterval(10);
+   mTimer.setInterval(0);
    setAutoBufferSwap(!drawOnSeparateThread);
 
    // This enables us to track mouse movement even when
