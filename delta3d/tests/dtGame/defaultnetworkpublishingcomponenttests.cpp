@@ -77,6 +77,8 @@ namespace dtGame
          CPPUNIT_TEST(TestUpdateActor);
          CPPUNIT_TEST(TestDeleteActor);
          CPPUNIT_TEST(TestUpdateUnpublishedActor);
+         CPPUNIT_TEST(TestAdditionalTypesToPublishAddRemove);
+         CPPUNIT_TEST(TestAdditionalTypesToPublishFunction);
 
       CPPUNIT_TEST_SUITE_END();
 
@@ -88,6 +90,8 @@ namespace dtGame
       void TestUpdateActor();
       void TestDeleteActor();
       void TestUpdateUnpublishedActor();
+      void TestAdditionalTypesToPublishAddRemove();
+      void TestAdditionalTypesToPublishFunction();
 
    private:
 
@@ -178,6 +182,53 @@ namespace dtGame
       CPPUNIT_ASSERT(createMessage != NULL);
       CPPUNIT_ASSERT(createMessage->GetMessageType() == MessageType::INFO_ACTOR_CREATED);
       CPPUNIT_ASSERT_EQUAL(createMessage->GetAboutActorId(), mGameActorProxy->GetId());
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DefaultNetworkPublishingComponentTests::TestAdditionalTypesToPublishAddRemove()
+   {
+      CPPUNIT_ASSERT(!mNetPubComp->PublishesAdditionalMessageType(MessageType::INFO_ACTOR_UPDATED));
+      CPPUNIT_ASSERT(!mNetPubComp->PublishesAdditionalMessageType(MessageType::INFO_GAME_EVENT));
+      mNetPubComp->AddMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
+      CPPUNIT_ASSERT(mNetPubComp->PublishesAdditionalMessageType(MessageType::INFO_GAME_EVENT));
+      mNetPubComp->RemoveMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
+      CPPUNIT_ASSERT(!mNetPubComp->PublishesAdditionalMessageType(MessageType::INFO_GAME_EVENT));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void DefaultNetworkPublishingComponentTests::TestAdditionalTypesToPublishFunction()
+   {
+      mNetPubComp->AddMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
+      dtCore::RefPtr<GameEventMessage> gaMsg;
+      mGameManager->GetMessageFactory().CreateMessage(MessageType::INFO_GAME_EVENT, gaMsg);
+      mGameManager->SendMessage(*gaMsg);
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_EQUAL(1U, unsigned(mTestComp->GetReceivedDispatchNetworkMessages().size()));
+      CPPUNIT_ASSERT(mTestComp->FindDispatchNetworkMessageOfType(MessageType::INFO_GAME_EVENT).valid());
+
+      mTestComp->reset();
+
+      dtCore::RefPtr<MachineInfo> mi = new MachineInfo("some other info");
+      gaMsg->SetSource(*mi);
+      mGameManager->SendMessage(*gaMsg);
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_MESSAGE("The message should not have been published because it had the wrong machine info",
+               mTestComp->GetReceivedDispatchNetworkMessages().empty());
+
+      mTestComp->reset();
+
+      gaMsg->SetSource(mGameManager->GetMachineInfo());
+      mNetPubComp->RemoveMessageTypeToPublish(MessageType::INFO_GAME_EVENT);
+      mGameManager->SendMessage(*gaMsg);
+      dtCore::System::GetInstance().Step();
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_MESSAGE("The message should not have been published because the type was removed from the list",
+               mTestComp->GetReceivedDispatchNetworkMessages().empty());
    }
 
    //////////////////////////////////////////////////////////////////////////

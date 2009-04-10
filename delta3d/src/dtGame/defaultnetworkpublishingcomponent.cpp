@@ -30,15 +30,18 @@ namespace dtGame
 {
    const std::string DefaultNetworkPublishingComponent::DEFAULT_NAME = "DefaultNetworkPublishingComponent";
 
+   /////////////////////////////////////////////
    DefaultNetworkPublishingComponent::DefaultNetworkPublishingComponent(const std::string& name) : GMComponent(name)
    {
       mLogger = &dtUtil::Log::GetInstance("defaultnetworkpublishingcomponent.cpp");
    }
 
+   /////////////////////////////////////////////
    DefaultNetworkPublishingComponent::~DefaultNetworkPublishingComponent()
    {
    }
 
+   /////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessMessage(const Message &msg)
    {
       if (GetGameManager() == NULL)
@@ -67,6 +70,10 @@ namespace dtGame
             if (ga != NULL && ga->IsPublished())
                ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
          }
+         else if (PublishesAdditionalMessageType(msg.GetMessageType()))
+         {
+            GetGameManager()->SendNetworkMessage(msg);
+         }
          else
          {
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -77,10 +84,11 @@ namespace dtGame
       }
       else
       {
-         ProcessUnhandledRemoteMessage(msg);  
+         ProcessUnhandledRemoteMessage(msg);
       }
    }
 
+   /////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::DispatchNetworkMessage(const Message &msg)
    {
       if (GetGameManager() == NULL)
@@ -90,36 +98,55 @@ namespace dtGame
       }
    }
 
-   void DefaultNetworkPublishingComponent::ProcessPublishActor(const ActorPublishedMessage &msg, GameActorProxy& gap)
+   /////////////////////////////////////////////
+   bool DefaultNetworkPublishingComponent::PublishesAdditionalMessageType(const MessageType& type) const
+   {
+      return mMessageTypesToPublish.find(&type) != mMessageTypesToPublish.end();
+   }
+
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::AddMessageTypeToPublish(const MessageType& type)
+   {
+      mMessageTypesToPublish.insert(&type);
+   }
+
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::RemoveMessageTypeToPublish(const MessageType& type)
+   {
+      std::set<const MessageType*>::iterator i = mMessageTypesToPublish.find(&type);
+      if (i != mMessageTypesToPublish.end())
+      {
+         mMessageTypesToPublish.erase(i);
+      }
+   }
+
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::ProcessPublishActor(const ActorPublishedMessage& msg, GameActorProxy& gap)
    {
       dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
       gap.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
       GetGameManager()->SendNetworkMessage(*newMsg);
    }
 
-   void DefaultNetworkPublishingComponent::ProcessDeleteActor(const ActorDeletedMessage &msg)
-   {
-      try
-      {
-         GetGameManager()->SendNetworkMessage(msg);
-      }
-      catch (const dtUtil::Exception& ex)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-            "Exception trying to clone a delete message: ", ex.What().c_str());
-      }
-   }
-
-   void DefaultNetworkPublishingComponent::ProcessUpdateActor(const ActorUpdateMessage &msg)
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::ProcessDeleteActor(const ActorDeletedMessage& msg)
    {
       GetGameManager()->SendNetworkMessage(msg);
    }
 
-   void DefaultNetworkPublishingComponent::ProcessUnhandledLocalMessage(const Message &msg)
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::ProcessUpdateActor(const ActorUpdateMessage& msg)
+   {
+      GetGameManager()->SendNetworkMessage(msg);
+   }
+
+   /////////////////////////////////////////////
+   void DefaultNetworkPublishingComponent::ProcessUnhandledLocalMessage(const Message& msg)
    {
 
    }
 
+   /////////////////////////////////////////////
    void DefaultNetworkPublishingComponent::ProcessUnhandledRemoteMessage(const Message &msg)
    {
 

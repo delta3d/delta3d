@@ -6,7 +6,7 @@
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -58,6 +58,13 @@ namespace dtGame
           */
          virtual void DispatchNetworkMessage(const Message &msg);
 
+         /// @return true if the given type has been added a type to publish, aside from the default behavior.
+         bool PublishesAdditionalMessageType(const MessageType& type) const;
+         /// Adds a message type to publish over the network.
+         void AddMessageTypeToPublish(const MessageType& type);
+         /// Removes a message type to publish over the network.
+         void RemoveMessageTypeToPublish(const MessageType& type);
+
       protected:
 
          /// Destructor
@@ -67,34 +74,35 @@ namespace dtGame
           * Processes an incoming actor published message
           * @param The message
           */
-         virtual void ProcessPublishActor(const ActorPublishedMessage &msg, GameActorProxy& gap);
+         virtual void ProcessPublishActor(const ActorPublishedMessage& msg, GameActorProxy& gap);
 
          /**
           * Processes an incoming actor deleted message
           * @param The message
           */
-         virtual void ProcessDeleteActor(const ActorDeletedMessage &msg);
+         virtual void ProcessDeleteActor(const ActorDeletedMessage& msg);
 
          /**
           * Processes an incoming actor update message
           * @param The message
           */
-         virtual void ProcessUpdateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessUpdateActor(const ActorUpdateMessage& msg);
 
          /**
           * Processes an unhandled local message
           * @param The message
           */
-         virtual void ProcessUnhandledLocalMessage(const Message &msg);
+         virtual void ProcessUnhandledLocalMessage(const Message& msg);
 
          /**
           * Processes an unhandled remote message
           * @param The message
           */
-         virtual void ProcessUnhandledRemoteMessage(const Message &msg);
+         virtual void ProcessUnhandledRemoteMessage(const Message& msg);
 
          dtUtil::Log* mLogger;
       private:
+         std::set<const MessageType*> mMessageTypesToPublish;
    };
 }
 
