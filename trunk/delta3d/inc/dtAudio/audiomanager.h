@@ -407,7 +407,9 @@ namespace dtAudio
                                           ///prior to a system-wide pause message
 
       ALCdevice*          mDevice;
-      ALCcontext*         mContext;      
+      ALCcontext*         mContext;
+
+      std::queue<dtCore::RefPtr<Sound>>  mSoundRecycle;  ///effort to save memory.
    };
 };
 

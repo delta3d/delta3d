@@ -152,6 +152,11 @@ AudioManager::~AudioManager()
    mBufferMap.clear();
    mSoundList.clear();
 
+   while (mSoundRecycle.size())
+   {
+      mSoundRecycle.pop();
+   }
+
    //close context and device in case they were not opened by ALUT
    CloseContext();
    CloseDevice();
@@ -396,7 +401,16 @@ void AudioManager::OnMessage(MessageData* data)
 Sound* AudioManager::NewSound()
 {
    CheckForError(ERROR_CLEARING_STRING, __FUNCTION__, __LINE__);
-   SOB_PTR snd(NULL);
+   SOB_PTR snd(NULL);   
+
+   // first look if we can recycle a Sound (memory saver)
+   if (!mSoundRecycle.empty())
+   {
+      snd = mSoundRecycle.front();
+      assert(snd.get());
+      
+      mSoundRecycle.pop();
+   }
 
    // create a new sound object if we don't have one
    if (snd.get() == NULL)
@@ -427,7 +441,7 @@ void AudioManager::FreeSound(Sound* sound)
    }
 
    // remove sound from list
-   SND_LST::iterator iter;
+   SND_LST::iterator iter;   
    for (iter = mSoundList.begin(); iter != mSoundList.end(); ++iter)
    {
       if (snd != *iter)
@@ -439,14 +453,19 @@ void AudioManager::FreeSound(Sound* sound)
       break;
    }
 
-   // stop listening to this guys messages
+   // stop listening to this guy's messages
    snd->RemoveSender(this);
    snd->RemoveSender(&dtCore::System::GetInstance());
-   RemoveSender(snd.get());
+   RemoveSender(snd.get());   
+   
+   if (snd->IsInitialized())
+   {
+      // free the sound's source and buffer
+      UnloadSound(snd.get());
+   }   
 
-   // free the sound's source and buffer
-   UnloadSound(snd.get());
-   snd->Clear();
+   //Put the Sound in the recycle queue
+   mSoundRecycle.push(snd);   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -815,7 +834,7 @@ bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessag
    if (alIsSource(src))
    {
       // NOTE: Deleting the buffer will fail if the sound source is still
-      // playing and thus result in a very sound memory leak and potentially
+      // playing and thus result in a very bad memory leak and potentially
       // mess up the the use of the sources for sounds; sources that should
       // have been freed will essentially become locked.
       //
@@ -824,13 +843,8 @@ bool AudioManager::ReleaseSoundSource(Sound& snd, const std::string& errorMessag
       snd.StopImmediately();
       snd.RewindImmediately();
       snd.SetLooping(false);
-
-      //Also ensure the sound's buffer is set to nothing:
-      snd.SetBuffer(AL_NONE);
-
-      // Free the source now so that the buffer can delete properly.
-      snd.SetSource(AL_NONE);
-      alDeleteSources(1L, &src);
+      
+      snd.Clear();
 
       // Determine if OpenAL has encountered an error.
       success = CheckForError(errorMessage, callerFunctionName, callerFunctionLineNum);
