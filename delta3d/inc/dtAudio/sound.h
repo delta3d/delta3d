@@ -532,7 +532,7 @@ namespace dtAudio
          unsigned int            mCommandState;
 
          ALuint                  mSource;
-         ALint                   mBuffer;
+         ALuint                  mBuffer;
          bool                    mIsInitialized;
    };
 } // namespace dtAudio
