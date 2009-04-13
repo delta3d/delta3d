@@ -133,6 +133,7 @@ bool TestSoundApp::KeyPressed(const dtCore::Keyboard* keyboard, int key)
 }
 
 
+
 /**
  * Call back to know when a sound has started.
  *
@@ -165,15 +166,14 @@ TestSoundApp::SoundStoppedCB(dtAudio::Sound* sound, void* param)
    Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
       " \"%s\" has stopped", sound->GetFilename());
 
-   // don't free the one sound the app is holding on to
-   // (the "cached" sound)
+   // don't free the one sound the app is holding
    if (sound == static_cast<TestSoundApp*>(param)->mSound)
    {
       return;
    }
 
-   // free this sound   
-   AudioManager::GetInstance().FreeSound(sound);   
+   // free all other sounds
+   AudioManager::GetInstance().FreeSound(sound);
 }
 
 /**
