@@ -228,20 +228,9 @@ void Sound::Clear()
 {
    mFilename = "";
 
-   if (alIsBuffer(mBuffer))
-   {
-      //OTHER SOURCES could be using this buffer 
-      //alDeleteBuffers(1, &mBuffer);      
-      mBuffer = AL_NONE;      
-   }
+   //DON'T clear the source ID!  We can reuse it!
+   //mSource     = 0;
 
-   if (alIsSource(mSource))
-   {
-      alDeleteSources(1, &mSource);      
-      mSource = AL_NONE;      
-   }   
-
-   //clean out command queue
    while (mCommand.size())
    {
       mCommand.pop();
@@ -258,12 +247,6 @@ void Sound::Clear()
    {
       GetParent()->RemoveChild(this);
    }
-
-   // This code was previously depended solely on mSource = AL_NONE;
-   // However, since 0 is a valid source that OpenAL can assign,
-   // we cannot enforce that a source of 0 means we "have no source".
-   // Instead, we reset it's initialized state.
-   SetInitialized(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -289,6 +272,11 @@ void Sound::RunAllCommandsInQueue()
       }
       else if (nextCmd == kCommand[STOP])
       {
+         if (mStopCB)
+         {
+            mStopCB(static_cast<Sound*>(this), mStopCBData);
+         }
+
          StopImmediately();
       }
    }
@@ -342,12 +330,21 @@ bool Sound::IsListenerRelative() const
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::SetBuffer(ALint b)
 {
-   if (b == 0 || b == AL_NONE)
-   {      
+   if (b == 0)
+   {
       // assume user is resetting buffer
-      SetInitialized(false);
       return;
    }
+
+   // This check was added to prevent a crash-on-exit for OSX -osb
+   //ALint bufValue;
+   //alGetSourcei(mSource, AL_BUFFER, &bufValue);
+   //CheckForError("Checking buffer before attaching it to a source", __FUNCTION__, __LINE__);
+   //if (bufValue == 0)
+   //{
+   //   std::cout << "alGetSource failed" << std::endl;
+   //   return;
+   //}
 
    if (alIsBuffer(b) == AL_FALSE)
    {
@@ -357,17 +354,10 @@ void Sound::SetBuffer(ALint b)
       return;
    }
 
-   if (! alIsSource(mSource))
-   {
-      alGenSources(1, &mSource);
-   }
-
    alSourcei(mSource, AL_BUFFER, b);
    CheckForError("Attempting to set buffer for source", __FUNCTION__, __LINE__);
 
    mBuffer = b;
-
-   SetInitialized(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +397,6 @@ void Sound::PlayImmediately()
    }
 
    SetState(PLAY);
-
    alSourcePlay(mSource);
    CheckForError("Attempting to play source", __FUNCTION__, __LINE__);
 }
@@ -436,25 +425,13 @@ void Sound::Stop()
 
 ////////////////////////////////////////////////////////////////////////////////
 void Sound::StopImmediately()
-{  
-   CheckForError("Clearing OpenAL errors before starting Sound::StopImmediately.",
-                  __FUNCTION__, __LINE__);      
-
-   if(alIsSource(mSource))
-   {  
-      if(IsInitialized())
-      {        
-         alSourceStop(mSource);
-         CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
-    
-         //fire stop callback         
-         if (mStopCB)
-         {
-            mStopCB(static_cast<Sound*>(this), mStopCBData);
-         }
-      }
-   }
+{
    SetState(STOP);
+   if(alIsSource(mSource))
+   {
+      alSourceStop(mSource);
+      CheckForError("Attempting to stop source", __FUNCTION__, __LINE__);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
