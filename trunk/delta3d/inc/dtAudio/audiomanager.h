@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -79,7 +79,7 @@ struct DT_AUDIO_EXPORT AudioConfigData
 namespace dtAudio
 {
 
-   /** dtAudio::AudioManager 
+   /** dtAudio::AudioManager
     *
     * dtAudio::AudioManager is the interface to the underlying audio-
     * engine; OpenAL.
@@ -105,7 +105,7 @@ namespace dtAudio
     * Sounds are not created by the user, but they are requested from
     * the AudioManager.  After getting a sound from the AudioManager
     * the user then calls the sound's functions.  When the user is
-    * finished with the sound, the sound should be passed back to 
+    * finished with the sound, the sound should be passed back to
     * the AudioManager for free the resource.
     *
     * There is one global listener which the user also requests from
@@ -130,8 +130,8 @@ namespace dtAudio
     * a sound's attributes.  State commands are pushed onto the Sound's
     * command queue for further processing at the appropriate time (frame change).
     *
-    * At frame time, AudioManager process all Sounds with commands in their 
-    * respective queues.      
+    * At frame time, AudioManager process all Sounds with commands in their
+    * respective queues.
     *
     */
    class DT_AUDIO_EXPORT AudioManager : public dtCore::Base
@@ -160,7 +160,7 @@ namespace dtAudio
             , loop(AL_FALSE)
             , use(0L)
          {}
-      };         
+      };
 
    private:
       typedef dtCore::RefPtr<AudioManager>       MOB_ptr;
@@ -168,7 +168,7 @@ namespace dtAudio
       typedef dtCore::RefPtr<Listener>           LOB_PTR;
 
       typedef std::map<std::string, BufferData*> BUF_MAP;
-      
+
       typedef std::vector<SOB_PTR>               SND_LST;
 
       enum SoundState
@@ -177,7 +177,7 @@ namespace dtAudio
          PLAYING,
          STOPPED
       };
-   
+
       typedef std::map<Sound*, SoundState> SoundObjectStateMap;
 
    private:
@@ -187,13 +187,13 @@ namespace dtAudio
       static const char*           _EaxSet;
       static const char*           _EaxGet;
 
-   private:      
+   private:
       AudioManager(const std::string& name = "audiomanager",
                    ALCdevice* dev = NULL, ALCcontext* cntxt = NULL);
       virtual ~AudioManager();
 
    public:
-      
+
       /** Create the singleton and initialize OpenAL and ALUT.
        *
        *  Specifying the OpenAL device and context is considered an advaced,
@@ -231,7 +231,7 @@ namespace dtAudio
        *  Also sets up an OpenAL context for this device.
        *  (Preexisting context and device are closed before doing the preceeding)
        *
-       */      
+       */
       void SetOpenALDevice(const ALCchar* deviceName);
 
       /// access the AudioManager
@@ -265,10 +265,10 @@ namespace dtAudio
        * 1.0 is the default value.
        * Values greater than 1.0 ted to maximimze the Doppler effect.
        * Negative values raise an AL_INVALID_VALUE error.
-       *   
+       *
        * An very simiplified summary of OpenAL calculation for the Doppler effect:
        *
-       * shift = DOPPLER_FACTOR * freq * (DOPPLER_VELOCITY - l.velocity) / (DOPPLER_VELOCITY + s.velocity)  
+       * shift = DOPPLER_FACTOR * freq * (DOPPLER_VELOCITY - l.velocity) / (DOPPLER_VELOCITY + s.velocity)
        *
        * where l is the listener and s is a sound source.
        *
@@ -382,22 +382,22 @@ namespace dtAudio
 
       /// Open an OpenAL device for the AudioManager to use
       void OpenDevice(const ALCchar* deviceName = 0);
-   
+
       /// Create an OpenAL context using the current device
       void CreateContext();
 
       /// close and cleanup current OpenAL sound device the AudioManager is using
-      void CloseDevice();      
-   
+      void CloseDevice();
+
       /// close and cleanup current OpenAL sound context the AudioManager is using
       void CloseContext();
 
    private:
       ALvoid*             mEAXSet;
       ALvoid*             mEAXGet;
-      
+
       unsigned int        mNumSounds;
-      bool                mIsConfigured;         
+      bool                mIsConfigured;
 
       BUF_MAP             mBufferMap;
 
@@ -409,7 +409,7 @@ namespace dtAudio
       ALCdevice*          mDevice;
       ALCcontext*         mContext;
 
-      std::queue<dtCore::RefPtr<Sound>>  mSoundRecycle;  ///effort to save memory.
+      std::queue<dtCore::RefPtr<Sound> >  mSoundRecycle;  ///effort to save memory.
    };
 };
 
