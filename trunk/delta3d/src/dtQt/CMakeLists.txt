@@ -4,7 +4,15 @@ SET(LIB_NAME     dtQt)
 SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
-file(GLOB LIB_SOURCES "*.cpp")
+
+set(LIB_SOURCES 
+
+osgadapterwidget.cpp
+osggraphicswindowqt
+qtguiwindowsystemwrapper.cpp 
+viewwindow.cpp
+
+)
 
 INCLUDE_DIRECTORIES(${SOURCE_PATH}/inc 
                     ${QT_INCLUDE_DIR}
