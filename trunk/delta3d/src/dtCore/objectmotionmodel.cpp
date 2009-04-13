@@ -261,7 +261,7 @@ void ObjectMotionModel::OnMessage(MessageData *data)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool ObjectMotionModel::Update(osg::Vec2 pos)
+ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
 {
    mMousePos = pos;
 
@@ -284,7 +284,7 @@ bool ObjectMotionModel::Update(osg::Vec2 pos)
          UpdateWidgets();
          if (HighlightWidgets(MousePick()))
          {
-            return true;
+            return mMotionType;
          }
       }
       else
@@ -312,7 +312,7 @@ bool ObjectMotionModel::Update(osg::Vec2 pos)
                   mMouseOffset = objectPos - mMouseOrigin;
                   mOriginAngle = 0.0f;
                }
-               return true;
+               return mMotionType;
             }
          }
          // If we currently have a motion arrow locked to the mouse.
@@ -333,12 +333,12 @@ bool ObjectMotionModel::Update(osg::Vec2 pos)
                break;
             }
             UpdateWidgets();
-            return true;
+            return mMotionType;
          }
       }
    }
 
-   return false;
+   return mMotionType;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

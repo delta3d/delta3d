@@ -202,7 +202,8 @@ namespace dtEditQt
       {
          // If this returns true, it means we are hovering our mouse over a
          // valid motion model widget so we should go into actor mode.
-         if (mObjectMotionModel->Update(pos))
+         mMotionType = mObjectMotionModel->Update(pos);
+         if (mMotionType != STAGEObjectMotionModel::MOTION_TYPE_MAX)
          {
             beginActorMode(e);
          }
@@ -317,9 +318,18 @@ namespace dtEditQt
    {
       setInteractionMode(Viewport::InteractionMode::ACTOR);
 
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      saveSelectedActorOrigValues("Scale");
+      switch (mMotionType)
+      {
+      case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
+         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+         break;
+      case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
+         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+         break;
+      case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
+         saveSelectedActorOrigValues("Scale");
+         break;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -332,9 +342,18 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitBeginChangeTransaction();
 
       // Update the selected actor proxies with their new values.
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-      updateActorSelectionProperty("Scale");
+      switch (mMotionType)
+      {
+      case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
+         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+         break;
+      case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
+         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+         break;
+      case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
+         updateActorSelectionProperty("Scale");
+         break;
+      }
 
       EditorEvents::GetInstance().emitEndChangeTransaction();
    }

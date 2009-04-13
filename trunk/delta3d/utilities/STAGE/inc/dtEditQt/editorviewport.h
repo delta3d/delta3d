@@ -250,6 +250,7 @@ namespace dtEditQt
             bool attachActorToCamera;
 
             dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
+            STAGEObjectMotionModel::MotionType     mMotionType;
 
             Qt::MouseButton                        mMouseButton;
             Qt::MouseButtons                       mMouseButtons;
