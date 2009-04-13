@@ -221,10 +221,9 @@ namespace dtCore
          *
          * @param[in]  pos  The current position of the mouse.
          *
-         * @return          Returns true if the mouse is locked or hovering
-         *                  a widget that belongs to the motion model.
+         * @return          Returns the current motion type activated.
          */
-         bool Update(osg::Vec2 pos);
+         MotionType Update(osg::Vec2 pos);
 
          /**
          * Updates position the motion model widgets.
