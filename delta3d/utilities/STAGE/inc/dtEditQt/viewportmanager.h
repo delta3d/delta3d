@@ -1,31 +1,32 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Matthew W. Campbell
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Matthew W. Campbell
+ */
+
 #ifndef DELTA_VIEWPORTMANAGER
 #define DELTA_VIEWPORTMANAGER
 
@@ -80,7 +81,8 @@ namespace dtEditQt
             static ViewportType ORTHOGRAPHIC;
             static ViewportType PERSPECTIVE;
         private:
-            ViewportType(const std::string &name) : dtUtil::Enumeration(name)
+            ViewportType(const std::string& name)
+               : dtUtil::Enumeration(name)
             {
                 AddInstance(this);
             }
@@ -94,12 +96,12 @@ namespace dtEditQt
          * @param parent Parent widget in which the newly created viewport will reside.
          * @return The newly created viewport.
          */
-        Viewport* createViewport(const std::string &name, ViewportType &type,
+        Viewport* createViewport(const std::string& name, ViewportType& type,
             QWidget* parent = NULL);
 
         /**
-        * Gets a handle to the master view.
-        */
+         * Gets a handle to the master view.
+         */
         dtCore::View* getMasterView() {
            return this->mMasterView.get();
         }
@@ -143,7 +145,7 @@ namespace dtEditQt
          * Gets a reference to the static singleton instance of the viewport manager.
          * @return
          */
-        static ViewportManager &GetInstance();
+        static ViewportManager& GetInstance();
 
         /**
          * Disables or enables OpenGL context sharing.  This should be called
@@ -156,8 +158,8 @@ namespace dtEditQt
         /**
          * Removes all drawables from the master scene.
          */
-        void clearMasterScene(const std::map<dtCore::UniqueId,
-            dtCore::RefPtr<dtDAL::ActorProxy> > &proxies);
+        void clearMasterScene(const std::map< dtCore::UniqueId,
+            dtCore::RefPtr<dtDAL::ActorProxy> >& proxies);
 
         /**
          * Called from the first initialized viewport.  This method sets various
@@ -208,10 +210,10 @@ namespace dtEditQt
         void onCurrentMapChanged();
 
         /**
-        * Refreshes viewports with a new set of selected actors.
-        *
-        * @param[in]  actors  The list of all actors being selected.
-        */
+         * Refreshes viewports with a new set of selected actors.
+         *
+         * @param[in]  actors  The list of all actors being selected.
+         */
         void refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors);
 
         /**
@@ -247,8 +249,8 @@ namespace dtEditQt
      private:
         ///Singletons shouldn't be created at the user's discretion.
         ViewportManager();
-        ViewportManager(const ViewportManager &rhs);
-        ViewportManager &operator=(const ViewportManager &rhs);
+        ViewportManager(const ViewportManager& rhs);
+        ViewportManager& operator=(const ViewportManager& rhs);
 
         ///Since the singleton is wrapped in a smart pointer disallow destructor access.
         virtual ~ViewportManager();
@@ -261,7 +263,7 @@ namespace dtEditQt
          * @param shareWith OpenGL context to share with or NULL if no sharing.
          * @return The newly created viewport.
          */
-        Viewport* createViewportImpl(const std::string &name, ViewportType &type,
+        Viewport* createViewportImpl(const std::string& name, ViewportType& type,
             QWidget* parent, QGLWidget* shareWith);
 
     private:
