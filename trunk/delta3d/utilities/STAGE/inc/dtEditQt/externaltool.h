@@ -5,7 +5,7 @@
 class QAction;
 class QProcess;
 
-namespace dtEditQt 
+namespace dtEditQt
 {
    class ExternalToolArgParser;
 
@@ -23,7 +23,7 @@ namespace dtEditQt
       void SetCmd(const QString& command);
       const QString& GetCmd() const;
 
-      void SetArgs(const QString &args);
+      void SetArgs(const QString& args);
       const QString& GetArgs() const;
 
       void SetWorkingDir(const QString& dir);
@@ -37,9 +37,8 @@ namespace dtEditQt
       void SetArgParsers(const QList<const ExternalToolArgParser*>& parsers);
 
       const QList<const dtEditQt::ExternalToolArgParser*>& GetArgParsers() const;
-   
-   protected slots:
 
+   protected slots:
       void OnStartTool();
 
    private:
@@ -51,7 +50,7 @@ namespace dtEditQt
       QProcess* mProcess;
       QList<const ExternalToolArgParser*> mArgParserContainer;
    };
-}
+
+} // namespace dtEditQt
 
 #endif // externaltool_h__
-
