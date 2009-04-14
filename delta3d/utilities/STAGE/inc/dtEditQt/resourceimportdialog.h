@@ -1,31 +1,31 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - This source file (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Teague Coonan
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Teague Coonan
+ */
 
 #ifndef DELTA_RESOURCE_IMPORT_DIALOG
 #define DELTA_RESOURCE_IMPORT_DIALOG
@@ -56,326 +56,331 @@ class QVBoxWidget;
 class QComboBox;
 class QScrollView;
 
-namespace dtEditQt{
+namespace dtEditQt
+{
 
-    /**
+   /**
     * @class ResourceImportDialog
     * @brief This is a generic class that handles the importation of resources
     *        through a selection dialog and file browsing dialog.
     */
-    class ResourceImportDialog : public QDialog
-    {
-        Q_OBJECT
-    public:
-        /**
-        * ConstrucTOR
-        */
-        ResourceImportDialog(QWidget *parent = 0, dtDAL::DataType &dataType = dtDAL::DataType::UNKNOWN);
+   class ResourceImportDialog : public QDialog
+   {
+      Q_OBJECT
 
-        /**
-        * DestrucTOR
-        */
-        virtual ~ResourceImportDialog();
+   public:
+      /**
+       * Constructor
+       */
+      ResourceImportDialog(QWidget* parent = 0, dtDAL::DataType& dataType = dtDAL::DataType::UNKNOWN);
 
-        /**
-        * Import dialog creates the dialog layout and widgets
-        */
-        void importDialog();
+      /**
+       * Destructor
+       */
+      virtual ~ResourceImportDialog();
 
-        /**
-        * getType grabs the set dataType. This will be useful for terrain selection
-        * @return a resource DataType
-        */
-        dtDAL::DataType *getType(){return resourceType;}
+      /**
+       * Import dialog creates the dialog layout and widgets
+       */
+      void importDialog();
 
-        /**
-        * setCategory stores the category name
-        * @param QString of the currently selected category from the resource tree
-        */
-        void setCategory(const QString &myCategory){this->category = myCategory;}
+      /**
+       * getType grabs the set dataType. This will be useful for terrain selection
+       * @return a resource DataType
+       */
+      dtDAL::DataType* getType() { return resourceType; }
 
-        /**
-        * getCategory
-        * @return QString category selected from the resource tree
-        */
-        QString getCategory(){return this->category;}
-        
-        /**
-        * setCategoryPath
-        * @param QString of the path to the category currently selected
-        */
-        void setCategoryPath(const QString &myCategoryPath){this->categoryPath = myCategoryPath;}
-        
-        /**
-        * setLastDirectory
-        * @param QString of the last directory the user imported from.
-        */
-        void setLastDirectory(const QString &lastDir){this->lastDirectory = lastDir;}
+      /**
+       * setCategory stores the category name
+       * @param QString of the currently selected category from the resource tree
+       */
+      void setCategory(const QString& myCategory) { this->category = myCategory; }
 
-        /**
-        * getLastDirectory
-        * @return QString of the last directory imported from.
-        */
-        QString getLastDirectory(){return this->lastDirectory;}
-        
-        /**
-        * getCategoryPath
-        * @return QString path to the category
-        */
-        QString getCategoryPath(){return this->categoryPath;}
+      /**
+       * getCategory
+       * @return QString category selected from the resource tree
+       */
+      QString getCategory() { return this->category; }
 
-        /**
-        * setResourceName
-        * @param QString of the name of the resource
-        */
-        void setResourceName(const QString &myResource){this->resource = myResource;}
+      /**
+       * setCategoryPath
+       * @param QString of the path to the category currently selected
+       */
+      void setCategoryPath(const QString& myCategoryPath) { this->categoryPath = myCategoryPath; }
 
-        /**
-        * getResourceName
-        * @return QString of the resource name
-        */
-        QString getResourceName(){return this->resource;}
+      /**
+       * setLastDirectory
+       * @param QString of the last directory the user imported from.
+       */
+      void setLastDirectory(const QString& lastDir) { this->lastDirectory = lastDir; }
 
-        /**
-        * getResourceFileList
-        * @return QList of the files imported
-        */
-        QList<QString> getResourceFileList(){ return fileList;}
+      /**
+       * getLastDirectory
+       * @return QString of the last directory imported from.
+       */
+      QString getLastDirectory() { return this->lastDirectory; }
 
-        QList<dtDAL::ResourceDescriptor> getDescriptorList(){return descriptorList;}
-        /**
-        * @brief updateData is a simple method that populates the qlineedit fields after the object
-        * has been created.
-        */
-        void updateData();
+      /**
+       * getCategoryPath
+       * @return QString path to the category
+       */
+      QString getCategoryPath() { return this->categoryPath; }
 
-        /**
-        * setDescriptor
-        * @param const ResourceDescriptor
-        */
-        void setDescriptor(const dtDAL::ResourceDescriptor &descriptor){this->descriptor = descriptor;}
+      /**
+       * setResourceName
+       * @param QString of the name of the resource
+       */
+      void setResourceName(const QString& myResource) { this->resource = myResource; }
 
-        /**
-        * getDescriptor
-        * @param grabs the resourceDescriptor assigned to the new resource
-        */
-        const dtDAL::ResourceDescriptor getDescriptor(){return this->descriptor;}
+      /**
+       * getResourceName
+       * @return QString of the resource name
+       */
+      QString getResourceName() { return this->resource; }
 
-        /**
-        * resourceCreated
-        * @return boolean if a resource has been created
-        */
-        bool resourceCreated(){return created;}
+      /**
+       * getResourceFileList
+       * @return QList of the files imported
+       */
+      QList<QString> getResourceFileList() { return fileList; }
 
-    private slots:
-        /**
-        * Slot: Assign a selection to the object
-        */
-        void fileDialog();
+      QList<dtDAL::ResourceDescriptor> getDescriptorList() { return descriptorList; }
 
-        /**
-        * Slot: Add selected resource
-        */
-        void addResource();
+      /**
+       * @brief updateData is a simple method that populates the qlineedit fields after the object
+       * has been created.
+       */
+      void updateData();
 
-        /**
-        * Slot: Close window
-        */
-        void closeImportDialog();
+      /**
+       * setDescriptor
+       * @param const ResourceDescriptor
+       */
+      void setDescriptor(const dtDAL::ResourceDescriptor& descriptor) { this->descriptor = descriptor; }
 
-    private:
+      /**
+       * getDescriptor
+       * @param grabs the resourceDescriptor assigned to the new resource
+       */
+      const dtDAL::ResourceDescriptor getDescriptor() { return this->descriptor; }
 
-        QLineEdit *nameEdit;
-        QLineEdit *catEdit;
-        QLineEdit *fileEdit;
-        QComboBox *typeEdit;
+      /**
+       * resourceCreated
+       * @return boolean if a resource has been created
+       */
+      bool resourceCreated() { return created; }
 
-        QList<QString> fileList;
-        QList<dtDAL::ResourceDescriptor> descriptorList;
-        QPushButton *importBtn;
-        QPushButton *fileBtn;
+   private slots:
+      /**
+       * Slot: Assign a selection to the object
+       */
+      void fileDialog();
 
-        QString name;
-        QString resource;
-        QString category;
-        QString categoryPath;
-        QString file;
-        QString type;
-        QStringList filterList;
-        QString fileExt;
-        QString lastDirectory;
-        dtDAL::ResourceTreeNode *resourceTreeNode;
-        dtDAL::DataType *resourceType;
-        dtDAL::ResourceDescriptor descriptor;
-        dtUtil::Log *mLogger;
+      /**
+       * Slot: Add selected resource
+       */
+      void addResource();
 
-        // filter vector to fill for file types
-        std::vector<const dtDAL::ResourceTypeHandler* >handler;
+      /**
+       * Slot: Close window
+       */
+      void closeImportDialog();
 
-        bool created;
-    };
+   private:
 
-    /**
+      QLineEdit* nameEdit;
+      QLineEdit* catEdit;
+      QLineEdit* fileEdit;
+      QComboBox* typeEdit;
+
+      QList<QString> fileList;
+      QList<dtDAL::ResourceDescriptor> descriptorList;
+      QPushButton* importBtn;
+      QPushButton* fileBtn;
+
+      QString                   name;
+      QString                   resource;
+      QString                   category;
+      QString                   categoryPath;
+      QString                   file;
+      QString                   type;
+      QStringList               filterList;
+      QString                   fileExt;
+      QString                   lastDirectory;
+      dtDAL::ResourceTreeNode*  resourceTreeNode;
+      dtDAL::DataType*          resourceType;
+      dtDAL::ResourceDescriptor descriptor;
+      dtUtil::Log*              mLogger;
+
+      // filter vector to fill for file types
+      std::vector<const dtDAL::ResourceTypeHandler*> handler;
+
+      bool created;
+   };
+
+   /**
     * @class AddCategoryDialog
     * @brief This will pop up a seperate dialog for entering a category
     */
-    class AddCategoryDialog : public QDialog
-    {
-        Q_OBJECT
+   class AddCategoryDialog : public QDialog
+   {
+      Q_OBJECT
 
-    public:
-        /**
-        * Constructor
-        */
-        AddCategoryDialog(QWidget *parent)
-        {
-            setWindowTitle(tr("Create New Category"));
-            setModal(true);
-            create = false;
+   public:
+      /**
+       * Constructor
+       */
+      AddCategoryDialog(QWidget* parent)
+      {
+         setWindowTitle(tr("Create New Category"));
+         setModal(true);
+         create = false;
 
-            // required for correct file path
-            categoryDialog();
+         // required for correct file path
+         categoryDialog();
 
-            categoryEdit->setFocus();
-        }
-        /**
-        * Destructor
-        */
-        virtual ~AddCategoryDialog(){}
+         categoryEdit->setFocus();
+      }
 
-        /**
-        * Create the category dialog
-        */
-        void categoryDialog()
-        {
-            // PushButtons
-            createBtn  = new QPushButton("Create", this);
-            QPushButton *cancelBtn  = new QPushButton("Cancel", this);
+      /**
+       * Destructor
+       */
+      virtual ~AddCategoryDialog(){}
 
-            // Create main grid
-            QVBoxLayout *vbox = new QVBoxLayout(this);
+      /**
+       * Create the category dialog
+       */
+      void categoryDialog()
+      {
+         // PushButtons
+         createBtn = new QPushButton("Create", this);
+         QPushButton* cancelBtn = new QPushButton("Cancel", this);
 
-            // Create grid layout
-            QGroupBox   *group   = new QGroupBox();
-            QGridLayout *mainGrid = new QGridLayout(group);
+         // Create main grid
+         QVBoxLayout* vbox = new QVBoxLayout(this);
 
-            // Category edit box
-            categoryEdit = new QLineEdit(group);
-            categoryEdit->setMinimumWidth(200);
+         // Create grid layout
+         QGroupBox*   group    = new QGroupBox();
+         QGridLayout* mainGrid = new QGridLayout(group);
 
-            // Labels
-            QLabel *categoryLabel   = new QLabel("Category: ",group);
+         // Category edit box
+         categoryEdit = new QLineEdit(group);
+         categoryEdit->setMinimumWidth(200);
 
-            mainGrid->addWidget(categoryLabel,0,0);
-            mainGrid->addWidget(categoryEdit,0,1);
+         // Labels
+         QLabel* categoryLabel = new QLabel("Category: ",group);
 
-            QHBoxLayout *hbox = new QHBoxLayout();
-            hbox->addStretch(1);
-            hbox->addWidget(createBtn,0,Qt::AlignCenter);
-            hbox->addWidget(cancelBtn,0,Qt::AlignCenter);
-            hbox->addStretch(1);
+         mainGrid->addWidget(categoryLabel,0,0);
+         mainGrid->addWidget(categoryEdit,0,1);
 
-            // add the layouts
-            vbox->addWidget(group);
-            vbox->addLayout(hbox);
+         QHBoxLayout* hbox = new QHBoxLayout();
+         hbox->addStretch(1);
+         hbox->addWidget(createBtn,0,Qt::AlignCenter);
+         hbox->addWidget(cancelBtn,0,Qt::AlignCenter);
+         hbox->addStretch(1);
 
-            connect(createBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
-            connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
-        }
+         // add the layouts
+         vbox->addWidget(group);
+         vbox->addLayout(hbox);
 
-        /**
-        * Set the category from the edit field
-        * @param takes a QString
-        */
-        void setCategory(const QString &myCategory){newCategory = myCategory;}
+         connect(createBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
+         connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
+      }
 
-        /**
-        * Set the category path
-        * @param takes a QString
-        */
-        void setCategoryPath(const QString &myCategoryPath){currPath = myCategoryPath;}
+      /**
+       * Set the category from the edit field
+       * @param takes a QString
+       */
+      void setCategory(const QString& myCategory) { newCategory = myCategory; }
 
-        /**
-        * SetType sets the current resource type
-        * @param DataType
-        */
-        void setType(dtDAL::DataType &myResourceType){resourceType=&myResourceType;}
+      /**
+       * Set the category path
+       * @param takes a QString
+       */
+      void setCategoryPath(const QString& myCategoryPath) { currPath = myCategoryPath; }
 
-        /**
-        * getType grabs the set dataType. This will be useful for terrain selection
-        * @return a resource DataType
-        */
-        dtDAL::DataType *getType(){return resourceType;}
+      /**
+       * SetType sets the current resource type
+       * @param DataType
+       */
+      void setType(dtDAL::DataType& myResourceType) { resourceType=&myResourceType; }
 
-        /**
-        * Get the category Path
-        * @return QString
-        */
-        QString getCategoryPath(){return this->currPath;}
+      /**
+       * getType grabs the set dataType. This will be useful for terrain selection
+       * @return a resource DataType
+       */
+      dtDAL::DataType* getType() { return resourceType; }
 
-        /**
-        * This retrieves the new category supplied by the user
-        * @return QString of the new category entered by the user
-        */
-        QString getCategory(){return this->newCategory;}
+      /**
+       * Get the category Path
+       * @return QString
+       */
+      QString getCategoryPath() { return this->currPath; }
 
-        /**
-        * This sets whether the category should be created
-        * @param boolean
-        */
-        void setCreate(bool canCreate){create = canCreate;}
+      /**
+       * This retrieves the new category supplied by the user
+       * @return QString of the new category entered by the user
+       */
+      QString getCategory() { return this->newCategory; }
 
-        /**
-        * getCreate()
-        * @return boolean whether or not this dialog can create a category
-        */
-        bool getCreate(){return this->create;}
+      /**
+       * This sets whether the category should be created
+       * @param boolean
+       */
+      void setCreate(bool canCreate) { create = canCreate; }
 
-    private slots:
-        /**
-        * Creates a new category supplied by the user
-        */
-        void createCategory()
-        {
-            // grab an instance to our project
-            dtDAL::Project& project = dtDAL::Project::GetInstance();
-            //dtUtil::FileUtils& futil = dtUtil::FileUtils::GetInstance();
+      /**
+       * getCreate()
+       * @return boolean whether or not this dialog can create a category
+       */
+      bool getCreate() { return this->create; }
 
-            // full path to our category
-            QString fullCategory;
-            fullCategory = getCategoryPath();
+   private slots:
+      /**
+       * Creates a new category supplied by the user
+       */
+      void createCategory()
+      {
+         // grab an instance to our project
+         dtDAL::Project& project = dtDAL::Project::GetInstance();
+         //dtUtil::FileUtils& futil = dtUtil::FileUtils::GetInstance();
 
-            // Add the users entered text
-            if(!fullCategory.isEmpty())
+         // full path to our category
+         QString fullCategory;
+         fullCategory = getCategoryPath();
+
+         // Add the users entered text
+         if (!fullCategory.isEmpty())
+         {
+            fullCategory = fullCategory + ":" + categoryEdit->text();
+         }
+         else
+         {
+            fullCategory = categoryEdit->text();
+         }
+
+         setCategory(categoryEdit->text());
+         setCategoryPath(fullCategory);
+
+         if (create)
+         {
+            if (!fullCategory.isEmpty())
             {
-                fullCategory = fullCategory+":"+categoryEdit->text();
+               project.CreateResourceCategory(fullCategory.toStdString(), *getType());
             }
-            else
-            {
-                fullCategory = categoryEdit->text();
-            }
+         }
+         close();
+      }
 
-            setCategory(categoryEdit->text());
-            setCategoryPath(fullCategory);
+   private:
+      QPushButton*     createBtn;
+      QLineEdit*       categoryEdit;
+      QString          newCategory;
+      QString          currPath;
+      dtDAL::DataType* resourceType;
+      bool             create;
+   };
 
-            if(create)
-            {
-                if(!fullCategory.isEmpty())
-                {
-                    project.CreateResourceCategory(fullCategory.toStdString(),*getType());
-                }
-            }
-            close();
-        }
+} // namespace dtEditQt
 
-    private:
-        QPushButton *createBtn;
-        QLineEdit   *categoryEdit;
-        QString newCategory;
-        QString currPath;
-        dtDAL::DataType *resourceType;
-        bool create;
-    };
-
-}
-#endif
+#endif // DELTA_RESOURCE_IMPORT_DIALOG
