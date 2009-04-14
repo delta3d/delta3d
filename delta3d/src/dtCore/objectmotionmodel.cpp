@@ -425,7 +425,7 @@ void ObjectMotionModel::InitArrows(void)
 
    float ringRadius             = 0.08f;
    float ringVisibleThickness   = 0.003f;
-   float ringSelectionThickness = 0.02f;
+   float ringSelectionThickness = 0.01f;
    for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
    {
       // Create all our objects and nodes.
@@ -436,7 +436,7 @@ void ObjectMotionModel::InitArrows(void)
       mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
 
       osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
-      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.013f, 0.03f);
+      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.018f, 0.03f);
 
 //      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
       osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 40);
