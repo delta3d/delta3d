@@ -3,6 +3,7 @@
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgViewer/GraphicsWindow>
+#include <osgGA/GUIEventAdapter>
 
 #include <dtUtil/log.h>
 
@@ -325,9 +326,39 @@ void ViewWindow::mouseReleaseEvent(QMouseEvent* event)
 //////////////////////////////////////////////////////////////////////////////////
 void ViewWindow::mouseMoveEvent(QMouseEvent* event)
 {
-   if (mGraphicsWindow.valid())
+   if (mGraphicsWindow.valid() && hasFocus())
    {
       mGraphicsWindow->getEventQueue()->mouseMotion(event->x(), event->y());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+void ViewWindow::wheelEvent(QWheelEvent* event)
+{
+   if (mGraphicsWindow.valid())
+   {
+      if (event->orientation() == Qt::Horizontal)
+      {
+         if (event->delta() > 0)
+         {
+            mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_LEFT);
+         }
+         else
+         {
+            mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_RIGHT);
+         }
+      }
+      else
+      {
+         if (event->delta() > 0)
+         {
+            mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+         }
+         else
+         {
+            mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
+         }
+      }
    }
 }
 
