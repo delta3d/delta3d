@@ -52,144 +52,145 @@ namespace osg
 namespace dtEditQt
 {
    /**
-   * This class is mostly an entry point for accessing state data shared between
-   * viewports. Since the data is shared between viewports, this class also provides a
-   * convienent mechanism for syncronizing elements common to all viewports.
-   * @note
-   *  As an example, the viewport overlay class manages the current selection of
-   *  actor proxies in the scene.
-   */
+    * This class is mostly an entry point for accessing state data shared between
+    * viewports. Since the data is shared between viewports, this class also provides a
+    * convienent mechanism for syncronizing elements common to all viewports.
+    * @note
+    *  As an example, the viewport overlay class manages the current selection of
+    *  actor proxies in the scene.
+    */
    class ViewportOverlay : public QObject, public osg::Referenced
    {
       Q_OBJECT
+
    public:
       ///Simplifies the interface to a list of actor proxies.
-      typedef std::set<dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
+      typedef std::set< dtCore::RefPtr<dtDAL::ActorProxy> > ActorProxyList;
 
       /**
-      * Constructs the overlay.
-      * @return
-      */
+       * Constructs the overlay.
+       * @return
+       */
       ViewportOverlay();
 
       /**
-      * This method "selects" a Delta3D drawable object.
-      * @par
-      *  A drawable object is selected by adding it to a selection overlay group.
-      *  The selection overlay group then instructs then causes the object to
-      *  be rendered in a second pass but with wireframe mode enabled on the object.
-      *  This results in a wireframe overlay that is applied to a selected object.
-      * @param drawable
-      */
+       * This method "selects" a Delta3D drawable object.
+       * @par
+       *  A drawable object is selected by adding it to a selection overlay group.
+       *  The selection overlay group then instructs then causes the object to
+       *  be rendered in a second pass but with wireframe mode enabled on the object.
+       *  This results in a wireframe overlay that is applied to a selected object.
+       * @param drawable
+       */
       void select(dtCore::DeltaDrawable* drawable);
 
       /**
-      * This method removes a Delta3D drawable object from the current selection
-      * overlay group.
-      * @param drawable
-      */
+       * This method removes a Delta3D drawable object from the current selection
+       * overlay group.
+       * @param drawable
+       */
       void unSelect(dtCore::DeltaDrawable* drawable);
 
       /**
-      * Sets whether or not the UI is currently in multi-select mode.  When in
-      * multi-select mode, newly selected objects are added to a list of
-      * currently selected objects.  When multi-select is not enabled, newly
-      * selected objects are made to be the current selection.
-      * @param value True if multi-select mode should be enabled.
-      */
+       * Sets whether or not the UI is currently in multi-select mode.  When in
+       * multi-select mode, newly selected objects are added to a list of
+       * currently selected objects.  When multi-select is not enabled, newly
+       * selected objects are made to be the current selection.
+       * @param value True if multi-select mode should be enabled.
+       */
       void setMultiSelectMode(bool value)
       {
          mMultiSelectMode = value;
       }
 
       /**
-      * Returns whether or not multi-select mode is enabled.
-      * @return The multi-selection mode flag.
-      */
+       * Returns whether or not multi-select mode is enabled.
+       * @return The multi-selection mode flag.
+       */
       bool getMultiSelectMode() const
       {
          return mMultiSelectMode;
       }
 
       /**
-      * Returns a group containing overlay objects.  Usually, objects in this group
-      * need to be rendered by the viewports but are not a part of the current scene.
-      * @return A group scenegraph node containing overlay objects.
-      */
+       * Returns a group containing overlay objects.  Usually, objects in this group
+       * need to be rendered by the viewports but are not a part of the current scene.
+       * @return A group scenegraph node containing overlay objects.
+       */
       osg::Group* getOverlayGroup()
       {
          return mOverlayGroup.get();
       }
 
       /**
-      * Returns the selection group overlay.  This group contains the current selection.
-      * @return A group scenegraph node containing the current selection.
-      */
+       * Returns the selection group overlay.  This group contains the current selection.
+       * @return A group scenegraph node containing the current selection.
+       */
       osg::Group* getSelectionDecorator()
       {
          return mSelectionDecorator.get();
       }
 
       /**
-      * Returns a sorted set of actor proxies corresponding to the current selection.
-      * @return ActorProxyList
-      */
+       * Returns a sorted set of actor proxies corresponding to the current selection.
+       * @return ActorProxyList
+       */
       ActorProxyList& getCurrentActorSelection()
       {
          return this->currentActorSelection;
       }
 
       /**
-      * Determines whether or not the specified actor proxy is currently selected.
-      * @param proxy The proxy to test.
-      * @return True if the proxy is already selected, false otherwise.
-      */
+       * Determines whether or not the specified actor proxy is currently selected.
+       * @param proxy The proxy to test.
+       * @return True if the proxy is already selected, false otherwise.
+       */
       bool isActorSelected(dtDAL::ActorProxy* proxy) const;
 
       /**
-      * Removes the specified actor proxy from the current selection.
-      * @param proxy The proxy to remove.
-      * @param clearAll This is useful if you want to remove the selection from the
-      *  selection tree but leave the proxy, logically, in a selected state.  Setting
-      *  true for this value clears the selection both visually and logically.
-      */
+       * Removes the specified actor proxy from the current selection.
+       * @param proxy The proxy to remove.
+       * @param clearAll This is useful if you want to remove the selection from the
+       *  selection tree but leave the proxy, logically, in a selected state.  Setting
+       *  true for this value clears the selection both visually and logically.
+       */
       void removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll = true);
 
       /**
-      * Clears the current selection.
-      */
+       * Clears the current selection.
+       */
       void clearCurrentSelection();
 
    public slots:
       /**
-      * This method is invoked when the user selects actors in the current scene.
-      * @param actors A list of the actors that were selected.
-      */
+       * This method is invoked when the user selects actors in the current scene.
+       * @param actors A list of the actors that were selected.
+       */
       void onActorsSelected(ActorProxyRefPtrVector& actors);
 
       /**
-      * Puts the overlay options in sync with the editor preferences.
-      */
+       * Puts the overlay options in sync with the editor preferences.
+       */
       void onEditorPreferencesChanged();
 
    protected:
       /**
-      * Destroys the viewport.
-      * @return
-      */
+       * Destroys the viewport.
+       * @return
+       */
       virtual ~ViewportOverlay();
 
    private:
       /**
-      * Creates or updates the decorator group used to hold the current selection.  The group
-      * sets its render state such that all objects contained in it will be
-      * rendered using a red wireframe outline.
-      */
+       * Creates or updates the decorator group used to hold the current selection.  The group
+       * sets its render state such that all objects contained in it will be
+       * rendered using a red wireframe outline.
+       */
       void setupSelectionDecorator();
 
       /**
-      * Connects the the UI global event system.
-      */
+       * Connects the the UI global event system.
+       */
       void listenForEvents();
 
       ///Do not allow overlays to be copy-constructed.
@@ -206,6 +207,6 @@ namespace dtEditQt
       bool mMultiSelectMode;
    };
 
-}
+} // namespace dtEditQt
 
-#endif
+#endif // DELTA_VIEWPORT_OVERLAY
