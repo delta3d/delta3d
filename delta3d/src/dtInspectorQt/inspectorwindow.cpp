@@ -18,6 +18,8 @@
 #include <dtInspectorQt/viewview.h>
 #include <dtInspectorQt/weatherview.h>
 
+#include "ui_dtinspectorqt.h"
+
 #include <dtCore/base.h>
 #include <dtCore/uniqueid.h>
 
@@ -25,36 +27,37 @@
 dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
 : QMainWindow(parent)
 {
-   ui.setupUi(this);
+   ui = new Ui::InspectorWidget();
+   ui->setupUi(this);
 
-   BaseView* baseMgr = new BaseView(ui);
+   BaseView* baseMgr = new BaseView(*ui);
    mViewContainer.push_back(baseMgr);
-   mViewContainer.push_back(new CameraView(ui));
-   mViewContainer.push_back(new CloudDomeView(ui));
-   mViewContainer.push_back(new DeltaWinView(ui));
-   mViewContainer.push_back(new DrawableView(ui));
-   mViewContainer.push_back(new EnvironmentView(ui));
-   mViewContainer.push_back(new InfiniteTerrainView(ui));
-   mViewContainer.push_back(new LabelActorView(ui));
-   mViewContainer.push_back(new LightView(ui));
-   mViewContainer.push_back(new ObjectView(ui));
-   mViewContainer.push_back(new ParticleSystemView(ui));
-   mViewContainer.push_back(new PhysicalView(ui));
-   mViewContainer.push_back(new SceneView(ui));
-   mViewContainer.push_back(new SkyDomeView(ui));
-   mViewContainer.push_back(new SystemView(ui));
-   mViewContainer.push_back(new TransformableView(ui));
-   mViewContainer.push_back(new ViewView(ui));
-   mViewContainer.push_back(new WeatherView(ui));
+   mViewContainer.push_back(new CameraView(*ui));
+   mViewContainer.push_back(new CloudDomeView(*ui));
+   mViewContainer.push_back(new DeltaWinView(*ui));
+   mViewContainer.push_back(new DrawableView(*ui));
+   mViewContainer.push_back(new EnvironmentView(*ui));
+   mViewContainer.push_back(new InfiniteTerrainView(*ui));
+   mViewContainer.push_back(new LabelActorView(*ui));
+   mViewContainer.push_back(new LightView(*ui));
+   mViewContainer.push_back(new ObjectView(*ui));
+   mViewContainer.push_back(new ParticleSystemView(*ui));
+   mViewContainer.push_back(new PhysicalView(*ui));
+   mViewContainer.push_back(new SceneView(*ui));
+   mViewContainer.push_back(new SkyDomeView(*ui));
+   mViewContainer.push_back(new SystemView(*ui));
+   mViewContainer.push_back(new TransformableView(*ui));
+   mViewContainer.push_back(new ViewView(*ui));
+   mViewContainer.push_back(new WeatherView(*ui));
 
    UpdateInstances();
-   ui.itemList->setCurrentRow(0);
+   ui->itemList->setCurrentRow(0);
    RefreshCurrentItem();
 
-   connect(ui.itemList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(OnSelection(QListWidgetItem*,QListWidgetItem*)));
-   connect(ui.actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
-   connect(ui.actionClose, SIGNAL(triggered()), this, SLOT(close()));
-   connect(ui.actionRebuild_List, SIGNAL(triggered()), this, SLOT(UpdateInstances()));
+   connect(ui->itemList, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(OnSelection(QListWidgetItem*,QListWidgetItem*)));
+   connect(ui->actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
+   connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
+   connect(ui->actionRebuild_List, SIGNAL(triggered()), this, SLOT(UpdateInstances()));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
 }
 
@@ -65,12 +68,21 @@ dtInspectorQt::InspectorWindow::~InspectorWindow()
    {
       delete mViewContainer.takeFirst();
    }
+   delete ui;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
+{
+   mViewContainer.push_back(customView);
+   UpdateInstances();
+   RefreshCurrentItem();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
-   ui.itemList->clear(); //remove any previous entries
+   ui->itemList->clear(); //remove any previous entries
 
    for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
    {
@@ -78,7 +90,7 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
       QListWidgetItem* item = new QListWidgetItem();
       item->setText(QString::fromStdString(o->GetName()));
 
-      ui.itemList->addItem(item);
+      ui->itemList->addItem(item);
    }
 }
 
@@ -91,14 +103,14 @@ void dtInspectorQt::InspectorWindow::OnSelection(QListWidgetItem* current, QList
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
 {
-   QListWidgetItem* item = ui.itemList->currentItem();
+   QListWidgetItem* item = ui->itemList->currentItem();
    item->setText(text);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
 {
-   int row = ui.itemList->currentRow();
+   int row = ui->itemList->currentRow();
    if (row < 0) { return; }
 
    dtCore::Base* b = dtCore::Base::GetInstance(row);
