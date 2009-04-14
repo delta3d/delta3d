@@ -1,14 +1,19 @@
 #ifndef inspectorwindow_h__
 #define inspectorwindow_h__
 
-#include "ui_dtinspectorqt.h"
 #include <dtInspectorQt/export.h>
 #include <QtGui/QMainWindow>
+#include <QtGui/QListWidgetItem>
 #include <QtCore/QList>
 
 namespace dtCore
 {
    class Base;
+}
+
+namespace Ui
+{
+   class InspectorWidget;
 }
 
 namespace dtInspectorQt
@@ -24,7 +29,10 @@ namespace dtInspectorQt
    public:
       InspectorWindow(QWidget* parent = NULL);
       ~InspectorWindow();
-   
+
+      Ui::InspectorWidget* GetViewUI() { return ui; }
+      void AddCustomView(IView* customView);
+
    public slots:
       void OnSelection(QListWidgetItem* current, QListWidgetItem* prev);
       void RefreshCurrentItem();
@@ -32,7 +40,7 @@ namespace dtInspectorQt
       void UpdateInstances();
 
    private:
-      Ui::InspectorWidget ui;
+      Ui::InspectorWidget* ui;
 
       QList<IView*> mViewContainer;
    };

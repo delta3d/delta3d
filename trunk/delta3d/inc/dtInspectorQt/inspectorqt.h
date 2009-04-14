@@ -11,8 +11,8 @@ class QApplication;
   */
 namespace dtInspectorQt
 {
-
    class InspectorWindow;
+   class IView;
 
    /** This utility library is used to inspect and tweak Delta3D class
      * instances found at runtime.
@@ -33,6 +33,11 @@ namespace dtInspectorQt
    	InspectorQt(int& argc, char **argv);
 
       virtual void OnMessage(MessageData*);
+
+      void AddCustomView(IView* customView);
+      void Show();
+      void Hide();
+      void SetVisible(bool isVisible);
 
    protected:
       virtual ~InspectorQt();
