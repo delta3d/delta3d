@@ -14,15 +14,15 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-      ExternalToolDialog(QList<ExternalTool*> &tools, QWidget* parent=NULL);
+      ExternalToolDialog(QList<ExternalTool*>& tools, QWidget* parent = NULL);
       ~ExternalToolDialog();
 
    public slots:
       virtual void accept();
-      
+
    protected slots:
-      void OnNewTool();   
-      void OnRemoveTool();   
+      void OnNewTool();
+      void OnRemoveTool();
       void OnToolSelectionChanged();
       void OnApplyChanges();
       void OnToolModified();
@@ -46,16 +46,16 @@ namespace dtEditQt
       void DeleteToolWidgets();
 
       /** Try to find an executable file, assuming it is located in the same folder
-        * as this application.
-        * @return full path to executable if found, or the baseName if not found.
-        */
+       * as this application.
+       * @return full path to executable if found, or the baseName if not found.
+       */
       QString FindDelta3DTool(const QString& baseName) const;
 
       Ui::ExternalToolDiag ui;
 
-      QList<ExternalTool*> *mTools;      
+      QList<ExternalTool*>* mTools;
    };
-}
+
+} // namespace dtEditQt
 
 #endif // externaltooldialog_h__
-

@@ -10,12 +10,12 @@ namespace dtEditQt
 {
    /**
     * Replace "${CurrentContext}" with the current context path
-   */
+    */
    class CurrentContextArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentContextArgParser() {};
-      ~CurrentContextArgParser() {};
+      CurrentContextArgParser() {}
+      ~CurrentContextArgParser() {}
 
       virtual QString ExpandArguments(const QString& args) const
       {
@@ -31,15 +31,15 @@ namespace dtEditQt
       }
    };
 
-   /** 
+   /**
     * Replace "${CurrentMapFilename}" with the currently loaded map filename
-   */
+    */
    class CurrentMapNameArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentMapNameArgParser() {};
-      ~CurrentMapNameArgParser() {};
-   	
+      CurrentMapNameArgParser() {}
+      ~CurrentMapNameArgParser() {}
+
       virtual QString ExpandArguments(const QString& args) const
       {
          dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
@@ -60,14 +60,14 @@ namespace dtEditQt
       }
    };
 
-   /** 
+   /**
     * Replace "${CurrentMesh}" with the currently selected mesh filename.
     */
    class CurrentMeshArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentMeshArgParser() {};
-      ~CurrentMeshArgParser() {};
+      CurrentMeshArgParser() {}
+      ~CurrentMeshArgParser() {}
 
       virtual QString ExpandArguments(const QString& args) const
       {
@@ -81,7 +81,7 @@ namespace dtEditQt
          return QString(args).replace(GetVariableText(), QString::fromStdString(path));
       }
 
-      virtual QString GetVariableText() const {return "${CurrentMesh}";}
+      virtual QString GetVariableText() const { return "${CurrentMesh}"; }
 
       virtual QString GetDescription() const
       {
@@ -89,14 +89,14 @@ namespace dtEditQt
       }
    };
 
-   /** 
-   * Replace "${CurrentParticle}" with the currently selected mesh filename.
-   */
+   /**
+    * Replace "${CurrentParticle}" with the currently selected mesh filename.
+    */
    class CurrentParticleSystemArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentParticleSystemArgParser() {};
-      ~CurrentParticleSystemArgParser() {};
+      CurrentParticleSystemArgParser() {}
+      ~CurrentParticleSystemArgParser() {}
 
       virtual QString ExpandArguments(const QString& args) const
       {
@@ -110,7 +110,7 @@ namespace dtEditQt
          return QString(args).replace(GetVariableText(), QString::fromStdString(path));
       }
 
-      virtual QString GetVariableText() const {return "${CurrentParticle}";}
+      virtual QString GetVariableText() const { return "${CurrentParticle}"; }
 
       virtual QString GetDescription() const
       {
@@ -118,14 +118,14 @@ namespace dtEditQt
       }
    };
 
-   /** 
-   * Replace "${CurrentPaCurrentSkeletonrticle}" with the currently selected mesh filename.
-   */
+   /**
+    * Replace "${CurrentPaCurrentSkeletonrticle}" with the currently selected mesh filename.
+    */
    class CurrentSkeletonArgParser : public ExternalToolArgParser
    {
    public:
-      CurrentSkeletonArgParser() {};
-      ~CurrentSkeletonArgParser() {};
+      CurrentSkeletonArgParser() {}
+      ~CurrentSkeletonArgParser() {}
 
       virtual QString ExpandArguments(const QString& args) const
       {
@@ -147,5 +147,6 @@ namespace dtEditQt
       }
    };
 
-}
+} // namespace dtEditQt
+
 #endif // externaltoolargparsers_h__
