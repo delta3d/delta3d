@@ -57,6 +57,7 @@ namespace dtEditQt
       mObjectMotionModel->ClearTargets();
       mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
       mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
+      mObjectMotionModel->SetScale(1.5f);
    }
 
    /////////////////////////////////////////////////////////////////////////////

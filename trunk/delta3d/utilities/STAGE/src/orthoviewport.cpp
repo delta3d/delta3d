@@ -156,7 +156,7 @@ namespace dtEditQt
    {
       EditorViewport::onMouseMoveEvent(e, dx, dy);
 
-      mObjectMotionModel->SetScale(300.0f / getCamera()->getZoom());
+      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
