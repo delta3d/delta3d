@@ -114,6 +114,10 @@ void Viewer::Config()
    GetCamera()->SetTransform(camPos);
    GetCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
+   double vfov, aspectRatio, nearClip, farClip;
+   GetCamera()->GetPerspectiveParams(vfov, aspectRatio, nearClip, farClip);
+   GetCamera()->SetPerspectiveParams(vfov, aspectRatio, 0.25, farClip);
+
    mMotion = new OrbitMotionModel(GetKeyboard(), GetMouse());
    mMotion->SetTarget(GetCamera());
    mMotion->SetDistance(5.f);
