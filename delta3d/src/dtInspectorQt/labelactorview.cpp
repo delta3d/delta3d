@@ -6,6 +6,8 @@
 dtInspectorQt::LabelActorView::LabelActorView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtABC::LabelActor");
+
    connect(mUI->labelActorTextEdit, SIGNAL(textChanged()), this, SLOT(OnTextChanged()));
    connect(mUI->labelActorAlignmentCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(OnAlignmentChanged(int)));
    connect(mUI->labelActorFontSizeEdit, SIGNAL(valueChanged(double)), this, SLOT(OnFontSizeChanged(double)));
@@ -38,6 +40,17 @@ void dtInspectorQt::LabelActorView::OperateOn(dtCore::Base* b)
 
    mOperateOn = labelactor;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::LabelActorView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtABC::LabelActor*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

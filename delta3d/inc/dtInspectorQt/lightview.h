@@ -47,6 +47,7 @@ namespace dtInspectorQt
       virtual ~LightView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       // General Light slots

@@ -6,6 +6,8 @@
 dtInspectorQt::EnvironmentView::EnvironmentView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Environment");
+
    connect(mUI->envFogToggle, SIGNAL(stateChanged(int)), this, SLOT(OnFogToggled(int)));
    connect(mUI->envFogVisibilityEdit, SIGNAL(valueChanged(double)), this, SLOT(OnVisibilityChanged(double)));
    connect(mUI->envFogRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnFogColorChanged(double)));
@@ -33,6 +35,17 @@ void dtInspectorQt::EnvironmentView::OperateOn(dtCore::Base* b)
 
    mOperateOn = environment;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::EnvironmentView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Environment*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

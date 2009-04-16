@@ -5,6 +5,8 @@
 dtInspectorQt::ParticleSystemView::ParticleSystemView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::ParticleSystem");
+
    connect(mUI->particleSystemEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->particleSystemParentRelativeToggle, SIGNAL(stateChanged(int)), this, SLOT(OnParentRelative(int)));
 }
@@ -22,6 +24,17 @@ void dtInspectorQt::ParticleSystemView::OperateOn(dtCore::Base* b)
 
    mOperateOn = particlesystem;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::ParticleSystemView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::ParticleSystem*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

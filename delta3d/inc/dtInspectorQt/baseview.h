@@ -25,6 +25,7 @@ namespace dtInspectorQt
    	~BaseView();
 
       void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnNameChange(const QString& text);

@@ -7,6 +7,8 @@
 dtInspectorQt::SceneView::SceneView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Scene");
+
    connect(mUI->sceneLightToggle, SIGNAL(stateChanged(int)), this, SLOT(OnUseSceneLight(int)));
    connect(mUI->sceneFaceCombo, SIGNAL(activated(int)), this, SLOT(OnRenderStateChanged(int)));
    connect(mUI->sceneModeCombo, SIGNAL(activated(int)), this, SLOT(OnRenderStateChanged(int)));
@@ -25,6 +27,17 @@ void dtInspectorQt::SceneView::OperateOn(dtCore::Base* b)
 
    mOperateOn = drawable;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::SceneView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Scene*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

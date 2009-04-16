@@ -50,6 +50,10 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    mViewContainer.push_back(new ViewView(*ui));
    mViewContainer.push_back(new WeatherView(*ui));
 
+   RefreshFilters();
+
+   mFilterName = baseMgr->mFilterName;
+
    UpdateInstances();
    ui->itemList->setCurrentRow(0);
    RefreshCurrentItem();
@@ -60,6 +64,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    connect(ui->actionRebuild_List, SIGNAL(triggered()), this, SLOT(UpdateInstances()));
    connect(ui->actionSort_List, SIGNAL(toggled(bool)), this, SLOT(SortList(bool)));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
+   connect(ui->filterBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(FilterSelected(const QString&)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,6 +87,7 @@ QWidget* dtInspectorQt::InspectorWindow::GetPropertyContainerWidget()
 void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
 {
    mViewContainer.push_back(customView);
+   RefreshFilters();
    UpdateInstances();
    RefreshCurrentItem();
 }
@@ -100,11 +106,10 @@ void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
 
    dtCore::Base* b = dtCore::Base::GetInstance(currentItem->text().toStdString());
 
-   for (int i=0; i<mViewContainer.size(); ++i)
+   for (int i = 0; i < mViewContainer.size(); ++i)
    {
       mViewContainer.at(i)->OperateOn(b);
    }
-
 }
 //////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
@@ -118,13 +123,21 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
    ui->itemList->clear(); //remove any previous entries
 
-   for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
+   for (int i = 0; i < dtCore::Base::GetInstanceCount(); i++)
    {
       dtCore::Base *o = dtCore::Base::GetInstance(i);
-      QListWidgetItem* item = new QListWidgetItem();
-      item->setText(QString::fromStdString(o->GetName()));
 
-      ui->itemList->addItem(item);
+      for (int j = 0; j < mViewContainer.size(); ++j)
+      {
+         if (mViewContainer.at(j)->IsOfType(mFilterName, o))
+         {
+            QListWidgetItem* item = new QListWidgetItem();
+            item->setText(QString::fromStdString(o->GetName()));
+
+            ui->itemList->addItem(item);
+            break;
+         }
+      }
    }
 }
 
@@ -133,6 +146,27 @@ void dtInspectorQt::InspectorWindow::SortList(bool sorted)
 {
    ui->itemList->setSortingEnabled(sorted);
    UpdateInstances();
+   ui->itemList->setCurrentRow(0);
+   RefreshCurrentItem();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::RefreshFilters()
+{
+   ui->filterBox->clear();
+
+   for (int i = 0; i < mViewContainer.size(); ++i)
+   {
+      ui->filterBox->addItem(mViewContainer.at(i)->mFilterName);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::FilterSelected(const QString& text)
+{
+   mFilterName = text;
+   UpdateInstances();
+   ui->itemList->setCurrentRow(0);
    RefreshCurrentItem();
 }
 

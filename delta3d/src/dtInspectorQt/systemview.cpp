@@ -5,6 +5,8 @@
 dtInspectorQt::SystemView::SystemView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::System");
+
    connect(mUI->sysPausedToggle, SIGNAL(stateChanged(int)), this, SLOT(OnPaused(int)));
    connect(mUI->sysTimeScaleEdit, SIGNAL(valueChanged(double)), this, SLOT(OnTimeScaleChanged(double)));
    connect(mUI->sysFixedTimeStepToggle, SIGNAL(stateChanged(int)), this, SLOT(OnFixedTimeStepsToggled(int)));
@@ -24,6 +26,17 @@ void dtInspectorQt::SystemView::OperateOn(dtCore::Base* b)
 
    mOperateOn = system;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::SystemView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::System*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

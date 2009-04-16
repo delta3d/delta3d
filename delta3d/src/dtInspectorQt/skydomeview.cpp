@@ -6,6 +6,8 @@
 dtInspectorQt::SkyDomeView::SkyDomeView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::SkyDome");
+
    connect(mUI->envSkyRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
    connect(mUI->envSkyGreenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
    connect(mUI->envSkyBlueEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
@@ -24,6 +26,17 @@ void dtInspectorQt::SkyDomeView::OperateOn(dtCore::Base* b)
 
    mOperateOn = skydome;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::SkyDomeView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::SkyDome*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

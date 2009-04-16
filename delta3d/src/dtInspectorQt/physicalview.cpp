@@ -7,6 +7,8 @@
 dtInspectorQt::PhysicalView::PhysicalView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Physical");
+
    connect(mUI->physicalDynamicsToggle, SIGNAL(stateChanged(int)), this, SLOT(OnDynamicsToggled(int)));
    connect(mUI->physicalMassEdit, SIGNAL(valueChanged(double)), this, SLOT(OnMassChanged(double)));
 }
@@ -24,6 +26,17 @@ void dtInspectorQt::PhysicalView::OperateOn(dtCore::Base* b)
 
    mOperateOn = physical;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::PhysicalView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Physical*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

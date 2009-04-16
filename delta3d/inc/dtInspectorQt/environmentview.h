@@ -46,6 +46,7 @@ namespace dtInspectorQt
       virtual ~EnvironmentView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnFogToggled(int checked);

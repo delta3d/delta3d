@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
+    <width>666</width>
     <height>672</height>
    </rect>
   </property>
@@ -23,27 +23,8 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QListWidget" name="itemList">
-      <property name="minimumSize">
-       <size>
-        <width>121</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>121</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="sortingEnabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
+   <layout class="QGridLayout" name="gridLayout_35">
+    <item row="0" column="2" rowspan="2">
      <widget class="QScrollArea" name="scrollArea">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
@@ -59,7 +40,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>367</width>
+         <width>372</width>
          <height>3976</height>
         </rect>
        </property>
@@ -2944,6 +2925,39 @@
       </widget>
      </widget>
     </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="filterBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_118">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Filter by type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QListWidget" name="itemList">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -2951,7 +2965,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
+     <width>666</width>
      <height>26</height>
     </rect>
    </property>

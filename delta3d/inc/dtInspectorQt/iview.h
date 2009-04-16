@@ -14,10 +14,13 @@ namespace dtInspectorQt
    class IView : public QObject
    {
    public:
+      QString mFilterName;
+
       IView() {};
       ~IView() {};
 
       virtual void OperateOn(dtCore::Base* b) = 0;
+      virtual bool IsOfType(QString name, dtCore::Base* object) = 0;
    };
 }
 #endif // iview_h__

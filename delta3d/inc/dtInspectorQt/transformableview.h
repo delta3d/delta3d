@@ -24,6 +24,7 @@ namespace dtInspectorQt
    	~TransformableView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnXYZHPRChanged(double val);

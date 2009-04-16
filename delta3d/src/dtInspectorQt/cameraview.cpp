@@ -5,6 +5,8 @@
 dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Camera");
+
    connect(mUI->cameraEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cameraVertEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
    connect(mUI->cameraAspectEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
@@ -23,6 +25,17 @@ void dtInspectorQt::CameraView::OperateOn(dtCore::Base* b)
 
    mOperateOn = camera;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::CameraView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Camera*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

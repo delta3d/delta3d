@@ -45,6 +45,7 @@ namespace dtInspectorQt
       virtual ~CloudDomeView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnEnabled(int state);

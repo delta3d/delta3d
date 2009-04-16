@@ -6,6 +6,7 @@
 dtInspectorQt::CloudDomeView::CloudDomeView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::CloudDome");
    connect(mUI->cloudDomeEnableToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cloudDomeRedEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
    connect(mUI->cloudDomeGreenEdit, SIGNAL(valueChanged(double)), this, SLOT(OnColorChanged(double)));
@@ -33,6 +34,17 @@ void dtInspectorQt::CloudDomeView::OperateOn(dtCore::Base* b)
 
    mOperateOn = clouddome;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::CloudDomeView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::CloudDome*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
