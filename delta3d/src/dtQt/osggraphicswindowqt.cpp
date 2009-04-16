@@ -214,6 +214,7 @@ namespace dtQt
    {
       if (mQWidget != NULL)
       {
+      // this cas be done but there are some quirks with it.
          //mQWidget->setWindowFlags()
          return true;
       }
@@ -232,6 +233,7 @@ namespace dtQt
    ////////////////////////////////////////////////////////////
    void OSGGraphicsWindowQt::grabFocusIfPointerInWindow()
    {
+      //TODO fix this so it checks for the pointer.
       if (mQWidget != NULL)
       {
          mQWidget->setFocus();

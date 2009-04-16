@@ -7,6 +7,7 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 
 set(LIB_SOURCES 
 
+deltastepper.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt
 qtguiwindowsystemwrapper.cpp 
