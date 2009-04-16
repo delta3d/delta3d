@@ -72,6 +72,12 @@ dtInspectorQt::InspectorWindow::~InspectorWindow()
 }
 
 //////////////////////////////////////////////////////////////////////////
+QWidget* dtInspectorQt::InspectorWindow::GetPropertyContainerWidget()
+{
+   return ui->scrollAreaWidgetContents;
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
 {
    mViewContainer.push_back(customView);
