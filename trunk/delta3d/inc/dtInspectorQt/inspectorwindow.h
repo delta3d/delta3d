@@ -30,7 +30,7 @@ namespace dtInspectorQt
       InspectorWindow(QWidget* parent = NULL);
       ~InspectorWindow();
 
-      Ui::InspectorWidget* GetViewUI() { return ui; }
+      QWidget* GetPropertyContainerWidget();
       void AddCustomView(IView* customView);
 
    public slots:
