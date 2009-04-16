@@ -5,6 +5,8 @@
 dtInspectorQt::DeltaWinView::DeltaWinView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::DeltaWin");
+
    connect(mUI->winFullscreenToggle, SIGNAL(stateChanged(int)), this, SLOT(OnFullScreenToggle(int)));
    connect(mUI->winCursorToggle, SIGNAL(stateChanged(int)), this, SLOT(OnCursorToggle(int)));
    connect(mUI->winTitleEdit, SIGNAL(textChanged(const QString&)), this, SLOT(OnTitleChanged(const QString&)));
@@ -26,6 +28,17 @@ void dtInspectorQt::DeltaWinView::OperateOn(dtCore::Base* b)
 
    mOperateOn = deltawin;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::DeltaWinView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::DeltaWin*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

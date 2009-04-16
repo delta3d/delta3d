@@ -5,6 +5,8 @@
 dtInspectorQt::InfiniteTerrainView::InfiniteTerrainView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::InfiniteTerrain");
+
    connect(mUI->infTerSegSizeEdit, SIGNAL(editingFinished()), this, SLOT(OnSegmentSizeChanged()));
    connect(mUI->infTerSegDivEdit, SIGNAL(editingFinished()), this, SLOT(OnSegmentDivisionsChanged()));
    connect(mUI->infTerHorizEdit, SIGNAL(editingFinished()), this, SLOT(OnHorizontalScaleChanged()));
@@ -26,6 +28,17 @@ void dtInspectorQt::InfiniteTerrainView::OperateOn(dtCore::Base* b)
 
    mOperateOn = infiniteterrain;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::InfiniteTerrainView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::InfiniteTerrain*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

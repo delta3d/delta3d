@@ -7,6 +7,8 @@
 dtInspectorQt::TransformableView::TransformableView(Ui::InspectorWidget &ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Transformable");
+
    connect(mUI->transXEdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
    connect(mUI->transYEdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
    connect(mUI->transZEdit, SIGNAL(valueChanged(double)), this, SLOT(OnXYZHPRChanged(double)));
@@ -34,6 +36,17 @@ void dtInspectorQt::TransformableView::OperateOn(dtCore::Base* b)
 
    mOperateOn = trans;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::TransformableView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Transformable*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

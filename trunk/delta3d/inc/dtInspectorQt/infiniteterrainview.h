@@ -45,6 +45,7 @@ namespace dtInspectorQt
       virtual ~InfiniteTerrainView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnSegmentSizeChanged();

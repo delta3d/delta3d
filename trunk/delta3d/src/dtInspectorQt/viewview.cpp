@@ -7,6 +7,8 @@
 dtInspectorQt::ViewView::ViewView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::View");
+
    connect(mUI->viewRenderOrderEdit, SIGNAL(valueChanged(int)), this, SLOT(OnRenderOrderChanged(int)));
 }
 
@@ -24,6 +26,17 @@ void dtInspectorQt::ViewView::OperateOn(dtCore::Base* b)
    mOperateOn = view;
 
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::ViewView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::View*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -39,11 +39,15 @@ namespace dtInspectorQt
       void OnNameChanged(const QString& text);
       void UpdateInstances();
       void SortList(bool sorted);
+      void RefreshFilters();
+      void FilterSelected(const QString& text);
 
    private:
       Ui::InspectorWidget* ui;
 
       QList<IView*> mViewContainer;
+
+      QString mFilterName;
    };
 }
 #endif // inspectorwindow_h__

@@ -6,6 +6,8 @@
 dtInspectorQt::LightView::LightView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Light");
+
    // General light connections
    connect(mUI->lightEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->lightNumberEdit, SIGNAL(valueChanged(int)), this, SLOT(OnLightNumberChanged(int)));
@@ -45,6 +47,17 @@ void dtInspectorQt::LightView::OperateOn(dtCore::Base* b)
 
    mOperateOn = light;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::LightView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Light*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

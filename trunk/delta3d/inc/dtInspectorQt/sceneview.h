@@ -26,6 +26,7 @@ namespace dtInspectorQt
    	~SceneView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnUseSceneLight(int state);

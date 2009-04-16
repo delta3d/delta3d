@@ -6,6 +6,8 @@
 dtInspectorQt::WeatherView::WeatherView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtABC::Weather");
+
    connect(mUI->weatherThemeCombo, SIGNAL(activated(int)), this, SLOT(OnThemeChanged(int)));
    connect(mUI->weatherCloudCombo, SIGNAL(activated(int)), this, SLOT(OnCloudTypeChanged(int)));
    connect(mUI->weatherWindCombo, SIGNAL(activated(int)), this, SLOT(OnWindTypeChanged(int)));
@@ -27,6 +29,17 @@ void dtInspectorQt::WeatherView::OperateOn(dtCore::Base* b)
 
    mOperateOn = weather;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::WeatherView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtABC::Weather*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

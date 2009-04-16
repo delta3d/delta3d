@@ -22,6 +22,7 @@ namespace dtInspectorQt
    	virtual ~PhysicalView();
 
       virtual void OperateOn(dtCore::Base* b);
+      bool IsOfType(QString name, dtCore::Base* object);
 
    protected slots:
       void OnDynamicsToggled(int checked);

@@ -6,6 +6,8 @@
 dtInspectorQt::ObjectView::ObjectView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::Object");
+
    connect(mUI->objectScaleXEdit, SIGNAL(valueChanged(double)), this, SLOT(OnScaleChanged(double)));
    connect(mUI->objectScaleYEdit, SIGNAL(valueChanged(double)), this, SLOT(OnScaleChanged(double)));
    connect(mUI->objectScaleZEdit, SIGNAL(valueChanged(double)), this, SLOT(OnScaleChanged(double)));
@@ -34,6 +36,17 @@ void dtInspectorQt::ObjectView::OperateOn(dtCore::Base* b)
 
    mOperateOn = object;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::ObjectView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::Object*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

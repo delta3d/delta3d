@@ -6,9 +6,10 @@
 dtInspectorQt::DrawableView::DrawableView(Ui::InspectorWidget& ui)
 :mUI(&ui)
 {
+   mFilterName = QString("dtCore::DeltaDrawable");
+
    connect(mUI->drawableActiveToggle, SIGNAL(stateChanged(int)), this, SLOT(OnActive(int)));
    connect(mUI->drawableProxyNodeToggle, SIGNAL(stateChanged(int)), this, SLOT(OnRenderProxyNode(int)));
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,17 @@ void dtInspectorQt::DrawableView::OperateOn(dtCore::Base* b)
 
    mOperateOn = drawable;
    Update();
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool dtInspectorQt::DrawableView::IsOfType(QString name, dtCore::Base* object)
+{
+   if (name == mFilterName && dynamic_cast<dtCore::DeltaDrawable*>(object) != NULL)
+   {
+      return true;
+   }
+
+   return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
