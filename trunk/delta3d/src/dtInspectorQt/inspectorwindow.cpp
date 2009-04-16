@@ -58,6 +58,7 @@ dtInspectorQt::InspectorWindow::InspectorWindow(QWidget* parent /* = NULL */)
    connect(ui->actionRefresh_Item, SIGNAL(triggered()), this, SLOT(RefreshCurrentItem()));
    connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()));
    connect(ui->actionRebuild_List, SIGNAL(triggered()), this, SLOT(UpdateInstances()));
+   connect(ui->actionSort_List, SIGNAL(toggled(bool)), this, SLOT(SortList(bool)));
    connect(baseMgr, SIGNAL(NameChanged(const QString&)), this, SLOT(OnNameChanged(const QString&)));
 }
 
@@ -86,6 +87,33 @@ void dtInspectorQt::InspectorWindow::AddCustomView(IView* customView)
 }
 
 //////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::OnSelection(QListWidgetItem* current, QListWidgetItem* prev)
+{
+   RefreshCurrentItem();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
+{
+   QListWidgetItem* currentItem = ui->itemList->currentItem();
+   if (currentItem == NULL) { return; }
+
+   dtCore::Base* b = dtCore::Base::GetInstance(currentItem->text().toStdString());
+
+   for (int i=0; i<mViewContainer.size(); ++i)
+   {
+      mViewContainer.at(i)->OperateOn(b);
+   }
+
+}
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
+{
+   QListWidgetItem* item = ui->itemList->currentItem();
+   item->setText(text);
+}
+
+//////////////////////////////////////////////////////////////////////////
 void dtInspectorQt::InspectorWindow::UpdateInstances()
 {
    ui->itemList->clear(); //remove any previous entries
@@ -101,29 +129,12 @@ void dtInspectorQt::InspectorWindow::UpdateInstances()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::InspectorWindow::OnSelection(QListWidgetItem* current, QListWidgetItem* prev)
+void dtInspectorQt::InspectorWindow::SortList(bool sorted)
 {
+   ui->itemList->setSortingEnabled(sorted);
+   UpdateInstances();
    RefreshCurrentItem();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::InspectorWindow::OnNameChanged(const QString& text)
-{
-   QListWidgetItem* item = ui->itemList->currentItem();
-   item->setText(text);
-}
 
-//////////////////////////////////////////////////////////////////////////
-void dtInspectorQt::InspectorWindow::RefreshCurrentItem()
-{
-   int row = ui->itemList->currentRow();
-   if (row < 0) { return; }
-
-   dtCore::Base* b = dtCore::Base::GetInstance(row);
-
-   for (int i=0; i<mViewContainer.size(); ++i)
-   {
-      mViewContainer.at(i)->OperateOn(b);
-   }
-
-}
