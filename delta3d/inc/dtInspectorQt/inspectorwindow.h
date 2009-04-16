@@ -38,6 +38,7 @@ namespace dtInspectorQt
       void RefreshCurrentItem();
       void OnNameChanged(const QString& text);
       void UpdateInstances();
+      void SortList(bool sorted);
 
    private:
       Ui::InspectorWidget* ui;

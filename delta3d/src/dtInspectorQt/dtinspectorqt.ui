@@ -38,6 +38,9 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="sortingEnabled">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
@@ -56,8 +59,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>349</width>
-         <height>3802</height>
+         <width>367</width>
+         <height>3976</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -2949,7 +2952,7 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuView">
@@ -2958,6 +2961,7 @@
     </property>
     <addaction name="actionRefresh_Item"/>
     <addaction name="actionRebuild_List"/>
+    <addaction name="actionSort_List"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -2989,6 +2993,20 @@
    <property name="text">
     <string>Rebuild &amp;List</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSort_List">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Sort List</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
  </widget>
  <tabstops>
@@ -3005,12 +3023,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>2609</y>
+     <x>317</x>
+     <y>2732</y>
     </hint>
     <hint type="destinationlabel">
-     <x>456</x>
-     <y>2633</y>
+     <x>474</x>
+     <y>2777</y>
     </hint>
    </hints>
   </connection>
@@ -3021,12 +3039,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>2609</y>
+     <x>317</x>
+     <y>2732</y>
     </hint>
     <hint type="destinationlabel">
-     <x>456</x>
-     <y>2659</y>
+     <x>474</x>
+     <y>2804</y>
     </hint>
    </hints>
   </connection>
