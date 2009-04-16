@@ -602,6 +602,11 @@ namespace dtTest
    //////////////////////////////////////////////////////////////////////////
    void ApplicationTests::TestReadingBadConfigFile()
    {
+      // We turn off 'error' logging here because the read bad config 
+      // prints out ".... error:32 ..." which causes MS Visual Studio to 
+      // flag it as an error. The teardown will unset this.
+      dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_ALWAYS);
+
       //verify Application can continue living with a bad config file
       const std::string filename = "badconfig.xml";
 
