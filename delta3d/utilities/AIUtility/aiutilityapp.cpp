@@ -40,6 +40,5 @@ AIUtilityApp::~AIUtilityApp()
 
 void AIUtilityApp::DoQuit()
 {
-   GetWindow()->GetOsgViewerGraphicsWindow()->getEventQueue()->closeWindow();
    Quit();
 }
