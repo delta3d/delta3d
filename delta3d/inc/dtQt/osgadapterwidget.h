@@ -34,6 +34,7 @@
 #include <QtGui/QApplication>
 #include <QtOpenGL/QGLWidget>
 #include <QtOpenGL/QGLContext>
+#include <dtQt/export.h>
 
 #include <dtCore/refptr.h>
 
@@ -45,7 +46,7 @@ namespace osgViewer
 namespace dtQt
 {
 
-   class OSGAdapterWidget : public QGLWidget
+   class DT_QT_EXPORT OSGAdapterWidget : public QGLWidget
    {
       Q_OBJECT
 
