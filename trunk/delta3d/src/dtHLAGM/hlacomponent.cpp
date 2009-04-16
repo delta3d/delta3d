@@ -885,6 +885,11 @@ namespace dtHLAGM
                ++objectToActorIterator;
             }
 
+            if (objectToActorIterator ==  mObjectToActorMap.end())
+            {
+               return NULL;
+            }
+
             if (objectToActorIterator->second->GetDisID() == NULL)
                return NULL;
 
