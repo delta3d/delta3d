@@ -32,6 +32,7 @@
 #include <QtCore/Qt>
 #include <QtCore/QObject>
 #include <osgViewer/GraphicsWindow>
+#include <dtQt/export.h>
 
 class QGLWidget;
 
@@ -39,7 +40,7 @@ namespace dtQt
 {
    class OSGAdapterWidget;
 
-   class OSGGraphicsWindowQt : public osgViewer::GraphicsWindow
+   class DT_QT_EXPORT OSGGraphicsWindowQt : public osgViewer::GraphicsWindow
    {
    public:
       typedef osgViewer::GraphicsWindow BaseClass;

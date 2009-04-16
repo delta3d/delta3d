@@ -25,10 +25,11 @@
 #include <osg/Version>
 #include <osg/GraphicsContext>
 #include <dtCore/refptr.h>
+#include <dtQt/export.h>
 
 namespace dtQt
 {
-   class QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
+   class DT_QT_EXPORT QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
    {
       public:
          QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface);
