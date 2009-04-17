@@ -29,6 +29,8 @@
 #include <dtABC/application.h>
 #include <dtQt/deltastepper.h>
 
+#include <dtGame/gamemanager.h>
+
 class AIUtilityApp: public QObject, public dtABC::Application
 {
    Q_OBJECT
@@ -38,8 +40,10 @@ public:
    virtual void Config();
 public slots:
    void DoQuit();
+   void SetProjectContext(const std::string& path);
 private:
    dtQt::DeltaStepper mStepper;
+   dtCore::RefPtr<dtGame::GameManager> mGM;
 };
 
 #endif /* AIUTILITYAPP_H_ */

@@ -42,8 +42,12 @@ public:
    ~MainWindow();
 
    void closeEvent(QCloseEvent* e);
-
+signals:
+   void ProjectContextChanged(const std::string& path);
+public slots:
+   void ChangeProjectContext();
 private:
+
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
 };

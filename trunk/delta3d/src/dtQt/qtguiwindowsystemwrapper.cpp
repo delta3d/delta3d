@@ -96,7 +96,7 @@ namespace dtQt
    {
       //return new osgViewer::GraphicsWindowEmbedded(traits);
 
-      if(traits->pbuffer)
+      if (traits->pbuffer)
       {
          return mInterface->createGraphicsContext(traits);
       }

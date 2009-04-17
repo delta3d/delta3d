@@ -5,11 +5,13 @@ SET(HEADER_PATH ${DELTA3D_SOURCE_DIR}/inc/${LIB_NAME})
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/src/${LIB_NAME})
 file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 
+# These files are listed in alphabetical order.
 set(LIB_SOURCES 
 
 deltastepper.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt
+projectcontextdialog.cpp
 qtguiwindowsystemwrapper.cpp 
 viewwindow.cpp
 

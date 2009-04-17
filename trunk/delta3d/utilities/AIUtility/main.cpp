@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
    win.show();
 
    QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), app.get(), SLOT(DoQuit()));
+   QObject::connect(&win, SIGNAL(ProjectContextChanged(const std::string&)), app.get(), SLOT(SetProjectContext(const std::string&)));
 
    app->Config();
    qapp.exec();

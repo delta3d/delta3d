@@ -25,9 +25,18 @@
 #include "mainwindow.h"
 #include <ui_mainwindow.h>
 #include <dtQt/deltastepper.h>
+#include <dtQt/projectcontextdialog.h>
 
 #include <QtGui/QCloseEvent>
+#include <QtGui/QDialog>
+#include <QtCore/QSettings>
 
+static const std::string ORG_NAME("delta3d.org");
+static const std::string APP_NAME("AIUtility");
+static const std::string PROJECT_CONTEXT_SETTING("ProjectContext");
+
+
+//////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
 : mUi(new Ui::MainWindow)
 , mCentralWidget(mainWidget)
@@ -36,18 +45,39 @@ MainWindow::MainWindow(QWidget& mainWidget)
 
    setCentralWidget(&mCentralWidget);
    setWindowTitle(tr("AI Utility"));
+
+   connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
 }
 
+//////////////////////////////////////////////
 MainWindow::~MainWindow()
 {
    delete mUi;
    mUi = NULL;
 }
 
+//////////////////////////////////////////////
 void MainWindow::closeEvent(QCloseEvent* e)
 {
    //Disconnect the central widget because OSG wants to close it itself.
    mCentralWidget.setParent(NULL);
    QApplication::quit();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::ChangeProjectContext()
+{
+   dtQt::ProjectContextDialog dialog(this);
+
+   if (dialog.exec() == QDialog::Accepted)
+   {
+      QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+
+      emit ProjectContextChanged(dialog.getProjectPath().toStdString());
+
+      settings.setValue(PROJECT_CONTEXT_SETTING.c_str(), dialog.getProjectPath());
+      settings.sync();
+   }
+}
+
 
