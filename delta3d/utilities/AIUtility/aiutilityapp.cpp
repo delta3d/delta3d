@@ -26,19 +26,28 @@
 
 #include <osgViewer/GraphicsWindow>
 #include <osgGA/EventQueue>
+
+#include <dtUtil/exception.h>
+
+#include <dtDAL/project.h>
+
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 
+/////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
 : dtABC::Application("config.xml")
+, mGM(new dtGame::GameManager(*GetScene()))
 {
-
+   mGM->SetApplication(*this);
 }
 
+/////////////////////////////////////
 AIUtilityApp::~AIUtilityApp()
 {
 }
 
+/////////////////////////////////////
 void AIUtilityApp::Config()
 {
    dtABC::Application::Config();
@@ -46,10 +55,23 @@ void AIUtilityApp::Config()
    mStepper.Start();
 }
 
-
+/////////////////////////////////////
 void AIUtilityApp::DoQuit()
 {
    mStepper.Stop();
    dtCore::System::GetInstance().Stop();
    Quit();
+}
+
+/////////////////////////////////////
+void AIUtilityApp::SetProjectContext(const std::string& path)
+{
+   try
+   {
+      dtDAL::Project::GetInstance().SetContext(path);
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      ex.LogException();
+   }
 }
