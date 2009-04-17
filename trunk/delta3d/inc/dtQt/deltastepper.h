@@ -27,10 +27,12 @@
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 
+#include <dtQt/export.h>
+
 namespace dtQt
 {
 
-   class DeltaStepper : public QObject
+   class DT_QT_EXPORT DeltaStepper : public QObject
    {
       Q_OBJECT
    public:
