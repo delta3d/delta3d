@@ -288,9 +288,9 @@ namespace dtActors
       // REMOVE USELESS PROPERTIES - These properties really should not show in
       // STAGE and ought to be completely removed from the object completely.
       // However, the overhead is part of sub-classing GameActor.
-      RemoveProperty("Rotation");
-      RemoveProperty("Translation");
-      RemoveProperty("Normal Rescaling");
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+      RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_NORMAL_RESCALING);
       RemoveProperty("Render Proxy Node");
       RemoveProperty("Show Collision Geometry"); //"ODE Show Collision Geometry"
       RemoveProperty(dtDAL::TransformableActorProxy::PROPERTY_COLLISION_TYPE);
@@ -321,7 +321,7 @@ namespace dtActors
          {
             // The SubTasks property was changed from a GroupActorProperty to
             // an ArrayActorProperty.
-            prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List", 
+            prop = new dtDAL::GroupActorProperty("SubTasks", "Sub Task Actor List",
                dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTaskGroup),
                dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTaskGroup),
                "The list of subtasks.", "BaseTask", "TaskChildren");
