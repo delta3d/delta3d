@@ -119,7 +119,7 @@ namespace dtUtil
           * logs the exception to the default logger.
           * @param level  The level/type of logging
           */
-         void LogException(dtUtil::Log::LogMessageType level) const;
+         void LogException(dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_ERROR) const;
 
          /**
           * logs the exception to the following log level using the logger.
