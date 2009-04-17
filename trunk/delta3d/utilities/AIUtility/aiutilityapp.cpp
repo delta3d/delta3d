@@ -27,6 +27,7 @@
 #include <osgViewer/GraphicsWindow>
 #include <osgGA/EventQueue>
 #include <dtCore/deltawin.h>
+#include <dtCore/system.h>
 
 AIUtilityApp::AIUtilityApp()
 : dtABC::Application("config.xml")
@@ -38,7 +39,17 @@ AIUtilityApp::~AIUtilityApp()
 {
 }
 
+void AIUtilityApp::Config()
+{
+   dtABC::Application::Config();
+   dtCore::System::GetInstance().Start();
+   mStepper.Start();
+}
+
+
 void AIUtilityApp::DoQuit()
 {
+   mStepper.Stop();
+   dtCore::System::GetInstance().Stop();
    Quit();
 }

@@ -27,6 +27,7 @@
 
 #include <QtCore/QObject>
 #include <dtABC/application.h>
+#include <dtQt/deltastepper.h>
 
 class AIUtilityApp: public QObject, public dtABC::Application
 {
@@ -34,8 +35,11 @@ class AIUtilityApp: public QObject, public dtABC::Application
 public:
    AIUtilityApp();
    virtual ~AIUtilityApp();
+   virtual void Config();
 public slots:
    void DoQuit();
+private:
+   dtQt::DeltaStepper mStepper;
 };
 
 #endif /* AIUTILITYAPP_H_ */
