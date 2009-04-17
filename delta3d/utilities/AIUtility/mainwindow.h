@@ -27,8 +27,6 @@
 
 #include <QtGui/QMainWindow>
 
-#include <dtQt/deltastepper.h>
-
 class QCloseEvent;
 
 namespace Ui
@@ -47,7 +45,6 @@ public:
 
 private:
    Ui::MainWindow* mUi;
-   dtQt::DeltaStepper mStepper;
    QWidget& mCentralWidget;
 };
 

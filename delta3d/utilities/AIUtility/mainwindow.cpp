@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
 , mCentralWidget(mainWidget)
 {
    mUi->setupUi(this);
-   mStepper.Start();
 
    setCentralWidget(&mCentralWidget);
    setWindowTitle(tr("AI Utility"));
@@ -47,7 +46,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-   mStepper.Stop();
    //Disconnect the central widget because OSG wants to close it itself.
    mCentralWidget.setParent(NULL);
    QApplication::quit();

@@ -32,6 +32,9 @@ namespace dtQt
    class DT_QT_EXPORT QtGuiWindowSystemWrapper: public osg::GraphicsContext::WindowingSystemInterface
    {
       public:
+
+         static void EnableQtGUIWrapper();
+
          QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface);
 
          virtual unsigned int getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier =

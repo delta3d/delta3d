@@ -25,31 +25,52 @@
 
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/osggraphicswindowqt.h>
+#include <dtUtil/log.h>
 
 namespace dtQt
 {
+   /////////////////////////////////////////////////////////////
+   void QtGuiWindowSystemWrapper::EnableQtGUIWrapper()
+   {
+      osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
+
+      if (winSys != NULL)
+      {
+         osg::GraphicsContext::setWindowingSystemInterface(new dtQt::QtGuiWindowSystemWrapper(*winSys));
+      }
+      else
+      {
+         LOG_ERROR("Unable to initialize. OSG reported not having any windowing system interface.");
+      }
+   }
+
+   /////////////////////////////////////////////////////////////
    QtGuiWindowSystemWrapper::QtGuiWindowSystemWrapper(osg::GraphicsContext::WindowingSystemInterface& oldInterface)
    : mInterface(&oldInterface)
    {
    }
 
+   /////////////////////////////////////////////////////////////
    unsigned int QtGuiWindowSystemWrapper::getNumScreens(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier)
    {
       return mInterface->getNumScreens(screenIdentifier);
    }
 
+   /////////////////////////////////////////////////////////////
    void QtGuiWindowSystemWrapper::getScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
             unsigned int& width, unsigned int& height)
    {
       mInterface->getScreenResolution(screenIdentifier, width, height);
    }
 
+   /////////////////////////////////////////////////////////////
    bool QtGuiWindowSystemWrapper::setScreenResolution(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
             unsigned int width, unsigned int height)
    {
       return mInterface->setScreenResolution(screenIdentifier, width, height);
    }
 
+   /////////////////////////////////////////////////////////////
    bool QtGuiWindowSystemWrapper::setScreenRefreshRate(const osg::GraphicsContext::ScreenIdentifier& screenIdentifier,
             double refreshRate)
    {
@@ -57,17 +78,20 @@ namespace dtQt
    }
 
 #if defined(OPENSCENEGRAPH_MAJOR_VERSION) && OPENSCENEGRAPH_MAJOR_VERSION >= 2 && defined(OPENSCENEGRAPH_MINOR_VERSION) && OPENSCENEGRAPH_MINOR_VERSION >= 8
+   /////////////////////////////////////////////////////////////
    void QtGuiWindowSystemWrapper::getScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettings & resolution)
    {
       mInterface->getScreenSettings(si, resolution);
    }
 
+   /////////////////////////////////////////////////////////////
    void QtGuiWindowSystemWrapper::enumerateScreenSettings(const osg::GraphicsContext::ScreenIdentifier& si, osg::GraphicsContext::ScreenSettingsList & rl)
    {
       mInterface->enumerateScreenSettings(si, rl);
    }
 #endif
 
+   /////////////////////////////////////////////////////////////
    osg::GraphicsContext* QtGuiWindowSystemWrapper::createGraphicsContext(osg::GraphicsContext::Traits* traits)
    {
       //return new osgViewer::GraphicsWindowEmbedded(traits);
