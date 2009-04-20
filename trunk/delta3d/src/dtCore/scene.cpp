@@ -25,6 +25,7 @@
 
 
 #include <dtUtil/configproperties.h>
+#include <dtUtil/log.h>
 
 #include <cassert>
 
@@ -231,6 +232,12 @@ void Scene::SetSceneNode(osg::Group* newSceneNode)
 /////////////////////////////////////////////
 void Scene::AddDrawable(DeltaDrawable* drawable)
 {
+   if (drawable == NULL)
+   {
+      LOG_WARNING("A NULL DeltaDrawable was attempted to be added to the Scene");
+      return;
+   }
+
    // This is modified to put a RefPtr in the scene
    // They are required or when you change the stateset
    // Everything is killed and you get a blank screen.
@@ -250,6 +257,12 @@ void Scene::AddDrawable(DeltaDrawable* drawable)
 /////////////////////////////////////////////
 void Scene::RemoveDrawable(DeltaDrawable* drawable)
 {
+   if (drawable == NULL)
+   {
+      LOG_WARNING("A NULL DeltaDrawable was attempted to be added to the Scene");
+      return;
+   }
+
    mImpl->mSceneNode->removeChild(drawable->GetOSGNode());
    drawable->AddedToScene(NULL);
 
