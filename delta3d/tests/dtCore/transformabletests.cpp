@@ -224,19 +224,19 @@ void TransformableTests::TestEpsilonEquals()
    xform1.MakeIdentity();
    xform2.MakeIdentity();
 
-   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001));
-   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001));
+   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001f));
+   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001f));
 
-   osg::Vec3 testPos(21.2, 23.3, 9.6);
+   osg::Vec3 testPos(21.2f, 23.3f, 9.6f);
    xform2.SetTranslation(testPos);
 
-   CPPUNIT_ASSERT(!xform1.EpsilonEquals(xform2, 0.001));
-   CPPUNIT_ASSERT(!xform2.EpsilonEquals(xform1, 0.001));
+   CPPUNIT_ASSERT(!xform1.EpsilonEquals(xform2, 0.001f));
+   CPPUNIT_ASSERT(!xform2.EpsilonEquals(xform1, 0.001f));
 
    xform1.SetTranslation(testPos);
 
-   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001));
-   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001));
+   CPPUNIT_ASSERT(xform1.EpsilonEquals(xform2, 0.001f));
+   CPPUNIT_ASSERT(xform2.EpsilonEquals(xform1, 0.001f));
 }
 
 
@@ -355,8 +355,8 @@ bool HasChild( osg::Group* parent, osg::Node* child )
 
 void TransformableTests::TestSetPosHPR()
 {
-   osg::Vec3 hpr (10.0, -30.0, 23.0);
-   osg::Vec3 pos(21.0, 33.66, 293.9);
+   osg::Vec3 hpr (10.0f, -30.0f, 23.0f);
+   osg::Vec3 pos(21.0f, 33.66f, 293.9f);
 
    dtCore::Transform xform;
    xform.Set(pos, hpr);
@@ -372,7 +372,7 @@ void TransformableTests::TestSetPosHPR()
 void TransformableTests::TestSetPosQuat()
 {
    osg::Quat quat (std::sqrt(0.5), 0.0, std::sqrt(0.5), 0.0);
-   osg::Vec3 pos(21.0, 33.66, 293.9);
+   osg::Vec3 pos(21.0f, 33.66f, 293.9f);
 
    dtCore::Transform xform;
    xform.Set(pos, quat);
@@ -450,7 +450,7 @@ void TransformableTests::TestTranslation()
 void TransformableTests::TestMove()
 {
    osg::Vec3 trans(10.0f, 7.0f, 2.0f);
-   osg::Vec3f moveF(-1.1, -3.6, 21.44);
+   osg::Vec3f moveF(-1.1f, -3.6f, 21.44f);
    osg::Vec3d moveD(moveF);
 
    dtCore::Transform transformTest;
@@ -594,20 +594,20 @@ void TransformableTests::TestRows()
    osg::Vec4 row4, row4Expected;
 
    transformTest.GetRow(1, row3);
-   row3Expected.set(4.0, 5.0, 6.0);
+   row3Expected.set(4.0f, 5.0f, 6.0f);
 
    CPPUNIT_ASSERT(dtUtil::Equivalent(row3Expected, row3, TEST_EPSILON));
 
-   row3Expected.set(9.0, 8.0, 1.0);
+   row3Expected.set(9.0f, 8.0f, 1.0f);
    transformTest.SetRow(2, row3Expected);
    transformTest.GetRow(2, row3);
    CPPUNIT_ASSERT(dtUtil::Equivalent(row3Expected, row3, TEST_EPSILON));
 
    transformTest.GetRow(1, row4);
-   row4Expected.set(4.0, 5.0, 6.0, 7.0);
+   row4Expected.set(4.0f, 5.0f, 6.0f, 7.0f);
    CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
 
-   row4Expected.set(104.3, 90.7, 98.6, 101.6);
+   row4Expected.set(104.3f, 90.7f, 98.6f, 101.6f);
    transformTest.SetRow(2, row4Expected);
    transformTest.GetRow(2, row4);
    CPPUNIT_ASSERT(dtUtil::Equivalent(row4Expected, row4, TEST_EPSILON));
@@ -619,8 +619,8 @@ void TransformableTests::TestDistance()
    dtCore::Transform transform1;
    dtCore::Transform transform2;
 
-   transform1.SetTranslation(osg::Vec3(0,0,10));
-   transform2.SetTranslation(osg::Vec3(0,0,0));
+   transform1.SetTranslation(osg::Vec3(0.f,0.f,10.f));
+   transform2.SetTranslation(osg::Vec3(0.f,0.f,0.f));
 
    double expectedValue = 100;
    double expectedValuert = 10;
