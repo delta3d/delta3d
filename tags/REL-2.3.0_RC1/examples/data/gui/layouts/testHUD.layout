@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Root" >
+        <Property Name="InheritsAlpha" Value="False" />
+        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="WindowsLook/FrameWindow" Name="Framewindow" >
+            <Property Name="Alpha" Value="0.8" />
+            <Property Name="TitlebarFont" Value="DejaVuSans-10" />
+            <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0.506614,0},{0.356753,0},{0.972197,0},{0.867717,0}}" />
+            <Window Type="WindowsLook/StaticImage" Name="camera1target" >
+                <Property Name="Alpha" Value="0.8" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0680095,0},{0.118035,0},{0.939226,0},{0.80926,0}}" />
+            </Window>
+            <Window Type="WindowsLook/Button" Name="MyButton" >
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.2,0},{0.834887,0},{0.791582,0},{0.966374,0}}" />
+                <Property Name="Text" Value="Exit"/>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>
