@@ -1,23 +1,23 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2004-2006 MOVES Institute
- *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- * Bradley Anderegg 06/07/2006
- */
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2004-2006 MOVES Institute
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* Bradley Anderegg 06/07/2006
+*/
 
 #include <dtAI/waypointmanager.h>
 
@@ -59,6 +59,7 @@ namespace dtAI
 
    osg::ref_ptr<WaypointManager> WaypointManager::mSingleton = 0;
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointManager::WaypointManager()
       : mLoadActors(0)
       , mDrawWaypoints(false)
@@ -75,19 +76,21 @@ namespace dtAI
       mDrawable->addDrawable(new WaypointManagerDrawable(this));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointManager::~WaypointManager()
    {
 
-      #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
+#if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR >= 1 && OSG_VERSION_MINOR >= 1
       mDrawable->removeDrawables(0, 1);
-      #else
+#else
       mDrawable->removeDrawable(0, 1);
-      #endif
+#endif
       mDrawable = NULL;
 
       Clear();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::CreateInstance()
    {
       if (!mSingleton)
@@ -96,12 +99,14 @@ namespace dtAI
       }
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointManager& WaypointManager::GetInstance()
    {
       CreateInstance();
       return *mSingleton;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::AddWaypoint(WaypointActor& pWaypointActor)
    {
       if (mLoadActors)
@@ -114,6 +119,7 @@ namespace dtAI
       mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, new Waypoint(&pWaypointActor)));
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    WaypointID WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
       WaypointID id = mWaypoints.size();
@@ -123,22 +129,27 @@ namespace dtAI
       return id;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::RemoveWaypoint(const WaypointActor& pWaypoint)
    {
       //we are indexing into map with a key generated on AddWaypoint
       RemoveWaypoint(pWaypoint.GetIndex());
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::RemoveWaypoint(WaypointID id)
    {
       //we are indexing into map with a key generated on AddWaypoint
       mWaypoints.erase(id);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    Waypoint* WaypointManager::GetWaypoint(WaypointID id)
    {
       return id < mWaypoints.size() ? mWaypoints[id] : NULL;
    }
+
+   /////////////////////////////////////////////////////////////////////////////
    const Waypoint* WaypointManager::GetWaypoint(WaypointID id) const
    {
       /*
@@ -171,17 +182,20 @@ namespace dtAI
       return NULL;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::MoveWaypoint(WaypointID id, const osg::Vec3& pPos)
    {
       // we are indexing into map with a key generated on AddWaypoint
       mWaypoints[id]->SetPosition(pPos);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::AddPathSegment(WaypointID idFrom, WaypointID idTo)
    {
       mNavMesh.AddPathSegment(mWaypoints[idFrom], mWaypoints[idTo]);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WaypointManager::WriteFile(const std::string& pFileToWrite)
    {
       std::ofstream outfile;
@@ -235,6 +249,7 @@ namespace dtAI
       return true;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    bool WaypointManager::ReadFile(const std::string& pFileToRead)
    {
       // we only want to allow loading after reading
@@ -304,7 +319,7 @@ namespace dtAI
       return read_file_ok;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    bool WaypointManager::ObtainLock()
    {
       if (!mLoadActorsLock && mLoadActors && !mReadingFile)
@@ -315,12 +330,14 @@ namespace dtAI
       return false;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::ReleaseLock()
    {
       mLoadActors = false;
       mLoadActorsLock = false;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::CreateNavMesh(dtCore::Scene* pScene)
    {
       float maxDistBetweenWaypoints = AvgDistBetweenWaypoints();
@@ -372,11 +389,13 @@ namespace dtAI
 
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::OnMapLoad(const std::string& pWaypointFilename)
    {
       ReadFile(pWaypointFilename);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::OnMapSave(const std::string& pWaypointFilename, bool pCreateNavMesh, dtCore::Scene* pScene)
    {
       mNavMesh.Clear();
@@ -384,26 +403,31 @@ namespace dtAI
       WriteFile(pWaypointFilename);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::OnMapClose()
    {
       Clear();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    NavMesh& WaypointManager::GetNavMesh()
    {
       return mNavMesh;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const NavMesh& WaypointManager::GetNavMesh() const
    {
       return mNavMesh;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const WaypointManager::WaypointMap& WaypointManager::GetWaypoints() const
    {
       return mWaypoints;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    std::vector<Waypoint*> WaypointManager::CopyWaypointsIntoVector() const
    {
       std::vector<Waypoint*> pContainer;
@@ -418,6 +442,7 @@ namespace dtAI
       return pContainer;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    std::ostream& WaypointManager::GetWaypoints(std::ostream& pStream)
    {
       WaypointIterator iter = mWaypoints.begin();
@@ -435,30 +460,34 @@ namespace dtAI
       return pStream;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    const osg::Node* WaypointManager::GetOSGNode() const
    {
       return mDrawable.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    osg::Node* WaypointManager::GetOSGNode()
    {
       return mDrawable.get();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetDrawWaypoints(bool pDraw)
    {
-       mDrawWaypoints = pDraw;
+      mDrawWaypoints = pDraw;
    }
 
    struct WaypointManagerDeleteFunc
    {
       template<class _Type>
-         void operator()(_Type p1)
+      void operator()(_Type p1)
       {
          delete p1.second;
       }
    };
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::Clear()
    {
       //free memory
@@ -467,34 +496,38 @@ namespace dtAI
       mNavMesh.Clear();
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetWaypointColor(const osg::Vec4& pColor)
    {
       mWaypointColor = pColor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetWaypointSize(float pSize)
    {
       mWaypointSize = pSize;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetDrawNavMesh(bool pDraw, bool pDrawDetails)
    {
       mDrawNavMesh = pDraw;
       mDrawNavMeshDetails = pDrawDetails;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetNavMeshColor(const osg::Vec4& pColor)
    {
       mNavMeshColor = pColor;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::SetNavMeshSize(float pSize)
    {
       mNavMeshWidth = pSize;
    }
 
-
+   /////////////////////////////////////////////////////////////////////////////
    float WaypointManager::AvgDistBetweenWaypoints() const
    {
       int i = 0;
@@ -528,11 +561,11 @@ namespace dtAI
    }
 
 
-//////////////////////////////////////////////////////////////////////////
-//WaypointManagerDrawable
-//////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
+   //WaypointManagerDrawable
+   //////////////////////////////////////////////////////////////////////////
 
-
+   /////////////////////////////////////////////////////////////////////////////
    void WaypointManager::WaypointManagerDrawable::drawImplementation(osg::RenderInfo& /*renderInfo*/) const
    {
       //this will keep us from drawing when we are loading
@@ -556,7 +589,7 @@ namespace dtAI
 
          while (iter != endOfMap)
          {
-            const osg::Vec3 &color = (*iter).second->GetColor();
+            const osg::Vec3& color = (*iter).second->GetColor();
             float alpha            = (*iter).second->GetAlpha();
 
             // If we're using a render flag, output using this waypoint's color
