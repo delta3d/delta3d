@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -39,8 +39,9 @@
 class FileUtilsTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(FileUtilsTests);
-      
-      CPPUNIT_TEST(testFileIO);
+
+      CPPUNIT_TEST(testFileIO1);
+      CPPUNIT_TEST(testFileIO2);
       CPPUNIT_TEST(testRelativePath);
       CPPUNIT_TEST(testCopyFileOntoItself);
       //CPPUNIT_TEST(testAbsoluteToRelativePath);
@@ -51,18 +52,19 @@ class FileUtilsTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
    public:
-   
+
       void setUp();
       void tearDown();
 
-      void testFileIO();
+      void testFileIO1();
+      void testFileIO2();
       void testRelativePath();
       void testCopyFileOntoItself();
       //void testAbsoluteToRelativePath();
       void testDirectoryContentsWithOneFilter();
       void testDirectoryContentsWithTwoFilters();
       void testDirectoryContentsWithDuplicateFilter();
-   
+
    private:
 
       void NormalizeDirectorySlashes(std::string &str)
@@ -100,9 +102,9 @@ std::string getFileExtensionIncludingDot(const std::string& fileName)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void FileUtilsTests::setUp() 
+void FileUtilsTests::setUp()
 {
-   try 
+   try
    {
       dtCore::SetDataFilePathList( dtCore::GetDataFilePathList() + ";" + dtCore::GetDeltaRootPath()+"/examples/data/;");
       std::string logName("projectTest");
@@ -125,15 +127,15 @@ void FileUtilsTests::setUp()
 
       fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
       fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
-   } 
-   catch (const dtUtil::Exception& ex) 
+   }
+   catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_FAIL(ex.ToString());
    }
 }
 
 
-void FileUtilsTests::tearDown() 
+void FileUtilsTests::tearDown()
 {
    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
@@ -154,15 +156,18 @@ void FileUtilsTests::tearDown()
       fileUtils.PopDirectory();
 }
 
-void FileUtilsTests::testFileIO()
+void FileUtilsTests::testFileIO1()
 {
    try
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      std::string Dir1("Testing");
-      std::string Dir2Name("Testing1");
-      std::string Dir2(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name);
+      const std::string Dir1("Testing");
+      const std::string Dir2Name("Testing1");
+      const std::string Dir2(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name);
+
+      const std::string file1("terrain_simple.ive");
+      const std::string file2("flatdirt.ive");
 
       //cleanup
       try
@@ -174,12 +179,9 @@ void FileUtilsTests::testFileIO()
          CPPUNIT_ASSERT_MESSAGE((ex.ToString() + ": Error deleting Directory, but file exists.").c_str(),
             ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
       }
-
       fileUtils.MakeDirectory(Dir1);
       fileUtils.MakeDirectory(Dir2);
 
-      std::string file1("terrain_simple.ive");
-      std::string file2("flatdirt.ive");
 
       dtUtil::FileInfo file1Info = fileUtils.GetFileInfo(file1);
       dtUtil::FileInfo file2Info = fileUtils.GetFileInfo(file2);
@@ -188,7 +190,7 @@ void FileUtilsTests::testFileIO()
       {
          fileUtils.GetFileInfo(file2 + "euaoeuaiao.ao.u");
       }
-      catch (const dtUtil::Exception& ex) 
+      catch (const dtUtil::Exception& ex)
       {
          //this should throw a file not found.
          CPPUNIT_ASSERT_MESSAGE(ex.ToString().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
@@ -209,11 +211,11 @@ void FileUtilsTests::testFileIO()
 
       CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-      try 
+      try
       {
          fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
          CPPUNIT_FAIL("The file copy should have failed since it was attempting to overwrite the file and overwriting was disabled.");
-      } 
+      }
       catch (const dtUtil::Exception&)
       {
          //correct
@@ -226,11 +228,11 @@ void FileUtilsTests::testFileIO()
       struct dtUtil::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
       CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as the original", fi.size == file1Info.size);
 
-      try 
+      try
       {
          fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
-      } 
-      catch (const dtUtil::Exception& ex) 
+      }
+      catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL(ex.ToString().c_str());
       }
@@ -244,11 +246,67 @@ void FileUtilsTests::testFileIO()
 
       CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
-      try 
+   } catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.ToString());
+   }
+}
+
+void FileUtilsTests::testFileIO2()
+{
+   try
+   {
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+
+      const std::string Dir1("Testing");
+      const std::string Dir2Name("Testing1");
+      const std::string Dir2(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name);
+
+      const std::string file1("terrain_simple.ive");
+      const std::string file2("flatdirt.ive");
+
+      dtUtil::FileInfo file2Info = fileUtils.GetFileInfo(file2);
+
+      //cleanup
+      try
+      {
+         fileUtils.DirDelete(Dir1, true);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         CPPUNIT_ASSERT_MESSAGE((ex.ToString() + ": Error deleting Directory, but file exists.").c_str(),
+            ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
+      }
+
+      fileUtils.MakeDirectory(Dir1);
+      fileUtils.MakeDirectory(Dir2);
+
+      CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should exist.", fileUtils.FileExists(file1));
+      CPPUNIT_ASSERT_MESSAGE("flatdirt.ive should exist.", fileUtils.FileExists(file2));
+
+      try
+      {
+         fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         CPPUNIT_FAIL(ex.ToString().c_str());
+      }
+
+      CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
+
+      CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive, copied from flatdirt.ive, should exist.",
+         fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
+
+      dtUtil::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
+
+      CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
+
+      try
       {
          fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
-      } 
-      catch (const dtUtil::Exception& ex) 
+      }
+      catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL(ex.ToString().c_str());
       }
@@ -262,29 +320,29 @@ void FileUtilsTests::testFileIO()
       CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
       //copy the file back so we can try to move it again with overwriting.
-      try 
+      try
       {
          fileUtils.FileCopy(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
-      } 
-      catch (const dtUtil::Exception& ex) 
+      }
+      catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL(ex.ToString().c_str());
       }
 
-      try 
+      try
       {
          fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
          CPPUNIT_FAIL("Moving the file should have failed since overwriting was turned off.");
-      } 
-      catch (const dtUtil::Exception&) 
+      }
+      catch (const dtUtil::Exception&)
       {
          //correct
       }
 
-      try 
+      try
       {
          fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
-      } 
+      }
       catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL(ex.ToString().c_str());
@@ -296,48 +354,48 @@ void FileUtilsTests::testFileIO()
       CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive, copied from terrain_simple.ive, should exist.",
          fileUtils.FileExists(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-      try 
+      try
       {
          //copy a directory into itself with "copy contents only"
          fileUtils.DirCopy(Dir1, Dir1+ dtUtil::FileUtils::PATH_SEPARATOR + ".."+ dtUtil::FileUtils::PATH_SEPARATOR + Dir1, true, true);
          CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-      } 
+      }
       catch (const dtUtil::Exception&)
       {
          //correct
       }
 
-      try 
+      try
       {
          //copy a directory into the parent without contents, so that it would try to recreate the same directory.
          fileUtils.DirCopy(Dir1, ".", true, false);
          CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-      } 
-      catch (const dtUtil::Exception&) 
+      }
+      catch (const dtUtil::Exception&)
       {
          //correct
       }
 
-      try 
+      try
       {
          //copy a directory into the parent without contents, so that it would try to recreate the same directory.
          fileUtils.DirCopy(Dir1, Dir1, true, false);
          //doing it again should do nothing.
          fileUtils.DirCopy(Dir1, Dir1, true, false);
-      } 
+      }
       catch (const dtUtil::Exception&)
       {
          CPPUNIT_FAIL("DirCopy should be able to copy a directory into itself as a subdirectory.");
       }
 
-      try 
+      try
       {
          //Copy a directory into the parent without contents, so that it would try to recreate the same directory.
          //Note that the directory has already been created previously in this same unit test, so this should not
-         //be allowed because we'd be overwriting a pre-existing directory.         
+         //be allowed because we'd be overwriting a pre-existing directory.
          fileUtils.DirCopy(Dir1, Dir1, false, false);
          CPPUNIT_FAIL("DirCopy should not be able to overwrite files if overwriting is set to false.");
-      } 
+      }
       catch (const dtUtil::Exception&)
       {
       }
@@ -403,7 +461,7 @@ void FileUtilsTests::testFileIO()
 
       if(!dc.empty())
       {
-         for(dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i) 
+         for(dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
          {
             const std::string& s = *i;
             CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries and they should be \"Testing1\" and \"Testing\".").c_str(),
@@ -412,36 +470,36 @@ void FileUtilsTests::testFileIO()
       }
 
       //Testing the delete functionality tests DirGetFiles
-      try 
+      try
       {
          CPPUNIT_ASSERT_MESSAGE("Deleting an nonexisten Directory should be ok.", fileUtils.DirDelete("gobbletygook", false) == true);
-      } 
-      catch (const dtUtil::Exception&) 
+      }
+      catch (const dtUtil::Exception&)
       {
          CPPUNIT_FAIL("Deleting an nonexisten Directory should be ok.");
       }
 
       //Testing the delete functionality tests DirGetFiles
-      try 
+      try
       {
          fileUtils.DirDelete(Dir1, false);
-      } 
-      catch (const dtUtil::Exception&) 
+      }
+      catch (const dtUtil::Exception&)
       {
          CPPUNIT_FAIL("Deleting non-empty Directory with a non-recursive call should have returned false.");
       }
       CPPUNIT_ASSERT_MESSAGE(Dir1 + " should still exist.", fileUtils.DirExists(Dir1));
-      try 
+      try
       {
          fileUtils.DirDelete(Dir1, true);
-      } 
-      catch (const dtUtil::Exception& ex) 
+      }
+      catch (const dtUtil::Exception& ex)
       {
          CPPUNIT_FAIL((ex.ToString() + ": Deleting non-empty Directory with a non-recursive call should not have generated an Exception.").c_str());
       }
       CPPUNIT_ASSERT_MESSAGE(Dir1 + " should not still exist.", !fileUtils.DirExists(Dir1));
-   } 
-   catch (const dtUtil::Exception& ex) 
+   }
+   catch (const dtUtil::Exception& ex)
    {
       CPPUNIT_FAIL(ex.ToString());
    }
@@ -461,27 +519,27 @@ void FileUtilsTests::testRelativePath()
    NormalizeDirectorySlashes(file);
 
    NormalizeDirectorySlashes(deltaRoot);
-  
+
    std::string relativePath = dtUtil::FileUtils::GetInstance().RelativePath(deltaRoot, file);
    CPPUNIT_ASSERT(!relativePath.empty());
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd", 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The relative path should be: data/map.xsd",
          std::string("data/map.xsd"), relativePath);
 }
 
 void FileUtilsTests::testCopyFileOntoItself()
 {
-   std::string testPath = DATA_DIR + "/aNewFilePath";
+   const std::string testPath = DATA_DIR + "/aNewFilePath";
 
-   std::string path1 = testPath + "/aFile.txt";
-   std::string path2 = testPath + "/../aNewFilePath/aFile.txt";
+   const std::string path1 = testPath + "/aFile.txt";
+   const std::string path2 = testPath + "/../aNewFilePath/aFile.txt";
 
    dtUtil::FileUtils::GetInstance().MakeDirectory(testPath);
 
    FILE* fp = fopen(path1.c_str(), "w");
 
-   CPPUNIT_ASSERT(fp);
-   
+   CPPUNIT_ASSERT(fp != NULL);
+
    fputs("Text for my test file", fp);
 
    fclose(fp);
@@ -509,7 +567,7 @@ void FileUtilsTests::testCopyFileOntoItself()
       std::string mapXSDPath = dtCore::FindFileInPathList("map.xsd");
 
       NormalizeDirectorySlashes(mapXSDPath);
-     
+
       instance.AbsoluteToRelative(mapXSDPath, path);
       CPPUNIT_ASSERT_EQUAL(std::string("../../data/map.xsd"), path);
    }
@@ -521,7 +579,7 @@ void FileUtilsTests::testCopyFileOntoItself()
 
 //////////////////////////////////////////////////////////////////////////
 void FileUtilsTests::testDirectoryContentsWithOneFilter()
-{   
+{
    const dtUtil::DirectoryContents allContents = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR);
    const size_t numAllFiles = allContents.size();
 
@@ -576,7 +634,7 @@ void FileUtilsTests::testDirectoryContentsWithDuplicateFilter()
    const dtUtil::DirectoryContents singleFilterList = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, singleExtension);
 
    dtUtil::FileExtensionList duplicateExtension;
-   duplicateExtension.push_back(".cpp"); 
+   duplicateExtension.push_back(".cpp");
    duplicateExtension.push_back(".cpp"); //add another of the same
 
    const dtUtil::DirectoryContents duplicateFilter = dtUtil::FileUtils::GetInstance().DirGetFiles(TESTS_DIR, duplicateExtension);
