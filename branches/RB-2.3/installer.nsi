@@ -135,7 +135,7 @@ Section "!Delta3D" Delta3DSection
   
   ;lib
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\lib"
-  File /x *.exp .\${DELTA_BUILD_DIR}\lib\*
+  File /x *.exp /x *.pdb /x *.idb .\${DELTA_BUILD_DIR}\lib\*
   
   ;macosx
   SetOutPath "$INSTDIR\macosx"
