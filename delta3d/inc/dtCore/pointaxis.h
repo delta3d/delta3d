@@ -57,7 +57,7 @@ namespace dtCore
    * Custom labels can be set or HPR can be enabled.  Colors of the axes and the length
    * of the line can also be set through the interface functions.
    */
-   class DT_CORE_EXPORT PointAxis  :  public   Transformable
+   class DT_CORE_EXPORT PointAxis : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(PointAxis)
 
@@ -158,6 +158,11 @@ namespace dtCore
       /// set a custom color value of an label
       virtual  void        SetLabelColor(AXIS a, const osg::Vec4 c);
 
+      /// set the size that characters will be scaled by when created
+      virtual void         SetCharacterScale(float size);
+
+      /// get the size that characters will be scaled by when created
+      virtual float        GetCharacterScale() const;
 
    private:
       inline   void        ctor();
@@ -174,6 +179,7 @@ namespace dtCore
       osg::Vec3                     mPoint[NUMAXES+1L];  ///< data points to construct geometry
       RefPtr<osg::Switch>           mMainSwitch;         ///< toggle for axis and all lables
       RefPtr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
+      float                         mCharacterScale;     ///< scale the size of label characters
    };
 }
 

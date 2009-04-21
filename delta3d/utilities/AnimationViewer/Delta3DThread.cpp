@@ -105,7 +105,7 @@ void Delta3DThread::run()
 
    mViewer->Config();
 
-   connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)) );
+   connect(mWin, SIGNAL(FileToLoad(const QString&)), mViewer.get(), SLOT(OnLoadCharFile(const QString&)));
    connect(mWin, SIGNAL(UnloadFile()), mViewer.get(), SLOT(OnUnloadCharFile()) );
    connect(mViewer.get(), SIGNAL(ClearCharacterData()), mWin, SLOT(OnClearCharacterData()));
 
@@ -117,13 +117,13 @@ void Delta3DThread::run()
    connect(mViewer.get(), SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
            mWin, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));
 
-   connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float )),
+   connect(mViewer.get(), SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float)),
            mWin, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
 
    connect(mWin, SIGNAL(ShowMesh(int)), mViewer.get(), SLOT(OnShowMesh(int)));
    connect(mWin, SIGNAL(HideMesh(int)), mViewer.get(), SLOT(OnHideMesh(int)));
 
-   connect(mViewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)) );
+   connect(mViewer.get(), SIGNAL(ErrorOccured(const QString&)), mWin, SLOT(OnDisplayError(const QString&)));
 
    connect(mWin, SIGNAL(StartAnimation(unsigned int,float,float)), mViewer.get(), SLOT(OnStartAnimation(unsigned int,float,float)));
    connect(mWin, SIGNAL(StopAnimation(unsigned int,float)), mViewer.get(), SLOT(OnStopAnimation(unsigned int,float)));
@@ -139,6 +139,7 @@ void Delta3DThread::run()
    connect((QObject*)mWin->mWireframeAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetWireframe()));
    connect((QObject*)mWin->mShadedWireAction, SIGNAL(triggered()), mViewer.get(), SLOT(OnSetShadedWireframe()));
    connect((QObject*)mWin->mBoneBasisAction, SIGNAL(toggled(bool)), mViewer.get(), SLOT(OnSetBoneBasisDisplay(bool)));
+   connect((QObject*)mWin->mBoneLabelAction, SIGNAL(toggled(bool)), mViewer.get(), SLOT(OnSetBoneLabelDisplay(bool)));
 
    connect(mViewer.get(), SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), mWin, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
    connect(mWin, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer.get(), SLOT(OnMorphChanged(int,int,int,float)));

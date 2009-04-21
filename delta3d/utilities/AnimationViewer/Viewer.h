@@ -62,6 +62,7 @@ public slots:
    void OnSetWireframe();
    void OnSetShadedWireframe();
    void OnSetBoneBasisDisplay(bool shouldDisplay);
+   void OnSetBoneLabelDisplay(bool shouldDisplay);
 
    void OnTimeout();
 

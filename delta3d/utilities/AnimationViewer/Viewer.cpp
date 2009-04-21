@@ -80,8 +80,16 @@ Viewer::~Viewer()
 osg::Geode* MakePlane()
 {
    osg::Geode* geode = new osg::Geode();
-   osg::Box* box = new osg::Box(osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.05f);
+   osg::Box* box = new osg::Box(osg::Vec3(0.f,0.f,-0.025f), 2.5f, 2.5f, 0.01f);
    osg::ShapeDrawable* shapeDrawable = new osg::ShapeDrawable(box);
+
+   osg::Material* material = new osg::Material;
+   material->setTransparency(osg::Material::FRONT, 0.5f);
+   material->setAlpha(osg::Material::FRONT, 0.5f);
+
+   osg::StateSet* ss = geode->getOrCreateStateSet();
+   ss->setAttributeAndModes(material, osg::StateAttribute::ON); 
+   ss->setMode(GL_BLEND, osg::StateAttribute::ON);
 
    geode->addDrawable(shapeDrawable);
 
@@ -299,6 +307,10 @@ void Viewer::CreateBoneBasisDisplay()
       axis->SetLength(dtCore::PointAxis::X, 0.025f);
       axis->SetLength(dtCore::PointAxis::Y, 0.025f);
       axis->SetLength(dtCore::PointAxis::Z, 0.025f);
+      axis->SetCharacterScale(5.0f);
+      axis->Enable(dtCore::PointAxis::LABEL_X);
+      axis->SetLabel(dtCore::PointAxis::X, boneNameIter->c_str());
+      axis->SetLabelColor(dtCore::PointAxis::X, dtCore::PointAxis::YELLOW);
 
       mAttachmentController->AddAttachment(*axis, hotSpotDefinition);
 
@@ -434,6 +446,27 @@ void Viewer::OnSetBoneBasisDisplay(bool shouldDisplay)
    else
    {
       GetScene()->GetSceneNode()->removeChild(mBoneBasisGroup.get());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Viewer::OnSetBoneLabelDisplay(bool shouldDisplay)
+{
+   int numberOfAxes = dtCore::PointAxis::GetInstanceCount();
+
+   for (int axisIndex = 0; axisIndex < numberOfAxes; ++axisIndex)
+   {
+      dtCore::PointAxis* axis = dtCore::PointAxis::GetInstance(axisIndex);
+
+      // Labels are on the X axis
+      if (shouldDisplay)
+      {
+         axis->Enable(dtCore::PointAxis::LABEL_X);
+      }
+      else
+      {
+         axis->Disable(dtCore::PointAxis::LABEL_X);
+      }
    }
 }
 

@@ -18,21 +18,21 @@ IMPLEMENT_MANAGEMENT_LAYER(PointAxis)
 /// static member variables
 const float                PointAxis::DEF_AXIS_SIZE(1.0f);
 const float                PointAxis::DEF_CHAR_SIZE(0.3f);
-const PointAxis::AXISCOLOR PointAxis::DEF_COLOR[NUMAXES]  =
+const PointAxis::AXISCOLOR PointAxis::DEF_COLOR[NUMAXES] =
 {
    RED,
    GREEN,
    BLUE
 };
 
-const char* PointAxis::DEF_LABEL_XYZ[NUMAXES]  =
+const char* PointAxis::DEF_LABEL_XYZ[NUMAXES] =
 {
    "X",
    "Y",
    "Z"
 };
 
-const char* PointAxis::DEF_LABEL_HPR[NUMAXES]  =
+const char* PointAxis::DEF_LABEL_HPR[NUMAXES] =
 {
    "P",
    "R",
@@ -53,9 +53,10 @@ const osg::Vec4 PointAxis::COLOR[BASECOLORS] =
 
 ////////////////////////////////////////////////////////////////////////////////
 PointAxis::PointAxis()
-   :  Transformable()
+   : Transformable()
    , mMainSwitch(NULL)
    , mLabelSwitch(NULL)
+   , mCharacterScale(1.0f)
 {
    RegisterInstance(this);
 
@@ -145,7 +146,7 @@ PointAxis::Enable(int f)
       osg::Geode* g(NULL);
 
       g = static_cast<osg::Geode*>(mLabelSwitch->getChild(X));
-      assert( g );
+      assert(g);
 
       mLabel[X] = DEF_LABEL_HPR[X];
       LabelSetup(g, mLabel[X].c_str(), mPoint[X], mLColor[X], GetLength(X));
@@ -167,11 +168,11 @@ PointAxis::Enable(int f)
    {
       osg::Geode* g(NULL);
 
-      g  = static_cast<osg::Geode*>(mLabelSwitch->getChild(X));
+      g = static_cast<osg::Geode*>(mLabelSwitch->getChild(X));
       assert(g);
 
       mLabel[X] = mCLabel[X];
-      LabelSetup( g, mLabel[X].c_str(), mPoint[X], mLColor[X], GetLength(X));
+      LabelSetup(g, mLabel[X].c_str(), mPoint[X], mLColor[X], GetLength(X));
 
       g = static_cast<osg::Geode*>(mLabelSwitch->getChild(Y));
       assert(g);
@@ -233,7 +234,7 @@ PointAxis::Disable(int f)
 */
 const char* PointAxis::GetLabel(AXIS a) const
 {
-   if( a >= NUMAXES )
+   if(a >= NUMAXES)
    {
       return NULL;
    }
@@ -256,7 +257,7 @@ PointAxis::SetLabel(AXIS a, const char* l)
       return;
    }
 
-   mCLabel[a]   = l;
+   mCLabel[a] = l;
    Enable(CUSTOM_LABELS);
 }
 
@@ -388,7 +389,7 @@ void PointAxis::SetColor(AXIS a, const osg::Vec4 c)
 *
 * @return  the color-id
 */
-PointAxis::AXISCOLOR PointAxis::GetLabelColor(AXIS a)   const
+PointAxis::AXISCOLOR PointAxis::GetLabelColor(AXIS a) const
 {
    if(a >= NUMAXES)
    {
@@ -437,6 +438,18 @@ void PointAxis::GetLabelColor(AXIS a, osg::Vec4& c) const
    }
 
    c = mLColor[a];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::PointAxis::SetCharacterScale(float size)
+{
+   mCharacterScale = size;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+float dtCore::PointAxis::GetCharacterScale() const
+{
+   return mCharacterScale;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -627,9 +640,8 @@ void PointAxis::LabelSetup(osg::Geode* g, const char* l, osg::Vec3 p, osg::Vec4 
    }
 
    txt->setText(l);
-   txt->setCharacterSize(s * DEF_CHAR_SIZE);
+   txt->setCharacterSize(s * DEF_CHAR_SIZE * mCharacterScale);
    txt->setAutoRotateToScreen(true);
    txt->setColor(c);
    txt->setPosition(p);
 }
-
