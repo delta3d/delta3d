@@ -79,8 +79,8 @@ namespace dtCore
           */
          virtual ~OrbitMotionModel();
 
-         LogicalInputDevice *GetDefaultLogicalInputDevice() { return mDefaultInputDevice.get(); }
-         const LogicalInputDevice *GetDefaultLogicalInputDevice() const { return mDefaultInputDevice.get(); }
+         LogicalInputDevice* GetDefaultLogicalInputDevice() { return mDefaultInputDevice.get(); }
+         const LogicalInputDevice* GetDefaultLogicalInputDevice() const { return mDefaultInputDevice.get(); }
 
       public:
       
@@ -219,7 +219,7 @@ namespace dtCore
           *
           * @param point the new focal point
           */
-         void SetFocalPoint(const osg::Vec3 &point);
+         void SetFocalPoint(const osg::Vec3& point);
 
          /**
           * Called when an axis' state has changed.
