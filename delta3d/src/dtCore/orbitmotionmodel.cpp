@@ -76,30 +76,30 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    {
       mDefaultInputDevice = new LogicalInputDevice;
 
-      mLeftButtonUpDownMapping = new ButtonAxisToAxis(   mouse->GetButton(Mouse::LeftButton),
-                                                         mouse->GetAxis(1) );
-      mDefaultElevationAxis = mDefaultInputDevice->AddAxis( "left mouse button up/down",
-                                                            mLeftButtonUpDownMapping.get() );
+      mLeftButtonUpDownMapping = new ButtonAxisToAxis(mouse->GetButton(Mouse::LeftButton),
+                                                      mouse->GetAxis(1));
+      mDefaultElevationAxis = mDefaultInputDevice->AddAxis("left mouse button up/down",
+                                                           mLeftButtonUpDownMapping.get());
 
-      mLeftButtonLeftRightMapping = new ButtonAxisToAxis(   mouse->GetButton(Mouse::LeftButton),
-                                                            mouse->GetAxis(0) );
-      mDefaultAzimuthAxis = mDefaultInputDevice->AddAxis(   "left mouse button left/right",
-                                                            mLeftButtonLeftRightMapping.get() );
+      mLeftButtonLeftRightMapping = new ButtonAxisToAxis(mouse->GetButton(Mouse::LeftButton),
+                                                         mouse->GetAxis(0));
+      mDefaultAzimuthAxis = mDefaultInputDevice->AddAxis("left mouse button left/right",
+                                                         mLeftButtonLeftRightMapping.get());
 
-      mMiddleButtonUpDownMapping = new ButtonAxisToAxis( mouse->GetButton(Mouse::MiddleButton),
-                                                         mouse->GetAxis(1) );
-      mDefaultDistanceAxis = mDefaultInputDevice->AddAxis(  "middle mouse button up/down",
-                                                            mMiddleButtonUpDownMapping.get() );
+      mMiddleButtonUpDownMapping = new ButtonAxisToAxis(mouse->GetButton(Mouse::MiddleButton),
+                                                        mouse->GetAxis(1));
+      mDefaultDistanceAxis = mDefaultInputDevice->AddAxis("middle mouse button up/down",
+                                                          mMiddleButtonUpDownMapping.get());
 
-      mRightButtonUpDownMapping = new ButtonAxisToAxis(  mouse->GetButton(Mouse::RightButton),
-                                                         mouse->GetAxis(1) );
-      mDefaultUpDownTranslationAxis = mDefaultInputDevice->AddAxis(  "right mouse button up/down",
-                                                                     mRightButtonUpDownMapping.get() );
+      mRightButtonUpDownMapping = new ButtonAxisToAxis(mouse->GetButton(Mouse::RightButton),
+                                                       mouse->GetAxis(1));
+      mDefaultUpDownTranslationAxis = mDefaultInputDevice->AddAxis("right mouse button up/down",
+                                                                   mRightButtonUpDownMapping.get());
 
-      mRightButtonLeftRightMapping = new ButtonAxisToAxis(  mouse->GetButton(Mouse::RightButton),
-                                                            mouse->GetAxis(0) );
-      mDefaultLeftRightTranslationAxis = mDefaultInputDevice->AddAxis(  "right mouse button left/right",
-                                                                        mRightButtonLeftRightMapping.get() );
+      mRightButtonLeftRightMapping = new ButtonAxisToAxis(mouse->GetButton(Mouse::RightButton),
+                                                          mouse->GetAxis(0));
+      mDefaultLeftRightTranslationAxis = mDefaultInputDevice->AddAxis("right mouse button left/right",
+                                                                      mRightButtonLeftRightMapping.get());
    }
    else
    {
@@ -377,7 +377,7 @@ osg::Vec3 OrbitMotionModel::GetFocalPoint() const
  *
  * @param point the new focal point
  */
-void OrbitMotionModel::SetFocalPoint(const osg::Vec3f &point)
+void OrbitMotionModel::SetFocalPoint(const osg::Vec3f& point)
 {
    // get current orientation
    osg::Vec3 hpr;
@@ -436,7 +436,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
 
       if (axis == mAzimuthAxis.get())
       {
-         osg::Vec3 focus( 0.0f, mDistance, 0.0f );
+         osg::Vec3 focus(0.0f, mDistance, 0.0f);
 
          osg::Matrix mat;
 
@@ -446,7 +446,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
 
          hpr[0] -= float(delta * mAngularRate);
 
-         osg::Vec3 offset( 0.0f, -mDistance, 0.0f );
+         osg::Vec3 offset(0.0f, -mDistance, 0.0f);
 
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
 
@@ -488,7 +488,7 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
             distDelta = 1.0f - mDistance;
          }
 
-         osg::Vec3 translation ( 0.0f, -distDelta, 0.0f );
+         osg::Vec3 translation (0.0f, -distDelta, 0.0f);
 
          osg::Matrix mat;
 
