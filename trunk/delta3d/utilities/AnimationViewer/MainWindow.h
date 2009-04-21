@@ -57,6 +57,7 @@ signals:
    void LODScale_Changed(float scaleValue);
    void SpeedChanged(float speedFactor);
    void ScaleFactorChanged(float scaleFactorValue);
+   void SetBoneLabeling(bool shouldShow);
 
    //Show the mesh on the CalModel
    void ShowMesh(int meshID);
@@ -127,6 +128,7 @@ private:
    QAction* mDiffuseLightAction;
    QAction* mPointLightAction;
    QAction* mHardwareSkinningAction;
+   QAction* mBoneLabelAction;
 
    QToolBar* mShadingToolbar;
    QToolBar* mLightingToolbar;

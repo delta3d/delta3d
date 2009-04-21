@@ -97,8 +97,6 @@ MainWindow::MainWindow()
    connect(mSubMorphTargetListWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(OnSubMorphChanged(QTableWidgetItem*)));
    connect(mSubMorphTargetListWidget, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(OnSubMorphPlay(QTableWidgetItem*)));
 
-
-
    CreateActions();
    CreateMenus();
    statusBar();
@@ -129,7 +127,6 @@ MainWindow::MainWindow()
    setAcceptDrops(true);
 
    SetCurrentFile("");
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +142,8 @@ void MainWindow::CreateMenus()
    QMenu* toolBarMenu = viewMenu->addMenu("&Toolbars");
 
    viewMenu->addAction(mHardwareSkinningAction);
-   
+   viewMenu->addAction(mBoneLabelAction);
+
    windowMenu->addAction(mLoadCharAct);
    windowMenu->addSeparator();
    windowMenu->addAction(mCloseCharAction);
@@ -231,6 +229,10 @@ void MainWindow::CreateActions()
    mHardwareSkinningAction->setCheckable(true);
    mHardwareSkinningAction->setChecked(false); //will get init'd properly when everything's up and running
    connect(mHardwareSkinningAction, SIGNAL(triggered()), this, SLOT(OnToggleHardwareSkinning()));
+
+   mBoneLabelAction = new QAction(tr("Use Bone Labeling"), this);
+   mBoneLabelAction->setCheckable(true);
+   mBoneLabelAction->setChecked(true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
