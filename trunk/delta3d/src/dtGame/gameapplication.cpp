@@ -31,7 +31,7 @@
 
 #include <dtUtil/exception.h>
 #include <dtCore/scene.h>
-#include <osgViewer/CompositeViewer>
+#include <osgViewer/CompositeViewer> //for parent class's forward declaration
 #include <dtCore/keyboard.h>
 
 namespace dtGame
@@ -48,11 +48,6 @@ namespace dtGame
    {
       RegisterInstance(this);
       GetKeyboard()->RemoveKeyboardListener(GetKeyboardListener());
-
-      //Disable OSG's default behavior of quitting when the Escape key is pressed.
-      //Not disabling this causes Delta3D and OSG to get into a bad state
-      //when the Escape key is pressed.
-      GetCompositeViewer()->setKeyEventSetsDone(0);
    }
 
    /////////////////////////////////////////////////////////////////////////////
