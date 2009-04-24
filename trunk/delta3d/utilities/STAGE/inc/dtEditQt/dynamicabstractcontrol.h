@@ -311,7 +311,7 @@ namespace dtEditQt
         // indicates whether the object has been initialized
         bool initialized;
 
-        dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+        dtCore::RefPtr<dtDAL::ActorProxy> mProxy;
         //dtCore::RefPtr<dtDAL::ActorProperty> property;
 
         // The parent control of this control.  All controls have a parent except root level

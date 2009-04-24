@@ -110,7 +110,7 @@ namespace dtEditQt
             if (result != myProperty->GetValue() && proxyValue != newValue) 
             {
                // give undo manager the ability to create undo/redo events
-               EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty,
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty,
                   myProperty->ToString(), QString::number(result).toStdString());
 
                myProperty->SetValue(result);
@@ -126,7 +126,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged) 
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
       }
 
       return dataChanged;
@@ -201,7 +201,7 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
+      if (temporaryEditControl != NULL && proxy == mProxy && property == myProperty) 
       {
          updateEditorFromModel(temporaryEditControl);
       }

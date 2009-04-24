@@ -108,14 +108,15 @@ namespace dtEditQt
          //unsigned int index = (unsigned int)(mTemporaryEditControl->currentIndex());
          std::string selectionString = selection.toStdString();
 
-         dtDAL::ActorProxy* proxy = getActorProxy();
-         std::string previousString = proxy? proxy->GetName() : "<None>";
+         dtDAL::ActorProxy* currentProxy = getActorProxy();
+         std::string previousString = currentProxy ? currentProxy->GetName() : "<None>";
 
          // set our value to our object
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, getActorProperty(), previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(
+               mProxy, getActorProperty(), previousString, selectionString);
 
             dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
             if (curMap == NULL)
@@ -162,10 +163,10 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, getActorProperty());
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, getActorProperty());
       }
 
-      return dataChanged;    
+      return dataChanged;
    }
 
 
@@ -323,7 +324,7 @@ namespace dtEditQt
 
       dtDAL::ActorActorProperty* changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
 
-      if (mTemporaryEditControl != NULL && proxy == this->proxy && changedProp == getActorProperty()) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == getActorProperty()) 
       {
          updateEditorFromModel(mTemporaryEditControl);
       }

@@ -63,7 +63,7 @@ namespace dtEditQt
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
 
          // set the current value from our property
-         editBox->setText(tr(proxy->GetName().c_str()));
+         editBox->setText(tr(mProxy->GetName().c_str()));
          editBox->selectAll();
       }
    }
@@ -86,10 +86,10 @@ namespace dtEditQt
          std::string result = editBox->text().toStdString();
 
          // set our value to our object
-         if (result != proxy->GetName()) 
+         if (result != mProxy->GetName()) 
          {
-            oldName = proxy->GetName();
-            proxy->SetName(result);
+            oldName = mProxy->GetName();
+            mProxy->SetName(result);
             dataChanged = true;
          }
 
@@ -101,7 +101,7 @@ namespace dtEditQt
       // no notification cause it's not a property 
       if (dataChanged) 
       {
-         EditorEvents::GetInstance().emitProxyNameChanged(proxy.get(), oldName);
+         EditorEvents::GetInstance().emitProxyNameChanged(mProxy.get(), oldName);
       }
 
       return dataChanged;
@@ -144,7 +144,7 @@ namespace dtEditQt
    const QString DynamicNameControl::getValueAsString() 
    {
       DynamicAbstractControl::getValueAsString();
-      return QString(tr(proxy->GetName().c_str()));
+      return QString(tr(mProxy->GetName().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicNameControl::proxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
    {
-      if (temporaryEditControl != NULL && proxy == this->proxy) 
+      if (temporaryEditControl != NULL && proxy == mProxy) 
       {
          updateEditorFromModel(temporaryEditControl);
       }

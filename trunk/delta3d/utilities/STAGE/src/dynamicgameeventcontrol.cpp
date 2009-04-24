@@ -107,7 +107,7 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, previousString, selectionString);
 
             dtDAL::GameEvent* eventToSet = NULL;
             //std::vector<dtDAL::GameEvent*> events;
@@ -130,7 +130,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
       }
 
       return dataChanged;    
@@ -230,7 +230,7 @@ namespace dtEditQt
 
       dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
 
-      if (temporaryEditControl != NULL && proxy == this->proxy && changedProp == myProperty) 
+      if (temporaryEditControl != NULL && proxy == mProxy && changedProp == myProperty) 
       {
          updateEditorFromModel(temporaryEditControl);
       }

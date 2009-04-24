@@ -219,11 +219,11 @@ namespace dtEditQt
             dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
             plugin->UpdateModelFromWidget(*pluginWidget, *param);      
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, mGroupProperty, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mGroupProperty, 
                mGroupProperty->ToString(), param->ToString());
             mGroupProperty->SetValue(*param);
             // notify the world (mostly the viewports) that our property changed
-            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mGroupProperty);
+            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mGroupProperty);
          }
       }
       else
