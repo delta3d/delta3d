@@ -27,8 +27,31 @@
  * Matthew W. Campbell
  */
 
-#include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/dialoglistselection.h"
+/* -*-c++-*-
+ * Delta3D
+ * Copyright 2009, Alion Science and Technology
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * David Guthrie
+ * Matt Campbell
+ */
+#include <dtQt/dialoglistselection.h>
 
 #include <QtCore/QStringList>
 #include <QtGui/QVBoxLayout>
@@ -38,7 +61,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QListWidgetItem>
 
-namespace dtEditQt
+namespace dtQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -55,98 +78,102 @@ namespace dtEditQt
       {
          QGroupBox*   groupBox = new QGroupBox(groupBoxName,this);
          QVBoxLayout* layout = new QVBoxLayout(groupBox);
-         listBox = new QListWidget(groupBox);
-         layout->addWidget(listBox);
+         mListBox = new QListWidget(groupBox);
+         layout->addWidget(mListBox);
          mainLayout->addWidget(groupBox);
       }
       else
       {
-         listBox = new QListWidget(this);
-         mainLayout->addWidget(listBox);
+         mListBox = new QListWidget(this);
+         mainLayout->addWidget(mListBox);
       }
 
-#if QT_VERSION <= 0x040100
-      connect(listBox,SIGNAL(itemSelectionChanged()),
-         this,SLOT(onSelectionChanged()));
-#else
-      connect(listBox, SIGNAL(itemClicked(QListWidgetItem*)),
+      connect(mListBox, SIGNAL(itemClicked(QListWidgetItem*)),
          this, SLOT(onItemClicked(QListWidgetItem*)));
 
-      connect(listBox, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+      connect(mListBox, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
          this, SLOT(onItemDoubleClicked(QListWidgetItem*)));
 
-      connect(listBox, SIGNAL(currentRowChanged(int)),
+      connect(mListBox, SIGNAL(currentRowChanged(int)),
          this, SLOT(onCurrentRowChanged(int)));
-#endif
 
       //Create the ok and cancel buttons...
-      okButton     = new QPushButton(tr("OK"),     this);
-      cancelButton = new QPushButton(tr("Cancel"), this);
+      mOKButton     = new QPushButton(tr("OK"),     this);
+      mCancelButton = new QPushButton(tr("Cancel"), this);
       QHBoxLayout* buttonLayout = new QHBoxLayout;
 
-      cancelButton->setDefault(true);
-      okButton->setEnabled(false);
+      mCancelButton->setDefault(true);
+      mOKButton->setEnabled(false);
       buttonLayout->addStretch(1);
-      buttonLayout->addWidget(okButton);
-      buttonLayout->addWidget(cancelButton);
+      buttonLayout->addWidget(mOKButton);
+      buttonLayout->addWidget(mCancelButton);
       buttonLayout->addStretch(1);
 
-      connect(okButton,     SIGNAL(clicked()), this, SLOT(accept()));
-      connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+      connect(mOKButton,     SIGNAL(clicked()), this, SLOT(accept()));
+      connect(mCancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
       mainLayout->addLayout(buttonLayout);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DialogListSelection::setListItems(const QStringList& list)
+   DialogListSelection::~DialogListSelection() { }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DialogListSelection::SetListItems(const QStringList& list)
    {
       if (!list.empty())
       {
-         listBox->addItems(list);
-         listBox->setCurrentRow(0);
-         okButton->setEnabled(true);
-         okButton->setDefault(true);
+         mListBox->addItems(list);
+         mListBox->setCurrentRow(0);
+         mOKButton->setEnabled(true);
+         mOKButton->setDefault(true);
       }
       else
       {
-         okButton->setEnabled(false);
-         cancelButton->setDefault(true);
+         mOKButton->setEnabled(false);
+         mCancelButton->setDefault(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DialogListSelection::onSelectionChanged()
    {
-      QListWidgetItem* item = listBox->currentItem();
+      QListWidgetItem* item = mListBox->currentItem();
       if (item != NULL)
       {
-         currentItem = item->text();
+         mCurrentItem = item->text();
       }
       else
       {
-         currentItem = tr("");
+         mCurrentItem = tr("");
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const QString& DialogListSelection::GetSelectedItem() const
+   {
+      return mCurrentItem;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DialogListSelection::onItemClicked(QListWidgetItem* i)
    {
-      currentItem = i->text();
+      mCurrentItem = i->text();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DialogListSelection::onItemDoubleClicked(QListWidgetItem* i)
    {
-      currentItem = i->text();
+      mCurrentItem = i->text();
       this->done(QDialog::Accepted);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DialogListSelection::onCurrentRowChanged(int i)
    {
-      QListWidgetItem* item = listBox->item(i);
+      QListWidgetItem* item = mListBox->item(i);
 
-      currentItem = item != NULL ? item->text() : tr("");
+      mCurrentItem = item != NULL ? item->text() : tr("");
    }
 
 } // namespace dtEditQt

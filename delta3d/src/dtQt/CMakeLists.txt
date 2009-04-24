@@ -8,7 +8,10 @@ file(GLOB LIB_PUBLIC_HEADERS "${HEADER_PATH}/*.h")
 # These files are listed in alphabetical order.
 set(LIB_SOURCES 
 
+baselibrarylisteditor.cpp
 deltastepper.cpp
+dialoglistselection.cpp
+librarypathseditor.cpp
 osgadapterwidget.cpp
 osggraphicswindowqt
 projectcontextdialog.cpp

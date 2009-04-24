@@ -29,7 +29,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
                                          QT_QTOPENGL_LIBRARY
                                          OSGFX_LIBRARY
                                          AGL_LIBRARY)
-TARGET_LINK_LIBRARIES( ${LIB_NAME}                                         
+TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTUTIL_LIBRARY}
                        ${DTCORE_LIBRARY}
                        ${DTDAL_LIBRARY}
@@ -37,6 +37,7 @@ TARGET_LINK_LIBRARIES( ${LIB_NAME}
                        ${DTAUDIO_LIBRARY}
                        ${DTABC_LIBRARY}
                        ${DTGAME_LIBRARY}
+                       ${DTQT_LIBRARY}
                      )
                      
 #MESSAGE(STATUS ${QT_LIBRARIES})

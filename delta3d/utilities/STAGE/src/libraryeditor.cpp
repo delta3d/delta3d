@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -43,6 +43,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editoractions.h>
+#include <dtEditQt/mainwindow.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/map.h>
@@ -50,102 +51,38 @@
 
 #include <osgDB/FileNameUtils>
 
-using dtDAL::ActorProxy;
-using dtDAL::ActorType;
-using dtDAL::Map;
-using dtDAL::ActorPluginRegistry;
-using dtDAL::LibraryManager;
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-using std::vector;
-using std::string;
-/// @endcond
-
-enum
-{
-   ERROR_LIB_NOT_LOADED = 0,
-   ERROR_ACTORS_IN_LIB,
-   ERROR_INVALID_LIB,
-   ERROR_UNKNOWN
-};
+#include <sstream>
 
 namespace dtEditQt
 {
 
    LibraryEditor::LibraryEditor(QWidget* parent)
-      : QDialog(parent)
-      , numActorsInScene(0)
+      : dtQt::BaseLibraryListEditor(parent)
    {
-      setWindowTitle(tr("Library Editor"));
-
-      QGroupBox*   groupBox   = new QGroupBox(tr("Loaded Libraries"), this);
-      QGridLayout* gridLayout = new QGridLayout(groupBox);
-
-      // add the lib names to the grid
-      libView = new QListWidget(groupBox);
-      libView->setSelectionMode(QAbstractItemView::SingleSelection);
-      gridLayout->addWidget(libView, 0, 0);
-
-      // Create the arrow buttons for changing the library order.
-      QVBoxLayout* arrowLayout = new QVBoxLayout;
-      upLib   = new QPushButton(tr("^"), groupBox);
-      downLib = new QPushButton(tr("v"), groupBox);
-      arrowLayout->addStretch(1);
-      arrowLayout->addWidget(upLib);
-      arrowLayout->addWidget(downLib);
-      arrowLayout->addStretch(1);
-      gridLayout->addLayout(arrowLayout, 0, 1);
-
-      // create the buttons, default delete to disabled
-      QHBoxLayout* buttonLayout = new QHBoxLayout;
-      QPushButton* importLib    = new QPushButton(tr("Import Library"), this);
-      QPushButton* close        = new QPushButton(tr("Close"), this);
-      deleteLib = new QPushButton(tr("Remove Library"), this);
-
-      deleteLib->setDisabled(true);
-      buttonLayout->addStretch(1);
-      buttonLayout->addWidget(deleteLib);
-      buttonLayout->addWidget(importLib);
-      buttonLayout->addWidget(close);
-      buttonLayout->addStretch(1);
-
-      // make the connections
-      connect(deleteLib, SIGNAL(clicked()),         this, SLOT(spawnDeleteConfirmation()));
-      connect(importLib, SIGNAL(clicked()),         this, SLOT(spawnFileBrowser()));
-      connect(upLib,     SIGNAL(clicked()),         this, SLOT(shiftLibraryUp()));
-      connect(downLib,   SIGNAL(clicked()),         this, SLOT(shiftLibraryDown()));
-      connect(close,     SIGNAL(clicked()),         this, SLOT(close()));
-      connect(this,      SIGNAL(noLibsSelected()),  this, SLOT(disableButtons()));
-      connect(this,      SIGNAL(librarySelected()), this, SLOT(enableButtons()));
-
-      QVBoxLayout* mainLayout = new QVBoxLayout(this);
-      mainLayout->addWidget(groupBox);
-      mainLayout->addLayout(buttonLayout);
-
-      refreshLibraries();
    }
 
    LibraryEditor::~LibraryEditor()
    {
    }
 
-   void LibraryEditor::getMapLibNames(vector<QListWidgetItem*>& items) const
+   void LibraryEditor::GetLibraryNames(std::vector<QListWidgetItem*>& items) const
    {
       items.clear();
-      Map* currentMap = EditorData::GetInstance().getCurrentMap();
+      dtDAL::Map* currentMap = EditorData::GetInstance().getCurrentMap();
       if (currentMap == NULL)
       {
          return;
       }
 
-      const vector<string>& libNames = currentMap->GetAllLibraries();
+      const std::vector<std::string>& libNames = currentMap->GetAllLibraries();
 
       for (unsigned int i = 0; i < libNames.size(); ++i)
       {
          QListWidgetItem* p = new QListWidgetItem;
-         ActorPluginRegistry* reg =
-            LibraryManager::GetInstance().GetRegistry(libNames[i]);
+         dtDAL::ActorPluginRegistry* reg =
+            dtDAL::LibraryManager::GetInstance().GetRegistry(libNames[i]);
          QString toolTip = tr("File: ") +
-            tr(LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
+            tr(dtDAL::LibraryManager::GetInstance().GetPlatformSpecificLibraryName(libNames[i]).c_str()) +
             tr(" \nDescription: ") + tr(reg->GetDescription().c_str());
          p->setText(tr(libNames[i].c_str()));
          p->setToolTip(toolTip);
@@ -153,48 +90,18 @@ namespace dtEditQt
       }
    }
 
-   void LibraryEditor::refreshLibraries()
-   {
-      libView->clear();
-
-      vector<QListWidgetItem*> libs;
-      getMapLibNames(libs);
-      for (unsigned int i = 0; i < libs.size(); ++i)
-      {
-         libView->addItem(libs[i]);
-      }
-
-      connect(libView, SIGNAL(itemSelectionChanged()), this, SLOT(enableButtons()));
-      if (libView->currentItem() == NULL)
-      {
-         emit noLibsSelected();
-      }
-      else
-      {
-         libView->setItemSelected(libView->currentItem(), true);
-      }
-   }
-
    ///////////////////////// Slots /////////////////////////
-   void LibraryEditor::spawnFileBrowser()
+   void LibraryEditor::SpawnFileBrowser()
    {
-      QString file;
-      string dir = EditorData::GetInstance().getCurrentLibraryDirectory();
-      QString hack = dir.c_str();
-      hack.replace('\\', '/');
+      const std::pair<std::string, std::string> libPair = SelectLibraryToOpen(EditorData::GetInstance().getCurrentLibraryDirectory());
 
-      string libs = "Libraries(" + LibraryManager::GetInstance().GetPlatformSpecificLibraryName("*") + ")";
+      const std::string& libName = libPair.first;
+      const std::string& filePath = libPair.second;
 
-      file = QFileDialog::getOpenFileName(this, tr("Select a library"), "", tr(libs.c_str()));
-
-      // did they hit cancel?
-      if (file.isEmpty())
+      if (filePath.empty())
       {
          return;
       }
-
-      std::string libName =
-         LibraryManager::GetInstance().GetPlatformIndependentLibraryName(file.toStdString());
 
       if (libName == "dtActors" || libName == "dtActorsd")
       {
@@ -205,7 +112,7 @@ namespace dtEditQt
       }
 
       // If the map already contains this library, no point in continuing
-      vector<string> curLibs = EditorData::GetInstance().getCurrentMap()->GetAllLibraries();
+      std::vector<std::string> curLibs = EditorData::GetInstance().getCurrentMap()->GetAllLibraries();
       for (unsigned int i = 0; i < curLibs.size(); ++i)
       {
          if (curLibs[i] == libName)
@@ -213,53 +120,55 @@ namespace dtEditQt
             return;
          }
       }
+
       try
       {
-         LibraryManager::GetInstance().LoadActorRegistry(libName);
+         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(libName);
       }
       catch(const dtUtil::Exception& e)
       {
          LOG_ERROR(e.What());
-         handleFailure(ERROR_INVALID_LIB, e.What());
+         HandleFailure(ERROR_INVALID_LIB, e.What());
          return;
       }
       EditorData::GetInstance().getCurrentMap()->AddLibrary(libName, "");
 
-      refreshLibraries();
+      RefreshLibraries();
       EditorEvents::GetInstance().emitMapLibraryImported();
-      libView->setCurrentItem(libView->item(libView->count() - 1));
-      EditorData::GetInstance().setCurrentLibraryDirectory(osgDB::getFilePath(file.toStdString()));
-      ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
-         EditorActions::GetInstance().getWindowName(/*true*/).c_str());
+      GetLibraryListWidget().setCurrentItem(GetLibraryListWidget().item(GetLibraryListWidget().count() - 1));
+      EditorData::GetInstance().setCurrentLibraryDirectory(osgDB::getFilePath(filePath));
+      EditorData::GetInstance().getMainWindow()->setWindowTitle(
+         EditorActions::GetInstance().getWindowName().c_str());
    }
 
-   void LibraryEditor::spawnDeleteConfirmation()
+   void LibraryEditor::SpawnDeleteConfirmation()
    {
       if (QMessageBox::question(this, tr("Confirm deletion"),
          tr("Are you sure you want to remove this library?"),
          tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
-         Map* curMap = EditorData::GetInstance().getCurrentMap();
-         vector< dtCore::RefPtr<ActorProxy> > proxies;
+         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
          curMap->GetAllProxies(proxies);
-         vector<string> loadedLibs = curMap->GetAllLibraries();
+         std::vector<std::string> loadedLibs = curMap->GetAllLibraries();
 
-         std::string libToRemove = libView->currentItem()->text().toStdString();
+         std::string libToRemove = GetLibraryListWidget().currentItem()->text().toStdString();
          // Does the map have this library?
          for (unsigned int i = 0; i < loadedLibs.size(); ++i)
-         {         
+         {
             if (loadedLibs[i] == libToRemove)
             {
-               ActorPluginRegistry* reg =
-                  LibraryManager::GetInstance().GetRegistry(loadedLibs[i]);
+               dtDAL::ActorPluginRegistry* reg =
+                  dtDAL::LibraryManager::GetInstance().GetRegistry(loadedLibs[i]);
 
+               unsigned int numActorsInScene = 0;
                // fail if actors are in the library
                for (unsigned int j = 0; j < proxies.size(); ++j)
                {
-                  std::cout << "Proxy: " << proxies[j]->GetName() << " RefCount: " <<
+                  std::cerr << "Proxy: " << proxies[j]->GetName() << " RefCount: " <<
                      proxies[j]->referenceCount() << std::endl;
 
-                  dtCore::RefPtr<const ActorType> type = &proxies[j]->GetActorType();
+                  dtCore::RefPtr<const dtDAL::ActorType> type = &proxies[j]->GetActorType();
                   if (reg->IsActorTypeSupported(type))
                   {
                      ++numActorsInScene;
@@ -268,18 +177,19 @@ namespace dtEditQt
 
                if (numActorsInScene > 0)
                {
-                  handleFailure(ERROR_ACTORS_IN_LIB);
-                  numActorsInScene = 0;
+                  std::ostringstream ss;
+                  ss << "Failed to remove the library, \""  << numActorsInScene << "\" actors exist in the system that depend on it.";
+                  HandleFailure(ERROR_OBJECTS_IN_LIB_EXIST, ss.str());
                   return;
                }
 
                EditorEvents::GetInstance().emitLibraryAboutToBeRemoved();
                curMap->RemoveLibrary(libToRemove);
-               LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
-               refreshLibraries();
+               dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(libToRemove);
+               RefreshLibraries();
                EditorEvents::GetInstance().emitMapLibraryRemoved();
                if (curMap->GetAllLibraries().size() > 0)
-                  libView->setCurrentItem(libView->item(libView->count() - 1));
+                  GetLibraryListWidget().setCurrentItem(GetLibraryListWidget().item(GetLibraryListWidget().count() - 1));
                // we're done
                break;
             }
@@ -287,138 +197,26 @@ namespace dtEditQt
       }
    }
 
-   void LibraryEditor::shiftLibraryUp()
+   void LibraryEditor::ShiftLibraryUp()
    {
-      Map* curMap = EditorData::GetInstance().getCurrentMap();
-      unsigned int i = 0;
-      for (; i < curMap->GetAllLibraries().size(); ++i)
+      if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() > 0)
       {
-         if (libView->currentItem())
-         {
-            if (curMap->GetAllLibraries()[i] == libView->currentItem()->text().toStdString())
-            {
-               break;
-            }
-         }
-      }
-
-      // already at the top of the list?
-      if (i == 0)
-      {
-         return;
-      }
-
-      // ensure the current item is selected
-      if (libView->currentItem())
-      {
-         curMap->InsertLibrary(i - 1, libView->currentItem()->text().toStdString(), "");
-         refreshLibraries();
-         QListWidgetItem* item = libView->item(i - 1);
-         if (item)
-         {
-            libView->setCurrentItem(item);
-            if (item == libView->item(0))
-            {
-               upLib->setDisabled(true);
-            }
-            if (item == libView->item(libView->count()-1))
-            {
-               downLib->setDisabled(true);
-            }
-         }
+         int row = GetLibraryListWidget().currentRow();
+         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         curMap->InsertLibrary(row - 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
+         dtQt::BaseLibraryListEditor::ShiftLibraryUp();
       }
    }
 
-   void LibraryEditor::shiftLibraryDown()
+   void LibraryEditor::ShiftLibraryDown()
    {
-      Map* curMap = EditorData::GetInstance().getCurrentMap();
-      unsigned int i = 0;
-      for (; i < curMap->GetAllLibraries().size(); ++i)
+      if (GetLibraryListWidget().currentItem() != NULL && GetLibraryListWidget().currentRow() < (GetLibraryListWidget().count() - 1))
       {
-         if (libView->currentItem())
-         {
-            if (curMap->GetAllLibraries()[i] == libView->currentItem()->text().toStdString())
-            {
-               break;
-            }
-         }
+         int row = GetLibraryListWidget().currentRow();
+         dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
+         curMap->InsertLibrary(row + 1, GetLibraryListWidget().currentItem()->text().toStdString(), "");
+         dtQt::BaseLibraryListEditor::ShiftLibraryDown();
       }
-
-      // already at the bottom of the list?
-      if (i == curMap->GetAllLibraries().size() - 1)
-      {
-         return;
-      }
-
-      // gotta love my QA
-      if (libView->currentItem())
-      {
-         curMap->InsertLibrary(i + 1, libView->currentItem()->text().toStdString(), "");
-         refreshLibraries();
-         QListWidgetItem* item = libView->item(i + 1);
-         if (item)
-         {
-            libView->setCurrentItem(item);
-            if (item == libView->item(0))
-            {
-               upLib->setDisabled(true);
-            }
-            if (item == libView->item(libView->count()-1))
-            {
-               downLib->setDisabled(true);
-            }
-         }
-      }
-   }
-
-   void LibraryEditor::handleFailure(const int errorCode, const std::string& errorMsg)
-   {
-      if (errorCode == ERROR_LIB_NOT_LOADED)
-      {
-         QMessageBox::critical(this, tr("Failed to delete library"),
-            tr("Library is not currently loaded"),
-            tr("&OK"));
-      }
-      else if (errorCode == ERROR_ACTORS_IN_LIB)
-      {
-         QString str = "Failed to remove the library, " + QString::number(numActorsInScene) +
-            " actor(s) are currently implemented";
-
-         QMessageBox::critical(this, tr("Failed to delete library"),
-            str,
-            tr("&OK"));
-      }
-      else if (errorCode == ERROR_INVALID_LIB)
-      {
-         QString message(tr("Error Message: "));
-         message.append(errorMsg.c_str());
-         message.append("\n\nPlease ensure that the name is correct, the library is in the path (or the working directory), ");
-         message.append("the library can load correctly, and dependent libraries are available.");
-
-         QMessageBox::critical(this, tr("Failed to import library"),
-            message,
-            tr("&OK"));
-      }
-      else
-      {
-         QMessageBox::critical(this, tr("Failed to delete library"),
-            tr("Failed to remove the library, unknown error"),
-            tr("&OK"));
-      }
-   }
-
-   void LibraryEditor::enableButtons()
-   {
-      deleteLib->setDisabled(false);
-      upLib->setDisabled(false);
-      downLib->setDisabled(false);
-   }
-
-   void LibraryEditor::disableButtons()
-   {
-      deleteLib->setDisabled(true);
-      upLib->setDisabled(true);
-      downLib->setDisabled(true);
    }
 
 } // namespace dtEditQt
