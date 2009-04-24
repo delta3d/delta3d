@@ -1,32 +1,27 @@
 /* -*-c++-*-
- * Delta3D Simulation Training And Game Editor (STAGE)
- * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ * Delta3D
+ * Copyright 2009, Alion Science and Technology
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
+ * David Guthrie
  * William E. Johnson II
  */
-#include <prefix/dtstageprefix-src.h>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QGridLayout>
@@ -39,10 +34,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QGroupBox>
 
-#include <dtEditQt/librarypathseditor.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
+#include <dtQt/librarypathseditor.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/actorpluginregistry.h>
 #include <dtDAL/map.h>
@@ -53,16 +45,6 @@
 
 #include <cassert>
 
-using dtDAL::ActorProxy;
-using dtDAL::ActorType;
-using dtDAL::Map;
-using dtDAL::ActorPluginRegistry;
-using dtDAL::LibraryManager;
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
-using std::vector;
-using std::string;
-/// @endcond
-
 enum
 {
    ERROR_LIB_NOT_LOADED = 0,
@@ -71,12 +53,12 @@ enum
    ERROR_UNKNOWN
 };
 
-namespace dtEditQt
+namespace dtQt
 {
 
-   LibraryPathsEditor::LibraryPathsEditor(QWidget* parent)
+   LibraryPathsEditor::LibraryPathsEditor(QWidget* parent, const std::string& fileBrowserStartDir)
       : QDialog(parent)
-      , numActorsInScene(0)
+      , mFileBrowserDir(fileBrowserStartDir)
    {
       bool okay = true;
       setWindowTitle(tr("Library Editor"));
@@ -116,12 +98,12 @@ namespace dtEditQt
       downPath->hide();
 
       // make the connections
-      okay = okay && connect(deletePath, SIGNAL(clicked()),              this, SLOT(spawnDeleteConfirmation()));
-      okay = okay && connect(addPath,    SIGNAL(clicked()),              this, SLOT(spawnFileBrowser()));
-      okay = okay && connect(upPath,     SIGNAL(clicked()),              this, SLOT(shiftPathUp()));
-      okay = okay && connect(downPath,   SIGNAL(clicked()),              this, SLOT(shiftPathDown()));
+      okay = okay && connect(deletePath, SIGNAL(clicked()),              this, SLOT(SpawnDeleteConfirmation()));
+      okay = okay && connect(addPath,    SIGNAL(clicked()),              this, SLOT(SpawnFileBrowser()));
+      okay = okay && connect(upPath,     SIGNAL(clicked()),              this, SLOT(ShiftPathUp()));
+      okay = okay && connect(downPath,   SIGNAL(clicked()),              this, SLOT(ShiftPathDown()));
       okay = okay && connect(close,      SIGNAL(clicked()),              this, SLOT(close()));
-      okay = okay && connect(pathView,   SIGNAL(itemSelectionChanged()), this, SLOT(refreshButtons()));
+      okay = okay && connect(pathView,   SIGNAL(itemSelectionChanged()), this, SLOT(RefreshButtons()));
 
       // make sure all connections were successfully made
       assert(okay);
@@ -130,8 +112,8 @@ namespace dtEditQt
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      refreshPaths();
-      refreshButtons();
+      RefreshPaths();
+      RefreshButtons();
    }
 
    LibraryPathsEditor::~LibraryPathsEditor()
@@ -144,7 +126,7 @@ namespace dtEditQt
       return !pathView->selectedItems().empty(); // this one is better
    }
 
-   void LibraryPathsEditor::getPathNames(vector<QListWidgetItem*>& items) const
+   void LibraryPathsEditor::GetPathNames(std::vector<QListWidgetItem*>& items) const
    {
       items.clear();
 
@@ -155,8 +137,8 @@ namespace dtEditQt
          return;
       }
 
-      for (std::vector<std::string>::const_iterator iter = pathList.begin(); 
-         iter != pathList.end(); 
+      for (std::vector<std::string>::const_iterator iter = pathList.begin();
+         iter != pathList.end();
          ++iter)
       {
          items.push_back(new QListWidgetItem(tr((*iter).c_str())));
@@ -164,11 +146,10 @@ namespace dtEditQt
    }
 
    ///////////////////////// Slots /////////////////////////
-   void LibraryPathsEditor::spawnFileBrowser()
+   void LibraryPathsEditor::SpawnFileBrowser()
    {
       QString file;
-      string dir = EditorData::GetInstance().getCurrentLibraryDirectory();
-      QString hack = dir.c_str();
+      QString hack = mFileBrowserDir.c_str();
       hack.replace('\\', '/');
 
       file = QFileDialog::getExistingDirectory(this, tr("Select a directory to add to the library path"));
@@ -181,10 +162,10 @@ namespace dtEditQt
 
       dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(file.toStdString());
 
-      refreshPaths();
+      RefreshPaths();
    }
 
-   void LibraryPathsEditor::spawnDeleteConfirmation()
+   void LibraryPathsEditor::SpawnDeleteConfirmation()
    {
       if (QMessageBox::question(this, tr("Confirm deletion"),
          tr("Are you sure you want to remove this path?"),
@@ -194,11 +175,11 @@ namespace dtEditQt
 
          dtUtil::LibrarySharingManager::GetInstance().RemoveFromSearchPath(pathToRemove);
 
-         refreshPaths();
+         RefreshPaths();
       }
    }
 
-   void LibraryPathsEditor::shiftPathUp()
+   void LibraryPathsEditor::ShiftPathUp()
    {
       QListWidgetItem* item = pathView->item(pathView->count() - 1);
       if (item != NULL)
@@ -222,10 +203,10 @@ namespace dtEditQt
          dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(pathView->item(i)->text().toStdString());
       }
 
-      refreshPaths();
+      RefreshPaths();
    }
 
-   void LibraryPathsEditor::shiftPathDown()
+   void LibraryPathsEditor::ShiftPathDown()
    {
       // ensure the current item is selected
       QListWidgetItem* item = pathView->item(pathView->count() + 1);
@@ -250,10 +231,10 @@ namespace dtEditQt
          dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(pathView->item(i)->text().toStdString());
       }
 
-      refreshPaths();
+      RefreshPaths();
    }
 
-   void LibraryPathsEditor::refreshButtons()
+   void LibraryPathsEditor::RefreshButtons()
    {
       bool pathIsSelected = AnyItemsSelected();
 
@@ -262,15 +243,15 @@ namespace dtEditQt
       downPath->setEnabled(pathIsSelected);
    }
 
-   void LibraryPathsEditor::refreshPaths()
+   void LibraryPathsEditor::RefreshPaths()
    {
       pathView->clear();
 
       std::vector<QListWidgetItem*> paths;
-      getPathNames(paths);
+      GetPathNames(paths);
 
       for (size_t i = 0; i < paths.size(); ++i)
-      {   
+      {
          pathView->addItem(paths[i]);
       }
 

@@ -25,23 +25,19 @@
  * circumstances in which the U. S. Government may have rights in the software.
  *
  * William E. Johnson II
+ * David Guthrie
  */
 
 #ifndef DELTA_LIBRARY_EDITOR
 #define DELTA_LIBRARY_EDITOR
 
-#include <QtGui/QDialog>
-#include <vector>
 
-class QListWidget;
-class QGridLayout;
-class QPushButton;
-class QStringList;
-class QListWidgetItem;
+#include <dtQt/baselibrarylisteditor.h>
 
 namespace dtEditQt
 {
-   class LibraryEditor : public QDialog
+   class LibraryEditor : public dtQt::BaseLibraryListEditor
+
    {
       Q_OBJECT
 
@@ -52,55 +48,24 @@ namespace dtEditQt
       /// Destructor
       virtual ~LibraryEditor();
 
-   signals:
-      /// This signal is emitted if no libraries in the list
-      /// are selected so the delete button knows to grey
-      /// itself out
-      void noLibsSelected();
-
-      /// This signal enables the remove library button
-      void librarySelected();
-
    public slots:
       /// Pop up the file browser for libraries
-      void spawnFileBrowser();
+      virtual void SpawnFileBrowser();
 
       /// Confirm deletion of libraries
-      void spawnDeleteConfirmation();
-
-      /// Handle a deletion failure
-      void handleFailure(const int code, const std::string& errorMsg = "");
-
-      /// Received when a library is currently selected
-      void enableButtons();
-
-      /// Disable the delete button if no libraries are selected
-      void disableButtons();
+      virtual void SpawnDeleteConfirmation();
 
       /// Shift the current library up 1 position
-      void shiftLibraryUp();
+      virtual void ShiftLibraryUp();
 
       /// Shift the current library down 1 position
-      void shiftLibraryDown();
+      virtual void ShiftLibraryDown();
 
-   private:
-      /// The visible list of libraries
-      QListWidget* libView;
-
-      /// Our buttons
-      QPushButton* deleteLib;
-      QPushButton* upLib;
-      QPushButton* downLib;
-
-      unsigned int numActorsInScene;
-
+   protected:
       // private function to obtain the library names from the map
       // and convert them to QT format
-      void getMapLibNames(std::vector<QListWidgetItem*>& items) const;
+      virtual void GetLibraryNames(std::vector<QListWidgetItem*>& items) const;
 
-      // private function to refresh the list of libraries after
-      // the user has imported his own libraries
-      void refreshLibraries();
    };
 
 } // namespace dtEditQt

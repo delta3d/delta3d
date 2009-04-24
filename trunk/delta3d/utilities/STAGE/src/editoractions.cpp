@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -47,13 +47,11 @@
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editoraboutbox.h>
 #include <dtEditQt/libraryeditor.h>
-#include <dtEditQt/librarypathseditor.h>
 #include <dtEditQt/gameeventsdialog.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/mapdialog.h>
 #include <dtEditQt/dialogmapproperties.h>
-#include <dtEditQt/dialoglistselection.h>
 #include <dtEditQt/mapsaveasdialog.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/preferencesdialog.h>
@@ -64,6 +62,9 @@
 #include <dtEditQt/externaltool.h>
 #include <dtEditQt/externaltoolargparsers.h>
 #include "ui_positiondialog.h"
+
+#include <dtQt/dialoglistselection.h>
+#include <dtQt/librarypathseditor.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/fileutils.h>
@@ -88,7 +89,7 @@ namespace dtEditQt
    dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
-   EditorActions::EditorActions() 
+   EditorActions::EditorActions()
       : mExternalToolActionGroup(new QActionGroup(NULL))
       , mIsector(new dtCore::Isector)
    {
@@ -456,7 +457,7 @@ namespace dtEditQt
 
       slotPauseAutosave();
 
-      DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(), tr("Open Existing Map"), tr("Available Maps"));
+      dtQt::DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(), tr("Open Existing Map"), tr("Available Maps"));
 
       QStringList listItems;
       std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
@@ -465,7 +466,7 @@ namespace dtEditQt
          listItems << i->c_str();
       }
 
-      openMapDialog.setListItems(listItems);
+      openMapDialog.SetListItems(listItems);
       if (openMapDialog.exec() == QDialog::Accepted)
       {
          dtCore::RefPtr<dtDAL::Map> newMap;
@@ -475,7 +476,7 @@ namespace dtEditQt
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-            const QString& mapName = openMapDialog.getSelectedItem();
+            const QString& mapName = openMapDialog.GetSelectedItem();
             newMap = &dtDAL::Project::GetInstance().GetMap(mapName.toStdString());
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -689,7 +690,8 @@ namespace dtEditQt
    void EditorActions::slotFileEditLibraryPaths()
    {
       // Bring up the library paths editor
-      LibraryPathsEditor editor(static_cast<QWidget*>(EditorData::GetInstance().getMainWindow()));
+      dtQt::LibraryPathsEditor editor(EditorData::GetInstance().getMainWindow(),
+               EditorData::GetInstance().getCurrentLibraryDirectory());
       editor.exec();
    }
 
