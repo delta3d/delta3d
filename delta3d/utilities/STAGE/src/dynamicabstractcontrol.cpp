@@ -80,7 +80,7 @@ namespace dtEditQt
       initialized = true;
 
       parent = newParent;
-      proxy  = newProxy;
+      mProxy = newProxy;
       model  = newModel;
 
       // Set the tooltip description on the control.

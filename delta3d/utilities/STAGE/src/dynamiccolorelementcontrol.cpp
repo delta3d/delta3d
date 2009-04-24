@@ -118,7 +118,7 @@ namespace dtEditQt
       {
          if (whichType == RGBA)
          {
-            EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGBA);
+            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, colorRGBA);
             //} else if (whichType == RGB) {
             //    EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGB);
          }
@@ -218,7 +218,7 @@ namespace dtEditQt
          colorRGBA->SetValue(vectorValue);
 
          // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, colorRGBA,
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, colorRGBA,
             oldValue, colorRGBA->ToString());
       }
       //else { // == RGB
@@ -249,7 +249,7 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == this->proxy && property == colorRGBA) 
+      if (temporaryEditControl != NULL && proxy == mProxy && property == colorRGBA) 
       {
          updateEditorFromModel(temporaryEditControl);
       }

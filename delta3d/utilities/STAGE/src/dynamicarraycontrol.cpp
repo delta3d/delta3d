@@ -236,7 +236,7 @@ namespace dtEditQt
                DynamicArrayElementControl* element = new DynamicArrayElementControl(childCount + childIndex);
                if (element)
                {
-                  element->initializeData(this, getModel(), this->proxy.get(), mProperty.get());
+                  element->initializeData(this, getModel(), mProxy.get(), mProperty.get());
                   children.push_back(element);
                }
             }
@@ -249,7 +249,7 @@ namespace dtEditQt
             }
          }
 
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, mProperty,
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
             oldValue, mProperty->ToString());
 
          dataChanged = true;
@@ -263,7 +263,7 @@ namespace dtEditQt
 
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, mProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
    }
 

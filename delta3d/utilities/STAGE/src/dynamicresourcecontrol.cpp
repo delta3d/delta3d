@@ -328,7 +328,7 @@ namespace dtEditQt
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already 
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, 
             oldValue, myProperty->ToString());
 
          // update our label
@@ -338,7 +338,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
       }
    }
 
@@ -356,7 +356,7 @@ namespace dtEditQt
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already 
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, 
             oldValue, myProperty->ToString());
 
          // update our label
@@ -366,7 +366,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(proxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
       }
    }
 
@@ -377,7 +377,7 @@ namespace dtEditQt
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
       // update our label
-      if (mTemporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
+      if (mTemporaryEditOnlyTextLabel != NULL && proxy == mProxy && property == myProperty) 
       {
          mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }
