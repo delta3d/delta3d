@@ -25,6 +25,7 @@
 #ifndef DELTA_DIALOG_LIST_SELECTION
 #define DELTA_DIALOG_LIST_SELECTION
 
+#include <dtQt/export.h>
 #include <QtGui/QDialog>
 
 class QStringList;
@@ -40,7 +41,7 @@ namespace dtQt
      * user to choose from.  The list is presented in a list box and
      * contains ok and cancel buttons.
      */
-    class DialogListSelection : public QDialog
+    class DT_QT_EXPORT DialogListSelection : public QDialog
     {
         Q_OBJECT
     public:
