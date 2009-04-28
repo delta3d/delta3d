@@ -104,6 +104,24 @@ namespace dtCore
                const std::string& paramName);
 
          /**
+          * Parses a shader parameter which represents a thre dimensional texture.
+          * @param tex3DElement The DOM element for the texture parameter.
+          * @param paramName Name to assign to the parameter.
+          * @return The newly constructed parameter.
+          */
+         dtCore::RefPtr<ShaderParameter> ParseTexture3DParameter(xercesc::DOMElement* tex3DElem,
+               const std::string& paramName);
+
+         /**
+          * Parses a shader parameter which represents a thre dimensional texture.
+          * @param texCubeMapElem The DOM element for the texture parameter.
+          * @param paramName Name to assign to the parameter.
+          * @return The newly constructed parameter.
+          */
+         dtCore::RefPtr<ShaderParameter> ParseTextureCubeMapParameter(xercesc::DOMElement* texCubeMapElem,
+               const std::string& paramName);
+
+         /**
           * Parses a shader parameter which represents a floating point value.
           * @param floatElem The DOM element for the float parameter.
           * @param paramName Name to assign to the parameter.
@@ -196,6 +214,28 @@ namespace dtCore
          static const std::string TEXTURE2D_WRAP_ELEMENT;
          static const std::string TEXTURE2D_WRAP_ATTRIBUTE_AXIS;
          static const std::string TEXTURE2D_WRAP_ATTRIBUTE_MODE;
+
+         static const std::string TEXTURE3D_ELEMENT;
+         static const std::string TEXTURE3D_ATTRIBUTE_TEXUNIT;
+         static const std::string TEXTURE3D_SOURCE_ELEMENT;
+         static const std::string TEXTURE3D_SOURCE_ATTRIBUTE_TYPE;
+         static const std::string TEXTURE3D_WRAP_ELEMENT;
+         static const std::string TEXTURE3D_WRAP_ATTRIBUTE_AXIS;
+         static const std::string TEXTURE3D_WRAP_ATTRIBUTE_MODE;
+
+         static const std::string TEXTURECUBEMAP_ELEMENT;
+         static const std::string TEXTURECUBEMAP_ATTRIBUTE_TEXUNIT;
+         static const std::string TEXTURECUBEMAP_SOURCE_ELEMENT;
+         static const std::string TEXTURECUBEMAP_SOURCE_ATTRIBUTE_TYPE;
+         static const std::string TEXTURECUBEMAP_WRAP_ELEMENT;
+         static const std::string TEXTURECUBEMAP_WRAP_ATTRIBUTE_AXIS;
+         static const std::string TEXTURECUBEMAP_WRAP_ATTRIBUTE_MODE;
+         static const std::string TEXTURECUBEMAP_IMAGE_POSITIVE_X;
+         static const std::string TEXTURECUBEMAP_IMAGE_NEGATIVE_X;
+         static const std::string TEXTURECUBEMAP_IMAGE_POSITIVE_Y;
+         static const std::string TEXTURECUBEMAP_IMAGE_NEGATIVE_Y;
+         static const std::string TEXTURECUBEMAP_IMAGE_POSITIVE_Z;
+         static const std::string TEXTURECUBEMAP_IMAGE_NEGATIVE_Z;
 
          static const std::string FLOAT_ELEMENT;
          static const std::string VEC4_ELEMENT;

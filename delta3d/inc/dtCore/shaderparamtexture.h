@@ -93,6 +93,17 @@ namespace dtCore
                 */
                static const TextureSourceType IMAGE;
 
+
+               /**
+                * These source types represent the six different faces of a cube map.
+                */
+               static const TextureSourceType CUBEMAP_IMAGE_POSITIVE_X;
+               static const TextureSourceType CUBEMAP_IMAGE_NEGATIVE_X;
+               static const TextureSourceType CUBEMAP_IMAGE_POSITIVE_Y;
+               static const TextureSourceType CUBEMAP_IMAGE_NEGATIVE_Y;
+               static const TextureSourceType CUBEMAP_IMAGE_POSITIVE_Z;
+               static const TextureSourceType CUBEMAP_IMAGE_NEGATIVE_Z;
+
                /**
                 * This source type can be used for different circumstances.  For example,
                 * if the texture was generated during runtime or is embedded within a particular
