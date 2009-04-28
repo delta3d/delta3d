@@ -1,8 +1,6 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
-#include <dtCore/camera.h> //due to including scene.h
-#include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtUtil/log.h>
 #include <osg/Node>
 #include <osg/Switch>

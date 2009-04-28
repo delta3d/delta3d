@@ -4,18 +4,10 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/fpsmotionmodel.h>
 
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
-#include <dtCore/inputdevice.h>
 #include <dtCore/logicalinputdevice.h>
-#include <dtCore/scene.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h>//due to include of scene.h
 
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
-#include <dtCore/isector.h>
 #include <dtCore/transform.h>
 
 #include <dtUtil/mathdefines.h>

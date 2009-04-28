@@ -1,8 +1,6 @@
 #include <dtCore/odecontroller.h>
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
-#include <dtCore/camera.h> //due to scene.h
-#include <dtCore/keyboardmousehandler.h>//due to scene.h
 #include <dtUtil/log.h>
 #include <cassert>
 #include <ode/odeinit.h>
