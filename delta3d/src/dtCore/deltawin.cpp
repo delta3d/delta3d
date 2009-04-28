@@ -128,7 +128,7 @@ void DeltaWin::CreateGraphicsWindow(osg::GraphicsContext::Traits& traits)
    gc->setResizedCallback(mResizeCallbackContainer.get());
 
    mOsgViewerGraphicsWindow = dynamic_cast<osgViewer::GraphicsWindow*>(gc.get());
-   if (mOsgViewerGraphicsWindow.valid() != NULL)
+   if (mOsgViewerGraphicsWindow.valid())
    {
       mOsgViewerGraphicsWindow->getEventQueue()->getCurrentEventState()->setWindowRectangle(traits.x, traits.y,
                                                                       traits.width, traits.height);
