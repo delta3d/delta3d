@@ -44,12 +44,21 @@ public:
    void closeEvent(QCloseEvent* e);
 signals:
    void ProjectContextChanged(const std::string& path);
+   void MapSelected(const std::string& path);
+   void CloseMapSelected();
 public slots:
    void ChangeProjectContext();
+   void OnOpenMap();
+   void OnCloseMap();
+   void EnableOrDisableControls();
 private:
+
+   void UpdateMapName(const QString& newMap);
 
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
+
+   QString mCurrentMapName;
 };
 
 

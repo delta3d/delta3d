@@ -27,6 +27,7 @@
 
 #include <QtCore/QObject>
 #include <dtABC/application.h>
+#include <dtCore/motionmodel.h>
 #include <dtQt/deltastepper.h>
 
 #include <dtGame/gamemanager.h>
@@ -41,9 +42,12 @@ public:
 public slots:
    void DoQuit();
    void SetProjectContext(const std::string& path);
+   void ChangeMap(const std::string& map);
+   void CloseMap();
 private:
    dtQt::DeltaStepper mStepper;
    dtCore::RefPtr<dtGame::GameManager> mGM;
+   dtCore::RefPtr<dtCore::MotionModel> mMotionModel;
 };
 
 #endif /* AIUTILITYAPP_H_ */

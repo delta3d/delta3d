@@ -27,6 +27,8 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="mActionOpenMap"/>
+    <addaction name="mActionCloseMap"/>
     <addaction name="mChangeContextAction"/>
     <addaction name="separator"/>
     <addaction name="mActionQuit"/>
@@ -47,6 +49,16 @@
   <action name="mChangeContextAction">
    <property name="text">
     <string>Change Project Context</string>
+   </property>
+  </action>
+  <action name="mActionOpenMap">
+   <property name="text">
+    <string>Open Map</string>
+   </property>
+  </action>
+  <action name="mActionCloseMap">
+   <property name="text">
+    <string>Close Map</string>
    </property>
   </action>
  </widget>

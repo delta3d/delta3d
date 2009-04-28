@@ -26,15 +26,22 @@
 #include <ui_mainwindow.h>
 #include <dtQt/deltastepper.h>
 #include <dtQt/projectcontextdialog.h>
+#include <dtQt/dialoglistselection.h>
 
 #include <QtGui/QCloseEvent>
+#include <QtGui/QApplication>
 #include <QtGui/QDialog>
+#include <QtGui/QMessageBox>
 #include <QtCore/QSettings>
+
+#include <dtDAL/map.h>
+#include <dtDAL/project.h>
+#include <set>
 
 static const std::string ORG_NAME("delta3d.org");
 static const std::string APP_NAME("AIUtility");
 static const std::string PROJECT_CONTEXT_SETTING("ProjectContext");
-
+static const std::string CURRENT_MAP_SETTING("CurrentMap");
 
 //////////////////////////////////////////////
 MainWindow::MainWindow(QWidget& mainWidget)
@@ -46,7 +53,11 @@ MainWindow::MainWindow(QWidget& mainWidget)
    setCentralWidget(&mCentralWidget);
    setWindowTitle(tr("AI Utility"));
 
+   connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
+   connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
+
+   EnableOrDisableControls();
 }
 
 //////////////////////////////////////////////
@@ -77,7 +88,65 @@ void MainWindow::ChangeProjectContext()
 
       settings.setValue(PROJECT_CONTEXT_SETTING.c_str(), dialog.getProjectPath());
       settings.sync();
+      EnableOrDisableControls();
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnOpenMap()
+{
+   dtQt::DialogListSelection openMapDialog(this, tr("Open Existing Map"), tr("Available Maps"));
+
+   QStringList listItems;
+   const std::set<std::string>& mapNames = dtDAL::Project::GetInstance().GetMapNames();
+   for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); ++i)
+   {
+      listItems << i->c_str();
+   }
+
+   openMapDialog.SetListItems(listItems);
+   if (openMapDialog.exec() == QDialog::Accepted)
+   {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      emit MapSelected(openMapDialog.GetSelectedItem().toStdString());
+      QApplication::restoreOverrideCursor();
+
+      UpdateMapName(openMapDialog.GetSelectedItem());
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::OnCloseMap()
+{
+   if (QMessageBox::question(this, tr("Close Map"), tr("Do you want to close the currently opened map?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+   {
+      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+      emit CloseMapSelected();
+
+      UpdateMapName(tr(""));
+
+      QApplication::restoreOverrideCursor();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::EnableOrDisableControls()
+{
+   mUi->mActionOpenMap->setEnabled(!dtDAL::Project::GetInstance().GetContext().empty());
+   mUi->mActionCloseMap->setEnabled(!mCurrentMapName.isEmpty());
+   // Stop from changing context unless the map is closed. It works around a bug.
+   // since the map doesn't change immediately in the GM, we can't just change maps.
+   mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::UpdateMapName(const QString& newMap)
+{
+   mCurrentMapName = newMap;
+   QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+   settings.setValue(CURRENT_MAP_SETTING.c_str(), mCurrentMapName);
+   settings.sync();
+   EnableOrDisableControls();
+}
 
