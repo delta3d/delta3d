@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <dtCore/view.h>
-#include <dtCore/scene.h>
-#include <dtCore/object.h>
 #include <dtCore/transformable.h>
 #include <dtCore/motionmodel.h>
 

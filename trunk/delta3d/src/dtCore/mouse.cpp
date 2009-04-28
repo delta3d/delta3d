@@ -3,9 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/mouse.h>
-#include <dtCore/scene.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/camera.h>
 #include <dtCore/deltawin.h>
 
 #include <dtUtil/log.h>

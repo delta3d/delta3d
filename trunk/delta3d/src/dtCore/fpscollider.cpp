@@ -22,8 +22,7 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtUtil/mathdefines.h>
 #include <dtCore/fpscollider.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
+#include <dtCore/scene.h>
 #include <ode/collision.h>
 
 namespace dtCore

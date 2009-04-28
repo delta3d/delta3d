@@ -3,21 +3,13 @@
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/object.h>
-#include <dtCore/scene.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/transform.h>
 
 #include <dtUtil/boundingshapeutils.h>
-#include <dtUtil/polardecomp.h>
 
-#include <osgDB/ReadFile>
-#include <osgDB/Registry>
 #include <osg/MatrixTransform>
 #include <osg/Matrix>
-#include <osg/NodeCallback>
-#include <osg/NodeVisitor>
 
 namespace dtCore
 {

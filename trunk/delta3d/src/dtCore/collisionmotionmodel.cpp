@@ -27,8 +27,6 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/scene.h>
-#include <dtCore/camera.h>  //due to including scene.h
-#include <dtCore/keyboardmousehandler.h>  //due to including scene.h
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>

@@ -6,7 +6,6 @@
 
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
-#include <dtCore/keyboardmousehandler.h> //due to including scene.h
 #include <dtCore/system.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtCore/cameracallbackcontainer.h>

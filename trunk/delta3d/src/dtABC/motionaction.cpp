@@ -2,7 +2,6 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 #include <dtABC/pathpoint.h>
-#include <dtCore/scene.h>
 #include <dtCore/transform.h>
 #include <osg/MatrixTransform>
 

@@ -2,8 +2,6 @@
 #include <dtCore/tripod.h>
 
 #include <dtCore/camera.h>
-#include <dtCore/scene.h> //due to include of camera.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtUtil/log.h>

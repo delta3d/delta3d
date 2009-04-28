@@ -2,8 +2,6 @@
 #include <dtCore/light.h>
 
 #include <dtCore/scene.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 
 #include <dtUtil/log.h>
 #include <osg/LightSource>

@@ -1,13 +1,12 @@
 #include <dtCore/rtsmotionmodel.h>
 
-#include <dtCore/camera.h>
 #include <dtCore/axistoaxistransformation.h>
-#include <dtCore/keyboardmousehandler.h>
-#include <dtCore/scene.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
 #include <dtUtil/matrixutil.h>
-
+#include <osg/Node>
 
 ////////////////////////////////////////////////////////////////////////////////
 using namespace dtCore;

@@ -25,13 +25,15 @@
 #include <dtCore/export.h>
 #include <osg/Vec3>
 #include <osg/Matrix>
-#include <dtCore/scene.h>
 
 #include <ode/contact.h>
 #include <vector>
 
 namespace dtCore
 {
+   class Scene;
+
+
    /**
     * This class uses ode to simulate fps movement on collision meshes
     * note: this is a simplified physical model and has a few caveats listed below

@@ -1,8 +1,6 @@
 #include <prefix/dtcoreprefix-src.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
-#include <dtCore/camera.h>//due to include of scene.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
 #include <dtCore/odegeomwrap.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>

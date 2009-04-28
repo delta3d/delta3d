@@ -6,7 +6,6 @@
 #include <dtCore/ephemeris.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/scene.h>
-#include <dtCore/keyboardmousehandler.h> // due to including scene.h
 #include <dtCore/skydome.h>
 #include <dtCore/skydomeshader.h>
 #include <dtCore/sunlightshader.h>
@@ -64,7 +63,7 @@ Environment::Environment(const std::string& name)
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
    mFogColor.set(0.84f, 0.87f, 1.f);
-   mAdvFogCtrl.set(1.f, 10.f, 2.545); // T, E, N
+   mAdvFogCtrl.set(1.f, 10.f, 2.545f); // T, E, N
    mSunColor.set(1.f, 1.f, 1.f);
    mModFogColor.set(mFogColor);
 

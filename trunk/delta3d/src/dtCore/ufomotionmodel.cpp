@@ -7,15 +7,10 @@
 #include <dtCore/inputdevice.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/logicalinputdevice.h>
-#include <dtCore/motionmodel.h>
 #include <dtCore/mouse.h>
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtCore/transform.h>
-#include <dtCore/camera.h>
-#include <dtCore/scene.h>//due to include of camera.h
-#include <dtCore/keyboardmousehandler.h> //due to include of scene.h
-#include <dtCore/keyboard.h>//due to include of scene.h
 
 namespace dtCore
 {
