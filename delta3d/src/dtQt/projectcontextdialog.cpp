@@ -34,9 +34,6 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QLabel>
 
-//#include "dtEditQt/editordata.h"
-//#include "dtEditQt/editorevents.h"
-//#include "dtEditQt/viewportmanager.h"
 #include <dtDAL/project.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/map.h>
@@ -85,7 +82,7 @@ namespace dtQt
 
       applyButton->setEnabled(false);
       pathEdit->setDisabled(true);
-      //pathEdit->setText(tr(EditorData::GetInstance().getCurrentProjectContext().c_str()));
+      pathEdit->setText(tr(dtDAL::Project::GetInstance().GetContext().c_str()));
       setMinimumSize(530, 100);
    }
 
