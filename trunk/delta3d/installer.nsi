@@ -135,7 +135,7 @@ Section "!Delta3D" Delta3DSection
   
   ;lib
   SetOutPath "$INSTDIR\${DELTA_BUILD_DIR}\lib"
-  File /x *.exp .\${DELTA_BUILD_DIR}\lib\*
+  File /x *.exp /x *.pdb /x *.idb .\${DELTA_BUILD_DIR}\lib\*
   
   ;macosx
   SetOutPath "$INSTDIR\macosx"
@@ -171,12 +171,6 @@ Section "!Delta3D" Delta3DSection
 SectionEnd
 
 SectionGroup /e "Addition Installations"
-
-	Section /o "Install OpenAL Drivers" OpenALSection
-	  SetOutPath $INSTDIR
-	  File /nonfatal "oalinst.exe"
-	  ExecWait "$INSTDIR\oalinst.exe"
-	SectionEnd
 	
 	Section /o "Install VCRedist Package" VCRedistSection
 	  SetOutPath $INSTDIR
@@ -237,7 +231,6 @@ SectionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Delta3DSection} "The source code, external dependencies, binaries, etc."
-  !insertmacro MUI_DESCRIPTION_TEXT ${OpenALSection} "Install the OpenAL Drivers (might be required on some systems for audio playback)."
   !insertmacro MUI_DESCRIPTION_TEXT ${VCRedistSection} "Install the Visual Studio runtime libraries (install if you don't have Visual Studio already installed)."
   !insertmacro MUI_DESCRIPTION_TEXT ${EnvironmentVariableSection} "Install the Delta3D Environment Variables"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
