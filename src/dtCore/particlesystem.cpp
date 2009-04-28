@@ -316,8 +316,9 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
          // Attach the particle system tree directly to the transform node.
          GetMatrixNode()->addChild((osg::Group*)mLoadedFile.get());
 
-
-         // Modify the reference frame of both the emitter and programe
+         //Presumably, osg 2.8.0 and greater doesn't need to do this.
+         #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 2 && OSG_VERSION_MINOR < 8
+         // Modify the reference frame of both the emitter and program
          // for each particle layer.
          for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
             pLayerIter != mLayers.end(); ++pLayerIter)
@@ -326,6 +327,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
             pLayerIter->GetProgram().setReferenceFrame(osgParticle::ParticleProcessor::ABSOLUTE_RF);
             pLayerIter->GetModularEmitter().setReferenceFrame(osgParticle::ParticleProcessor::ABSOLUTE_RF);
          }
+         #endif
 
       }
       else // Emit particles into world space
