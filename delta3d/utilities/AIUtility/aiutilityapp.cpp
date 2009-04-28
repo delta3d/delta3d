@@ -34,6 +34,8 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 
+#include <dtCore/flymotionmodel.h>
+
 /////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
 : dtABC::Application("config.xml")
@@ -51,6 +53,10 @@ AIUtilityApp::~AIUtilityApp()
 void AIUtilityApp::Config()
 {
    dtABC::Application::Config();
+
+   mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
+   mMotionModel->SetTarget(GetCamera());
+
    dtCore::System::GetInstance().Start();
    mStepper.Start();
 }
@@ -74,4 +80,16 @@ void AIUtilityApp::SetProjectContext(const std::string& path)
    {
       ex.LogException();
    }
+}
+
+/////////////////////////////////////
+void AIUtilityApp::ChangeMap(const std::string& map)
+{
+   mGM->ChangeMap(map);
+}
+
+/////////////////////////////////////
+void AIUtilityApp::CloseMap()
+{
+   mGM->CloseCurrentMap();
 }
