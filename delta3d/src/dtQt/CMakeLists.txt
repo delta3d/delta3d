@@ -40,6 +40,7 @@ LINK_WITH_VARIABLES(${LIB_NAME}
 
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
             ${DTCORE_LIBRARY}
+            ${DTDAL_LIBRARY}
             )
 
 if (X11_FOUND)
