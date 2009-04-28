@@ -25,6 +25,8 @@
 #include <dtCore/shadergroup.h>
 #include <dtCore/shaderparamtexture1d.h>
 #include <dtCore/shaderparamtexture2d.h>
+#include <dtCore/shaderparamtexture3d.h>
+#include <dtCore/shaderparamtexturecubemap.h>
 #include <dtCore/shaderparamfloat.h>
 #include <dtCore/shaderparamvec4.h>
 #include <dtCore/shaderparamint.h>
@@ -80,6 +82,28 @@ namespace dtCore
    const std::string ShaderXML::TEXTURE2D_WRAP_ELEMENT("wrap");
    const std::string ShaderXML::TEXTURE2D_WRAP_ATTRIBUTE_AXIS("axis");
    const std::string ShaderXML::TEXTURE2D_WRAP_ATTRIBUTE_MODE("mode");
+
+   const std::string ShaderXML::TEXTURE3D_ELEMENT("texture3D");
+   const std::string ShaderXML::TEXTURE3D_ATTRIBUTE_TEXUNIT("textureUnit");
+   const std::string ShaderXML::TEXTURE3D_SOURCE_ELEMENT("source");
+   const std::string ShaderXML::TEXTURE3D_SOURCE_ATTRIBUTE_TYPE("type");
+   const std::string ShaderXML::TEXTURE3D_WRAP_ELEMENT("wrap");
+   const std::string ShaderXML::TEXTURE3D_WRAP_ATTRIBUTE_AXIS("axis");
+   const std::string ShaderXML::TEXTURE3D_WRAP_ATTRIBUTE_MODE("mode");
+
+   const std::string ShaderXML::TEXTURECUBEMAP_ELEMENT("textureCubeMap");
+   const std::string ShaderXML::TEXTURECUBEMAP_ATTRIBUTE_TEXUNIT("textureUnit");
+   const std::string ShaderXML::TEXTURECUBEMAP_SOURCE_ELEMENT("source");
+   const std::string ShaderXML::TEXTURECUBEMAP_SOURCE_ATTRIBUTE_TYPE("type");
+   const std::string ShaderXML::TEXTURECUBEMAP_WRAP_ELEMENT("wrap");
+   const std::string ShaderXML::TEXTURECUBEMAP_WRAP_ATTRIBUTE_AXIS("axis");
+   const std::string ShaderXML::TEXTURECUBEMAP_WRAP_ATTRIBUTE_MODE("mode");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_X("ImagePositiveX");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_X("ImageNegativeX");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Y("ImagePositiveY");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Y("ImageNegativeY");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Z("ImagePositiveZ");
+   const std::string ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Z("ImageNegativeZ");
 
    const std::string ShaderXML::FLOAT_ELEMENT("float");
    const std::string ShaderXML::INT_ELEMENT("integer");
@@ -313,6 +337,14 @@ namespace dtCore
          if (toString == ShaderXML::TEXTURE2D_ELEMENT)
          {
             newParam = ParseTexture2DParameter(typeElement, paramName);
+         }
+         else if (toString == ShaderXML::TEXTURE3D_ELEMENT)
+         {
+            newParam = ParseTexture3DParameter(typeElement, paramName);
+         }
+         else if (toString == ShaderXML::TEXTURECUBEMAP_ELEMENT)
+         {
+            newParam = ParseTextureCubeMapParameter(typeElement, paramName);
          }
          else if (toString == ShaderXML::FLOAT_ELEMENT)
          {
@@ -558,6 +590,246 @@ namespace dtCore
          {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
                "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
+         }
+      }
+
+      return static_cast<ShaderParameter *>(newParam.get());
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture3DParameter(
+         xercesc::DOMElement* tex3DElem, const std::string& paramName)
+   {
+      //First get the texture unit attribute from the element.
+      dtCore::RefPtr<ShaderParamTexture3D> newParam = new ShaderParamTexture3D(paramName);
+      xercesc::DOMNodeList* children = tex3DElem->getChildNodes();
+
+      //Get the integer for the texture unit.
+      std::string texUnitString = GetElementAttribute(*tex3DElem, ShaderXML::TEXTURE3D_ATTRIBUTE_TEXUNIT);
+      if (!texUnitString.empty())
+      {
+         std::istringstream ss;
+         unsigned int texUnit;
+         ss.str(texUnitString);
+         ss >> texUnit;
+         newParam->SetTextureUnit(texUnit);
+      }
+
+      //Now parse the individual child elements of the 2D texture element.
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
+      {
+         xercesc::DOMNode* node = children->item(i);
+
+         if (node == NULL)
+         {
+            continue;
+         }
+         if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
+            continue;
+         }
+
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
+
+         dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
+         std::string elemName = elemNameConverter.ToString();
+         if (elemName == ShaderXML::TEXTURE2D_SOURCE_ELEMENT)
+         {
+            //Source elements have a type attribute that specify whether or not the
+            //texture source is to come from an image file or from some source generated
+            //elsewhere.
+            std::string sourceType = GetElementAttribute(*texElement,
+                  ShaderXML::TEXTURE2D_SOURCE_ATTRIBUTE_TYPE);
+
+            if (sourceType == ShaderParamTexture::TextureSourceType::IMAGE.GetName())
+            {
+               xercesc::DOMNodeList* children = texElement->getChildNodes();
+               if (children->getLength() != 1 ||
+                  children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+               }
+
+               xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
+
+               dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
+               newParam->SetTexture(fileConverter.ToString());
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::IMAGE);
+            }
+            else if (sourceType == ShaderParamTexture::TextureSourceType::AUTO.GetName())
+            {
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::AUTO);
+            }
+            else
+            {
+               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture3D source type.", __FILE__, __LINE__);
+            }
+         }
+         else if (elemName == ShaderXML::TEXTURE3D_WRAP_ELEMENT)
+         {
+            std::string axis = GetElementAttribute(*texElement,ShaderXML::TEXTURE3D_WRAP_ATTRIBUTE_AXIS);
+            std::string mode = GetElementAttribute(*texElement,ShaderXML::TEXTURE3D_WRAP_ATTRIBUTE_MODE);
+
+            if (!axis.empty() && !mode.empty())
+            {
+               const ShaderParamTexture::AddressMode* wrapMode = GetTextureAddressMode(mode);
+               const ShaderParamTexture::TextureAxis* texAxis = GetTextureAxis(axis);
+
+               if (wrapMode == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+               if (texAxis == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+
+               newParam->SetAddressMode(*texAxis, *wrapMode);
+            }
+         }
+         else
+         {
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+               "Unknown element in Texture2D parameter.", __FILE__, __LINE__);
+         }
+      }
+
+      return static_cast<ShaderParameter *>(newParam.get());
+   }
+
+
+   ///////////////////////////////////////////////////////////////////////////////
+
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTextureCubeMapParameter(
+         xercesc::DOMElement* texCubeMapElem, const std::string& paramName)
+   {
+      //First get the texture unit attribute from the element.
+      dtCore::RefPtr<ShaderParamTextureCubeMap> newParam = new ShaderParamTextureCubeMap(paramName);
+      xercesc::DOMNodeList* children = texCubeMapElem->getChildNodes();
+
+      //Get the integer for the texture unit.
+      std::string texUnitString = GetElementAttribute(*texCubeMapElem, ShaderXML::TEXTURECUBEMAP_ATTRIBUTE_TEXUNIT);
+      if (!texUnitString.empty())
+      {
+         std::istringstream ss;
+         unsigned int texUnit;
+         ss.str(texUnitString);
+         ss >> texUnit;
+         newParam->SetTextureUnit(texUnit);
+      }
+
+      //Now parse the individual child elements of the 2D texture element.
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
+      {
+         xercesc::DOMNode* node = children->item(i);
+
+         if (node == NULL)
+         {
+            continue;
+         }
+         if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
+            continue;
+         }
+
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
+
+         dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
+         std::string elemName = elemNameConverter.ToString();
+         if (elemName == ShaderXML::TEXTURECUBEMAP_SOURCE_ELEMENT)
+         {
+            //Source elements have a type attribute that specify whether or not the
+            //texture source is to come from an image file or from some source generated
+            //elsewhere.
+            std::string sourceType = GetElementAttribute(*texElement,
+                  ShaderXML::TEXTURECUBEMAP_SOURCE_ATTRIBUTE_TYPE);
+
+            if (sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_X ||
+                sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_X ||
+                sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Y ||
+                sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Y ||
+                sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Z ||
+                sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Z
+               )
+            {
+               xercesc::DOMNodeList* children = texElement->getChildNodes();
+               if (children->getLength() != 1 ||
+                  children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+               }
+
+               xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
+
+               dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
+               
+               if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_X)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_X);
+               }
+               else if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_X)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_X);
+               }
+               else if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Y)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Y);
+               }
+               else if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Y)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Y);
+               }
+               else if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_POSITIVE_Z)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Z);
+               }
+               else if(sourceType == ShaderXML::TEXTURECUBEMAP_IMAGE_NEGATIVE_Z)
+               {
+                  newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Z);
+               }
+               newParam->SetTexture(fileConverter.ToString());
+            }
+            else if (sourceType == ShaderParamTexture::TextureSourceType::AUTO.GetName())
+            {
+               newParam->SetTextureSourceType(ShaderParamTexture::TextureSourceType::AUTO);
+            }
+            else
+            {
+               throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Unknown texture3D source type.", __FILE__, __LINE__);
+            }
+         }
+         else if (elemName == ShaderXML::TEXTURECUBEMAP_WRAP_ELEMENT)
+         {
+            std::string axis = GetElementAttribute(*texElement,ShaderXML::TEXTURECUBEMAP_WRAP_ATTRIBUTE_AXIS);
+            std::string mode = GetElementAttribute(*texElement,ShaderXML::TEXTURECUBEMAP_WRAP_ATTRIBUTE_MODE);
+
+            if (!axis.empty() && !mode.empty())
+            {
+               const ShaderParamTexture::AddressMode* wrapMode = GetTextureAddressMode(mode);
+               const ShaderParamTexture::TextureAxis* texAxis = GetTextureAxis(axis);
+
+               if (wrapMode == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid address mode of: " + mode +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+               if (texAxis == NULL)
+               {
+                  throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid texture axis: " + axis +
+                        " specified for shader parameter: " + paramName, __FILE__, __LINE__);
+               }
+
+               newParam->SetAddressMode(*texAxis, *wrapMode);
+            }
+         }
+         else
+         {
+            throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+               "Unknown element in TextureCubeMap parameter.", __FILE__, __LINE__);
          }
       }
 

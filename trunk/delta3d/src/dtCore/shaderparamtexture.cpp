@@ -43,6 +43,12 @@ namespace dtCore
    IMPLEMENT_ENUM(ShaderParamTexture::TextureSourceType)
    const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::IMAGE("Image");
    const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::AUTO("Auto");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_X("CubeMapPositiveX");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_X("CubeMapNegativeX");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Y("CubeMapPositiveY");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Y("CubeMapNegativeY");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Z("CubeMapPositiveZ");
+   const ShaderParamTexture::TextureSourceType ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Z("CubeMapNegativeZ");
 
    ///////////////////////////////////////////////////////////////////////////////
    ShaderParamTexture::ShaderParamTexture(const std::string &name) :
