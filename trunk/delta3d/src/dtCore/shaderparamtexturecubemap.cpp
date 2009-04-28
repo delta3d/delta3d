@@ -19,7 +19,7 @@
  */
 
 #include <prefix/dtcoreprefix-src.h>
-#include <dtCore/ShaderParamTextureCubeMap.h>
+#include <dtCore/shaderparamtexturecubemap.h>
 #include <dtUtil/exception.h>
 #include <dtCore/refptr.h>
 
@@ -71,16 +71,16 @@ namespace dtCore
 
       stateSet.addUniform(uniform);
 
-      // Load (if necessary) and Set the Tex cube map on the StateSet 
+      // Load (if necessary) and Set the Tex cube map on the StateSet
       if (GetTextureSourceType() == ShaderParamTexture::TextureSourceType::IMAGE)
       {
          texCube = static_cast<osg::TextureCubeMap*>(GetTextureObject());
 
          // load or reload the image - allows caching from the template
          // Note - ImageSourceDirty may not be relevant anymore cause it now loads the image when you call SetTexture().
-         // note - If shared, load only happens the first time it is assigned. 
+         // note - If shared, load only happens the first time it is assigned.
          // check only if face 0 exists. Is this sufficient?
-         if (texCube->getImage(osg::TextureCubeMap::POSITIVE_X) == NULL || IsImageSourceDirty()) 
+         if (texCube->getImage(osg::TextureCubeMap::POSITIVE_X) == NULL || IsImageSourceDirty())
          {
             LoadImage();
             ApplyTextureCubeMapValues();
@@ -159,7 +159,7 @@ namespace dtCore
          GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Y ||
          GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Z ||
          GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Z
-         
+
          )
       {
          //Timer statsTickClock;
@@ -176,7 +176,7 @@ namespace dtCore
             // we don't want to crash just because a shader couldnt find an image, but we need to let
             // the user know.
             image = new osg::Image(); // gotta have some sort of image placeholder
-            LOG_ALWAYS("Could not find image for shader parameter [" + GetName() + "] at location [" + 
+            LOG_ALWAYS("Could not find image for shader parameter [" + GetName() + "] at location [" +
                GetTexture() + "].");
             //throw dtUtil::Exception(ShaderParameterException::INVALID_ATTRIBUTE,"Could not find image for texture at location: " + GetTexture());
          }
