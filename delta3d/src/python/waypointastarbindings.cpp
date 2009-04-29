@@ -7,17 +7,17 @@ using namespace boost::python;
 using namespace dtAI;
 
 
-typedef std::vector<const Waypoint*> WaypointVector;
+typedef std::vector<const WaypointInterface*> WaypointVector;
 
 class PythonAStar
 {
 public:
-   void Reset1(const Waypoint* w1, const Waypoint* w2)
+   void Reset1(const WaypointInterface* w1, const WaypointInterface* w2)
    {
       mAStar.Reset(w1, w2);
    }
 
-   void Reset3(const std::vector<const Waypoint*>& pFrom, const std::vector<const Waypoint*>& pTo)
+   void Reset3(const std::vector<const WaypointInterface*>& pFrom, const std::vector<const WaypointInterface*>& pTo)
    {
       mAStar.Reset(pFrom, pTo);
    }
@@ -48,7 +48,7 @@ private:
 
 
 void init_WaypointAStarBindings()
-{   
+{
    class_<WaypointVector>("WaypointVector")
       .def(vector_indexing_suite<WaypointVector>())
       ;

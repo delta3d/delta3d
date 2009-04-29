@@ -260,7 +260,6 @@ void MessageTests::createActors(dtDAL::Map& map)
    actorTypes.push_back(dtActors::EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::PLAYER_START_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::GAME_MESH_ACTOR_TYPE.get());
-   actorTypes.push_back(dtActors::EngineActorRegistry::WAYPOINT_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE.get());
 
@@ -1794,34 +1793,34 @@ void MessageTests::TestRemoteActorCreatesFromPrototype()
    dtCore::System::GetInstance().Step();
 
 
-   // The create message had a 'local tick' on it, but nothing else. So, when we send it, we should get a 
-   // new actor with the right name & actorid. The tick remote should be what was on the prototype (41), 
-   // but the tick local we set manually to 11. 
+   // The create message had a 'local tick' on it, but nothing else. So, when we send it, we should get a
+   // new actor with the right name & actorid. The tick remote should be what was on the prototype (41),
+   // but the tick local we set manually to 11.
 
 
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(createdId);
    dtCore::RefPtr<TestGameActor1> gapRemoteActor = dynamic_cast<TestGameActor1*> (gapRemote->GetActor());
 
    CPPUNIT_ASSERT_MESSAGE("The remote actor should have been created.", gapRemote != NULL);
-   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as our prototype.", 
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the same actor type as our prototype.",
       gapRemote->GetActorType() == prototypeProxy->GetActorType());
 
-   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - name. ", 
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - name. ",
       prototypeProxy->GetName() == "Test1Prototype");
-   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - name.", 
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - name.",
       gapRemote->GetName() == "MyUpdateActor");
 
-   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - uniqueid. ", 
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - uniqueid. ",
       prototypeProxy->GetId() == prototypeId);
-   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - uniqueid.", 
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - uniqueid.",
       gapRemote->GetId() == createdId);
 
-   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - tick locals. ", 
+   CPPUNIT_ASSERT_MESSAGE("The create message should not have affected our prototype - tick locals. ",
       prototypeActor->GetTickLocals() == 59);
-   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - tick locals.", 
+   CPPUNIT_ASSERT_MESSAGE("The remote actor should have the value from the update message - tick locals.",
       gapRemoteActor->GetTickLocals() == 11);
 
-   CPPUNIT_ASSERT_EQUAL_MESSAGE("The remote actor should have the value from the prototype - tick remotes. ", 
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("The remote actor should have the value from the prototype - tick remotes. ",
       prototypeActor->GetTickRemotes(), gapRemoteActor->GetTickRemotes());
 
    CPPUNIT_ASSERT_MESSAGE("The created actor should be remote.", gapRemote->IsRemote());
