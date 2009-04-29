@@ -130,7 +130,16 @@ namespace dtAI
       //checking id < mWaypoints.size() is invalid if waypoints are
       //inserted then removed 
 
-      return mWaypoints[id];
+      //we return NULL if no waypoint is found matching this id
+      WaypointMap::iterator i = mWaypoints.find(id);
+      if (i != mWaypoints.end())
+      {
+         return (*i).second;
+      }
+      else
+      {
+         return NULL;
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////
