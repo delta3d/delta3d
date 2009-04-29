@@ -114,17 +114,17 @@ namespace dtAI
          return;
       }
 
-      WaypointID id = mWaypoints.size();
-      pWaypointActor.SetIndex(id);
-      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, new Waypoint(&pWaypointActor)));
+      Waypoint* way = new Waypoint(&pWaypointActor);
+
+      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(way->GetID(), way));
    }
 
    /////////////////////////////////////////////////////////////////////////////
    WaypointID WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
-      WaypointID id = mWaypoints.size();
       Waypoint* pWay = new Waypoint(pWaypoint);
-      pWay->SetID(id);
+      WaypointID id = pWay->GetID();
+
       mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, pWay));
       return id;
    }
@@ -146,7 +146,11 @@ namespace dtAI
    /////////////////////////////////////////////////////////////////////////////
    Waypoint* WaypointManager::GetWaypoint(WaypointID id)
    {
-      return id < mWaypoints.size() ? mWaypoints[id] : NULL;
+      //note: the id is not related to the size of the waypoints
+      //checking id < mWaypoints.size() is invalid if waypoints are
+      //inserted then removed 
+
+      return mWaypoints[id];
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -171,15 +175,16 @@ namespace dtAI
       remain a const method.
       //*/
 
-      if (id < mWaypoints.size())
+
+      WaypointMap::const_iterator i = mWaypoints.find(id);
+      if (i != mWaypoints.end())
       {
-         WaypointMap::const_iterator i = mWaypoints.find(id);
-         if (i != mWaypoints.end())
-         {
-            return (*i).second;
-         }
+         return (*i).second;
       }
-      return NULL;
+      else
+      {
+         return NULL;
+      }
    }
 
    /////////////////////////////////////////////////////////////////////////////

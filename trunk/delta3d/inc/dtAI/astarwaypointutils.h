@@ -42,7 +42,7 @@ namespace dtAI
 
    /**
    * This class wraps a multi-map iterator and abstracts it as an iterator to 
-   * Waypoint list type iterator.  This class is needed for the AStarNode's _Iter
+   * WaypointInterface list type iterator.  This class is needed for the AStarNode's _Iter
    * template argument.  Notice the operators it uses, !=, *, and ++.  Any STL iterator
    * will work for AStarNode's _Iter template argument provided that operator* will return 
    * a DataType.
@@ -62,7 +62,7 @@ namespace dtAI
          return mIter != pIter.container();
       }
 
-      const Waypoint* operator*() const
+      const WaypointInterface* operator*() const
       {
          return (*mIter).second->GetWaypointTo();
       }
@@ -83,16 +83,16 @@ namespace dtAI
    /**
    * This is the NodeType derivative used by the AStar class.  Notice the template arguments
    * it gives to the base class AStarNode.  The first one, WaypointNode, is just itself passed 
-   * as an argument, this is useful to avoid casting.  The next, const Waypoint*, is our DataType
+   * as an argument, this is useful to avoid casting.  The next, const WaypointInterface*, is our DataType
    * this is what we expect for our result path to contain, and what we compute our cost from.
    * The next argument, WaypointIter, is the iterator type we will return on begin() and end(), it
    * is described in more detail above. The last template argument, float, is our CostType, this is
    * defined as being the type used to compute the cost between Waypoints.
    */
-   class WaypointNode: public AStarNode<WaypointNode, const Waypoint*, WaypointIter, float>
+   class WaypointNode: public AStarNode<WaypointNode, const WaypointInterface*, WaypointIter, float>
    {
    public:      
-      WaypointNode(node_type* pParent, const Waypoint* pWaypoint, cost_type pGn, cost_type pHn): BaseType(pParent, pWaypoint, pGn, pHn){}
+      WaypointNode(node_type* pParent, const WaypointInterface* pWaypoint, cost_type pGn, cost_type pHn): BaseType(pParent, pWaypoint, pGn, pHn){}
 
       /*virtual*/ iterator begin() const 
       {
@@ -109,17 +109,17 @@ namespace dtAI
 
    /**
    * This class is used to compute the cost between two DataType's, for us
-   * this DataType is const Waypoint*.  As a note, the AStar algorithm will
+   * this DataType is const WaypointInterface*.  As a note, the AStar algorithm will
    * give perfect output when perfect input is provided. This means that the 
    * performance of AStar::FindPath() and its accuracy is determined by how
    * well we can compute cost.  This is using 3D distance for cost and can
    * be refined to use slope or even other factors such as gravitational spots
    * reflected places you want your agents to avoid or close in on.
    */
-   class WaypointCostFunc: public AStarCostFunc<const Waypoint*, float>
+   class WaypointCostFunc: public AStarCostFunc<const WaypointInterface*, float>
    {
    public:
-      float operator()(const Waypoint* pWaypoint1, const Waypoint* pWaypoint2) const
+      float operator()(const WaypointInterface* pWaypoint1, const WaypointInterface* pWaypoint2) const
       {
          WaypointPair pPair(pWaypoint1, pWaypoint2);
          return pPair.Get3DDistance();
@@ -152,7 +152,7 @@ namespace dtAI
    * and a timer for statistical tracking and constraints.  Now we can use the AStar API on our
    * custom AStar type WaypointAStar.   
    */
-   typedef AStar<WaypointNode, WaypointCostFunc, std::list<const Waypoint*>, AStarTimer > WaypointAStar;
+   typedef AStar<WaypointNode, WaypointCostFunc, std::list<const WaypointInterface*>, AStarTimer > WaypointAStar;
 
 
 }//namespace dtAI

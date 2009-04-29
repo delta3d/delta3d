@@ -28,7 +28,7 @@
 
 namespace dtAI
 {
-   class Waypoint;
+   class WaypointInterface;
    class WaypointPair;
    
    /**
@@ -49,23 +49,23 @@ namespace dtAI
          /**
          * Creates a new WaypointPair and adds it to the current set
          */
-         void AddPathSegment(const Waypoint* pFrom, const Waypoint* pTo);
+         void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
          * Removes the path segment between the two waypoints if one exists         
          */
-         void RemovePathSegment(const Waypoint* pFrom, const Waypoint* pTo);
+         void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
          * Removes all path segments from the specified waypoint
          */
-         void RemoveAllPaths(const Waypoint* pFrom);
+         void RemoveAllPaths(const WaypointInterface* pFrom);
 
 
          /**
           *	@return whether or not a path exists between the two waypoints
           */
-         bool ContainsPath(const Waypoint* pFrom, const Waypoint* pTo) const;
+         bool ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
 
          /**
          * returns a reference to the multimap which contains all WaypointPairs
@@ -78,16 +78,16 @@ namespace dtAI
          * valid waypoint you can get to from the waypoint specified
          * used by WaypointIter in WaypointUtils.h
          */
-         NavMeshContainer::iterator begin(const Waypoint* pPtr);
-         NavMeshContainer::const_iterator begin(const Waypoint* pPtr) const;
+         NavMeshContainer::iterator begin(const WaypointInterface* pPtr);
+         NavMeshContainer::const_iterator begin(const WaypointInterface* pPtr) const;
          
          /**
          * Returns a multimap iterator to the end sequence of
          * valid waypoints you can get to from the waypoint specified
          * used by WaypointIter in WaypointUtils.h
          */
-         NavMeshContainer::iterator end(const Waypoint* pPtr);
-         NavMeshContainer::const_iterator end(const Waypoint* pPtr) const;
+         NavMeshContainer::iterator end(const WaypointInterface* pPtr);
+         NavMeshContainer::const_iterator end(const WaypointInterface* pPtr) const;
 
 
          /**

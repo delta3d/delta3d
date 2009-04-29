@@ -2,18 +2,21 @@
 <map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
     <header>
         <name>TesttownLt</name>
-        <waypointFileName>Waypoints_TesttownLt.ai</waypointFileName>
-        <createNavMesh>13</createNavMesh>
         <description></description>
         <author></author>
         <comment></comment>
         <copyright></copyright>
         <createTimestamp>2006-07-12T14:52:23.0-08:00</createTimestamp>
-        <lastUpdateTimestamp>2008-06-12T19:12:41-08:00</lastUpdateTimestamp>
+        <lastUpdateTimestamp>2009-04-28T15:55:46-05:00</lastUpdateTimestamp>
         <editorVersion>2.0.0</editorVersion>
         <schemaVersion>1.0</schemaVersion>
     </header>
-    <libraries></libraries>
+    <libraries>
+        <library>
+            <name>dtAI</name>
+            <version></version>
+        </library>
+    </libraries>
     <actors>
         <actor>
             <type>dtcore.Static Mesh</type>
@@ -119,6 +122,17 @@
             </property>
         </actor>
         <actor>
+            <type>dtAI.AIInterface.AI Interface Actor</type>
+            <id>2398d24b-0a3a-4ee1-be41-926c2949c734</id>
+            <name>DeltaDrawable</name>
+            <property>
+                <name>dtAI::WaypointFilename</name>
+                <resourceType>StaticMeshes</resourceType>
+                <resourceDisplayName>StaticMeshes::Waypoints_TesttownLt.ai</resourceDisplayName>
+                <resource>StaticMeshes::Waypoints_TesttownLt.ai</resource>
+            </property>
+        </actor>
+        <actor>
             <type>dtcore.Lights.Infinite Light</type>
             <id>467672fe-93d3-40bd-a6c4-bd590ec502af</id>
             <name>defaultInfiniteLight</name>
@@ -162,12 +176,48 @@
                 </colorRGBA>
             </property>
             <property>
-                <name>Direction</name>
+                <name>Rotation</name>
                 <vec3>
-                    <value1>-75.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>180.000031</value3>
+                    <value1>-90.000000</value1>
+                    <value2>180.000000</value2>
+                    <value3>0.000000</value3>
                 </vec3>
+            </property>
+            <property>
+                <name>Normal Rescaling</name>
+                <boolean>true</boolean>
+            </property>
+            <property>
+                <name>Show Collision Geometry</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Collision Type</name>
+                <enumerated>NONE</enumerated>
+            </property>
+            <property>
+                <name>Collision Radius</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Length</name>
+                <float>0</float>
+            </property>
+            <property>
+                <name>Collision Box</name>
+                <vec3>
+                    <value1>0.000000</value1>
+                    <value2>0.000000</value2>
+                    <value3>0.000000</value3>
+                </vec3>
+            </property>
+            <property>
+                <name>Enable Collision</name>
+                <boolean>false</boolean>
+            </property>
+            <property>
+                <name>Render Proxy Node</name>
+                <boolean>false</boolean>
             </property>
         </actor>
         <actor>
@@ -212,14 +262,6 @@
                     <valueB>0.050000</valueB>
                     <valueA>1.000000</valueA>
                 </colorRGBA>
-            </property>
-            <property>
-                <name>Rotation</name>
-                <vec3>
-                    <value1>0.000000</value1>
-                    <value2>0.000000</value2>
-                    <value3>0.000000</value3>
-                </vec3>
             </property>
             <property>
                 <name>Translation</name>

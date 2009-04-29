@@ -23,6 +23,7 @@
 #define __DELTA_WAYPOINT_H__
 
 #include <dtAI/export.h>
+#include <dtAI/waypointinterface.h>
 #include <dtAI/primitives.h>
 #include <osg/Vec3>
 #include <osg/Vec4>
@@ -36,7 +37,7 @@ namespace dtAI
     * and is a place holder for other potential data
     * someone might want to store in a waypoint
     */
-   class DT_AI_EXPORT Waypoint
+   class DT_AI_EXPORT Waypoint : public WaypointInterface
    {
       public:
 
@@ -58,20 +59,18 @@ namespace dtAI
       public:
    
          Waypoint();
-         Waypoint(const WaypointActor* pActor);
+         Waypoint(WaypointActor* pActor);
          Waypoint(const osg::Vec3& pPos);
          ~Waypoint();
 
-         bool operator==(const Waypoint& pWay) const;
-         bool operator!=(const Waypoint& pWay) const;
+         //override so it isn't protected
+         //this is a temporary work-around transitioning to the waypoint interface
+         void SetID(WaypointID ID);
 
-         void Set(const WaypointActor* pActor);
-   
+         void Set(WaypointActor* pActor);
+
          const osg::Vec3& GetPosition() const;
          void SetPosition(const osg::Vec3& pVec);
-
-         void SetID(WaypointID ID);
-         WaypointID GetID()const;
 
          void SetRenderFlag(RenderFlag rf) const;
          RenderFlag GetRenderFlag() const {return mRenderFlag;}
@@ -88,9 +87,7 @@ namespace dtAI
          float GetAlpha() const;
 
       private:        
-         
-         WaypointID mID;
-
+                 
          mutable RenderFlag mRenderFlag;
          mutable osg::Vec3 mColor; 
          mutable float mGradient;

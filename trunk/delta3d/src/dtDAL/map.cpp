@@ -471,31 +471,6 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////////////////////
-   const std::string& Map::GetPathNodeFileName() const
-   {
-      return mPathNodeFile;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void Map::SetPathNodeFileName(const std::string& newFilename)
-   {
-      mModified = true;
-      mPathNodeFile = newFilename;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   bool Map::GetCreateNavMesh() const
-   {
-      return mCreateNavMesh;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void Map::SetCreateNavMesh(bool pNavMesh)
-   {
-      mCreateNavMesh = pNavMesh;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
    const std::string& Map::GetComment() const
    {
       return mComment;

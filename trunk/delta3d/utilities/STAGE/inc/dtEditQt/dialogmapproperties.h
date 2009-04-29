@@ -51,15 +51,6 @@ namespace dtEditQt {
             return this->name;
         }
 
-        QCheckBox* getCreateNavMesh()
-        {
-           return this->createNavMesh;
-        }
-
-        QLineEdit *getPathNodeFileName() {
-           return this->pathNodeFile;
-        }
-
         QLineEdit *getMapDescription() {
             return this->description;
         }
@@ -81,12 +72,10 @@ namespace dtEditQt {
 
     private:
         QLineEdit *name;
-        QLineEdit *pathNodeFile;
         QLineEdit *description;
         QLineEdit *author;
         QLineEdit *copyright;
         QTextEdit *comments;
-        QCheckBox *createNavMesh;
     };
 
 }
