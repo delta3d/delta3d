@@ -30,7 +30,6 @@
 
 namespace dtAI 
 {
-   class WaypointActor;
 
    /**
     * This class encapsulates a Vec3 as a position
@@ -59,15 +58,12 @@ namespace dtAI
       public:
    
          Waypoint();
-         Waypoint(WaypointActor* pActor);
          Waypoint(const osg::Vec3& pPos);
          ~Waypoint();
 
          //override so it isn't protected
          //this is a temporary work-around transitioning to the waypoint interface
          void SetID(WaypointID ID);
-
-         void Set(WaypointActor* pActor);
 
          const osg::Vec3& GetPosition() const;
          void SetPosition(const osg::Vec3& pVec);

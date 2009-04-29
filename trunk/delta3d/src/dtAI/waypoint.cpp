@@ -20,7 +20,6 @@
  */
 
 #include <dtAI/waypoint.h>
-#include <dtAI/waypointactor.h>
 #include <dtCore/transformable.h>
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
@@ -36,12 +35,6 @@ namespace dtAI
       , mGradient(1.0f)
       , mAlpha(1.0f)
    {
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   Waypoint::Waypoint(WaypointActor* pActor)
-   {
-      Set(pActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -75,17 +68,6 @@ namespace dtAI
    void Waypoint::SetPosition(const osg::Vec3& pVec)
    {
       mPosition = pVec;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Waypoint::Set(WaypointActor* pActor)
-   {
-      osg::Matrix tranform = pActor->GetMatrixNode()->getMatrix();
-      mPosition[0] = tranform(3,0);
-      mPosition[1] = tranform(3,1);
-      mPosition[2] = tranform(3,2);
-
-      pActor->SetIndex(GetID());
    }
 
    /////////////////////////////////////////////////////////////////////////////
