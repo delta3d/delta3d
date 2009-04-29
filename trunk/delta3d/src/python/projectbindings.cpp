@@ -15,19 +15,19 @@ void initProjectBindings()
 {
    Map& ( Project::*LMIS1 )( const std::string&, dtCore::Scene&, bool) = &Project::LoadMapIntoScene;
    void ( Project::*LMIS2 )( Map&, dtCore::Scene&, bool) = &Project::LoadMapIntoScene;
-   
+
    void ( Project::*DM1 )( Map&, bool ) = &Project::DeleteMap;
    void ( Project::*DM2 )( const std::string&, bool ) = &Project::DeleteMap;
-   
-   void ( Project::*SM1 )( Map&, dtCore::Scene* ) = &Project::SaveMap;
-   void ( Project::*SMA1 )( Map&, const std::string&, const std::string&, dtCore::Scene* ) = &Project::SaveMapAs;
-   
-   void ( Project::*SM2 )( const std::string&, dtCore::Scene*) = &Project::SaveMap;
-   void ( Project::*SMA2 )( const std::string&, const std::string&, const std::string&, dtCore::Scene* ) = &Project::SaveMapAs;
-   
+
+   void ( Project::*SM1 )( Map& ) = &Project::SaveMap;
+   void ( Project::*SMA1 )( Map&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+
+   void ( Project::*SM2 )( const std::string& ) = &Project::SaveMap;
+   void ( Project::*SMA2 )( const std::string&, const std::string&, const std::string& ) = &Project::SaveMapAs;
+
    bool ( Project::*HB1 )( Map& ) const = &Project::HasBackup;
    bool ( Project::*HB2 )( const std::string& ) const = &Project::HasBackup;
-   
+
    void ( Project::*CB1 )( Map& ) = &Project::ClearBackup;
    void ( Project::*CB2 )( const std::string& ) = &Project::ClearBackup;
 
@@ -39,10 +39,10 @@ void initProjectBindings()
       .def( "GetContext", &Project::GetContext, return_value_policy<copy_const_reference>() )
       .def( "Refresh", &Project::Refresh )
       .def( "GetMap", &Project::GetMap, return_internal_reference<>() )
-      .def( "OpenMapBackup", &Project::OpenMapBackup, return_internal_reference<>() ) 
-      .def( "LoadMapIntoScene", LMIS1, LMIS_overloads()[ return_internal_reference<>() ] ) 
+      .def( "OpenMapBackup", &Project::OpenMapBackup, return_internal_reference<>() )
+      .def( "LoadMapIntoScene", LMIS1, LMIS_overloads()[ return_internal_reference<>() ] )
       .def( "LoadMapIntoScene", LMIS2, LMIS_overloads() )
-      .def( "CreateMap", &Project::CreateMap, return_internal_reference<>() ) 
+      .def( "CreateMap", &Project::CreateMap, return_internal_reference<>() )
       .def( "CloseMap", &Project::CloseMap, CM_overloads() )
       .def( "DeleteMap", DM1, DM_overloads() )
       .def( "DeleteMap", DM2, DM_overloads() )

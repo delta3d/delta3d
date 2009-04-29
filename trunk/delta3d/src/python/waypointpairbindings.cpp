@@ -10,8 +10,7 @@ using namespace dtAI;
 void init_WaypointPairBindings()
 {
    class_<WaypointPair>("WaypointPair")
-      .def(init<const Waypoint*, const Waypoint*>())
-      .def("ClosestPointTo", &WaypointPair::ClosestPointTo)
+      .def(init<const WaypointInterface*, const WaypointInterface*>())
       .def("Calculate3DDistance", &WaypointPair::Calculate3DDistance)
       .def("Get3DDistance", &WaypointPair::Get3DDistance)
       .def("CalculateSlope", &WaypointPair::CalculateSlope)
