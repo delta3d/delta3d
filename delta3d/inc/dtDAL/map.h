@@ -128,29 +128,6 @@ namespace dtDAL
           */
          void SetAuthor(const std::string& newAuthor);
 
-
-         /**
-         * @return The name of the file containing waypoints or pathnodes
-         */
-         const std::string& GetPathNodeFileName() const;
-
-         /**
-         * Sets the name of the file used for loading and saving pathnodes.
-         * @param newFilename the new filename.
-         */
-         void SetPathNodeFileName(const std::string& newFilename);
-
-         /**
-         * @return whether or not we will create a navmesh on map save
-         */
-         bool GetCreateNavMesh() const;
-
-         /**
-         * Sets whether or not we create a NavMesh on save
-         * used with waypoints
-         */
-         void SetCreateNavMesh(bool pNavMesh);
-
          /**
           * @return The map comments.  This is intended to be the long comments.
           */

@@ -49,16 +49,19 @@ namespace dtAI
 
    void NavMesh::Clear()
    {
-      std::for_each(mNavMesh.begin(), mNavMesh.end(), NavMeshDeleteFunc());
-      mNavMesh.clear();
+      if(!mNavMesh.empty())
+      {
+         std::for_each(mNavMesh.begin(), mNavMesh.end(), NavMeshDeleteFunc());
+         mNavMesh.clear();
+      }
    }
 
-   void NavMesh::AddPathSegment(const Waypoint* pFrom, const Waypoint* pTo)
+   void NavMesh::AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       mNavMesh.insert( NavMeshPair(pFrom->GetID(), new WaypointPair(pFrom, pTo)));
    }
 
-   void NavMesh::RemovePathSegment(const Waypoint* pFrom, const Waypoint* pTo)
+   void NavMesh::RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    {
       NavMeshContainer::iterator iter      = begin(pFrom);
       NavMeshContainer::iterator endOfList = end(pFrom);
@@ -75,13 +78,13 @@ namespace dtAI
       }
    }
 
-   void NavMesh::RemoveAllPaths(const Waypoint* pFrom)
+   void NavMesh::RemoveAllPaths(const WaypointInterface* pFrom)
    {
       std::pair<NavMeshContainer::iterator, NavMeshContainer::iterator> rangeElements = mNavMesh.equal_range(pFrom->GetID());
       mNavMesh.erase(rangeElements.first, rangeElements.second);
    }
 
-   bool NavMesh::ContainsPath(const Waypoint* pFrom, const Waypoint* pTo) const
+   bool NavMesh::ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const
    {
       NavMeshContainer::const_iterator iter = begin(pFrom);
       NavMeshContainer::const_iterator endOfList = end(pFrom);
@@ -105,24 +108,24 @@ namespace dtAI
    }
 
 
-   NavMesh::NavMeshContainer::iterator NavMesh::begin(const Waypoint* pPtr)
+   NavMesh::NavMeshContainer::iterator NavMesh::begin(const WaypointInterface* pPtr)
    {
       return mNavMesh.lower_bound(pPtr->GetID());
    }
 
 
-   NavMesh::NavMeshContainer::iterator NavMesh::end(const Waypoint* pPtr)
+   NavMesh::NavMeshContainer::iterator NavMesh::end(const WaypointInterface* pPtr)
    {
       return mNavMesh.upper_bound(pPtr->GetID());
    }
 
-   NavMesh::NavMeshContainer::const_iterator NavMesh::begin(const Waypoint* pPtr) const
+   NavMesh::NavMeshContainer::const_iterator NavMesh::begin(const WaypointInterface* pPtr) const
    {
       return mNavMesh.lower_bound(pPtr->GetID());
    }
 
 
-   NavMesh::NavMeshContainer::const_iterator NavMesh::end(const Waypoint* pPtr) const
+   NavMesh::NavMeshContainer::const_iterator NavMesh::end(const WaypointInterface* pPtr) const
    {
       return mNavMesh.upper_bound(pPtr->GetID());
    }

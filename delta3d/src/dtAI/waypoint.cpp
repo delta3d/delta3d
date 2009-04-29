@@ -31,28 +31,27 @@ namespace dtAI
 {
    /////////////////////////////////////////////////////////////////////////////
    Waypoint::Waypoint()
-      : mID(0)
+      : WaypointInterface()
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
       , mGradient(1.0f)
       , mAlpha(1.0f)
-      , mPosition()
    {
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Waypoint::Waypoint(const WaypointActor* pActor)
+   Waypoint::Waypoint(WaypointActor* pActor)
    {
       Set(pActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   Waypoint::Waypoint(const osg::Vec3& pPos)
-      : mID(0)
+   Waypoint::Waypoint(const osg::Vec3& pPos)      
+      : WaypointInterface()
       , mRenderFlag(Waypoint::RENDER_DEFAULT)
       , mGradient(1.0f)
       , mAlpha(1.0f)
+      , mPosition(pPos)
    {
-      mPosition = pPos;
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -61,24 +60,9 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   bool Waypoint::operator==(const Waypoint& pWay) const
+   void Waypoint::SetID(WaypointID ID)
    {
-      return dtUtil::Equivalent(mPosition, pWay.mPosition);
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   bool Waypoint::operator!=(const Waypoint& pWay) const
-   {
-      return !(operator==(pWay));
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void Waypoint::Set(const WaypointActor* pActor)
-   {
-      osg::Matrix tranform = pActor->GetMatrixNode()->getMatrix();
-      mPosition[0] = tranform(3,0);
-      mPosition[1] = tranform(3,1);
-      mPosition[2] = tranform(3,2);
+      WaypointInterface::SetID(ID);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -94,15 +78,14 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void Waypoint::SetID(WaypointID ID)
+   void Waypoint::Set(WaypointActor* pActor)
    {
-      mID = ID;
-   }
+      osg::Matrix tranform = pActor->GetMatrixNode()->getMatrix();
+      mPosition[0] = tranform(3,0);
+      mPosition[1] = tranform(3,1);
+      mPosition[2] = tranform(3,2);
 
-   /////////////////////////////////////////////////////////////////////////////
-   dtAI::WaypointID Waypoint::GetID() const
-   {
-      return mID;
+      pActor->SetIndex(GetID());
    }
 
    /////////////////////////////////////////////////////////////////////////////

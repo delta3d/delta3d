@@ -16,6 +16,7 @@ ADD_LIBRARY(${LIB_NAME} SHARED
 TARGET_LINK_LIBRARIES( ${LIB_NAME}
              ${DTUTIL_LIBRARY}
              ${DTCORE_LIBRARY}
+             ${DTGAME_LIBRARY}
              ${OPENGL_LIBRARY}
              )                        
 

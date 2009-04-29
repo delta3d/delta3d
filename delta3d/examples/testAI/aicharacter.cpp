@@ -45,7 +45,11 @@ struct funcRenderGreen
    template<class _WayIter>
    void operator()(const _WayIter& pWaypoint) const
    {
-      (*pWaypoint).SetRenderFlag(dtAI::Waypoint::RENDER_GREEN);
+      const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(&*pWaypoint);
+      if(way != NULL)
+      {
+         way->SetRenderFlag(dtAI::Waypoint::RENDER_GREEN);
+      }
    }
 };
 
@@ -53,7 +57,7 @@ struct funcRenderGreen
 
 namespace dtAI
 {
-   AICharacter::AICharacter(dtCore::Scene* pScene, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed)
+   AICharacter::AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const std::string& pFilename, unsigned pSpeed)
       : mSpeed(pSpeed)
       , mCharacter(new dtAnim::CharacterWrapper(pFilename))
       , mCurrentWaypoint(pWaypoint)
@@ -72,7 +76,7 @@ namespace dtAI
    {
    }
 
-   void AICharacter::SetPosition(const Waypoint* pWaypoint)
+   void AICharacter::SetPosition(const WaypointInterface* pWaypoint)
    {
       osg::Matrix mat;
       mat(3,0) = pWaypoint->GetPosition()[0];
@@ -82,7 +86,7 @@ namespace dtAI
       mCharacter->GetMatrixNode()->setMatrix(mat);
    }
 
-   bool AICharacter::FindPathAndGoToWaypoint(const Waypoint* pWaypoint)
+   bool AICharacter::FindPathAndGoToWaypoint(const WaypointInterface* pWaypoint)
    {
       //to use AStar, we call reset with the two points we want to path between
       mAStar.Reset(mCurrentWaypoint, pWaypoint);
@@ -99,8 +103,12 @@ namespace dtAI
          //loop through the path and turn everything to render green
          for_each(mWaypointPath.begin(), mWaypointPath.end(), funcRenderGreen());
 
-         //set the last waypoint to render red
-         pWaypoint->SetRenderFlag(Waypoint::RENDER_RED);
+         const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(pWaypoint);
+         if(way != NULL)
+         {
+            //set the last waypoint to render red
+            way->SetRenderFlag(dtAI::Waypoint::RENDER_RED);
+         }
 
          return true;
       }
@@ -114,7 +122,7 @@ namespace dtAI
       return mAStar.GetConfig();
    }
 
-   void AICharacter::GoToWaypoint(float dt, const Waypoint* pWaypoint)
+   void AICharacter::GoToWaypoint(float dt, const WaypointInterface* pWaypoint)
    {
       //simple... just rotate to the waypoint over time and set a
       //positive velocity to go there
@@ -159,7 +167,7 @@ namespace dtAI
       return forward;
    }
 
-   bool AICharacter::AmAtWaypoint(const Waypoint* pWaypoint)
+   bool AICharacter::AmAtWaypoint(const WaypointInterface* pWaypoint)
    {
       //a simple distance comparison to determine if we are within
       //range of a waypoint to be considered "at it"
@@ -192,8 +200,13 @@ namespace dtAI
             mCurrentWaypoint = mWaypointPath.front();
             //remove that waypoint from the list
             mWaypointPath.pop_front();
+            
+            const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(mCurrentWaypoint);
             //set its render flag to render blue again
-            mCurrentWaypoint->SetRenderFlag(Waypoint::RENDER_BLUE);
+            if(way != NULL)
+            {
+               way->SetRenderFlag(dtAI::Waypoint::RENDER_BLUE);
+            }
          }
 
          //if we have another waypoint to goto, goto it
@@ -229,13 +242,17 @@ namespace dtAI
          //vec.normalize();
          pIsector->SetStartPosition(GetPosition());// + vec);
 
-         const Waypoint* pNextWaypoint = *(++(mWaypointPath.begin()));
+         const WaypointInterface* pNextWaypoint = *(++(mWaypointPath.begin()));
          pIsector->SetEndPosition(pNextWaypoint->GetPosition());// - vec);
 
          //if there is a path between the two points
          if (!pIsector->Update())
          {
-            mWaypointPath.front()->SetRenderFlag(Waypoint::RENDER_BLUE);
+            const dtAI::Waypoint* way = dynamic_cast<const dtAI::Waypoint*>(mWaypointPath.front());
+            if(way != NULL)
+            {
+               way->SetRenderFlag(Waypoint::RENDER_BLUE);
+            }
             mWaypointPath.pop_front();
          }
          else break;

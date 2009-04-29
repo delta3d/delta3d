@@ -56,8 +56,6 @@ namespace dtDAL
 
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::MAP_NAME_ELEMENT = NULL;
-   XMLCh* MapXMLConstants::WAYPOINT_CREATE_NAVMESH = NULL;
-   XMLCh* MapXMLConstants::WAYPOINT_FILENAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
    XMLCh* MapXMLConstants::AUTHOR_ELEMENT = NULL;
    XMLCh* MapXMLConstants::COMMENT_ELEMENT = NULL;
@@ -135,8 +133,6 @@ namespace dtDAL
 
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       MAP_NAME_ELEMENT = xercesc::XMLString::transcode("name");
-      WAYPOINT_FILENAME_ELEMENT = xercesc::XMLString::transcode("waypointFileName");
-      WAYPOINT_CREATE_NAVMESH = xercesc::XMLString::transcode("createNavMesh");
       DESCRIPTION_ELEMENT = xercesc::XMLString::transcode("description");
       AUTHOR_ELEMENT = xercesc::XMLString::transcode("author");
       COMMENT_ELEMENT = xercesc::XMLString::transcode("comment");
@@ -214,8 +210,6 @@ namespace dtDAL
 
       xercesc::XMLString::release(&HEADER_ELEMENT);
       xercesc::XMLString::release(&MAP_NAME_ELEMENT);
-      xercesc::XMLString::release(&WAYPOINT_FILENAME_ELEMENT);
-      xercesc::XMLString::release(&WAYPOINT_CREATE_NAVMESH);
       xercesc::XMLString::release(&DESCRIPTION_ELEMENT);
       xercesc::XMLString::release(&AUTHOR_ELEMENT);
       xercesc::XMLString::release(&COMMENT_ELEMENT);

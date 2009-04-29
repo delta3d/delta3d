@@ -23,8 +23,8 @@
 #define __DELTA_WAYPOINTPAIR_H__
 
 
-#include "export.h"
-#include "waypoint.h"
+#include <dtAI/export.h>
+#include <dtAI/waypointinterface.h>
 
 namespace dtAI
 {
@@ -39,16 +39,9 @@ namespace dtAI
       /**
       * constructor assigns the two waypoints, calculates slope and 2D Distance
       */
-      WaypointPair(const Waypoint* pFrom, const Waypoint* pTo);      
+      WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo);      
       WaypointPair();
       virtual ~WaypointPair();
-
-      /**
-      * returns the closest point to the path between these two 
-      * waypoints, currently unused and unimplemented, but seems
-      * like it could be useful.
-      */
-      osg::Vec3 ClosestPointTo(const osg::Vec3& pPoint);
 
       /**
       * calculates distance between the two points
@@ -68,14 +61,14 @@ namespace dtAI
       * if this is used remember to call Calculate2DDistance()
       * and CalculateSlope()
       */
-      void SetFrom(const Waypoint* pWaypoint);
-      void SetTo(const Waypoint* pWaypoint);
+      void SetFrom(const WaypointInterface* pWaypoint);
+      void SetTo(const WaypointInterface* pWaypoint);
 
       /**
       * Getters for the waypoints
       */
-      const Waypoint* GetWaypointFrom() const;
-      const Waypoint* GetWaypointTo() const;
+      const WaypointInterface* GetWaypointFrom() const;
+      const WaypointInterface* GetWaypointTo() const;
 
       /**
       * Getters that return a reference the the actual position
@@ -86,8 +79,8 @@ namespace dtAI
 
    private:
 
-      const Waypoint* mFrom;
-      const Waypoint* mTo;
+      const WaypointInterface* mFrom;
+      const WaypointInterface* mTo;
 
       float m3DDistance;
       float mSlope;

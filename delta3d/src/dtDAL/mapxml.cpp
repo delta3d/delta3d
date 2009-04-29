@@ -448,16 +448,6 @@ namespace dtDAL
          BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
          AddCharacters(map.GetName());
          EndElement();
-         if (!map.GetPathNodeFileName().empty())
-         {
-            BeginElement(MapXMLConstants::WAYPOINT_FILENAME_ELEMENT);
-            AddCharacters(map.GetPathNodeFileName());
-            EndElement();
-
-            BeginElement(MapXMLConstants::WAYPOINT_CREATE_NAVMESH);
-            AddCharacters(dtUtil::ToString(map.GetCreateNavMesh()));
-            EndElement();
-         }
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
          AddCharacters(map.GetDescription());
          EndElement();

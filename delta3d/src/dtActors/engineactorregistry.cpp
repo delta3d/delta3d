@@ -52,7 +52,6 @@
 #include <dtActors/playerstartactorproxy.h>
 #include <dtActors/gamemeshactor.h>
 #include <dtActors/distancesensoractor.h>
-#include <dtDAL/waypointactorproxy.h>
 #include <dtActors/waypointvolumeactor.h>
 #include <dtActors/labelactorproxy.h>
 
@@ -85,7 +84,6 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::SKYDOME_ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("SkyDomeEnvironment", "dtcore.Environment", "dtCore::Environment plus a SkyDome"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_ACTOR_TYPE(new dtDAL::ActorType("Waypoint", "dtai.waypoint", "dtAI::Waypoint Actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::WAYPOINT_VOLUME_ACTOR_TYPE(new dtDAL::ActorType("WaypointVolume", "dtai.waypoint", "dtActos::Waypoint VolumeActor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LABEL_ACTOR_TYPE(new dtDAL::ActorType("Label", "dtcore", "Simple 3D label drawable."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
@@ -175,7 +173,6 @@ namespace dtActors
       mActorFactory->RegisterType<SkyDomeEnvironmentActorProxy>(SKYDOME_ENVIRONMENT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
-      mActorFactory->RegisterType<dtDAL::WaypointActorProxy>(WAYPOINT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<WaypointVolumeActorProxy>(WAYPOINT_VOLUME_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LabelActorProxy>(LABEL_ACTOR_TYPE.get());
 

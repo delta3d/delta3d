@@ -30,7 +30,7 @@
 #include <osg/Referenced>
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
-#include <dtAI/waypoint.h>
+#include <dtAI/waypointinterface.h>
 #include <dtAI/astarwaypointutils.h>
 #include <string>
 
@@ -44,19 +44,19 @@ namespace dtAI
    class AICharacter: public osg::Referenced
    {
       public:  
-         AICharacter(dtCore::Scene* pScene, const Waypoint* pWaypoint, const std::string& pFilename, unsigned pSpeed);
+         AICharacter(dtCore::Scene* pScene, const WaypointInterface* pWaypoint, const std::string& pFilename, unsigned pSpeed);
       protected:
          /*virtual*/ ~AICharacter();
    
       public:
          void Update(float dt);
-         void SetPosition(const Waypoint* pWaypoint);         
+         void SetPosition(const WaypointInterface* pWaypoint);         
 
          osg::Vec3 GetPosition() const;
          osg::Vec3 GetForward() const;
 
-         bool FindPathAndGoToWaypoint(const Waypoint* pWaypoint);
-         const Waypoint* GetCurrentWaypoint(){return mCurrentWaypoint;}
+         bool FindPathAndGoToWaypoint(const WaypointInterface* pWaypoint);
+         const WaypointInterface* GetCurrentWaypoint(){return mCurrentWaypoint;}
 
          const WaypointAStar::config_type& GetConfig() const;
 
@@ -64,15 +64,15 @@ namespace dtAI
 
       private:
          void ApplyStringPulling();
-         void GoToWaypoint(float dt, const Waypoint* pWaypoint);
-         bool AmAtWaypoint(const Waypoint* pWaypoint);
-         void SetRotation(float dt, const Waypoint* pWaypoint);
+         void GoToWaypoint(float dt, const WaypointInterface* pWaypoint);
+         bool AmAtWaypoint(const WaypointInterface* pWaypoint);
+         void SetRotation(float dt, const WaypointInterface* pWaypoint);
 
          unsigned mSpeed;         
          dtCore::RefPtr<dtAnim::CharacterWrapper> mCharacter;
 
          //pathfinding stuff
-         const Waypoint* mCurrentWaypoint;
+         const WaypointInterface* mCurrentWaypoint;
          WaypointAStar::container_type mWaypointPath;
          WaypointAStar mAStar;
          dtCore::RefPtr<dtCore::Scene> mScene;

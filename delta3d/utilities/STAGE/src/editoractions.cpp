@@ -556,7 +556,7 @@ namespace dtEditQt
       {
          myMap->SetDescription(dlg.getMapDescription());
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
-         dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName, ViewportManager::GetInstance().getMasterScene());
+         dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }
       catch (const dtUtil::Exception& e)
@@ -633,8 +633,6 @@ namespace dtEditQt
       else
       {
          mapPropsDialog.getMapName()->setText(map->GetName().c_str());
-         mapPropsDialog.getPathNodeFileName()->setText(map->GetPathNodeFileName().c_str());
-         mapPropsDialog.getCreateNavMesh()->setChecked(map->GetCreateNavMesh());
          mapPropsDialog.getMapDescription()->setText(map->GetDescription().c_str());
          mapPropsDialog.getMapAuthor()->setText(map->GetAuthor().c_str());
          mapPropsDialog.getMapCopyright()->setText(map->GetCopyright().c_str());
@@ -645,8 +643,6 @@ namespace dtEditQt
       if (mapPropsDialog.exec()== QDialog::Accepted)
       {
          map->SetName(mapPropsDialog.getMapName()->text().toStdString());
-         map->SetPathNodeFileName(mapPropsDialog.getPathNodeFileName()->text().toStdString());
-         map->SetCreateNavMesh(mapPropsDialog.getCreateNavMesh()->isChecked());
          map->SetDescription(mapPropsDialog.getMapDescription()->text().toStdString());
          map->SetAuthor(mapPropsDialog.getMapAuthor()->text().toStdString());
          map->SetCopyright(mapPropsDialog.getMapCopyright()->text().toStdString());
@@ -1328,7 +1324,7 @@ namespace dtEditQt
          try
          {
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
-            dtDAL::Project::GetInstance().SaveMap(*currMap, ViewportManager::GetInstance().getMasterScene());
+            dtDAL::Project::GetInstance().SaveMap(*currMap);
             ((QMainWindow*)EditorData::GetInstance().getMainWindow())->setWindowTitle(
                getWindowName().c_str());
             EditorData::GetInstance().getMainWindow()->endWaitCursor();

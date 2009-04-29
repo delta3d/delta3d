@@ -32,7 +32,7 @@ WaypointPair::WaypointPair()
 {
 }
 
-WaypointPair::WaypointPair(const Waypoint* pFrom, const Waypoint* pTo)
+WaypointPair::WaypointPair(const WaypointInterface* pFrom, const WaypointInterface* pTo)
    : mFrom(pFrom)
    , mTo(pTo)
 {
@@ -42,15 +42,6 @@ WaypointPair::WaypointPair(const Waypoint* pFrom, const Waypoint* pTo)
 
 WaypointPair::~WaypointPair()
 {
-}
-
-
-
-osg::Vec3 WaypointPair::ClosestPointTo(const osg::Vec3& pPoint)
-{
-   //\todo implement me
-   assert(0);
-   return pPoint;
 }
 
 void WaypointPair::Calculate3DDistance()
@@ -81,24 +72,24 @@ float WaypointPair::Get3DDistance() const
    return m3DDistance;
 }
 
-void WaypointPair::SetFrom(const Waypoint* pWaypoint)
+void WaypointPair::SetFrom(const WaypointInterface* pWaypoint)
 {
    assert(pWaypoint);
    mFrom = pWaypoint;
 }
 
-void WaypointPair::SetTo(const Waypoint* pWaypoint)
+void WaypointPair::SetTo(const WaypointInterface* pWaypoint)
 {
    assert(pWaypoint);
    mTo = pWaypoint;
 }
 
-const Waypoint* WaypointPair::GetWaypointFrom() const
+const WaypointInterface* WaypointPair::GetWaypointFrom() const
 {
    return mFrom;
 }
 
-const Waypoint* WaypointPair::GetWaypointTo() const
+const WaypointInterface* WaypointPair::GetWaypointTo() const
 {
    return mTo;
 }

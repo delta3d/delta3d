@@ -163,15 +163,7 @@ namespace  dtDAL
                mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
                //this flag is only used when the parser is just looking for the map name.
                mFoundMapName = true;
-            }
-            else if (topEl == MapXMLConstants::WAYPOINT_CREATE_NAVMESH)
-            {
-               mMap->SetCreateNavMesh(dtUtil::ToType<bool>(dtUtil::XMLStringConverter(chars).ToString()));
-            }
-            else if (topEl == MapXMLConstants::WAYPOINT_FILENAME_ELEMENT)
-            {
-               mMap->SetPathNodeFileName(dtUtil::XMLStringConverter(chars).ToString());
-            }
+            }            
             else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
             {
                mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
