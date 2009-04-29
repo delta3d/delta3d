@@ -122,7 +122,7 @@
             </property>
         </actor>
         <actor>
-            <type>dtAI.AIInterface.AI Interface Actor</type>
+            <type>dtai.AIInterface.AI Interface Actor</type>
             <id>2398d24b-0a3a-4ee1-be41-926c2949c734</id>
             <name>DeltaDrawable</name>
             <property>
