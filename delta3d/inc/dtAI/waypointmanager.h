@@ -29,7 +29,6 @@
 
 #include <dtAI/waypoint.h>
 #include <dtAI/waypointpair.h>
-#include <dtAI/waypointactor.h>
 #include <dtAI/navmesh.h>
 #include <dtAI/export.h>
 #include <dtAI/primitives.h>
@@ -156,10 +155,8 @@ namespace dtAI
       void AddPathSegment(WaypointID idFrom, WaypointID idTo);
 
       /**
-      * These are utility functions used by STAGE and dtDAL::Project
+      * Moves an existing waypoint without removing it
       */
-      void AddWaypoint(WaypointActor& pWaypoint);
-      void RemoveWaypoint(const WaypointActor& pWaypoint);
       void MoveWaypoint(WaypointID id, const osg::Vec3& pPos);
 
       void OnMapLoad(const std::string& pWaypointFilename);

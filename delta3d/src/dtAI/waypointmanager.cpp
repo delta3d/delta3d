@@ -107,19 +107,6 @@ namespace dtAI
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void WaypointManager::AddWaypoint(WaypointActor& pWaypointActor)
-   {
-      if (mLoadActors)
-      {
-         return;
-      }
-
-      Waypoint* way = new Waypoint(&pWaypointActor);
-
-      mWaypoints.insert(std::pair<WaypointID, Waypoint*>(way->GetID(), way));
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
    WaypointID WaypointManager::AddWaypoint(const osg::Vec3& pWaypoint)
    {
       Waypoint* pWay = new Waypoint(pWaypoint);
@@ -127,13 +114,6 @@ namespace dtAI
 
       mWaypoints.insert(std::pair<WaypointID, Waypoint*>(id, pWay));
       return id;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////
-   void WaypointManager::RemoveWaypoint(const WaypointActor& pWaypoint)
-   {
-      //we are indexing into map with a key generated on AddWaypoint
-      RemoveWaypoint(pWaypoint.GetIndex());
    }
 
    /////////////////////////////////////////////////////////////////////////////
