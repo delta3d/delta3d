@@ -1,22 +1,32 @@
-#include <delta3dthread.h>
 #include <mainwindow.h>
-
+#include <dtCore/system.h>
 #include <QtGui/QApplication>
+#include <dtQt/deltastepper.h>
+#include <dtQt/qtguiwindowsystemwrapper.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
    QApplication qapp(argc, argv);  
 
-   Delta3DThread *thread = new Delta3DThread(&qapp);
+   //Create special QGLWidget's when we create DeltaWin instances
+   dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
 
-   QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
-
+   //The main UI window
    psEditor::MainWindow win;
-   win.show();
 
-   thread->SetMainWindow(&win);
-   thread->run();
+   //The particle editor Application
+   dtCore::RefPtr<ParticleViewer> particleEditorApplication = new ParticleViewer();
+   particleEditorApplication->Config();
+
+   win.SetParticleViewer(particleEditorApplication.get());
+   win.SetupUI();
+   win.show(); //show the UI
+
+   //create a little class to ensure Delta3D performs Window "steps"
+   dtCore::System::GetInstance().Start();
+   dtQt::DeltaStepper stepper;
+   stepper.Start();
 
    if (argc >= 2)
    {
@@ -24,8 +34,7 @@ int main(int argc, char **argv)
    }
 
    qapp.exec();
-
-   delete thread;
+   stepper.Stop();
 
    return EXIT_SUCCESS;
 }
