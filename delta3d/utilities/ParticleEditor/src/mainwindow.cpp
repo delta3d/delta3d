@@ -1,7 +1,10 @@
 #include <mainwindow.h>
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
-
+#include <QtOpenGL/QGLWidget>
+#include <dtQt/osggraphicswindowqt.h>
+#include <dtCore/deltawin.h>
+#include <dtUtil/log.h>
 using namespace psEditor;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -9,8 +12,6 @@ MainWindow::MainWindow(QMainWindow* parent):
 QMainWindow(parent)
 {
    mUI.setupUi(this);
-
-   SetupViewWindow();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,6 +23,22 @@ MainWindow::~MainWindow()
 void MainWindow::SetParticleViewer(ParticleViewer* particleViewer)
 {
    mpParticleViewer = particleViewer;
+   dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mpParticleViewer->GetWindow()->GetOsgViewerGraphicsWindow());
+
+   if (osgGraphWindow == NULL)
+   {
+      LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
+      return;
+   }
+
+   //stuff the QGLWidget into it's parent widget placeholder and ensure it gets
+   //resized to fit the parent
+   QWidget* widget = osgGraphWindow->GetQGLWidget();
+   if (widget != NULL)
+   {
+      widget->setGeometry(mUI.ParticleViewer->geometry());
+      widget->setParent(mUI.ParticleViewer);
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,12 +86,6 @@ void MainWindow::UpdateHistory(const QString& filename)
 
    settings.setValue("recentFileList", files);
    UpdateRecentFileActions();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void MainWindow::SetupViewWindow()
-{
-   mpViewWindow = new dtQt::ViewWindow(false, dynamic_cast<QWidget*>(mUI.ParticleViewer));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
