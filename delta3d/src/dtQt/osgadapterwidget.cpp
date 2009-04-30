@@ -38,6 +38,7 @@ namespace dtQt
          QtKeyboardMap()
          {
             mKeyMap[Qt::Key_Escape     ] = osgGA::GUIEventAdapter::KEY_Escape;
+            mKeyMap[Qt::Key_Delete   ] = osgGA::GUIEventAdapter::KEY_Delete;
             mKeyMap[Qt::Key_Home       ] = osgGA::GUIEventAdapter::KEY_Home;
             mKeyMap[Qt::Key_Enter      ] = osgGA::GUIEventAdapter::KEY_KP_Enter;
             mKeyMap[Qt::Key_End        ] = osgGA::GUIEventAdapter::KEY_End;
@@ -52,6 +53,9 @@ namespace dtQt
             mKeyMap[Qt::Key_Tab        ] = osgGA::GUIEventAdapter::KEY_Tab;
             mKeyMap[Qt::Key_Space      ] = osgGA::GUIEventAdapter::KEY_Space;
             mKeyMap[Qt::Key_Delete     ] = osgGA::GUIEventAdapter::KEY_Delete;
+            mKeyMap[Qt::Key_Alt      ] = osgGA::GUIEventAdapter::KEY_Alt_L;
+            mKeyMap[Qt::Key_Shift    ] = osgGA::GUIEventAdapter::KEY_Shift_L;
+            mKeyMap[Qt::Key_Control  ] = osgGA::GUIEventAdapter::KEY_Control_L;
 
             mKeyMap[Qt::Key_F1             ] = osgGA::GUIEventAdapter::KEY_F1;
             mKeyMap[Qt::Key_F2             ] = osgGA::GUIEventAdapter::KEY_F2;
@@ -315,6 +319,36 @@ namespace dtQt
       if (mGraphicsWindow.valid())
       {
          mGraphicsWindow->getEventQueue()->mouseMotion(event->x(), event->y());
+      }
+   }
+   
+   //////////////////////////////////////////////////////////////////////////////////
+   void OSGAdapterWidget::wheelEvent(QWheelEvent* event)
+   {
+      if (mGraphicsWindow.valid())
+      {
+         if (event->orientation() == Qt::Horizontal)
+         {
+            if (event->delta() > 0)
+            {
+               mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_LEFT);
+            }
+            else
+            {
+               mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_RIGHT);
+            }
+         }
+         else
+         {
+            if (event->delta() > 0)
+            {
+               mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_UP);
+            }
+            else
+            {
+               mGraphicsWindow->getEventQueue()->mouseScroll(osgGA::GUIEventAdapter::SCROLL_DOWN);
+            }
+         }
       }
    }
 }
