@@ -982,7 +982,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of game actors before changing to record.",
-         (unsigned)1,mGameManager->GetNumGameActors());
+         size_t(1),mGameManager->GetNumGameActors());
 
       //First, we'll start recording and then add some actors thus generating
       //actor create messages.
@@ -999,7 +999,7 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
       CPPUNIT_ASSERT_EQUAL_MESSAGE("Wrong number of actors correctly added during record.",
-         (unsigned)3,mGameManager->GetNumGameActors());
+         size_t(3),mGameManager->GetNumGameActors());
 
       testSignal->Reset();
       logController->RequestServerGetStatus();
