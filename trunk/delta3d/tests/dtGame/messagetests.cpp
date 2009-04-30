@@ -1264,9 +1264,9 @@ void MessageTests::TestChangeMap()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      const size_t numActors = mapA->GetAllProxies().size() + mapB->GetAllProxies().size(); //the maps loaded via mapNamesExpected
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the loaded Maps minus two for the Crash Actors.",
-                                    numActors - 2, mGameManager->GetNumAllActors());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the loaded Maps.",
+                                    mapA->GetAllProxies().size() + mapB->GetAllProxies().size(),
+                                    mGameManager->GetNumAllActors());
 
       dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
       //2 from each map, and one that is shared with the same unique id.
@@ -1343,9 +1343,9 @@ void MessageTests::TestChangeMap()
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      const size_t numActors2 = map2A->GetAllProxies().size() + map2B->GetAllProxies().size();
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors.",
-                                    numActors2 - 2, mGameManager->GetNumAllActors());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the second loaded Maps.",
+                                    map2A->GetAllProxies().size() + map2B->GetAllProxies().size(),
+                                    mGameManager->GetNumAllActors());
 
       // make sure that the events from both maps are in the gem.
       CPPUNIT_ASSERT_EQUAL(4U, mainGEM.GetNumEvents());
