@@ -239,8 +239,9 @@ void MessageTests::tearDown()
 
 void MessageTests::createActors(dtDAL::Map& map)
 {
+   map.ClearProxies();
+
    std::vector<const dtDAL::ActorType*> actorTypes;
-   std::vector<dtDAL::ActorProperty*> props;
 
    actorTypes.push_back(dtActors::EngineActorRegistry::TASK_ACTOR_TYPE.get());
    actorTypes.push_back(dtActors::EngineActorRegistry::GAME_EVENT_TASK_ACTOR_TYPE.get());
@@ -264,44 +265,19 @@ void MessageTests::createActors(dtDAL::Map& map)
    actorTypes.push_back(dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE.get());
 
    actorTypes.push_back(TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE.get());
-   //mGameManager->GetActorTypes(actorTypes);
-
-   int nameCounter = 0;
-   char nameAsString[21];
-
-   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
    for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
       dtCore::RefPtr<dtDAL::ActorProxy> proxy;
 
-      mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Creating actor proxy with type \"%s\" with category %s.", actorTypes[i]->GetFullName().c_str());
-
       proxy = mGameManager->CreateActor(*actorTypes[i]);
-      snprintf(nameAsString, 21, "%d", nameCounter);
-      proxy->SetName(std::string(nameAsString));
-      ++nameCounter;
-
-      mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                         "Set proxy name to: %s", proxy->GetName().c_str());
-
-
-      proxy->GetPropertyList(props);
-      for (unsigned int j=0; j<props.size(); ++j)
-      {
-         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                            "Property: Name: %s, Type: %s",
-                            props[j]->GetName().c_str(), props[j]->GetDataType().GetName().c_str());
-      }
+      proxy->SetName(dtUtil::ToString(i));
 
       map.AddProxy(*proxy);
-
-      CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-                             map.GetAllProxies().size() == (i + 1));
-      CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
-                             map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
    }
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Proxy list has the wrong size.",
+                                actorTypes.size(), map.GetAllProxies().size());
 }
 
 void MessageTests::TestOperatorEquals()
@@ -1194,22 +1170,18 @@ void MessageTests::TestChangeMap()
    try
    {
       dtDAL::Project& project = dtDAL::Project::GetInstance();
-      std::string mapNameA = "Many Game Actors";
-      std::string mapNameB = "Many Game Actors the second";
-      dtDAL::Map* mapA = &project.CreateMap(mapNameA, "mga");
-      dtDAL::Map* mapB = &project.CreateMap(mapNameB, "mgb");
-
-      std::string mapName2A = "Many More Game Actors";
-      std::string mapName2B = "Many More Game Actors the second";
-      dtDAL::Map* map2A = &project.CreateMap(mapName2A, "mg2");
-      dtDAL::Map* map2B = &project.CreateMap(mapName2B, "mg2b");
-
       dtGame::GameManager::NameVector mapNamesExpected;
-      mapNamesExpected.push_back(mapNameA);
-      mapNamesExpected.push_back(mapNameB);
+      mapNamesExpected.push_back("Many Game Actors");
+      mapNamesExpected.push_back("Many Game Actors the second");
+
+      dtCore::RefPtr<dtDAL::Map> mapA = &project.CreateMap(mapNamesExpected[0], "mga");
+      dtCore::RefPtr<dtDAL::Map> mapB = &project.CreateMap(mapNamesExpected[1], "mgb");
+
       dtGame::GameManager::NameVector mapNames2Expected;
-      mapNames2Expected.push_back(mapName2A);
-      mapNames2Expected.push_back(mapName2B);
+      mapNames2Expected.push_back("Many More Game Actors");
+      mapNames2Expected.push_back("Many More Game Actors the second");
+      dtCore::RefPtr<dtDAL::Map> map2A = &project.CreateMap(mapNames2Expected[0], "mg2");
+      dtCore::RefPtr<dtDAL::Map> map2B = &project.CreateMap(mapNames2Expected[1], "mg2b");
 
       createActors(*mapA);
       createActors(*mapB);
@@ -1243,10 +1215,7 @@ void MessageTests::TestChangeMap()
       RemoveOneProxy(*map2A);
       RemoveOneProxy(*map2B);
 
-      size_t numActors  = mapA->GetAllProxies().size() * 2 ;
-      size_t numActors2 = map2A->GetAllProxies().size() * 2;
-
-      CPPUNIT_ASSERT(numActors != numActors2);
+      CPPUNIT_ASSERT(mapA->GetAllProxies().size() != map2A->GetAllProxies().size());
 
       project.SaveMap(*mapA);
       project.CloseMap(*mapA);
@@ -1263,12 +1232,11 @@ void MessageTests::TestChangeMap()
       TestComponent& tc = *new TestComponent("name");
       mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
+      //change the map set using the first set of Maps
       mGameManager->ChangeMapSet(mapNamesExpected, false);
 
-      std::vector<dtDAL::ActorProxy*> toFill;
-      mGameManager->GetAllActors(toFill);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, mGameManager->GetNumAllActors());
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, unsigned(toFill.size()));
       SLEEP(10);
       dtCore::System::GetInstance().Step();
       dtCore::RefPtr<const dtGame::Message> processMapChange = tc.FindProcessMessageOfType(dtGame::MessageType::INFO_MAP_CHANGE_BEGIN);
@@ -1289,12 +1257,16 @@ void MessageTests::TestChangeMap()
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapLoadedMsg.get());
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0),  toFill.size());
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should still be 0 after INFO_MAP_LOAD_BEGIN.", 
+                                    0U, mGameManager->GetNumAllActors());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
-      mGameManager->GetAllActors(toFill);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the map minus two for the Crash Actors.", numActors - 2, toFill.size());
+
+      const size_t numActors = mapA->GetAllProxies().size() + mapB->GetAllProxies().size(); //the maps loaded via mapNamesExpected
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the loaded Maps minus two for the Crash Actors.",
+                                    numActors - 2, mGameManager->GetNumAllActors());
 
       dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
       //2 from each map, and one that is shared with the same unique id.
@@ -1315,23 +1287,24 @@ void MessageTests::TestChangeMap()
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
-      for (unsigned i = 0; i < toFill.size(); ++i)
+      std::vector<dtGame::GameActorProxy*> gameActorProxyVec;
+      mGameManager->GetAllGameActors(gameActorProxyVec);
+
+      for (unsigned int i = 0; i < gameActorProxyVec.size(); ++i)
       {
-         if (toFill[i]->IsGameActorProxy())
-         {
-            dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(toFill[i]);
-            CPPUNIT_ASSERT(gap != NULL);
-            CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap.get());
-            std::vector<const dtGame::Invokable*> invokables;
-            gap->GetInvokables(invokables);
-            CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);
-         }
+         dtGame::GameActorProxy* gap = gameActorProxyVec[i];
+         CPPUNIT_ASSERT(gap != NULL);
+         CPPUNIT_ASSERT_MESSAGE("The game actor proxy should be assigned to the game actor.", &gap->GetGameActor().GetGameActorProxy() == gap);
+         std::vector<const dtGame::Invokable*> invokables;
+         gap->GetInvokables(invokables);
+         CPPUNIT_ASSERT_MESSAGE("There should be invokables on the game actor proxies if BuildInvokables was called.", invokables.size() > 0);
       }
 
-      toFill.clear();
+      gameActorProxyVec.clear();
 
       tc.reset();
 
+      //change the map set using the second set of Maps
       mGameManager->ChangeMapSet(mapNames2Expected, false);
 
       SLEEP(10);
@@ -1365,17 +1338,14 @@ void MessageTests::TestChangeMap()
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.",
             !processMapChange.valid());
 
-      mGameManager->GetAllActors(toFill);
-
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0), toFill.size());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, mGameManager->GetNumAllActors());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      mGameManager->GetAllActors(toFill);
-
+      const size_t numActors2 = map2A->GetAllProxies().size() + map2B->GetAllProxies().size();
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors.",
-            numActors2 - 2, toFill.size());
+                                    numActors2 - 2, mGameManager->GetNumAllActors());
 
       // make sure that the events from both maps are in the gem.
       CPPUNIT_ASSERT_EQUAL(4U, mainGEM.GetNumEvents());
@@ -1393,7 +1363,6 @@ void MessageTests::TestChangeMap()
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should have been processed.", processMapChange.valid());
       mapLoadedMsg = static_cast<const dtGame::MapMessage*>(processMapChange.get());
       CheckMapNames(*mapLoadedMsg, mapNames2Expected);
-
    }
    catch(const dtUtil::Exception& e)
    {
