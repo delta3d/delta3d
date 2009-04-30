@@ -265,6 +265,7 @@ void MessageTests::createActors(dtDAL::Map& map)
    actorTypes.push_back(dtActors::EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE.get());
 
    actorTypes.push_back(TestGameActorLibrary::TEST_TANK_GAME_ACTOR_PROXY_TYPE.get());
+   actorTypes.push_back(TestGameActorLibrary::TEST_GAME_ACTOR_CRASH_PROXY_TYPE.get());
 
    for (unsigned int i = 0; i < actorTypes.size(); ++i)
    {
@@ -1235,7 +1236,7 @@ void MessageTests::TestChangeMap()
       //change the map set using the first set of Maps
       mGameManager->ChangeMapSet(mapNamesExpected, false);
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, mGameManager->GetNumAllActors());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0), mGameManager->GetNumAllActors());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
@@ -1258,14 +1259,14 @@ void MessageTests::TestChangeMap()
       CheckMapNames(*mapLoadedMsg, mapNamesExpected);
 
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should still be 0 after INFO_MAP_LOAD_BEGIN.", 
-                                    0U, mGameManager->GetNumAllActors());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should still be 0 after INFO_MAP_LOAD_BEGIN.",
+                                    size_t(0), mGameManager->GetNumAllActors());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the loaded Maps.",
-                                    mapA->GetAllProxies().size() + mapB->GetAllProxies().size(),
+                                    mapA->GetAllProxies().size() + mapB->GetAllProxies().size() - 2,
                                     mGameManager->GetNumAllActors());
 
       dtDAL::GameEventManager& mainGEM = dtDAL::GameEventManager::GetInstance();
@@ -1338,13 +1339,14 @@ void MessageTests::TestChangeMap()
       CPPUNIT_ASSERT_MESSAGE("A INFO_MAP_CHANGED message should NOT have been processed.",
             !processMapChange.valid());
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", 0U, mGameManager->GetNumAllActors());
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should be 0.", size_t(0), mGameManager->GetNumAllActors());
 
       SLEEP(10);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of Actors in the GM should equal the Proxies in the second loaded Maps.",
-                                    map2A->GetAllProxies().size() + map2B->GetAllProxies().size(),
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of actors in the GM should match the second map minus two for the Crash Actors,"
+               " which throw and exception in OnEnteredWorld, so should not end up in the GM.",
+                                    map2A->GetAllProxies().size() + map2B->GetAllProxies().size() - 2,
                                     mGameManager->GetNumAllActors());
 
       // make sure that the events from both maps are in the gem.

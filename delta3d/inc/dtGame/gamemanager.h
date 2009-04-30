@@ -489,7 +489,7 @@ namespace dtGame
              * manager.
              * @return The number of game actors in the system.
              */
-            unsigned GetNumGameActors() const { return mGameActorProxyMap.size(); }
+            size_t GetNumGameActors() const { return mGameActorProxyMap.size(); }
 
             /**
              * Retrieves all the game actors added to the GM
@@ -509,12 +509,12 @@ namespace dtGame
              */
             void GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const;
 
-            /** 
+            /**
              * Get the number of all Actors currently managed.
-             * @return The number of ActorProxy and GameActorProxy currently 
+             * @return The number of ActorProxy and GameActorProxy currently
              * managed by this GameManager.
              */
-            unsigned int GetNumAllActors() const;
+            size_t GetNumAllActors() const;
 
             /**
              * Fills a vector with actors that are currently in the scene

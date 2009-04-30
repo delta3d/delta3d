@@ -1222,7 +1222,7 @@ namespace dtGame
       {
          id = itor->first;
          GameActorProxy& gameActorProxy = *itor->second;
-         if (gameActorProxy.IsInGM()) 
+         if (gameActorProxy.IsInGM())
          {
             mDeleteList.push_back(itor->second);
             gameActorProxy.SetIsInGM(false);
@@ -1417,7 +1417,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   unsigned int GameManager::GetNumAllActors() const
+   size_t GameManager::GetNumAllActors() const
    {
       return mGameActorProxyMap.size() + mActorProxyMap.size();
    }
