@@ -84,6 +84,9 @@ public:
    virtual void Config();
    void LoadFile(QString filename, bool import = false);
 
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc);
+
+
 signals:
    ///> Main Window signals
    void UpdateWindowTitle(const QString& title);
