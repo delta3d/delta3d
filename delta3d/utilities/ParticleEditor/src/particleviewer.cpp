@@ -1757,4 +1757,11 @@ void ParticleViewer::SetParticleLayerRenderBin(int value)
       mLayers[mLayerIndex].mParticleSystem->getOrCreateStateSet()->setBinNumber(value);
    }
 }
+
+bool ParticleViewer::KeyPressed( const dtCore::Keyboard* keyboard, int kc )
+{
+   //Nothing to do here, but we want to overwrite the inherited 
+   //Quit-on-Escape behavior.
+   return false;
+}
 ////////////////////////////////////////////////////////////////////////////////
