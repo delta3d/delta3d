@@ -1416,6 +1416,12 @@ namespace dtGame
       //}
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   unsigned int GameManager::GetNumAllActors() const
+   {
+      return mGameActorProxyMap.size() + mActorProxyMap.size();
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::GetAllPrototypes(std::vector<dtDAL::ActorProxy*>& toFill) const
    {

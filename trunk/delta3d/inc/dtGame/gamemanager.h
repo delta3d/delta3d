@@ -509,6 +509,13 @@ namespace dtGame
              */
             void GetAllActors(std::vector<dtDAL::ActorProxy*>& toFill) const;
 
+            /** 
+             * Get the number of all Actors currently managed.
+             * @return The number of ActorProxy and GameActorProxy currently 
+             * managed by this GameManager.
+             */
+            unsigned int GetNumAllActors() const;
+
             /**
              * Fills a vector with actors that are currently in the scene
              * @param vec The vector to fill
