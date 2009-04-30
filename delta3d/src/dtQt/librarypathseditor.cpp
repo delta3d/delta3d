@@ -30,18 +30,10 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QListWidgetItem>
 #include <QtGui/QListWidget>
-#include <QtCore/QStringList>
-#include <QtGui/QMainWindow>
 #include <QtGui/QGroupBox>
 
 #include <dtQt/librarypathseditor.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorpluginregistry.h>
-#include <dtDAL/map.h>
-#include <dtUtil/log.h>
-
-#include <osgDB/FileNameUtils>
-#include <osgDB/Registry>
+#include <dtUtil/librarysharingmanager.h>
 
 #include <cassert>
 

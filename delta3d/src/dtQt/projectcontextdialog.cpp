@@ -30,15 +30,10 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QLineEdit>
 #include <QtGui/QFileDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QCloseEvent>
 #include <QtGui/QLabel>
 
 #include <dtDAL/project.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/map.h>
 
-#include <osgDB/FileNameUtils>
 
 namespace dtQt
 {
