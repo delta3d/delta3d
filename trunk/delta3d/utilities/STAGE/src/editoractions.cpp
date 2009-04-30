@@ -460,8 +460,8 @@ namespace dtEditQt
       dtQt::DialogListSelection openMapDialog(EditorData::GetInstance().getMainWindow(), tr("Open Existing Map"), tr("Available Maps"));
 
       QStringList listItems;
-      std::set<std::string> mapNames = dtDAL::Project::GetInstance().GetMapNames();
-      for (std::set<std::string>::iterator i = mapNames.begin(); i != mapNames.end(); ++i)
+      const std::set<std::string>& mapNames = dtDAL::Project::GetInstance().GetMapNames();
+      for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); ++i)
       {
          listItems << i->c_str();
       }

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -429,7 +429,7 @@ namespace dtEditQt
          resourceBrowser->setUpdatesEnabled(true);
 
          throw ex;
-      }   
+      }
       catch(const std::exception& ex)
       {
          setUpdatesEnabled(true);
@@ -489,8 +489,8 @@ namespace dtEditQt
       if (!pathList.empty())
       {
          int pos = 0;
-         for (std::vector<std::string>::iterator iter = pathList.begin(); 
-            iter != pathList.end(); 
+         for (std::vector<std::string>::iterator iter = pathList.begin();
+            iter != pathList.end();
             ++iter)
          {
             QString item = EditorSettings::LIBRARY_PATH_N;
@@ -699,9 +699,9 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
          this, SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
          this, SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
-      connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(showStatusBarMessage(const QString, int)),
          this, SLOT(showStatusBarMessage(const QString, int)));
 
       connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<QAction*>&)),
@@ -856,7 +856,7 @@ namespace dtEditQt
             {
                dtUtil::LibrarySharingManager::GetInstance().AddToSearchPath(path);
             }
-         } 
+         }
          while (!path.empty());
       }
    }
@@ -996,7 +996,7 @@ namespace dtEditQt
    {
       // Note - calling this method multiple times will nest hte wait cursors,
       // so remember to call endWaitCursor() for each one.
-      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
