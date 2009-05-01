@@ -72,7 +72,13 @@ namespace dtCore
       stateSet.addUniform(uniform);
 
       // Load (if necessary) and Set the Tex cube map on the StateSet
-      if (GetTextureSourceType() == ShaderParamTexture::TextureSourceType::IMAGE)
+      if(GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_X ||
+         GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_X ||
+         GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Y ||
+         GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Y ||
+         GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_POSITIVE_Z ||
+         GetTextureSourceType() == ShaderParamTexture::TextureSourceType::CUBEMAP_IMAGE_NEGATIVE_Z
+      )
       {
          texCube = static_cast<osg::TextureCubeMap*>(GetTextureObject());
 
