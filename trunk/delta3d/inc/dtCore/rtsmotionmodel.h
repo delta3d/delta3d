@@ -44,7 +44,8 @@ namespace dtCore
    public:
       RTSMotionModel(dtCore::Keyboard* keyboard,
                      dtCore::Mouse* mouse,
-                     bool useSimTimeForSpeed = false);
+                     bool useSimTimeForSpeed = false,
+                     bool useMouseScrolling = true);
 
       /**
        * Called when an axis' state has changed.
