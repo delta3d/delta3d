@@ -16,7 +16,8 @@ using namespace dtCore;
  */
 RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
                               , dtCore::Mouse *mouse
-                              , bool useSimTimeForSpeed )
+                              , bool useSimTimeForSpeed
+                              , bool useMouseScrolling )
    : dtCore::OrbitMotionModel(keyboard, mouse)
    , mTerrainDrawable(NULL)
    , mUseSimTimeForSpeed(useSimTimeForSpeed)
@@ -48,37 +49,55 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
          0.05f,
          0.0f)));
 
-   SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-      "translate left/right",
-      new dtCore::AxesToAxis(
+   if (useMouseScrolling)
+   {
+      SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
+         "translate left/right",
+         new dtCore::AxesToAxis(
          GetDefaultLogicalInputDevice()->AddAxis(
-            "left/right of screen translates left/right",
-            new dtCore::AxisToAxisTransformation(
-               mouse->GetAxis(0),
-               new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
+         "left/right of screen translates left/right",
+         new dtCore::AxisToAxisTransformation(
+         mouse->GetAxis(0),
+         new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
          GetDefaultLogicalInputDevice()->AddAxis(
-            "a/d keys translate left/right",
-            new dtCore::ButtonsToAxis(
-               keyboard->GetButton('a'),
-               keyboard->GetButton('d')))
-      )));
+         "a/d keys translate left/right",
+         new dtCore::ButtonsToAxis(
+         keyboard->GetButton('a'),
+         keyboard->GetButton('d')))
+         )));
 
-   SetUpDownTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
-      "translate forward/back",
-      new dtCore::AxesToAxis(
+      SetUpDownTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
+         "translate forward/back",
+         new dtCore::AxesToAxis(
          GetDefaultLogicalInputDevice()->AddAxis(
-            "top/bottom of screen translates forward/back",
-            new dtCore::AxisToAxisTransformation(
-               mouse->GetAxis(1),
-               new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
+         "top/bottom of screen translates forward/back",
+         new dtCore::AxisToAxisTransformation(
+         mouse->GetAxis(1),
+         new dtUtil::EdgeStepFilter(-0.9f, 0.9f))),
          GetDefaultLogicalInputDevice()->AddAxis(
-            "w/s keys translate forward/back",
-            new dtCore::ButtonsToAxis(
-               keyboard->GetButton('s'),
-               keyboard->GetButton('w')))
-      )));
+         "w/s keys translate forward/back",
+         new dtCore::ButtonsToAxis(
+         keyboard->GetButton('s'),
+         keyboard->GetButton('w')))
+         )));
+   }
+   else
+   {
+      SetLeftRightTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
+         "a/d keys translate left/right",
+         new dtCore::ButtonsToAxis(
+         keyboard->GetButton('a'),
+         keyboard->GetButton('d'))));
+
+      SetUpDownTranslationAxis(GetDefaultLogicalInputDevice()->AddAxis(
+         "w/s keys translate forward/back",
+         new dtCore::ButtonsToAxis(
+         keyboard->GetButton('s'),
+         keyboard->GetButton('w'))));
+   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 bool RTSMotionModel::AxisStateChanged(const dtCore::Axis *axis, double oldState, double newState, double delta)
 {
@@ -116,6 +135,7 @@ bool RTSMotionModel::AxisStateChanged(const dtCore::Axis *axis, double oldState,
    return rval;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 void RTSMotionModel::OnMessage(MessageData *data)
 {
