@@ -1,5 +1,3 @@
-//#define NOMINMAX //do not use windows.h-min-max
-
 #include <dtGUI/hud.h>
 #include <dtGUI/ceguirenderer.h>
 #include <dtGUI/ceguitexture.h>

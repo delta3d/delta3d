@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004-2005 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -40,11 +40,11 @@ namespace dtCore
    ///Base class to support naming and message passing
 
    /**
-    * The Base class handles things that are required by most of the dtCore 
+    * The Base class handles things that are required by most of the dtCore
     * classes such as naming, RTTI, and message passing.
     * To name an instance, call SetName() or pass it to the constructor.
     *
-    * Inter-class message passing is handled by "subscribing" the 
+    * Inter-class message passing is handled by "subscribing" the
     * instance to a sender using AddSender().  Anytime the sender
     * calls SendMessage(), the receiver class' OnMessage() will get triggered.
     * The MessageData that gets passed to OnMessage() contains a pointer to the
@@ -53,7 +53,7 @@ namespace dtCore
     * This class is also reference counted using the osg::Referenced class.  To
     * safely keep the reference count up-to-date, pointers to Base classes should
     * be stored in a RefPtr template.  For example:
-    * \code 
+    * \code
     * RefPtr<Base> mPointerToMyBase;
     * \endcode
     */
@@ -70,7 +70,7 @@ namespace dtCore
             Base* sender;        ///<Pointer to the sender
             void* userData;      ///<Void pointer to user data
          };
-         
+
          /**
           * Constructor.
           *
@@ -86,7 +86,7 @@ namespace dtCore
          virtual ~Base();
 
       public:
-      
+
          /**
           * Sets the name of this instance.
           *
@@ -100,7 +100,7 @@ namespace dtCore
           * @return the current name
           */
          const std::string& GetName() const;
-         
+
          /**
           * This sets the unique ID, for general purposes this should not be used.
           */
@@ -125,7 +125,7 @@ namespace dtCore
           * Stop receiving messages from the supplied sender instance
           */
          void RemoveSender(Base* sender);
-         
+
          /**
           *  Send a message to any instances that are subscribed
           *  to this instance.  Any supplied string or void* data will be passed
@@ -140,10 +140,10 @@ namespace dtCore
 
          ///< The name of this instance.
          dtUtil::RefString mName;
-         
+
          ///< The actual signal that gets triggered from SendMessage()
          sigslot::signal1<MessageData*> mSendMessage;
-         
+
          UniqueId mId;
    };
 }

@@ -2,20 +2,12 @@
 #include <dtGUI/ceguitexture.h>
 #include <dtUtil/macros.h>
 
+//includes gl without needed the windows headers.
+#include <osg/GL>
+
 #if defined( __APPLE__ )
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 //needed for something in CEGUI. weird.
 #include <CoreFoundation/CoreFoundation.h>
-#else /* __APPLE__ **/
-#if defined(DELTA_WIN32)
-   #define WIN32_LEAN_AND_MEAN
-   #include <windows.h>
-   #undef GetClassName
-   #undef SendMessage
-#endif
-#include <GL/gl.h>
-#include <GL/glu.h>
 #endif /* __APPLE__ **/
 
 #include <iostream>
