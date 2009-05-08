@@ -26,6 +26,9 @@
 #include <dtABC/baseabc.h>
 #include <osgViewer/GraphicsWindow>
 
+#include <dtUtil/mswin.h>
+
+
 #if defined(WIN32) && !defined(__CYGWIN__)
 #include <osgViewer/api/Win32/GraphicsWindowWin32>
 typedef HWND WindowHandle;
