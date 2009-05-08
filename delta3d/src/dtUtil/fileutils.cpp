@@ -24,10 +24,7 @@
 #include <osg/Version>
 
 #ifdef DELTA_WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef GetClassName
-#   undef SendMessage
+#   include <dtUtil/mswin.h>
 #   include <direct.h>
 #   include <io.h>
 #   include <errno.h>
@@ -182,7 +179,7 @@ namespace dtUtil
       FILE* pSrcFile;
       FILE* pDestFile;
 
-      struct stat tagStat;            
+      struct stat tagStat;
 
       //Make absolutely certain these two strings don't point to the same file.
       if(!IsSameFile(strSrc, strDest))
@@ -249,7 +246,7 @@ namespace dtUtil
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
 
-               stat( strSrc.c_str(), &tagStat );               
+               stat( strSrc.c_str(), &tagStat );
                long i = 0;
                char buffer[4096];
                while (i<tagStat.st_size)
@@ -512,7 +509,7 @@ namespace dtUtil
    }
 
    //////////////////////////////////////////////////////////////////////////
-   DirectoryContents FileUtils::DirGetFiles(const std::string& path, 
+   DirectoryContents FileUtils::DirGetFiles(const std::string& path,
                                             const FileExtensionList& extensions) const
    {
       FileInfo ft = GetFileInfo(path);
@@ -546,14 +543,14 @@ namespace dtUtil
                filteredContents.push_back((*dirItr));
                //stop when we find at least one match, to avoid duplicate file entries, in
                //case extensions contains duplicate entries.
-               break; 
+               break;
             }
             ++extItr;
          }
          ++dirItr;
       }
-      
-      return filteredContents;     
+
+      return filteredContents;
    }
 
    //-----------------------------------------------------------------------
@@ -664,7 +661,7 @@ namespace dtUtil
          {
             const std::string& srcName = osgDB::getSimpleFileName(fullSrcPath);
             fullDestPath += PATH_SEPARATOR + srcName;
-            
+
             if(DirExists(fullDestPath) && !bOverwrite)
             {
                throw dtUtil::Exception(FileExceptionEnum::IOException,
@@ -673,7 +670,7 @@ namespace dtUtil
             }
 
             if (!DirExists(fullDestPath))
-               MakeDirectory(fullDestPath);            
+               MakeDirectory(fullDestPath);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -853,7 +850,7 @@ namespace dtUtil
       }
 #endif
 
-      return false;       
+      return false;
    }
 
    //-----------------------------------------------------------------------
