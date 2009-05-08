@@ -2,13 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
+#include <dtUtil/macros.h>
 #if defined(DELTA_WIN32)
 #include <dtUtil/mswin.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
-#define WIN32_LEAN_AND_MEAN
 
-//#include <macros.h>
 using namespace dtCore;
 using namespace dtUtil;
 
