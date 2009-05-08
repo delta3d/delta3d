@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -30,6 +30,7 @@
 #include <dtAudio/audiomanager.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/timer.h> // for appsleep
 #include <dtDAL/project.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/gmcomponent.h>
@@ -41,13 +42,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/macros.h>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 
 using dtCore::RefPtr;
 
@@ -60,13 +54,13 @@ class FireFighterMessageTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
    public:
-      
+
       void setUp();
       void tearDown();
       void TestGameStateMessages();
 
    private:
-      
+
       RefPtr<dtGame::GameManager> mGM;
       RefPtr<dtABC::Application> mApp;
 };
@@ -123,20 +117,20 @@ void FireFighterMessageTests::TestGameStateMessages()
       CPPUNIT_ASSERT(gscm->GetNewState() == GameState::STATE_MENU);
       mGM->SendMessage(*gscm);
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
-      CPPUNIT_ASSERT_MESSAGE("The state should have changed to menu", 
+      CPPUNIT_ASSERT_MESSAGE("The state should have changed to menu",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
 
       bool returnValue = inputComp->HandleKeyPressed(NULL, 'n');
-      CPPUNIT_ASSERT_MESSAGE("The current state was not one where the N keypress applied, the state should NOT have changed", 
+      CPPUNIT_ASSERT_MESSAGE("The current state was not one where the N keypress applied, the state should NOT have changed",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
       CPPUNIT_ASSERT(!returnValue);
 
       returnValue = inputComp->HandleKeyPressed(NULL, osgGA::GUIEventAdapter::KEY_Escape);
       CPPUNIT_ASSERT(!returnValue);
-      CPPUNIT_ASSERT_MESSAGE("The current state was not one where the Escape keypress applied, the state shoudl NOT have changed", 
+      CPPUNIT_ASSERT_MESSAGE("The current state was not one where the Escape keypress applied, the state shoudl NOT have changed",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
 
       msg = mf.CreateMessage(MessageType::GAME_STATE_CHANGED);
@@ -146,25 +140,25 @@ void FireFighterMessageTests::TestGameStateMessages()
       gscm->SetNewState(GameState::STATE_INTRO);
       mGM->SendMessage(*gscm);
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       returnValue = inputComp->HandleKeyPressed(NULL, 'n');
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(returnValue);
-      CPPUNIT_ASSERT_MESSAGE("The state should have changed due to the keypress", 
+      CPPUNIT_ASSERT_MESSAGE("The state should have changed due to the keypress",
          inputComp->GetCurrentGameState() == GameState::STATE_RUNNING);
 
       returnValue = inputComp->HandleKeyPressed(NULL, osgGA::GUIEventAdapter::KEY_Escape);
-      
-      SLEEP(10);
+
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(returnValue);
-      CPPUNIT_ASSERT_MESSAGE("The state was running, hitting escape should set the state back to the main menu", 
+      CPPUNIT_ASSERT_MESSAGE("The state was running, hitting escape should set the state back to the main menu",
          inputComp->GetCurrentGameState() == GameState::STATE_MENU);
    }
    catch(const dtUtil::Exception &e)
