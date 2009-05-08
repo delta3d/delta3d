@@ -12,15 +12,8 @@
 //#include <sstream>
 #include <algorithm>
 
-#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
-   #if !defined (WIN32_LEAN_AND_MEAN)
-       #define WIN32_LEAN_AND_MEAN
-   #endif
-   #if !defined (NOMINMAX)
-       #define NOMINMAX
-   #endif
-   #include <windows.h>
-#endif
+//This gives windows.h with the undefs needed.
+#include <dtUtil/mswin.h>
 
 //#include <python/dtpython.h>
 #include <osg/Referenced>

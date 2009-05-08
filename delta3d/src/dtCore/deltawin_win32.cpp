@@ -2,15 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <prefix/dtcoreprefix-src.h>
-#include <dtUtil/macros.h>
 #if defined(DELTA_WIN32)
+#include <dtUtil/mswin.h>
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef GetClassName
-#undef SendMessage
 
+//#include <macros.h>
 using namespace dtCore;
 using namespace dtUtil;
 
@@ -26,7 +24,7 @@ void DeltaWin::KillGLWindow()
 
    //if( mRenderSurface->isFullScreen() )
    //{
-   //   ChangeDisplaySettings(0,0);    
+   //   ChangeDisplaySettings(0,0);
    //   ShowCursor(true);
    //}
 
@@ -73,11 +71,11 @@ DeltaWin::ResolutionVec DeltaWin::GetResolutions()
    return rv;
 }
 
-bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate ) 
+bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate )
 {
    //Note: If a window is fullscreen, we have to trick it a little in order
    // for it to resize correctly after the resolution changes.  To do this,
-   // we store the fullscreen mode, then set it to be not fullscreened, change 
+   // we store the fullscreen mode, then set it to be not fullscreened, change
    // the resolution, then restore the fullscreen mode.
 
    bool changeSuccessful = false;
@@ -90,22 +88,22 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
       //store fullScreen state, then set to false
       fullScreenVec.push_back(dw->GetFullScreenMode());
-      dw->SetFullScreenMode(false);  
+      dw->SetFullScreenMode(false);
    }
 
-   DEVMODE dmScreenSettings;                                                           
+   DEVMODE dmScreenSettings;
    ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));
 
-   dmScreenSettings.dmSize             = sizeof (DEVMODE);             
-   dmScreenSettings.dmPelsWidth        = width;                                        
-   dmScreenSettings.dmPelsHeight       = height;                              
-   dmScreenSettings.dmBitsPerPel       = colorDepth;    
+   dmScreenSettings.dmSize             = sizeof (DEVMODE);
+   dmScreenSettings.dmPelsWidth        = width;
+   dmScreenSettings.dmPelsHeight       = height;
+   dmScreenSettings.dmBitsPerPel       = colorDepth;
    dmScreenSettings.dmDisplayFrequency = refreshRate;
    dmScreenSettings.dmFields           = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
          "Resolution could not be changed to %dx%d @ %d, %d",
          width, height, colorDepth, refreshRate );
 
