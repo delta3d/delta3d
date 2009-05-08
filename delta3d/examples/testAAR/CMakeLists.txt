@@ -33,14 +33,13 @@ TARGET_LINK_LIBRARIES(${LIB_NAME}
                       ${DTAI_LIBRARY}
                       ${DTGUI_LIBRARY}
                       ${DTLMS_LIBRARY}
-                     )                                        
-                                              
+                     )
 
 SET_TARGET_PROPERTIES(${LIB_NAME}
                      PROPERTIES DEFINE_SYMBOL TEST_AAR_LIBRARY)
 
 #little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
+IF (MSVC_IDE)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)
+ENDIF ()

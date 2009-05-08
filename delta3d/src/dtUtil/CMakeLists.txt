@@ -29,10 +29,10 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 INCLUDE(ModuleInstall OPTIONAL)
 
 #little hack to get the .dll into /bin and .lib into /lib
-IF (MSVC)
+IF (MSVC_IDE)
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC)
+ENDIF ()
 
 IF (PCHSupport_FOUND)
    ADD_PRECOMPILED_HEADER(${LIB_NAME} precomp.cpp prefix/dtutilprefix-src.h true)

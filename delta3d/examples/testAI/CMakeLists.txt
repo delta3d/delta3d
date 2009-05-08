@@ -3,7 +3,7 @@ SET(TARGET_H aicharacter.h testai.h)
 
 INCLUDE_DIRECTORIES( ${CAL3D_INCLUDE_DIR} )#for dtAnim
 
-BUILD_EXE_EXAMPLE( testAI                                          
+BUILD_EXE_EXAMPLE( testAI
                    ${DTUTIL_LIBRARY}
                    ${DTCORE_LIBRARY}
                    ${DTABC_LIBRARY}
