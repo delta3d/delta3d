@@ -82,6 +82,7 @@ typedef struct win_addr {
 } win_addr;
 
 #else
+   #include <dtUtil/mswin.h>
    #include <WinSock.h>
    typedef int socklen_t;
 #endif

@@ -36,6 +36,7 @@
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtCore/camera.h>
+#include <dtCore/timer.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
@@ -65,14 +66,6 @@
 
 #include "testcomponent.h"
 extern dtABC::Application& GetGlobalApplication();
-
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 
 class GameActorTests : public CPPUNIT_NS::TestFixture
 {
@@ -372,7 +365,7 @@ void GameActorTests::TestInvokableMessageRegistration()
       CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 0);
       CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 1);
@@ -609,7 +602,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //actors are not removed immediately
       CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) != NULL);
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       //Actor should be removed by now.
@@ -637,7 +630,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //add a load map message again.
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
 
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
@@ -648,7 +641,7 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       mManager->UnregisterForMessages(
          dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->SendMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
-      SLEEP(10);
+      dtCore::AppSleep(10);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);

@@ -60,13 +60,6 @@
 #include <dtABC/application.h>
 extern dtABC::Application& GetGlobalApplication();
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 namespace dtGame
 {
    class DefaultNetworkPublishingComponentTests : public CPPUNIT_NS::TestFixture

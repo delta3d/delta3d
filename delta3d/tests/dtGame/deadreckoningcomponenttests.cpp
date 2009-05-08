@@ -44,6 +44,7 @@
 #include <dtUtil/nodecollector.h>
 #include <dtCore/batchisector.h>
 
+
 #include <dtGame/basemessages.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/messagefactory.h>
@@ -58,14 +59,6 @@
 #include <dtActors/engineactorregistry.h>
 
 extern dtABC::Application& GetGlobalApplication();
-
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 
 namespace dtGame
 {

@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -36,15 +36,10 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtABC/application.h>
-extern dtABC::Application& GetGlobalApplication();
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
+#include <dtCore/timer.h>
+
+extern dtABC::Application& GetGlobalApplication();
 
 class GMTaskComponentTests : public CPPUNIT_NS::TestFixture
 {
@@ -189,7 +184,7 @@ void GMTaskComponentTests::TestTaskComponentTaskTracking()
       //Remove some actors and make sure the removal is tracked..
       mGameManager->DeleteAllActors();
 
-      SLEEP(50);
+      dtCore::AppSleep(50);
       dtCore::System::GetInstance().Step();
 
       CPPUNIT_ASSERT_MESSAGE("Task component should have no top level tasks after deletion.",
