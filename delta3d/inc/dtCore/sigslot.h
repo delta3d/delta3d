@@ -45,6 +45,7 @@
 #ifndef SIGSLOT_H__
 #define SIGSLOT_H__
 
+#include <dtCore/export.h>
 #include <set>
 #include <list>
 
@@ -59,7 +60,7 @@
 namespace sigslot {
 
    /// This threading policy does nothing.  lock and unlock are no-ops.
-   class single_threaded
+   class DT_CORE_EXPORT single_threaded
    {
    public:
       single_threaded() {}
@@ -72,7 +73,7 @@ namespace sigslot {
    };
 
    /// This policy uses a single, reentrant global lock.
-   class multi_threaded_global
+   class DT_CORE_EXPORT multi_threaded_global
    {
    public:
       multi_threaded_global();
@@ -90,7 +91,7 @@ namespace sigslot {
 
    class multi_threaded_local_impl;
    /// This policy uses a reentrant lock per instance.
-   class multi_threaded_local
+   class DT_CORE_EXPORT multi_threaded_local
    {
    public:
       multi_threaded_local();
