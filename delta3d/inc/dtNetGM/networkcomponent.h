@@ -34,6 +34,8 @@
 #include <gnelib.h>
 #include <dtGame/gmcomponent.h>
 #include <dtUtil/enumeration.h>
+#include <OpenThreads/ReentrantMutex>
+#include <deque>
 
 // Forward declaration
 namespace dtCore
@@ -99,6 +101,9 @@ namespace dtNetGM
        * 'additional' Network Messages on the GameManager
        */
       virtual void OnAddedToGM();
+
+      /// Overridden to handle shutdown.
+      virtual void OnRemovedFromGM();
 
       /**
        * Function called by a GameManager to process Messages. This function forwards the connection related
@@ -324,11 +329,13 @@ namespace dtNetGM
       int mRateIn; // Value describing the GNE connection parameter
 
       // Mutex
-      GNE::Mutex mMutex;
-      // local buffer to store messages received from the network.
-      std::queue<dtCore::RefPtr<const dtGame::Message> > mMessageBuffer;
+      OpenThreads::ReentrantMutex mMutex;
       // mutex for accessing the GameManager message queue
-      GNE::Mutex mBufferMutex;
+      OpenThreads::ReentrantMutex mBufferMutex;
+   private:
+      typedef std::deque<dtCore::RefPtr<const dtGame::Message> > MessageBufferType;
+      // local buffer to store messages received from the network.
+      MessageBufferType mMessageBuffer;
    };
 }
 #endif // DELTA_NETWORKCOMPONENT
