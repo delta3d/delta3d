@@ -564,6 +564,9 @@ osg::ref_ptr<osg::Material> MtlKeeper::createMaterial(StdMat* stdMtl, Options* o
 		osgMtl->setShininess(osg::Material::FRONT_AND_BACK, shininess * 128.0f ); 
 	}
 
+   //sets the max material name on the osg material
+   osgMtl->setName(stdMtl->GetName());
+
 	return osgMtl;
 }
 
