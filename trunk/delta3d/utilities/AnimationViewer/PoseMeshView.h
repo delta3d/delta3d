@@ -12,10 +12,12 @@ class QAbstractButton;
 class PoseMeshScene;
 class PoseMeshItem;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class PoseMeshPropertiesContainer;
 }
+/// @endcond
 
 ///////////////////////////////////////////////////////////////////////////////
 

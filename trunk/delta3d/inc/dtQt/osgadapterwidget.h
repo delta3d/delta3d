@@ -35,10 +35,12 @@
 
 #include <dtCore/refptr.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osgViewer
 {
    class GraphicsWindow;
 }
+/// @endcond
 
 namespace dtQt
 {
