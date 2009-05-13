@@ -29,10 +29,12 @@
 
 class QCloseEvent;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Ui
 {
    class MainWindow;
 }
+/// @endcond
 
 class MainWindow : public QMainWindow
 {
