@@ -51,6 +51,7 @@ namespace dtEditQt
       , gridSize(16)
       , loadLastProject(true)
       , loadLastMap(true)
+      , mUseGlobalOrientationForViewportWidget(true)
       , rigidCamera(true)
       , mActorCreationDistance(5.0)
       , selectionColor(Qt::red)    

@@ -61,6 +61,10 @@ namespace dtEditQt
       /// @param state The new checkbox state
       void onLastMapCheckBox(int state);
 
+      /// Called when the Global Orientation checkbox is altered
+      /// @param state The new checkbox state
+      void onUseGlobalOrientationCheckBox(int state);
+
       /// Called when the Ok button is pressed
       void onOk();
 
@@ -71,6 +75,7 @@ namespace dtEditQt
       QCheckBox*   mProjectCheck;
       QCheckBox*   mMapCheck;
       QCheckBox*   mRigidCamCheck;
+      QCheckBox*   mUseGlobalOrientationCheck;
       QPushButton* mColor;
       QSpinBox*    mSaveMins;
       QLineEdit*   mActorOffsetDistance;

@@ -473,6 +473,7 @@ namespace dtEditQt
       settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS, editorData.getLoadLastProject());
       settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
       settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
+      settings.setValue(EditorSettings::USE_GLOBAL_ORIENTATION, editorData.GetUseGlobalOrientationForViewportWidget());
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().saveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
@@ -787,6 +788,13 @@ namespace dtEditQt
       {
          bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA).toBool();
          EditorData::GetInstance().setRigidCamera(rigidCamera);
+         perspView->onEditorPreferencesChanged();
+      }
+
+      if (settings.contains(EditorSettings::USE_GLOBAL_ORIENTATION))
+      {
+         bool useGlobalOrientation = settings.value(EditorSettings::USE_GLOBAL_ORIENTATION).toBool();
+         EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget(useGlobalOrientation);
          perspView->onEditorPreferencesChanged();
       }
 

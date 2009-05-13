@@ -324,6 +324,12 @@ namespace dtEditQt
       inline void setLoadLastMap(bool enable) { loadLastMap = enable; }
 
       // Accessor
+      inline bool GetUseGlobalOrientationForViewportWidget() const { return mUseGlobalOrientationForViewportWidget; }
+
+      // Mutator
+      inline void SetUseGlobalOrientationForViewportWidget(bool enable) { mUseGlobalOrientationForViewportWidget = enable; }
+
+      // Accessor
       inline QColor getSelectionColor() const { return selectionColor; }
 
       // Mutator
@@ -394,6 +400,7 @@ namespace dtEditQt
       unsigned int numRecentProjects;
 
       bool loadLastProject, loadLastMap, rigidCamera;
+      bool mUseGlobalOrientationForViewportWidget; 
       float mActorCreationDistance;
       QColor selectionColor;
    };

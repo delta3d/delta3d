@@ -41,6 +41,7 @@
 #include <dtUtil/exception.h>
 #include <dtDAL/exceptionenum.h>
 
+
 namespace dtEditQt
 {
 
@@ -87,6 +88,7 @@ namespace dtEditQt
    void EditorViewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
       Viewport::refreshActorSelection(actors);
+
 
       if (actors.size() > 0)
       {
@@ -362,7 +364,15 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onEditorPreferencesChanged()
    {
-      this->attachActorToCamera = EditorData::GetInstance().getRigidCamera();
+      attachActorToCamera = EditorData::GetInstance().getRigidCamera();
+
+      // sync up our local vs world space setting. Affects the actor movement/rotation widget in the viewports
+      bool useGlobalOrientation = EditorData::GetInstance().
+         GetUseGlobalOrientationForViewportWidget();
+      if (useGlobalOrientation)
+         mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
+      else
+         mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::LOCAL_SPACE);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

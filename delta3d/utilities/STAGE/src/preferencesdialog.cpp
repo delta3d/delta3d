@@ -70,6 +70,7 @@ namespace dtEditQt
       mProjectCheck       = new QCheckBox;
       mMapCheck           = new QCheckBox;
       mRigidCamCheck      = new QCheckBox;
+      mUseGlobalOrientationCheck = new QCheckBox;
       mSaveMins           = new QSpinBox;
 
       mActorOffsetDistance = new QLineEdit;
@@ -81,6 +82,7 @@ namespace dtEditQt
       mProjectCheck->setToolTip(tr("Enables the loading of the most recently loaded project on startup."));
       mMapCheck->setToolTip(tr("Enables the loading of most recently used map on startup. Note that a map cannot be loaded without a project."));
       mRigidCamCheck->setToolTip(tr("Enables the rigid body movement of the camera in a scene."));
+      mUseGlobalOrientationCheck->setToolTip(tr("If true, the widget that moves and rotates actors in the viewport will orient to world space instead of local space."));
       mColor->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
       mSaveMins->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
       mActorOffsetDistance->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
@@ -101,20 +103,26 @@ namespace dtEditQt
       grid->addWidget(label, 2, 0);
       grid->addWidget(mRigidCamCheck, 2, 2);
 
+      label = new QLabel(tr("Use Global Orientation In Viewport"));
+      label->setToolTip(tr("If true, the widget that moves and rotates actors in the viewport will orient to world space instead of local space."));
+      grid->addWidget(label, 3, 0);
+      grid->addWidget(mUseGlobalOrientationCheck, 3, 2);
+
+
       label = new QLabel(tr("Autosave Delay"));
       label->setToolTip(tr("Selects the number of minutes in between autosaves. Setting the number of minutes to zero will disable autosave."));
-      grid->addWidget(label, 3, 0);
-      grid->addWidget(mSaveMins,  3, 2);
+      grid->addWidget(label, 4, 0);
+      grid->addWidget(mSaveMins,  4, 2);
 
       label = new QLabel(tr("Selection Color"));
       label->setToolTip(tr("Selects the color that will be used to highlight selected actors."));
-      grid->addWidget(label, 4, 0);
-      grid->addWidget(mColor, 4, 2);
+      grid->addWidget(label, 5, 0);
+      grid->addWidget(mColor, 5, 2);
 
       label = new QLabel(tr("Actor Creation Offset"));
       label->setToolTip(tr("How far away new or duplicated objects should be. Should be small (1.0) for indoor maps, large for big objects, outdoors (10.0)."));
-      grid->addWidget(label, 5, 0);
-      grid->addWidget(mActorOffsetDistance, 5, 2);
+      grid->addWidget(label, 6, 0);
+      grid->addWidget(mActorOffsetDistance, 6, 2);
 
       mSaveMins->setMinimum(0);
       mSaveMins->setMaximum(60);
@@ -130,6 +138,7 @@ namespace dtEditQt
 
       connect(mProjectCheck,  SIGNAL(stateChanged(int)), this, SLOT(onLastProjectCheckBox(int)));
       connect(mMapCheck,      SIGNAL(stateChanged(int)), this, SLOT(onLastMapCheckBox(int)));
+      connect(mUseGlobalOrientationCheck, SIGNAL(stateChanged(int)), this, SLOT(onUseGlobalOrientationCheckBox(int)));
       connect(mColor,         SIGNAL(clicked()),         this, SLOT(onColorSelect()));
       connect(ok,             SIGNAL(clicked()),         this, SLOT(onOk()));
       connect(cancel,         SIGNAL(clicked()),         this, SLOT(reject()));
@@ -144,10 +153,12 @@ namespace dtEditQt
       bool loadProject = EditorData::GetInstance().getLoadLastProject();
       bool loadMap     = EditorData::GetInstance().getLoadLastMap();
       bool rigidCamera = EditorData::GetInstance().getRigidCamera();
+      bool useGlobalOrientation = EditorData::GetInstance().GetUseGlobalOrientationForViewportWidget();
 
       mProjectCheck->setChecked(loadProject);
       mMapCheck->setChecked((loadProject && loadMap));
       mRigidCamCheck->setChecked(rigidCamera);
+      mUseGlobalOrientationCheck->setChecked(useGlobalOrientation);
 
       float actorOffsetDistance = EditorData::GetInstance().GetActorCreationOffset();
       mActorOffsetDistance->setText(QString::number(actorOffsetDistance, 'f', 5));
@@ -180,6 +191,17 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////
+   void PreferencesDialog::onUseGlobalOrientationCheckBox(int state)
+   {
+      bool isChecked = state == Qt::Checked;
+      if (isChecked)
+      {
+         //mUseGlobalOrientationCheck->setEnabled(true);
+         mUseGlobalOrientationCheck->setChecked(true);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////
    void PreferencesDialog::onColorSelect()
    {
       QColor selectedColor = QColorDialog::getColor(EditorData::GetInstance().getSelectionColor(), this);
@@ -194,6 +216,8 @@ namespace dtEditQt
       EditorData::GetInstance().setLoadLastProject(mProjectCheck->isChecked());
       EditorData::GetInstance().setLoadLastMap(mMapCheck->isChecked());
       EditorData::GetInstance().setRigidCamera(mRigidCamCheck->isChecked());
+      EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget
+         (mUseGlobalOrientationCheck->isChecked());
 
       // No point in resetting the interval if it didn't change
       int milliSecs = mSaveMins->value() * 60 * 1000;
