@@ -35,6 +35,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/globals.h>
 #include <dtCore/deltawin.h>
+#include <dtCore/singletonmanager.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
@@ -160,6 +161,7 @@ Application::~Application()
 {
    mCompositeViewer = NULL;
    delete mStats;
+   dtCore::SingletonManager::Destroy(); //destroy any singletons that need to go away
    DeregisterInstance(this);
 }
 
