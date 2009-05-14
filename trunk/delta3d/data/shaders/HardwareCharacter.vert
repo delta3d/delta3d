@@ -41,5 +41,9 @@ void main(void)
    gl_TexCoord[2] = transformedNormal;
    
    gl_Position = gl_ModelViewProjectionMatrix * transformedPosition;
+   
+   vec4 ecPosition = gl_ModelViewMatrix * gl_Vertex;
+   vec3 ecPosition3 = vec3(ecPosition) / ecPosition.w;
+   gl_FogFragCoord = length(ecPosition3);
 }
 
