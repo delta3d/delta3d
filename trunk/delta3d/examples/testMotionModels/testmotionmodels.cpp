@@ -349,7 +349,17 @@ public:
       Application::Config();
 
       mTown = new Object("Town");
-      mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
+
+      if (!mOptionalFilename.empty())
+      {
+         mTown->LoadFile(mOptionalFilename);
+      }
+      else
+      {
+         mTown->LoadFile("/demoMap/StaticMeshes/TestTownLt.ive");
+      }
+
+     
       mTown->SetCollisionMesh();
       AddDrawable(mTown.get());
       GetScene()->GetSceneNode()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
@@ -462,11 +472,19 @@ public:
       return verdict;
    }
 
+   
+
+   public:
+      // Allow command settings to override the default filename. Allows this app to be used to test external models.
+      std::string mOptionalFilename;
+
+
    protected:
       ~TestMotionModelsApp()
       {
          mGUIDrawable->ShutdownGUI();
       }
+
 
 private:
 
@@ -513,6 +531,7 @@ private:
 
    bool mUseSimTime; // ie sim time versus real time. Only supported by some motion models.
    unsigned int mCurrentMotionModelIndex;
+
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApp)
@@ -529,6 +548,15 @@ int main(int argc, char** argv)
                                dtCore::GetDeltaRootPath() + "/examples/testMotionModels/;");
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
+
+   // Pull the optional file name off of the command line.
+   if (argc > 1)
+   {
+      std::string temp = argv[1];
+      if (!temp.empty())
+         app->mOptionalFilename = temp;
+      std::cout << "Attempting to load file [" << temp << "] instead of the default model." << std::endl;
+   }
 
    app->Config();
    app->Run();
