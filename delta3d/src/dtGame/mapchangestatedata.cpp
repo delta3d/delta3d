@@ -229,7 +229,7 @@ namespace dtGame
                   catch (const dtUtil::Exception& ex)
                   {
                      dtUtil::Log::GetInstance("mapchangestatedata.cpp").LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                           "An error occurred adding actor \"%s\" of type \"%s\".  The exception will follow.",
+                           "A problem occurred adding Actor with name \"%s\" of type \"%s\" to the GameManager.",
                            gameProxy->GetName().c_str(), gameProxy->GetActorType().GetFullName().c_str());
                      ex.LogException(dtUtil::Log::LOG_ERROR, dtUtil::Log::GetInstance("mapchangestatedata.cpp"));
                   }
