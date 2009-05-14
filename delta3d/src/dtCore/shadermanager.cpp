@@ -56,6 +56,23 @@ namespace dtCore
       RemoveSender(&dtCore::System::GetInstance());
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   ShaderManager& ShaderManager::GetInstance()
+   {
+      if (mInstance == NULL)
+      {
+         mInstance = new ShaderManager();
+      }
+
+      return *mInstance;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::Destroy()
+   {
+      mInstance = NULL;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderManager::Clear()
    {
