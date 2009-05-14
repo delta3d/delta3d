@@ -125,15 +125,13 @@ namespace dtCore
           * Gets the single global instance of this class.
           * @return The singleton instance.
           */
-         static ShaderManager& GetInstance()
-         {
-            if (mInstance == NULL)
-            {
-               mInstance = new ShaderManager();
-            }
+         static ShaderManager& GetInstance();
 
-            return *mInstance;
-         }
+         /** 
+          * Destroy the singleton instance of ShaderManager, if one was created.
+          * Should only be called when the application is finished with it.
+          */
+         static void Destroy();
 
          /**
           * Removes all shaders and shader groups from the manager.
