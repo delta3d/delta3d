@@ -161,6 +161,11 @@ void SkyDomeEnvironmentActorProxy::BuildPropertyMap()
       MakeFunctor(*env, &SkyDomeEnvironmentActor::SetSkyDomeEnable),
       MakeFunctorRet(*env, &SkyDomeEnvironmentActor::GetSkyDomeEnable),
       "Enable or disable the rendering of the Sky Dome"));
+
+   AddProperty( new FloatActorProperty("Visibility", "Visibility",
+      MakeFunctor(*env, &SkyDomeEnvironmentActor::SetVisibility),
+      MakeFunctorRet(*env, &SkyDomeEnvironmentActor::GetVisbility),
+      "Adjusts the max visibility distance (meters)"));
 }
 
 void SkyDomeEnvironmentActorProxy::CreateActor()
