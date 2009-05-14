@@ -977,7 +977,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddActor(dtDAL::ActorProxy& actorProxy)
    {
-      if (mEnvironment != NULL)
+      if (mEnvironment.valid())
       {
          if (mEnvironment.get() != &actorProxy)
          {
@@ -1014,7 +1014,7 @@ namespace dtGame
       gameActorProxy.SetGameManager(this);
       gameActorProxy.SetRemote(isRemote);
 
-      if (mEnvironment != NULL)
+      if (mEnvironment.valid())
       {
          if (mEnvironment.get() != &gameActorProxy)
          {
