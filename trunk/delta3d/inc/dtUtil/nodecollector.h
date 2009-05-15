@@ -48,9 +48,19 @@ namespace osgSim
 
 namespace dtUtil
 {
-   //Create the NodeCollector Class for dtCore.  It is used to gather osg Group nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
-   //and Geode nodes (which have Drawable objects and Material objects).  It stores the different nodes into corresponding maps which may than
-   //be retrieved by the user.  In the case of Geode nodes it creates maps for Drawable objects and Material Objects which can be retrieved.
+   /** NodeCollector is used to gather osg Group
+    * nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
+    * and Geode nodes (which have Drawable objects and Material objects).  It 
+    * stores the different nodes into corresponding maps which may than
+    * be retrieved by the user.  In the case of Geode nodes it creates maps
+    * for Drawable objects and Material Objects which can be retrieved.
+    *
+    * For example, to find the osg::Switch named "switch1":
+    * @code
+    * dtUtil::NodeCollector *collector = new dtUtil::NodeCollector(modelNode, dtUtil::NodeCollector::SwitchFlag);
+    * osg::Switch* sw = collector->GetSwitch("switch1");
+    * @endcode
+    */
    class DT_UTIL_EXPORT NodeCollector : public osg::Referenced
    {
    public:
@@ -59,22 +69,22 @@ namespace dtUtil
       typedef std::map<std::string, dtCore::RefPtr <osg::Group> >             GroupNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osgSim::DOFTransform> >   TransformNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
-      typedef std::map<std::string, dtCore::RefPtr<osg::Switch> >             SwitchNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr <osg::Switch> >            SwitchNodeMap;
 
       //Type Definitions for the two different geode node maps
       typedef std::map<std::string, dtCore::RefPtr<osg::Geode> >     GeodeNodeMap;
 
-      //Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
+      ///Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
       typedef unsigned NodeFlag;
 
-      //NodeFlags that represent the four different types of nodes that can be searched for
+      ///NodeFlags that represent the four different types of nodes that can be searched for
       static const NodeFlag GroupFlag;
       static const NodeFlag DOFTransformFlag;
       static const NodeFlag MatrixTransformFlag;
       static const NodeFlag SwitchFlag;
       static const NodeFlag GeodeFlag;
 
-      //NodeFlag that when defined will represent all kinds of nodes and Geode nodes
+      ///NodeFlag that when defined will represent all kinds of nodes and Geode nodes
       static const NodeFlag AllNodeTypes;
 
       /**
@@ -89,7 +99,7 @@ namespace dtUtil
        * @param mask The different types of nodes you want to collect off of the loaded node.
        * @param nodeNameIgnored The name of a node that you do not want to collect.
        */
-      NodeCollector(osg::Node* nodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNameIgnored = "");
+      NodeCollector(osg::Node* nodeToLoad, NodeCollector::NodeFlag mask, const std::string& nodeNameIgnored = "");
 
       /**
        * Function that when called will automatically generate the node maps or geode maps that you request
@@ -98,7 +108,7 @@ namespace dtUtil
        * @param nodeNameIgnored The name of a node that you do not want to collect.
        * @note This function was originally intended to be used in conjunction with the blank constructor or after a call of the ClearAllNodes function
        */
-      void CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNamesIgnored = "");
+      void CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string& nodeNamesIgnored = "");
 
       /**
        * Function that is defined to clear all the maps of their contents.
@@ -300,7 +310,7 @@ namespace dtUtil
 
       /**
        * Function that returns a Transform map
-       * @return A map with the names of Transform Nodes and osg Transform Nodesa
+       * @return A map with the names of Transform Nodes and osg Transform Nodes
        */
       NodeCollector::TransformNodeMap& GetTransformNodeMap();
 
