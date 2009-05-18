@@ -43,7 +43,12 @@ namespace dtQt
       _traits = traits;
       if (adapter == NULL)
       {
-         adapter = new dtQt::OSGAdapterWidget(false);
+         Qt::WindowFlags flags = NULL;
+         if (!traits->windowDecoration)
+         {
+            flags |= Qt::FramelessWindowHint;
+         }
+         adapter = new dtQt::OSGAdapterWidget(false, NULL, NULL, flags);
       }
       adapter->SetGraphicsWindow(*this);
       adapter->setFocusPolicy(Qt::StrongFocus);
@@ -215,7 +220,8 @@ namespace dtQt
       if (mQWidget != NULL)
       {
       // this cas be done but there are some quirks with it.
-         //mQWidget->setWindowFlags()
+         //mQWidget->setWindowFlags();
+         //mQWidget->show();
          return true;
       }
       return false;
