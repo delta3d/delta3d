@@ -50,6 +50,7 @@ namespace dtInspectorQt
    protected slots:
       void OnEnabled(int state);
       void OnPerspectiveChanged(double value);
+      void OnClearColorChanged(double value);
 
    private:
       Ui::InspectorWidget* mUI;

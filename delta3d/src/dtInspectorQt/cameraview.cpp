@@ -10,6 +10,10 @@ dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
    connect(mUI->cameraEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cameraVertEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
    connect(mUI->cameraAspectEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
+   connect(mUI->cameraRedClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
+   connect(mUI->cameraGreenClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
+   connect(mUI->cameraBlueClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
+   connect(mUI->cameraAlphaClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,6 +57,13 @@ void dtInspectorQt::CameraView::Update()
       mUI->cameraAspectEdit->setValue(ar);
       mUI->cameraNearClipEdit->setValue(nearClip);
       mUI->cameraFarClipEdit->setValue(farClip);
+
+      float red, green, blue, alpha;
+      mOperateOn->GetClearColor(red, green, blue, alpha);
+      mUI->cameraRedClearEdit->setValue(red);
+      mUI->cameraGreenClearEdit->setValue(green);
+      mUI->cameraBlueClearEdit->setValue(blue);
+      mUI->cameraAlphaClearEdit->setValue(alpha);
    }
    else
    {
@@ -79,3 +90,15 @@ void dtInspectorQt::CameraView::OnPerspectiveChanged(double value)
       mOperateOn->SetPerspectiveParams(vertFOV, aspectRatio, 1.0, 10.f); //near/far auto calculated
    }
 }
+
+//////////////////////////////////////////////////////////////////////////
+void dtInspectorQt::CameraView::OnClearColorChanged(double value)
+{
+   if (mOperateOn.valid())
+   {
+      mOperateOn->SetClearColor(mUI->cameraRedClearEdit->value(), mUI->cameraGreenClearEdit->value(),
+         mUI->cameraBlueClearEdit->value(), mUI->cameraAlphaClearEdit->value());
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
