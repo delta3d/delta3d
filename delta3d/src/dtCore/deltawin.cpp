@@ -440,7 +440,7 @@ osg::ref_ptr<osg::GraphicsContext::Traits> DeltaWin::CreateOSGTraits(const Delta
    traits->height = deltaTraits.height;
    traits->alpha = ds->getMinimumNumAlphaBits();
    traits->stencil = ds->getMinimumNumStencilBits();
-   traits->windowDecoration = true;
+   traits->windowDecoration = deltaTraits.windowDecoration;
    traits->doubleBuffer = true;
    traits->supportsResize = deltaTraits.supportResize;
    traits->sharedContext = deltaTraits.contextToShare;

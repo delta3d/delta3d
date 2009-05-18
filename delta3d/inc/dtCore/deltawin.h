@@ -94,6 +94,7 @@ namespace dtCore
             , height(DEFAULT_HEIGHT)
             , showCursor(true)
             , fullScreen(false)
+            , windowDecoration(true)
             , supportResize(true)
             , inheritedWindowData(NULL)
             , contextToShare(NULL)
@@ -110,6 +111,7 @@ namespace dtCore
          int height;
          bool showCursor;
          bool fullScreen;
+         bool windowDecoration;
          bool supportResize;
          osg::Referenced* inheritedWindowData;
          osg::GraphicsContext* contextToShare;
