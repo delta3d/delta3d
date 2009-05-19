@@ -10,6 +10,8 @@ dtInspectorQt::CameraView::CameraView(Ui::InspectorWidget& ui)
    connect(mUI->cameraEnabledToggle, SIGNAL(stateChanged(int)), this, SLOT(OnEnabled(int)));
    connect(mUI->cameraVertEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
    connect(mUI->cameraAspectEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
+   connect(mUI->cameraNearClipEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
+   connect(mUI->cameraFarClipEdit, SIGNAL(valueChanged(double)), this, SLOT(OnPerspectiveChanged(double)));
    connect(mUI->cameraRedClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
    connect(mUI->cameraGreenClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
    connect(mUI->cameraBlueClearEdit, SIGNAL(valueChanged(double)), this, SLOT(OnClearColorChanged(double)));
@@ -87,7 +89,9 @@ void dtInspectorQt::CameraView::OnPerspectiveChanged(double value)
    {
       double aspectRatio = mUI->cameraAspectEdit->value();
       double vertFOV = mUI->cameraVertEdit->value();
-      mOperateOn->SetPerspectiveParams(vertFOV, aspectRatio, 1.0, 10.f); //near/far auto calculated
+      double nearClip = mUI->cameraNearClipEdit->value();
+      double farClip = mUI->cameraFarClipEdit->value();
+      mOperateOn->SetPerspectiveParams(vertFOV, aspectRatio, nearClip, farClip); //near/far auto calculated
    }
 }
 

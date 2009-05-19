@@ -40,7 +40,6 @@
 
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/gameeventmanager.h>
 #include <dtDAL/gameevent.h>

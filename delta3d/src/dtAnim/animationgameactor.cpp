@@ -20,7 +20,6 @@
  */
 
 #include <dtAnim/animationgameactor.h>
-#include <dtDAL/groupactorproperty.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
