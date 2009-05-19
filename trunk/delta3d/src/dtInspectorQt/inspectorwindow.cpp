@@ -147,7 +147,6 @@ void dtInspectorQt::InspectorWindow::SortList(bool sorted)
    ui->itemList->setSortingEnabled(sorted);
    UpdateInstances();
    ui->itemList->setCurrentRow(0);
-   RefreshCurrentItem();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -167,7 +166,6 @@ void dtInspectorQt::InspectorWindow::FilterSelected(const QString& text)
    mFilterName = text;
    UpdateInstances();
    ui->itemList->setCurrentRow(0);
-   RefreshCurrentItem();
 }
 
 //////////////////////////////////////////////////////////////////////////
