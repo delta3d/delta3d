@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -49,7 +49,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicBoolControl::DynamicBoolControl()
-      : temporaryEditControl(NULL)
+      : mTemporaryEditControl(NULL)
    {
    }
 
@@ -63,17 +63,17 @@ namespace dtEditQt
    void DynamicBoolControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::BOOLEAN) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::BOOLEAN)
       {
-         myProperty = static_cast<dtDAL::BooleanActorProperty*>(newProperty);
+         mProperty = static_cast<dtDAL::BooleanActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      } 
-      else 
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -86,7 +86,7 @@ namespace dtEditQt
          SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         bool value = myProperty->GetValue();
+         bool value = mProperty->GetValue();
          editor->setCurrentIndex(editor->findText((value) ? TRUE_LABEL : FALSE_LABEL));
       }
    }
@@ -98,7 +98,7 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
 
@@ -107,76 +107,76 @@ namespace dtEditQt
          bool    result    = (selection == TRUE_LABEL);
 
          // set our value to our object
-         if (result != myProperty->GetValue()) 
+         if (result != mProperty->GetValue())
          {
-            std::string oldValue = myProperty->ToString();
-            myProperty->SetValue(result);
+            std::string oldValue = mProperty->ToString();
+            mProperty->SetValue(result);
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty,
-               oldValue, myProperty->ToString());
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+               oldValue, mProperty->ToString());
             dataChanged = true;
          }
       }
 
       // notify the world (mostly the viewports) that our property changed
-      if (dataChanged) 
+      if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
 
       return dataChanged;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicBoolControl::createEditor(QWidget* parent, 
+   QWidget* DynamicBoolControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the combo box
-      temporaryEditControl = new SubQComboBox(parent, this);
-      temporaryEditControl->addItem(TRUE_LABEL);
-      temporaryEditControl->addItem(FALSE_LABEL);
+      mTemporaryEditControl = new SubQComboBox(parent, this);
+      mTemporaryEditControl->addItem(TRUE_LABEL);
+      mTemporaryEditControl->addItem(FALSE_LABEL);
 
-      if (!initialized)  
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
-      connect(temporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
 
       // set the tooltip
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicBoolControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicBoolControl::getDescription() 
+   const QString DynamicBoolControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-         myProperty->GetPropertyType().GetDisplayName() + "]";
+      std::string tooltip = mProperty->GetDescription() + "  [Type: " +
+         mProperty->GetPropertyType().GetDisplayName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicBoolControl::getValueAsString() 
+   const QString DynamicBoolControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      bool value = myProperty->GetValue();
+      bool value = mProperty->GetValue();
       return (value) ? TRUE_LABEL : FALSE_LABEL;
    }
 
    bool DynamicBoolControl::isEditable()
    {
-      return !myProperty->IsReadOnly();
+      return !mProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -184,18 +184,18 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicBoolControl::itemSelected(int index) 
+   void DynamicBoolControl::itemSelected(int index)
    {
-      if (temporaryEditControl != NULL) 
+      if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(temporaryEditControl);
+         updateModelFromEditor(mTemporaryEditControl);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicBoolControl::updateData(QWidget* widget)
    {
-      if (!initialized || widget == NULL) 
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -210,9 +210,9 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == mProxy && property == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && property == mProperty)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

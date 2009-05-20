@@ -64,8 +64,8 @@ namespace dtEditQt
       QGLWidget* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
-      this->camera = new StageCamera();
-      this->cameraMode = &OrthoViewport::CameraMode::NOTHING;
+      mCamera = new StageCamera();
+      mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
       mObjectMotionModel->SetAutoScaleEnabled(false);
@@ -100,18 +100,18 @@ namespace dtEditQt
    {
       if (type == OrthoViewType::TOP)
       {
-         this->viewType = &OrthoViewType::TOP;
+         mViewType = &OrthoViewType::TOP;
          getCamera()->resetRotation();
          getCamera()->pitch(-90);
       }
       else if (type == OrthoViewType::FRONT)
       {
-         this->viewType = &OrthoViewType::FRONT;
+         mViewType = &OrthoViewType::FRONT;
          getCamera()->resetRotation();
       }
       else if (type == OrthoViewType::SIDE)
       {
-         this->viewType = &OrthoViewType::SIDE;
+         mViewType = &OrthoViewType::SIDE;
          getCamera()->resetRotation();
          getCamera()->yaw(90);
       }
@@ -162,7 +162,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::moveCamera(float dx, float dy)
    {
-      if (*this->cameraMode == OrthoViewport::CameraMode::NOTHING || getCamera() == NULL)
+      if (*mCameraMode == OrthoViewport::CameraMode::NOTHING || getCamera() == NULL)
       {
          return;
       }
@@ -170,14 +170,14 @@ namespace dtEditQt
       float xAmount = (-dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
       float yAmount = (dy/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
 
-      if (*this->cameraMode == OrthoViewport::CameraMode::CAMERA_PAN)
+      if (*mCameraMode == OrthoViewport::CameraMode::CAMERA_PAN)
       {
          getCamera()->move(getCamera()->getRightDir() * xAmount);
          getCamera()->move(getCamera()->getUpDir() * yAmount);
       }
-      else if (*this->cameraMode == OrthoViewport::CameraMode::CAMERA_ZOOM)
+      else if (*mCameraMode == OrthoViewport::CameraMode::CAMERA_ZOOM)
       {
-         osg::Vec3 moveVec = this->zoomToPosition-getCamera()->getPosition();
+         osg::Vec3 moveVec = mZoomToPosition-getCamera()->getPosition();
 
          moveVec.normalize();
          if (dy <= -1.0f)
@@ -213,7 +213,7 @@ namespace dtEditQt
 
       if (mMouseButton == Qt::LeftButton)
       {
-         this->cameraMode = &OrthoViewport::CameraMode::CAMERA_PAN;
+         mCameraMode = &OrthoViewport::CameraMode::CAMERA_PAN;
       }
       else if (mMouseButton == Qt::RightButton)
       {
@@ -221,8 +221,8 @@ namespace dtEditQt
          int xLoc = e->pos().x();
          int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
          getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
-         this->zoomToPosition = nearPoint;
-         this->cameraMode = &OrthoViewport::CameraMode::CAMERA_ZOOM;
+         mZoomToPosition = nearPoint;
+         mCameraMode = &OrthoViewport::CameraMode::CAMERA_ZOOM;
       }
 
       setInteractionMode(Viewport::InteractionMode::CAMERA);
@@ -234,7 +234,7 @@ namespace dtEditQt
    {
       EditorViewport::endCameraMode(e);
 
-      this->cameraMode = &OrthoViewport::CameraMode::NOTHING;
+      mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();
    }

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -52,27 +52,27 @@ namespace dtEditQt
       setWindowTitle(tr("Resources"));
 
       // container
-      tabC              = new TabContainer(this);
+      mTabC              = new TabContainer(this);
 
       // tabs
-      tabMesh           = new TabWrapper(this);
-      tabSkeletal       = new TabWrapper(this);
-      tabSound          = new TabWrapper(this);
-      tabParticle       = new TabWrapper(this);
-      tabTexture        = new TabWrapper(this);
-      tabTerrain        = new TabWrapper(this);
+      mTabMesh          = new TabWrapper(this);
+      mTabSkeletal      = new TabWrapper(this);
+      mTabSound         = new TabWrapper(this);
+      mTabParticle      = new TabWrapper(this);
+      mTabTexture       = new TabWrapper(this);
+      mTabTerrain       = new TabWrapper(this);
 
       // widgets
-      meshWidget        = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH,this);
-      skeletalWidget    = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH,this);
-      soundWidget       = new SoundBrowser(dtDAL::DataType::SOUND,this);
-      particleWidget    = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM,this);
-      textureWidget     = new TextureBrowser(dtDAL::DataType::TEXTURE,this);
-      terrainWidget     = new TerrainBrowser(dtDAL::DataType::TERRAIN,this);
+      mMeshWidget       = new StaticMeshBrowser(dtDAL::DataType::STATIC_MESH, this);
+      mSkeletalWidget   = new SkeletalMeshBrowser(dtDAL::DataType::SKELETAL_MESH, this);
+      mSoundWidget      = new SoundBrowser(dtDAL::DataType::SOUND, this);
+      mParticleWidget   = new ParticleBrowser(dtDAL::DataType::PARTICLE_SYSTEM, this);
+      mTextureWidget    = new TextureBrowser(dtDAL::DataType::TEXTURE, this);
+      mTerrainWidget    = new TerrainBrowser(dtDAL::DataType::TERRAIN, this);
 
       addTabs();
 
-      setWidget(tabC->getWidget());
+      setWidget(mTabC->getWidget());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -82,57 +82,57 @@ namespace dtEditQt
    void ResourceBrowser::addTabs()
    {
       // Static Mesh tab
-      tabMesh->setWidget(meshWidget);
-      tabMesh->setName("Static Mesh");
-      tabC->addTab(tabMesh);
-      //tabC->addTab(tabMesh, UIResources::ICON_STATICMESH_TAB.c_str());
+      mTabMesh->setWidget(mMeshWidget);
+      mTabMesh->setName("Static Mesh");
+      mTabC->addTab(mTabMesh);
+      //mTabC->addTab(mTabMesh, UIResources::ICON_STATICMESH_TAB.c_str());
 
       // Skeletal Mesh tab
-      tabSkeletal->setWidget(skeletalWidget);
-      tabSkeletal->setName("Skeletal Mesh");
-      tabC->addTab(tabSkeletal);
+      mTabSkeletal->setWidget(mSkeletalWidget);
+      mTabSkeletal->setName("Skeletal Mesh");
+      mTabC->addTab(mTabSkeletal);
 
       // Sound tab
-      tabSound->setWidget(soundWidget);
-      tabSound->setName("Sound");
-      tabC->addTab(tabSound);
-      //tabC->addTab(tabSound, UIResources::ICON_SOUND_TAB.c_str());
+      mTabSound->setWidget(mSoundWidget);
+      mTabSound->setName("Sound");
+      mTabC->addTab(mTabSound);
+      //mTabC->addTab(mTabSound, UIResources::ICON_SOUND_TAB.c_str());
 
       // Particle tab
-      tabParticle->setWidget(particleWidget);
-      tabParticle->setName("Particle");
-      tabC->addTab(tabParticle);
-      //tabC->addTab(tabParticle, UIResources::ICON_PARTICLE_TAB.c_str());
+      mTabParticle->setWidget(mParticleWidget);
+      mTabParticle->setName("Particle");
+      mTabC->addTab(mTabParticle);
+      //mTabC->addTab(mTabParticle, UIResources::ICON_PARTICLE_TAB.c_str());
 
       // Texture tab
-      tabTexture->setWidget(textureWidget);
-      tabTexture->setName("Texture");
-      tabC->addTab(tabTexture);
-      //tabC->addTab(tabTexture, UIResources::ICON_TEXTURE_TAB.c_str());
+      mTabTexture->setWidget(mTextureWidget);
+      mTabTexture->setName("Texture");
+      mTabC->addTab(mTabTexture);
+      //mTabC->addTab(mTabTexture, UIResources::ICON_TEXTURE_TAB.c_str());
 
       //// Character tab
-      //tabCharacter->setWidget(characterWidget);
-      //tabCharacter->setName("Characters");
-      //tabC->addTab(tabCharacter);
-      //tabC->addTab(tabCharacter, UIResources::ICON_CHARACTER_TAB.c_str());
+      //mTabCharacter->setWidget(mCharacterWidget);
+      //mTabCharacter->setName("Characters");
+      //mTabC->addTab(mTabCharacter);
+      //mTabC->addTab(mTabCharacter, UIResources::ICON_CHARACTER_TAB.c_str());
 
       //// Terrain tab
-      tabTerrain->setWidget(terrainWidget);
-      tabTerrain->setName("Terrain");
-      tabC->addTab(tabTerrain);
-      //tabC->addTab(tabTerrain, UIResources::ICON_TERRAIN_TAB.c_str());
+      mTabTerrain->setWidget(mTerrainWidget);
+      mTabTerrain->setName("Terrain");
+      mTabC->addTab(mTabTerrain);
+      //mTabC->addTab(mTabTerrain, UIResources::ICON_TERRAIN_TAB.c_str());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* ResourceBrowser::getWidget()
    {
-      return tabC->getWidget();
+      return mTabC->getWidget();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void ResourceBrowser::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(false);
+      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(false);
    }
 
 } // namespace dtEditQt

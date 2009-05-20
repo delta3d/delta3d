@@ -42,8 +42,8 @@ namespace dtEditQt
    class PerspectiveViewport : public EditorViewport
    {
       Q_OBJECT
-   public:
 
+   public:
       /**
        * Enumerates the specific types of interactions a perspective viewport
        * supports.  These extend the interactions of the base viewport.  For example,
@@ -199,7 +199,7 @@ namespace dtEditQt
       ///Allow the ViewportManager access to it can create perspective viewports.
       friend class ViewportManager;
 
-      const CameraMode* cameraMode;
+      const CameraMode* mCameraMode;
    };
 
 } // namespace dtEditQt

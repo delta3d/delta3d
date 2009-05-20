@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -48,21 +48,21 @@ namespace dtEditQt
       setWindowTitle(tr("Actors"));
 
       // container
-      tabC = new TabContainer(this);
+      mTabC = new TabContainer(this);
 
       // tabs
-      tabActorBrowser = new TabWrapper(this);
-      tabActorSearch  = new TabWrapper(this);
-      tabGlobalActor  = new TabWrapper(this);
+      mTabActorBrowser = new TabWrapper(this);
+      mTabActorSearch  = new TabWrapper(this);
+      mTabGlobalActor  = new TabWrapper(this);
 
       // widgets
-      actorBrowserWidget = new ActorBrowser(this);
-      actorSearchWidget  = new ActorSearcher(this);
-      actorGlobalWidget  = new ActorGlobalBrowser(this);
+      mActorBrowserWidget = new ActorBrowser(this);
+      mActorSearchWidget  = new ActorSearcher(this);
+      mActorGlobalWidget  = new ActorGlobalBrowser(this);
 
-      this->addTabs();
+      addTabs();
 
-      setWidget(this->tabC->getWidget());
+      setWidget(mTabC->getWidget());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -72,31 +72,31 @@ namespace dtEditQt
    void ActorTab::addTabs()
    {
       // Actor Browser Tab
-      tabActorBrowser->setWidget(actorBrowserWidget);
-      tabActorBrowser->setName("Actors");
-      tabC->addTab(tabActorBrowser);
+      mTabActorBrowser->setWidget(mActorBrowserWidget);
+      mTabActorBrowser->setName("Actors");
+      mTabC->addTab(mTabActorBrowser);
 
       // Actor Search tab
-      tabActorSearch->setWidget(actorSearchWidget);
-      tabActorSearch->setName("Actor Search");
-      tabC->addTab(tabActorSearch);
+      mTabActorSearch->setWidget(mActorSearchWidget);
+      mTabActorSearch->setName("Actor Search");
+      mTabC->addTab(mTabActorSearch);
 
       // Global Actors
-      tabGlobalActor->setWidget(actorGlobalWidget);
-      tabGlobalActor->setName("Global Actors");
-      tabC->addTab(tabGlobalActor);
+      mTabGlobalActor->setWidget(mActorGlobalWidget);
+      mTabGlobalActor->setName("Global Actors");
+      mTabC->addTab(mTabGlobalActor);
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* ActorTab::getWidget()
    {
-      return tabC->getWidget();
+      return mTabC->getWidget();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void ActorTab::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().actionWindowsActorSearch->setChecked(false);
+      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(false);
    }
 
 } // namespace dtEditQt

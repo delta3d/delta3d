@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -49,7 +49,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicEnumControl::DynamicEnumControl()
-      : temporaryEditControl(NULL)
+      : mTemporaryEditControl(NULL)
    {
    }
 
@@ -67,7 +67,7 @@ namespace dtEditQt
       // We need to dynamic cast it...
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ENUMERATION)
       {
-         myProperty = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
       }
       else
@@ -86,7 +86,7 @@ namespace dtEditQt
          SubQComboBox* editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         dtUtil::Enumeration& value = myProperty->GetEnumValue();
+         dtUtil::Enumeration& value = mProperty->GetEnumValue();
          editor->setCurrentIndex(editor->findText(QString(value.GetName().c_str())));
       }
    }
@@ -105,7 +105,7 @@ namespace dtEditQt
          // Get the current selected string and the previously set string value
          QString selection = editor->currentText();
          std::string selectionString = selection.toStdString();
-         dtUtil::Enumeration& previousValue = myProperty->GetEnumValue();
+         dtUtil::Enumeration& previousValue = mProperty->GetEnumValue();
          std::string previousString = previousValue.GetName();
 
          // set our value to our object
@@ -113,9 +113,9 @@ namespace dtEditQt
          {
             // give undo manager the ability to create undo/redo events
             EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy,
-               myProperty->AsActorProperty(), previousString, selectionString);
+               mProperty->AsActorProperty(), previousString, selectionString);
 
-            myProperty->SetValueFromString(selectionString);
+            mProperty->SetValueFromString(selectionString);
             dataChanged = true;
          }
       }
@@ -124,7 +124,7 @@ namespace dtEditQt
       if (dataChanged)
       {
          EditorEvents::GetInstance().emitActorPropertyChanged(mProxy,
-            myProperty->AsActorProperty());
+            mProperty->AsActorProperty());
       }
 
       return dataChanged;
@@ -136,44 +136,44 @@ namespace dtEditQt
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the combo box
-      temporaryEditControl = new SubQComboBox(parent, this);
+      mTemporaryEditControl = new SubQComboBox(parent, this);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      const std::vector<dtUtil::Enumeration*>& options = myProperty->GetList();
+      const std::vector<dtUtil::Enumeration*>& options = mProperty->GetList();
       std::vector<dtUtil::Enumeration*>::const_iterator iter;
 
       for (iter = options.begin(); iter != options.end(); ++iter)
       {
          dtUtil::Enumeration* enumValue = (*iter);
-         temporaryEditControl->addItem(QString(enumValue->GetName().c_str()));
+         mTemporaryEditControl->addItem(QString(enumValue->GetName().c_str()));
       }
 
-      connect(temporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
       // set the tooltip
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicEnumControl::getDisplayName()
    {
-      return QString(tr(myProperty->AsActorProperty()->GetLabel().c_str()));
+      return QString(tr(mProperty->AsActorProperty()->GetLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicEnumControl::getDescription()
    {
-      std::string tooltip = myProperty->AsActorProperty()->GetDescription() + "  [Type: " +
-         myProperty->AsActorProperty()->GetDataType().GetName() + "]";
+      std::string tooltip = mProperty->AsActorProperty()->GetDescription() + "  [Type: " +
+         mProperty->AsActorProperty()->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
@@ -181,7 +181,7 @@ namespace dtEditQt
    const QString DynamicEnumControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      dtUtil::Enumeration &value = myProperty->GetEnumValue();
+      dtUtil::Enumeration &value = mProperty->GetEnumValue();
       return QString(value.GetName().c_str());
    }
 
@@ -196,18 +196,18 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicEnumControl::itemSelected(int index) 
+   void DynamicEnumControl::itemSelected(int index)
    {
-      if (temporaryEditControl != NULL) 
+      if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(temporaryEditControl);
+         updateModelFromEditor(mTemporaryEditControl);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicEnumControl::updateData(QWidget* widget)
    {
-      if (!initialized || widget == NULL)
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -222,12 +222,12 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      dtDAL::AbstractEnumActorProperty* changedProp = 
+      dtDAL::AbstractEnumActorProperty* changedProp =
          dynamic_cast<dtDAL::AbstractEnumActorProperty *>(property.get());
 
-      if (temporaryEditControl != NULL && proxy == mProxy && changedProp == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == mProperty)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

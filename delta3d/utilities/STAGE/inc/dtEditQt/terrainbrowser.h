@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -51,7 +51,7 @@ namespace dtEditQt
       virtual ~TerrainBrowser();
 
       /**
-       * Derived from our abstract base class. When a tree selection changes 
+       * Derived from our abstract base class. When a tree selection changes
        * this method will be called. This will handle our context sensitive buttons
        * so we know when to preview a character
        */
@@ -59,7 +59,7 @@ namespace dtEditQt
 
    protected:
       /**
-       * Added an event filter to capture keyboard events sent to the tree widget 
+       * Added an event filter to capture keyboard events sent to the tree widget
        * so we can trap the enter key and play sounds. All other events are
        * passed on to the parent. This has been overridden from the base abstract
        * class to provide browser specific functionality.
@@ -76,7 +76,7 @@ namespace dtEditQt
       QGroupBox* listGroup();
 
       // Layout Objects
-      QGridLayout* grid;
+      //QGridLayout* mGrid;
    };
 
 } // namespace dtEditQt

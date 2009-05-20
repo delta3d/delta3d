@@ -79,7 +79,7 @@ namespace dtEditQt
        */
       SubQLineEdit(QWidget* parent, DynamicAbstractControl* newControl)
          : QLineEdit(parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -91,7 +91,7 @@ namespace dtEditQt
       }
 
    private:
-      DynamicAbstractControl* control;
+      DynamicAbstractControl* mControl;
    };
 
    /**
@@ -109,7 +109,7 @@ namespace dtEditQt
        */
       SubQComboBox(QWidget* parent, DynamicAbstractControl* newControl)
          : QComboBox(parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -121,7 +121,7 @@ namespace dtEditQt
       }
 
    private:
-      DynamicAbstractControl* control;
+      DynamicAbstractControl* mControl;
    };
 
    /**
@@ -139,7 +139,7 @@ namespace dtEditQt
        */
       SubQSpinBox(QWidget* parent, DynamicAbstractControl* newControl)
          : QSpinBox(parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -151,7 +151,7 @@ namespace dtEditQt
       }
 
    private:
-      DynamicAbstractControl* control;
+      DynamicAbstractControl* mControl;
    };
 
    /**
@@ -169,7 +169,7 @@ namespace dtEditQt
        */
       SubQLabel(QString name, QWidget* parent, DynamicAbstractControl* newControl)
          : QLabel(name, parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -181,7 +181,7 @@ namespace dtEditQt
       }
 
    private:
-      DynamicAbstractControl* control;
+      DynamicAbstractControl* mControl;
    };
 
    /**
@@ -199,7 +199,7 @@ namespace dtEditQt
        */
       SubQPushButton(QString name, QWidget* parent, DynamicAbstractControl* newControl)
          : QPushButton(name, parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -211,7 +211,7 @@ namespace dtEditQt
       }
 
    private:
-      DynamicAbstractControl* control;
+      DynamicAbstractControl* mControl;
    };
 
    /**
@@ -228,7 +228,7 @@ namespace dtEditQt
        */
       SubQWidget(QWidget* parent, DynamicAbstractControl* newControl)
          : QWidget(parent)
-         , control(newControl)
+         , mControl(newControl)
       {
       }
 
@@ -237,7 +237,7 @@ namespace dtEditQt
        */
       virtual ~SubQWidget()
       {
-         childWidgets.clear();
+         mChildWidgets.clear();
       }
 
       /**
@@ -245,12 +245,12 @@ namespace dtEditQt
        */
       void addManagedChild(QWidget* child)
       {
-         childWidgets.push_back(child);
+         mChildWidgets.push_back(child);
       }
 
    private:
-      DynamicAbstractControl* control;
-      std::vector<QWidget*> childWidgets;
+      DynamicAbstractControl* mControl;
+      std::vector<QWidget*>   mChildWidgets;
    };
 
 } // namespace dtEditQt

@@ -1,4 +1,4 @@
-/* -*-c++-*-v
+/* -*-c++-*-
  * Delta3D Simulation Training And Game Editor (STAGE)
  * STAGE - This source file (.h & .cpp) - Using 'The MIT License'
  * Copyright (C) 2005-2008, Alion Science and Technology Corporation
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -58,9 +58,9 @@ namespace dtEditQt
    {
       LOG_INFO("Initializing ResourceTreeWidget - Resource node");
 
-      resource = false;
+      mIsResource = false;
       // store the resource assocated with this treeitem
-      myResource = newResource;
+      mResource = newResource;
    }
 
    ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget* parent, ResourceTreeWidget* item)
@@ -75,12 +75,12 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    dtDAL::ResourceDescriptor &ResourceTreeWidget::getResourceDescriptor()
    {
-      return this->myResource;
+      return mResource;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, const QIcon& resourceIcon)
-   { 
+   {
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()), QIcon::Normal, QIcon::Off);
@@ -90,23 +90,23 @@ namespace dtEditQt
          ++i)
       {
          if (i->isCategory())
-         {   
-            category = new ResourceTreeWidget(this);
-            category->setText(0, QString(i->getNodeText().c_str()));
-            category->setIfResource(false);
+         {
+            mCategory = new ResourceTreeWidget(this);
+            mCategory->setText(0, QString(i->getNodeText().c_str()));
+            mCategory->setIsResource(false);
             // The full path is required so we can delete the category
-            category->setCategoryFullName(QString(i->getFullCategory().c_str()));
-            category->setCategoryName(QString(i->getNodeText().c_str()));
+            mCategory->setCategoryFullName(QString(i->getFullCategory().c_str()));
+            mCategory->setCategoryName(QString(i->getNodeText().c_str()));
             // iterate down the branch until we are finished with this node
-            category->recursivelyCreateResourceTree(i, resourceIcon);
-            category->setIcon(0, icon);
+            mCategory->recursivelyCreateResourceTree(i, resourceIcon);
+            mCategory->setIcon(0, icon);
          }
          else
          {
             // pass in the resource
             ResourceTreeWidget* innerNode = new ResourceTreeWidget(this,i->getResource());
             innerNode->setText(0,QString(i->getNodeText().c_str()));
-            innerNode->setIfResource(true);
+            innerNode->setIsResource(true);
             innerNode->setIcon(0,resourceIcon);
          }
       }

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -34,9 +34,9 @@
 namespace dtEditQt
 {
    void UIResources::staticInitialize()
-   {        
+   {
       UIResources::GPL_LICENSE_FILE = ":gpl.txt";
-      
+
       ICON_FILE_NEW_MAP = ":/icons/newmap_small.png";
       ICON_FILE_OPEN_MAP = ":/icons/openmap_small.png";
       ICON_FILE_SAVE = ":/icons/savemap_small.png";
@@ -67,14 +67,14 @@ namespace dtEditQt
       LARGE_ICON_EDIT_GOTO = ":/icons/goto_large.png";
       LARGE_ICON_EDIT_IMPORT = ":/icons/import_large.png";
       LARGE_ICON_EDIT_REFRESH = ":/icons/refresh_large.png";
-      LARGE_ICON_EDIT_CATEGORY = ":/icons/category_large.png";       
+      LARGE_ICON_EDIT_CATEGORY = ":/icons/category_large.png";
 
       ICON_SOUND_STOP = ":/icons/stop_sound.png";
       ICON_SOUND_PLAY = ":/icons/play_sound.png";
 
       ICON_EDITOR_SKELETAL_MESH   = ":/icons/subeditor_skeletal.png";
       ICON_EDITOR_PARTICLE_SYSTEM = ":/icons/particle.ico";
-      ICON_EDITOR_VIEWER          = ":/icons/viewer.ico";       
+      ICON_EDITOR_VIEWER          = ":/icons/viewer.ico";
 
       ICON_SOUND_RESOURCE = ":/icons/sound_resource.png";
       ICON_STATICMESH_RESOURCE = ":/icons/staticmesh_resource.png";
@@ -128,7 +128,7 @@ namespace dtEditQt
    std::string UIResources::LARGE_ICON_EDIT_GOTO("");
    std::string UIResources::LARGE_ICON_EDIT_IMPORT("");
    std::string UIResources::LARGE_ICON_EDIT_REFRESH("");
-   std::string UIResources::LARGE_ICON_EDIT_CATEGORY("");   
+   std::string UIResources::LARGE_ICON_EDIT_CATEGORY("");
 
    std::string UIResources::ICON_SOUND_STOP("");
    std::string UIResources::ICON_SOUND_PLAY("");
@@ -153,6 +153,6 @@ namespace dtEditQt
 
    std::string UIResources::ICON_ACTOR("");
    std::string UIResources::SPLASH_SCREEN("");
-   std::string UIResources::ICON_APPLICATION("");  
+   std::string UIResources::ICON_APPLICATION("");
 
 } // namespace dtEditQt

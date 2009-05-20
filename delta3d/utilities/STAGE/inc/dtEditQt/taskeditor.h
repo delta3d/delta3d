@@ -20,11 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * William E. Johnson II 
+ * William E. Johnson II
  * David Guthrie
  */
 #ifndef DELTA_TASK_EDITOR
@@ -113,7 +113,7 @@ namespace dtEditQt
       /// Disables the buttons for manipulating the existing children
       void DisableEditButtons();
 
-      /// Adds the selected task actor in the combo box 
+      /// Adds the selected task actor in the combo box
       void AddSelected();
 
       /// called when the combo box selection changes.

@@ -110,10 +110,7 @@ namespace dtEditQt
        * Gets the current zoom factor.
        * @return The current zoom factor.
        */
-      double getZoom() const
-      {
-         return this->zoomFactor;
-      }
+      double getZoom() const { return mZoomFactor; }
 
       /**
        * Resets the camera's rotation quaternion to the identity where the positive Z
@@ -153,7 +150,7 @@ namespace dtEditQt
       /**
        * Gets the horizonal aspect ratio of this camera.
        */
-      double getAspectRatio() {return this->aspectRatio;}
+      double getAspectRatio() const { return mAspectRatio; }
 
       /**
        * Sets the value of the near clipping plane of this camera.  Anything
@@ -198,38 +195,26 @@ namespace dtEditQt
        * Gets the current pitch of this camera.
        * @return The pitch value in degrees.
        */
-      double getPitch() const
-      {
-         return this->camPitch;
-      }
+      double getPitch() const { return mCamPitch; }
 
       /**
        * Gets the current yaw of this camera.
        * @return The yaw value in degrees.
        */
-      double getYaw() const
-      {
-         return this->camYaw;
-      }
+      double getYaw() const { return mCamYaw; }
 
       /**
        * Gets the current roll of this camera.
        * @return The roll value in degrees.
        */
-      double getRoll() const
-      {
-         return this->camRoll;
-      }
+      double getRoll() const { return mCamRoll; }
 
       /**
        * Gets the current position of this camera.
        * @return Returns a 3D vector corresponding to this camera's current position
        * in world coordinates.
        */
-      const osg::Vec3& getPosition() const
-      {
-         return this->position;
-      }
+      const osg::Vec3& getPosition() const { return mPosition; }
 
       /**
        * Gets this camera's current projection matrix.
@@ -253,7 +238,7 @@ namespace dtEditQt
       /**
        * Retrieves the delta representation of the camera.
        */
-      dtCore::Camera* getDeltaCamera() {return this->deltaCamera.get();}
+      dtCore::Camera* getDeltaCamera() {return mDeltaCamera.get();}
 
       /**
        * Updates the camera's viewing and projection matrices.  Also updates
@@ -296,7 +281,7 @@ namespace dtEditQt
        */
       unsigned int getNumActorAttachments() const
       {
-         return this->attachedProxies.size();
+         return mAttachedProxies.size();
       }
 
    signals:
@@ -306,10 +291,10 @@ namespace dtEditQt
    protected:
       struct ActorAttachment
       {
-         dtCore::RefPtr<dtDAL::TransformableActorProxy> actor;
-         osg::Vec3 positionOffset;
-         osg::Quat rotationOffset;
-         osg::Vec3 initialCameraHPR;
+         dtCore::RefPtr<dtDAL::TransformableActorProxy> mActor;
+         osg::Vec3 mPositionOffset;
+         osg::Quat mRotationOffset;
+         osg::Vec3 mInitialCameraHPR;
       };
 
       /**
@@ -328,27 +313,27 @@ namespace dtEditQt
          PERSPECTIVE
       };
 
-      osg::Vec3 position;
-      osg::Quat orientation;
-      double camPitch,camYaw,camRoll;
+      osg::Vec3 mPosition;
+      osg::Quat mOrientation;
+      double mCamPitch, mCamYaw, mCamRoll;
 
-      osg::Matrixd projectionMat;
-      osg::Matrixd worldViewMat;
+      osg::Matrixd mProjectionMat;
+      osg::Matrixd mWorldViewMat;
 
-      double fovY, aspectRatio;
-      double orthoLeft, orthoRight, orthoTop, orthoBottom;
-      double zNear, zFar;
-      double zoomFactor;
+      double mFovY, mAspectRatio;
+      double mOrthoLeft, mOrthoRight, mOrthoTop, mOrthoBottom;
+      double mZNear, mZFar;
+      double mZoomFactor;
 
-      bool updateProjectionMatrix;
-      bool updateWorldViewMatrix;
+      bool mUpdateProjectionMatrix;
+      bool mUpdateWorldViewMatrix;
 
-      ProjectionType projType;
+      ProjectionType mProjType;
 
-      dtCore::RefPtr<dtCore::Camera> deltaCamera;
+      dtCore::RefPtr<dtCore::Camera> mDeltaCamera;
 
       ///A list of transformable actor proxies currently attached to the camera.
-      std::list<ActorAttachment> attachedProxies;
+      std::list<ActorAttachment> mAttachedProxies;
    };
 
 } // namespace dtEditQt

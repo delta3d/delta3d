@@ -140,13 +140,13 @@ namespace dtEditQt
        * getRootName
        * @brief This returns the name of the root that was set by the constructor
        */
-      QString getRootName() { return rootName; }
+      QString getRootName() { return mRootName; }
 
       /**
        * getsCurrentParent
        * @return QWidget parent
        */
-      QWidget* getCurrentParent() { return parent; }
+      QWidget* getCurrentParent() { return mParent; }
 
       /**
        * standardButtons
@@ -237,41 +237,41 @@ namespace dtEditQt
        */
       virtual void createActions();
 
-      QString* currentPath;
-      QString* resourceName;
-      QString  rootName;
+      QString* mCurrentPath;
+      QString* mResourceName;
+      QString  mRootName;
 
-      QWidget* parent;
-      QString* context;
-      QString  fileDialogDir;
+      QWidget* mParent;
+      QString* mContext;
+      QString  mFileDialogDir;
 
-      dtUtil::tree<dtDAL::ResourceTreeNode> iterTree;
-      dtDAL::ResourceDescriptor*            selectedDescriptor;
-      dtDAL::DataType*                      resourceType;
-      ResourceTree*                         tree;
-      ResourceTreeWidget*                   root;
-      ResourceTreeWidget*                   selection;
+      dtUtil::tree<dtDAL::ResourceTreeNode> mIterTree;
+      dtDAL::ResourceDescriptor*            mSelectedDescriptor;
+      dtDAL::DataType*                      mResourceType;
+      ResourceTree*                         mTree;
+      ResourceTreeWidget*                   mRoot;
+      ResourceTreeWidget*                   mSelection;
 
       // Importing
-      ResourceImportDialog* importDialog;
+      ResourceImportDialog* mImportDialog;
 
       // Button Objects
-      QPushButton* categoryBtn;
-      QPushButton* importBtn;
-      QPushButton* deleteBtn;
-      QPushButton* refreshBtn;
+      QPushButton* mCategoryBtn;
+      QPushButton* mImportBtn;
+      QPushButton* mDeleteBtn;
+      QPushButton* mRefreshBtn;
 
       // Context Menu Objects
-      QMenu* contextMenu;
+      QMenu* mContextMenu;
 
       // Action Objects
-      QAction* setRenameAction;
-      QAction* setRefreshAction;
-      QAction* setDeleteAction;
-      QAction* setCategoryAction;
-      QAction* setImportAction;
+      QAction* mSetRenameAction;
+      QAction* mSetRefreshAction;
+      QAction* mSetDeleteAction;
+      QAction* mSetCategoryAction;
+      QAction* mSetImportAction;
 
-      QIcon resourceIcon;
+      QIcon    mResourceIcon;
    };
 
 } // namespace dtEditQt

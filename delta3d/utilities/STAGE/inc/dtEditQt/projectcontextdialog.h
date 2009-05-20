@@ -59,8 +59,8 @@ namespace dtEditQt
       void spawnFileBrowser();
 
    private:
-      QPushButton* applyButton;
-      QLineEdit*   pathEdit;
+      QPushButton* mApplyButton;
+      QLineEdit*   mPathEdit;
    };
 
 } // namespace dtEditQt

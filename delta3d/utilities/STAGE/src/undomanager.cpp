@@ -47,7 +47,7 @@ namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
    UndoManager::UndoManager()
-      : recursePrevent(false)
+      : mRecursePrevent(false)
    {
       LOG_INFO("Initializing the UndoManager.");
 
@@ -91,26 +91,26 @@ namespace dtEditQt
    void UndoManager::onActorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property)
    {
-      if (!recursePrevent)
+      if (!mRecursePrevent)
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
 
          // verify that the about to change event is the same as this event
-         if (aboutToChangeEvent != NULL && aboutToChangeEvent->objectId ==
-             proxy->GetId().ToString() && aboutToChangeEvent->type ==
-             ChangeEvent::PROPERTY_CHANGED && aboutToChangeEvent->undoPropData.size() > 0)
+         if (mAboutToChangeEvent != NULL && mAboutToChangeEvent->mObjectId ==
+             proxy->GetId().ToString() && mAboutToChangeEvent->mType ==
+             ChangeEvent::PROPERTY_CHANGED && mAboutToChangeEvent->mUndoPropData.size() > 0)
          {
             // double check the actual property.
-            dtCore::RefPtr<UndoPropertyData> propData = aboutToChangeEvent->undoPropData[0];
-            if (propData->propertyName == property->GetName())
+            dtCore::RefPtr<UndoPropertyData> propData = mAboutToChangeEvent->mUndoPropData[0];
+            if (propData->mPropertyName == property->GetName())
             {
                // FINALLY, we get to add it to our undo list.
-               undoStack.push(aboutToChangeEvent);
+               mUndoStack.push(mAboutToChangeEvent);
             }
          }
 
-         aboutToChangeEvent = NULL;
+         mAboutToChangeEvent = NULL;
 
          enableButtons();
       }
@@ -120,25 +120,28 @@ namespace dtEditQt
    void UndoManager::actorPropertyAboutToChange(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
       dtCore::RefPtr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
    {
-      if (!recursePrevent)
+      if (!mRecursePrevent)
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
 
-         ChangeEvent* undoEvent       = new ChangeEvent();
-         undoEvent->type              = ChangeEvent::PROPERTY_CHANGED;
-         undoEvent->objectId          = proxy->GetId().ToString();
-         undoEvent->actorTypeName     = proxy->GetActorType().GetName();
-         undoEvent->actorTypeCategory = proxy->GetActorType().GetCategory();
+         ChangeEvent* undoEvent = new ChangeEvent();
+         undoEvent->mType       = ChangeEvent::PROPERTY_CHANGED;
+         if (proxy.valid())
+         {
+            undoEvent->mObjectId          = proxy->GetId().ToString();
+            undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
+            undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
+         }
 
          UndoPropertyData* propData = new UndoPropertyData();
-         propData->propertyName     = property->GetName();
-         propData->oldValue         = oldValue;
-         propData->newValue         = newValue;
-         undoEvent->undoPropData.push_back(propData);
+         propData->mPropertyName    = property->GetName();
+         propData->mOldValue        = oldValue;
+         propData->mNewValue        = newValue;
+         undoEvent->mUndoPropData.push_back(propData);
 
          // mark this event as the current event without adding it to our undo stack
-         aboutToChangeEvent = undoEvent;
+         mAboutToChangeEvent = undoEvent;
 
          enableButtons();
       }
@@ -147,18 +150,18 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void UndoManager::onActorProxyCreated(dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
    {
-      if (!recursePrevent)
+      if (!mRecursePrevent)
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
          // clear any incomplete property change events
-         aboutToChangeEvent = NULL;
+         mAboutToChangeEvent = NULL;
 
          ChangeEvent* undoEvent = createFullUndoEvent(proxy.get());
-         undoEvent->type = ChangeEvent::PROXY_CREATED;
+         undoEvent->mType = ChangeEvent::PROXY_CREATED;
 
          // add it to our main undo stack
-         undoStack.push(undoEvent);
+         mUndoStack.push(undoEvent);
 
          enableButtons();
       }
@@ -167,22 +170,22 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void UndoManager::onProxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
    {
-      if (!recursePrevent)
+      if (!mRecursePrevent)
       {
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
          // clear any incomplete property change events
-         aboutToChangeEvent = NULL;
+         mAboutToChangeEvent = NULL;
 
          ChangeEvent* undoEvent       = new ChangeEvent();
-         undoEvent->type              = ChangeEvent::PROXY_NAME_CHANGED;
-         undoEvent->objectId          = proxy->GetId().ToString();
-         undoEvent->actorTypeName     = proxy->GetActorType().GetName();
-         undoEvent->actorTypeCategory = proxy->GetActorType().GetCategory();
-         undoEvent->oldName           = oldName;
+         undoEvent->mType              = ChangeEvent::PROXY_NAME_CHANGED;
+         undoEvent->mObjectId          = proxy->GetId().ToString();
+         undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
+         undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
+         undoEvent->mOldName           = oldName;
 
          // add it to our main undo stack
-         undoStack.push(undoEvent);
+         mUndoStack.push(undoEvent);
 
          enableButtons();
       }
@@ -191,7 +194,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void UndoManager::onActorProxyDestroyed(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
    {
-      if (!recursePrevent)
+      if (!mRecursePrevent)
       {
          std::vector<dtDAL::ActorProperty*> propList;
          std::vector<dtDAL::ActorProperty*>::const_iterator propIter;
@@ -199,13 +202,13 @@ namespace dtEditQt
          // clear the redo list anytime we add a new item to the undo list.
          clearRedoList();
          // clear any incomplete property change events
-         aboutToChangeEvent = NULL;
+         mAboutToChangeEvent = NULL;
 
          ChangeEvent* undoEvent = createFullUndoEvent(proxy.get());
-         undoEvent->type = ChangeEvent::PROXY_DELETED;
+         undoEvent->mType = ChangeEvent::PROXY_DELETED;
 
          // add it to our main undo stack
-         undoStack.push(undoEvent);
+         mUndoStack.push(undoEvent);
 
          enableButtons();
       }
@@ -215,12 +218,12 @@ namespace dtEditQt
    void UndoManager::doRedo()
    {
       // clear any incomplete property change events
-      aboutToChangeEvent = NULL;
+      mAboutToChangeEvent = NULL;
 
-      if (!redoStack.empty())
+      if (!mRedoStack.empty())
       {
-         dtCore::RefPtr<ChangeEvent> redoEvent = redoStack.top();
-         redoStack.pop();
+         dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
+         mRedoStack.pop();
 
          handleUndoRedoEvent(redoEvent.get(), false);
       }
@@ -232,12 +235,12 @@ namespace dtEditQt
    void UndoManager::doUndo()
    {
       // clear any incomplete property change events
-      aboutToChangeEvent = NULL;
+      mAboutToChangeEvent = NULL;
 
-      if (!undoStack.empty())
+      if (!mUndoStack.empty())
       {
-         dtCore::RefPtr<ChangeEvent> undoEvent = undoStack.top();
-         undoStack.pop();
+         dtCore::RefPtr<ChangeEvent> undoEvent = mUndoStack.top();
+         mUndoStack.pop();
 
          handleUndoRedoEvent(undoEvent.get(), true);
       }
@@ -252,10 +255,10 @@ namespace dtEditQt
 
       if (currMap.valid())
       {
-         dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->objectId));
+         dtDAL::ActorProxy* proxy = currMap->GetProxyById(dtCore::UniqueId(event->mObjectId));
 
          // delete is special since the proxy is always NULL :)
-         if (event->type == ChangeEvent::PROXY_DELETED)
+         if (event->mType == ChangeEvent::PROXY_DELETED)
          {
             handleUndoRedoDeleteObject(event, isUndo);
             return; // best to return because event can be modified as a side effect
@@ -263,18 +266,15 @@ namespace dtEditQt
 
          if (proxy != NULL)
          {
-            if (event->type == ChangeEvent::PROXY_NAME_CHANGED)
+            switch (event->mType)
             {
+            case ChangeEvent::PROXY_NAME_CHANGED:
                handleUndoRedoNameChange(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
-            }
-            else if (event->type == ChangeEvent::PROPERTY_CHANGED)
-            {
+            case ChangeEvent::PROPERTY_CHANGED:
                handleUndoRedoPropertyValue(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
-            }
-            else if (event->type == ChangeEvent::PROXY_CREATED)
-            {
+            case ChangeEvent::PROXY_CREATED:
                handleUndoRedoCreateObject(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
             }
@@ -291,25 +291,25 @@ namespace dtEditQt
       std::string currentName = proxy->GetName();
 
       // do the undo
-      proxy->SetName(event->oldName);
+      proxy->SetName(event->mOldName);
       // notify the world of our change to the data.
       dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
-      recursePrevent = true;
+      mRecursePrevent = true;
       EditorEvents::GetInstance().emitProxyNameChanged(ActorProxyRefPtr, currentName);
-      recursePrevent = false;
+      mRecursePrevent = false;
 
       // now turn the undo into a redo event
-      event->oldName = currentName;
+      event->mOldName = currentName;
 
       if (isUndo)
       {
          // add it REDO stack
-         redoStack.push(event);
+         mRedoStack.push(event);
       }
       else
       {
          // add it UNDO stack
-         undoStack.push(event);
+         mUndoStack.push(event);
       }
 
       enableButtons();
@@ -324,21 +324,21 @@ namespace dtEditQt
       // We are UNDO'ing a create, so we delete it. That means that we add a
       // Delete change event to the Undo or redo list.
 
-      event->type = ChangeEvent::PROXY_DELETED;
+      event->mType = ChangeEvent::PROXY_DELETED;
 
       if (isUndo)
       {
          // add it REDO stack
-         redoStack.push(event);
+         mRedoStack.push(event);
       }
       else
       {
          // add it UNDO stack
-         undoStack.push(event);
+         mUndoStack.push(event);
       }
 
       // Delete the sucker
-      recursePrevent = true;
+      mRecursePrevent = true;
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
       EditorActions::GetInstance().deleteProxy(proxy, currMap);
@@ -348,7 +348,7 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitActorsSelected(emptySelection);
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
-      recursePrevent = false;
+      mRecursePrevent = false;
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -366,7 +366,7 @@ namespace dtEditQt
 
       // figure out the actor type
       dtCore::RefPtr<const dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
-         FindActorType(event->actorTypeCategory, event->actorTypeName);
+         FindActorType(event->mActorTypeCategory, event->mActorTypeName);
 
       if (currMap.valid() && actorType.valid())
       {
@@ -378,38 +378,38 @@ namespace dtEditQt
          if (proxy.valid())
          {
             // set all of our old properties before telling anyone else about it
-            for (undoPropIter = event->undoPropData.begin(); undoPropIter != event->undoPropData.end(); ++undoPropIter)
+            for (undoPropIter = event->mUndoPropData.begin(); undoPropIter != event->mUndoPropData.end(); ++undoPropIter)
             {
-               dtCore::RefPtr < UndoPropertyData> undoProp = (*undoPropIter);
+               dtCore::RefPtr<UndoPropertyData> undoProp = (*undoPropIter);
                // find the prop on the real actor
-               dtDAL::ActorProperty *actorProp = proxy->GetProperty(undoProp->propertyName);
+               dtDAL::ActorProperty* actorProp = proxy->GetProperty(undoProp->mPropertyName);
 
                // put our value back
                if (actorProp != NULL)
                {
-                  actorProp->FromString(undoProp->oldValue);
+                  actorProp->FromString(undoProp->mOldValue);
                }
             }
 
-            proxy->SetId(dtCore::UniqueId(event->objectId));
-            proxy->SetName(event->oldName);
+            proxy->SetId(dtCore::UniqueId(event->mObjectId));
+            proxy->SetName(event->mOldName);
             currMap->AddProxy(*(proxy.get()));
-            recursePrevent = true;
+            mRecursePrevent = true;
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorProxyCreated(proxy, true);
             ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
             EditorEvents::GetInstance().emitEndChangeTransaction();
-            recursePrevent = false;
+            mRecursePrevent = false;
 
             // create our redo event
-            event->type = ChangeEvent::PROXY_CREATED;
+            event->mType = ChangeEvent::PROXY_CREATED;
             if (isUndo)
             {
-               redoStack.push(event);
+               mRedoStack.push(event);
             }
             else
             {
-               undoStack.push(event);
+               mUndoStack.push(event);
             }
          }
       }
@@ -422,43 +422,43 @@ namespace dtEditQt
       // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
       // these methods, be VERY careful
 
-      if (event->undoPropData.size() == 0)
+      if (event->mUndoPropData.size() == 0)
       {
          return;
       }
 
       // for property changed, simply find the old property and reset the value
-      dtCore::RefPtr<UndoPropertyData> propData = event->undoPropData[0];
+      dtCore::RefPtr<UndoPropertyData> propData = event->mUndoPropData[0];
       if (propData.valid())
       {
-         dtDAL::ActorProperty* property = proxy->GetProperty(propData->propertyName);
+         dtDAL::ActorProperty* property = proxy->GetProperty(propData->mPropertyName);
          if (property != NULL)
          {
             std::string currentValue = property->ToString();
-            property->FromString(propData->oldValue);
+            property->FromString(propData->mOldValue);
 
             // notify the world of our change to the data.
             dtCore::RefPtr<dtDAL::ActorProxy> ActorProxyRefPtr = proxy;
             dtCore::RefPtr<dtDAL::ActorProperty> ActorPropertyRefPtr = property;
-            recursePrevent = true;
+            mRecursePrevent = true;
             EditorData::GetInstance().getMainWindow()->startWaitCursor();
             EditorEvents::GetInstance().emitActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr);
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
-            recursePrevent = false;
+            mRecursePrevent = false;
 
             // Create the Redo event - reverse old and new.
-            event->type = UndoManager::ChangeEvent::PROPERTY_CHANGED;
-            propData->newValue = propData->oldValue;
-            propData->oldValue = currentValue;
+            event->mType = UndoManager::ChangeEvent::PROPERTY_CHANGED;
+            propData->mNewValue = propData->mOldValue;
+            propData->mOldValue = currentValue;
             if (isUndo)
             {
                // add it REDO stack
-               redoStack.push(event);
+               mRedoStack.push(event);
             }
             else
             {
                // add it UNDO stack
-               undoStack.push(event);
+               mRedoStack.push(event);
             }
          }
       }
@@ -472,10 +472,10 @@ namespace dtEditQt
       std::vector<dtDAL::ActorProperty*>::const_iterator propIter;
 
       ChangeEvent* undoEvent       = new ChangeEvent();
-      undoEvent->objectId          = proxy->GetId().ToString();
-      undoEvent->actorTypeName     = proxy->GetActorType().GetName();
-      undoEvent->actorTypeCategory = proxy->GetActorType().GetCategory();
-      undoEvent->oldName           = proxy->GetName();
+      undoEvent->mObjectId          = proxy->GetId().ToString();
+      undoEvent->mActorTypeName     = proxy->GetActorType().GetName();
+      undoEvent->mActorTypeCategory = proxy->GetActorType().GetCategory();
+      undoEvent->mOldName           = proxy->GetName();
 
       // for each property, create a property data object and add it to our event's list.
       proxy->GetPropertyList(propList);
@@ -483,11 +483,11 @@ namespace dtEditQt
       {
          curProp = (*propIter);
          UndoPropertyData* undoData = new UndoPropertyData();
-         undoData->propertyName = curProp->GetName();
-         undoData->oldValue = curProp->ToString();
-         undoData->newValue = ""; // ain't a new value - put here for completeness and readability
+         undoData->mPropertyName = curProp->GetName();
+         undoData->mOldValue = curProp->ToString();
+         undoData->mNewValue = ""; // ain't a new value - put here for completeness and readability
 
-         undoEvent->undoPropData.push_back(undoData);
+         undoEvent->mUndoPropData.push_back(undoData);
       }
 
       return undoEvent;
@@ -496,8 +496,8 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void UndoManager::enableButtons()
    {
-      EditorActions::GetInstance().actionEditUndo->setEnabled(!undoStack.empty());
-      EditorActions::GetInstance().actionEditRedo->setEnabled(!redoStack.empty());
+      EditorActions::GetInstance().mActionEditUndo->setEnabled(!mUndoStack.empty());
+      EditorActions::GetInstance().mActionEditRedo->setEnabled(!mRedoStack.empty());
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -513,10 +513,10 @@ namespace dtEditQt
    void UndoManager::clearUndoList()
    {
       // clear undo
-      while (!undoStack.empty())
+      while (!mUndoStack.empty())
       {
-         dtCore::RefPtr<ChangeEvent> undoEvent = undoStack.top();
-         undoStack.pop();
+         dtCore::RefPtr<ChangeEvent> undoEvent = mUndoStack.top();
+         mUndoStack.pop();
       }
    }
 
@@ -524,23 +524,23 @@ namespace dtEditQt
    void UndoManager::clearRedoList()
    {
       // clear redo
-      while (!redoStack.empty())
+      while (!mRedoStack.empty())
       {
-         dtCore::RefPtr<ChangeEvent> redoEvent = redoStack.top();
-         redoStack.pop();
+         dtCore::RefPtr<ChangeEvent> redoEvent = mRedoStack.top();
+         mRedoStack.pop();
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
    bool UndoManager::hasUndoItems()
    {
-      return !undoStack.empty();
+      return !mUndoStack.empty();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    bool UndoManager::hasRedoItems()
    {
-      return !undoStack.empty();
+      return !mRedoStack.empty();
    }
 
 } // namespace dtEditQt

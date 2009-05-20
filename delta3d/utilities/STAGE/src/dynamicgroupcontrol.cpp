@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -36,7 +36,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicGroupControl::DynamicGroupControl(const std::string& newName)
-      : name(newName.c_str())
+      : mName(newName.c_str())
    {
    }
 
@@ -52,14 +52,14 @@ namespace dtEditQt
       DynamicGroupControl* result = NULL;
 
       // walk the children to find group controls.
-      for (childIter = children.begin(); childIter != children.end(); ++childIter)
+      for (childIter = mChildren.begin(); childIter != mChildren.end(); ++childIter)
       {
          DynamicAbstractControl* control = (*childIter);
          if (control != NULL)
          {
             // for each group control, compare the name
             DynamicGroupControl* group = dynamic_cast<DynamicGroupControl*>(control);
-            if (group != NULL && group->name == QString(name))
+            if (group != NULL && group->mName == QString(name))
             {
                result = group;
                break;
@@ -75,9 +75,9 @@ namespace dtEditQt
    {
       // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
       // the property editor, you need to work with the begin/endinsertrows methods of model.
-      if (child != NULL) 
+      if (child != NULL)
       {
-         children.push_back(child);
+         mChildren.push_back(child);
       }
    }
 
@@ -91,7 +91,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGroupControl::getDisplayName()
    {
-      return name;
+      return mName;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace dtEditQt
    bool DynamicGroupControl::updateData(QWidget* widget)
    {
       // groups don't have editors, nor do they have any data to update.
-      // and they don't have to update their children, because the children 
+      // and they don't have to update their children, because the children
       // get their own events if needed.
 
       return false;

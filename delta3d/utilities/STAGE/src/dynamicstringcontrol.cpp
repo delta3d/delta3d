@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -44,7 +44,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicStringControl::DynamicStringControl()
-      : temporaryEditControl(NULL)
+      : mTemporaryEditControl(NULL)
    {
    }
 
@@ -58,17 +58,17 @@ namespace dtEditQt
    void DynamicStringControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::STRING)
       {
-         myProperty = static_cast<dtDAL::StringActorProperty*>(newProperty);
+         mProperty = static_cast<dtDAL::StringActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      } 
-      else 
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -76,12 +76,12 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicStringControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
 
          // set the current value from our property
-         editBox->setText(tr(myProperty->GetValue().c_str()));
+         editBox->setText(tr(mProperty->GetValue().c_str()));
          editBox->selectAll();
       }
    }
@@ -93,7 +93,7 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
 
@@ -101,25 +101,25 @@ namespace dtEditQt
          std::string result = editBox->text().toStdString();
 
          // set our value to our object
-         if (result != myProperty->GetValue()) 
+         if (result != mProperty->GetValue())
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, 
-               myProperty->ToString(), result);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+               mProperty->ToString(), result);
 
-            myProperty->SetValue(result);
+            mProperty->SetValue(result);
             dataChanged = true;
          }
 
-         // reselect all the text when we commit.  
+         // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
          editBox->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
-      if (dataChanged) 
+      if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy.get(), myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy.get(), mProperty);
       }
 
       return dataChanged;
@@ -127,49 +127,49 @@ namespace dtEditQt
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicStringControl::createEditor(QWidget* parent, 
+   QWidget *DynamicStringControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the edit box
-      temporaryEditControl = new SubQLineEdit (parent, this);
-      if (myProperty->GetMaxLength() > 0)
+      mTemporaryEditControl = new SubQLineEdit (parent, this);
+      if (mProperty->GetMaxLength() > 0)
       {
-         temporaryEditControl->setMaxLength(myProperty->GetMaxLength());
+         mTemporaryEditControl->setMaxLength(mProperty->GetMaxLength());
       }
 
-      if (!initialized) 
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
-      temporaryEditControl->setToolTip(getDescription());
+      updateEditorFromModel(mTemporaryEditControl);
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    const QString DynamicStringControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
-   const QString DynamicStringControl::getDescription() 
+   const QString DynamicStringControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-         myProperty->GetDataType().GetName() + "]";
+      std::string tooltip = mProperty->GetDescription() + "  [Type: " +
+         mProperty->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
-   const QString DynamicStringControl::getValueAsString() 
+   const QString DynamicStringControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return QString(tr(myProperty->GetValue().c_str()));
+      return QString(tr(mProperty->GetValue().c_str()));
    }
 
    bool DynamicStringControl::isEditable()
    {
-      return !myProperty->IsReadOnly();
+      return !mProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ namespace dtEditQt
       // returns true if we successfully change data
       bool dataChanged = false;
 
-      if (!initialized || widget == NULL) 
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return dataChanged;
@@ -196,9 +196,9 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == mProxy && property == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && property == mProperty)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -41,7 +41,7 @@
 namespace dtEditQt
 {
 
-   DynamicGameEventControl::DynamicGameEventControl() 
+   DynamicGameEventControl::DynamicGameEventControl()
    {
    }
 
@@ -56,7 +56,7 @@ namespace dtEditQt
       // We need to dynamic cast it...
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GAME_EVENT)
       {
-         myProperty = dynamic_cast<dtDAL::GameEventActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtDAL::GameEventActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
       }
       else
@@ -75,13 +75,13 @@ namespace dtEditQt
          //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
 
          // set the current value from our property
-         if (myProperty->GetValue() != NULL)
+         if (mProperty->GetValue() != NULL)
          {
-            temporaryEditControl->setCurrentIndex(temporaryEditControl->findText(myProperty->GetValue()->GetName().c_str()));
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText(mProperty->GetValue()->GetName().c_str()));
          }
          else
          {
-            temporaryEditControl->setCurrentIndex(temporaryEditControl->findText("<None>"));
+            mTemporaryEditControl->setCurrentIndex(mTemporaryEditControl->findText("<None>"));
          }
       }
    }
@@ -98,16 +98,16 @@ namespace dtEditQt
          //SubQComboBox *editor = static_cast<SubQComboBox*>(widget);
 
          // Get the current selected string and the previously set string value
-         QString selection = temporaryEditControl->currentText();
+         QString selection = mTemporaryEditControl->currentText();
          //int index = temporaryEditControl->findText(selection);
          std::string selectionString = selection.toStdString();
-         std::string previousString = myProperty->GetValue() != NULL ? myProperty->GetValue()->GetName() : "<None>";
+         std::string previousString = mProperty->GetValue() != NULL ? mProperty->GetValue()->GetName() : "<None>";
 
          // set our value to our object
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, previousString, selectionString);
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty, previousString, selectionString);
 
             dtDAL::GameEvent* eventToSet = NULL;
             //std::vector<dtDAL::GameEvent*> events;
@@ -117,12 +117,12 @@ namespace dtEditQt
             //for (unsigned int i = 0; i < events.size(); i++)
             //{
             //   if (events[i]->GetName() == selectionString)
-            //   {  
+            //   {
             //      eventToSet = events[i];
             //      break;
-            //   }                  
+            //   }
             //}
-            myProperty->SetValue(eventToSet);
+            mProperty->SetValue(eventToSet);
             dataChanged = true;
          }
       }
@@ -130,20 +130,20 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
 
-      return dataChanged;    
+      return dataChanged;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QWidget* DynamicGameEventControl::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index)
    {
-      temporaryEditControl = new SubQComboBox(parent, this);
-      if (!initialized)
+      mTemporaryEditControl = new SubQComboBox(parent, this);
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
       std::vector<dtDAL::GameEvent*> events;
@@ -160,27 +160,27 @@ namespace dtEditQt
       QStringList listPlusNone;
       listPlusNone.append(QString("<None>"));
       listPlusNone += sortedEventNames;
-      temporaryEditControl->addItems(listPlusNone);
+      mTemporaryEditControl->addItems(listPlusNone);
 
-      connect(temporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
+      connect(mTemporaryEditControl, SIGNAL(activated(int)), this, SLOT(itemSelected(int)));
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
       // set the tooltip
-      temporaryEditControl->setToolTip(getDescription());
-      return temporaryEditControl;
+      mTemporaryEditControl->setToolTip(getDescription());
+      return mTemporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGameEventControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicGameEventControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + myProperty->GetDataType().GetName() + "]";
+      std::string tooltip = mProperty->GetDescription() + "  [Type: " + mProperty->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
@@ -188,7 +188,7 @@ namespace dtEditQt
    const QString DynamicGameEventControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return myProperty->GetValue() != NULL ? QString(myProperty->GetValue()->GetName().c_str()) : QString("<None>");
+      return mProperty->GetValue() != NULL ? QString(mProperty->GetValue()->GetName().c_str()) : QString("<None>");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -202,18 +202,18 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicGameEventControl::itemSelected(int index) 
+   void DynamicGameEventControl::itemSelected(int index)
    {
-      if (temporaryEditControl != NULL) 
+      if (mTemporaryEditControl != NULL)
       {
-         updateModelFromEditor(temporaryEditControl);
+         updateModelFromEditor(mTemporaryEditControl);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicGameEventControl::updateData(QWidget* widget)
    {
-      if (initialized || widget == NULL)
+      if (mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -230,9 +230,9 @@ namespace dtEditQt
 
       dtDAL::GameEventActorProperty* changedProp = dynamic_cast<dtDAL::GameEventActorProperty*>(property.get());
 
-      if (temporaryEditControl != NULL && proxy == mProxy && changedProp == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == mProperty)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

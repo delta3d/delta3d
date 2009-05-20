@@ -76,7 +76,7 @@ namespace dtEditQt
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = resourceIcon;
+      ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
       // create a new scene for the static mesh viewport
       meshScene = new dtCore::Scene();
@@ -168,7 +168,7 @@ namespace dtEditQt
       hbox->addWidget(previewChk, 0, Qt::AlignLeft);
       hbox->addWidget(previewBtn, 0, Qt::AlignRight);
       grid->addLayout(hbox, 0, 0);
-      grid->addWidget(tree, 1, 0);
+      grid->addWidget(mTree, 1, 0);
 
       return groupBox;
    }
@@ -178,7 +178,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool StaticMeshBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree)
+      if (obj == mTree)
       {
          //For some reason, KeyPress is getting defined by something...
          //Without this undef, it will not compile under Linux..
@@ -191,27 +191,27 @@ namespace dtEditQt
             switch (keyEvent->key())
             {
             case Qt::Key_Return:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   selectionChanged();
                   displaySelection();
                }
                break;
             case Qt::Key_Enter:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   selectionChanged();
                   displaySelection();
                }
                break;
             default:
-               return tree->eventFilter(obj, e);
+               return mTree->eventFilter(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return tree->eventFilter(obj, e);
+            return mTree->eventFilter(obj, e);
          }
       }
       return false;
@@ -241,9 +241,9 @@ namespace dtEditQt
    void StaticMeshBrowser::createContextMenu()
    {
       ResourceAbstractBrowser::createContextMenu();
-      contextMenu->addAction(setCreateAction);
-      contextMenu->addAction(setSGPreviewAction);
-      contextMenu->addAction(setOSGDump);
+      mContextMenu->addAction(setCreateAction);
+      mContextMenu->addAction(setSGPreviewAction);
+      mContextMenu->addAction(setOSGDump);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -312,9 +312,9 @@ namespace dtEditQt
       meshScene->RemoveDrawable(previewObject.get());
       perspView->refresh();
 
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // auto preview
             if (previewChk->isChecked())
@@ -342,7 +342,7 @@ namespace dtEditQt
    {
       if (previewChk->isChecked())
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // preview current item
             selectionChanged();
@@ -354,7 +354,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::doubleClickEvent()
    {
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          displaySelection();
       }
@@ -363,7 +363,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void StaticMeshBrowser::deleteItemEvent()
    {
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          // When any item is selected, clear the scene
          meshScene->RemoveDrawable(previewObject.get());
@@ -377,7 +377,7 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          LOG_INFO("User Created an Actor - Slot");
 
@@ -410,7 +410,7 @@ namespace dtEditQt
 
                if (resourceProp != NULL)
                {
-                  resourceProp->SetValue(&selection->getResourceDescriptor());
+                  resourceProp->SetValue(&mSelection->getResourceDescriptor());
                }
 
                // add the new proxy to the map
@@ -442,7 +442,7 @@ namespace dtEditQt
    {
       QString resourceName;
       // Make sure we have a valid resource
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          QDialog dlg(this);
          dlg.setModal(true);
@@ -454,7 +454,7 @@ namespace dtEditQt
          QTextEdit*   text    = new QTextEdit(&dlg);
          QPushButton* close   = new QPushButton(tr("Close"), &dlg);
 
-         dtDAL::ResourceDescriptor& rd = selection->getResourceDescriptor();
+         dtDAL::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
          const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
 
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;
@@ -485,7 +485,7 @@ namespace dtEditQt
    {
       QString resourceName;
       // Make sure we have a valid resource
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          QDialog dlg(this);
          dlg.setModal(true);
@@ -499,7 +499,7 @@ namespace dtEditQt
 
          text->addScrollBarWidget(new QScrollBar(this), Qt::AlignRight);
 
-         dtDAL::ResourceDescriptor& rd = selection->getResourceDescriptor();
+         dtDAL::ResourceDescriptor& rd = mSelection->getResourceDescriptor();
          const std::string fileName = dtDAL::Project::GetInstance().GetResourcePath(rd);
 
          dtCore::RefPtr<dtCore::Object> obj = new dtCore::Object;

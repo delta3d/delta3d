@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -77,14 +77,14 @@ namespace dtEditQt
    void DynamicResourceControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType().IsResource()) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType().IsResource())
       {
-         myProperty = static_cast<dtDAL::ResourceActorProperty*>(newProperty);
+         mProperty = static_cast<dtDAL::ResourceActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      } 
-      else 
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
          std::string propType     = (newProperty != NULL) ? newProperty->GetDataType().GetName() : "NULL";
@@ -99,60 +99,60 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicResourceControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicResourceControl::getDescription() 
+   const QString DynamicResourceControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + " - To assign a resource, select a [" + 
-         myProperty->GetDataType().GetName() + "] resource in the Resource Browser and press Use Current";
+      std::string tooltip = mProperty->GetDescription() + " - To assign a resource, select a [" +
+         mProperty->GetDataType().GetName() + "] resource in the Resource Browser and press Use Current";
       return QString(tr(tooltip.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicResourceControl::getValueAsString() 
+   const QString DynamicResourceControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
 
       // if we have no current resource, show special text that indicates the type
-      dtDAL::ResourceDescriptor* resource = myProperty->GetValue();
+      dtDAL::ResourceDescriptor* resource = mProperty->GetValue();
       QString resourceTag;
-      if (resource == NULL) 
+      if (resource == NULL)
       {
          QString type;
-         if (myProperty->GetDataType() == dtDAL::DataType::SOUND) 
+         if (mProperty->GetDataType() == dtDAL::DataType::SOUND)
          {
             type = dtDAL::DataType::SOUND.GetDisplayName().c_str();
-         } 
-         else if (myProperty->GetDataType() == dtDAL::DataType::STATIC_MESH) 
+         }
+         else if (mProperty->GetDataType() == dtDAL::DataType::STATIC_MESH)
          {
             type = dtDAL::DataType::STATIC_MESH.GetDisplayName().c_str();
-         } 
-         else if (myProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH) 
+         }
+         else if (mProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH)
          {
             type = dtDAL::DataType::SKELETAL_MESH.GetDisplayName().c_str();
-         } 
-         else if (myProperty->GetDataType() == dtDAL::DataType::TEXTURE) 
+         }
+         else if (mProperty->GetDataType() == dtDAL::DataType::TEXTURE)
          {
             type = dtDAL::DataType::TEXTURE.GetDisplayName().c_str();
-         } 
-         else if (myProperty->GetDataType() == dtDAL::DataType::TERRAIN) 
+         }
+         else if (mProperty->GetDataType() == dtDAL::DataType::TERRAIN)
          {
             type = dtDAL::DataType::TERRAIN.GetDisplayName().c_str();
-         } 
-         else if (myProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+         }
+         else if (mProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM)
          {
             type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
-         } 
-         else 
+         }
+         else
          {
             type = "Unknown Type";
          }
 
          resourceTag = "(NONE) - [" + type + "]";
-      } 
-      else 
+      }
+      else
       {
          resourceTag = QString(tr(resource->GetDisplayName().c_str()));
       }
@@ -173,7 +173,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicResourceControl::createEditor(QWidget* parent, 
+   QWidget *DynamicResourceControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       QWidget* wrapper = new QWidget(parent);
@@ -181,7 +181,7 @@ namespace dtEditQt
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -191,14 +191,14 @@ namespace dtEditQt
       grid->setMargin(0);
       grid->setSpacing(1);
 
-      // label 
+      // label
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       // Use Current button
       mTemporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
-      // make sure it hold's it's min width.  This is a work around for a wierd QT behavior that 
+      // make sure it hold's it's min width.  This is a work around for a wierd QT behavior that
       // allowed the button to get really tiny and stupid looking (had 'U' instead of 'Use Current')
       QSize size = mTemporaryUseCurrentBtn->sizeHint();
       mTemporaryUseCurrentBtn->setMaximumWidth(size.width());
@@ -209,7 +209,7 @@ namespace dtEditQt
       size = mTemporaryClearBtn->sizeHint();
       mTemporaryClearBtn->setMaximumWidth(size.width());
       connect(mTemporaryClearBtn, SIGNAL(clicked()), this, SLOT(clearPressed()));
-      std::string tooltip = myProperty->GetDescription() + " - Clears the current resource";
+      std::string tooltip = mProperty->GetDescription() + " - Clears the current resource";
       mTemporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
 
       grid->addWidget(mTemporaryEditOnlyTextLabel, 0, 0, 1, 1);
@@ -230,41 +230,41 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicResourceControl::isEditable()
    {
-      return !myProperty->IsReadOnly();
+      return !mProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   dtDAL::ResourceDescriptor DynamicResourceControl::getCurrentResource() 
+   dtDAL::ResourceDescriptor DynamicResourceControl::getCurrentResource()
    {
-      if (myProperty->GetDataType() == dtDAL::DataType::SOUND) 
+      if (mProperty->GetDataType() == dtDAL::DataType::SOUND)
       {
          return EditorData::GetInstance().getCurrentSoundResource();
-      } 
-      else if (myProperty->GetDataType() == dtDAL::DataType::STATIC_MESH) 
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::STATIC_MESH)
       {
          return EditorData::GetInstance().getCurrentMeshResource();
-      } 
-      else if (myProperty->GetDataType() == dtDAL::DataType::TEXTURE) 
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::TEXTURE)
       {
          return EditorData::GetInstance().getCurrentTextureResource();
-      } 
-      else if (myProperty->GetDataType() == dtDAL::DataType::TERRAIN) 
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::TERRAIN)
       {
          return EditorData::GetInstance().getCurrentTerrainResource();
-      } 
-      else if (myProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::PARTICLE_SYSTEM)
       {
          return EditorData::GetInstance().getCurrentParticleResource();
-      } 
-      else if (myProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH) 
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH)
       {
          return EditorData::GetInstance().getCurrentSkeletalModelResource();
-      } 
-      else 
+      }
+      else
       {
-         LOG_ERROR("Error setting current resource because DataType [" + 
-            myProperty->GetDataType().GetName() + 
-            "] is not supported for property [" + myProperty->GetName() + "].");
+         LOG_ERROR("Error setting current resource because DataType [" +
+            mProperty->GetDataType().GetName() +
+            "] is not supported for property [" + mProperty->GetName() + "].");
          // return something so we don't crash
          return dtDAL::ResourceDescriptor();
       }
@@ -311,10 +311,10 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicResourceControl::useCurrentPressed() 
+   void DynamicResourceControl::useCurrentPressed()
    {
       // get the old and the new
-      dtDAL::ResourceDescriptor* curResource = myProperty->GetValue();
+      dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
       dtDAL::ResourceDescriptor newResource = getCurrentResource();
       bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
       bool isNewEmpty = (newResource.GetResourceIdentifier().empty());
@@ -322,51 +322,51 @@ namespace dtEditQt
       // if different, than we make the change
       if (isCurEmpty != isNewEmpty || (curResource != NULL && !((*curResource) == newResource)))
       {
-         std::string oldValue = myProperty->ToString();
-         myProperty->SetValue(&newResource);
+         std::string oldValue = mProperty->ToString();
+         mProperty->SetValue(&newResource);
 
          // give undo manager the ability to create undo/redo events
-         // technically, we're sending the about to change event AFTER we already 
+         // technically, we're sending the about to change event AFTER we already
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, 
-            oldValue, myProperty->ToString());
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+            oldValue, mProperty->ToString());
 
          // update our label
-         if (mTemporaryEditOnlyTextLabel !=  NULL) 
+         if (mTemporaryEditOnlyTextLabel !=  NULL)
          {
             mTemporaryEditOnlyTextLabel->setText(getValueAsString());
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControl::clearPressed()
    {
-      dtDAL::ResourceDescriptor* curResource = myProperty->GetValue();
+      dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
       bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
 
-      if (!isCurEmpty) 
+      if (!isCurEmpty)
       {
-         std::string oldValue = myProperty->ToString();
-         myProperty->SetValue(NULL);
+         std::string oldValue = mProperty->ToString();
+         mProperty->SetValue(NULL);
 
          // give undo manager the ability to create undo/redo events
-         // technically, we're sending the about to change event AFTER we already 
+         // technically, we're sending the about to change event AFTER we already
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty, 
-            oldValue, myProperty->ToString());
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+            oldValue, mProperty->ToString());
 
          // update our label
-         if (mTemporaryEditOnlyTextLabel !=  NULL) 
+         if (mTemporaryEditOnlyTextLabel !=  NULL)
          {
             mTemporaryEditOnlyTextLabel->setText(getValueAsString());
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
    }
 
@@ -377,7 +377,7 @@ namespace dtEditQt
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
       // update our label
-      if (mTemporaryEditOnlyTextLabel != NULL && proxy == mProxy && property == myProperty) 
+      if (mTemporaryEditOnlyTextLabel != NULL && proxy == mProxy && property == mProperty)
       {
          mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }

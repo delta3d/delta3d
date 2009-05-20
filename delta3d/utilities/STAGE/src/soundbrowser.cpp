@@ -59,13 +59,13 @@ namespace dtEditQt
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_SOUND_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = resourceIcon;
+      ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
       // setup the grid layouts
-      grid = new QGridLayout(this);
-      grid->addWidget(previewSoundGroup(), 0, 0);
-      grid->addWidget(listSoundGroup(), 1, 0);
-      grid->addWidget(standardButtons(QString("Resource Tools")), 2, 0, Qt::AlignCenter);
+      mGrid = new QGridLayout(this);
+      mGrid->addWidget(previewSoundGroup(), 0, 0);
+      mGrid->addWidget(listSoundGroup(), 1, 0);
+      mGrid->addWidget(standardButtons(QString("Resource Tools")), 2, 0, Qt::AlignCenter);
 
       mSoundBuffers[0] = NULL;
       mSoundSources[0] = NULL;
@@ -81,23 +81,23 @@ namespace dtEditQt
 
       QHBoxLayout* hbox = new QHBoxLayout(groupBox);
 
-      playBtn = new QPushButton(""/*Play*/, groupBox);
-      playBtn->setToolTip("Play currently selected sound");
-      playBtn->setIcon(QPixmap(UIResources::ICON_SOUND_PLAY.c_str()));
-      connect(playBtn, SIGNAL(clicked()), this, SLOT(playSelected()));
+      mPlayBtn = new QPushButton(""/*Play*/, groupBox);
+      mPlayBtn->setToolTip("Play currently selected sound");
+      mPlayBtn->setIcon(QPixmap(UIResources::ICON_SOUND_PLAY.c_str()));
+      connect(mPlayBtn, SIGNAL(clicked()), this, SLOT(playSelected()));
 
-      stopBtn = new QPushButton(""/*Stop*/, groupBox);
-      stopBtn->setToolTip("Stop currently playing sound");
-      stopBtn->setIcon(QPixmap(UIResources::ICON_SOUND_STOP.c_str()));
-      connect(stopBtn, SIGNAL(clicked()), this, SLOT(stopSelected()));
+      mStopBtn = new QPushButton(""/*Stop*/, groupBox);
+      mStopBtn->setToolTip("Stop currently playing sound");
+      mStopBtn->setIcon(QPixmap(UIResources::ICON_SOUND_STOP.c_str()));
+      connect(mStopBtn, SIGNAL(clicked()), this, SLOT(stopSelected()));
 
       hbox->addStretch(1);
-      hbox->addWidget(stopBtn, 0, Qt::AlignTop);
-      hbox->addWidget(playBtn, 0, Qt::AlignTop);
+      hbox->addWidget(mStopBtn, 0, Qt::AlignTop);
+      hbox->addWidget(mPlayBtn, 0, Qt::AlignTop);
       hbox->addStretch(1);
 
-      playBtn->setDisabled(true);
-      stopBtn->setDisabled(true);
+      mPlayBtn->setDisabled(true);
+      mStopBtn->setDisabled(true);
 
       return groupBox;
    }
@@ -109,7 +109,7 @@ namespace dtEditQt
 
       QGridLayout* grid = new QGridLayout(group);
 
-      grid->addWidget(tree,0,0);
+      grid->addWidget(mTree,0,0);
 
       return group;
    }
@@ -156,7 +156,7 @@ namespace dtEditQt
                   //Load the sound manually from OpenAL / ALUT (dtAudio doesn't currently provide a
                   // way to do this without firing up a game/application loop).-------------------
                   //
-                  //TODO: Have dtAudio provide a way to play a sound from STAGE. 
+                  //TODO: Have dtAudio provide a way to play a sound from STAGE.
                   ALenum format;
                   ALsizei size;
                   ALfloat freq;
@@ -216,7 +216,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool SoundBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree)
+      if (obj == mTree)
       {
          //For some reason, KeyPress is getting defined by something...
          //Without this undef, it will not compile under Linux..
@@ -229,13 +229,13 @@ namespace dtEditQt
             switch (keyEvent->key())
             {
             case Qt::Key_Return:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   playSound();
                }
                break;
             case Qt::Key_Enter:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   playSound();
                }
@@ -244,13 +244,13 @@ namespace dtEditQt
                stopSound();
                break;
             default:
-               return tree->eventFilter(obj, e);
+               return mTree->eventFilter(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return tree->eventFilter(obj, e);
+            return mTree->eventFilter(obj, e);
          }
       }
       return false;
@@ -260,17 +260,17 @@ namespace dtEditQt
    {
       // This is the abstract base classes original functionality
       ResourceAbstractBrowser::selectionChanged();
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
-            playBtn->setDisabled(false);
-            stopBtn->setDisabled(false);
+            mPlayBtn->setDisabled(false);
+            mStopBtn->setDisabled(false);
          }
          else
          {
-            playBtn->setDisabled(true);
-            stopBtn->setDisabled(true);
+            mPlayBtn->setDisabled(true);
+            mStopBtn->setDisabled(true);
          }
       }
    }
@@ -278,7 +278,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void SoundBrowser::doubleClickEvent()
    {
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          playSound();
       }
@@ -302,8 +302,8 @@ namespace dtEditQt
    void SoundBrowser::deleteItemEvent()
    {
       // disable the sound play and stop buttons
-      playBtn->setDisabled(true);
-      stopBtn->setDisabled(true);
+      mPlayBtn->setDisabled(true);
+      mStopBtn->setDisabled(true);
    }
 
 } // namespace dtEditQt

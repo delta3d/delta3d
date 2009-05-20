@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -48,172 +48,172 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2ActorProperty* newVectorProp,
       int whichIndex, const std::string &newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = newVectorProp;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC2;
+      mVec2Prop  = newVectorProp;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC2;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2fActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = newVectorProp;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC2F;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = newVectorProp;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC2F;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = newVectorProp;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC2D;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = newVectorProp;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC2D;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3ActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3ActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = newVectorProp;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC3;
+      mVec2Prop  = NULL;
+      mVec3Prop  = newVectorProp;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC3;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3fActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = newVectorProp;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC3F;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = newVectorProp;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC3F;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3dActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = newVectorProp;
-      vec4dProp = NULL;
-      whichType = VEC3D;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = newVectorProp;
+      mVec4dProp = NULL;
+      mWhichType = VEC3D;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4ActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4ActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = newVectorProp;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC4;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = newVectorProp;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC4;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4fActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4fActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = newVectorProp;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = NULL;
-      whichType = VEC4F;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = newVectorProp;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = NULL;
+      mWhichType = VEC4F;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4dActorProperty* newVectorProp, 
+   DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4dActorProperty* newVectorProp,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
+      : mLabel(newLabel)
       , mElementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      , mTemporaryEditControl(NULL)
    {
-      vec2Prop  = NULL;
-      vec3Prop  = NULL;
-      vec4Prop  = NULL;
-      vec2fProp = NULL;
-      vec3fProp = NULL;
-      vec4fProp = NULL;
-      vec2dProp = NULL;
-      vec3dProp = NULL;
-      vec4dProp = newVectorProp;
-      whichType = VEC4D;
+      mVec2Prop  = NULL;
+      mVec3Prop  = NULL;
+      mVec4Prop  = NULL;
+      mVec2fProp = NULL;
+      mVec3fProp = NULL;
+      mVec4fProp = NULL;
+      mVec2dProp = NULL;
+      mVec3dProp = NULL;
+      mVec4dProp = newVectorProp;
+      mWhichType = VEC4D;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -227,17 +227,17 @@ namespace dtEditQt
    {
       DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
-      // determine whether we have floats or doubles 
-      // Doesn't matter whether this is a vec2, 3, or 4. 
+      // determine whether we have floats or doubles
+      // Doesn't matter whether this is a vec2, 3, or 4.
       osg::Vec3 testVect;
-      isVecFloat = (sizeof(testVect.x()) == sizeof(float));
-      if (isVecFloat)
+      mIsVecFloat = (sizeof(testVect.x()) == sizeof(float));
+      if (mIsVecFloat)
       {
-         toolTipTypeLabel = "FLOAT";
+         mToolTipTypeLabel = "FLOAT";
       }
       else
       {
-         toolTipTypeLabel = "DOUBLE";
+         mToolTipTypeLabel = "DOUBLE";
       }
 
    }
@@ -245,7 +245,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicVectorElementControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL && widget == temporaryEditControl)
+      if (widget != NULL && widget == mTemporaryEditControl)
       {
          std::ostringstream ss;
          ss << "Updating editor for index " << mElementIndex;
@@ -257,8 +257,8 @@ namespace dtEditQt
          const bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
 
          QString strValue = QString::number(value, 'f', isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE);
-         temporaryEditControl->setText(strValue);
-         temporaryEditControl->selectAll();
+         mTemporaryEditControl->setText(strValue);
+         mTemporaryEditControl->selectAll();
       }
    }
 
@@ -269,7 +269,7 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL && widget == temporaryEditControl) 
+      if (widget != NULL && widget == mTemporaryEditControl)
       {
          std::ostringstream ss;
          ss << "Updating model for index " << mElementIndex;
@@ -278,13 +278,13 @@ namespace dtEditQt
          // Note, don't use the temporary variable here.  It can cause errors with QT.
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
          bool success = false;
-         //float floatResult = -999.999f; 
+         //float floatResult = -999.999f;
          double doubleResult = editBox->text().toDouble(&success);
 
          // set our value to our object
          if (success)
          {
-            // Save the data if they are different.  Note, we also need to compare the QString value, 
+            // Save the data if they are different.  Note, we also need to compare the QString value,
             // else we get epsilon differences that cause the map to be marked dirty with no edits :(
             QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS_DOUBLE);
             QString newValue = editBox->text();
@@ -293,59 +293,35 @@ namespace dtEditQt
                setValue(doubleResult);
                dataChanged = true;
             }
-         } 
-         else 
+         }
+         else
          {
             LOGN_ERROR("dynamicvectorelementcontrol.cpp", "updateData() failed to convert our value successfully");
          }
 
-         // reselect all the text when we commit.  
+         // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
          editBox->selectAll();
       }
 
       // notify the world (mostly the viewports) that our property changed
-      if (dataChanged) 
+      if (dataChanged)
       {
          std::ostringstream ss;
          ss << "Updating model (data changed) for index " << mElementIndex;
          LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
 
-         if (whichType == VEC2) 
+         switch (mWhichType)
          {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec2Prop);
-         } 
-         else if (whichType == VEC2F) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec2fProp);
-         } 
-         else if (whichType == VEC2D) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec2dProp);
-         } 
-         else if (whichType == VEC3) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec3Prop);
-         } 
-         else if (whichType == VEC3F) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec3fProp);
-         } 
-         else if (whichType == VEC3D) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec3dProp);
-         } 
-         else if (whichType == VEC4) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec4Prop);
-         } 
-         else if (whichType == VEC4F) 
-         {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec4fProp);
-         } 
-         else if (whichType == VEC4D)
-         { 
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, vec4dProp);
+         case VEC2:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2Prop);  break;
+         case VEC2F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2fProp); break;
+         case VEC2D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2dProp); break;
+         case VEC3:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3Prop);  break;
+         case VEC3F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3fProp); break;
+         case VEC3D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3dProp); break;
+         case VEC4:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4Prop);  break;
+         case VEC4F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4fProp); break;
+         case VEC4D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4dProp); break;
          }
       }
 
@@ -353,7 +329,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicVectorElementControl::createEditor(QWidget* parent, 
+   QWidget* DynamicVectorElementControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       std::ostringstream ss;
@@ -361,78 +337,54 @@ namespace dtEditQt
       LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
       // create and init the edit box
       //editBox = new QLineEdit(parent);
-      temporaryEditControl = new SubQLineEdit (parent, this);
-      QDoubleValidator* validator = new QDoubleValidator(temporaryEditControl);
+      mTemporaryEditControl = new SubQLineEdit (parent, this);
+      QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
       validator->setDecimals(NUM_DECIMAL_DIGITS_DOUBLE);
-      temporaryEditControl->setValidator(validator);
+      mTemporaryEditControl->setValidator(validator);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOGN_ERROR("dynamicvectorelementcontrol.cpp", "Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicVectorElementControl::getDisplayName()
    {
-      return QString(tr(label.c_str()));
+      return QString(tr(mLabel.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicVectorElementControl::getDescription() 
+   const QString DynamicVectorElementControl::getDescription()
    {
       std::string tooltip;
 
-      if (whichType == VEC2) 
+      switch (mWhichType)
       {
-         tooltip = vec2Prop->GetDescription();
-      } 
-      else if (whichType == VEC2F) 
-      {
-         tooltip = vec2fProp->GetDescription();
-      } 
-      else if (whichType == VEC2D) 
-      {
-         tooltip = vec2dProp->GetDescription();
-      } 
-      else if (whichType == VEC3) 
-      {
-         tooltip = vec3Prop->GetDescription();
-      } 
-      else if (whichType == VEC3F) 
-      {
-         tooltip = vec3fProp->GetDescription();
-      } 
-      else if (whichType == VEC3D) 
-      {
-         tooltip = vec3dProp->GetDescription();
-      } 
-      else if (whichType == VEC4) 
-      {
-         tooltip = vec4Prop->GetDescription();
-      } 
-      else if (whichType == VEC4F) 
-      {
-         tooltip = vec4fProp->GetDescription();
-      } 
-      else if (whichType == VEC4D)
-      {
-         tooltip = vec4dProp->GetDescription();
+      case VEC2:  tooltip = mVec2Prop->GetDescription();  break;
+      case VEC2F: tooltip = mVec2fProp->GetDescription(); break;
+      case VEC2D: tooltip = mVec2dProp->GetDescription(); break;
+      case VEC3:  tooltip = mVec3Prop->GetDescription();  break;
+      case VEC3F: tooltip = mVec3fProp->GetDescription(); break;
+      case VEC3D: tooltip = mVec3dProp->GetDescription(); break;
+      case VEC4:  tooltip = mVec4Prop->GetDescription();  break;
+      case VEC4F: tooltip = mVec4fProp->GetDescription(); break;
+      case VEC4D: tooltip = mVec4dProp->GetDescription(); break;
       }
 
-      tooltip += " [Type: " + label;
+      tooltip += " [Type: " + mLabel;
       return QString(tr(tooltip.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicVectorElementControl::getValueAsString() 
+   const QString DynamicVectorElementControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
 
@@ -443,41 +395,17 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicVectorElementControl::isEditable()
    {
-      if (whichType == VEC2)
+      switch (mWhichType)
       {
-         return !vec2Prop->IsReadOnly();
-      }
-      else if (whichType == VEC2F)
-      {
-         return !vec2fProp->IsReadOnly();
-      }
-      else if (whichType == VEC2D)
-      {
-         return !vec2dProp->IsReadOnly();
-      }
-      else if (whichType == VEC3)
-      {
-         return !vec3Prop->IsReadOnly();
-      }
-      else if (whichType == VEC3F)
-      {
-         return !vec3fProp->IsReadOnly();
-      }
-      else if (whichType == VEC3D)
-      {
-         return !vec3dProp->IsReadOnly();
-      }
-      else if (whichType == VEC4)
-      {
-         return !vec4Prop->IsReadOnly();
-      }
-      else if (whichType == VEC4F)
-      {
-         return !vec4fProp->IsReadOnly();
-      }
-      else if (whichType == VEC2D)
-      {
-         return !vec4dProp->IsReadOnly();
+      case VEC2:  return !mVec2Prop->IsReadOnly();
+      case VEC2F: return !mVec2fProp->IsReadOnly();
+      case VEC2D: return !mVec2dProp->IsReadOnly();
+      case VEC3:  return !mVec3Prop->IsReadOnly();
+      case VEC3F: return !mVec3fProp->IsReadOnly();
+      case VEC3D: return !mVec3dProp->IsReadOnly();
+      case VEC4:  return !mVec4Prop->IsReadOnly();
+      case VEC4F: return !mVec4fProp->IsReadOnly();
+      case VEC4D: return !mVec4dProp->IsReadOnly();
       }
 
       return true;
@@ -488,50 +416,53 @@ namespace dtEditQt
    {
       double result = 0.0;
 
-      if (whichType == VEC2) 
+      switch (mWhichType)
       {
-         osg::Vec2 vectorValue = vec2Prop->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC2F) 
-      {
-         osg::Vec2f vectorValue = vec2fProp->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC2D) 
-      {
-         osg::Vec2d vectorValue = vec2dProp->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC3) 
-      {
-         osg::Vec3 vectorValue = vec3Prop->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC3F) 
-      {
-         osg::Vec3f vectorValue = vec3fProp->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC3D) 
-      {
-         osg::Vec3d vectorValue = vec3dProp->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC4) 
-      {
-         osg::Vec4 vectorValue = vec4Prop->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC4F) 
-      {
-         osg::Vec4f vectorValue = vec4fProp->GetValue();
-         result = vectorValue[mElementIndex];
-      } 
-      else if (whichType == VEC4D)
-      { 
-         osg::Vec4d vectorValue = vec4dProp->GetValue();
-         result = vectorValue[mElementIndex];
+      case VEC2:
+         {
+            osg::Vec2 vectorValue = mVec2Prop->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC2F:
+         {
+            osg::Vec2f vectorValue = mVec2fProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC2D:
+         {
+            osg::Vec2d vectorValue = mVec2dProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC3:
+         {
+            osg::Vec3 vectorValue = mVec3Prop->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC3F:
+         {
+            osg::Vec3f vectorValue = mVec3fProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC3D:
+         {
+            osg::Vec3d vectorValue = mVec3dProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC4:
+         {
+            osg::Vec4 vectorValue = mVec4Prop->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC4F:
+         {
+            osg::Vec4f vectorValue = mVec4fProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
+      case VEC4D:
+         {
+            osg::Vec4d vectorValue = mVec4dProp->GetValue();
+            result = vectorValue[mElementIndex];
+         } break;
       }
 
       return result;
@@ -540,104 +471,107 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicVectorElementControl::setValue(double value)
    {
-      if (whichType == VEC2) 
+      switch (mWhichType)
       {
-         std::string oldValue    = vec2Prop->ToString();
-         osg::Vec2   vectorValue = vec2Prop->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec2Prop->SetValue(vectorValue);
+      case VEC2:
+         {
+            std::string oldValue    = mVec2Prop->ToString();
+            osg::Vec2   vectorValue = mVec2Prop->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec2Prop->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec2Prop, 
-            oldValue, vec2Prop->ToString());
-      }
-      else if (whichType == VEC2F) 
-      {
-         std::string oldValue    = vec2fProp->ToString();
-         osg::Vec2f  vectorValue = vec2fProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec2fProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2Prop,
+               oldValue, mVec2Prop->ToString());
+         } break;
+      case VEC2F:
+         {
+            std::string oldValue    = mVec2fProp->ToString();
+            osg::Vec2f  vectorValue = mVec2fProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec2fProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec2fProp, 
-            oldValue, vec2fProp->ToString());
-      }
-      else if (whichType == VEC2D) 
-      {
-         std::string oldValue    = vec2dProp->ToString();
-         osg::Vec2d  vectorValue = vec2dProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec2dProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2fProp,
+               oldValue, mVec2fProp->ToString());
+         } break;
+      case VEC2D:
+         {
+            std::string oldValue    = mVec2dProp->ToString();
+            osg::Vec2d  vectorValue = mVec2dProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec2dProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec2dProp, 
-            oldValue, vec2dProp->ToString());
-      }
-      else if (whichType == VEC3) 
-      {
-         std::string oldValue    = vec3Prop->ToString();
-         osg::Vec3   vectorValue = vec3Prop->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec3Prop->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2dProp,
+               oldValue, mVec2dProp->ToString());
+         } break;
+      case VEC3:
+         {
+            std::string oldValue    = mVec3Prop->ToString();
+            osg::Vec3   vectorValue = mVec3Prop->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec3Prop->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec3Prop, 
-            oldValue, vec3Prop->ToString());
-      } 
-      else if (whichType == VEC3F) 
-      {
-         std::string oldValue    = vec3fProp->ToString();
-         osg::Vec3f  vectorValue = vec3fProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec3fProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3Prop,
+               oldValue, mVec3Prop->ToString());
+         } break;
+      case VEC3F:
+         {
+            std::string oldValue    = mVec3fProp->ToString();
+            osg::Vec3f  vectorValue = mVec3fProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec3fProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec3fProp, 
-            oldValue, vec3fProp->ToString());
-      } 
-      else if (whichType == VEC3D) 
-      {
-         std::string oldValue    = vec3dProp->ToString();
-         osg::Vec3d  vectorValue = vec3dProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec3dProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3fProp,
+               oldValue, mVec3fProp->ToString());
+         } break;
+      case VEC3D:
+         {
+            std::string oldValue    = mVec3dProp->ToString();
+            osg::Vec3d  vectorValue = mVec3dProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec3dProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec3dProp, 
-            oldValue, vec3dProp->ToString());
-      } 
-      else if (whichType == VEC4) 
-      {
-         std::string oldValue    = vec4Prop->ToString();
-         osg::Vec4   vectorValue = vec4Prop->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec4Prop->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3dProp,
+               oldValue, mVec3dProp->ToString());
+         } break;
+      case VEC4:
+         {
+            std::string oldValue    = mVec4Prop->ToString();
+            osg::Vec4   vectorValue = mVec4Prop->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec4Prop->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec4Prop, 
-            oldValue, vec4Prop->ToString());
-      } 
-      else if (whichType == VEC4F) 
-      {
-         std::string oldValue    = vec4fProp->ToString();
-         osg::Vec4f  vectorValue = vec4fProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec4fProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4Prop,
+               oldValue, mVec4Prop->ToString());
+         } break;
+      case VEC4F:
+         {
+            std::string oldValue    = mVec4fProp->ToString();
+            osg::Vec4f  vectorValue = mVec4fProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec4fProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec4fProp, 
-            oldValue, vec4fProp->ToString());
-      } 
-      else if (whichType == VEC4D)
-      {
-         std::string oldValue    = vec4dProp->ToString();
-         osg::Vec4d  vectorValue = vec4dProp->GetValue();
-         vectorValue[mElementIndex] = value;
-         vec4dProp->SetValue(vectorValue);
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4fProp,
+               oldValue, mVec4fProp->ToString());
+         } break;
+      case VEC4D:
+         {
+            std::string oldValue    = mVec4dProp->ToString();
+            osg::Vec4d  vectorValue = mVec4dProp->GetValue();
+            vectorValue[mElementIndex] = value;
+            mVec4dProp->SetValue(vectorValue);
 
-         // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, vec4dProp, 
-            oldValue, vec4dProp->ToString());
+            // give undo manager the ability to create undo/redo events
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4dProp,
+               oldValue, mVec4dProp->ToString());
+         } break;
       }
    }
 
@@ -646,7 +580,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicVectorElementControl::updateData(QWidget* widget)
    {
-      if (!initialized || widget == NULL)  
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -661,43 +595,55 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == mProxy) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy)
       {
-         if (whichType == VEC2 && property == vec2Prop) 
+         switch (mWhichType)
          {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC2F && property == vec2fProp) 
-         {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC2D && property == vec2dProp) 
-         {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC3 && property == vec3Prop) 
-         {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC3F && property == vec3fProp) 
-         {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC3D && property == vec3dProp) 
-         {
-            updateEditorFromModel(temporaryEditControl);
-         } 
-         else if (whichType == VEC4 && property == vec4Prop)
-         {
-            updateEditorFromModel(temporaryEditControl);
-         }
-         else if (whichType == VEC4F && property == vec4fProp)
-         {
-            updateEditorFromModel(temporaryEditControl);
-         }
-         else if (whichType == VEC4D && property == vec4dProp)
-         {
-            updateEditorFromModel(temporaryEditControl);
+         case VEC2:
+            if (property == mVec2Prop)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC2F:
+            if (property == mVec2fProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC2D:
+            if (property == mVec2dProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC3:
+            if (property == mVec3Prop)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC3F:
+            if (property == mVec3fProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC3D:
+            if (property == mVec3dProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC4:
+            if (property == mVec4Prop)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC4F:
+            if (property == mVec4fProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
+         case VEC4D:
+            if (property == mVec4dProp)
+            {
+               updateEditorFromModel(mTemporaryEditControl);
+            } break;
          }
       }
    }

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -57,15 +57,15 @@ namespace dtEditQt
 
       label = new QLabel(tr("Name:"), mapGroup);
       label->setAlignment(Qt::AlignRight);
-      this->name = new QLineEdit(mapGroup);
+      mName = new QLineEdit(mapGroup);
       gridLayout->addWidget(label, 0, 0);
-      gridLayout->addWidget(this->name, 0, 1);
+      gridLayout->addWidget(mName, 0, 1);
 
       label = new QLabel(tr("Description:"), mapGroup);
       label->setAlignment(Qt::AlignRight);
-      this->description = new QLineEdit(mapGroup);
+      mDescription = new QLineEdit(mapGroup);
       gridLayout->addWidget(label, 1, 0);
-      gridLayout->addWidget(this->description, 1, 1);
+      gridLayout->addWidget(mDescription, 1, 1);
 
       // Create the properties section...
       QGroupBox* propsGroup = new QGroupBox(tr("Properties"),this);
@@ -73,20 +73,20 @@ namespace dtEditQt
 
       label = new QLabel(tr("Author:"), propsGroup);
       label->setAlignment(Qt::AlignRight);
-      this->author = new QLineEdit(propsGroup);
+      mAuthor = new QLineEdit(propsGroup);
       gridLayout->addWidget(label, 0, 0);
-      gridLayout->addWidget(this->author, 0, 1);
+      gridLayout->addWidget(mAuthor, 0, 1);
 
       label = new QLabel(tr("Copyright:"), propsGroup);
       label->setAlignment(Qt::AlignRight);
-      this->copyright = new QLineEdit(propsGroup);
+      mCopyright = new QLineEdit(propsGroup);
       gridLayout->addWidget(label, 1, 0);
-      gridLayout->addWidget(this->copyright, 1, 1);
+      gridLayout->addWidget(mCopyright, 1, 1);
 
       label = new QLabel(tr("Comments:"),propsGroup);
-      this->comments = new QTextEdit(propsGroup);
+      mComments = new QTextEdit(propsGroup);
       gridLayout->addWidget(label, 2, 0, 1, 2);
-      gridLayout->addWidget(this->comments, 3, 0, 1, 2);
+      gridLayout->addWidget(mComments, 3, 0, 1, 2);
 
       // Create the ok and cancel buttons...
       QPushButton* okButton     = new QPushButton(tr("OK"),     this);
@@ -113,7 +113,7 @@ namespace dtEditQt
    {
       // Maps must at least have a valid name so check it before closing the
       // dialog.
-      if (this->name->text().isEmpty())
+      if (mName->text().isEmpty())
       {
          QMessageBox::critical(this,tr("Error"),
             tr("Maps must have a valid name."), tr("OK"));

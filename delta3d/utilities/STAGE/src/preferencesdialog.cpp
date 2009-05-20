@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -138,7 +138,7 @@ namespace dtEditQt
       setWindowTitle(tr("Preference Editor"));
 
       // Set the existing values
-      mSaveMins->setValue((EditorActions::GetInstance().saveMilliSeconds / 1000) / 60);
+      mSaveMins->setValue((EditorActions::GetInstance().mSaveMilliSeconds / 1000) / 60);
 
       setNewPalette();
 
@@ -198,16 +198,16 @@ namespace dtEditQt
 
       // No point in resetting the interval if it didn't change
       int milliSecs = mSaveMins->value() * 60 * 1000;
-      if (EditorActions::GetInstance().saveMilliSeconds != milliSecs)
+      if (EditorActions::GetInstance().mSaveMilliSeconds != milliSecs)
       {
-         EditorActions::GetInstance().saveMilliSeconds = milliSecs;
+         EditorActions::GetInstance().mSaveMilliSeconds = milliSecs;
          EditorActions::GetInstance().getTimer()->setInterval(milliSecs);
       }
 
       // Creation offset.
       bool success = false;
       float result = mActorOffsetDistance->text().toFloat(&success);
-      if (success) 
+      if (success)
       {
          EditorData::GetInstance().SetActorCreationOffset(result);
       }
@@ -228,8 +228,8 @@ namespace dtEditQt
 
       int r, g, b;
       selectedColor.getRgb(&r, &g, &b);
-      mColor->setText(tr("R=")  + QString::number(r) + 
-         tr(" G=") + QString::number(g) + 
+      mColor->setText(tr("R=")  + QString::number(r) +
+         tr(" G=") + QString::number(g) +
          tr(" B=") + QString::number(b));
    }
 

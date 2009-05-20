@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -32,7 +32,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtEditQt/editorevents.h>
-#include <QtGui/QColor> 
+#include <QtGui/QColor>
 #include <QtGui/QPalette>
 #include <QtGui/QWidget>
 #include <QtGui/QPainter>
@@ -44,11 +44,11 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl::DynamicAbstractControl()
-      : initialized(false)
-      , parent(NULL)
-      , model(NULL)
-      , propertyTree(NULL)
-      //, newCommitEmitter(NULL)
+      : mInitialized(false)
+      , mParent(NULL)
+      , mModel(NULL)
+      , mPropertyTree(NULL)
+      //, mNewCommitEmitter(NULL)
    {
       connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
          this, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
@@ -74,24 +74,24 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::initializeData(DynamicAbstractControl* newParent, 
+   void DynamicAbstractControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      initialized = true;
+      mInitialized = true;
 
-      parent = newParent;
-      mProxy = newProxy;
-      model  = newModel;
+      mParent = newParent;
+      mProxy  = newProxy;
+      mModel  = newModel;
 
       // Set the tooltip description on the control.
-      if (model)
+      if (mModel)
       {
-         model->setDescription(this);
+         mModel->setDescription(this);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicAbstractControl::createEditor(QWidget* parent, 
+   QWidget *DynamicAbstractControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // do nothing.  This method allows controls with no editor to not have to override it.
@@ -101,23 +101,23 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl *DynamicAbstractControl::getParent()
    {
-      return parent;
+      return mParent;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   int DynamicAbstractControl::getChildIndex(DynamicAbstractControl* child) 
+   int DynamicAbstractControl::getChildIndex(DynamicAbstractControl* child)
    {
       return 0;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   DynamicAbstractControl* DynamicAbstractControl::getChild(int index) 
+   DynamicAbstractControl* DynamicAbstractControl::getChild(int index)
    {
       return NULL;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   int DynamicAbstractControl::getChildCount() 
+   int DynamicAbstractControl::getChildCount()
    {
       return 0;
    }
@@ -135,13 +135,13 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicAbstractControl::getDescription() 
+   const QString DynamicAbstractControl::getDescription()
    {
       return QString("");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicAbstractControl::getValueAsString() 
+   const QString DynamicAbstractControl::getValueAsString()
    {
       NotifyParentOfPreUpdate();
       return QString("");
@@ -175,11 +175,11 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::setTreeView(PropertyEditorTreeView* newPropertyTree)
    {
-      propertyTree = newPropertyTree;
+      mPropertyTree = newPropertyTree;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint) 
+   void DynamicAbstractControl::handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint)
    {
    }
 

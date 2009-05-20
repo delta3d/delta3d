@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -75,7 +75,7 @@ namespace dtEditQt
       setWindowTitle(tr("Game Event Editor"));
 
       QGroupBox*   groupBox = new QGroupBox(tr("Game Events"), this);
-      QGridLayout* gridLayout = new QGridLayout(groupBox);      
+      QGridLayout* gridLayout = new QGridLayout(groupBox);
 
       mGameEventView = new QTreeWidget(groupBox);
       //mGameEventView = new QTableWidget(groupBox);
@@ -149,11 +149,11 @@ namespace dtEditQt
    {
       EventTreeItem* returnVal = NULL;
 
-      if (mGameEventView != NULL) 
+      if (mGameEventView != NULL)
       {
          QList<QTreeWidgetItem*> list = mGameEventView->selectedItems();
 
-         if (!list.isEmpty()) 
+         if (!list.isEmpty())
          {
             returnVal = dynamic_cast<EventTreeItem*>(list[0]);
          }
@@ -166,14 +166,14 @@ namespace dtEditQt
    void GameEventsDialog::EditGameEvent()
    {
       EventTreeItem* selection = GetSelectedEventTreeItem();
-      if (selection == NULL) 
+      if (selection == NULL)
       {
          return;
       }
       GameEvent* eventToEdit = selection->GetEvent();
 
       GameEventDialog editDialog(this, *eventToEdit, false);
-      if (editDialog.exec() == QDialog::Accepted) 
+      if (editDialog.exec() == QDialog::Accepted)
       {
          EditorEvents::GetInstance().emitGameEventEdited();
          Map& curMap = *EditorData::GetInstance().getCurrentMap();
@@ -189,7 +189,7 @@ namespace dtEditQt
       dtCore::RefPtr<dtDAL::GameEvent> newEvent = new dtDAL::GameEvent();
 
       GameEventDialog editDialog(this, *newEvent, true);
-      if (editDialog.exec() == QDialog::Accepted) 
+      if (editDialog.exec() == QDialog::Accepted)
       {
          //select the event just edited.
          Map& curMap = *EditorData::GetInstance().getCurrentMap();
@@ -205,7 +205,7 @@ namespace dtEditQt
       Map& curMap = *EditorData::GetInstance().getCurrentMap();
 
       EventTreeItem* selection = GetSelectedEventTreeItem();
-      if (selection == NULL) 
+      if (selection == NULL)
       {
          return;
       }
@@ -240,20 +240,20 @@ namespace dtEditQt
          if (QMessageBox::question(this, tr("Confirm deletion"),
             tr("Are you sure you want to delete this game event?"),
             tr("&Yes"), tr("&No"), QString::null, 1) == 0)
-         {            
+         {
             EditorEvents::GetInstance().emitGameEventAboutToBeRemoved();
             curMap.GetEventManager().RemoveEvent(*eventToDelete);
-            EditorEvents::GetInstance().emitGameEventRemoved();            
+            EditorEvents::GetInstance().emitGameEventRemoved();
          }
       }
       else if (QMessageBox::question(this, tr("Confirm deletion"),
          tr("Actors are referencing this game event. Would you still like to delete it?"),
-         tr("&Yes"), tr("&No"), QString::null, 1) == 0) 
+         tr("&Yes"), tr("&No"), QString::null, 1) == 0)
       {
-         for (unsigned int i = 0; i < eventPropsToClear.size(); ++i) 
+         for (unsigned int i = 0; i < eventPropsToClear.size(); ++i)
          {
             eventPropsToClear[i]->SetValue(NULL);
-         }            
+         }
 
          EditorEvents::GetInstance().emitGameEventAboutToBeRemoved();
          curMap.GetEventManager().RemoveEvent(*eventToDelete);
@@ -285,7 +285,7 @@ namespace dtEditQt
    //Populate the list box with the current events.
    //vector<QTableWidgetItem*> eventNames, eventDescs;
    //GetGameEventList(eventNames, eventDescs);
-   //void GameEventsDialog::GetGameEventList(std::vector<QTableWidgetItem*>& eventList, 
+   //void GameEventsDialog::GetGameEventList(std::vector<QTableWidgetItem*>& eventList,
    //   std::vector<QTableWidgetItem*>& eventDescs) const
    //{
    //}
@@ -323,9 +323,9 @@ namespace dtEditQt
          // loop through the new items and compare events - if same, then set selected
          EventTreeItem* item;
          int index = 0;
-         while (NULL != (item = (EventTreeItem*) mGameEventView->topLevelItem(index))) 
+         while (NULL != (item = (EventTreeItem*) mGameEventView->topLevelItem(index)))
          {
-            if (item->GetEvent() == selectedItem->GetEvent()) 
+            if (item->GetEvent() == selectedItem->GetEvent())
             {
                mGameEventView->setItemSelected(item, true);
             }

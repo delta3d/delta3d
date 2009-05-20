@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -43,8 +43,8 @@ namespace dtEditQt
 {
 
    DynamicActorControl::DynamicActorControl()
-      : myProperty(NULL)
-      , myIdProperty(NULL)
+      : mProperty(NULL)
+      , mIdProperty(NULL)
       , mTemporaryWrapper(NULL)
       , mTemporaryEditControl(NULL)
       , mTemporaryGotoButton(NULL)
@@ -62,8 +62,8 @@ namespace dtEditQt
       // We need to dynamic cast it...
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ACTOR)
       {
-         myProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
-         myIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
+         mProperty = dynamic_cast<dtDAL::ActorActorProperty*>(newProperty);
+         mIdProperty = dynamic_cast<dtDAL::ActorIDActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
       }
       else
@@ -125,16 +125,16 @@ namespace dtEditQt
                "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
             }
 
-            // Find our matching proxy with this name - "<None>" ends up as NULl cause no match 
+            // Find our matching proxy with this name - "<None>" ends up as NULl cause no match
             std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxies;
             std::string proxyClass;
-            if (myProperty)
+            if (mProperty)
             {
-               proxyClass = myProperty->GetDesiredActorClass();
+               proxyClass = mProperty->GetDesiredActorClass();
             }
-            else if (myIdProperty)
+            else if (mIdProperty)
             {
-               proxyClass = myIdProperty->GetDesiredActorClass();
+               proxyClass = mIdProperty->GetDesiredActorClass();
             }
             GetActorProxies(proxies, proxyClass);
             dtDAL::ActorProxy* proxy = NULL;
@@ -147,13 +147,13 @@ namespace dtEditQt
                }
             }
 
-            if (myProperty)
+            if (mProperty)
             {
-               myProperty->SetValue(proxy);
+               mProperty->SetValue(proxy);
             }
-            else if (myIdProperty)
+            else if (mIdProperty)
             {
-               myIdProperty->SetValue(proxy->GetId());
+               mIdProperty->SetValue(proxy->GetId());
             }
 
             dataChanged = true;
@@ -178,7 +178,7 @@ namespace dtEditQt
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -196,13 +196,13 @@ namespace dtEditQt
 
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > names;
       std::string proxyClass;
-      if (myProperty)
+      if (mProperty)
       {
-         proxyClass = myProperty->GetDesiredActorClass();
+         proxyClass = mProperty->GetDesiredActorClass();
       }
-      else if (myIdProperty)
+      else if (mIdProperty)
       {
-         proxyClass = myIdProperty->GetDesiredActorClass();
+         proxyClass = mIdProperty->GetDesiredActorClass();
       }
       GetActorProxies(names, proxyClass);
 
@@ -239,14 +239,14 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProxy* DynamicActorControl::getActorProxy()
    {
-      if (myProperty)
+      if (mProperty)
       {
-         return myProperty->GetValue();
+         return mProperty->GetValue();
       }
 
-      if (myIdProperty)
+      if (mIdProperty)
       {
-         return myIdProperty->GetActorProxy();
+         return mIdProperty->GetActorProxy();
       }
 
       return NULL;
@@ -255,12 +255,12 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtDAL::ActorProperty* DynamicActorControl::getActorProperty()
    {
-      if (myProperty)
+      if (mProperty)
       {
-         return myProperty;
+         return mProperty;
       }
 
-      return myIdProperty;
+      return mIdProperty;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -296,9 +296,9 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicActorControl::itemSelected(int index) 
+   void DynamicActorControl::itemSelected(int index)
    {
-      if (mTemporaryEditControl != NULL) 
+      if (mTemporaryEditControl != NULL)
       {
          updateModelFromEditor(mTemporaryEditControl);
       }
@@ -307,7 +307,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicActorControl::updateData(QWidget* widget)
    {
-      if (initialized || widget == NULL)
+      if (mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -324,7 +324,7 @@ namespace dtEditQt
 
       dtDAL::ActorActorProperty* changedProp = dynamic_cast<dtDAL::ActorActorProperty*>(property.get());
 
-      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == getActorProperty()) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && changedProp == getActorProperty())
       {
          updateEditorFromModel(mTemporaryEditControl);
       }
@@ -357,7 +357,7 @@ namespace dtEditQt
 
       if (!curMap.valid())
       {
-         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException, 
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapException,
          "There is no map open, there shouldn't be any controls", __FILE__, __LINE__);
       }
 

@@ -140,7 +140,7 @@ namespace dtEditQt
    protected:
 
    private:
-      dtDAL::ResourceActorProperty* myProperty;
+      dtDAL::ResourceActorProperty* mProperty;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).

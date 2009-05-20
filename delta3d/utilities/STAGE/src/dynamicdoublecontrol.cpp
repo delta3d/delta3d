@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -44,7 +44,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicDoubleControl::DynamicDoubleControl()
-      : temporaryEditControl(NULL)
+      : mTemporaryEditControl(NULL)
    {
    }
 
@@ -58,17 +58,17 @@ namespace dtEditQt
    void DynamicDoubleControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::DOUBLE) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::DOUBLE)
       {
-         myProperty = static_cast<dtDAL::DoubleActorProperty*>(newProperty);
+         mProperty = static_cast<dtDAL::DoubleActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      } 
-      else 
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -76,12 +76,12 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicDoubleControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
 
          // set the current value from our property
-         double doubleValue = myProperty->GetValue();
+         double doubleValue = mProperty->GetValue();
          editBox->setText(QString::number(doubleValue, 'f', NUM_DECIMAL_DIGITS_DOUBLE));
          editBox->selectAll();
       }
@@ -94,39 +94,39 @@ namespace dtEditQt
 
       bool dataChanged = false;
 
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
          bool   success = false;
          double result  = editBox->text().toDouble(&success);
 
          // set our value to our object
-         if (success) 
+         if (success)
          {
-            // Save the data if they are different.  Note, we also need to compare the QString value, 
+            // Save the data if they are different.  Note, we also need to compare the QString value,
             // else we get epsilon differences that cause the map to be marked dirty with no edits :(
-            QString proxyValue = QString::number(myProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS_DOUBLE);
+            QString proxyValue = QString::number(mProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS_DOUBLE);
             QString newValue = editBox->text();
-            if (result != myProperty->GetValue() && proxyValue != newValue) 
+            if (result != mProperty->GetValue() && proxyValue != newValue)
             {
                // give undo manager the ability to create undo/redo events
-               EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty,
-                  myProperty->ToString(), QString::number(result).toStdString());
+               EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+                  mProperty->ToString(), QString::number(result).toStdString());
 
-               myProperty->SetValue(result);
+               mProperty->SetValue(result);
                dataChanged = true;
             }
-         } 
-         else 
+         }
+         else
          {
             LOG_ERROR("updateData() failed to convert our value successfully");
          }
       }
 
       // notify the world (mostly the viewports) that our property changed
-      if (dataChanged) 
+      if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
 
       return dataChanged;
@@ -134,50 +134,50 @@ namespace dtEditQt
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicDoubleControl::createEditor(QWidget* parent, 
+   QWidget* DynamicDoubleControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the edit box
-      temporaryEditControl = new SubQLineEdit (parent, this);
-      QDoubleValidator* validator = new QDoubleValidator(temporaryEditControl);
+      mTemporaryEditControl = new SubQLineEdit (parent, this);
+      QDoubleValidator* validator = new QDoubleValidator(mTemporaryEditControl);
       validator->setDecimals(NUM_DECIMAL_DIGITS_DOUBLE);
-      temporaryEditControl->setValidator(validator);
+      mTemporaryEditControl->setValidator(validator);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    const QString DynamicDoubleControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
-   const QString DynamicDoubleControl::getDescription() 
+   const QString DynamicDoubleControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-         myProperty->GetDataType().GetName() + "]";
+      std::string tooltip = mProperty->GetDescription() + "  [Type: " +
+         mProperty->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
-   const QString DynamicDoubleControl::getValueAsString() 
+   const QString DynamicDoubleControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      double doubleValue = myProperty->GetValue();
+      double doubleValue = mProperty->GetValue();
       return QString::number(doubleValue, 'f', NUM_DECIMAL_DIGITS_DOUBLE);
    }
 
    bool DynamicDoubleControl::isEditable()
    {
-      return !myProperty->IsReadOnly();
+      return !mProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ namespace dtEditQt
 
    bool DynamicDoubleControl::updateData(QWidget* widget)
    {
-      if (!initialized || widget == NULL)  
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -201,9 +201,9 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == mProxy && property == myProperty) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && property == mProperty)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

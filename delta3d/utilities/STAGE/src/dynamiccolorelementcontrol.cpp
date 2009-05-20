@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -43,27 +43,27 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbaActorProperty* newColorRGBA, 
+   DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbaActorProperty* newColorRGBA,
       int whichIndex, const std::string& newLabel)
-      : label(newLabel)
-      , elementIndex(whichIndex)
-      , temporaryEditControl(NULL)
+      : mLabel(newLabel)
+      , mElementIndex(whichIndex)
+      , mTemporaryEditControl(NULL)
    {
 
-      //colorRGB = NULL;
-      colorRGBA = newColorRGBA;
-      whichType = RGBA;
+      //mColorRGB = NULL;
+      mColorRGBA = newColorRGBA;
+      mWhichType = RGBA;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbActorProperty* colorRGB, 
+   //DynamicColorElementControl::DynamicColorElementControl(dtDAL::ColorRgbActorProperty* colorRGB,
    //        int whichIndex, const std::string& newLabel)
-   //   : label(newLabel)
-   //   , elementIndex(whichIndex)
+   //   : mLabel(newLabel)
+   //   , mElementIndex(whichIndex)
    //{
-   //    colorRGB = colorRGBA;
-   //    colorRGBA = NULL;
-   //    whichType = RGB;
+   //    mColorRGB = colorRGBA;
+   //    mColorRGBA = NULL;
+   //    mWhichType = RGB;
    //}
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +116,9 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         if (whichType == RGBA)
+         if (mWhichType == RGBA)
          {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, colorRGBA);
+            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mColorRGBA);
             //} else if (whichType == RGB) {
             //    EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGB);
          }
@@ -129,52 +129,51 @@ namespace dtEditQt
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicColorElementControl::createEditor(QWidget* parent, 
+   QWidget* DynamicColorElementControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the edit box
-      temporaryEditControl = new SubQSpinBox(parent, this);
-      temporaryEditControl->setMinimum(-512);
-      temporaryEditControl->setMaximum(512);
-      //control->
+      mTemporaryEditControl = new SubQSpinBox(parent, this);
+      mTemporaryEditControl->setMinimum(-512);
+      mTemporaryEditControl->setMaximum(512);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
-      temporaryEditControl->setToolTip(getDescription());
+      updateEditorFromModel(mTemporaryEditControl);
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicColorElementControl::getDisplayName()
    {
-      return QString(tr(label.c_str()));
+      return QString(tr(mLabel.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicColorElementControl::getDescription() 
+   const QString DynamicColorElementControl::getDescription()
    {
       std::string tooltip;
 
-      if (whichType == RGBA)
+      if (mWhichType == RGBA)
       {
-         tooltip = colorRGBA->GetDescription();
+         tooltip = mColorRGBA->GetDescription();
       }// else { // == RGB
       //    tooltip = colorRGB->getDescription();
       //}
 
-      tooltip += " " + label;
+      tooltip += " " + mLabel;
       return QString(tr(tooltip.c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicColorElementControl::getValueAsString() 
+   const QString DynamicColorElementControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
       int value = getValue();
@@ -192,15 +191,15 @@ namespace dtEditQt
    {
       int result = 0;
 
-      if (whichType == RGBA)
+      if (mWhichType == RGBA)
       {
-         osg::Vec4 vectorValue = colorRGBA->GetValue();
-         double intermediate = (double) vectorValue[elementIndex];
+         osg::Vec4 vectorValue = mColorRGBA->GetValue();
+         double intermediate = (double) vectorValue[mElementIndex];
          result = DynamicColorElementControl::convertColorFloatToInt(intermediate);
       }
       //else { // == RGB
-      //    osg::Vec3 vectorValue = colorRGB->getValue();
-      //    result = vectorValue[elementIndex];
+      //    osg::Vec3 vectorValue = mColorRGB->getValue();
+      //    result = vectorValue[mElementIndex];
       //}
 
       return result;
@@ -209,22 +208,22 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicColorElementControl::setValue(int value)
    {
-      if (whichType == RGBA) 
+      if (mWhichType == RGBA)
       {
-         std::string oldValue = colorRGBA->ToString();
-         osg::Vec4 vectorValue = colorRGBA->GetValue();
+         std::string oldValue  = mColorRGBA->ToString();
+         osg::Vec4 vectorValue = mColorRGBA->GetValue();
          double intermediate = DynamicColorElementControl::convertColorIntToFloat(value);
-         vectorValue[elementIndex] = (double) intermediate;
-         colorRGBA->SetValue(vectorValue);
+         vectorValue[mElementIndex] = (double) intermediate;
+         mColorRGBA->SetValue(vectorValue);
 
          // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, colorRGBA,
-            oldValue, colorRGBA->ToString());
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mColorRGBA,
+            oldValue, mColorRGBA->ToString());
       }
       //else { // == RGB
-      //    osg::Vec3 vectorValue = colorRGB->getValue();
-      //    vectorValue[elementIndex] = value;
-      //    colorRGB->setValue(vectorValue);
+      //    osg::Vec3 vectorValue = mColorRGB->getValue();
+      //    vectorValue[mElementIndex] = value;
+      //    mColorRGB->setValue(vectorValue);
       //}
    }
 
@@ -234,7 +233,7 @@ namespace dtEditQt
 
    bool DynamicColorElementControl::updateData(QWidget* widget)
    {
-      if (!initialized || widget == NULL)  
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return false;
@@ -249,16 +248,16 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (temporaryEditControl != NULL && proxy == mProxy && property == colorRGBA) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy && property == mColorRGBA)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 
    // STATIC methods
 
    /////////////////////////////////////////////////////////////////////////////////
-   int DynamicColorElementControl::convertColorFloatToInt(float value) 
+   int DynamicColorElementControl::convertColorFloatToInt(float value)
    {
       // convert 0 to 1 to 0 to 255 with a round for display
       int result = (int) (value * 255 + 0.5);
@@ -267,7 +266,7 @@ namespace dtEditQt
 
    float DynamicColorElementControl::convertColorIntToFloat(int value)
    {
-      // convert 0 to 255 back to 0 to 1. 
+      // convert 0 to 255 back to 0 to 1.
       float result = (float) (value / 255.0);
       return result;
    }

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -59,30 +59,30 @@ namespace dtEditQt
       vbox->setSpacing(0);
       vbox->setMargin(3);
 
-      // connect 
+      // connect
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
-         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
          this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
 
-      connect(&EditorEvents::GetInstance(), 
-         SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)), 
-         this, 
+      connect(&EditorEvents::GetInstance(),
+         SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+         this,
          SLOT(onActorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
 
-      connect(&EditorEvents::GetInstance(), 
-         SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)), 
-         this, 
+      connect(&EditorEvents::GetInstance(),
+         SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+         this,
          SLOT(onActorProxyNameChanged(ActorProxyRefPtr, std::string)));
    }
 
@@ -96,10 +96,10 @@ namespace dtEditQt
    {
       QGroupBox* groupBox = new QGroupBox(tr("Global Actors"),this);
 
-      resultsTable = new ActorResultsTable(true, false, groupBox);
+      mResultsTable = new ActorResultsTable(true, false, groupBox);
 
       QVBoxLayout* vbox = new QVBoxLayout(groupBox);
-      vbox->addWidget(resultsTable, 1, 0); // take the rest of the space
+      vbox->addWidget(mResultsTable, 1, 0); // take the rest of the space
       vbox->setSpacing(2);
       vbox->setMargin(2);
 
@@ -119,13 +119,13 @@ namespace dtEditQt
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // empty out our table, just in case - Must happen BEFORE libraries are removed
-      resultsTable->clearAll();
+      mResultsTable->clearAll();
 
-      if (map != NULL) 
+      if (map != NULL)
       {
          map->FindProxies(globalProxies, "", "", "", "", dtDAL::Map::NotPlaceable);
 
-         resultsTable->addProxies(globalProxies);
+         mResultsTable->addProxies(globalProxies);
       }
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -136,7 +136,7 @@ namespace dtEditQt
    {
       if (!proxy->IsPlaceable())
       {
-         resultsTable->addProxy(proxy);
+         mResultsTable->addProxy(proxy);
       }
 
       //refreshAll();
@@ -147,20 +147,20 @@ namespace dtEditQt
    {
       if (!proxy->IsPlaceable())
       {
-         resultsTable->actorProxyAboutToBeDestroyed(proxy);
+         mResultsTable->actorProxyAboutToBeDestroyed(proxy);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ActorGlobalBrowser::onActorPropertyChanged(ActorProxyRefPtr proxy, ActorPropertyRefPtr property)
    {
-      resultsTable->HandleProxyUpdated(proxy);
+      mResultsTable->HandleProxyUpdated(proxy);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ActorGlobalBrowser::onActorProxyNameChanged(ActorProxyRefPtr proxy, std::string oldName)
    {
-      resultsTable->HandleProxyUpdated(proxy);
+      mResultsTable->HandleProxyUpdated(proxy);
    }
 
 } // namespace dtEditQt

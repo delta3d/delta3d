@@ -92,57 +92,57 @@ namespace dtEditQt
        * This returns a boolean if the current resource is in fact a resource
        * @return boolean
        */
-      bool isResource() { return this->resource; }
+      bool isResource() { return mIsResource; }
 
       /**
        * setCategoryName
        * @param QString of the current category NodeText
        */
-      void setCategoryName(const QString newCategoryName) { this->categoryName = newCategoryName; }
+      void setCategoryName(const QString newCategoryName) { mCategoryName = newCategoryName; }
 
       /**
        * getCategoryName
        * @return QString category name captured from the node
        */
-      QString getCategoryName() { return this->categoryName; }
+      QString getCategoryName() { return mCategoryName; }
 
       /**
        * setCategoryFullName
        * @param QString of the full category name including the path
        */
-      void setCategoryFullName(const QString categoryFullName) { this->categoryFullName = categoryFullName; }
+      void setCategoryFullName(const QString categoryFullName) { mCategoryFullName = categoryFullName; }
 
       /**
        * getCategoryFullName
        * @return QString of the full category name including the path
        */
-      QString getCategoryFullName() { return this->categoryFullName; }
+      QString getCategoryFullName() { return mCategoryFullName; }
 
       /**
        * setIfResource
        * @param boolean to set if this is a resource
        */
-      void setIfResource(const bool isResource) { resource = isResource; }
+      void setIsResource(const bool isResource) { mIsResource = isResource; }
 
       /**
        * setResourceDescriptor
        * @param ResourceDescriptor
        */
-      void setResourceDescriptor(dtDAL::ResourceDescriptor& myDescriptor) { myResource = myDescriptor; }
+      void setResourceDescriptor(dtDAL::ResourceDescriptor& descriptor) { mResource = descriptor; }
 
    private:
-      void setIndex(int index) { this->itemIndex = index; }
-      int getIndex() { return itemIndex; }
+      void setIndex(int index) { mItemIndex = index; }
+      int getIndex() { return mItemIndex; }
 
       // This holds the type of the currently selected resource
       // only valid resources hold a resouce type - meaning
       // we exclude categories
-      dtDAL::ResourceDescriptor myResource;
-      bool resource;
-      QString categoryFullName;
-      QString categoryName;
-      int itemIndex;
-      ResourceTreeWidget* category;
+      dtDAL::ResourceDescriptor mResource;
+      bool                      mIsResource;
+      QString                   mCategoryFullName;
+      QString                   mCategoryName;
+      int                       mItemIndex;
+      ResourceTreeWidget*       mCategory;
    };
 
 } // namespace dtEditQt

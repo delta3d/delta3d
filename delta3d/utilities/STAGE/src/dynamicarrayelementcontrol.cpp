@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -73,9 +73,9 @@ namespace dtEditQt
    void DynamicArrayElementControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ARRAY) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::ARRAY)
       {
          mProperty = static_cast<dtDAL::ArrayActorPropertyBase*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
@@ -89,14 +89,14 @@ namespace dtEditQt
             if (mPropertyControl)
             {
                mPropertyControl->initializeData(this, newModel, newProxy, propType);
-               children.push_back(mPropertyControl);
+               mChildren.push_back(mPropertyControl);
             }
          }
       }
-      else 
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -109,7 +109,7 @@ namespace dtEditQt
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -119,7 +119,7 @@ namespace dtEditQt
       grid->setMargin(0);
       grid->setSpacing(1);
 
-      // label 
+      // label
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       setBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 

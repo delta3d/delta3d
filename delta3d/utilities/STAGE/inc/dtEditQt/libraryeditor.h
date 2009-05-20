@@ -37,7 +37,6 @@
 namespace dtEditQt
 {
    class LibraryEditor : public dtQt::BaseLibraryListEditor
-
    {
       Q_OBJECT
 
@@ -65,7 +64,6 @@ namespace dtEditQt
       // private function to obtain the library names from the map
       // and convert them to QT format
       virtual void GetLibraryNames(std::vector<QListWidgetItem*>& items) const;
-
    };
 
 } // namespace dtEditQt

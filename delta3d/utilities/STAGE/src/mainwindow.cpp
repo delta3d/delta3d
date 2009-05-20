@@ -103,90 +103,90 @@ namespace dtEditQt
    {
       EditorActions& editorActions = EditorActions::GetInstance();
 
-      recentProjs = new QMenu(tr("Recent Projects"), this);
-      recentMaps  = new QMenu(tr("Recent Maps"),     this);
+      mRecentProjs = new QMenu(tr("Recent Projects"), this);
+      mRecentMaps  = new QMenu(tr("Recent Maps"),     this);
 
-      recentProjs->addAction(editorActions.actionFileRecentProject0);
+      mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
 
-      fileMenu = menuBar()->addMenu(tr("&File"));
-      fileMenu->addAction(editorActions.actionFileNewMap);
-      fileMenu->addAction(editorActions.actionFileOpenMap);
-      fileMenu->addAction(editorActions.actionFileCloseMap);
-      fileMenu->addSeparator();
-      fileMenu->addAction(editorActions.actionFileSaveMap);
-      fileMenu->addAction(editorActions.actionFileSaveMapAs);
-      fileMenu->addSeparator();
-      fileMenu->addAction(editorActions.actionFileChangeProject);
-      fileMenu->addSeparator();
-      fileMenu->addMenu(recentProjs);
-      fileMenu->addSeparator();
-      fileMenu->addAction(editorActions.actionFileEditLibraryPaths);
-      fileMenu->addSeparator();
-      fileMenu->addAction(editorActions.actionFileExit);
+      mFileMenu = menuBar()->addMenu(tr("&File"));
+      mFileMenu->addAction(editorActions.mActionFileNewMap);
+      mFileMenu->addAction(editorActions.mActionFileOpenMap);
+      mFileMenu->addAction(editorActions.mActionFileCloseMap);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileSaveMap);
+      mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileChangeProject);
+      mFileMenu->addSeparator();
+      mFileMenu->addMenu(mRecentProjs);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileEditLibraryPaths);
+      mFileMenu->addSeparator();
+      mFileMenu->addAction(editorActions.mActionFileExit);
 
-      editMenu = menuBar()->addMenu(tr("&Edit"));
-      editMenu->addAction(editorActions.actionEditUndo);
-      editMenu->addAction(editorActions.actionEditRedo);
-      editMenu->addSeparator();
-      editMenu->addAction(editorActions.actionLocalSpace);
-      editMenu->addSeparator();
-      editMenu->addAction(editorActions.actionEditDuplicateActor);
-      editMenu->addAction(editorActions.actionEditDeleteActor);
-      editMenu->addAction(editorActions.actionEditGroundClampActors);
-      editMenu->addAction(editorActions.actionEditGotoActor);
-      editMenu->addSeparator();
-      editMenu->addAction(editorActions.actionGetGotoPosition);
-      editMenu->addSeparator();
-      editMenu->addAction(editorActions.actionEditMapProperties);
-      editMenu->addAction(editorActions.actionEditMapLibraries);
-      editMenu->addAction(editorActions.actionEditMapEvents);
-      editMenu->addSeparator();
-      editMenu->addAction(editorActions.actionFileEditPreferences);
+      mEditMenu = menuBar()->addMenu(tr("&Edit"));
+      mEditMenu->addAction(editorActions.mActionEditUndo);
+      mEditMenu->addAction(editorActions.mActionEditRedo);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.actionLocalSpace);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
+      mEditMenu->addAction(editorActions.mActionEditDeleteActor);
+      mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
+      mEditMenu->addAction(editorActions.mActionEditGotoActor);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionGetGotoPosition);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionEditMapProperties);
+      mEditMenu->addAction(editorActions.mActionEditMapLibraries);
+      mEditMenu->addAction(editorActions.mActionEditMapEvents);
+      mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionFileEditPreferences);
 
-      windowMenu = menuBar()->addMenu(tr("&Window"));
-      windowMenu->addAction(editorActions.actionWindowsPropertyEditor);
-      windowMenu->addAction(editorActions.actionWindowsActorSearch);
-      windowMenu->addAction(editorActions.actionWindowsResourceBrowser);
-      windowMenu->addSeparator();
-      windowMenu->addAction(editorActions.actionWindowsResetWindows);
+      mWindowMenu = menuBar()->addMenu(tr("&Window"));
+      mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
+      mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
+      mWindowMenu->addAction(editorActions.mActionWindowsResourceBrowser);
+      mWindowMenu->addSeparator();
+      mWindowMenu->addAction(editorActions.mActionWindowsResetWindows);
 
       mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
-      helpMenu = menuBar()->addMenu(tr("&Help"));
-      helpMenu->addAction(editorActions.actionHelpAboutEditor);
-      helpMenu->addAction(editorActions.actionHelpAboutQT);
+      mHelpMenu = menuBar()->addMenu(tr("&Help"));
+      mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
+      mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setupToolbar()
    {
-      fileToolBar = new QToolBar(this);
-      fileToolBar->setObjectName("FileToolBar");
-      fileToolBar->setWindowTitle(tr("File Toolbar"));
-      fileToolBar->addAction(EditorActions::GetInstance().actionFileNewMap);
-      fileToolBar->addAction(EditorActions::GetInstance().actionFileOpenMap);
-      fileToolBar->addAction(EditorActions::GetInstance().actionFileSaveMap);
-      addToolBar(fileToolBar);
+      mFileToolBar = new QToolBar(this);
+      mFileToolBar->setObjectName("FileToolBar");
+      mFileToolBar->setWindowTitle(tr("File Toolbar"));
+      mFileToolBar->addAction(EditorActions::GetInstance().mActionFileNewMap);
+      mFileToolBar->addAction(EditorActions::GetInstance().mActionFileOpenMap);
+      mFileToolBar->addAction(EditorActions::GetInstance().mActionFileSaveMap);
+      addToolBar(mFileToolBar);
 
-      editToolBar = new QToolBar(this);
-      editToolBar->setObjectName("EditToolBar");
-      editToolBar->setWindowTitle(tr("Edit Toolbar"));
-      editToolBar->setMinimumWidth(4);
-      editToolBar->addAction(EditorActions::GetInstance().actionLocalSpace);
-      editToolBar->addSeparator();
-      editToolBar->addAction(EditorActions::GetInstance().actionEditDuplicateActor);
-      editToolBar->addAction(EditorActions::GetInstance().actionEditDeleteActor);
-      editToolBar->addAction(EditorActions::GetInstance().actionEditGotoActor);
-      editToolBar->addAction(EditorActions::GetInstance().actionEditGroundClampActors);
-      //editToolBar->addAction(EditorActions::GetInstance().actionEditTaskEditor);
-      addToolBar(editToolBar);
+      mEditToolBar = new QToolBar(this);
+      mEditToolBar->setObjectName("EditToolBar");
+      mEditToolBar->setWindowTitle(tr("Edit Toolbar"));
+      mEditToolBar->setMinimumWidth(4);
+      mEditToolBar->addAction(EditorActions::GetInstance().actionLocalSpace);
+      mEditToolBar->addSeparator();
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDuplicateActor);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDeleteActor);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditGotoActor);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionEditGroundClampActors);
+      //mEditToolBar->addAction(EditorActions::GetInstance().mActionEditTaskEditor);
+      addToolBar(mEditToolBar);
 
-      undoToolBar = new QToolBar(this);
-      undoToolBar->setObjectName("UndoToolBar");
-      undoToolBar->setWindowTitle(tr("Undo Toolbar"));
-      undoToolBar->addAction(EditorActions::GetInstance().actionEditUndo);
-      undoToolBar->addAction(EditorActions::GetInstance().actionEditRedo);
-      addToolBar(undoToolBar);
+      mUndoToolBar = new QToolBar(this);
+      mUndoToolBar->setObjectName("UndoToolBar");
+      mUndoToolBar->setWindowTitle(tr("Undo Toolbar"));
+      mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditUndo);
+      mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditRedo);
+      addToolBar(mUndoToolBar);
 
       mExternalToolsToolBar = new QToolBar(this);
       mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
@@ -208,27 +208,27 @@ namespace dtEditQt
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
       // create the main left dock window
-      propertyWindow = new PropertyEditor(this);
-      propertyWindow->setObjectName("PropertyWindow");
+      mPropertyWindow = new PropertyEditor(this);
+      mPropertyWindow->setObjectName("PropertyWindow");
 
-      actorTab = new ActorTab(this);
-      actorTab->setObjectName("ActorTab");
+      mActorTab = new ActorTab(this);
+      mActorTab->setObjectName("ActorTab");
 
-      resourceBrowser = new ResourceBrowser(this);
-      resourceBrowser->setObjectName("ResourceBrowser");
+      mResourceBrowser = new ResourceBrowser(this);
+      mResourceBrowser->setObjectName("ResourceBrowser");
 
-      propertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
-      actorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
-      resourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
+      mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
+      mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
+      mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
 
-      addDockWidget(Qt::LeftDockWidgetArea,  propertyWindow);
-      addDockWidget(Qt::LeftDockWidgetArea,  actorTab);
-      addDockWidget(Qt::RightDockWidgetArea, resourceBrowser);
+      addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
+      addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
 
       // Create the viewports, assign them to splitters, and embed the splitters
       // in the central widget of the main window.
-      mainViewportParent = setupViewports();
-      setCentralWidget(mainViewportParent);
+      mMainViewportParent = setupViewports();
+      setCentralWidget(mMainViewportParent);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -246,33 +246,33 @@ namespace dtEditQt
       mSplitters.push_back(vSplit2);
 
       //Create the actual viewport objects..
-      this->perspView = (PerspectiveViewport*)vpMgr.createViewport("Perspective View",
+      mPerspView = (PerspectiveViewport*)vpMgr.createViewport("Perspective View",
          ViewportManager::ViewportType::PERSPECTIVE);
-      this->perspView->setAutoInteractionMode(true);
+      mPerspView->setAutoInteractionMode(true);
 
-      this->topView = (OrthoViewport*)vpMgr.createViewport("Top View (XY)",
+      mTopView = (OrthoViewport*)vpMgr.createViewport("Top View (XY)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
-      this->topView->setAutoInteractionMode(true);
+      mTopView->setAutoInteractionMode(true);
 
-      this->sideView = (OrthoViewport*)vpMgr.createViewport("Side View (YZ)",
+      mSideView = (OrthoViewport*)vpMgr.createViewport("Side View (YZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
-      this->sideView->setViewType(OrthoViewport::OrthoViewType::SIDE,false);
-      this->sideView->setAutoInteractionMode(true);
+      mSideView->setViewType(OrthoViewport::OrthoViewType::SIDE,false);
+      mSideView->setAutoInteractionMode(true);
 
-      this->frontView = (OrthoViewport*)vpMgr.createViewport("Front View (XZ)",
+      mFrontView = (OrthoViewport*)vpMgr.createViewport("Front View (XZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
-      this->frontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
-      this->frontView->setAutoInteractionMode(true);
+      mFrontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
+      mFrontView->setAutoInteractionMode(true);
 
       // We now wrap each viewport in a viewport container to provide the
       // toolbar and right click menu add-ons which are needed by the editor
       // for each viewport.
       ViewportContainer* container;
 
-      container = new ViewportContainer(this->sideView,  vSplit2);
-      container = new ViewportContainer(this->perspView, vSplit2);
-      container = new ViewportContainer(this->topView,   vSplit1);
-      container = new ViewportContainer(this->frontView, vSplit1);
+      container = new ViewportContainer(mSideView,  vSplit2);
+      container = new ViewportContainer(mPerspView, vSplit2);
+      container = new ViewportContainer(mTopView,   vSplit1);
+      container = new ViewportContainer(mFrontView, vSplit1);
 
       // Returns the root of the viewport widget hierarchy.
       return hSplit;
@@ -285,59 +285,59 @@ namespace dtEditQt
       bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
       bool hasBoth       = hasProject && hasCurrentMap;
 
-      EditorActions::GetInstance().actionFileNewMap->setEnabled(hasProject);
-      EditorActions::GetInstance().actionFileOpenMap->setEnabled(hasProject);
-      EditorActions::GetInstance().actionFileCloseMap->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionFileSaveMap->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionFileSaveMapAs->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionFileExit->setEnabled(true);
+      EditorActions::GetInstance().mActionFileNewMap->setEnabled(hasProject);
+      EditorActions::GetInstance().mActionFileOpenMap->setEnabled(hasProject);
+      EditorActions::GetInstance().mActionFileCloseMap->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionFileSaveMap->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionFileSaveMapAs->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionFileExit->setEnabled(true);
 
-      EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(false);
-      EditorActions::GetInstance().actionEditDeleteActor->setEnabled(false);
-      EditorActions::GetInstance().actionEditGotoActor->setEnabled(false);
-      EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(false);
-      EditorActions::GetInstance().actionEditMapProperties->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionEditMapLibraries->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionEditTaskEditor->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
+      EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
+      EditorActions::GetInstance().mActionEditGotoActor->setEnabled(false);
+      EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(false);
+      EditorActions::GetInstance().mActionEditMapProperties->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionEditMapLibraries->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionEditTaskEditor->setEnabled(hasBoth);
 
-      EditorActions::GetInstance().actionWindowsActorSearch->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
-      EditorActions::GetInstance().actionWindowsResetWindows->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionWindowsActorSearch->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionWindowsPropertyEditor->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionWindowsResourceBrowser->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionWindowsResetWindows->setEnabled(hasBoth);
 
-      EditorActions::GetInstance().actionHelpAboutEditor->setEnabled(true);
-      EditorActions::GetInstance().actionHelpAboutQT->setEnabled(true);
+      EditorActions::GetInstance().mActionHelpAboutEditor->setEnabled(true);
+      EditorActions::GetInstance().mActionHelpAboutQT->setEnabled(true);
 
       // enable main window areas
-      propertyWindow->setEnabled(hasBoth);
-      actorTab->setEnabled(hasBoth);
-      resourceBrowser->setEnabled(hasProject);
-      mainViewportParent->setEnabled(hasBoth);
-      editMenu->setEnabled(hasBoth);
-      windowMenu->setEnabled(hasBoth);
+      mPropertyWindow->setEnabled(hasBoth);
+      mActorTab->setEnabled(hasBoth);
+      mResourceBrowser->setEnabled(hasProject);
+      mMainViewportParent->setEnabled(hasBoth);
+      mEditMenu->setEnabled(hasBoth);
+      mWindowMenu->setEnabled(hasBoth);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onResetWindows()
    {
       // If they're detached, reattach
-      propertyWindow->setFloating(false);
-      actorTab->setFloating(false);
-      resourceBrowser->setFloating(false);
+      mPropertyWindow->setFloating(false);
+      mActorTab->setFloating(false);
+      mResourceBrowser->setFloating(false);
 
       // This should always default back to visible, like the app was restarted and the .ini
       // was deleted
-      propertyWindow->setVisible(true);
-      actorTab->setVisible(true);
-      resourceBrowser->setVisible(true);
+      mPropertyWindow->setVisible(true);
+      mActorTab->setVisible(true);
+      mResourceBrowser->setVisible(true);
 
-      EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(true);
-      EditorActions::GetInstance().actionWindowsActorSearch->setChecked(true);
-      EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(true);
+      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(true);
+      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
+      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);
 
-      addDockWidget(Qt::LeftDockWidgetArea,  propertyWindow);
-      addDockWidget(Qt::LeftDockWidgetArea,  actorTab);
-      addDockWidget(Qt::RightDockWidgetArea, resourceBrowser);
+      addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
+      addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
 
       ResetSplitters();
    }
@@ -354,7 +354,7 @@ namespace dtEditQt
          // Load the custom library paths if they exist
          loadLibraryPaths();
          findAndLoadPreferences();
-         perspView->onEditorPreferencesChanged();
+         mPerspView->onEditorPreferencesChanged();
 
          if (!EditorData::GetInstance().getLoadLastProject())//FindRecentProjects().empty())
          {
@@ -421,25 +421,25 @@ namespace dtEditQt
          //findAndLoadPreferences();
 
          setUpdatesEnabled(true);
-         propertyWindow->setUpdatesEnabled(true);
-         actorTab->setUpdatesEnabled(true);
-         resourceBrowser->setUpdatesEnabled(true);
+         mPropertyWindow->setUpdatesEnabled(true);
+         mActorTab->setUpdatesEnabled(true);
+         mResourceBrowser->setUpdatesEnabled(true);
       }
       catch(const dtUtil::Exception& ex)
       {
          setUpdatesEnabled(true);
-         propertyWindow->setUpdatesEnabled(true);
-         actorTab->setUpdatesEnabled(true);
-         resourceBrowser->setUpdatesEnabled(true);
+         mPropertyWindow->setUpdatesEnabled(true);
+         mActorTab->setUpdatesEnabled(true);
+         mResourceBrowser->setUpdatesEnabled(true);
 
          throw ex;
       }
       catch(const std::exception& ex)
       {
          setUpdatesEnabled(true);
-         propertyWindow->setUpdatesEnabled(true);
-         actorTab->setUpdatesEnabled(true);
-         resourceBrowser->setUpdatesEnabled(true);
+         mPropertyWindow->setUpdatesEnabled(true);
+         mActorTab->setUpdatesEnabled(true);
+         mResourceBrowser->setUpdatesEnabled(true);
 
          throw ex;
       }
@@ -478,7 +478,7 @@ namespace dtEditQt
       settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
       settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
-      settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().saveMilliSeconds);
+      settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().mSaveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
       settings.endGroup();
 
@@ -580,7 +580,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().wasCancelled = false;
+      EditorActions::GetInstance().mWasCancelled = false;
 
       dtDAL::Map* curMap = dtEditQt::EditorData::GetInstance().getCurrentMap();
       if (curMap == NULL)
@@ -591,7 +591,7 @@ namespace dtEditQt
       }
 
       dtEditQt::EditorActions::GetInstance().slotFileExit();
-      EditorActions::GetInstance().wasCancelled ? e->ignore() : e->accept();
+      EditorActions::GetInstance().mWasCancelled ? e->ignore() : e->accept();
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -608,19 +608,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onPropertyEditorSelection()
    {
-      propertyWindow->setVisible(EditorActions::GetInstance().actionWindowsPropertyEditor->isChecked());
+      mPropertyWindow->setVisible(EditorActions::GetInstance().mActionWindowsPropertyEditor->isChecked());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorSearchSelection()
    {
-      actorTab->setVisible(EditorActions::GetInstance().actionWindowsActorSearch->isChecked());
+      mActorTab->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onResourceBrowserSelection()
    {
-      resourceBrowser->setVisible(EditorActions::GetInstance().actionWindowsResourceBrowser->isChecked());
+      mResourceBrowser->setVisible(EditorActions::GetInstance().mActionWindowsResourceBrowser->isChecked());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -660,9 +660,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setWindowMenuTabsChecked()
    {
-      EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(propertyWindow->isVisible());
-      EditorActions::GetInstance().actionWindowsActorSearch->setChecked(actorTab->isVisible());
-      EditorActions::GetInstance().actionWindowsResourceBrowser->setChecked(resourceBrowser->isVisible());
+      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(mPropertyWindow->isVisible());
+      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorTab->isVisible());
+      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(mResourceBrowser->isVisible());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -670,11 +670,11 @@ namespace dtEditQt
    {
       EditorActions& editorActions = EditorActions::GetInstance();
 
-      connect(editorActions.actionWindowsPropertyEditor, SIGNAL(triggered()),
+      connect(editorActions.mActionWindowsPropertyEditor, SIGNAL(triggered()),
          this, SLOT(onPropertyEditorSelection()));
-      connect(editorActions.actionWindowsActorSearch,    SIGNAL(triggered()),
+      connect(editorActions.mActionWindowsActorSearch,    SIGNAL(triggered()),
          this, SLOT(onActorSearchSelection()));
-      connect(editorActions.actionWindowsResourceBrowser,SIGNAL(triggered()),
+      connect(editorActions.mActionWindowsResourceBrowser,SIGNAL(triggered()),
          this, SLOT(onResourceBrowserSelection()));
       connect(&EditorEvents::GetInstance(), SIGNAL(editorInitiationEvent()),
          this, SLOT(onEditorInitiated()));
@@ -694,7 +694,7 @@ namespace dtEditQt
          this, SLOT(updateWindowTitle()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapPropertyChanged()),
          this, SLOT(onMapPropertyChanged()));
-      connect(editorActions.actionWindowsResetWindows, SIGNAL(triggered()),
+      connect(editorActions.mActionWindowsResetWindows, SIGNAL(triggered()),
          this, SLOT(onResetWindows()));
       connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyDestroyed(ActorProxyRefPtr)),
          this, SLOT(onActorProxyDestroyed(ActorProxyRefPtr)));
@@ -715,7 +715,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    PropertyEditor& MainWindow::GetPropertyEditor()
    {
-      return *propertyWindow;
+      return *mPropertyWindow;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -791,7 +791,7 @@ namespace dtEditQt
       {
          bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA).toBool();
          EditorData::GetInstance().setRigidCamera(rigidCamera);
-         perspView->onEditorPreferencesChanged();
+         mPerspView->onEditorPreferencesChanged();
       }
 
       if (settings.contains(EditorSettings::ACTOR_CREATION_OFFSET))
@@ -807,7 +807,7 @@ namespace dtEditQt
       if (settings.contains(EditorSettings::SAVE_MILLISECONDS))
       {
          int ms = settings.value(EditorSettings::SAVE_MILLISECONDS).toInt();
-         EditorActions::GetInstance().saveMilliSeconds = ms;
+         EditorActions::GetInstance().mSaveMilliSeconds = ms;
          EditorActions::GetInstance().getTimer()->setInterval(ms);
       }
 
@@ -1022,7 +1022,7 @@ namespace dtEditQt
       }
 
       mToolsMenu->addSeparator();
-      mToolsMenu->addAction(EditorActions::GetInstance().actionAddTool);
+      mToolsMenu->addAction(EditorActions::GetInstance().mActionAddTool);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

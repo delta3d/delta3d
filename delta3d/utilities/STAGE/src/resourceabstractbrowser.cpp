@@ -59,17 +59,17 @@ namespace dtEditQt
    ResourceAbstractBrowser::ResourceAbstractBrowser(dtDAL::DataType* type, QWidget* parent)
       : QWidget(parent)
    {
-      tree = new ResourceTree(parent);
-      tree->setColumnCount(1);
-      tree->header()->hide();
-      tree->setFocusPolicy(Qt::StrongFocus);
+      mTree = new ResourceTree(parent);
+      mTree->setColumnCount(1);
+      mTree->header()->hide();
+      mTree->setFocusPolicy(Qt::StrongFocus);
 
-      this->rootName = QString(type->GetDisplayName().c_str());
-      this->resourceType = type;
-      this->parent = parent;
+      mRootName = QString(type->GetDisplayName().c_str());
+      mResourceType = type;
+      mParent = parent;
 
       // create an event filter so we can grab tree key events
-      tree->installEventFilter(this);
+      mTree->installEventFilter(this);
 
       // setup right mouse click context menu
       createActions();
@@ -80,7 +80,7 @@ namespace dtEditQt
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(onProjectChanged()));
 
-      connect(tree, SIGNAL(doubleClicked(const QModelIndex)), this, SLOT(doubleClickEvent()));
+      connect(mTree, SIGNAL(doubleClicked(const QModelIndex)), this, SLOT(doubleClickEvent()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -92,44 +92,44 @@ namespace dtEditQt
          // grab an instance of our project
          dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-         project.GetResourcesOfType(type, iterTree);
+         project.GetResourcesOfType(type, mIterTree);
 
          QIcon icon;
          icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
          icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),      QIcon::Normal, QIcon::Off);
 
          // construct our tree
-         root = new ResourceTreeWidget(tree);
-         root->setText(0, rootName);
-         root->recursivelyCreateResourceTree(iterTree, resourceIcon);
-         root->setIfResource(false);
-         root->setIcon(0, icon);
+         mRoot = new ResourceTreeWidget(mTree);
+         mRoot->setText(0, mRootName);
+         mRoot->recursivelyCreateResourceTree(mIterTree, resourceIcon);
+         mRoot->setIsResource(false);
+         mRoot->setIcon(0, icon);
 
-         selection = new ResourceTreeWidget();
-         selection->setCategoryName(QString(type.GetName().c_str()));
+         mSelection = new ResourceTreeWidget();
+         mSelection->setCategoryName(QString(type.GetName().c_str()));
 
          // connect tree signals
-         connect(tree, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
+         connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
       }
    }
    ///////////////////////////////////////////////////////////////////////////////
    ResourceTreeWidget* ResourceAbstractBrowser::currentSelection()
    {
-      selection = NULL;
+      mSelection = NULL;
 
-      if (tree != NULL)
+      if (mTree != NULL)
       {
-         QList <QTreeWidgetItem*> list = tree->selectedItems();
+         QList <QTreeWidgetItem*> list = mTree->selectedItems();
 
          if (!list.isEmpty())
          {
-            selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
+            mSelection = dynamic_cast<ResourceTreeWidget*>(list[0]);
          }
-         if (selection != NULL)
+         if (mSelection != NULL)
          {
-            if (selection->isResource())
+            if (mSelection->isResource())
             {
-               setEditorDataDescriptor(selection->getResourceDescriptor());
+               setEditorDataDescriptor(mSelection->getResourceDescriptor());
             }
             else
             {
@@ -137,29 +137,30 @@ namespace dtEditQt
             }
          }
       }
-      return selection;
+      return mSelection;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::removeTreeNode()
    {
       int index;
       //dtDAL::Project& project = dtDAL::Project::GetInstance();
 
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
-         QTreeWidgetItem* parent = selection->parent();
+         QTreeWidgetItem* parent = mSelection->parent();
 
          if (parent != NULL)
          {
-            index = parent->indexOfChild(selection);
+            index = parent->indexOfChild(mSelection);
             parent->takeChild(index);
-            tree->setItemExpanded(parent, true);
+            mTree->setItemExpanded(parent, true);
          }
          else
          {
-            index = tree->indexOfTopLevelItem(selection);
-            tree->takeTopLevelItem(index);
-            tree->setItemExpanded(root, true);
+            index = mTree->indexOfTopLevelItem(mSelection);
+            mTree->takeTopLevelItem(index);
+            mTree->setItemExpanded(mRoot, true);
          }
       }
    }
@@ -170,9 +171,9 @@ namespace dtEditQt
    {
       if (!nodeText.isEmpty())
       {
-         ResourceTreeWidget* child = new ResourceTreeWidget(selection);
+         ResourceTreeWidget* child = new ResourceTreeWidget(mSelection);
          child->setText(0, nodeText);
-         child->setIfResource(resource);
+         child->setIsResource(resource);
          child->setResourceDescriptor(descriptor);
       }
    }
@@ -184,20 +185,20 @@ namespace dtEditQt
       resetEditorDataDescriptor();
 
       // clear the tree
-      tree->clear();
+      mTree->clear();
 
       // rebuild the tree
-      buildResourceTree(*resourceType, getCurrentParent(), resourceIcon);
+      buildResourceTree(*mResourceType, getCurrentParent(), mResourceIcon);
 
       // change the selection to the root to be nice
-      tree->setCurrentItem(tree->topLevelItem(0));
+      mTree->setCurrentItem(mTree->topLevelItem(0));
       selectionChanged();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    bool ResourceAbstractBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree)
+      if (obj == mTree)
       {
          // For some reason, KeyPress is getting defined by something...
          // Without this undef, it will not compile under Linux..
@@ -218,13 +219,13 @@ namespace dtEditQt
                // enterKeySelected();
                break;
             default:
-               return tree->eventFilter(obj, e);
+               return mTree->eventFilter(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return tree->eventFilter(obj, e);
+            return mTree->eventFilter(obj, e);
          }
       }
       return false;
@@ -235,9 +236,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::contextMenuEvent(QContextMenuEvent* e)
    {
-      if (tree->underMouse())
+      if (mTree->underMouse())
       {
-         contextMenu->exec(e->globalPos());
+         mContextMenu->exec(e->globalPos());
       }
       else
       {
@@ -248,11 +249,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::createContextMenu()
    {
-      contextMenu = new QMenu(this);
-      contextMenu->addAction(setRefreshAction);
-      contextMenu->addAction(setDeleteAction);
-      contextMenu->addAction(setCategoryAction);
-      contextMenu->addAction(setImportAction);
+      mContextMenu = new QMenu(this);
+      mContextMenu->addAction(mSetRefreshAction);
+      mContextMenu->addAction(mSetDeleteAction);
+      mContextMenu->addAction(mSetCategoryAction);
+      mContextMenu->addAction(mSetImportAction);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -260,24 +261,24 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::createActions()
    {
-      setRefreshAction = new QAction(tr("&Refresh"), getCurrentParent());
-      setRefreshAction->setCheckable(false);
-      connect(setRefreshAction,SIGNAL(triggered()), this, SLOT(refreshSelected()));
+      mSetRefreshAction = new QAction(tr("&Refresh"), getCurrentParent());
+      mSetRefreshAction->setCheckable(false);
+      connect(mSetRefreshAction,SIGNAL(triggered()), this, SLOT(refreshSelected()));
 
-      setDeleteAction  = new QAction(tr("&Delete"), getCurrentParent());
-      setDeleteAction->setCheckable(false);
-      connect(setDeleteAction,SIGNAL(triggered()), this, SLOT(deleteSelected()));
-      setDeleteAction->setEnabled(false);
+      mSetDeleteAction  = new QAction(tr("&Delete"), getCurrentParent());
+      mSetDeleteAction->setCheckable(false);
+      connect(mSetDeleteAction,SIGNAL(triggered()), this, SLOT(deleteSelected()));
+      mSetDeleteAction->setEnabled(false);
 
-      setCategoryAction = new QAction(tr("&Create Category"), getCurrentParent());
-      setCategoryAction->setCheckable(false);
-      connect(setCategoryAction, SIGNAL(triggered()), this, SLOT(createCategory()));
-      setCategoryAction->setEnabled(false);
+      mSetCategoryAction = new QAction(tr("&Create Category"), getCurrentParent());
+      mSetCategoryAction->setCheckable(false);
+      connect(mSetCategoryAction, SIGNAL(triggered()), this, SLOT(createCategory()));
+      mSetCategoryAction->setEnabled(false);
 
-      setImportAction = new QAction(tr("&Import Resource"), getCurrentParent());
-      setImportAction->setCheckable(false);
-      connect(setImportAction, SIGNAL(triggered()), this, SLOT(importSelected()));
-      setImportAction->setEnabled(false);
+      mSetImportAction = new QAction(tr("&Import Resource"), getCurrentParent());
+      mSetImportAction->setCheckable(false);
+      connect(mSetImportAction, SIGNAL(triggered()), this, SLOT(importSelected()));
+      mSetImportAction->setEnabled(false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -292,32 +293,32 @@ namespace dtEditQt
       // contains our  buttons
       QHBoxLayout* hbox = new QHBoxLayout();
 
-      importBtn = new QPushButton(""/*"Import"*/, group);
-      importBtn->setToolTip("Import - add a new resource to the project");
-      importBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_IMPORT.c_str()));
-      connect(importBtn, SIGNAL(clicked()), this, SLOT(importSelected()));
+      mImportBtn = new QPushButton(""/*"Import"*/, group);
+      mImportBtn->setToolTip("Import - add a new resource to the project");
+      mImportBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_IMPORT.c_str()));
+      connect(mImportBtn, SIGNAL(clicked()), this, SLOT(importSelected()));
 
-      deleteBtn = new QPushButton(""/*"Delete"*/, group);
-      deleteBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DELETE.c_str()));
-      deleteBtn->setToolTip("Delete - remove the current resource or category from the project");
-      connect(deleteBtn, SIGNAL(clicked()), this, SLOT(deleteSelected()));
-      deleteBtn->setDisabled(true);
+      mDeleteBtn = new QPushButton(""/*"Delete"*/, group);
+      mDeleteBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DELETE.c_str()));
+      mDeleteBtn->setToolTip("Delete - remove the current resource or category from the project");
+      connect(mDeleteBtn, SIGNAL(clicked()), this, SLOT(deleteSelected()));
+      mDeleteBtn->setDisabled(true);
 
-      refreshBtn = new QPushButton(""/*"Refresh"*/, group);
-      refreshBtn->setToolTip("Refresh - update the categories and resources directly from your hard drive");
-      refreshBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_REFRESH.c_str()));
-      connect(refreshBtn, SIGNAL(clicked()), this, SLOT(refreshSelected()));
+      mRefreshBtn = new QPushButton(""/*"Refresh"*/, group);
+      mRefreshBtn->setToolTip("Refresh - update the categories and resources directly from your hard drive");
+      mRefreshBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_REFRESH.c_str()));
+      connect(mRefreshBtn, SIGNAL(clicked()), this, SLOT(refreshSelected()));
 
-      categoryBtn = new QPushButton(""/*Category"*/, group);
-      categoryBtn->setToolTip("Create Category - create a new category folder in the current category");
-      categoryBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_CATEGORY.c_str()));
-      connect(categoryBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
+      mCategoryBtn = new QPushButton(""/*Category"*/, group);
+      mCategoryBtn->setToolTip("Create Category - create a new category folder in the current category");
+      mCategoryBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_CATEGORY.c_str()));
+      connect(mCategoryBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
 
       hbox->addStretch(1);
-      hbox->addWidget(importBtn,   0);
-      hbox->addWidget(deleteBtn,   0);
-      hbox->addWidget(refreshBtn,  0);
-      hbox->addWidget(categoryBtn, 0);
+      hbox->addWidget(mImportBtn,   0);
+      hbox->addWidget(mDeleteBtn,   0);
+      hbox->addWidget(mRefreshBtn,  0);
+      hbox->addWidget(mCategoryBtn, 0);
       hbox->addStretch(1);
 
       grid->addLayout(hbox, 0, 0);
@@ -373,43 +374,43 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::selectionChanged()
    {
-      ResourceTreeWidget* selection = currentSelection();
+      ResourceTreeWidget* mSelection = currentSelection();
 
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
          // checks if we have the root of the browser tree
-         if (tree->indexOfTopLevelItem(selection) == 0)
+         if (mTree->indexOfTopLevelItem(mSelection) == 0)
          {
-            deleteBtn->setDisabled(true);
-            setDeleteAction->setEnabled(false);
+            mDeleteBtn->setDisabled(true);
+            mSetDeleteAction->setEnabled(false);
          }
          else
          {
-            deleteBtn->setDisabled(false);
-            setDeleteAction->setEnabled(true);
+            mDeleteBtn->setDisabled(false);
+            mSetDeleteAction->setEnabled(true);
          }
 
          // handle turning on and off buttons and context menu items
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
-            importBtn->setDisabled(true);
-            categoryBtn->setDisabled(true);
-            setCategoryAction->setEnabled(false);
-            setImportAction->setEnabled(false);
+            mImportBtn->setDisabled(true);
+            mCategoryBtn->setDisabled(true);
+            mSetCategoryAction->setEnabled(false);
+            mSetImportAction->setEnabled(false);
          }
          else
          {
-            importBtn->setDisabled(false);
-            categoryBtn->setDisabled(false);
-            setCategoryAction->setEnabled(true);
-            setImportAction->setEnabled(true);
+            mImportBtn->setDisabled(false);
+            mCategoryBtn->setDisabled(false);
+            mSetCategoryAction->setEnabled(true);
+            mSetImportAction->setEnabled(true);
          }
       }
       else
       {
-         importBtn->setDisabled(true);
-         categoryBtn->setDisabled(true);
-         setImportAction->setEnabled(false);
+         mImportBtn->setDisabled(true);
+         mCategoryBtn->setDisabled(true);
+         mSetImportAction->setEnabled(false);
       }
    }
 
@@ -477,7 +478,7 @@ namespace dtEditQt
                // grab the full path to the category
                categoryPath = QString(selection->getCategoryFullName());
                project.RemoveResourceCategory(categoryPath.QString::toStdString(),
-                  *resourceType, true);
+                  *mResourceType, true);
             }
             // manually remove the widget item from the tree
             removeTreeNode();
@@ -492,7 +493,7 @@ namespace dtEditQt
       }
 
       // change the selection to the root to be nice
-      tree->setCurrentItem(tree->topLevelItem(0));
+      mTree->setCurrentItem(mTree->topLevelItem(0));
    }
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::refreshSelected()
@@ -513,22 +514,22 @@ namespace dtEditQt
       QString resourceName;
 
       // Setup the import dialog default parameters for this browser
-      importDialog = new ResourceImportDialog(this, *resourceType);
+      mImportDialog = new ResourceImportDialog(this, *mResourceType);
 
       // Grab the filter from the resourceTypeHandler
-      if (!fileDialogDir.isEmpty())
+      if (!mFileDialogDir.isEmpty())
       {
-         importDialog->setLastDirectory(fileDialogDir);
+         mImportDialog->setLastDirectory(mFileDialogDir);
       }
 
-      importDialog->setCategory(selection->getCategoryFullName());
-      importDialog->updateData();
+      mImportDialog->setCategory(selection->getCategoryFullName());
+      mImportDialog->updateData();
 
       try
       {
-         importDialog->exec();
+         mImportDialog->exec();
       }
-      catch(const dtUtil::Exception&)
+      catch (const dtUtil::Exception&)
       {
          return;
       }
@@ -537,12 +538,12 @@ namespace dtEditQt
       categoryPath = QString(selection->getCategoryFullName());
 
       // Importing resources
-      if (!importDialog->getResourceFileList().isEmpty())
+      if (!mImportDialog->getResourceFileList().isEmpty())
       {
-         QList<QString> files = importDialog->getResourceFileList();
-         QList<dtDAL::ResourceDescriptor> descList = importDialog->getDescriptorList();
+         QList<QString> files = mImportDialog->getResourceFileList();
+         QList<dtDAL::ResourceDescriptor> descList = mImportDialog->getDescriptorList();
 
-         std::string categoryRoot = resourceType->GetName();
+         std::string categoryRoot = mResourceType->GetName();
          QString root = QString(categoryRoot.c_str());
 
          for (int i = 0; i < files.size(); ++i)
@@ -553,7 +554,7 @@ namespace dtEditQt
 
             if (files.size() == 1)
             {
-               resourceName = importDialog->getResourceName();
+               resourceName = mImportDialog->getResourceName();
             }
             else
             {
@@ -562,19 +563,19 @@ namespace dtEditQt
             if (resourceName != "")
             {
                ResourceTreeWidget* resource = new ResourceTreeWidget(selection);
-               resource->setIfResource(true);
+               resource->setIsResource(true);
                resource->setText(0, resourceName);
                resource->setCategoryName(descList.at(i).GetDisplayName().c_str());
                resource->setCategoryFullName(descList.at(i).GetResourceIdentifier().c_str());
-               resource->setIcon(0, resourceIcon);
+               resource->setIcon(0, mResourceIcon);
                resourcePath = QString(descList.at(i).GetResourceIdentifier().c_str());
 
                // create our own resource descriptor
-               dtDAL::ResourceDescriptor* myResource = new dtDAL::ResourceDescriptor(resourceName.toStdString(),resourcePath.toStdString());
+               dtDAL::ResourceDescriptor* myResource = new dtDAL::ResourceDescriptor(resourceName.toStdString(), resourcePath.toStdString());
                resource->setResourceDescriptor(*myResource);
 
                // change the selection
-               tree->setCurrentItem(resource);
+               mTree->setCurrentItem(resource);
             }
          }
       }
@@ -582,33 +583,33 @@ namespace dtEditQt
       resetEditorDataDescriptor();
       selectionChanged();
       // Save the last directory of the dialog
-      fileDialogDir = importDialog->getLastDirectory();
+      mFileDialogDir = mImportDialog->getLastDirectory();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::resetEditorDataDescriptor()
    {
-      if (*resourceType == dtDAL::DataType::SOUND)
+      if (*mResourceType == dtDAL::DataType::SOUND)
       {
          EditorData::GetInstance().setCurrentSoundResource(dtDAL::ResourceDescriptor());
       }
-      else if (*resourceType == dtDAL::DataType::STATIC_MESH)
+      else if (*mResourceType == dtDAL::DataType::STATIC_MESH)
       {
          EditorData::GetInstance().setCurrentMeshResource(dtDAL::ResourceDescriptor());
       }
-      else if (*resourceType == dtDAL::DataType::TEXTURE)
+      else if (*mResourceType == dtDAL::DataType::TEXTURE)
       {
          EditorData::GetInstance().setCurrentTextureResource(dtDAL::ResourceDescriptor());
       }
-      else if (*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
+      else if (*mResourceType == dtDAL::DataType::PARTICLE_SYSTEM)
       {
          EditorData::GetInstance().setCurrentParticleResource(dtDAL::ResourceDescriptor());
       }
-      else if (*resourceType == dtDAL::DataType::TERRAIN)
+      else if (*mResourceType == dtDAL::DataType::TERRAIN)
       {
          EditorData::GetInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
       }
-      else if (*resourceType == dtDAL::DataType::SKELETAL_MESH)
+      else if (*mResourceType == dtDAL::DataType::SKELETAL_MESH)
       {
          EditorData::GetInstance().setCurrentSkeletalModelResource(dtDAL::ResourceDescriptor());
       }
@@ -617,27 +618,27 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceAbstractBrowser::setEditorDataDescriptor(dtDAL::ResourceDescriptor& descriptor)
    {
-      if (*resourceType == dtDAL::DataType::SOUND)
+      if (*mResourceType == dtDAL::DataType::SOUND)
       {
          EditorData::GetInstance().setCurrentSoundResource(descriptor);
       }
-      else if (*resourceType == dtDAL::DataType::STATIC_MESH)
+      else if (*mResourceType == dtDAL::DataType::STATIC_MESH)
       {
          EditorData::GetInstance().setCurrentMeshResource(descriptor);
       }
-      else if (*resourceType == dtDAL::DataType::TEXTURE)
+      else if (*mResourceType == dtDAL::DataType::TEXTURE)
       {
          EditorData::GetInstance().setCurrentTextureResource(descriptor);
       }
-      else if (*resourceType == dtDAL::DataType::PARTICLE_SYSTEM)
+      else if (*mResourceType == dtDAL::DataType::PARTICLE_SYSTEM)
       {
          EditorData::GetInstance().setCurrentParticleResource(descriptor);
       }
-      else if (*resourceType == dtDAL::DataType::TERRAIN)
+      else if (*mResourceType == dtDAL::DataType::TERRAIN)
       {
          EditorData::GetInstance().setCurrentTerrainResource(descriptor);
       }
-      else if (*resourceType == dtDAL::DataType::SKELETAL_MESH)
+      else if (*mResourceType == dtDAL::DataType::SKELETAL_MESH)
       {
          EditorData::GetInstance().setCurrentSkeletalModelResource(descriptor);
       }
@@ -663,7 +664,7 @@ namespace dtEditQt
 
       // setup the category dialog with default properties
       AddCategoryDialog* catDialog = new AddCategoryDialog(this);
-      catDialog->setType(*resourceType);
+      catDialog->setType(*mResourceType);
       catDialog->setCategoryPath(categoryPath);
       catDialog->setCreate(true);
       catDialog->exec();
@@ -673,7 +674,7 @@ namespace dtEditQt
       if (!newCategory.isEmpty())
       {
          ResourceTreeWidget* child = new ResourceTreeWidget(selection);
-         child->setIfResource(false);
+         child->setIsResource(false);
          child->setText(0, newCategory);
          child->setCategoryFullName(catDialog->getCategoryPath());
          child->setCategoryName(newCategory);

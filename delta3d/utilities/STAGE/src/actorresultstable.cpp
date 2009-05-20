@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -46,16 +46,16 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    ActorResultsTable::ActorResultsTable(bool showActions, bool showGoto, QWidget* parent)
       : QWidget(parent)
-      , showActions(showActions)
-      , showGoto(showGoto)
-      , recurseProtectSendingSelection(false)
-      , recurseProtectEmitSelectionChanged(false)
+      , mShowActions(showActions)
+      , mShowGoto(showGoto)
+      , mRecurseProtectSendingSelection(false)
+      , mRecurseProtectEmitSelectionChanged(false)
    {
       // if we have a parent box, then we will use it later.
-      parentBox = dynamic_cast<QGroupBox*>(parent);
-      if (parentBox != NULL) 
+      mParentBox = dynamic_cast<QGroupBox*>(parent);
+      if (mParentBox != NULL)
       {
-         parentBaseTitle = parentBox->title();
+         mParentBaseTitle = mParentBox->title();
       }
 
       QVBoxLayout* boxLayout = new QVBoxLayout(this);
@@ -81,49 +81,49 @@ namespace dtEditQt
       //connect(selectBtn, SIGNAL(clicked()), this, SLOT(onSelectionChanged()));
 
       // goto button
-      if (showGoto) 
+      if (showGoto)
       {
-         gotoBtn = new QPushButton(/*tr("Goto")*/"", this);
-         gotoBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_GOTO.c_str()));
-         gotoBtn->setToolTip(tr("Goto the selected actor in all viewports."));
-         connect(gotoBtn, SIGNAL(clicked()), this, SLOT(gotoPressed()));
-      } 
-      else 
+         mGotoBtn = new QPushButton(/*tr("Goto")*/"", this);
+         mGotoBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_GOTO.c_str()));
+         mGotoBtn->setToolTip(tr("Goto the selected actor in all viewports."));
+         connect(mGotoBtn, SIGNAL(clicked()), this, SLOT(gotoPressed()));
+      }
+      else
       {
-         gotoBtn = NULL;
+         mGotoBtn = NULL;
       }
 
       // duplicate button
-      dupBtn = new QPushButton(""/*tr("Duplicate")*/, this);
-      dupBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DUPLICATE.c_str()));
-      dupBtn->setToolTip(tr("Duplicate the selected actor(s)."));
-      connect(dupBtn, SIGNAL(clicked()), this, SLOT(duplicatePressed()));
+      mDupBtn = new QPushButton(""/*tr("Duplicate")*/, this);
+      mDupBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DUPLICATE.c_str()));
+      mDupBtn->setToolTip(tr("Duplicate the selected actor(s)."));
+      connect(mDupBtn, SIGNAL(clicked()), this, SLOT(duplicatePressed()));
 
       // delete button
-      deleteBtn = new QPushButton(""/*tr("Delete")*/, this);
-      deleteBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DELETE.c_str()));
-      deleteBtn->setToolTip(tr("Delete the marked actor(s)"));
-      connect(deleteBtn, SIGNAL(clicked()), this, SLOT(deletePressed()));
+      mDeleteBtn = new QPushButton(""/*tr("Delete")*/, this);
+      mDeleteBtn->setIcon(QPixmap(UIResources::LARGE_ICON_EDIT_DELETE.c_str()));
+      mDeleteBtn->setToolTip(tr("Delete the marked actor(s)"));
+      connect(mDeleteBtn, SIGNAL(clicked()), this, SLOT(deletePressed()));
 
       // build up the button layout
       QHBoxLayout* hBox = new QHBoxLayout();
       hBox->addStretch(1);
       //hBox->addWidget(selectBtn);
-      if (showGoto) 
+      if (showGoto)
       {
-         hBox->addWidget(gotoBtn);
+         hBox->addWidget(mGotoBtn);
          hBox->addSpacing(2);
       }
-      hBox->addWidget(dupBtn);
+      hBox->addWidget(mDupBtn);
       hBox->addSpacing(2);
-      hBox->addWidget(deleteBtn);
+      hBox->addWidget(mDeleteBtn);
       hBox->addStretch(1);
 
 
       // add the controls  to the main layout
       boxLayout->addWidget(mResultsTree, 1, 0);
       // only add the buttons if we're supposed to.
-      if (showActions) 
+      if (showActions)
       {
          boxLayout->addLayout(hBox);
       }
@@ -150,26 +150,26 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ActorResultsTable::updateResultsCount() 
+   void ActorResultsTable::updateResultsCount()
    {
       QString newTitle;
 
-      if (parentBox != NULL) 
+      if (mParentBox != NULL)
       {
          int count = mResultsTree->topLevelItemCount();
 
          // add the count if it's greater than 0 and account for the 's'.
-         if (count > 0) 
+         if (count > 0)
          {
-            newTitle = parentBaseTitle + " (" + QString::number(count) + " Actor" +
+            newTitle = mParentBaseTitle + " (" + QString::number(count) + " Actor" +
                ((count > 1) ? "s" : "") + ")";
-         } 
-         else 
+         }
+         else
          {
-            newTitle = parentBaseTitle;
+            newTitle = mParentBaseTitle;
          }
 
-         parentBox->setTitle(newTitle);
+         mParentBox->setTitle(newTitle);
       }
    }
 
@@ -215,17 +215,17 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::HandleProxyUpdated(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
    {
-      if (mResultsTree != NULL && proxy.valid()) 
+      if (mResultsTree != NULL && proxy.valid())
       {
          QTreeWidgetItem* item;
          int index = 0;
 
-         // Iterate through the items in our list and find a match. If we find the 
+         // Iterate through the items in our list and find a match. If we find the
          // matching proxy, then update it's 3 fields
-         while (NULL != (item = mResultsTree->topLevelItem(index))) 
+         while (NULL != (item = mResultsTree->topLevelItem(index)))
          {
             ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
-            if (proxy == treeItem->getProxy()) 
+            if (proxy == treeItem->getProxy())
             {
                QString name(proxy->GetName().c_str());
                QString type(proxy->GetActorType().GetName().c_str());
@@ -246,11 +246,11 @@ namespace dtEditQt
    {
       ActorResultsTreeItem* returnVal = NULL;
 
-      if (mResultsTree != NULL) 
+      if (mResultsTree != NULL)
       {
          QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
 
-         if (!list.isEmpty()) 
+         if (!list.isEmpty())
          {
             returnVal = dynamic_cast<ActorResultsTreeItem*>(list[0]);
          }
@@ -265,13 +265,13 @@ namespace dtEditQt
       QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
 
       // goto Button only works with one.
-      if (showGoto) 
+      if (mShowGoto)
       {
-         gotoBtn->setDisabled(list.size() != 1);
+         mGotoBtn->setDisabled(list.size() != 1);
       }
 
-      deleteBtn->setDisabled(list.size() == 0);
-      dupBtn->setDisabled(list.size()    == 0);
+      mDeleteBtn->setDisabled(list.size() == 0);
+      mDupBtn->setDisabled(list.size()    == 0);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ namespace dtEditQt
    {
       ActorResultsTreeItem* selection = getSelectedResultTreeWidget();
 
-      if (selection != NULL) 
+      if (selection != NULL)
       {
          dtCore::RefPtr<dtDAL::ActorProxy> proxyPtr = selection->getProxy();
 
@@ -310,11 +310,11 @@ namespace dtEditQt
       int index = 0;
 
       // iterate through our top level items until we have no more.
-      while (NULL != (item = mResultsTree->topLevelItem(index))) 
+      while (NULL != (item = mResultsTree->topLevelItem(index)))
       {
          ActorResultsTreeItem* treeItem = static_cast<ActorResultsTreeItem*>(item);
 
-         if (proxy == treeItem->getProxy()) 
+         if (proxy == treeItem->getProxy())
          {
             mResultsTree->takeTopLevelItem(index);
             updateResultsCount();
@@ -333,14 +333,14 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::sendSelection()
    {
-      if (!recurseProtectSendingSelection) 
+      if (!mRecurseProtectSendingSelection)
       {
          QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
          QListIterator<QTreeWidgetItem*> iter(list);
          std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxyVector;
 
          // move the objects to a vector for the message
-         while (iter.hasNext()) 
+         while (iter.hasNext())
          {
             ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
             dtCore::RefPtr<dtDAL::ActorProxy> proxyPtr = item->getProxy();
@@ -348,19 +348,19 @@ namespace dtEditQt
          }
 
          // tell the world to select these items - handle several recursive cases
-         recurseProtectSendingSelection = true;
-         if (!recurseProtectEmitSelectionChanged) 
+         mRecurseProtectSendingSelection = true;
+         if (!mRecurseProtectEmitSelectionChanged)
          {
             EditorEvents::GetInstance().emitActorsSelected(proxyVector);
          }
-         recurseProtectSendingSelection = false;
+         mRecurseProtectSendingSelection = false;
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::onSelectionChanged()
    {
-      if (!recurseProtectSendingSelection) 
+      if (!mRecurseProtectSendingSelection)
       {
          // always change the real selection whenever our list selection changes
          sendSelection();
@@ -371,7 +371,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ActorResultsTable::selectedActors(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
-      if (!recurseProtectSendingSelection) 
+      if (!mRecurseProtectSendingSelection)
       {
          // if we get a selection event, just clear our selection.  We're not going to
          // keep our selection in sync, since it's technically impossible.  Our list may
@@ -380,9 +380,9 @@ namespace dtEditQt
          // occur with no selections, so...
 
          // Also, protect from recursive issues.
-         recurseProtectEmitSelectionChanged = true;
+         mRecurseProtectEmitSelectionChanged = true;
          UnselectAllItemsManually(NULL);
-         recurseProtectEmitSelectionChanged = false;
+         mRecurseProtectEmitSelectionChanged = false;
 
          doEnableButtons();
       }
@@ -398,9 +398,9 @@ namespace dtEditQt
       // resets the current item, which causes wierd keyboard focus issues that will resend
       // a selection event sometimes or cause the selection to flicker...  it's sloppy.  So,
       // the easiest thing to do was just unselect items one at a time.
-      while (NULL != (item = mResultsTree->topLevelItem(index))) 
+      while (NULL != (item = mResultsTree->topLevelItem(index)))
       {
-         if (item != keepSelectedItem && mResultsTree->isItemSelected(item)) 
+         if (item != keepSelectedItem && mResultsTree->isItemSelected(item))
          {
             mResultsTree->setItemSelected(item, false);
          }
@@ -416,12 +416,12 @@ namespace dtEditQt
       sendSelection();
 
       // Protect from recursive issues.
-      recurseProtectEmitSelectionChanged = true;
+      mRecurseProtectEmitSelectionChanged = true;
 
       // delete the currently selected actors
       EditorActions::GetInstance().slotEditDeleteActors();
 
-      recurseProtectEmitSelectionChanged = false;
+      mRecurseProtectEmitSelectionChanged = false;
 
       updateResultsCount();
       doEnableButtons();
@@ -435,7 +435,7 @@ namespace dtEditQt
       sendSelection();
 
       // Protect from recursive issues.
-      recurseProtectEmitSelectionChanged = true;
+      mRecurseProtectEmitSelectionChanged = true;
 
       // Go ahead and unselect all items now. That prevents a wierd recursive event effect.
       UnselectAllItemsManually(NULL);
@@ -443,7 +443,7 @@ namespace dtEditQt
       // duplicate the currently selected actors
       EditorActions::GetInstance().slotEditDuplicateActors();
 
-      recurseProtectEmitSelectionChanged = false;
+      mRecurseProtectEmitSelectionChanged = false;
 
       updateResultsCount();
       doEnableButtons();
@@ -463,7 +463,7 @@ namespace dtEditQt
    ActorResultsTreeItem::ActorResultsTreeItem(QTreeWidget* parent,
       dtCore::RefPtr<dtDAL::ActorProxy> proxy)
       : QTreeWidgetItem(parent)
-      , myProxy(proxy)
+      , mProxy(proxy)
    {
    }
 
