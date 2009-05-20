@@ -74,7 +74,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       * @param[in]  func  The functor.
       */
       void SetGetMouseLineFunc(GetMouseLineFunc func);
-      
+
       /**
       * Resets the Object to screen callback function.
       */

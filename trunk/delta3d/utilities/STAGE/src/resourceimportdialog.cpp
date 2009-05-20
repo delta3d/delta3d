@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -55,7 +55,7 @@ namespace dtEditQt
       setWindowTitle(tr("Import Resources"));
       setModal(true);
 
-      resourceType = &dataType;
+      mResourceType = &dataType;
       //dtUtil::Log &mLogger = dtUtil::Log::GetInstance();
 
       // we have to call this here for correct file pathing
@@ -80,10 +80,10 @@ namespace dtEditQt
       QLabel* fileLabel       = new QLabel("File Path: ", group);
       QLabel* typeLabel       = new QLabel("Type: ",      group);
 
-      nameEdit                = new QLineEdit(group);
-      catEdit                 = new QLineEdit(group);
-      fileEdit                = new QLineEdit(group);
-      typeEdit                = new QComboBox(group);
+      mNameEdit                = new QLineEdit(group);
+      mCatEdit                 = new QLineEdit(group);
+      mFileEdit                = new QLineEdit(group);
+      mTypeEdit                = new QComboBox(group);
 
       // first column
       topGrid->addWidget(nameLabel, 0, 0);
@@ -92,80 +92,80 @@ namespace dtEditQt
       topGrid->addWidget(typeLabel, 3, 0);
 
       // second column
-      topGrid->addWidget(nameEdit, 0, 1);
-      topGrid->addWidget(catEdit,  1, 1);
-      topGrid->addWidget(fileEdit, 2, 1);
-      topGrid->addWidget(typeEdit, 3, 1);
+      topGrid->addWidget(mNameEdit, 0, 1);
+      topGrid->addWidget(mCatEdit,  1, 1);
+      topGrid->addWidget(mFileEdit, 2, 1);
+      topGrid->addWidget(mTypeEdit, 3, 1);
 
       // third column
-      fileBtn = new QPushButton("...", this);
-      topGrid->addWidget(fileBtn, 2, 2);
+      mFileBtn = new QPushButton("...", this);
+      topGrid->addWidget(mFileBtn, 2, 2);
 
-      nameEdit->setMinimumWidth(200);
-      catEdit->setMinimumWidth(200);
-      fileEdit->setMinimumWidth(200);
-      typeEdit->setMinimumWidth(200);
+      mNameEdit->setMinimumWidth(200);
+      mCatEdit->setMinimumWidth(200);
+      mFileEdit->setMinimumWidth(200);
+      mTypeEdit->setMinimumWidth(200);
 
       // create grid layout for bottom grid area
       //QGridLayout* bottomGrid = new QGridLayout();
       QHBoxLayout* hbox = new QHBoxLayout();
 
-      importBtn  = new QPushButton("Import", this);
+      mImportBtn  = new QPushButton("Import", this);
       QPushButton* cancelBtn  = new QPushButton("Cancel", this);
 
       hbox->addStretch(1);
-      hbox->addWidget(importBtn, 0, Qt::AlignCenter);
-      hbox->addWidget(cancelBtn, 0, Qt::AlignCenter);
+      hbox->addWidget(mImportBtn, 0, Qt::AlignCenter);
+      hbox->addWidget(cancelBtn,  0, Qt::AlignCenter);
       hbox->addStretch(1);
 
       // add the layouts
       vbox->addWidget(group);
       vbox->addLayout(hbox);
-      catEdit->insert(getCategory());
+      mCatEdit->insert(getCategory());
 
-      handler.clear();
+      mHandler.clear();
       dtDAL::Project& project = dtDAL::Project::GetInstance();
-      project.GetHandlersForDataType(*resourceType, handler);
+      project.GetHandlersForDataType(*mResourceType, mHandler);
 
       // populate the type edit drop down
-      if (handler.size() > 1)
+      if (mHandler.size() > 1)
       {
          // this list will be our drop down selection items
          QStringList filterList;
          filterList.clear();
 
          // enable our type list
-         typeEdit->setDisabled(false);
+         mTypeEdit->setDisabled(false);
          std::map<std::string, std::string> description;
          description.clear();
-         for (unsigned i = 0; i < handler.size(); ++i)
+         for (unsigned i = 0; i < mHandler.size(); ++i)
          {
-            filterList.append(handler.at(i)->GetTypeHandlerDescription().c_str());
+            filterList.append(mHandler.at(i)->GetTypeHandlerDescription().c_str());
          }
-         typeEdit->addItems(filterList);
+         mTypeEdit->addItems(filterList);
       }
       else
       {
          // if we only have 1 item in our list then the drop down
          // should be disabled.
-         typeEdit->addItem(QString(resourceType->GetName().c_str()));
-         typeEdit->setDisabled(true);
+         mTypeEdit->addItem(QString(mResourceType->GetName().c_str()));
+         mTypeEdit->setDisabled(true);
       }
 
-      importBtn->setDisabled(true);
-      fileEdit->setDisabled(true);
-      nameEdit->setDisabled(true);
-      catEdit->setDisabled(true);
+      mImportBtn->setDisabled(true);
+      mFileEdit->setDisabled(true);
+      mNameEdit->setDisabled(true);
+      mCatEdit->setDisabled(true);
 
-      connect(importBtn, SIGNAL(clicked()), this, SLOT(addResource()));
-      connect(cancelBtn, SIGNAL(clicked()), this, SLOT(closeImportDialog()));
-      connect(fileBtn,   SIGNAL(clicked()), this, SLOT(fileDialog()));
+      connect(mImportBtn, SIGNAL(clicked()), this, SLOT(addResource()));
+      connect(cancelBtn,  SIGNAL(clicked()), this, SLOT(closeImportDialog()));
+      connect(mFileBtn,   SIGNAL(clicked()), this, SLOT(fileDialog()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceImportDialog::updateData()
    {
-      catEdit->insert(getCategory());
+      mCatEdit->insert(getCategory());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceImportDialog::closeImportDialog()
    {
-      fileList.clear();
+      mFileList.clear();
       close();
    }
 
@@ -187,11 +187,11 @@ namespace dtEditQt
       dtDAL::Project& project = dtDAL::Project::GetInstance();
       context = QString(project.GetContext().c_str());
 
-      nameEdit->clear();
-      fileEdit->clear();
+      mNameEdit->clear();
+      mFileEdit->clear();
 
-      fileList.clear();
-      filterList.clear();
+      mFileList.clear();
+      mFilterList.clear();
 
       // check if we have a project context
       if (context.isEmpty())
@@ -204,13 +204,13 @@ namespace dtEditQt
       fd->setFileMode(QFileDialog::ExistingFiles);
 
       // handle the file filters here
-      handler.clear();
-      project.GetHandlersForDataType(*resourceType, handler);
+      mHandler.clear();
+      project.GetHandlersForDataType(*mResourceType, mHandler);
 
       std::map<std::string, std::string> filters;
       filters.clear();
 
-      for (unsigned i = 0 ; i < handler.size(); ++i)
+      for (unsigned i = 0 ; i < mHandler.size(); ++i)
       {
          // this is required to find the selected terrain group
          bool found = false;
@@ -218,16 +218,16 @@ namespace dtEditQt
          std::map<std::string, std::string>::iterator iter;
 
          // spin through the filters for the selected combobox
-         if (*resourceType == dtDAL::DataType::TERRAIN)
+         if (*mResourceType == dtDAL::DataType::TERRAIN)
          {
             // if we find our filters than the handler will be updated with the correct file filters
             // otherwise the loop will end safely when i reaches the handler size
-            while (found != true && i < handler.size())
+            while (found != true && i < mHandler.size())
             {
-               if (typeEdit->currentText() == handler.at(i)->GetTypeHandlerDescription().c_str())
+               if (mTypeEdit->currentText() == mHandler.at(i)->GetTypeHandlerDescription().c_str())
                {
                   found = true;
-                  filters = handler.at(i)->GetFileFilters();
+                  filters = mHandler.at(i)->GetFileFilters();
                }
                else
                {
@@ -237,7 +237,7 @@ namespace dtEditQt
          }
          else
          {
-            filters = handler.at(i)->GetFileFilters();
+            filters = mHandler.at(i)->GetFileFilters();
          }
 
          for (iter = filters.begin(); iter != filters.end(); ++iter)
@@ -257,7 +257,7 @@ namespace dtEditQt
 
             filter += iter->first.c_str();
             filter += ")";
-            filterList.append(filter);        
+            mFilterList.append(filter);
          }
 
          if (found == true)
@@ -266,7 +266,7 @@ namespace dtEditQt
          }
       }
 
-      fd->setFilters(filterList);
+      fd->setFilters(mFilterList);
       fd->setReadOnly(true);
 
       // put the user in the last known directory if it exists
@@ -287,51 +287,52 @@ namespace dtEditQt
          {
             // handles multiple files
             // find the context where the file(s) were selected
-            file = "";
-            file = list.at(0);
+            mFile = "";
+            mFile = list.at(0);
 
-            if (!file.isEmpty())
+            if (!mFile.isEmpty())
             {
                // insert the directory context
-               QFileInfo fi(file);
+               QFileInfo fi(mFile);
                QString actualPath = fi.path();
                actualPath = actualPath.replace("/",QString(dtUtil::FileUtils::PATH_SEPARATOR));
                actualPath = actualPath.replace("\\",QString(dtUtil::FileUtils::PATH_SEPARATOR));
-               fileEdit->insert(actualPath);
+               mFileEdit->insert(actualPath);
 
                // add the filenames to the name field
                for (int i = 0; i < list.size(); ++i)
                {
-                  file = list.at(i);
-                  QFileInfo fi(file);
+                  mFile = list.at(i);
+                  QFileInfo fi(mFile);
                   QString names = fi.fileName();
 
                   if (list.size() == 1)
                   {
-                     if (nameEdit->text().isEmpty())
+                     if (mNameEdit->text().isEmpty())
                      {
-                        nameEdit->insert(names);
-                        nameEdit->setDisabled(false);
+                        mNameEdit->insert(names);
+                        mNameEdit->setDisabled(false);
                      }
                   }
                   else
                   {
-                     nameEdit->insert(names+";");
+                     mNameEdit->insert(names + ";");
                   }
-                  fileList.append(names);
+                  mFileList.append(names);
                }
             }
          }
 
          // enable the import button
-         importBtn->setDisabled(false);
+         mImportBtn->setDisabled(false);
 
          if (list.size() > 1)
          {
-            nameEdit->setDisabled(true);
+            mNameEdit->setDisabled(true);
          }
       }
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ResourceImportDialog::addResource()
    {
@@ -342,25 +343,25 @@ namespace dtEditQt
       dtDAL::Project& project = dtDAL::Project::GetInstance();
       //dtUtil::FileUtils& fileUtil = dtUtil::FileUtils::GetInstance();
 
-      if (!fileList.isEmpty())
+      if (!mFileList.isEmpty())
       {
-         for (int i = 0;i < fileList.size(); ++i)
+         for (int i = 0;i < mFileList.size(); ++i)
          {
             // Grab the full file name
-            resourceName = fileList.at(i);
+            resourceName = mFileList.at(i);
 
             // Create the full path to the file
-            fullPath = fileEdit->text() + "/" + resourceName;
+            fullPath = mFileEdit->text() + "/" + resourceName;
             fullPath = fullPath.replace("/",  QString(dtUtil::FileUtils::PATH_SEPARATOR));
             fullPath = fullPath.replace("\\", QString(dtUtil::FileUtils::PATH_SEPARATOR));
 
             QFileInfo fi(fullPath);
 
             // check this in case our file was renamed
-            if (fileList.size() == 1)
+            if (mFileList.size() == 1)
             {
                suffix = fi.suffix();
-               resourceName = nameEdit->text();
+               resourceName = mNameEdit->text();
                QFileInfo fi(resourceName);
                resourceName = fi.baseName();
                setResourceName(resourceName + "." + suffix);
@@ -372,10 +373,10 @@ namespace dtEditQt
 
             try
             {
-               descriptorList.append(project.AddResource(resourceName.toStdString(),
-                  fullPath.toStdString(), catEdit->text().toStdString(), *this->getType()));
+               mDescriptorList.append(project.AddResource(resourceName.toStdString(),
+                  fullPath.toStdString(), mCatEdit->text().toStdString(), *getType()));
 
-               setCategoryPath(catEdit->text());
+               setCategoryPath(mCatEdit->text());
                QFileInfo pathOfDir(fullPath);
                fullPath = pathOfDir.absolutePath();
                setLastDirectory(fullPath);
@@ -386,7 +387,7 @@ namespace dtEditQt
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
                throw e;
             }
-         }            
+         }
          close();
       }
    }

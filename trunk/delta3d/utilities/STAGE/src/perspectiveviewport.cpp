@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -61,10 +61,10 @@ namespace dtEditQt
       QGLWidget* shareWith)
       : EditorViewport(ViewportManager::ViewportType::PERSPECTIVE, name, parent, shareWith)
    {
-      this->cameraMode = &CameraMode::NOTHING;
+      mCameraMode = &CameraMode::NOTHING;
 
-      this->camera = ViewportManager::GetInstance().getWorldViewCamera();
-      this->camera->setFarClipPlane(250000.0f);
+      mCamera = ViewportManager::GetInstance().getWorldViewCamera();
+      mCamera->setFarClipPlane(250000.0f);
       setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
    }
 
@@ -140,7 +140,7 @@ namespace dtEditQt
 
       if (getMoveActorWithCamera() && getEnableKeyBindings() &&
          e->modifiers() == Qt::ShiftModifier &&
-         this->cameraMode == &CameraMode::NOTHING)
+         mCameraMode == &CameraMode::NOTHING)
       {
          attachCurrentSelectionToCamera();
          saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
@@ -150,19 +150,19 @@ namespace dtEditQt
 
       if (mMouseButtons == bothButtons || mMouseButtons == Qt::MidButton)
       {
-         this->cameraMode = &CameraMode::CAMERA_TRANSLATE;
+         mCameraMode = &CameraMode::CAMERA_TRANSLATE;
       }
       else if (mMouseButton == Qt::LeftButton)
       {
-         this->cameraMode = &CameraMode::CAMERA_NAVIGATE;
+         mCameraMode = &CameraMode::CAMERA_NAVIGATE;
       }
       else if (mMouseButton == Qt::RightButton)
       {
-         this->cameraMode = &CameraMode::CAMERA_LOOK;
+         mCameraMode = &CameraMode::CAMERA_LOOK;
       }
       else
       {
-         this->cameraMode = &CameraMode::NOTHING;
+         mCameraMode = &CameraMode::NOTHING;
          return;
       }
 
@@ -176,17 +176,17 @@ namespace dtEditQt
 
       if (mMouseButton == Qt::LeftButton && mMouseButtons == Qt::RightButton)
       {
-         this->cameraMode = &CameraMode::CAMERA_LOOK;
+         mCameraMode = &CameraMode::CAMERA_LOOK;
       }
       else if (mMouseButton == Qt::RightButton && mMouseButtons == Qt::LeftButton)
       {
-         this->cameraMode = &CameraMode::CAMERA_NAVIGATE;
+         mCameraMode = &CameraMode::CAMERA_NAVIGATE;
       }
       else
       {
          setInteractionMode(Viewport::InteractionMode::NOTHING);
 
-         this->cameraMode = &CameraMode::NOTHING;
+         mCameraMode = &CameraMode::NOTHING;
          releaseMouseCursor();
          if (getMoveActorWithCamera() && getCamera() != NULL &&
             getEnableKeyBindings() && getCamera()->getNumActorAttachments() != 0)
@@ -221,12 +221,12 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::moveCamera(float dx, float dy)
    {
-      if (*this->cameraMode == CameraMode::NOTHING || getCamera() == NULL)
+      if (*mCameraMode == CameraMode::NOTHING || getCamera() == NULL)
       {
          return;
       }
 
-      if (*this->cameraMode == CameraMode::CAMERA_NAVIGATE)
+      if (*mCameraMode == CameraMode::CAMERA_NAVIGATE)
       {
          getCamera()->yaw(-dx / 10.0f);
 
@@ -236,12 +236,12 @@ namespace dtEditQt
          viewDir[2] = 0.0f;
          getCamera()->move(viewDir);
       }
-      else if (*this->cameraMode == CameraMode::CAMERA_LOOK)
+      else if (*mCameraMode == CameraMode::CAMERA_LOOK)
       {
          getCamera()->pitch(-dy / 10.0f);
          getCamera()->yaw(-dx / 10.0f);
       }
-      else if (*this->cameraMode == CameraMode::CAMERA_TRANSLATE)
+      else if (*mCameraMode == CameraMode::CAMERA_TRANSLATE)
       {
          getCamera()->move(getCamera()->getUpDir() *
             (-dy / getMouseSensitivity()));

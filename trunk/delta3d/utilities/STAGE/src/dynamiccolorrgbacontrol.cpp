@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -74,35 +74,35 @@ namespace dtEditQt
    void DynamicColorRGBAControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::RGBACOLOR)
       {
-         myProperty = static_cast<dtDAL::ColorRgbaActorProperty*>(newProperty);
+         mProperty = static_cast<dtDAL::ColorRgbaActorProperty*>(newProperty);
 
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // create R
-         rElement = new DynamicColorElementControl(myProperty, 0, "Red");
-         rElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(rElement);
+         mElementR = new DynamicColorElementControl(mProperty, 0, "Red");
+         mElementR->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementR);
          // create G
-         gElement = new DynamicColorElementControl(myProperty, 1, "Green");
-         gElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(gElement);
+         mElementG = new DynamicColorElementControl(mProperty, 1, "Green");
+         mElementG->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementG);
          // create B
-         bElement = new DynamicColorElementControl(myProperty, 2, "Blue");
-         bElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(bElement);
+         mElementB = new DynamicColorElementControl(mProperty, 2, "Blue");
+         mElementB->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementB);
          // create A
-         aElement = new DynamicColorElementControl(myProperty, 3, "Alpha");
-         aElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(aElement);
-      } 
-      else 
+         mElementA = new DynamicColorElementControl(mProperty, 3, "Alpha");
+         mElementA->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementA);
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -110,29 +110,29 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicColorRGBAControl::getDisplayName()
    {
-      return QString(tr(myProperty->GetLabel().c_str()));
+      return QString(tr(mProperty->GetLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicColorRGBAControl::getDescription() 
+   const QString DynamicColorRGBAControl::getDescription()
    {
-      std::string tooltip = myProperty->GetDescription() + "  [Type: " + 
-         myProperty->GetDataType().GetName() + "]";
+      std::string tooltip = mProperty->GetDescription() + "  [Type: " +
+         mProperty->GetDataType().GetName() + "]";
       return QString(tr(tooltip.c_str()));
    }
 
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicColorRGBAControl::getValueAsString() 
+   const QString DynamicColorRGBAControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      const osg::Vec4& vectorValue = myProperty->GetValue();
+      const osg::Vec4& vectorValue = mProperty->GetValue();
 
       QString display;
-      display.sprintf("(R=%d, G=%d, B=%d, A=%d)", 
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[0]), 
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[1]), 
-         DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]), 
+      display.sprintf("(R=%d, G=%d, B=%d, A=%d)",
+         DynamicColorElementControl::convertColorFloatToInt(vectorValue[0]),
+         DynamicColorElementControl::convertColorFloatToInt(vectorValue[1]),
+         DynamicColorElementControl::convertColorFloatToInt(vectorValue[2]),
          DynamicColorElementControl::convertColorFloatToInt(vectorValue[3]));
       return display;
    }
@@ -149,7 +149,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicColorRGBAControl::createEditor(QWidget* parent, 
+   QWidget *DynamicColorRGBAControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       QWidget* wrapper = new QWidget(parent);
@@ -157,7 +157,7 @@ namespace dtEditQt
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      if (!initialized)  
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -167,7 +167,7 @@ namespace dtEditQt
       hBox->setMargin(0);
       hBox->setSpacing(0);
 
-      // label 
+      // label
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
@@ -178,7 +178,7 @@ namespace dtEditQt
       connect(mTemporaryColorPicker, SIGNAL(clicked()), this, SLOT(colorPickerPressed()));
       mTemporaryColorPicker->setToolTip(getDescription());
 
-      // setup the horizontal layout 
+      // setup the horizontal layout
       hBox->addWidget(mTemporaryColorPicker);
       hBox->addSpacing(3);
       hBox->addWidget(mTemporaryEditOnlyTextLabel);
@@ -191,7 +191,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicColorRGBAControl::isEditable()
    {
-      return !myProperty->IsReadOnly();
+      return !mProperty->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +208,7 @@ namespace dtEditQt
       {
          mTemporaryWrapper = NULL;
          mTemporaryEditOnlyTextLabel = NULL;
-         mTemporaryColorPicker = NULL;        
+         mTemporaryColorPicker = NULL;
       }
    }
 
@@ -238,10 +238,10 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicColorRGBAControl::colorPickerPressed() 
+   void DynamicColorRGBAControl::colorPickerPressed()
    {
       // get the current value, as floats
-      osg::Vec4 vectorValue = myProperty->GetValue();
+      osg::Vec4 vectorValue = mProperty->GetValue();
 
       //clamp to ensure its in the 0..1 range for Qt to use
       for (unsigned int i = 0; i < vectorValue.num_components; ++i)
@@ -257,19 +257,19 @@ namespace dtEditQt
       QRgb rgba = QColorDialog::getRgba(startColor.rgba(), &ok, EditorData::GetInstance().getMainWindow());
 
       // if the user pressed, OK, we set the color and assume it changed
-      if (ok) 
+      if (ok)
       {
          QColor result;
          result.setRgba(rgba);
          osg::Vec4d propColor;
          result.getRgbF(&propColor[0], &propColor[1], &propColor[2], &propColor[3]);
 
-         std::string oldValue = myProperty->ToString();
-         myProperty->SetValue(propColor);
+         std::string oldValue = mProperty->ToString();
+         mProperty->SetValue(propColor);
 
          // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, myProperty,
-            oldValue, myProperty->ToString());
+         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+            oldValue, mProperty->ToString());
 
          // update our label
          if (mTemporaryEditOnlyTextLabel !=  NULL)
@@ -278,7 +278,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, myProperty);
+         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
       }
    }
 
@@ -288,7 +288,7 @@ namespace dtEditQt
    {
       DynamicAbstractControl::actorPropertyChanged(proxy, property);
 
-      if (mTemporaryEditOnlyTextLabel != NULL && proxy == mProxy && property == myProperty) 
+      if (mTemporaryEditOnlyTextLabel != NULL && proxy == mProxy && property == mProperty)
       {
          mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }

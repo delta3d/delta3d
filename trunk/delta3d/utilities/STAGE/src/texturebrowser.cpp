@@ -28,6 +28,8 @@
  */
 
 #include <prefix/dtstageprefix-src.h>
+#include <dtEditQt/texturebrowser.h>
+
 #include <QtGui/QHeaderView>
 
 #include <QtGui/QHBoxLayout>
@@ -54,7 +56,6 @@
 #include <dtEditQt/resourceimportdialog.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/texturebrowser.h>
 #include <dtEditQt/uiresources.h>
 
 #include <dtDAL/project.h>
@@ -68,7 +69,7 @@ namespace dtEditQt
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_TEXTURE_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = resourceIcon;
+      ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
       QSplitter* splitter = new QSplitter(Qt::Vertical, this);
 
@@ -76,36 +77,36 @@ namespace dtEditQt
       splitter->addWidget(listTextureGroup());
 
       // setup the grid layouts
-      grid = new QGridLayout(this);
-      grid->addWidget(splitter, 0, 0);
-      grid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
+      mGrid = new QGridLayout(this);
+      mGrid->addWidget(splitter, 0, 0);
+      mGrid->addWidget(standardButtons(QString("Resource Tools")), 1, 0, Qt::AlignCenter);
 
       // stop the buttons from stretching
-      grid->setRowStretch(1, 0);
+      mGrid->setRowStretch(1, 0);
    }
    ///////////////////////////////////////////////////////////////////////////////
    TextureBrowser::~TextureBrowser() {}
    ///////////////////////////////////////////////////////////////////////////////
    QGroupBox* TextureBrowser::listTextureGroup()
    {
-      QGroupBox* groupBox = new QGroupBox(tr("Textures"));
-      QGridLayout* grid = new QGridLayout(groupBox);
-      QHBoxLayout* hbox = new QHBoxLayout();
+      QGroupBox*   groupBox = new QGroupBox(tr("Textures"));
+      QGridLayout* grid     = new QGridLayout(groupBox);
+      QHBoxLayout* hbox     = new QHBoxLayout();
 
       // Checkbox for auto preview
-      previewChk = new QCheckBox(tr("Auto Preview"), groupBox);
-      connect(previewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
-      previewChk->setChecked(false);
+      mPreviewChk = new QCheckBox(tr("Auto Preview"), groupBox);
+      connect(mPreviewChk, SIGNAL(stateChanged(int)), this, SLOT(checkBoxSelected()));
+      mPreviewChk->setChecked(false);
 
       // Preview button for a selected mesh
-      previewBtn = new QPushButton("Preview", groupBox);
-      connect(previewBtn, SIGNAL(clicked()), this, SLOT(previewTexture()));
-      previewBtn->setDisabled(true);
+      mPreviewBtn = new QPushButton("Preview", groupBox);
+      connect(mPreviewBtn, SIGNAL(clicked()), this, SLOT(previewTexture()));
+      mPreviewBtn->setDisabled(true);
 
-      hbox->addWidget(previewChk, 0, Qt::AlignLeft);
-      hbox->addWidget(previewBtn, 0, Qt::AlignRight);
-      grid->addLayout(hbox, 0, 0);
-      grid->addWidget(tree, 1, 0);
+      hbox->addWidget(mPreviewChk, 0, Qt::AlignLeft);
+      hbox->addWidget(mPreviewBtn, 0, Qt::AlignRight);
+      grid->addLayout(hbox,        0, 0);
+      grid->addWidget(mTree,       1, 0);
 
       return groupBox;
    }
@@ -116,17 +117,17 @@ namespace dtEditQt
       QGroupBox*   group = new QGroupBox(tr("Preview"));
       QHBoxLayout* hbox  = new QHBoxLayout(group);
 
-      scrollArea = new QScrollArea(group);
+      mScrollArea = new QScrollArea(group);
 
-      pixmapWrapper = new QWidget(scrollArea);
+      mPixmapWrapper = new QWidget(mScrollArea);
 
-      preview = new QLabel(pixmapWrapper);
-      preview->setPixmap(QPixmap());
-      preview->setShown(true);
+      mPreview = new QLabel(mPixmapWrapper);
+      mPreview->setPixmap(QPixmap());
+      mPreview->setShown(true);
 
-      scrollArea->setWidget(pixmapWrapper);
+      mScrollArea->setWidget(mPixmapWrapper);
 
-      hbox->addWidget(scrollArea);
+      hbox->addWidget(mScrollArea);
 
       return group;
    }
@@ -135,7 +136,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool TextureBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree)
+      if (obj == mTree)
       {
          // For some reason, KeyPress is getting defined by something...
          // Without this undef, it will not compile under Linux..
@@ -148,25 +149,25 @@ namespace dtEditQt
             switch (keyEvent->key())
             {
             case Qt::Key_Return:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   previewTexture();
                }
                break;
             case Qt::Key_Enter:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   previewTexture();
                }
                break;
             default:
-               return tree->eventFilter(obj,e);
+               return mTree->eventFilter(obj,e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return tree->eventFilter(obj, e);
+            return mTree->eventFilter(obj, e);
          }
       }
       return false;
@@ -208,17 +209,17 @@ namespace dtEditQt
             file.replace("\\","/");
             file.replace("//","/");
 
-            scrollArea->setShown(true);
+            mScrollArea->setShown(true);
             //Load the new file.
-            delete preview;
+            delete mPreview;
             QPixmap image;
             image.load(file);
-            preview = new QLabel(pixmapWrapper);
-            preview->setPixmap(image);
-            preview->setShown(true);
+            mPreview = new QLabel(mPixmapWrapper);
+            mPreview->setPixmap(image);
+            mPreview->setShown(true);
 
-            pixmapWrapper->setMinimumSize(preview->sizeHint());
-            pixmapWrapper->setMaximumSize(preview->sizeHint());
+            mPixmapWrapper->setMinimumSize(mPreview->sizeHint());
+            mPixmapWrapper->setMaximumSize(mPreview->sizeHint());
          }
       }
    }
@@ -229,21 +230,21 @@ namespace dtEditQt
       // This is the abstract base classes original functionality
       ResourceAbstractBrowser::selectionChanged();
 
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // auto preview
-            if (previewChk->isChecked())
+            if (mPreviewChk->isChecked())
             {
                previewTexture();
             }
             //context sensitive menu items
-            previewBtn->setDisabled(false);
+            mPreviewBtn->setDisabled(false);
          }
          else
          {
-            previewBtn->setDisabled(true);
+            mPreviewBtn->setDisabled(true);
             clearTextureWidget();
          }
       }
@@ -252,9 +253,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void TextureBrowser::checkBoxSelected()
    {
-      if (previewChk->isChecked())
+      if (mPreviewChk->isChecked())
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // preview current item
             selectionChanged();
@@ -266,7 +267,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void TextureBrowser::doubleClickEvent()
    {
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          previewTexture();
       }
@@ -275,10 +276,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void TextureBrowser::deleteItemEvent()
    {
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          clearTextureWidget();
-         previewBtn->setDisabled(true);
+         mPreviewBtn->setDisabled(true);
       }
    }
 
@@ -286,9 +287,9 @@ namespace dtEditQt
    void TextureBrowser::clearTextureWidget()
    {
       // When any item is selected, clear the texture
-      delete preview;
-      preview = new QLabel(pixmapWrapper);
-      preview->setPixmap(QPixmap());
+      delete mPreview;
+      mPreview = new QLabel(mPixmapWrapper);
+      mPreview->setPixmap(QPixmap());
    }
 
 } // namespace dtEditQt

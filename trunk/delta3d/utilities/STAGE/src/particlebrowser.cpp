@@ -73,7 +73,7 @@ namespace dtEditQt
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_PARTICLE_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = resourceIcon;
+      ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
       // create a new scene for the particle viewport
       particleScene = new dtCore::Scene();
@@ -126,7 +126,7 @@ namespace dtEditQt
       hbox->addWidget(previewBtn, 0, Qt::AlignRight);
 
       grid->addLayout(hbox, 0, 0);
-      grid->addWidget(tree, 1, 0);
+      grid->addWidget(mTree, 1, 0);
 
       return groupBox;
    }
@@ -184,7 +184,7 @@ namespace dtEditQt
    void ParticleBrowser::createContextMenu()
    {
       ResourceAbstractBrowser::createContextMenu();
-      contextMenu->addAction(setCreateAction);
+      mContextMenu->addAction(setCreateAction);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -224,7 +224,7 @@ namespace dtEditQt
    {
       if (previewChk->isChecked())
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // preview current item
             selectionChanged();
@@ -242,9 +242,9 @@ namespace dtEditQt
       // Let's assume that the map could be closed
       setCreateAction->setEnabled(false);
 
-      if (selection != NULL)
+      if (mSelection != NULL)
       {
-         if (selection->isResource())
+         if (mSelection->isResource())
          {
             // auto preview
             if (previewChk->isChecked())
@@ -269,7 +269,7 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
-      if (selection->isResource())
+      if (mSelection->isResource())
       {
          LOG_INFO("User Created an Actor - Slot");
 
@@ -302,7 +302,7 @@ namespace dtEditQt
 
                if (resourceProp != NULL)
                {
-                  resourceProp->SetValue(&selection->getResourceDescriptor());
+                  resourceProp->SetValue(&mSelection->getResourceDescriptor());
                }
 
                // add the new proxy to the map

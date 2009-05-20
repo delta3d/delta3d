@@ -57,7 +57,6 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-
       /**
        * Constructor
        */
@@ -91,8 +90,8 @@ namespace dtEditQt
        * @return the property editor.
        */
       PropertyEditor& GetPropertyEditor();
-   public slots:
 
+   public slots:
       /**
        * This slot is triggered when the application is started and initialized.
        */
@@ -184,7 +183,6 @@ namespace dtEditQt
        */
       void showStatusBarMessage(const QString message, int timeout);
 
-
    protected:
       /**
        * Called when the window receives the event to close itself.
@@ -201,31 +199,31 @@ namespace dtEditQt
 
    private:
 
-      QMenu* fileMenu;
-      QMenu* editMenu;
-      QMenu* projectMenu;
-      QMenu* windowMenu;
-      QMenu* helpMenu;
-      QMenu* recentProjs;
-      QMenu* recentMaps;
+      QMenu* mFileMenu;
+      QMenu* mEditMenu;
+      QMenu* mProjectMenu;
+      QMenu* mWindowMenu;
+      QMenu* mHelpMenu;
+      QMenu* mRecentProjs;
+      QMenu* mRecentMaps;
       QMenu* mToolsMenu;
 
-      QToolBar* fileToolBar;
-      QToolBar* editToolBar;
-      QToolBar* undoToolBar;
+      QToolBar* mFileToolBar;
+      QToolBar* mEditToolBar;
+      QToolBar* mUndoToolBar;
       QToolBar* mExternalToolsToolBar;
 
-      PerspectiveViewport* perspView;
-      OrthoViewport* topView;
-      OrthoViewport* sideView;
-      OrthoViewport* frontView;
+      PerspectiveViewport* mPerspView;
+      OrthoViewport* mTopView;
+      OrthoViewport* mSideView;
+      OrthoViewport* mFrontView;
 
       // main controls
-      PropertyEditor* propertyWindow;
-      ActorTab* actorTab;
-      ResourceBrowser* resourceBrowser;
+      PropertyEditor*  mPropertyWindow;
+      ActorTab*        mActorTab;
+      ResourceBrowser* mResourceBrowser;
 
-      QWidget* mainViewportParent;
+      QWidget*          mMainViewportParent;
       QList<QSplitter*> mSplitters;
 
       /**
@@ -271,7 +269,6 @@ namespace dtEditQt
        * Reset the splitters to equally divide the screen.
        */
       void ResetSplitters();
-
 
       friend class EditorActions;
    };

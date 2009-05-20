@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -38,7 +38,7 @@ namespace dtEditQt
    /**
     * @class TabWrapper
     * @brief This class is a wrapper for the QWidget class to create a generic
-    *        tab to be added to a tab container. 
+    *        tab to be added to a tab container.
     */
    class TabWrapper : public QObject
    {
@@ -57,29 +57,29 @@ namespace dtEditQt
        * Sets the name of the tab
        * @param string name
        */
-      void setName(const QString& name) { tabName = name; }
+      void setName(const QString& name) { mTabName = name; }
 
       /**
        * Sets a widget to this object
        * @param QWidget widget
        */
-      void setWidget(QWidget* myWidget);
+      void setWidget(QWidget* widget);
 
       /**
        * Gets the name of this tab
        * @return The name of the tab.
        */
-      QString getName() { return this->tabName; }
+      const QString& getName() const { return mTabName; }
 
       /**
        * Gets the widget that was set by setWidget
        * @return QWidget
        */
-      QWidget* getWidget() { return this->myWidget; }
+      QWidget* getWidget() { return mWidget; }
 
    private:
-      QString  tabName;
-      QWidget* myWidget;
+      QString  mTabName;
+      QWidget* mWidget;
    };
 
 } // namespace dtEditQt

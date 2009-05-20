@@ -260,7 +260,7 @@ namespace dtEditQt
       EditorEvents(const EditorEvents& rhs) {}
       virtual ~EditorEvents();
 
-      static dtCore::RefPtr<EditorEvents> instance;
+      static dtCore::RefPtr<EditorEvents> sInstance;
    };
 
 } // namespace dtEditQt

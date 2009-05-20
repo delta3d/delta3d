@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -65,14 +65,14 @@ namespace dtEditQt
    {
       // Note - if you change the propertyeditor so that it adds and removes rows instead of destroying
       // the property editor, you need to work with the begin/endinsertrows methods of model.
-      if (child != NULL) 
+      if (child != NULL)
       {
-         children.push_back(child);
+         mChildren.push_back(child);
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget* DynamicGroupPropertyControl::createEditor(QWidget* parent, 
+   QWidget* DynamicGroupPropertyControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       QWidget* wrapper = new QWidget(parent);
@@ -80,7 +80,7 @@ namespace dtEditQt
       // set the background color to white so that it sort of blends in with the rest of the controls
       setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-      if (!initialized)
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
          return wrapper;
@@ -104,17 +104,17 @@ namespace dtEditQt
    void DynamicGroupPropertyControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GROUP) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::GROUP)
       {
          mGroupProperty = dynamic_cast<dtDAL::GroupActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
-      } 
-      else 
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property \"" + 
+         LOG_ERROR("Cannot create dynamic control because property \"" +
             propertyName + "\" is not the correct type.");
       }
    }
@@ -130,20 +130,20 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicGroupPropertyControl::getDescription() 
+   const QString DynamicGroupPropertyControl::getDescription()
    {
       if (mGroupProperty == NULL)
       {
          return tr("");
       }
 
-      std::string tooltip = mGroupProperty->GetDescription() + "  [Type: " + 
+      std::string tooltip = mGroupProperty->GetDescription() + "  [Type: " +
          mGroupProperty->GetDataType().GetName() + "]";
       return tr(tooltip.c_str());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicGroupPropertyControl::getValueAsString() 
+   const QString DynamicGroupPropertyControl::getValueAsString()
    {
       if (mGroupProperty == NULL)
       {
@@ -217,9 +217,9 @@ namespace dtEditQt
          if (dialog->result() == QDialog::Accepted)
          {
             dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
-            plugin->UpdateModelFromWidget(*pluginWidget, *param);      
+            plugin->UpdateModelFromWidget(*pluginWidget, *param);
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mGroupProperty, 
+            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mGroupProperty,
                mGroupProperty->ToString(), param->ToString());
             mGroupProperty->SetValue(*param);
             // notify the world (mostly the viewports) that our property changed

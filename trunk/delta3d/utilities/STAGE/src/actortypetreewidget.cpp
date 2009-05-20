@@ -48,18 +48,18 @@ namespace dtEditQt
    {
       LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
 
-      myActorType = actorType;
+      mActorType = actorType;
 
       // setup data
-      if (myActorType != NULL)
+      if (mActorType != NULL)
       {
          // This sets our actor icon
          QIcon actorIcon;
          actorIcon.addPixmap(QPixmap(UIResources::ICON_ACTOR.c_str()));
 
-         setText(0, myActorType->GetName().c_str());
-         setToolTip(0, myActorType->GetDescription().c_str());
-         setIcon(0,actorIcon);
+         setText(0,    mActorType->GetName().c_str());
+         setToolTip(0, mActorType->GetDescription().c_str());
+         setIcon(0,    actorIcon);
       }
    }
 
@@ -69,10 +69,10 @@ namespace dtEditQt
    {
       LOG_INFO("Initializing ActorTypeTreeWidget - Internal node:"  + str.toStdString());
 
-      myActorType = NULL;
+      mActorType = NULL;
 
-      categorySegment = str;
-      setText(0, categorySegment);
+      mCategorySegment = str;
+      setText(0, mCategorySegment);
 
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
@@ -87,10 +87,10 @@ namespace dtEditQt
    {
       LOG_INFO("Initializing ActorTypeTreeWidget - as a root node (QTreeWidget parent):" + str.toStdString());
 
-      myActorType = NULL;
+      mActorType = NULL;
 
-      categorySegment = str;
-      setText(0, categorySegment);
+      mCategorySegment = str;
+      setText(0, mCategorySegment);
 
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()), QIcon::Normal, QIcon::On);
@@ -102,13 +102,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<const dtDAL::ActorType> ActorTypeTreeWidget::getActorType()
    {
-      return myActorType;
+      return mActorType;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    bool ActorTypeTreeWidget::isLeafNode()
    {
-      if (myActorType == NULL)
+      if (mActorType == NULL)
       {
          return false;
       }
@@ -121,7 +121,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    const QString& ActorTypeTreeWidget::getCategorySegment()
    {
-      return categorySegment;
+      return mCategorySegment;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -129,11 +129,11 @@ namespace dtEditQt
    {
       if (isLeafNode())
       {
-         return QString(myActorType->GetName().c_str());
+         return QString(mActorType->GetName().c_str());
       }
       else
       {
-         return categorySegment;
+         return mCategorySegment;
       }
    }
 
@@ -173,8 +173,8 @@ namespace dtEditQt
             // take the category and try to find it as a child of this tree node.
             for (int i = 0; i < childCount(); ++i)
             {
-               QTreeWidgetItem*     child      = this->child(i);
-               ActorTypeTreeWidget* actorChild = dynamic_cast<ActorTypeTreeWidget*>(child);
+               QTreeWidgetItem*     childWidget = child(i);
+               ActorTypeTreeWidget* actorChild  = dynamic_cast<ActorTypeTreeWidget*>(childWidget);
                if (actorChild != NULL && subCategory == actorChild->getCategorySegment())
                {
                   result = actorChild->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorType);

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -80,7 +80,7 @@ namespace dtEditQt
             mObjectMotionModel->SetSceneNode(node);
          }
 
-         mObjectMotionModel->SetCamera(this->camera->getDeltaCamera());
+         mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
       }
    }
 
@@ -199,7 +199,7 @@ namespace dtEditQt
       }
 
       osg::Vec2 pos = convertMousePosition(e->pos());
-      
+
       // If this is our first click.
       if (getInteractionMode() == Viewport::InteractionMode::NOTHING)
       {
@@ -283,7 +283,7 @@ namespace dtEditQt
 
       // Update the object motion model mouse position.
       mObjectMotionModel->Update(pos);
-      
+
       // If we move the mouse while in select actor mode,
       // immediately jump to camera motion mode.
       if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
@@ -364,7 +364,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onEditorPreferencesChanged()
    {
-      attachActorToCamera = EditorData::GetInstance().getRigidCamera();
+      mAttachActorToCamera = EditorData::GetInstance().getRigidCamera();
 
       // sync up our local vs world space setting. Affects the actor movement/rotation widget in the viewports
       bool wasGlobal = true;
@@ -375,9 +375,13 @@ namespace dtEditQt
 
       bool useGlobalOrientation = EditorData::GetInstance().GetUseGlobalOrientationForViewportWidget();
       if (useGlobalOrientation)
+      {
          mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
+      }
       else
+      {
          mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::LOCAL_SPACE);
+      }
 
       if (wasGlobal != useGlobalOrientation)
       {

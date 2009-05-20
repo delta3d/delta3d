@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -43,22 +43,22 @@ namespace dtEditQt
 {
 
    // Singleton global variable for this class.
-   dtCore::RefPtr<EditorData> EditorData::instance;
+   dtCore::RefPtr<EditorData> EditorData::sInstance;
    ///////////////////////////////////////////////////////////////////////////////
    EditorData::EditorData()
-      : mainWindow(NULL)
+      : mMainWindow(NULL)
       , mGroupUIRegistry(new GroupUIRegistry)
-      , gridSize(16)
-      , loadLastProject(true)
-      , loadLastMap(true)
+      , mGridSize(16)
+      , mLoadLastProject(true)
+      , mLoadLastMap(true)
       , mUseGlobalOrientationForViewportWidget(false)
-      , rigidCamera(true)
+      , mRigidCamera(true)
       , mActorCreationDistance(5.0)
-      , selectionColor(Qt::red)    
+      , mSelectionColor(Qt::red)
    {
       LOG_DEBUG("Initializing Editor Data.");
 
-      LOG_DEBUG("--- Registering Static Group UI Plugins ---");      
+      LOG_DEBUG("--- Registering Static Group UI Plugins ---");
       const QObjectList& staticPluginList = QPluginLoader::staticInstances();
       for (QObjectList::const_iterator i = staticPluginList.constBegin(); i != staticPluginList.constEnd(); ++i)
       {
@@ -69,7 +69,7 @@ namespace dtEditQt
             mGroupUIRegistry->RegisterPlugin(*groupUI);
          }
       }
-      LOG_DEBUG("--- Finished Registering Static Group UI Plugins ---");      
+      LOG_DEBUG("--- Finished Registering Static Group UI Plugins ---");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -97,77 +97,77 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorData::addRecentMap(const std::string& name)
    {
-      for (std::list<std::string>::iterator i = recentMaps.begin();
-         i != recentMaps.end();
+      for (std::list<std::string>::iterator i = mRecentMaps.begin();
+         i != mRecentMaps.end();
          ++i)
       {
          if ((*i) == name)
          {
-            recentMaps.erase(i);
+            mRecentMaps.erase(i);
             break;
          }
       }
 
-      if (recentMaps.size() < 4)
+      if (mRecentMaps.size() < 4)
       {
-         recentMaps.push_front(name);
+         mRecentMaps.push_front(name);
       }
       else
       {
-         recentMaps.pop_back();
-         recentMaps.push_front(name);
+         mRecentMaps.pop_back();
+         mRecentMaps.push_front(name);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorData::addRecentProject(const std::string& name)
    {
-      for (std::list<std::string>::iterator i = recentProjects.begin();
-         i != recentProjects.end(); ++i)
+      for (std::list<std::string>::iterator i = mRecentProjects.begin();
+         i != mRecentProjects.end(); ++i)
       {
          if ((*i) == name)
          {
-            recentProjects.erase(i);
+            mRecentProjects.erase(i);
             break;
          }
       }
 
-      if (recentProjects.size() < 4)
+      if (mRecentProjects.size() < 4)
       {
-         recentProjects.push_front(name);
+         mRecentProjects.push_front(name);
       }
       else
       {
-         recentProjects.pop_back();
-         recentProjects.push_front(name);
+         mRecentProjects.pop_back();
+         mRecentProjects.push_front(name);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorData &EditorData::GetInstance()
    {
-      if (EditorData::instance.get() == NULL)
+      if (EditorData::sInstance.get() == NULL)
       {
-         EditorData::instance = new EditorData();
+         EditorData::sInstance = new EditorData();
       }
-      return *(EditorData::instance.get());
+      return *(EditorData::sInstance.get());
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setMainWindow(MainWindow* window)
    {
-      mainWindow = window;
+      mMainWindow = window;
    }
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentMap(dtDAL::Map* map)
    {
-      myMap = map;
+      mMap = map;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    dtDAL::Map* EditorData::getCurrentMap()
    {
-      return myMap.get();
+      return mMap.get();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -179,43 +179,43 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentSoundResource(dtDAL::ResourceDescriptor newResource)
    {
-      soundResource = newResource;
+      mSoundResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentMeshResource(dtDAL::ResourceDescriptor newResource)
    {
-      meshResource = newResource;
+      mMeshResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentTextureResource(dtDAL::ResourceDescriptor newResource)
    {
-      textureResource = newResource;
+      mTextureResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentParticleResource(dtDAL::ResourceDescriptor newResource)
    {
-      particleResource = newResource;
+      mParticleResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentTerrainResource(dtDAL::ResourceDescriptor newResource)
    {
-      terrainResource = newResource;
+      mTerrainResource = newResource;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setOriginalOsgLibraryPath(const std::string& path)
    {
-      osgLibraryPath = path;
+      mOsgLibraryPath = path;
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource)
    {
-      skeletalModelResource = selectedResource;
+      mSkeletalModelResource = selectedResource;
    }
 
 } // namespace dtEditQt

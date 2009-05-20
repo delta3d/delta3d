@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -72,7 +72,7 @@ namespace dtEditQt
       virtual ~TextureBrowser();
 
       /**
-       * Derived from our abstract base class. When a tree selection changes 
+       * Derived from our abstract base class. When a tree selection changes
        * this method will be called. This will handle our context sensitive buttons
        * so we know when to preview a texture
        */
@@ -117,7 +117,7 @@ namespace dtEditQt
       void doubleClickEvent();
 
       // Layout Objects
-      QGridLayout* grid;
+      QGridLayout* mGrid;
 
       /**
        * When the base class registers a delete has occured the browser
@@ -128,16 +128,16 @@ namespace dtEditQt
       void clearTextureWidget();
 
       // Required for previewing textures
-      QLabel*      preview;
-      QScrollArea* scrollArea;
-      QWidget*     pixmapWrapper;
+      QLabel*      mPreview;
+      QScrollArea* mScrollArea;
+      QWidget*     mPixmapWrapper;
 
-      QPushButton* previewIcon;
+      QPushButton* mPreviewIcon;
 
-      QCheckBox*   previewChk;
+      QCheckBox*   mPreviewChk;
 
       // Buttons
-      QPushButton* previewBtn;
+      QPushButton* mPreviewBtn;
    };
 
 } // namespace dtEditQt

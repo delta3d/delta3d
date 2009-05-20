@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -55,17 +55,17 @@ namespace dtEditQt
       std::vector<DynamicAbstractControl*>::iterator childIter;
 
       // remove all the controls from the inner layout
-      for (childIter = children.begin(); childIter != children.end(); ++childIter)
+      for (childIter = mChildren.begin(); childIter != mChildren.end(); ++childIter)
       {
-         DynamicAbstractControl* control = (*childIter);    
+         DynamicAbstractControl* control = (*childIter);
 
          if (control != NULL)
          {
             // Groups delete their children in the destructor.
-            delete control;              
+            delete control;
          }
       }
-      children.clear();
+      mChildren.clear();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ namespace dtEditQt
       bool found = false;
 
       // walk through our list to find the child.
-      for (iter = children.begin(); iter != children.end(); ++iter, ++index)
+      for (iter = mChildren.begin(); iter != mChildren.end(); ++iter, ++index)
       {
          if ((*iter) == child)
          {
@@ -99,9 +99,9 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl* DynamicAbstractParentControl::getChild(int index)
    {
-      if (children.size() > (unsigned) index)
+      if (mChildren.size() > (unsigned) index)
       {
-         return children[index];
+         return mChildren[index];
       }
       else
       {
@@ -112,7 +112,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    int DynamicAbstractParentControl::getChildCount()
    {
-      return children.size();
+      return mChildren.size();
    }
 
 } // namespace dtEditQt

@@ -154,9 +154,9 @@ namespace dtEditQt
          UndoPropertyData() {}
          virtual ~UndoPropertyData() {}
 
-         std::string propertyName;
-         std::string oldValue;
-         std::string newValue;
+         std::string mPropertyName;
+         std::string mOldValue;
+         std::string mNewValue;
       };
 
       /**
@@ -177,28 +177,28 @@ namespace dtEditQt
          ChangeEvent() {}
          virtual ~ChangeEvent() {}
 
-         ChangeEventType type;
-         std::vector< dtCore::RefPtr<UndoPropertyData> > undoPropData;
-         std::string objectId;
-         std::string actorTypeName;
-         std::string actorTypeCategory;
-         std::string oldName; // for proxy name changed events
+         ChangeEventType mType;
+         std::vector< dtCore::RefPtr<UndoPropertyData> > mUndoPropData;
+         std::string mObjectId;
+         std::string mActorTypeName;
+         std::string mActorTypeCategory;
+         std::string mOldName; // for proxy name changed events
       };
 
       // variables
-      std::stack< dtCore::RefPtr<ChangeEvent> > undoStack;
-      std::stack< dtCore::RefPtr<ChangeEvent> > redoStack;
+      std::stack< dtCore::RefPtr<ChangeEvent> > mUndoStack;
+      std::stack< dtCore::RefPtr<ChangeEvent> > mRedoStack;
       // this variable is used to avoid recursing on events to our selves
       // because undo or redo makjes changes to the data, but we don't want
       // to listen to our own events
-      bool recursePrevent;
+      bool mRecursePrevent;
 
       // the about to change is set when the about to change event is
       // sent.  If the next call to change event is NOT the same object id
       // and property, then it is discarded.  This helps to only track change
       // events that were intended to be tracked in undo. It also prevents us
       // from holding to a change event for a change that didn't actually complete
-      dtCore::RefPtr<ChangeEvent> aboutToChangeEvent;
+      dtCore::RefPtr<ChangeEvent> mAboutToChangeEvent;
 
       /**
        * Enables the redo and undo buttons based on the current state of the stacks

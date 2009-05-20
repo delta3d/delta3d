@@ -64,7 +64,7 @@ namespace dtEditQt
       // This sets our resource icon that is visible on leaf nodes
       QIcon resourceIcon;
       resourceIcon.addPixmap(QPixmap(UIResources::ICON_TERRAIN_RESOURCE.c_str()));
-      ResourceAbstractBrowser::resourceIcon = resourceIcon;
+      ResourceAbstractBrowser::mResourceIcon = resourceIcon;
 
       // setup right mouse click context menu
       createActions();
@@ -87,7 +87,7 @@ namespace dtEditQt
       QGroupBox* group = new QGroupBox(this);
       QGridLayout* grid = new QGridLayout(group);
 
-      grid->addWidget(tree, 0, 0);
+      grid->addWidget(mTree, 0, 0);
 
       return group;
    }
@@ -97,7 +97,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool TerrainBrowser::eventFilter(QObject* obj, QEvent* e)
    {
-      if (obj == tree)
+      if (obj == mTree)
       {
          // For some reason, KeyPress is getting defined by something...
          // Without this undef, it will not compile under Linux..
@@ -110,25 +110,25 @@ namespace dtEditQt
             switch (keyEvent->key())
             {
             case Qt::Key_Return:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   selectionChanged();
                }
                break;
             case Qt::Key_Enter:
-               if (selection->isResource())
+               if (mSelection->isResource())
                {
                   selectionChanged();
                }
                break;
             default:
-               return tree->eventFilter(obj, e);
+               return mTree->eventFilter(obj, e);
             }
          }
          else
          {
             // pass the event on to the parent class
-            return tree->eventFilter(obj, e);
+            return mTree->eventFilter(obj, e);
          }
       }
       return false;

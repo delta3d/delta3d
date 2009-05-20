@@ -131,14 +131,14 @@ namespace dtEditQt
       QGroupBox* listSoundGroup();
 
       // Button Objects
-      QPushButton* playBtn;
-      QPushButton* stopBtn;
+      QPushButton* mPlayBtn;
+      QPushButton* mStopBtn;
 
       ALuint mSoundBuffers[1];
       ALuint mSoundSources[1];
 
       // Layout Objects
-      QGridLayout* grid;
+      QGridLayout* mGrid;
    };
 
 } // namespace dtEditQt

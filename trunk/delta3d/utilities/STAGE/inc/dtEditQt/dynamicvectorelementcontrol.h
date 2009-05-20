@@ -204,9 +204,9 @@ namespace dtEditQt
       {
          // we have to check - sometimes the destructor won't get called before the
          // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-         if (widget != NULL && widget == temporaryEditControl)
+         if (widget != NULL && widget == mTemporaryEditControl)
          {
-            temporaryEditControl = NULL;
+            mTemporaryEditControl = NULL;
          }
       }
 
@@ -224,29 +224,29 @@ namespace dtEditQt
          VEC4,
          VEC4F,
          VEC4D
-      } whichType;
+      } mWhichType;
 
-      bool isVecFloat;
+      bool mIsVecFloat;
       // the tool tip type label indicates that the vector is a float or a double
-      std::string toolTipTypeLabel;
-      std::string label;
+      std::string mToolTipTypeLabel;
+      std::string mLabel;
 
-      dtDAL::Vec2ActorProperty*  vec2Prop;
-      dtDAL::Vec3ActorProperty*  vec3Prop;
-      dtDAL::Vec4ActorProperty*  vec4Prop;
-      dtDAL::Vec2fActorProperty* vec2fProp;
-      dtDAL::Vec3fActorProperty* vec3fProp;
-      dtDAL::Vec4fActorProperty* vec4fProp;
-      dtDAL::Vec2dActorProperty* vec2dProp;
-      dtDAL::Vec3dActorProperty* vec3dProp;
-      dtDAL::Vec4dActorProperty* vec4dProp;
+      dtDAL::Vec2ActorProperty*  mVec2Prop;
+      dtDAL::Vec3ActorProperty*  mVec3Prop;
+      dtDAL::Vec4ActorProperty*  mVec4Prop;
+      dtDAL::Vec2fActorProperty* mVec2fProp;
+      dtDAL::Vec3fActorProperty* mVec3fProp;
+      dtDAL::Vec4fActorProperty* mVec4fProp;
+      dtDAL::Vec2dActorProperty* mVec2dProp;
+      dtDAL::Vec3dActorProperty* mVec3dProp;
+      dtDAL::Vec4dActorProperty* mVec4dProp;
       int mElementIndex;
 
       // This pointer is not really in our control.  It is constructed in the createEditor()
       // method and destroyed whenever QT feels like it (mostly when the control looses focus).
       // We work around this by trapping the destruction of this object, it should
       // call our handleSubEditDestroy() method so we know to not hold this anymore
-      SubQLineEdit* temporaryEditControl;
+      SubQLineEdit* mTemporaryEditControl;
    };
 
 } // namespace dtEditQt

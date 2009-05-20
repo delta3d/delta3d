@@ -49,8 +49,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    ActorBrowser::ActorBrowser(QWidget* parent)
       : QWidget(parent)
-      , rootActorType(NULL)
-      , rootNodeWasExpanded(false)
+      , mRootActorType(NULL)
+      , mRootNodeWasExpanded(false)
    {
       setupGUI();
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
@@ -81,18 +81,18 @@ namespace dtEditQt
       //vBox->setMargin(3);
 
       // create root
-      tree = new QTreeWidget(groupBox);
-      tree->setColumnCount(1);
-      connect(tree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
-      tree->header()->hide();
-      vBox->addWidget(tree);
+      mTree = new QTreeWidget(groupBox);
+      mTree->setColumnCount(1);
+      connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
+      mTree->header()->hide();
+      vBox->addWidget(mTree);
 
-      createActorBtn = new QPushButton(tr("Create Actor"), this);
-      connect(createActorBtn, SIGNAL(clicked()), this, SLOT(createActorPressed()));
+      mCreateActorBtn = new QPushButton(tr("Create Actor"), this);
+      connect(mCreateActorBtn, SIGNAL(clicked()), this, SLOT(createActorPressed()));
 
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
-      btnLayout->addWidget(createActorBtn);
+      btnLayout->addWidget(mCreateActorBtn);
       btnLayout->addStretch(1);
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -111,9 +111,9 @@ namespace dtEditQt
       // can scroll back to it as best as we can later
       markCurrentExpansion();
 
-      rootActorType = NULL;
-      tree->clear();
-      actorTypes.clear();
+      mRootActorType = NULL;
+      mTree->clear();
+      mActorTypes.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -124,24 +124,24 @@ namespace dtEditQt
       // resets everything and marks the current expansion
       clearActorTypesTree();
 
-      dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
+      dtDAL::LibraryManager::GetInstance().GetActorTypes(mActorTypes);
 
       // recreate our root.
-      rootActorType = new ActorTypeTreeWidget(tree, tr("Actor Types"));
+      mRootActorType = new ActorTypeTreeWidget(mTree, tr("Actor Types"));
 
       // iterate through the actor types and create all the internal nodes.
-      for (unsigned int i = 0; i < actorTypes.size(); ++i)
+      for (unsigned int i = 0; i < mActorTypes.size(); ++i)
       {
-         if (actorTypes[i] != NULL)
+         if (mActorTypes[i] != NULL)
          {
-            QString fullCategory(tr(actorTypes[i]->GetCategory().c_str()));
+            QString fullCategory(tr(mActorTypes[i]->GetCategory().c_str()));
 
             if (!fullCategory.isNull())
             {
                QStringList subCategories = fullCategory.split(tr(ActorTypeTreeWidget::CATEGORY_SEPARATOR.c_str()),
                   QString::SkipEmptyParts);
                QMutableStringListIterator* listIterator = new QMutableStringListIterator(subCategories);
-               rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i]);
+               mRootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, mActorTypes[i]);
                delete listIterator;
             }
          }
@@ -161,14 +161,14 @@ namespace dtEditQt
       // if we have a leaf, then enable the button
       if (selectedWidget != NULL && selectedWidget->isLeafNode())
       {
-         createActorBtn->setEnabled(true);
+         mCreateActorBtn->setEnabled(true);
          return;
       }
 
       // disable the button if we got here.
-      if (createActorBtn != NULL)
+      if (mCreateActorBtn != NULL)
       {
-         createActorBtn->setEnabled(false);
+         mCreateActorBtn->setEnabled(false);
       }
    }
 
@@ -177,9 +177,9 @@ namespace dtEditQt
    {
       ActorTypeTreeWidget* returnVal = NULL;
 
-      if (tree != NULL)
+      if (mTree != NULL)
       {
-         QList<QTreeWidgetItem*> list = tree->selectedItems();
+         QList<QTreeWidgetItem*> list = mTree->selectedItems();
 
          if (!list.isEmpty())
          {
@@ -193,20 +193,20 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void ActorBrowser::markCurrentExpansion()
    {
-      if (tree != NULL && rootActorType != NULL)
+      if (mTree != NULL && mRootActorType != NULL)
       {
          // we trap the root node separately to make the tree walking easier.
-         rootNodeWasExpanded = tree->isItemExpanded(rootActorType);
+         mRootNodeWasExpanded = mTree->isItemExpanded(mRootActorType);
 
          // clear out previous marks
-         expandedActorTypeNames.clear();
+         mExpandedActorTypeNames.clear();
 
          // start recursion
-         recurseMarkCurrentExpansion(rootActorType, expandedActorTypeNames);
+         recurseMarkCurrentExpansion(mRootActorType, mExpandedActorTypeNames);
 
          // also store the last location of the scroll bar... so that they go back
          // to where they were next time.
-         lastScrollBarLocation = tree->verticalScrollBar()->sliderPosition();
+         mLastScrollBarLocation = mTree->verticalScrollBar()->sliderPosition();
       }
    }
 
@@ -221,7 +221,7 @@ namespace dtEditQt
          // if we have children, then we could potentially be expanded...
          if (child != NULL && child->childCount() > 0)
          {
-            if (tree->isItemExpanded(child))
+            if (mTree->isItemExpanded(child))
             {
                // add it to our list
                dtUtil::tree<QString>& insertedItem = currentTree.
@@ -237,18 +237,18 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void ActorBrowser::restorePreviousExpansion()
    {
-      if (tree != NULL && rootActorType != NULL)
+      if (mTree != NULL && mRootActorType != NULL)
       {
          // re-expand the root node separately to make the tree walking easier.
-         if (rootNodeWasExpanded)
+         if (mRootNodeWasExpanded)
          {
-            tree->expandItem(rootActorType);
+            mTree->expandItem(mRootActorType);
          }
 
-         recurseRestorePreviousExpansion(rootActorType, expandedActorTypeNames);
+         recurseRestorePreviousExpansion(mRootActorType, mExpandedActorTypeNames);
 
          // Put the scroll bar back where it was last time
-         tree->verticalScrollBar()->setSliderPosition(lastScrollBarLocation);
+         mTree->verticalScrollBar()->setSliderPosition(mLastScrollBarLocation);
       }
    }
 
@@ -268,7 +268,7 @@ namespace dtEditQt
             // found a match!  expand it
             if (child->getCategoryOrName() == name)
             {
-               tree->expandItem(child);
+               mTree->expandItem(child);
 
                // recurse over the children of this object
                recurseRestorePreviousExpansion(child, iter.tree_ref());

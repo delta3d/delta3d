@@ -11,11 +11,11 @@ dtEditQt::ExternalToolDialog::ExternalToolDialog(QList<ExternalTool*>& tools, QW
    : QDialog(parent)
    , mTools(&tools)
 {
-   ui.setupUi(this);
+   mUI.setupUi(this);
 
-   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-   ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
-   ui.extensionWidget->setVisible(false);
+   mUI.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+   mUI.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+   mUI.extensionWidget->setVisible(false);
 
    SetupConnections();
    PopulateToolsUI();
@@ -28,23 +28,23 @@ dtEditQt::ExternalToolDialog::~ExternalToolDialog()
 
 void dtEditQt::ExternalToolDialog::SetupConnections()
 {
-   connect(ui.addButton,        SIGNAL(clicked()),                  this, SLOT(OnNewTool()));
-   connect(ui.deleteButton,     SIGNAL(clicked()),                  this, SLOT(OnRemoveTool()));
-   connect(ui.toolList,         SIGNAL(itemSelectionChanged()),     this, SLOT(OnToolSelectionChanged()));
-   connect(ui.buttonBox->button(QDialogButtonBox::Apply),
+   connect(mUI.addButton,        SIGNAL(clicked()),                  this, SLOT(OnNewTool()));
+   connect(mUI.deleteButton,     SIGNAL(clicked()),                  this, SLOT(OnRemoveTool()));
+   connect(mUI.toolList,         SIGNAL(itemSelectionChanged()),     this, SLOT(OnToolSelectionChanged()));
+   connect(mUI.buttonBox->button(QDialogButtonBox::Apply),
                                 SIGNAL(clicked()),                  this, SLOT(OnApplyChanges()));
-   connect(ui.titleEdit,        SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
-   connect(ui.commandEdit,      SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
-   connect(ui.commandButton,    SIGNAL(clicked()),                  this, SLOT(OnFindCommandFile()));
-   connect(ui.argsEdit,         SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
-   connect(ui.argsButton,       SIGNAL(clicked()),                  this, SLOT(OnEditArgs()));
-   connect(ui.workingDirEdit,   SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
-   connect(ui.workingDirButton, SIGNAL(clicked()),                  this, SLOT(OnFindWorkingDir()));
-   connect(ui.moveDownButton,   SIGNAL(clicked()),                  this, SLOT(OnMoveToolDown()));
-   connect(ui.moveUpButton,     SIGNAL(clicked()),                  this, SLOT(OnMoveToolUp()));
-   connect(ui.iconFileEdit,     SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
-   connect(ui.iconDirButton,    SIGNAL(clicked()),                  this, SLOT(OnFindIconFile()));
-   connect(ui.resetButton,      SIGNAL(clicked()),                  this, SLOT(OnResetToDefaultTools()));
+   connect(mUI.titleEdit,        SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(mUI.commandEdit,      SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(mUI.commandButton,    SIGNAL(clicked()),                  this, SLOT(OnFindCommandFile()));
+   connect(mUI.argsEdit,         SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(mUI.argsButton,       SIGNAL(clicked()),                  this, SLOT(OnEditArgs()));
+   connect(mUI.workingDirEdit,   SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(mUI.workingDirButton, SIGNAL(clicked()),                  this, SLOT(OnFindWorkingDir()));
+   connect(mUI.moveDownButton,   SIGNAL(clicked()),                  this, SLOT(OnMoveToolDown()));
+   connect(mUI.moveUpButton,     SIGNAL(clicked()),                  this, SLOT(OnMoveToolUp()));
+   connect(mUI.iconFileEdit,     SIGNAL(textEdited(const QString&)), this, SLOT(OnStringChanged(const QString&)));
+   connect(mUI.iconDirButton,    SIGNAL(clicked()),                  this, SLOT(OnFindIconFile()));
+   connect(mUI.resetButton,      SIGNAL(clicked()),                  this, SLOT(OnResetToDefaultTools()));
 }
 
 
@@ -77,8 +77,8 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
    ResetTool(*tool);
    tool->GetAction()->setVisible(true);
 
-   QListWidgetItem* item = new QListWidgetItem(tool->GetTitle(), ui.toolList);
-   ui.toolList->setCurrentItem(item); //make it the currently selected item
+   QListWidgetItem* item = new QListWidgetItem(tool->GetTitle(), mUI.toolList);
+   mUI.toolList->setCurrentItem(item); //make it the currently selected item
 
    SetOkButtonEnabled(true);
    SetModifyButtonsEnabled(false);
@@ -87,7 +87,7 @@ void dtEditQt::ExternalToolDialog::OnNewTool()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnRemoveTool()
 {
-   if (ui.toolList->currentItem() == NULL)
+   if (mUI.toolList->currentItem() == NULL)
    {
       // nothing selected
       return;
@@ -99,15 +99,15 @@ void dtEditQt::ExternalToolDialog::OnRemoveTool()
       return;
    }
 
-   ui.toolList->takeItem(ui.toolList->currentRow()); // remove it's widget
+   mUI.toolList->takeItem(mUI.toolList->currentRow()); // remove it's widget
    ResetTool(*tool);
    tool->GetAction()->setVisible(false); // turn off the QAction
    SetOkButtonEnabled(true);
 
    // now select something that still exists.
-   if (ui.toolList->count() > 0)
+   if (mUI.toolList->count() > 0)
    {
-      ui.toolList->setCurrentItem(ui.toolList->item(0));
+      mUI.toolList->setCurrentItem(mUI.toolList->item(0));
    }
 }
 
@@ -121,16 +121,16 @@ void dtEditQt::ExternalToolDialog::PopulateToolsUI()
       if (mTools->at(toolIdx)->GetAction()->isVisible())
       {
          QListWidgetItem* item = new QListWidgetItem(mTools->at(toolIdx)->GetTitle(),
-                                                     ui.toolList);
+                                                     mUI.toolList);
          item->setIcon(QIcon(mTools->at(toolIdx)->GetIcon()));
-         ui.toolList->addItem(item);
+         mUI.toolList->addItem(item);
       }
    }
 
    //now select something that still exists.
-   if (ui.toolList->count() > 0)
+   if (mUI.toolList->count() > 0)
    {
-      ui.toolList->setCurrentItem(ui.toolList->item(0));
+      mUI.toolList->setCurrentItem(mUI.toolList->item(0));
    }
 }
 
@@ -140,22 +140,22 @@ void dtEditQt::ExternalToolDialog::OnToolSelectionChanged()
    const ExternalTool* tool = GetSelectedTool();
    if (tool == NULL)
    {
-      ui.titleEdit->setText(QString());
-      ui.commandEdit->setText(QString());
+      mUI.titleEdit->setText(QString());
+      mUI.commandEdit->setText(QString());
       return;
    }
 
-   ui.titleEdit->setText(tool->GetTitle());
-   ui.commandEdit->setText(tool->GetCmd());
-   ui.argsEdit->setText(tool->GetArgs());
-   ui.workingDirEdit->setText(tool->GetWorkingDir());
-   ui.iconFileEdit->setText(tool->GetIcon());
+   mUI.titleEdit->setText(tool->GetTitle());
+   mUI.commandEdit->setText(tool->GetCmd());
+   mUI.argsEdit->setText(tool->GetArgs());
+   mUI.workingDirEdit->setText(tool->GetWorkingDir());
+   mUI.iconFileEdit->setText(tool->GetIcon());
 }
 
 //////////////////////////////////////////////////////////////////////////
 ExternalTool* dtEditQt::ExternalToolDialog::GetSelectedTool() const
 {
-   const QListWidgetItem* currentItem = ui.toolList->currentItem();
+   const QListWidgetItem* currentItem = mUI.toolList->currentItem();
    if (currentItem == NULL)
    {
       // nothing selected
@@ -178,7 +178,7 @@ ExternalTool* dtEditQt::ExternalToolDialog::GetSelectedTool() const
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnApplyChanges()
 {
-   QListWidgetItem* currentItem = ui.toolList->currentItem();
+   QListWidgetItem* currentItem = mUI.toolList->currentItem();
    if (currentItem == NULL)
    {
       // nothing selected
@@ -191,15 +191,15 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
       return;
    }
 
-   currentItem->setText(ui.titleEdit->text());
-   currentItem->setIcon(QIcon(ui.iconFileEdit->text()));
-   tool->SetTitle(ui.titleEdit->text());
-   tool->SetCmd(ui.commandEdit->text());
-   tool->SetArgs(ui.argsEdit->text());
-   tool->SetWorkingDir(ui.workingDirEdit->text());
-   tool->SetIcon(ui.iconFileEdit->text());
+   currentItem->setText(mUI.titleEdit->text());
+   currentItem->setIcon(QIcon(mUI.iconFileEdit->text()));
+   tool->SetTitle(mUI.titleEdit->text());
+   tool->SetCmd(mUI.commandEdit->text());
+   tool->SetArgs(mUI.argsEdit->text());
+   tool->SetWorkingDir(mUI.workingDirEdit->text());
+   tool->SetIcon(mUI.iconFileEdit->text());
 
-   ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+   mUI.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
 
    SetModifyButtonsEnabled(true);
 }
@@ -207,8 +207,8 @@ void dtEditQt::ExternalToolDialog::OnApplyChanges()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::SetOkButtonEnabled(bool enabled)
 {
-   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enabled);
-   ui.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(enabled);
+   mUI.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enabled);
+   mUI.buttonBox->button(QDialogButtonBox::Apply)->setEnabled(enabled);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,7 +227,7 @@ void dtEditQt::ExternalToolDialog::OnStringChanged(const QString& text)
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::accept()
 {
-   if (ui.buttonBox->button(QDialogButtonBox::Apply)->isEnabled())
+   if (mUI.buttonBox->button(QDialogButtonBox::Apply)->isEnabled())
    {
       OnApplyChanges();
    }
@@ -238,10 +238,10 @@ void dtEditQt::ExternalToolDialog::accept()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::SetModifyButtonsEnabled(bool enabled)
 {
-   ui.addButton->setEnabled(enabled);
-   ui.deleteButton->setEnabled(enabled);
-   ui.moveDownButton->setEnabled(enabled);
-   ui.moveUpButton->setEnabled(enabled);
+   mUI.addButton->setEnabled(enabled);
+   mUI.deleteButton->setEnabled(enabled);
+   mUI.moveDownButton->setEnabled(enabled);
+   mUI.moveUpButton->setEnabled(enabled);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ void dtEditQt::ExternalToolDialog::OnFindCommandFile()
    if (!filename.isEmpty())
    {
       tool->SetCmd(filename);
-      ui.commandEdit->setText(filename);
+      mUI.commandEdit->setText(filename);
       OnToolModified();
    }
 }
@@ -285,7 +285,7 @@ void dtEditQt::ExternalToolDialog::OnFindWorkingDir()
    if (!workingDir.isEmpty())
    {
       tool->SetWorkingDir(workingDir);
-      ui.workingDirEdit->setText(workingDir);
+      mUI.workingDirEdit->setText(workingDir);
       OnToolModified();
    }
 }
@@ -308,7 +308,7 @@ void dtEditQt::ExternalToolDialog::OnFindIconFile()
    if (!iconFile.isEmpty())
    {
       tool->SetIcon(iconFile);
-      ui.iconFileEdit->setText(iconFile);
+      mUI.iconFileEdit->setText(iconFile);
       OnToolModified();
    }
 }
@@ -316,7 +316,7 @@ void dtEditQt::ExternalToolDialog::OnFindIconFile()
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnMoveToolDown()
 {
-   QListWidgetItem* currentItem = ui.toolList->currentItem();
+   QListWidgetItem* currentItem = mUI.toolList->currentItem();
    if (currentItem == NULL)
    {
       // nothing selected
@@ -324,26 +324,26 @@ void dtEditQt::ExternalToolDialog::OnMoveToolDown()
       return;
    }
 
-   const int currentRow = ui.toolList->row(currentItem);
-   if (currentRow == ui.toolList->count()-1)
+   const int currentRow = mUI.toolList->row(currentItem);
+   if (currentRow == mUI.toolList->count()-1)
    {
       // already at end of list
       return;
    }
 
-   currentItem = ui.toolList->takeItem(currentRow);
-   ui.toolList->insertItem(currentRow+1, currentItem);
+   currentItem = mUI.toolList->takeItem(currentRow);
+   mUI.toolList->insertItem(currentRow+1, currentItem);
 
    mTools->swap(currentRow, currentRow+1);
-   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+   mUI.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 
-   ui.toolList->setCurrentItem(currentItem); //reselect the item
+   mUI.toolList->setCurrentItem(currentItem); //reselect the item
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::OnMoveToolUp()
 {
-   QListWidgetItem* currentItem = ui.toolList->currentItem();
+   QListWidgetItem* currentItem = mUI.toolList->currentItem();
    if (currentItem == NULL)
    {
       // nothing selected
@@ -351,20 +351,20 @@ void dtEditQt::ExternalToolDialog::OnMoveToolUp()
       return;
    }
 
-   const int currentRow = ui.toolList->row(currentItem);
+   const int currentRow = mUI.toolList->row(currentItem);
    if (currentRow == 0)
    {
       // already at top of list
       return;
    }
 
-   currentItem = ui.toolList->takeItem(currentRow);
-   ui.toolList->insertItem(currentRow-1, currentItem);
+   currentItem = mUI.toolList->takeItem(currentRow);
+   mUI.toolList->insertItem(currentRow-1, currentItem);
 
    mTools->swap(currentRow, currentRow-1);
-   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+   mUI.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 
-   ui.toolList->setCurrentItem(currentItem); // reselect the item
+   mUI.toolList->setCurrentItem(currentItem); // reselect the item
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -435,15 +435,15 @@ void dtEditQt::ExternalToolDialog::ClearAndAddDefaultDelta3DTools()
    }
 
    PopulateToolsUI(); // refresh the UI list
-   ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+   mUI.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtEditQt::ExternalToolDialog::DeleteToolWidgets()
 {
-   while (ui.toolList->count() > 0)
+   while (mUI.toolList->count() > 0)
    {
-      QListWidgetItem* item = ui.toolList->takeItem(0);
+      QListWidgetItem* item = mUI.toolList->takeItem(0);
       delete item;
    }
 }
@@ -490,7 +490,7 @@ void dtEditQt::ExternalToolDialog::OnEditArgs()
 
       // set the args on tool, argsEdit
       tool->SetArgs(args);
-      ui.argsEdit->setText(args);
+      mUI.argsEdit->setText(args);
 
       SetOkButtonEnabled(true);
    }

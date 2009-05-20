@@ -81,9 +81,9 @@ namespace dtEditQt
        */
       void setWireFrameView()
       {
-         if (this->viewPort != NULL)
+         if (mViewPort != NULL)
          {
-            this->viewPort->setRenderStyle(Viewport::RenderStyle::WIREFRAME);
+            mViewPort->setRenderStyle(Viewport::RenderStyle::WIREFRAME);
          }
       }
 
@@ -94,9 +94,9 @@ namespace dtEditQt
        */
       void setTexturesOnlyView()
       {
-         if (this->viewPort != NULL)
+         if (mViewPort != NULL)
          {
-            this->viewPort->setRenderStyle(Viewport::RenderStyle::TEXTURED);
+            mViewPort->setRenderStyle(Viewport::RenderStyle::TEXTURED);
          }
       }
 
@@ -107,9 +107,9 @@ namespace dtEditQt
        */
       void setLightingOnlyView()
       {
-         if (this->viewPort != NULL)
+         if (mViewPort != NULL)
          {
-            this->viewPort->setRenderStyle(Viewport::RenderStyle::LIT);
+            mViewPort->setRenderStyle(Viewport::RenderStyle::LIT);
          }
       }
 
@@ -121,9 +121,9 @@ namespace dtEditQt
        */
       void setTexturesAndLightingView()
       {
-         if (this->viewPort != NULL)
+         if (mViewPort != NULL)
          {
-            this->viewPort->setRenderStyle(Viewport::RenderStyle::LIT_AND_TEXTURED);
+            mViewPort->setRenderStyle(Viewport::RenderStyle::LIT_AND_TEXTURED);
          }
       }
 
@@ -175,30 +175,30 @@ namespace dtEditQt
       void addCameraControlWidget();
 
    private:
-      Viewport* viewPort;
+      Viewport* mViewPort;
 
-      QBoxLayout*       layout;
-      QBoxLayout*       buttonLayout;
-      QLabel*           viewportTitle;
-      QMenu*            contextMenu;
-      QMenu*            cameraMovementMenu;
-      QFrame*           toolBar;
+      QBoxLayout*       mLayout;
+      QBoxLayout*       mButtonLayout;
+      QLabel*           mViewportTitle;
+      QMenu*            mContextMenu;
+      QMenu*            mCameraMovementMenu;
+      QFrame*           mToolBar;
       QList<QLineEdit*> mPositionEditWidgets;
 
-      QActionGroup* renderStyleActionGroup;
-      QActionGroup* cameraSpeedGroup;
+      QActionGroup* mRenderStyleActionGroup;
+      QActionGroup* mCameraSpeedGroup;
 
       // Action objects.
-      QAction* setWireFrameAction;
-      QAction* setTexturesOnlyAction;
-      QAction* setLightingOnlyAction;
-      QAction* setTexturesAndLightingAction;
+      QAction* mSetWireFrameAction;
+      QAction* mSetTexturesOnlyAction;
+      QAction* mSetLightingOnlyAction;
+      QAction* mSetTexturesAndLightingAction;
 
-      QAction* cameraSpeedSlowest;
-      QAction* cameraSpeedSlow;
-      QAction* cameraSpeedNormal;
-      QAction* cameraSpeedFast;
-      QAction* cameraSpeedFastest;
+      QAction* mCameraSpeedSlowest;
+      QAction* mCameraSpeedSlow;
+      QAction* mCameraSpeedNormal;
+      QAction* mCameraSpeedFast;
+      QAction* mCameraSpeedFastest;
 
       void SetupPositionWidgets(QBoxLayout* layout);
    };

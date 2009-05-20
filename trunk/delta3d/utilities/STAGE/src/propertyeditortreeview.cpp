@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -79,7 +79,7 @@ namespace dtEditQt
    void PropertyEditorTreeView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
    {
       // I have to save the previous index so that I can look it up on
-      // the closeEditor call so I can tell the control to 
+      // the closeEditor call so I can tell the control to
       // cleanup.
       mPreviousIndex = &previous;
       QTreeView::currentChanged(current, previous);
@@ -120,14 +120,14 @@ namespace dtEditQt
    {
       QTreeView::closeEditor(editor, hint);
 
-      // On certain events, the delegate is not notified that the 
+      // On certain events, the delegate is not notified that the
       // editor is being closed, which doesn't allow us to clean up our pointers.
       // This work around handles that case.
       PropertyEditorModel* currentModel = dynamic_cast<PropertyEditorModel*>(model());
-      if (currentModel != NULL && mPreviousIndex != NULL) 
+      if (currentModel != NULL && mPreviousIndex != NULL)
       {
          DynamicAbstractControl* control = currentModel->privateData(*mPreviousIndex);
-         if (control != NULL) 
+         if (control != NULL)
          {
             control->handleSubEditDestroy(editor, hint);
          }

@@ -55,7 +55,8 @@ namespace dtEditQt
       /// Destructor
       virtual ~MapDialog() { }
 
-      inline dtDAL::Map* getFinalizedMap() { return myMap; }
+      inline dtDAL::Map* getFinalizedMap() { return mMap; }
+      inline const dtDAL::Map* getFinalizedMap() const { return mMap; }
 
    public slots:
       /// slot for receiving the text changing signal
@@ -65,11 +66,11 @@ namespace dtEditQt
       void applyChanges();
 
    private:
-      QPushButton* okButton;
-      QLineEdit*   nameEdit;
-      QTextEdit*   descEdit;
-      QLineEdit*   fileEdit;
-      dtDAL::Map*  myMap;
+      QPushButton* mOkButton;
+      QLineEdit*   mNameEdit;
+      QTextEdit*   mDescEdit;
+      QLineEdit*   mFileEdit;
+      dtDAL::Map*  mMap;
    };
 
 } // namespace dtEditQt

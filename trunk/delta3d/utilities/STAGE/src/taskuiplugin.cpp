@@ -20,11 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
- * William E. Johnson II 
+ * William E. Johnson II
  * David Guthrie
  */
 #include <prefix/dtstageprefix-src.h>
@@ -50,11 +50,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    /////////////    Task UI Plugin    ////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
-   
+
    TaskUIPlugin::TaskUIPlugin()
       : mName("TaskChildren")
    {}
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    bool TaskUIPlugin::UpdateWidgetFromModel(QWidget& widget, const dtDAL::NamedGroupParameter& modelData) const
    {
@@ -63,11 +63,11 @@ namespace dtEditQt
       {
          return false;
       }
-      
+
       taskEditor->SetTaskChildren(modelData);
       return true;
    }
-    
+
    ///////////////////////////////////////////////////////////////////////////////
    bool TaskUIPlugin::UpdateModelFromWidget(QWidget& widget, dtDAL::NamedGroupParameter& modelData) const
    {
@@ -76,11 +76,11 @@ namespace dtEditQt
       {
          return false;
       }
-      
+
       taskEditor->GetTaskChildren(modelData);
-      return true; 
+      return true;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    QWidget* TaskUIPlugin::CreateWidget(QWidget* parent)
    {
@@ -88,7 +88,7 @@ namespace dtEditQt
    }
 
 }
-//This export line had to be done this way because the first name is used in a function name in the macro, but I have to 
+//This export line had to be done this way because the first name is used in a function name in the macro, but I have to
 //put the call outside a namespace, so the second parameter has to have the namespace of the actual class.  God help us.
 Q_EXPORT_PLUGIN2(TaskUIPlugin, dtEditQt::TaskUIPlugin);
 //The plugin is all static, so just export and import it all at the same time.

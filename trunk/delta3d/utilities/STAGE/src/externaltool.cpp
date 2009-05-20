@@ -23,7 +23,7 @@ dtEditQt::ExternalTool::~ExternalTool()
    if (mProcess->state() == QProcess::Running)
    {
       mProcess->terminate();
-      
+
       if (mProcess->waitForFinished() == false)
       {
          mProcess->kill(); //really?
@@ -70,7 +70,7 @@ void dtEditQt::ExternalTool::OnStartTool()
 
    if (mProcess->waitForStarted() == false)
    {
-      QMessageBox::warning(NULL, tr("External Tool"), 
+      QMessageBox::warning(NULL, tr("External Tool"),
                          tr("Failed to start tool.  Does file exist?\n") + mCommand);
    }
 }
@@ -135,7 +135,7 @@ const QString& dtEditQt::ExternalTool::GetIcon() const
 QString dtEditQt::ExternalTool::ExpandArguments(const QString& args) const
 {
    QString expandedArgs(args);
-  
+
    QListIterator<const ExternalToolArgParser*> i(mArgParserContainer);
    while (i.hasNext())
    {

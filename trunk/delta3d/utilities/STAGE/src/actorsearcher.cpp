@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -58,7 +58,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    ActorSearcher::ActorSearcher(QWidget* parent)
       : QWidget(parent)
-      , anyValue("(Any)")
+      , mAnyValue("(Any)")
    {
       QVBoxLayout* vbox = new QVBoxLayout(this);
       vbox->addWidget(searchGroup());
@@ -66,19 +66,19 @@ namespace dtEditQt
       vbox->setSpacing(2);
       vbox->setMargin(3);
 
-      // connect 
+      // connect
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryImported()),
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryRemoved()),
          this, SLOT(refreshAll()));
       connect(&EditorEvents::GetInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
          this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
-      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()), 
+      connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(refreshAll()));
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), 
-         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));   
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
+         this, SLOT(onActorProxyCreated(ActorProxyRefPtr, bool)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -97,50 +97,50 @@ namespace dtEditQt
       // actor name  search
       label = new QLabel(tr("Name:"),searchBox);
       label->setAlignment(Qt::AlignRight);
-      actorNameEdit = new QLineEdit(searchBox);
-      actorNameEdit->setToolTip(QString("Restrict the search by Actor Name - '*' and '?' are legal wildcards"));
+      mActorNameEdit = new QLineEdit(searchBox);
+      mActorNameEdit->setToolTip(QString("Restrict the search by Actor Name - '*' and '?' are legal wildcards"));
       gridLayout->addWidget(label, 0, 0);
-      gridLayout->addWidget(actorNameEdit, 0, 1);
+      gridLayout->addWidget(mActorNameEdit, 0, 1);
 
       // build the category combo box
       label = new QLabel(tr("Category:"),searchBox);
       label->setAlignment(Qt::AlignRight);
-      categoryBox = new QComboBox(searchBox);
-      categoryBox->setToolTip(QString("Restrict the search by Actor Category"));
+      mCategoryBox = new QComboBox(searchBox);
+      mCategoryBox->setToolTip(QString("Restrict the search by Actor Category"));
       gridLayout->addWidget(label, 1, 0);
-      gridLayout->addWidget(categoryBox, 1, 1);
+      gridLayout->addWidget(mCategoryBox, 1, 1);
 
       // build the type combo box
       label = new QLabel(tr("Type:"),searchBox);
       label->setAlignment(Qt::AlignRight);
-      typeBox = new QComboBox(searchBox);
-      typeBox->setToolTip(QString("Restrict the search by Actor Type"));
+      mTypeBox = new QComboBox(searchBox);
+      mTypeBox->setToolTip(QString("Restrict the search by Actor Type"));
       gridLayout->addWidget(label,2, 0);
-      gridLayout->addWidget(typeBox, 2, 1);
+      gridLayout->addWidget(mTypeBox, 2, 1);
 
       // build the class combo box
       label = new QLabel(tr("Class:"),searchBox);
       label->setAlignment(Qt::AlignRight);
-      classBox = new QComboBox(searchBox);
-      classBox->setToolTip(QString("Restrict the search by Actor Class Name (handles superclasses)"));
+      mClassBox = new QComboBox(searchBox);
+      mClassBox->setToolTip(QString("Restrict the search by Actor Class Name (handles superclasses)"));
       gridLayout->addWidget(label, 3, 0);
-      gridLayout->addWidget(classBox, 3, 1);
+      gridLayout->addWidget(mClassBox, 3, 1);
 
       // search btn
-      searchBtn = new QPushButton(tr("Search"), searchBox);
-      searchBtn->setToolTip(QString("Searches for Actors using search criteria"));
-      connect(searchBtn, SIGNAL(clicked()), this, SLOT(searchPressed()));
+      mSearchBtn = new QPushButton(tr("Search"), searchBox);
+      mSearchBtn->setToolTip(QString("Searches for Actors using search criteria"));
+      connect(mSearchBtn, SIGNAL(clicked()), this, SLOT(searchPressed()));
       // clear btn
-      clearBtn = new QPushButton(tr("Clear Search"), searchBox);
-      clearBtn->setToolTip(QString("Clears search results and search criteria"));
-      connect(clearBtn, SIGNAL(clicked()), this, SLOT(refreshAll()));
+      mClearBtn = new QPushButton(tr("Clear Search"), searchBox);
+      mClearBtn->setToolTip(QString("Clears search results and search criteria"));
+      connect(mClearBtn, SIGNAL(clicked()), this, SLOT(refreshAll()));
 
       // build up the button layout
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
-      btnLayout->addWidget(searchBtn);
+      btnLayout->addWidget(mSearchBtn);
       btnLayout->addSpacing(3);
-      btnLayout->addWidget(clearBtn);
+      btnLayout->addWidget(mClearBtn);
       btnLayout->addStretch(1);
 
 
@@ -158,10 +158,10 @@ namespace dtEditQt
    {
       QGroupBox* groupBox = new QGroupBox(tr("Results"),this);
 
-      resultsTable = new ActorResultsTable(true, true, groupBox);
+      mResultsTable = new ActorResultsTable(true, true, groupBox);
 
       QVBoxLayout* vbox = new QVBoxLayout(groupBox);
-      vbox->addWidget(resultsTable, 10, 0); // take the rest of the space
+      vbox->addWidget(mResultsTable, 10, 0); // take the rest of the space
       vbox->setSpacing(0);
       vbox->setMargin(1);
 
@@ -184,30 +184,30 @@ namespace dtEditQt
       QStringList categoryList;
       QStringList typeList;
 
-      actorNameEdit->clear();
+      mActorNameEdit->clear();
 
-      classList.clear();
+      mClassList.clear();
 
-      // clear the category box - there's no clear all.... 
-      while (categoryBox->count() > 0) 
+      // clear the category box - there's no clear all....
+      while (mCategoryBox->count() > 0)
       {
-         categoryBox->removeItem(0);
+         mCategoryBox->removeItem(0);
       }
-      // clear the type box - there's no clear all.... 
-      while (typeBox->count() > 0) 
+      // clear the type box - there's no clear all....
+      while (mTypeBox->count() > 0)
       {
-         typeBox->removeItem(0);
+         mTypeBox->removeItem(0);
       }
-      // clear the type box - there's no clear all.... 
-      while (classBox->count() > 0) 
+      // clear the type box - there's no clear all....
+      while (mClassBox->count() > 0)
       {
-         classBox->removeItem(0);
+         mClassBox->removeItem(0);
       }
 
       // empty out our table, just in case (this MUST happen  when libraries are removed)
-      resultsTable->clearAll();
+      mResultsTable->clearAll();
 
-      if (map != NULL) 
+      if (map != NULL)
       {
          EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
@@ -232,27 +232,27 @@ namespace dtEditQt
 
          // take the category list and add it to the combo box.
          categoryList.sort();
-         categoryList.prepend(anyValue);
-         categoryBox->addItems(categoryList);
-         categoryBox->setCurrentIndex(0);
+         categoryList.prepend(mAnyValue);
+         mCategoryBox->addItems(categoryList);
+         mCategoryBox->setCurrentIndex(0);
 
          // take the type list and add it to the combo box.
          typeList.sort();
-         typeList.prepend(anyValue);
-         typeBox->addItems(typeList);
-         typeBox->setCurrentIndex(0);
+         typeList.prepend(mAnyValue);
+         mTypeBox->addItems(typeList);
+         mTypeBox->setCurrentIndex(0);
 
          // fill up the class box
          std::set<std::string> classSet = map->GetProxyActorClasses();
          for (setIter = classSet.begin(); setIter != classSet.end(); ++setIter)
          {
             std::string className = (*setIter);
-            classList.append(QString::fromStdString(className));
+            mClassList.append(QString::fromStdString(className));
          }
-         classList.sort();
-         classList.prepend(anyValue);
-         classBox->addItems(classList);
-         classBox->setCurrentIndex(0);
+         mClassList.sort();
+         mClassList.prepend(mAnyValue);
+         mClassBox->addItems(mClassList);
+         mClassBox->setCurrentIndex(0);
 
          EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }
@@ -267,34 +267,34 @@ namespace dtEditQt
       dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
 
       // get the search values
-      QString searchName     = actorNameEdit->text();
-      QString searchCategory = categoryBox->currentText();
-      QString searchType     = typeBox->currentText();
-      QString searchClass    = classBox->currentText();
+      QString searchName     = mActorNameEdit->text();
+      QString searchCategory = mCategoryBox->currentText();
+      QString searchType     = mTypeBox->currentText();
+      QString searchClass    = mClassBox->currentText();
 
       // check for the empty selection
-      if (searchCategory == anyValue)
+      if (searchCategory == mAnyValue)
       {
          searchCategory = "";
       }
-      if (searchType == anyValue)
+      if (searchType == mAnyValue)
       {
          searchType = "";
       }
-      if (searchClass == anyValue)
+      if (searchClass == mAnyValue)
       {
          searchClass = "";
       }
 
       // search
-      map->FindProxies(foundProxies, searchName.toStdString(), searchCategory.toStdString(), 
+      map->FindProxies(foundProxies, searchName.toStdString(), searchCategory.toStdString(),
          searchType.toStdString(), searchClass.toStdString(), dtDAL::Map::Either);
 
       // empty out our table before we add stuff
-      resultsTable->clearAll();
-      resultsTable->setUpdatesEnabled(false);
-      resultsTable->addProxies(foundProxies);
-      resultsTable->setUpdatesEnabled(true);
+      mResultsTable->clearAll();
+      mResultsTable->setUpdatesEnabled(false);
+      mResultsTable->addProxies(foundProxies);
+      mResultsTable->setUpdatesEnabled(true);
       //showResults(foundProxies);
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
@@ -316,32 +316,32 @@ namespace dtEditQt
          std::string className = (*setIter);
          QString classString = QString::fromStdString(className);
          // add any new classes that we don't already have
-         if (!classList.contains(classString)) 
+         if (!mClassList.contains(classString))
          {
             addedClasses = true;
-            classList.append(classString);
+            mClassList.append(classString);
          }
       }
 
       // only do the sort and reset box once
-      if (addedClasses) 
+      if (addedClasses)
       {
          // hold previous selection - nice for the user
-         QString previousSelection = classBox->currentText();
+         QString previousSelection = mClassBox->currentText();
 
-         // clear the type box - there's no clear all.... 
-         while (classBox->count() > 0) 
+         // clear the type box - there's no clear all....
+         while (mClassBox->count() > 0)
          {
-            classBox->removeItem(0);
+            mClassBox->removeItem(0);
          }
 
          // add the new sorted list.
-         classList.sort();
-         classBox->addItems(classList);
+         mClassList.sort();
+         mClassBox->addItems(mClassList);
 
          // reselect the previous
-         int previousIndex = classBox->findText(previousSelection);
-         classBox->setCurrentIndex(previousIndex);
+         int previousIndex = mClassBox->findText(previousSelection);
+         mClassBox->setCurrentIndex(previousIndex);
       }
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();

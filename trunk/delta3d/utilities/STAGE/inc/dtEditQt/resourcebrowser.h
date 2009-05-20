@@ -79,20 +79,20 @@ namespace dtEditQt
       QWidget* getWidget();
 
    private:
-      TabWrapper*   tabMesh;
-      TabWrapper*   tabSkeletal;
-      TabWrapper*   tabSound;
-      TabWrapper*   tabParticle;
-      TabWrapper*   tabTexture;
-      TabWrapper*   tabTerrain;
-      TabContainer* tabC;
+      TabWrapper*   mTabMesh;
+      TabWrapper*   mTabSkeletal;
+      TabWrapper*   mTabSound;
+      TabWrapper*   mTabParticle;
+      TabWrapper*   mTabTexture;
+      TabWrapper*   mTabTerrain;
+      TabContainer* mTabC;
 
-      StaticMeshBrowser*   meshWidget;
-      SkeletalMeshBrowser* skeletalWidget;
-      SoundBrowser*        soundWidget;
-      ParticleBrowser*     particleWidget;
-      TextureBrowser*      textureWidget;
-      TerrainBrowser*      terrainWidget;
+      StaticMeshBrowser*   mMeshWidget;
+      SkeletalMeshBrowser* mSkeletalWidget;
+      SoundBrowser*        mSoundWidget;
+      ParticleBrowser*     mParticleWidget;
+      TextureBrowser*      mTextureWidget;
+      TerrainBrowser*      mTerrainWidget;
 
       void closeEvent(QCloseEvent* e);
    };

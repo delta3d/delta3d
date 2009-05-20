@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -65,8 +65,8 @@ namespace dtEditQt
       QHBoxLayout* buttons= new QHBoxLayout;
       QPushButton* select = new QPushButton(tr("..."),group);
       QPushButton* cancel = new QPushButton(tr("Cancel"),this);
-      pathEdit            = new QLineEdit(group);
-      applyButton         = new QPushButton(tr("Apply"),this);
+      mPathEdit           = new QLineEdit(group);
+      mApplyButton        = new QPushButton(tr("Apply"),this);
 
       QLabel*      desc   = new QLabel(tr("A project holds all related maps, files, and "
                                           "resources.  Please select a directory where your project files will be "
@@ -74,25 +74,25 @@ namespace dtEditQt
 
       desc->setWordWrap(true);
       grid->addWidget(new QLabel(tr("Path:")), 0, 0);
-      grid->addWidget(pathEdit, 0, 1);
+      grid->addWidget(mPathEdit, 0, 1);
       grid->addWidget(select, 0, 2);
       grid->addWidget(desc, 1, 0, 1, 3, Qt::AlignTop);
       vLay->addWidget(group);
 
       buttons->addStretch(1);
-      buttons->addWidget(applyButton);
+      buttons->addWidget(mApplyButton);
       buttons->addWidget(cancel);
       buttons->addStretch(1);
 
       vLay->addLayout(buttons);
 
-      connect(select,      SIGNAL(clicked()), this, SLOT(spawnFileBrowser()));
-      connect(applyButton, SIGNAL(clicked()), this, SLOT(accept()));
-      connect(cancel,      SIGNAL(clicked()), this, SLOT(reject()));
+      connect(select,       SIGNAL(clicked()), this, SLOT(spawnFileBrowser()));
+      connect(mApplyButton, SIGNAL(clicked()), this, SLOT(accept()));
+      connect(cancel,       SIGNAL(clicked()), this, SLOT(reject()));
 
-      applyButton->setEnabled(false);
-      pathEdit->setDisabled(true);
-      pathEdit->setText(tr(EditorData::GetInstance().getCurrentProjectContext().c_str()));
+      mApplyButton->setEnabled(false);
+      mPathEdit->setDisabled(true);
+      mPathEdit->setText(tr(EditorData::GetInstance().getCurrentProjectContext().c_str()));
       setMinimumSize(530, 100);
    }
 
@@ -101,9 +101,9 @@ namespace dtEditQt
 
    }
 
-   QString ProjectContextDialog::getProjectPath() const 
+   QString ProjectContextDialog::getProjectPath() const
    {
-      return pathEdit->text();
+      return mPathEdit->text();
    }
 
    ///////////////////////// SLOTS ////////////////////////////////////
@@ -111,9 +111,9 @@ namespace dtEditQt
    {
       QString dir = QFileDialog::getExistingDirectory(this, tr("Select a project context"));
 
-      if (dir.isEmpty()) 
+      if (dir.isEmpty())
       {
-         applyButton->setEnabled(false);
+         mApplyButton->setEnabled(false);
          return;
       }
 
@@ -123,8 +123,8 @@ namespace dtEditQt
          strippedName = strippedName.substr(0, strippedName.size() - 1);
       }
 
-      pathEdit->setText(tr(strippedName.c_str()));
-      applyButton->setEnabled(true);
+      mPathEdit->setText(tr(strippedName.c_str()));
+      mApplyButton->setEnabled(true);
    }
 
 } // namespace dtEditQt

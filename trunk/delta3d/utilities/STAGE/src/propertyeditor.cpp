@@ -252,14 +252,14 @@ namespace dtEditQt
       }
 
       // turn off screen updates so that we don't watch it draw
-      this->setUpdatesEnabled(false);
+      setUpdatesEnabled(false);
       mainAreaWidget->setUpdatesEnabled(false);
       actorPropBox->setUpdatesEnabled(false);
 
       refreshSelectedActors();
 
       // turn them back on, so it looks right
-      this->setUpdatesEnabled(true);
+      setUpdatesEnabled(true);
       mainAreaWidget->setUpdatesEnabled(true);
       actorPropBox->setUpdatesEnabled(true);
    }
@@ -552,7 +552,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditor::closeEvent(QCloseEvent* e)
    {
-      EditorActions::GetInstance().actionWindowsPropertyEditor->setChecked(false);
+      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(false);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

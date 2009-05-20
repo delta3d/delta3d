@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -50,7 +50,7 @@ namespace dtEditQt
       : QDialog(parent)
    {
       setWindowTitle(tr("New Map"));
-      myMap = NULL;
+      mMap = NULL;
 
       QGroupBox*   groupBox = new QGroupBox("Map",this);
       QGridLayout* gridLayout = new QGridLayout(groupBox);
@@ -59,43 +59,43 @@ namespace dtEditQt
       //Create the properties fields..
       label = new QLabel(tr("Name:"), groupBox);
       label->setAlignment(Qt::AlignRight);
-      nameEdit = new QLineEdit(groupBox);
-      gridLayout->addWidget(label,    0, 0);
-      gridLayout->addWidget(nameEdit, 0, 1);
+      mNameEdit = new QLineEdit(groupBox);
+      gridLayout->addWidget(label,     0, 0);
+      gridLayout->addWidget(mNameEdit, 0, 1);
 
       label = new QLabel(tr("FileName:"), groupBox);
       label->setAlignment(Qt::AlignRight);
-      fileEdit = new QLineEdit(groupBox);
-      fileEdit->setEnabled(false);
+      mFileEdit = new QLineEdit(groupBox);
+      mFileEdit->setEnabled(false);
       //fileEdit->setValidator(new QValidator(fileEdit));
       gridLayout->addWidget(label,    1, 0);
-      gridLayout->addWidget(fileEdit, 1, 1);
+      gridLayout->addWidget(mFileEdit, 1, 1);
 
       label = new QLabel(tr("Description:"), groupBox);
       label->setAlignment(Qt::AlignRight);
-      descEdit = new QTextEdit(groupBox);
-      gridLayout->addWidget(label,    2, 0);
-      gridLayout->addWidget(descEdit, 2, 1);
+      mDescEdit = new QTextEdit(groupBox);
+      gridLayout->addWidget(label,     2, 0);
+      gridLayout->addWidget(mDescEdit, 2, 1);
 
       // Create the buttons...
-      okButton = new QPushButton(tr("OK"), this);
+      mOkButton = new QPushButton(tr("OK"), this);
       QPushButton* cancelButton = new QPushButton(tr("Cancel"), this);
       QHBoxLayout* buttonLayout = new QHBoxLayout;
 
-      okButton->setEnabled(false);
+      mOkButton->setEnabled(false);
       buttonLayout->addStretch(1);
-      buttonLayout->addWidget(okButton);
+      buttonLayout->addWidget(mOkButton);
       buttonLayout->addWidget(cancelButton);
       buttonLayout->addStretch(1);
 
-      connect(okButton,     SIGNAL(clicked()), this, SLOT(applyChanges()));
+      connect(mOkButton,    SIGNAL(clicked()), this, SLOT(applyChanges()));
       connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
       mainLayout->addWidget(groupBox);
       mainLayout->addLayout(buttonLayout);
 
-      connect(nameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(edited(const QString&)));
+      connect(mNameEdit, SIGNAL(textChanged(const QString&)), this, SLOT(edited(const QString&)));
    }
 
    ///////////////////////// SLOTS ///////////////////////////////
@@ -106,27 +106,27 @@ namespace dtEditQt
       text.replace('-', '_');
       text.replace(' ', '_');
 
-      fileEdit->setText(text);
+      mFileEdit->setText(text);
 
       // Enable the ok button now that we have text.
-      !text.isEmpty() ? okButton->setEnabled(true) : okButton->setEnabled(false);
+      !text.isEmpty() ? mOkButton->setEnabled(true) : mOkButton->setEnabled(false);
    }
 
    void MapDialog::applyChanges()
    {
-      if (nameEdit->text().isEmpty() || fileEdit->text().isEmpty()) 
+      if (mNameEdit->text().isEmpty() || mFileEdit->text().isEmpty())
       {
          QMessageBox::critical(this, tr("Map Create Error"),
             tr("A map must have a valid name and file name"),tr("OK"));
       }
       else
       {
-         try 
+         try
          {
-            myMap = &dtDAL::Project::GetInstance().CreateMap(nameEdit->text().toStdString(),
-               fileEdit->text().toStdString());
+            mMap = &dtDAL::Project::GetInstance().CreateMap(mNameEdit->text().toStdString(),
+               mFileEdit->text().toStdString());
          }
-         catch(dtUtil::Exception& e) 
+         catch(dtUtil::Exception& e)
          {
             QString error = "An error occured while creating the map. ";
             error += e.What().c_str();
@@ -136,7 +136,7 @@ namespace dtEditQt
             return;
          }
 
-         myMap->SetDescription(descEdit->toPlainText().toStdString());
+         mMap->SetDescription(mDescEdit->toPlainText().toStdString());
          accept();
       }
    }

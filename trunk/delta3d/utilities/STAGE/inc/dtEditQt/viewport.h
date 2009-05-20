@@ -95,11 +95,13 @@ namespace dtEditQt
       class RenderStyle : public dtUtil::Enumeration
       {
          DECLARE_ENUM(RenderStyle);
+
       public:
          static const RenderStyle WIREFRAME;
          static const RenderStyle LIT;
          static const RenderStyle TEXTURED;
          static const RenderStyle LIT_AND_TEXTURED;
+
       private:
          RenderStyle(const std::string& name)
             : dtUtil::Enumeration(name)
@@ -174,14 +176,14 @@ namespace dtEditQt
        * created.
        * @return The viewport's name.
        */
-      const std::string& getName() const { return this->name; }
+      const std::string& getName() const { return mName; }
 
       /**
        * Gets this viewport's type.  This is assigned by the ViewportManager
        * when the viewport is created.
        * @return The type of viewport.
        */
-      ViewportManager::ViewportType& getType() const { return this->viewPortType; }
+      ViewportManager::ViewportType& getType() const { return mViewPortType; }
 
       /**
        * Tells the viewport whether or not to keep in sync with the rest
@@ -201,7 +203,7 @@ namespace dtEditQt
        * @return True if auto interaction mode is enabled on this viewport.
        */
       bool getAutoInteractionMode() const {
-         return this->useAutoInteractionMode;
+         return mUseAutoInteractionMode;
       }
 
       /**
@@ -213,13 +215,13 @@ namespace dtEditQt
        *  loaded scene.  For example, the static mesh browser has this property
        *  set to false.
        */
-      void setAutoSceneUpdate(bool on)  { autoSceneUpdate = on; }
+      void setAutoSceneUpdate(bool on)  { mAutoSceneUpdate = on; }
 
       /**
        * Gets the auto scene update property.
        * @return
        */
-      bool getAutoSceneUpdate() const { return autoSceneUpdate; }
+      bool getAutoSceneUpdate() const { return mAutoSceneUpdate; }
 
       /**
        * Sets whether or not the hot keys for actor manipulation and selection
@@ -231,14 +233,14 @@ namespace dtEditQt
        *  may or may not have key bindings.  However, if key bindings are present,
        *  this method allows the user to disable them if desired.
        */
-      void setEnableKeyBindings(bool enable) { enableKeyBindings = enable; }
+      void setEnableKeyBindings(bool enable) { mEnableKeyBindings = enable; }
 
       /**
        * Gets whether or not key bindings (hot keys) are enabled for this
        * viewport.
        * @return True if enabled.
        */
-      bool getEnableKeyBindings() const { return this->enableKeyBindings; }
+      bool getEnableKeyBindings() const { return mEnableKeyBindings; }
 
       /**
        * Projects the 2D window coordinates into the current scene and determines
@@ -285,7 +287,7 @@ namespace dtEditQt
        * Gets the scene currently being rendered by this viewport.
        * @return A pointer to the scene.
        */
-      dtCore::Scene* getScene() { return this->mScene.get(); }
+      dtCore::Scene* getScene() { return mScene.get(); }
 
       /**
        * Sets the overlay object for this viewport.
@@ -299,20 +301,20 @@ namespace dtEditQt
        * Gets the current overlay assigned to this viewport.
        * @return The overlay assigned to this viewport.
        */
-      ViewportOverlay* getOverlay() { return this->overlay.get(); }
+      ViewportOverlay* getOverlay() { return mOverlay.get(); }
 
       /**
        * Sets the viewport's camera.  The camera determines the point of view
        * from which the current scene is rendered.
        * @param cam The new camera to use.
        */
-      void setCamera(StageCamera* cam) { this->camera = cam; }
+      void setCamera(StageCamera* cam) { mCamera = cam; }
 
       /**
        * Gets this viewport's camera.
        * @return
        */
-      StageCamera* getCamera() { return this->camera.get(); }
+      StageCamera* getCamera() { return mCamera.get(); }
 
       /**
        * Sets the mouse sensitivity for this viewport.  All mouse input into
@@ -321,13 +323,13 @@ namespace dtEditQt
        * The default is 10.
        * @param value
        */
-      void setMouseSensitivity(float value) { this->mouseSensitivity = value; }
+      void setMouseSensitivity(float value) { mMouseSensitivity = value; }
 
       /**
        * Gets this viewport's mouse sensitivity.
        * @return
        */
-      float getMouseSensitivity() const { return this->mouseSensitivity; }
+      float getMouseSensitivity() const { return mMouseSensitivity; }
 
       /**
        * Sets the current render style of this viewport.
@@ -343,24 +345,24 @@ namespace dtEditQt
        * Gets the current render style of this viewport.
        * @return
        */
-      const RenderStyle& getRenderStyle() const { return *(this->renderStyle); }
+      const RenderStyle& getRenderStyle() const { return *mRenderStyle; }
 
       /**
        * Gets the interaction mode currently in use by this viewport.
        * @return The current interaction mode.
        */
-      const InteractionMode& getInteractionMode() const { return *(this->interactionMode); }
+      const InteractionMode& getInteractionMode() const { return *mInteractionMode; }
 
       /**
        * Sets the current interaction mode.
        */
-      void setInteractionMode(const InteractionMode& mode) { this->interactionMode = &mode; }
+      void setInteractionMode(const InteractionMode& mode) { mInteractionMode = &mode; }
 
       /**
        * Returns whether or not the viewport has been initialized.
        * @return True if the viewport has been initialized.
        */
-      bool isInitialized() const { return this->initialized; }
+      bool isInitialized() const { return mInitialized; }
 
       /**
        * Refreshes the viewport with a new set of selected actors.
@@ -394,8 +396,8 @@ namespace dtEditQt
       void onEndChangeTransaction();
 
    signals:
-         ///This signal is emitted when the render style is changed.
-         void renderStyleChanged();
+      ///This signal is emitted when the render style is changed.
+      void renderStyleChanged();
 
    protected:
       /**
@@ -442,14 +444,14 @@ namespace dtEditQt
        * Returns the underlying scene view that is attached to this viewport.
        * @return
        */
-      osgUtil::SceneView* getSceneView() { return this->sceneView.get(); }
+      osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
 
       /**
        * Returns the state set for this viewport.  This determines how the scene is
        * rendered.
        * @return The global state set for this viewport.
        */
-      osg::StateSet* getGlobalStateSet() { return this->globalStateSet.get(); }
+      osg::StateSet* getGlobalStateSet() { return mGlobalStateSet.get(); }
 
       /**
        * Tells this viewport to listen to global UI events.
@@ -512,15 +514,15 @@ namespace dtEditQt
        *  This is not created by this viewport.  It must be created by
        *  classes extending the base viewport.
        */
-      dtCore::RefPtr<StageCamera> camera;
+      dtCore::RefPtr<StageCamera> mCamera;
 
       /**
        * Tracks whether we are currently in a batch change transaction
        */
-      bool inChangeTransaction;
+      bool mInChangeTransaction;
 
    protected:
-      osg::Group* GetRootNode() { return this->rootNodeGroup.get(); }
+      osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
 
    private:
       ///Sets up the initial render state of this viewport.
@@ -529,36 +531,36 @@ namespace dtEditQt
       ///Allow the viewport manager to have access to the viewport so it can create it.
       friend class ViewportManager;
 
-      float mouseSensitivity;
-      std::string name;
-      ViewportManager::ViewportType& viewPortType;
-      const RenderStyle* renderStyle;
-      const InteractionMode* interactionMode;
+      float                          mMouseSensitivity;
+      std::string                    mName;
+      ViewportManager::ViewportType& mViewPortType;
+      const RenderStyle*             mRenderStyle;
+      const InteractionMode*         mInteractionMode;
 
       bool mRedrawContinuously;
-      bool useAutoInteractionMode;
-      bool autoSceneUpdate;
-      bool initialized;
-      bool enableKeyBindings;
+      bool mUseAutoInteractionMode;
+      bool mAutoSceneUpdate;
+      bool mInitialized;
+      bool mEnableKeyBindings;
 
-      QCursor oldMouseCursor;
-      QPoint oldMouseLocation;
-      bool cacheMouseLocation;
-      bool isMouseTrapped;
+      QCursor mOldMouseCursor;
+      QPoint  mOldMouseLocation;
+      bool    mCacheMouseLocation;
+      bool    mIsMouseTrapped;
 
-      QPoint lastMouseUpdateLocation;
+      QPoint mLastMouseUpdateLocation;
       QTimer mTimer;
 
       // holds the original values of translation and/or rotation.  This should
       // be set in BeginEdit and cleared in EndEdit
-      std::map< std::string, std::vector<std::string> > selectedActorOrigValues;
+      std::map< std::string, std::vector<std::string> > mSelectedActorOrigValues;
 
-      dtCore::RefPtr<ViewportOverlay> overlay;
-      dtCore::RefPtr<dtCore::Scene> mScene;
-      osg::ref_ptr<osg::FrameStamp> frameStamp;
-      osg::ref_ptr<osgUtil::SceneView> sceneView;
-      osg::ref_ptr<osg::StateSet> globalStateSet;
-      osg::ref_ptr<osg::ClearNode> clearNode;
+      dtCore::RefPtr<ViewportOverlay>  mOverlay;
+      dtCore::RefPtr<dtCore::Scene>    mScene;
+      osg::ref_ptr<osg::FrameStamp>    mFrameStamp;
+      osg::ref_ptr<osgUtil::SceneView> mSceneView;
+      osg::ref_ptr<osg::StateSet>      mGlobalStateSet;
+      osg::ref_ptr<osg::ClearNode>     mClearNode;
 
       /**
        * The root node group holds to branches.  The first branch is the scene
@@ -566,7 +568,7 @@ namespace dtEditQt
        * overlays and other objects that are editor specific and are not
        * a part of the actual scene.
        */
-      osg::ref_ptr<osg::Group> rootNodeGroup;
+      osg::ref_ptr<osg::Group> mRootNodeGroup;
 
       dtCore::RefPtr<dtCore::Isector> mIsector;
    };

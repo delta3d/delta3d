@@ -49,12 +49,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    ViewportContainer::ViewportContainer(Viewport* vp, QWidget* parent)
       : QWidget(parent)
+      , mLayout(new QVBoxLayout(this))
+      , mCameraMovementMenu(NULL)
+      , mCameraSpeedGroup(NULL)
    {
-      this->layout = new QVBoxLayout(this);
-      this->layout->setMargin(0);
-      this->layout->setSpacing(0);
-      this->cameraMovementMenu = NULL;
-      this->cameraSpeedGroup = NULL;
+      mLayout->setMargin(0);
+      mLayout->setSpacing(0);
+
       createActions();
       createToolBar();
       createContextMenu();
@@ -65,35 +66,35 @@ namespace dtEditQt
       }
       else
       {
-         this->viewPort = NULL;
+         mViewPort = NULL;
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setViewport(Viewport* viewPort)
    {
-      this->viewPort = viewPort;
-      this->viewportTitle->setText(tr(viewPort->getName().c_str()));
-      this->viewPort->setParent(this);
-      this->layout->addWidget(this->viewPort);
-      connect(this->viewPort,SIGNAL(renderStyleChanged()),
+      mViewPort = viewPort;
+      mViewportTitle->setText(tr(viewPort->getName().c_str()));
+      mViewPort->setParent(this);
+      mLayout->addWidget(mViewPort);
+      connect(mViewPort,SIGNAL(renderStyleChanged()),
               this, SLOT(onViewportRenderStyleChanged()));
 
-      if (this->viewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
+      if (mViewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
       {
          addCameraControlWidget();
       }
       else
       {
-         if (this->cameraMovementMenu != NULL)
+         if (mCameraMovementMenu != NULL)
          {
-            delete this->cameraMovementMenu;
-            this->cameraMovementMenu = NULL;
+            delete mCameraMovementMenu;
+            mCameraMovementMenu = NULL;
          }
-         if (this->cameraSpeedGroup)
+         if (mCameraSpeedGroup)
          {
-            delete this->cameraSpeedGroup;
-            this->cameraSpeedGroup = NULL;
+            delete mCameraSpeedGroup;
+            mCameraSpeedGroup = NULL;
          }
       }
 
@@ -116,9 +117,9 @@ namespace dtEditQt
    {
       // Only allow the right-click menu to be invoked when right-clicking the
       // toolbar.
-      if (this->toolBar->underMouse())
+      if (mToolBar->underMouse())
       {
-         this->contextMenu->exec(e->globalPos());
+         mContextMenu->exec(e->globalPos());
       }
       else
       {
@@ -132,34 +133,34 @@ namespace dtEditQt
       // First create our action group so the buttons will be mutually
       // exclusive. (They are all toggle buttons and only one can be
       // active at any given time).
-      this->renderStyleActionGroup = new QActionGroup(this);
-      this->setWireFrameAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_WIREFRAME.c_str()),
-                                             tr("&Wireframe Mode"), this);
-      this->setWireFrameAction->setActionGroup(this->renderStyleActionGroup);
-      this->setWireFrameAction->setCheckable(true);
-      connect(this->setWireFrameAction,SIGNAL(triggered()),
+      mRenderStyleActionGroup = new QActionGroup(this);
+      mSetWireFrameAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_WIREFRAME.c_str()),
+                                       tr("&Wireframe Mode"), this);
+      mSetWireFrameAction->setActionGroup(mRenderStyleActionGroup);
+      mSetWireFrameAction->setCheckable(true);
+      connect(mSetWireFrameAction,SIGNAL(triggered()),
               this, SLOT(setWireFrameView()));
 
-      this->setTexturesOnlyAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_TEXTURES.c_str()),
-                                                tr("&Texture Only Mode"), this);
-      this->setTexturesOnlyAction->setActionGroup(this->renderStyleActionGroup);
-      this->setTexturesOnlyAction->setCheckable(true);
-      connect(this->setTexturesOnlyAction, SIGNAL(triggered()),
+      mSetTexturesOnlyAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_TEXTURES.c_str()),
+                                          tr("&Texture Only Mode"), this);
+      mSetTexturesOnlyAction->setActionGroup(mRenderStyleActionGroup);
+      mSetTexturesOnlyAction->setCheckable(true);
+      connect(mSetTexturesOnlyAction, SIGNAL(triggered()),
               this, SLOT(setTexturesOnlyView()));
 
-      this->setLightingOnlyAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_LIGHTING.c_str()),
-                                                tr("&Lighting Only Mode"), this);
-      this->setLightingOnlyAction->setActionGroup(this->renderStyleActionGroup);
-      this->setLightingOnlyAction->setCheckable(true);
-      connect(this->setLightingOnlyAction, SIGNAL(triggered()),
+      mSetLightingOnlyAction = new QAction(QIcon(UIResources::ICON_VIEWMODE_LIGHTING.c_str()),
+                                          tr("&Lighting Only Mode"), this);
+      mSetLightingOnlyAction->setActionGroup(mRenderStyleActionGroup);
+      mSetLightingOnlyAction->setCheckable(true);
+      connect(mSetLightingOnlyAction, SIGNAL(triggered()),
               this, SLOT(setLightingOnlyView()));
 
-      this->setTexturesAndLightingAction =
+      mSetTexturesAndLightingAction =
          new QAction(QIcon(UIResources::ICON_VIEWMODE_TEXTURES_AND_LIGHTING.c_str()),
             tr("&Texture and Lighting Mode"), this);
-      this->setTexturesAndLightingAction->setActionGroup(this->renderStyleActionGroup);
-      this->setTexturesAndLightingAction->setCheckable(true);
-      connect(this->setTexturesAndLightingAction, SIGNAL(triggered()),
+      mSetTexturesAndLightingAction->setActionGroup(mRenderStyleActionGroup);
+      mSetTexturesAndLightingAction->setCheckable(true);
+      connect(mSetTexturesAndLightingAction, SIGNAL(triggered()),
               this, SLOT(setTexturesAndLightingView()));
    }
 
@@ -168,112 +169,112 @@ namespace dtEditQt
    {
       QToolButton* button = NULL;
 
-      //Create our "toolbar" widget.
-      this->toolBar = new QFrame(this);
-      this->toolBar->setFrameStyle(QFrame::Box | QFrame::Raised);
-      this->toolBar->setFixedHeight(25);
+      // Create our "toolbar" widget.
+      mToolBar = new QFrame(this);
+      mToolBar->setFrameStyle(QFrame::Box | QFrame::Raised);
+      mToolBar->setFixedHeight(25);
 
-      QBoxLayout* layout = new QHBoxLayout(this->toolBar);
-      this->buttonLayout = new QHBoxLayout();
+      QBoxLayout* layout = new QHBoxLayout(mToolBar);
+      mButtonLayout = new QHBoxLayout();
 
       layout->setAlignment(Qt::AlignLeft);
       layout->setSpacing(0);
       layout->setMargin(0);
 
-      this->buttonLayout->setAlignment(Qt::AlignLeft);
-      this->buttonLayout->setSpacing(0);
-      this->buttonLayout->setMargin(1);
+      mButtonLayout->setAlignment(Qt::AlignLeft);
+      mButtonLayout->setSpacing(0);
+      mButtonLayout->setMargin(1);
 
-      //Put a label which holds the name of the viewport.
-      this->viewportTitle = new QLabel(this->toolBar);
-      this->viewportTitle->setMargin(3);
-      this->viewportTitle->setAlignment(Qt::AlignLeft);
-      QFont labelFont = this->viewportTitle->font();
+      // Put a label which holds the name of the viewport.
+      mViewportTitle = new QLabel(mToolBar);
+      mViewportTitle->setMargin(3);
+      mViewportTitle->setAlignment(Qt::AlignLeft);
+      QFont labelFont = mViewportTitle->font();
       labelFont.setBold(true);
-      this->viewportTitle->setFont(labelFont);
-      layout->addWidget(this->viewportTitle);
+      mViewportTitle->setFont(labelFont);
+      layout->addWidget(mViewportTitle);
 
       SetupPositionWidgets(layout);
 
       layout->addStretch(1);
-      layout->addLayout(buttonLayout);
+      layout->addLayout(mButtonLayout);
 
-      button = new QToolButton(this->toolBar);
-      button->setDefaultAction(this->setWireFrameAction);
+      button = new QToolButton(mToolBar);
+      button->setDefaultAction(mSetWireFrameAction);
       button->setAutoRaise(true);
       button->setFocusPolicy(Qt::NoFocus);
-      this->buttonLayout->addWidget(button);
+      mButtonLayout->addWidget(button);
 
-      button = new QToolButton(this->toolBar);
-      button->setDefaultAction(this->setLightingOnlyAction);
+      button = new QToolButton(mToolBar);
+      button->setDefaultAction(mSetLightingOnlyAction);
       button->setAutoRaise(true);
       button->setFocusPolicy(Qt::NoFocus);
-      this->buttonLayout->addWidget(button);
+      mButtonLayout->addWidget(button);
 
-      button = new QToolButton(this->toolBar);
-      button->setDefaultAction(this->setTexturesOnlyAction);
+      button = new QToolButton(mToolBar);
+      button->setDefaultAction(mSetTexturesOnlyAction);
       button->setAutoRaise(true);
       button->setFocusPolicy(Qt::NoFocus);
-      this->buttonLayout->addWidget(button);
+      mButtonLayout->addWidget(button);
 
-      button = new QToolButton(this->toolBar);
-      button->setDefaultAction(this->setTexturesAndLightingAction);
+      button = new QToolButton(mToolBar);
+      button->setDefaultAction(mSetTexturesAndLightingAction);
       button->setAutoRaise(true);
       button->setFocusPolicy(Qt::NoFocus);
-      this->buttonLayout->addWidget(button);
+      mButtonLayout->addWidget(button);
 
-      this->layout->addWidget(this->toolBar);
+      mLayout->addWidget(mToolBar);
    }
 
    void ViewportContainer::createContextMenu()
    {
-      this->contextMenu = new QMenu(this);
+      mContextMenu = new QMenu(this);
 
-      QMenu* styles = new QMenu(tr("Render Styles"), this->contextMenu);
-      styles->addAction(this->setWireFrameAction);
-      styles->addAction(this->setTexturesOnlyAction);
-      styles->addAction(this->setLightingOnlyAction);
-      styles->addAction(this->setTexturesAndLightingAction);
-      this->contextMenu->addMenu(styles);
+      QMenu* styles = new QMenu(tr("Render Styles"), mContextMenu);
+      styles->addAction(mSetWireFrameAction);
+      styles->addAction(mSetTexturesOnlyAction);
+      styles->addAction(mSetLightingOnlyAction);
+      styles->addAction(mSetTexturesAndLightingAction);
+      mContextMenu->addMenu(styles);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::addCameraControlWidget()
    {
-      if (this->cameraSpeedGroup != NULL)
+      if (mCameraSpeedGroup != NULL)
       {
          return;
       }
 
-      this->cameraSpeedGroup = new QActionGroup(this);
+      mCameraSpeedGroup = new QActionGroup(this);
 
-      this->cameraSpeedSlowest = new QAction(tr("&Slowest"), this->cameraSpeedGroup);
-      this->cameraSpeedSlowest->setCheckable(true);
-      connect(this->cameraSpeedSlowest, SIGNAL(triggered()), this, SLOT(setCameraSpeedSlowest()));
+      mCameraSpeedSlowest = new QAction(tr("&Slowest"), mCameraSpeedGroup);
+      mCameraSpeedSlowest->setCheckable(true);
+      connect(mCameraSpeedSlowest, SIGNAL(triggered()), this, SLOT(setCameraSpeedSlowest()));
 
-      this->cameraSpeedSlow = new QAction(tr("S&low"), this->cameraSpeedGroup);
-      this->cameraSpeedSlow->setCheckable(true);
-      connect(this->cameraSpeedSlow,SIGNAL(triggered()), this, SLOT(setCameraSpeedSlow()));
+      mCameraSpeedSlow = new QAction(tr("S&low"), mCameraSpeedGroup);
+      mCameraSpeedSlow->setCheckable(true);
+      connect(mCameraSpeedSlow,SIGNAL(triggered()), this, SLOT(setCameraSpeedSlow()));
 
-      this->cameraSpeedNormal = new QAction(tr("&Normal"), this->cameraSpeedGroup);
-      this->cameraSpeedNormal->setCheckable(true);
-      connect(this->cameraSpeedNormal,SIGNAL(triggered()), this, SLOT(setCameraSpeedNormal()));
+      mCameraSpeedNormal = new QAction(tr("&Normal"), mCameraSpeedGroup);
+      mCameraSpeedNormal->setCheckable(true);
+      connect(mCameraSpeedNormal,SIGNAL(triggered()), this, SLOT(setCameraSpeedNormal()));
 
-      this->cameraSpeedFast = new QAction(tr("&Fast"), this->cameraSpeedGroup);
-      this->cameraSpeedFast->setCheckable(true);
-      connect(this->cameraSpeedFast,SIGNAL(triggered()), this, SLOT(setCameraSpeedFast()));
+      mCameraSpeedFast = new QAction(tr("&Fast"), mCameraSpeedGroup);
+      mCameraSpeedFast->setCheckable(true);
+      connect(mCameraSpeedFast,SIGNAL(triggered()), this, SLOT(setCameraSpeedFast()));
 
-      this->cameraSpeedFastest = new QAction(tr("F&astest"), this->cameraSpeedGroup);
-      this->cameraSpeedFastest->setCheckable(true);
-      connect(this->cameraSpeedFastest,SIGNAL(triggered()), this, SLOT(setCameraSpeedFastest()));
+      mCameraSpeedFastest = new QAction(tr("F&astest"), mCameraSpeedGroup);
+      mCameraSpeedFastest->setCheckable(true);
+      connect(mCameraSpeedFastest,SIGNAL(triggered()), this, SLOT(setCameraSpeedFastest()));
 
-      this->cameraMovementMenu = new QMenu(tr("Camera Speed"), this->contextMenu);
-      this->cameraMovementMenu->addAction(this->cameraSpeedSlowest);
-      this->cameraMovementMenu->addAction(this->cameraSpeedSlow);
-      this->cameraMovementMenu->addAction(this->cameraSpeedNormal);
-      this->cameraMovementMenu->addAction(this->cameraSpeedFast);
-      this->cameraMovementMenu->addAction(this->cameraSpeedFastest);
-      this->contextMenu->addMenu(this->cameraMovementMenu);
+      mCameraMovementMenu = new QMenu(tr("Camera Speed"), mContextMenu);
+      mCameraMovementMenu->addAction(mCameraSpeedSlowest);
+      mCameraMovementMenu->addAction(mCameraSpeedSlow);
+      mCameraMovementMenu->addAction(mCameraSpeedNormal);
+      mCameraMovementMenu->addAction(mCameraSpeedFast);
+      mCameraMovementMenu->addAction(mCameraSpeedFastest);
+      mContextMenu->addMenu(mCameraMovementMenu);
 
       setCameraSpeedNormal();
    }
@@ -281,73 +282,73 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setCameraSpeedSlowest()
    {
-      if (this->viewPort != NULL)
+      if (mViewPort != NULL)
       {
-         this->viewPort->setMouseSensitivity(100.0f);
-         this->cameraSpeedSlowest->setChecked(true);
+         mViewPort->setMouseSensitivity(100.0f);
+         mCameraSpeedSlowest->setChecked(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setCameraSpeedSlow()
    {
-      if (this->viewPort != NULL)
+      if (mViewPort != NULL)
       {
-         this->viewPort->setMouseSensitivity(50.0f);
-         this->cameraSpeedSlow->setChecked(true);
+         mViewPort->setMouseSensitivity(50.0f);
+         mCameraSpeedSlow->setChecked(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setCameraSpeedNormal()
    {
-      if (this->viewPort != NULL)
+      if (mViewPort != NULL)
       {
-         this->viewPort->setMouseSensitivity(10.0f);
-         this->cameraSpeedNormal->setChecked(true);
+         mViewPort->setMouseSensitivity(10.0f);
+         mCameraSpeedNormal->setChecked(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setCameraSpeedFast()
    {
-      if (this->viewPort != NULL)
+      if (mViewPort != NULL)
       {
-         this->viewPort->setMouseSensitivity(3.0f);
-         this->cameraSpeedFast->setChecked(true);
+         mViewPort->setMouseSensitivity(3.0f);
+         mCameraSpeedFast->setChecked(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::setCameraSpeedFastest()
    {
-      if (this->viewPort != NULL)
+      if (mViewPort != NULL)
       {
-         this->viewPort->setMouseSensitivity(0.2f);
-         this->cameraSpeedFastest->setChecked(true);
+         mViewPort->setMouseSensitivity(0.2f);
+         mCameraSpeedFastest->setChecked(true);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportContainer::onViewportRenderStyleChanged()
    {
-      const Viewport::RenderStyle& currStyle = this->viewPort->getRenderStyle();
+      const Viewport::RenderStyle& currStyle = mViewPort->getRenderStyle();
 
       if (currStyle == Viewport::RenderStyle::WIREFRAME)
       {
-         this->setWireFrameAction->setChecked(true);
+         mSetWireFrameAction->setChecked(true);
       }
       else if (currStyle == Viewport::RenderStyle::TEXTURED)
       {
-         this->setTexturesOnlyAction->setChecked(true);
+         mSetTexturesOnlyAction->setChecked(true);
       }
       else if (currStyle == Viewport::RenderStyle::LIT)
       {
-         this->setLightingOnlyAction->setChecked(true);
+         mSetLightingOnlyAction->setChecked(true);
       }
       else if (currStyle == Viewport::RenderStyle::LIT_AND_TEXTURED)
       {
-         this->setTexturesAndLightingAction->setChecked(true);
+         mSetTexturesAndLightingAction->setChecked(true);
       }
    }
 
@@ -362,7 +363,7 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////
    void ViewportContainer::OnNewPositionEntered()
    {
-      this->viewPort->onGotoPosition(mPositionEditWidgets.at(0)->text().toDouble(),
+      mViewPort->onGotoPosition(mPositionEditWidgets.at(0)->text().toDouble(),
                                      mPositionEditWidgets.at(1)->text().toDouble(),
                                      mPositionEditWidgets.at(2)->text().toDouble());
    }

@@ -9,8 +9,8 @@ namespace dtEditQt
    class ExternalToolArgParser;
 
    /** Used to edit a list of arguments which can be passed to an ExternalTool.
-    * Uses the list of supplied ExternalToolArgParsers for predefined variable
-    * information.
+    *  Uses the list of supplied ExternalToolArgParsers for predefined variable
+    *  information.
     */
    class ExternalToolArgEditor : public QDialog
    {
@@ -31,7 +31,7 @@ namespace dtEditQt
       void OnDisplayParserDescription(QListWidgetItem* item);
 
    private:
-      Ui::ExternalToolArgEditor ui;
+      Ui::ExternalToolArgEditor mUI;
    };
 
 } // namespace dtEditQt

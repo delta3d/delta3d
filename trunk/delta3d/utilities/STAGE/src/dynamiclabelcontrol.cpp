@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -60,46 +60,46 @@ namespace dtEditQt
       //myProperty = dynamic_cast<dtDAL::StringActorProperty *>(newProperty);
       DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
-      // It's ok to do a NULL property.  It just means that someone is going to call the set 
+      // It's ok to do a NULL property.  It just means that someone is going to call the set
       // display values soon.
       if (newProperty != NULL)
       {
-         valueAsString = QString(tr("Unknown")); //newProperty->getValue().c_str()));
+         mValueAsString = QString(tr("Unknown")); //newProperty->getValue().c_str()));
 
-         std::string tooltip = newProperty->GetDescription() + "  [Type: " + 
+         std::string tooltip = newProperty->GetDescription() + "  [Type: " +
             newProperty->GetDataType().GetName() + "]";
-         description = QString(tr(tooltip.c_str()));
+         mDescription = QString(tr(tooltip.c_str()));
 
-         name = QString(tr(newProperty->GetLabel().c_str()));
+         mName = QString(tr(newProperty->GetLabel().c_str()));
       }
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicLabelControl::getDisplayName()
    {
-      return name;
+      return mName;
       //return QString(tr(myProperty->getLabel().c_str()));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicLabelControl::getDescription() 
+   const QString DynamicLabelControl::getDescription()
    {
-      return description;
+      return mDescription;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicLabelControl::getValueAsString() 
+   const QString DynamicLabelControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
-      return valueAsString;
+      return mValueAsString;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicLabelControl::setDisplayValues(QString newName, QString newDescription, QString newValueAsString)
    {
-      name          = newName;
-      description   = newDescription;
-      valueAsString = newValueAsString;
+      mName          = newName;
+      mDescription   = newDescription;
+      mValueAsString = newValueAsString;
    }
 
    /////////////////////////////////////////////////////////////////////////////////

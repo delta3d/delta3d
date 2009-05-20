@@ -91,32 +91,32 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    Viewport::Viewport(ViewportManager::ViewportType& type, const std::string& name, QWidget* parent, QGLWidget* shareWith)
       : QGLWidget(parent, shareWith)
-      , inChangeTransaction(false)
-      , name(name)
-      , viewPortType(type)
+      , mInChangeTransaction(false)
+      , mName(name)
+      , mViewPortType(type)
       , mRedrawContinuously(false)
-      , useAutoInteractionMode(false)
-      , autoSceneUpdate(true)
-      , initialized(false)
-      , enableKeyBindings(true)
+      , mUseAutoInteractionMode(false)
+      , mAutoSceneUpdate(true)
+      , mInitialized(false)
+      , mEnableKeyBindings(true)
       , mIsector(new dtCore::Isector())
-      , isMouseTrapped(false)
+      , mIsMouseTrapped(false)
    {
-      this->frameStamp = new osg::FrameStamp();
-      this->mouseSensitivity = 10.0f;
-      this->interactionMode = &InteractionMode::NOTHING;
-      this->renderStyle = &RenderStyle::WIREFRAME;
+      mFrameStamp = new osg::FrameStamp();
+      mMouseSensitivity = 10.0f;
+      mInteractionMode = &InteractionMode::NOTHING;
+      mRenderStyle = &RenderStyle::WIREFRAME;
 
-      this->rootNodeGroup = new osg::Group();
-      this->sceneView = new osgUtil::SceneView();
+      mRootNodeGroup = new osg::Group();
+      mSceneView = new osgUtil::SceneView();
 
-      this->sceneView->setDefaults();
-      this->sceneView->setFrameStamp(this->frameStamp.get());
-      this->sceneView->setSceneData(this->rootNodeGroup.get());
+      mSceneView->setDefaults();
+      mSceneView->setFrameStamp(mFrameStamp.get());
+      mSceneView->setSceneData(mRootNodeGroup.get());
       setOverlay(ViewportManager::GetInstance().getViewportOverlay());
 
       setMouseTracking(true);
-      this->cacheMouseLocation = true;
+      mCacheMouseLocation = true;
 
       connect(&mTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
       mTimer.setInterval(10);
@@ -133,7 +133,7 @@ namespace dtEditQt
    {
       setupInitialRenderState();
       ViewportManager::GetInstance().initializeGL();
-      this->initialized = true;
+      mInitialized = true;
       if (mRedrawContinuously)
       {
          mTimer.start();
@@ -144,46 +144,46 @@ namespace dtEditQt
    void Viewport::setScene(dtCore::Scene* scene)
    {
       //First, remove the old scene, then add the new one.
-      if (this->sceneView.valid())
+      if (mSceneView.valid())
       {
-         if (this->mScene != NULL)
+         if (mScene != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->mScene->GetSceneNode(), scene->GetSceneNode());
+            mRootNodeGroup->replaceChild(mScene->GetSceneNode(), scene->GetSceneNode());
          }
          else
          {
-            this->rootNodeGroup->addChild(scene->GetSceneNode());
+            mRootNodeGroup->addChild(scene->GetSceneNode());
          }
 
-         this->mScene = scene;
-         //this->scene->GetSceneNode()->setStateSet(this->globalStateSet.get());
+         mScene = scene;
+         //mScene->GetSceneNode()->setStateSet(mGlobalStateSet.get());
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::setOverlay(ViewportOverlay* overlay)
    {
-      if (this->sceneView.valid())
+      if (mSceneView.valid())
       {
          //If the new overlay is NULL, clear the current overlay.
          if (overlay == NULL)
          {
-            this->rootNodeGroup->removeChild(this->overlay->getOverlayGroup());
-            this->overlay = NULL;
+            mRootNodeGroup->removeChild(mOverlay->getOverlayGroup());
+            mOverlay = NULL;
             return;
          }
 
          //Else update the current overlay in both the scene and in the viewport.
-         if (this->overlay != NULL)
+         if (mOverlay != NULL)
          {
-            this->rootNodeGroup->replaceChild(this->overlay->getOverlayGroup(), overlay->getOverlayGroup());
+            mRootNodeGroup->replaceChild(mOverlay->getOverlayGroup(), overlay->getOverlayGroup());
          }
          else
          {
-            this->rootNodeGroup->addChild(overlay->getOverlayGroup());
+            mRootNodeGroup->addChild(overlay->getOverlayGroup());
          }
 
-         this->overlay = overlay;
+         mOverlay = overlay;
       }
    }
 
@@ -209,13 +209,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::resizeGL(int width, int height)
    {
-      this->sceneView->setViewport(0, 0, width, height);
+      mSceneView->setViewport(0, 0, width, height);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()
    {
-      if (!this->sceneView.valid() || !this->mScene.valid() || !this->camera.valid())
+      if (!mSceneView.valid() || !mScene.valid() || !mCamera.valid())
       {
          return;
       }
@@ -237,9 +237,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::setClearColor(const osg::Vec4& color)
    {
-      if (clearNode.valid())
+      if (mClearNode.valid())
       {
-         clearNode->setClearColor(color);
+         mClearNode->setClearColor(color);
       }
    }
 
@@ -262,21 +262,21 @@ namespace dtEditQt
          const dtCore::DatabasePager* dbp = ViewportManager::GetInstance().GetDatabasePager();
          if (dbp != NULL)
          {
-            dbp->SignalBeginFrame(frameStamp.get());
+            dbp->SignalBeginFrame(mFrameStamp.get());
 #if OPENSCENEGRAPH_MAJOR_VERSION < 2 || (OPENSCENEGRAPH_MAJOR_VERSION == 2 && OPENSCENEGRAPH_MINOR_VERSION <= 6)
-            dbp->UpdateSceneGraph(frameStamp->getReferenceTime());
+            dbp->UpdateSceneGraph(mFrameStamp->getReferenceTime());
 #else
-            dbp->UpdateSceneGraph(frameStamp.get());
+            dbp->UpdateSceneGraph(mFrameStamp.get());
 #endif
          }
       }
 
-      frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::GetInstance().GetStartTick(), osg::Timer::instance()->tick()));
-      frameStamp->setFrameNumber(frameStamp->getFrameNumber()+ 1);
+      mFrameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::GetInstance().GetStartTick(), osg::Timer::instance()->tick()));
+      mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+ 1);
 
-      sceneView->update();
-      sceneView->cull();
-      sceneView->draw();
+      mSceneView->update();
+      mSceneView->cull();
+      mSceneView->draw();
 
       if (ViewportManager::GetInstance().IsPagingEnabled())
       {
@@ -286,9 +286,9 @@ namespace dtEditQt
             dbp->SignalEndFrame();
             // This magic number is the default amount of time that dtCore Scene USED to use.
             double cleanupTime = 0.0025;
-            dbp->CompileGLObjects(*sceneView->getState(), cleanupTime);
+            dbp->CompileGLObjects(*mSceneView->getState(), cleanupTime);
 
-            sceneView->flushDeletedGLObjects(cleanupTime);
+            mSceneView->flushDeletedGLObjects(cleanupTime);
          }
       }
    }
@@ -299,8 +299,8 @@ namespace dtEditQt
       int i;
       int numTextureUnits = ViewportManager::GetInstance().getNumTextureUnits();
 
-      this->renderStyle = &style;
-      if (!this->sceneView.valid())
+      mRenderStyle = &style;
+      if (!mSceneView.valid())
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,"Cannot set render style "
                "because the current scene view is invalid.", __FILE__, __LINE__);
@@ -310,42 +310,42 @@ namespace dtEditQt
       osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE |osg::StateAttribute::OFF;
 
       osg::PolygonMode* pm = dynamic_cast<osg::PolygonMode*>(
-            this->globalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
+            mGlobalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
 
-      if (*this->renderStyle == RenderStyle::WIREFRAME)
+      if (*mRenderStyle == RenderStyle::WIREFRAME)
       {
          for (i = 0; i < numTextureUnits; ++i)
          {
-            this->globalStateSet->setTextureMode(i, GL_TEXTURE_2D, turnOff);
+            mGlobalStateSet->setTextureMode(i, GL_TEXTURE_2D, turnOff);
          }
-         this->globalStateSet->setMode(GL_LIGHTING, turnOff);
+         mGlobalStateSet->setMode(GL_LIGHTING, turnOff);
          pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
       }
-      else if (*this->renderStyle == RenderStyle::TEXTURED)
+      else if (*mRenderStyle == RenderStyle::TEXTURED)
       {
          for (i = 0; i < numTextureUnits; ++i)
          {
-            this->globalStateSet->removeTextureMode(i, GL_TEXTURE_2D);
+            mGlobalStateSet->removeTextureMode(i, GL_TEXTURE_2D);
          }
-         this->globalStateSet->setMode(GL_LIGHTING, turnOff);
+         mGlobalStateSet->setMode(GL_LIGHTING, turnOff);
          pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
       }
-      else if (*this->renderStyle == RenderStyle::LIT)
+      else if (*mRenderStyle == RenderStyle::LIT)
       {
          for (i = 0; i < numTextureUnits; ++i)
          {
-            this->globalStateSet->setTextureMode(i, GL_TEXTURE_2D, turnOff);
+            mGlobalStateSet->setTextureMode(i, GL_TEXTURE_2D, turnOff);
          }
-         this->globalStateSet->setMode(GL_LIGHTING, turnOn);
+         mGlobalStateSet->setMode(GL_LIGHTING, turnOn);
          pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
       }
-      else if (*this->renderStyle == RenderStyle::LIT_AND_TEXTURED)
+      else if (*mRenderStyle == RenderStyle::LIT_AND_TEXTURED)
       {
          for (i = 0; i < numTextureUnits; ++i)
          {
-            this->globalStateSet->removeTextureMode(i, GL_TEXTURE_2D);
+            mGlobalStateSet->removeTextureMode(i, GL_TEXTURE_2D);
          }
-         this->globalStateSet->setMode(GL_LIGHTING, turnOn);
+         mGlobalStateSet->setMode(GL_LIGHTING, turnOn);
          pm->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
       }
 
@@ -443,7 +443,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
-      if (!this->mScene.valid())
+      if (!mScene.valid())
       {
          throw dtUtil::Exception(dtDAL::ExceptionEnum::BaseException,
             "Scene is invalid.  Cannot pick objects from an invalid scene.", __FILE__, __LINE__);
@@ -467,9 +467,9 @@ namespace dtEditQt
       mIsector->Reset();
       mIsector->SetScene( getScene());
       osg::Vec3 nearPoint, farPoint;
-      int yLoc = int(this->sceneView->getViewport()->height()-y);
+      int yLoc = int(mSceneView->getViewport()->height()-y);
 
-      this->sceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
+      mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
       mIsector->SetStartPosition(nearPoint);
       mIsector->SetDirection(farPoint-nearPoint);
 
@@ -509,7 +509,7 @@ namespace dtEditQt
          }
 
          getCamera()->setPosition(translation);
-         if (this->viewPortType == ViewportManager::ViewportType::PERSPECTIVE)
+         if (mViewPortType == ViewportManager::ViewportType::PERSPECTIVE)
          {
             getCamera()->move(viewDir*-offset*1.5f);
          }
@@ -536,16 +536,16 @@ namespace dtEditQt
       // Get the current cursor so we can restore it later.
       if (cursor().shape()!= Qt::BlankCursor)
       {
-         this->oldMouseCursor = cursor();
+         mOldMouseCursor = cursor();
       }
       setCursor(QCursor(Qt::BlankCursor));
 
       // Cache the old mouse location so the cursor doesn't appear to jump when
       // the camera mode operation is complete.
-      if (this->cacheMouseLocation)
+      if (mCacheMouseLocation)
       {
-         this->oldMouseLocation = QCursor::pos();
-         this->cacheMouseLocation = false;
+         mOldMouseLocation = QCursor::pos();
+         mCacheMouseLocation = false;
       }
 
       // I disabled this because the mouse move event does this whenever the mouse moves.
@@ -553,16 +553,16 @@ namespace dtEditQt
 
       // Put the mouse cursor in the center of the viewport.
       QPoint center((x()+width())/2, (y()+height())/2);
-      lastMouseUpdateLocation = center;
+      mLastMouseUpdateLocation = center;
       QCursor::setPos(mapToGlobal(center));
-      isMouseTrapped = true;
+      mIsMouseTrapped = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::releaseMouseCursor(const QPoint& mousePosition)
    {
-      isMouseTrapped = false;
-      setCursor(this->oldMouseCursor);
+      mIsMouseTrapped = false;
+      setCursor(mOldMouseCursor);
 
       if (mousePosition.x() != -1 && mousePosition.y() != -1)
       {
@@ -570,10 +570,10 @@ namespace dtEditQt
       }
       else
       {
-         QCursor::setPos(this->oldMouseLocation);
+         QCursor::setPos(mOldMouseLocation);
       }
 
-      this->cacheMouseLocation = true;
+      mCacheMouseLocation = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -590,14 +590,14 @@ namespace dtEditQt
 
       float dx, dy;
 
-      dx = (float)(e->pos().x() - lastMouseUpdateLocation.x());
-      dy = (float)(e->pos().y() - lastMouseUpdateLocation.y());
+      dx = (float)(e->pos().x() - mLastMouseUpdateLocation.x());
+      dy = (float)(e->pos().y() - mLastMouseUpdateLocation.y());
 
       onMouseMoveEvent(e, dx, dy);
 
       QPoint mousePos = e->pos();
 
-      if (isMouseTrapped)
+      if (mIsMouseTrapped)
       {
          QPoint center((x()+width())/2, (y()+height())/2);
 
@@ -615,7 +615,7 @@ namespace dtEditQt
          }
       }
 
-      lastMouseUpdateLocation = mousePos;
+      mLastMouseUpdateLocation = mousePos;
 
       refresh();
    }
@@ -665,7 +665,7 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList::iterator itor;
 
       //Clear the old list first.
-      this->selectedActorOrigValues.erase(propName);
+      mSelectedActorOrigValues.erase(propName);
       std::vector<std::string> savedValues;
 
       for (itor = selection.begin(); itor != selection.end(); ++itor)
@@ -680,7 +680,7 @@ namespace dtEditQt
          }
       }
 
-      this->selectedActorOrigValues[propName] = savedValues;
+      mSelectedActorOrigValues[propName] = savedValues;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -689,11 +689,11 @@ namespace dtEditQt
       ViewportOverlay::ActorProxyList& selection =ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       ViewportOverlay::ActorProxyList::iterator itor;
       std::map< std::string, std::vector<std::string> >::iterator
-            saveEntry = this->selectedActorOrigValues.find(propName);
+            saveEntry = mSelectedActorOrigValues.find(propName);
       int oldValueIndex = 0;
 
       // Make sure we actually saved values for this property.
-      if (saveEntry == this->selectedActorOrigValues.end())
+      if (saveEntry == mSelectedActorOrigValues.end())
       {
          return;
       }
@@ -753,25 +753,25 @@ namespace dtEditQt
    {
       if (on)
       {
-         if (this->useAutoInteractionMode)
+         if (mUseAutoInteractionMode)
          {
             return; // Already on, so do nothing.
          }
          else
          {
-            this->useAutoInteractionMode = true;
+            mUseAutoInteractionMode = true;
             connectInteractionModeSlots();
          }
       }
       else
       {
-         if (!this->useAutoInteractionMode)
+         if (!mUseAutoInteractionMode)
          {
             return; // Already off, so do nothing.
          }
          else
          {
-            this->useAutoInteractionMode = false;
+            mUseAutoInteractionMode = false;
             disconnectInteractionModeSlots();
          }
       }
@@ -783,19 +783,19 @@ namespace dtEditQt
       // Some actors in the scene may have a clear node that disables screen clears
       // each frame. (The skybox for example).  Therefore, we add this node to the
       // scene to ensure a clear happens if needed.
-      this->clearNode = new osg::ClearNode;
-      this->clearNode->setRequiresClear(true);
-      this->clearNode->setClearColor(osg::Vec4(0.2f, 0.2f, 0.4f, 1.0f));
+      mClearNode = new osg::ClearNode;
+      mClearNode->setRequiresClear(true);
+      mClearNode->setClearColor(osg::Vec4(0.2f, 0.2f, 0.4f, 1.0f));
       osg::Group* group = getSceneView()->getSceneData()->asGroup();
       if (group != NULL)
       {
-         group->addChild(this->clearNode.get());
+         group->addChild(mClearNode.get());
       }
 
       // Sets up the global state set used to render the viewport's contents.
       // This also sets up some default modes which are shared amoung
       // all viewports.
-      this->globalStateSet = new osg::StateSet();
+      mGlobalStateSet = new osg::StateSet();
 
       osg::AlphaFunc* alphafunc = new osg::AlphaFunc;
       alphafunc->setFunction(osg::AlphaFunc::GREATER, 0.0f);
@@ -805,25 +805,25 @@ namespace dtEditQt
       osg::CullFace* cf = new osg::CullFace();
       cf->setMode(osg::CullFace::BACK);
 
-      this->globalStateSet->setGlobalDefaults();
-      this->globalStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
-      this->globalStateSet->setAttributeAndModes(alphafunc, osg::StateAttribute::ON);
-      this->globalStateSet->setAttributeAndModes(pm, osg::StateAttribute::ON);
-      this->globalStateSet->setAttributeAndModes(cf, osg::StateAttribute::ON);
+      mGlobalStateSet->setGlobalDefaults();
+      mGlobalStateSet->setMode(GL_DEPTH_TEST,osg::StateAttribute::ON);
+      mGlobalStateSet->setAttributeAndModes(alphafunc, osg::StateAttribute::ON);
+      mGlobalStateSet->setAttributeAndModes(pm, osg::StateAttribute::ON);
+      mGlobalStateSet->setAttributeAndModes(cf, osg::StateAttribute::ON);
 
-      this->sceneView->setGlobalStateSet(this->globalStateSet.get());
+      mSceneView->setGlobalStateSet(mGlobalStateSet.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::onBeginChangeTransaction()
    {
-      inChangeTransaction = true;
+      mInChangeTransaction = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::onEndChangeTransaction()
    {
-      inChangeTransaction = false;
+      mInChangeTransaction = false;
 //      ViewportManager::GetInstance().refreshAllViewports();
    }
 

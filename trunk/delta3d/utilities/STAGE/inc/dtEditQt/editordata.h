@@ -69,7 +69,7 @@ namespace dtEditQt
        *
        * @return Returns the user-defined custom path that OSG uses in addition to its main search path for libraries.
        */
-      std::string getOriginalOsgLibraryPath() { return osgLibraryPath; }
+      std::string getOriginalOsgLibraryPath() { return mOsgLibraryPath; }
 
       /**
        * Gets the environment string associated with OSG_LIBRARY_PATH.
@@ -168,7 +168,7 @@ namespace dtEditQt
        * @return A power of two integer corresponding to the current grid size.
        * @note The default grid size is 16
        */
-      int getGridSize() const { return gridSize; }
+      int getGridSize() const { return mGridSize; }
 
       /**
        * Gets the currently selected Sound resource.  This is used by the
@@ -178,7 +178,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentSoundResource() { return soundResource; }
+      dtDAL::ResourceDescriptor getCurrentSoundResource() { return mSoundResource; }
 
       /**
        * Gets the currently selected Mesh resource.  This is used by the
@@ -188,7 +188,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentMeshResource() { return this->meshResource; }
+      dtDAL::ResourceDescriptor getCurrentMeshResource() { return mMeshResource; }
 
       /**
        * Gets the currently selected Texture resource.  This is used by the
@@ -198,7 +198,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentTextureResource() { return this->textureResource; }
+      dtDAL::ResourceDescriptor getCurrentTextureResource() { return mTextureResource; }
 
       /**
        * Gets the currently selected Particle resource.  This is used by the
@@ -208,7 +208,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentParticleResource() { return this->particleResource; }
+      dtDAL::ResourceDescriptor getCurrentParticleResource() { return mParticleResource; }
 
 
       /**
@@ -219,7 +219,7 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see setSoundResource, setMeshResource, setTextureResource
        */
-      dtDAL::ResourceDescriptor getCurrentSkeletalModelResource() { return this->skeletalModelResource; }
+      dtDAL::ResourceDescriptor getCurrentSkeletalModelResource() { return mSkeletalModelResource; }
 
       /**
        * Gets the currently selected terrain resource.  This is used by the
@@ -229,19 +229,19 @@ namespace dtEditQt
        * resource.getResourceIdentifier().empty() to see if it's actually none.
        * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
        */
-      dtDAL::ResourceDescriptor getCurrentTerrainResource() { return this->terrainResource; }
+      dtDAL::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
 
       /**
        * Returns a pointer the the main window.
        * @return The main window.
        */
-      MainWindow* getMainWindow() const { return mainWindow; }
+      MainWindow* getMainWindow() const { return mMainWindow; }
 
       /**
        * Returns the current library directory for the library editor
        * @return The current library directory
        */
-      inline const std::string& getCurrentLibraryDirectory() const { return currentLibraryDirectory; }
+      inline const std::string& getCurrentLibraryDirectory() const { return mCurrentLibraryDirectory; }
 
       /**
        * Sets the current library directory
@@ -253,7 +253,7 @@ namespace dtEditQt
       {
          if (!newDir.empty())
          {
-            currentLibraryDirectory = newDir;
+            mCurrentLibraryDirectory = newDir;
          }
       }
 
@@ -263,7 +263,7 @@ namespace dtEditQt
        */
       inline const std::string& getCurrentProjectContext() const
       {
-         return currentProjectContext;
+         return mCurrentProjectContext;
       }
 
       /**
@@ -275,7 +275,7 @@ namespace dtEditQt
       {
          if (!newDir.empty())
          {
-            currentProjectContext = newDir;
+            mCurrentProjectContext = newDir;
          }
       }
 
@@ -296,32 +296,29 @@ namespace dtEditQt
       /**
        * UndoManager accessor
        */
-      inline UndoManager& getUndoManager()
-      {
-         return undoManager;
-      }
+      inline UndoManager& getUndoManager() { return mUndoManager; }
 
       /**
        * Recent project accessor
        */
-      inline std::list<std::string>& getRecentProjects() { return recentProjects; }
+      inline std::list<std::string>& getRecentProjects() { return mRecentProjects; }
 
       /**
        * Recent map accessor
        */
-      inline std::list<std::string>& getRecentMaps() { return recentMaps; }
+      inline std::list<std::string>& getRecentMaps() { return mRecentMaps; }
 
       // Accessor
-      inline bool getLoadLastProject() const { return loadLastProject; }
+      inline bool getLoadLastProject() const { return mLoadLastProject; }
 
       // Mutator
-      inline void setLoadLastProject(bool enable) { loadLastProject = enable; }
+      inline void setLoadLastProject(bool enable) { mLoadLastProject = enable; }
 
       // Accessor
-      inline bool getLoadLastMap() const { return loadLastMap; }
+      inline bool getLoadLastMap() const { return mLoadLastMap; }
 
       // Mutator
-      inline void setLoadLastMap(bool enable) { loadLastMap = enable; }
+      inline void setLoadLastMap(bool enable) { mLoadLastMap = enable; }
 
       // Accessor
       inline bool GetUseGlobalOrientationForViewportWidget() const { return mUseGlobalOrientationForViewportWidget; }
@@ -330,16 +327,16 @@ namespace dtEditQt
       inline void SetUseGlobalOrientationForViewportWidget(bool enable) { mUseGlobalOrientationForViewportWidget = enable; }
 
       // Accessor
-      inline QColor getSelectionColor() const { return selectionColor; }
+      inline QColor getSelectionColor() const { return mSelectionColor; }
 
       // Mutator
-      inline void setSelectionColor(const QColor& color) { selectionColor = color; }
+      inline void setSelectionColor(const QColor& color) { mSelectionColor = color; }
 
       // Accessor
-      inline bool getRigidCamera() const { return rigidCamera; }
+      inline bool getRigidCamera() const { return mRigidCamera; }
 
       // Mutator
-      inline void setRigidCamera(bool enable) { rigidCamera = enable; }
+      inline void setRigidCamera(bool enable) { mRigidCamera = enable; }
 
       // Accessor
       inline float GetActorCreationOffset() const { return mActorCreationDistance; }
@@ -373,36 +370,36 @@ namespace dtEditQt
       EditorData& operator=(EditorData& rhs);
 
       // Singleton instance of this class.
-      static dtCore::RefPtr<EditorData> instance;
+      static dtCore::RefPtr<EditorData> sInstance;
 
       // data
       // NOTE - This should be an dtCore::RefPtr, however QT is managing MainWindow, so we don't have to.
-      MainWindow* mainWindow;
+      MainWindow* mMainWindow;
       dtCore::RefPtr<GroupUIRegistry> mGroupUIRegistry;
-      dtCore::RefPtr<dtDAL::Map> myMap;
-      std::string currentLibraryDirectory;
-      std::string currentProjectContext;
-      std::string osgLibraryPath;
+      dtCore::RefPtr<dtDAL::Map> mMap;
+      std::string mCurrentLibraryDirectory;
+      std::string mCurrentProjectContext;
+      std::string mOsgLibraryPath;
 
-      dtDAL::ResourceDescriptor soundResource;
-      dtDAL::ResourceDescriptor meshResource;
-      dtDAL::ResourceDescriptor textureResource;
-      dtDAL::ResourceDescriptor particleResource;
-      dtDAL::ResourceDescriptor terrainResource;
-      dtDAL::ResourceDescriptor skeletalModelResource;
+      dtDAL::ResourceDescriptor mSoundResource;
+      dtDAL::ResourceDescriptor mMeshResource;
+      dtDAL::ResourceDescriptor mTextureResource;
+      dtDAL::ResourceDescriptor mParticleResource;
+      dtDAL::ResourceDescriptor mTerrainResource;
+      dtDAL::ResourceDescriptor mSkeletalModelResource;
 
-      std::list<std::string> recentMaps;
-      std::list<std::string> recentProjects;
+      std::list<std::string> mRecentMaps;
+      std::list<std::string> mRecentProjects;
 
-      UndoManager undoManager;
+      UndoManager mUndoManager;
 
-      int gridSize;
-      unsigned int numRecentProjects;
+      int mGridSize;
+      unsigned int mNumRecentProjects;
 
-      bool loadLastProject, loadLastMap, rigidCamera;
+      bool mLoadLastProject, mLoadLastMap, mRigidCamera;
       bool mUseGlobalOrientationForViewportWidget; 
       float mActorCreationDistance;
-      QColor selectionColor;
+      QColor mSelectionColor;
    };
 
 } // namespace dtEditQt

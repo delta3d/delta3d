@@ -86,7 +86,7 @@ namespace dtEditQt
 {
 
    // Singleton global variable for the library manager.
-   dtCore::RefPtr<EditorActions> EditorActions::instance(NULL);
+   dtCore::RefPtr<EditorActions> EditorActions::sInstance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::EditorActions()
@@ -101,8 +101,8 @@ namespace dtEditQt
       setupHelpActions();
       setupRecentItems();
 
-      saveMilliSeconds = 300000;
-      wasCancelled = false;
+      mSaveMilliSeconds = 300000;
+      mWasCancelled = false;
 
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),    this, SLOT(slotPauseAutosave()));
       connect(&EditorEvents::GetInstance(), SIGNAL(currentMapChanged()), this, SLOT(slotRestartAutosave()));
@@ -111,9 +111,9 @@ namespace dtEditQt
          SIGNAL(selectedActors(ActorProxyRefPtrVector&)), this,
          SLOT(slotSelectedActors(ActorProxyRefPtrVector&)));
 
-      timer = new QTimer((QWidget*)EditorData::GetInstance().getMainWindow());
-      timer->setInterval(saveMilliSeconds);
-      connect(timer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
+      mTimer = new QTimer((QWidget*)EditorData::GetInstance().getMainWindow());
+      mTimer->setInterval(mSaveMilliSeconds);
+      connect(mTimer, SIGNAL(timeout()), this, SLOT(slotAutosave()));
 
       connect(&EditorEvents::GetInstance(),
          SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)), this,
@@ -123,8 +123,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions::~EditorActions()
    {
-      timer->stop();
-      delete timer;
+      mTimer->stop();
+      delete mTimer;
 
       while (mTools.size() > 0)
       {
@@ -144,21 +144,21 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorActions& EditorActions::GetInstance()
    {
-      if (EditorActions::instance.get() == NULL)
+      if (EditorActions::sInstance.get() == NULL)
       {
-         EditorActions::instance = new EditorActions();
+         EditorActions::sInstance = new EditorActions();
       }
-      return *(EditorActions::instance.get());
+      return *(EditorActions::sInstance.get());
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotSelectedActors(std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& newActors)
    {
-      actors.clear();
-      actors.reserve(newActors.size());
+      mActors.clear();
+      mActors.reserve(newActors.size());
       for (unsigned int i = 0; i < newActors.size(); ++i)
       {
-         actors.push_back(newActors[i]);
+         mActors.push_back(newActors[i]);
       }
    }
 
@@ -166,70 +166,70 @@ namespace dtEditQt
    void EditorActions::setupFileActions()
    {
       // File - New Map...
-      actionFileNewMap = new QAction(QIcon(UIResources::ICON_FILE_NEW_MAP.c_str()),
+      mActionFileNewMap = new QAction(QIcon(UIResources::ICON_FILE_NEW_MAP.c_str()),
          tr("&New Map..."), this);
-      actionFileNewMap->setShortcut(tr("Ctrl+N"));
-      actionFileNewMap->setStatusTip(tr("Create a new map."));
-      connect(actionFileNewMap, SIGNAL(triggered()), this, SLOT(slotFileNewMap()));
+      mActionFileNewMap->setShortcut(tr("Ctrl+N"));
+      mActionFileNewMap->setStatusTip(tr("Create a new map."));
+      connect(mActionFileNewMap, SIGNAL(triggered()), this, SLOT(slotFileNewMap()));
 
       // File - Open Map...
-      actionFileOpenMap = new QAction(QIcon(UIResources::ICON_FILE_OPEN_MAP.c_str()),
+      mActionFileOpenMap = new QAction(QIcon(UIResources::ICON_FILE_OPEN_MAP.c_str()),
          tr("&Open Map..."), this);
-      actionFileOpenMap->setShortcut(tr("Ctrl+O"));
-      actionFileOpenMap->setStatusTip(tr("Open an existing map in this project."));
-      connect(actionFileOpenMap, SIGNAL(triggered()), this, SLOT(slotFileOpenMap()));
+      mActionFileOpenMap->setShortcut(tr("Ctrl+O"));
+      mActionFileOpenMap->setStatusTip(tr("Open an existing map in this project."));
+      connect(mActionFileOpenMap, SIGNAL(triggered()), this, SLOT(slotFileOpenMap()));
 
       // File - Close Map
-      actionFileCloseMap = new QAction(tr("Close Map"), this);
-      actionFileCloseMap->setStatusTip(tr("Close the currently opened map"));
-      connect(actionFileCloseMap, SIGNAL(triggered()), this, SLOT(slotFileCloseMap()));
+      mActionFileCloseMap = new QAction(tr("Close Map"), this);
+      mActionFileCloseMap->setStatusTip(tr("Close the currently opened map"));
+      connect(mActionFileCloseMap, SIGNAL(triggered()), this, SLOT(slotFileCloseMap()));
 
       // File - Save Map...
-      actionFileSaveMap = new QAction(QIcon(UIResources::ICON_FILE_SAVE.c_str()),
+      mActionFileSaveMap = new QAction(QIcon(UIResources::ICON_FILE_SAVE.c_str()),
          tr("&Save Map"), this);
-      actionFileSaveMap->setShortcut(tr("Ctrl+S"));
-      actionFileSaveMap->setStatusTip(tr("Save the current map."));
-      connect(actionFileSaveMap, SIGNAL(triggered()), this, SLOT(slotFileSaveMap()));
+      mActionFileSaveMap->setShortcut(tr("Ctrl+S"));
+      mActionFileSaveMap->setStatusTip(tr("Save the current map."));
+      connect(mActionFileSaveMap, SIGNAL(triggered()), this, SLOT(slotFileSaveMap()));
 
       // File - Save Map As...
-      actionFileSaveMapAs = new QAction(tr("Save Map &As..."),this);
-      actionFileSaveMapAs->setStatusTip(tr("Save the current map under a different file."));
-      connect(actionFileSaveMapAs, SIGNAL(triggered()), this, SLOT(slotFileSaveMapAs()));
+      mActionFileSaveMapAs = new QAction(tr("Save Map &As..."),this);
+      mActionFileSaveMapAs->setStatusTip(tr("Save the current map under a different file."));
+      connect(mActionFileSaveMapAs, SIGNAL(triggered()), this, SLOT(slotFileSaveMapAs()));
 
       // File - Change Project
-      actionFileChangeProject = new QAction(tr("&Change Project..."), this);
-      actionFileChangeProject->setStatusTip(tr("Change the current project context."));
-      connect(actionFileChangeProject, SIGNAL(triggered()), this, SLOT(slotProjectChangeContext()));
+      mActionFileChangeProject = new QAction(tr("&Change Project..."), this);
+      mActionFileChangeProject->setStatusTip(tr("Change the current project context."));
+      connect(mActionFileChangeProject, SIGNAL(triggered()), this, SLOT(slotProjectChangeContext()));
 
       // File - Map Properties Editor...
-      actionEditMapProperties = new QAction(tr("Map &Properties..."), this);
-      actionEditMapProperties->setStatusTip(tr("Edit the properties of the current map."));
-      connect(actionEditMapProperties, SIGNAL(triggered()), this, SLOT(slotEditMapProperties()));
+      mActionEditMapProperties = new QAction(tr("Map &Properties..."), this);
+      mActionEditMapProperties->setStatusTip(tr("Edit the properties of the current map."));
+      connect(mActionEditMapProperties, SIGNAL(triggered()), this, SLOT(slotEditMapProperties()));
 
       // File - Map Libraries Editor...
-      actionEditMapLibraries = new QAction(tr("Map &Libraries..."), this);
-      actionEditMapLibraries->setStatusTip(tr("Add and Remove actor libraries from the current map."));
-      connect(actionEditMapLibraries, SIGNAL(triggered()), this, SLOT(slotEditMapLibraries()));
+      mActionEditMapLibraries = new QAction(tr("Map &Libraries..."), this);
+      mActionEditMapLibraries->setStatusTip(tr("Add and Remove actor libraries from the current map."));
+      connect(mActionEditMapLibraries, SIGNAL(triggered()), this, SLOT(slotEditMapLibraries()));
 
       // File - Map Events Editor...
-      actionEditMapEvents = new QAction(tr("Map &Events..."), this);
-      actionEditMapEvents->setStatusTip(tr("Add and Remove Game Events from the current map."));
-      connect(actionEditMapEvents, SIGNAL(triggered()), this, SLOT(slotEditMapEvents()));
+      mActionEditMapEvents = new QAction(tr("Map &Events..."), this);
+      mActionEditMapEvents->setStatusTip(tr("Add and Remove Game Events from the current map."));
+      connect(mActionEditMapEvents, SIGNAL(triggered()), this, SLOT(slotEditMapEvents()));
 
       // File - Edit Library Paths...
-      actionFileEditLibraryPaths = new QAction(tr("Edit Library Pat&hs..."), this);
-      actionFileEditLibraryPaths->setStatusTip(tr("Add or Remove paths to actor libraries."));
-      connect(actionFileEditLibraryPaths, SIGNAL(triggered()), this, SLOT(slotFileEditLibraryPaths()));
+      mActionFileEditLibraryPaths = new QAction(tr("Edit Library Pat&hs..."), this);
+      mActionFileEditLibraryPaths->setStatusTip(tr("Add or Remove paths to actor libraries."));
+      connect(mActionFileEditLibraryPaths, SIGNAL(triggered()), this, SLOT(slotFileEditLibraryPaths()));
 
-      actionFileEditPreferences = new QAction(tr("Preferences..."), this);
-      actionFileEditPreferences->setStatusTip(tr("Edit editor preferences"));
-      connect(actionFileEditPreferences, SIGNAL(triggered()), this, SLOT(slotFileEditPreferences()));
+      mActionFileEditPreferences = new QAction(tr("Preferences..."), this);
+      mActionFileEditPreferences->setStatusTip(tr("Edit editor preferences"));
+      connect(mActionFileEditPreferences, SIGNAL(triggered()), this, SLOT(slotFileEditPreferences()));
 
       // File - Exit...
-      actionFileExit = new QAction(tr("E&xit"), this);
-      actionFileExit->setShortcut(tr("Alt+F4"));
-      actionFileExit->setStatusTip(tr("Exit the level editor."));
-      connect(actionFileExit, SIGNAL(triggered()), this, SLOT(slotFileExit()));
+      mActionFileExit = new QAction(tr("E&xit"), this);
+      mActionFileExit->setShortcut(tr("Alt+F4"));
+      mActionFileExit->setStatusTip(tr("Exit the level editor."));
+      connect(mActionFileExit, SIGNAL(triggered()), this, SLOT(slotFileExit()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -243,86 +243,86 @@ namespace dtEditQt
       connect(actionLocalSpace, SIGNAL(triggered()), this, SLOT(slotEditLocalSpace()));
 
       // Edit - Duplicate Actors...
-      actionEditDuplicateActor = new QAction(QIcon(UIResources::ICON_EDIT_DUPLICATE.c_str()),
+      mActionEditDuplicateActor = new QAction(QIcon(UIResources::ICON_EDIT_DUPLICATE.c_str()),
          tr("Du&plicate Selection"), this);
-      actionEditDuplicateActor->setShortcut(tr("Ctrl+D"));
-      actionEditDuplicateActor->setStatusTip(tr("Duplicates the current actor selection."));
-      connect(actionEditDuplicateActor, SIGNAL(triggered()), this, SLOT(slotEditDuplicateActors()));
+      mActionEditDuplicateActor->setShortcut(tr("Ctrl+D"));
+      mActionEditDuplicateActor->setStatusTip(tr("Duplicates the current actor selection."));
+      connect(mActionEditDuplicateActor, SIGNAL(triggered()), this, SLOT(slotEditDuplicateActors()));
 
       // Edit - Delete Actors...
-      actionEditDeleteActor = new QAction(QIcon(UIResources::ICON_EDIT_DELETE.c_str()),
+      mActionEditDeleteActor = new QAction(QIcon(UIResources::ICON_EDIT_DELETE.c_str()),
          tr("&Delete Selection"), this);
-      //actionEditDeleteActor->setShortcut(tr("delete"));
-      actionEditDeleteActor->setStatusTip(tr("Deletes the current actor selection."));
-      connect(actionEditDeleteActor, SIGNAL(triggered()), this, SLOT(slotEditDeleteActors()));
+      //mActionEditDeleteActor->setShortcut(tr("delete"));
+      mActionEditDeleteActor->setStatusTip(tr("Deletes the current actor selection."));
+      connect(mActionEditDeleteActor, SIGNAL(triggered()), this, SLOT(slotEditDeleteActors()));
 
       // Edit - Ground Clamp Actors.
-      actionEditGroundClampActors = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
+      mActionEditGroundClampActors = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
          tr("&Ground Clamp"), this);
-      actionEditGroundClampActors->setShortcut(tr("Ctrl+G"));
-      actionEditGroundClampActors->setStatusTip(tr("Moves the currently selected actors' Z value to be in line with whatever is below them."));
-      connect(actionEditGroundClampActors, SIGNAL(triggered()), this, SLOT(slotEditGroundClampActors()));
+      mActionEditGroundClampActors->setShortcut(tr("Ctrl+G"));
+      mActionEditGroundClampActors->setStatusTip(tr("Moves the currently selected actors' Z value to be in line with whatever is below them."));
+      connect(mActionEditGroundClampActors, SIGNAL(triggered()), this, SLOT(slotEditGroundClampActors()));
 
       // Edit - Task Editor
-      actionEditTaskEditor = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
+      mActionEditTaskEditor = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
          tr("Tas&k Editor"), this);
-      connect(actionEditTaskEditor, SIGNAL(triggered()), this, SLOT(slotTaskEditor()));
+      connect(mActionEditTaskEditor, SIGNAL(triggered()), this, SLOT(slotTaskEditor()));
 
       // Edit - Goto Actor
-      actionEditGotoActor = new QAction(QIcon(UIResources::LARGE_ICON_EDIT_GOTO.c_str()),
+      mActionEditGotoActor = new QAction(QIcon(UIResources::LARGE_ICON_EDIT_GOTO.c_str()),
          tr("Goto Actor"), this);
-      actionEditGotoActor->setStatusTip(tr("Places the camera at the selected actor."));
-      connect(actionEditGotoActor, SIGNAL(triggered()), this, SLOT(slotEditGotoActor()));
+      mActionEditGotoActor->setStatusTip(tr("Places the camera at the selected actor."));
+      connect(mActionEditGotoActor, SIGNAL(triggered()), this, SLOT(slotEditGotoActor()));
 
-      actionGetGotoPosition = new QAction(tr("Go&to Position..."), this);
-      actionGetGotoPosition->setStatusTip(tr("Move all cameras to desired position."));
-      connect(actionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
+      mActionGetGotoPosition = new QAction(tr("Go&to Position..."), this);
+      mActionGetGotoPosition->setStatusTip(tr("Move all cameras to desired position."));
+      connect(mActionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
 
       // Edit - Undo
-      actionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"), this);
-      actionEditUndo->setShortcut(tr("Ctrl+Z"));
-      actionEditUndo->setStatusTip(tr("Undoes the last property edit, actor delete, or actor creation."));
-      connect(actionEditUndo, SIGNAL(triggered()), this, SLOT(slotEditUndo()));
+      mActionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"), this);
+      mActionEditUndo->setShortcut(tr("Ctrl+Z"));
+      mActionEditUndo->setStatusTip(tr("Undoes the last property edit, actor delete, or actor creation."));
+      connect(mActionEditUndo, SIGNAL(triggered()), this, SLOT(slotEditUndo()));
 
       // Edit - Redo
-      actionEditRedo = new QAction(QIcon(UIResources::ICON_EDIT_REDO.c_str()), tr("&Redo"), this);
-      actionEditRedo->setShortcut(tr("Ctrl+Y"));
-      actionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
-      connect(actionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
+      mActionEditRedo = new QAction(QIcon(UIResources::ICON_EDIT_REDO.c_str()), tr("&Redo"), this);
+      mActionEditRedo->setShortcut(tr("Ctrl+Y"));
+      mActionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
+      connect(mActionEditRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupWindowActions()
    {
-      actionWindowsPropertyEditor = new QAction(tr("Property Editor"), this);
-      actionWindowsPropertyEditor->setShortcut(tr("Alt+1"));
-      actionWindowsPropertyEditor->setStatusTip(tr("Hides and retrieves the actor property editor"));
-      actionWindowsPropertyEditor->setCheckable(true);
-      actionWindowsPropertyEditor->setChecked(true);
+      mActionWindowsPropertyEditor = new QAction(tr("Property Editor"), this);
+      mActionWindowsPropertyEditor->setShortcut(tr("Alt+1"));
+      mActionWindowsPropertyEditor->setStatusTip(tr("Hides and retrieves the actor property editor"));
+      mActionWindowsPropertyEditor->setCheckable(true);
+      mActionWindowsPropertyEditor->setChecked(true);
 
-      actionWindowsActorSearch = new QAction(tr("Actor Search"), this);
-      actionWindowsActorSearch->setShortcut(tr("Alt+2"));
-      actionWindowsActorSearch->setStatusTip(tr("Hides and retrieves the actor search window"));
-      actionWindowsActorSearch->setCheckable(true);
-      actionWindowsActorSearch->setChecked(true);
+      mActionWindowsActorSearch = new QAction(tr("Actor Search"), this);
+      mActionWindowsActorSearch->setShortcut(tr("Alt+2"));
+      mActionWindowsActorSearch->setStatusTip(tr("Hides and retrieves the actor search window"));
+      mActionWindowsActorSearch->setCheckable(true);
+      mActionWindowsActorSearch->setChecked(true);
 
-      actionWindowsResourceBrowser = new QAction(tr("Resource Browser"), this);
-      actionWindowsResourceBrowser->setShortcut(tr("Alt+3"));
-      actionWindowsResourceBrowser->setStatusTip(tr("Hides and retrieves the resource browser"));
-      actionWindowsResourceBrowser->setCheckable(true);
-      actionWindowsResourceBrowser->setChecked(true);
+      mActionWindowsResourceBrowser = new QAction(tr("Resource Browser"), this);
+      mActionWindowsResourceBrowser->setShortcut(tr("Alt+3"));
+      mActionWindowsResourceBrowser->setStatusTip(tr("Hides and retrieves the resource browser"));
+      mActionWindowsResourceBrowser->setCheckable(true);
+      mActionWindowsResourceBrowser->setChecked(true);
 
-      actionWindowsResetWindows = new QAction(tr("Reset Windows"), this);
-      actionWindowsResetWindows->setShortcut(tr("Ctrl+R"));
-      actionWindowsResetWindows->setStatusTip(tr("Restores the windows to a default state"));
+      mActionWindowsResetWindows = new QAction(tr("Reset Windows"), this);
+      mActionWindowsResetWindows->setShortcut(tr("Ctrl+R"));
+      mActionWindowsResetWindows->setStatusTip(tr("Restores the windows to a default state"));
    }
 
    //////////////////////////////////////////////////////////////////////////
    void EditorActions::SetupToolsActions()
    {
-      actionAddTool = new QAction(tr("&External Tools..."), this);
-      actionAddTool->setStatusTip(tr("Add/edit external tools"));
-      connect(actionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
+      mActionAddTool = new QAction(tr("&External Tools..."), this);
+      mActionAddTool->setStatusTip(tr("Add/edit external tools"));
+      connect(mActionAddTool, SIGNAL(triggered()), this, SLOT(SlotNewExternalToolEditor()));
 
       mExternalToolArgParsers.push_back(new CurrentContextArgParser());
       mExternalToolArgParsers.push_back(new CurrentMapNameArgParser());
@@ -346,14 +346,14 @@ namespace dtEditQt
    void EditorActions::setupHelpActions()
    {
       // Help - About Editor
-      actionHelpAboutEditor = new QAction(tr("&About STAGE..."), this);
-      actionHelpAboutEditor->setStatusTip(tr("About STAGE"));
-      connect(actionHelpAboutEditor, SIGNAL(triggered()), this, SLOT(slotHelpAboutEditor()));
+      mActionHelpAboutEditor = new QAction(tr("&About STAGE..."), this);
+      mActionHelpAboutEditor->setStatusTip(tr("About STAGE"));
+      connect(mActionHelpAboutEditor, SIGNAL(triggered()), this, SLOT(slotHelpAboutEditor()));
 
       // Help - About QT
-      actionHelpAboutQT = new QAction(tr("A&bout Qt..."), this);
-      actionHelpAboutQT->setStatusTip(tr("About Qt"));
-      connect(actionHelpAboutQT, SIGNAL(triggered()), this, SLOT(slotHelpAboutQT()));
+      mActionHelpAboutQT = new QAction(tr("A&bout Qt..."), this);
+      mActionHelpAboutQT->setStatusTip(tr("About Qt"));
+      connect(mActionHelpAboutQT, SIGNAL(triggered()), this, SLOT(slotHelpAboutQT()));
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -362,9 +362,9 @@ namespace dtEditQt
       //std::vector<std::string> projs = EditorData::GetInstance().getMainWindow()->findRecentProjects();
       std::list<std::string>::iterator itor;
 
-      actionFileRecentProject0 = new QAction(tr("(Recent Project 1)"), this);
-      actionFileRecentProject0->setEnabled(false);
-      connect(actionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
+      mActionFileRecentProject0 = new QAction(tr("(Recent Project 1)"), this);
+      mActionFileRecentProject0->setEnabled(false);
+      connect(mActionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
 
       itor = EditorData::GetInstance().getRecentProjects().begin();
       if (itor == EditorData::GetInstance().getRecentProjects().end())
@@ -375,9 +375,9 @@ namespace dtEditQt
       if (EditorData::GetInstance().getRecentProjects().size() > 0)
       {
          std::string str = (*itor);
-         actionFileRecentProject0->setText((*itor).c_str());
-         actionFileRecentProject0->setEnabled(true);
-         connect(actionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
+         mActionFileRecentProject0->setText((*itor).c_str());
+         mActionFileRecentProject0->setEnabled(true);
+         connect(mActionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
          ++itor;
       }
    }
@@ -398,10 +398,10 @@ namespace dtEditQt
       }
 
       //unsigned int i = EditorData::GetInstance().getRecentProjects().size();
-      QString curText = actionFileRecentProject0->text();
-      actionFileRecentProject0->setText(tr((*itor).c_str()));
+      QString curText = mActionFileRecentProject0->text();
+      mActionFileRecentProject0->setText(tr((*itor).c_str()));
       ++itor;
-      actionFileRecentProject0->setEnabled(true);
+      mActionFileRecentProject0->setEnabled(true);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -609,7 +609,7 @@ namespace dtEditQt
       }
       else if (result == QMessageBox::Cancel)
       {
-         wasCancelled = true;
+         mWasCancelled = true;
          slotRestartAutosave();
          return;
       }
@@ -1045,9 +1045,9 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditGotoActor()
    {
-      if (actors.size()> 0)
+      if (mActors.size()> 0)
       {
-         EditorEvents::GetInstance().emitGotoActor(actors[0]);
+         EditorEvents::GetInstance().emitGotoActor(mActors[0]);
       }
    }
 
@@ -1159,13 +1159,13 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotPauseAutosave()
    {
-      timer->stop();
+      mTimer->stop();
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotRestartAutosave()
    {
-      timer->start();
+      mTimer->start();
    }
 
    //////////////////////////////////////////////////////////////////////////////
@@ -1178,10 +1178,10 @@ namespace dtEditQt
 
       changeMaps(EditorData::GetInstance().getCurrentMap(), NULL);
 
-      EditorData::GetInstance().setCurrentProjectContext(actionFileRecentProject0->text().toStdString());
+      EditorData::GetInstance().setCurrentProjectContext(mActionFileRecentProject0->text().toStdString());
       try
       {
-         dtDAL::Project::GetInstance().SetContext(actionFileRecentProject0->text().toStdString());
+         dtDAL::Project::GetInstance().SetContext(mActionFileRecentProject0->text().toStdString());
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -1200,7 +1200,7 @@ namespace dtEditQt
          return;
       }
 
-      const std::string& newMapName = actionFileRecentMap0->text().toStdString();
+      const std::string& newMapName = mActionFileRecentMap0->text().toStdString();
       dtDAL::Map* newMap;
       try
       {

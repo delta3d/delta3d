@@ -98,47 +98,32 @@ namespace dtEditQt
        * selected objects are made to be the current selection.
        * @param value True if multi-select mode should be enabled.
        */
-      void setMultiSelectMode(bool value)
-      {
-         mMultiSelectMode = value;
-      }
+      void setMultiSelectMode(bool value) { mMultiSelectMode = value; }
 
       /**
        * Returns whether or not multi-select mode is enabled.
        * @return The multi-selection mode flag.
        */
-      bool getMultiSelectMode() const
-      {
-         return mMultiSelectMode;
-      }
+      bool getMultiSelectMode() const { return mMultiSelectMode; }
 
       /**
        * Returns a group containing overlay objects.  Usually, objects in this group
        * need to be rendered by the viewports but are not a part of the current scene.
        * @return A group scenegraph node containing overlay objects.
        */
-      osg::Group* getOverlayGroup()
-      {
-         return mOverlayGroup.get();
-      }
+      osg::Group* getOverlayGroup() { return mOverlayGroup.get(); }
 
       /**
        * Returns the selection group overlay.  This group contains the current selection.
        * @return A group scenegraph node containing the current selection.
        */
-      osg::Group* getSelectionDecorator()
-      {
-         return mSelectionDecorator.get();
-      }
+      osg::Group* getSelectionDecorator() { return mSelectionDecorator.get(); }
 
       /**
        * Returns a sorted set of actor proxies corresponding to the current selection.
        * @return ActorProxyList
        */
-      ActorProxyList& getCurrentActorSelection()
-      {
-         return this->currentActorSelection;
-      }
+      ActorProxyList& getCurrentActorSelection() { return mCurrentActorSelection; }
 
       /**
        * Determines whether or not the specified actor proxy is currently selected.
@@ -203,8 +188,8 @@ namespace dtEditQt
       osg::ref_ptr<osg::Group> mOverlayGroup;
       osg::ref_ptr<osg::Group> mSelectionDecorator;
 
-      ActorProxyList currentActorSelection;
-      bool mMultiSelectMode;
+      ActorProxyList mCurrentActorSelection;
+      bool           mMultiSelectMode;
    };
 
 } // namespace dtEditQt

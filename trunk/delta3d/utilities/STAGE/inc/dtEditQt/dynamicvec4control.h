@@ -101,18 +101,18 @@ namespace dtEditQt
    protected:
 
    private:
-      DynamicVectorElementControl* wElement;
-      DynamicVectorElementControl* xElement;
-      DynamicVectorElementControl* yElement;
-      DynamicVectorElementControl* zElement;
+      DynamicVectorElementControl* mElementW;
+      DynamicVectorElementControl* mElementX;
+      DynamicVectorElementControl* mElementY;
+      DynamicVectorElementControl* mElementZ;
 
-      bool isVecFloat;
+      bool mIsVecFloat;
       // the tool tip type label indicates that the vector is a float or a double
-      std::string toolTipTypeLabel;
+      std::string mToolTipTypeLabel;
 
-      dtCore::RefPtr<dtDAL::Vec4ActorProperty>  myVec4Property;
-      dtCore::RefPtr<dtDAL::Vec4fActorProperty> myVec4fProperty;
-      dtCore::RefPtr<dtDAL::Vec4dActorProperty> myVec4dProperty;
+      dtCore::RefPtr<dtDAL::Vec4ActorProperty>  mVec4Property;
+      dtCore::RefPtr<dtDAL::Vec4fActorProperty> mVec4fProperty;
+      dtCore::RefPtr<dtDAL::Vec4dActorProperty> mVec4dProperty;
    };
 
 } // namespace dtEditQt

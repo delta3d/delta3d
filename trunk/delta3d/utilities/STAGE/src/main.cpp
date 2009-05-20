@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  */
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
       e.LogException(dtUtil::Log::LOG_ERROR);
       std::ostringstream ss;
       ss << "Exception (" << e.TypeEnum() << "): " << e.What()
-         << "\n\tLine: " << e.Line() << " File: " << e.File(); 
+         << "\n\tLine: " << e.Line() << " File: " << e.File();
 
       // hide the splash screen if it's up or you can't see the error!
       if (splash != NULL)

@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -42,7 +42,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicNameControl::DynamicNameControl()
-      : temporaryEditControl(NULL)
+      : mTemporaryEditControl(NULL)
    {
       // listen for name changes so we can update our own edit control
       connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
@@ -57,7 +57,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicNameControl::updateEditorFromModel(QWidget* widget)
    {
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          // Note, don't use the temporary variable here.  It can cause errors with QT.
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
@@ -76,7 +76,7 @@ namespace dtEditQt
       bool dataChanged = false;
       std::string oldName;
 
-      if (widget != NULL) 
+      if (widget != NULL)
       {
          // Note, don't use the temporary variable here.  It can cause errors with QT.
          SubQLineEdit* editBox = static_cast<SubQLineEdit*>(widget);
@@ -86,20 +86,20 @@ namespace dtEditQt
          std::string result = editBox->text().toStdString();
 
          // set our value to our object
-         if (result != mProxy->GetName()) 
+         if (result != mProxy->GetName())
          {
             oldName = mProxy->GetName();
             mProxy->SetName(result);
             dataChanged = true;
          }
 
-         // reselect all the text when we commit.  
+         // reselect all the text when we commit.
          // Gives the user visual feedback that something happened.
          editBox->selectAll();
       }
 
-      // no notification cause it's not a property 
-      if (dataChanged) 
+      // no notification cause it's not a property
+      if (dataChanged)
       {
          EditorEvents::GetInstance().emitProxyNameChanged(mProxy.get(), oldName);
       }
@@ -108,24 +108,24 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QWidget *DynamicNameControl::createEditor(QWidget* parent, 
+   QWidget *DynamicNameControl::createEditor(QWidget* parent,
       const QStyleOptionViewItem& option, const QModelIndex& index)
    {
       // create and init the edit box
-      temporaryEditControl = new SubQLineEdit(parent, this);
+      mTemporaryEditControl = new SubQLineEdit(parent, this);
 
-      if (!initialized)  
+      if (!mInitialized)
       {
          LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-         return temporaryEditControl;
+         return mTemporaryEditControl;
       }
 
-      updateEditorFromModel(temporaryEditControl);
+      updateEditorFromModel(mTemporaryEditControl);
 
       // set the tooltip
-      temporaryEditControl->setToolTip(getDescription());
+      mTemporaryEditControl->setToolTip(getDescription());
 
-      return temporaryEditControl;
+      return mTemporaryEditControl;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -135,13 +135,13 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicNameControl::getDescription() 
+   const QString DynamicNameControl::getDescription()
    {
       return QString("A descriptive name for the actor that helps searching in both the editor and in code.  It may help implementaion if this is unique");
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   const QString DynamicNameControl::getValueAsString() 
+   const QString DynamicNameControl::getValueAsString()
    {
       DynamicAbstractControl::getValueAsString();
       return QString(tr(mProxy->GetName().c_str()));
@@ -162,7 +162,7 @@ namespace dtEditQt
       // returns true if we successfully change data
       bool dataChanged = false;
 
-      if (!initialized || widget == NULL)  
+      if (!mInitialized || widget == NULL)
       {
          LOG_ERROR("Tried to updateData before being initialized");
          return dataChanged;
@@ -174,9 +174,9 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicNameControl::proxyNameChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy, std::string oldName)
    {
-      if (temporaryEditControl != NULL && proxy == mProxy) 
+      if (mTemporaryEditControl != NULL && proxy == mProxy)
       {
-         updateEditorFromModel(temporaryEditControl);
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

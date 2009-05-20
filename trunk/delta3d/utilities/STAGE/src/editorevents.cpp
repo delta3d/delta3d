@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -42,7 +42,7 @@ namespace dtEditQt
 {
 
    // Singleton instance of the event manager.
-   dtCore::RefPtr<EditorEvents> EditorEvents::instance(NULL);
+   dtCore::RefPtr<EditorEvents> EditorEvents::sInstance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
    EditorEvents::EditorEvents()
@@ -105,7 +105,7 @@ namespace dtEditQt
    void EditorEvents::emitEditorInitiationEvent()
    {
       LOG_INFO("Emitting UI event - [editorInitiationEvent]");
-      emit editorInitiationEvent();           
+      emit editorInitiationEvent();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -252,11 +252,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    EditorEvents& EditorEvents::GetInstance()
    {
-      if (EditorEvents::instance.get() == NULL)
+      if (EditorEvents::sInstance.get() == NULL)
       {
-         EditorEvents::instance = new EditorEvents();
+         EditorEvents::sInstance = new EditorEvents();
       }
-      return *(EditorEvents::instance.get());
+      return *(EditorEvents::sInstance.get());
    }
 
 } // namespace dtEditQt

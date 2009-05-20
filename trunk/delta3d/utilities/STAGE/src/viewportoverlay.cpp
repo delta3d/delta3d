@@ -95,10 +95,10 @@ namespace dtEditQt
       if (actors.empty())
       {
          clearCurrentSelection();
-         EditorActions::GetInstance().actionEditDeleteActor->setEnabled(false);
-         EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(false);
-         EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(false);
-         EditorActions::GetInstance().actionEditGotoActor->setEnabled(false);
+         EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
+         EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
+         EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(false);
+         EditorActions::GetInstance().mActionEditGotoActor->setEnabled(false);
          ViewportManager::GetInstance().refreshAllViewports();
          return;
       }
@@ -148,13 +148,13 @@ namespace dtEditQt
             select(actors[i]->GetActor());
          }
 
-         currentActorSelection.insert(actors[i]);
+         mCurrentActorSelection.insert(actors[i]);
       }
 
-      EditorActions::GetInstance().actionEditDeleteActor->setEnabled(true);
-      EditorActions::GetInstance().actionEditDuplicateActor->setEnabled(true);
-      EditorActions::GetInstance().actionEditGroundClampActors->setEnabled(true);
-      EditorActions::GetInstance().actionEditGotoActor->setEnabled(true);
+      EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(true);
+      EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(true);
+      EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(true);
+      EditorActions::GetInstance().mActionEditGotoActor->setEnabled(true);
       ViewportManager::GetInstance().refreshAllViewports();
    }
 
@@ -188,15 +188,15 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool ViewportOverlay::isActorSelected(dtDAL::ActorProxy* proxy) const
    {
-      ActorProxyList::const_iterator itor = this->currentActorSelection.find(proxy);
-      return (itor != this->currentActorSelection.end());
+      ActorProxyList::const_iterator itor = mCurrentActorSelection.find(proxy);
+      return (itor != mCurrentActorSelection.end());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll)
    {
-      ActorProxyList::iterator itor = this->currentActorSelection.find(proxy);
-      if (itor == this->currentActorSelection.end())
+      ActorProxyList::iterator itor = mCurrentActorSelection.find(proxy);
+      if (itor == mCurrentActorSelection.end())
       {
          return;
       }
@@ -244,21 +244,21 @@ namespace dtEditQt
       //Finally remove the actor proxy from the selection list.
       if (clearAll)
       {
-         this->currentActorSelection.erase(itor);
+         mCurrentActorSelection.erase(itor);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::clearCurrentSelection()
    {
-      ActorProxyList::iterator itor = this->currentActorSelection.begin();
-      while (itor != this->currentActorSelection.end())
+      ActorProxyList::iterator itor = mCurrentActorSelection.begin();
+      while (itor != mCurrentActorSelection.end())
       {
          removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy*>(itor->get()), false);
          ++itor;
       }
 
-      this->currentActorSelection.clear();
+      mCurrentActorSelection.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -46,7 +46,7 @@ namespace dtEditQt
 {
 
    //Singleton global variable for the library manager.
-   dtCore::RefPtr<ViewportManager> ViewportManager::instance(NULL);
+   dtCore::RefPtr<ViewportManager> ViewportManager::sInstance(NULL);
 
    ///////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(ViewportManager::ViewportType);
@@ -56,16 +56,16 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    ViewportManager::ViewportManager()
+      : mShareMasterContext(true)
+      , mMasterViewport(NULL)
+      , mMasterScene(new dtCore::Scene())
+      , mMasterView(new dtCore::View())
    {
-      shareMasterContext = true;
-      masterViewport = NULL;
-      mMasterScene = new dtCore::Scene();
-      mMasterView = new dtCore::View();
       mMasterView->SetScene(mMasterScene.get());
-      viewportOverlay = new ViewportOverlay();
-      worldCamera = new StageCamera();
-      inChangeTransaction = false;
-      startTick = 0;
+      mViewportOverlay     = new ViewportOverlay();
+      mWorldCamera         = new StageCamera();
+      mInChangeTransaction = false;
+      mStartTick = 0;
 
       EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
@@ -105,7 +105,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    ViewportManager::~ViewportManager()
    {
-      this->viewportList.clear();
+      mViewportList.clear();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -116,17 +116,17 @@ namespace dtEditQt
       // The master viewport for context sharing is the first one created.
       // Therefore, see if we have it and if so grab its context to pass
       // on to the new viewport.
-      if (this->shareMasterContext)
+      if (mShareMasterContext)
       {
-         if (this->masterViewport == NULL)
+         if (mMasterViewport == NULL)
          {
             // Must be the first viewport.  Nothing to share with in this case.
             vp = createViewportImpl(name, type, parent, NULL);
-            this->masterViewport = vp;
+            mMasterViewport = vp;
          }
          else
          {
-            vp = createViewportImpl(name, type, parent, this->masterViewport);
+            vp = createViewportImpl(name, type, parent, mMasterViewport);
          }
       }
       else
@@ -141,19 +141,19 @@ namespace dtEditQt
          return NULL;
       }
 
-      vp->setScene(this->mMasterScene.get());
-      this->viewportList[vp->getName()] = vp;
+      vp->setScene(mMasterScene.get());
+      mViewportList[vp->getName()] = vp;
       return vp;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    ViewportManager& ViewportManager::GetInstance()
    {
-      if (ViewportManager::instance.get() == NULL)
+      if (ViewportManager::sInstance.get() == NULL)
       {
-         ViewportManager::instance = new ViewportManager();
+         ViewportManager::sInstance = new ViewportManager();
       }
-      return *(ViewportManager::instance.get());
+      return *ViewportManager::sInstance.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ namespace dtEditQt
    void ViewportManager::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
    {
       std::map<std::string, Viewport*>::iterator itor;
-      for (itor = this->viewportList.begin(); itor != this->viewportList.end(); ++itor)
+      for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
       {
          if (itor->second->getAutoInteractionMode())
          {
@@ -191,7 +191,7 @@ namespace dtEditQt
    void ViewportManager::refreshAllViewports()
    {
       std::map<std::string, Viewport*>::iterator itor;
-      for (itor = this->viewportList.begin(); itor != this->viewportList.end(); ++itor)
+      for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
       {
          if (itor->second->getAutoInteractionMode())
          {
@@ -204,11 +204,11 @@ namespace dtEditQt
    void ViewportManager::refreshScene()
    {
       std::map<std::string, Viewport*>::iterator itor;
-      for (itor = this->viewportList.begin(); itor != this->viewportList.end(); ++itor)
+      for (itor = mViewportList.begin(); itor != mViewportList.end(); ++itor)
       {
          if (itor->second->getAutoSceneUpdate())
          {
-            itor->second->setScene(this->mMasterScene.get());
+            itor->second->setScene(mMasterScene.get());
          }
       }
    }
@@ -230,21 +230,21 @@ namespace dtEditQt
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
             {
-               this->mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+               mMasterScene->RemoveDrawable(billBoard->GetDrawable());
             }
          }
          else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
          {
-            this->mMasterScene->RemoveDrawable(proxy->GetActor());
+            mMasterScene->RemoveDrawable(proxy->GetActor());
          }
          else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
          {
             billBoard = proxy->GetBillBoardIcon();
             if (billBoard != NULL)
             {
-               this->mMasterScene->RemoveDrawable(billBoard->GetDrawable());
+               mMasterScene->RemoveDrawable(billBoard->GetDrawable());
             }
-            this->mMasterScene->RemoveDrawable(proxy->GetActor());
+            mMasterScene->RemoveDrawable(proxy->GetActor());
          }
       }
    }
@@ -261,11 +261,11 @@ namespace dtEditQt
          osg::Texture::Extensions* ext = osg::Texture::getExtensions(0, true);
          if (ext != NULL)
          {
-            this->numTextureUnits = ext->numTextureUnits();
+            mNumTextureUnits = ext->numTextureUnits();
          }
          else
          {
-            this->numTextureUnits = 2;
+            mNumTextureUnits = 2;
          }
       }
    }
@@ -288,7 +288,7 @@ namespace dtEditQt
       if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
       {
          mMasterScene->RemoveDrawable(proxy->GetActor());
-         viewportOverlay->unSelect(proxy->GetActor());
+         mViewportOverlay->unSelect(proxy->GetActor());
          if (billBoard == NULL)
          {
             LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
@@ -300,7 +300,7 @@ namespace dtEditQt
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
                mMasterScene->AddDrawable(billBoard->GetDrawable());
-               viewportOverlay->select(billBoard->GetDrawable());
+               mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
       }
@@ -312,15 +312,15 @@ namespace dtEditQt
          }
          else
          {
-            viewportOverlay->unSelect(billBoard->GetDrawable());
+            mViewportOverlay->unSelect(billBoard->GetDrawable());
             mMasterScene->RemoveDrawable(billBoard->GetDrawable());
          }
 
          actorIndex = mMasterScene->GetDrawableIndex(proxy->GetActor());
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
-            this->mMasterScene->AddDrawable(proxy->GetActor());
-            this->viewportOverlay->select(proxy->GetActor());
+            mMasterScene->AddDrawable(proxy->GetActor());
+            mViewportOverlay->select(proxy->GetActor());
          }
       }
       else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
@@ -336,7 +336,7 @@ namespace dtEditQt
             if (billBoardIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
             {
                mMasterScene->AddDrawable(billBoard->GetDrawable());
-               viewportOverlay->select(billBoard->GetDrawable());
+               mViewportOverlay->select(billBoard->GetDrawable());
             }
          }
 
@@ -344,7 +344,7 @@ namespace dtEditQt
          if (actorIndex == (unsigned)mMasterScene->GetNumberOfAddedDrawable())
          {
             mMasterScene->AddDrawable(proxy->GetActor());
-            viewportOverlay->select(proxy->GetActor());
+            mViewportOverlay->select(proxy->GetActor());
          }
       }
       else
@@ -355,7 +355,7 @@ namespace dtEditQt
 
       // only redraw if we're doing a single change.  Otherwise, all events will be
       // redrawn in the endChangeTransaction
-      if (!inChangeTransaction)
+      if (!mInChangeTransaction)
       {
          refreshAllViewports();
       }
@@ -372,7 +372,7 @@ namespace dtEditQt
    void ViewportManager::onActorProxyCreated(
       dtCore::RefPtr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
    {
-      dtCore::Scene* scene = this->mMasterScene.get();
+      dtCore::Scene* scene = mMasterScene.get();
       dtDAL::ActorProxyIcon* billBoard = NULL;
 
       const dtDAL::ActorProxy::RenderMode& renderMode = proxy->GetRenderMode();
@@ -431,7 +431,7 @@ namespace dtEditQt
 
       // update the viewports unless we're getting lots of changes back to back, in which
       // case our super class handles that.
-      if (!inChangeTransaction)
+      if (!mInChangeTransaction)
       {
          refreshAllViewports();
       }
@@ -473,7 +473,7 @@ namespace dtEditQt
          EditorEvents::GetInstance().emitActorPropertyChanged(proxy,prop);
       }
 
-      if (!inChangeTransaction)
+      if (!mInChangeTransaction)
       {
          refreshAllViewports();
       }
@@ -482,13 +482,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onBeginChangeTransaction()
    {
-      inChangeTransaction = true;
+      mInChangeTransaction = true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportManager::onEndChangeTransaction()
    {
-      inChangeTransaction = false;
+      mInChangeTransaction = false;
       refreshAllViewports();
    }
 

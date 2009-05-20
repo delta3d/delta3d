@@ -1,73 +1,74 @@
 /* -*-c++-*-
-* Delta3D Simulation Training And Game Editor (STAGE)
-* STAGE - dynamiccolorelementcontrol (.h & .cpp) - Using 'The MIT License'
-* Copyright (C) 2005-2008, Alion Science and Technology Corporation
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-* 
-* This software was developed by Alion Science and Technology Corporation under
-* circumstances in which the U. S. Government may have rights in the software.
-*
-* Curtiss Murphy
-*/
+ * Delta3D Simulation Training And Game Editor (STAGE)
+ * STAGE - dynamiccolorelementcontrol (.h & .cpp) - Using 'The MIT License'
+ * Copyright (C) 2005-2008, Alion Science and Technology Corporation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * This software was developed by Alion Science and Technology Corporation under
+ * circumstances in which the U. S. Government may have rights in the software.
+ *
+ * Curtiss Murphy
+ */
 #ifndef DELTA_DYNAMICCOLORELEMENTCONTROL
 #define DELTA_DYNAMICCOLORELEMENTCONTROL
 
 #include <dtEditQt/dynamicabstractcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
 
-namespace dtDAL 
+namespace dtDAL
 {
     //class Vec3ActorProperty;
     class ColorRgbaActorProperty;
 }
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     /**
-    * @class DynamicColorElementControl
-    * @brief This is the a sub control used by the various color property classes.  
-    * In order to draw a vector 3 in the property tree, you actually have 
-    * an X, Y, and Z entry.  This class is for that.  And, this class actually supports
-    * the ColorRgbaActorProperty, and ColorRgbActorProperty with separate contructors.  
-    * It provides a get and set method to get at the data.
-    */
+     * @class DynamicColorElementControl
+     * @brief This is the a sub control used by the various color property classes.
+     * In order to draw a vector 3 in the property tree, you actually have
+     * an X, Y, and Z entry.  This class is for that.  And, this class actually supports
+     * the ColorRgbaActorProperty, and ColorRgbActorProperty with separate contructors.
+     * It provides a get and set method to get at the data.
+     */
     class DynamicColorElementControl : public DynamicAbstractControl
     {
         Q_OBJECT
+
     public:
         /**
          * Constructor - For the ColorRgbaActorProperty property
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
          */
-        DynamicColorElementControl(dtDAL::ColorRgbaActorProperty *colorRGBA, int whichIndex, 
-            const std::string &newLabel);
+        DynamicColorElementControl(dtDAL::ColorRgbaActorProperty* colorRGBA, int whichIndex,
+            const std::string& newLabel);
 
         /**
          * Constructor - For the ColorRgbAActorProperty property
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
          */
-        //DynamicColorElementControl(dtDAL::Vec4ActorProperty *newVectorProp, int whichIndex, 
-        //    const std::string &newLabel);
+        //DynamicColorElementControl(dtDAL::Vec4ActorProperty* newVectorProp, int whichIndex,
+        //    const std::string& newLabel);
 
         /**
          * Destructor
@@ -77,47 +78,47 @@ namespace dtEditQt
         /**
          * @see DynamicAbstractControl#initializeData
          */
-        virtual void initializeData(DynamicAbstractControl *newParent, PropertyEditorModel *model,
-            dtDAL::ActorProxy *proxy, dtDAL::ActorProperty *property);
+        virtual void initializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
+            dtDAL::ActorProxy* proxy, dtDAL::ActorProperty* property);
 
         /**
          * @see DynamicAbstractControl#updateEditorFromModel
          */
-        virtual void updateEditorFromModel(QWidget *widget);
+        virtual void updateEditorFromModel(QWidget* widget);
 
         /**
          * @see DynamicAbstractControl#updateModelFromEditor
          */
-        virtual bool updateModelFromEditor(QWidget *widget);
+        virtual bool updateModelFromEditor(QWidget* widget);
 
         /**
          * @see DynamicAbstractControl#createEditor
          */
-        virtual QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-            const QModelIndex &index);
+        virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+            const QModelIndex& index);
 
         /**
          * @see DynamicAbstractControl#getDisplayName
          */
         virtual const QString getDisplayName();
 
-         /**
+        /**
          * @see DynamicAbstractControl#getDescription
          */
         virtual const QString getDescription();
 
-         /**
+        /**
          * @see DynamicAbstractControl#getValueAsString
          */
         virtual const QString getValueAsString();
 
-         /**
+        /**
          * @see DynamicAbstractControl#isEditable
          */
         virtual bool isEditable();
 
         /**
-         * A convenience method to get the value from the associated 
+         * A convenience method to get the value from the associated
          * vector.  Which element is the 0 based index into the vector.
          */
         int getValue();
@@ -138,9 +139,8 @@ namespace dtEditQt
         static float convertColorIntToFloat(int value);
 
 
-    public slots: 
-
-        virtual bool updateData(QWidget *widget);
+    public slots:
+        virtual bool updateData(QWidget* widget);
 
         void actorPropertyChanged(ActorProxyRefPtr proxy,
             ActorPropertyRefPtr property);
@@ -148,34 +148,34 @@ namespace dtEditQt
         /**
          * @see DynamicAbstractControl#handleSubEditDestroy
          */
-        void handleSubEditDestroy(QWidget *widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
+        void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint)
         {
-            // we have to check - sometimes the destructor won't get called before the 
+            // we have to check - sometimes the destructor won't get called before the
             // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
-            if (widget == temporaryEditControl)
+            if (widget == mTemporaryEditControl)
             {
-               temporaryEditControl = NULL;
+               mTemporaryEditControl = NULL;
             }
         }
 
     protected:
 
-    private: 
-        enum WHICHTYPE {RGBA, RGB} whichType;
+    private:
+        enum WHICHTYPE {RGBA, RGB} mWhichType;
 
-        std::string label;
+        std::string mLabel;
 
-        //dtDAL::ColorRgbActorProperty *colorRGB;
-        dtDAL::ColorRgbaActorProperty *colorRGBA;
-        int elementIndex;
+        //dtDAL::ColorRgbActorProperty *mColorRGB;
+        dtDAL::ColorRgbaActorProperty *mColorRGBA;
+        int mElementIndex;
 
-        // This pointer is not really in our control.  It is constructed in the createEditor() 
-        // method and destroyed whenever QT feels like it (mostly when the control looses focus). 
+        // This pointer is not really in our control.  It is constructed in the createEditor()
+        // method and destroyed whenever QT feels like it (mostly when the control looses focus).
         // We work around this by trapping the destruction of this object, it should
         // call our handleSubEditDestroy() method so we know to not hold this anymore
-        SubQSpinBox *temporaryEditControl;
+        SubQSpinBox *mTemporaryEditControl;
     };
 
-}
+} // namespace dtEditQt
 
-#endif
+#endif // DELTA_DYNAMICCOLORELEMENTCONTROL

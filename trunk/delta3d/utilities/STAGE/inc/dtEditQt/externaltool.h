@@ -13,6 +13,7 @@ namespace dtEditQt
    class ExternalTool : public QObject
    {
       Q_OBJECT
+
    public:
       ExternalTool();
       ~ExternalTool();
@@ -43,10 +44,10 @@ namespace dtEditQt
 
    private:
       QString ExpandArguments(const QString& args) const;
-      QAction* mAction;
-      QString mCommand;
-      QString mArgs;
-      QString mIconFilename;
+      QAction*  mAction;
+      QString   mCommand;
+      QString   mArgs;
+      QString   mIconFilename;
       QProcess* mProcess;
       QList<const ExternalToolArgParser*> mArgParserContainer;
    };

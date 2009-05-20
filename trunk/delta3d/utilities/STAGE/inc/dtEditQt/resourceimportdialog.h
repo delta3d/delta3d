@@ -88,63 +88,63 @@ namespace dtEditQt
        * getType grabs the set dataType. This will be useful for terrain selection
        * @return a resource DataType
        */
-      dtDAL::DataType* getType() { return resourceType; }
+      dtDAL::DataType* getType() { return mResourceType; }
 
       /**
        * setCategory stores the category name
        * @param QString of the currently selected category from the resource tree
        */
-      void setCategory(const QString& myCategory) { this->category = myCategory; }
+      void setCategory(const QString& category) { mCategory = category; }
 
       /**
        * getCategory
        * @return QString category selected from the resource tree
        */
-      QString getCategory() { return this->category; }
+      QString getCategory() { return mCategory; }
 
       /**
        * setCategoryPath
        * @param QString of the path to the category currently selected
        */
-      void setCategoryPath(const QString& myCategoryPath) { this->categoryPath = myCategoryPath; }
+      void setCategoryPath(const QString& categoryPath) { mCategoryPath = categoryPath; }
 
       /**
        * setLastDirectory
        * @param QString of the last directory the user imported from.
        */
-      void setLastDirectory(const QString& lastDir) { this->lastDirectory = lastDir; }
+      void setLastDirectory(const QString& lastDir) { mLastDirectory = lastDir; }
 
       /**
        * getLastDirectory
        * @return QString of the last directory imported from.
        */
-      QString getLastDirectory() { return this->lastDirectory; }
+      QString getLastDirectory() { return mLastDirectory; }
 
       /**
        * getCategoryPath
        * @return QString path to the category
        */
-      QString getCategoryPath() { return this->categoryPath; }
+      QString getCategoryPath() { return mCategoryPath; }
 
       /**
        * setResourceName
        * @param QString of the name of the resource
        */
-      void setResourceName(const QString& myResource) { this->resource = myResource; }
+      void setResourceName(const QString& resource) { mResource = resource; }
 
       /**
        * getResourceName
        * @return QString of the resource name
        */
-      QString getResourceName() { return this->resource; }
+      QString getResourceName() { return mResource; }
 
       /**
        * getResourceFileList
        * @return QList of the files imported
        */
-      QList<QString> getResourceFileList() { return fileList; }
+      QList<QString> getResourceFileList() { return mFileList; }
 
-      QList<dtDAL::ResourceDescriptor> getDescriptorList() { return descriptorList; }
+      QList<dtDAL::ResourceDescriptor> getDescriptorList() { return mDescriptorList; }
 
       /**
        * @brief updateData is a simple method that populates the qlineedit fields after the object
@@ -156,19 +156,19 @@ namespace dtEditQt
        * setDescriptor
        * @param const ResourceDescriptor
        */
-      void setDescriptor(const dtDAL::ResourceDescriptor& descriptor) { this->descriptor = descriptor; }
+      void setDescriptor(const dtDAL::ResourceDescriptor& descriptor) { mDescriptor = descriptor; }
 
       /**
        * getDescriptor
        * @param grabs the resourceDescriptor assigned to the new resource
        */
-      const dtDAL::ResourceDescriptor getDescriptor() { return this->descriptor; }
+      const dtDAL::ResourceDescriptor& getDescriptor() const { return mDescriptor; }
 
       /**
        * resourceCreated
        * @return boolean if a resource has been created
        */
-      bool resourceCreated() { return created; }
+      bool resourceCreated() { return mCreated; }
 
    private slots:
       /**
@@ -188,34 +188,34 @@ namespace dtEditQt
 
    private:
 
-      QLineEdit* nameEdit;
-      QLineEdit* catEdit;
-      QLineEdit* fileEdit;
-      QComboBox* typeEdit;
+      QLineEdit* mNameEdit;
+      QLineEdit* mCatEdit;
+      QLineEdit* mFileEdit;
+      QComboBox* mTypeEdit;
 
-      QList<QString> fileList;
-      QList<dtDAL::ResourceDescriptor> descriptorList;
-      QPushButton* importBtn;
-      QPushButton* fileBtn;
+      QList<QString> mFileList;
+      QList<dtDAL::ResourceDescriptor> mDescriptorList;
+      QPushButton* mImportBtn;
+      QPushButton* mFileBtn;
 
-      QString                   name;
-      QString                   resource;
-      QString                   category;
-      QString                   categoryPath;
-      QString                   file;
-      QString                   type;
-      QStringList               filterList;
-      QString                   fileExt;
-      QString                   lastDirectory;
-      dtDAL::ResourceTreeNode*  resourceTreeNode;
-      dtDAL::DataType*          resourceType;
-      dtDAL::ResourceDescriptor descriptor;
+      QString                   mName;
+      QString                   mResource;
+      QString                   mCategory;
+      QString                   mCategoryPath;
+      QString                   mFile;
+      QString                   mType;
+      QStringList               mFilterList;
+      QString                   mFileExt;
+      QString                   mLastDirectory;
+      dtDAL::ResourceTreeNode*  mResourceTreeNode;
+      dtDAL::DataType*          mResourceType;
+      dtDAL::ResourceDescriptor mDescriptor;
       dtUtil::Log*              mLogger;
 
       // filter vector to fill for file types
-      std::vector<const dtDAL::ResourceTypeHandler*> handler;
+      std::vector<const dtDAL::ResourceTypeHandler*> mHandler;
 
-      bool created;
+      bool mCreated;
    };
 
    /**
@@ -234,12 +234,12 @@ namespace dtEditQt
       {
          setWindowTitle(tr("Create New Category"));
          setModal(true);
-         create = false;
+         mCreate = false;
 
          // required for correct file path
          categoryDialog();
 
-         categoryEdit->setFocus();
+         mCategoryEdit->setFocus();
       }
 
       /**
@@ -253,7 +253,7 @@ namespace dtEditQt
       void categoryDialog()
       {
          // PushButtons
-         createBtn = new QPushButton("Create", this);
+         mCreateBtn = new QPushButton("Create", this);
          QPushButton* cancelBtn = new QPushButton("Cancel", this);
 
          // Create main grid
@@ -264,76 +264,76 @@ namespace dtEditQt
          QGridLayout* mainGrid = new QGridLayout(group);
 
          // Category edit box
-         categoryEdit = new QLineEdit(group);
-         categoryEdit->setMinimumWidth(200);
+         mCategoryEdit = new QLineEdit(group);
+         mCategoryEdit->setMinimumWidth(200);
 
          // Labels
-         QLabel* categoryLabel = new QLabel("Category: ",group);
+         QLabel* categoryLabel = new QLabel("Category: ", group);
 
-         mainGrid->addWidget(categoryLabel,0,0);
-         mainGrid->addWidget(categoryEdit,0,1);
+         mainGrid->addWidget(categoryLabel, 0, 0);
+         mainGrid->addWidget(mCategoryEdit, 0, 1);
 
          QHBoxLayout* hbox = new QHBoxLayout();
          hbox->addStretch(1);
-         hbox->addWidget(createBtn,0,Qt::AlignCenter);
-         hbox->addWidget(cancelBtn,0,Qt::AlignCenter);
+         hbox->addWidget(mCreateBtn, 0, Qt::AlignCenter);
+         hbox->addWidget(cancelBtn,  0, Qt::AlignCenter);
          hbox->addStretch(1);
 
          // add the layouts
          vbox->addWidget(group);
          vbox->addLayout(hbox);
 
-         connect(createBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
-         connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
+         connect(mCreateBtn, SIGNAL(clicked()), this, SLOT(createCategory()));
+         connect(cancelBtn,  SIGNAL(clicked()), this, SLOT(close()));
       }
 
       /**
        * Set the category from the edit field
        * @param takes a QString
        */
-      void setCategory(const QString& myCategory) { newCategory = myCategory; }
+      void setCategory(const QString& category) { mNewCategory = category; }
 
       /**
        * Set the category path
        * @param takes a QString
        */
-      void setCategoryPath(const QString& myCategoryPath) { currPath = myCategoryPath; }
+      void setCategoryPath(const QString& categoryPath) { mCurrPath = categoryPath; }
 
       /**
        * SetType sets the current resource type
        * @param DataType
        */
-      void setType(dtDAL::DataType& myResourceType) { resourceType=&myResourceType; }
+      void setType(dtDAL::DataType& resourceType) { mResourceType = &resourceType; }
 
       /**
        * getType grabs the set dataType. This will be useful for terrain selection
        * @return a resource DataType
        */
-      dtDAL::DataType* getType() { return resourceType; }
+      dtDAL::DataType* getType() { return mResourceType; }
 
       /**
        * Get the category Path
        * @return QString
        */
-      QString getCategoryPath() { return this->currPath; }
+      QString getCategoryPath() { return mCurrPath; }
 
       /**
        * This retrieves the new category supplied by the user
        * @return QString of the new category entered by the user
        */
-      QString getCategory() { return this->newCategory; }
+      QString getCategory() { return mNewCategory; }
 
       /**
        * This sets whether the category should be created
        * @param boolean
        */
-      void setCreate(bool canCreate) { create = canCreate; }
+      void setCreate(bool canCreate) { mCreate = canCreate; }
 
       /**
        * getCreate()
        * @return boolean whether or not this dialog can create a category
        */
-      bool getCreate() { return this->create; }
+      bool getCreate() { return mCreate; }
 
    private slots:
       /**
@@ -352,17 +352,17 @@ namespace dtEditQt
          // Add the users entered text
          if (!fullCategory.isEmpty())
          {
-            fullCategory = fullCategory + ":" + categoryEdit->text();
+            fullCategory = fullCategory + ":" + mCategoryEdit->text();
          }
          else
          {
-            fullCategory = categoryEdit->text();
+            fullCategory = mCategoryEdit->text();
          }
 
-         setCategory(categoryEdit->text());
+         setCategory(mCategoryEdit->text());
          setCategoryPath(fullCategory);
 
-         if (create)
+         if (mCreate)
          {
             if (!fullCategory.isEmpty())
             {
@@ -373,12 +373,12 @@ namespace dtEditQt
       }
 
    private:
-      QPushButton*     createBtn;
-      QLineEdit*       categoryEdit;
-      QString          newCategory;
-      QString          currPath;
-      dtDAL::DataType* resourceType;
-      bool             create;
+      QPushButton*     mCreateBtn;
+      QLineEdit*       mCategoryEdit;
+      QString          mNewCategory;
+      QString          mCurrPath;
+      dtDAL::DataType* mResourceType;
+      bool             mCreate;
    };
 
 } // namespace dtEditQt

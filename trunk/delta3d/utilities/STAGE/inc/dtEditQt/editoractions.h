@@ -71,9 +71,8 @@ namespace dtEditQt
       Q_OBJECT
 
    public:
-
-      int  saveMilliSeconds;
-      bool wasCancelled;
+      int  mSaveMilliSeconds;
+      bool mWasCancelled;
 
       /**
        * Gets the singleton instance of the EditorActions.
@@ -91,7 +90,7 @@ namespace dtEditQt
       void setupRecentItems();
 
       /// Accessor to the timer
-      inline QTimer* getTimer() { return timer; }
+      inline QTimer* getTimer() { return mTimer; }
 
       /**
        * This method is used by several processes to delete a proxy.  It removes
@@ -114,115 +113,115 @@ namespace dtEditQt
        */
 
       // Action - File - New Map
-      QAction* actionFileNewMap;
+      QAction* mActionFileNewMap;
 
       // Action - File - Open Map
-      QAction* actionFileOpenMap;
+      QAction* mActionFileOpenMap;
 
       // Action - File - Close Map
-      QAction* actionFileCloseMap;
+      QAction* mActionFileCloseMap;
 
       // Action - File - Save Map
-      QAction* actionFileSaveMap;
+      QAction* mActionFileSaveMap;
 
       // Action - File - Save Map As
-      QAction* actionFileSaveMapAs;
+      QAction* mActionFileSaveMapAs;
 
       // Action - File - Edit Preferences
-      QAction* actionFileEditPreferences;
+      QAction* mActionFileEditPreferences;
 
       // Action - File - Change Project
-      QAction* actionFileChangeProject;
+      QAction* mActionFileChangeProject;
 
       // Action - File - Recent Project0
-      QAction* actionFileRecentProject0;
+      QAction* mActionFileRecentProject0;
 
       // Action - File - Recent Project1
-      QAction* actionFileRecentProject1;
+      QAction* mActionFileRecentProject1;
 
       // Action - File - Recent Project2
-      QAction* actionFileRecentProject2;
+      QAction* mActionFileRecentProject2;
 
       // Action - File - Recent Project3
-      QAction* actionFileRecentProject3;
+      QAction* mActionFileRecentProject3;
 
       // Action - File - Recent Map0
-      QAction* actionFileRecentMap0;
+      QAction* mActionFileRecentMap0;
 
       // Action - File - Recent Map1
-      QAction* actionFileRecentMap1;
+      QAction* mActionFileRecentMap1;
 
       // Action - File - Recent Map2
-      QAction* actionFileRecentMap2;
+      QAction* mActionFileRecentMap2;
 
       // Action - File - Recent Map3
-      QAction* actionFileRecentMap3;
+      QAction* mActionFileRecentMap3;
 
       // Action - File - Exit
-      QAction* actionFileExit;
+      QAction* mActionFileExit;
 
       // Action - Edit - Local Space
       QAction* actionLocalSpace;
 
       // Action - Edit - Duplicate Actor
-      QAction* actionEditDuplicateActor;
+      QAction* mActionEditDuplicateActor;
 
       // Action - Edit - Delete Actor
-      QAction* actionEditDeleteActor;
+      QAction* mActionEditDeleteActor;
 
       // Action - Edit Clamp actors to ground.
-      QAction* actionEditGroundClampActors;
+      QAction* mActionEditGroundClampActors;
 
       // Action - Edit - Goto Actor
-      QAction* actionEditGotoActor;
+      QAction* mActionEditGotoActor;
 
       // Action - Goto position
-      QAction* actionGetGotoPosition;
+      QAction* mActionGetGotoPosition;
 
       // Action - Edit - Undo
-      QAction* actionEditUndo;
+      QAction* mActionEditUndo;
 
       // Action - Edit - Redo
-      QAction* actionEditRedo;
+      QAction* mActionEditRedo;
 
       // Action - Edit - Map Libraries Editor
-      QAction* actionEditMapLibraries;
+      QAction* mActionEditMapLibraries;
 
       // Action - Edit - Map Properties Editor
-      QAction* actionEditMapProperties;
+      QAction* mActionEditMapProperties;
 
       // Action - Edit - Map Events Editor
-      QAction* actionEditMapEvents;
+      QAction* mActionEditMapEvents;
 
       // Action - File - Library Paths Dialog
-      QAction* actionFileEditLibraryPaths;
+      QAction* mActionFileEditLibraryPaths;
 
       // Action - Edit - Task Editor
-      QAction* actionEditTaskEditor;
+      QAction* mActionEditTaskEditor;
 
       // Action - Project - Change project context.
       //QAction* actionProjectChangeContext;
 
       // Action - Property Editor - Hides/Brings back the property editor window
-      QAction* actionWindowsPropertyEditor;
+      QAction* mActionWindowsPropertyEditor;
 
       // Action - Actor Search - Hides/Brings back the actor tab window
-      QAction* actionWindowsActorSearch;
+      QAction* mActionWindowsActorSearch;
 
       // Action - Resource Browser - Hides/Brings back the resource browser window
-      QAction* actionWindowsResourceBrowser;
+      QAction* mActionWindowsResourceBrowser;
 
       // Action - Reset Windows - Resets the docking windows to a default state
-      QAction* actionWindowsResetWindows;
+      QAction* mActionWindowsResetWindows;
 
       // Add a new external tool
-      QAction* actionAddTool;
+      QAction* mActionAddTool;
 
       // Action - Help - About Delta Level Editor
-      QAction* actionHelpAboutEditor;
+      QAction* mActionHelpAboutEditor;
 
       // Action - Help - About QT
-      QAction* actionHelpAboutQT;
+      QAction* mActionHelpAboutQT;
 
       //Group of external tool QActions
       QActionGroup* mExternalToolActionGroup;
@@ -433,11 +432,11 @@ namespace dtEditQt
       void setupHelpActions();
       void setupWindowActions();
 
-      QTimer* timer;
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+      QTimer* mTimer;
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > mActors;
 
       ///Singleton instance of this class.
-      static dtCore::RefPtr<EditorActions> instance;
+      static dtCore::RefPtr<EditorActions> sInstance;
 
       dtCore::RefPtr<dtCore::Isector> mIsector;
 

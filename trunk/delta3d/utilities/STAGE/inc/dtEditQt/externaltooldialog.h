@@ -51,7 +51,7 @@ namespace dtEditQt
        */
       QString FindDelta3DTool(const QString& baseName) const;
 
-      Ui::ExternalToolDiag ui;
+      Ui::ExternalToolDiag mUI;
 
       QList<ExternalTool*>* mTools;
    };

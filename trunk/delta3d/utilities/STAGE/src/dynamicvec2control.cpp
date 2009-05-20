@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -45,11 +45,11 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    DynamicVec2Control::DynamicVec2Control()
-      : xElement(NULL)
-      , yElement(NULL)
-      //, myVec2Property(NULL)
-      //, myVec2fProperty(NULL)
-      //, myVec2dProperty(NULL)
+      : mElementX(NULL)
+      , mElementY(NULL)
+      //, mVec2Property(NULL)
+      //, mVec2fProperty(NULL)
+      //, mVec2dProperty(NULL)
    {
    }
 
@@ -62,54 +62,54 @@ namespace dtEditQt
    void DynamicVec2Control::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
-      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2) 
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
+      if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2)
       {
-         myVec2Property = static_cast<dtDAL::Vec2ActorProperty*>(newProperty);
+         mVec2Property = static_cast<dtDAL::Vec2ActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // create X
-         xElement = new DynamicVectorElementControl(myVec2Property.get(), 0, "X");
-         xElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(xElement);
+         mElementX = new DynamicVectorElementControl(mVec2Property.get(), 0, "X");
+         mElementX->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementX);
          // create Y
-         yElement = new DynamicVectorElementControl(myVec2Property.get(), 1, "Y");
-         yElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(yElement);
-      } 
-      else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2F) 
+         mElementY = new DynamicVectorElementControl(mVec2Property.get(), 1, "Y");
+         mElementY->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementY);
+      }
+      else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2F)
       {
-         myVec2fProperty = static_cast<dtDAL::Vec2fActorProperty*>(newProperty);
+         mVec2fProperty = static_cast<dtDAL::Vec2fActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // create X
-         xElement = new DynamicVectorElementControl(myVec2fProperty.get(), 0, "X");
-         xElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(xElement);
+         mElementX = new DynamicVectorElementControl(mVec2fProperty.get(), 0, "X");
+         mElementX->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementX);
          // create Y
-         yElement = new DynamicVectorElementControl(myVec2fProperty.get(), 1, "Y");
-         yElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(yElement);
-      } 
-      else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2D) 
+         mElementY = new DynamicVectorElementControl(mVec2fProperty.get(), 1, "Y");
+         mElementY->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementY);
+      }
+      else if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::VEC2D)
       {
-         myVec2dProperty = static_cast<dtDAL::Vec2dActorProperty*>(newProperty);
+         mVec2dProperty = static_cast<dtDAL::Vec2dActorProperty*>(newProperty);
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // create X
-         xElement = new DynamicVectorElementControl(myVec2dProperty.get(), 0, "X");
-         xElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(xElement);
+         mElementX = new DynamicVectorElementControl(mVec2dProperty.get(), 0, "X");
+         mElementX->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementX);
          // create Y
-         yElement = new DynamicVectorElementControl(myVec2dProperty.get(), 1, "Y");
-         yElement->initializeData(this, newModel, newProxy, newProperty);
-         children.push_back(yElement);
-      } 
-      else 
+         mElementY = new DynamicVectorElementControl(mVec2dProperty.get(), 1, "Y");
+         mElementY->initializeData(this, newModel, newProxy, newProperty);
+         mChildren.push_back(mElementY);
+      }
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }
@@ -117,17 +117,17 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicVec2Control::getDisplayName()
    {
-      if (myVec2Property.valid())
+      if (mVec2Property.valid())
       {
-         return QString(tr(myVec2Property->GetLabel().c_str()));
+         return QString(tr(mVec2Property->GetLabel().c_str()));
       }
-      else if (myVec2fProperty.valid())
+      else if (mVec2fProperty.valid())
       {
-         return QString(tr(myVec2fProperty->GetLabel().c_str()));
+         return QString(tr(mVec2fProperty->GetLabel().c_str()));
       }
-      else if (myVec2dProperty.valid())
+      else if (mVec2dProperty.valid())
       {
-         return QString(tr(myVec2dProperty->GetLabel().c_str()));
+         return QString(tr(mVec2dProperty->GetLabel().c_str()));
       }
       else
       {
@@ -139,22 +139,22 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicVec2Control::getDescription()
    {
-      if (myVec2Property.valid())
+      if (mVec2Property.valid())
       {
-         std::string tooltip = myVec2Property->GetDescription() + "  [Type: " +
-            myVec2Property->GetDataType().GetName() + "]";
+         std::string tooltip = mVec2Property->GetDescription() + "  [Type: " +
+            mVec2Property->GetDataType().GetName() + "]";
          return QString(tr(tooltip.c_str()));
       }
-      else if (myVec2fProperty.valid())
+      else if (mVec2fProperty.valid())
       {
-         std::string tooltip = myVec2fProperty->GetDescription() + "  [Type: " +
-            myVec2fProperty->GetDataType().GetName() + "]";
+         std::string tooltip = mVec2fProperty->GetDescription() + "  [Type: " +
+            mVec2fProperty->GetDataType().GetName() + "]";
          return QString(tr(tooltip.c_str()));
       }
-      else if (myVec2dProperty.valid())
+      else if (mVec2dProperty.valid())
       {
-         std::string tooltip = myVec2dProperty->GetDescription() + "  [Type: " +
-            myVec2dProperty->GetDataType().GetName() + "]";
+         std::string tooltip = mVec2dProperty->GetDescription() + "  [Type: " +
+            mVec2dProperty->GetDataType().GetName() + "]";
          return QString(tr(tooltip.c_str()));
       }
       else
@@ -173,23 +173,23 @@ namespace dtEditQt
       bool isVecFloat = (sizeof(testVect.x()) == sizeof(float));
       const unsigned int NUM_DECIMAL_DIGITS = isVecFloat ? NUM_DECIMAL_DIGITS_FLOAT : NUM_DECIMAL_DIGITS_DOUBLE;
 
-      if (myVec2Property.valid())
+      if (mVec2Property.valid())
       {
-         const osg::Vec2 &vectorValue = myVec2Property->GetValue();
+         const osg::Vec2 &vectorValue = mVec2Property->GetValue();
 
          return "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
                 ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) + ")";
       }
-      else if (myVec2fProperty.valid())
+      else if (mVec2fProperty.valid())
       {
-         const osg::Vec2f &vectorValue = myVec2fProperty->GetValue();
+         const osg::Vec2f &vectorValue = mVec2fProperty->GetValue();
 
          return "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_FLOAT) +
                 ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_FLOAT) + ")";
       }
-      else if (myVec2dProperty.valid())
+      else if (mVec2dProperty.valid())
       {
-         const osg::Vec2d &vectorValue = myVec2dProperty->GetValue();
+         const osg::Vec2d &vectorValue = mVec2dProperty->GetValue();
 
          return "(X="  + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) +
                 ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS_DOUBLE) + ")";

@@ -115,10 +115,7 @@ namespace dtEditQt
        * Gets the type of view currently in use by the viewport.
        * @return
        */
-      const OrthoViewType& getViewType() const
-      {
-         return *(this->viewType);
-      }
+      const OrthoViewType& getViewType() const { return *mViewType; }
 
       /**
        * Moves the camera.
@@ -241,9 +238,9 @@ namespace dtEditQt
       ///Allow the ViewportManager access to it can create perspective viewports.
       friend class ViewportManager;
 
-      const CameraMode*    cameraMode;
-      const OrthoViewType* viewType;
-      osg::Vec3 zoomToPosition;
+      const CameraMode*    mCameraMode;
+      const OrthoViewType* mViewType;
+      osg::Vec3            mZoomToPosition;
    };
 
 } // namespace dtEditQt
