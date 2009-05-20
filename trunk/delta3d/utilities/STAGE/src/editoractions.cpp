@@ -235,6 +235,13 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::setupEditActions()
    {
+      // Edit - Local Space...
+      actionLocalSpace = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()), "Local Space", this);
+      actionLocalSpace->setCheckable(true);
+      actionLocalSpace->setChecked(true);
+      actionLocalSpace->setStatusTip(tr("Sets the selection gizmos to local space."));
+      connect(actionLocalSpace, SIGNAL(triggered()), this, SLOT(slotEditLocalSpace()));
+
       // Edit - Duplicate Actors...
       actionEditDuplicateActor = new QAction(QIcon(UIResources::ICON_EDIT_DUPLICATE.c_str()),
          tr("Du&plicate Selection"), this);
@@ -689,6 +696,13 @@ namespace dtEditQt
       dtQt::LibraryPathsEditor editor(EditorData::GetInstance().getMainWindow(),
                EditorData::GetInstance().getCurrentLibraryDirectory());
       editor.exec();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditLocalSpace()
+   {
+      EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget(!actionLocalSpace->isChecked());
+      EditorEvents::GetInstance().emitEditorPreferencesChanged();
    }
 
    //////////////////////////////////////////////////////////////////////////////

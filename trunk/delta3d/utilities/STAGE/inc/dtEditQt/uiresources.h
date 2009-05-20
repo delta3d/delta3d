@@ -49,6 +49,7 @@ namespace dtEditQt
       static std::string ICON_FILE_OPEN_MAP;
       static std::string ICON_FILE_SAVE;
 
+      static std::string ICON_EDIT_LOCAL_SPACE;
       static std::string ICON_EDIT_DUPLICATE;
       static std::string ICON_EDIT_DELETE;
       static std::string ICON_GROUND_CLAMP;

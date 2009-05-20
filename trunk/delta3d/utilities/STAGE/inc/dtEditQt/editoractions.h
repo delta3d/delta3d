@@ -161,6 +161,9 @@ namespace dtEditQt
       // Action - File - Exit
       QAction* actionFileExit;
 
+      // Action - Edit - Local Space
+      QAction* actionLocalSpace;
+
       // Action - Edit - Duplicate Actor
       QAction* actionEditDuplicateActor;
 
@@ -194,7 +197,7 @@ namespace dtEditQt
       // Action - File - Library Paths Dialog
       QAction* actionFileEditLibraryPaths;
 
-      // Action - Edie - Task Editor
+      // Action - Edit - Task Editor
       QAction* actionEditTaskEditor;
 
       // Action - Project - Change project context.
@@ -260,6 +263,11 @@ namespace dtEditQt
        * Slot - File Exit event.  Exits the app.
        */
       void slotFileExit();
+
+      /**
+      * Slot - Edit - Local space event.  Sets the edit gizmos to local space.
+      */
+      void slotEditLocalSpace();
 
       /**
        * Slot - Edit - Duplicate event.  Copies the current actor selection and added the

@@ -41,6 +41,7 @@ namespace dtEditQt
       ICON_FILE_OPEN_MAP = ":/icons/openmap_small.png";
       ICON_FILE_SAVE = ":/icons/savemap_small.png";
 
+      ICON_EDIT_LOCAL_SPACE = ":/icons/localspace.png";
       ICON_EDIT_DUPLICATE = ":/icons/duplicate_small.png";
       ICON_EDIT_DELETE = ":/icons/trash_small.png";
       ICON_GROUND_CLAMP = ":/icons/groundclamp_small.png";
@@ -101,6 +102,7 @@ namespace dtEditQt
    std::string UIResources::ICON_FILE_OPEN_MAP("");
    std::string UIResources::ICON_FILE_SAVE("");
 
+   std::string UIResources::ICON_EDIT_LOCAL_SPACE("");
    std::string UIResources::ICON_EDIT_DUPLICATE("");
    std::string UIResources::ICON_EDIT_DELETE("");
    std::string UIResources::ICON_GROUND_CLAMP("");

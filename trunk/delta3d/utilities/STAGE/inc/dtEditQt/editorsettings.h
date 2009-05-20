@@ -87,7 +87,6 @@ namespace dtEditQt
       static const QString LOAD_RECENT_MAPS;
       static const QString SELECTION_COLOR;
       static const QString RIGID_CAMERA;
-      static const QString USE_GLOBAL_ORIENTATION;
       static const QString ACTOR_CREATION_OFFSET;
 
       ///Version identifier for the main window docking state.
