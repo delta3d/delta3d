@@ -367,12 +367,22 @@ namespace dtEditQt
       attachActorToCamera = EditorData::GetInstance().getRigidCamera();
 
       // sync up our local vs world space setting. Affects the actor movement/rotation widget in the viewports
-      bool useGlobalOrientation = EditorData::GetInstance().
-         GetUseGlobalOrientationForViewportWidget();
+      bool wasGlobal = true;
+      if (dtCore::ObjectMotionModel::LOCAL_SPACE == mObjectMotionModel->GetCoordinateSpace())
+      {
+         wasGlobal = false;
+      }
+
+      bool useGlobalOrientation = EditorData::GetInstance().GetUseGlobalOrientationForViewportWidget();
       if (useGlobalOrientation)
          mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
       else
          mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::LOCAL_SPACE);
+
+      if (wasGlobal != useGlobalOrientation)
+      {
+         refresh();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

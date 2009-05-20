@@ -19,6 +19,7 @@
       <file>icons/groundclamp_small.png</file>
       <file>icons/import_large.png</file>
       <file>icons/lightingmode_tiny.png</file>
+	  <file>icons/localspace.png</file>
       <file>icons/newmap_small.png</file>
       <file>icons/openmap_small.png</file>
       <file>icons/particle_resource.png</file>
@@ -51,6 +52,7 @@
       <file>icons/undo.png</file>
       <file>icons/viewer.ico</file>
       <file>icons/wireframemode_tiny.png</file>
+	  <file>icons/worldspace.png</file>
       <file>gpl.txt</file>
     </qresource>
 </RCC>

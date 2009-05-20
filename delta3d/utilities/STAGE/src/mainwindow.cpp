@@ -128,6 +128,8 @@ namespace dtEditQt
       editMenu->addAction(editorActions.actionEditUndo);
       editMenu->addAction(editorActions.actionEditRedo);
       editMenu->addSeparator();
+      editMenu->addAction(editorActions.actionLocalSpace);
+      editMenu->addSeparator();
       editMenu->addAction(editorActions.actionEditDuplicateActor);
       editMenu->addAction(editorActions.actionEditDeleteActor);
       editMenu->addAction(editorActions.actionEditGroundClampActors);
@@ -170,6 +172,8 @@ namespace dtEditQt
       editToolBar->setObjectName("EditToolBar");
       editToolBar->setWindowTitle(tr("Edit Toolbar"));
       editToolBar->setMinimumWidth(4);
+      editToolBar->addAction(EditorActions::GetInstance().actionLocalSpace);
+      editToolBar->addSeparator();
       editToolBar->addAction(EditorActions::GetInstance().actionEditDuplicateActor);
       editToolBar->addAction(EditorActions::GetInstance().actionEditDeleteActor);
       editToolBar->addAction(EditorActions::GetInstance().actionEditGotoActor);
@@ -473,7 +477,6 @@ namespace dtEditQt
       settings.setValue(EditorSettings::LOAD_RECENT_PROJECTS, editorData.getLoadLastProject());
       settings.setValue(EditorSettings::LOAD_RECENT_MAPS, editorData.getLoadLastMap());
       settings.setValue(EditorSettings::RIGID_CAMERA, editorData.getRigidCamera());
-      settings.setValue(EditorSettings::USE_GLOBAL_ORIENTATION, editorData.GetUseGlobalOrientationForViewportWidget());
       settings.setValue(EditorSettings::ACTOR_CREATION_OFFSET, editorData.GetActorCreationOffset());
       settings.setValue(EditorSettings::SAVE_MILLISECONDS, EditorActions::GetInstance().saveMilliSeconds);
       settings.setValue(EditorSettings::SELECTION_COLOR, editorData.getSelectionColor());
@@ -788,13 +791,6 @@ namespace dtEditQt
       {
          bool rigidCamera = settings.value(EditorSettings::RIGID_CAMERA).toBool();
          EditorData::GetInstance().setRigidCamera(rigidCamera);
-         perspView->onEditorPreferencesChanged();
-      }
-
-      if (settings.contains(EditorSettings::USE_GLOBAL_ORIENTATION))
-      {
-         bool useGlobalOrientation = settings.value(EditorSettings::USE_GLOBAL_ORIENTATION).toBool();
-         EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget(useGlobalOrientation);
          perspView->onEditorPreferencesChanged();
       }
 
