@@ -28,7 +28,6 @@
 
 namespace dtNetGM
 {
-   ///////////////////////////////////////////////////////////
    ClientNetworkComponent::ClientNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
       : NetworkComponent(gameName, gameVersion, logFile)
       , mAcceptedClient(false)
@@ -37,13 +36,11 @@ namespace dtNetGM
       mConnectedClients.empty();
    }
 
-   ///////////////////////////////////////////////////////////
    ClientNetworkComponent::~ClientNetworkComponent(void)
    {
       mConnectedClients.clear();
    }
 
-   ///////////////////////////////////////////////////////////
    bool ClientNetworkComponent::SetupClient(const std::string& host, const int portNum)
    {
       if (!IsGneInitialized())
@@ -60,7 +57,6 @@ namespace dtNetGM
       return true;
    }
 
-   ///////////////////////////////////////////////////////////
    bool ClientNetworkComponent::ConnectToServer(const std::string& host, const int portNum)
    {
       GNE::Address address(host);
@@ -105,7 +101,7 @@ namespace dtNetGM
       return true;
    }
 
-   ///////////////////////////////////////////////////////////
+
    void ClientNetworkComponent::OnDisconnect(NetworkBridge& networkBridge)
    {
       mAcceptedClient = false;
@@ -116,7 +112,6 @@ namespace dtNetGM
       RemoveConnection(networkBridge.GetMachineInfo());
    }
 
-   ///////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerAcceptConnection(const MachineInfoMessage& msg)
    {
       mAcceptedClient = true;
@@ -127,20 +122,17 @@ namespace dtNetGM
       LOG_INFO("Connection accepted by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}");
    }
 
-   ///////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectConnection(const dtGame::NetServerRejectMessage& msg)
    {
       mAcceptedClient = false; // should stay false....
       LOG_INFO("Connection rejected by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}.\nReason: " + msg.GetRejectionMessage());
    }
 
-   ///////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectMessage(const dtGame::ServerMessageRejected& msg)
    {
       LOG_DEBUG("Message[" + dtUtil::ToString(msg.GetMessageType().GetId()) + "] rejected by " + msg.GetSource().GetName() + " Reason: " + msg.GetCause());
    }
 
-   ///////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessInfoClientConnected(const MachineInfoMessage& msg)
    {
       mConnectedClients.push_back(msg.GetMachineInfo());
@@ -148,11 +140,9 @@ namespace dtNetGM
       LOG_DEBUG("InfoClientConnected: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
    }
 
-   ///////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg)
    {
-      OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
-
+      mMutex.acquire();
       std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter;
       dtCore::RefPtr<dtGame::MachineInfo> machineInfo = msg.GetMachineInfo();
 
@@ -166,9 +156,9 @@ namespace dtNetGM
             break;
          }
       }
+      mMutex.release();
    }
 
-   ///////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetServer()
    {
       if (mMachineInfoServer.valid())
@@ -181,17 +171,14 @@ namespace dtNetGM
       }
    }
 
-   ///////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetMachineInfo(const dtCore::UniqueId& uniqueId)
    {
+      mMutex.acquire();
 
       // check in direct connections (servers!)
       const dtGame::MachineInfo* machInfo = NetworkComponent::GetMachineInfo(uniqueId);
-
       if (machInfo == NULL)
       {
-         //lock after the above method call to avoid a recursive lock.
-         OpenThreads::ScopedLock<OpenThreads::Mutex> lock(mMutex);
          // find MachineInfo among other client-connections
          for (std::vector< dtCore::RefPtr<dtGame::MachineInfo> >::iterator iter = mConnectedClients.begin(); iter != mConnectedClients.end(); iter++)
          {
@@ -203,6 +190,7 @@ namespace dtNetGM
          }
       }
 
+      mMutex.release();
       return machInfo;
    }
 }
