@@ -70,9 +70,12 @@ namespace dtCore
 
       void SetTerrain(dtCore::DeltaDrawable* terrain) { mTerrainDrawable = terrain; }
 
+      void EnableTranslation(bool enabled) { mShouldTranslate = enabled; }
+
    private:
       dtCore::RefPtr<dtCore::DeltaDrawable> mTerrainDrawable;
       bool mUseSimTimeForSpeed;
+      bool mShouldTranslate;
    };
 } // namespace dtCore
 

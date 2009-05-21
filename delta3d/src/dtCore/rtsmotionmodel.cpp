@@ -21,6 +21,7 @@ RTSMotionModel::RTSMotionModel( dtCore::Keyboard *keyboard
    : dtCore::OrbitMotionModel(keyboard, mouse)
    , mTerrainDrawable(NULL)
    , mUseSimTimeForSpeed(useSimTimeForSpeed)
+   , mShouldTranslate(true)
 {
    AddSender(&dtCore::System::GetInstance());
 
@@ -187,10 +188,10 @@ void RTSMotionModel::OnMessage(MessageData *data)
    // let's work in terms of the focal point instead
    xyz = GetFocalPoint();
 
+   if (mShouldTranslate)
    {
       osg::Vec3 hpr_trans = hpr;
-      osg::Vec3 translation
-      (
+      osg::Vec3 translation(
          float(GetLeftRightTranslationAxis()->GetState()),
          float(GetUpDownTranslationAxis()->GetState()),
          0.0f
