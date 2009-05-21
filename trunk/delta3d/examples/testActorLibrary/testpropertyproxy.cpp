@@ -31,6 +31,7 @@
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
 #include <dtCore/scene.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
@@ -224,29 +225,36 @@ void ExampleTestPropertyProxy::BuildPropertyMap()
    std::string arrayString = arrayStringProp->ToString();
    arrayStringProp->FromString(arrayString);
 
-   mColorArray.push_back(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
-   mColorArray.push_back(osg::Vec4(0.1f, 1.0f, 0.1f, 1.0f));
-   mColorArray.push_back(osg::Vec4(1.0f, 0.5f, 0.5f, 1.0f));
-   mColorArray.push_back(osg::Vec4(0.5f, 1.0f, 1.0f, 0.5f));
+   Vec3ActorProperty* vecContainerProp = new Vec3ActorProperty(
+      "VectorProp", "Vector Prop",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::SetVecContainerValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetVecContainerValue),
+      "Holds the vector used in the container", GROUPNAME);
 
-   ColorRgbaActorProperty* colorProp = new ColorRgbaActorProperty(
-      "ArrayColor", "Array Color",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::SetColorArrayValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetColorArrayValue),
-      "Holds the color used in the array", GROUPNAME);
+   IntActorProperty* intContainerProp = new IntActorProperty(
+      "IntProp", "Int Prop",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::SetIntContainerValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetIntContainerValue),
+      "Holds the int used in the container", GROUPNAME);
 
-   ArrayActorPropertyBase* arrayColorProp = new ArrayActorProperty<osg::Vec4>(
-      "TestColorArray", "Fixed Position Test Color Array", "Holds a test array of Colors that cannot be reordered",
-      MakeFunctor(*this, &ExampleTestPropertyProxy::ColorArraySetIndex),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetDefault),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArrayGetValue),
-      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ColorArraySetValue),
-      colorProp, GROUPNAME, "", false);
+   ContainerActorProperty* containerProp = new ContainerActorProperty(
+      "ContainerProp", "Container", "Contains a structure of properties",
+      GROUPNAME);
+   containerProp->AddProperty(vecContainerProp);
+   containerProp->AddProperty(intContainerProp);
 
-   AddProperty(arrayColorProp);
+   ArrayActorPropertyBase* arrayContainerProp = new ArrayActorProperty<ExampleTestPropertyProxy::testStruct>(
+      "TestContainerArray", "Array of Containers", "Holds a test array of Containers",
+      MakeFunctor(*this, &ExampleTestPropertyProxy::ContainerArraySetIndex),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArrayGetDefault),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArrayGetValue),
+      MakeFunctorRet(*this, &ExampleTestPropertyProxy::ContainerArraySetValue),
+      containerProp, GROUPNAME, "", false);
 
-   arrayString = arrayColorProp->ToString();
-   arrayColorProp->FromString(arrayString);
+   AddProperty(arrayContainerProp);
+
+   arrayString = arrayContainerProp->ToString();
+   arrayContainerProp->FromString(arrayString);
 
    std::vector<int> a;
    a.push_back(1);
@@ -333,51 +341,70 @@ std::string ExampleTestPropertyProxy::GetStringArrayValue()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ExampleTestPropertyProxy::ColorArraySetIndex(int index)
+void ExampleTestPropertyProxy::ContainerArraySetIndex(int index)
 {
-   mColorArrayIndex = index;
+   mContainerArrayIndex = index;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec4 ExampleTestPropertyProxy::ColorArrayGetDefault()
+ExampleTestPropertyProxy::testStruct ExampleTestPropertyProxy::ContainerArrayGetDefault()
 {
-   osg::Vec4 color;
-   color.r() = 0.5f;
-   color.g() = 0.5f;
-   color.b() = 0.5f;
-   color.a() = 1.0f;
-   return color;
+   testStruct test;
+   test.vector.x() = 5.0f;
+   test.vector.y() = 8.0f;
+   test.vector.z() = 53.0f;
+   test.value = 100;
+   return test;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<osg::Vec4> ExampleTestPropertyProxy::ColorArrayGetValue()
+std::vector<ExampleTestPropertyProxy::testStruct> ExampleTestPropertyProxy::ContainerArrayGetValue()
 {
-   return mColorArray;
+   return mStructArray;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ExampleTestPropertyProxy::ColorArraySetValue(const std::vector<osg::Vec4>& value)
+void ExampleTestPropertyProxy::ContainerArraySetValue(const std::vector<ExampleTestPropertyProxy::testStruct>& value)
 {
-   mColorArray = value;
+   mStructArray = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ExampleTestPropertyProxy::SetColorArrayValue(const osg::Vec4& value)
+void ExampleTestPropertyProxy::SetVecContainerValue(const osg::Vec3& value)
 {
-   if (mColorArrayIndex < (int)mColorArray.size())
+   if (mContainerArrayIndex < (int)mStructArray.size())
    {
-      mColorArray[mColorArrayIndex] = value;
+      mStructArray[mContainerArrayIndex].vector = value;
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec4 ExampleTestPropertyProxy::GetColorArrayValue()
+osg::Vec3 ExampleTestPropertyProxy::GetVecContainerValue()
 {
-   if (mColorArrayIndex < (int)mColorArray.size())
+   if (mContainerArrayIndex < (int)mStructArray.size())
    {
-      return mColorArray[mColorArrayIndex];
+      return mStructArray[mContainerArrayIndex].vector;
    }
-   return ColorArrayGetDefault();
+   return ContainerArrayGetDefault().vector;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ExampleTestPropertyProxy::SetIntContainerValue(int value)
+{
+   if (mContainerArrayIndex < (int)mStructArray.size())
+   {
+      mStructArray[mContainerArrayIndex].value = value;
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int ExampleTestPropertyProxy::GetIntContainerValue()
+{
+   if (mContainerArrayIndex < (int)mStructArray.size())
+   {
+      return mStructArray[mContainerArrayIndex].value;
+   }
+   return ContainerArrayGetDefault().value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

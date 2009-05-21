@@ -70,6 +70,12 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
          }
       };
 
+      struct DT_PLUGIN_EXPORT testStruct
+      {
+         osg::Vec3 vector;
+         int       value;
+      };
+
       /**
        * Sets the test Float
        * @param value Test value
@@ -447,12 +453,14 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       std::string GetStringArrayValue();
 
       // Array of colors
-      void ColorArraySetIndex(int index);
-      osg::Vec4 ColorArrayGetDefault();
-      std::vector<osg::Vec4> ColorArrayGetValue();
-      void ColorArraySetValue(const std::vector<osg::Vec4>& value);
-      void SetColorArrayValue(const osg::Vec4& value);
-      osg::Vec4 GetColorArrayValue();
+      void ContainerArraySetIndex(int index);
+      testStruct ContainerArrayGetDefault();
+      std::vector<testStruct> ContainerArrayGetValue();
+      void ContainerArraySetValue(const std::vector<testStruct>& value);
+      void SetVecContainerValue(const osg::Vec3& value);
+      osg::Vec3 GetVecContainerValue();
+      void SetIntContainerValue(int value);
+      int GetIntContainerValue();
 
       // Array of Arrays of Ints.
       void IntArraySetIndex(int index);
@@ -495,8 +503,8 @@ class DT_PLUGIN_EXPORT ExampleTestPropertyProxy : public StaticMeshActorProxy
       dtCore::RefPtr<dtDAL::NamedGroupParameter> mGroupParam;
       std::vector<std::string>      mStringArray;
       int                           mStringArrayIndex;
-      std::vector<osg::Vec4>        mColorArray;
-      int                           mColorArrayIndex;
+      std::vector<testStruct>       mStructArray;
+      int                           mContainerArrayIndex;
       std::vector<std::vector<int> > mArrayIntArray;
       int                           mIntArrayIndex;
       int                           mArrayArrayIndex;

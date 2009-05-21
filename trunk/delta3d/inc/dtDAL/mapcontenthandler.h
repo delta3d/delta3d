@@ -53,6 +53,7 @@ namespace dtDAL
    class NamedParameter;
    class NamedGroupParameter;
    class ArrayActorPropertyBase;
+   class ContainerActorProperty;
    class DataType;
 
    /**
@@ -226,6 +227,7 @@ namespace dtDAL
          bool mInGroupProperty;
          bool mHasDeprecatedProperty;
          int  mInArrayProperty;     // Since arrays can be nested, we need to keep track of how deep we are.
+         int  mInContainerProperty; // Since containers can be nested, we need to keep track of how deep we are.
 
          std::string mLibName;
          std::string mLibVersion;
@@ -290,6 +292,8 @@ namespace dtDAL
          void ParseVec(const std::string& dataValue, VecType& vec, size_t vecSize);
          //parses the data for an array property.
          void ParseArray(std::string& dataValue, ArrayActorPropertyBase* arrayProp);
+         //parses the data for a container property.
+         void ParseContainer(std::string& dataValue, ContainerActorProperty* arrayProp);
          //processes the mActorLinking multimap to set ActorActorProperties.
          void LinkActors();
          //processes the mGroupProperties multimap to set GroupActorProperties.

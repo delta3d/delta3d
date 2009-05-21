@@ -25,6 +25,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
 
 namespace dtDAL
 {
@@ -922,6 +923,55 @@ namespace dtDAL
 
    ///////////////////////////////////////////////////////////////////////////////
    bool NamedArrayParameter::FromString(const std::string& value)
+   {
+      SetValue(value);
+      return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedContainerParameter::NamedContainerParameter(const dtUtil::RefString& name)
+      : NamedGenericParameter<std::string>(DataType::CONTAINER, name, "", false)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedContainerParameter::NamedContainerParameter(DataType& dataType, const dtUtil::RefString& name)
+      : NamedGenericParameter<std::string>(dataType, name, "", false)
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   NamedContainerParameter::~NamedContainerParameter()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedContainerParameter::SetFromProperty(const dtDAL::ActorProperty& property)
+   {
+      ValidatePropertyType(property);
+
+      const dtDAL::ContainerActorProperty* ap = static_cast<const dtDAL::ContainerActorProperty*> (&property);
+      SetValue(ap->ToString());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void NamedContainerParameter::ApplyValueToProperty(dtDAL::ActorProperty& property) const
+   {
+      ValidatePropertyType(property);
+
+      dtDAL::ContainerActorProperty *ap = static_cast<dtDAL::ContainerActorProperty*> (&property);
+      ap->FromString(GetValue());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string NamedContainerParameter::ToString() const
+   {
+      return GetValue();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool NamedContainerParameter::FromString(const std::string& value)
    {
       SetValue(value);
       return true;
