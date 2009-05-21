@@ -30,6 +30,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
@@ -268,7 +269,7 @@ namespace  dtDAL
          else
          {
             // Make sure we don't try and change the current property if we are loading properties from an array.
-            if (mInArrayProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+            if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
             {
                std::string propName = dtUtil::XMLStringConverter(chars).ToString();
                mActorProperty = mActorProxy->GetProperty(propName);
@@ -293,7 +294,7 @@ namespace  dtDAL
             else if (mActorProperty != NULL)
             {
                // Make sure we don't try and change the current property if we are loading properties from an array.
-               if (mInArrayProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
+               if (mInArrayProperty == 0 && mInContainerProperty == 0 && topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                {
                   std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
                   mActorPropertyType = static_cast<DataType*>(DataType::GetValueForName(resourceTypeString));
@@ -556,8 +557,8 @@ namespace  dtDAL
       }
       // Skipped elements.
       else if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
-               topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
                topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+               topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
                topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
       {
       }
@@ -565,6 +566,60 @@ namespace  dtDAL
       else
       {
          ActorProperty* prop = arrayProp->GetArrayProperty();
+         if (prop)
+         {
+            DataType* propType = &prop->GetDataType();
+            ParsePropertyData(dataValue, &propType, prop);
+         }
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::ParseContainer(std::string& dataValue, ContainerActorProperty* arrayProp)
+   {
+      xmlCharString& topEl = mElements.top();
+
+      // Find the property we want to edit based on how deep the container is nested.
+      for (int nestIndex = 1; nestIndex < mInContainerProperty; nestIndex++)
+      {
+         int index = arrayProp->GetCurrentPropertyIndex();
+         arrayProp = static_cast<ContainerActorProperty*>(arrayProp->GetProperty(index));
+      }
+
+      if (!arrayProp)
+      {
+         return;
+      }
+
+      // Skipped elements.
+      if (topEl == MapXMLConstants::ACTOR_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT ||
+         topEl == MapXMLConstants::ACTOR_PROPERTY_ELEMENT)
+      {
+      }
+      else if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
+      {
+         arrayProp->SetCurrentPropertyIndex(-1);
+         // Find the property in the container with the given name.
+         for (int index = 0; index < arrayProp->GetPropertyCount(); index++)
+         {
+            ActorProperty* prop = arrayProp->GetProperty(index);
+            if (prop)
+            {
+               if (prop->GetName() == dataValue)
+               {
+                  arrayProp->SetCurrentPropertyIndex(index);
+                  break;
+               }
+            }
+         }
+      }
+      // Unrecognized elements are checked with the array's property type
+      else
+      {
+         int index = arrayProp->GetCurrentPropertyIndex();
+         ActorProperty* prop = arrayProp->GetProperty(index);
          if (prop)
          {
             DataType* propType = &prop->GetDataType();
@@ -740,6 +795,12 @@ namespace  dtDAL
          {
             ArrayActorPropertyBase& arrayProp = static_cast<ArrayActorPropertyBase&>(*actorProperty);
             ParseArray(dataValue, &arrayProp);
+            break;
+         }
+         case DataType::CONTAINER_ID:
+         {
+            ContainerActorProperty& arrayProp = static_cast<ContainerActorProperty&>(*actorProperty);
+            ParseContainer(dataValue, &arrayProp);
             break;
          }
          default:
@@ -1078,6 +1139,11 @@ namespace  dtDAL
          return &DataType::ARRAY;
       }
       else if (XMLString::compareString(localname,
+               MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         return &DataType::CONTAINER;
+      }
+      else if (XMLString::compareString(localname,
                MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
       {
          //Need the character contents to know the type, so this will be
@@ -1168,14 +1234,19 @@ namespace  dtDAL
 
                      }
                      else if (XMLString::compareString(localname,
-                                                         MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
+                        MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
                      {
                         mInArrayProperty++;
+                     }
+                     else if (XMLString::compareString(localname,
+                        MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+                     {
+                        mInContainerProperty++;
                      }
                   }
                }
                else if (XMLString::compareString(localname,
-                                                 MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+                  MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
                {
                   mInActorProperty = true;
                }
@@ -1421,6 +1492,7 @@ namespace  dtDAL
 
       mInGroupProperty = false;
       mInArrayProperty = 0;
+      mInContainerProperty = 0;
       while (!mParameterStack.empty())
       {
          mParameterStack.pop();
@@ -1633,13 +1705,17 @@ namespace  dtDAL
    //////////////////////////////////////////////////////////////////////////
    void MapContentHandler::EndActorPropertySection(const XMLCh* const localname)
    {
-      if (mInArrayProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
+      if (mInArrayProperty == 0 && mInContainerProperty == 0 && XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ELEMENT) == 0)
       {
          EndActorPropertyElement();
       }
       else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_ARRAY_ELEMENT) == 0)
       {
          mInArrayProperty--;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT) == 0)
+      {
+         mInContainerProperty--;
       }
       else if (mInGroupProperty)
       {
@@ -1666,7 +1742,7 @@ namespace  dtDAL
       {
          if (mActorProperty != NULL)
          {
-            if (mActorPropertyType != NULL && mInArrayProperty == 0)
+            if (mActorPropertyType != NULL && mInArrayProperty == 0 && mInContainerProperty == 0)
             {
                // parse the end element into a data type to see if it's an end property element.
                dtDAL::DataType* d = ParsePropertyType(localname, false);

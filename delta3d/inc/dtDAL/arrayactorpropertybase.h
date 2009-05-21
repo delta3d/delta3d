@@ -35,16 +35,10 @@ const char CLOSE_CHAR = 2;
 namespace dtDAL
 {
    /**
-    * @brief An actor property that contains a structure of NamedParameter Objects.
+    * @brief An actor property that contains an array of other actor property Objects.
     *
-    * This actor property solves the concept of both structures and lists in actor properties.
-    * This property gets and sets a NamedGroupParameter, which can hold any number of other NamedParameters.
-    * This is passed to the functors for the actor property which must then handle the data in way that makes
-    * sense the actor.  Additionally, a string name can be passed to the property in the constructor
-    *
-    * @note When loading and saving GroupActorProperties, only the NamedParameter types that have associated actor property types
-    *       can be saved.  The rest will be ignored.  There are no plans no solve this issue.
-    * @note Also, note that currently Vec3d and Vec3f parameters will be loaded as Vec3. There are plans to fix this.
+    * This actor property provides a dynamic array of the property type associated
+    * with it.
     */
    class ArrayActorPropertyBase : public ActorProperty
    {

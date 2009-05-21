@@ -51,6 +51,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/groupactorproperty.h>
 #include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/containeractorproperty.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actortype.h>
@@ -676,6 +677,12 @@ namespace dtDAL
             // TODO ARRAY: Save an array that was part of a group.
             break;
          }
+         case DataType::CONTAINER_ID:
+         {
+            //BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT);
+            // TODO CONTAINER: Save a container that was part of a group.
+            break;
+         }
          default:
          {
             if (dataType.IsResource())
@@ -774,8 +781,22 @@ namespace dtDAL
       EndElement();
    }
 
-   /////////////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapWriter::WriteContainer(const ContainerActorProperty& arrayProp, char* numberConversionBuffer, size_t bufferMax)
+   {
+      BeginElement(MapXMLConstants::ACTOR_PROPERTY_CONTAINER_ELEMENT);
 
+      // Save out the data for each index.
+      for (int index = 0; index < arrayProp.GetPropertyCount(); index++)
+      {
+         // Write the data for the current property.
+         WriteProperty(*arrayProp.GetProperty(index));
+      }
+
+      EndElement();
+   }
+
+   /////////////////////////////////////////////////////////////////
    void MapWriter::WriteSimple(const AbstractParameter& holder)
    {
       switch (holder.GetDataType().GetTypeId())
@@ -896,6 +917,11 @@ namespace dtDAL
          case DataType::ARRAY_ID:
          {
             WriteArray(static_cast<const ArrayActorPropertyBase&>(property), numberConversionBuffer, bufferMax);
+            break;
+         }
+         case DataType::CONTAINER_ID:
+         {
+            WriteContainer(static_cast<const ContainerActorProperty&>(property), numberConversionBuffer, bufferMax);
             break;
          }
          default:

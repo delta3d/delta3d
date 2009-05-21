@@ -53,6 +53,7 @@
 #include <dtEditQt/dynamicvec4control.h>
 #include <dtEditQt/dynamicgameeventcontrol.h>
 #include <dtEditQt/dynamicarraycontrol.h>
+#include <dtEditQt/dynamiccontainercontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
@@ -157,6 +158,7 @@ namespace dtEditQt
       controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TERRAIN));
       controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::PARTICLE_SYSTEM));
       controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));
+      controlFactory->RegisterType<DynamicContainerControl>(&(dtDAL::DataType::CONTAINER));
       controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
       controlFactory->RegisterType<DynamicGroupPropertyControl>(&(dtDAL::DataType::GROUP));
       controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SKELETAL_MESH));
