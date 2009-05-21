@@ -34,7 +34,6 @@ namespace dtAI
    class DT_AI_EXPORT AIInterfaceActor : public dtCore::DeltaDrawable
    {
    public:
-
       AIInterfaceActor();
 
       osg::Node* GetOSGNode();
@@ -45,8 +44,6 @@ namespace dtAI
 
    private:
    };
-
-
 
    /**
     * @class AIInterfaceActorProxy
@@ -87,12 +84,10 @@ namespace dtAI
 
      /*virtual*/ void CreateActor();
 
-
      /**
-     * This is called from CreateActor
-     */
+      * This is called from CreateActor
+      */
      virtual AIPluginInterface* CreateAIInterface();
-
 
      /**
       * Destructor
@@ -100,10 +95,9 @@ namespace dtAI
      /*virtual*/ ~AIInterfaceActorProxy();
 
    private:
-
       AIPluginInterface* mAIInterface;
-
    };
+
 } // namespace dtAI
 
-#endif
+#endif // DELTA_AI_INTERFACE_ACTOR

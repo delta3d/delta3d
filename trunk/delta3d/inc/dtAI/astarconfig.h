@@ -72,7 +72,6 @@ namespace dtAI
 
 
       public:
-
          ///the resulting path, and the total cost to it
          container mResult;
          cost_type mTotalCost;
@@ -126,7 +125,6 @@ namespace dtAI
             mTotalTime          = 0;
          }
 
-
          bool AtFinish(data_type pTest)
          {
             typename std::vector<data_type>::const_iterator iter = mFinish.begin();
@@ -164,7 +162,6 @@ namespace dtAI
          unsigned int mNodesExplored;
          ///these are for usage by AStar.h and should not be used by clients of AStar.h
          double mTimeSpent;
-
    };
 } // namespace dtAI
 

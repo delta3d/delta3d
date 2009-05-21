@@ -38,7 +38,6 @@ namespace dtAI
    class DT_AI_EXPORT NavMesh
    {
    public:
-
       typedef std::pair<WaypointID, WaypointPair*> NavMeshPair;
       typedef std::multimap<WaypointID, WaypointPair*> NavMeshContainer;      
 
@@ -47,18 +46,18 @@ namespace dtAI
          ~NavMesh();
 
          /**
-         * Creates a new WaypointPair and adds it to the current set
-         */
+          * Creates a new WaypointPair and adds it to the current set
+          */
          void AddPathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
-         * Removes the path segment between the two waypoints if one exists         
-         */
+          * Removes the path segment between the two waypoints if one exists         
+          */
          void RemovePathSegment(const WaypointInterface* pFrom, const WaypointInterface* pTo);
 
          /**
-         * Removes all path segments from the specified waypoint
-         */
+          * Removes all path segments from the specified waypoint
+          */
          void RemoveAllPaths(const WaypointInterface* pFrom);
 
 
@@ -68,44 +67,47 @@ namespace dtAI
          bool ContainsPath(const WaypointInterface* pFrom, const WaypointInterface* pTo) const;
 
          /**
-         * returns a reference to the multimap which contains all WaypointPairs
-         * indexed by the starting waypoint
-         */
+          * returns a reference to the multimap which contains all WaypointPairs
+          * indexed by the starting waypoint
+          */
          const NavMeshContainer& GetNavMesh() const;
 
          /**
-         * Returns a multimap iterator to begin starting at the first
-         * valid waypoint you can get to from the waypoint specified
-         * used by WaypointIter in WaypointUtils.h
-         */
+          * Returns a multimap iterator to begin starting at the first
+          * valid waypoint you can get to from the waypoint specified
+          * used by WaypointIter in WaypointUtils.h
+          */
          NavMeshContainer::iterator begin(const WaypointInterface* pPtr);
          NavMeshContainer::const_iterator begin(const WaypointInterface* pPtr) const;
          
          /**
-         * Returns a multimap iterator to the end sequence of
-         * valid waypoints you can get to from the waypoint specified
-         * used by WaypointIter in WaypointUtils.h
-         */
+          * Returns a multimap iterator to the end sequence of
+          * valid waypoints you can get to from the waypoint specified
+          * used by WaypointIter in WaypointUtils.h
+          */
          NavMeshContainer::iterator end(const WaypointInterface* pPtr);
          NavMeshContainer::const_iterator end(const WaypointInterface* pPtr) const;
 
+         /**
+          * Returns the number of immediately reachable waypoints
+          * adjacent to the given waypoint
+          */
+         NavMeshContainer::size_type size(const WaypointInterface* pPtr) const;
 
          /**
-         * Frees memory and clears all waypoints from the multimap
-         */
+          * Frees memory and clears all waypoints from the multimap
+          */
          void Clear();
 
-
          /**
-         * Returns whether or not there is a WaypointPair going in the opposite direction
-         */
+          * Returns whether or not there is a WaypointPair going in the opposite direction
+          */
          bool IsOneWay(WaypointPair* pPair) const;
 
    private:
-
       NavMeshContainer mNavMesh;
-   
    };
-}//namespace dtAI
+
+} // namespace dtAI
 
 #endif // __DELTA_NAVMESH_H__
