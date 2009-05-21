@@ -38,61 +38,59 @@ namespace dtAI
     */
    class DT_AI_EXPORT Waypoint : public WaypointInterface
    {
-      public:
+   public:
+      // render flags will determine how we draw our waypoints
+      enum RenderFlag
+      {
+         RENDERFLAG_FIRST = 0,
 
-         //render flags will determine how we draw our waypoints
-         enum RenderFlag
-         {
-            RENDERFLAG_FIRST = 0,
+         RENDER_DEFAULT = RENDERFLAG_FIRST, 
+         RENDER_RED, 
+         RENDER_GREEN,
+         RENDER_BLUE, 
+         RENDER_CUSTOM,
 
-            RENDER_DEFAULT = RENDERFLAG_FIRST, 
-            RENDER_RED, 
-            RENDER_GREEN,
-            RENDER_BLUE, 
-            RENDER_CUSTOM,
+         RENDERFLAG_LAST = RENDER_CUSTOM,
+         RENDERFLAG_TOTAL
+      };
 
-            RENDERFLAG_LAST = RENDER_CUSTOM,
-            RENDERFLAG_TOTAL
-         };
+   public:
+      Waypoint();
+      Waypoint(const osg::Vec3& pPos);
+      ~Waypoint();
 
-      public:
-   
-         Waypoint();
-         Waypoint(const osg::Vec3& pPos);
-         ~Waypoint();
+      // override so it isn't protected
+      // this is a temporary work-around transitioning to the waypoint interface
+      void SetID(WaypointID ID);
 
-         //override so it isn't protected
-         //this is a temporary work-around transitioning to the waypoint interface
-         void SetID(WaypointID ID);
+      const osg::Vec3& GetPosition() const;
+      void SetPosition(const osg::Vec3& pVec);
 
-         const osg::Vec3& GetPosition() const;
-         void SetPosition(const osg::Vec3& pVec);
+      void SetRenderFlag(RenderFlag rf) const;
+      RenderFlag GetRenderFlag() const {return mRenderFlag;}
 
-         void SetRenderFlag(RenderFlag rf) const;
-         RenderFlag GetRenderFlag() const {return mRenderFlag;}
+      void SetColor(const osg::Vec3& newColor) const;
+      const osg::Vec3& GetColor() const;
 
-         void SetColor(const osg::Vec3& newColor) const;
-         const osg::Vec3& GetColor() const;
+      ///Set a color scaling value.  Used for rendering (0.0..1.0)
+      void SetGradient(float pGradient) const;
+      float GetGradient() const;
 
-         ///Set a color scaling value.  Used for rendering (0.0..1.0)
-         void SetGradient(float pGradient) const;
-         float GetGradient() const;
+      ///Set an alpha transparency value.  Used for rendering (0.0..1.0)
+      void SetAlpha(float newAlpha) const;
+      float GetAlpha() const;
 
-         ///Set an alpha transparency value.  Used for rendering (0.0..1.0)
-         void SetAlpha(float newAlpha) const;
-         float GetAlpha() const;
+   private:        
+      mutable RenderFlag mRenderFlag;
+      mutable osg::Vec3 mColor; 
+      mutable float mGradient;
+      mutable float mAlpha;         
 
-      private:        
-                 
-         mutable RenderFlag mRenderFlag;
-         mutable osg::Vec3 mColor; 
-         mutable float mGradient;
-         mutable float mAlpha;         
+      osg::Vec3 mPosition;   
 
-         osg::Vec3 mPosition;   
-
-         inline void SetColorFromRenderFlag() const;
+      inline void SetColorFromRenderFlag() const;
    };
-}//namespace 
+
+} // namespace dtAI
 
 #endif // __DELTA_WAYPOINT_H__

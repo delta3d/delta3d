@@ -26,8 +26,9 @@
 #include <dtAI/primitives.h>
 #include <osg/Vec3>
 
-namespace dtAI 
+namespace dtAI
 {
+
    class DT_AI_EXPORT WaypointInterface
    {
    public:
@@ -46,12 +47,11 @@ namespace dtAI
       void SetID(WaypointID pID);
 
    private:
-
       WaypointID mID;
 
       static WaypointID mIDCounter;
    };
 
-}//namespace 
+} // namespace dtAI
 
 #endif // __DELTA_WAYPOINTINTERFACE_H__

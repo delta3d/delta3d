@@ -130,6 +130,17 @@ namespace dtAI
       return mNavMesh.upper_bound(pPtr->GetID());
    }
 
+   NavMesh::NavMeshContainer::size_type NavMesh::size(const WaypointInterface* pPtr) const
+   {
+      // first pass implementation is potentially slow, but works
+      NavMesh::NavMeshContainer::size_type count = 0;
+      for (NavMeshContainer::const_iterator adj = begin(pPtr); adj != end(pPtr); ++adj)
+      {
+         ++count;
+      }
+      return count;
+   }
+
    bool NavMesh::IsOneWay(WaypointPair* pPair) const
    {
       NavMeshContainer::const_iterator iter = begin(pPair->GetWaypointTo());
