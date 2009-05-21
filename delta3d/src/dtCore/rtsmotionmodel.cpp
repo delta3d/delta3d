@@ -218,7 +218,7 @@ void RTSMotionModel::OnMessage(MessageData *data)
    }
 
    // clamp z to 1 meter off the ground
-   xyz[2] = 1.0f;
+   xyz[2] = std::max(1.0f, xyz[2]);
 
    // clamp position to bounding terrain sphere
    if (mTerrainDrawable.valid())
