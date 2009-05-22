@@ -66,19 +66,19 @@ void HUDComponent::ProcessMessage(const dtGame::Message& message)
       // Update AAR text
       if (!mLogController.valid())
       {
-         UpdateStaticText(mStateText, "", 1.0, 1.0, 1.0);
+         UpdateStaticText(mStateText, "", 1.0f, 1.0f, 1.0f);
       }
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_IDLE == mLogController->GetLastKnownStatus().GetStateEnum())
       {
-         UpdateStaticText(mStateText, "IDLE", 1.0, 1.0, 1.0);
+         UpdateStaticText(mStateText, "IDLE", 1.0f, 1.0f, 1.0f);
       }
       else if (dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK == mLogController->GetLastKnownStatus().GetStateEnum())
       {
-         UpdateStaticText(mStateText, "PLAYBACK", 0.1, 0.1, 1.0);
+         UpdateStaticText(mStateText, "PLAYBACK", 0.1f, 0.1f, 1.0f);
       }
       else // if (dtGame::LogStateEnumeration::LOGGER_STATE_RECORD == mLogController->GetLastKnownStatus().GetStateEnum())
       {
-         UpdateStaticText(mStateText, "RECORD", 1.0, 0.1, 0.1);
+         UpdateStaticText(mStateText, "RECORD", 1.0f, 0.1f, 0.1f);
       }
    }
    else if (message.GetMessageType() == dtGame::MessageType::TICK_REMOTE)

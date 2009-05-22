@@ -1084,7 +1084,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          TestSpecificIntTranslations(mMapping, (long)testUChar, sizeof(unsigned char));
 
          float testFloat = 33.6f;
-         float testDouble = 344.9;
+         float testDouble = 344.9f;
 
          *((float*)mBuffer) = testFloat;
          if (mEndian == osg::LittleEndian)
@@ -1107,7 +1107,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
       {
          std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
 
-         dtHLAGM::ArticulatedParts* ap = new dtHLAGM::ArticulatedParts(1212, 8, -20.21);
+         dtHLAGM::ArticulatedParts* ap = new dtHLAGM::ArticulatedParts(1212, 8, -20.21f);
          dtHLAGM::ArticulatedParameter artParam(0,0, dtHLAGM::ParameterValue(*ap));
          artParam.Encode(mBuffer);
 
