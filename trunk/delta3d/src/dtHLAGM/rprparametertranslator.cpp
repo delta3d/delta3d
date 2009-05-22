@@ -131,8 +131,8 @@ namespace dtHLAGM
          }
          else
          {
-            unsigned drCodeInt = GetIntegerValue(frozenParam, mapping, 1);
-            spatial.SetFrozen(bool(drCodeInt));
+            unsigned int drCodeInt = GetIntegerValue(frozenParam, mapping, 1);
+            spatial.SetFrozen(drCodeInt ? true : false);
          }
       }
 
