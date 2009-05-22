@@ -15,6 +15,6 @@ void initRTSMotionModelBindings()
 {
 	class_<RTSMotionModel, bases<MotionModel>, dtCore::RefPtr<RTSMotionModel> >("RTSMotionModel", init<Keyboard*, Mouse*, optional<bool> >())
 	   .def("AxisStateChanged", &RTSMotionModel::AxisStateChanged)
-	   .def("SetTerrain", &RTSMotionModel::AxisStateChanged)
+	   .def("SetTerrain", &RTSMotionModel::SetTerrain)
 	   ;
 }
