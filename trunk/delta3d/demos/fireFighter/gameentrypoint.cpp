@@ -38,6 +38,8 @@
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
 
+#include <iostream>
+
 using dtCore::RefPtr;
 
 extern "C" FIRE_FIGHTER_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()

@@ -24,9 +24,6 @@
 
 #include <map>
 #include <vector>
-#include <iostream>
-#include <sstream>
-#include <dtUtil/log.h>
 #include <osg/Referenced>  // for base_class
 
 namespace dtUtil
@@ -72,15 +69,13 @@ namespace dtUtil
    public:
       /**
        * Registers a new type of object with the factory.
+       * @return false if the type is a duplicate.
        */
       template<typename DerivedType>
       bool RegisterType(UniqueIdType id)
       {
          if (this->objectTypeMap.find(id) != this->objectTypeMap.end())
          {
-            std::ostringstream ss;
-            ss << "Duplicate object type " << id << " found.";
-            LOG_ERROR(ss.str());
             return false;
          }
 
@@ -93,12 +88,7 @@ namespace dtUtil
        * of object types.
        */
       void RemoveType(UniqueIdType id) {
-         if (this->objectTypeMap.erase(id) != 1)
-         {
-            std::ostringstream ss;
-            ss << "ID " << id << " cannot be removed because it does not exist.";
-            //LOG_WARNING(ss.str());
-         }
+         this->objectTypeMap.erase(id);
       }
 
       /**
@@ -135,23 +125,19 @@ namespace dtUtil
       /**
        * Creates a new object.
        * @param id - Type of object to create.
-       * @return Returns a pointer to the newly created object.
+       * @return Returns a pointer to the newly created object or NULL if the given id has not been registered.
        * @throw Exception is thrown if the factory does not know how to create
        *  the requested type.
        */
-      BaseType *CreateObject(const UniqueIdType id)
+      BaseType* CreateObject(const UniqueIdType id) const
       {
-         ObjTypeItor itor(this->objectTypeMap.find(id));
+         ObjTypeItorConst itor(this->objectTypeMap.find(id));
 
          // We cannot create a new object if we do not know what type it is
          // so throw an exception.
          if (itor == this->objectTypeMap.end())
          {
-            std::ostringstream ss;
-            ss << "ObjectFactory::CreateObject() Unable to create object of type: " << id << " Reason: Unknown type.";
-            LOG_ERROR( ss.str() );
-            // throw dtUtil::Exception(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,ss.str());
-            return 0;
+            return NULL;
          }
 
          return (itor->second)();

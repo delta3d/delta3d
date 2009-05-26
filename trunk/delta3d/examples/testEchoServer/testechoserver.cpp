@@ -27,6 +27,8 @@
 #include <dtGame/gamemanager.h>
 #include <dtNetGM/servernetworkcomponent.h>
 
+#include <iostream>
+
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(AppException);
 AppException AppException::INIT_ERROR("INIT_ERROR");

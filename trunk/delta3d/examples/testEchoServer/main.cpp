@@ -26,6 +26,8 @@
 #include <dtCore/globals.h>
 #include "testechoserver.h"
 
+#include <iostream>
+
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {

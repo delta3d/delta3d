@@ -1,20 +1,20 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2007, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author David Guthrie
  */
@@ -25,9 +25,9 @@
 #include <dtDAL/functor.h>
 
 namespace dtHLAGM
-{   
+{
    const std::string DDMCalculatorGeographic::PROP_CALCULATOR_OBJECT_KIND("Object Kind");
-   
+
    const std::string DDMCalculatorGeographic::PROP_FRIENDLY_REGION_TYPE("Friendly Region Type");
    const std::string DDMCalculatorGeographic::PROP_ENEMY_REGION_TYPE("Enemy Region Type");
    const std::string DDMCalculatorGeographic::PROP_NEUTRAL_REGION_TYPE("Neutral Region Type");
@@ -67,68 +67,68 @@ namespace dtHLAGM
       mId = id;
    }
 
-   DDMCalculatorGeographic::DDMCalculatorGeographic(): 
+   DDMCalculatorGeographic::DDMCalculatorGeographic():
       mCalculatorObjectKind(&DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY),
-      
+
       mFriendlyRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
       mEnemyRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
       mNeutralRegionType(&DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE),
-      
+
       mDefaultRegionType(&DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY),
-      
+
       mFriendlyAppSpace(1),
       mEnemyAppSpace(2),
       mNeutralAppSpace(3)
-      
+
    {
       mCoordinates.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
 
-      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>(PROP_CALCULATOR_OBJECT_KIND, PROP_CALCULATOR_OBJECT_KIND,
+      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::DDMObjectKind>(PROP_CALCULATOR_OBJECT_KIND, PROP_CALCULATOR_OBJECT_KIND,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetCalculatorObjectKind),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetCalculatorObjectKind)
             ));
-      
-      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_FRIENDLY_REGION_TYPE, PROP_FRIENDLY_REGION_TYPE,
+
+      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_FRIENDLY_REGION_TYPE, PROP_FRIENDLY_REGION_TYPE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetFriendlyRegionType),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetFriendlyRegionType)
             ));
-      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_ENEMY_REGION_TYPE, PROP_ENEMY_REGION_TYPE,
+      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_ENEMY_REGION_TYPE, PROP_ENEMY_REGION_TYPE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetEnemyRegionType),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetEnemyRegionType)
-            ));      
-      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_NEUTRAL_REGION_TYPE, PROP_NEUTRAL_REGION_TYPE,
+            ));
+      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_NEUTRAL_REGION_TYPE, PROP_NEUTRAL_REGION_TYPE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetNeutralRegionType),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetNeutralRegionType)
             ));
 
-      AddProperty(*new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_DEFAULT_REGION_TYPE, PROP_DEFAULT_REGION_TYPE,
+      AddProperty(new dtDAL::EnumActorProperty<DDMCalculatorGeographic::RegionCalculationType>(PROP_DEFAULT_REGION_TYPE, PROP_DEFAULT_REGION_TYPE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetDefaultRegionType),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetDefaultRegionType)
             ));
 
-      
-      AddProperty(*new dtDAL::LongActorProperty(PROP_FRIENDLY_APPSPACE, PROP_FRIENDLY_APPSPACE,
+
+      AddProperty(new dtDAL::LongActorProperty(PROP_FRIENDLY_APPSPACE, PROP_FRIENDLY_APPSPACE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetFriendlyAppSpace),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetFriendlyAppSpace)
             ));
-      AddProperty(*new dtDAL::LongActorProperty(PROP_ENEMY_APPSPACE, PROP_ENEMY_APPSPACE,
+      AddProperty(new dtDAL::LongActorProperty(PROP_ENEMY_APPSPACE, PROP_ENEMY_APPSPACE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetEnemyAppSpace),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetEnemyAppSpace)
-            ));      
-      AddProperty(*new dtDAL::LongActorProperty(PROP_NEUTRAL_APPSPACE, PROP_NEUTRAL_APPSPACE,
+            ));
+      AddProperty(new dtDAL::LongActorProperty(PROP_NEUTRAL_APPSPACE, PROP_NEUTRAL_APPSPACE,
             dtDAL::MakeFunctor(*this, &DDMCalculatorGeographic::SetNeutralAppSpace),
             dtDAL::MakeFunctorRet(*this, &DDMCalculatorGeographic::GetNeutralAppSpace)
             ));
    }
-   
+
    DDMCalculatorGeographic::~DDMCalculatorGeographic()
    {
    }
 
-   void DDMCalculatorGeographic::SetCoordinateConverter(const dtUtil::Coordinates& coord) 
-   { 
-      mCoordinates = coord; 
-      mCoordinates.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC); 
+   void DDMCalculatorGeographic::SetCoordinateConverter(const dtUtil::Coordinates& coord)
+   {
+      mCoordinates = coord;
+      mCoordinates.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
    }
 
    dtCore::RefPtr<DDMRegionData> DDMCalculatorGeographic::CreateRegionData() const
@@ -137,7 +137,7 @@ namespace dtHLAGM
    }
 
    void DDMCalculatorGeographic::CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<DDMRegionData> >& toFill) const
-   { 
+   {
       DDMGeographicRegionData* newData;
 
       if (GetCalculatorObjectKind() == DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY)
@@ -161,45 +161,45 @@ namespace dtHLAGM
          toFill.resize(1);
          newData = new DDMGeographicRegionData;
          toFill[0] = newData;
-         newData->SetForce(DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL);         
+         newData->SetForce(DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL);
       }
    }
-   
+
    bool DDMCalculatorGeographic::UpdateRegionData(DDMRegionData& ddmData) const
    {
       DDMGeographicRegionData* data = dynamic_cast<DDMGeographicRegionData*>(&ddmData);
       if (data == NULL)
       {
          LOG_ERROR("Unable to cast DDMRegionData to a DDMGeographicRegionData.  This implies a code error. Ignoring data.")
-         return false;         
+         return false;
       }
       return true;
    }
-   
+
    std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> DDMCalculatorGeographic::GetAppSpaceValues(DDMCalculatorGeographic::DDMForce& force, DDMCalculatorGeographic::DDMObjectKind& kind) const
    {
-      std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> result = std::make_pair(&DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY ,0L); 
+      std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> result = std::make_pair(&DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY ,0L);
 
       if (kind == DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_OTHER)
       {
-         result = std::make_pair(&GetDefaultRegionType(), GetDefaultAppSpace()); 
+         result = std::make_pair(&GetDefaultRegionType(), GetDefaultAppSpace());
       }
       else if (kind == DDMCalculatorGeographic::DDMObjectKind::OBJECT_KIND_ENTITY)
       {
          if (force == DDMCalculatorGeographic::DDMForce::FORCE_ENEMY)
          {
-            result = std::make_pair(&GetEnemyRegionType(), GetEnemyAppSpace());          
+            result = std::make_pair(&GetEnemyRegionType(), GetEnemyAppSpace());
          }
          else if (force == DDMCalculatorGeographic::DDMForce::FORCE_FRIENDLY)
          {
-            result = std::make_pair(&GetFriendlyRegionType(), GetFriendlyAppSpace());          
+            result = std::make_pair(&GetFriendlyRegionType(), GetFriendlyAppSpace());
          }
          else if (force == DDMCalculatorGeographic::DDMForce::FORCE_NEUTRAL)
          {
-            result = std::make_pair(&GetNeutralRegionType(), GetNeutralAppSpace());          
+            result = std::make_pair(&GetNeutralRegionType(), GetNeutralAppSpace());
          }
       }
-         
+
       return result;
    }
 

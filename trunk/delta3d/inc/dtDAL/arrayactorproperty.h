@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * Jeffrey Houde
  */
 #ifndef DELTA_ARRAY_ACTOR_PROPERTY
 #define DELTA_ARRAY_ACTOR_PROPERTY
 
-#include <string> 
+#include <string>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/export.h>
 #include <dtDAL/arrayactorpropertybase.h>
@@ -225,7 +225,7 @@ namespace dtDAL
       }
 
    protected:
-  
+
       /**
       * Functor to notify the owner than the current array index has changed.
       *

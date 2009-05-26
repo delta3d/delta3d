@@ -211,111 +211,6 @@ namespace dtDAL
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::AddProperty(ActorProperty* newProp)
-   {
-      if(newProp == NULL)
-      {
-         throw dtUtil::Exception(ExceptionEnum::InvalidParameter,
-            "AddProperty cannot add a NULL property", __FILE__, __LINE__);
-      }
-
-      PropertyMapType::iterator itor =
-         mPropertyMap.find(newProp->GetName());
-      if(itor != mPropertyMap.end())
-      {
-         std::ostringstream ss;
-         ss << "Could not add new property " << newProp->GetName() << " because "
-            << "a property with that name already exists.";
-         LOG_ERROR(ss.str());
-      }
-      else
-      {
-         mPropertyMap.insert(std::make_pair(dtUtil::RefString(newProp->GetName()),newProp));
-         mProperties.push_back(newProp);
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::RemoveProperty(const std::string& nameToRemove)
-   {
-      PropertyMapType::iterator itor =
-         mPropertyMap.find(nameToRemove);
-      if (itor != mPropertyMap.end())
-      {
-         mPropertyMap.erase(itor);
-         for (size_t i = 0; i < mProperties.size(); ++i)
-         {
-            if (mProperties[i]->GetName() == nameToRemove)
-            {
-               mProperties.erase(mProperties.begin() + i);
-               break;
-            }
-         }
-      }
-      else
-      {
-         std::ostringstream msg;
-         msg << "Could not find property " << nameToRemove << " to remove. Reason was: " << "was not found in mPropertyMap";
-         LOG_DEBUG(msg.str());
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   ActorProperty* ActorProxy::GetProperty(const std::string& name)
-   {
-      PropertyMapType::iterator itor =
-         mPropertyMap.find(name);
-
-      if(itor == mPropertyMap.end())
-         return NULL;
-      else
-         return itor->second.get();
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   const ActorProperty* ActorProxy::GetProperty(const std::string& name) const
-   {
-      PropertyMapType::const_iterator itor =
-         mPropertyMap.find(name);
-
-      if(itor == mPropertyMap.end())
-         return NULL;
-      else
-         return itor->second.get();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ActorProperty> ActorProxy::GetDeprecatedProperty(const std::string& name)
-   {
-      dtCore::RefPtr<ActorProperty> prop = NULL;
-      return prop;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::GetPropertyList(std::vector<const ActorProperty*> &propList) const
-   {
-      propList.clear();
-      propList.reserve(mProperties.size());
-
-      for (size_t i = 0; i < mProperties.size(); ++i)
-      {
-         propList.push_back(mProperties[i].get());
-      }
-   }
-
-
-   ///////////////////////////////////////////////////////////////////////////////////////
-   void ActorProxy::GetPropertyList(std::vector<ActorProperty*> &propList)
-   {
-      propList.clear();
-      propList.reserve(mProperties.size());
-
-      for (size_t i = 0; i < mProperties.size(); ++i)
-      {
-         propList.push_back(mProperties[i].get());
-      }
-   }
 
    ///////////////////////////////////////////////////////////////////////////////////////
    static void CheckActorType(const dtDAL::ActorType* actorType)
@@ -416,12 +311,7 @@ namespace dtDAL
       //the user changes them.
       copy->SetName(GetName());
 
-      //Now copy all of the properties from this proxy to the clone.
-      for (size_t i = 0; i < mProperties.size(); ++i)
-      {
-         if (!mProperties[i]->IsReadOnly())
-            copy->mProperties[i]->CopyFrom(*mProperties[i]);
-      }
+      copy->CopyPropertiesFrom(*this);
 
       return copy;
    }

@@ -34,6 +34,8 @@
 #include <osgViewer/CompositeViewer> //for parent class's forward declaration
 #include <dtCore/keyboard.h>
 
+#include <iostream>
+
 namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)

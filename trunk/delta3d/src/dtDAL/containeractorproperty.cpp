@@ -158,7 +158,7 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    void ContainerActorProperty::AddProperty(ActorProperty* property)
    {
-      if (!property)
+      if (property == NULL)
       {
          return;
       }

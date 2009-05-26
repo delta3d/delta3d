@@ -59,6 +59,8 @@
 #include <dtUtil/mathdefines.h>
 #include <dtUtil/exception.h>
 
+#include <iostream>
+
 TestAARMessageProcessor::TestAARMessageProcessor(dtLMS::LmsComponent& lmsComp,
                                                  dtGame::LogController& logCtrl,
                                                  dtGame::ServerLoggerComponent& srvrCtrl)

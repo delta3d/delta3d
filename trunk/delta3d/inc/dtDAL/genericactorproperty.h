@@ -45,6 +45,9 @@ namespace dtDAL
    class GenericActorProperty : public ActorProperty
    {
    public:
+      typedef GetType GetValueType;
+      typedef SetType SetValueType;
+
       typedef dtUtil::Functor<void, TYPELIST_1(SetType)> SetFuncType;
       typedef dtUtil::Functor<GetType, TYPELIST_0()> GetFuncType;
       /**

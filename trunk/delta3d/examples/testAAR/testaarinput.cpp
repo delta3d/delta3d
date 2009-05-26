@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -46,6 +46,8 @@
 #include <dtLMS/lmscomponent.h>
 #include <dtDAL/gameevent.h>
 
+#include <iostream>
+
 ////////////////////////////////////////////////////////////////////
 TestAARInput::TestAARInput(const std::string& name, dtGame::LogController& logCtrl, TestAARHUD& hudComp)
    : dtGame::BaseInputComponent(name)
@@ -54,7 +56,7 @@ TestAARInput::TestAARInput(const std::string& name, dtGame::LogController& logCt
    , mHudGUI(&hudComp)
    , mLogController(&logCtrl)
 {
-  
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -68,7 +70,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
 {
    std::ostringstream ss;
    bool handled = true;
-   
+
    switch (key)
    {
       case ' ':
@@ -111,7 +113,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
       case '2':
       {
          mLogController->RequestChangeStateToRecord();
-         
+
          FireEvent(*TestAARGameEvent::EVENT_START_RECORD);
       }
       break;
@@ -126,7 +128,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
          }
 
          mLogController->RequestChangeStateToPlayback();
-         
+
          GetGameManager()->SetPaused(false);
       }
       break;
@@ -182,7 +184,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
          {
             dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PLACE_ACTOR);
             GetGameManager()->SendMessage(*msg);
-         }   
+         }
       }
       break;
 
@@ -192,7 +194,7 @@ bool TestAARInput::HandleKeyPressed(const dtCore::Keyboard* keyBoard, int key)
          {
             dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(TestAARMessageType::PLACE_IGNORED_ACTOR);
             GetGameManager()->SendMessage(*msg);
-         }   
+         }
       }
       break;
 
@@ -310,7 +312,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
 
       case 'j':
       case 'l':
-      {   
+      {
          SendPlayerUpdateMsg("Turn Rate", 0.0f);
       }
       break;
@@ -322,7 +324,7 @@ bool TestAARInput::HandleKeyReleased(const dtCore::Keyboard* keyboard, int key)
       break;
    }
 
-   return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key); 
+   return handled ? handled : dtGame::BaseInputComponent::HandleKeyReleased(keyboard, key);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -426,7 +428,7 @@ void TestAARInput::InsertKeyFrame()
 void TestAARInput::ProcessMessage(const dtGame::Message& message)
 {
    const dtGame::MessageType& type = message.GetMessageType();
-   
+
    if (type == dtGame::MessageType::INFO_ACTOR_DELETED)
    {
       if (mPlayer != NULL && message.GetAboutActorId() == mPlayer->GetId())

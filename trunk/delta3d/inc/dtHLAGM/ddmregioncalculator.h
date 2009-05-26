@@ -27,7 +27,7 @@
 #include <RTI.hh>
 
 #include <dtCore/refptr.h>
-#include <dtCore/base.h>
+#include <dtDAL/propertycontainer.h>
 #include <dtDAL/actorproperty.h>
 #include <dtHLAGM/export.h>
 #include <map>
@@ -45,24 +45,38 @@ namespace dtGame
 namespace dtHLAGM
 {
    class DDMRegionData;
-   
+
    /**
     * This abstract calculator class provides the interface used to write concrete region calculators.
     * That is, it modifies the RTI region based on implemented algoriths using the state data provided
     * on the DDMRegionData object.
     */
-   class DT_HLAGM_EXPORT DDMRegionCalculator : public dtCore::Base
+   class DT_HLAGM_EXPORT DDMRegionCalculator : public dtDAL::PropertyContainer
    {
       public:
          static const std::string PROP_FIRST_DIMENSION_NAME;
          static const std::string PROP_SECOND_DIMENSION_NAME;
          static const std::string PROP_THIRD_DIMENSION_NAME;
-         
+
          DDMRegionCalculator();
-         
+
+         /**
+          * Sets the name of this instance.
+          *
+          * @param name the new name
+          */
+         void SetName(const std::string& name);
+
+         /**
+          * Returns the name of this instance.
+          *
+          * @return the current name
+          */
+         const std::string& GetName() const;
+
          /**
           * Creates and returns a pointer to a region data object for this calculator.
-          * This is basically a factory method. 
+          * This is basically a factory method.
           * This will be called on the calculator when it is creating regions for published
           * entities.
           * @return the new region data object.
@@ -71,56 +85,36 @@ namespace dtHLAGM
 
          /**
           * Creates and returns a pointer to a region data object for this calculator.
-          * This is basically a factory method. This will be called on the calculator 
+          * This is basically a factory method. This will be called on the calculator
           * when it is creating regions for subscription.  The calculator may handle multiple regions, so
           * it will fill a vector.
           */
          virtual void CreateSubscriptionRegionData(std::vector<dtCore::RefPtr<DDMRegionData> >& toFill) const = 0;
-         
+
          /**
-          * Updates the subscription region 
+          * Updates the subscription region
           * @param region the region to update.
           */
          virtual bool UpdateRegionData(DDMRegionData& ddmData) const = 0;
-         
-         dtDAL::ActorProperty* GetProperty(const std::string& name);
 
-         template <class PropertyType>
-         void GetProperty(const std::string& name, PropertyType*& toSet)
-         {
-            dtDAL::ActorProperty* prop = GetProperty(name);
-            toSet = static_cast<PropertyType*>(prop);
-         }
-         
-         const dtDAL::ActorProperty* GetProperty(const std::string& name) const;
-
-         template <class PropertyType>
-         void GetProperty(const std::string& name, PropertyType*& toSet) const
-         {
-            const dtDAL::ActorProperty* prop = GetProperty(name);
-            toSet = static_cast<PropertyType*>(prop);
-         }
-
-         void GetAllProperties(std::vector<dtDAL::ActorProperty*> toFill);
-         
          const std::string& GetFirstDimensionName() const { return mFirstDimensionName; }
          void SetFirstDimensionName(const std::string& newName) { mFirstDimensionName = newName; }
 
          const std::string& GetSecondDimensionName() const { return mSecondDimensionName; }
          void SetSecondDimensionName(const std::string& newName) { mSecondDimensionName = newName; }
-         
+
          const std::string& GetThirdDimensionName() const { return mThirdDimensionName; }
          void SetThirdDimensionName(const std::string& newName) { mThirdDimensionName = newName; }
 
       protected:
          /**
-          * This helper method should be called by subclasses when update a region because it 
+          * This helper method should be called by subclasses when update a region because it
           * will check to see if the dimension actually changed before creates a new one and assigns it, which
-          * requires some data copying.  Also it helps one check to see if any of the dimensions changed so that the 
+          * requires some data copying.  Also it helps one check to see if any of the dimensions changed so that the
           * UpdateRegionData method can know what to return.
           * @return true if the dimension was changed.
           * @param ddmData the region data object to update.
-          * @param index the index of the dimension 
+          * @param index the index of the dimension
           * @param name the name of the dimension
           * @param min  the minimum extent value
           * @param max the maximum extent value
@@ -130,9 +124,9 @@ namespace dtHLAGM
          std::string GetFirstDimensionNameByCopy() const { return mFirstDimensionName; }
          std::string GetSecondDimensionNameByCopy() const { return mSecondDimensionName; }
          std::string GetThirdDimensionNameByCopy() const { return mThirdDimensionName; }
-         void AddProperty(dtDAL::ActorProperty& newProperty);
       private:
-         std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> > mProperties;
+         ///< The name of this instance.
+         dtUtil::RefString mName;
          std::string mFirstDimensionName;
          std::string mSecondDimensionName;
          std::string mThirdDimensionName;
