@@ -165,7 +165,7 @@ namespace dtEditQt
       /**
        * Add all the dynamic controls for this proxy object.
        */
-      void buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy);
+      void buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy, DynamicGroupControl* parentControl = NULL);
 
       /**
        * Indicate selection information in the group box title

@@ -573,7 +573,7 @@ namespace  dtDAL
             // If the element is the name of the property, we only care
             // about it if we are parsing container elements.
             if (topEl != MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT ||
-               propType == &DataType::CONTAINER)
+               (propType == &DataType::ARRAY || propType == &DataType::CONTAINER))
             {
                ParsePropertyData(dataValue, &propType, prop);
             }

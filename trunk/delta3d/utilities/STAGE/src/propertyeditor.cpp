@@ -197,11 +197,13 @@ namespace dtEditQt
          else
          {
             // create a single label entry for each multi selected proxy
-            DynamicLabelControl* labelControl = new DynamicLabelControl();
-            labelControl->initializeData(rootProperty, propertyModel, myProxy.get(), NULL);
-            labelControl->setDisplayValues(tr(myProxy->GetActorType().GetName().c_str()), "",
-               QString(tr(myProxy->GetName().c_str())));
-            rootProperty->addChildControl(labelControl, propertyModel);
+            DynamicGroupControl* parentControl = new DynamicGroupControl(myProxy->GetName());
+            parentControl->initializeData(rootProperty, propertyModel, myProxy.get(), NULL);
+            //parentControl->setDisplayValues(tr(myProxy->GetActorType().GetName().c_str()), "",
+            //   QString(tr(myProxy->GetName().c_str())));
+            rootProperty->addChildControl(parentControl, propertyModel);
+
+            buildDynamicControls(myProxy, parentControl);
          }
       }
 
@@ -254,7 +256,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy)
+   void PropertyEditor::buildDynamicControls(dtCore::RefPtr<dtDAL::ActorProxy> proxy, DynamicGroupControl* parentControl)
    {
       dtDAL::ActorProperty* curProp;
       std::vector<dtDAL::ActorProperty*> propList;
@@ -262,14 +264,20 @@ namespace dtEditQt
       std::vector<dtDAL::ActorProperty*>::const_iterator propIter;
       int row = 0;
 
+      DynamicGroupControl* parent = rootProperty;
+      if (parentControl)
+      {
+         parent = parentControl;
+      }
+
       proxy->GetPropertyList(propList);
 
       // create controls for the basic properties - name, type, etc...
 
       // create the basic actor group
       DynamicGroupControl* baseGroupControl = new DynamicGroupControl("Actor Information");
-      baseGroupControl->initializeData(rootProperty, propertyModel, NULL, NULL);
-      rootProperty->addChildControl(baseGroupControl, propertyModel);
+      baseGroupControl->initializeData(parent, propertyModel, NULL, NULL);
+      parent->addChildControl(baseGroupControl, propertyModel);
 
       // name of actor
       DynamicNameControl* nameControl = new DynamicNameControl();
@@ -329,14 +337,14 @@ namespace dtEditQt
                if (!groupName.empty())
                {
                   // find our group
-                  DynamicGroupControl* groupControl = rootProperty->getChildGroupControl(QString(groupName.c_str()));
+                  DynamicGroupControl* groupControl = parent->getChildGroupControl(QString(groupName.c_str()));
 
                   // if no group, then create one.
                   if (groupControl == NULL)
                   {
                      groupControl = new DynamicGroupControl(groupName);
-                     groupControl->initializeData(rootProperty, propertyModel, proxy.get(), NULL);
-                     rootProperty->addChildControl(groupControl, propertyModel);
+                     groupControl->initializeData(parent, propertyModel, proxy.get(), NULL);
+                     parent->addChildControl(groupControl, propertyModel);
                   }
 
                   // add our new control to the group.
@@ -346,8 +354,8 @@ namespace dtEditQt
                else
                {
                   // there's no group, so use the root.
-                  newControl->initializeData(rootProperty, propertyModel, proxy.get(), curProp);
-                  rootProperty->addChildControl(newControl, propertyModel);
+                  newControl->initializeData(parent, propertyModel, proxy.get(), curProp);
+                  parent->addChildControl(newControl, propertyModel);
                }
 
                // the following code doesn't work.  I'm leaving it here for reference.

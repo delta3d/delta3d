@@ -161,7 +161,7 @@ namespace dtEditQt
       QAction* mActionFileExit;
 
       // Action - Edit - Local Space
-      QAction* actionLocalSpace;
+      QAction* mActionLocalSpace;
 
       // Action - Edit - Duplicate Actor
       QAction* mActionEditDuplicateActor;
@@ -177,6 +177,9 @@ namespace dtEditQt
 
       // Action - Goto position
       QAction* mActionGetGotoPosition;
+
+      // Action - Group actors.
+      QAction* mActionGroupActors;
 
       // Action - Edit - Undo
       QAction* mActionEditUndo;
@@ -295,6 +298,11 @@ namespace dtEditQt
        * Slot - Edit - Goto Actor. Places the camera at the selected actor.
        */
       void slotEditGotoActor();
+
+      /**
+       * Slot - Edit - Group Actors.
+       */
+      void slotEditGroupActors();
 
       /**
        * Slot - Edit - Undo.  Undoes the last user edit property, delete proxy, or create proxy command.

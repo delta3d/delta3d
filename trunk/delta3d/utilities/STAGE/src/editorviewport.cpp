@@ -89,7 +89,6 @@ namespace dtEditQt
    {
       Viewport::refreshActorSelection(actors);
 
-
       if (actors.size() > 0)
       {
          mObjectMotionModel->ClearTargets();
