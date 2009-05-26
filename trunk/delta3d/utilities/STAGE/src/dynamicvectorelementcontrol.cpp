@@ -30,7 +30,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicvectorelementcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
-#include <dtEditQt/editorevents.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
@@ -61,6 +60,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC2;
    }
 
@@ -80,6 +82,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC2F;
    }
 
@@ -99,6 +104,9 @@ namespace dtEditQt
       mVec2dProp = newVectorProp;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC2D;
    }
 
@@ -118,6 +126,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC3;
    }
 
@@ -137,6 +148,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC3F;
    }
 
@@ -156,6 +170,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = newVectorProp;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC3D;
    }
 
@@ -175,6 +192,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC4;
    }
 
@@ -194,6 +214,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = NULL;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC4F;
    }
 
@@ -213,6 +236,9 @@ namespace dtEditQt
       mVec2dProp = NULL;
       mVec3dProp = NULL;
       mVec4dProp = newVectorProp;
+
+      mActiveProp = newVectorProp;
+
       mWhichType = VEC4D;
    }
 
@@ -311,18 +337,7 @@ namespace dtEditQt
          ss << "Updating model (data changed) for index " << mElementIndex;
          LOGN_DEBUG("dynamicvectorelementcontrol.cpp", ss.str());
 
-         switch (mWhichType)
-         {
-         case VEC2:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2Prop);  break;
-         case VEC2F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2fProp); break;
-         case VEC2D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec2dProp); break;
-         case VEC3:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3Prop);  break;
-         case VEC3F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3fProp); break;
-         case VEC3D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec3dProp); break;
-         case VEC4:  EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4Prop);  break;
-         case VEC4F: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4fProp); break;
-         case VEC4D: EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mVec4dProp); break;
-         }
+         emit PropertyChanged(*mProxy, *mActiveProp);
       }
 
       return dataChanged;
@@ -364,20 +379,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    const QString DynamicVectorElementControl::getDescription()
    {
-      std::string tooltip;
-
-      switch (mWhichType)
-      {
-      case VEC2:  tooltip = mVec2Prop->GetDescription();  break;
-      case VEC2F: tooltip = mVec2fProp->GetDescription(); break;
-      case VEC2D: tooltip = mVec2dProp->GetDescription(); break;
-      case VEC3:  tooltip = mVec3Prop->GetDescription();  break;
-      case VEC3F: tooltip = mVec3fProp->GetDescription(); break;
-      case VEC3D: tooltip = mVec3dProp->GetDescription(); break;
-      case VEC4:  tooltip = mVec4Prop->GetDescription();  break;
-      case VEC4F: tooltip = mVec4fProp->GetDescription(); break;
-      case VEC4D: tooltip = mVec4dProp->GetDescription(); break;
-      }
+      std::string tooltip = mActiveProp->GetDescription();
 
       tooltip += " [Type: " + mLabel;
       return QString(tr(tooltip.c_str()));
@@ -395,20 +397,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool DynamicVectorElementControl::isEditable()
    {
-      switch (mWhichType)
-      {
-      case VEC2:  return !mVec2Prop->IsReadOnly();
-      case VEC2F: return !mVec2fProp->IsReadOnly();
-      case VEC2D: return !mVec2dProp->IsReadOnly();
-      case VEC3:  return !mVec3Prop->IsReadOnly();
-      case VEC3F: return !mVec3fProp->IsReadOnly();
-      case VEC3D: return !mVec3dProp->IsReadOnly();
-      case VEC4:  return !mVec4Prop->IsReadOnly();
-      case VEC4F: return !mVec4fProp->IsReadOnly();
-      case VEC4D: return !mVec4dProp->IsReadOnly();
-      }
-
-      return true;
+      return !mActiveProp->IsReadOnly();
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -471,108 +460,70 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicVectorElementControl::setValue(double value)
    {
+      const std::string oldValue = mActiveProp->ToString();
+
       switch (mWhichType)
       {
       case VEC2:
          {
-            std::string oldValue    = mVec2Prop->ToString();
             osg::Vec2   vectorValue = mVec2Prop->GetValue();
             vectorValue[mElementIndex] = value;
             mVec2Prop->SetValue(vectorValue);
 
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2Prop,
-               oldValue, mVec2Prop->ToString());
          } break;
       case VEC2F:
          {
-            std::string oldValue    = mVec2fProp->ToString();
             osg::Vec2f  vectorValue = mVec2fProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec2fProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2fProp,
-               oldValue, mVec2fProp->ToString());
          } break;
       case VEC2D:
          {
-            std::string oldValue    = mVec2dProp->ToString();
             osg::Vec2d  vectorValue = mVec2dProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec2dProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec2dProp,
-               oldValue, mVec2dProp->ToString());
          } break;
       case VEC3:
          {
-            std::string oldValue    = mVec3Prop->ToString();
             osg::Vec3   vectorValue = mVec3Prop->GetValue();
             vectorValue[mElementIndex] = value;
             mVec3Prop->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3Prop,
-               oldValue, mVec3Prop->ToString());
          } break;
       case VEC3F:
          {
-            std::string oldValue    = mVec3fProp->ToString();
             osg::Vec3f  vectorValue = mVec3fProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec3fProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3fProp,
-               oldValue, mVec3fProp->ToString());
          } break;
       case VEC3D:
          {
-            std::string oldValue    = mVec3dProp->ToString();
             osg::Vec3d  vectorValue = mVec3dProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec3dProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec3dProp,
-               oldValue, mVec3dProp->ToString());
          } break;
       case VEC4:
          {
-            std::string oldValue    = mVec4Prop->ToString();
             osg::Vec4   vectorValue = mVec4Prop->GetValue();
             vectorValue[mElementIndex] = value;
             mVec4Prop->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4Prop,
-               oldValue, mVec4Prop->ToString());
          } break;
       case VEC4F:
          {
-            std::string oldValue    = mVec4fProp->ToString();
             osg::Vec4f  vectorValue = mVec4fProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec4fProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4fProp,
-               oldValue, mVec4fProp->ToString());
          } break;
       case VEC4D:
          {
-            std::string oldValue    = mVec4dProp->ToString();
             osg::Vec4d  vectorValue = mVec4dProp->GetValue();
             vectorValue[mElementIndex] = value;
             mVec4dProp->SetValue(vectorValue);
-
-            // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mVec4dProp,
-               oldValue, mVec4dProp->ToString());
          } break;
       }
+
+      // give undo manager the ability to create undo/redo events
+      emit PropertyAboutToChange(*mProxy, *mActiveProp,
+         oldValue, mActiveProp->ToString());
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -597,54 +548,7 @@ namespace dtEditQt
 
       if (mTemporaryEditControl != NULL && proxy == mProxy)
       {
-         switch (mWhichType)
-         {
-         case VEC2:
-            if (property == mVec2Prop)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC2F:
-            if (property == mVec2fProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC2D:
-            if (property == mVec2dProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC3:
-            if (property == mVec3Prop)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC3F:
-            if (property == mVec3fProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC3D:
-            if (property == mVec3dProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC4:
-            if (property == mVec4Prop)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC4F:
-            if (property == mVec4fProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         case VEC4D:
-            if (property == mVec4dProp)
-            {
-               updateEditorFromModel(mTemporaryEditControl);
-            } break;
-         }
+         updateEditorFromModel(mTemporaryEditControl);
       }
    }
 

@@ -71,7 +71,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void PropertyEditorTreeView::setRoot(DynamicGroupControl* newRoot)
    {
-      propertyModel->setRootControl(newRoot);
+      propertyModel->SetRootControl(newRoot);
       reset();
    }
 
@@ -87,8 +87,8 @@ namespace dtEditQt
 
       if (current.isValid() && current.column() == 0)
       {
-         DynamicAbstractControl* property = propertyModel->privateData(current);
-         QModelIndex newSelection = propertyModel->indexOf(property, 1);
+         DynamicAbstractControl* property = propertyModel->GetAbstractControlFromIndex(current);
+         QModelIndex newSelection = propertyModel->IndexOf(property, 1);
          setCurrentIndex(newSelection);
       }
    }
@@ -106,8 +106,8 @@ namespace dtEditQt
       {
          if (current.isValid() && current.column() == 0)
          {
-            DynamicAbstractControl* property = propertyModel->privateData(current);
-            QModelIndex newSelection = propertyModel->indexOf(property, 1);
+            DynamicAbstractControl* property = propertyModel->GetAbstractControlFromIndex(current);
+            QModelIndex newSelection = propertyModel->IndexOf(property, 1);
             QRect rect = visualRect(newSelection);
             setSelection(rect, QItemSelectionModel::SelectCurrent);
             break;
@@ -126,7 +126,7 @@ namespace dtEditQt
       PropertyEditorModel* currentModel = dynamic_cast<PropertyEditorModel*>(model());
       if (currentModel != NULL && mPreviousIndex != NULL)
       {
-         DynamicAbstractControl* control = currentModel->privateData(*mPreviousIndex);
+         DynamicAbstractControl* control = currentModel->GetAbstractControlFromIndex(*mPreviousIndex);
          if (control != NULL)
          {
             control->handleSubEditDestroy(editor, hint);
@@ -144,14 +144,14 @@ namespace dtEditQt
 
       setTabKeyNavigation(true);
       setEditTriggers(QAbstractItemView::CurrentChanged | QAbstractItemView::SelectedClicked);
-      if (propertyModel->getRootControl() != NULL)
+      if (propertyModel->GetRootControl() != NULL)
       {
-         setRootIndex(propertyModel->indexOf(propertyModel->getRootControl()));
+         setRootIndex(propertyModel->IndexOf(propertyModel->GetRootControl()));
 
          header()->setResizeMode(1, QHeaderView::Stretch);
 
          resizeColumnToContents(0);
-         setExpanded(propertyModel->indexOf(propertyModel->getRootControl()), true);
+         setExpanded(propertyModel->IndexOf(propertyModel->GetRootControl()), true);
       }
    }
 

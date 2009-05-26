@@ -211,6 +211,19 @@ namespace dtEditQt
       mPropertyWindow = new PropertyEditor(this);
       mPropertyWindow->setObjectName("PropertyWindow");
 
+      // listen for selection changed event
+      connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+               mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+
+      // listen for property change events and update the tree.  These can be generated
+      // by the viewports, or the tree itself.
+      connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+               mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+
+      // listen for name changes so we can update our group box label or handle undo changes
+      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+               mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+
       mActorTab = new ActorTab(this);
       mActorTab->setObjectName("ActorTab");
 
@@ -451,6 +464,21 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorShutDown()
    {
+      // listen for selection changed event
+      disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+         mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+
+      // listen for property change events and update the tree.  These can be generated
+      // by the viewports, or the tree itself.
+      disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+         ActorPropertyRefPtr)),
+         mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr,
+         ActorPropertyRefPtr)));
+
+      // listen for name changes so we can update our group box label or handle undo changes
+      disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+               mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+
       EditorData& editorData = EditorData::GetInstance();
       EditorSettings settings;
 

@@ -31,7 +31,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamiccolorelementcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
-#include <dtEditQt/editorevents.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
@@ -118,9 +117,7 @@ namespace dtEditQt
       {
          if (mWhichType == RGBA)
          {
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mColorRGBA);
-            //} else if (whichType == RGB) {
-            //    EditorEvents::GetInstance().emitActorPropertyChanged(proxy, colorRGB);
+            emit PropertyChanged(*mProxy, *mColorRGBA);
          }
       }
 
@@ -217,7 +214,7 @@ namespace dtEditQt
          mColorRGBA->SetValue(vectorValue);
 
          // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mColorRGBA,
+         emit PropertyAboutToChange(*mProxy, *mColorRGBA,
             oldValue, mColorRGBA->ToString());
       }
       //else { // == RGB

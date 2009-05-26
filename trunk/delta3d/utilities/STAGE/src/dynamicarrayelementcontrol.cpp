@@ -28,27 +28,31 @@
  */
 
 #include <prefix/dtstageprefix-src.h>
+
 #include <QtGui/QWidget>
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include "dtEditQt/dynamicarrayelementcontrol.h"
-#include "dtEditQt/dynamicarraycontrol.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtUtil/log.h>
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/propertyeditor.h"
-#include <dtEditQt/propertyeditormodel.h>
-#include <dtEditQt/propertyeditortreeview.h>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
+
+#include <dtEditQt/dynamicarrayelementcontrol.h>
+#include <dtEditQt/dynamicarraycontrol.h>
+#include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/propertyeditormodel.h>
+#include <dtEditQt/propertyeditortreeview.h>
+
+#include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
-#include <dtEditQt/editorevents.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtDAL/actorproperty.h>
+
+#include <dtUtil/log.h>
+
+//#include <dtEditQt/editordata.h>
+//#include <dtEditQt/editorevents.h>
 
 namespace dtEditQt
 {
@@ -81,14 +85,22 @@ namespace dtEditQt
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          dtDAL::ActorProperty* propType = mProperty->GetArrayProperty();
-         if (propType)
+         if (propType != NULL)
          {
             // Create property data for this array index.
-            PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
-            mPropertyControl = propEditor.CreatePropertyObject(propType);
-            if (mPropertyControl)
+            mPropertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
+            if (mPropertyControl != NULL)
             {
+               mPropertyControl->SetTreeView(mPropertyTree);
+               mPropertyControl->SetDynamicControlFactory(GetDynamicControlFactory());
                mPropertyControl->initializeData(this, newModel, newProxy, propType);
+               connect(mPropertyControl, SIGNAL(PropertyAboutToChange(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)),
+                        this, SLOT(PropertyAboutToChangePassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)));
+
+               connect(mPropertyControl, SIGNAL(PropertyChanged(dtDAL::ActorProxy&, dtDAL::ActorProperty&)),
+                        this, SLOT(PropertyChangedPassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&)));
                mChildren.push_back(mPropertyControl);
             }
          }
@@ -107,7 +119,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -121,7 +133,7 @@ namespace dtEditQt
 
       // label
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
-      setBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       mShiftUpButton   = new SubQPushButton(tr("Up"),     wrapper, this);
       mShiftDownButton = new SubQPushButton(tr("Down"),   wrapper, this);

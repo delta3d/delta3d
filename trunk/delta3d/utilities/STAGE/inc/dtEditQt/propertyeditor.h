@@ -32,13 +32,14 @@
 #include <QtGui/QDockWidget>
 #include <vector>
 
-#include <dtUtil/objectfactory.h>
 
 #include <dtUtil/tree.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/actortype.h>
 #include <dtEditQt/typedefs.h>
+
+#include <dtEditQt/dynamicabstractcontrol.h>
 
 class QMainWindow;
 class QTreeWidget;
@@ -108,8 +109,6 @@ namespace dtEditQt
          }
       }
 
-      DynamicAbstractControl* CreatePropertyObject(dtDAL::ActorProperty* prop);
-
    public slots:
       /**
        * Handles the actor selection changed event message from EditorEvents
@@ -121,12 +120,15 @@ namespace dtEditQt
 
       void proxyNameChanged(ActorProxyRefPtr proxy, std::string oldName);
 
-      ///This will mark the propertyeditor as closing so it won't update while the app is shutting down.
-      void OnEditorClosing();
+      virtual void PropertyAboutToChangeFromControl(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+               const std::string& oldValue, const std::string& newValue);
+      virtual void PropertyChangedFromControl(dtDAL::ActorProxy&, dtDAL::ActorProperty&);
 
    private:
       // list of what the editor thinks is the last known selected actors
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > selectedActors;
+
+      dtCore::RefPtr<DynamicControlFactory> mControlFactory;
 
       //QGroupBox *actorInfoBox;
       QString                 baseGroupBoxName;
@@ -137,9 +139,6 @@ namespace dtEditQt
       PropertyEditorTreeView* propertyTree;
       PropertyEditorModel*    propertyModel;
       DynamicGroupControl*    rootProperty;
-
-      // the dynamic control factory can create objects for each type.
-      dtCore::RefPtr< dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl> > controlFactory;
 
       // this is a tree of property group names which were expanded.  It is used
       // when we change selected actors.  We walk the property tree and look for

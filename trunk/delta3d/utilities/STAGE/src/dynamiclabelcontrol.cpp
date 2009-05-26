@@ -29,7 +29,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamiclabelcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
-#include <dtEditQt/editorevents.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>

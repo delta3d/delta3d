@@ -231,6 +231,8 @@ namespace dtEditQt
       std::string mToolTipTypeLabel;
       std::string mLabel;
 
+      dtDAL::ActorProperty*  mActiveProp;
+
       dtDAL::Vec2ActorProperty*  mVec2Prop;
       dtDAL::Vec3ActorProperty*  mVec3Prop;
       dtDAL::Vec4ActorProperty*  mVec4Prop;

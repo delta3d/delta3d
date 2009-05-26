@@ -31,12 +31,12 @@
 #include <dtEditQt/dynamicgrouppropertycontrol.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
-#include <dtEditQt/editordata.h>
+
+
 #include <dtEditQt/groupuiregistry.h>
 #include <dtEditQt/dynamicsubwidgets.h>
 #include <dtEditQt/groupuiplugin.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/editorevents.h>
 
 #include <dtDAL/groupactorproperty.h>
 #include <dtUtil/log.h>
@@ -45,6 +45,8 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QPushButton>
 #include <QtGui/QMessageBox>
+
+#include <dtEditQt/editordata.h>
 
 namespace dtEditQt
 {
@@ -78,7 +80,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -175,6 +177,7 @@ namespace dtEditQt
          return NULL;
       }
 
+      //TODO rip this out of editor data.
       return EditorData::GetInstance().GetGroupUIRegistry().GetPlugin(mGroupProperty->GetEditorType());
    }
 
@@ -193,17 +196,18 @@ namespace dtEditQt
    {
       if (mGroupProperty == NULL)
       {
-         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
+         QMessageBox::critical(mPropertyTree,
             tr("Error"),tr("No Group Property is associated with this control.  An internal error has occurred."), QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
 
       GroupUIPlugin* plugin = GetPlugin();
-      QWidget* pluginWidget = plugin->CreateWidget(EditorData::GetInstance().getMainWindow());
+      QWidget* pluginWidget = plugin->CreateWidget(mPropertyTree);
       if (pluginWidget == NULL)
       {
-         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
-            tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),QMessageBox::Ok, QMessageBox::Ok);
+         QMessageBox::critical(mPropertyTree,
+            tr("Plugin Error"),tr("The plugin registered for this group actor property returned a NULL editor window."),
+            QMessageBox::Ok, QMessageBox::Ok);
          return;
       }
 
@@ -219,16 +223,16 @@ namespace dtEditQt
             dtCore::RefPtr<dtDAL::NamedGroupParameter> param = new dtDAL::NamedGroupParameter(mGroupProperty->GetName());
             plugin->UpdateModelFromWidget(*pluginWidget, *param);
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mGroupProperty,
+            emit PropertyAboutToChange(*mProxy, *mGroupProperty,
                mGroupProperty->ToString(), param->ToString());
             mGroupProperty->SetValue(*param);
             // notify the world (mostly the viewports) that our property changed
-            EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mGroupProperty);
+            emit PropertyChanged(*mProxy, *mGroupProperty);
          }
       }
       else
       {
-         QMessageBox::critical(EditorData::GetInstance().getMainWindow(),
+         QMessageBox::critical(mPropertyTree,
             tr("Plugin Error"),tr("Non-QDialog group property plugin widgets are not yet supported."), QMessageBox::Ok, QMessageBox::Ok);
       }
    }

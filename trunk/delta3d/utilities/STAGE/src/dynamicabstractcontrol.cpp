@@ -31,6 +31,7 @@
 #include <dtEditQt/propertyeditortreeview.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
+#include <dtDAL/enginepropertytypes.h>
 #include <dtEditQt/editorevents.h>
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
@@ -39,9 +40,77 @@
 #include <QtCore/QSize>
 #include <QtGui/QStyleOptionViewItem>
 
+#include <dtEditQt/dynamicabstractparentcontrol.h>
+#include <dtEditQt/dynamicactorcontrol.h>
+#include <dtEditQt/dynamicboolcontrol.h>
+#include <dtEditQt/dynamiccolorrgbacontrol.h>
+#include <dtEditQt/dynamicenumcontrol.h>
+#include <dtEditQt/dynamicfloatcontrol.h>
+#include <dtEditQt/dynamicdoublecontrol.h>
+#include <dtEditQt/dynamicgrouppropertycontrol.h>
+#include <dtEditQt/dynamicintcontrol.h>
+#include <dtEditQt/dynamiclabelcontrol.h>
+#include <dtEditQt/dynamiclongcontrol.h>
+#include <dtEditQt/dynamicnamecontrol.h>
+#include <dtEditQt/dynamicresourcecontrol.h>
+#include <dtEditQt/dynamicstringcontrol.h>
+#include <dtEditQt/dynamicvecncontrol.h>
+#include <dtEditQt/dynamicgameeventcontrol.h>
+#include <dtEditQt/dynamicarraycontrol.h>
+#include <dtEditQt/dynamiccontainercontrol.h>
+
+#include <dtDAL/datatype.h>
+
 namespace dtEditQt
 {
 
+   ///////////////////////////////////////////////////////////////////////////////
+   DynamicControlFactory::DynamicControlFactory()
+   : mControlFactory(new dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl>)
+   {
+      // register all the data types with the dynamic control factory
+      RegisterControlForDataType<DynamicStringControl>(dtDAL::DataType::STRING);
+      RegisterControlForDataType<DynamicFloatControl>(dtDAL::DataType::FLOAT);
+      RegisterControlForDataType<DynamicDoubleControl>(dtDAL::DataType::DOUBLE);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3ActorProperty> >(dtDAL::DataType::VEC3);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3fActorProperty> >(dtDAL::DataType::VEC3F);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec3dActorProperty> >(dtDAL::DataType::VEC3D);
+      RegisterControlForDataType<DynamicIntControl>(dtDAL::DataType::INT);
+      RegisterControlForDataType<DynamicLongControl>(dtDAL::DataType::LONGINT);
+      RegisterControlForDataType<DynamicBoolControl>(dtDAL::DataType::BOOLEAN);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2ActorProperty> >(dtDAL::DataType::VEC2);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2fActorProperty> >(dtDAL::DataType::VEC2F);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec2dActorProperty> >(dtDAL::DataType::VEC2D);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4ActorProperty> >(dtDAL::DataType::VEC4);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4fActorProperty> >(dtDAL::DataType::VEC4F);
+      RegisterControlForDataType<DynamicVecNControl<dtDAL::Vec4dActorProperty> >(dtDAL::DataType::VEC4D);
+      RegisterControlForDataType<DynamicEnumControl>(dtDAL::DataType::ENUMERATION);
+      RegisterControlForDataType<DynamicColorRGBAControl>(dtDAL::DataType::RGBACOLOR);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::SOUND);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::STATIC_MESH);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::TEXTURE);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::TERRAIN);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::PARTICLE_SYSTEM);
+      RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
+      RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
+      RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::SKELETAL_MESH);
+      RegisterControlForDataType<DynamicArrayControl>(dtDAL::DataType::ARRAY);
+      RegisterControlForDataType<DynamicContainerControl>(dtDAL::DataType::CONTAINER);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DynamicAbstractControl* DynamicControlFactory::CreateDynamicControl(const dtDAL::ActorProperty& prop)
+   {
+      return mControlFactory->CreateObject(&prop.GetPropertyType());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   DynamicControlFactory::~DynamicControlFactory()
+   {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    ///////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl::DynamicAbstractControl()
       : mInitialized(false)
@@ -57,6 +126,18 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    DynamicAbstractControl::~DynamicAbstractControl()
    {
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   DynamicControlFactory* DynamicAbstractControl::GetDynamicControlFactory()
+   {
+      return mControlFactory.get();
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::SetDynamicControlFactory(DynamicControlFactory* factory)
+   {
+      mControlFactory = factory;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +204,19 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::PropertyAboutToChangePassThrough(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty& prop,
+            std::string oldValue, std::string newValue)
+   {
+      emit PropertyAboutToChange(proxy, prop, oldValue, newValue);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DynamicAbstractControl::PropertyChangedPassThrough(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty& prop)
+   {
+      emit PropertyChanged(proxy, prop);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void DynamicAbstractControl::OnChildPreUpdate(DynamicAbstractControl* child)
    {
       NotifyParentOfPreUpdate();
@@ -173,7 +267,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::setTreeView(PropertyEditorTreeView* newPropertyTree)
+   void DynamicAbstractControl::SetTreeView(PropertyEditorTreeView* newPropertyTree)
    {
       mPropertyTree = newPropertyTree;
    }
@@ -184,13 +278,13 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicAbstractControl::isNeedsPersistentEditor()
+   bool DynamicAbstractControl::NeedsPersistentEditor()
    {
       return false;
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::setBackgroundColor(QWidget* widget, QColor color)
+   void DynamicAbstractControl::SetBackgroundColor(QWidget* widget, QColor color)
    {
       QPalette palette(widget->palette());
       palette.setColor(QPalette::Active,   QPalette::Background, color);
@@ -202,7 +296,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   void DynamicAbstractControl::installEventFilterOnControl(QObject* filterObj)
+   void DynamicAbstractControl::InstallEventFilterOnControl(QObject* filterObj)
    {
       QObject::installEventFilter(filterObj);
    }

@@ -29,8 +29,6 @@
 #include <dtDAL/project.h>
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicactorcontrol.h>
-#include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
 #include <dtEditQt/propertyeditortreeview.h>
 #include <dtDAL/map.h>
 #include <dtDAL/exceptionenum.h>
@@ -38,6 +36,9 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <QtGui/QPushButton>
 #include <QtGui/QHBoxLayout>
+
+#include <dtEditQt/editordata.h>
+#include <dtEditQt/editorevents.h>
 
 namespace dtEditQt
 {
@@ -115,8 +116,7 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(
-               mProxy, getActorProperty(), previousString, selectionString);
+            emit PropertyAboutToChange(*mProxy, *getActorProperty(), previousString, selectionString);
 
             dtDAL::Map* curMap = EditorData::GetInstance().getCurrentMap();
             if (curMap == NULL)
@@ -163,7 +163,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, getActorProperty());
+         emit PropertyChanged(*mProxy, *getActorProperty());
       }
 
       return dataChanged;
@@ -176,7 +176,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {

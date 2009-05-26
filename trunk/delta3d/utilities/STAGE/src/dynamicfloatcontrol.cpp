@@ -29,7 +29,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/dynamicfloatcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
-#include <dtEditQt/editorevents.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
@@ -110,7 +109,7 @@ namespace dtEditQt
             if (result != mProperty->GetValue() && proxyValue != newValue)
             {
                // give undo manager the ability to create undo/redo events
-               EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+               emit PropertyAboutToChange(*mProxy, *mProperty,
                   mProperty->ToString(), QString::number(result).toStdString());
 
                mProperty->SetValue(result);
@@ -130,7 +129,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
+         emit PropertyChanged(*mProxy, *mProperty);
       }
 
       return dataChanged;

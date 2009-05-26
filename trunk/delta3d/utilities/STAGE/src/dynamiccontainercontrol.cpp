@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * This software was developed by Alion Science and Technology Corporation under
  * circumstances in which the U. S. Government may have rights in the software.
  *
@@ -33,19 +33,15 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include "dtEditQt/dynamiccontainercontrol.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
+#include <dtEditQt/dynamiccontainercontrol.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
 #include <dtDAL/containeractorproperty.h>
 #include <dtUtil/log.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
 #include <QtGui/QLabel>
-#include <dtEditQt/editorevents.h>
-#include "dtEditQt/editordata.h"
-#include "dtEditQt/mainwindow.h"
-#include "dtEditQt/propertyeditor.h"
 
 namespace dtEditQt
 {
@@ -64,8 +60,8 @@ namespace dtEditQt
    void DynamicContainerControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in 
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.   
+      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
+      // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::CONTAINER)
       {
          mProperty = static_cast<dtDAL::ContainerActorProperty*>(newProperty);
@@ -77,21 +73,27 @@ namespace dtEditQt
             dtDAL::ActorProperty* propType = mProperty->GetProperty(index);
             if (propType)
             {
-               // Create property data for this array index.
-               PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
-               DynamicAbstractControl* propertyControl = propEditor.CreatePropertyObject(propType);
-               if (propertyControl)
+               DynamicAbstractControl* propertyControl = GetDynamicControlFactory()->CreateDynamicControl(*propType);
+               if (propertyControl != NULL)
                {
                   propertyControl->initializeData(this, newModel, newProxy, propType);
+
+                  connect(propertyControl, SIGNAL(PropertyAboutToChange(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                    const std::string&, const std::string&)),
+                           this, SLOT(PropertyAboutToChangePassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                    const std::string&, const std::string&)));
+
+                  connect(propertyControl, SIGNAL(PropertyChanged(dtDAL::ActorProxy&, dtDAL::ActorProperty&)),
+                           this, SLOT(PropertyChangedPassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&)));
                   mChildren.push_back(propertyControl);
                }
             }
          }
       }
-      else 
+      else
       {
          std::string propertyName = (newProperty != NULL) ? newProperty->GetName() : "NULL";
-         LOG_ERROR("Cannot create dynamic control because property [" + 
+         LOG_ERROR("Cannot create dynamic control because property [" +
             propertyName + "] is not the correct type.");
       }
    }

@@ -31,34 +31,17 @@
 
 #include <dtEditQt/propertyeditor.h>
 
-#include <dtEditQt/actortypetreewidget.h>
 #include <dtEditQt/dynamicabstractcontrol.h>
-#include <dtEditQt/dynamicabstractparentcontrol.h>
-#include <dtEditQt/dynamicactorcontrol.h>
-#include <dtEditQt/dynamicboolcontrol.h>
-#include <dtEditQt/dynamiccolorrgbacontrol.h>
-#include <dtEditQt/dynamicenumcontrol.h>
-#include <dtEditQt/dynamicfloatcontrol.h>
-#include <dtEditQt/dynamicdoublecontrol.h>
 #include <dtEditQt/dynamicgroupcontrol.h>
-#include <dtEditQt/dynamicgrouppropertycontrol.h>
-#include <dtEditQt/dynamicintcontrol.h>
 #include <dtEditQt/dynamiclabelcontrol.h>
-#include <dtEditQt/dynamiclongcontrol.h>
 #include <dtEditQt/dynamicnamecontrol.h>
-#include <dtEditQt/dynamicresourcecontrol.h>
-#include <dtEditQt/dynamicstringcontrol.h>
-#include <dtEditQt/dynamicvec3control.h>
-#include <dtEditQt/dynamicvec2control.h>
-#include <dtEditQt/dynamicvec4control.h>
-#include <dtEditQt/dynamicgameeventcontrol.h>
-#include <dtEditQt/dynamicarraycontrol.h>
+#include <dtEditQt/propertyeditormodel.h>
+#include <dtEditQt/propertyeditortreeview.h>
+
 #include <dtEditQt/dynamiccontainercontrol.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
-#include <dtEditQt/propertyeditormodel.h>
-#include <dtEditQt/propertyeditortreeview.h>
 
 #include <QtCore/QStringList>
 
@@ -98,6 +81,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    PropertyEditor::PropertyEditor(QMainWindow* parent)
       : QDockWidget(parent)
+      , mControlFactory(new DynamicControlFactory)
    {
       LOG_INFO("Initializing PropertyEditor");
       propertyModel = NULL;
@@ -112,93 +96,12 @@ namespace dtEditQt
       setWindowTitle(tr("Property Editor"));
 
       setupUI();
-
-      // listen for selection changed event
-      connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-         this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
-
-      // listen for property change events and update the tree.  These can be generated
-      // by the viewports, or the tree itself.
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)),
-         this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)));
-
-      // listen for name changes so we can update our group box label or handle undo changes
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-         this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
-
-      // listen for closing
-      connect(&EditorEvents::GetInstance(), SIGNAL(editorCloseEvent()),
-         this, SLOT(OnEditorClosing()));
-
-      controlFactory = new dtUtil::ObjectFactory<dtDAL::DataType*, DynamicAbstractControl>;
-
-      // register all the data types with the dynamic control factory
-      controlFactory->RegisterType<DynamicStringControl>(&(dtDAL::DataType::STRING));
-      controlFactory->RegisterType<DynamicFloatControl>(&(dtDAL::DataType::FLOAT));
-      controlFactory->RegisterType<DynamicDoubleControl>(&(dtDAL::DataType::DOUBLE));
-      controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3));
-      controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3F));
-      controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3D));
-      controlFactory->RegisterType<DynamicIntControl>(&(dtDAL::DataType::INT));
-      controlFactory->RegisterType<DynamicLongControl>(&(dtDAL::DataType::LONGINT));
-      controlFactory->RegisterType<DynamicBoolControl>(&(dtDAL::DataType::BOOLEAN));
-      controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2));
-      controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2F));
-      controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2D));
-      controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4));
-      controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4F));
-      controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4D));
-      controlFactory->RegisterType<DynamicEnumControl>(&(dtDAL::DataType::ENUMERATION));
-      controlFactory->RegisterType<DynamicColorRGBAControl>(&(dtDAL::DataType::RGBACOLOR));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SOUND));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::STATIC_MESH));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TEXTURE));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::TERRAIN));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::PARTICLE_SYSTEM));
-      controlFactory->RegisterType<DynamicActorControl>(&(dtDAL::DataType::ACTOR));
-      controlFactory->RegisterType<DynamicContainerControl>(&(dtDAL::DataType::CONTAINER));
-      controlFactory->RegisterType<DynamicGameEventControl>(&(dtDAL::DataType::GAME_EVENT));
-      controlFactory->RegisterType<DynamicGroupPropertyControl>(&(dtDAL::DataType::GROUP));
-      controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SKELETAL_MESH));
-      controlFactory->RegisterType<DynamicArrayControl>(&(dtDAL::DataType::ARRAY));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    PropertyEditor::~PropertyEditor()
    {
       delete rootProperty;
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
-   DynamicAbstractControl* PropertyEditor::CreatePropertyObject(dtDAL::ActorProperty* prop)
-   {
-      if (prop)
-      {
-         return controlFactory->CreateObject(&prop->GetPropertyType());
-      }
-
-      return NULL;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////
-   void PropertyEditor::OnEditorClosing()
-   {
-      // listen for selection changed event
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-         this, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
-
-      // listen for property change events and update the tree.  These can be generated
-      // by the viewports, or the tree itself.
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)),
-         this, SLOT(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)));
-
-      // listen for name changes so we can update our group box label or handle undo changes
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-         this, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -271,13 +174,8 @@ namespace dtEditQt
    {
       CommitCurrentEdits();
 
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator iter;
       bool isMultiSelect = selectedActors.size() > 1;
 
-      // The ordering of the following code block has been known to cause
-      // problems in various versions of qt.  This code works in 4.2.1.
-      // if it breaks in a later version, past experience has shown that
-      // changing the order in some way will make it work
       delete propertyTree;
       rootProperty->removeAllChildren(propertyModel);
       propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
@@ -286,6 +184,7 @@ namespace dtEditQt
 
       resetGroupBoxLabel();
       // Walk our selection items.
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator iter;
       for (iter = selectedActors.begin(); iter != selectedActors.end(); ++iter)
       {
          dtCore::RefPtr<dtDAL::ActorProxy> myProxy = (*iter);
@@ -406,14 +305,23 @@ namespace dtEditQt
          {
             // first create the control.  Sometimes the controls aren't creatable, so
             // check that first before we do other work.  Excepts if it fails
-            newControl = CreatePropertyObject(curProp);
+            newControl = mControlFactory->CreateDynamicControl(*curProp);
             if (newControl == NULL)
             {
                LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetDataType().GetName());
             }
             else
             {
-               newControl->setTreeView(propertyTree);
+               newControl->SetTreeView(propertyTree);
+               newControl->SetDynamicControlFactory(mControlFactory.get());
+
+               connect(newControl, SIGNAL(PropertyAboutToChange(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)),
+                        this, SLOT(PropertyAboutToChangeFromControl(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)));
+
+               connect(newControl, SIGNAL(PropertyChanged(dtDAL::ActorProxy&, dtDAL::ActorProperty&)),
+                        this, SLOT(PropertyChangedFromControl(dtDAL::ActorProxy&, dtDAL::ActorProperty&)));
 
                // Work with the group.  Requires finding an existing group or creating one,
                // and eventually adding our new control to that group control
@@ -448,7 +356,7 @@ namespace dtEditQt
                // control or not.  QT creates and destroys the edit controls on the fly.
                // make the new controls editor persistent if necessary.
                //if (newControl->isNeedsPersistentEditor()) {
-               //    QModelIndex index = propertyModel->indexOf(newControl, 1);
+               //    QModelIndex index = propertyModel->IndexOf(newControl, 1);
                //    propertyTree->openPersistentEditor(index);
                //}
             }
@@ -492,7 +400,7 @@ namespace dtEditQt
          // if we have children, then we could potentially be expanded...
          if (child->getChildCount() > 0)
          {
-            QModelIndex index = propertyModel->indexOf(child);
+            QModelIndex index = propertyModel->IndexOf(child);
             if (propertyTree->isExpanded(index))
             {
                // add it to our list
@@ -534,7 +442,7 @@ namespace dtEditQt
             // found a match!  expand it
             if (child->getDisplayName() == name)
             {
-               QModelIndex childIndex = propertyModel->indexOf(child);
+               QModelIndex childIndex = propertyModel->IndexOf(child);
                propertyTree->setExpanded(childIndex, true);
 
                // recurse over the children of this object
@@ -555,6 +463,19 @@ namespace dtEditQt
    void PropertyEditor::closeEvent(QCloseEvent* e)
    {
       EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(false);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditor::PropertyAboutToChangeFromControl(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty& prop,
+            const std::string& oldValue, const std::string& newValue)
+   {
+      EditorEvents::GetInstance().emitActorPropertyAboutToChange(&proxy, &prop, oldValue, newValue);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditor::PropertyChangedFromControl(dtDAL::ActorProxy& proxy, dtDAL::ActorProperty& prop)
+   {
+      EditorEvents::GetInstance().emitActorPropertyChanged(&proxy, &prop);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

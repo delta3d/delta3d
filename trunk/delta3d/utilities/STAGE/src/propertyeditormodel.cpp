@@ -46,28 +46,52 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   QModelIndex PropertyEditorModel::index(int row, int column, const QModelIndex& parent) const
+   DynamicGroupControl* PropertyEditorModel::GetRootControl() const
    {
-#if (QT_VERSION == 0x040001)
-      DynamicAbstractControl* parentProp = privateData(parent);
+      return rootControl;
+   }
 
-      if (!parent.isValid() || parentProp == NULL)
+   /////////////////////////////////////////////////////////////////////////////////
+   void PropertyEditorModel::SetRootControl(DynamicGroupControl* newRoot)
+   {
+      rootControl = newRoot;
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   QModelIndex PropertyEditorModel::IndexOf(DynamicAbstractControl* property, int column) const
+   {
+      if (property == rootControl)
       {
-         // special case for root.
-         parentProp = rootControl;
+         return createIndex(0, column, rootControl);
       }
 
-      DynamicAbstractControl* childProp = parentProp->getChild(row);
-      if (childProp != NULL)
+      if (property == NULL || property->getParent() == NULL)
       {
-         return createIndex(row, column, childProp);
+         return QModelIndex(); // INVALID
+      }
+
+      DynamicAbstractControl* parent = property->getParent();
+      int row = parent->getChildIndex(property);
+      return createIndex(row, column, property);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   DynamicAbstractControl* PropertyEditorModel::GetAbstractControlFromIndex(const QModelIndex& index) const
+   {
+      if (!index.isValid())
+      {
+         return NULL;
       }
       else
       {
-         return QModelIndex();
+         return static_cast<DynamicAbstractControl*>(index.internalPointer());
       }
-#else
-      DynamicAbstractControl* parentProp = privateData(parent);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   QModelIndex PropertyEditorModel::index(int row, int column, const QModelIndex& parent) const
+   {
+      DynamicAbstractControl* parentProp = GetAbstractControlFromIndex(parent);
       DynamicAbstractControl* childProp = NULL;
 
       if (rootControl == NULL)
@@ -95,20 +119,19 @@ namespace dtEditQt
       {
          return QModelIndex();
       }
-#endif
    }
 
    /////////////////////////////////////////////////////////////////////////////////
    QModelIndex PropertyEditorModel::parent(const QModelIndex& index) const
    {
-      DynamicAbstractControl* prop = privateData(index);
+      DynamicAbstractControl* prop = GetAbstractControlFromIndex(index);
 
       if (!index.isValid() || prop == NULL || prop == rootControl)
       {
          return QModelIndex();
       }
 
-      return indexOf(prop->getParent());
+      return IndexOf(prop->getParent());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +142,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    int PropertyEditorModel::rowCount(const QModelIndex& parent) const
    {
-      DynamicAbstractControl* prop = privateData(parent);
+      DynamicAbstractControl* prop = GetAbstractControlFromIndex(parent);
 
       if (!parent.isValid() || prop == NULL)
       {
@@ -138,7 +161,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    QVariant PropertyEditorModel::data(const QModelIndex& index, int role) const
    {
-      DynamicAbstractControl* property = privateData(index);
+      DynamicAbstractControl* property = GetAbstractControlFromIndex(index);
 
       if (!index.isValid() || property == NULL)
       {
@@ -187,7 +210,7 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    bool PropertyEditorModel::isEditable(const QModelIndex& index) const
    {
-      DynamicAbstractControl* property = privateData(index);
+      DynamicAbstractControl* property = GetAbstractControlFromIndex(index);
 
       if (!index.isValid() || property == NULL || index.column() != 1)
       {
@@ -231,7 +254,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    bool PropertyEditorModel::removeRows(int position, int rows, const QModelIndex& parent)
    {
-      DynamicAbstractControl* property = privateData(parent);
+      DynamicAbstractControl* property = GetAbstractControlFromIndex(parent);
       int childCount = property->getChildCount();
       for (int childIndex = 0; childIndex < childCount; ++childIndex)
       {
@@ -239,7 +262,7 @@ namespace dtEditQt
 
          if (child->getChildCount() > 0)
          {
-            removeRows(0, child->getChildCount(), indexOf(child));
+            removeRows(0, child->getChildCount(), IndexOf(child));
          }
       }
 
