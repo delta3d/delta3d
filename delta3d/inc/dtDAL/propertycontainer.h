@@ -28,6 +28,7 @@
 #include <dtUtil/refstring.h>
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
+#include <dtDAL/actorproperty.h>
 #include <osg/Referenced>
 
 #include <map>
@@ -35,8 +36,6 @@
 
 namespace dtDAL
 {
-   class ActorProperty;
-
    class DT_DAL_EXPORT PropertyContainer: public osg::Referenced
    {
    public:
