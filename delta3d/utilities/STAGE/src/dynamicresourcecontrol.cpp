@@ -32,8 +32,7 @@
 #include <dtEditQt/dynamiclabelcontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
 #include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
-#include <dtEditQt/mainwindow.h>
+
 #include <dtEditQt/propertyeditortreeview.h>
 
 #include <dtDAL/actorproxy.h>
@@ -179,7 +178,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -194,7 +193,7 @@ namespace dtEditQt
       // label
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       // Use Current button
       mTemporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
@@ -328,7 +327,7 @@ namespace dtEditQt
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+         emit PropertyAboutToChange(*mProxy, *mProperty,
             oldValue, mProperty->ToString());
 
          // update our label
@@ -338,7 +337,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
+         emit PropertyChanged(*mProxy, *mProperty);
       }
    }
 
@@ -356,7 +355,7 @@ namespace dtEditQt
          // give undo manager the ability to create undo/redo events
          // technically, we're sending the about to change event AFTER we already
          // changed it, but it doesn't matter.  It's the easiest way to get the string value.
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+         emit PropertyAboutToChange(*mProxy, *mProperty,
             oldValue, mProperty->ToString());
 
          // update our label
@@ -366,7 +365,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
+         emit PropertyChanged(*mProxy, *mProperty);
       }
    }
 

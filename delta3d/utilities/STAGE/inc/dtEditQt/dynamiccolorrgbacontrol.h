@@ -36,133 +36,136 @@ class QColorDialog;
 
 namespace dtDAL
 {
-    class ColorRgbaActorProperty;
+   class ColorRgbaActorProperty;
 }
 
 namespace dtEditQt
 {
+   class DynamicColorElementControl;
+   class SubQLabel;
+   class SubQPushButton;
 
-    class DynamicColorElementControl;
-    class SubQLabel;
-    class SubQPushButton;
-
-    /**
+   /**
      * @class DynamicColorRGBAControl
      * @brief This is the dynamic control for the an RGBA Color picker - used in the property editor
      * @Note It adds a group of child elements to the tree, since you can't edit 3 things
      * in one control easily.
      */
-    class DynamicColorRGBAControl : public DynamicAbstractParentControl
-    {
-        Q_OBJECT
+   class DynamicColorRGBAControl : public DynamicAbstractParentControl
+   {
+      Q_OBJECT
+   public:
+      /**
+       * Constructor
+       */
+      DynamicColorRGBAControl();
 
-    public:
-        /**
-         * Constructor
-         */
-        DynamicColorRGBAControl();
-
-        /**
-         * Destructor
-         */
-        virtual ~DynamicColorRGBAControl();
+      /**
+       * Destructor
+       */
+      virtual ~DynamicColorRGBAControl();
 
 
-        /**
-         * @see DynamicAbstractControl#initializeData
-         */
-        virtual void initializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
-            dtDAL::ActorProxy* proxy, dtDAL::ActorProperty* property);
+      /**
+       * @see DynamicAbstractControl#initializeData
+       */
+      virtual void initializeData(DynamicAbstractControl* newParent, PropertyEditorModel* model,
+               dtDAL::ActorProxy* proxy, dtDAL::ActorProperty* property);
 
-        /**
-         * @see DynamicAbstractControl#addSelfToParentWidget
-         */
-        void addSelfToParentWidget(QWidget& parent, QGridLayout& layout, int row);
+      /**
+       * @see DynamicAbstractControl#addSelfToParentWidget
+       */
+      void addSelfToParentWidget(QWidget& parent, QGridLayout& layout, int row);
 
-        /**
-         * @see DynamicAbstractControl#getDisplayName
-         */
-        virtual const QString getDisplayName();
+      /**
+       * @see DynamicAbstractControl#getDisplayName
+       */
+      virtual const QString getDisplayName();
 
-        /**
-         * @see DynamicAbstractControl#getDescription
-         */
-        virtual const QString getDescription();
+      /**
+       * @see DynamicAbstractControl#getDescription
+       */
+      virtual const QString getDescription();
 
-        /**
-         * @see DynamicAbstractControl#getValueAsString
-         */
-        virtual const QString getValueAsString();
+      /**
+       * @see DynamicAbstractControl#getValueAsString
+       */
+      virtual const QString getValueAsString();
 
-        /**
-         * @see DynamicAbstractControl#updateEditorFromModel
-         */
-        virtual void updateEditorFromModel(QWidget* widget);
+      /**
+       * @see DynamicAbstractControl#updateEditorFromModel
+       */
+      virtual void updateEditorFromModel(QWidget* widget);
 
-        /**
-         * @see DynamicAbstractControl#updateModelFromEditor
-         */
-        virtual bool updateModelFromEditor(QWidget* widget);
+      /**
+       * @see DynamicAbstractControl#updateModelFromEditor
+       */
+      virtual bool updateModelFromEditor(QWidget* widget);
 
-        /**
-         * @see DynamicAbstractControl#createEditor
-         */
-        virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-            const QModelIndex& index);
+      /**
+       * @see DynamicAbstractControl#createEditor
+       */
+      virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+               const QModelIndex& index);
 
-        /**
-         * @see DynamicAbstractControl#isEditable
-         */
-        virtual bool isEditable();
+      /**
+       * @see DynamicAbstractControl#isEditable
+       */
+      virtual bool isEditable();
 
-        /**
-         * @see DynamicAbstractControl#isNeedsPersistentEditor
-         */
-        virtual bool isNeedsPersistentEditor();
+      /**
+       * @see DynamicAbstractControl#NeedsPersistentEditor
+       */
+      virtual bool NeedsPersistentEditor();
 
-        /**
-         * @see DynamicAbstractControl#installEventFilterOnControl
-         */
-        virtual void installEventFilterOnControl(QObject* filterObj);
+      /**
+       * @see DynamicAbstractControl#installEventFilterOnControl
+       */
+      virtual void installEventFilterOnControl(QObject* filterObj);
 
-    public slots:
-        virtual bool updateData(QWidget* widget);
+   public slots:
 
-        /**
-         * Slot - color button is pressed
-         */
-        void colorPickerPressed();
+      virtual bool updateData(QWidget* widget);
 
-        void actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
-            dtCore::RefPtr<dtDAL::ActorProperty> property);
+      /**
+       * Slot - color button is pressed
+       */
+      void colorPickerPressed();
 
-        /**
-         * @see DynamicAbstractControl#handleSubEditDestroy
-         */
-        virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
+      void actorPropertyChanged(dtCore::RefPtr<dtDAL::ActorProxy> proxy,
+               dtCore::RefPtr<dtDAL::ActorProperty> property);
 
-    protected:
+      /**
+       * @see DynamicAbstractControl#handleSubEditDestroy
+       */
+      virtual void handleSubEditDestroy(QWidget* widget, QAbstractItemDelegate::EndEditHint hint = QAbstractItemDelegate::NoHint);
 
-    private:
-        DynamicColorElementControl* mElementR;
-        DynamicColorElementControl* mElementG;
-        DynamicColorElementControl* mElementB;
-        DynamicColorElementControl* mElementA;
+   protected:
 
-        dtDAL::ColorRgbaActorProperty* mProperty;
+      DynamicColorElementControl* CreateElementControl(int index, const std::string& label,
+               PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy);
 
-        // This pointer is not really in our control.  It is constructed in the createEditor()
-        // method and destroyed whenever QT feels like it (mostly when the control looses focus).
-        // We work around this by trapping the destruction of this object, it should
-        // call our handleSubEditDestroy() method so we know to not hold this anymore
-        QWidget*        mTemporaryWrapper;
+   private:
 
-        SubQLabel*      mTemporaryEditOnlyTextLabel;
-        SubQPushButton* mTemporaryColorPicker;
+      DynamicColorElementControl* rElement;
+      DynamicColorElementControl* gElement;
+      DynamicColorElementControl* bElement;
+      DynamicColorElementControl* aElement;
 
-        QColorDialog*   mColorDialog;
-    };
+      dtDAL::ColorRgbaActorProperty* mProperty;
 
-} // namespace dtEditQt
+      // This pointer is not really in our control.  It is constructed in the createEditor()
+      // method and destroyed whenever QT feels like it (mostly when the control looses focus).
+      // We work around this by trapping the destruction of this object, it should
+      // call our handleSubEditDestroy() method so we know to not hold this anymore
+      QWidget* mTemporaryWrapper;
+
+      SubQLabel *mTemporaryEditOnlyTextLabel;
+      SubQPushButton *mTemporaryColorPicker;
+
+      QColorDialog *colorDialog;
+   };
+
+}
 
 #endif // DELTA_DYNAMICCOLORRGBCONTROL

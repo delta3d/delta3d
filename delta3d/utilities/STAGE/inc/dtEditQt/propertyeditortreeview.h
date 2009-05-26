@@ -90,9 +90,6 @@ namespace dtEditQt
        */
       void setRoot(DynamicGroupControl* newRoot);
 
-   signals:
-      void propertyChanged(DynamicAbstractControl* property);
-
    public slots:
       virtual void reset();
 

@@ -165,9 +165,6 @@ namespace dtEditQt
                // fail if actors are in the library
                for (unsigned int j = 0; j < proxies.size(); ++j)
                {
-                  std::cerr << "Proxy: " << proxies[j]->GetName() << " RefCount: " <<
-                     proxies[j]->referenceCount() << std::endl;
-
                   dtCore::RefPtr<const dtDAL::ActorType> type = &proxies[j]->GetActorType();
                   if (reg->IsActorTypeSupported(type))
                   {

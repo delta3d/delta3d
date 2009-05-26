@@ -29,7 +29,6 @@
 #include <prefix/dtstageprefix-src.h>
 #include <dtUtil/enumeration.h>
 #include <dtEditQt/dynamicenumcontrol.h>
-#include <dtEditQt/editorevents.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/datatype.h>
@@ -112,8 +111,8 @@ namespace dtEditQt
          if (previousString != selectionString)
          {
             // give undo manager the ability to create undo/redo events
-            EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy,
-               mProperty->AsActorProperty(), previousString, selectionString);
+            emit PropertyAboutToChange(*mProxy,
+               *mProperty->AsActorProperty(), previousString, selectionString);
 
             mProperty->SetValueFromString(selectionString);
             dataChanged = true;
@@ -123,8 +122,7 @@ namespace dtEditQt
       // notify the world (mostly the viewports) that our property changed
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy,
-            mProperty->AsActorProperty());
+         emit PropertyChanged(*mProxy, *mProperty->AsActorProperty());
       }
 
       return dataChanged;

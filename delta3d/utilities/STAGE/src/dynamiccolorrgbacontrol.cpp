@@ -31,7 +31,6 @@
 #include <dtEditQt/dynamiccolorrgbacontrol.h>
 #include <dtEditQt/dynamicsubwidgets.h>
 #include <dtEditQt/editordata.h>
-#include <dtEditQt/editorevents.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/propertyeditortreeview.h>
 #include <dtDAL/actorproxy.h>
@@ -74,8 +73,6 @@ namespace dtEditQt
    void DynamicColorRGBAControl::initializeData(DynamicAbstractControl* newParent,
       PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy, dtDAL::ActorProperty* newProperty)
    {
-      // Note - We used to have dynamic_cast in here, but it was failing to properly cast in
-      // all cases in Linux with gcc4.  So we replaced it with a static cast.
       if (newProperty != NULL && newProperty->GetDataType() == dtDAL::DataType::RGBACOLOR)
       {
          mProperty = static_cast<dtDAL::ColorRgbaActorProperty*>(newProperty);
@@ -83,21 +80,13 @@ namespace dtEditQt
          DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
          // create R
-         mElementR = new DynamicColorElementControl(mProperty, 0, "Red");
-         mElementR->initializeData(this, newModel, newProxy, newProperty);
-         mChildren.push_back(mElementR);
+         rElement = CreateElementControl(0, "Red", newModel, newProxy);
          // create G
-         mElementG = new DynamicColorElementControl(mProperty, 1, "Green");
-         mElementG->initializeData(this, newModel, newProxy, newProperty);
-         mChildren.push_back(mElementG);
+         gElement = CreateElementControl(1, "Green", newModel, newProxy);
          // create B
-         mElementB = new DynamicColorElementControl(mProperty, 2, "Blue");
-         mElementB->initializeData(this, newModel, newProxy, newProperty);
-         mChildren.push_back(mElementB);
+         bElement = CreateElementControl(2, "Blue", newModel, newProxy);
          // create A
-         mElementA = new DynamicColorElementControl(mProperty, 3, "Alpha");
-         mElementA->initializeData(this, newModel, newProxy, newProperty);
-         mChildren.push_back(mElementA);
+         aElement = CreateElementControl(3, "Alpha", newModel, newProxy);
       }
       else
       {
@@ -155,7 +144,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -170,7 +159,7 @@ namespace dtEditQt
       // label
       mTemporaryEditOnlyTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(mTemporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       // button
       mTemporaryColorPicker = new SubQPushButton(tr("Pick ..."), wrapper, this);
@@ -195,7 +184,7 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////////
-   bool DynamicColorRGBAControl::isNeedsPersistentEditor()
+   bool DynamicColorRGBAControl::NeedsPersistentEditor()
    {
       // we want our color picker to always show up. Because it's less confusing that way.
       return true;
@@ -254,7 +243,7 @@ namespace dtEditQt
 
       // show the dialog.  Blocks for user input.
       bool ok;
-      QRgb rgba = QColorDialog::getRgba(startColor.rgba(), &ok, EditorData::GetInstance().getMainWindow());
+      QRgb rgba = QColorDialog::getRgba(startColor.rgba(), &ok, mPropertyTree);
 
       // if the user pressed, OK, we set the color and assume it changed
       if (ok)
@@ -268,7 +257,7 @@ namespace dtEditQt
          mProperty->SetValue(propColor);
 
          // give undo manager the ability to create undo/redo events
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
+         emit PropertyAboutToChange(*mProxy, *mProperty,
             oldValue, mProperty->ToString());
 
          // update our label
@@ -278,7 +267,7 @@ namespace dtEditQt
          }
 
          // notify the world (mostly the viewports) that our property changed
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
+         emit PropertyChanged(*mProxy, *mProperty);
       }
    }
 
@@ -293,5 +282,25 @@ namespace dtEditQt
          mTemporaryEditOnlyTextLabel->setText(getValueAsString());
       }
    }
+
+   /////////////////////////////////////////////////////////////////////////////////
+   DynamicColorElementControl* DynamicColorRGBAControl::CreateElementControl(int index, const std::string& label,
+            PropertyEditorModel* newModel, dtDAL::ActorProxy* newProxy)
+   {
+      DynamicColorElementControl* control = new DynamicColorElementControl(mProperty, index, label);
+      control->initializeData(this, newModel, newProxy, mProperty);
+      mChildren.push_back(control);
+
+      connect(control, SIGNAL(PropertyAboutToChange(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                        const std::string&, const std::string&)),
+               this, SLOT(PropertyAboutToChangePassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                        const std::string&, const std::string&)));
+
+      connect(control, SIGNAL(PropertyChanged(dtDAL::ActorProxy&, dtDAL::ActorProperty&)),
+               this, SLOT(PropertyChangedPassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&)));
+
+      return control;
+   }
+
 
 } // namespace dtEditQt

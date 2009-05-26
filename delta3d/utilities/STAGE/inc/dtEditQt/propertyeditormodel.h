@@ -69,37 +69,16 @@ namespace dtEditQt
        */
       //void clearRootChildren();
 
-      inline DynamicGroupControl* getRootControl() const
-      {
-         return rootControl;
-      }
+      DynamicGroupControl* GetRootControl() const;
 
-      inline void setRootControl(DynamicGroupControl* newRoot)
-      {
-         rootControl = newRoot;
-      }
+      void SetRootControl(DynamicGroupControl* newRoot);
 
       /**
        * This class returns the QModelIndex for the property.  The index comes
        * from getting the parent of the property and then finding this properties
        * row in the parent.
        */
-      inline QModelIndex indexOf(DynamicAbstractControl* property, int column = 0) const
-      {
-         if (property == rootControl)
-         {
-            return createIndex(0, column, rootControl);
-         }
-
-         if (property == NULL || property->getParent() == NULL)
-         {
-            return QModelIndex(); // INVALID
-         }
-
-         DynamicAbstractControl* parent = property->getParent();
-         int row = parent->getChildIndex(property);
-         return createIndex(row, column, property);
-      }
+      QModelIndex IndexOf(DynamicAbstractControl* property, int column = 0) const;
 
       /**
        * Convenience method - This returns the DynamicAbstractControl from the
@@ -107,30 +86,9 @@ namespace dtEditQt
        * with a void * pointer but doesn't allow you to access the data as a void *
        * later.  Instead, we have to static cast it out from the QVariant in data().
        */
-      inline DynamicAbstractControl* privateData(const QModelIndex& index) const
-      {
-         if (!index.isValid())
-         {
-            return NULL;
-         }
-         else
-         {
-            return static_cast<DynamicAbstractControl*>(index.internalPointer());
-         }
-      }
+      DynamicAbstractControl* GetAbstractControlFromIndex(const QModelIndex& index) const;
 
-      Qt::ItemFlags flags(const QModelIndex& index) const;
-
-   signals:
-      void propertyChanged(DynamicAbstractControl* property);
-      void resetProperty(const QString& name);
-
-   public slots:
-      //void setInitialInput(IProperty *initialInput);
-      //void propertyAdded(DynamicAbstractControl *property);
-      //void propertyRemoved(const QModelIndex &index);
-      //void refresh(DynamicAbstractControl *property);
-      //void refresh();
+      virtual Qt::ItemFlags flags(const QModelIndex& index) const;
 
    public:
       //

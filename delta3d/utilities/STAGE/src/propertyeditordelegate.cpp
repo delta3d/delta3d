@@ -116,7 +116,7 @@ namespace dtEditQt
       const PropertyEditorModel* model = dynamic_cast<const PropertyEditorModel* >(index.model());
       if (model != NULL)
       {
-         DynamicAbstractControl* control = model->privateData(index);
+         DynamicAbstractControl* control = model->GetAbstractControlFromIndex(index);
          if (control != NULL && control->isControlDoesCustomPainting(index.column()))
          {
             control->paintColumn(index.column(), painter, opt);
@@ -135,7 +135,7 @@ namespace dtEditQt
       const PropertyEditorModel* model = dynamic_cast<const PropertyEditorModel*>(index.model());
       if (model != NULL)
       {
-         DynamicAbstractControl* control = model->privateData(index);
+         DynamicAbstractControl* control = model->GetAbstractControlFromIndex(index);
          if (control != NULL && control->isControlDoesCustomPainting(index.column()))
          {
             return control->sizeHint(index.column(), opt);
@@ -155,7 +155,7 @@ namespace dtEditQt
       const PropertyEditorModel* model = dynamic_cast<const PropertyEditorModel*>(index.model());
       if (model != NULL)
       {
-         DynamicAbstractControl* control = model->privateData(index);
+         DynamicAbstractControl* control = model->GetAbstractControlFromIndex(index);
          if (control != NULL)
          {
             editor = control->createEditor(parent, option, index);//, SLOT(sync()));
@@ -166,7 +166,7 @@ namespace dtEditQt
             // we want the delegate to control events
             if (editor != NULL)
             {
-               control->installEventFilterOnControl(const_cast<PropertyEditorDelegate*>(this));
+               control->InstallEventFilterOnControl(const_cast<PropertyEditorDelegate*>(this));
 
                editor->installEventFilter(const_cast<PropertyEditorDelegate*>(this));
             }
@@ -182,7 +182,7 @@ namespace dtEditQt
       const PropertyEditorModel* model = dynamic_cast<const PropertyEditorModel*>(index.model());
       if (model != NULL)
       {
-         DynamicAbstractControl* control = model->privateData(index);
+         DynamicAbstractControl* control = model->GetAbstractControlFromIndex(index);
          if (control != NULL)
          {
             control->updateEditorFromModel(editor);
@@ -197,7 +197,7 @@ namespace dtEditQt
       PropertyEditorModel* myModel = dynamic_cast<PropertyEditorModel*>(model);
       if (myModel != NULL)
       {
-         DynamicAbstractControl* control = myModel->privateData(index);
+         DynamicAbstractControl* control = myModel->GetAbstractControlFromIndex(index);
          if (control != NULL)
          {
             control->updateModelFromEditor(editor);

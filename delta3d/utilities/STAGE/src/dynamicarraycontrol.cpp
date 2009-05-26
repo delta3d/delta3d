@@ -33,18 +33,18 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDoubleValidator>
-#include "dtEditQt/dynamicarraycontrol.h"
-#include "dtEditQt/dynamicarrayelementcontrol.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include <dtDAL/arrayactorpropertybase.h>
-#include <dtUtil/log.h>
+#include <dtEditQt/dynamicarraycontrol.h>
+#include <dtEditQt/dynamicarrayelementcontrol.h>
 #include <dtEditQt/propertyeditormodel.h>
 #include <dtEditQt/propertyeditortreeview.h>
+
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/arrayactorpropertybase.h>
+#include <dtUtil/log.h>
 #include <QtGui/QLabel>
 #include <QtGui/QPushButton>
-#include <dtEditQt/editorevents.h>
 
 namespace dtEditQt
 {
@@ -91,7 +91,7 @@ namespace dtEditQt
       QWidget* wrapper = new QWidget(parent);
       wrapper->setFocusPolicy(Qt::StrongFocus);
       // set the background color to white so that it sort of blends in with the rest of the controls
-      setBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(wrapper, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       if (!mInitialized)
       {
@@ -105,7 +105,7 @@ namespace dtEditQt
 
       // label
       mTextLabel = new SubQLabel(getValueAsString(), wrapper, this);
-      setBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
+      SetBackgroundColor(mTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
       mAddButton   = new SubQPushButton(tr("Add"),   wrapper, this);
       mClearButton = new SubQPushButton(tr("Clear"), wrapper, this);
@@ -208,8 +208,8 @@ namespace dtEditQt
       int size = mProperty->GetArraySize();
       bool dataChanged = false;
 
-      PropertyEditorModel* model = getModel();
-      if (model)
+      PropertyEditorModel* model = GetModel();
+      if (model != NULL)
       {
          std::string oldValue = mProperty->ToString();
 
@@ -217,7 +217,7 @@ namespace dtEditQt
          // This is done so all items will be refreshed.
          if (size < childCount || forceRefresh)
          {
-            model->removeRows(0, childCount, model->indexOf(this));
+            model->removeRows(0, childCount, model->IndexOf(this));
 
             removeAllChildren(model);
 
@@ -234,14 +234,20 @@ namespace dtEditQt
                mProperty->SetIndex(childCount + childIndex);
 
                DynamicArrayElementControl* element = new DynamicArrayElementControl(childCount + childIndex);
-               if (element)
-               {
-                  element->initializeData(this, getModel(), mProxy.get(), mProperty.get());
-                  mChildren.push_back(element);
-               }
+               element->SetTreeView(mPropertyTree);
+               element->SetDynamicControlFactory(GetDynamicControlFactory());
+               element->initializeData(this, GetModel(), mProxy.get(), mProperty.get());
+               connect(element, SIGNAL(PropertyAboutToChange(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)),
+                        this, SLOT(PropertyAboutToChangePassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&,
+                                 const std::string&, const std::string&)));
+
+               connect(element, SIGNAL(PropertyChanged(dtDAL::ActorProxy&, dtDAL::ActorProperty&)),
+                        this, SLOT(PropertyChangedPassThrough(dtDAL::ActorProxy&, dtDAL::ActorProperty&)));
+               mChildren.push_back(element);
             }
 
-            model->insertRows(childCount, addCount, model->indexOf(this));
+            model->insertRows(childCount, addCount, model->IndexOf(this));
 
             if (!isChild)
             {
@@ -249,8 +255,8 @@ namespace dtEditQt
             }
          }
 
-         EditorEvents::GetInstance().emitActorPropertyAboutToChange(mProxy, mProperty,
-            oldValue, mProperty->ToString());
+         PropertyAboutToChange(*mProxy, *mProperty,
+                  oldValue, mProperty->ToString());
 
          dataChanged = true;
       }
@@ -263,7 +269,7 @@ namespace dtEditQt
 
       if (dataChanged)
       {
-         EditorEvents::GetInstance().emitActorPropertyChanged(mProxy, mProperty);
+         PropertyChanged(*mProxy, *mProperty);
       }
    }
 
