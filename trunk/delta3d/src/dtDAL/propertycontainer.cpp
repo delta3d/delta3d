@@ -23,7 +23,6 @@
  */
 
 #include <dtDAL/propertycontainer.h>
-#include <dtDAL/actorproperty.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>

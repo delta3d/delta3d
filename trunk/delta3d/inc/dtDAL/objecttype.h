@@ -159,7 +159,7 @@ namespace dtDAL
    };
 
    ///Provide a method for printing the actor type to a stream.
-   std::ostream& DT_DAL_EXPORT operator<<(std::ostream& os, const ObjectType& objectType);
+   DT_DAL_EXPORT std::ostream& operator<<(std::ostream& os, const ObjectType& objectType);
 
 }
 
