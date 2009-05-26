@@ -74,7 +74,8 @@ namespace dtDAL
 
       /**
        * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
-       * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
+       * Warning: this uses a dynamic_cast, so you are able to shoot yourself in the foot 
+       * if you pass in the wrong type of ActorProperty.
        */
       template<class PropertyType>
       void GetProperty(const std::string& name, PropertyType*& property)
