@@ -213,16 +213,16 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
          CPPUNIT_ASSERT(dtHLAGM::DDMCalculatorGeographic::RegionCalculationType::APP_SPACE_ONLY == eap->GetValue());
       }
 
-      void TestAppSpaceValueProp(const std::string& propName, int expectedDefault)
+      void TestAppSpaceValueProp(const std::string& propName, long expectedDefault)
       {
-         dtDAL::IntActorProperty* iap = NULL;
-         mCalcGeo->GetProperty(propName, iap);
-         CPPUNIT_ASSERT_MESSAGE("dtHLAGM::DDMCalculatorGeographic is missing the Property:'" + propName + "'",
-                                 iap != NULL);
+         dtDAL::LongActorProperty* prop = NULL;
+         mCalcGeo->GetProperty(propName, prop);
+         CPPUNIT_ASSERT_MESSAGE("dtHLAGM::DDMCalculatorGeographic is missing the LongActorProperty:'" + propName + "'",
+                                 prop != NULL);
          
-         CPPUNIT_ASSERT_EQUAL(expectedDefault, iap->GetValue());
-         iap->SetValue(173);
-         CPPUNIT_ASSERT_EQUAL(173, iap->GetValue());
+         CPPUNIT_ASSERT_EQUAL(expectedDefault, prop->GetValue());
+         prop->SetValue(173L);
+         CPPUNIT_ASSERT_EQUAL(173L, prop->GetValue());
       }
       
       dtCore::RefPtr<dtHLAGM::DDMCalculatorGeographic> mCalcGeo; 
