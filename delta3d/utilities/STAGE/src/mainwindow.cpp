@@ -128,7 +128,7 @@ namespace dtEditQt
       mEditMenu->addAction(editorActions.mActionEditUndo);
       mEditMenu->addAction(editorActions.mActionEditRedo);
       mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.actionLocalSpace);
+      mEditMenu->addAction(editorActions.mActionLocalSpace);
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
       mEditMenu->addAction(editorActions.mActionEditDeleteActor);
@@ -172,7 +172,7 @@ namespace dtEditQt
       mEditToolBar->setObjectName("EditToolBar");
       mEditToolBar->setWindowTitle(tr("Edit Toolbar"));
       mEditToolBar->setMinimumWidth(4);
-      mEditToolBar->addAction(EditorActions::GetInstance().actionLocalSpace);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionLocalSpace);
       mEditToolBar->addSeparator();
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDuplicateActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDeleteActor);

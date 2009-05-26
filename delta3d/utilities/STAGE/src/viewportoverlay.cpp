@@ -108,6 +108,8 @@ namespace dtEditQt
          clearCurrentSelection();
       }
 
+      mCurrentActorSelection.clear();
+
       for (unsigned int i = 0; i < actors.size(); ++i)
       {
          const dtDAL::ActorProxy::RenderMode& renderMode = actors[i]->GetRenderMode();
@@ -148,7 +150,7 @@ namespace dtEditQt
             select(actors[i]->GetActor());
          }
 
-         mCurrentActorSelection.insert(actors[i]);
+         mCurrentActorSelection.push_back(actors[i]);
       }
 
       EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(true);
@@ -188,15 +190,31 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    bool ViewportOverlay::isActorSelected(dtDAL::ActorProxy* proxy) const
    {
-      ActorProxyList::const_iterator itor = mCurrentActorSelection.find(proxy);
-      return (itor != mCurrentActorSelection.end());
+      for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
+      {
+         if (mCurrentActorSelection[index] == proxy)
+         {
+            return true;
+         }
+      }
+
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll)
    {
-      ActorProxyList::iterator itor = mCurrentActorSelection.find(proxy);
-      if (itor == mCurrentActorSelection.end())
+      int foundIndex = -1;
+      for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
+      {
+         if (mCurrentActorSelection[index] == proxy)
+         {
+            foundIndex = index;
+            break;
+         }
+      }
+
+      if (foundIndex == -1)
       {
          return;
       }
@@ -244,18 +262,16 @@ namespace dtEditQt
       //Finally remove the actor proxy from the selection list.
       if (clearAll)
       {
-         mCurrentActorSelection.erase(itor);
+         mCurrentActorSelection.erase(mCurrentActorSelection.begin() + foundIndex);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::clearCurrentSelection()
    {
-      ActorProxyList::iterator itor = mCurrentActorSelection.begin();
-      while (itor != mCurrentActorSelection.end())
+      for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
       {
-         removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy*>(itor->get()), false);
-         ++itor;
+         removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy*>(mCurrentActorSelection[index].get()), false);
       }
 
       mCurrentActorSelection.clear();

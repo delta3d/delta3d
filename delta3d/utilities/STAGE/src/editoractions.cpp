@@ -236,11 +236,11 @@ namespace dtEditQt
    void EditorActions::setupEditActions()
    {
       // Edit - Local Space...
-      actionLocalSpace = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()), "Local Space", this);
-      actionLocalSpace->setCheckable(true);
-      actionLocalSpace->setChecked(true);
-      actionLocalSpace->setStatusTip(tr("Sets the selection gizmos to local space."));
-      connect(actionLocalSpace, SIGNAL(triggered()), this, SLOT(slotEditLocalSpace()));
+      mActionLocalSpace = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()), "Local Space", this);
+      mActionLocalSpace->setCheckable(true);
+      mActionLocalSpace->setChecked(true);
+      mActionLocalSpace->setStatusTip(tr("Sets the selection gizmos to local space."));
+      connect(mActionLocalSpace, SIGNAL(triggered()), this, SLOT(slotEditLocalSpace()));
 
       // Edit - Duplicate Actors...
       mActionEditDuplicateActor = new QAction(QIcon(UIResources::ICON_EDIT_DUPLICATE.c_str()),
@@ -277,6 +277,11 @@ namespace dtEditQt
       mActionGetGotoPosition = new QAction(tr("Go&to Position..."), this);
       mActionGetGotoPosition->setStatusTip(tr("Move all cameras to desired position."));
       connect(mActionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
+
+      // Edit - Group Actors...
+      mActionGroupActors = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()), "Group/Ungroup Actors", this);
+      mActionGroupActors->setStatusTip(tr("Groups or Ungroups selected actors."));
+      connect(mActionGroupActors, SIGNAL(triggered()), this, SLOT(slotEditGroupActors()));
 
       // Edit - Undo
       mActionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"), this);
@@ -701,7 +706,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditLocalSpace()
    {
-      EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget(!actionLocalSpace->isChecked());
+      EditorData::GetInstance().SetUseGlobalOrientationForViewportWidget(!mActionLocalSpace->isChecked());
       EditorEvents::GetInstance().emitEditorPreferencesChanged();
    }
 
@@ -1049,6 +1054,13 @@ namespace dtEditQt
       {
          EditorEvents::GetInstance().emitGotoActor(mActors[0]);
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditGroupActors()
+   {
+      // Get the currently selected actors and make sure they are removed from
+      // any groups they currently belong to.
    }
 
    //////////////////////////////////////////////////////////////////////////////
