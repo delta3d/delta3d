@@ -217,7 +217,8 @@ class DDMCalculatorGeographicTests : public CPPUNIT_NS::TestFixture
       {
          dtDAL::IntActorProperty* iap = NULL;
          mCalcGeo->GetProperty(propName, iap);
-         CPPUNIT_ASSERT(iap != NULL);
+         CPPUNIT_ASSERT_MESSAGE("dtHLAGM::DDMCalculatorGeographic is missing the Property:'" + propName + "'",
+                                 iap != NULL);
          
          CPPUNIT_ASSERT_EQUAL(expectedDefault, iap->GetValue());
          iap->SetValue(173);
