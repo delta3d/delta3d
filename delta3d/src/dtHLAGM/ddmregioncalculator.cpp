@@ -15,57 +15,30 @@ namespace dtHLAGM
       mSecondDimensionName("one"),
       mThirdDimensionName("two")
    {
-      AddProperty(*new dtDAL::StringActorProperty(PROP_FIRST_DIMENSION_NAME, PROP_FIRST_DIMENSION_NAME,
+      AddProperty(new dtDAL::StringActorProperty(PROP_FIRST_DIMENSION_NAME, PROP_FIRST_DIMENSION_NAME,
             dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetFirstDimensionName),
             dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetFirstDimensionNameByCopy)
             ));
-      AddProperty(*new dtDAL::StringActorProperty(PROP_SECOND_DIMENSION_NAME, PROP_SECOND_DIMENSION_NAME,
+      AddProperty(new dtDAL::StringActorProperty(PROP_SECOND_DIMENSION_NAME, PROP_SECOND_DIMENSION_NAME,
             dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetSecondDimensionName),
             dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetSecondDimensionNameByCopy)
             ));
-      AddProperty(*new dtDAL::StringActorProperty(PROP_THIRD_DIMENSION_NAME, PROP_THIRD_DIMENSION_NAME,
+      AddProperty(new dtDAL::StringActorProperty(PROP_THIRD_DIMENSION_NAME, PROP_THIRD_DIMENSION_NAME,
             dtDAL::MakeFunctor(*this, &DDMRegionCalculator::SetThirdDimensionName),
             dtDAL::MakeFunctorRet(*this, &DDMRegionCalculator::GetThirdDimensionNameByCopy)
             ));
    }
-   
+
    //////////////////////////////////////////////////////////////
-   dtDAL::ActorProperty* DDMRegionCalculator::GetProperty(const std::string& name)
+   void DDMRegionCalculator::SetName(const std::string& name)
    {
-      std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i = mProperties.find(name);
-      if (i == mProperties.end())
-         return NULL;
-      
-      return i->second.get();
-   }
-   
-   //////////////////////////////////////////////////////////////
-   const dtDAL::ActorProperty* DDMRegionCalculator::GetProperty(const std::string& name) const
-   {
-      std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::const_iterator i = mProperties.find(name);
-      if (i == mProperties.end())
-         return NULL;
-      
-      return i->second.get();      
+      mName = name;
    }
 
    //////////////////////////////////////////////////////////////
-   void DDMRegionCalculator::GetAllProperties(std::vector<dtDAL::ActorProperty*> toFill)
+   const std::string& DDMRegionCalculator::GetName() const
    {
-      toFill.clear();
-      toFill.reserve(mProperties.size());
-
-      std::map<std::string, dtCore::RefPtr<dtDAL::ActorProperty> >::iterator i;
-      for (i = mProperties.begin(); i != mProperties.end(); ++i)
-      {
-         toFill.push_back(i->second.get());
-      }
-   }
-   
-   //////////////////////////////////////////////////////////////
-   void DDMRegionCalculator::AddProperty(dtDAL::ActorProperty& newProperty)
-   {
-      mProperties.insert(std::make_pair(newProperty.GetName(), &newProperty));
+      return mName;
    }
 
    //////////////////////////////////////////////////////////////
@@ -86,9 +59,9 @@ namespace dtHLAGM
       {
          result = true;
       }
-      
+
       if (result)
-      {      
+      {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("ddmcameracalculatorgeographic.cpp");
          if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
@@ -96,7 +69,7 @@ namespace dtHLAGM
                   "with name \"%s\" to min [%u] max [%u].", index, name.c_str(), min, max);
          }
 
-         DDMRegionData::DimensionValues newDv;   
+         DDMRegionData::DimensionValues newDv;
          newDv.mName = name;
          newDv.mMin = min;
          newDv.mMax = max;

@@ -1,20 +1,20 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2007, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * David Guthrie
  */
@@ -41,25 +41,25 @@ namespace dtHLAGM
    //////////////////////////////////////////////////////////////
    DDMCameraCalculatorGeographic::DDMCameraCalculatorGeographic(): BaseClass(), mXRange(100), mYRange(100), mMinTimeBetweenUpdates(0.25)
    {
-      AddProperty(*new dtDAL::FloatActorProperty(PROP_X_SUBSCRIPTION_RANGE, PROP_X_SUBSCRIPTION_RANGE,
+      AddProperty(new dtDAL::FloatActorProperty(PROP_X_SUBSCRIPTION_RANGE, PROP_X_SUBSCRIPTION_RANGE,
             dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetXSubscriptionRange),
             dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetXSubscriptionRange)
             ));
-      AddProperty(*new dtDAL::FloatActorProperty(PROP_Y_SUBSCRIPTION_RANGE, PROP_Y_SUBSCRIPTION_RANGE,
+      AddProperty(new dtDAL::FloatActorProperty(PROP_Y_SUBSCRIPTION_RANGE, PROP_Y_SUBSCRIPTION_RANGE,
             dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetYSubscriptionRange),
             dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetYSubscriptionRange)
             ));
-      AddProperty(*new dtDAL::FloatActorProperty(PROP_MIN_TIME_BETWEEN_UPDATES, PROP_MIN_TIME_BETWEEN_UPDATES,
+      AddProperty(new dtDAL::FloatActorProperty(PROP_MIN_TIME_BETWEEN_UPDATES, PROP_MIN_TIME_BETWEEN_UPDATES,
             dtDAL::MakeFunctor(*this, &DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates),
             dtDAL::MakeFunctorRet(*this, &DDMCameraCalculatorGeographic::GetMinTimeBetweenUpdates)
             ));
    }
-   
+
    //////////////////////////////////////////////////////////////
    DDMCameraCalculatorGeographic::~DDMCameraCalculatorGeographic()
    {
    }
-   
+
    //////////////////////////////////////////////////////////////
    double DDMCameraCalculatorGeographic::FixLongitudeRange(double longitude) const
    {
@@ -67,16 +67,16 @@ namespace dtHLAGM
          longitude += 360.0;
       else if (longitude > 360.0)
          longitude -= 360.0;
-      
+
       return longitude;
    }
-   
+
    //////////////////////////////////////////////////////////////
    bool DDMCameraCalculatorGeographic::UpdateRegionData(DDMRegionData& ddmData) const
    {
       if (!BaseClass::UpdateRegionData(ddmData))
          return false;
-      
+
       if (!mCamera.valid())
          return false;
 
@@ -85,10 +85,10 @@ namespace dtHLAGM
       DDMGeographicRegionData* ddmGeoData = dynamic_cast<DDMGeographicRegionData*>(&ddmData);
       if (ddmGeoData == NULL)
          return false;
-                  
+
       DDMCalculatorGeographic::DDMForce& force = ddmGeoData->GetForce();
       DDMCalculatorGeographic::DDMObjectKind& kind = GetCalculatorObjectKind();
-      
+
       std::pair<DDMCalculatorGeographic::RegionCalculationType*, long> appSpacePair = GetAppSpaceValues(force, kind);
       unsigned long mappedValue = MapAppSpaceValue(appSpacePair.second);
 
@@ -103,7 +103,7 @@ namespace dtHLAGM
          //We're changing from 3 to 1.  This really shouldn't happen in practice, but it could.
          ddmData.ClearDimensions();
       }
-      
+
       bool updated = UpdateDimension(ddmData, 0, GetFirstDimensionName(), mappedValue, mappedValue);
 
       if (*appSpacePair.first == DDMCalculatorGeographic::RegionCalculationType::GEOGRAPHIC_SPACE)
@@ -168,9 +168,9 @@ namespace dtHLAGM
    //////////////////////////////////////////////////////////////
    void DDMCameraCalculatorGeographic::SetYSubscriptionRange(float range)
    {
-      mYRange = range;      
+      mYRange = range;
    }
-   
+
    //////////////////////////////////////////////////////////////
    void DDMCameraCalculatorGeographic::SetMinTimeBetweenUpdates(float minTime)
    {

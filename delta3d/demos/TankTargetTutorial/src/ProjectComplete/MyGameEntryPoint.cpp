@@ -63,6 +63,8 @@
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
 
+#include <iostream>
+
 //////////////////////////////////////////////////////////////////////////
 extern "C" TUTORIAL_TANK_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {

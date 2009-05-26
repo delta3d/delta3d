@@ -21,14 +21,14 @@
 #ifndef DELTA_ACTORTYPE
 #define DELTA_ACTORTYPE
 
-#include <string>
-#include <osg/Referenced>
-#include <dtCore/refptr.h>
-#include <ostream>
 #include <dtDAL/export.h>
+#include <dtDAL/objecttype.h>
 
-namespace dtDAL 
+namespace dtDAL
 {
+
+   class ActorProxy;
+
    /**
     * This class is more or less a simple data class that has information
     * describing a particular type of Actor.  Actor types contain a name
@@ -42,166 +42,36 @@ namespace dtDAL
     * @note
     *   ActorType objects have a notion of a type hierarchy.  Therefore, when
     *   creating a new actor type, its parent type must be specified.  This allows
-    *   queries to be made against the actor type to dermine if it is an "instance" 
+    *   queries to be made against the actor type to dermine if it is an "instance"
     *   of another type.
     */
-   class DT_DAL_EXPORT ActorType : public osg::Referenced 
-   {   
-      public:
-         
-         /**
-          * Simple less than comparison function for the ObjectFactory.
-          * We cannot use the default comparison function because we
-          * store smart pointers in the factory.  This implies that
-          * the ActorType will not be the key, but the memory address
-          * of the ActorType will be the key.  Therefore, this comparison
-          * function exists so that the ActorType smart pointer is
-          * deferenced before the comparison.
-          */
-         struct RefPtrComp 
-         {
-            bool operator()(const dtCore::RefPtr<const ActorType>& id1,const dtCore::RefPtr<const ActorType>& id2) const
-            {
-               return (*id1) < (*id2);
-            }
-         };
+   class DT_DAL_EXPORT ActorType : public ObjectType
+   {
+   public:
 
-         /**
-          * Constructs a new actor type object.
-          */
-         ActorType(const std::string& name, 
-                   const std::string& category="nocategory",
-                   const std::string& desc="", 
-                   const ActorType* parentType = NULL) 
-            : mName(name)
-            , mCategory(category)
-            , mDescription(desc)
-            , mParentType(parentType)
-         {
-            GenerateUniqueId();
-         }
+      typedef ActorProxy CreateType;
 
-         /**
-          * Sets the name for this actor type.
-          */
-         void SetName(const std::string& name) 
-         {
-            mName = name;
-            GenerateUniqueId();
-         }
-
-         /**
-          * Gets the name currently assigned to this actor type.
-          */
-         const std::string& GetName() const { return mName; }
-
-         /**
-          * Sets the category for this actor type.
-          */
-         void SetCategory(const std::string& category) 
-         {
-            mCategory = category;
-            GenerateUniqueId();
-         }
-
-         /**
-          * Gets the category given to this actor type.
-          */
-         const std::string& GetCategory() const { return mCategory; }
-
-         /**
-          * Sets the description for this actor type.
-          */
-         void SetDescription(const std::string& desc) { mDescription = desc; }
-
-         /**
-          * Gets the description given to this actor type.
-          */
-         const std::string& GetDescription() const { return mDescription; }
-
-         /**
-          * Gets the uniqueId string which was generated for this actor type.
-          */
-         const std::string& GetUniqueId() const { return mUniqueId; }
-            
-         /**
-          * Gets the parent or "super" type of this actor type.
-          */
-         const ActorType* GetParentActorType() const { return mParentType.get(); }
-            
-         /**
-          * Based on this actor types super type hierarchy, this method determines whether
-          * or not this type is a descendent or equal to the specified actor type.
-          * @return True if a descendent or equal, false otherwise.
-          */
-         bool InstanceOf(const ActorType& rhs) const;
-
-         /**
-          * Helper method which is the same as the other InstanceOf method, only this one
-          * wraps the creation of the actor type.
-          * @param category The category of the actor type in question.
-          * @param name The name of the actor type in question.
-          * @return True if a descendent or equal, false otherwise.
-          * @see InstanceOf(const ActorType &rhs)
-          */
-         bool InstanceOf(const std::string& category, const std::string& name) const;
-            
-         /**
-          * Less-than comparison of the actor type's uniqueId strings.
-          */
-         bool operator<(const ActorType& rhs) const
-         {
-            return (mUniqueId < rhs.mUniqueId);
-         }
-
-         /**
-          * Equality test of the actor type's uniqueId strings.
-          */
-         bool operator==(const ActorType& rhs) const 
-         {
-            return (mUniqueId == rhs.mUniqueId);
-         }
-
-         /**
-          * Inequality test of the actor type's uniqueId strings.
-          */
-         bool operator!=(const ActorType& rhs) const 
-         {
-            return (mUniqueId != rhs.mUniqueId);
-         }
-
-         ///Get the fully qualified string representation for this ActorType.
-         const std::string GetFullName() const;
+      /**
+       * Constructs a new actor type object.
+       */
+      ActorType(const std::string& name,
+               const std::string& category="nocategory",
+               const std::string& desc="",
+               const ActorType* parentType = NULL);
 
 
-      protected:
-         //Object can only be deleted through the ref_ptr interface.
-         virtual ~ActorType() { }
+      /**
+       * Gets the parent or "super" type of this actor type.
+       */
+      const ActorType* GetParentActorType() const;
 
-         /**
-          * Creates a unique id for this ActorType. Currently, the implementation
-          * merely concatenates the name and category.  Probably should hash this
-          * and store a hash id instead.
-          */
-         void GenerateUniqueId();
 
-      private:
-         std::string mName;
-         std::string mCategory;
-         std::string mDescription;
+   protected:
 
-         ///UniqueId for this actor type.
-         std::string mUniqueId;
-            
-         ///Parent of this actor type.  Null indicates there is no super type to this one.
-         const dtCore::RefPtr<const ActorType> mParentType;
+      //Object can only be deleted through the ref_ptr interface.
+      virtual ~ActorType();
 
-         ///Provide a method for printing the actor type to a stream.
-         friend std::ostream& operator<<(std::ostream& os,const ActorType& actorType)
-         {
-            os << actorType.GetFullName();
-            return os;
-         }
+   private:
    };
 }
 

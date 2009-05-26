@@ -51,6 +51,7 @@
 #include <osg/ArgumentParser>
 #include <osg/ApplicationUsage>
 
+#include <iostream>
 
 extern "C" TEST_AAR_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {

@@ -52,6 +52,8 @@
 
 #include <osgViewer/View>
 
+#include <iostream>
+
 using dtCore::RefPtr;
 
 const std::string InputComponent::NAME = "InputComponent";

@@ -22,9 +22,10 @@
 #ifndef DELTA_ACTORPROXY
 #define DELTA_ACTORPROXY
 
+//To get the windows.h undefs before anything else.
+#include <dtUtil/macros.h>
+
 #include <string>
-#include <map>
-#include <vector>
 #include <set>
 #include <osg/Referenced>
 #include <dtUtil/enumeration.h>
@@ -32,11 +33,8 @@
 #include <dtCore/uniqueid.h>
 #include <dtCore/refptr.h>
 #include <dtDAL/export.h>
+#include <dtDAL/propertycontainer.h>
 
-// Counteracts the "#define GetClassName GetClassNameA" in winuser.h
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-#undef GetClassName
-#endif
 
 namespace dtCore
 {
@@ -45,7 +43,6 @@ namespace dtCore
 
 namespace dtDAL
 {
-   class ActorProperty;
    class ActorType;
    class DataType;
    class ResourceDescriptor;
@@ -64,7 +61,7 @@ namespace dtDAL
     *      interface for accessing actor objects.  However, the actor proxy
     *      is the only way to expose actors to the Delta3D Level Editor.
     */
-   class DT_DAL_EXPORT ActorProxy : public osg::Referenced
+   class DT_DAL_EXPORT ActorProxy : public PropertyContainer
    {
       public:
 
@@ -177,56 +174,6 @@ namespace dtDAL
          virtual bool IsGameActorProxy() const { return false; }
 
          /**
-          * Adds a new property to the this proxy's list of properties.
-          * @note
-          *      Properties must have unique names, therefore, if a property
-          *      is added that who's name collides with another, the property
-          *      is not added and an error message is logged.
-          */
-         void AddProperty(ActorProperty* newProp);
-
-         /**
-          * Gets a property of the requested name.
-          *
-          * @param name Name of the property to retrieve.
-          * @return A pointer to the property object or NULL if it
-          * is not found.
-          */
-         ActorProperty* GetProperty(const std::string& name);
-
-         /**
-          * Templated version of GetProperty (non-const) that auto casts the property to the desired type.
-          * Warning: this uses a static cast, so you are able to shoot yourself in the foot.
-          */
-         template<class PropertyType>
-         void GetProperty(const std::string& name, PropertyType*& property)
-         {
-            property = dynamic_cast<PropertyType*>(GetProperty(name));
-         }
-
-         /**
-          * Gets a property of the requested name. (const version)
-          * @param name Name of the property to retrieve.
-          * @return A pointer to the property object or NULL if it
-          * is not found.
-          */
-         const ActorProperty* GetProperty(const std::string& name) const;
-
-         /**
-         * This function queries the proxy with any properties not
-         * found in the property list. If a property was previously
-         * removed from the proxy, but is still important to load,
-         * then this function should return a temporary property of
-         * the appropriate type to be used when loading the map.
-         *
-         * @param[in]  name  The name of the property queried for.
-         *
-         * @return           A temporary property, or NULL if
-         *                   none is needed.
-         */
-         virtual dtCore::RefPtr<ActorProperty> GetDeprecatedProperty(const std::string& name);
-
-         /**
           * Gets a ResourceDescriptor of the requested property name.
           * @param name Name of the resource to retrieve.
           * @return A pointer to the resource descripter or NULL if it
@@ -271,18 +218,6 @@ namespace dtDAL
           * @param value The pointer to new proxy value
           */
          void SetLinkedActor(const std::string& name, ActorProxy* newValue);
-
-         /**
-          * Gets a list of the properties currently registered for this
-          * actor proxy.
-          */
-         void GetPropertyList(std::vector<ActorProperty *>& propList);
-
-         /**
-          * Gets a const list of the properties currently registered for this
-          * actor proxy.
-          */
-         void GetPropertyList(std::vector<const ActorProperty *>& propList) const;
 
          /**
           * Gets the actor type that represents this actor proxy.
@@ -356,7 +291,7 @@ namespace dtDAL
          virtual const RenderMode& GetRenderMode();
 
          /**
-          * This method is called by the actor registry which instructs the
+          * This method is called init, which instructs the
           * proxy to create its properties.  Methods implementing this should
           * be sure to call their parent class's buildPropertyMap method to
           * ensure all properties in the proxy inheritance hierarchy are
@@ -460,24 +395,13 @@ namespace dtDAL
           */
          dtCore::RefPtr<ActorProxyIcon> mBillBoardIcon;
 
-         /// Only call from build property map
-         void RemoveProperty(const std::string& nameToRemove);
-
       private:
-         typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProperty> > PropertyMapType;
-         typedef std::vector<dtCore::RefPtr<ActorProperty> > PropertyVectorType;
          typedef std::map<dtUtil::RefString, ResourceDescriptor> ResourceMapType;
          typedef std::map<dtUtil::RefString, dtCore::RefPtr<ActorProxy> > ActorProxyMapType;
          typedef std::set<dtUtil::RefString> ClassHierarchyType;
 
          ///Pointer to the Delta3D object (Actor) this proxy is wrapping.
          dtCore::RefPtr<dtCore::DeltaDrawable> mActor;
-
-         ///Map of properties.
-         PropertyMapType mPropertyMap;
-
-         ///vector of properties (for order).
-         PropertyVectorType mProperties;
 
          /// Map of property names to resource values
          ResourceMapType mResourceMap;
