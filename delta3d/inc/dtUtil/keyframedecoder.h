@@ -26,10 +26,9 @@
 #ifndef DTUTIL_KEYFRAME_DECODER_INC
 #define DTUTIL_KEYFRAME_DECODER_INC
 
-#include "dtUtil/log.h"
-#include "dtUtil/stringutils.h"
-#include "dtUtil/xercesutils.h"
-#include "dtCore/refptr.h"
+#include <dtUtil/log.h>
+#include <dtUtil/xercesutils.h>
+#include <dtCore/refptr.h>
 
 #include <xercesc/dom/DOMTreeWalker.hpp>
 
