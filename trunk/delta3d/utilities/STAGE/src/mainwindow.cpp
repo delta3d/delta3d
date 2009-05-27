@@ -914,10 +914,10 @@ namespace dtEditQt
                try 
                {
                   dtDAL::Project::GetInstance().SetContext(project);
-               }
-               catch (dtUtil::Exception& ex)
+               }               
+               catch (dtUtil::Exception&)
                {
-                   failedToLoadContext = true;
+                   failedToLoadContext = true;                   
                }               
             }
             projects.push_back(project);
