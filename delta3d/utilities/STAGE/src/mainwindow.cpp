@@ -898,6 +898,7 @@ namespace dtEditQt
    {
       EditorSettings settings;
       std::vector<std::string> projects;
+      bool failedToLoadContext = false;
 
       settings.beginGroup(EditorSettings::RECENT_PROJECTS);
       if (settings.contains(EditorSettings::RECENT_PROJECT0))
@@ -910,22 +911,32 @@ namespace dtEditQt
             if (EditorData::GetInstance().getLoadLastProject())
             {
                EditorData::GetInstance().setCurrentProjectContext(project);
-               dtDAL::Project::GetInstance().SetContext(project);
+               try 
+               {
+                  dtDAL::Project::GetInstance().SetContext(project);
+               }
+               catch (dtUtil::Exception& ex)
+               {
+                   failedToLoadContext = true;
+               }               
             }
             projects.push_back(project);
-         }
-         else
-         {
-            QMessageBox::critical(this, tr("Failed to load previous context"),
-               tr("Failed to load the previous project context.\n") +
-               tr("This can happen if the last project context\n has been moved, renamed, or deleted."),
-               tr("OK"));
-
-            // Remove the recent projects entry from the settings object since it
-            // has become somehow corrupted.
-            settings.remove(EditorSettings::RECENT_PROJECT0);
-         }
+         }         
       }
+
+      if(failedToLoadContext)
+      {
+         QMessageBox::critical(this, tr("Failed to load previous context"),
+            tr("Failed to load the previous project context.\n") +
+            tr("This can happen if the last project context\n has been moved, renamed, or deleted.\n") +
+            tr("You may need to restart STAGE."),
+            tr("OK"));
+
+         // Remove the recent projects entry from the settings object since it
+         // has become somehow corrupted.
+         settings.remove(EditorSettings::RECENT_PROJECT0);
+      }
+
       settings.endGroup();
       return projects;
    }
