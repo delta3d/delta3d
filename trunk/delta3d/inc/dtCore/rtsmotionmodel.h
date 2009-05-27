@@ -72,10 +72,14 @@ namespace dtCore
 
       void EnableTranslation(bool enabled) { mShouldTranslate = enabled; }
 
+      float GetMinGroundHeight() const   { return mMinGroundHeight; }
+      void SetMinGroundHeight(float val) { mMinGroundHeight = val;  }
+
    private:
       dtCore::RefPtr<dtCore::DeltaDrawable> mTerrainDrawable;
       bool mUseSimTimeForSpeed;
       bool mShouldTranslate;
+      float mMinGroundHeight;
    };
 } // namespace dtCore
 
