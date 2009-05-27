@@ -153,6 +153,12 @@ namespace dtDAL
          LOG_ERROR("Property types are incompatible. Cannot make copy.");
          return;
       }
+
+      const ContainerActorProperty* src = dynamic_cast<const ContainerActorProperty*>(&otherProp);
+      if (src)
+      {
+         FromString(src->ToString());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
