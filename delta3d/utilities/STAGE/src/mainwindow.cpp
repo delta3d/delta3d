@@ -130,6 +130,8 @@ namespace dtEditQt
       mEditMenu->addSeparator();
       mEditMenu->addAction(editorActions.mActionLocalSpace);
       mEditMenu->addSeparator();
+      mEditMenu->addAction(editorActions.mActionGroupActors);
+      mEditMenu->addAction(editorActions.mActionUngroupActors);
       mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
       mEditMenu->addAction(editorActions.mActionEditDeleteActor);
       mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
@@ -174,6 +176,8 @@ namespace dtEditQt
       mEditToolBar->setMinimumWidth(4);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionLocalSpace);
       mEditToolBar->addSeparator();
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionGroupActors);
+      mEditToolBar->addAction(EditorActions::GetInstance().mActionUngroupActors);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDuplicateActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditDeleteActor);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionEditGotoActor);
@@ -305,6 +309,8 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionFileSaveMapAs->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionFileExit->setEnabled(true);
 
+      EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
+      EditorActions::GetInstance().mActionUngroupActors->setEnabled(false);
       EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
       EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
       EditorActions::GetInstance().mActionEditGotoActor->setEnabled(false);
@@ -662,6 +668,13 @@ namespace dtEditQt
    {
       EditorData::GetInstance().getCurrentMap()->SetModified(true);
       updateWindowTitle();
+
+      // Remove this actor from any groups it may have been.
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         map->RemoveActorFromGroups(proxy.get());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

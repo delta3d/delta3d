@@ -279,9 +279,14 @@ namespace dtEditQt
       connect(mActionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
 
       // Edit - Group Actors...
-      mActionGroupActors = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()), "Group/Ungroup Actors", this);
+      mActionGroupActors = new QAction(QIcon(UIResources::ICON_EDIT_GROUP.c_str()), "Group Actors Together", this);
       mActionGroupActors->setStatusTip(tr("Groups or Ungroups selected actors."));
       connect(mActionGroupActors, SIGNAL(triggered()), this, SLOT(slotEditGroupActors()));
+
+      // Edit - Group Actors...
+      mActionUngroupActors = new QAction(QIcon(UIResources::ICON_EDIT_UNGROUP.c_str()), "Ungroup Actors", this);
+      mActionUngroupActors->setStatusTip(tr("Groups or Ungroups selected actors."));
+      connect(mActionUngroupActors, SIGNAL(triggered()), this, SLOT(slotEditUngroupActors()));
 
       // Edit - Undo
       mActionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"), this);
@@ -1056,11 +1061,59 @@ namespace dtEditQt
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotEditGroupActors()
    {
-      // Get the currently selected actors and make sure they are removed from
-      // any groups they currently belong to.
+      EditorData::GetInstance().getCurrentMap()->SetModified(true);
+      EditorEvents::GetInstance().emitProjectChanged();
+
+      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+
+      // Add all the selected actions into a new group.
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         // Remove the current actors from any groups they are currently in.
+         for (int index = 0; index < (int)selection.size(); index++)
+         {
+            dtDAL::ActorProxy* proxy = selection[index].get();
+            map->RemoveActorFromGroups(proxy);
+         }
+
+         int groupIndex = map->GetGroupCount();
+
+         for (int index = 0; index < (int)selection.size(); index++)
+         {
+            dtDAL::ActorProxy* proxy = selection[index].get();
+            map->AddActorToGroup(groupIndex, proxy);
+         }
+      }
+
+      mActionGroupActors->setEnabled(false);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotEditUngroupActors()
+   {
+      EditorData::GetInstance().getCurrentMap()->SetModified(true);
+      EditorEvents::GetInstance().emitProjectChanged();
+
+      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+      ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+
+      // Remove all the selected actions from their current groups.
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+      if (map)
+      {
+         for (int index = 0; index < (int)selection.size(); index++)
+         {
+            dtDAL::ActorProxy* proxy = selection[index].get();
+            map->RemoveActorFromGroups(proxy);
+         }
+      }
+
+      mActionUngroupActors->setEnabled(false);
    }
 
    //////////////////////////////////////////////////////////////////////////////

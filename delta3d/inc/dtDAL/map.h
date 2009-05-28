@@ -84,6 +84,12 @@ namespace dtDAL
             private:
                Map& mParent;
          };
+
+         // Group data.
+         struct MapGroupData
+         {
+            std::vector<dtDAL::ActorProxy*> actorList;
+         };
    
          /**
           * @return the mName of the map.
@@ -376,7 +382,59 @@ namespace dtDAL
           * @param envActor The new environment actor to set
           */
          void SetEnvironmentActor(ActorProxy *envActor);
-         
+
+         /**
+          * Retrieves the total number of groups.
+          */
+         int GetGroupCount();
+
+         /**
+         * Retrieves the number of actors in a group.
+         *
+         * @param[in]  groupIndex  The index of the group.
+         *
+         * @return     The total actors within the group, -1 if the group does not exist.
+         */
+         int GetGroupActorCount(int groupIndex);
+
+         /**
+         * Adds an actor into a given group.
+         *
+         * @param[in]  groupIndex  The index of the group.
+         *                         If the index is invalid, a new group will be created.
+         *
+         * @param[in]  actor       The actor to add to the group.
+         */
+         void AddActorToGroup(int groupIndex, dtDAL::ActorProxy* actor);
+
+         /**
+         * Removes an actor from any groups they are currently in.
+         *
+         * @param[in]  actor  The actor to remove.
+         *
+         * @return     True if the actor belonged to any groups.
+         */
+         bool RemoveActorFromGroups(dtDAL::ActorProxy* actor);
+
+         /**
+         * Retrieves a group that belongs to the given actor.
+         *
+         * @param[in]  actor  The actor to search for.
+         *
+         * @return     The group in which this actor belongs to.
+         */
+         int FindGroupForActor(dtDAL::ActorProxy* actor);
+
+         /**
+         * Retrieves an actor from a group.
+         *
+         * @param[in]  groupIndex  The index of the group to get.
+         * @param[in]  actorIndex  The index of the actor to get.
+         *
+         * @return     The actor, or NULL if the group or actor index are out of scope.
+         */
+         dtDAL::ActorProxy* GetActorFromGroup(int groupIndex, int actorIndex);
+
       protected:
          friend class Project;
 
@@ -415,7 +473,7 @@ namespace dtDAL
          void AddMissingActorTypes(const std::set<std::string>& types);
 
          virtual ~Map();
-      
+         
        private:
          bool mModified;
          //typedef std::multimap<std::string, dtCore::RefPtr<ActorProxy> > ProxiesByClassMap;
@@ -444,6 +502,8 @@ namespace dtDAL
 
          std::vector<std::string> mMissingLibraries;
          std::set<std::string> mMissingActorTypes;
+
+         std::vector<MapGroupData> mActorGroups;
 
          //all of the classes used by the proxies in the map.
          mutable std::set<std::string> mProxyActorClasses;

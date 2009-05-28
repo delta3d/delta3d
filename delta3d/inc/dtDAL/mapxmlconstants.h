@@ -121,6 +121,10 @@ namespace dtDAL
          static XMLCh* ACTOR_ARRAY_INDEX_ELEMENT;
          static XMLCh* ACTOR_ARRAY_ELEMENT;
 
+         static XMLCh* ACTOR_GROUPS_ELEMENT;
+         static XMLCh* ACTOR_GROUP_ELEMENT;
+         static XMLCh* ACTOR_GROUP_ACTOR_ELEMENT;
+
          /**
           * this is called automatically on startup.
           */
@@ -135,7 +139,6 @@ namespace dtDAL
          ~MapXMLConstants();
          MapXMLConstants(const MapXMLConstants& handler);
          MapXMLConstants& operator=(const MapXMLConstants& handler);
-
    };
 }
 

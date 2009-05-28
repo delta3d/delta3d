@@ -448,36 +448,36 @@ namespace dtDAL
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
          BeginElement(MapXMLConstants::MAP_NAME_ELEMENT);
          AddCharacters(map.GetName());
-         EndElement();
+         EndElement(); // End Map Name Element.
          BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
          AddCharacters(map.GetDescription());
-         EndElement();
+         EndElement(); // End Description Element.
          BeginElement(MapXMLConstants::AUTHOR_ELEMENT);
          AddCharacters(map.GetAuthor());
-         EndElement();
+         EndElement(); // End Author Element.
          BeginElement(MapXMLConstants::COMMENT_ELEMENT);
          AddCharacters(map.GetComment());
-         EndElement();
+         EndElement(); // End Comment Element.
          BeginElement(MapXMLConstants::COPYRIGHT_ELEMENT);
          AddCharacters(map.GetCopyright());
-         EndElement();
+         EndElement(); // End Copyright Element.
          BeginElement(MapXMLConstants::CREATE_TIMESTAMP_ELEMENT);
          if (map.GetCreateDateTime().length() == 0)
          {
             map.SetCreateDateTime(utcTime);
          }
          AddCharacters(map.GetCreateDateTime());
-         EndElement();
+         EndElement(); // End Create Timestamp Element.
          BeginElement(MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT);
          AddCharacters(utcTime);
-         EndElement();
+         EndElement(); // End Last Update Timestamp Element
          BeginElement(MapXMLConstants::EDITOR_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::EDITOR_VERSION));
-         EndElement();
+         EndElement(); // End Editor Version Element.
          BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
          AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
-         EndElement();
-         EndElement();
+         EndElement(); // End Scema Version Element.
+         EndElement(); // End Header Element.
 
          BeginElement(MapXMLConstants::LIBRARIES_ELEMENT);
          const std::vector<std::string>& libs = map.GetAllLibraries();
@@ -486,13 +486,13 @@ namespace dtDAL
             BeginElement(MapXMLConstants::LIBRARY_ELEMENT);
             BeginElement(MapXMLConstants::LIBRARY_NAME_ELEMENT);
             AddCharacters(*i);
-            EndElement();
+            EndElement(); // End Library Name Element.
             BeginElement(MapXMLConstants::LIBRARY_VERSION_ELEMENT);
             AddCharacters(map.GetLibraryVersion(*i));
-            EndElement();
-            EndElement();
+            EndElement(); // End Library Version Element.
+            EndElement(); // End Library Element.
          }
-         EndElement();
+         EndElement(); // End Libraries Element.
 
          std::vector<GameEvent* > events;
          map.GetEventManager().GetAllEvents(events);
@@ -504,17 +504,16 @@ namespace dtDAL
                BeginElement(MapXMLConstants::EVENT_ELEMENT);
                BeginElement(MapXMLConstants::EVENT_ID_ELEMENT);
                AddCharacters((*i)->GetUniqueId().ToString());
-               EndElement();
+               EndElement(); // End ID Element.
                BeginElement(MapXMLConstants::EVENT_NAME_ELEMENT);
                AddCharacters((*i)->GetName());
-               EndElement();
+               EndElement(); // End Event Name Element.
                BeginElement(MapXMLConstants::EVENT_DESCRIPTION_ELEMENT);
                AddCharacters((*i)->GetDescription());
-               EndElement();
-               EndElement();
+               EndElement(); // End Event Description Element.
+               EndElement(); // End Event Element.
             }
-            EndElement();
-
+            EndElement(); // End Events Element.
          }
 
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
@@ -524,7 +523,7 @@ namespace dtDAL
             ActorProxy &proxy = *map.GetEnvironmentActor();
             BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
             AddCharacters(proxy.GetId().ToString());
-            EndElement();
+            EndElement(); // End Actor Environment Actor Element.
          }
 
          const std::map<dtCore::UniqueId, dtCore::RefPtr<ActorProxy> >& proxies = map.GetAllProxies();
@@ -543,10 +542,10 @@ namespace dtDAL
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
             AddCharacters(proxy.GetActorType().GetFullName());
-            EndElement();
+            EndElement(); // End Actor Type Element.
             BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
             AddCharacters(proxy.GetId().ToString());
-            EndElement();
+            EndElement(); // End Actor ID Element.
             BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
             AddCharacters(proxy.GetName());
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -554,7 +553,7 @@ namespace dtDAL
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                    "Found Proxy Named: %s", proxy.GetName().c_str());
             }
-            EndElement();
+            EndElement(); // End Actor Name Element.
             std::vector<const ActorProperty*> propList;
             proxy.GetPropertyList(propList);
             //int x = 0;
@@ -571,11 +570,36 @@ namespace dtDAL
                WriteProperty(property);
 
             }
-            EndElement();
+            EndElement(); // End Actor Element.
          }
-         EndElement();
+         EndElement(); // End Actors Element
 
-         EndElement();
+         BeginElement(MapXMLConstants::ACTOR_GROUPS_ELEMENT);
+         {
+            int groupCount = map.GetGroupCount();
+            for (int groupIndex = 0; groupIndex < groupCount; groupIndex++)
+            {
+               BeginElement(MapXMLConstants::ACTOR_GROUP_ELEMENT);
+
+               int actorCount = map.GetGroupActorCount(groupIndex);
+               for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+               {
+                  dtDAL::ActorProxy* proxy = map.GetActorFromGroup(groupIndex, actorIndex);
+                  if (proxy)
+                  {
+                     BeginElement(MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT);
+                     AddCharacters(proxy->GetId().ToString());
+                     EndElement(); // End Groups Actor Size Element.
+                  }
+               }
+
+               EndElement(); // End Group Element.
+            }
+         }
+         EndElement(); // End Groups Element.
+
+         EndElement(); // End Map Element.
+
          //closes the file.
          mFormatTarget.SetOutputFile(NULL);
       }

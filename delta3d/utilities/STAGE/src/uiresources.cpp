@@ -45,6 +45,8 @@ namespace dtEditQt
       ICON_EDIT_DUPLICATE = ":/icons/duplicate_small.png";
       ICON_EDIT_DELETE = ":/icons/trash_small.png";
       ICON_GROUND_CLAMP = ":/icons/groundclamp_small.png";
+      ICON_EDIT_GROUP = ":/icons/group.png";
+      ICON_EDIT_UNGROUP = ":/icons/ungroup.png";
       ICON_EDIT_UNDO = ":/icons/undo.png";
       ICON_EDIT_REDO = ":/icons/redo.png";
 
@@ -106,6 +108,8 @@ namespace dtEditQt
    std::string UIResources::ICON_EDIT_DUPLICATE("");
    std::string UIResources::ICON_EDIT_DELETE("");
    std::string UIResources::ICON_GROUND_CLAMP("");
+   std::string UIResources::ICON_EDIT_GROUP("");
+   std::string UIResources::ICON_EDIT_UNGROUP("");
    std::string UIResources::ICON_EDIT_UNDO("");
    std::string UIResources::ICON_EDIT_REDO("");
 

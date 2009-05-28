@@ -242,6 +242,19 @@ namespace  dtDAL
                   mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
             }
          }
+         else if (mInGroup)
+         {
+            if (topEl == MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT)
+            {
+               dtDAL::ActorProxy* proxy = NULL;
+               dtCore::UniqueId id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
+               mMap->GetProxyById(id, proxy);
+               if (proxy)
+               {
+                  mMap->AddActorToGroup(mGroupIndex, proxy);
+               }
+            }
+         }
       }
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -1264,6 +1277,13 @@ namespace  dtDAL
                ClearActorValues();
             }
          }
+         else if (mInGroup)
+         {
+            if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUP_ELEMENT) == 0)
+            {
+               mGroupIndex = mMap->GetGroupCount();
+            }
+         }
          else if (mInEvents)
          {
             if (XMLString::compareString(localname, MapXMLConstants::EVENT_ELEMENT) == 0)
@@ -1271,7 +1291,7 @@ namespace  dtDAL
                mGameEvent = new GameEvent();
             }
          }
-         else if (!mInHeader && !mInEvents && !mInLibraries && !mInActors)
+         else if (!mInHeader && !mInEvents && !mInLibraries && !mInActors && !mInGroup)
          {
             if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
             {
@@ -1296,6 +1316,12 @@ namespace  dtDAL
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Actors");
                mInActors = true;
+            }
+            else if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUPS_ELEMENT) == 0)
+            {
+               if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Found Groups");
+               mInGroup = true;
             }
          }
       }
@@ -1352,6 +1378,10 @@ namespace  dtDAL
       else if (mInActors)
       {
          EndActorSection(localname);
+      }
+      else if (mInGroup)
+      {
+         EndGroupSection(localname);
       }
       mElements.pop();
    }
@@ -1458,6 +1488,7 @@ namespace  dtDAL
       mInLibraries = false;
       mInEvents = false;
       mInActors = false;
+      mInGroup = false;
       mInActorProperty = false;
       mInActor = false;
 
@@ -1626,6 +1657,7 @@ namespace  dtDAL
       , mActorProxy(NULL)
       , mActorPropertyType(NULL)
       , mActorProperty(NULL)
+      , mGroupIndex(0)
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
@@ -1799,6 +1831,21 @@ namespace  dtDAL
       mInActorProperty = false;
       mActorProperty = NULL;
       mActorPropertyType = NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndGroupSection(const XMLCh* const localname)
+   {
+      if (XMLString::compareString(localname, MapXMLConstants::ACTOR_GROUPS_ELEMENT) == 0)
+      {
+         EndGroupElement();
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::EndGroupElement()
+   {
+      mInGroup = false;
    }
 
    //////////////////////////////////////////////////////////////////////////

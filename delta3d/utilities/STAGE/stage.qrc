@@ -17,6 +17,7 @@
       <file>icons/gridoff_small.png</file>
       <file>icons/gridon_small.png</file>
       <file>icons/groundclamp_small.png</file>
+	  <file>icons/group.png</file>
       <file>icons/import_large.png</file>
       <file>icons/lightingmode_tiny.png</file>
 	  <file>icons/localspace.png</file>
@@ -50,6 +51,7 @@
       <file>icons/trash_large.png</file>
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>
+	  <file>icons/ungroup.png</file>
       <file>icons/viewer.ico</file>
       <file>icons/wireframemode_tiny.png</file>
       <file>gpl.txt</file>

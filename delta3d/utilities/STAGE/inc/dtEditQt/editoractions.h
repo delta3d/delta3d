@@ -181,6 +181,9 @@ namespace dtEditQt
       // Action - Group actors.
       QAction* mActionGroupActors;
 
+      // Action - Ungroup actors.
+      QAction* mActionUngroupActors;
+
       // Action - Edit - Undo
       QAction* mActionEditUndo;
 
@@ -303,6 +306,11 @@ namespace dtEditQt
        * Slot - Edit - Group Actors.
        */
       void slotEditGroupActors();
+
+      /**
+      * Slot - Edit - Ungroup Actors.
+      */
+      void slotEditUngroupActors();
 
       /**
        * Slot - Edit - Undo.  Undoes the last user edit property, delete proxy, or create proxy command.

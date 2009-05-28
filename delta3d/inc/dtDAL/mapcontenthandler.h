@@ -221,6 +221,7 @@ namespace dtDAL
          bool mInEvents;
          bool mInActors;
          bool mInActor;
+         bool mInGroup;
          bool mIgnoreCurrentActor;
          bool mInActorProperty;
          bool mPreparingProp;
@@ -266,6 +267,8 @@ namespace dtDAL
          int mErrorCount;
          int mFatalErrorCount;
          int mWarningCount;
+
+         int mGroupIndex;
 
          bool mFoundMapName;
 
@@ -313,6 +316,8 @@ namespace dtDAL
          void EndActorPropertyGroupElement();
          void EndActorPropertyParameterElement();
          void EndActorPropertyElement();
+         void EndGroupSection(const XMLCh* const localname);
+         void EndGroupElement();
          void EndLibrarySection(const XMLCh* const localname);
          void EndLibraryElement();
          void EndEventSection(const XMLCh* const localname);

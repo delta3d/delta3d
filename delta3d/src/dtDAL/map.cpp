@@ -408,6 +408,117 @@ namespace dtDAL
       AddProxy(*mEnvActor);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   int Map::GetGroupCount()
+   {
+      return (int)mActorGroups.size();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Map::GetGroupActorCount(int groupIndex)
+   {
+      if (groupIndex >= 0 && groupIndex < (int)mActorGroups.size())
+      {
+         return (int)mActorGroups[groupIndex].actorList.size();
+      }
+
+      return -1;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void Map::AddActorToGroup(int groupIndex, dtDAL::ActorProxy* actor)
+   {
+      if (actor == NULL)
+      {
+         LOG_ERROR("Failed to add an actor to a group because the actor is NULL");
+         return;
+      }
+
+      if (groupIndex >= 0 && groupIndex < (int)mActorGroups.size())
+      {
+         mActorGroups[groupIndex].actorList.push_back(actor);
+      }
+      else
+      {
+         // If the group does not exist, create one.
+         MapGroupData group;
+         group.actorList.push_back(actor);
+         mActorGroups.push_back(group);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Map::RemoveActorFromGroups(dtDAL::ActorProxy* actor)
+   {
+      // Iterate through each group.
+      bool found = false;
+      for (int groupIndex = 0; groupIndex < (int)mActorGroups.size(); groupIndex++)
+      {
+         MapGroupData& group = mActorGroups[groupIndex];
+
+         // Iterate through each actor in the group.
+         for (int actorIndex = 0; actorIndex < (int)group.actorList.size(); actorIndex++)
+         {
+            if (group.actorList[actorIndex] == actor)
+            {
+               group.actorList.erase(group.actorList.begin() + actorIndex);
+               found = true;
+            }
+         }
+      }
+
+      if (found)
+      {
+         // Remove any groups that are now empty.
+         for (int groupIndex = 0; groupIndex < (int)mActorGroups.size(); groupIndex++)
+         {
+            MapGroupData& group = mActorGroups[groupIndex];
+
+            if (group.actorList.size() == 0)
+            {
+               mActorGroups.erase(mActorGroups.begin() + groupIndex);
+            }
+         }
+      }
+   
+      return found;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   int Map::FindGroupForActor(dtDAL::ActorProxy* actor)
+   {
+      // Iterate through each group.
+      for (int groupIndex = 0; groupIndex < (int)mActorGroups.size(); groupIndex++)
+      {
+         MapGroupData& group = mActorGroups[groupIndex];
+
+         // Iterate through each actor in the group.
+         for (int actorIndex = 0; actorIndex < (int)group.actorList.size(); actorIndex++)
+         {
+            if (group.actorList[actorIndex] == actor)
+            {
+               return groupIndex;
+            }
+         }
+      }
+
+      return -1;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtDAL::ActorProxy* Map::GetActorFromGroup(int groupIndex, int actorIndex)
+   {
+      if (groupIndex >= 0 && groupIndex < (int)mActorGroups.size())
+      {
+         if (actorIndex >= 0 && actorIndex < (int)mActorGroups[groupIndex].actorList.size())
+         {
+            return mActorGroups[groupIndex].actorList[actorIndex];
+         }
+      }
+
+      return NULL;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    const std::vector<std::string>& Map::GetMissingLibraries() const
    {
