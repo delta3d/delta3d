@@ -415,13 +415,38 @@ namespace dtEditQt
 
       if (newSelection)
       {
+         // Determine if this new selection is part of a group.
+         std::vector<dtDAL::ActorProxy*> groupActors;
+         groupActors.push_back(newSelection);
+
+         int groupIndex = currMap->FindGroupForActor(newSelection);
+
+         if (groupIndex > -1)
+         {
+            int actorCount = currMap->GetGroupActorCount(groupIndex);
+            for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+            {
+               dtDAL::ActorProxy* proxy = currMap->GetActorFromGroup(groupIndex, actorIndex);
+               if (proxy != newSelection)
+               {
+                  groupActors.push_back(proxy);
+               }
+            }
+         }
+
          if (overlay->isActorSelected(newSelection))
          {
-            overlay->removeActorFromCurrentSelection(newSelection);
+            for (int index = 0; index < (int)groupActors.size(); index++)
+            {
+               overlay->removeActorFromCurrentSelection(groupActors[index]);
+            }
          }
          else
          {
-            toSelect.push_back(newSelection);
+            for (int index = 0; index < (int)groupActors.size(); index++)
+            {
+               toSelect.push_back(groupActors[index]);
+            }
          }
       }
 

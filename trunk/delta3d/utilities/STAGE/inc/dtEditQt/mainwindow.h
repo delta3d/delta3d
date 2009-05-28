@@ -41,7 +41,6 @@ class QSplitter;
 
 namespace dtEditQt
 {
-
    class PerspectiveViewport;
    class OrthoViewport;
    class PropertyEditor;
@@ -61,7 +60,6 @@ namespace dtEditQt
        * Constructor
        */
       MainWindow();
-
 
       /**
        * Adds custom library paths as specified by the user settings

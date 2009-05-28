@@ -122,6 +122,9 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_ARRAY_INDEX_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ARRAY_ELEMENT = NULL;
 
+   XMLCh* MapXMLConstants::ACTOR_GROUPS_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_GROUP_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT = NULL;
 
    void MapXMLConstants::StaticInit()
    {
@@ -199,6 +202,10 @@ namespace dtDAL
       ACTOR_ARRAY_SIZE_ELEMENT = xercesc::XMLString::transcode("size");
       ACTOR_ARRAY_INDEX_ELEMENT = xercesc::XMLString::transcode("index");
       ACTOR_ARRAY_ELEMENT = xercesc::XMLString::transcode("element");
+
+      ACTOR_GROUPS_ELEMENT = xercesc::XMLString::transcode("groups");
+      ACTOR_GROUP_ELEMENT = xercesc::XMLString::transcode("group");
+      ACTOR_GROUP_ACTOR_ELEMENT = xercesc::XMLString::transcode("actor");
    }
 
    void MapXMLConstants::StaticShutdown()
@@ -273,6 +280,10 @@ namespace dtDAL
       xercesc::XMLString::release(&ACTOR_COLOR_G_ELEMENT);
       xercesc::XMLString::release(&ACTOR_COLOR_B_ELEMENT);
       xercesc::XMLString::release(&ACTOR_COLOR_A_ELEMENT);
+
+      xercesc::XMLString::release(&ACTOR_GROUPS_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_GROUP_ELEMENT);
+      xercesc::XMLString::release(&ACTOR_GROUP_ACTOR_ELEMENT);
    }
 
    MapXMLConstants::MapXMLConstants() {}

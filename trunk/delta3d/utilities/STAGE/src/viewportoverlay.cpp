@@ -53,6 +53,8 @@
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editordata.h>
 
+#include <dtDAL/map.h>
+
 namespace dtEditQt
 {
 
@@ -95,6 +97,8 @@ namespace dtEditQt
       if (actors.empty())
       {
          clearCurrentSelection();
+         EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
+         EditorActions::GetInstance().mActionUngroupActors->setEnabled(false);
          EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
          EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(false);
          EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(false);
@@ -153,6 +157,63 @@ namespace dtEditQt
          mCurrentActorSelection.push_back(actors[i]);
       }
 
+      dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+
+      if (mCurrentActorSelection.size() <= 1)
+      {
+         EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
+      }
+      else
+      {
+         bool enabled = true;
+         if (map)
+         {
+            // Check the selection and make sure they are not already in the same group.
+            enabled = false;
+            int groupIndex = -2;
+            for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
+            {
+               int testGroupIndex = map->FindGroupForActor(mCurrentActorSelection[index].get());
+
+               if (testGroupIndex != groupIndex)
+               {
+                  if (groupIndex == -2)
+                  {
+                     groupIndex = testGroupIndex;
+                  }
+                  else
+                  {
+                     enabled = true;
+                     break;
+                  }
+               }
+            }
+
+            // If all the actors are not in a group, then we can group them.
+            if (groupIndex == -1)
+            {
+               enabled = true;
+            }
+         }
+         EditorActions::GetInstance().mActionGroupActors->setEnabled(enabled);
+      }
+
+      // Now add all the selected actions into a new group.
+      bool canUngroup = false;
+      if (map)
+      {
+         for (int index = 0; index < (int)mCurrentActorSelection.size(); index++)
+         {
+            dtDAL::ActorProxy* proxy = mCurrentActorSelection[index].get();
+            if (map->FindGroupForActor(proxy) != -1)
+            {
+               canUngroup = true;
+               break;
+            }
+         }
+      }
+
+      EditorActions::GetInstance().mActionUngroupActors->setEnabled(canUngroup);
       EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(true);
       EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(true);
       EditorActions::GetInstance().mActionEditGroundClampActors->setEnabled(true);

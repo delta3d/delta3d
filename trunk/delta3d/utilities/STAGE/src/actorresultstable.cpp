@@ -39,6 +39,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/uiresources.h>
+#include <dtDAL/map.h>
 
 namespace dtEditQt
 {
@@ -335,6 +336,7 @@ namespace dtEditQt
    {
       if (!mRecurseProtectSendingSelection)
       {
+         dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
          QList<QTreeWidgetItem*> list = mResultsTree->selectedItems();
          QListIterator<QTreeWidgetItem*> iter(list);
          std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > proxyVector;
@@ -345,6 +347,24 @@ namespace dtEditQt
             ActorResultsTreeItem* item = static_cast<ActorResultsTreeItem*>(iter.next());
             dtCore::RefPtr<dtDAL::ActorProxy> proxyPtr = item->getProxy();
             proxyVector.push_back(proxyPtr);
+
+            // Also select all other proxies that belong to its group.
+            if (map)
+            {
+               int groupIndex = map->FindGroupForActor(proxyPtr.get());
+               if (groupIndex > -1)
+               {
+                  int actorCount = map->GetGroupActorCount(groupIndex);
+                  for (int actorIndex = 0; actorIndex < actorCount; actorIndex++)
+                  {
+                     dtCore::RefPtr<dtDAL::ActorProxy> proxy = map->GetActorFromGroup(groupIndex, actorIndex);
+                     if (proxy != proxyPtr)
+                     {
+                        proxyVector.push_back(proxy);
+                     }
+                  }
+               }
+            }
          }
 
          // tell the world to select these items - handle several recursive cases
