@@ -23,6 +23,7 @@
 #define DELTA_AI_DEBUG_DRAWABLE
 
 #include <dtAI/export.h>
+#include <dtUtil/refstring.h>
 #include <dtCore/deltadrawable.h>
 
 #include <osg/Array>
@@ -40,6 +41,20 @@ namespace dtAI
 
    class DT_AI_EXPORT AIDebugDrawable : public dtCore::DeltaDrawable
    {
+   public:
+      //static datatypes for changing how the waypoints are rendered
+      //set these variables BEFORE you create the AIDebugDrawable
+      //which means for the AIInterfaceActor before you call GetDebugDrawable()
+      //they are static so you can set them without having an instance to one
+      //it would make sense later to have a function to change them all after the fact
+      static float DEFAULT_WAYPOINT_SIZE;
+      static osg::Vec4 DEFAULT_WAYPOINT_COLOR;
+      
+      static dtUtil::RefString DEFAULT_FONT;
+      static float DEFAULT_FONT_SIZE;
+      static osg::Vec3 DEFAULT_FONT_OFFSET_FROM_WAYPOINT;
+      static osg::Vec4 DEFAULT_FONT_COLOR;
+
    public:
 
       AIDebugDrawable();
