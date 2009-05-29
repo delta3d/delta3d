@@ -14,8 +14,14 @@
             </texture2D>
          </parameter>
 	 
-	      <parameter name="normalTexture">
+	     <parameter name="normalTexture">
             <texture2D textureUnit="1">
+               <source type="Auto"/>
+            </texture2D>
+         </parameter>
+		 
+		 <parameter name="specTexture">
+            <texture2D textureUnit="2">
                <source type="Auto"/>
             </texture2D>
          </parameter>

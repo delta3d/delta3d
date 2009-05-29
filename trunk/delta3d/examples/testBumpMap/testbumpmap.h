@@ -64,6 +64,7 @@ private:
 
    osg::ref_ptr<osg::Texture2D> mDiffuseTexture;
    osg::ref_ptr<osg::Texture2D> mNormalTexture;
+   osg::ref_ptr<osg::Texture2D> mSpecularTexture;
 
    dtCore::RefPtr<dtCore::ShaderParamInt>  mCustomShaderMode;
    dtCore::RefPtr<dtCore::ShaderParamInt>  mSphereShaderMode;

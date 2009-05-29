@@ -118,8 +118,9 @@ void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::LoadTextures()
 {
-   osg::Image* diffuseImage = osgDB::readImageFile("textures/sheetmetal.tga");
-   osg::Image* normalImage  = osgDB::readImageFile("textures/delta3d_logo_normal_map.tga");
+   osg::Image* diffuseImage = osgDB::readImageFile("textures/Fieldstone.tga");
+   osg::Image* normalImage  = osgDB::readImageFile("textures/Fieldstone_NORM.tga");
+   osg::Image* specImage    = osgDB::readImageFile("textures/Fieldstone_SPEC.tga");
 
    mDiffuseTexture = new osg::Texture2D;
    mDiffuseTexture->setImage(diffuseImage);
@@ -136,6 +137,14 @@ void TestBumpMapApp::LoadTextures()
    mNormalTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
    mNormalTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
    mNormalTexture->setMaxAnisotropy(8);
+
+   mSpecularTexture = new osg::Texture2D;
+   mSpecularTexture->setImage(specImage);
+   mSpecularTexture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+   mSpecularTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
+   mSpecularTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+   mSpecularTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+   mSpecularTexture->setMaxAnisotropy(8);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,6 +232,7 @@ void TestBumpMapApp::GenerateTangentsForObject(dtCore::Object* object)
    osg::StateSet* ss = object->GetOSGNode()->getOrCreateStateSet();
    ss->setTextureAttributeAndModes(0, mDiffuseTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
    ss->setTextureAttributeAndModes(1, mNormalTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
+   ss->setTextureAttributeAndModes(2, mSpecularTexture.get(), osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON);
 
    // We only need to compute the tangents if the shader is going to use them
    if (mUsePrecomputedTangents)
