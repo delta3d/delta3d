@@ -59,13 +59,25 @@ namespace dtCore
    void ShaderProgram::Reset()
    {
       mGLSLProgram = NULL;
+      mGeometryCacheKey = "";
+      mGeometryCacheKey = "";
       mVertexCacheKey = "";
       mFragmentCacheKey = "";
       mFragmentShaderFileName.clear();
       mVertexShaderFileName.clear();
+      mGeometryShaderFileName.clear();
+      mVertexShaderFileName.clear();
+      mGeometryShaderFileName.clear();
       mParameters.clear();
       mIsDirty = false;
    }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const std::string& ShaderProgram::GetGeometryCacheKey()
+   { 
+       return mGeometryCacheKey;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string& ShaderProgram::GetVertexCacheKey()
    { 
@@ -103,7 +115,7 @@ namespace dtCore
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::RemoveParameter(ShaderParameter& param)
    {
-      std::map<std::string,dtCore::RefPtr<ShaderParameter> >::iterator itor =
+      std::map<std::string, dtCore::RefPtr<ShaderParameter> >::iterator itor =
          mParameters.find(param.GetName());
 
       if (itor == mParameters.end())
@@ -181,6 +193,26 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void ShaderProgram::AddGeometryShader(const std::string& fileName)
+   {
+	   // Geometry source is allowed to be empty - but, if a filename is set, the file needs to exist.
+	   if (!fileName.empty())
+	   {
+		   std::string path = dtCore::FindFileInPathList(fileName);
+		   if (path.empty())
+		   {
+			   throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Could not find shader source: " +
+				   fileName + " in path list.", __FILE__, __LINE__);
+		   }
+		   else
+		   {
+			   mGeometryShaderFileName.push_back(fileName);
+			   mGeometryCacheKey += fileName;
+		   }
+	   }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::AddVertexShader(const std::string& fileName)
    {
       // Vertex source is now allowed to be empty - but, if a filename is set, the file needs to exist.
@@ -254,6 +286,7 @@ namespace dtCore
       newShader->mVertexShaderFileName = GetVertexShaders();
       newShader->mFragmentShaderFileName = GetFragmentShaders();
       newShader->mGLSLProgram = mGLSLProgram;
+	   newShader->mGeometryCacheKey = mGeometryCacheKey;
       newShader->mVertexCacheKey = mVertexCacheKey;
       newShader->mFragmentCacheKey = mFragmentCacheKey;
 

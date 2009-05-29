@@ -49,6 +49,14 @@
       </shader>
    </shadergroup>
 
+   <shadergroup name="TestGroup3">
+      <shader name="ShaderOne">
+         <source type="Geometry">Shaders/pass_through_geom.glsl</source>
+         <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
+         <source type="Fragment">Shaders/perpixel_lighting_detailmap_frag.glsl</source>
+      </shader>
+   </shadergroup>
+
    <shadergroup name="ParamsGroup">
       <shader name="AllParamsShader">
          <source type="Vertex">Shaders/perpixel_lighting_detailmap_vert.glsl</source>
@@ -80,4 +88,4 @@
 
       </shader>
    </shadergroup>
-</shaderlist>
+ </shaderlist>

@@ -183,6 +183,9 @@ void ShaderManagerTests::TestShader()
 //      CPPUNIT_ASSERT_MESSAGE("Shader vertex program should be NULL.", newShader->GetVertexShader() == NULL);
       CPPUNIT_ASSERT_MESSAGE("Shader program should be NULL.", newShader->GetShaderProgram() == NULL);
 
+      newShader->AddGeometryShader("Shaders/pass_through_geom.glsl");
+      CPPUNIT_ASSERT_EQUAL(std::string("Shaders/pass_through_geom.glsl"), *(newShader->GetGeometryShaders().begin()));
+
       newShader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
       CPPUNIT_ASSERT_EQUAL(std::string("Shaders/perpixel_lighting_detailmap_vert.glsl"), *(newShader->GetVertexShaders().begin()));
 
@@ -220,6 +223,7 @@ void ShaderManagerTests::TestShader()
 
       newShader->Reset();
       CPPUNIT_ASSERT_MESSAGE("Should have no parameters after a reset.", newShader->GetNumParameters() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Should have no geometry source after a reset.", newShader->GetGeometryShaders().empty());
       CPPUNIT_ASSERT_MESSAGE("Should have no vertex source after a reset.", newShader->GetVertexShaders().empty());
       CPPUNIT_ASSERT_MESSAGE("Should have no fragment source after a reset.", newShader->GetFragmentShaders().empty());
       CPPUNIT_ASSERT_MESSAGE("Shader name should have been shaderone after reset.", newShader->GetName() == "shaderone");
@@ -251,6 +255,7 @@ void ShaderManagerTests::TestShaderManager()
          for (j=0; j<3; j++)
          {
             shader = new dtCore::ShaderProgram("Shader" + dtUtil::ToString(j));
+	        shader->AddGeometryShader("Shaders/pass_through_geom.glsl");
             shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
             shader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
             shader->AddParameter(*(new dtCore::ShaderParamTexture2D("Param0")));
@@ -341,6 +346,7 @@ void ShaderManagerTests::TestAssignShader()
    try
    {
       dtCore::RefPtr<dtCore::ShaderProgram> shader = new dtCore::ShaderProgram("TestShader");
+      shader->AddGeometryShader("Shaders/pass_through_geom.glsl");
       shader->AddVertexShader("Shaders/perpixel_lighting_detailmap_vert.glsl");
       shader->AddFragmentShader("Shaders/perpixel_lighting_detailmap_frag.glsl");
 
@@ -543,8 +549,8 @@ void ShaderManagerTests::TestXMLParsing()
 {
    try
    {
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3, mShaderMgr->GetNumShaderGroupPrototypes());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)5, mShaderMgr->GetNumShaderPrototypes());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)4, mShaderMgr->GetNumShaderGroupPrototypes());
+      CPPUNIT_ASSERT_EQUAL((unsigned int)6, mShaderMgr->GetNumShaderPrototypes());
 
       dtCore::ShaderGroup* group1 = mShaderMgr->FindShaderGroupPrototype("TestGroup1");
       CPPUNIT_ASSERT(group1 != NULL);
@@ -552,8 +558,12 @@ void ShaderManagerTests::TestXMLParsing()
       dtCore::ShaderGroup* group2 = mShaderMgr->FindShaderGroupPrototype("TestGroup2");
       CPPUNIT_ASSERT(group2 != NULL);
 
+	  dtCore::ShaderGroup* group3 = mShaderMgr->FindShaderGroupPrototype("TestGroup3");
+	  CPPUNIT_ASSERT(group3 != NULL);
+
       CPPUNIT_ASSERT_EQUAL((unsigned int)2, group1->GetNumShaders());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)2, group2->GetNumShaders());
+	  CPPUNIT_ASSERT_EQUAL((unsigned int)2, group2->GetNumShaders());
+	  CPPUNIT_ASSERT_EQUAL((unsigned int)1, group3->GetNumShaders());
 
       //CHECK GROUP ONE'S SHADERS...
       dtCore::ShaderProgram* shader1 = group1->FindShader("Default");
@@ -667,6 +677,22 @@ void ShaderManagerTests::TestXMLParsing()
                                    dtCore::ShaderParamTexture::AddressMode::MIRROR);
       CPPUNIT_ASSERT_MESSAGE("Texture parameter should be assigned to unit 2.",
                              texParam->GetTextureUnit() == 2);
+
+	  //CHECK GROUP THREES'S SHADERS...
+	  shader1 = group3->FindShader("ShaderOne");
+
+	  //SHADER ONE...
+	  CPPUNIT_ASSERT_MESSAGE("Group 3 should have a shader named ShaderOne.", shader1 != NULL);
+	  CPPUNIT_ASSERT_MESSAGE("Group 3 should not have a default shader.", group3->GetDefaultShader() == NULL);
+
+	  CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 3 should be named ShaderOne.", shader1->GetName() == "ShaderOne");
+
+	  CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 3 had wrong geometry shader source.",
+	     * (shader1->GetGeometryShaders().begin()) == "Shaders/pass_through_geom.glsl");
+	  CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 3 had wrong vertex shader source.",
+	     * (shader1->GetVertexShaders().begin()) == "Shaders/perpixel_lighting_detailmap_vert.glsl");
+	  CPPUNIT_ASSERT_MESSAGE("Shader 1 in Group 3 had wrong fragment shader source.",
+	     * (shader1->GetFragmentShaders().begin()) == "Shaders/perpixel_lighting_detailmap_frag.glsl");
    }
    catch (const dtUtil::Exception& e)
    {
