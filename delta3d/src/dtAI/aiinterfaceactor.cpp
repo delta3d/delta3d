@@ -27,6 +27,7 @@
 #include <dtAI/navmesh.h>
 #include <dtAI/waypointmanager.h>
 #include <dtAI/astarwaypointutils.h>
+#include <dtAI/aidebugdrawable.h>
 
 
 namespace dtAI
@@ -51,11 +52,28 @@ namespace dtAI
 
       WaypointID InsertWaypoint(const osg::Vec3& pos)
       {
-         return mWaypointManager.AddWaypoint(pos);
+         WaypointID id = mWaypointManager.AddWaypoint(pos);
+
+         //if we have created a drawable then we must add and remove to it
+         if(mDrawable.valid())
+         {
+            WaypointInterface* wi = mWaypointManager.GetWaypoint(id);
+            if(wi != NULL)
+            {
+               mDrawable->InsertWaypoint(*wi);
+            }
+         }
+
+         return id;
       }
 
       bool RemoveWaypoint(WaypointID id)
       {
+         if(mDrawable.valid())
+         {
+            mDrawable->RemoveWaypoint(id);
+         }
+
          mWaypointManager.RemoveWaypoint(id);
          return true;
       }
@@ -173,6 +191,26 @@ namespace dtAI
          return mWaypointManager.WriteFile(filename);
       }
 
+      //note: if you ever call this function it will require additional maintenance
+      //adding and removing waypoints
+      AIDebugDrawable* GetDebugDrawable()
+      {
+         if(!mDrawable.valid())
+         {
+            mDrawable = new AIDebugDrawable();
+
+            //now we must add all current waypoints
+            dtAI::WaypointManager::WaypointMap::const_iterator iter = mWaypointManager.GetWaypoints().begin();
+            dtAI::WaypointManager::WaypointMap::const_iterator iterEnd = mWaypointManager.GetWaypoints().end();
+
+            for(;iter != iterEnd; ++iter)
+            {
+               mDrawable->InsertWaypoint(*(iter->second));
+            }
+         }
+
+         return mDrawable.get();
+      }
 
    protected:
 
@@ -184,6 +222,7 @@ namespace dtAI
 
    private:
 
+      dtCore::RefPtr<AIDebugDrawable> mDrawable;
       WaypointAStar mAStar;
       WaypointManager& mWaypointManager;
 
@@ -285,7 +324,15 @@ namespace dtAI
        return false;
     }
 
+    AIPluginInterface* AIInterfaceActorProxy::GetAIInterface()
+    {
+      return mAIInterface.get();
+    }
 
+    const AIPluginInterface* AIInterfaceActorProxy::GetAIInterface() const
+    {
+       return mAIInterface.get();
+    }
     //////////////////////////////////////////////////////////////////////////////////////////
     //Entry Point
     //////////////////////////////////////////////////////////////////////////////////////////

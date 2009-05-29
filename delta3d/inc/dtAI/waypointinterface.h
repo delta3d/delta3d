@@ -33,12 +33,16 @@ namespace dtAI
    {
    public:
       WaypointInterface();
-      virtual ~WaypointInterface();
-
-      WaypointID GetID() const;
 
       bool operator==(const WaypointInterface& pWay) const;
       bool operator!=(const WaypointInterface& pWay) const;
+
+      virtual ~WaypointInterface();
+
+      //TODO- Provide copy constructors and a virtual clone
+      //WaypointInterface* Clone(const WaypointInterface& wp);
+
+      WaypointID GetID() const;
 
       virtual const osg::Vec3& GetPosition() const = 0;
       virtual void SetPosition(const osg::Vec3& pVec) = 0;

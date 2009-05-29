@@ -36,6 +36,8 @@
 
 #include <dtCore/flymotionmodel.h>
 
+#include "aicomponent.h"
+
 /////////////////////////////////////
 AIUtilityApp::AIUtilityApp()
 : dtABC::Application("config.xml")
@@ -53,6 +55,9 @@ AIUtilityApp::~AIUtilityApp()
 void AIUtilityApp::Config()
 {
    dtABC::Application::Config();
+
+   AIComponent* aicomp = new AIComponent();
+   mGM->AddComponent(*aicomp, dtGame::GameManager::ComponentPriority::NORMAL);
 
    mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
    mMotionModel->SetTarget(GetCamera());
