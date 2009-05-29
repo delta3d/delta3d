@@ -194,6 +194,7 @@ namespace dtCore
          static const std::string SHADER_SOURCE_ATTRIBUTE_TYPE;
          static const std::string SHADER_SOURCE_TYPE_VERTEX;
          static const std::string SHADER_SOURCE_TYPE_FRAGMENT;
+		 static const std::string SHADER_SOURCE_TYPE_GEOMETRY;
 
          static const std::string PARAMETER_ELEMENT;
          static const std::string PARAMETER_ATTRIBUTE_NAME;

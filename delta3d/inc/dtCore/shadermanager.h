@@ -340,11 +340,11 @@ namespace dtCore
          unsigned int mTotalShaderCount;
 
          ///List of the shader groups currently loaded by the manager.
-         std::map<std::string,dtCore::RefPtr<ShaderGroup> > mShaderGroups;
+         std::map<std::string, dtCore::RefPtr<ShaderGroup> > mShaderGroups;
 
          ///Shader program cache which stores compiled shader programs that may
          ///be shared amongst the loaded shaders.
-         std::map<std::string,ShaderCacheEntry> mShaderProgramCache;
+         std::map<std::string, ShaderCacheEntry> mShaderProgramCache;
 
          // list of all the actively assigned nodes.  Each active entry has a ref to its instance 
          // of the shader as well as a weak reference to the node itself.  

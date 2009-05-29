@@ -31,10 +31,10 @@
 
 namespace dtCore
 {
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderManager> ShaderManager::mInstance(NULL);
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(ShaderException)
    ShaderException ShaderException::SHADER_SOURCE_ERROR("SHADER_SOURCE_ERROR");
    ShaderException ShaderException::DUPLICATE_SHADERGROUP_FOUND("DUPLICATE_SHADERGROUP_FOUND");
@@ -42,21 +42,21 @@ namespace dtCore
    ShaderException ShaderException::DUPLICATE_SHADER_PARAMETER_FOUND("DUPLICATE_SHADER_PARAMETER_FOUND");
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ShaderManager::ShaderManager() : dtCore::Base("ShaderManager")
    {
       Clear();
       AddSender(&dtCore::System::GetInstance());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ShaderManager::~ShaderManager()
    {
       Clear();
       RemoveSender(&dtCore::System::GetInstance());
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////
    ShaderManager& ShaderManager::GetInstance()
    {
       if (mInstance == NULL)
@@ -67,13 +67,13 @@ namespace dtCore
       return *mInstance;
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////////
    void ShaderManager::Destroy()
    {
       mInstance = NULL;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::Clear()
    {
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
@@ -103,8 +103,8 @@ namespace dtCore
       mActiveNodeList.clear();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::OnMessage(dtCore::Base::MessageData *msgData)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::OnMessage(dtCore::Base::MessageData* msgData)
    {
       if (msgData->message == dtCore::System::MESSAGE_PRE_FRAME)
       {
@@ -113,7 +113,7 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::OnPreFrame(double deltaRealTime, double deltaSimTime)
    {
       for (int i = mActiveNodeList.size() - 1; i >= 0; i--)
@@ -122,7 +122,9 @@ namespace dtCore
          if (mActiveNodeList[i].nodeWeakReference.valid())
          {
             if (mActiveNodeList[i].shaderInstance->IsDirty())
+            {
                mActiveNodeList[i].shaderInstance->Update();
+            }
          }
          else
          {
@@ -132,17 +134,19 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::AddShaderGroupPrototype(ShaderGroup &shaderGroup)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::AddShaderGroupPrototype(ShaderGroup& shaderGroup)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(shaderGroup.GetName());
 
       //Do not allow shader groups with the same name...
       if (itor != mShaderGroups.end())
+      {
          throw dtUtil::Exception(ShaderException::DUPLICATE_SHADERGROUP_FOUND,
          "Shader groups must have unique names.  The conflicting name is \"" +
          shaderGroup.GetName() + "\".", __FILE__, __LINE__);
+      }
 
       //Before we insert the group, we need to check our program cache and update it
       //if necessary for each shader in the group.  Also update our total shader count.
@@ -156,11 +160,11 @@ namespace dtCore
          mTotalShaderCount++;
       }
 
-      mShaderGroups.insert(std::make_pair(shaderGroup.GetName(),&shaderGroup));
+      mShaderGroups.insert(std::make_pair(shaderGroup.GetName(), &shaderGroup));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroupPrototype(const std::string &name)
+   void ShaderManager::RemoveShaderGroupPrototype(const std::string& name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
          mShaderGroups.find(name);
@@ -169,62 +173,73 @@ namespace dtCore
       mShaderGroups.erase(itor);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::RemoveShaderGroupPrototype(const ShaderGroup &shaderGroup)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::RemoveShaderGroupPrototype(const ShaderGroup& shaderGroup)
    {
       RemoveShaderGroupPrototype(shaderGroup.GetName());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string &name) const
+   /////////////////////////////////////////////////////////////////////////////
+   const ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string& name) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor =
             mShaderGroups.find(name);
 
       if (itor != mShaderGroups.end())
+      {
          return itor->second.get();
+      }
       else
+      {
          return NULL;
+      }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string &name)
+   /////////////////////////////////////////////////////////////////////////////
+   ShaderGroup *ShaderManager::FindShaderGroupPrototype(const std::string& name)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor =
             mShaderGroups.find(name);
 
       if (itor != mShaderGroups.end())
+      {
          return itor->second.get();
+      }
       else
+      {
          return NULL;
+      }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> > &toFill)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::GetAllShaderGroupPrototypes(std::vector<dtCore::RefPtr<ShaderGroup> >& toFill)
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::iterator itor;
 
       toFill.clear();
       toFill.reserve(mShaderGroups.size());
+      
       for (itor=mShaderGroups.begin(); itor!=mShaderGroups.end(); ++itor)
+      {
          toFill.push_back(itor->second);
+      }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const ShaderProgram *ShaderManager::FindShaderPrototype(const std::string &name, const std::string &groupName) const
+   /////////////////////////////////////////////////////////////////////////////
+   const ShaderProgram* ShaderManager::FindShaderPrototype(const std::string& name, const std::string& groupName) const
    {
       return InternalFindShader(name,groupName);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   ShaderProgram *ShaderManager::FindShaderPrototype(const std::string &name, const std::string &groupName)
+   /////////////////////////////////////////////////////////////////////////////
+   ShaderProgram* ShaderManager::FindShaderPrototype(const std::string& name, const std::string& groupName)
    {
-      return const_cast<ShaderProgram *>(InternalFindShader(name,groupName));
+      return const_cast<ShaderProgram*>(InternalFindShader(name,groupName));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const ShaderProgram *ShaderManager::InternalFindShader(const std::string &shaderName,
-         const std::string &groupName) const
+   /////////////////////////////////////////////////////////////////////////////
+   const ShaderProgram* ShaderManager::InternalFindShader(const std::string& shaderName,
+         const std::string& groupName) const
    {
       std::map<std::string,dtCore::RefPtr<ShaderGroup> >::const_iterator itor;
 
@@ -254,7 +269,7 @@ namespace dtCore
       return NULL;
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    // Curt - Add a method to get an active shader for a given node
    dtCore::ShaderProgram *ShaderManager::GetShaderInstanceForNode(osg::Node *node)
    {
@@ -271,8 +286,7 @@ namespace dtCore
       return NULL;
    }
 
-
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::RemoveShaderFromActiveNodeList(osg::Node *node)
    {
       // find any instances of weak references to this node and remove it from the active list.
@@ -286,9 +300,8 @@ namespace dtCore
       }
    }
 
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::UnassignShaderFromNode(osg::Node &node)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::UnassignShaderFromNode(osg::Node& node)
    {
       std::vector<dtCore::RefPtr<ShaderParameter> > params;
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
@@ -311,13 +324,12 @@ namespace dtCore
       }
 
       // Remove all references to this node.  Call the method for safety to eliminate any possible
-      // chance that there is more than one (not sure how that could happen). .
+      // chance that there is more than one (not sure how that could happen).
       RemoveShaderFromActiveNodeList(&node);
    }
 
-
-   ///////////////////////////////////////////////////////////////////////////////
-   dtCore::ShaderProgram *ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram &templateShader, osg::Node &node)
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::ShaderProgram *ShaderManager::AssignShaderFromPrototype(const dtCore::ShaderProgram& templateShader, osg::Node& node)
    {
       // If this node is already assigned to a shader, remove it from our active list.
       RemoveShaderFromActiveNodeList(&node);
@@ -330,13 +342,10 @@ namespace dtCore
       std::vector<dtCore::RefPtr<ShaderParameter> >::iterator currParam;
       dtCore::RefPtr<osg::StateSet> stateSet = node.getOrCreateStateSet();
 
-      //First assign the vertex,fragment,and shader program to the render state.
-      //if (newShader->GetVertexShader() == NULL)
-      //   LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Vertex shader was invalid.");
-      //if (newShader->GetFragmentShader() == NULL)
-      //   LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Fragment shader was invalid.");
       if (newShader->GetShaderProgram() == NULL)
+      {
          LOG_WARNING("Error assigning shader: " + newShader->GetName() + "  Shader program was invalid.");
+      }
 
       //I realize const-cast is not a great idea here, but I did not want the have a non-const version
       //of the GetShaderProgram() method on the shader class.
@@ -347,7 +356,9 @@ namespace dtCore
       //is responcible for knowning how to attach itself to the render state.
       newShader->GetParameterList(params);
       for (currParam=params.begin(); currParam!=params.end(); ++currParam)
+      {
          (*currParam)->AttachToRenderState(*stateSet);
+      }
 
       // add the new shader and node to the active node list.
       ActiveNodeEntry activeNode;
@@ -358,13 +369,13 @@ namespace dtCore
       return newShader.get();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    void ShaderManager::ResolveShaderPrograms(ShaderProgram &shader, const std::string &groupName)
    {
       //Shader cache entries are keyed by a combination of the source to the
-      //vertex shader and the source to the fragment shader.
+      //geometry shader, the source to the vertex shader and the source to the fragment shader.
 
-      std::string cacheKey = shader.GetVertexCacheKey() + ":" + shader.GetFragmentCacheKey();
+      std::string cacheKey = shader.GetGeometryCacheKey() + ":" + shader.GetVertexCacheKey() + ":" + shader.GetFragmentCacheKey();
 
       std::map<std::string,ShaderCacheEntry>::iterator itor =
          mShaderProgramCache.find(cacheKey);
@@ -381,17 +392,39 @@ namespace dtCore
 
       //Load, compile, and link the shaders...
       std::string path;
+      dtCore::RefPtr<osg::Shader> geometryShader;
       dtCore::RefPtr<osg::Shader> vertexShader;
       dtCore::RefPtr<osg::Shader> fragmentShader;
       dtCore::RefPtr<osg::Program> program = new osg::Program();
-      program->setName( std::string('('+groupName+')'+ shader.GetName()).c_str() );
+      program->setName(std::string('('+groupName+')'+ shader.GetName()).c_str());
+
+      std::vector<std::string>::const_iterator geometryShaderIterator = shader.GetGeometryShaders().begin();
+
+      while(geometryShaderIterator != shader.GetGeometryShaders().end())
+      {
+          // Load and set the geometry shader - note, this is not required         
+          path = dtCore::FindFileInPathList(*geometryShaderIterator);
+
+          if (!path.empty())
+          {
+              geometryShader = new osg::Shader(osg::Shader::GEOMETRY);
+              if (!geometryShader->loadShaderSourceFromFile(path))
+              {
+                  throw dtUtil::Exception(ShaderException::SHADER_SOURCE_ERROR,"Error loading geometry shader file: " +
+                  *geometryShaderIterator + " from shader: " + shader.GetName(), __FILE__, __LINE__);
+              }
+
+              geometryShader->setName(*geometryShaderIterator);
+              program->addShader(geometryShader.get());
+          }
+          geometryShaderIterator++;
+      }
 
       std::vector<std::string>::const_iterator vertexShaderIterator = shader.GetVertexShaders().begin();
 
       while(vertexShaderIterator != shader.GetVertexShaders().end())
       {
          // Load and set the vertex shader - note, this is not required
-         //path = dtCore::FindFileInPathList(shader.GetVertexShaders());
          path = dtCore::FindFileInPathList(*vertexShaderIterator);
          if (!path.empty())
          {
@@ -410,7 +443,6 @@ namespace dtCore
       while(fragmentShaderIterator != shader.GetFragmentShaders().end())
       {
          // Load and set the fragment shader - note, this is not required
-         //path = dtCore::FindFileInPathList(shader.GetFragmentShaders());
          path = dtCore::FindFileInPathList(*fragmentShaderIterator);
          if (!path.empty())
          {
@@ -435,8 +467,8 @@ namespace dtCore
       mShaderProgramCache.insert(std::make_pair(cacheKey,newCacheEntry));
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::ReloadAndReassignShaderDefinitions(const std::string &fileName)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::ReloadAndReassignShaderDefinitions(const std::string& fileName)
    {
       LOG_WARNING("Attempting to reload ALL Shaders using file[" + fileName + "]. This is a test behavior and may result in artifacts or changes in the scene.");
 
@@ -480,14 +512,15 @@ namespace dtCore
 
                // Is it a perfect match??
                if (foundCacheKey == oldCacheKey)
+               {
                   bFoundMatch = true;
+               }
             }
          }
 
          // if we got a match, we rock!!!
          if (bFoundMatch)
          {
-            //LOG_ERROR("FOUND A MATCH FOR shader[" + mCopiedNodeList[i].shaderInstance->GetName() +  "]!!!");
             AssignShaderFromPrototype(*matchingShader, *mCopiedNodeList[i].nodeWeakReference.get());
          }
          else
@@ -502,9 +535,8 @@ namespace dtCore
       mCopiedNodeList.clear();
    }
 
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderManager::LoadShaderDefinitions(const std::string &fileName, bool merge)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderManager::LoadShaderDefinitions(const std::string& fileName, bool merge)
    {
       ShaderXML parser;
       std::string path = dtCore::FindFileInPathList(fileName);
@@ -517,13 +549,15 @@ namespace dtCore
       LOG_INFO("Loading Shader Definitions file: " + fileName);
 
       if (!merge)
+      {
          Clear();
+      }
 
       try
       {
          parser.ParseXML(path);
       }
-      catch (const dtUtil::Exception &e)
+      catch (const dtUtil::Exception& e)
       {
          throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, e.ToString(), __FILE__, __LINE__);
       }

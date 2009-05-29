@@ -67,6 +67,22 @@ namespace dtCore
           */
          const std::string& GetName() const { return mName; }
 
+
+		 /**
+		 * This method adds a shader source meant for geometry processing from the
+		 * specified file name.
+		 * @param fileName The path of the shader file source.  This must be either the
+		 *    full path or a path relative to the Delta3d path list.
+		 */
+		 void AddGeometryShader(const std::string& fileName);
+
+		 /**
+		 * Gets the vertex shaders file names.
+		 * @return A Vector that contains a set of strings that represent the different vertex file names 
+		 */
+		 const std::vector<std::string>& GetGeometryShaders() const { return mGeometryShaderFileName; }
+
+
          /**
           * This method adds a shader source meant for vertex processing from the
           * specified file name.
@@ -81,6 +97,12 @@ namespace dtCore
           */
          const std::vector<std::string>& GetVertexShaders() const { return mVertexShaderFileName; }
 
+
+         /**
+         * Gets the vertex cache key
+         * @return The vertex cache key used to identify a certain shader group
+         */
+         const std::string& GetGeometryCacheKey();
 
          /**
          * Gets the vertex cache key
@@ -228,9 +250,11 @@ namespace dtCore
 
          //Cache Keys which are used as unique identifiers for identifying vertex and fragment shader groups
          //which are stored in map
+         std::string mGeometryCacheKey;
          std::string mVertexCacheKey;
          std::string mFragmentCacheKey;
 
+         std::vector<std::string> mGeometryShaderFileName;
          std::vector<std::string> mVertexShaderFileName;
          std::vector<std::string> mFragmentShaderFileName;
 

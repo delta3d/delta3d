@@ -62,6 +62,7 @@ namespace dtCore
    const std::string ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE("type");
    const std::string ShaderXML::SHADER_SOURCE_TYPE_VERTEX("Vertex");
    const std::string ShaderXML::SHADER_SOURCE_TYPE_FRAGMENT("Fragment");
+   const std::string ShaderXML::SHADER_SOURCE_TYPE_GEOMETRY("Geometry");
 
    const std::string ShaderXML::PARAMETER_ELEMENT("parameter");
    const std::string ShaderXML::PARAMETER_ATTRIBUTE_NAME("name");
@@ -121,16 +122,16 @@ namespace dtCore
    const std::string ShaderXML::OSCILLATOR_ATTRIB_OSCILLATION_TYPE("oscillation");
    const std::string ShaderXML::OSCILLATOR_ATTRIB_TRIGGER("trigger");
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ShaderXML::ShaderXML()
    {
       try
       {
          xercesc::XMLPlatformUtils::Initialize();
       }
-      catch(const xercesc::XMLException &e)
+      catch(const xercesc::XMLException& e)
       {
-         char *message = xercesc::XMLString::transcode(e.getMessage());
+         char* message = xercesc::XMLString::transcode(e.getMessage());
 
          std::ostringstream error;
          error << "Error initializing XML toolkit: " << message;
@@ -139,14 +140,14 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    ShaderXML::~ShaderXML()
    {
       try
       {
          xercesc::XMLPlatformUtils::Terminate();
       }
-      catch(const xercesc::XMLException &e)
+      catch(const xercesc::XMLException& e)
       {
          char *message = xercesc::XMLString::transcode(e.getMessage());
 
@@ -158,7 +159,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseXML(const std::string &fileName)
+   void ShaderXML::ParseXML(const std::string& fileName)
    {
       xercesc::XercesDOMParser parser;
 
@@ -171,14 +172,20 @@ namespace dtCore
       {
          parser.parse(fileName.c_str());
 
-         xercesc::DOMDocument *xmlDoc = parser.getDocument();
-         xercesc::DOMElement *shaderList = xmlDoc->getDocumentElement();
+         xercesc::DOMDocument* xmlDoc = parser.getDocument();
+         xercesc::DOMElement* shaderList = xmlDoc->getDocumentElement();
+         
          if (shaderList == NULL)
+         {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader XML document is empty.", __FILE__, __LINE__);
+         }
 
          dtUtil::XMLStringConverter strConv(shaderList->getTagName());
+
          if (strConv.ToString() != ShaderXML::SHADERLIST_ELEMENT)
+         {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Malformed shader list element tag name.", __FILE__, __LINE__);
+         }
 
          xercesc::DOMNodeList *children = shaderList->getChildNodes();
          for (XMLSize_t i=0; i<children->getLength(); i++)
@@ -186,29 +193,34 @@ namespace dtCore
             xercesc::DOMNode *node = children->item(i);
 
             if (node == NULL)
+            {
                continue;
+            }
+
             if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+            {
                continue;
+            }
 
             //If we got here, we have a shader group element.
-            xercesc::DOMElement *element = static_cast<xercesc::DOMElement *>(node);
+            xercesc::DOMElement* element = static_cast<xercesc::DOMElement*>(node);
             ParseShaderGroupElement(element);
          }
       }
-      catch (const xercesc::XMLException &e)
+      catch (const xercesc::XMLException& e)
       {
-         char *message = xercesc::XMLString::transcode(e.getMessage());
+         char* message = xercesc::XMLString::transcode(e.getMessage());
          std::ostringstream error;
 
          error << "Error parsing shader file: " << fileName << ".  Reason: " <<
             message;
 
          xercesc::XMLString::release(&message);
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,error.str(), __FILE__, __LINE__);
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR, error.str(), __FILE__, __LINE__);
       }
-      catch (const xercesc::DOMException &e)
+      catch (const xercesc::DOMException& e)
       {
-         char *message = xercesc::XMLString::transcode(e.getMessage());
+         char* message = xercesc::XMLString::transcode(e.getMessage());
          std::ostringstream error;
 
          error << "Error processing DOM:  Reason: " << message;
@@ -218,8 +230,8 @@ namespace dtCore
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseShaderGroupElement(xercesc::DOMElement *shaderGroupElem)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderXML::ParseShaderGroupElement(xercesc::DOMElement* shaderGroupElem)
    {
       dtUtil::XMLStringConverter strConv(shaderGroupElem->getTagName());
       if (strConv.ToString() != ShaderXML::SHADERGROUP_ELEMENT)
@@ -231,31 +243,41 @@ namespace dtCore
       dtCore::RefPtr<ShaderGroup> newGroup = new ShaderGroup(groupName);
 
       //Children of a shadergroup element are shaders...
-      xercesc::DOMNodeList *children = shaderGroupElem->getChildNodes();
-      for (XMLSize_t i=0; i<children->getLength(); i++)
+      xercesc::DOMNodeList* children = shaderGroupElem->getChildNodes();
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
       {
-         xercesc::DOMNode *node = children->item(i);
+         xercesc::DOMNode* node = children->item(i);
 
          if (node == NULL)
+         {
             continue;
+         }
+
          if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
             continue;
+         }
 
          //If we got here, we have either a uniform element or a source element.
          xercesc::DOMElement *element = static_cast<xercesc::DOMElement *>(node);
 
          dtUtil::XMLStringConverter elemName(element->getTagName());
+
          if (elemName.ToString() == ShaderXML::SHADER_ELEMENT)
+         {
             ParseShaderElement(element,*newGroup);
+         }
          else
+         {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
+         }
       }
 
       ShaderManager::GetInstance().AddShaderGroupPrototype(*newGroup);
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseShaderElement(xercesc::DOMElement *shaderElem, ShaderGroup &group)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderXML::ParseShaderElement(xercesc::DOMElement* shaderElem, ShaderGroup& group)
    {
       //Shader elements have a name attribute and possibly a default attribute telling the
       //shader group that this shader is the default.
@@ -264,72 +286,105 @@ namespace dtCore
       dtCore::RefPtr<ShaderProgram> newShader = new ShaderProgram(shaderName);
 
       //Children of a shader element are either shader sources or parameters...
-      xercesc::DOMNodeList *children = shaderElem->getChildNodes();
-      for (XMLSize_t i=0; i<children->getLength(); i++)
+      xercesc::DOMNodeList* children = shaderElem->getChildNodes();
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
       {
-         xercesc::DOMNode *node = children->item(i);
+         xercesc::DOMNode* node = children->item(i);
 
          if (node == NULL)
+         {
             continue;
+         }
+
          if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
             continue;
+         }
 
          //If we got here, we have either a uniform element or a source element.
-         xercesc::DOMElement *element = static_cast<xercesc::DOMElement *>(node);
+         xercesc::DOMElement* element = static_cast<xercesc::DOMElement*>(node);
 
          dtUtil::XMLStringConverter elemName(element->getTagName());
+
          if (elemName.ToString() == ShaderXML::SHADER_SOURCE_ELEMENT)
+         {
             ParseShaderSourceElement(element,*newShader);
+         }
          else if (elemName.ToString() == ShaderXML::PARAMETER_ELEMENT)
+         {
             ParseParameterElement(element,*newShader);
+         }
          else
+         {
             throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Foreign element found in shader XML source.", __FILE__, __LINE__);
+         }
       }
 
       if (isDefault == "yes")
+      {
          group.AddShader(*newShader,true);
+      }
       else
+      {
          group.AddShader(*newShader);
+      }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseShaderSourceElement(xercesc::DOMElement *sourceElem, ShaderProgram &shader)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderXML::ParseShaderSourceElement(xercesc::DOMElement* sourceElem, ShaderProgram& shader)
    {
       std::string type = GetElementAttribute(*sourceElem,ShaderXML::SHADER_SOURCE_ATTRIBUTE_TYPE);
 
       //The source element has one child:  The text specifing the source file.
-      xercesc::DOMNodeList *children = sourceElem->getChildNodes();
-      if (children->getLength() != 1 || children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
-         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Shader source should only have one child text element.", __FILE__, __LINE__);
+      xercesc::DOMNodeList* children = sourceElem->getChildNodes();
 
-      xercesc::DOMText *file = static_cast<xercesc::DOMText *>(children->item(0));
+      if (children->getLength() != 1 || children->item(0)->getNodeType() != xercesc::DOMNode::TEXT_NODE)
+      {
+         throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,
+            "Shader source should only have one child text element.", __FILE__, __LINE__);
+      }
+
+      xercesc::DOMText* file = static_cast<xercesc::DOMText*>(children->item(0));
 
       dtUtil::XMLStringConverter fileConverter(file->getNodeValue());
 
-      if (type == ShaderXML::SHADER_SOURCE_TYPE_VERTEX)
-         shader.AddVertexShader(fileConverter.ToString());
-      else if (type == ShaderXML::SHADER_SOURCE_TYPE_FRAGMENT)
-         shader.AddFragmentShader(fileConverter.ToString());
+	  if (type == ShaderXML::SHADER_SOURCE_TYPE_GEOMETRY)
+     {
+		  shader.AddGeometryShader(fileConverter.ToString());
+     }
+     else if (type == ShaderXML::SHADER_SOURCE_TYPE_VERTEX)
+     {
+        shader.AddVertexShader(fileConverter.ToString());
+     }
+     else if (type == ShaderXML::SHADER_SOURCE_TYPE_FRAGMENT)
+     {
+        shader.AddFragmentShader(fileConverter.ToString());
+     }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void ShaderXML::ParseParameterElement(xercesc::DOMElement *paramElement, ShaderProgram &shader)
+   /////////////////////////////////////////////////////////////////////////////
+   void ShaderXML::ParseParameterElement(xercesc::DOMElement* paramElement, ShaderProgram& shader)
    {
       std::string paramName = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_NAME);
       std::string isShared = GetElementAttribute(*paramElement,ShaderXML::PARAMETER_ATTRIBUTE_SHARED);
-      xercesc::DOMNodeList *children = paramElement->getChildNodes();
+      xercesc::DOMNodeList* children = paramElement->getChildNodes();
 
-      for (XMLSize_t i=0; i<children->getLength(); i++)
+      for (XMLSize_t i = 0; i < children->getLength(); i++)
       {
-         xercesc::DOMNode *node = children->item(i);
+         xercesc::DOMNode* node = children->item(i);
 
          if (node == NULL)
+         {
             continue;
+         }
+
          if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
+         {
             continue;
+         }
 
          //If we got here, then we have some sort of shader parameter specialization.
-         xercesc::DOMElement *typeElement = static_cast<xercesc::DOMElement *>(node);
+         xercesc::DOMElement *typeElement = static_cast<xercesc::DOMElement*>(node);
          dtCore::RefPtr<ShaderParameter> newParam = NULL;
 
          dtUtil::XMLStringConverter paramType(typeElement->getTagName());
@@ -377,20 +432,26 @@ namespace dtCore
          if (!isShared.empty())
          {
             if (isShared == "yes")
+            {
                newParam->SetShared(true);
+            }
             else if (isShared == "no")
+            {
                newParam->SetShared(false);
+            }
             else
+            {
                throw dtUtil::Exception(ShaderException::XML_PARSER_ERROR,"Invalid option for 'shared' on parameter [" +
                   newParam->GetName() + "]. Shared is optional, to override the default for this parameter type, use 'yes' or 'no'.",
                   __FILE__, __LINE__);
+            }
          }
 
          shader.AddParameter(*newParam);
       }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture1DParameter(
       xercesc::DOMElement* tex1DElem, const std::string& paramName)
    {
@@ -423,7 +484,7 @@ namespace dtCore
             continue;
          }
 
-         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement*>(node);
 
          dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
          std::string elemName = elemNameConverter.ToString();
@@ -493,7 +554,7 @@ namespace dtCore
       return static_cast<ShaderParameter *>(newParam.get());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture2DParameter(
          xercesc::DOMElement* tex2DElem, const std::string& paramName)
    {
@@ -597,7 +658,7 @@ namespace dtCore
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////////////////////
 
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTexture3DParameter(
          xercesc::DOMElement* tex3DElem, const std::string& paramName)
@@ -631,7 +692,7 @@ namespace dtCore
             continue;
          }
 
-         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement* >(node);
+         xercesc::DOMElement* texElement = static_cast<xercesc::DOMElement*>(node);
 
          dtUtil::XMLStringConverter elemNameConverter(texElement->getTagName());
          std::string elemName = elemNameConverter.ToString();
@@ -702,8 +763,7 @@ namespace dtCore
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
-
+   /////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ShaderParameter> ShaderXML::ParseTextureCubeMapParameter(
          xercesc::DOMElement* texCubeMapElem, const std::string& paramName)
    {
@@ -837,8 +897,8 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatParameter(xercesc::DOMElement *floatElem,
-         const std::string &paramName)
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatParameter(xercesc::DOMElement* floatElem,
+         const std::string& paramName)
    {
       dtCore::RefPtr<ShaderParamFloat> newParam = new ShaderParamFloat(paramName);
 
@@ -879,7 +939,7 @@ namespace dtCore
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatTimerParameter(xercesc::DOMElement *timerElem,
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseFloatTimerParameter(xercesc::DOMElement* timerElem,
       const std::string &paramName)
    {
       std::string valueString;
@@ -973,9 +1033,13 @@ namespace dtCore
       if (!valueString.empty())
       {
          if (valueString == "true")
+         {
             newParam->SetUseRealTime(true);
+         }
          else if (valueString == "false")
+         {
             newParam->SetUseRealTime(false);
+         }
          else
          {
             std::ostringstream error;
@@ -990,13 +1054,21 @@ namespace dtCore
       if (!valueString.empty())
       {
          if (valueString == ShaderParamOscillator::OscillationType::UP.GetName())
+         {
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::UP);
+         }
          else if (valueString == ShaderParamOscillator::OscillationType::DOWN.GetName())
+         {
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::DOWN);
+         }
          else if (valueString == ShaderParamOscillator::OscillationType::UPANDDOWN.GetName())
+         {
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::UPANDDOWN);
+         }
          else if (valueString == ShaderParamOscillator::OscillationType::DOWNANDUP.GetName())
+         {
             newParam->SetOscillationType(ShaderParamOscillator::OscillationType::DOWNANDUP);
+         }
          else
          {
             std::ostringstream error;
@@ -1010,9 +1082,9 @@ namespace dtCore
    }
 
 
-   ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseIntParameter(xercesc::DOMElement *intElem,
-         const std::string &paramName)
+   /////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ShaderParameter> ShaderXML::ParseIntParameter(xercesc::DOMElement* intElem,
+         const std::string& paramName)
    {
       dtCore::RefPtr<ShaderParamInt> newParam = new ShaderParamInt(paramName);
 
@@ -1029,42 +1101,59 @@ namespace dtCore
       return static_cast<ShaderParameter*>(newParam.get());
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   std::string ShaderXML::GetElementAttribute(xercesc::DOMElement &element, const std::string &attribName)
+   /////////////////////////////////////////////////////////////////////////////
+   std::string ShaderXML::GetElementAttribute(xercesc::DOMElement& element, const std::string& attribName)
    {
-      XMLCh *xmlChar = xercesc::XMLString::transcode(attribName.c_str());
+      XMLCh* xmlChar = xercesc::XMLString::transcode(attribName.c_str());
       dtUtil::XMLStringConverter converter(element.getAttribute(xmlChar));
       xercesc::XMLString::release(&xmlChar);
 
       return converter.ToString();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   const ShaderParamTexture::AddressMode *ShaderXML::GetTextureAddressMode(const std::string &mode)
+   /////////////////////////////////////////////////////////////////////////////
+   const ShaderParamTexture::AddressMode* ShaderXML::GetTextureAddressMode(const std::string& mode)
    {
       if (ShaderParamTexture::AddressMode::CLAMP == mode)
+      {
          return &ShaderParamTexture::AddressMode::CLAMP;
+      }
       else if (ShaderParamTexture::AddressMode::REPEAT == mode)
+      {
          return &ShaderParamTexture::AddressMode::REPEAT;
+      }
       else if (ShaderParamTexture::AddressMode::MIRROR == mode)
+      {
          return &ShaderParamTexture::AddressMode::MIRROR;
+      }
       else
+      {
          return NULL;
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   const ShaderParamTexture::TextureAxis *ShaderXML::GetTextureAxis(const std::string &axis)
+   const ShaderParamTexture::TextureAxis* ShaderXML::GetTextureAxis(const std::string& axis)
    {
       if (ShaderParamTexture::TextureAxis::S == axis)
+      {
          return &ShaderParamTexture::TextureAxis::S;
+      }
       else if (ShaderParamTexture::TextureAxis::T == axis)
+      {
          return &ShaderParamTexture::TextureAxis::T;
+      }
       else if (ShaderParamTexture::TextureAxis::R == axis)
+      {
          return &ShaderParamTexture::TextureAxis::R;
+      }
       else if (ShaderParamTexture::TextureAxis::Q == axis)
+      {
          return &ShaderParamTexture::TextureAxis::Q;
+      }
       else
+      {
          return NULL;
+      }
    }
-
 }
