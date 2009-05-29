@@ -22,6 +22,7 @@
 #ifndef DELTA_AI_INTERFACE_ACTOR
 #define DELTA_AI_INTERFACE_ACTOR
 
+#include <dtCore/refptr.h>
 #include <dtAI/export.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/actorproxy.h>
@@ -88,6 +89,7 @@ namespace dtAI
       * This is called from CreateActor
       */
      virtual AIPluginInterface* CreateAIInterface();
+     
 
      /**
       * Destructor
@@ -95,7 +97,7 @@ namespace dtAI
      /*virtual*/ ~AIInterfaceActorProxy();
 
    private:
-      AIPluginInterface* mAIInterface;
+      dtCore::RefPtr<AIPluginInterface> mAIInterface;
    };
 
 } // namespace dtAI

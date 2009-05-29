@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include <osg/Referenced>
+
 #include <dtAI/export.h>
 #include <dtAI/waypointinterface.h>
 #include <osg/Vec3>
@@ -36,8 +38,9 @@
 
 namespace dtAI
 {
+   class AIDebugDrawable;
 
-   class DT_AI_EXPORT AIPluginInterface
+   class DT_AI_EXPORT AIPluginInterface: public osg::Referenced
    {
       public: 
          typedef std::vector<WaypointInterface*> WaypointArray;      
@@ -137,6 +140,15 @@ namespace dtAI
          * @return whether the waypoint file was saved successfully
          */
          virtual bool SaveWaypointFile(const std::string& filename) = 0;
+
+
+         /**
+          *	This method is used for visualizing the internal data in the AI system
+          * @return A DeltaDrawable to add to your Scene, this will most likely create
+          *            one the first time this is called.
+          */
+         virtual AIDebugDrawable* GetDebugDrawable() = 0;
+
 
          /**
          *	Purges the cache, clears all pathing information
