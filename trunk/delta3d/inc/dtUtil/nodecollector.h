@@ -42,25 +42,16 @@ namespace osg
 namespace osgSim
 {
    class DOFTransform;
+   class MultiSwitch;
 }
 /// @endcond
 
 
 namespace dtUtil
 {
-   /** NodeCollector is used to gather osg Group
-    * nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
-    * and Geode nodes (which have Drawable objects and Material objects).  It 
-    * stores the different nodes into corresponding maps which may than
-    * be retrieved by the user.  In the case of Geode nodes it creates maps
-    * for Drawable objects and Material Objects which can be retrieved.
-    *
-    * For example, to find the osg::Switch named "switch1":
-    * @code
-    * dtUtil::NodeCollector *collector = new dtUtil::NodeCollector(modelNode, dtUtil::NodeCollector::SwitchFlag);
-    * osg::Switch* sw = collector->GetSwitch("switch1");
-    * @endcode
-    */
+   //Create the NodeCollector Class for dtCore.  It is used to gather osg Group nodes, DOFTransform nodes, MatrixTransform nodes, Switch Nodes
+   //and Geode nodes (which have Drawable objects and Material objects).  It stores the different nodes into corresponding maps which may than
+   //be retrieved by the user.  In the case of Geode nodes it creates maps for Drawable objects and Material Objects which can be retrieved.
    class DT_UTIL_EXPORT NodeCollector : public osg::Referenced
    {
    public:
@@ -70,21 +61,23 @@ namespace dtUtil
       typedef std::map<std::string, dtCore::RefPtr <osgSim::DOFTransform> >   TransformNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osg::Switch> >            SwitchNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr <osgSim::MultiSwitch> >    MultiSwitchNodeMap;
 
       //Type Definitions for the two different geode node maps
       typedef std::map<std::string, dtCore::RefPtr<osg::Geode> >     GeodeNodeMap;
 
-      ///Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
+      //Type Definition that is used to declare flags that allow the user to request searches for different types of nodes or geode nodes.
       typedef unsigned NodeFlag;
 
-      ///NodeFlags that represent the four different types of nodes that can be searched for
+      //NodeFlags that represent the four different types of nodes that can be searched for
       static const NodeFlag GroupFlag;
       static const NodeFlag DOFTransformFlag;
       static const NodeFlag MatrixTransformFlag;
       static const NodeFlag SwitchFlag;
+      static const NodeFlag MultiSwitchFlag;
       static const NodeFlag GeodeFlag;
 
-      ///NodeFlag that when defined will represent all kinds of nodes and Geode nodes
+      //NodeFlag that when defined will represent all kinds of nodes and Geode nodes
       static const NodeFlag AllNodeTypes;
 
       /**
@@ -99,7 +92,7 @@ namespace dtUtil
        * @param mask The different types of nodes you want to collect off of the loaded node.
        * @param nodeNameIgnored The name of a node that you do not want to collect.
        */
-      NodeCollector(osg::Node* nodeToLoad, NodeCollector::NodeFlag mask, const std::string& nodeNameIgnored = "");
+      NodeCollector(osg::Node* nodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNameIgnored = "");
 
       /**
        * Function that when called will automatically generate the node maps or geode maps that you request
@@ -108,7 +101,7 @@ namespace dtUtil
        * @param nodeNameIgnored The name of a node that you do not want to collect.
        * @note This function was originally intended to be used in conjunction with the blank constructor or after a call of the ClearAllNodes function
        */
-      void CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string& nodeNamesIgnored = "");
+      void CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNamesIgnored = "");
 
       /**
        * Function that is defined to clear all the maps of their contents.
@@ -148,6 +141,13 @@ namespace dtUtil
       const osg::Switch* GetSwitch(const std::string& name) const;
 
       /**
+      * Function that is used to request a CONST pointer to a MultiSwitch Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+      */
+      const osgSim::MultiSwitch* GetMultiSwitch(const std::string& name) const;
+
+      /**
        * Function that is used to request a CONST pointer to a Geode Node
        * @param name A String that represents the name of the node you are looking for
        * @return A CONST pointer to the node you were looking for or NULL if the node was not found
@@ -185,6 +185,13 @@ namespace dtUtil
        * @return A pointer to the node you were looking for or NULL if the node was not found
        */
       osg::Switch* GetSwitch(const std::string& name);
+
+      /**
+      * Function that is used to request a pointer to a MultiSwitch Node
+      * @param name A String that represents the name of the node you are looking for
+      * @return A pointer to the node you were looking for or NULL if the node was not found
+      */
+      osgSim::MultiSwitch* GetMultiSwitch(const std::string& name);
 
       /**
        * Function that is used to request a CONST pointer to a Geode Node
@@ -251,6 +258,19 @@ namespace dtUtil
       void RemoveSwitch(const std::string& name);
 
       /**
+      * Function that is used to add a MultiSwitch Node to the MultiSwitch Node map
+      * @param name A String that represents the name of the Node
+      * @param node The MultiSwitch Node that you wish to add to the map
+      */
+      void AddMultiSwitch(const std::string& name, osgSim::MultiSwitch& node);
+
+      /**
+      * Function that is used to remove a MultiSwitch Node to the MultiSwitch Node map
+      * @param name A String that represents the name of the Node
+      */
+      void RemoveMultiSwitch(const std::string& name);
+
+      /**
        * Function that is used to add a Geode Node to the Geode Node map
        * @param name A String that represents the name of the Node
        * @param node The Geode Node that you wish to add to the map
@@ -293,6 +313,12 @@ namespace dtUtil
       const NodeCollector::SwitchNodeMap& GetSwitchNodeMap() const;
 
       /**
+      * Function that returns a CONST MultiSwitch map
+      * @return A map with the names of MultiSwitch Nodes and osg MultiSwitch Nodes
+      */
+      const NodeCollector::MultiSwitchNodeMap& GetMultiSwitchNodeMap() const;
+
+      /**
        * Function that returns CONST a Geode map
        * @return A map with the names of Geode Nodes and osg Geode Nodes
        */
@@ -310,7 +336,7 @@ namespace dtUtil
 
       /**
        * Function that returns a Transform map
-       * @return A map with the names of Transform Nodes and osg Transform Nodes
+       * @return A map with the names of Transform Nodes and osg Transform Nodesa
        */
       NodeCollector::TransformNodeMap& GetTransformNodeMap();
 
@@ -325,6 +351,12 @@ namespace dtUtil
        * @return A map with the names of Switch Nodes and osg Switch Nodes
        */
       NodeCollector::SwitchNodeMap& GetSwitchNodeMap();
+
+      /**
+      * Function that returns a MultiSwitch map
+      * @return A map with the names of MultiSwitch Nodes and osg MultiSwitch Nodes
+      */
+      NodeCollector::MultiSwitchNodeMap& GetMultiSwitchNodeMap();
 
       /**
        * Function that returns a Geode map
@@ -347,6 +379,7 @@ namespace dtUtil
       NodeCollector::TransformNodeMap       mTranformNodeMap;
       NodeCollector::MatrixTransformNodeMap mMatrixTransformNodeMap;
       NodeCollector::SwitchNodeMap          mSwitchNodeMap;
+      NodeCollector::MultiSwitchNodeMap     mMultiSwitchNodeMap;
       NodeCollector::GeodeNodeMap           mGeodeNodeMap;
 
    };

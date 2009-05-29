@@ -29,6 +29,7 @@
 #include <osg/MatrixTransform>
 #include <osgSim/DOFTransform>
 #include <osg/Switch>
+#include <osgSim/MultiSwitch>
 #include <osg/Drawable>
 #include <osg/Geode>
 
@@ -40,13 +41,15 @@ namespace dtUtil
    const NodeCollector::NodeFlag NodeCollector::DOFTransformFlag = dtUtil::Bits::Add(0,2);
    const NodeCollector::NodeFlag NodeCollector::MatrixTransformFlag = dtUtil::Bits::Add(0,4);
    const NodeCollector::NodeFlag NodeCollector::SwitchFlag = dtUtil::Bits::Add(0,8);
-   const NodeCollector::NodeFlag NodeCollector::GeodeFlag = dtUtil::Bits::Add(0,16);
+   const NodeCollector::NodeFlag NodeCollector::MultiSwitchFlag = dtUtil::Bits::Add(0,16);
+   const NodeCollector::NodeFlag NodeCollector::GeodeFlag = dtUtil::Bits::Add(0,32);
 
    //A Flag that will return all nodes and Drawable / Material objects that it finds
    const NodeCollector::NodeFlag NodeCollector::AllNodeTypes = (NodeCollector::GroupFlag | 
                                                                 NodeCollector::DOFTransformFlag | 
                                                                 NodeCollector::MatrixTransformFlag | 
                                                                 NodeCollector::SwitchFlag |
+                                                                NodeCollector::MultiSwitchFlag |
                                                                 NodeCollector::GeodeFlag);
   
    //GroupVisitor Class
@@ -169,7 +172,25 @@ namespace dtUtil
          //Traverses through the Switch Nodes Children
          traverse(pSwitch);
       }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+      /**
+      * Function that Checks to see if the MultiSwitch Node is a node that we wish to collect and than traverses down the
+      * to any of the MultiSwitch Nodes children.
+      * @param MultiSwitch A MultiSwitch Node Object that will be checked
+      */
+      virtual void apply(osgSim::MultiSwitch& pMultiSwitch)
+      { 
+        //Check if we should add this node using the flag
+        if (dtUtil::Bits::Has(mNodeMask, NodeCollector::MultiSwitchFlag) && (pMultiSwitch.getName() != mNodeNamesIgnored))
+        {
+          //Add MultiSwitch to node collector's std::map
+          mNodeManager->AddMultiSwitch(pMultiSwitch.getName(), pMultiSwitch);
+          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added MultiSwitch Node: " + pMultiSwitch.getName());
+        }
+        //Traverses through the MultiSwitch Nodes Children
+        traverse(pMultiSwitch);
+      }
    private:
       //Manages the nodes that we wish to collect
       NodeCollector* mNodeManager;
@@ -235,6 +256,7 @@ namespace dtUtil
       mTranformNodeMap.clear();
       mMatrixTransformNodeMap.clear();
       mSwitchNodeMap.clear();
+      mMultiSwitchNodeMap.clear();
       mGeodeNodeMap.clear();
    }
 
@@ -359,6 +381,30 @@ namespace dtUtil
       }
    }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Function that is used to add a MultiSwitch Node to the MultiSwitch Node map
+   void NodeCollector::AddMultiSwitch(const std::string & key, osgSim::MultiSwitch & data)
+   {
+     if( !CollectorUtil::AddNode(key, & data, mMultiSwitchNodeMap) )
+     {
+       dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+       logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+     }
+   }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // Function that is used to remove a MultiSwitch Node from the MultiSwitch Node map
+   void NodeCollector::RemoveMultiSwitch( const std::string& key )
+   {
+     if( !CollectorUtil::RemoveNode(key, mMultiSwitchNodeMap) )
+     {
+       dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+       logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove multi switch node \"" + key + "\" because it does not exist");
+     }
+   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////CONST RETURNS///////////////////////////////////////////////////////
@@ -402,7 +448,16 @@ namespace dtUtil
    {
       return CollectorUtil::FindNodePointer(nodeName, mSwitchNodeMap);
    }
-   
+
+
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Function that is used to request a CONST pointer to a MultiSwitch Node
+   const osgSim::MultiSwitch* NodeCollector::GetMultiSwitch(const std::string& nodeName) const
+   {
+     return CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
+   }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////NON CONST RETURNS/////////////////////////////////////////////////////
 ///////////////////////////////////ADDED SUPPORT FOR DRAWABLES AND MATERIALS/////////////////////////////////////////
@@ -447,6 +502,14 @@ namespace dtUtil
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Function that is used to request a pointer to a MultiSwitch Node
+   osgSim::MultiSwitch* NodeCollector::GetMultiSwitch(const std::string& nodeName)
+   {
+     return CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
+   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////CONST RETURNS///////////////////////////////////////////////////////
 //////////////////////////////////////////////Return the Node Maps///////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -479,6 +542,14 @@ namespace dtUtil
    const NodeCollector::SwitchNodeMap& NodeCollector::GetSwitchNodeMap() const
    {
       return mSwitchNodeMap;
+   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Function that returns a CONST MultiSwitch map 
+   const NodeCollector::MultiSwitchNodeMap& NodeCollector::GetMultiSwitchNodeMap() const
+   {
+     return mMultiSwitchNodeMap;
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -522,6 +593,14 @@ namespace dtUtil
    NodeCollector::SwitchNodeMap& NodeCollector::GetSwitchNodeMap()
    {
       return mSwitchNodeMap;
+   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Function that returns a MultiSwitch map 
+   NodeCollector::MultiSwitchNodeMap& NodeCollector::GetMultiSwitchNodeMap()
+   {
+     return mMultiSwitchNodeMap;
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
