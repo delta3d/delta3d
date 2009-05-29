@@ -29,10 +29,18 @@
 #include <osg/Geometry>
 #include <osg/Group>
 
+#include <osg/Point>
+
 #include <osgText/Text>
 
 namespace dtAI
 {
+   float AIDebugDrawable::DEFAULT_WAYPOINT_SIZE = 10.0f;
+   osg::Vec4 AIDebugDrawable::DEFAULT_WAYPOINT_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
+   dtUtil::RefString AIDebugDrawable::DEFAULT_FONT("Arial.ttf");
+   float AIDebugDrawable::DEFAULT_FONT_SIZE = 0.5f;
+   osg::Vec3 AIDebugDrawable::DEFAULT_FONT_OFFSET_FROM_WAYPOINT(0.0f, 0.0f, 0.3f);
+   osg::Vec4 AIDebugDrawable::DEFAULT_FONT_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
    //////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable()
@@ -61,6 +69,12 @@ namespace dtAI
       mNode->addChild(mGeode.get());
       mNode->addChild(mGeodeIDs.get());
       mGeode->addDrawable(mGeometry.get());
+
+      //set the default color of the waypoints here so a derivative class can override it
+      osg::Vec4Array *colors = new osg::Vec4Array(1);
+      (*colors)[0] = DEFAULT_WAYPOINT_COLOR;
+      mGeometry->setColorArray(colors);
+      mGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -200,8 +214,8 @@ namespace dtAI
       //setting it back to zero will ensure any user data does not get removed when this function is called again
       mGeometry->setPrimitiveSet(0, ps);
 
-      //TODO- WHERE THE HECK DO I DO THIS IN OSG?????
-      glPointSize(10.0f);
+      osg::Point* p = new osg::Point(DEFAULT_WAYPOINT_SIZE);
+      mGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -212,11 +226,10 @@ namespace dtAI
       text->setAlignment(osgText::TextBase::CENTER_CENTER);
       text->setAxisAlignment(osgText::TextBase::SCREEN);
       text->setAutoRotateToScreen(true);
-      text->setFont("Arial.ttf");
-      text->setCharacterSize(0.5f);
-      text->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
-      text->setBackdropColor(osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
-      text->setPosition(wp.GetPosition() + osg::Vec3(0.0f, 0.0f, 0.3f));
+      text->setFont(DEFAULT_FONT);
+      text->setCharacterSize(DEFAULT_FONT_SIZE);
+      text->setColor(DEFAULT_FONT_COLOR);
+      text->setPosition(wp.GetPosition() + DEFAULT_FONT_OFFSET_FROM_WAYPOINT);
       text->setText(dtUtil::ToString(wp.GetID()));
       mGeodeIDs->addDrawable(text);
    }
