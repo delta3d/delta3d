@@ -218,10 +218,10 @@ namespace dtAudio
       static void Destroy();
 
       /// returns the OpenAL sound device the AudioManager is using
-      ALCdevice* GetDevice() {return mDevice;}
+      ALCdevice* GetDevice() { return mDevice; }
 
       /// returns the OpenAL context the AudioManager is using
-      ALCcontext* GetContext() {return mContext;}
+      ALCcontext* GetContext() { return mContext; }
 
       /** This is an advanced operation that normally isn't necessary! Typically
        *  the default device and context are sufficient.  If you do use this

@@ -73,6 +73,7 @@ namespace dtCore
       class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
       {
          DECLARE_ENUM(CollisionGeomType);
+
       public:
          static CollisionGeomType NONE;
          static CollisionGeomType SPHERE;
@@ -95,7 +96,7 @@ namespace dtCore
       {
          REL_CS, ///< The Transform coordinate system is relative to the parent
          ABS_CS  ///< The Transform coordinate system is absolute
-      } ;
+      };
 
       ///Used to identify the collision geometry node if RenderCollisionGeometry is
       ///set to true.
@@ -113,14 +114,12 @@ namespace dtCore
       Transformable(TransformableNode& node, const std::string &name = "Transformable");
 
    protected:
-
       ///DEPRECATED 1/13/09.  Method is not required anymore
       DEPRECATE_FUNC void ReplaceMatrixNode(TransformableNode* matrixTransform);
 
       virtual ~Transformable();
 
    public:
-
       /**
        * Add a child to this Transformable.  This will allow the child to be
        * repositioned whenever the parent moves.  An optional offset may be applied to
@@ -457,9 +456,9 @@ namespace dtCore
       const ODEGeomWrap* GetGeomWrapper() const;
 
       /**
-      * Get the internal ODE Geom wrapper object.
-      * @return The ODE Geom collision wrapper
-      */
+       * Get the internal ODE Geom wrapper object.
+       * @return The ODE Geom collision wrapper
+       */
       ODEGeomWrap* GetGeomWrapper();
 
    private:
@@ -468,7 +467,7 @@ namespace dtCore
 
       ///little util to remove any of the rendered collision geometry
       void RemoveRenderedCollisionGeometry();
-
    };
 }
+
 #endif // DELTA_TRANSFORMABLE

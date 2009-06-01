@@ -577,11 +577,10 @@ namespace dtGame
                FindActorsByName(name, toFill);
                if (!toFill.empty())
                {
-                  std::vector<dtDAL::ActorProxy*>::iterator i, iend;
-                  i = toFill.begin();
-                  iend = toFill.end();
                   // Iterate until we find a proxy of the proper type.
-                  for (;i != iend; ++i)
+                  for (std::vector<dtDAL::ActorProxy*>::iterator i = toFill.begin();
+                     i != toFill.end();
+                     ++i)
                   {
                      proxy = dynamic_cast<ProxyType*>(*i);
 

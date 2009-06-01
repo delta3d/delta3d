@@ -128,8 +128,8 @@ namespace dtGUI
       void ShutdownGUI();
 
       ///required by DeltaDrawable
-      osg::Node* GetOSGNode(){return mNode.get();}
-      const osg::Node* GetOSGNode() const{return mNode.get();}
+      osg::Node* GetOSGNode() { return mNode.get(); }
+      const osg::Node* GetOSGNode() const { return mNode.get(); }
 
       void SetOSGNode(osg::Node* pNode) { mNode = pNode; }
 
@@ -199,6 +199,6 @@ namespace dtGUI
       dtCore::RefPtr<CEGUIKeyboardListener> mKeyboardListener;
       dtCore::RefPtr<CEGUIMouseListener> mMouseListener;
    };
-} //namespace dtGUI
+} // namespace dtGUI
 
 #endif // DELTA_CEUIDRAWABLE

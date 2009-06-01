@@ -49,7 +49,7 @@ public:
    unsigned int GetTextureID(osg::GraphicsContext*);
 
    ///if set to true the CEGUIREnderer will flip y-coordinates
-   inline void SetFlipHorizontal(bool bX) { m_bFlipHorizontal=bX; }
+   inline void SetFlipHorizontal(bool bX) { m_bFlipHorizontal = bX; }
 
    ///if true the CEGUIREnderer will flip y-coordinates
    inline bool IsFlippedHorizontal() const { return m_bFlipHorizontal; }

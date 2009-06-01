@@ -240,7 +240,7 @@ namespace dtCore
          *
          * @param[in]  sensitivity  The new sensitivity of the mouse.
          */
-         void SetMouseSensitivity(float sensitivity) {mMouseSensitivity = sensitivity;}
+         void SetMouseSensitivity(float sensitivity) { mMouseSensitivity = sensitivity; }
 
          /**
          * Gets the current mouse sensitivity.
@@ -255,16 +255,16 @@ namespace dtCore
          * @param[in]  maxLimit  The max limit.
          * @param[in]  minLimit  The min limit.
          */
-         void SetElevationMinLimit(float minLimit) {mMinElevationLimit = minLimit;}
-         void SetElevationMaxLimit(float maxLimit) {mMaxElevationLimit = maxLimit;}
+         void SetElevationMinLimit(float minLimit) { mMinElevationLimit = minLimit; }
+         void SetElevationMaxLimit(float maxLimit) { mMaxElevationLimit = maxLimit; }
 
          /**
          * Gets the min and max elevation limits for the motion model.
          *
          * @return     The min or max limit.
          */
-         float GetElevationMinLimit() {return mMinElevationLimit;}
-         float GetElevationMaxLimit() {return mMaxElevationLimit;}
+         float GetElevationMinLimit() { return mMinElevationLimit; }
+         float GetElevationMaxLimit() { return mMaxElevationLimit; }
 
       private:
       

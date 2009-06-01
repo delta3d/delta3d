@@ -39,7 +39,7 @@ namespace dtGUI
 
          CEGUIRenderer(CEGUI::uint max_quads, CEGUI::ImageCodec* codec = 0);
 
-         CEGUIRenderer(CEGUI::uint max_quads,int width, int height, CEGUI::ImageCodec* codec  = 0);
+         CEGUIRenderer(CEGUI::uint max_quads, int width, int height, CEGUI::ImageCodec* codec = 0);
 
          virtual ~CEGUIRenderer(void);
 
@@ -51,11 +51,11 @@ namespace dtGUI
 
          virtual void setQueueingEnabled(bool setting) {m_queueing = setting;}
 
-         virtual   CEGUI::Texture*   createTexture(void);
+         virtual   CEGUI::Texture* createTexture(void);
 
-         virtual   CEGUI::Texture*   createTexture(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
+         virtual   CEGUI::Texture* createTexture(const CEGUI::String& filename, const CEGUI::String& resourceGroup);
 
-         virtual   CEGUI::Texture*   createTexture(float size);
+         virtual   CEGUI::Texture* createTexture(float size);
 
          virtual   void destroyTexture(CEGUI::Texture* texture);
 
