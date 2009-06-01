@@ -314,23 +314,42 @@ void HLAComponentTests::BetweenTestSetUp()
    try
    {
       mClassHandle1 = rtiamb->getObjectClassHandle(
-         "BaseEntity.PhysicalEntity.Platform.GroundVehicle");
+                     "BaseEntity.PhysicalEntity.Platform.GroundVehicle");
       mObjectHandle1 = rtiamb->registerObjectInstance(mClassHandle1,
-                                                     "TestObject1");
+                                                      "TestObject1");
+   }
+   catch (const RTI::Exception &e)
+   {      
+      std::ostringstream ss; 
+      ss << e << " '" << rtiamb->getObjectClassName(mClassHandle1) << "'";
+      CPPUNIT_FAIL(ss.str());
+   }
+
+   try
+   {
       mClassHandle2 = rtiamb->getObjectClassHandle(
-         "BaseEntity.PhysicalEntity.Platform.Aircraft");
+                      "BaseEntity.PhysicalEntity.Platform.Aircraft");
       mObjectHandle2 = rtiamb->registerObjectInstance(mClassHandle2,
                                                      "TestObject2");
-
-      mClassHandle3 = rtiamb->getObjectClassHandle(
-         "BaseEntity.PhysicalEntity.CulturalFeature");
-      mObjectHandle3 = rtiamb->registerObjectInstance(mClassHandle3,
-                                                     "TestObject3");
    }
    catch (const RTI::Exception &e)
    {
       std::ostringstream ss; 
-      ss << e;
+      ss << e << " '" << rtiamb->getObjectClassName(mClassHandle2) << "'";
+      CPPUNIT_FAIL(ss.str());
+   }
+
+   try
+   {
+      mClassHandle3 = rtiamb->getObjectClassHandle(
+                      "BaseEntity.PhysicalEntity.CulturalFeature");
+      mObjectHandle3 = rtiamb->registerObjectInstance(mClassHandle3,
+                                                      "TestObject3");
+   }
+   catch (const RTI::Exception &e)
+   {
+      std::ostringstream ss; 
+      ss << e << " '" << rtiamb->getObjectClassName(mClassHandle3) << "'";
       CPPUNIT_FAIL(ss.str());
    }
 
