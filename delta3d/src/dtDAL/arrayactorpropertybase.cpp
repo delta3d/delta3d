@@ -1,6 +1,7 @@
 #include <dtDAL/arrayactorpropertybase.h>
 #include <dtUtil/log.h>
 #include <dtUtil/macros.h>
+#include <dtUtil/stringutils.h>
 #include <dtDAL/datatype.h>
 
 using namespace dtDAL;
@@ -45,7 +46,7 @@ bool dtDAL::ArrayActorPropertyBase::FromString(const std::string& value)
    // First read the total size of the array.
    std::string token = TakeToken(data);
 
-   int arraySize = atoi(token.c_str());
+   const int arraySize = dtUtil::ToType<int>(token);
    for (int index = 0; index < arraySize; index++)
    {
       SetIndex(index);
