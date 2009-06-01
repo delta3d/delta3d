@@ -310,16 +310,16 @@ namespace dtActors
          virtual bool IsPlaceable() const { return false; };
 
          /**
-         * This function queries the proxy with any properties not
-         * found in the property list. If a property was previously
-         * removed from the proxy, but is still important to load,
-         * then this function should return a property of
-         * the appropriate type to be used when loading the map.
-         *
-         * @param[in]  name  The name of the property queried for.
-         *
-         * @return           A property, or NULL if none is needed.
-         */
+          * This function queries the proxy with any properties not
+          * found in the property list. If a property was previously
+          * removed from the proxy, but is still important to load,
+          * then this function should return a property of
+          * the appropriate type to be used when loading the map.
+          *
+          * @param[in]  name  The name of the property queried for.
+          *
+          * @return           A property, or NULL if none is needed.
+          */
          virtual dtCore::RefPtr<dtDAL::ActorProperty> GetDeprecatedProperty(const std::string& name);
 
          /**
@@ -407,11 +407,11 @@ namespace dtActors
          void AddSubTask(TaskActorProxy &subTask);
 
          /**
-         * Adds a new sub task to this task.  If the subtask is already a subtask
-         * of a different parent, the subtask is reparented and its old parent task
-         * is notified.
-         * @param id  The id of the task to add as a subtask to this one.
-         */
+          * Adds a new sub task to this task.  If the subtask is already a subtask
+          * of a different parent, the subtask is reparented and its old parent task
+          * is notified.
+          * @param id  The id of the task to add as a subtask to this one.
+          */
          void AddSubTask(dtCore::UniqueId id);
 
          /**
@@ -424,21 +424,21 @@ namespace dtActors
           * Removes an existing task from this task's list of children.
           * @param name The name of the task to remove.
           */
-         void RemoveSubTask(const std::string &name);
+         void RemoveSubTask(const std::string& name);
 
          /**
           * Searches this task's list of sub tasks for the specified child.
           * @param name The name of the child task to find.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy* FindSubTask(const std::string &name);
+         TaskActorProxy* FindSubTask(const std::string& name);
 
          /**
           * Searches this task's list of sub tasks for the specified child.
           * @param id The unique id of the task to search for.
           * @return The requested proxy or NULL if it could not be found.
           */
-         TaskActorProxy* FindSubTask(const dtCore::UniqueId &id);
+         TaskActorProxy* FindSubTask(const dtCore::UniqueId& id);
 
          ///**
          // * @return A const list of sub tasks owned by this task.
@@ -449,8 +449,8 @@ namespace dtActors
          //}
 
          /**
-         * Gets the proxy for the given Id
-         */
+          * Gets the proxy for the given Id
+          */
          TaskActorProxy* GetProxyById(dtCore::UniqueId id) const;
 
          /**
@@ -515,7 +515,6 @@ namespace dtActors
          }
 
       protected:
-
          /**
           * Sets the group parameter to populate the list of subtasks.
           * @param subTasks the group of tasks.  It should contain NamedActorParameters with the ids of all the subtask proxies.
@@ -548,8 +547,8 @@ namespace dtActors
          virtual void OnEnteredWorld();
 
          /**
-         * Called when the map has been loaded.
-         */
+          * Called when the map has been loaded.
+          */
          void OnMapLoaded(const dtGame::Message& msg);
 
          /**
@@ -559,21 +558,20 @@ namespace dtActors
          void SetParentTaskProxy(TaskActorProxy* parent) { mParentTaskProxy = parent; }
 
          /**
-         * Set and Get functors for the Task Actor property.
-         */
+          * Set and Get functors for the Task Actor property.
+          */
          void SetSubTask(dtCore::UniqueId value);
          dtCore::UniqueId GetSubTask();
 
          /**
-         * Array actor property functors.
-         */
+          * Array actor property functors.
+          */
          void TaskArraySetIndex(int index);
          dtCore::UniqueId TaskArrayGetDefault();
          std::vector<dtCore::UniqueId> TaskArrayGetValue();
          void TaskArraySetValue(const std::vector<dtCore::UniqueId>& value);
 
       private:
-
          // Parent task if this task is a subtask of another.
          TaskActorProxy* mParentTaskProxy;
 
@@ -583,6 +581,6 @@ namespace dtActors
          int                                          mSubTaskIndex;
    };
 
-}
+} // namespace dtActors
 
-#endif
+#endif // DELTA_TASKACTOR

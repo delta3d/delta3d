@@ -62,7 +62,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Base)
 
       public:
-
          ///Data that gets passed through SendMessage
          struct DT_CORE_EXPORT MessageData
          {
@@ -79,14 +78,12 @@ namespace dtCore
          Base(const std::string& name = "base");
 
       protected:
-
          /**
           * Destructor.
           */
          virtual ~Base();
 
       public:
-
          /**
           * Sets the name of this instance.
           *
@@ -137,7 +134,6 @@ namespace dtCore
          void SendMessage(const std::string& message = "", void* data = 0);
 
       private:
-
          ///< The name of this instance.
          dtUtil::RefString mName;
 
@@ -146,6 +142,6 @@ namespace dtCore
 
          UniqueId mId;
    };
-}
+} // namespace dtCore
 
 #endif // DELTA_BASE

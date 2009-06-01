@@ -29,7 +29,7 @@
 namespace dtCore
 {
    /// Set the list of data file paths
-   DT_CORE_EXPORT void SetDataFilePathList( const std::string& pathList );
+   DT_CORE_EXPORT void SetDataFilePathList(const std::string& pathList);
 
    /// Get the list of data file paths
    DT_CORE_EXPORT std::string GetDataFilePathList();
@@ -56,7 +56,7 @@ namespace dtCore
     *  to the current Delta3D data path list.
     * @return The full path to the file requested or empty string if it's not found. 
     */
-   DT_CORE_EXPORT std::string FindFileInPathList(const std::string &fileName);
+   DT_CORE_EXPORT std::string FindFileInPathList(const std::string& fileName);
 
 
 }

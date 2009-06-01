@@ -168,7 +168,7 @@ namespace dtGame
          /**
           * Returns the last received LogStatus.  No Set, since only this object should set it.
           */
-         const LogStatus &GetLastKnownStatus() { return mLastKnownStatus; }
+         const LogStatus& GetLastKnownStatus() { return mLastKnownStatus; }
 
          /**
           * Gets the list of logs cached since the last query from the server logger component.
