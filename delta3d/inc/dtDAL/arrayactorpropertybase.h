@@ -30,15 +30,34 @@
 namespace dtDAL
 {
    /**
-    * @brief An ActorProperty that is an array of other ActorProperty.
+    * @brief An ActorProperty that acts like an array of values.
     *
-    * This actor property provides a dynamic array of the property type associated
-    * with it.  The ArrayActorProperty has a current size, minimum size, and 
+    * This ActorProperty provides an interface to an array of values.  The array
+    * is of the type handled by the ActorProperty returned by GetArrayProperty().
+    * The ArrayActorProperty has a current size, minimum size, and 
     * maximum size.  Use GetArraySize(), GetMinArraySize(), GetMaxArraySize() to
     * query.  
     * 
-    * To operate on a particular ActorProperty stored in the array, first set the
-    * index using SetIndex(), then access the ActorProperty by calling GetArrayProperty().
+    * To operate on a value stored in the array, first set the
+    * index using SetIndex(), then use the ActorProperty returned from GetArrayProperty()
+    * to get/set the value of that particular index.
+    *
+    * @note The ActorProperty returned from GetArrayProperty() and the number of 
+    * elements contained in the array, are not counted as ActorProperties in the
+    * PropertyContainer which holds this array ArrayActorPropertyBase.
+    * 
+    * For example, to sum up the values of an ArrayActorProperty which operates
+    * on IntActorProperty:
+    * @code
+    *  const IntActorProperty *accessorProperty = 
+    *              static_cast<IntActorProperty*>(myArrayProperty->GetArrayProperty());
+    *  int sum = 0;
+    *  for (int i=0; i<myArrayProperty->GetArraySize(); i++)
+    *  {
+    *      myArrayProperty->SetIndex(i);
+    *      sum += accessorProperty->GetValue();
+    *  }
+    * @endcode
     */
    class DT_DAL_EXPORT ArrayActorPropertyBase : public ActorProperty
    {
@@ -99,14 +118,14 @@ namespace dtDAL
       virtual void CopyFrom(const ActorProperty& otherProp);
 
       /**
-      * This gets the ActorProperty used in this array, indexed by the last
-      * call to SetIndex().
+      * This gets the ActorProperty used to access the values in this array,
+      * indexed by the last call to SetIndex().
       */
       virtual ActorProperty* GetArrayProperty();
 
       /**
-      * This gets the const ActorProperty used in this array, indexed by the last
-      * call to SetIndex().
+      * This gets the const ActorProperty used to access the values in this array,
+      * indexed by the last call to SetIndex().
       */
       virtual const ActorProperty* GetArrayProperty() const;
 
@@ -133,8 +152,9 @@ namespace dtDAL
       virtual int GetArraySize() const;
 
       /**
-      * Sets the current active index, indicating which of the stored
-      * ActorProperty is being referenced. [0..GetArraySize()-1]
+      * Sets the current active index, indicating which of the values
+      * in the array will be accessed. [0..GetArraySize()-1]
+      * @see GetArrayProperty()
       */
       virtual void SetIndex(int index) const;
 
