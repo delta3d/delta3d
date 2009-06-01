@@ -7,6 +7,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
 
 #include <osg/Math>
 #include <osg/Vec3>
@@ -167,8 +168,6 @@ osg::Vec2 STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates(osg::Vec3 ob
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)
 {
-   //dtCore::ObjectMotionModel::OnTranslate(delta);
-
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
       dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
@@ -185,8 +184,6 @@ void STAGEObjectMotionModel::OnTranslate(osg::Vec3 delta)
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
 {
-   //dtCore::ObjectMotionModel::OnRotate(delta, axis);
-
    osg::Vec3 center;
    dtCore::Transformable* target = ObjectMotionModel::GetTarget();
    if (target)
@@ -229,19 +226,35 @@ void STAGEObjectMotionModel::OnRotate(float delta, osg::Vec3 axis)
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnScale(osg::Vec3 delta)
 {
-   //dtCore::ObjectMotionModel::OnScale(delta);
-
    for (int subIndex = 0; subIndex < GetNumTargets(); subIndex++)
    {
       dtDAL::TransformableActorProxy* targetProxy = GetTarget(subIndex);
 
       if (targetProxy)
       {
-         dtCore::Transformable* target = NULL;
-         targetProxy->GetActor(target);
+         dtDAL::ActorProperty* prop = targetProxy->GetProperty("Scale");
+         dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
 
-         if (target)
+         if (scaleProp)
          {
+            osg::Vec3 oldScale = scaleProp->GetValue();
+            osg::Vec3 newScale = oldScale + delta;
+
+            // It causes problems when the scale is negative.
+            if (newScale.x() < 0.0f)
+            {
+               newScale.x() = 0.0f;
+            }
+            if (newScale.y() < 0.0f)
+            {
+               newScale.y() = 0.0f;
+            }
+            if (newScale.z() < 0.0f)
+            {
+               newScale.z() = 0.0f;
+            }
+
+            scaleProp->SetValue(newScale);
          }
       }
    }

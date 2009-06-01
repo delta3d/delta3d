@@ -45,9 +45,11 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mSnap(false)
    , mOriginAngle(0.0f)
    , mAutoScale(true)
+   , mAllowScaleGizmo(false)
 {
    mSnapRotation = osg::DegreesToRadians(45.0f);
    mSnapTranslation = 1;
+   mSnapScale = 1;
 
    RegisterInstance(this);
 
@@ -132,6 +134,45 @@ void ObjectMotionModel::SetEnabled(bool enabled)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetScaleEnabled(bool enabled)
+{
+   if (mAllowScaleGizmo != enabled)
+   {
+      mAllowScaleGizmo = enabled;
+
+      // Only allow the scale gizmos if we are in local space.
+      if (mCoordinateSpace == WORLD_SPACE)
+      {
+         enabled = false;
+      }
+
+      if (mAllowScaleGizmo)
+      {
+         mTargetTransform->AddChild(mScaleTransform.get());
+      }
+      else
+      {
+         mTargetTransform->RemoveChild(mScaleTransform.get());
+      }
+
+      if (enabled)
+      {
+         for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
+         {
+            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+         }
+      }
+      else
+      {
+         for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
+         {
+            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+         }
+      }
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::SetScale(float scale)
 {
    mScale = scale;
@@ -182,7 +223,42 @@ ObjectMotionModel::CoordinateSpace ObjectMotionModel::GetCoordinateSpace(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
 {
-   mCoordinateSpace = coordinateSpace;
+   if (mCoordinateSpace != coordinateSpace)
+   {
+      mCoordinateSpace = coordinateSpace;
+
+      bool enabled = mAllowScaleGizmo;
+
+      // Only allow the scale gizmos if we are in local space.
+      if (mCoordinateSpace == WORLD_SPACE)
+      {
+         enabled = false;
+      }
+
+      if (mAllowScaleGizmo)
+      {
+         mTargetTransform->AddChild(mScaleTransform.get());
+      }
+      else
+      {
+         mTargetTransform->RemoveChild(mScaleTransform.get());
+      }
+
+      if (enabled)
+      {
+         for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
+         {
+            mTargetTransform->AddChild(mArrows[arrow].scaleTransform.get());
+         }
+      }
+      else
+      {
+         for (int arrow = 0; arrow < ARROW_TYPE_MAX; arrow++)
+         {
+            mTargetTransform->RemoveChild(mArrows[arrow].scaleTransform.get());
+         }
+      }
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -195,6 +271,12 @@ void ObjectMotionModel::SetSnapTranslation(int increment)
 void ObjectMotionModel::SetSnapRotation(float degrees)
 {
    mSnapRotation = osg::DegreesToRadians(degrees);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetSnapScale(int increment)
+{
+   mSnapScale = increment;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,7 +476,7 @@ void ObjectMotionModel::InitArrows(void)
       }
    }
 
-   osg::Group* wireNode = new osg::Group();
+   osg::Group* wireNode = NULL;//new osg::Group();
    if (wireNode)
    {
       // Make this group render top most.
@@ -426,12 +508,15 @@ void ObjectMotionModel::InitArrows(void)
       // Create all our objects and nodes.
       mArrows[arrowIndex].translationTransform   = new dtCore::Transformable();
       mArrows[arrowIndex].rotationTransform      = new dtCore::Transformable();
+      mArrows[arrowIndex].scaleTransform         = new dtCore::Transformable();
       mArrows[arrowIndex].arrowGeode             = new osg::Geode();
       mArrows[arrowIndex].rotationGeode          = new osg::Geode();
       mArrows[arrowIndex].rotationSelectionGeode = new osg::Geode();
+      mArrows[arrowIndex].scaleGeode             = new osg::Geode();
 
-      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.06f), 0.01f, 0.1f);
-      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.115f), 0.018f, 0.03f);
+      osg::Cylinder* cylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.07f), 0.01f, 0.1f);
+      osg::Cone*     cone     = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.125f), 0.018f, 0.03f);
+      osg::Box*      box      = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.17f), 0.02f, 0.02f, 0.02f);
 
 //      osg::Cylinder* ring     = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 0.07f, 0.001f);
       osg::TriangleMesh* ring = GenerateRing(ringRadius - ringVisibleThickness, ringRadius + ringVisibleThickness, 40);
@@ -439,6 +524,7 @@ void ObjectMotionModel::InitArrows(void)
 
       mArrows[arrowIndex].arrowCylinder = new osg::ShapeDrawable(cylinder);
       mArrows[arrowIndex].arrowCone     = new osg::ShapeDrawable(cone);
+      mArrows[arrowIndex].scaleBox      = new osg::ShapeDrawable(box);
 
       mArrows[arrowIndex].rotationRing  = new osg::ShapeDrawable(ring);
       osg::ShapeDrawable* rotationSelectionRing = new osg::ShapeDrawable(selectionRing);
@@ -447,11 +533,13 @@ void ObjectMotionModel::InitArrows(void)
       // Now set up their Hierarchy.
       mTargetTransform->AddChild(mArrows[arrowIndex].translationTransform.get());
       mTargetTransform->AddChild(mArrows[arrowIndex].rotationTransform.get());
+      //mTargetTransform->AddChild(mArrows[arrowIndex].scaleTransform.get());
 
       if (wireNode)
       {
          wireNode->addChild(mArrows[arrowIndex].translationTransform->GetOSGNode());
          wireNode->addChild(mArrows[arrowIndex].rotationTransform->GetOSGNode());
+         //wireNode->addChild(mArrows[arrowIndex].scaleTransform->GetOSGNode());
       }
 
       osg::Group* arrowGroup = mArrows[arrowIndex].translationTransform->GetOSGNode()->asGroup();
@@ -467,6 +555,12 @@ void ObjectMotionModel::InitArrows(void)
          rotationGroup->addChild(mArrows[arrowIndex].rotationSelectionGeode.get());
       }
 
+      osg::Group* scaleGroup = mArrows[arrowIndex].scaleTransform->GetOSGNode()->asGroup();
+      if (scaleGroup)
+      {
+         scaleGroup->addChild(mArrows[arrowIndex].scaleGeode.get());
+      }
+
       mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCylinder.get());
       mArrows[arrowIndex].arrowGeode->addDrawable(mArrows[arrowIndex].arrowCone.get());
       mArrows[arrowIndex].arrowGeode->setNodeMask(ARROW_NODE_MASK);
@@ -476,20 +570,36 @@ void ObjectMotionModel::InitArrows(void)
 
       mArrows[arrowIndex].rotationSelectionGeode->addDrawable(rotationSelectionRing);
       mArrows[arrowIndex].rotationSelectionGeode->setNodeMask(ARROW_NODE_MASK);
+
+      mArrows[arrowIndex].scaleGeode->addDrawable(mArrows[arrowIndex].scaleBox.get());
+      mArrows[arrowIndex].scaleGeode->setNodeMask(ARROW_NODE_MASK);
    }
 
+   mScaleTransform        = new dtCore::Transformable();
+   mScaleGeode            = new osg::Geode();
+   osg::Sphere* scaleOrb  = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 0.012f);
+   mScaleOrb              = new osg::ShapeDrawable(scaleOrb);
+   mScaleGeode->addDrawable(mScaleOrb.get());
+   mScaleGeode->setNodeMask(ARROW_NODE_MASK);
+   osg::Group* scaleGroup = mScaleTransform->GetOSGNode()->asGroup();
+   if (scaleGroup)
+   {
+      scaleGroup->addChild(mScaleGeode.get());
+   }
+   //mTargetTransform->AddChild(mScaleTransform.get());
+
    mAngleTransform = new dtCore::Transformable();
-   mAngleGeode = new osg::Geode();
-   mAngleCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
-   mAngleDrawable = new osg::ShapeDrawable(mAngleCylinder.get());
+   mAngleGeode     = new osg::Geode();
+   mAngleCylinder  = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
+   mAngleDrawable  = new osg::ShapeDrawable(mAngleCylinder.get());
 
    mAngleTransform->GetOSGNode()->asGroup()->addChild(mAngleGeode.get());
    mTargetTransform->AddChild(mAngleTransform.get());
 
    mAngleOriginTransform = new dtCore::Transformable();
-   mAngleOriginGeode = new osg::Geode();
-   mAngleOriginCylinder = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
-   mAngleOriginDrawable = new osg::ShapeDrawable(mAngleOriginCylinder.get());
+   mAngleOriginGeode     = new osg::Geode();
+   mAngleOriginCylinder  = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, ringRadius * 0.5f), 0.001f, ringRadius);
+   mAngleOriginDrawable  = new osg::ShapeDrawable(mAngleOriginCylinder.get());
 
    mAngleOriginTransform->GetOSGNode()->asGroup()->addChild(mAngleOriginGeode.get());
    mTargetTransform->AddChild(mAngleOriginTransform.get());
@@ -505,6 +615,7 @@ void ObjectMotionModel::InitArrows(void)
    transformX.Set(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
    mArrows[ARROW_TYPE_RIGHT].translationTransform->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].rotationTransform->SetTransform(transformX);
+   mArrows[ARROW_TYPE_RIGHT].scaleTransform->SetTransform(transformX);
    mArrows[ARROW_TYPE_RIGHT].arrowCylinderColor = osg::Vec4(1.0f, 0.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_RIGHT].arrowConeColor = osg::Vec4(1.0f, 0.3f, 0.3f, 0.5f);
 
@@ -513,6 +624,7 @@ void ObjectMotionModel::InitArrows(void)
    transformY.Set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
    mArrows[ARROW_TYPE_AT].translationTransform->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].rotationTransform->SetTransform(transformY);
+   mArrows[ARROW_TYPE_AT].scaleTransform->SetTransform(transformY);
    mArrows[ARROW_TYPE_AT].arrowCylinderColor = osg::Vec4(0.0f, 1.0f, 0.0f, 0.5f);
    mArrows[ARROW_TYPE_AT].arrowConeColor = osg::Vec4(0.3f, 1.0f, 0.3f, 0.5f);
 
@@ -520,6 +632,7 @@ void ObjectMotionModel::InitArrows(void)
    transformZ.SetTranslation(0.0f, 0.0f, 0.0f);
    mArrows[ARROW_TYPE_UP].translationTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].rotationTransform->SetTransform(transformZ);
+   mArrows[ARROW_TYPE_UP].scaleTransform->SetTransform(transformZ);
    mArrows[ARROW_TYPE_UP].arrowCylinderColor = osg::Vec4(0.0f, 0.0f, 1.0f, 0.5f);
    mArrows[ARROW_TYPE_UP].arrowConeColor = osg::Vec4(0.3f, 0.3f, 1.0f, 0.5f);
 
@@ -653,6 +766,11 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
             ++nodeItr)
          {
             osg::Node* node = (*nodeItr);
+            if (node == mScaleTransform->GetOSGNode())
+            {
+               return mScaleTransform.get();
+            }
+
             for (int ArrowIndex = 0; ArrowIndex < ARROW_TYPE_MAX; ArrowIndex++)
             {
                if (node == mArrows[ArrowIndex].translationTransform->GetOSGNode())
@@ -662,6 +780,10 @@ dtCore::DeltaDrawable* ObjectMotionModel::MousePick(void)
                else if (node == mArrows[ArrowIndex].rotationTransform->GetOSGNode())
                {
                   return mArrows[ArrowIndex].rotationTransform.get();
+               }
+               else if (node == mArrows[ArrowIndex].scaleTransform->GetOSGNode())
+               {
+                  return mArrows[ArrowIndex].scaleTransform.get();
                }
             }
          }
@@ -703,6 +825,13 @@ bool ObjectMotionModel::HighlightWidgets(dtCore::DeltaDrawable* drawable)
 {
    if (drawable)
    {
+      if (drawable == mScaleTransform.get())
+      {
+         mMotionType = MOTION_TYPE_SCALE;
+         SetArrowHighlight(ARROW_TYPE_ALL);
+         return true;
+      }
+
       for (int arrowIndex = 0; arrowIndex < ARROW_TYPE_MAX; arrowIndex++)
       {
          if (drawable == mArrows[arrowIndex].translationTransform.get())
@@ -714,6 +843,12 @@ bool ObjectMotionModel::HighlightWidgets(dtCore::DeltaDrawable* drawable)
          else if (drawable == mArrows[arrowIndex].rotationTransform.get())
          {
             mMotionType = MOTION_TYPE_ROTATION;
+            SetArrowHighlight((ArrowType)arrowIndex);
+            return true;
+         }
+         else if (drawable == mArrows[arrowIndex].scaleTransform.get())
+         {
+            mMotionType = MOTION_TYPE_SCALE;
             SetArrowHighlight((ArrowType)arrowIndex);
             return true;
          }
@@ -740,6 +875,7 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
 
       mArrows[arrowIndex].rotationRing->setColor(color);
       mArrows[arrowIndex].arrowCylinder->setColor(color);
+      mArrows[arrowIndex].scaleBox->setColor(color);
 
       color = mArrows[arrowIndex].arrowConeColor;
       color.r() = color.r() * 0.5f;
@@ -767,6 +903,19 @@ void ObjectMotionModel::SetArrowHighlight(ArrowType arrowType)
             mArrows[arrowIndex].arrowCylinder->setColor(highlightColor);
             mArrows[arrowIndex].arrowCone->setColor(mArrows[arrowIndex].arrowConeColor);
          }
+         else if (mMotionType == MOTION_TYPE_SCALE)
+         {
+            mArrows[arrowIndex].scaleBox->setColor(highlightColor);
+         }
+      }
+   }
+
+   mScaleOrb->setColor(osg::Vec4(0.75f, 0.75f, 0.75f, 0.5f));
+   if (mHoverArrow == ARROW_TYPE_ALL)
+   {
+      if (mMotionType == MOTION_TYPE_SCALE)
+      {
+         mScaleOrb->setColor(osg::Vec4(1.0f, 1.0f, 1.0f, 0.5f));
       }
    }
 }
@@ -901,7 +1050,7 @@ void ObjectMotionModel::UpdateTranslation(void)
          fDistance = (int)fDistance / mSnapTranslation;
       }
 
-      targetPos += axis * fDistance;
+      //targetPos += axis * fDistance;
 
       OnTranslate(axis * fDistance);
    }
@@ -1136,7 +1285,164 @@ void ObjectMotionModel::UpdateRotation(void)
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::UpdateScale(void)
 {
-   // TODO: Not currenlty implemented as there may be issues with scaling transformables.
+   osg::Vec3 plane1;
+   osg::Vec3 plane2;
+   osg::Vec3 axis;
+   osg::Vec3 scaleAxis;
+   osg::Vec3* plane = NULL;
+
+   osg::Vec3 targetUp;
+   osg::Vec3 targetRight;
+   osg::Vec3 targetAt;
+   osg::Vec3 targetPos;
+
+   osg::Vec3 camUp;
+   osg::Vec3 camRight;
+   osg::Vec3 camAt;
+   //osg::Vec3 camPos;
+
+   dtCore::Transformable* target = GetTarget();
+   if (!target)
+   {
+      return;
+   }
+
+   if (!mCamera)
+   {
+      return;
+   }
+
+   dtCore::Transform camTransform;
+   mCamera->GetTransform(camTransform);
+   camTransform.GetOrientation(camRight, camUp, camAt);
+   //camPos = camTransform.GetTranslation();
+
+   if (mCoordinateSpace == LOCAL_SPACE)
+   {
+      dtCore::Transform transform;
+      target->GetTransform(transform);
+      transform.GetOrientation(targetRight, targetUp, targetAt);
+      targetPos = transform.GetTranslation();
+   }
+   else // World Space
+   {
+      dtCore::Transform transform;
+      transform.GetOrientation(targetRight, targetUp, targetAt);
+      target->GetTransform(transform);
+      targetPos = transform.GetTranslation();
+   }
+
+   switch (mHoverArrow)
+   {
+   case ARROW_TYPE_AT:
+      {
+         axis = targetAt;
+         scaleAxis = osg::Vec3(0.0f, 1.0f, 0.0f);
+         plane1 = targetUp ^ axis;
+         plane2 = targetRight ^ axis;
+         break;
+      }
+
+   case ARROW_TYPE_RIGHT:
+      {
+         axis = targetRight;
+         scaleAxis = osg::Vec3(1.0f, 0.0f, 0.0f);
+         plane1 = targetUp ^ axis;
+         plane2 = axis ^ targetAt;
+         break;
+      }
+
+   case ARROW_TYPE_UP:
+      {
+         axis = targetUp;
+         scaleAxis = osg::Vec3(0.0f, 0.0f, 1.0f);
+         plane1 = axis ^ targetRight;
+         plane2 = targetAt ^ axis;
+         break;
+      }
+
+   case ARROW_TYPE_ALL:
+      {
+         axis = camRight;
+         scaleAxis = osg::Vec3(1.0f, 1.0f, 1.0f);
+         plane1 = camUp ^ axis;
+         plane2 = axis ^ camAt;
+         break;
+      }
+
+   default:
+      {
+         return;
+      }
+   }
+
+   plane1.normalize();
+   plane2.normalize();
+
+   // Find the best plane.
+   float fBest;
+   float fTest;
+
+   if (fBest = fabs(camAt * plane1) > osg::DegreesToRadians(5.0f))
+   {
+      plane = &plane1;
+   }
+
+   fTest = fabs(camAt * plane2);
+   if (fTest > fBest)
+   {
+      fBest = fTest;
+      if (fBest > osg::DegreesToRadians(5.0f))
+      {
+         plane = &plane2;
+      }
+   }
+
+   if (plane)
+   {
+      // Get the mouse vector.
+      osg::Vec3 mouseStart, mouseEnd;
+      osg::Vec2 newMousePos = GetMousePosition();
+      GetMouseLine(newMousePos + mMouseOffset, mouseStart, mouseEnd);
+      osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
+      mMouseOffset = objectPos - newMousePos;
+      osg::Vec3 mouse = mouseEnd - mouseStart;
+
+      // Calculate the mouse collision in the 3D space relative to the plane
+      // of the camera and the desired axis of the object.
+      float fStartOffset   = mouseStart * (*plane);
+      float fDistMod       = mouse      * (*plane);
+      float fPlaneOffset   = targetPos  * (*plane);
+
+      float fDistance      = (fPlaneOffset - fStartOffset) / fDistMod;
+
+      // Find the projected point of collision on the plane.
+      osg::Vec3 projection = (mouse * fDistance) + mouseStart;
+      osg::Vec3 vector     = projection - targetPos;
+
+      // Find the translation vector.
+      fDistance = axis * vector;
+
+      // Snap
+      if (mSnap)
+      {
+         fDistance = (int)fDistance / mSnapScale;
+      }
+
+      //// If we are in world space, we need to change the scale axis
+      //// in relation to the local rotation of the object.
+      //if (mCoordinateSpace == WORLD_SPACE)
+      //{
+      //   dtCore::Transform transform;
+      //   target->GetTransform(transform);
+      //   osg::Matrix matrix;
+      //   transform.GetRotation(matrix);
+      //   matrix.invert(matrix);
+      //   scaleAxis = matrix.inverse(matrix) * scaleAxis;
+      //}
+
+      OnScale(scaleAxis * fDistance);
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

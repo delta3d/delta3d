@@ -94,6 +94,7 @@ namespace dtEditQt
          mObjectMotionModel->ClearTargets();
 
          // Now iterate through the additional targets.
+         bool canScale = false;
          for (int actorIndex = 0; actorIndex < (int)actors.size(); actorIndex++)
          {
             dtDAL::TransformableActorProxy* targetProxy =
@@ -102,15 +103,31 @@ namespace dtEditQt
             if (targetProxy)
             {
                mObjectMotionModel->AddTarget(targetProxy);
+
+               // Once we determine that a target can scale, we don't need to
+               // test the others.
+               if (!canScale)
+               {
+                  // Determine if this target can be scaled.
+                  dtDAL::ActorProperty* prop = targetProxy->GetProperty("Scale");
+                  dtDAL::Vec3ActorProperty* scaleProp = dynamic_cast<dtDAL::Vec3ActorProperty*>(prop);
+
+                  if (scaleProp)
+                  {
+                     canScale = true;
+                  }
+               }
             }
          }
 
+         mObjectMotionModel->SetScaleEnabled(canScale);
          mObjectMotionModel->SetEnabled(true);
       }
       else
       {
          mObjectMotionModel->SetEnabled(false);
          mObjectMotionModel->ClearTargets();
+         mObjectMotionModel->SetScaleEnabled(false);
       }
 
       mObjectMotionModel->UpdateWidgets();

@@ -72,8 +72,8 @@ namespace dtCore
             ARROW_TYPE_AT,          // green (Y)
             ARROW_TYPE_RIGHT,       // red   (X)
             ARROW_TYPE_UP,          // blue  (Z)
-            //ARROW_TYPE_ALL,         // white (XYZ)
             ARROW_TYPE_MAX,
+            ARROW_TYPE_ALL,         // white (XYZ)
          };
 
          /**
@@ -114,10 +114,17 @@ namespace dtCore
          /**
          * Enables or disables this motion model.
          *
-         * @param[in] enabled  True to enable this motion model, false
+         * @param[in]  enabled  True to enable this motion model, false
          *                      to disable it
          */
          virtual void SetEnabled(bool enabled);
+
+         /**
+         * Enables or disables the scale gizmos.
+         *
+         * @param[in]  enabled  True to enable the scale gizmos.
+         */
+         virtual void SetScaleEnabled(bool enabled);
 
          /**
          * Sets the scale of the arrows displayed.
@@ -174,6 +181,13 @@ namespace dtCore
          * @param[in]  degrees  The number of degrees between snap positions.
          */
          void SetSnapRotation(float degrees);
+
+         /**
+         * Sets the snap scale increment.
+         *
+         * @param[in]  increment  The increment length per snap position.
+         */
+         void SetSnapScale(int increment);
 
          /**
          * Gets the current position of the mouse.
@@ -295,7 +309,9 @@ namespace dtCore
          /**
          * Sets an arrow as highlighted or not.
          *
-         * @param[in]  arrowType  The arrow to highlight (ARROW_TYPE_MAX to unhighlight all).
+         * @param[in]  arrowType  The arrow to highlight
+         *                        (ARROW_TYPE_MAX to un-highlight all).
+         *                        (ARROW_TYPE_ALL to highlight the scale all gizmo).
          */
          void SetArrowHighlight(ArrowType arrowType);
 
@@ -332,6 +348,8 @@ namespace dtCore
          {
             dtCore::RefPtr<dtCore::Transformable>  translationTransform;
             dtCore::RefPtr<dtCore::Transformable>  rotationTransform;
+            dtCore::RefPtr<dtCore::Transformable>  scaleTransform;
+
             osg::ref_ptr<osg::Geode>               arrowGeode;
             osg::ref_ptr<osg::ShapeDrawable>       arrowCylinder;
             osg::ref_ptr<osg::ShapeDrawable>       arrowCone;
@@ -340,9 +358,16 @@ namespace dtCore
             osg::ref_ptr<osg::Geode>               rotationSelectionGeode;
             osg::ref_ptr<osg::ShapeDrawable>       rotationRing;
 
+            osg::ref_ptr<osg::Geode>               scaleGeode;
+            osg::ref_ptr<osg::ShapeDrawable>       scaleBox;
+
             osg::Vec4                              arrowCylinderColor;
             osg::Vec4                              arrowConeColor;
          };
+
+         dtCore::RefPtr<dtCore::Transformable>     mScaleTransform;
+         osg::ref_ptr<osg::Geode>                  mScaleGeode;
+         osg::ref_ptr<osg::ShapeDrawable>          mScaleOrb;
 
          dtCore::RefPtr<dtCore::Transformable>     mAngleOriginTransform;
          osg::ref_ptr<osg::Geode>                  mAngleOriginGeode;
@@ -382,9 +407,11 @@ namespace dtCore
          float           mOriginAngle;
 
          bool            mAutoScale;
+         bool            mAllowScaleGizmo;
 
          int             mSnapTranslation;
          float           mSnapRotation;
+         int             mSnapScale;
          bool            mSnap;
    };
 } // namespace dtCore
