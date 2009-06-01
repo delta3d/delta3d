@@ -30,9 +30,9 @@ void main(void)
    float reflectionAngle =  dot(reflectionDir, viewDir);
 
    // Calculate the contributions from each shading component
-   vec3 ambientColor = vec3(0.2, 0.2, 0.2) * baseColor;
-   vec3 diffuseColor = NdotL * vec3(gl_LightSource[0].diffuse.rgb) * baseColor;
-   vec3 specularColor = specColor * pow(max(0.0, reflectionAngle), 128.0);
+   vec3 ambientColor = vec3(0.2, 0.2, 0.2) * baseColor.rgb;
+   vec3 diffuseColor = NdotL * vec3(gl_LightSource[0].diffuse.rgb) * baseColor.rgb;
+   vec3 specularColor = specColor.rgb * pow(max(0.0, reflectionAngle), 128.0);
 
    vec3 result = ambientColor + diffuseColor + specularColor;
 
