@@ -76,12 +76,15 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
    mOrbitMotion = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
    mOrbitMotion->SetTarget(GetScene()->GetLight(0));
 
+   // Translation doesn't matter with a directional light
+   mOrbitMotion->SetLeftRightTranslationAxis(NULL);
+   mOrbitMotion->SetUpDownTranslationAxis(NULL);
+
    // Adjust the positioning of the camera depending on the size of the object
    CenterCameraOnObject(mCustomObject.get());
 
    CreateHelpLabel();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void TestBumpMapApp::LoadGeometry(const std::string& customObjectName)
