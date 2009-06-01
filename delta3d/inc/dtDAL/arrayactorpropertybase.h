@@ -1,6 +1,6 @@
 /* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
- * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
+ * Copyright (C) 2009, MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,26 +21,26 @@
 #ifndef DELTA_ARRAY_ACTOR_PROPERTY_BASE
 #define DELTA_ARRAY_ACTOR_PROPERTY_BASE
 
-#include <string>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/export.h>
+#include <dtCore/refptr.h>
+#include <string>
 
-#include <dtUtil/log.h>
-
-#include <dtUtil/macros.h>
-
-const char OPEN_CHAR = 1;
-const char CLOSE_CHAR = 2;
 
 namespace dtDAL
 {
    /**
-    * @brief An actor property that contains an array of other actor property Objects.
+    * @brief An ActorProperty that is an array of other ActorProperty.
     *
     * This actor property provides a dynamic array of the property type associated
-    * with it.
+    * with it.  The ArrayActorProperty has a current size, minimum size, and 
+    * maximum size.  Use GetArraySize(), GetMinArraySize(), GetMaxArraySize() to
+    * query.  
+    * 
+    * To operate on a particular ActorProperty stored in the array, first set the
+    * index using SetIndex(), then access the ActorProperty by calling GetArrayProperty().
     */
-   class ArrayActorPropertyBase : public ActorProperty
+   class DT_DAL_EXPORT ArrayActorPropertyBase : public ActorProperty
    {
    public:
 
@@ -62,14 +62,7 @@ namespace dtDAL
                               const std::string& groupName,
                               const std::string& editorType = "",
                               bool canReorder = true,
-                              bool readOnly = false)
-         : ActorProperty(DataType::ARRAY, name, label, desc, groupName, readOnly)
-         , mPropertyType(propertyType)
-         , mCanReorder(canReorder)
-         , mMinSize(-1)
-         , mMaxSize(-1)
-      {
-      }
+                              bool readOnly = false);
 
       /**
        * Sets the value of the property based on a string.
@@ -78,28 +71,7 @@ namespace dtDAL
        * @param value the value to set.
        * @return true if the string was usable to set the value, false if not.
        */
-      virtual bool FromString(const std::string& value)
-      {
-         if (!mPropertyType.valid())
-         {
-            return false;
-         }
-
-         std::string data = value;
-
-         // First read the total size of the array.
-         std::string token = TakeToken(data);
-
-         int arraySize = atoi(token.c_str());
-         for (int index = 0; index < arraySize; index++)
-         {
-            SetIndex(index);
-            token = TakeToken(data);
-            mPropertyType->FromString(token);
-         }
-
-         return true;
-      }
+      virtual bool FromString(const std::string& value);
 
       /**
       * Reads the next token form the given string data.
@@ -112,169 +84,59 @@ namespace dtDAL
       *
       * @return            The first token from the string data.
       */
-      std::string TakeToken(std::string& data)
-      {
-         std::string returnData;
-
-         // If the first character in the data string is not the opening character,
-         //  we will just assume the entire data string is the token.
-         if (data.c_str()[0] != OPEN_CHAR)
-         {
-            returnData = data;
-            data = "";
-         }
-
-         int depth = 0;
-         int dataIndex = 0;
-         while (data.length() > 0)
-         {
-            bool appendChar = true;
-
-            // Opening characters increase the depth counter.
-            if (data[dataIndex] == OPEN_CHAR)
-            {
-               depth++;
-
-               if (depth == 1)
-               {
-                  appendChar = false;
-               }
-            }
-            // Closing characters decrease the depth counter.
-            else if (data[dataIndex] == CLOSE_CHAR)
-            {
-               depth--;
-
-               if (depth == 0)
-               {
-                  appendChar = false;
-               }
-            }
-
-            // All other characters are added to the return buffer.
-            if (appendChar)
-            {
-               returnData.append(data.c_str(), 1);
-            }
-
-            // Remove the left most character from the data string.
-            data = &data[1];
-
-            // We are done once our depth returns to 0.
-            if (depth <= 0)
-            {
-               break;
-            }
-         }
-
-         return returnData;
-      }
+      std::string TakeToken(std::string& data);
 
       /**
        * @return a string version of the data.  This value can be used when calling SetStringValue.
        * @see #SetStringValue
        */
-      virtual const std::string ToString() const
-      {
-         if (!mPropertyType.valid())
-         {
-            return "";
-         }
-
-         // Iterate through each index in the array and append the strings.
-         int arraySize = GetArraySize();
-
-         char buffer[20] = {0,};
-         std::string data;
-         data += OPEN_CHAR;
-         snprintf(buffer, 20, "%d", arraySize);
-         data += buffer;
-         data += CLOSE_CHAR;
-
-         for (int index = 0; index < arraySize; index++)
-         {
-            SetIndex(index);
-            data += OPEN_CHAR;
-            data += mPropertyType->ToString();
-            data += CLOSE_CHAR;
-         }
-
-         return data;
-      }
+      virtual const std::string ToString() const;
 
       /**
        * This is overridden to make handle the fact that the get method returns a refptr.
        * @param otherProp The property to copy from.
        */
-      virtual void CopyFrom(const ActorProperty& otherProp)
-      {
-         if (GetDataType() != otherProp.GetDataType())
-         {
-            LOG_ERROR("Property types are incompatible. Cannot make copy.");
-            return;
-         }
-
-         const ArrayActorPropertyBase* src = dynamic_cast<const ArrayActorPropertyBase*>(&otherProp);
-         if (src)
-         {
-            FromString(src->ToString());
-         }
-      }
+      virtual void CopyFrom(const ActorProperty& otherProp);
 
       /**
-      * This gets the property used in this array.
+      * This gets the ActorProperty used in this array, indexed by the last
+      * call to SetIndex().
       */
-      virtual ActorProperty* GetArrayProperty()
-      {
-         return mPropertyType.get();
-      }
+      virtual ActorProperty* GetArrayProperty();
 
-      virtual const ActorProperty* GetArrayProperty() const
-      {
-         return mPropertyType.get();
-      }
+      /**
+      * This gets the const ActorProperty used in this array, indexed by the last
+      * call to SetIndex().
+      */
+      virtual const ActorProperty* GetArrayProperty() const;
 
       /**
       * Sets the minimum size of the array.
       */
-      virtual void SetMinArraySize(int minSize)
-      {
-         mMinSize = minSize;
-
-         // TODO ARRAY: Make sure to add indexes if the minimum size is larger than the current size.
-      }
-      virtual int GetMinArraySize() const {return mMinSize;}
+      virtual void SetMinArraySize(int minSize);
+      virtual int GetMinArraySize() const;
 
       /**
       * Sets the maximum size of the array.
       */
-      virtual void SetMaxArraySize(int maxSize)
-      {
-         mMaxSize = maxSize;
-
-         // TODO ARRAY: Make sure to remove indexes if the maximum size exceeds the current size.
-      }
-      virtual int GetMaxArraySize() const {return mMaxSize;}
+      virtual void SetMaxArraySize(int maxSize);
+      virtual int GetMaxArraySize() const;
 
       /**
       * Gets whether or not this array can be re-ordered.
       */
-      virtual bool CanReorder() const {return mCanReorder;}
+      virtual bool CanReorder() const;
 
       /**
-      * Gets the total size of the array.
+      * Gets the total number of ActorProperty stored in the array.
       */
-      virtual int GetArraySize() const
-      {
-         return 0;
-      }
+      virtual int GetArraySize() const;
 
       /**
-      * Sets the current active index.
+      * Sets the current active index, indicating which of the stored
+      * ActorProperty is being referenced. [0..GetArraySize()-1]
       */
-      virtual void SetIndex(int index) const
-      {
-      }
+      virtual void SetIndex(int index) const;
 
       /**
       * Inserts a new index into the array.
@@ -283,10 +145,7 @@ namespace dtDAL
       *
       * @return     True if an element was inserted properly.
       */
-      virtual bool Insert(int index)
-      {
-         return false;
-      }
+      virtual bool Insert(int index);
 
       /**
       * Removes an index from the array.
@@ -295,17 +154,12 @@ namespace dtDAL
       *
       * @return     True if an element was removed properly.
       */
-      virtual bool Remove(int index)
-      {
-         return false;
-      }
+      virtual bool Remove(int index);
 
       /**
-      * Clears the array.
+      * Removes all the stored ActorProperty stored in the array.
       */
-      virtual void Clear()
-      {
-      }
+      virtual void Clear();
 
       /**
       * Swaps the contents of the current index with the given.
@@ -313,9 +167,7 @@ namespace dtDAL
       * @param[in]  first   The first index to swap.
       * @param[in]  second  The second index to swap.
       */
-      virtual void Swap(int first, int second)
-      {
-      }
+      virtual void Swap(int first, int second);
 
       /**
       * Copies the contents of the current index with the given.
@@ -323,15 +175,11 @@ namespace dtDAL
       * @param[in]  src  The source index to copy from.
       * @param[in]  dst  The destination index to copy to.
       */
-      virtual void Copy(int src, int dst)
-      {
-      }
+      virtual void Copy(int src, int dst);
 
    protected:
 
-      virtual ~ArrayActorPropertyBase()
-      {
-      }
+      virtual ~ArrayActorPropertyBase();
 
       /// The property that each array index uses.
       dtCore::RefPtr<ActorProperty> mPropertyType;
