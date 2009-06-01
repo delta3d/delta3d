@@ -390,7 +390,7 @@ namespace dtEditQt
       if (newSelection == NULL)
       {
          const std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >&
-            proxyList =currMap->GetAllProxies();
+            proxyList = currMap->GetAllProxies();
          std::map< dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> >::const_iterator proxyItor;
 
          // Loop through the proxies searching for the one with billboard geometry

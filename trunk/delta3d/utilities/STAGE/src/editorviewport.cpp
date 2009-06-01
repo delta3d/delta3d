@@ -30,13 +30,16 @@
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QAction>
+#include <dtEditQt/mainwindow.h>
 #include <dtEditQt/perspectiveviewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/editorevents.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
+#include <dtEditQt/propertyeditor.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/map.h>
 #include <dtCore/isector.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/exceptionenum.h>
@@ -318,6 +321,17 @@ namespace dtEditQt
       }
       else if (getInteractionMode() == Viewport::InteractionMode::ACTOR)
       {
+         // If we are holding ALT during the actor movement,
+         // then it should copy the current actor(s) and move
+         // them instead.
+         if (mKeyMods == Qt::AltModifier)
+         {
+            DuplicateActors();
+
+            // Make sure we only duplicate the actors once.
+            mKeyMods = 0x0;
+         }
+
          ViewportManager::GetInstance().refreshAllViewports();
       }
    }
@@ -425,4 +439,84 @@ namespace dtEditQt
          this, SLOT(onEditorPreferencesChanged()));
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::DuplicateActors()
+   {
+      LOG_INFO("Duplicating current actor selection.");
+
+      // This commits any changes in the property editor.
+      PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
+      propEditor.CommitCurrentEdits();
+
+      ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+      dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+      ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+
+      // Make sure we have valid data.
+      if (!currMap.valid())
+      {
+         LOG_ERROR("Current map is not valid.");
+         return;
+      }
+
+      // We're about to do a LOT of work, especially if lots of things are select
+      // so, start a change transaction.
+      EditorData::GetInstance().getMainWindow()->startWaitCursor();
+      EditorEvents::GetInstance().emitBeginChangeTransaction();
+
+      // Once we have a reference to the current selection and the scene,
+      // clone each proxy, add it to the scene, make the newly cloned
+      // proxy(s) the current selection.
+      ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
+      itor    = selection.begin();
+      itorEnd = selection.end();
+
+      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
+      for (; itor != itorEnd; ++itor)
+      {
+         dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+         dtCore::RefPtr<dtDAL::ActorProxy> copy = proxy->Clone();
+         if (!copy.valid())
+         {
+            LOG_ERROR("Error duplicating proxy: " + proxy->GetName());
+            continue;
+         }
+
+         // Un-highlight the currently selected proxy.
+         if (overlay->isActorSelected(proxy))
+         {
+            overlay->removeActorFromCurrentSelection(proxy);
+         }
+
+         newSelection.push_back(copy);
+
+         osg::Vec3 oldPosition;
+         // Store the original location of the proxy so we can position after
+         // it has been added to the scene.
+         dtDAL::TransformableActorProxy* tProxy =
+            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+         if (tProxy)
+         {
+            oldPosition = tProxy->GetTranslation();
+         }
+
+         // Add the new proxy to the map and send out a create event.
+         currMap->AddProxy(*copy);
+
+         EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
+
+         // Move the newly duplicated actor to where it is supposed to go.
+         if (tProxy)
+         {
+            tProxy->SetTranslation(oldPosition);
+         }
+      }
+
+      // Finally set the newly cloned proxies to be the current selection.
+      //ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
+      EditorEvents::GetInstance().emitActorsSelected(newSelection);
+      EditorEvents::GetInstance().emitEndChangeTransaction();
+
+      EditorData::GetInstance().getMainWindow()->endWaitCursor();
+   }
 } // namespace dtEditQt

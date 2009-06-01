@@ -240,6 +240,11 @@ namespace dtEditQt {
        */
       virtual void disconnectInteractionModeSlots();
 
+      /**
+      * Duplicates the selected actors.
+      */
+      virtual void DuplicateActors();
+
    protected:
       bool mAttachActorToCamera;
 
