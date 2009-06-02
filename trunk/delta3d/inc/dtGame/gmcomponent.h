@@ -70,28 +70,28 @@ namespace dtGame
           * @see dtGame::GameManager
           */
          GameManager* GetGameManager() { return mParent; }
-         
+
          /**
           * Get the priority of this component.
           * @return the value of the priority.  It is only valid when GetGameManager() is not NULL.
           */
-         const GameManager::ComponentPriority& GetComponentPriority() const { return *mPriority; };
-         
-         /**
-          * Called immediately after a component is added to the GM. Override this 
-          * to do init type behavior that needs access to the GameManager.
-          */
-         virtual void OnAddedToGM() { }
+         const GameManager::ComponentPriority& GetComponentPriority() const;
 
          /**
-          * Called immediately after a component is removed from the GM. This is 
+          * Called immediately after a component is added to the GM. Override this
+          * to do init type behavior that needs access to the GameManager.
+          */
+         virtual void OnAddedToGM();
+
+         /**
+          * Called immediately after a component is removed from the GM. This is
           * where any previously allocated memory should be deallocated, files unloaded,
           * resources free'd, etc.  This gets called when the GMComponent gets removed
           * from the GameManager and when the GameManager gets shut down.
           * @see GameManager::RemoveComponent()
           * @see GameManager::Shutdown()
           */
-         virtual void OnRemovedFromGM() { }
+         virtual void OnRemovedFromGM();
 
       private:
          friend class GameManager;
@@ -99,22 +99,22 @@ namespace dtGame
           * Sets the game manager that owns this component
           * @see dtGame::GameManager
           */
-         void SetGameManager(GameManager* gameManager) { mParent = gameManager; }
+         void SetGameManager(GameManager* gameManager);
          /**
           * Sets the component priority on this component.
           * @see dtGame::GameManager::ComponentPriority
           */
-         void SetComponentPriority(const GameManager::ComponentPriority& newPriority) { mPriority = &newPriority; }
+         void SetComponentPriority(const GameManager::ComponentPriority& newPriority);
 
          GameManager* mParent;
          const GameManager::ComponentPriority* mPriority;
-         
+
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators
          // -----------------------------------------------------------------------
-         GMComponent(const GMComponent&) {}
-         GMComponent& operator=(const GMComponent&) {return *this;}
-         
+         GMComponent(const GMComponent&);
+         GMComponent& operator=(const GMComponent&);
+
    };
 }
 #endif

@@ -56,6 +56,15 @@ namespace dtGame
 
    IMPLEMENT_ENUM(GameManager::ComponentPriority);
 
+   ///@return the order id.  The higher the priority, the lower the number.
+   unsigned int GameManager::ComponentPriority::GetOrderId() const { return mOrderId; }
+
+   GameManager::ComponentPriority::ComponentPriority(const std::string& name, unsigned int orderId)
+      : Enumeration(name)
+      , mOrderId(orderId)
+   {
+      AddInstance(this);
+   }
    const GameManager::ComponentPriority GameManager::ComponentPriority::HIGHEST("HIGHEST", 1);
    const GameManager::ComponentPriority GameManager::ComponentPriority::HIGHER("HIGHER", 2);
    const GameManager::ComponentPriority GameManager::ComponentPriority::NORMAL("NORMAL", 3);
