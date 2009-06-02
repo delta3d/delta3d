@@ -24,22 +24,60 @@
 
 namespace dtGame
 {
+   //////////////////////////////////////////////
    GMComponent::GMComponent(const std::string& name) : dtCore::Base(name), mParent(NULL),
       mPriority(&GameManager::ComponentPriority::NORMAL)
    {
    }
 
+   //////////////////////////////////////////////
    GMComponent::~GMComponent()
    {
    }
 
+   //////////////////////////////////////////////
    void GMComponent::DispatchNetworkMessage(const Message& message)
    {
-
    }
 
+   //////////////////////////////////////////////
    void GMComponent::ProcessMessage(const Message& message)
    {
-
    }
+
+   //////////////////////////////////////////////
+   const GameManager::ComponentPriority& GMComponent::GetComponentPriority() const
+   {
+      return *mPriority;
+   }
+
+   //////////////////////////////////////////////
+   void GMComponent::OnAddedToGM() {}
+
+   //////////////////////////////////////////////
+   void GMComponent::OnRemovedFromGM() {}
+
+   //////////////////////////////////////////////
+   void GMComponent::SetGameManager(GameManager* gameManager)
+   {
+      mParent = gameManager;
+   }
+
+   //////////////////////////////////////////////
+   void GMComponent::SetComponentPriority(const GameManager::ComponentPriority& newPriority)
+   {
+      mPriority = &newPriority;
+   }
+
+   //////////////////////////////////////////////
+   GMComponent::GMComponent(const GMComponent&)
+   {
+   }
+
+   //////////////////////////////////////////////
+   GMComponent& GMComponent::operator=(const GMComponent&)
+   {
+      return *this;
+   }
+
 }

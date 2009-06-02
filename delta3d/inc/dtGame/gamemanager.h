@@ -109,15 +109,12 @@ namespace dtGame
                static const ComponentPriority LOWEST;
 
                ///@return the order id.  The higher the priority, the lower the number.
-               unsigned int GetOrderId() const { return mOrderId; }
+               unsigned int GetOrderId() const;
 
             protected:
-               ComponentPriority(const std::string& name, unsigned int orderId)
-                  : Enumeration(name)
-                  , mOrderId(orderId)
-               {
-                  AddInstance(this);
-               }
+
+               ComponentPriority(const std::string& name, unsigned int orderId);
+
                unsigned int mOrderId;
          };
 
