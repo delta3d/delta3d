@@ -43,6 +43,7 @@ public:
    MainWindow(QWidget& centralWidget);
    ~MainWindow();
 
+   void showEvent(QShowEvent* e);
    void closeEvent(QCloseEvent* e);
 signals:
    void ProjectContextChanged(const std::string& path);
@@ -55,7 +56,7 @@ public slots:
    void EnableOrDisableControls();
 private:
 
-   void UpdateMapName(const QString& newMap);
+   void ChangeMap(const QString& newMap);
 
    Ui::MainWindow* mUi;
    QWidget& mCentralWidget;
