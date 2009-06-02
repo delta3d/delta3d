@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * Delta3D Open Source Game and Simulation Engine 
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2009, Alion Science and Technology, BMH Operation
  *
  * This library is free software; you can redistribute it and/or modify it under
@@ -21,8 +21,14 @@
 #ifndef AIUTILITY_AI_COMPONENT
 #define AIUTILITY_AI_COMPONENT
 
+#include <dtCore/refptr.h>
 #include <dtGame/gmcomponent.h>
+#include <dtAI/aiinterfaceactor.h>
 
+namespace dtAI
+{
+   class AIPluginInterface;
+}
 
 class AIComponent : public dtGame::GMComponent
 {
@@ -31,27 +37,31 @@ class AIComponent : public dtGame::GMComponent
       static const std::string DEFAULT_NAME;
 
       /// Constructor
-      AIComponent(const std::string &name = DEFAULT_NAME);
+      AIComponent(const std::string& name = DEFAULT_NAME);
 
       /**
        * Handles incoming messages
        */
-      virtual void ProcessMessage(const dtGame::Message &message);
+      virtual void ProcessMessage(const dtGame::Message& message);
 
       /**
        * Called when this component is added to the game manager
        */
       virtual void OnAddedToGM();
 
+      virtual void OnRemovedFromGM();
+
+      dtAI::AIPluginInterface* GetAIPluginInterface();
+
    protected:
 
       /// Destructor
       virtual ~AIComponent();
 
-      void OnRemovedFromGM();
+      virtual void CleanUp();
 
    private:
-
+      dtCore::RefPtr<dtAI::AIInterfaceActorProxy> mAIInterfaceProxy;
 };
 
 #endif //AIUTILITY_AI_COMPONENT

@@ -34,33 +34,58 @@
 
 const std::string AIComponent::DEFAULT_NAME = "AIComponent";
 
-AIComponent::AIComponent(const std::string &name)
+/////////////////////////////////////////////////////////////
+AIComponent::AIComponent(const std::string& name)
    : dtGame::GMComponent(name)
 {
 
 }
 
+/////////////////////////////////////////////////////////////
 AIComponent::~AIComponent()
 {
-   
+
 }
 
+/////////////////////////////////////////////////////////////
 void AIComponent::OnAddedToGM()
 {
 
 }
 
+/////////////////////////////////////////////////////////////
 void AIComponent::OnRemovedFromGM()
 {
+   CleanUp();
+}
 
+/////////////////////////////////////////////////////////////
+void AIComponent::CleanUp()
+{
+   if (mAIInterfaceProxy.valid())
+   {
+      GetGameManager()->GetScene().RemoveDrawable(GetAIPluginInterface()->GetDebugDrawable());
+      mAIInterfaceProxy = NULL;
+   }
+}
+
+/////////////////////////////////////////////////////////////
+dtAI::AIPluginInterface* AIComponent::GetAIPluginInterface()
+{
+   if (mAIInterfaceProxy.valid())
+   {
+      return mAIInterfaceProxy->GetAIInterface();
+   }
+   return NULL;
 }
 
 
+/////////////////////////////////////////////////////////////
 void AIComponent::ProcessMessage(const dtGame::Message &message)
 {
    if(message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
    {
-      float dt = float(static_cast<const dtGame::TickMessage&>(message).GetDeltaSimTime());
+      //float dt = float(static_cast<const dtGame::TickMessage&>(message).GetDeltaSimTime());
    }
    else if(message.GetMessageType() == dtGame::MessageType::INFO_GAME_EVENT)
    {
@@ -71,10 +96,16 @@ void AIComponent::ProcessMessage(const dtGame::Message &message)
       //to the scene, this will make the waypoints visible in the map
       dtAI::AIInterfaceActorProxy* aiInterface = NULL;
       GetGameManager()->FindActorByType(*dtAI::AIActorRegistry::AI_INTERFACE_ACTOR_TYPE, aiInterface);
-      if(aiInterface != NULL)
+      mAIInterfaceProxy = aiInterface;
+
+      if (mAIInterfaceProxy.valid())
       {
-         GetGameManager()->GetApplication().GetScene()->AddDrawable(aiInterface->GetAIInterface()->GetDebugDrawable());
+         GetGameManager()->GetScene().AddDrawable(GetAIPluginInterface()->GetDebugDrawable());
       }
+   }
+   else if(message.GetMessageType() == dtGame::MessageType::INFO_MAP_UNLOADED)
+   {
+      CleanUp();
    }
 }
 
