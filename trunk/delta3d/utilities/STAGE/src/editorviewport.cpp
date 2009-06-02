@@ -471,6 +471,8 @@ namespace dtEditQt
       itor    = selection.begin();
       itorEnd = selection.end();
 
+      std::map<int, int> groupMap;
+
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
       for (; itor != itorEnd; ++itor)
       {
@@ -504,6 +506,26 @@ namespace dtEditQt
          currMap->AddProxy(*copy);
 
          EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
+
+         // Preserve the group data for new proxies.
+         int groupIndex = currMap->FindGroupForActor(proxy);
+         if (groupIndex > -1)
+         {
+            // If we already have this group index mapped, then we have
+            // already created a new group for the copied proxies.
+            if (groupMap.find(groupIndex) != groupMap.end())
+            {
+               int newGroup = groupMap[groupIndex];
+               currMap->AddActorToGroup(newGroup, copy.get());
+            }
+            else
+            {
+               // Create a new group and map it.
+               int newGroup = currMap->GetGroupCount();
+               currMap->AddActorToGroup(newGroup, copy.get());
+               groupMap[groupIndex] = newGroup;
+            }
+         }
 
          // Move the newly duplicated actor to where it is supposed to go.
          if (tProxy)

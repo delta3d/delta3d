@@ -155,7 +155,7 @@ namespace  dtDAL
    void MapContentHandler::characters(const XMLCh* const chars, const unsigned int length)
    {
       xmlCharString& topEl = mElements.top();
-      if (mInMap)
+      if (mInMap || mInPrefab)
       {
          if (mInHeader)
          {
@@ -167,7 +167,11 @@ namespace  dtDAL
             }            
             else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
             {
-               mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
+               // if we are loading a prefab, this description does not matter.
+               if (!mLoadingPrefab)
+               {
+                  mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
+               }
             }
             else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
             {
@@ -191,11 +195,17 @@ namespace  dtDAL
             }
             else if (topEl == MapXMLConstants::EDITOR_VERSION_ELEMENT)
             {
-               //ignored for now
+               if (!mLoadingPrefab)
+               {
+                  //ignored for now
+               }
             }
             else if (topEl == MapXMLConstants::SCHEMA_VERSION_ELEMENT)
             {
-               //ignored - the schema checks this value
+               if (!mLoadingPrefab)
+               {
+                  //ignored - the schema checks this value
+               }
             }
          }
          else if (mInEvents)
@@ -246,6 +256,11 @@ namespace  dtDAL
          {
             if (topEl == MapXMLConstants::ACTOR_GROUP_ACTOR_ELEMENT)
             {
+               if (mGroupIndex == -1)
+               {
+                  mGroupIndex = 0;
+               }
+
                dtDAL::ActorProxy* proxy = NULL;
                dtCore::UniqueId id = dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString());
                mMap->GetProxyById(id, proxy);
@@ -360,8 +375,10 @@ namespace  dtDAL
                                 "Encountered the actor id element with value \"%s\", but actor is NULL.",
                                 dtUtil::XMLStringConverter(chars).c_str());
          }
-         else
+         else if (!mLoadingPrefab)
+         {
             mActorProxy->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
+         }
       }
       else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
       {
@@ -403,9 +420,27 @@ namespace  dtDAL
 
                mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType).get();
                if (mActorProxy == NULL)
+               {
                   mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
-                                      "mActorProxy could not be created for ActorType \"%s\" not found.",
-                                      actorTypeFullName.c_str());
+                     "mActorProxy could not be created for ActorType \"%s\" not found.",
+                     actorTypeFullName.c_str());
+               }
+
+               // When loading a prefab, all actors are put into a group.
+               if (mLoadingPrefab)
+               {
+                  if (mGroupIndex == -1)
+                  {
+                     mGroupIndex = mMap->GetGroupCount();
+                  }
+
+                  mMap->AddActorToGroup(mGroupIndex, mActorProxy.get());
+
+                  if (mPrefabProxyList)
+                  {
+                     mPrefabProxyList->push_back(mActorProxy);
+                  }
+               }
             }
          }
          else
@@ -1072,7 +1107,10 @@ namespace  dtDAL
             "Parsing Map Document Started.");
 
       Reset();
-      mMap = new Map("","");
+      if (!mLoadingPrefab)
+      {
+         mMap = new Map("","");
+      }
    }
 
    /////////////////////////////////////////////////////////////////
@@ -1213,7 +1251,7 @@ namespace  dtDAL
                              "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
       }
 
-      if (mInMap)
+      if (mInMap || mInPrefab)
       {
          if (mInLibraries)
          {
@@ -1329,6 +1367,11 @@ namespace  dtDAL
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Map");
          mInMap = true;
+      }
+      else if (XMLString::compareString(localname, MapXMLConstants::PREFAB_ELEMENT) == 0)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Prefab");
+         mInPrefab = true;
       }
       mElements.push(xmlCharString(localname));
    }
@@ -1479,11 +1522,24 @@ namespace  dtDAL
       mMissingActorTypes.clear();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapContentHandler::SetPrefabMode(Map* map, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   {
+      mLoadingPrefab = true;
+      mMap = map;
+      mPrefabProxyList = &proxyList;
+   }
+
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::Reset()
    {
-      mMap = NULL;
+      if (!mLoadingPrefab)
+      {
+         mMap = NULL;
+      }
+
       mInMap = false;
+      mInPrefab = false;
       mInHeader = false;
       mInLibraries = false;
       mInEvents = false;
@@ -1657,7 +1713,9 @@ namespace  dtDAL
       , mActorProxy(NULL)
       , mActorPropertyType(NULL)
       , mActorProperty(NULL)
-      , mGroupIndex(0)
+      , mGroupIndex(-1)
+      , mLoadingPrefab(false)
+      , mPrefabProxyList(NULL)
    {
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);

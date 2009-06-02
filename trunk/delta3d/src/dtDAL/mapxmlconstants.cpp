@@ -54,6 +54,9 @@ namespace dtDAL
    XMLCh* MapXMLConstants::MAP_ELEMENT = NULL;
    XMLCh* MapXMLConstants::MAP_NAMESPACE = NULL;
 
+   XMLCh* MapXMLConstants::PREFAB_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::PREFAB_NAMESPACE = NULL;
+
    XMLCh* MapXMLConstants::HEADER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::MAP_NAME_ELEMENT = NULL;
    XMLCh* MapXMLConstants::DESCRIPTION_ELEMENT = NULL;
@@ -134,6 +137,9 @@ namespace dtDAL
 
       MAP_ELEMENT = xercesc::XMLString::transcode("map");
       MAP_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dMap\" xsi:schemaLocation=\"delta3dMap map.xsd\"");
+
+      PREFAB_ELEMENT = xercesc::XMLString::transcode("prefab");
+      PREFAB_NAMESPACE = xercesc::XMLString::transcode("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"delta3dMap\" xsi:schemaLocation=\"delta3dMap map.xsd\"");
 
       HEADER_ELEMENT = xercesc::XMLString::transcode("header");
       MAP_NAME_ELEMENT = xercesc::XMLString::transcode("name");
@@ -216,6 +222,9 @@ namespace dtDAL
 
       xercesc::XMLString::release(&MAP_ELEMENT);
       xercesc::XMLString::release(&MAP_NAMESPACE);
+
+      xercesc::XMLString::release(&PREFAB_ELEMENT);
+      xercesc::XMLString::release(&PREFAB_NAMESPACE);
 
       xercesc::XMLString::release(&HEADER_ELEMENT);
       xercesc::XMLString::release(&MAP_NAME_ELEMENT);

@@ -74,6 +74,8 @@ namespace dtEditQt
       int  mSaveMilliSeconds;
       bool mWasCancelled;
 
+      static const std::string PREFAB_DIRECTORY;
+
       /**
        * Gets the singleton instance of the EditorActions.
        * @return Returns the singleton instance.
@@ -126,6 +128,12 @@ namespace dtEditQt
 
       // Action - File - Save Map As
       QAction* mActionFileSaveMapAs;
+
+      // Action - File - Import Prefab
+      //QAction* mActionFileImportPrefab;
+
+      // Action - File - Export Prefab
+      QAction* mActionFileExportPrefab;
 
       // Action - File - Edit Preferences
       QAction* mActionFileEditPreferences;
@@ -258,6 +266,16 @@ namespace dtEditQt
        * Slot - File Save As event.  Saves the current map as a different name,
        */
       void slotFileSaveMapAs();
+
+      /**
+      * Slot - File Import prefab.
+      */
+      void slotFileImportPrefab();
+
+      /**
+      * Slot - File Export prefab.
+      */
+      void slotFileExportPrefab();
 
       /**
        * Slot - File Edit Preferences event. Spawns the preference editor
