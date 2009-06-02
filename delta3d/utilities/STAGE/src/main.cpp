@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
       // Now that everything is initialized, show the main window.
       // Construct the application...
-      dtEditQt::MainWindow mainWindow;
+      dtEditQt::MainWindow mainWindow(argv[0]);
       mainWindow.show();
 
       splash->finish(&mainWindow);

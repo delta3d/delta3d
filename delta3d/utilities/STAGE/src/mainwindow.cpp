@@ -39,6 +39,7 @@
 #include <QtCore/QTimer>
 #include <dtCore/uniqueid.h>
 #include <QtGui/QIcon>
+#include <dtCore/globals.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/fileutils.h>
@@ -66,7 +67,8 @@ namespace dtEditQt
 {
 
    ///////////////////////////////////////////////////////////////////////////////
-   MainWindow::MainWindow()
+   MainWindow::MainWindow(const std::string& stagePath)
+      : mSTAGEFullPath(stagePath)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -79,6 +81,8 @@ namespace dtEditQt
       dtDAL::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
+
+      //TODO: Read STAGE config file      
 
       connectSlots();
       setupDockWindows();
@@ -96,6 +100,21 @@ namespace dtEditQt
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
       setWindowIcon(icon);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   MainWindow::~MainWindow()
+   {
+      //Save configuration
+      std::string stageFolder = mSTAGEFullPath.substr(0,
+                                   mSTAGEFullPath.find_last_of("/\\"));
+
+      QSplitter* hSplit = mSplitters.at(0);
+      QSize hSize = hSplit->frameSize();  
+      mCfgMgr.SetVariable("HorizontalViewFrameHeight", hSize.height());
+      mCfgMgr.SetVariable("HorizontalViewFrameWidth", hSize.width());
+
+      mCfgMgr.WriteXML(stageFolder + "/STAGEConfig.xml");
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -283,6 +302,7 @@ namespace dtEditQt
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mFrontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
       mFrontView->setAutoInteractionMode(true);
+
 
       // We now wrap each viewport in a viewport container to provide the
       // toolbar and right click menu add-ons which are needed by the editor
