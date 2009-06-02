@@ -36,6 +36,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/map.h>
 #include <dtEditQt/typedefs.h>
+#include <dtEditQt/configurationmanager.h>
 
 class QSplitter;
 
@@ -45,7 +46,7 @@ namespace dtEditQt
    class OrthoViewport;
    class PropertyEditor;
    class ActorTab;
-   class ResourceBrowser;
+   class ResourceBrowser;   
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -59,7 +60,12 @@ namespace dtEditQt
       /**
        * Constructor
        */
-      MainWindow();
+      MainWindow(const std::string& stagePath);
+
+      /**
+       * Destructor
+       */
+      ~MainWindow();
 
       /**
        * Adds custom library paths as specified by the user settings
@@ -195,7 +201,9 @@ namespace dtEditQt
        */
       void keyPressEvent(QKeyEvent* e);
 
-   private:
+   private:      
+      ConfigurationManager mCfgMgr;
+      std::string mSTAGEFullPath;
 
       QMenu* mFileMenu;
       QMenu* mEditMenu;
