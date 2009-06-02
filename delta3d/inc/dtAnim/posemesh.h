@@ -103,14 +103,15 @@ namespace dtAnim
 
       ~PoseMesh();
 
-      const std::string& GetName() const                 { return mName;       }
-      const std::string& GetBoneName() const             { return mBoneName;   }
-      int GetBoneID() const                              { return mEffectorID;     }
-      const VertexVector& GetVertices() const            { return mVertices;   }
-      const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces; }
-      const TriangleVector& GetTriangles() const         { return mTriangles;  }
+      const std::string& GetName() const                 { return mName;            }
+      const std::string& GetEffectorName() const         { return mBoneName;        }
+      int GetEffectorID() const                          { return mEffectorID;      }
+      const VertexVector& GetVertices() const            { return mVertices;        }
+      const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces;      }
+      const TriangleVector& GetTriangles() const         { return mTriangles;       }
       const TriangleEdgeVector GetSilhouette() const     { return mSilhouetteEdges; }
-      const osg::Vec3& GetNativeForwardDirection() const { return mEffectorForward; }
+      const osg::Vec3& GetRootForwardAxis() const        { return mRootForward;     }
+      const osg::Vec3& GetEffectorForwardAxis() const    { return mEffectorForward; }
 
       /**  
       *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation 

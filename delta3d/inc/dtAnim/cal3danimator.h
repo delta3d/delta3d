@@ -45,7 +45,7 @@ public:
    const Cal3DModelWrapper* GetWrapper() const;
 
    ///Give the Animator a new Cal3DModelWrapper to operate on.
-   void SetWrapper( Cal3DModelWrapper *wrapper );
+   void SetWrapper(Cal3DModelWrapper* wrapper);
 
    // these are listed in the order in which they are called on update
    void SetPreDriver(ICal3DDriver* pDriver);

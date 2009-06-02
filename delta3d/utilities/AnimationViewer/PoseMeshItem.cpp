@@ -737,13 +737,12 @@ float PoseMeshItem::GetErrorSample(const QPointF& samplePoint)
    // Apply the blended pose for this sample
    modelWrapper->Update(0.0f);
 
-   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
    
    // calculate a vector transformed by the rotation data.
-   osg::Vec3 blendDirection = boneRotation * mPoseMesh->GetNativeForwardDirection();  
-
-   // is this always valid?
-   osg::Vec3 forwardDirection = -osg::Y_AXIS;
+   osg::Vec3 blendDirection = boneRotation * mPoseMesh->GetEffectorForwardAxis();  
+   
+   const osg::Vec3& forwardDirection = mPoseMesh->GetRootForwardAxis();
    osg::Vec3 upDirection = osg::Z_AXIS;
 
    osg::Vec3 trueDirection;
@@ -769,10 +768,10 @@ void PoseMeshItem::GetBoneDirections(const dtAnim::PoseMesh::TargetTriangle& tar
                                      osg::Vec3& outBlendDirection)
 {
    dtAnim::Cal3DModelWrapper *modelWrapper = mModel->GetCal3DWrapper();
-   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+   osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
 
    // Get the direction that points forward for this pose mesh's bone
-   const osg::Vec3& nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+   const osg::Vec3& nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
    // calculate a vector transformed by the rotation data.
    outBlendDirection = boneRotation * nativeBoneForward;   
@@ -838,9 +837,9 @@ void PoseMeshItem::GetAnchorBoneDirection(const dtAnim::PoseMesh::TargetTriangle
       modelWrapper->Update(0.0f);
 
       // Get the bone's rotation without this pose mesh's animations applied
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
 
-      const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+      const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
       // Transform the native forward by base rotation
       outDirection = boneRotation * nativeBoneForward;
@@ -1029,11 +1028,11 @@ void PoseMeshItem::AssertZeroErrorAtVertices()
 
       //GetBoneDirections(trianglePick, trueDirection, blendDirection);
          
-         osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
+         osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(mPoseMesh->GetEffectorID());
          //osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotationForKeyFrame(animID, mPoseMesh->GetBoneID(), 30);
 
          // Get the direction that points forward for this pose mesh's bone
-         const osg::Vec3 &nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
+         const osg::Vec3 &nativeBoneForward = mPoseMesh->GetEffectorForwardAxis();
 
          // calculate a vector transformed by the rotation data.
          blendDirection = boneRotation * nativeBoneForward;   
