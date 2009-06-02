@@ -323,8 +323,9 @@ namespace dtTerrain
                for (j=0; j<hf->GetNumColumns(); j++)
                {
                   RawData *data = GetRawData(Index(j,i));
-                  data->height = (float)(hf->GetHeight(j,hf->GetNumRows()-i-1)) *
-                     mBaseVerticalResolution + mBaseVerticalBias;
+                  data->height = hf->GetInterpolatedHeight((float)j * (float)hf->GetNumColumns()/(float)mBaseSize,(float)(hf->GetNumRows() - 1) -
+                                                           (float)i * (float)hf->GetNumRows()/(float)mBaseSize) *
+                                                            mBaseVerticalResolution + mBaseVerticalBias;
                   data->error = 0.0f;
                   data->radius = 0.0f;
                   data->scale = 1.0f;
