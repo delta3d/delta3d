@@ -73,6 +73,16 @@ namespace dtDAL
          Map* Parse(const std::string& path);
 
          /**
+         * Parses a prefab resource and places it in the given map
+         * at a given location.
+         *
+         * @param[in]  map        The map to load the prefab to.
+         * @param[in]  path       The prefab filepath.
+         * @param[in]  proxyList  The list of proxies loaded from the prefab.
+         */
+         bool ParsePrefab(Map* map, const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+
+         /**
           * Reads the assigned name from the map path given.
           * @param path the file path to the map.
           * @return the name of the map from the file.
@@ -144,6 +154,10 @@ namespace dtDAL
          */
          void Save(Map& map, const std::string& filePath);
 
+         /**
+         * Saves a number of given actor proxies into a prefab resource.
+         */
+         void SavePrefab(std::vector<dtCore::RefPtr<ActorProxy> > proxyList, const std::string& filePath, const std::string& description);
          
       protected:
          virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
@@ -207,8 +221,6 @@ namespace dtDAL
          MapWriter(const MapWriter& toCopy): mFormatter("UTF-8", NULL, &mFormatTarget, xercesc::XMLFormatter::NoEscapes, xercesc::XMLFormatter::DefaultUnRep) {}
          //disable operator =
          MapWriter& operator=(const MapWriter& assignTo) { return *this;}
-
-
    };
 
 }

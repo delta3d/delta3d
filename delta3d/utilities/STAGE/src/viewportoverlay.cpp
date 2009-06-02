@@ -97,6 +97,7 @@ namespace dtEditQt
       if (actors.empty())
       {
          clearCurrentSelection();
+         EditorActions::GetInstance().mActionFileExportPrefab->setEnabled(false);
          EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
          EditorActions::GetInstance().mActionUngroupActors->setEnabled(false);
          EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(false);
@@ -213,6 +214,7 @@ namespace dtEditQt
          }
       }
 
+      EditorActions::GetInstance().mActionFileExportPrefab->setEnabled(true);
       EditorActions::GetInstance().mActionUngroupActors->setEnabled(canUngroup);
       EditorActions::GetInstance().mActionEditDeleteActor->setEnabled(true);
       EditorActions::GetInstance().mActionEditDuplicateActor->setEnabled(true);

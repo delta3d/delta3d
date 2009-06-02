@@ -706,7 +706,7 @@ namespace dtDAL
       mapToClose.GetAllProxies(proxies);
 
       // Scoped for proxyIter
-      {         
+      {
          std::vector<dtCore::RefPtr<ActorProxy> >::iterator proxyIter = proxies.begin();
 
          while (proxyIter != proxies.end())
@@ -1210,7 +1210,6 @@ namespace dtDAL
          throw e;
       }
       fileUtils.PopDirectory();
-
    }
 
    /////////////////////////////////////////////////////////////////////////////

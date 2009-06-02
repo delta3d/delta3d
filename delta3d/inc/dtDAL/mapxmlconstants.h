@@ -53,6 +53,9 @@ namespace dtDAL
          static XMLCh* MAP_ELEMENT;
          static XMLCh* MAP_NAMESPACE;
 
+         static XMLCh* PREFAB_ELEMENT;
+         static XMLCh* PREFAB_NAMESPACE;
+
          static XMLCh* HEADER_ELEMENT;
          static XMLCh* MAP_NAME_ELEMENT;
          static XMLCh* DESCRIPTION_ELEMENT;

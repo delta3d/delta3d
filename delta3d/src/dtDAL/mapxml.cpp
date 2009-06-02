@@ -44,6 +44,8 @@
 #include <osgDB/FileNameUtils>
 
 #include <dtCore/globals.h>
+#include <dtCore/transformable.h>
+#include <dtCore/transform.h>
 
 #include <dtDAL/mapxml.h>
 #include <dtDAL/map.h>
@@ -61,6 +63,7 @@
 #include <dtDAL/namedparameter.h>
 #include <dtDAL/mapxmlconstants.h>
 #include <dtDAL/mapcontenthandler.h>
+#include <dtDAL/transformableactorproxy.h>
 
 #include <dtUtil/fileutils.h>
 #include <dtUtil/datetime.h>
@@ -111,6 +114,7 @@ namespace dtDAL
       try
       {
          mParsing = true;
+         mHandler->SetMapMode();
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());
@@ -140,6 +144,44 @@ namespace dtDAL
          throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
       }
       return NULL;
+   }
+
+   /////////////////////////////////////////////////////////////////
+
+   bool MapParser::ParsePrefab(Map* map, const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   {
+      try
+      {
+         mParsing = true;
+         mHandler->SetPrefabMode(map, proxyList);
+         mXercesParser->setContentHandler(mHandler.get());
+         mXercesParser->setErrorHandler(mHandler.get());
+         mXercesParser->parse(path.c_str());
+         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
+         mHandler->ClearMap();
+         mParsing = false;
+         return true;
+      }
+      catch (const OutOfMemoryException&)
+      {
+         mParsing = false;
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.", __FILE__, __LINE__);
+      }
+      catch (const XMLException& toCatch)
+      {
+         mParsing = false;
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
+            toCatch.getMessage());
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
+      }
+      catch (const SAXParseException&)
+      {
+         mParsing = false;
+         //this will already by logged by the
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.", __FILE__, __LINE__);
+      }
+      return false;
    }
 
    /////////////////////////////////////////////////////////////////
@@ -266,7 +308,6 @@ namespace dtDAL
       //cache the schema
       mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
       XMLString::release(&value);
-
    }
 
    /////////////////////////////////////////////////////////////////
@@ -328,7 +369,6 @@ namespace dtDAL
       const unsigned int count,
       xercesc::XMLFormatter* const formatter)
    {
-
       if (mOutFile != NULL)
       {
          size_t size = fwrite((char *) toWrite, sizeof(char), (size_t)count, mOutFile);
@@ -618,6 +658,132 @@ namespace dtDAL
                              map.GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
          throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."), __FILE__, __LINE__);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MapWriter::SavePrefab(const std::vector<dtCore::RefPtr<ActorProxy> > proxyList, const std::string& filePath, const std::string& description)
+   {
+      FILE* outfile = fopen(filePath.c_str(), "w");
+
+      if (outfile == NULL)
+      {
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.", __FILE__, __LINE__);
+      }
+
+      mFormatTarget.SetOutputFile(outfile);
+
+      try
+      {
+         mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
+
+         const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+            dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
+
+         BeginElement(MapXMLConstants::PREFAB_ELEMENT, MapXMLConstants::PREFAB_NAMESPACE);
+
+         BeginElement(MapXMLConstants::HEADER_ELEMENT);
+         BeginElement(MapXMLConstants::DESCRIPTION_ELEMENT);
+         AddCharacters(description);
+         EndElement(); // End Description Element.
+         BeginElement(MapXMLConstants::EDITOR_VERSION_ELEMENT);
+         AddCharacters(std::string(MapXMLConstants::EDITOR_VERSION));
+         EndElement(); // End Editor Version Element.
+         BeginElement(MapXMLConstants::SCHEMA_VERSION_ELEMENT);
+         AddCharacters(std::string(MapXMLConstants::SCHEMA_VERSION));
+         EndElement(); // End Scema Version Element.
+         EndElement(); // End Header Element.
+
+         osg::Vec3 origin;
+         bool originSet = false;
+         BeginElement(MapXMLConstants::ACTORS_ELEMENT);
+         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+         {
+            ActorProxy* proxy = proxyList[proxyIndex].get();
+
+            // We can't do anything without a proxy.
+            if (!proxy)
+            {
+               continue;
+            }
+
+            // If this is the first proxy, store the translation as the origin.
+            dtDAL::TransformableActorProxy* tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+            if (tProxy)
+            {
+               if (!originSet)
+               {
+                  origin = tProxy->GetTranslation();
+                  originSet = true;
+               }
+
+               tProxy->SetTranslation(tProxy->GetTranslation() - origin);
+            }
+
+            //ghost proxies arent saved
+            if (proxy->IsGhostProxy())
+               continue;
+
+            BeginElement(MapXMLConstants::ACTOR_ELEMENT);
+            BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);
+            AddCharacters(proxy->GetActorType().GetFullName());
+            EndElement(); // End Actor Type Element.
+            BeginElement(MapXMLConstants::ACTOR_ID_ELEMENT);
+            AddCharacters(proxy->GetId().ToString());
+            EndElement(); // End Actor ID Element.
+            BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
+            AddCharacters(proxy->GetName());
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                  "Found Proxy Named: %s", proxy->GetName().c_str());
+            }
+            EndElement(); // End Actor Name Element.
+            std::vector<const ActorProperty*> propList;
+            proxy->GetPropertyList(propList);
+            //int x = 0;
+            for (std::vector<const ActorProperty*>::const_iterator i = propList.begin();
+               i != propList.end(); ++i)
+            {
+               //printf("Printing actor property number %d", x++);
+               const ActorProperty& property = *(*i);
+
+               // If the property is read only, skip it
+               if (property.IsReadOnly())
+                  continue;
+
+               WriteProperty(property);
+            }
+            EndElement(); // End Actor Element.
+
+            // Now undo the translation.
+            if (tProxy && originSet)
+            {
+               tProxy->SetTranslation(tProxy->GetTranslation() + origin);
+            }
+         }
+         EndElement(); // End Actors Element
+
+         EndElement(); // End Prefab Element.
+
+         //closes the file.
+         mFormatTarget.SetOutputFile(NULL);
+      }
+      catch (dtUtil::Exception& ex)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Caught Exception \"%s\" while attempting to save prefab \"%s\".",
+            ex.What().c_str(), filePath.c_str());
+         mFormatTarget.SetOutputFile(NULL);
+         throw ex;
+      }
+      catch (...)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            "Unknown exception while attempting to save prefab \"%s\".",
+            filePath.c_str());
+         mFormatTarget.SetOutputFile(NULL);
+         throw dtUtil::Exception(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + filePath + ("\"."), __FILE__, __LINE__);
       }
    }
 

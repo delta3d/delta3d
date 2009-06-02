@@ -187,6 +187,16 @@ namespace dtDAL
          bool HasDeprecatedProperty() const { return mHasDeprecatedProperty; }
 
          /**
+         * Initializes the content handler to load a map.
+         */
+         void SetMapMode() {mLoadingPrefab = false;}
+
+         /**
+         * Initializes the content handler to load a prefab.
+         */
+         void SetPrefabMode(Map* map, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+
+         /**
           * note: store a RefPtr to this map immediately because reparsing with this handler
           * would otherwise cause it to be deleted.
           * @return a handle to the map parsed, or NULL if no map has been created.
@@ -216,6 +226,7 @@ namespace dtDAL
          dtCore::RefPtr<Map> mMap;
 
          bool mInMap;
+         bool mInPrefab;
          bool mInHeader;
          bool mInLibraries;
          bool mInEvents;
@@ -271,6 +282,9 @@ namespace dtDAL
          int mGroupIndex;
 
          bool mFoundMapName;
+
+         bool mLoadingPrefab;
+         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >* mPrefabProxyList;
 
          //Reset all of the internal data/state variables
          void Reset();

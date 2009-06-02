@@ -29,6 +29,7 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <dtEditQt/editoractions.h>
+#include <dtEditQt/editordata.h>
 
 #include <QtGui/QAction>
 #include <QtGui/QIcon>
@@ -53,6 +54,7 @@
 #include <dtEditQt/mapdialog.h>
 #include <dtEditQt/dialogmapproperties.h>
 #include <dtEditQt/mapsaveasdialog.h>
+#include <dtEditQt/prefabsaveasdialog.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/preferencesdialog.h>
 #include <dtEditQt/propertyeditor.h>
@@ -72,18 +74,21 @@
 #include <dtCore/isector.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 #include <dtDAL/environmentactor.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
 #include <dtCore/globals.h>
 
 #include <sstream>
 
 namespace dtEditQt
 {
+   const std::string EditorActions::PREFAB_DIRECTORY("prefabs");
 
    // Singleton global variable for the library manager.
    dtCore::RefPtr<EditorActions> EditorActions::sInstance(NULL);
@@ -195,6 +200,16 @@ namespace dtEditQt
       mActionFileSaveMapAs = new QAction(tr("Save Map &As..."),this);
       mActionFileSaveMapAs->setStatusTip(tr("Save the current map under a different file."));
       connect(mActionFileSaveMapAs, SIGNAL(triggered()), this, SLOT(slotFileSaveMapAs()));
+
+      // File - Import Prefab...
+      //mActionFileImportPrefab = new QAction(tr("Import Prefab..."), this);
+      //mActionFileImportPrefab->setStatusTip(tr("Import a prefab into the current map."));
+      //connect(mActionFileImportPrefab, SIGNAL(triggered()), this, SLOT(slotFileImportPrefab()));
+
+      // File - Export Prefab...
+      mActionFileExportPrefab = new QAction(tr("Export Prefab..."), this);
+      mActionFileExportPrefab->setStatusTip(tr("Export the currently selected actors to a prefab resource."));
+      connect(mActionFileExportPrefab, SIGNAL(triggered()), this, SLOT(slotFileExportPrefab()));
 
       // File - Change Project
       mActionFileChangeProject = new QAction(tr("&Change Project..."), this);
@@ -591,6 +606,141 @@ namespace dtEditQt
       slotRestartAutosave();
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotFileImportPrefab()
+   {
+      slotPauseAutosave();
+      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + "test3.dtprefab";
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      try
+      {
+         EditorData::GetInstance().getMainWindow()->startWaitCursor();
+         EditorEvents::GetInstance().emitBeginChangeTransaction();
+
+         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
+         dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
+         dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
+         parser->ParsePrefab(map, fullPath, proxyList);
+
+         // Auto select all of the proxies.
+         ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
+         dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
+         ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+
+         // Make sure we have valid data.
+         if (!currMap.valid())
+         {
+            LOG_ERROR("Current map is not valid.");
+            return;
+         }
+
+         // Once we have a reference to the current selection and the scene,
+         // clone each proxy, add it to the scene, make the newly cloned
+         // proxy(s) the current selection.
+         ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
+         itor    = selection.begin();
+         itorEnd = selection.end();
+
+         // Un-select all proxies currently selected.
+         for (; itor != itorEnd; ++itor)
+         {
+            dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
+
+            // Un-highlight the currently selected proxy.
+            if (overlay->isActorSelected(proxy))
+            {
+               overlay->removeActorFromCurrentSelection(proxy);
+            }
+         }
+
+         osg::Vec3 offset = ViewportManager::GetInstance().getWorldViewCamera()->getPosition();
+
+         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
+         {
+            dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
+
+            // Notify the creation of the proxies.
+            EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+
+            // Offset the position of all new proxies in the prefab.
+            dtDAL::TransformableActorProxy* tProxy =
+               dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+
+            if (tProxy)
+            {
+               osg::Vec3 pos = tProxy->GetTranslation();
+               pos += offset;
+               tProxy->SetTranslation(pos);
+            }
+         }
+
+         // Finally set the proxies in the prefab to be the current selection.
+         ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
+         EditorEvents::GetInstance().emitActorsSelected(proxyList);
+         EditorEvents::GetInstance().emitEndChangeTransaction();
+
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         LOG_ERROR(e.What());
+
+         QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
+            tr("Error"), QString(e.What().c_str()), tr("OK"));
+
+         //slotRestartAutosave();
+         //return;
+      }
+      fileUtils.PopDirectory();
+
+      slotRestartAutosave();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorActions::slotFileExportPrefab()
+   {
+      slotPauseAutosave();
+
+      PrefabSaveDialog dlg;
+      if (dlg.exec()== QDialog::Rejected)
+      {
+         slotRestartAutosave();
+         return;
+      }
+
+      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + dlg.getPrefabName();
+      std::string fullPathSaving = fullPath + ".saving";
+
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
+      try
+      {
+         ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
+         ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
+
+         dtCore::RefPtr<dtDAL::MapWriter> writer = new dtDAL::MapWriter;
+         writer->SavePrefab(selection, fullPathSaving, dlg.getPrefabDescription());
+
+         //if it's successful, move it to the final file name
+         fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
+      }
+      catch (const dtUtil::Exception& e)
+      {
+         LOG_ERROR(e.What());
+
+         QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
+            tr("Error"), QString(e.What().c_str()), tr("OK"));
+
+         //slotRestartAutosave();
+         //return;
+      }
+      fileUtils.PopDirectory();
+
+      slotRestartAutosave();
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileExit()
    {
@@ -763,11 +913,12 @@ namespace dtEditQt
       // Once we have a reference to the current selection and the scene,
       // clone each proxy, add it to the scene, make the newly cloned
       // proxy(s) the current selection.
+      std::map<int, int> groupMap;
       ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
       itor    = selection.begin();
       itorEnd = selection.end();
-
       std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > newSelection;
+
       for (; itor != itorEnd; ++itor)
       {
          dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
@@ -778,37 +929,48 @@ namespace dtEditQt
             continue;
          }
 
-         newSelection.push_back(copy);
-      }
-
-      std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >::iterator i, iend;
-
-      i    = newSelection.begin();
-      iend = newSelection.end();
-      for (; i != iend; ++i)
-      {
-         dtDAL::ActorProxy* proxy = i->get();
-
          // Store the original location of the proxy so we can position after
          // it has been added to the scene.
          osg::Vec3 oldPosition;
          dtDAL::TransformableActorProxy* tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+            dynamic_cast<dtDAL::TransformableActorProxy*>(copy.get());
          if (tProxy != NULL)
          {
             oldPosition = tProxy->GetTranslation();
          }
 
          // Add the new proxy to the map and send out a create event.
-         currMap->AddProxy(*proxy);
+         currMap->AddProxy(*copy);
 
-         EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+         EditorEvents::GetInstance().emitActorProxyCreated(copy, false);
+
+         // Preserve the group data for new proxies.
+         int groupIndex = currMap->FindGroupForActor(proxy);
+         if (groupIndex > -1)
+         {
+            // If we already have this group index mapped, then we have
+            // already created a new group for the copied proxies.
+            if (groupMap.find(groupIndex) != groupMap.end())
+            {
+               int newGroup = groupMap[groupIndex];
+               currMap->AddActorToGroup(newGroup, copy.get());
+            }
+            else
+            {
+               // Create a new group and map it.
+               int newGroup = currMap->GetGroupCount();
+               currMap->AddActorToGroup(newGroup, copy.get());
+               groupMap[groupIndex] = newGroup;
+            }
+         }
 
          // Move the newly duplicated actor to where it is supposed to go.
          if (tProxy != NULL)
          {
             tProxy->SetTranslation(oldPosition + offset);
          }
+
+         newSelection.push_back(copy);
       }
 
       // Finally set the newly cloned proxies to be the current selection.

@@ -116,6 +116,9 @@ namespace dtEditQt
       mFileMenu->addAction(editorActions.mActionFileSaveMap);
       mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
       mFileMenu->addSeparator();
+      //mFileMenu->addAction(editorActions.mActionFileImportPrefab);
+      mFileMenu->addAction(editorActions.mActionFileExportPrefab);
+      mFileMenu->addSeparator();
       mFileMenu->addAction(editorActions.mActionFileChangeProject);
       mFileMenu->addSeparator();
       mFileMenu->addMenu(mRecentProjs);
@@ -307,6 +310,7 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionFileCloseMap->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionFileSaveMap->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionFileSaveMapAs->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionFileExportPrefab->setEnabled(false);
       EditorActions::GetInstance().mActionFileExit->setEnabled(true);
 
       EditorActions::GetInstance().mActionGroupActors->setEnabled(false);
