@@ -50,8 +50,8 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::
    rootVertItem->setText(0, "Vertices");
 
    // Get the bone name
-   QString boneValue = QString("{ id = %1 }").arg(newMesh.GetBoneID());
-   boneNameItem->setText(0, QString("Bone - ") + QString::fromStdString(newMesh.GetBoneName()));
+   QString boneValue = QString("{ id = %1 }").arg(newMesh.GetEffectorID());
+   boneNameItem->setText(0, QString("Bone - ") + QString::fromStdString(newMesh.GetEffectorName()));
    boneNameItem->setText(1, boneValue);
 
    const dtAnim::PoseMesh::VertexVector &rawVerts = newMesh.GetVertices();
@@ -81,7 +81,7 @@ void PoseMeshProperties::AddMesh(const dtAnim::PoseMesh& newMesh, const dtAnim::
    stateItem->setText(0, "State");
 
    QTreeWidgetItem* meshAzimuthItem   = new QTreeWidgetItem(stateItem);
-   QTreeWidgetItem* meshElevationItem = new QTreeWidgetItem(stateItem);  
+   QTreeWidgetItem* meshElevationItem = new QTreeWidgetItem(stateItem);
 
    meshAzimuthItem->setText(0, "Posemesh Azimuth");
    meshElevationItem->setText(0, "Posemesh Elevation");  
