@@ -176,6 +176,9 @@ namespace dtDAL
       case dtDAL::DataType::ARRAY_ID:
          param = new NamedArrayParameter(name);
          break;
+      case dtDAL::DataType::CONTAINER_ID:
+         param = new NamedContainerParameter(name);
+         break;
       case dtDAL::DataType::STATICMESH_ID:
       case dtDAL::DataType::TEXTURE_ID:
       case dtDAL::DataType::TERRAIN_ID:
