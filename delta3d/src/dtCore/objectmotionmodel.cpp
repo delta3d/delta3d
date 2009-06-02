@@ -30,22 +30,20 @@ const float SENSITIVITY = 5.0f;
 //////////////////////////////////////////////////////////////////////////
 ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    : MotionModel("ObjectMotionModel")
-   , mView(NULL)
-   , mSceneNode(NULL)
-   , mCamera(NULL)
-   , mMouse(NULL)
    , mScale(1.0f)
+   , mView(NULL)
+   , mSceneNode(NULL)   , mMouse(NULL)
+   , mCamera(NULL)
    , mCoordinateSpace(LOCAL_SPACE)
    , mMotionType(MOTION_TYPE_MAX)
    , mHoverArrow(ARROW_TYPE_MAX)
    , mLeftMouse(false)
    , mRightMouse(false)
    , mMouseDown(false)
-   , mMouseLocked(false)
-   , mSnap(false)
-   , mOriginAngle(0.0f)
+   , mMouseLocked(false)   , mOriginAngle(0.0f)
    , mAutoScale(true)
    , mAllowScaleGizmo(false)
+   , mSnap(false)
 {
    mSnapRotation = osg::DegreesToRadians(45.0f);
    mSnapTranslation = 1;
@@ -408,6 +406,9 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
             case MOTION_TYPE_SCALE:
                UpdateScale();
                break;
+
+            default:
+               break;
             }
             UpdateWidgets();
             return mMotionType;
@@ -655,7 +656,6 @@ osg::TriangleMesh* ObjectMotionModel::GenerateRing(float minRadius, float maxRad
    float segmentAngle = osg::DegreesToRadians(360.0f) / segments;
 
    // Now iterate through each segment.
-   int vertexIndex = 0;
 
    osg::Vec3 minVertex = osg::Vec3(minRadius, 0.0f, 0.0f);
    osg::Vec3 maxVertex = osg::Vec3(maxRadius, 0.0f, 0.0f);
@@ -1004,15 +1004,14 @@ void ObjectMotionModel::UpdateTranslation(void)
    plane2.normalize();
 
    // Find the best plane.
-   float fBest;
-   float fTest;
+   float fBest = fabs(camAt * plane1);
+   float fTest = fabs(camAt * plane2);
 
-   if (fBest = fabs(camAt * plane1) > osg::DegreesToRadians(5.0f))
+   if (fBest > osg::DegreesToRadians(5.0f))
    {
       plane = &plane1;
    }
 
-   fTest = fabs(camAt * plane2);
    if (fTest > fBest)
    {
       fBest = fTest;
@@ -1380,15 +1379,14 @@ void ObjectMotionModel::UpdateScale(void)
    plane2.normalize();
 
    // Find the best plane.
-   float fBest;
-   float fTest;
+   float fBest = fabs(camAt * plane1);
+   float fTest = fabs(camAt * plane2);
 
-   if (fBest = fabs(camAt * plane1) > osg::DegreesToRadians(5.0f))
+   if (fBest > osg::DegreesToRadians(5.0f))
    {
       plane = &plane1;
    }
 
-   fTest = fabs(camAt * plane2);
    if (fTest > fBest)
    {
       fBest = fTest;
