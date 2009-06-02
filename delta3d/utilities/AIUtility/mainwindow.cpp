@@ -56,8 +56,6 @@ MainWindow::MainWindow(QWidget& mainWidget)
    connect(mUi->mActionOpenMap, SIGNAL(triggered()), this, SLOT(OnOpenMap()));
    connect(mUi->mActionCloseMap, SIGNAL(triggered()), this, SLOT(OnCloseMap()));
    connect(mUi->mChangeContextAction, SIGNAL(triggered()), this, SLOT(ChangeProjectContext()));
-
-   EnableOrDisableControls();
 }
 
 //////////////////////////////////////////////
@@ -65,6 +63,25 @@ MainWindow::~MainWindow()
 {
    delete mUi;
    mUi = NULL;
+}
+//////////////////////////////////////////////
+void MainWindow::showEvent(QShowEvent* e)
+{
+   if (!e->spontaneous())
+   {
+      QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+      QString projectContext = settings.value(PROJECT_CONTEXT_SETTING.c_str()).toString();
+
+
+      if (!projectContext.isEmpty())
+      {
+         emit ProjectContextChanged(projectContext.toStdString());
+      }
+
+      ChangeMap(settings.value(CURRENT_MAP_SETTING.c_str()).toString());
+
+      EnableOrDisableControls();
+   }
 }
 
 //////////////////////////////////////////////
@@ -107,12 +124,29 @@ void MainWindow::OnOpenMap()
    openMapDialog.SetListItems(listItems);
    if (openMapDialog.exec() == QDialog::Accepted)
    {
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-      emit MapSelected(openMapDialog.GetSelectedItem().toStdString());
-      QApplication::restoreOverrideCursor();
-
-      UpdateMapName(openMapDialog.GetSelectedItem());
+      ChangeMap(openMapDialog.GetSelectedItem());
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::ChangeMap(const QString& newMap)
+{
+   QApplication::setOverrideCursor(Qt::WaitCursor);
+   if (newMap.isEmpty())
+   {
+      emit CloseMapSelected();
+   }
+   else
+   {
+      emit MapSelected(newMap.toStdString());
+   }
+   QApplication::restoreOverrideCursor();
+
+   mCurrentMapName = newMap;
+   QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
+   settings.setValue(CURRENT_MAP_SETTING.c_str(), mCurrentMapName);
+   settings.sync();
+   EnableOrDisableControls();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,13 +154,7 @@ void MainWindow::OnCloseMap()
 {
    if (QMessageBox::question(this, tr("Close Map"), tr("Do you want to close the currently opened map?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
    {
-      QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-
-      emit CloseMapSelected();
-
-      UpdateMapName(tr(""));
-
-      QApplication::restoreOverrideCursor();
+      ChangeMap(tr(""));
    }
 }
 
@@ -138,15 +166,5 @@ void MainWindow::EnableOrDisableControls()
    // Stop from changing context unless the map is closed. It works around a bug.
    // since the map doesn't change immediately in the GM, we can't just change maps.
    mUi->mChangeContextAction->setEnabled(mCurrentMapName.isEmpty());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void MainWindow::UpdateMapName(const QString& newMap)
-{
-   mCurrentMapName = newMap;
-   QSettings settings(ORG_NAME.c_str(), APP_NAME.c_str());
-   settings.setValue(CURRENT_MAP_SETTING.c_str(), mCurrentMapName);
-   settings.sync();
-   EnableOrDisableControls();
 }
 
