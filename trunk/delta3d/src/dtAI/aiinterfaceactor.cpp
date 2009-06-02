@@ -156,9 +156,9 @@ namespace dtAI
          {
             mAStar.Reset(wayFrom, wayTo);
             if(mAStar.FindPath() == PATH_FOUND)
-            {  
-               //we should be able to do a simple assign here however we have a 
-               //const array of waypoints so we have to const cast each one               
+            {
+               //we should be able to do a simple assign here however we have a
+               //const array of waypoints so we have to const cast each one
                //this code should go away with the refactor
                WaypointAStar::container_type::iterator iter = mAStar.GetPath().begin();
                WaypointAStar::container_type::iterator iterEnd = mAStar.GetPath().end();
@@ -169,13 +169,13 @@ namespace dtAI
                }
 
                return true;
-            }            
+            }
          }
 
          return false;
       }
 
-      void ClearMemory() 
+      void ClearMemory()
       {
          mWaypointManager.GetNavMesh().Clear();
          mWaypointManager.Clear();
@@ -293,7 +293,7 @@ namespace dtAI
     ///////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::BuildPropertyMap()
     {
-        const dtUtil::RefString& GROUPNAME = "AIInterface";
+        const dtUtil::RefString GROUPNAME = "AIInterface";
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
            PROPERTY_WAYPOINT_FILE_NAME,
@@ -311,10 +311,10 @@ namespace dtAI
          std::string res = dtDAL::Project::GetInstance().GetContext() + '/'+ fileName;
 
          bool success = mAIInterface->LoadWaypointFile(res);
-         
+
          if(!success)
          {
-            LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")               
+            LOG_ERROR("Unable to load Waypoint File '" + fileName + "'")
          }
     }
 
@@ -332,17 +332,5 @@ namespace dtAI
     const AIPluginInterface* AIInterfaceActorProxy::GetAIInterface() const
     {
        return mAIInterface.get();
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////
-    //Entry Point
-    //////////////////////////////////////////////////////////////////////////////////////////
-    extern "C" DT_AI_EXPORT dtAI::AIPluginInterface* CreateAIInterface()
-    {
-       return new DeltaAIInterface;
-    }
-
-    extern "C" DT_AI_EXPORT void DestroyAIInterface(dtAI::AIPluginInterface* aiInterface)
-    {
-       delete aiInterface;
     }
 }
