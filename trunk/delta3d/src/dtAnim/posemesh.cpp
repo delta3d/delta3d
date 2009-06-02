@@ -36,27 +36,31 @@ using namespace dtAnim;
 PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
                    const PoseMeshData& meshData)
   : mName(meshData.mName)
-  , mBoneName(meshData.mBoneName)
+  , mBoneName(meshData.mEffectorName)
 {
    std::vector<unsigned int> animids;
    GetAnimationIDsByName(model, meshData.mAnimations, animids);
 
-   mBoneID = model->GetCoreBoneID(meshData.mBoneName);
+   mRootID     = model->GetCoreBoneID(meshData.mRootName);
+   mEffectorID = model->GetCoreBoneID(meshData.mEffectorName);
 
-   // We need to have a valid bone here in order to continue
-   if (mBoneID == -1)
+   // We need to have valid bones here in order to continue
+   if (mRootID == -1 || mEffectorID == -1)
    {
-      throw dtUtil::Exception("Unable to find bone '" + meshData.mBoneName + "' for pose mesh", __FILE__, __LINE__);
+      throw dtUtil::Exception("Unable to find bone '" + meshData.mEffectorName + 
+         "--" + meshData.mRootName + "' for pose mesh", __FILE__, __LINE__);
    }
 
-   // Store off the forward axis for this mesh
-   mNativeForward = meshData.mForward;
+   // Store off the effector axis for this mesh
+   mEffectorForward = meshData.mEffectorForward;
 
-   //mNativeForward = model->GetBoneAbsoluteRotation(mBoneID).inverse() * -osg::Y_AXIS;
-   //ExtractNativeForward(model, mNativeForward);
-
+   // Update the skeleton to initialize bone data
    model->ClearAll(0.0f);
    model->Update(0.0f);
+
+   // Calculate the forward direction
+   osg::Quat rootRotation = model->GetBoneAbsoluteRotation(mRootID);
+   mRootForward = rootRotation * meshData.mRootForward;
 
    // Allocate space for osg to triangulate our verts
    std::vector<osg::Vec3> posePoints;
@@ -88,44 +92,31 @@ PoseMesh::PoseMesh(dtAnim::Cal3DModelWrapper* model,
       model->BlendCycle(animID, 1.0f, 0.0f);
       model->Update(0.0f);
 
-      // frame 30 is a temp number intended to be the last or close to the last frame
-      //osg::Quat finalRotation = model->GetBoneAbsoluteRotationForKeyFrame(*anim, mBoneID, 30);
-      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mBoneID);
+      osg::Quat finalRotation = model->GetBoneAbsoluteRotation(mEffectorID);
 
       model->ClearCycle(animID, 0.0f);
       model->Update(0.0f);
 
       // calculate a vector transformed by the rotation data.
-      osg::Vec3 transformed = finalRotation * mNativeForward;
+      osg::Vec3 transformed = finalRotation * mEffectorForward;
       transformed.normalize();
 
       // calculate the local azimuth and elevation for the transformed vector
       float az = 0.f;
       float el = 0.f;
+      
+      dtAnim::GetCelestialCoordinates(transformed, mRootForward, az, el);
+     
+      std::string debugName = model->GetCoreAnimationName(animID);
 
-      osg::Vec3 pelvisForward(0, -1, 0);
-      dtAnim::GetCelestialCoordinates(transformed, pelvisForward, az, el);
+      osg::Vec3 debugDirection;
+      dtAnim::GetCelestialDirection(az, el, mRootForward, osg::Z_AXIS, debugDirection);
 
-      //float testAzDegrees = osg::RadiansToDegrees(az);
-      //float testElDegrees = osg::RadiansToDegrees(el);
-      std::string testName = model->GetCoreAnimationName(animID);
+      debugDirection.normalize();
+      float debugDotTranformed = debugDirection * transformed;
+      dtUtil::Clamp(debugDotTranformed, -1.0f, 1.0f);
 
-      osg::Vec3 testDirection;
-      dtAnim::GetCelestialDirection(az, el, pelvisForward, osg::Z_AXIS, testDirection);
-
-      testDirection.normalize();
-      float testDotTranformed = testDirection * transformed;
-      dtUtil::Clamp(testDotTranformed, -1.0f, 1.0f);
-
-      float precision = acosf(testDotTranformed);
-
-      //std::ostringstream oss;
-      //oss << "Vert #" << vert_idx
-      //    << " (" << osg::RadiansToDegrees(az) << "," << osg::RadiansToDegrees(el) << ") (degs)"
-      //    << "\t(anim=" << model->GetCoreAnimationName(*anim) << ")"
-      //    << std::endl;
-
-      //LOG_DEBUG(oss.str());
+      float precision = acosf(debugDotTranformed);
 
       // Store the vert for triangulation
       // - osg::PI_2
@@ -314,27 +305,6 @@ void PoseMesh::GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
 
       animIDs.push_back(id);
    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void PoseMesh::ExtractNativeForward(dtAnim::Cal3DModelWrapper* model,
-                                    osg::Vec3& outNativeForward)
-{
-   // Clear all animations from the skeleton
-   model->ClearAll(0.0f);
-   model->Update(0.0f);
-
-   //// Get the bone's rotation without this pose mesh's animations applied
-   //osg::Quat boneRotation = model->GetBoneAbsoluteRotation(mPoseMesh->GetBoneID());
-
-   //const osg::Vec3& nativeBoneForward = mPoseMesh->GetNativeForwardDirection();
-
-   //// Transform the native forward by base rotation
-   //outDirection = boneRotation * nativeBoneForward;
-
-   //// Re-apply the previous animation
-   //mMeshUtil->BlendPoses(mPoseMesh, mModel->GetCal3DWrapper(), currentTargetTri);
-   //modelWrapper->Update(0.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

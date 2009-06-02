@@ -44,14 +44,14 @@ namespace dtAnim
 
    class DT_ANIM_EXPORT PoseMesh
    {
-   public:   
+   public:
 
       struct DT_ANIM_EXPORT TargetTriangle
       {
          bool  mIsInside;
          int   mTriangleID;
          float mAzimuth;
-         float mElevation;         
+         float mElevation;
       };   
 
       struct DT_ANIM_EXPORT Vertex
@@ -74,7 +74,7 @@ namespace dtAnim
 
          // 3 pointers to the vertex points
          const Vertex* mVertices[3];
-         unsigned short mIndices[3];   
+         unsigned short mIndices[3];
       };
 
       typedef std::pair<unsigned short, unsigned short> MeshIndexPair;
@@ -93,7 +93,7 @@ namespace dtAnim
       typedef dtUtil::BarycentricSpace<osg::Vec3> Barycentric2D;
       typedef std::vector<Barycentric2D*>         Barycentric2DVector;
       typedef std::vector<Triangle>               TriangleVector;
-      typedef std::vector<TriangleEdge>           TriangleEdgeVector;     
+      typedef std::vector<TriangleEdge>           TriangleEdgeVector;
       typedef std::vector<std::string>            StringVector;
 
       typedef std::map<MeshIndexPair, osg::ref_ptr<osg::Geometry> > EdgeLineMap;
@@ -105,12 +105,12 @@ namespace dtAnim
 
       const std::string& GetName() const                 { return mName;       }
       const std::string& GetBoneName() const             { return mBoneName;   }
-      int GetBoneID() const                              { return mBoneID;     }
+      int GetBoneID() const                              { return mEffectorID;     }
       const VertexVector& GetVertices() const            { return mVertices;   }
       const Barycentric2DVector& GetBarySpaces() const   { return mBarySpaces; }
       const TriangleVector& GetTriangles() const         { return mTriangles;  }
       const TriangleEdgeVector GetSilhouette() const     { return mSilhouetteEdges; }
-      const osg::Vec3& GetNativeForwardDirection() const { return mNativeForward; }
+      const osg::Vec3& GetNativeForwardDirection() const { return mEffectorForward; }
 
       /**  
       *  GetTargetTriangleData Finds the triangle in the mesh for the given azimuth elevation 
@@ -124,7 +124,7 @@ namespace dtAnim
                                  TargetTriangle& outTriangle) const;
 
       /**
-      *  FindCelestialTriangleID Looks up a celestial triangle from a mesh using azimuth and elevation  
+      *  FindCelestialTriangleID Looks up a celestial triangle from a mesh using azimuth and elevation
       *  @param azimuth the horizontal angle of interest
       *  @param elevation the vertical angle of interest
       */
@@ -141,15 +141,18 @@ namespace dtAnim
       void GetIndexPairsForTriangle(int triangleID, 
                                     MeshIndexPair& pair0,
                                     MeshIndexPair& pair1,
-                                    MeshIndexPair& pair2) const;   
+                                    MeshIndexPair& pair2) const;
 
    private:
 
       std::string mName;
       std::string mBoneName;
 
-      int mBoneID;
-      osg::Vec3 mNativeForward;
+      int mRootID;
+      int mEffectorID;
+
+      osg::Vec3 mRootForward;
+      osg::Vec3 mEffectorForward;
 
       TriangleVector       mTriangles;
       TriangleEdgeVector   mSilhouetteEdges;
@@ -163,10 +166,6 @@ namespace dtAnim
       void GetAnimationIDsByName(const dtAnim::Cal3DModelWrapper* model,
                                  const std::vector<std::string>& animNames,
                                  std::vector<unsigned int>& animIDs) const;
-
-      void ExtractNativeForward(dtAnim::Cal3DModelWrapper* model,
-                                osg::Vec3& outNativeForward);
-
    };
 }
 
