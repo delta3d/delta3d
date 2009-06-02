@@ -19,21 +19,28 @@
 
 #include <dtAnim/posemeshxml.h>
 #include <dtAnim/posemesh.h>
-
+#include <dtCore/exceptionenum.h>
 #include <dtUtil/xercesutils.h>
+#include <dtUtil/exception.h>
+
 #include <cstddef>
 #include <cassert>
 #include <sstream>
 
 using namespace dtAnim;
 
-const char PoseMeshFileHandler::POSE_NODE_NAME[]         = { "PoseMesh\0"  };
-const char PoseMeshFileHandler::BONE_ATTRIBUTE_NAME[]    = { "bone\0"      };
-const char PoseMeshFileHandler::NAME_ATTRIBUTE_NAME[]    = { "name\0"      };
-const char PoseMeshFileHandler::FORWARD_ATTRIBUTE_NAME[] = { "forward\0"   };
-const char PoseMeshFileHandler::DEFAULT_VALUE[]          = { "default\0"   };
-const char PoseMeshFileHandler::TRIANGLE_NODE_NAME[]     = { "Triangle\0"  };
-const char PoseMeshFileHandler::ANIMATION_NODE_NAME[]    = { "Animation\0" };
+const char PoseMeshFileHandler::POSE_NODE[]      = { "PoseMesh\0"  };
+const char PoseMeshFileHandler::TRIANGLE_NODE[]  = { "Triangle\0"  };
+const char PoseMeshFileHandler::ANIMATION_NODE[] = { "Animation\0" };
+
+const char PoseMeshFileHandler::NAME_ATTRIBUTE[]             = { "name\0"                };
+const char PoseMeshFileHandler::ROOT_ATTRIBUTE[]             = { "root\0"                };
+const char PoseMeshFileHandler::ROOT_FORWARD_ATTRIBUTE[]     = { "rootForwardAxis\0"     };
+const char PoseMeshFileHandler::EFFECTOR_ATTRIBUTE[]         = { "effector\0"            };
+const char PoseMeshFileHandler::EFFECTOR_FORWARD_ATTRIBUTE[] = { "effectorForwardAxis\0" };
+
+const char PoseMeshFileHandler::DEFAULT_VALUE[] = { "default\0" };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 PoseMeshFileHandler::PoseMeshFileHandler()
@@ -56,56 +63,20 @@ void PoseMeshFileHandler::startElement(const XMLCh* const uri,const XMLCh* const
    dtUtil::XMLStringConverter elementName(localname);
    const std::string elementStr = elementName.ToString();
 
-   dtUtil::AttributeSearch search;
-   dtUtil::AttributeSearch::ResultMap results;
-   dtUtil::AttributeSearch::ResultMap::iterator resultIter;
-
    PoseNode currentNode(NODE_UNKNOWN);
 
-   if (elementStr == POSE_NODE_NAME)
+   if (elementStr == POSE_NODE)
    {
-      currentNode = NODE_CELESTIAL_MESH;
+      currentNode = NODE_POSEMESH;
 
-      results    = search(attrs);
-      resultIter = results.find(NAME_ATTRIBUTE_NAME);
-
-      // Get the name attribute
-      if (resultIter != results.end())
-      {
-         mCurrentData.mName = resultIter->second;
-      }
-      else
-      {
-         mCurrentData.mName = DEFAULT_VALUE;
-      }
-
-      // Get the bone attribute
-      resultIter = results.find(BONE_ATTRIBUTE_NAME);
-      assert(resultIter != results.end());
-
-      if (resultIter != results.end())
-      {
-         mCurrentData.mBoneName = resultIter->second;
-      }
-
-      // Get the forward direction
-      resultIter = results.find(FORWARD_ATTRIBUTE_NAME);
-      assert(resultIter != results.end());
-
-      if (resultIter != results.end())
-      {
-         std::istringstream iss(resultIter->second);
-         float xAxis, yAxis, zAxis;
-
-         iss >> xAxis >> yAxis >> zAxis;
-         mCurrentData.mForward.set(xAxis, yAxis, zAxis);
-      }
+      // Read in the attributes
+      ReadPoseMeshNode(attrs);
    }
-   else if (elementStr == TRIANGLE_NODE_NAME)
+   else if (elementStr == TRIANGLE_NODE)
    {
       currentNode = NODE_TRIANGLE;
    }
-   else if (elementStr == ANIMATION_NODE_NAME)
+   else if (elementStr == ANIMATION_NODE)
    {
       currentNode = NODE_ANIMATION;
    }
@@ -119,12 +90,12 @@ void PoseMeshFileHandler::endElement(const XMLCh* const uri,const XMLCh* const l
    dtUtil::XMLStringConverter elementName(localname);
    const std::string elementStr = elementName.ToString();
 
-   if (elementStr == POSE_NODE_NAME)
+   if (elementStr == POSE_NODE)
    {
       mMeshDataList.push_back(mCurrentData);
       mCurrentData.mAnimations.clear();
    }
-   else if (elementStr == TRIANGLE_NODE_NAME)
+   else if (elementStr == TRIANGLE_NODE)
    {
       assert((mCurrentData.mAnimations.size() % 3) == 0);
    }
@@ -151,4 +122,77 @@ void PoseMeshFileHandler::characters(const XMLCh* const chars, const unsigned in
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void dtAnim::PoseMeshFileHandler::ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+{
+   bool success = true;
 
+   dtUtil::AttributeSearch search;
+   dtUtil::AttributeSearch::ResultMap results;
+   dtUtil::AttributeSearch::ResultMap::iterator resultIter;
+
+   results    = search(attrs);
+   resultIter = results.find(NAME_ATTRIBUTE);
+
+   // Get the name attribute
+   if (resultIter != results.end())
+   {
+      mCurrentData.mName = resultIter->second;
+   }
+   else
+   {
+      mCurrentData.mName = DEFAULT_VALUE;
+   }
+
+   // Get the root bone attribute
+   resultIter = results.find(ROOT_ATTRIBUTE);
+   success = success && (resultIter != results.end());
+
+   if (resultIter != results.end())
+   {
+      mCurrentData.mRootName = resultIter->second;
+   }
+
+   // Get the root forward axis direction
+   resultIter = results.find(ROOT_FORWARD_ATTRIBUTE);
+   success = success && (resultIter != results.end());
+
+   if (resultIter != results.end())
+   {
+      std::istringstream iss(resultIter->second);
+      float xAxis, yAxis, zAxis;
+
+      iss >> xAxis >> yAxis >> zAxis;
+      mCurrentData.mRootForward.set(xAxis, yAxis, zAxis);
+   }
+
+   // Get the effector bone attribute
+   resultIter = results.find(EFFECTOR_ATTRIBUTE);
+   success = success && (resultIter != results.end());
+
+   if (resultIter != results.end())
+   {
+      mCurrentData.mEffectorName = resultIter->second;
+   }
+
+   // Get the effector forward axis direction
+   resultIter = results.find(EFFECTOR_FORWARD_ATTRIBUTE);
+   success = success && (resultIter != results.end());
+
+   if (resultIter != results.end())
+   {
+      std::istringstream iss(resultIter->second);
+      float xAxis, yAxis, zAxis;
+
+      iss >> xAxis >> yAxis >> zAxis;
+      mCurrentData.mEffectorForward.set(xAxis, yAxis, zAxis);
+   }
+
+   // Report errors
+   if (!success)
+   {
+      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Invalid or missing parameter in PoseMesh file.",
+         __FILE__, __LINE__);
+   }
+}

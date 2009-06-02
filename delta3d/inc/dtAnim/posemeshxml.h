@@ -35,10 +35,12 @@ namespace dtAnim
 
    struct PoseMeshData
    {
-      std::string  mName;       /// an identifier for this pose mesh instance
-      std::string  mBoneName;   /// an identifier for the bone that will give us direction
-      StringVector mAnimations; /// a list of name triples for animation triangles
-      osg::Vec3    mForward;    /// the direction that is forward in this bone's space
+      std::string  mName;            ///< an identifier for this pose mesh instance
+      std::string  mRootName;        ///< an identifier for the bone that will give the global forward
+      osg::Vec3    mRootForward;     ///< the direction that end effectors are relative to
+      std::string  mEffectorName;    ///< an identifier for the end effector bone     
+      osg::Vec3    mEffectorForward; ///< the direction that is forward in the end effector's bone's space
+      StringVector mAnimations;      ///< a list of name triples for animation triangles
    };
 
 
@@ -49,21 +51,27 @@ namespace dtAnim
       enum PoseNode
       {
          NODE_UNKNOWN,
-         NODE_CELESTIAL_MESH,
+         NODE_POSEMESH,
          NODE_TRIANGLE,
          NODE_ANIMATION
       };
 
       typedef std::stack<PoseNode> NodeStack;
       typedef std::vector<PoseMeshData> PoseMeshDataVector;
+      
+      // Node names
+      static const char POSE_NODE[];
+      static const char TRIANGLE_NODE[];
+      static const char ANIMATION_NODE[];
 
-      static const char POSE_NODE_NAME[];
-      static const char BONE_ATTRIBUTE_NAME[];
-      static const char NAME_ATTRIBUTE_NAME[];
-      static const char FORWARD_ATTRIBUTE_NAME[];
+      // Attribute names
+      static const char NAME_ATTRIBUTE[];
+      static const char ROOT_ATTRIBUTE[];
+      static const char ROOT_FORWARD_ATTRIBUTE[];
+      static const char EFFECTOR_ATTRIBUTE[];
+      static const char EFFECTOR_FORWARD_ATTRIBUTE[];
       static const char DEFAULT_VALUE[];
-      static const char TRIANGLE_NODE_NAME[];
-      static const char ANIMATION_NODE_NAME[];
+
 
       PoseMeshFileHandler();
       ~PoseMeshFileHandler();
@@ -94,6 +102,8 @@ namespace dtAnim
       PoseMeshData       mCurrentData;
       NodeStack          mNodeStack;
       StringVector       mTriangleAnimations;
+
+      void ReadPoseMeshNode(const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
    };
 }
 

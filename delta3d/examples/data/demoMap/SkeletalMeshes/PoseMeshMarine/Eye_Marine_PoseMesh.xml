@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PoseMeshFile>
-	<PoseMesh name="Poses_Head" bone="Bip01 Head" forward="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_Head" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bip01 Head" effectorForwardAxis="0.0 1.0 0.0">	
 		<Triangle>
 			<Animation>EHeadDownRight.XAF</Animation>
 			<Animation>EHeadDownLeft.XAF</Animation>
@@ -23,7 +24,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_LeftEye" bone="Bone_LEye" forward="1.0 0.0 0.0">	
+	<PoseMesh name="Poses_LeftEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bone_LEye" effectorForwardAxis="1.0 0.0 0.0">	
 		<Triangle>
 			<Animation>ELeftIn.XAF</Animation>
 			<Animation>ELeftMidDown.XAF</Animation>
@@ -46,7 +48,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_RightEye" bone="Bone_REye" forward="1.0 0.0 0.0">	
+	<PoseMesh name="Poses_RightEye" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bone_REye" effectorForwardAxis="1.0 0.0 0.0">	
 		<Triangle>
 			<Animation>ERightIn.XAF</Animation>
 			<Animation>ERightMidUp.XAF</Animation>
@@ -69,7 +72,8 @@
 		</Triangle>						
 	</PoseMesh>	
 	
-	<PoseMesh name="Poses_Torso" bone="Bip01 Spine3" forward="0.0 1.0 0.0">	
+	<PoseMesh name="Poses_Torso" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Bip01 Spine3" effectorForwardAxis="0.0 1.0 0.0">	
 		<Triangle>
 			<Animation>AtEase_rightdown.XAF</Animation>
 			<Animation>AtEase_straight.XAF</Animation>
@@ -92,7 +96,8 @@
 		</Triangle>						
 	</PoseMesh>
 	
-	<PoseMesh name="Poses_Gun" bone="Gun Barrel" forward="-1.0 0.0 0.0">	
+	<PoseMesh name="Poses_Gun" root="Bip01 Pelvis"  rootForwardAxis="0.0 1.0 0.0"
+	          effector="Gun Barrel" effectorForwardAxis="-1.0 0.0 0.0">	
     <Triangle>
 		<Animation>Squat_Aim_LeftUp.XAF</Animation>
 		<Animation>Squat_Aim_FtUp.XAF</Animation>
