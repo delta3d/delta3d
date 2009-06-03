@@ -43,6 +43,7 @@ namespace dtEditQt
     class ActorBrowser;
     class ActorSearcher;
     class ActorGlobalBrowser;
+    class PrefabBrowser;
 
     /**
     * @class ActorTab
@@ -77,10 +78,12 @@ namespace dtEditQt
         TabWrapper*   mTabActorBrowser;
         TabWrapper*   mTabActorSearch;
         TabWrapper*   mTabGlobalActor;
+        TabWrapper*   mTabPrefabBrowser;
 
         ActorBrowser*       mActorBrowserWidget;
         ActorSearcher*      mActorSearchWidget;
         ActorGlobalBrowser* mActorGlobalWidget;
+        PrefabBrowser*      mPrefabBrowserWidget;
 
         void closeEvent(QCloseEvent* e);
     };
