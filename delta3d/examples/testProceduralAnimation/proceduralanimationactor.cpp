@@ -291,8 +291,8 @@ osg::Vec3 ProceduralAnimationActor::GetPoseMeshEndEffectorDirection(const dtAnim
    // If we have the ik system attached
    if (poseMesh != NULL)
    {
-      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(poseMesh->GetBoneID());
-      osg::Vec3 nativeBoneForward = poseMesh->GetNativeForwardDirection();
+      osg::Quat boneRotation = modelWrapper->GetBoneAbsoluteRotation(poseMesh->GetEffectorID());
+      osg::Vec3 nativeBoneForward = poseMesh->GetEffectorForwardAxis();
 
       dtCore::Transform transform;
       GetTransform(transform);
@@ -367,7 +367,7 @@ osg::Vec3 ProceduralAnimationActor::GetGunPosition() const
    transform.GetTranslation(translation);
 
    // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(gunMesh->GetBoneID());
+   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(gunMesh->GetEffectorID());
 
    // Get the gun position in the world
    osg::Quat rotationCorrection(osg::DegreesToRadians(180.0f), osg::Z_AXIS);
@@ -406,7 +406,7 @@ osg::Vec3 ProceduralAnimationActor::GetHeadPosition() const
    transform.GetTranslation(translation);
 
    // Get the bone position relative to its root
-   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(headMesh->GetBoneID());
+   osg::Vec3 bonePosition = modelWrapper->GetBoneAbsoluteTranslation(headMesh->GetEffectorID());
 
    // Get the gun position in the world
    bonePosition  = bonePosition * rotation;
