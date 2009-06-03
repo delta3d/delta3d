@@ -255,7 +255,7 @@ namespace dtEditQt
       if (selectedWidget && selectedWidget->isResource())
       {
          dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
-         std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + descriptor.GetResourceName();
+         std::string fullPath = dtDAL::Project::GetInstance().GetResourcePath(descriptor);
 
          dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
