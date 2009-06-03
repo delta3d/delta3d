@@ -63,6 +63,9 @@ namespace dtEditQt
       setupGUI();
       connect(&EditorEvents::GetInstance(), SIGNAL(projectChanged()),
          this, SLOT(refreshPrefabs()));
+      
+      connect(&EditorActions::GetInstance(), SIGNAL(PrefabExported()),
+         this, SLOT(refreshPrefabs()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -88,9 +91,13 @@ namespace dtEditQt
       mCreatePrefabBtn = new QPushButton(tr("Create Prefab"), this);
       connect(mCreatePrefabBtn, SIGNAL(clicked()), this, SLOT(createPrefabPressed()));
 
+      mRefreshPrefabBtn = new QPushButton(tr("Refresh"), this);
+      connect(mRefreshPrefabBtn, SIGNAL(clicked()), this, SLOT(refreshPrefabs()));
+
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
       btnLayout->addWidget(mCreatePrefabBtn);
+      btnLayout->addWidget(mRefreshPrefabBtn);
       btnLayout->addStretch(1);
 
       QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -325,6 +332,9 @@ namespace dtEditQt
          {
             LOG_ERROR(e.What());
 
+            refreshPrefabs();
+
+            EditorData::GetInstance().getMainWindow()->endWaitCursor();
             //QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
             //   tr("Error"), QString(e.What().c_str()), tr("OK"));
 
@@ -357,6 +367,7 @@ namespace dtEditQt
 
       EditorData::GetInstance().getMainWindow()->startWaitCursor();
 
+      project.Refresh();
       project.GetResourcesOfType(dtDAL::DataType::PREFAB, mPrefabList);
 
       QIcon resourceIcon;

@@ -135,7 +135,6 @@ namespace dtEditQt
       mFileMenu->addAction(editorActions.mActionFileSaveMap);
       mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
       mFileMenu->addSeparator();
-      //mFileMenu->addAction(editorActions.mActionFileImportPrefab);
       mFileMenu->addAction(editorActions.mActionFileExportPrefab);
       mFileMenu->addSeparator();
       mFileMenu->addAction(editorActions.mActionFileChangeProject);

@@ -116,6 +116,7 @@ namespace dtEditQt
       QIcon          mResourceIcon;
       ResourceTree*  mTree;
       QPushButton*   mCreatePrefabBtn;
+      QPushButton*   mRefreshPrefabBtn;
 
       ResourceTreeWidget*  mRootPrefabTree;
 
