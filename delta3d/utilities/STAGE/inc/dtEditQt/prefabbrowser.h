@@ -78,7 +78,7 @@ namespace dtEditQt
          /**
          * Slot - handles the event when the create button is pressed
          */
-         void createActorPressed();
+         void createPrefabPressed();
 
          /**
          * Slot - Called when the tree selection changes

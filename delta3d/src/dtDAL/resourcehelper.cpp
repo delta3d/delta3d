@@ -794,11 +794,15 @@ namespace dtDAL
       fileUtils.PushDirectory(osgDB::getSimpleFileName(resourcePath));
       try
       {
-         dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
+         dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory(), dt.GetExtensions());
          for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
                continue;
+
+            //// Skip the svn folders.
+            //if (*j == ".svn")
+            //   continue;
 
             const std::string& currentFile = *j;
 
