@@ -795,15 +795,34 @@ namespace dtDAL
       try
       {
          dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory(), dt.GetExtensions());
+         dtUtil::DirectoryContents folders;
+         dtUtil::DirectoryContents files;
          for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
                continue;
 
-            //// Skip the svn folders.
-            //if (*j == ".svn")
-            //   continue;
+            const std::string& currentFile = *j;
 
+            std::string::size_type dot = currentFile.find_last_of('.');
+            if (dot == std::string::npos)
+            {
+               folders.push_back(currentFile);
+            }
+            else
+            {
+               files.push_back(currentFile);
+            }
+         }
+
+         contents = folders;
+         for (dtUtil::DirectoryContents::const_iterator j = files.begin(); j != files.end(); ++j)
+         {
+            contents.push_back(*j);
+         }
+
+         for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
+         {
             const std::string& currentFile = *j;
 
             dtUtil::FileInfo fi = fileUtils.GetFileInfo(currentFile);
