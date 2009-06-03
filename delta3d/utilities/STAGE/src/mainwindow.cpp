@@ -81,8 +81,11 @@ namespace dtEditQt
       dtDAL::Project::GetInstance().SetEditMode(true);
 
       ViewportManager::GetInstance();
-
-      //TODO: Read STAGE config file      
+      
+      //Read STAGE configuration file
+      std::string stageFolder = mSTAGEFullPath.substr(0,
+                                  mSTAGEFullPath.find_last_of("/\\"));
+      mCfgMgr.ReadXML(stageFolder + "/STAGEConfig.xml");      
 
       connectSlots();
       setupDockWindows();
@@ -105,16 +108,21 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::~MainWindow()
    {
-      //Save configuration
-      std::string stageFolder = mSTAGEFullPath.substr(0,
-                                   mSTAGEFullPath.find_last_of("/\\"));
+      if(mCfgMgr.GetVariable(ConfigurationManager::GENERAL,
+                              "SaveConfigurationOnClose") == "True")
+      {
+         //Save configuration
+         std::string stageFolder = mSTAGEFullPath.substr(0,
+                                      mSTAGEFullPath.find_last_of("/\\"));
 
-      QSplitter* hSplit = mSplitters.at(0);
-      QSize hSize = hSplit->frameSize();  
-      mCfgMgr.SetVariable("HorizontalViewFrameHeight", hSize.height());
-      mCfgMgr.SetVariable("HorizontalViewFrameWidth", hSize.width());
+         //Sample of how to save some STAGE config variables that we might care about:
+         //QSplitter* hSplit = mSplitters.at(0);
+         //QSize hSize = hSplit->frameSize();  
+         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "ShowTopView", hSize.height());
+         //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
-      mCfgMgr.WriteXML(stageFolder + "/STAGEConfig.xml");
+         mCfgMgr.WriteXML(stageFolder + "/STAGEConfig.xml");
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -308,10 +316,22 @@ namespace dtEditQt
       // for each viewport.
       ViewportContainer* container;
 
-      container = new ViewportContainer(mSideView,  vSplit2);
-      container = new ViewportContainer(mPerspView, vSplit2);
-      container = new ViewportContainer(mTopView,   vSplit1);
-      container = new ViewportContainer(mFrontView, vSplit1);
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "False")
+      {
+         container = new ViewportContainer(mSideView,  vSplit2);
+      }
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "False")
+      {
+         container = new ViewportContainer(mPerspView, vSplit2);
+      }
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "False")
+      {
+         container = new ViewportContainer(mTopView,   vSplit1);
+      }
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "False")
+      {
+         container = new ViewportContainer(mFrontView, vSplit1);
+      }
 
       // Returns the root of the viewport widget hierarchy.
       return hSplit;
