@@ -34,6 +34,7 @@
 #include "dtEditQt/actorsearcher.h"
 #include "dtEditQt/actorglobalbrowser.h"
 #include "dtEditQt/editoractions.h"
+#include <dtEditQt/prefabbrowser.h>
 
 #include <QtGui/QWidget>
 #include <QtGui/QAction>
@@ -54,11 +55,13 @@ namespace dtEditQt
       mTabActorBrowser = new TabWrapper(this);
       mTabActorSearch  = new TabWrapper(this);
       mTabGlobalActor  = new TabWrapper(this);
+      mTabPrefabBrowser= new TabWrapper(this);
 
       // widgets
       mActorBrowserWidget = new ActorBrowser(this);
       mActorSearchWidget  = new ActorSearcher(this);
       mActorGlobalWidget  = new ActorGlobalBrowser(this);
+      mPrefabBrowserWidget= new PrefabBrowser(this);
 
       addTabs();
 
@@ -85,6 +88,11 @@ namespace dtEditQt
       mTabGlobalActor->setWidget(mActorGlobalWidget);
       mTabGlobalActor->setName("Global Actors");
       mTabC->addTab(mTabGlobalActor);
+
+      // Prefabs Tab
+      mTabPrefabBrowser->setWidget(mPrefabBrowserWidget);
+      mTabPrefabBrowser->setName("Prefabs");
+      mTabC->addTab(mTabPrefabBrowser);
    }
 
    /////////////////////////////////////////////////////////////////////////////////

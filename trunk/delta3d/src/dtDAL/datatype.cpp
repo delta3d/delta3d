@@ -67,4 +67,5 @@ namespace dtDAL
    DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID);
    DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID);
    DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID);   
+   DataType DataType::PREFAB("Prefabs", "Prefab", true, PREFAB_ID);
 }
