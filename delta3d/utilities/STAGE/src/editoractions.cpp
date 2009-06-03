@@ -201,11 +201,6 @@ namespace dtEditQt
       mActionFileSaveMapAs->setStatusTip(tr("Save the current map under a different file."));
       connect(mActionFileSaveMapAs, SIGNAL(triggered()), this, SLOT(slotFileSaveMapAs()));
 
-      // File - Import Prefab...
-      //mActionFileImportPrefab = new QAction(tr("Import Prefab..."), this);
-      //mActionFileImportPrefab->setStatusTip(tr("Import a prefab into the current map."));
-      //connect(mActionFileImportPrefab, SIGNAL(triggered()), this, SLOT(slotFileImportPrefab()));
-
       // File - Export Prefab...
       mActionFileExportPrefab = new QAction(tr("Export Prefab..."), this);
       mActionFileExportPrefab->setStatusTip(tr("Export the currently selected actors to a prefab resource."));
@@ -607,98 +602,6 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorActions::slotFileImportPrefab()
-   {
-      slotPauseAutosave();
-      std::string fullPath = EditorActions::PREFAB_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + "test3.dtprefab";
-
-      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
-      try
-      {
-         EditorData::GetInstance().getMainWindow()->startWaitCursor();
-         EditorEvents::GetInstance().emitBeginChangeTransaction();
-
-         std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
-         dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
-         dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-         parser->ParsePrefab(map, fullPath, proxyList);
-
-         // Auto select all of the proxies.
-         ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
-         dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
-         ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
-
-         // Make sure we have valid data.
-         if (!currMap.valid())
-         {
-            LOG_ERROR("Current map is not valid.");
-            return;
-         }
-
-         // Once we have a reference to the current selection and the scene,
-         // clone each proxy, add it to the scene, make the newly cloned
-         // proxy(s) the current selection.
-         ViewportOverlay::ActorProxyList::iterator itor, itorEnd;
-         itor    = selection.begin();
-         itorEnd = selection.end();
-
-         // Un-select all proxies currently selected.
-         for (; itor != itorEnd; ++itor)
-         {
-            dtDAL::ActorProxy* proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-
-            // Un-highlight the currently selected proxy.
-            if (overlay->isActorSelected(proxy))
-            {
-               overlay->removeActorFromCurrentSelection(proxy);
-            }
-         }
-
-         osg::Vec3 offset = ViewportManager::GetInstance().getWorldViewCamera()->getPosition();
-
-         for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
-         {
-            dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
-
-            // Notify the creation of the proxies.
-            EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-
-            // Offset the position of all new proxies in the prefab.
-            dtDAL::TransformableActorProxy* tProxy =
-               dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
-
-            if (tProxy)
-            {
-               osg::Vec3 pos = tProxy->GetTranslation();
-               pos += offset;
-               tProxy->SetTranslation(pos);
-            }
-         }
-
-         // Finally set the proxies in the prefab to be the current selection.
-         ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
-         EditorEvents::GetInstance().emitActorsSelected(proxyList);
-         EditorEvents::GetInstance().emitEndChangeTransaction();
-
-         EditorData::GetInstance().getMainWindow()->endWaitCursor();
-      }
-      catch (const dtUtil::Exception& e)
-      {
-         LOG_ERROR(e.What());
-
-         QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
-            tr("Error"), QString(e.What().c_str()), tr("OK"));
-
-         //slotRestartAutosave();
-         //return;
-      }
-      fileUtils.PopDirectory();
-
-      slotRestartAutosave();
-   }
-
-   ////////////////////////////////////////////////////////////////////////////////
    void EditorActions::slotFileExportPrefab()
    {
       slotPauseAutosave();
@@ -725,6 +628,8 @@ namespace dtEditQt
 
          //if it's successful, move it to the final file name
          fileUtils.FileMove(fullPathSaving, fullPath + ".dtprefab", true);
+
+         emit PrefabExported();
       }
       catch (const dtUtil::Exception& e)
       {
