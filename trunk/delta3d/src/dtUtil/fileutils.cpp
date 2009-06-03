@@ -22,6 +22,7 @@
 #include <prefix/dtutilprefix-src.h>
 #include <dtUtil/macros.h>
 #include <osg/Version>
+#include <algorithm>
 
 #ifdef DELTA_WIN32
 #   include <dtUtil/mswin.h>
@@ -494,7 +495,6 @@ namespace dtUtil
       return result;
    }
 
-
    //////////////////////////////////////////////////////////////////////////
    std::string getFileExtensionIncludingDot(const std::string& fileName)
    {
@@ -507,6 +507,18 @@ namespace dtUtil
       return osgDB::getFileExtensionIncludingDot(fileName);
 #endif
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   class ToLowerClass
+   {
+   public:
+      ToLowerClass(){}
+
+      char operator() (char& elem) const
+      {
+         return tolower(elem);
+      }
+   };
 
    //////////////////////////////////////////////////////////////////////////
    DirectoryContents FileUtils::DirGetFiles(const std::string& path,
@@ -538,7 +550,11 @@ namespace dtUtil
          FileExtensionList::const_iterator extItr = extensions.begin();
          while (extItr != extensions.end())
          {
-            if (getFileExtensionIncludingDot((*dirItr)) == (*extItr))
+            std::string testExt = getFileExtensionIncludingDot((*dirItr));
+            std::transform(testExt.begin(), testExt.end(), testExt.begin(), ToLowerClass());
+            std::string validExt = (*extItr);
+            std::transform(validExt.begin(), validExt.end(), validExt.begin(), ToLowerClass());
+            if (testExt == validExt)
             {
                filteredContents.push_back((*dirItr));
                //stop when we find at least one match, to avoid duplicate file entries, in

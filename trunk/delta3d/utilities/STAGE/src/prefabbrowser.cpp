@@ -85,8 +85,8 @@ namespace dtEditQt
       connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
       vBox->addWidget(mTree);
 
-      mCreatePrefabBtn = new QPushButton(tr("Spawn Prefab"), this);
-      connect(mCreatePrefabBtn, SIGNAL(clicked()), this, SLOT(createActorPressed()));
+      mCreatePrefabBtn = new QPushButton(tr("Create Prefab"), this);
+      connect(mCreatePrefabBtn, SIGNAL(clicked()), this, SLOT(createPrefabPressed()));
 
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
@@ -240,7 +240,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PrefabBrowser::createActorPressed()
+   void PrefabBrowser::createPrefabPressed()
    {
       //LOG_INFO("User Created an Actor - Slot");
       ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
