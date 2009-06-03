@@ -22,6 +22,7 @@
 
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 
 using namespace dtAnim;
 
@@ -40,8 +41,16 @@ bool PoseMeshLoader::Load(const std::string& file, MeshDataContainer& toFill)
 {
    PoseMeshFileHandler handler;
    dtUtil::XercesParser parser;
+   bool result = false;
 
-   bool result = parser.Parse(file, handler, "");
+   try
+   {
+      result = parser.Parse(file, handler, "");
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      ex.LogException(dtUtil::Log::LOG_ERROR);
+   }
 
    if (result)
    {
