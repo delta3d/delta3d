@@ -36,6 +36,7 @@
 #include <osg/Matrix>
 #include <osg/io_utils>
 #include <cmath>
+#include <limits>
 #include <sstream>
 
 namespace dtUtil
@@ -44,6 +45,7 @@ namespace dtUtil
    class MathTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE(MathTests);
+         CPPUNIT_TEST( TestFiniteAndNAN );
          CPPUNIT_TEST( TestNormalizer );
          CPPUNIT_TEST( TestEquivalentVec2 );
          CPPUNIT_TEST( TestEquivalentVec3);
@@ -51,14 +53,15 @@ namespace dtUtil
          CPPUNIT_TEST( TestEquivalentVecUsingSlightlyDifferentVecs );
          CPPUNIT_TEST( TestEquivalentVecUsingVeryDifferentVecs );
          CPPUNIT_TEST( TestEquivalentVec4 );
-		 CPPUNIT_TEST( TestMatrixEulerConversions );
-       CPPUNIT_TEST( TestEquivalentReals );
+         CPPUNIT_TEST( TestMatrixEulerConversions );
+         CPPUNIT_TEST( TestEquivalentReals );
       CPPUNIT_TEST_SUITE_END();
 
       public:
          void setUp();
          void tearDown();
 
+         void TestFiniteAndNAN();
          void TestNormalizer();
          void TestEquivalentVec2();
          void TestEquivalentVec3();
@@ -83,6 +86,54 @@ namespace dtUtil
    {
    }
 
+   void MathTests::TestFiniteAndNAN()
+   {
+      float f1 = 5.1;
+      double d1 = 6.1;
+
+      CPPUNIT_ASSERT(dtUtil::IsFinite(f1));
+      CPPUNIT_ASSERT(dtUtil::IsFinite(d1));
+
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(d1));
+
+      f1 = std::numeric_limits<float>::infinity();
+      d1 = std::numeric_limits<double>::infinity();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(d1));
+
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(d1));
+
+      f1 = std::numeric_limits<float>::quiet_NaN();
+      d1 = std::numeric_limits<double>::quiet_NaN();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(d1));
+
+      CPPUNIT_ASSERT(dtUtil::IsNAN(f1));
+      CPPUNIT_ASSERT(dtUtil::IsNAN(d1));
+
+      f1 = -std::numeric_limits<float>::infinity();
+      d1 = -std::numeric_limits<double>::infinity();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(d1));
+
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsNAN(d1));
+
+      f1 = std::numeric_limits<float>::signaling_NaN();
+      d1 = std::numeric_limits<double>::signaling_NaN();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(f1));
+      CPPUNIT_ASSERT(!dtUtil::IsFinite(d1));
+
+      CPPUNIT_ASSERT(dtUtil::IsNAN(f1));
+      CPPUNIT_ASSERT(dtUtil::IsNAN(d1));
+   }
+
    void MathTests::TestNormalizer()
    {
       // set up
@@ -90,16 +141,16 @@ namespace dtUtil
       double yMin(-1.0), yMax(3.0);
 
       double minTest = Min<double>(xMin, xMax);
-      CPPUNIT_ASSERT_EQUAL(xMin, minTest);   
+      CPPUNIT_ASSERT_EQUAL(xMin, minTest);
 
       double maxTest = Max<double>(xMin, xMax);
-      CPPUNIT_ASSERT_EQUAL(xMax, maxTest);   
+      CPPUNIT_ASSERT_EQUAL(xMax, maxTest);
 
       double randRange = RandRange(5, 10);
-      CPPUNIT_ASSERT(randRange <= 10 && randRange >= 5);   
+      CPPUNIT_ASSERT(randRange <= 10 && randRange >= 5);
 
       float randFloat = RandFloat(float(xMin), float(xMax));
-      CPPUNIT_ASSERT(randFloat <= xMax && randFloat >= xMin);   
+      CPPUNIT_ASSERT(randFloat <= xMax && randFloat >= xMin);
 
       float randPercent = RandPercent();
       CPPUNIT_ASSERT(randPercent <= 1.0 && randPercent >= 0.0);
@@ -124,21 +175,21 @@ namespace dtUtil
    {
       osg::Vec2 v2a(3.31f, 3.32f);
       osg::Vec2 v2b(3.32f, 3.33f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v2a, v2b, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v2a, v2b, 0.1f));
 
       osg::Vec2f v2fa(3.31f, 3.32f);
       osg::Vec2f v2fb(3.32f, 3.33f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v2fa, v2fb, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v2fa, v2fb, 0.1f));
 
       osg::Vec2d v2da(3.31, 3.32);
       osg::Vec2d v2db(3.32, 3.33);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 1e-6));
       CPPUNIT_ASSERT(!Equivalent(v2da, v2db, 0.001));
       CPPUNIT_ASSERT(Equivalent(v2da, v2db, 0.1));
@@ -148,21 +199,21 @@ namespace dtUtil
    {
       osg::Vec3 v3a(3.31f, 3.32f, 3.33f);
       osg::Vec3 v3b(3.32f, 3.33f, 3.34f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v3a, v3b, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v3a, v3b, 0.1f));
 
       osg::Vec3f v3fa(3.31f, 3.32f, 3.33f);
       osg::Vec3f v3fb(3.32f, 3.33f, 3.34f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v3fa, v3fb, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v3fa, v3fb, 0.1f));
 
       osg::Vec3d v3da(3.31, 3.32, 3.33);
       osg::Vec3d v3db(3.32, 3.33, 3.34);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 1e-6));
       CPPUNIT_ASSERT(!Equivalent(v3da, v3db, 0.001));
       CPPUNIT_ASSERT(Equivalent(v3da, v3db, 0.1));
@@ -172,7 +223,7 @@ namespace dtUtil
    void MathTests::TestEquivalentVecUsingEqualVecs()
    {
       const osg::Vec3 v1(1.f, 2.f, 3.f);
-      
+
       //easy case, this *better* be true
       CPPUNIT_ASSERT_MESSAGE("dtUtil::Equivalent(Vec3,Vec3) did not correctly compare equal Vec3",
                               Equivalent(v1, v1) == true );
@@ -205,21 +256,21 @@ namespace dtUtil
    {
       osg::Vec4 v4a(3.31f, 3.32f, 3.33f, 3.34f);
       osg::Vec4 v4b(3.32f, 3.33f, 3.34f, 3.33f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v4a, v4b, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v4a, v4b, 0.1f));
 
       osg::Vec4f v4fa(3.31f, 3.32f, 3.33f, 3.34f);
       osg::Vec4f v4fb(3.32f, 3.33f, 3.34f, 3.33f);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 1e-6f));
       CPPUNIT_ASSERT(!Equivalent(v4fa, v4fb, 0.001f));
       CPPUNIT_ASSERT(Equivalent(v4fa, v4fb, 0.1f));
 
       osg::Vec4d v4da(3.31, 3.32, 3.33, 3.34);
       osg::Vec4d v4db(3.32, 3.33, 3.34, 3.33);
-      
+
       CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 1e-6));
       CPPUNIT_ASSERT(!Equivalent(v4da, v4db, 0.001));
       CPPUNIT_ASSERT(Equivalent(v4da, v4db, 0.1));
@@ -229,7 +280,7 @@ namespace dtUtil
    {
       float test_magic_epsilon = 1e-1f;
 
-      osg::Matrix testMatrix; 
+      osg::Matrix testMatrix;
 	   osg::Vec3 hprResult;
 
 	   // Test special cases with 90 degree angles
@@ -279,15 +330,15 @@ namespace dtUtil
       float float1, float2;
 
       // It seems wierd, but if you are doing lots of math, and your values are in the 10 Million range,
-      // Then the next representable number is actually in increments of 1.  So, if you compare this, using 
-      // the normal checks, it will say they are not equal, but in fact, because of hte level of precision 
+      // Then the next representable number is actually in increments of 1.  So, if you compare this, using
+      // the normal checks, it will say they are not equal, but in fact, because of hte level of precision
       // at that point, they are equal. So, to be most accurate, the Equivalent() method allows
       // for a scaling epsilon value.  It's hard to explain, but you can see the article mentioned in the
       // Equivalent method description.
       float1 = 10000000.0f;
       float2 = 10000001.0f;
 
-      bool wasEqual; 
+      bool wasEqual;
       wasEqual = (float1 == float2);
       CPPUNIT_ASSERT_MESSAGE("Using regular epsilon type check, they should not be equal.", !wasEqual);
 

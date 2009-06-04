@@ -30,7 +30,7 @@
 #endif
 
 namespace dtUtil
-{      
+{
 
    template <typename Real>
    Real Min(Real a, Real b)
@@ -48,7 +48,7 @@ namespace dtUtil
    {
       return ((from) + (rand() % (((to) - (from)) + 1)));
    }
-   
+
    inline float RandFloat(float min, float max)
    {
       return ( (min) + (((rand() & RAND_MAX) / ((float)RAND_MAX)) * ( (max) - (min)) )  );
@@ -62,25 +62,29 @@ namespace dtUtil
    template <typename Real>
    inline Real Abs(Real x)
    {
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
       return (( x < 0) ? ((Real)(-1.0) * x) : x);
+#else
+      return std::abs(x);
+#endif
    }
 
    template <typename Real>
    inline void Clamp(Real& x, const Real low, const Real high)
    {
       ClampMin( x, low );
-      ClampMax( x, high );      
+      ClampMax( x, high );
    }
 
    template <typename Real>
    inline void ClampMax(Real& x, const Real high)
-   {      
+   {
       if (x > high) { x = high; }
    }
 
    template <typename Real>
    inline void ClampMin(Real& x, const Real low)
-   {      
+   {
       if (x < low) { x = low; }
    }
 
@@ -98,7 +102,7 @@ namespace dtUtil
       return x + t * (y - x);
    }
 
-   template <typename T> 
+   template <typename T>
    bool IsFinite(const T value)
    {
       #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
@@ -107,7 +111,13 @@ namespace dtUtil
          return std::isfinite(value) ? true : false;
       #endif
    }
- 
+
+   template <typename T>
+   bool IsNAN(const T value)
+   {
+      return osg::isNaN(value);
+   }
+
    /// Normalizes a value within a specified space range.
    /// Usage:  To find the normalized value for a range:
    /// float nX = CalculateNormal( valueX , xMin , xMax );
@@ -139,10 +149,10 @@ namespace dtUtil
    }
 
    /**
-    * This does a relative comparison of floats.  This is a SAFE comparison 
+    * This does a relative comparison of floats.  This is a SAFE comparison
     * that doesn't use cheesy 0.0001 type epsilon values.  The epsilon is scaled
     * based on the precision of the numbers passed in.  This was taken from
-    * Christer Ericson's GDC '07 presentation: 
+    * Christer Ericson's GDC '07 presentation:
     * http://realtimecollisiondetection.net/pubs/GDC06_Ericson_Physics_Tutorial_Numerical_Robustness.ppt
     * Note - This should be used when comparing very large and/or very small numbers.
     * @param float1 The first float
@@ -155,10 +165,10 @@ namespace dtUtil
    }
 
    /**
-   * This does a relative comparison of doubles.  This is a SAFE comparison 
+   * This does a relative comparison of doubles.  This is a SAFE comparison
    * that doesn't use cheesy 0.0001 type epsilon values.  The epsilon is scaled
    * based on the precision of the numbers passed in.  This was taken from
-   * Christer Ericson's GDC '07 presentation: 
+   * Christer Ericson's GDC '07 presentation:
    * http://realtimecollisiondetection.net/pubs/GDC06_Ericson_Physics_Tutorial_Numerical_Robustness.ppt
    * Note - This should be used when comparing very large and/or very small numbers.
    * @param double1 The first value
@@ -189,7 +199,7 @@ namespace dtUtil
    }
 
    /**
-    * Does an epsilon equals on an any osg::Vec# 
+    * Does an epsilon equals on an any osg::Vec#
     * @param lhs The first vector.
     * @param rhs The second vector.
     * @param epsilon the epsilon to use in the compare.
