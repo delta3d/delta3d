@@ -69,17 +69,17 @@ static ParamBlockDesc2 group_param_blk ( group_params, _T("group_params"),  0, &
 										 end
 										 );
 
-void OSGGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void OSGGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	GroupDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void OSGGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void OSGGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	GroupDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

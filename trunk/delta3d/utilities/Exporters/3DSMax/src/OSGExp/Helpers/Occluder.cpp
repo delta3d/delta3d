@@ -68,17 +68,17 @@ static ParamBlockDesc2 Occluder_param_blk ( Occluder_params, _T("Occluder_params
 	end
 	);
 
-void Occluder::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void Occluder::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	OccluderDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void Occluder::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void Occluder::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	OccluderDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

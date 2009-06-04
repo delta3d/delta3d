@@ -111,17 +111,17 @@ static ParamBlockDesc2 billboard_param_blk ( billboard_params, _T("billboard_par
 	end
 	);
 
-void Billboard::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void Billboard::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{	
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	BillboardDesc.BeginEditParams(ip, this, flags, prev);
 }
 
-void Billboard::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void Billboard::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	BillboardDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

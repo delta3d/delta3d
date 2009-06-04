@@ -77,17 +77,17 @@ static ParamBlockDesc2 NodeMask_param_blk ( NodeMask_params, _T("NodeMask_params
 	end
 	);
 
-void NodeMask::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void NodeMask::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	NodeMaskDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void NodeMask::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void NodeMask::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	NodeMaskDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

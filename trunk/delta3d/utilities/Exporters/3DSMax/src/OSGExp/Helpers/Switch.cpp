@@ -116,17 +116,17 @@ static ParamBlockDesc2 switch_param_blk ( switch_params, _T("switch_params"),  0
 	end
 	);
 
-void Switch::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void Switch::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	SwitchDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void Switch::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void Switch::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	SwitchDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

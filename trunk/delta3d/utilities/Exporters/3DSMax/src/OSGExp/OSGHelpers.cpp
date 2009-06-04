@@ -54,11 +54,31 @@
 
 #include <crtdbg.h>
 
+////////////////////////////////////////////////////////////////////////////////
+void OSGExp::InitOSGNode(osg::Node& node, INode* maxNode, bool dynamicDataVariance)
+{
+   // Set the node's name.
+   if(maxNode != NULL)
+   {
+      node.setName(maxNode->GetName());
+   }
+
+   // Set static data variance for better performance.
+   node.setDataVariance(dynamicDataVariance
+      ? osg::Object::DYNAMIC : osg::Object::STATIC);
+
+   // Use default node mask
+   if(_options->getUseDefaultNodeMaskValue())
+      node.setNodeMask(_options->getDefaultNodeMaskValue());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /**
  * Method to handle nodes referenced by an OSG Helper NodeMask Object.
  * The method will apply a user defined nodemask value to an OSG::Node.
  */
-void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode){
+void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode)
+{
 	IParamBlock2* pblock2;
 	RefList refList;
 
@@ -97,11 +117,13 @@ void OSGExp::applyNodeMaskValue(INode* node, TimeValue t, osg::Node* osgNode){
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * Method to handle nodes referenced by an OSG Helper StateSet Object.
  * The method will apply user defined properties to an OSG::StateSet.
  */
-void OSGExp::applyStateSetProperties(INode* node, TimeValue t, osg::StateSet* stateset){
+void OSGExp::applyStateSetProperties(INode* node, TimeValue t, osg::StateSet* stateset)
+{
 	if(!stateset)
 		return;
 
@@ -133,7 +155,9 @@ void OSGExp::applyStateSetProperties(INode* node, TimeValue t, osg::StateSet* st
 	}
 }
 
-void OSGExp::applyStateSetPolygonModeProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset){
+////////////////////////////////////////////////////////////////////////////////
+void OSGExp::applyStateSetPolygonModeProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset)
+{
     Interval iv;
     BOOL enabled;
 
@@ -162,7 +186,9 @@ void OSGExp::applyStateSetPolygonModeProperties(IParamBlock2* pblock2, TimeValue
     }
 }
 
-void OSGExp::applyStateSetPolygonOffsetProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset){
+////////////////////////////////////////////////////////////////////////////////
+void OSGExp::applyStateSetPolygonOffsetProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset)
+{
     Interval iv;
     BOOL enabled;
 
@@ -189,7 +215,9 @@ void OSGExp::applyStateSetPolygonOffsetProperties(IParamBlock2* pblock2, TimeVal
     }
 }
 
-void OSGExp::applyStateSetGLModeProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset){
+////////////////////////////////////////////////////////////////////////////////
+void OSGExp::applyStateSetGLModeProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset)
+{
     Interval iv;
     BOOL cullface;
 	BOOL normalize;
@@ -213,7 +241,9 @@ void OSGExp::applyStateSetGLModeProperties(IParamBlock2* pblock2, TimeValue t, o
     if(usealphablending) MtlKeeper::addAlphaBlendFunc(stateset);
 }
 
-void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset){
+////////////////////////////////////////////////////////////////////////////////
+void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t, osg::StateSet* stateset)
+{
     Interval iv;
     BOOL renderBinEnabled;
 
@@ -245,19 +275,17 @@ void OSGExp::applyStateSetRenderBinProperties(IParamBlock2* pblock2, TimeValue t
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an OSG billboard defined by an OSG
  * billboard helper object. 
  */
-osg::ref_ptr<osg::Billboard> OSGExp::createBillboardFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Billboard> OSGExp::createBillboardFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	// Make the billboard from properties in helper object.
 	osg::ref_ptr<osg::Billboard> bilbo = new osg::Billboard();
-	bilbo->setName(node->GetName());
-	// Set static datavariance for better performance
-	bilbo->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		bilbo->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*bilbo, node, false);
 
 	// The billboard properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
@@ -302,6 +330,7 @@ osg::ref_ptr<osg::Billboard> OSGExp::createBillboardFromHelperObject(osg::Group*
 	return bilbo;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will allow for adding groups of geometry to the billboard helper object.
  * Billboard geoemtry in OSG must be added directly to the rootscene - no matrixtransforms, 
@@ -309,7 +338,8 @@ osg::ref_ptr<osg::Billboard> OSGExp::createBillboardFromHelperObject(osg::Group*
  * from any max geometry node or group node. The resulting geometry with position will be added
  * to the given billboard object.
  */
-void OSGExp::traverseBillboardNodes(osg::Group* rootTransform, osg::Billboard* bilbo, INode* node, TimeValue t){
+void OSGExp::traverseBillboardNodes(osg::Group* rootTransform, osg::Billboard* bilbo, INode* node, TimeValue t)
+{
 	if(node == NULL)
 		return;
 	// Is this a group node.
@@ -345,12 +375,13 @@ void OSGExp::traverseBillboardNodes(osg::Group* rootTransform, osg::Billboard* b
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /** 
  * This method will transform the given geometry's vertices
  * and normals by the given matrix.
  */
-osg::Vec3 OSGExp::transformBillboardGeometry(osg::Geometry* geometry, osg::Matrix mat){
-
+osg::Vec3 OSGExp::transformBillboardGeometry(osg::Geometry* geometry, osg::Matrix mat)
+{
 	// Rotate and scale every vertex to absolute coordinates.
 	// The geometry will still be positioned in its local coordinate system.
 	osg::Matrix cMat(mat);
@@ -382,12 +413,14 @@ osg::Vec3 OSGExp::transformBillboardGeometry(osg::Geometry* geometry, osg::Matri
 	return mat.getTrans();
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osg::(Paged)LOD defined by an OSG
  * LOD helper object. 
  */
-osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
-
+osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	// The lod properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
@@ -395,10 +428,11 @@ osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(osg::Group* rootTransfo
 	BOOL usePagedLOD;
 	TCHAR* templateFilename;
 
-	if(pblock2){
-		pblock2->GetValue(lod_center_x, t, center[0], iv);
-		pblock2->GetValue(lod_center_y, t, center[1], iv);
-		pblock2->GetValue(lod_center_z, t, center[2], iv);
+	if(pblock2)
+   {
+		//pblock2->GetValue(lod_center_x, t, center[0], iv); // Not in UI anymore.
+		//pblock2->GetValue(lod_center_y, t, center[1], iv); // Not in UI anymore.
+		//pblock2->GetValue(lod_center_z, t, center[2], iv); // Not in UI anymore.
 		pblock2->GetValue(lod_usepaged, t, usePagedLOD, iv);
 		pblock2->GetValue(lod_paged_filename, t, templateFilename, iv);
 	}
@@ -409,30 +443,43 @@ osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(osg::Group* rootTransfo
 		lod = new osg::PagedLOD();
 	else
 		lod = new osg::LOD();
-	lod->setName(node->GetName());
-	// Set static datavariance for better performance
-	lod->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		lod->setNodeMask(_options->getDefaultNodeMaskValue());
+
+   InitOSGNode(*lod, node, true);
 
 	// Set properties on OSG lod.
-	lod->setCenter(center);
+	lod->setCenter(center); // CR - Fix this??? It is assumed the point is relative to the hierarchy.
 
-	// Add geometry to lod.
-	if(pblock2){
-		for(int n=0; n<NUM_LOD_OBJECTS; n++){
+   // Add geometry to lod.
+   osg::LOD::RangeList rangeList;
+
+	if(pblock2 != NULL)
+   {
+      int limit = pblock2->Count(lod_node_array);
+      if(limit > NUM_LOD_OBJECTS)
+      {
+         limit = NUM_LOD_OBJECTS;
+      }
+
+      Interval interval;
+      INode* lodGeomNode = NULL;
+		for(int n = 0; n < limit; ++n)
+      {
 			// Get min and max values from helper object.
-			float min;
-			float max;
-			pblock2->GetValue(lod_min, t, min, iv, n);
-			pblock2->GetValue(lod_max, t, max, iv, n);
+			float minDistance = 0.0f;
+			float maxDistance = 0.0f;
+			pblock2->GetValue(lod_min, t, minDistance, iv, n);
+			pblock2->GetValue(lod_max, t, maxDistance, iv, n);
 
-			INode* lodGeomNode = pblock2->GetINode(lod_node+n, t);
-			osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, lodGeomNode, obj, t);
-			if(transform.valid()){
+         lodGeomNode = NULL;
+			pblock2->GetValue(lod_node_array, t, lodGeomNode, interval, n);
+
+         /*osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, lodGeomNode, obj, t);
+			
+         if(transform.valid(lodGeomNode))
+         {
 				// If use paged LOD
-				if(usePagedLOD && dynamic_cast<const osg::PagedLOD*>(lod.get())){
+				if(usePagedLOD && dynamic_cast<const osg::PagedLOD*>(lod.get()))
+            {
 					char filename[500];
 					sprintf(filename,"%s_%d%s", templateFilename,
 												n,
@@ -446,30 +493,36 @@ osg::ref_ptr<osg::LOD> OSGExp::createLODFromHelperObject(osg::Group* rootTransfo
 				}
 				// or use standard LODs
 				else{
-					lod->addChild(transform.get(), min, max);
+					lod->addChild(transform.get(), minDistance, maxDistance);
 				}
-			}
+			}*/
+
+         rangeList.push_back(std::make_pair(minDistance, maxDistance));
+
 		}// End for number of LOD objects in pblock2
 	}
 
-	// Return OSG LOD.
+   lod->setRangeList(rangeList);
+
+   // Return OSG LOD.
+   osg::Matrix transform = getNodeTransform(node, t);
+   osg::ref_ptr<osg::MatrixTransform> lodParent = new osg::MatrixTransform(transform);
+   rootTransform->addChild(lodParent.get());
+   lodParent->addChild(lod.get());
 	return lod;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osg::Sequence object from the 
  * properties defined in an OSG Sequence helper object. 
  */
-osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	// Make the LOD from properties in helper object.
 	osg::ref_ptr<osg::Sequence> seq = new osg::Sequence();
-	seq->setName(node->GetName());
-	// Set static datavariance for better performance
-	seq->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		seq->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*seq, node, false);
 
 	// The sequence properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
@@ -515,15 +568,18 @@ osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* r
 			break;
 	}
 	// Add geometry to sequence.
-	if(pblock2){
+	if(pblock2)
+   {
 		// Sample sequence objects.
-		if(approach==0){
+		if(approach==0)
+      {
 			INode* seqGeomNode = pblock2->GetINode(sequence_sample_node, t);
-			if(seqGeomNode){
+			if(seqGeomNode)
+         {
 				// Assert this is a geometry node
 				ObjectState os = seqGeomNode->EvalWorldState(t); 
-				if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID ){
-
+				if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID )
+            {
 					// Frames per sample
 					int fps;
 					pblock2->GetValue(sequence_frame_per_sample, t, fps, iv);
@@ -537,7 +593,8 @@ osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* r
 
 					// If the interval given in pblock2 is different from -1
 					// we should use this interval instead. This is given in sec.
-					if(end > begin){
+					if(end > begin)
+               {
 						animStart = begin*GetFrameRate()*GetTicksPerFrame();
 						animEnd = end*GetFrameRate()*GetTicksPerFrame();
 					}
@@ -549,44 +606,45 @@ osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* r
 					// A          B			 C          D	        	sampled geometry 
 					osg::Geode* prevGeode = NULL;
 					float frameTime = 0.0f;
-					for (step=animStart; step<=animEnd-delta; step+=delta) {
+					for(step=animStart; step<=animEnd-delta; step+=delta)
+               {
 						os = seqGeomNode->EvalWorldState(step); 
 						// Create sequence geometry; this geometry is placed relative!
-						osg::ref_ptr<osg::MatrixTransform> transform =  createGeomObject(rootTransform, seqGeomNode, os.obj,  step);
+						osg::ref_ptr<osg::MatrixTransform> transform = createGeomObject(rootTransform, seqGeomNode, os.obj, step);
 						osg::Geode* geode = Util::getGeode(transform.get());
 
 						// Only add geode to OSG sequence if it is different
 						// from the previous sampled geometry.
-						if(!Util::isGeodeEqual(prevGeode, geode)){
+						if(!Util::isGeodeEqual(prevGeode, geode))
+                  {
 							// Save geode so we can compared it to the next sampled geometry.
 							prevGeode = geode;
 
 							// Only set the frame time when we know for how long time we are going
 							// to see geometry, this is first possible, when we know when we should display
 							// the next geometry. Hence do not set it the first time.
-							if(step!=animStart){
+							if(step!=animStart)
+                     {
 								seq->setTime(n++, frameTime);
 								frameTime = 0.0f;
 							}
 						
-							// If the seqGeomNode has a parentnode different from
+                     // If the seqGeomNode has a parentnode different from
 							// the MAX rootNode, we need to create an OSG MatrixTransform
 							// to put the sequence geometry in before adding it to the OSG Sequence.
-							if(!seqGeomNode->GetParentNode()->IsRootNode()){
+							if(!seqGeomNode->GetParentNode()->IsRootNode())
+                     {
 								// Get absolute position of parent node.
 								osg::Matrix parentMat = convertMat(seqGeomNode->GetParentNode()->GetObjTMBeforeWSM(t));
 								osg::ref_ptr<osg::MatrixTransform> parentTransform = new osg::MatrixTransform();
-								// Set static datavariance for better performance
-								parentTransform->setDataVariance(osg::Object::STATIC);
-								// Use default node mask
-								if(_options->getUseDefaultNodeMaskValue())
-									parentTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+                        InitOSGNode(*parentTransform, NULL, false);
 
 								parentTransform->setMatrix(parentMat);
 								parentTransform->addChild(transform.get());
 								seq->addChild(parentTransform.get());
 							}
-							else{
+							else
+                     {
 								seq->addChild(transform.get());
 							}
 						}
@@ -599,11 +657,14 @@ osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* r
 			}
 		}
 		// or use static objects.
-		else{
-			for(int n=0; n<NUM_SEQUENCE_OBJECTS; n++){
+		else
+      {
+			for(int n=0; n<NUM_SEQUENCE_OBJECTS; n++)
+         {
 				INode* seqGeomNode = pblock2->GetINode(sequence_node+n, t);
 				osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, seqGeomNode, obj, t);
-				if(transform.valid()){
+				if(transform.valid())
+            {
 					seq->addChild(transform.get());
 					// Get time value from helper object.
 					float time;
@@ -614,30 +675,28 @@ osg::ref_ptr<osg::Sequence> OSGExp::createSequenceFromHelperObject(osg::Group* r
 		}
 	}
 
-	// Return OSG Sequence.
+   // Return OSG Sequence.
 	return seq;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osg::Switch object from the 
  * properties defined in an OSG Switch helper object. 
  */
-osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	osg::ref_ptr<osg::Switch> switcher = new osg::Switch();
-	switcher->setName(node->GetName());
-	// Set static datavariance for better performance
-	switcher->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		switcher->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*switcher, node, false);
 
 	// The switch properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
 
-	BOOL switchEnableChildren[9];
-	//memset(switchEnableChildren, 0, sizeof(BOOL) * 9);
+   osg::Switch::ValueList valueList;
+   const int NUM_VALUES = 9;
+	BOOL switchEnableChildren[NUM_VALUES];
 
 	if(pblock2)
 	{
@@ -650,11 +709,16 @@ osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(osg::Group* rootT
 		pblock2->GetValue(switch_enable_children7, t, switchEnableChildren[6], iv);
 		pblock2->GetValue(switch_enable_children8, t, switchEnableChildren[7], iv);
 		pblock2->GetValue(switch_enable_children9, t, switchEnableChildren[8], iv);
+
+      for(int i = 0; i < NUM_VALUES; ++i)
+      {
+         valueList.push_back(switchEnableChildren[i]==TRUE);
+      }
 	}
 
 
 	// Add geometry to osg::switch.
-	if(pblock2){
+	/*if(pblock2){
 		for(int n=0; n<pblock2->Count(switch_nodes); n++){
 			INode* switchGeomNode = pblock2->GetINode(switch_nodes, t,n);
 			osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, switchGeomNode, obj, t);
@@ -663,29 +727,31 @@ osg::ref_ptr<osg::Switch> OSGExp::createSwitchFromHelperObject(osg::Group* rootT
 				switcher->addChild(transform.get());
 				if(n < 9)
 				{
-					switcher->setChildValue(transform.get(), switchEnableChildren[n]!=FALSE);
+					switcher->setChildValue(transform.get(), switchEnableChildren[n]==TRUE);
 				}
 			}
 		}// End for all geometry nodes.
-	}
-	// Return switch.
+	}*/
+
+   // Return switch.
+   osg::Matrix transform = getNodeTransform(node, t);
+   osg::ref_ptr<osg::MatrixTransform> switchParent = new osg::MatrixTransform(transform);
+   rootTransform->addChild(switchParent.get());
+   switchParent->addChild(switcher.get());
 	return switcher;
 }
 
 
 
-osg::ref_ptr<osg::Group> OSGExp::createGroupFromHelper(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+////////////////////////////////////////////////////////////////////////////////
+osg::ref_ptr<osg::Group> OSGExp::createGroupFromHelper(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	osg::ref_ptr<osg::Group> pGroup = new osg::Group();
-	pGroup->setName(node->GetName());
-	// Set static datavariance for better performance
-	pGroup->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		pGroup->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*pGroup, node, false);
 
 	// The switch properties are saved in a parameter block.
-	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
+	/*IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
 
 
@@ -699,23 +765,25 @@ osg::ref_ptr<osg::Group> OSGExp::createGroupFromHelper(osg::Group* rootTransform
 				pGroup->addChild(transform.get());
 			}
 		}// End for all geometry nodes.
-	}
-	// Return group.
+	}*/
+
+   // Return group.
+   osg::Matrix transform = getNodeTransform(node, t);
+   osg::ref_ptr<osg::MatrixTransform> groupParent = new osg::MatrixTransform(transform);
+   rootTransform->addChild(groupParent.get());
+   groupParent->addChild(pGroup.get());
 	return pGroup;
 }
 
 
 
 
-osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(osg::Group* parent, INode* node, Object* obj, TimeValue t){
+////////////////////////////////////////////////////////////////////////////////
+osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(
+   osg::Group* parent, INode* node, Object* obj, TimeValue t)
+{
 	osg::ref_ptr<osgSim::DOFTransform> pDOF = new osgSim::DOFTransform();
-	pDOF->setName(node->GetName());
-	// Set dynamic datavariance so the optimizer doesn't try to remove this dof
-	pDOF->setDataVariance(osg::Object::DYNAMIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		pDOF->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*pDOF, node, true);
 
 	// The switch properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
@@ -819,36 +887,32 @@ osg::ref_ptr<osg::Transform> OSGExp::createDOFFromHelper(osg::Group* parent, INo
 
 
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osg::Impostor object from the 
  * properties defined in an OSG Impostor helper object. 
  */
-osg::ref_ptr<osg::Group> OSGExp::createImpostorFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
-
+osg::ref_ptr<osg::Group> OSGExp::createImpostorFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	osg::ref_ptr<osg::Group> group = new osg::Group();
-	group->setName(node->GetName());
-	// Set static datavariance for better performance
-	group->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		group->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*group, node, false);
 
 	// The impostor properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
 	// Add geometry to osg::impostor
-	if(pblock2){
-		for(int n=0; n<pblock2->Count(impostor_nodes); n++){
+	if(pblock2)
+   {
+		for(int n = 0; n < pblock2->Count(impostor_nodes); ++n)
+      {
 			INode* impostorGeomNode = pblock2->GetINode(impostor_nodes, t,n);
 			osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, impostorGeomNode, obj, t);
-			if(transform.valid()){
+			if(transform.valid())
+         {
 				// Create an impostor for every geometry node.
 				osg::ref_ptr<osgSim::Impostor> impostor = new osgSim::Impostor;
-				// Set static datavariance for better performance
-				impostor->setDataVariance(osg::Object::STATIC);
-				// Use default node mask
-				if(_options->getUseDefaultNodeMaskValue())
-					impostor->setNodeMask(_options->getDefaultNodeMaskValue());
+            InitOSGNode(*impostor, NULL, false);
 
 				// Add geometry to impostor.
 				impostor->addChild(transform.get());
@@ -867,28 +931,32 @@ osg::ref_ptr<osg::Group> OSGExp::createImpostorFromHelperObject(osg::Group* root
 			}
 		}// End for all geometry nodes
 	}
-	// Return group with impostors.
+   // Return group with impostors.
 	return group;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osg::Occluder object from the 
  * properties defined in an OSG Occluder helper object. 
  */
-void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
-
+void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	// The Occluder properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
 	// Add geometry to osg::Occluder.
-	if(pblock2){
-		for(int n=0; n<pblock2->Count(occluder_planes); n++){
+	if(pblock2)
+   {
+		for(int n=0; n<pblock2->Count(occluder_planes); n++)
+      {
 			INode* geomNode = pblock2->GetINode(occluder_planes, t,n);
-			if(geomNode){
+			if(geomNode)
+         {
 				// Assert this is a shape node
 				ObjectState os = geomNode->EvalWorldState(t); 
-				if(os.obj->SuperClassID() == SHAPE_CLASS_ID ){
-
+				if(os.obj->SuperClassID() == SHAPE_CLASS_ID)
+            {
 					// Get the absolute position of shape.
 					osg::Matrix mat = convertMat(geomNode->GetObjTMBeforeWSM(t));
 	
@@ -898,22 +966,20 @@ void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* no
 					// Transform all vertices in shape geometry to absolute position
 					// and insert them into occluder.
 					osg::Vec3Array* coords = static_cast<osg::Vec3Array*>(((osg::Geometry*)geode->getDrawable(0))->getVertexArray());
-					if(coords){
+					if(coords)
+               {
 						// Create occluder.
 						osg::OccluderNode* occluderNode = new osg::OccluderNode;
-						occluderNode->setName(node->GetName());
-						// Set static datavariance for better performance
-						occluderNode->setDataVariance(osg::Object::STATIC);
-						// Use default node mask
-						if(_options->getUseDefaultNodeMaskValue())
-							occluderNode->setNodeMask(_options->getDefaultNodeMaskValue());
+                  InitOSGNode(*occluderNode, node, false);
+
 						osg::ConvexPlanarOccluder* cpo = new osg::ConvexPlanarOccluder;
 						occluderNode->setOccluder(cpo);
 						osg::ConvexPlanarPolygon& occluder = cpo->getOccluder();
 						// Add occluder to rootTransform.
 						rootTransform->addChild(occluderNode);
 						int numCoords = coords->getNumElements();
-						for(int i=0;i<numCoords;i++){
+						for(int i=0;i<numCoords;i++)
+                  {
 							osg::Vec3 v = (*coords)[i];
 							v = mat.preMult(v);
 							occluder.add(v);
@@ -925,24 +991,23 @@ void OSGExp::createOccluderFromHelperObject(osg::Group* rootTransform, INode* no
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create an osgSim::VisibilityGroup object from the 
  * properties defined in an OSG VisibilityGroup helper object. 
  */
-osg::ref_ptr<osgSim::VisibilityGroup> OSGExp::createVisibilityGroupFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osgSim::VisibilityGroup> OSGExp::createVisibilityGroupFromHelperObject(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	osg::ref_ptr<osgSim::VisibilityGroup> visibilityGroup = new osgSim::VisibilityGroup();
-	visibilityGroup->setName(node->GetName());
-	// Set static datavariance for better performance
-	visibilityGroup->setDataVariance(osg::Object::STATIC);
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		visibilityGroup->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*visibilityGroup, node, false);
 
 	// The VisibilityGroup's properties are saved in a parameter block.
 	IParamBlock2* pblock2 = (IParamBlock2*)obj->GetParamBlock();
 	Interval iv;
 
-	if(pblock2){
+	if(pblock2)
+   {
 		// Set visibility volume.
 		INode* volumeNode = pblock2->GetINode(visibilitygroup_volume, t, 0);
 		osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(rootTransform, volumeNode, obj, t);
@@ -950,7 +1015,8 @@ osg::ref_ptr<osgSim::VisibilityGroup> OSGExp::createVisibilityGroupFromHelperObj
 			visibilityGroup->setVisibilityVolume(transform.get());
 
 		// Add all the geometry nodes to the VisibilityGroup.
-		for(int n=0; n<pblock2->Count(visibilitygroup_nodes); n++){
+		for(int n=0; n<pblock2->Count(visibilitygroup_nodes); n++)
+      {
 			INode* geomNode = pblock2->GetINode(visibilitygroup_nodes, t, n);
 			osg::ref_ptr<osg::Node> transform = createGeomObjectForHelperObjects(visibilityGroup.get(), geomNode, obj, t);
 			if(transform.valid())
@@ -961,11 +1027,14 @@ osg::ref_ptr<osgSim::VisibilityGroup> OSGExp::createVisibilityGroupFromHelperObj
 	return visibilityGroup;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will create geometry object for the helper objects
  * and place them in absolute positions.
  */
-osg::ref_ptr<osg::Node> OSGExp::createGeomObjectForHelperObjects(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Node> OSGExp::createGeomObjectForHelperObjects(
+   osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	if(node == NULL)
 		return NULL;
 
@@ -979,11 +1048,8 @@ osg::ref_ptr<osg::Node> OSGExp::createGeomObjectForHelperObjects(osg::Group* roo
 		// Get absolute position of parent node.
 		osg::Matrix parentMat = convertMat(node->GetParentNode()->GetObjTMBeforeWSM(t));
 		osg::ref_ptr<osg::MatrixTransform> parentTransform = new osg::MatrixTransform();
-		// Set static datavariance for better performance
-		parentTransform->setDataVariance(osg::Object::STATIC);
-		// Use default node mask
-		if(_options->getUseDefaultNodeMaskValue())
-			parentTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+      InitOSGNode(*parentTransform, NULL, false);
+
 		parentTransform->setMatrix(parentMat);
 		parentTransform->addChild(transform.get());
 		applyNodeMaskValue(node, t, parentTransform.get());
@@ -992,22 +1058,21 @@ osg::ref_ptr<osg::Node> OSGExp::createGeomObjectForHelperObjects(osg::Group* roo
 	return transform;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 /**
  * This method will traverse the node and create geometry objects or groups.
  */
-osg::ref_ptr<osg::Node> OSGExp::traverseNode(osg::Group* rootTransform, INode* node, TimeValue t){
+osg::ref_ptr<osg::Node> OSGExp::traverseNode(osg::Group* rootTransform, INode* node, TimeValue t)
+{
+   osg::ref_ptr<osg::Node> nodePtr;
 
 	// If this a group node then make an OSG group node
 	// and traverse into the children.
-	if (node->IsGroupHead()) {
+	if (node->IsGroupHead())
+   {
 		osg::ref_ptr<osg::MatrixTransform> groupNode = new osg::MatrixTransform();
-		// Set name of group node.
-		groupNode->setName(std::string(node->GetName()));
-		// Set static datavariance for better performance
-		groupNode->setDataVariance(osg::Object::STATIC);
-		// Set NodeMask
-		if(_options->getUseDefaultNodeMaskValue())
-			groupNode->setNodeMask(_options->getDefaultNodeMaskValue());
+      InitOSGNode(*groupNode, node, false);
+
 		groupNode->setMatrix(getNodeTransform(node, _ip->GetTime()));
 		// Traverse and add children.
 		for (int c = 0; c < node->NumberOfChildren(); c++){
@@ -1016,24 +1081,26 @@ osg::ref_ptr<osg::Node> OSGExp::traverseNode(osg::Group* rootTransform, INode* n
 				groupNode->addChild(transform.get());
 		}
 		applyNodeMaskValue(node, t, groupNode.get());
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(groupNode.get()));
+		nodePtr = groupNode.get();
 	}
-	else{
+	else
+   {
 		// Is this a geometry group.
 		ObjectState os = node->EvalWorldState(t); 
 		if(os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID )
 		{
-			return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createGeomObject(rootTransform, node, os.obj, t).get()));
+			nodePtr = createGeomObject(rootTransform, node, os.obj, t).get();
 		}
 		else if(os.obj->SuperClassID() == HELPER_CLASS_ID)
 		{
-			return createHelperObject(rootTransform, node, os.obj, _ip->GetTime());
+			nodePtr = createHelperObject(rootTransform, node, os.obj, _ip->GetTime());
 		}
 	}
-	//we shouldnt ever get here... hopefully
-	return NULL;
+
+	return nodePtr;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::ref_ptr<osg::MatrixTransform> OSGExp::createPointFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
 {
     osg::MatrixTransform *matrixTransform=new osg::MatrixTransform;

@@ -224,6 +224,8 @@
 #define IDC_HPR                         1130
 #define IDC_BILL_PICKNODE               1157
 #define IDC_PICKNODE                    1157
+#define IDC_NODE_MOVE_UP                1158
+#define IDC_NODE_MOVE_DOWN              1159
 #define IDC_LIST                        1333
 #define IDC_REMOVE_BILL                 1334
 #define IDC_COLOR                       1456
@@ -273,6 +275,7 @@
 #define IDC_BILL_SPIN17                 1518
 #define IDC_BILL_EDIT18                 1519
 #define IDC_BILL_SPIN18                 1520
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 

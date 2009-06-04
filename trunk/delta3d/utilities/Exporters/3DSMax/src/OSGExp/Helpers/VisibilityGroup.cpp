@@ -75,17 +75,17 @@ static ParamBlockDesc2 visibilitygroup_param_blk ( visibilitygroup_params, _T("v
 	end
 	);
 
-void VisibilityGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void VisibilityGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{	
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	VisibilityGroupDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void VisibilityGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void VisibilityGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{	
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	VisibilityGroupDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

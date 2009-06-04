@@ -73,17 +73,17 @@ static ParamBlockDesc2 impostor_param_blk ( impostor_params, _T("Impostor_params
 	end
 	);
 
-void Impostor::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void Impostor::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	theHelperProc.setInterfacePtr(ip);
-	editOb   = this;
+	theHelperProc.SetCurrentOSGHelper(this);
 	ImpostorDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void Impostor::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void Impostor::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	theHelperProc.setInterfacePtr(NULL);
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	ImpostorDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

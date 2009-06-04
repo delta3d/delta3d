@@ -115,7 +115,7 @@ class OSGExp : public SceneExport {
 	private:
 		// PreProcesses and traverses all the nodes in the MAX scene graph, can be found in OSGExp.cpp.
 		BOOL								preProcess(INode* node, TimeValue t);
-		BOOL								nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* parent);
+		BOOL								nodeEnum(osg::Group* rootTransform, INode* node, osg::Group* parent);
 
 		// Methods to do the real exporting, can be found in Export.cpp.
 		osg::ref_ptr<osg::MatrixTransform>	createGeomObject(osg::Group* rootTransform, INode *node, Object* obj, TimeValue t);
@@ -125,7 +125,16 @@ class OSGExp : public SceneExport {
 		osg::ref_ptr<osg::Node>				createHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
         osg::ref_ptr<osg::MatrixTransform>  createPointFromHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
 		osg::ref_ptr<osg::MatrixTransform>	createParticleSystemObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t);
-		// Methods for getting/converting MAX's matrices into OSG matrices.
+		
+      /**
+       * Method for setting common parameters and options on new helper nodes.
+       * @param outNode Node to be initialized with common parameters from the associate Max node.
+       * @param maxNode 3DS Max node with which the new OSG node is associated.
+       * @param dynamicDataVariance Set TRUE for DYNAMIC data variance, otherwise it will be STATIC.
+       */
+      void InitOSGNode(osg::Node& outNode, INode* maxNode, bool dynamicDataVariance);
+
+      // Methods for getting/converting MAX's matrices into OSG matrices.
 		osg::Matrix							getNodeTransform(INode* node, TimeValue t);
 		osg::Matrix							getObjectTransform(INode* node, TimeValue t);
 		osg::Matrix							convertMat(Matrix3 maxMat);
