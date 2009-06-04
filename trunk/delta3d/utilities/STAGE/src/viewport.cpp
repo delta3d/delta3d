@@ -62,6 +62,8 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/actorproxyicon.h>
 
+#include <dtActors/prefabactorproxy.h>
+
 #include <cmath>
 #include <sstream>
 
@@ -385,6 +387,21 @@ namespace dtEditQt
 
       // First see if the selected drawable is an actor.
       dtDAL::ActorProxy* newSelection = currMap->GetProxyById(drawable->GetUniqueId());
+
+      // if its not an actor that is directly part of the map then it may be an actor under a prefab.
+      if (newSelection == NULL)
+      {
+         dtCore::DeltaDrawable* parent = drawable->GetParent();
+         if (parent)
+         {
+            // If the parent is a prefab actor, then we want to select that instead.
+            dtActors::PrefabActor* prefabActor = dynamic_cast<dtActors::PrefabActor*>(parent);
+            if (prefabActor)
+            {
+               newSelection = currMap->GetProxyById(prefabActor->GetUniqueId());
+            }
+         }
+      }
 
       // If its not an actor then it may be a billboard placeholder for an actor.
       if (newSelection == NULL)

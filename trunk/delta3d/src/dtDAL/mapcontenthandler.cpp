@@ -429,12 +429,12 @@ namespace  dtDAL
                // When loading a prefab, all actors are put into a group.
                if (mLoadingPrefab)
                {
-                  if (mGroupIndex == -1)
-                  {
-                     mGroupIndex = mMap->GetGroupCount();
-                  }
+                  //if (mGroupIndex == -1)
+                  //{
+                  //   mGroupIndex = mMap->GetGroupCount();
+                  //}
 
-                  mMap->AddActorToGroup(mGroupIndex, mActorProxy.get());
+                  //mMap->AddActorToGroup(mGroupIndex, mActorProxy.get());
 
                   if (mPrefabProxyList)
                   {
@@ -1523,21 +1523,16 @@ namespace  dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void MapContentHandler::SetPrefabMode(Map* map, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   void MapContentHandler::SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
    {
       mLoadingPrefab = true;
-      mMap = map;
       mPrefabProxyList = &proxyList;
    }
 
    /////////////////////////////////////////////////////////////////
    void MapContentHandler::Reset()
    {
-      if (!mLoadingPrefab)
-      {
-         mMap = NULL;
-      }
-
+      mMap = NULL;
       mInMap = false;
       mInPrefab = false;
       mInHeader = false;
@@ -1762,7 +1757,10 @@ namespace  dtDAL
    {
       if (mActorProxy != NULL)
       {
-         mMap->AddProxy(*mActorProxy);
+         if (!mLoadingPrefab)
+         {
+            mMap->AddProxy(*mActorProxy);
+         }
          mActorProxy->OnMapLoadEnd(); //notify ActorProxy we're done loading it
       }
       mActorProxy = NULL;

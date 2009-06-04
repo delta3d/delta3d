@@ -76,11 +76,10 @@ namespace dtDAL
          * Parses a prefab resource and places it in the given map
          * at a given location.
          *
-         * @param[in]  map        The map to load the prefab to.
          * @param[in]  path       The prefab filepath.
          * @param[in]  proxyList  The list of proxies loaded from the prefab.
          */
-         bool ParsePrefab(Map* map, const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+         bool ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
 
          /**
           * Reads the assigned name from the map path given.

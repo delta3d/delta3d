@@ -144,6 +144,10 @@ namespace dtEditQt
          {
             type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
          }
+         else if (mProperty->GetDataType() == dtDAL::DataType::PREFAB)
+         {
+            type = dtDAL::DataType::PREFAB.GetDisplayName().c_str();
+         }
          else
          {
             type = "Unknown Type";
@@ -258,6 +262,10 @@ namespace dtEditQt
       else if (mProperty->GetDataType() == dtDAL::DataType::SKELETAL_MESH)
       {
          return EditorData::GetInstance().getCurrentSkeletalModelResource();
+      }
+      else if (mProperty->GetDataType() == dtDAL::DataType::PREFAB)
+      {
+         return EditorData::GetInstance().getCurrentPrefabResource();
       }
       else
       {

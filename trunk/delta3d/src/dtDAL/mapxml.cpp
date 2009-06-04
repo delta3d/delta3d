@@ -148,12 +148,12 @@ namespace dtDAL
 
    /////////////////////////////////////////////////////////////////
 
-   bool MapParser::ParsePrefab(Map* map, const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
+   bool MapParser::ParsePrefab(const std::string& path, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList)
    {
       try
       {
          mParsing = true;
-         mHandler->SetPrefabMode(map, proxyList);
+         mHandler->SetPrefabMode(proxyList);
          mXercesParser->setContentHandler(mHandler.get());
          mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());

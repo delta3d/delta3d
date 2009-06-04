@@ -61,11 +61,11 @@ namespace dtDAL
    DataType DataType::CONTAINER("CONTAINER", "Container", false, CONTAINER_ID);
    DataType DataType::ACTOR("ACTOR", "Actor", false, ACTOR_ID);
 
-   DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, STATICMESH_ID, "|.ive|.osg");
-   DataType DataType::SKELETAL_MESH("SkeletalMeshes", "Skeletal Mesh", true, SKELETAL_MESH_ID, "|.xml");
-   DataType DataType::TEXTURE("Textures", "Texture", true, TEXTURE_ID, "|.jpg|.tga|.png|.bmp|.rgb|.rgba");
-   DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID, "");
-   DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID, "|.wav|.mid");
-   DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID, "|.osg");
-   DataType DataType::PREFAB("Prefabs", "Prefab", true, PREFAB_ID, "|.dtprefab");
+   DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, STATICMESH_ID);
+   DataType DataType::SKELETAL_MESH("SkeletalMeshes", "Skeletal Mesh", true, SKELETAL_MESH_ID);
+   DataType DataType::TEXTURE("Textures", "Texture", true, TEXTURE_ID);
+   DataType DataType::TERRAIN("Terrains", "Terrain", true, TERRAIN_ID);
+   DataType DataType::SOUND("Sounds", "Sound", true, SOUND_ID);
+   DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, PARTICLESYSTEM_ID);
+   DataType DataType::PREFAB("Prefabs", "Prefab", true, PREFAB_ID);
 }

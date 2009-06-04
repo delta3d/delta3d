@@ -70,6 +70,7 @@ namespace dtActors
        static dtCore::RefPtr<dtDAL::ActorType> WAYPOINT_VOLUME_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> LABEL_ACTOR_TYPE;
        static dtCore::RefPtr<dtDAL::ActorType> DISTANCE_SENSOR_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> PREFAB_ACTOR_TYPE;
 
         /**
          * Constructs the engine actor registry.

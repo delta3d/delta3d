@@ -116,6 +116,17 @@ namespace dtDAL
       const std::string mDescription;
    };
 
+   ////////////////////////////////////////////////////////////////////////////////
+   class ToLowerClass
+   {
+   public:
+      ToLowerClass(){}
+
+      char operator() (char& elem) const
+      {
+         return tolower(elem);
+      }
+   };
 
    //////////////////////////////////////////////////////////
    ResourceHelper::ResourceHelper()
@@ -134,39 +145,155 @@ namespace dtDAL
             if (d == DataType::SOUND)
             {
                description = "Sound Files";
-               defFilter.insert(std::make_pair("wav","Wave audio format"));
-               defFilter.insert(std::make_pair("aiff","Audio Interchange File Format"));
             }
             else if (d == DataType::STATIC_MESH)
             {
                description = "Static Mesh Files";
-               defFilter.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
-               defFilter.insert(std::make_pair("flt","Open-Flight model"));
-               defFilter.insert(std::make_pair("3ds","3D Studio Max"));
+            }
+            else if (d == DataType::SKELETAL_MESH)
+            {
+               description = "Skeletal Mesh Files";
             }
             else if (d == DataType::TERRAIN)
             {
                description = "Static Mesh Terrain Files";
-               defFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain."));
             }
             else if (d == DataType::TEXTURE)
             {
                description = "Image Files";
-               defFilter.insert(std::make_pair("png","Portable Network Graphics"));
-               defFilter.insert(std::make_pair("gif","Graphics Interchange Format"));
-               defFilter.insert(std::make_pair("tga","Targa"));
+            }
+            else if (d == DataType::PARTICLE_SYSTEM)
+            {
+               description = "Particle Files";
+            }
+            else if (d == DataType::PREFAB)
+            {
+               description = "Prefab Files";
             }
             DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
-            mDefaultTypeHandlers.insert(std::make_pair(&d,
-                                                       dtCore::RefPtr<ResourceTypeHandler>(def)));
+            mDefaultTypeHandlers.insert(std::make_pair(&d, dtCore::RefPtr<ResourceTypeHandler>(def)));
          }
+
+         if (d.IsResource())
+         {
+            std::map<std::string, std::string> extFilter;
+            DefaultResourceTypeHandler* handler = NULL;
+            std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > extMap;
+
+            std::string description;
+            if (d == DataType::SOUND)
+            {
+               description = "Sound Files";
+
+               extFilter.insert(std::make_pair("wav","Wave audio format."));
+               handler = new DefaultResourceTypeHandler(d, "Wave audio format.", extFilter);
+               extMap.insert(std::make_pair("wav", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("aiff","Audio Interchange File Format."));
+               handler = new DefaultResourceTypeHandler(d, "Audio Interchange File Format.", extFilter);
+               extMap.insert(std::make_pair("aiff", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::STATIC_MESH)
+            {
+               description = "Static Mesh Files";
+
+               extFilter.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary scene data.", extFilter);
+               extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("osg","Open Scene Graph ascii scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
+               extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("flt","Open-Flight model."));
+               handler = new DefaultResourceTypeHandler(d, "Open-Flight model.", extFilter);
+               extMap.insert(std::make_pair("flt", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("3ds","3D Studio Max."));
+               handler = new DefaultResourceTypeHandler(d, "3D Studio Max.", extFilter);
+               extMap.insert(std::make_pair("3ds", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::SKELETAL_MESH)
+            {
+               description = "Skeletal Mesh Files";
+
+               extFilter.insert(std::make_pair("xml","Extensible Markup Language."));
+               handler = new DefaultResourceTypeHandler(d, "Extensible Markup Language.", extFilter);
+               extMap.insert(std::make_pair("xml", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::TERRAIN)
+            {
+               description = "Static Mesh Terrain Files";
+
+               extFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph binary terrain.", extFilter);
+               extMap.insert(std::make_pair("ive", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::TEXTURE)
+            {
+               description = "Image Files";
+
+               extFilter.insert(std::make_pair("png","Portable Network Graphics."));
+               handler = new DefaultResourceTypeHandler(d, "Portable Network Graphics.", extFilter);
+               extMap.insert(std::make_pair("png", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("gif","Graphics Interchange Format."));
+               handler = new DefaultResourceTypeHandler(d, "Graphics Interchange Format.", extFilter);
+               extMap.insert(std::make_pair("gif", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("tga","Targa Format."));
+               handler = new DefaultResourceTypeHandler(d, "Targa Format.", extFilter);
+               extMap.insert(std::make_pair("tga", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("jpg","Joint Photographic Group Format."));
+               handler = new DefaultResourceTypeHandler(d, "Joint Photographic Group Format.", extFilter);
+               extMap.insert(std::make_pair("jpg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("bmp","Bitmap Format."));
+               handler = new DefaultResourceTypeHandler(d, "Bitmap Format.", extFilter);
+               extMap.insert(std::make_pair("bmp", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("rgb","Red Green Blue Format."));
+               handler = new DefaultResourceTypeHandler(d, "Red Green Blue Format.", extFilter);
+               extMap.insert(std::make_pair("rgb", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("rgba","Red Green Blue Alpha Format."));
+               handler = new DefaultResourceTypeHandler(d, "Red Green Blue Alpha Format.", extFilter);
+               extMap.insert(std::make_pair("rgba", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::PARTICLE_SYSTEM)
+            {
+               description = "Particle Files";
+
+               extFilter.insert(std::make_pair("osg", "Open Scene Graph ascii scene data."));
+               handler = new DefaultResourceTypeHandler(d, "Open Scene Graph ascii scene data.", extFilter);
+               extMap.insert(std::make_pair("osg", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+            else if (d == DataType::PREFAB)
+            {
+               description = "Prefab Resources";
+
+               extFilter.insert(std::make_pair("dtprefab","Delta Prefab."));
+               handler = new DefaultResourceTypeHandler(d, "Delta Prefab.", extFilter);
+               extMap.insert(std::make_pair("dtprefab", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+            }
+
+            mTypeHandlers.insert(std::make_pair(&d, extMap));
+         }
+
          std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > extMap;
-
-         mTypeHandlers.insert(std::make_pair(&d, extMap));
-
          mResourceDirectoryTypeHandlers.insert(std::make_pair(&d, extMap));
       }
-
 
       std::vector<std::string> fltMasterFiles;
       fltMasterFiles.push_back("main.flt");
@@ -200,7 +327,6 @@ namespace dtDAL
    {
       if (resourceType.IsResource())
       {
-
          //file and directories handled by handlers MUST have extensions.
          std::string ext = osgDB::getLowerCaseFileExtension(filePath);
 
@@ -220,7 +346,6 @@ namespace dtDAL
             //ask the handler if it handles the given file.
             if (handler != NULL && handler->HandlesFile(filePath, fType))
                return handler;
-
          }
          else
          {
@@ -228,7 +353,6 @@ namespace dtDAL
             if (fType == dtUtil::FILE_NOT_FOUND)
             {
                return NULL;
-
             }
             else if (fType == dtUtil::DIRECTORY)
             {
@@ -253,8 +377,18 @@ namespace dtDAL
                }
             }
          }
+
          //otherwise get the handler default handler.
-         return mDefaultTypeHandlers.find(dt)->second.get();
+         std::map<DataType*, dtCore::RefPtr<ResourceTypeHandler> >::const_iterator found =
+            mDefaultTypeHandlers.find(dt);
+
+         if (found != mDefaultTypeHandlers.end())
+         {
+            if (found->second.get()->HandlesFile(filePath, fType))
+            {
+               return found->second.get();
+            }
+         }
       }
       else
       {
@@ -267,10 +401,13 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    const ResourceTypeHandler* ResourceHelper::FindHandlerForDataTypeAndExtension(
       const std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >& mapToSearch,
-      DataType& dt, const std::string& ext) const
+      DataType& dt, std::string ext) const
    {
       std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::const_iterator found
          = mapToSearch.find(&dt);
+
+      // Convert the extension to a lowercase value.
+      std::transform(ext.begin(), ext.end(), ext.begin(), ToLowerClass());
 
       if (found != mapToSearch.end())
       {
@@ -794,12 +931,15 @@ namespace dtDAL
       fileUtils.PushDirectory(osgDB::getSimpleFileName(resourcePath));
       try
       {
-         dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory(), dt.GetExtensions());
+         dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
          dtUtil::DirectoryContents folders;
          dtUtil::DirectoryContents files;
          for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
+               continue;
+
+            if (*j == ".svn")
                continue;
 
             const std::string& currentFile = *j;
@@ -821,9 +961,9 @@ namespace dtDAL
             contents.push_back(*j);
          }
 
-         for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
+         for (int fileIndex = 0; fileIndex < (int)contents.size(); fileIndex++)
          {
-            const std::string& currentFile = *j;
+            const std::string& currentFile = contents[fileIndex];
 
             dtUtil::FileInfo fi = fileUtils.GetFileInfo(currentFile);
 
@@ -866,6 +1006,10 @@ namespace dtDAL
                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                   mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "No hander returned for file %s.",
                                       currentFile.c_str());
+
+               // Remove the unhandled resource from the list.
+               contents.erase(contents.begin() + fileIndex);
+               fileIndex--;
             }
          }
       }

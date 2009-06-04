@@ -81,6 +81,11 @@ namespace dtEditQt
          void createPrefabPressed();
 
          /**
+         * Slot - handles the event when the create instance button is pressed.
+         */
+         void createPrefabInstancePressed();
+
+         /**
          * Slot - Called when the tree selection changes
          */
          void treeSelectionChanged();
@@ -116,6 +121,7 @@ namespace dtEditQt
       QIcon          mResourceIcon;
       ResourceTree*  mTree;
       QPushButton*   mCreatePrefabBtn;
+      QPushButton*   mCreateInstanceBtn;
       QPushButton*   mRefreshPrefabBtn;
 
       ResourceTreeWidget*  mRootPrefabTree;

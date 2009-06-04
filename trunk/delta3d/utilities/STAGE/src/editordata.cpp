@@ -210,6 +210,12 @@ namespace dtEditQt
       mTerrainResource = newResource;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorData::setCurrentPrefabResource(dtDAL::ResourceDescriptor newResource)
+   {
+      mPrefabResource = newResource;
+   }
+
    //////////////////////////////////////////////////////////////////////////////
    void EditorData::setOriginalOsgLibraryPath(const std::string& path)
    {
