@@ -93,10 +93,10 @@ namespace dtEditQt
       connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
       vBox->addWidget(mTree);
 
-      mCreatePrefabBtn = new QPushButton(tr("Create Prefab"), this);
+      mCreatePrefabBtn = new QPushButton(tr("Create Actor(s)"), this);
       connect(mCreatePrefabBtn, SIGNAL(clicked()), this, SLOT(createPrefabPressed()));
 
-      mCreateInstanceBtn = new QPushButton(tr("Create Prefab Instance"), this);
+      mCreateInstanceBtn = new QPushButton(tr("Create Prefab"), this);
       connect(mCreateInstanceBtn, SIGNAL(clicked()), this, SLOT(createPrefabInstancePressed()));
 
       mRefreshPrefabBtn = new QPushButton(tr("Refresh"), this);
@@ -315,21 +315,27 @@ namespace dtEditQt
             {
                dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
 
-               // Notify the creation of the proxies.
-               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
-
-               // Offset the position of all new proxies in the prefab.
-               dtDAL::TransformableActorProxy* tProxy =
-                  dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
-
                currMap->AddProxy(*proxy);
                currMap->AddActorToGroup(groupIndex, proxy);
 
+               // Notify the creation of the proxies.
+               EditorEvents::GetInstance().emitActorProxyCreated(proxy, false);
+
+               dtDAL::TransformableActorProxy* tProxy =
+                  dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+
                if (tProxy)
                {
-                  osg::Vec3 pos = tProxy->GetTranslation();
-                  pos += offset;
-                  tProxy->SetTranslation(pos);
+                  if (proxyIndex == 0)
+                  {
+                     ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy);
+                     
+                     offset = tProxy->GetTranslation();
+                  }
+                  else
+                  {
+                     tProxy->SetTranslation(tProxy->GetTranslation() + offset);
+                  }
                }
             }
 
