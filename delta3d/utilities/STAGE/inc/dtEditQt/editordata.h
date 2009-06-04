@@ -164,6 +164,17 @@ namespace dtEditQt
       void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
 
       /**
+      * Sets the currently selected prefab resource.  This is called when the user is
+      * using the resource browser and is selecting resources.  It is used by the
+      * property editor when the user selects 'Use Current'.
+      *
+      * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+      * with empty strings.
+      * @see setSoundResource, setMeshResource, setTextureResource
+      */
+      void setCurrentPrefabResource(const dtDAL::ResourceDescriptor selectedResource);
+
+      /**
        * Gets the current grid size.
        * @return A power of two integer corresponding to the current grid size.
        * @note The default grid size is 16
@@ -230,6 +241,16 @@ namespace dtEditQt
        * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
        */
       dtDAL::ResourceDescriptor getCurrentTerrainResource() { return mTerrainResource; }
+
+      /**
+      * Gets the currently selected prefab resource.  This is used by the
+      * property editor when the user selects 'Use Current'.
+      *
+      * @return The currently selected resource descriptor.  Check
+      * resource.getResourceIdentifier().empty() to see if it's actually none.
+      * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
+      */
+      dtDAL::ResourceDescriptor getCurrentPrefabResource() { return mPrefabResource; }
 
       /**
        * Returns a pointer the the main window.
@@ -387,6 +408,7 @@ namespace dtEditQt
       dtDAL::ResourceDescriptor mParticleResource;
       dtDAL::ResourceDescriptor mTerrainResource;
       dtDAL::ResourceDescriptor mSkeletalModelResource;
+      dtDAL::ResourceDescriptor mPrefabResource;
 
       std::list<std::string> mRecentMaps;
       std::list<std::string> mRecentProjects;

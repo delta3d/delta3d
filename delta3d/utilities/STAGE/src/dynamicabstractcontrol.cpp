@@ -91,6 +91,7 @@ namespace dtEditQt
       RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::TEXTURE);
       RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::TERRAIN);
       RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::PARTICLE_SYSTEM);
+      RegisterControlForDataType<DynamicResourceControl>(dtDAL::DataType::PREFAB);
       RegisterControlForDataType<DynamicActorControl>(dtDAL::DataType::ACTOR);
       RegisterControlForDataType<DynamicGameEventControl>(dtDAL::DataType::GAME_EVENT);
       RegisterControlForDataType<DynamicGroupPropertyControl>(dtDAL::DataType::GROUP);

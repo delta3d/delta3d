@@ -262,7 +262,7 @@ namespace dtDAL
 
          const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
             const std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >& mapToSearch,
-            DataType& dt, const std::string& ext) const;
+            DataType& dt, std::string ext) const;
 
          static dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFor(
             dtUtil::tree<ResourceTreeNode>& resources, const std::string& id);

@@ -257,10 +257,10 @@ namespace dtDAL
           */
          void SetTypeId(unsigned char newId) { mId = newId; }
 
-         /**
-         * Gets the file extensions available for this resource.
-         */
-         const dtUtil::FileExtensionList& GetExtensions() const {return mExtensions;}
+         ///**
+         //* Gets the file extensions available for this resource.
+         //*/
+         //const dtUtil::FileExtensionList& GetExtensions() const {return mExtensions;}
 
        private:
          /**
@@ -275,28 +275,28 @@ namespace dtDAL
             mDisplayName = displayName;
             mId = id;
 
-            // Parse through the extension string for each extension.
-            int len = extensions.length();
-            int firstLetter = 0;
-            for (int letter = 0; letter < len; letter++)
-            {
-               // Find the end of the token.
-               if (extensions[letter] == '|' || letter == len - 1)
-               {
-                  std::string ext = &extensions[firstLetter];
-                  if (extensions[letter] == '|')
-                  {
-                     ext.resize(letter - firstLetter);
-                  }
-                  firstLetter = letter + 1;
-                  mExtensions.push_back(ext);
-               }
-            }
+            //// Parse through the extension string for each extension.
+            //int len = extensions.length();
+            //int firstLetter = 0;
+            //for (int letter = 0; letter < len; letter++)
+            //{
+            //   // Find the end of the token.
+            //   if (extensions[letter] == '|' || letter == len - 1)
+            //   {
+            //      std::string ext = &extensions[firstLetter];
+            //      if (extensions[letter] == '|')
+            //      {
+            //         ext.resize(letter - firstLetter);
+            //      }
+            //      firstLetter = letter + 1;
+            //      mExtensions.push_back(ext);
+            //   }
+            //}
          }
 
          bool mResource;
          std::string mDisplayName;
-         dtUtil::FileExtensionList mExtensions;
+         //dtUtil::FileExtensionList mExtensions;
          unsigned char mId;
    };
 }

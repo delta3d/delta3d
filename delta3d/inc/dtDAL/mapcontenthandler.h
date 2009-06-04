@@ -194,7 +194,7 @@ namespace dtDAL
          /**
          * Initializes the content handler to load a prefab.
          */
-         void SetPrefabMode(Map* map, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
+         void SetPrefabMode(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& proxyList);
 
          /**
           * note: store a RefPtr to this map immediately because reparsing with this handler

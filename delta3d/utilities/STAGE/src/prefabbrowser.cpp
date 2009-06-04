@@ -49,7 +49,12 @@
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
 #include <dtDAL/mapxml.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/librarymanager.h>
+#include <dtActors/engineactorregistry.h>
 #include <dtUtil/log.h>
+#include <dtActors/prefabactorproxy.h>
 
 namespace dtEditQt
 {
@@ -91,12 +96,16 @@ namespace dtEditQt
       mCreatePrefabBtn = new QPushButton(tr("Create Prefab"), this);
       connect(mCreatePrefabBtn, SIGNAL(clicked()), this, SLOT(createPrefabPressed()));
 
+      mCreateInstanceBtn = new QPushButton(tr("Create Prefab Instance"), this);
+      connect(mCreateInstanceBtn, SIGNAL(clicked()), this, SLOT(createPrefabInstancePressed()));
+
       mRefreshPrefabBtn = new QPushButton(tr("Refresh"), this);
       connect(mRefreshPrefabBtn, SIGNAL(clicked()), this, SLOT(refreshPrefabs()));
 
       QHBoxLayout* btnLayout = new QHBoxLayout();
       btnLayout->addStretch(1);
       btnLayout->addWidget(mCreatePrefabBtn);
+      btnLayout->addWidget(mCreateInstanceBtn);
       btnLayout->addWidget(mRefreshPrefabBtn);
       btnLayout->addStretch(1);
 
@@ -127,14 +136,13 @@ namespace dtEditQt
       if (selectedWidget != NULL && selectedWidget->isResource())
       {
          mCreatePrefabBtn->setEnabled(true);
+         mCreateInstanceBtn->setEnabled(true);
          return;
       }
 
       // disable the button if we got here.
-      if (mCreatePrefabBtn != NULL)
-      {
-         mCreatePrefabBtn->setEnabled(false);
-      }
+      mCreatePrefabBtn->setEnabled(false);
+      mCreateInstanceBtn->setEnabled(false);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -249,7 +257,6 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::createPrefabPressed()
    {
-      //LOG_INFO("User Created an Actor - Slot");
       ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
 
       if (selectedWidget && selectedWidget->isResource())
@@ -267,7 +274,7 @@ namespace dtEditQt
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
             dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
             dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
-            parser->ParsePrefab(map, fullPath, proxyList);
+            parser->ParsePrefab(fullPath, proxyList);
 
             // Auto select all of the proxies.
             ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
@@ -302,6 +309,8 @@ namespace dtEditQt
 
             osg::Vec3 offset = ViewportManager::GetInstance().getWorldViewCamera()->getPosition();
 
+            int groupIndex = currMap->GetGroupCount();
+
             for (int proxyIndex = 0; proxyIndex < (int)proxyList.size(); proxyIndex++)
             {
                dtDAL::ActorProxy* proxy = proxyList[proxyIndex].get();
@@ -312,6 +321,9 @@ namespace dtEditQt
                // Offset the position of all new proxies in the prefab.
                dtDAL::TransformableActorProxy* tProxy =
                   dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
+
+               currMap->AddProxy(*proxy);
+               currMap->AddActorToGroup(groupIndex, proxy);
 
                if (tProxy)
                {
@@ -335,13 +347,56 @@ namespace dtEditQt
             refreshPrefabs();
 
             EditorData::GetInstance().getMainWindow()->endWaitCursor();
-            //QMessageBox::critical((QWidget *)EditorData::GetInstance().getMainWindow(),
-            //   tr("Error"), QString(e.What().c_str()), tr("OK"));
-
-            //slotRestartAutosave();
-            //return;
          }
          fileUtils.PopDirectory();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::createPrefabInstancePressed()
+   {
+      ResourceTreeWidget* selectedWidget = getSelectedPrefabWidget();
+
+      // if we have an actor type, then create the proxy and emit the signal
+      if (selectedWidget && selectedWidget->isResource())
+      {
+         EditorData::GetInstance().getMainWindow()->startWaitCursor();
+
+         // create our new object
+         dtCore::RefPtr<dtDAL::ActorProxy> proxy =
+            dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+
+         if (proxy.valid())
+         {
+            // add the new proxy to the map
+            dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+            if (mapPtr.valid())
+            {
+               mapPtr->AddProxy(*(proxy.get()));
+            }
+
+            // Set the prefab resource of the actor to the current prefab.
+            dtDAL::ResourceActorProperty* resourceProp = NULL;
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(proxy->GetProperty("PrefabResource"));
+            if (resourceProp)
+            {
+               dtDAL::ResourceDescriptor descriptor = selectedWidget->getResourceDescriptor();
+               resourceProp->SetValue(&descriptor);
+            }
+
+            // let the world know that a new proxy exists
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
+            EditorEvents::GetInstance().emitActorProxyCreated(proxy.get(), false);
+            ViewportManager::GetInstance().placeProxyInFrontOfCamera(proxy.get());
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+
+            // Now, let the world that it should select the new actor proxy.
+            std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+            actors.push_back(proxy.get());
+            EditorEvents::GetInstance().emitActorsSelected(actors);
+         }
+
+         EditorData::GetInstance().getMainWindow()->endWaitCursor();
       }
    }
 
@@ -349,6 +404,29 @@ namespace dtEditQt
    void PrefabBrowser::treeSelectionChanged()
    {
       handleEnableCreateActor();
+
+      ResourceTreeWidget* selection = NULL;
+
+      if (mTree != NULL)
+      {
+         QList <QTreeWidgetItem*> list = mTree->selectedItems();
+
+         if (!list.isEmpty())
+         {
+            selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
+         }
+         if (selection != NULL)
+         {
+            if (selection->isResource())
+            {
+               EditorData::GetInstance().setCurrentPrefabResource(selection->getResourceDescriptor());
+            }
+            else
+            {
+               EditorData::GetInstance().setCurrentPrefabResource(dtDAL::ResourceDescriptor());
+            }
+         }
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
