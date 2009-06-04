@@ -22,6 +22,7 @@
 
 #include <dtAI/aidebugdrawable.h>
 #include <dtAI/waypointinterface.h>
+#include <dtAI/waypointrenderinfo.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -35,16 +36,19 @@
 
 namespace dtAI
 {
-   float AIDebugDrawable::DEFAULT_WAYPOINT_SIZE = 10.0f;
-   osg::Vec4 AIDebugDrawable::DEFAULT_WAYPOINT_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
-   dtUtil::RefString AIDebugDrawable::DEFAULT_FONT("Arial.ttf");
-   float AIDebugDrawable::DEFAULT_FONT_SIZE = 0.5f;
-   osg::Vec3 AIDebugDrawable::DEFAULT_FONT_OFFSET_FROM_WAYPOINT(0.0f, 0.0f, 0.3f);
-   osg::Vec4 AIDebugDrawable::DEFAULT_FONT_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
    //////////////////////////////////////////////////////////////////////////////
+   //AIDebugDrawable
+   //////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::AIDebugDrawable()
-      : mRenderWaypointID(true)
+      : mRenderInfo(new WaypointRenderInfo())
+   {
+      Init();
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   AIDebugDrawable::AIDebugDrawable(WaypointRenderInfo& pRenderInfo)
+      : mRenderInfo(&pRenderInfo)      
    {
       Init();
    }
@@ -52,6 +56,43 @@ namespace dtAI
    ///////////////////////////////////////////////////////////////////////////////
    AIDebugDrawable::~AIDebugDrawable()
    {
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::SetRenderInfo(WaypointRenderInfo& pRenderInfo)
+   {
+      mRenderInfo = &pRenderInfo;
+      
+      OnRenderInfoChanged();
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   WaypointRenderInfo& AIDebugDrawable::GetRenderInfo(const WaypointRenderInfo& pRenderInfo)
+   {
+      return *mRenderInfo;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const WaypointRenderInfo& AIDebugDrawable::GetRenderInfo(const WaypointRenderInfo& pRenderInfo) const
+   {
+      return *mRenderInfo;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void AIDebugDrawable::OnRenderInfoChanged()
+   {
+      /**TODO: RE-CREATE ALL GEOMETRY
+      if(mRenderInfo->mRenderWaypointID)
+      {
+      if(!mNode->containsNode(mGeodeIDs.get()))
+      {
+      mNode->addChild(mGeodeIDs.get());
+      }
+      else
+      {
+      mNode->removeChild(mGeodeIDs.get());
+      }
+      }*/
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +113,7 @@ namespace dtAI
 
       //set the default color of the waypoints here so a derivative class can override it
       osg::Vec4Array *colors = new osg::Vec4Array(1);
-      (*colors)[0] = DEFAULT_WAYPOINT_COLOR;
+      (*colors)[0] = mRenderInfo->mWaypointColor;
       mGeometry->setColorArray(colors);
       mGeometry->setColorBinding(osg::Geometry::BIND_OVERALL);
    }
@@ -121,30 +162,6 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   bool AIDebugDrawable::GetRenderWaypointID() const
-   {
-      return mRenderWaypointID;
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::SetRenderWaypointID(bool b)
-   {
-      mRenderWaypointID = b;
-      
-      if(mRenderWaypointID)
-      {
-         if(!mNode->containsNode(mGeodeIDs.get()))
-         {
-            mNode->addChild(mGeodeIDs.get());
-         }
-         else
-         {
-            mNode->removeChild(mGeodeIDs.get());
-         }
-      }
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
    int AIDebugDrawable::FindWaypoint(unsigned id)
    {
       unsigned numWaypoints = mWaypointIDs->size();
@@ -160,7 +177,7 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::InsertWaypoint( const WaypointInterface& wp )
+   void AIDebugDrawable::InsertWaypoint(const WaypointInterface& wp)
    {
       int loc = FindWaypoint(wp.GetID());
       if(loc > -1)
@@ -173,7 +190,7 @@ namespace dtAI
          mWaypointIDs->push_back(wp.GetID());
          mVerts->push_back(wp.GetPosition());
 
-         if(mRenderWaypointID)
+         if(mRenderInfo->mRenderWaypointText)
          {
             CreateWaypointIDText(wp);
          }
@@ -183,7 +200,7 @@ namespace dtAI
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void AIDebugDrawable::RemoveWaypoint( unsigned id )
+   void AIDebugDrawable::RemoveWaypoint(unsigned id)
    {
       int loc = FindWaypoint(id);
       if(loc > -1)
@@ -214,23 +231,28 @@ namespace dtAI
       //setting it back to zero will ensure any user data does not get removed when this function is called again
       mGeometry->setPrimitiveSet(0, ps);
 
-      osg::Point* p = new osg::Point(DEFAULT_WAYPOINT_SIZE);
+      osg::Point* p = new osg::Point(mRenderInfo->mWaypointSize);
       mGeometry->getOrCreateStateSet()->setAttribute(p, osg::StateAttribute::ON);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void AIDebugDrawable::CreateWaypointIDText(const WaypointInterface& wp)
    {
+      //note: we either create a render info in the constructor
+      //or we take one by reference so should never be NULL
+
       osgText::Text* text = new osgText::Text(); 
       text->setDrawMode(osgText::Text::TEXT);
       text->setAlignment(osgText::TextBase::CENTER_CENTER);
       text->setAxisAlignment(osgText::TextBase::SCREEN);
       text->setAutoRotateToScreen(true);
-      text->setFont(DEFAULT_FONT);
-      text->setCharacterSize(DEFAULT_FONT_SIZE);
-      text->setColor(DEFAULT_FONT_COLOR);
-      text->setPosition(wp.GetPosition() + DEFAULT_FONT_OFFSET_FROM_WAYPOINT);
+      text->setFont(mRenderInfo->mWaypointFontFile);
+      text->setCharacterSize(mRenderInfo->mWaypointFontSizeScalar);
+      text->setColor(mRenderInfo->mWaypointFontColor);
+      text->setPosition(wp.GetPosition() + mRenderInfo->mWaypointTextOffset);
       text->setText(dtUtil::ToString(wp.GetID()));
       mGeodeIDs->addDrawable(text);
    }
+
+
 }
