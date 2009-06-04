@@ -42,6 +42,8 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void AutoTriggerActorProxy::BuildPropertyMap()
    {
+      dtDAL::ActorProxy::BuildPropertyMap();
+
       AutoTrigger* trigger = static_cast<AutoTrigger*>(GetActor());
 
       AddProperty(new ActorActorProperty(*this, "Action","Action",

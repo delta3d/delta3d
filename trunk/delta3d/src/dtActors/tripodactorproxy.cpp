@@ -51,6 +51,8 @@ void TripodActorProxy::CreateActor()
 ///////////////////////////////////////////////////////////////////////////////////
 void TripodActorProxy::BuildPropertyMap()
 {
+   dtDAL::ActorProxy::BuildPropertyMap();
+
    const std::string& GROUPNAME = "Tripod";
 
    //Tripod* tripod = static_cast< Tripod* >( GetActor() );

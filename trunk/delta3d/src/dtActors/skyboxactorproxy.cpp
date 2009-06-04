@@ -32,6 +32,8 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void SkyBoxActorProxy::BuildPropertyMap()
     {
+        dtActors::EnvEffectActorProxy::BuildPropertyMap();
+
         const std::string GROUPNAME = "SkyBox Textures";
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TEXTURE,

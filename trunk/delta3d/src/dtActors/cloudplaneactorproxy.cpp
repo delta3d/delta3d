@@ -33,6 +33,6 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void CloudPlaneActorProxy::BuildPropertyMap()
     {
-
+       dtActors::EnvEffectActorProxy::BuildPropertyMap();
     }
 }

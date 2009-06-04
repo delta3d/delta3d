@@ -36,6 +36,8 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     void CloudDomeActorProxy::BuildPropertyMap()
     {
+       dtActors::EnvEffectActorProxy::BuildPropertyMap();
+
         CloudDome *cd = static_cast<dtCore::CloudDome*>(GetActor());
         const std::string GROUPNAME = "dtCore_CloudPlane";
 

@@ -25,4 +25,10 @@ namespace dtActors
 {
 
 
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EnvEffectActorProxy::BuildPropertyMap()
+   {
+      dtDAL::ActorProxy::BuildPropertyMap();
+   }
 }
