@@ -269,7 +269,10 @@ void ConfigurationManager::SetDefaultConfigValues()
    mLayoutVariables["ShowSideView"] = "True";
    mLayoutVariables["ShowTopView"] = "True";
    mLayoutVariables["ShowPerspView"] = "True";
+
    mLayoutVariables["ShowPropertyEditor"] = "True";
+   mLayoutVariables["ShowActorTab"] = "True";
+   mLayoutVariables["ShowResourceBrowser"] = "True";
 }
 
 } //namespace dtEditQt

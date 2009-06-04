@@ -70,6 +70,8 @@ namespace dtEditQt
    MainWindow::MainWindow(const std::string& stagePath)
       : mSTAGEFullPath(stagePath)
       , mPropertyWindow(NULL)
+      , mActorTab(NULL)
+      , mResourceBrowser(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -265,19 +267,21 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      mActorTab = new ActorTab(this);
-      mActorTab->setObjectName("ActorTab");
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "False")
+      {
+         mActorTab = new ActorTab(this);
+         mActorTab->setObjectName("ActorTab");
+         mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
+      }
 
-      mResourceBrowser = new ResourceBrowser(this);
-      mResourceBrowser->setObjectName("ResourceBrowser");
-
-      
-      mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
-      mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
-
-      
-      addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
-      addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "False")
+      {
+         mResourceBrowser = new ResourceBrowser(this);
+         mResourceBrowser->setObjectName("ResourceBrowser");
+         mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);      
+         addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      }
 
       // Create the viewports, assign them to splitters, and embed the splitters
       // in the central widget of the main window.
@@ -383,8 +387,14 @@ namespace dtEditQt
 	  {
          mPropertyWindow->setEnabled(hasBoth);
       }
-      mActorTab->setEnabled(hasBoth);
-      mResourceBrowser->setEnabled(hasProject);
+      if(mActorTab != NULL)
+      {
+         mActorTab->setEnabled(hasBoth);
+      }
+      if(mResourceBrowser != NULL)
+      {
+         mResourceBrowser->setEnabled(hasProject);
+      }
       mMainViewportParent->setEnabled(hasBoth);
       mEditMenu->setEnabled(hasBoth);
       mWindowMenu->setEnabled(hasBoth);
@@ -392,28 +402,33 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onResetWindows()
-   {
-      // If they're detached, reattach
-      if(mPropertyWindow != NULL)
+   {      
+      if (mPropertyWindow != NULL)
       {
+         // If detached, reattach
          mPropertyWindow->setFloating(false);
+         // This should always default back to visible, like the app was restarted and the .ini
+         // was deleted      
          mPropertyWindow->setVisible(true);
          EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(true);
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
-      mActorTab->setFloating(false);
-      mResourceBrowser->setFloating(false);
+      
+      if (mActorTab != NULL)
+      {
+         mActorTab->setFloating(false);
+         mActorTab->setVisible(true);
+         EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
+         addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
+      }
 
-      // This should always default back to visible, like the app was restarted and the .ini
-      // was deleted      
-      mActorTab->setVisible(true);
-      mResourceBrowser->setVisible(true);      
-      
-      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
-      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);      
-      
-      addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
-      addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      if (mResourceBrowser != NULL)
+      {
+         mResourceBrowser->setFloating(false);
+         mResourceBrowser->setVisible(true);      
+         EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);      
+         addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
+      }
 
       ResetSplitters();
    }
@@ -497,12 +512,18 @@ namespace dtEditQt
          //findAndLoadPreferences();
 
          setUpdatesEnabled(true);
-         if(mPropertyWindow != NULL)
+         if (mPropertyWindow != NULL)
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         mActorTab->setUpdatesEnabled(true);
-         mResourceBrowser->setUpdatesEnabled(true);
+         if (mActorTab != NULL)
+         {
+            mActorTab->setUpdatesEnabled(true);
+         }
+         if (mResourceBrowser != NULL)
+         {
+            mResourceBrowser->setUpdatesEnabled(true);
+         }
       }
       catch(const dtUtil::Exception& ex)
       {
@@ -511,8 +532,14 @@ namespace dtEditQt
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         mActorTab->setUpdatesEnabled(true);
-         mResourceBrowser->setUpdatesEnabled(true);
+         if (mActorTab != NULL)
+         {
+            mActorTab->setUpdatesEnabled(true);
+         }
+         if (mResourceBrowser != NULL)
+         {
+            mResourceBrowser->setUpdatesEnabled(true);
+         }
 
          throw ex;
       }
@@ -523,8 +550,14 @@ namespace dtEditQt
          {
             mPropertyWindow->setUpdatesEnabled(true);
          }
-         mActorTab->setUpdatesEnabled(true);
-         mResourceBrowser->setUpdatesEnabled(true);
+         if (mActorTab != NULL)
+         {
+            mActorTab->setUpdatesEnabled(true);
+         }
+         if (mResourceBrowser != NULL)
+         {
+            mResourceBrowser->setUpdatesEnabled(true);
+         }
 
          throw ex;
       }
@@ -720,13 +753,19 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onActorSearchSelection()
    {
-      mActorTab->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
+      if(mActorTab != NULL)
+      {
+         mActorTab->setVisible(EditorActions::GetInstance().mActionWindowsActorSearch->isChecked());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onResourceBrowserSelection()
    {
-      mResourceBrowser->setVisible(EditorActions::GetInstance().mActionWindowsResourceBrowser->isChecked());
+      if(mResourceBrowser != NULL)
+      {
+         mResourceBrowser->setVisible(EditorActions::GetInstance().mActionWindowsResourceBrowser->isChecked());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -777,8 +816,14 @@ namespace dtEditQt
       {
          EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(mPropertyWindow->isVisible());
       }
-      EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorTab->isVisible());
-      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(mResourceBrowser->isVisible());
+      if(mActorTab != NULL)
+      {
+         EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorTab->isVisible());
+      }
+      if(mResourceBrowser != NULL)
+      {
+         EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(mResourceBrowser->isVisible());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
