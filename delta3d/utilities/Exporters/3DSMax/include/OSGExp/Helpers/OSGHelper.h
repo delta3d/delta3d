@@ -35,6 +35,7 @@
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
+#include "ISceneEventManager.h"
 
 #include "helpers.h" 
 
@@ -46,12 +47,17 @@ extern HINSTANCE hInstance;
 
 #define PBLOCK_REF	0
 
+class NodeEventCallback;
 
 class OSGHelper : public HelperObject {
 	public:
+      typedef HelperObject BaseClass;
+
+      INode* mNode;
+      NodeEventCallback* mNodeEventCallback;
 
 		IObjParam *ip;
-		OSGHelper *editOb;
+
 		// Parameter block for holding parameters.
 		IParamBlock2	*pblock2;	//ref 0
 
@@ -65,6 +71,8 @@ class OSGHelper : public HelperObject {
 		void BeginEditParams( IObjParam *ip, ULONG flags,Animatable *prev);
 		void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
 		TCHAR *GetObjectName() {return name;}
+
+      ULONG GetCurrentNodeHandle(Interface* ip);
 
 
 		// From Object
@@ -114,6 +122,28 @@ class OSGHelper : public HelperObject {
 		~OSGHelper();		
 
 		virtual int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
+
+      void AttachReferencedObjects();
+      void DetachUnreferencedObjects();
+      bool IsObjectReferenced(const INode& node, IParamBlock2& pblock, ParamID nodesParamID);
+      void UpdateReferencesByLinks();
+
+      void ClearNodeWidgets(IParamBlock2& pblock2, ParamID paramID, int newListSize);
+
+      void SetNodeParameter(IParamBlock2& pblock2, ParamID paramID,
+         int nodeIndex, INode* node);
+      INode* GetNodeParameter(IParamBlock2& pblock2, ParamID paramID,
+         int nodeIndex);
+
+      void MoveNodeItem(HWND hWnd, int offset);
+      INode* GetNodeFromSelectedItem(HWND hWnd, IParamBlock2& pblock2, ParamID paramID);
+      void SetSelectedNodeItem(HWND hWnd, int index);
+
+      bool IsHierarchalType();
+
+      static bool NodeHasChild(INode& potentialParent, INode& potentialChild);
+
+      static bool GetParamIDForNodeList(ParamBlockDesc2& desc, ParamID& outParamID);
 };
 
 class OSGHelperClassDesc:public ClassDesc2 {
@@ -131,103 +161,125 @@ class OSGHelperClassDesc:public ClassDesc2 {
 };
 
 
-/**
- * A class for multiple selection dialog.
- */
-class MultipleSelectDlg : public HitByNameDlgCallback {
+
+////////////////////////////////////////////////////////////////////////////////
+// MULTIPLE SELECT DIALOG CALLBACK
+////////////////////////////////////////////////////////////////////////////////
+class MultipleSelectDlg : public HitByNameDlgCallback
+{
 	private:
 		IParamMap2* map;
+      OSGHelper* mCurrentHelper;
 
 	public:
 		MultipleSelectDlg(IParamMap2* map) { this->map=map;} 
 
+      void SetCurrentHelper(OSGHelper* helper) {mCurrentHelper = helper;}
 		TCHAR		*dialogTitle()				{ return _T("Multiple Selection"); }
 		TCHAR		*buttonText() 				{ return _T("Ok"); }
 		BOOL		singleSelect()				{ return FALSE; }
 		BOOL		useFilter()					{ return TRUE; }
 		BOOL		useProc()					{ return TRUE; }
-		int			filter(INode *node){return TRUE;}
-		void		proc(INodeTab &nodeTab) {
-			if (map) {
-				if (nodeTab.Count()){
-					IParamBlock2* pblock2 = map->GetParamBlock();
-					ParamBlockDesc2* pdesc2 = pblock2->GetDesc(); 
-					ClassDesc2* cd = pdesc2->cd;
 
-					// Figure out which helper object the multiple button is used on.
-					int pnodes;
-					if(cd->ClassID() == BILLBOARD_CLASS_ID)	
-						pnodes = bilbo_nodes;
-					else if(cd->ClassID() == STATESET_CLASS_ID)
-						pnodes = stateset_nodes;
-					else if(cd->ClassID() == NODEMASK_CLASS_ID)
-						pnodes = nodemask_nodes;
-					else if(cd->ClassID() == SWITCH_CLASS_ID)
-						pnodes = switch_nodes;
-					else if(cd->ClassID() == IMPOSTOR_CLASS_ID)
-						pnodes = impostor_nodes;
-					else if(cd->ClassID() == OCCLUDER_CLASS_ID)
-						pnodes = occluder_planes;
-					else if(cd->ClassID() == VISIBILITYGROUP_CLASS_ID)
-						pnodes = visibilitygroup_nodes;
-					else if(cd->ClassID() == OSGGROUP_CLASS_ID)
-						pnodes = osggroup_nodes;
-					else
-						return;
+      virtual int filter(INode *node);
 
-					int size = pblock2->Count(pnodes);
-					pblock2->Resize(pnodes, size + nodeTab.Count());
-					for(int i=0;i<nodeTab.Count();i++){
-						pblock2->SetValue(pnodes, 0, nodeTab[i], size+i);
-					}
-					pdesc2->InvalidateUI();
-				}
-			}
-		}
-
+		virtual void proc(INodeTab &nodeTab);
 };
 
 
-/** 
- * This is used to provide special processing of controls in the rollup page.
- */
-class HelperDlgProc : public ParamMap2UserDlgProc {
-		IObjParam* ip;
+
+////////////////////////////////////////////////////////////////////////////////
+// NODE PICK FILTER CALLBACK
+////////////////////////////////////////////////////////////////////////////////
+class PickNodeFilterCallback : public PickNodeCallback
+{
+   public:
+      PickNodeFilterCallback();
+
+      void SetCurrentNode(INode* node);
+
+      virtual BOOL Filter(INode* node);
+
+   private:
+      INode* mCurrentNode;
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// PICK OBJECT CALLBACK
+////////////////////////////////////////////////////////////////////////////////
+class PickObjectCallback : public PickModeCallback
+{
+   public:
+      PickObjectCallback();
+      virtual ~PickObjectCallback();
+
+      void SetCurrentHelper(OSGHelper* helper);
+      OSGHelper* GetCurrentHelper();
+      const OSGHelper* GetCurrentHelper() const;
+
+      INode* GetCurrentNode();
+
+      void SetWindowHandle(HWND hWnd);
+
+      void SetButtonHandle(int buttonHandle);
+
+      bool IsEnabled() const;
+
+      virtual void EnterMode(IObjParam* ip);
+      virtual void ExitMode(IObjParam* ip);
+      virtual BOOL Pick(IObjParam* ip, ViewExp* viewport);
+      virtual BOOL HitTest(IObjParam* ip, HWND hWnd, ViewExp* viewport, IPoint2 point, int flags);
+
+   private:
+      bool mEnabled;
+      OSGHelper* mCurrentHelper;
+      PickNodeFilterCallback* mPickNodeCallback;
+      HWND mWinHandle;
+      int mButtonHandle;
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// HELPER DIALOG PROCEDURE
+////////////////////////////////////////////////////////////////////////////////
+// This is used to provide special processing of controls in the rollup page.
+class HelperDlgProc : public ParamMap2UserDlgProc 
+{
+      OSGHelper* mCurrentHelper;
+      PickObjectCallback* mPickObjectCallback;
+
 	public:
-		BOOL DlgProc(TimeValue t,IParamMap2* map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
-		{
-			ICustButton * pickButton;
-			ICustButton * mpickButton;
-			switch (msg) 
-			{
-				case WM_INITDIALOG:
-					pickButton = GetICustButton(GetDlgItem(hWnd,IDC_PICKNODE));
-					mpickButton = GetICustButton(GetDlgItem(hWnd,IDC_MULTIPLE_PICKNODE));
-					if(pickButton->IsEnabled())
-						mpickButton->Enable(TRUE);
-					else 
-						mpickButton->Enable(FALSE);
-					ReleaseICustButton(pickButton);
-					ReleaseICustButton(mpickButton);
-				case WM_DESTROY:
-					break;
-				case WM_COMMAND:
-					switch (LOWORD(wParam)) {
-						case IDC_MULTIPLE_PICKNODE:
-							if(ip && map){
-								ip->DoHitByNameDialog(new MultipleSelectDlg(map));
-							}
-						break;
-					}
-					break;
-			}
-			return FALSE;
-		}
-		void setInterfacePtr(IObjParam* ip){this->ip = ip;}
-		void DeleteThis() {}
+      HelperDlgProc();
+      virtual ~HelperDlgProc();
+
+		BOOL DlgProc(TimeValue t,IParamMap2* map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
+      void SetCurrentOSGHelper(OSGHelper* helper) {mCurrentHelper = helper;}
+      void DeleteThis() {}
 };
 
 static HelperDlgProc theHelperProc;
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// NODE EVENT CALLBACK
+////////////////////////////////////////////////////////////////////////////////
+class NodeEventCallback : public INodeEventCallback
+{
+   public:
+      NodeEventCallback();
+
+      virtual void LinkChanged(NodeKeyTab &nodes);
+
+      void SetCurrentHelper(OSGHelper* helper);
+      OSGHelper* GetCurrentHelper();
+      const OSGHelper* GetCurrentHelper() const;
+
+   private:
+      OSGHelper* mCurrentHelper;
+};
 
 #endif // __OSGHELPER__H

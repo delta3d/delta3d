@@ -107,7 +107,15 @@ enum{
 	lod_max,
 	lod_usepaged,
 	lod_paged_filename,
-	lod_node
+   lod_node,
+   // The following new parameter ID is to be used by a list widget.
+   // The ID value had to be offset from the previous value (lod_node)
+   // by 5 since the older version of the interface used 5 buttons,
+   // which are no longer going to be used and are now hidden.
+   // The hidden buttons need to remain so that Max does not crash
+   // when trying to load parameter blocks for older saves of the LOD
+   // helper that had used such buttons.
+   lod_node_array = lod_node + NUM_LOD_OBJECTS
 };
 
 #define NUM_SEQUENCE_OBJECTS 5

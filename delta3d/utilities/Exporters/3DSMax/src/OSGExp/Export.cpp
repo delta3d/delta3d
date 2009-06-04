@@ -81,6 +81,9 @@
  *					08.01.2008: Farshid Lashkari: User modified normals are now 
  *					correctly exported. Currently, this only works for 
  *					non-indexed meshes.
+ * 
+ *					06.04.2009: Chris Rodgers: Cleaned up the createHelper Object
+ *             method for better readability.
  */
 
 #include <osg/Switch>
@@ -119,14 +122,7 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createGeomObject(osg::Group* rootTran
 
 	// Create a transform node for the geometry.
 	osg::ref_ptr<osg::MatrixTransform> nodeTransform = new osg::MatrixTransform();
-	// Set node name.
-	nodeTransform->setName(node->GetName());
-	// Set static datavariance for better performance
-	nodeTransform->setDataVariance(osg::Object::STATIC);
-    
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		nodeTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*nodeTransform, node, false);
 
 	// Are we exporting animations.
 	if(_options->getExportAnimations()){
@@ -192,15 +188,7 @@ osg::ref_ptr<osg::Transform> OSGExp::createCameraObject(osg::Group* rootTransfor
 
 	// Create a viewpoint transform node for the camera.
 	osg::ref_ptr<osg::PositionAttitudeTransform> nodeTransform = new osg::PositionAttitudeTransform();
-	// Set node name.
-	nodeTransform->setName(node->GetName());
-	// Set static datavariance for better performance
-	nodeTransform->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask.
-	if(_options->getUseDefaultNodeMaskValue())
-		nodeTransform->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*nodeTransform, node, false);
 
 	// Are we exporting animations.
 	if(_options->getExportAnimations())
@@ -236,14 +224,7 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createLightObject(osg::Group* rootTra
 
 	// Create a transform node for the lightsource.
 	osg::ref_ptr<osg::MatrixTransform> nodeTransform = new osg::MatrixTransform();
-	// Set node name.
-	nodeTransform->setName(node->GetName());
-	// Set static datavariance for better performance
-	nodeTransform->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		nodeTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*nodeTransform, node, false);
 
 	// Are we exporting animations.
 	if(_options->getExportAnimations())
@@ -317,16 +298,11 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createLightObject(osg::Group* rootTra
 	}
 
 	osg::ref_ptr<osg::LightSource> lightSource = new osg::LightSource;
-	lightSource->setLight(light.get());
+   InitOSGNode(*lightSource, NULL, false);
+
+   lightSource->setLight(light.get());
 	lightSource->setLocalStateSetModes(osg::StateAttribute::ON);
 	lightSource->setStateSetModes(*(rootTransform->getStateSet()),osg::StateAttribute::ON);
-
-	// Set static datavariance for better performance
-	lightSource->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask.
-	if(_options->getUseDefaultNodeMaskValue())
-		lightSource->setNodeMask(_options->getDefaultNodeMaskValue());
 
 	// If the MAX light is located in the root scene node we will
 	// treat it as a global light in OSG and never cull it away.
@@ -347,14 +323,7 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createShapeObject(osg::Group* rootTra
 
 	// Create a transform node for the shape object.
 	osg::ref_ptr<osg::MatrixTransform> nodeTransform = new osg::MatrixTransform(); 
-	// Set node name.
-	nodeTransform->setName(node->GetName());
-	// Set static datavariance for better performance
-	nodeTransform->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask.
-	if(_options->getUseDefaultNodeMaskValue())
-		nodeTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*nodeTransform, node, false);
 
 	// Are we exporting animations.
 	if(_options->getExportAnimations())
@@ -385,43 +354,54 @@ osg::ref_ptr<osg::MatrixTransform> OSGExp::createShapeObject(osg::Group* rootTra
 /** 
  * This node will export helper objects. 
  */
-osg::ref_ptr<osg::Node> OSGExp::createHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
+osg::ref_ptr<osg::Node> OSGExp::createHelperObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t)
+{
 	Class_ID id = obj->ClassID();
 
-    if (id == BILLBOARD_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createBillboardFromHelperObject(rootTransform, node, obj, t).get()));
+   osg::ref_ptr<osg::Node> nodePtr;
+
+   if (id == BILLBOARD_CLASS_ID)
+   {
+		nodePtr = createBillboardFromHelperObject(rootTransform, node, obj, t).get();
 	}
-	else if (id == LOD_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createLODFromHelperObject(rootTransform, node, obj, t).get())); 
+	//else if (id == LOD_CLASS_ID)
+   //{
+	//	nodePtr = createLODFromHelperObject(rootTransform, node, obj, t).get(); 
+	//}
+	else if (id == SEQUENCE_CLASS_ID)
+   {
+		nodePtr = createSequenceFromHelperObject(rootTransform, node, obj, t).get(); 
 	}
-	else if (id == SEQUENCE_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createSequenceFromHelperObject(rootTransform, node, obj, t).get())); 
+	//else if (id == SWITCH_CLASS_ID)
+   //{
+	//	nodePtr = createSwitchFromHelperObject(rootTransform, node, obj, t).get(); 
+	//}
+	else if (id == IMPOSTOR_CLASS_ID)
+   {
+		nodePtr = createImpostorFromHelperObject(rootTransform, node, obj, t).get(); 
 	}
-	else if (id == SWITCH_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createSwitchFromHelperObject(rootTransform, node, obj, t).get())); 
-	}
-	else if (id == IMPOSTOR_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createImpostorFromHelperObject(rootTransform, node, obj, t).get())); 
-	}
-	else if (id == OCCLUDER_CLASS_ID){
+	else if (id == OCCLUDER_CLASS_ID)
+   {
 		//shouldnt this return some kind of node
-		createOccluderFromHelperObject(rootTransform, node, obj, t); 
-		return osg::ref_ptr<osg::Node>(NULL);
+		createOccluderFromHelperObject(rootTransform, node, obj, t);
+      // Do not assign the pointer.
 	}
-	else if (id == VISIBILITYGROUP_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createVisibilityGroupFromHelperObject(rootTransform, node, obj, t).get())); 
+	else if (id == VISIBILITYGROUP_CLASS_ID)
+   {
+		nodePtr = createVisibilityGroupFromHelperObject(rootTransform, node, obj, t).get(); 
 	}
-
-	else if (id == OSGGROUP_CLASS_ID){
-		return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createGroupFromHelper(rootTransform, node, obj, t).get())); 
-	}
-
-   //the dof helper is handled as a special case
-	//else if (id == DOFTRANSFORM_CLASS_ID){
-	//	return osg::ref_ptr<osg::Node>(static_cast<osg::Node*>(createDOFFromHelper(rootTransform, node, obj, t).get())); 
+	//else if (id == OSGGROUP_CLASS_ID)
+   //{
+	//	nodePtr = createGroupFromHelper(rootTransform, node, obj, t).get(); 
 	//}
 
-	return osg::ref_ptr<osg::Node>(NULL);
+   //the dof helper is handled as a special case
+	//else if (id == DOFTRANSFORM_CLASS_ID)
+   //{
+	//	nodePtr = createDOFFromHelper(rootTransform, node, obj, t).get(); 
+	//}
+
+	return nodePtr;
 }
 
 /**
@@ -430,14 +410,7 @@ osg::ref_ptr<osg::Node> OSGExp::createHelperObject(osg::Group* rootTransform, IN
 osg::ref_ptr<osg::MatrixTransform> OSGExp::createParticleSystemObject(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
 	// Create a transform node for the particle system object.
 	osg::ref_ptr<osg::MatrixTransform> nodeTransform = new osg::MatrixTransform(); 
-	// Set node name.
-	nodeTransform->setName(node->GetName());
-	// Set static datavariance for better performance
-	nodeTransform->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		nodeTransform->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*nodeTransform, node, false);
 
 	// Are we exporting animations.
 	if(_options->getExportAnimations())
@@ -525,13 +498,7 @@ osg::Matrix OSGExp::convertMat(Matrix3 maxMat){
 osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, INode* node, Object* obj, TimeValue t){
 	//  Geode to hold the geometry.
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-
-	// Set static datavariance for better performance
-	geode->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		geode->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*geode, NULL, false);
 
 	// Order of the vertices. Get them counter clockwise if the objects is
 	// negatively scaled. This is important if an object has been mirrored.
@@ -826,14 +793,7 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 
 	//  Geode to hold the geometry.
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-
-	// Set static datavariance for better performance
-	geode->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask
-	if(_options->getUseDefaultNodeMaskValue())
-		geode->setNodeMask(_options->getDefaultNodeMaskValue());
-
+   InitOSGNode(*geode, NULL, false);
 
 	// Order of the vertices. Get them counter clockwise if the objects is
 	// negatively scaled. This is important if an object has been mirrored.
@@ -1150,13 +1110,7 @@ osg::ref_ptr<osg::Geode> OSGExp::createMeshGeometry(osg::Group* rootTransform, I
 	
 	// Create a geode to hold all the primitives.
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-
-	// Set static datavariance for better performance
-	geode->setDataVariance(osg::Object::STATIC);
-
-	// Use default node mask.
-	if(_options->getUseDefaultNodeMaskValue())
-		geode->setNodeMask(_options->getDefaultNodeMaskValue());
+   InitOSGNode(*geode, NULL, false);
 
 	// For every line object in the polyshape we will make a geode.
 	for(int l = 0; l< numLines; l++){

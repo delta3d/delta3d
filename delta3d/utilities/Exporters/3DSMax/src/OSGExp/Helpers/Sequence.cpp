@@ -151,14 +151,14 @@ static ParamBlockDesc2 sequence_param_blk ( sequence_params, _T("sequence_params
 	end
 	);
 
-void Sequence::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void Sequence::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	editOb   = this;
 	SequenceDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void Sequence::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void Sequence::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
 	SequenceDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);

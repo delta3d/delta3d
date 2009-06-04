@@ -229,13 +229,13 @@ OSGExp::OSGExp(){
 	_mtlList = new MtlKeeper();
 	_hasShownError = FALSE;
 	_helperIDs.push_back(BILLBOARD_CLASS_ID);
-	_helperIDs.push_back(LOD_CLASS_ID);
+//	_helperIDs.push_back(LOD_CLASS_ID);
 	_helperIDs.push_back(SEQUENCE_CLASS_ID);
-	_helperIDs.push_back(SWITCH_CLASS_ID);
+//	_helperIDs.push_back(SWITCH_CLASS_ID);
 	_helperIDs.push_back(IMPOSTOR_CLASS_ID);
 	_helperIDs.push_back(VISIBILITYGROUP_CLASS_ID);
-	_helperIDs.push_back(OSGGROUP_CLASS_ID);
-	_helperIDs.push_back(DOFTRANSFORM_CLASS_ID);
+//	_helperIDs.push_back(OSGGROUP_CLASS_ID);
+//	_helperIDs.push_back(DOFTRANSFORM_CLASS_ID);
 }
 
 /**
@@ -688,9 +688,9 @@ BOOL OSGExp::preProcess(INode* node, TimeValue t){
  * This method will export the argument node and traverse
  * into its child nodes to export them.
  */
-BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* parent){
-
-	osg::ref_ptr<osg::Transform> child = NULL;
+BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Group* parent)
+{
+	osg::ref_ptr<osg::Group> child = NULL;
 
 	_nCurNode++;
 	_ip->ProgressUpdate((int)((float)_nCurNode/_nTotalNodeCount*100.0f)); 
@@ -703,23 +703,36 @@ BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* pa
 	// If node is hidden and we are not exporting hidden nodes then return.
 	if(node->IsNodeHidden() && !_options->getExportHiddenNodes()){
 		return TRUE;
-	}
+   }
+
+   // Capture a special group helper if one is returned.
+   // Nodes such as LODs and Switches will have to apply
+   // special flags to their immediate children and thus
+   // cannot be traversed in the normal recursive flow.
+//   osg::Group* specialGroup = NULL;
+
 
 	// Only export if hole scene is to be exported or
 	// this node is choosen to be exported.
-	if(!_onlyExportSelected || node->Selected()) {
-
+	if(!_onlyExportSelected || node->Selected())
+   {
 		// The ObjectState is a 'thing' that flows down the pipeline containing
 		// all information about the object. By calling EvalWorldState() we tell
 		// max to evaluate the object at the end of the pipeline.
 		// An object may start out as an sphere, but could be modified by an modifier
 		// object, the EvalWorldState will apply all modifiers to the original object
 		// and return the final geometry for the object.
-		ObjectState os = node->EvalWorldState(_ip->GetTime()); 
+		ObjectState os = node->EvalWorldState(_ip->GetTime());
+
+      // Use temporary variables for cleaner code.
+      Object* obj = os.obj;
+      TimeValue timeValue = _ip->GetTime();
+
 
 		// If this a group node then make a OSG group node and add it to
 		// the parent node and traverse into the children.
-		if (node->IsGroupHead() || os.obj->ClassID()==Class_ID(DUMMY_CLASS_ID,0)) {
+		if(node->IsGroupHead() || obj->ClassID() == Class_ID(DUMMY_CLASS_ID,0))
+      {
 			// Do not export referenced groups.
 			if(Util::isReferencedByHelperObjects(node, _helperIDs))
 				return TRUE;
@@ -731,16 +744,16 @@ BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* pa
 
 			// Are we exporting animations.
 			if(_options->getExportAnimations()){
-				addAnimation(node, _ip->GetTime(), groupNode);
+				addAnimation(node, timeValue, groupNode);
 			}
 			
 			// Set NodeMask
 			if(_options->getUseDefaultNodeMaskValue())
 				groupNode->setNodeMask(_options->getDefaultNodeMaskValue());
-			groupNode->setMatrix(getNodeTransform(node, _ip->GetTime()));
+			groupNode->setMatrix(getNodeTransform(node, timeValue));
 			parent->addChild(groupNode);
 			parent = groupNode;
-			applyNodeMaskValue(node, _ip->GetTime(), groupNode);
+			applyNodeMaskValue(node, timeValue, groupNode);
 		}
 
 		// If this is not a group node it could be a geomtry object,
@@ -748,59 +761,90 @@ BOOL OSGExp::nodeEnum(osg::Group* rootTransform, INode* node, osg::Transform* pa
 		// to carry out a specific export.
 		// Note, it is the obj member of ObjectState which
 		// is the actual object we are exporting.
-		else if (os.obj) {
+		else if(obj != NULL)
+      {
+         Class_ID cid = obj->ClassID();
 
 			// We look at the super class ID to determine the type of the object.
-			switch(os.obj->SuperClassID()) {
+			switch(obj->SuperClassID())
+         {
 				case GEOMOBJECT_CLASS_ID:
-					if(!Util::isReferencedByHelperObjects(node, _helperIDs)){
-						child = createGeomObject(rootTransform, node, os.obj, _ip->GetTime()).get();
+					if(!Util::isReferencedByHelperObjects(node, _helperIDs))
+               {
+						child = createGeomObject(rootTransform, node, obj, timeValue).get();
 						parent->addChild(child.get());
 					}
 					break;
 				case CAMERA_CLASS_ID:
-					if (_options->getExportCameras()) {
-						child = createCameraObject(rootTransform, node, os.obj, _ip->GetTime()).get();
+					if(_options->getExportCameras())
+               {
+						child = createCameraObject(rootTransform, node, obj, timeValue).get();
 						parent->addChild(child.get());
 					}
 					break;
 				case LIGHT_CLASS_ID:
-					if (_options->getExportLights()) {
-						child = createLightObject(rootTransform, node, os.obj, _ip->GetTime()).get();
+					if(_options->getExportLights())
+               {
+						child = createLightObject(rootTransform, node, obj, timeValue).get();
 						parent->addChild(child.get());
 					}
 					break;
 				case SHAPE_CLASS_ID:
-					if (_options->getExportShapes() && !Util::isReferencedByHelperObject(node, OCCLUDER_CLASS_ID)){
-						child = createShapeObject(rootTransform, node, os.obj, _ip->GetTime()).get();
+					if(_options->getExportShapes() && !Util::isReferencedByHelperObject(node, OCCLUDER_CLASS_ID))
+               {
+						child = createShapeObject(rootTransform, node, obj, timeValue).get();
 						parent->addChild(child.get());
 					}
 					break;
 				case HELPER_CLASS_ID:
-               if(_options->getExportPointHelpers() && os.obj->ClassID() == Class_ID(POINTHELP_CLASS_ID,0)) 
                {
-                  child = createPointFromHelperObject(rootTransform,node,os.obj,_ip->GetTime()).get();
-                  parent->addChild(child.get());
+                  bool notRefByHelpers = Util::isReferencedByHelperObjects(node, _helperIDs) == NULL;
+                  bool exportHelpers = _options->getExportHelpers() == TRUE;
+
+                  if(_options->getExportPointHelpers() && cid == Class_ID(POINTHELP_CLASS_ID,0)) 
+                  {
+                     child = createPointFromHelperObject(rootTransform, node, obj, timeValue).get();
+                     parent->addChild(child.get());
+                  }
+                  if(exportHelpers && notRefByHelpers)
+                  {
+                     if(cid == OSGGROUP_CLASS_ID)
+                     {
+                        child = createGroupFromHelper(parent, node, obj, timeValue).get();
+                     }
+                     else if(cid == LOD_CLASS_ID)
+                     {
+                        child = createLODFromHelperObject(parent, node, obj, timeValue).get();
+                     }
+                     else if(cid == SWITCH_CLASS_ID)
+                     {
+                        child = createSwitchFromHelperObject(parent, node, obj, timeValue).get();
+                     }
+                     else if(cid == DOFTRANSFORM_CLASS_ID) 
+                     {
+                        child = createDOFFromHelper(parent, node, obj, timeValue).get();                  
+                     }
+		               else
+                     {
+			               rootTransform->addChild(createHelperObject(rootTransform, node, obj, timeValue).get());
+		               }
+                  }
                }
-               else if(_options->getExportHelpers() && os.obj->ClassID() == DOFTRANSFORM_CLASS_ID && !Util::isReferencedByHelperObjects(node, _helperIDs)) 
-               {
-                  child = createDOFFromHelper(parent, node, os.obj, _ip->GetTime()).get();                  
-               }
-		         else if (_options->getExportHelpers() && !Util::isReferencedByHelperObjects(node, _helperIDs))
-               {
-			         rootTransform->addChild(createHelperObject(rootTransform, node, os.obj, _ip->GetTime()).get());
-		         }
 					break;
+            default:
+               break;
 			}
 		}
 	}
 
-	for (int c = 0; c < node->NumberOfChildren(); c++) {
-		if (_ip->GetCancel() || !nodeEnum(rootTransform, node->GetChildNode(c),child.valid()?child.get():parent)){
-			// If user cancels export we return false.
-			return TRUE;
-		}
-	}
+   for(int c = 0; c < node->NumberOfChildren(); c++)
+   {
+	   if(_ip->GetCancel() || ! nodeEnum(rootTransform, node->GetChildNode(c),child.valid()?child.get():parent))
+      {
+		   // If user cancels export we return false.
+		   return FALSE;
+	   }
+   }
 
 	return TRUE;
 }

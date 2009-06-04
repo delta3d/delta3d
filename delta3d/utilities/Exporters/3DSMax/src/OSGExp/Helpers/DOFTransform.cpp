@@ -64,7 +64,11 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 										 P_AUTO_CONSTRUCT + P_AUTO_UI, PBLOCK_REF , 
 										 
 										 // rollout
-										 IDD_DOFTRANSFORM, IDS_DOF, 0, 0, NULL,											 
+										 IDD_DOFTRANSFORM, IDS_DOF, 0, 0, &theHelperProc,		
+										 doftrans_nodes,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_DOF_NODES,
+                               p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
+										 p_prompt,		IDS_PICK_GEOM_OBJECT,
+										 end,
 
 										 // mult order
 										 dof_mult_order,		 	_T("Mult Order"),		TYPE_INT, 	P_ANIMATABLE,	IDS_BILL_MODE,
@@ -203,15 +207,17 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 										 end
 										 );
 
-void DOFTransform::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
-	this->ip = ip;
-	editOb   = this;
-	DOFTransDesc.BeginEditParams(ip, this, flags, prev);	
+void DOFTransform::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
+   this->ip = ip;
+   theHelperProc.SetCurrentOSGHelper(this);
+	DOFTransDesc.BeginEditParams(ip, this, flags, prev);
 }
 
-void DOFTransform::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void DOFTransform::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
+	theHelperProc.SetCurrentOSGHelper(NULL);
 	DOFTransDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }

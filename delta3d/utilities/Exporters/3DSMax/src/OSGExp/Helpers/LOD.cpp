@@ -42,7 +42,6 @@ class LOD:public OSGHelper{
 		RefTargetHandle Clone(RemapDir& remap);
 		int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
 		int HitTest(TimeValue t, INode *inode, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
-		int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
 };
 
 class LODClassDesc:public OSGHelperClassDesc {
@@ -66,7 +65,11 @@ enum {
 static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDesc, 
 	P_AUTO_CONSTRUCT + P_AUTO_UI, PBLOCK_REF , 
 	// rollout
-	IDD_LOD, IDS_LOD, 0, 0, NULL,
+   IDD_LOD, IDS_LOD, 0, 0, &theHelperProc,		
+      lod_node_array,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_DOF_NODES,
+      p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
+      p_prompt,		IDS_PICK_GEOM_OBJECT,
+      end,
 	// center x value
 	lod_center_x, 		_T("CenterX"),	TYPE_FLOAT, 	P_ANIMATABLE, 	IDS_LOD_CENTER, 
 		p_default, 		0.0f,
@@ -124,7 +127,7 @@ static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDes
 	// Not able to do a TYPE_INODE_TAB with TYPE_PICKNODEBUTTON,
 	// must declare NUM_LOD_OBJECTS (5 params) of TYPE_INODE, or make
 	// an NODE_LISTBOX and implement all logic myself.
-	lod_node+0,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
+	/*lod_node+0,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE1,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
 		end,
@@ -143,20 +146,22 @@ static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDes
 	lod_node+4,			_T("NODES"),	TYPE_INODE,	0,	IDS_LOD_NODES,
 		p_ui,			TYPE_PICKNODEBUTTON,	IDC_LOD_PICKNODE5,
 		p_prompt,		IDS_PICK_GEOM_OBJECT,
-		end,
+		end,*/
 	end
 	);
 
-void LOD::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev){	
+void LOD::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+{
 	this->ip = ip;
-	editOb   = this;
-	LODDesc.BeginEditParams(ip, this, flags, prev);	
+   theHelperProc.SetCurrentOSGHelper(this);
+   LODDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
-void LOD::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next){	
-	editOb   = NULL;
+void LOD::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
 	this->ip = NULL;
-	LODDesc.EndEditParams(ip, this, flags, next);
+   theHelperProc.SetCurrentOSGHelper(NULL);
+   LODDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }
 
@@ -235,14 +240,5 @@ int LOD::HitTest(	TimeValue t, INode *inode, int type, int crossing, int flags, 
 	if((hitRegion.type != POINT_RGN) && !hitRegion.crossing)
 		return TRUE;
 	return gw->checkHitCode();
-}
-
-/**
- * This is called by the system to have the item display itself 
- * (perform a quick render in viewport, using the current TM). 
- */
-int LOD::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags) {
-	DrawAndHit(t, inode, vpt);
-	return(0);
 }
 
