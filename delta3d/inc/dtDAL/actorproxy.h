@@ -300,7 +300,7 @@ namespace dtDAL
           * @see GetDeprecatedProperty to handle old properties that need
           *       to be removed.
           */
-         virtual void BuildPropertyMap() = 0;
+         virtual void BuildPropertyMap();
 
          /**
           * Not all objects are "placeable" in the scene.  For example, an infinite

@@ -45,6 +45,8 @@ namespace dtActors
    ///////////////////////////////////////////////////////////////////////////////
    void TriggerActorProxy::BuildPropertyMap()
    {
+      dtDAL::ActorProxy::BuildPropertyMap();
+
       const std::string GROUPNAME = "Trigger";
 
       Trigger *trigger = static_cast<Trigger*>(GetActor());

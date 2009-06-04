@@ -338,4 +338,10 @@ namespace dtDAL
    void ActorProxy::OnMapLoadEnd()
    {
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ActorProxy::BuildPropertyMap()
+   {
+
+   }
 }

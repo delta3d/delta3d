@@ -7,6 +7,8 @@ namespace dtActors
 {
    void ActionActorProxy::BuildPropertyMap()
    {
+      dtDAL::ActorProxy::BuildPropertyMap();
+
       const std::string GROUPNAME = "Action";
 
       dtABC::Action *a = static_cast<dtABC::Action*>(GetActor());

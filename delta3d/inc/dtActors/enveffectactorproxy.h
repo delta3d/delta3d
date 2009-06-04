@@ -46,7 +46,7 @@ namespace dtActors
          * Actor proxies for effects must extend this class to support the individual
          * effect.
          */
-        virtual void BuildPropertyMap() = 0;
+        virtual void BuildPropertyMap();
 
         /**
          * Effects cannot be placed in a scene

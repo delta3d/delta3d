@@ -293,14 +293,15 @@ namespace dtAI
     ///////////////////////////////////////////////////////////////////////////////
     void AIInterfaceActorProxy::BuildPropertyMap()
     {
-        const dtUtil::RefString GROUPNAME = "AIInterface";
+       dtDAL::ActorProxy::BuildPropertyMap();
 
-        AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
-           PROPERTY_WAYPOINT_FILE_NAME,
-           PROPERTY_WAYPOINT_FILE_NAME,
-           dtDAL::MakeFunctor(*this, &AIInterfaceActorProxy::LoadFile),
-           "Loads the waypoint and connectivity graph.", GROUPNAME));
+       const dtUtil::RefString GROUPNAME = "AIInterface";
 
+       AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::STATIC_MESH,
+                   PROPERTY_WAYPOINT_FILE_NAME,
+                   PROPERTY_WAYPOINT_FILE_NAME,
+                   dtDAL::MakeFunctor(*this, &AIInterfaceActorProxy::LoadFile),
+                   "Loads the waypoint and connectivity graph.", GROUPNAME));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
