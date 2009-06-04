@@ -26,6 +26,10 @@
 #include <dtUtil/refstring.h>
 #include <dtCore/deltadrawable.h>
 
+//forward declared
+//#include <dtAI/waypointrenderinfo.h>
+
+//this includes osg::Vec3, Vec4, and all those
 #include <osg/Array>
 
 namespace osg
@@ -38,37 +42,34 @@ namespace osg
 namespace dtAI
 {
    class WaypointInterface;
+   class WaypointRenderInfo;
 
    class DT_AI_EXPORT AIDebugDrawable : public dtCore::DeltaDrawable
    {
    public:
-      //static datatypes for changing how the waypoints are rendered
-      //set these variables BEFORE you create the AIDebugDrawable
-      //which means for the AIInterfaceActor before you call GetDebugDrawable()
-      //they are static so you can set them without having an instance to one
-      //it would make sense later to have a function to change them all after the fact
-      static float DEFAULT_WAYPOINT_SIZE;
-      static osg::Vec4 DEFAULT_WAYPOINT_COLOR;
-      
-      static dtUtil::RefString DEFAULT_FONT;
-      static float DEFAULT_FONT_SIZE;
-      static osg::Vec3 DEFAULT_FONT_OFFSET_FROM_WAYPOINT;
-      static osg::Vec4 DEFAULT_FONT_COLOR;
+      typedef osg::Vec3 Color;
 
    public:
-
+      
       AIDebugDrawable();
+      AIDebugDrawable(WaypointRenderInfo& pRenderInfo);
 
-      bool GetRenderWaypointID() const;
-      void SetRenderWaypointID(bool b);
+      /**
+       *	@note replaces all geometry, this can be SLOW, if the editor interface must
+       *    call this every frame we can make a separate function to reset ALL the geometry       
+       */
+      void SetRenderInfo(WaypointRenderInfo& pRenderInfo);
+      WaypointRenderInfo& GetRenderInfo(const WaypointRenderInfo& pRenderInfo);
+      const WaypointRenderInfo& GetRenderInfo(const WaypointRenderInfo& pRenderInfo) const;
 
       osg::Node* GetOSGNode();
       const osg::Node* GetOSGNode() const;
 
       /**
-       * Note: Adding an existing waypoint will reset its position
+       * Note: Adding an existing waypoint will reset just its position
+       *       currently use this to move the waypoint as well.
        */
-      virtual void InsertWaypoint(const WaypointInterface& wp);
+      virtual void InsertWaypoint(const WaypointInterface& wp);      
       virtual void RemoveWaypoint(unsigned id);
 
    protected:
@@ -91,11 +92,14 @@ namespace dtAI
       //when the vertex data has changed
       void OnGeometryChanged();
 
+      //this is an expensive operation because all the geometry must be recreated
+      void OnRenderInfoChanged();
+
       void CreateWaypointIDText(const WaypointInterface& wp);
 
    private:
-
-      bool mRenderWaypointID;
+      
+      dtCore::RefPtr<WaypointRenderInfo> mRenderInfo;
       
       dtCore::RefPtr<osg::IntArray> mWaypointIDs;
       dtCore::RefPtr<osg::Vec3Array> mVerts;
