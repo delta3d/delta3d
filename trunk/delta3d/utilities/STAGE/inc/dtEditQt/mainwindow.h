@@ -93,7 +93,7 @@ namespace dtEditQt
       /**
        * @return the property editor.
        */
-      PropertyEditor& GetPropertyEditor();
+      PropertyEditor* GetPropertyEditor();
 
    public slots:
       /**

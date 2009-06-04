@@ -69,6 +69,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::MainWindow(const std::string& stagePath)
       : mSTAGEFullPath(stagePath)
+      , mPropertyWindow(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -240,22 +241,29 @@ namespace dtEditQt
       // setup the layout of the dock windows
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
-      // create the main left dock window
-      mPropertyWindow = new PropertyEditor(this);
-      mPropertyWindow->setObjectName("PropertyWindow");
 
-      // listen for selection changed event
-      connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-               mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "False")
+      {      
+         // create the main left dock window
+         mPropertyWindow = new PropertyEditor(this);
+         mPropertyWindow->setObjectName("PropertyWindow");
 
-      // listen for property change events and update the tree.  These can be generated
-      // by the viewports, or the tree itself.
-      connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
-               mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+         // listen for selection changed event
+         connect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+                  mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
 
-      // listen for name changes so we can update our group box label or handle undo changes
-      connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-               mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+         // listen for property change events and update the tree.  These can be generated
+         // by the viewports, or the tree itself.
+         connect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)),
+                  mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr, ActorPropertyRefPtr)));
+
+         // listen for name changes so we can update our group box label or handle undo changes
+         connect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+                  mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+         
+         mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      }
 
       mActorTab = new ActorTab(this);
       mActorTab->setObjectName("ActorTab");
@@ -263,11 +271,11 @@ namespace dtEditQt
       mResourceBrowser = new ResourceBrowser(this);
       mResourceBrowser->setObjectName("ResourceBrowser");
 
-      mPropertyWindow->setFeatures(QDockWidget::AllDockWidgetFeatures);
+      
       mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
       mResourceBrowser->setFeatures(QDockWidget::AllDockWidgetFeatures);
 
-      addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      
       addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
       addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
 
@@ -371,7 +379,10 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionHelpAboutQT->setEnabled(true);
 
       // enable main window areas
-      mPropertyWindow->setEnabled(hasBoth);
+      if(mPropertyWindow != NULL)
+	  {
+         mPropertyWindow->setEnabled(hasBoth);
+      }
       mActorTab->setEnabled(hasBoth);
       mResourceBrowser->setEnabled(hasProject);
       mMainViewportParent->setEnabled(hasBoth);
@@ -383,21 +394,24 @@ namespace dtEditQt
    void MainWindow::onResetWindows()
    {
       // If they're detached, reattach
-      mPropertyWindow->setFloating(false);
+      if(mPropertyWindow != NULL)
+      {
+         mPropertyWindow->setFloating(false);
+         mPropertyWindow->setVisible(true);
+         EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(true);
+         addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      }
       mActorTab->setFloating(false);
       mResourceBrowser->setFloating(false);
 
       // This should always default back to visible, like the app was restarted and the .ini
-      // was deleted
-      mPropertyWindow->setVisible(true);
+      // was deleted      
       mActorTab->setVisible(true);
-      mResourceBrowser->setVisible(true);
-
-      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(true);
+      mResourceBrowser->setVisible(true);      
+      
       EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(true);
-      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);
-
-      addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
+      EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(true);      
+      
       addDockWidget(Qt::LeftDockWidgetArea,  mActorTab);
       addDockWidget(Qt::RightDockWidgetArea, mResourceBrowser);
 
@@ -483,14 +497,20 @@ namespace dtEditQt
          //findAndLoadPreferences();
 
          setUpdatesEnabled(true);
-         mPropertyWindow->setUpdatesEnabled(true);
+         if(mPropertyWindow != NULL)
+         {
+            mPropertyWindow->setUpdatesEnabled(true);
+         }
          mActorTab->setUpdatesEnabled(true);
          mResourceBrowser->setUpdatesEnabled(true);
       }
       catch(const dtUtil::Exception& ex)
       {
          setUpdatesEnabled(true);
-         mPropertyWindow->setUpdatesEnabled(true);
+         if(mPropertyWindow != NULL)
+         {
+            mPropertyWindow->setUpdatesEnabled(true);
+         }
          mActorTab->setUpdatesEnabled(true);
          mResourceBrowser->setUpdatesEnabled(true);
 
@@ -499,7 +519,10 @@ namespace dtEditQt
       catch(const std::exception& ex)
       {
          setUpdatesEnabled(true);
-         mPropertyWindow->setUpdatesEnabled(true);
+         if (mPropertyWindow != NULL)
+         {
+            mPropertyWindow->setUpdatesEnabled(true);
+         }
          mActorTab->setUpdatesEnabled(true);
          mResourceBrowser->setUpdatesEnabled(true);
 
@@ -513,20 +536,23 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onEditorShutDown()
    {
-      // listen for selection changed event
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
-         mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
+      if(mPropertyWindow != NULL)
+      {
+         // listen for selection changed event
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(selectedActors(ActorProxyRefPtrVector&)),
+            mPropertyWindow, SLOT(handleActorsSelected(ActorProxyRefPtrVector&)));
 
-      // listen for property change events and update the tree.  These can be generated
-      // by the viewports, or the tree itself.
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)),
-         mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr,
-         ActorPropertyRefPtr)));
+         // listen for property change events and update the tree.  These can be generated
+         // by the viewports, or the tree itself.
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)),
+            mPropertyWindow, SLOT(actorPropertyChanged(ActorProxyRefPtr,
+            ActorPropertyRefPtr)));
 
-      // listen for name changes so we can update our group box label or handle undo changes
-      disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
-               mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+         // listen for name changes so we can update our group box label or handle undo changes
+         disconnect(&EditorEvents::GetInstance(), SIGNAL(proxyNameChanged(ActorProxyRefPtr, std::string)),
+                  mPropertyWindow, SLOT(proxyNameChanged(ActorProxyRefPtr, std::string)));
+      }
 
       EditorData& editorData = EditorData::GetInstance();
       EditorSettings settings;
@@ -685,7 +711,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::onPropertyEditorSelection()
    {
-      mPropertyWindow->setVisible(EditorActions::GetInstance().mActionWindowsPropertyEditor->isChecked());
+      if(mPropertyWindow != NULL)
+      {
+         mPropertyWindow->setVisible(EditorActions::GetInstance().mActionWindowsPropertyEditor->isChecked());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -744,7 +773,10 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::setWindowMenuTabsChecked()
    {
-      EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(mPropertyWindow->isVisible());
+      if(mPropertyWindow != NULL)
+      {
+         EditorActions::GetInstance().mActionWindowsPropertyEditor->setChecked(mPropertyWindow->isVisible());
+      }
       EditorActions::GetInstance().mActionWindowsActorSearch->setChecked(mActorTab->isVisible());
       EditorActions::GetInstance().mActionWindowsResourceBrowser->setChecked(mResourceBrowser->isVisible());
    }
@@ -797,9 +829,9 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   PropertyEditor& MainWindow::GetPropertyEditor()
+   PropertyEditor* MainWindow::GetPropertyEditor()
    {
-      return *mPropertyWindow;
+      return mPropertyWindow;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

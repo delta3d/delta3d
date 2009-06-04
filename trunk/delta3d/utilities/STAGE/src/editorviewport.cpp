@@ -445,8 +445,11 @@ namespace dtEditQt
       LOG_INFO("Duplicating current actor selection.");
 
       // This commits any changes in the property editor.
-      PropertyEditor& propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
-      propEditor.CommitCurrentEdits();
+      PropertyEditor* propEditor = EditorData::GetInstance().getMainWindow()->GetPropertyEditor();
+      if(propEditor != NULL)
+      {
+         propEditor->CommitCurrentEdits();
+      }
 
       ViewportOverlay::ActorProxyList selection = ViewportManager::GetInstance().getViewportOverlay()->getCurrentActorSelection();
       dtCore::RefPtr<dtDAL::Map> currMap = EditorData::GetInstance().getCurrentMap();
