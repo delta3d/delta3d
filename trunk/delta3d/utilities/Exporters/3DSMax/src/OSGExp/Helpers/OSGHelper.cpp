@@ -890,6 +890,7 @@ void PickObjectCallback::EnterMode(IObjParam* ip)
       ICustButton* pickButton = GetICustButton(GetDlgItem(mWinHandle,mButtonHandle));
       if(pickButton != NULL)
       {
+         pickButton->SetType(CBT_CHECK);
          pickButton->SetCheck(TRUE);
          ReleaseICustButton(pickButton);
       }
@@ -1007,7 +1008,7 @@ BOOL HelperDlgProc::DlgProc(TimeValue t,IParamMap2* map,HWND hWnd,UINT msg,
             if(helper.IsHierarchalType())
             {
                // Is the pick mode EXITING the custom pick mode callback?
-               if(mPickObjectCallback->GetCurrentHelper() && ! mPickObjectCallback->IsEnabled())
+               if(mPickObjectCallback->IsEnabled())
                {
                   // Clear all references to other objects to prevent any potential problems.
                   mPickObjectCallback->SetButtonHandle(0);

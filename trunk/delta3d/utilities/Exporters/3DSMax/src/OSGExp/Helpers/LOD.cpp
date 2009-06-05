@@ -67,7 +67,7 @@ static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDes
 	// rollout
    IDD_LOD, IDS_LOD, 0, 0, &theHelperProc,		
       lod_node_array,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_DOF_NODES,
-      p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
+      p_ui,			TYPE_NODELISTBOX, IDC_LIST,0,0,IDC_SWITCH_REMNODE,
       p_prompt,		IDS_PICK_GEOM_OBJECT,
       end,
 	// center x value

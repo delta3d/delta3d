@@ -62,7 +62,7 @@ static ParamBlockDesc2 group_param_blk ( group_params, _T("group_params"),  0, &
 										 // rollout
 										 IDD_OSGGROUP, IDS_GROUP, 0, 0, &theHelperProc,		
 										 osggroup_nodes,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_GROUP_NODES,
-										 p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
+										 p_ui,			TYPE_NODELISTBOX, IDC_LIST,0,0,IDC_SWITCH_REMNODE,
 										 p_prompt,		IDS_PICK_GEOM_OBJECT,
 										 end,
 
