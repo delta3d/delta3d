@@ -72,6 +72,14 @@ namespace dtEditQt
       , mPropertyWindow(NULL)
       , mActorTab(NULL)
       , mResourceBrowser(NULL)
+      , mFileMenu(NULL)
+      , mEditMenu(NULL)
+      , mProjectMenu(NULL)
+      , mWindowMenu(NULL)
+      , mHelpMenu(NULL)
+      , mRecentProjs(NULL)
+      , mRecentMaps(NULL)
+      , mToolsMenu(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -138,57 +146,64 @@ namespace dtEditQt
 
       mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
 
-      mFileMenu = menuBar()->addMenu(tr("&File"));
-      mFileMenu->addAction(editorActions.mActionFileNewMap);
-      mFileMenu->addAction(editorActions.mActionFileOpenMap);
-      mFileMenu->addAction(editorActions.mActionFileCloseMap);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(editorActions.mActionFileSaveMap);
-      mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(editorActions.mActionFileExportPrefab);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(editorActions.mActionFileChangeProject);
-      mFileMenu->addSeparator();
-      mFileMenu->addMenu(mRecentProjs);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(editorActions.mActionFileEditLibraryPaths);
-      mFileMenu->addSeparator();
-      mFileMenu->addAction(editorActions.mActionFileExit);
+      if (mCfgMgr.GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
+      {
+         mFileMenu = menuBar()->addMenu(tr("&Edit Map"));         
+      }
+      else
+      {
+         mFileMenu = menuBar()->addMenu(tr("&File"));
+         mFileMenu->addAction(editorActions.mActionFileNewMap);
+         mFileMenu->addAction(editorActions.mActionFileOpenMap);
+         mFileMenu->addAction(editorActions.mActionFileCloseMap);
+         mFileMenu->addSeparator();
+         mFileMenu->addAction(editorActions.mActionFileSaveMap);
+         mFileMenu->addAction(editorActions.mActionFileSaveMapAs);
+         mFileMenu->addSeparator();
+         mFileMenu->addAction(editorActions.mActionFileExportPrefab);
+         mFileMenu->addSeparator();
+         mFileMenu->addAction(editorActions.mActionFileChangeProject);
+         mFileMenu->addSeparator();
+         mFileMenu->addMenu(mRecentProjs);
+         mFileMenu->addSeparator();
+         mFileMenu->addAction(editorActions.mActionFileEditLibraryPaths);
+         mFileMenu->addSeparator();
+         mFileMenu->addAction(editorActions.mActionFileExit);
 
-      mEditMenu = menuBar()->addMenu(tr("&Edit"));
-      mEditMenu->addAction(editorActions.mActionEditUndo);
-      mEditMenu->addAction(editorActions.mActionEditRedo);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.mActionLocalSpace);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.mActionGroupActors);
-      mEditMenu->addAction(editorActions.mActionUngroupActors);
-      mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
-      mEditMenu->addAction(editorActions.mActionEditDeleteActor);
-      mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
-      mEditMenu->addAction(editorActions.mActionEditGotoActor);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.mActionGetGotoPosition);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.mActionEditMapProperties);
-      mEditMenu->addAction(editorActions.mActionEditMapLibraries);
-      mEditMenu->addAction(editorActions.mActionEditMapEvents);
-      mEditMenu->addSeparator();
-      mEditMenu->addAction(editorActions.mActionFileEditPreferences);
+         mEditMenu = menuBar()->addMenu(tr("&Edit"));
+         mEditMenu->addAction(editorActions.mActionEditUndo);
+         mEditMenu->addAction(editorActions.mActionEditRedo);
+         mEditMenu->addSeparator();
+         mEditMenu->addAction(editorActions.mActionLocalSpace);
+         mEditMenu->addSeparator();
+         mEditMenu->addAction(editorActions.mActionGroupActors);
+         mEditMenu->addAction(editorActions.mActionUngroupActors);
+         mEditMenu->addAction(editorActions.mActionEditDuplicateActor);
+         mEditMenu->addAction(editorActions.mActionEditDeleteActor);
+         mEditMenu->addAction(editorActions.mActionEditGroundClampActors);
+         mEditMenu->addAction(editorActions.mActionEditGotoActor);
+         mEditMenu->addSeparator();
+         mEditMenu->addAction(editorActions.mActionGetGotoPosition);
+         mEditMenu->addSeparator();
+         mEditMenu->addAction(editorActions.mActionEditMapProperties);
+         mEditMenu->addAction(editorActions.mActionEditMapLibraries);
+         mEditMenu->addAction(editorActions.mActionEditMapEvents);
+         mEditMenu->addSeparator();
+         mEditMenu->addAction(editorActions.mActionFileEditPreferences);
 
-      mWindowMenu = menuBar()->addMenu(tr("&Window"));
-      mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
-      mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
-      mWindowMenu->addAction(editorActions.mActionWindowsResourceBrowser);
-      mWindowMenu->addSeparator();
-      mWindowMenu->addAction(editorActions.mActionWindowsResetWindows);
+         mWindowMenu = menuBar()->addMenu(tr("&Window"));
+         mWindowMenu->addAction(editorActions.mActionWindowsPropertyEditor);
+         mWindowMenu->addAction(editorActions.mActionWindowsActorSearch);
+         mWindowMenu->addAction(editorActions.mActionWindowsResourceBrowser);
+         mWindowMenu->addSeparator();
+         mWindowMenu->addAction(editorActions.mActionWindowsResetWindows);
 
-      mToolsMenu = menuBar()->addMenu(tr("&Tools"));
+         mToolsMenu = menuBar()->addMenu(tr("&Tools"));
 
-      mHelpMenu = menuBar()->addMenu(tr("&Help"));
-      mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
-      mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
+         mHelpMenu = menuBar()->addMenu(tr("&Help"));
+         mHelpMenu->addAction(editorActions.mActionHelpAboutEditor);
+         mHelpMenu->addAction(editorActions.mActionHelpAboutQT);
+      } //end else 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -396,8 +411,15 @@ namespace dtEditQt
          mResourceBrowser->setEnabled(hasProject);
       }
       mMainViewportParent->setEnabled(hasBoth);
-      mEditMenu->setEnabled(hasBoth);
-      mWindowMenu->setEnabled(hasBoth);
+
+      if(mEditMenu != NULL)
+      {
+         mEditMenu->setEnabled(hasBoth);
+      }
+      if(mWindowMenu != NULL)
+      {
+         mWindowMenu->setEnabled(hasBoth);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1185,6 +1207,10 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////
    void MainWindow::RebuildToolsMenu(const QList<QAction*>& actions)
    {
+      if(mToolsMenu == NULL)
+      {
+         return;
+      }
       mToolsMenu->clear();
       mExternalToolsToolBar->clear();
       for (int toolIdx = 0; toolIdx < actions.size(); ++toolIdx)
