@@ -64,6 +64,7 @@ namespace dtDAL
    class DT_DAL_EXPORT ActorProxy : public PropertyContainer
    {
       public:
+         static const dtUtil::RefString DESCRIPTION_PROPERTY;
 
          /**
           * This enumeration defines the different ways an actor proxy can

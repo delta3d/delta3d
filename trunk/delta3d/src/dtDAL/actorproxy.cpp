@@ -41,6 +41,7 @@ namespace dtDAL
    const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_BILLBOARD_ICON("DRAW_BILLBOARD_ICON");
    const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON("DRAW_ACTOR_AND_BILLBOARD_ICON");
    const ActorProxy::RenderMode ActorProxy::RenderMode::DRAW_AUTO("DRAW_AUTO");
+   const dtUtil::RefString ActorProxy::DESCRIPTION_PROPERTY("Description");
    ///////////////////////////////////////////////////////////////////////////////////////
 
    ///////////////////////////////////////////////////////////////////////////////////////
@@ -342,6 +343,14 @@ namespace dtDAL
    ////////////////////////////////////////////////////////////////////////////////
    void ActorProxy::BuildPropertyMap()
    {
+      dtCore::DeltaDrawable* actor = GetActor();
 
+      AddProperty(new StringActorProperty(
+                      ActorProxy::DESCRIPTION_PROPERTY.Get(),
+                      "Description",
+                      StringActorProperty::SetFuncType(actor, &dtCore::DeltaDrawable::SetDescription),
+                      StringActorProperty::GetFuncType(actor, &dtCore::DeltaDrawable::GetDescription),
+                      "Generic text field used to describe this object",
+                      "DeltaDrawable"));
    }
 }

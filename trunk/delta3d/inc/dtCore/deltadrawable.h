@@ -40,6 +40,8 @@ namespace osg
 namespace dtCore
 {
    class Scene;
+   class DeltaDrawablePrivate;
+
 
    /**
     * A renderable object. A Drawable is a virtual base class which cannot be
@@ -165,6 +167,21 @@ namespace dtCore
           */
          virtual bool GetActive() const;
 
+         /** 
+          * Allows a description to be added to this DeltaDrawable for 
+          * application purposes.
+          * @param description The string used to describe this object
+          * @see GetDescription()
+          */
+         void SetDescription(const std::string& description);
+
+         /** 
+          * Get a previously set description string of this object.
+          * @return The description string (could be empty)
+          * @see SetDescription()
+          */
+         const std::string& GetDescription() const;
+
       protected:
 
          DeltaDrawable(const std::string& name = "DeltaDrawable");
@@ -187,22 +204,7 @@ namespace dtCore
          DeltaDrawable& operator=(const DeltaDrawable&);
          DeltaDrawable(const DeltaDrawable&);
 
-         ///Insert a new Switch Node above GetOSGNode() and below it's parents
-         void InsertSwitchNode();
-
-         ///Remove Switch Node above GetOSGNode()
-         void RemoveSwitchNode();
-
-         DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
-
-         typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
-         ChildList mChildList; ///< List of children DeltaDrawable added
-
-         Scene* mParentScene; ///< The Scene this Drawable was added to (Weak pointer to prevent circular reference).
-
-         RefPtr<osg::Node> mProxyNode; ///< Handle to the rendered proxy node (or NULL)
-
-         bool mIsActive; ///<Is this DeltaDrawable active (rendering)
+         DeltaDrawablePrivate* mPvt; ///<private pointer to implementation
    };
 }
 
