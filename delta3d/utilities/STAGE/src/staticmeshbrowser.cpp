@@ -148,6 +148,7 @@ namespace dtEditQt
       grid->addWidget(container, 0, 0);
       return groupBox;
    }
+
    ///////////////////////////////////////////////////////////////////////////////
    QGroupBox* StaticMeshBrowser::listGroup()
    {
