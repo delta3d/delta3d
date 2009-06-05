@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
+ * @author Pjotr van Amerongen, Curtiss Murphy
  */
 #include <dtNetGM/clientnetworkcomponent.h>
 #include <dtNetGM/clientconnectionlistener.h>
@@ -28,6 +28,10 @@
 
 namespace dtNetGM
 {
+
+   const std::string ClientNetworkComponent::DEFAULT_NAME = "ClientNetworkComponent";
+
+   ////////////////////////////////////////////////////////////////////
    ClientNetworkComponent::ClientNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
       : NetworkComponent(gameName, gameVersion, logFile)
       , mAcceptedClient(false)
@@ -36,11 +40,13 @@ namespace dtNetGM
       mConnectedClients.empty();
    }
 
+   ////////////////////////////////////////////////////////////////////
    ClientNetworkComponent::~ClientNetworkComponent(void)
    {
       mConnectedClients.clear();
    }
 
+   ////////////////////////////////////////////////////////////////////
    bool ClientNetworkComponent::SetupClient(const std::string& host, const int portNum)
    {
       if (!IsGneInitialized())
@@ -57,6 +63,7 @@ namespace dtNetGM
       return true;
    }
 
+   ////////////////////////////////////////////////////////////////////
    bool ClientNetworkComponent::ConnectToServer(const std::string& host, const int portNum)
    {
       GNE::Address address(host);
@@ -102,6 +109,7 @@ namespace dtNetGM
    }
 
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::OnDisconnect(NetworkBridge& networkBridge)
    {
       mAcceptedClient = false;
@@ -112,6 +120,7 @@ namespace dtNetGM
       RemoveConnection(networkBridge.GetMachineInfo());
    }
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerAcceptConnection(const MachineInfoMessage& msg)
    {
       mAcceptedClient = true;
@@ -122,17 +131,20 @@ namespace dtNetGM
       LOG_INFO("Connection accepted by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}");
    }
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectConnection(const dtGame::NetServerRejectMessage& msg)
    {
       mAcceptedClient = false; // should stay false....
       LOG_INFO("Connection rejected by " + msg.GetSource().GetName() + " {" + msg.GetSource().GetHostName() + "}.\nReason: " + msg.GetRejectionMessage());
    }
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetServerRejectMessage(const dtGame::ServerMessageRejected& msg)
    {
       LOG_DEBUG("Message[" + dtUtil::ToString(msg.GetMessageType().GetId()) + "] rejected by " + msg.GetSource().GetName() + " Reason: " + msg.GetCause());
    }
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessInfoClientConnected(const MachineInfoMessage& msg)
    {
       mConnectedClients.push_back(msg.GetMachineInfo());
@@ -140,6 +152,7 @@ namespace dtNetGM
       LOG_DEBUG("InfoClientConnected: " + msg.GetMachineInfo()->GetName() + " {" + msg.GetMachineInfo()->GetHostName() + "} ID [" + msg.GetMachineInfo()->GetUniqueId().ToString() + "].");
    }
 
+   ////////////////////////////////////////////////////////////////////
    void ClientNetworkComponent::ProcessNetClientNotifyDisconnect(const MachineInfoMessage& msg)
    {
       mMutex.acquire();
@@ -159,6 +172,7 @@ namespace dtNetGM
       mMutex.release();
    }
 
+   ////////////////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetServer()
    {
       if (mMachineInfoServer.valid())
@@ -171,6 +185,7 @@ namespace dtNetGM
       }
    }
 
+   ////////////////////////////////////////////////////////////////////
    const dtGame::MachineInfo* ClientNetworkComponent::GetMachineInfo(const dtCore::UniqueId& uniqueId)
    {
       mMutex.acquire();
@@ -192,5 +207,15 @@ namespace dtNetGM
 
       mMutex.release();
       return machInfo;
+   }
+
+   ////////////////////////////////////////////////////////////////////
+   void ClientNetworkComponent::SendRequestConnectionMessage()
+   {
+      dtCore::RefPtr<dtNetGM::MachineInfoMessage> message;
+      GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION, message);
+      message->SetDestination(GetServer());
+      message->SetMachineInfo(GetGameManager()->GetMachineInfo());
+      GetGameManager()->SendNetworkMessage(*message);
    }
 }
