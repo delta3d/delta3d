@@ -34,8 +34,7 @@ extern ParamBlockDesc2 switch_param_blk;
 class Switch:public OSGHelper{
 	public:
 		Switch(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&switch_param_blk,0);};
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
+      virtual ClassDesc2& GetClassDesc();
 		Class_ID ClassID() {return SWITCH_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -116,19 +115,10 @@ static ParamBlockDesc2 switch_param_blk ( switch_params, _T("switch_params"),  0
 	end
 	);
 
-void Switch::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& Switch::GetClassDesc()
 {
-	this->ip = ip;
-	theHelperProc.SetCurrentOSGHelper(this);
-	SwitchDesc.BeginEditParams(ip, this, flags, prev);	
-}
-
-void Switch::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
-{
-	this->ip = NULL;
-	theHelperProc.SetCurrentOSGHelper(NULL);
-	SwitchDesc.EndEditParams(ip, this, flags, next);
-	ClearAFlag(A_OBJ_CREATING);
+   return SwitchDesc;
 }
 
 RefTargetHandle Switch::Clone(RemapDir& remap){

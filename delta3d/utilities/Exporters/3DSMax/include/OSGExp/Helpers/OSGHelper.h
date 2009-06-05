@@ -35,7 +35,6 @@
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
-#include "ISceneEventManager.h"
 
 #include "helpers.h" 
 
@@ -54,15 +53,18 @@ class OSGHelper : public HelperObject {
       typedef HelperObject BaseClass;
 
       INode* mNode;
-      NodeEventCallback* mNodeEventCallback;
 
 		IObjParam *ip;
 
 		// Parameter block for holding parameters.
 		IParamBlock2	*pblock2;	//ref 0
 
+      int mLinksCount;
+
 		// The name of the helper object.
 		TSTR name;
+
+      virtual ClassDesc2& GetClassDesc();
 
 		// From BaseObject
 		int HitTest(TimeValue t, INode* inode, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
@@ -115,7 +117,7 @@ class OSGHelper : public HelperObject {
 		RefTargetHandle GetReference(int i) {return pblock2;}
 		void SetReference(int i, RefTargetHandle rtarg) {pblock2=(IParamBlock2*)rtarg;}
 		RefResult NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
-									PartID& partID, RefMessage message );	
+         PartID& partID, RefMessage message );
 
 		//Constructor/Destructor
 		OSGHelper(TSTR name);
@@ -261,25 +263,5 @@ class HelperDlgProc : public ParamMap2UserDlgProc
 };
 
 static HelperDlgProc theHelperProc;
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// NODE EVENT CALLBACK
-////////////////////////////////////////////////////////////////////////////////
-class NodeEventCallback : public INodeEventCallback
-{
-   public:
-      NodeEventCallback();
-
-      virtual void LinkChanged(NodeKeyTab &nodes);
-
-      void SetCurrentHelper(OSGHelper* helper);
-      OSGHelper* GetCurrentHelper();
-      const OSGHelper* GetCurrentHelper() const;
-
-   private:
-      OSGHelper* mCurrentHelper;
-};
 
 #endif // __OSGHELPER__H

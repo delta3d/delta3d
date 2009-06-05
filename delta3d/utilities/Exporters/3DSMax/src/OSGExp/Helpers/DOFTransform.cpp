@@ -32,7 +32,8 @@ extern ParamBlockDesc2 doftrans_param_blk;
 class DOFTransform:public OSGHelper{
 public:
 	DOFTransform(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&doftrans_param_blk,0);};
-	void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+   virtual ClassDesc2& GetClassDesc();
+   void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
 	void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 	Class_ID ClassID() {return DOFTRANSFORM_CLASS_ID;}
 	RefTargetHandle Clone(RemapDir& remap);
@@ -206,6 +207,13 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 
 										 end
 										 );
+
+
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& DOFTransform::GetClassDesc()
+{
+ return DOFTransDesc;
+}
 
 void DOFTransform::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {

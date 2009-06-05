@@ -32,8 +32,7 @@ extern ParamBlockDesc2 Occluder_param_blk;
 class Occluder:public OSGHelper{
 	public:
 		Occluder(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&Occluder_param_blk,0);};
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
+      virtual ClassDesc2& GetClassDesc();
 		Class_ID ClassID() {return OCCLUDER_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -68,19 +67,10 @@ static ParamBlockDesc2 Occluder_param_blk ( Occluder_params, _T("Occluder_params
 	end
 	);
 
-void Occluder::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& Occluder::GetClassDesc()
 {
-	this->ip = ip;
-	theHelperProc.SetCurrentOSGHelper(this);
-	OccluderDesc.BeginEditParams(ip, this, flags, prev);	
-}
-
-void Occluder::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
-{
-	this->ip = NULL;
-	theHelperProc.SetCurrentOSGHelper(NULL);
-	OccluderDesc.EndEditParams(ip, this, flags, next);
-	ClearAFlag(A_OBJ_CREATING);
+   return OccluderDesc;
 }
 
 RefTargetHandle Occluder::Clone(RemapDir& remap){

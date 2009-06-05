@@ -31,8 +31,7 @@ extern ParamBlockDesc2 impostor_param_blk;
 class Impostor:public OSGHelper{
 	public:
 		Impostor(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&impostor_param_blk,0);};
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
+      virtual ClassDesc2& GetClassDesc();
 		Class_ID ClassID() {return IMPOSTOR_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -73,19 +72,10 @@ static ParamBlockDesc2 impostor_param_blk ( impostor_params, _T("Impostor_params
 	end
 	);
 
-void Impostor::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& Impostor::GetClassDesc()
 {
-	this->ip = ip;
-	theHelperProc.SetCurrentOSGHelper(this);
-	ImpostorDesc.BeginEditParams(ip, this, flags, prev);	
-}
-
-void Impostor::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
-{
-	this->ip = NULL;
-	theHelperProc.SetCurrentOSGHelper(NULL);
-	ImpostorDesc.EndEditParams(ip, this, flags, next);
-	ClearAFlag(A_OBJ_CREATING);
+   return ImpostorDesc;
 }
 
 RefTargetHandle Impostor::Clone(RemapDir& remap){
