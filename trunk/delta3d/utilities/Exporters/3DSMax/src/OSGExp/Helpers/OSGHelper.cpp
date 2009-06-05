@@ -62,6 +62,16 @@ static ParamBlockDesc2 osghelper_param_blk ( osghelper_params, _T("params"),  0,
 	end
 	);
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// OSG HELPER
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& OSGHelper::GetClassDesc()
+{
+   return OSGHelperDesc;
+}
+
 /**
  * This method is called by the system when the user may edit the item's 
  * (object, modifier, controller, etc.) parameters.
@@ -69,7 +79,8 @@ static ParamBlockDesc2 osghelper_param_blk ( osghelper_params, _T("params"),  0,
 void OSGHelper::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
 	this->ip = ip;
-   OSGHelperDesc.BeginEditParams(ip, this, flags, prev);	
+   theHelperProc.SetCurrentOSGHelper(this);
+   GetClassDesc().BeginEditParams(ip, this, flags, prev);	
 }
 
 /**
@@ -81,7 +92,7 @@ void OSGHelper::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 void OSGHelper::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
 {
 	this->ip = NULL;
-	OSGHelperDesc.EndEditParams(ip, this, flags, next);
+   GetClassDesc().EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }
 
@@ -107,9 +118,9 @@ ULONG OSGHelper::GetCurrentNodeHandle(Interface* ip)
 
 OSGHelper::OSGHelper(TSTR name)
    : mNode(NULL)
-   , mNodeEventCallback(NULL)
    , ip(NULL)
    , pblock2(NULL)
+   , mLinksCount(0)
 {	
 	this->name = name;
 	SetAFlag(A_OBJ_CREATING);
@@ -118,14 +129,6 @@ OSGHelper::OSGHelper(TSTR name)
 OSGHelper::~OSGHelper()
 {
    DeleteAllRefsFromMe();
-
-   if(mNodeEventCallback != NULL)
-   {
-      ISceneEventManager* sceneMgr = GetISceneEventManager();
-      ISceneEventManager::CallbackKey cbKey = sceneMgr->GetKeyByCallback(mNodeEventCallback);
-      sceneMgr->UnRegisterCallback(cbKey);
-      delete mNodeEventCallback;
-   }
 }
 
 /**
@@ -302,10 +305,18 @@ int OSGHelper::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
    {
       mNode = inode;
       AttachReferencedObjects();
+   }
 
-      mNodeEventCallback = new NodeEventCallback;
-      mNodeEventCallback->SetCurrentHelper(this);
-      GetISceneEventManager()->RegisterCallback(mNodeEventCallback);
+   // HACK: Update references in both the object and the UI if the link count
+   // has changed.
+   if(mNode != NULL)
+   {
+      int linkCount = mNode->NumberOfChildren();
+      if(mLinksCount != linkCount)
+      {
+         mLinksCount = linkCount;
+         UpdateReferencesByLinks();
+      }
    }
 
 	DrawAndHit(t, inode, vpt);
@@ -319,12 +330,15 @@ int OSGHelper::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
  * This is the method will handle it.
  */
 RefResult OSGHelper::NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-										PartID& partID, RefMessage message ){
-	switch (message) {
-		case REFMSG_CHANGE:
-			//if (editOb==this) InvalidateUI();
+										PartID& partID, RefMessage message )
+{
+	switch (message)
+   {
+		case REFMSG_NODE_LINK:
 			break;
-		}
+      default:
+         break;
+	}
 	return(REF_SUCCEED);
 }
 
@@ -1078,41 +1092,4 @@ BOOL HelperDlgProc::DlgProc(TimeValue t,IParamMap2* map,HWND hWnd,UINT msg,
       break;
    }
    return FALSE;
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// NODE EVENT CALLBACK
-////////////////////////////////////////////////////////////////////////////////
-NodeEventCallback::NodeEventCallback()
-   : mCurrentHelper(NULL)
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void NodeEventCallback::SetCurrentHelper(OSGHelper* helper)
-{
-   mCurrentHelper = helper;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-OSGHelper* NodeEventCallback::GetCurrentHelper()
-{
-   return mCurrentHelper;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-const OSGHelper* NodeEventCallback::GetCurrentHelper() const
-{
-   return mCurrentHelper;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void NodeEventCallback::LinkChanged(NodeKeyTab& nodes)
-{
-   if(mCurrentHelper != NULL)
-   {
-      mCurrentHelper->UpdateReferencesByLinks();
-   }
 }

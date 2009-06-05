@@ -39,8 +39,7 @@ extern ParamBlockDesc2 stateset_param_blk;
 class StateSet:public OSGHelper{
 	public:
 		StateSet(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&stateset_param_blk,0);};
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
-		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
+      virtual ClassDesc2& GetClassDesc();
 		Class_ID ClassID() {return STATESET_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -177,19 +176,10 @@ static ParamBlockDesc2 stateset_param_blk ( stateset_params, _T("stateset_params
 	end
 	);
 
-void StateSet::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& StateSet::GetClassDesc()
 {
-	this->ip = ip;
-	theHelperProc.SetCurrentOSGHelper(this);
-	StateSetDesc.BeginEditParams(ip, this, flags, prev);	
-}
-
-void StateSet::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
-{
-	this->ip = NULL;
-	theHelperProc.SetCurrentOSGHelper(NULL);
-	StateSetDesc.EndEditParams(ip, this, flags, next);
-	ClearAFlag(A_OBJ_CREATING);
+  return StateSetDesc;
 }
 
 RefTargetHandle StateSet::Clone(RemapDir& remap){

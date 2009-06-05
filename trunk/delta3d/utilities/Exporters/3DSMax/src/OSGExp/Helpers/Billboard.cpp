@@ -31,7 +31,8 @@ extern ParamBlockDesc2 billboard_param_blk;
 class Billboard:public OSGHelper{
 	public:
 		Billboard(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&billboard_param_blk,0);};
-		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+      virtual ClassDesc2& GetClassDesc();
+      void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
 		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 		Class_ID ClassID() {return BILLBOARD_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
@@ -110,6 +111,12 @@ static ParamBlockDesc2 billboard_param_blk ( billboard_params, _T("billboard_par
 		end,
 	end
 	);
+
+////////////////////////////////////////////////////////////////////////////////
+ClassDesc2& Billboard::GetClassDesc()
+{
+   return BillboardDesc;
+}
 
 void Billboard::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {	
