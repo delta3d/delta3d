@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author Pjotr van Amerongen
+ * @author Pjotr van Amerongen, Curtiss Murphy
  */
 #ifndef DELTA_CLIENTNETWORKCOMPONENT
 #define DELTA_CLIENTNETWORKCOMPONENT
@@ -31,6 +31,7 @@ namespace dtNetGM
    class DT_NETGM_EXPORT ClientNetworkComponent : public NetworkComponent
    {
    public:
+      static const std::string DEFAULT_NAME;
 
       /**
        * Construct a ClientNetworkComponent with a game name and version to be used by GNE
@@ -103,6 +104,13 @@ namespace dtNetGM
        * @return MachineInfo
        */
       const dtGame::MachineInfo* GetServer();
+
+      /**
+       * Utility method to put together a request connection message and send it. 
+       * Note - Your client will not be able to send or receive messages from the server
+       * until you do this. This has no effect if you are not connected to a server yet.
+       */
+      void SendRequestConnectionMessage();
 
    private:
       // MachineInfo of the Server
