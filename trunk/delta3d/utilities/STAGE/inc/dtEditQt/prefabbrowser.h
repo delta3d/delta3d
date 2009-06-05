@@ -33,21 +33,35 @@
 #include <QtGui/QWidget>
 #include <vector>
 
+#include <dtEditQt/actortypetreewidget.h>
+#include <dtActors/prefabactorproxy.h>
 #include <dtCore/refptr.h>
-#include <dtUtil/tree.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/resourcetreenode.h>
-#include <dtEditQt/actortypetreewidget.h>
+#include <dtUtil/tree.h>
 
 class QGroupBox;
 class QTreeWidget;
 class QPushButton;
 class QModelIndex;
+class QBoxLayout;
+class QGridLayout;
+class QCheckBox;
+
+namespace dtCore
+{
+   class Scene;
+   class Object;
+}
 
 namespace dtEditQt
 {
    class ResourceTree;
    class ResourceTreeWidget;
+
+   class PerspectiveViewport;
+   class ViewportContainer;
+   class StageCamera;
 
    /**
    * @class PrefabBrowser
@@ -102,9 +116,12 @@ namespace dtEditQt
          */
          void clearPrefabTree();
 
+         /**
+         * Slot - Display currently selected mesh
+         */
+         void displaySelection();
+
    private:
-      // Prefab resources.
-      dtUtil::tree<dtDAL::ResourceTreeNode> mPrefabList;
 
       /**
       * Creates the main User Interface for the Actor Browser
@@ -112,12 +129,53 @@ namespace dtEditQt
       void setupGUI();
 
       /**
+      * Sets the camera to center around the prefab object.
+      */
+      void SetCameraLookAt();
+
+      /**
       * A convenience method to returns the selected tree widget or NULL.
       * @return The selected actor tree widget.  NULL if no selection.
       */
       ResourceTreeWidget* getSelectedPrefabWidget();
 
+      /**
+      * This defines the layout for the preview window.
+      * @return QGroupBox layout widget
+      */
+      QGroupBox* previewGroup();
 
+      /**
+      * This defines the layout for the prefab list.
+      * @return QGroupBox layout widget
+      */
+      QGroupBox* listGroup();
+
+      /**
+      * This defines the layout for the prefab action buttons.
+      * @return QWidget layout widget.
+      */
+      QBoxLayout* buttonLayout();
+
+
+      // Preview
+      ViewportContainer*             mContainer;
+      PerspectiveViewport*           mPerspView;
+      dtCore::RefPtr<dtCore::Scene>  mPrefabScene;
+      dtCore::RefPtr<StageCamera>    mCamera;
+
+      dtCore::RefPtr<dtActors::PrefabActorProxy> mPreviewObject;
+
+      // Layout Objects
+      QGridLayout* mGrid;
+
+      // Checkboxes
+      QCheckBox* mPreviewChk;
+
+      // Buttons
+      QPushButton* mPreviewBtn;
+
+      // Tree
       QIcon          mResourceIcon;
       ResourceTree*  mTree;
       QPushButton*   mCreatePrefabBtn;
@@ -125,6 +183,9 @@ namespace dtEditQt
       QPushButton*   mRefreshPrefabBtn;
 
       ResourceTreeWidget*  mRootPrefabTree;
+
+      // Prefab resources.
+      dtUtil::tree<dtDAL::ResourceTreeNode> mPrefabList;
 
       // this is a tree of actor type names which were expanded.  It is used
       // when we reload actor types.  We walk the tree and look for
