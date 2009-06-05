@@ -76,14 +76,16 @@ namespace dtActors
          /**
           * Sets the description of this task.
           * @param desc The new description to assign to this task.
+          * @note Deprecate this in favor of DeltaDrawable::SetDescription()?
           */
-         void SetDescription(const std::string &desc) { mDescription = desc; }
+         void SetDescription(const std::string &desc) { dtGame::GameActor::SetDescription(desc); }
 
          /**
           * Gets the description of this task.
           * @return The task's description.
+          * @note Deprecate this in favor of DeltaDrawable::GetDescription()?
           */
-         const std::string& GetDescription() const { return mDescription; }
+         const std::string& GetDescription() const { return dtGame::GameActor::GetDescription(); }
 
          /**
           * Sets the display name of this task. This allows you to have a pretty value for the user.
@@ -265,7 +267,6 @@ namespace dtActors
       private:
 
          //Basic properties of a task...
-         std::string mDescription;
          std::string mDisplayName;
          float mPassingScore;
          float mScore;

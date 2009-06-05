@@ -10,24 +10,444 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
+namespace dtCore
+{
+   class DeltaDrawablePrivate
+   {
+   public:
+      DeltaDrawablePrivate();
+      ~DeltaDrawablePrivate();
+
+      void SetParent(DeltaDrawable* parent);
+      DeltaDrawable* GetParent();
+      const DeltaDrawable* GetParent() const;
+
+      void AddedToScene(Scene* scene, osg::Node* node);
+
+      Scene* GetSceneParent();
+      const Scene* GetSceneParent() const;
+
+      bool AddChild(DeltaDrawable* child, DeltaDrawable* parent);
+      void RemoveChild(DeltaDrawable* child);
+
+      void Emancipate(DeltaDrawable* that);
+
+      unsigned int GetNumChildren() const;
+
+      DeltaDrawable* GetChild(unsigned int idx);
+      const DeltaDrawable* GetChild(unsigned int idx) const;
+
+      unsigned int GetChildIndex(const DeltaDrawable* child) const;
+
+      bool CanBeChild(DeltaDrawable* child) const;
+
+      void RenderProxyNode(bool enable = true);
+      bool GetIsRenderingProxyNode() const;
+
+      void GetBoundingSphere(osg::Vec3* center, float* radius, osg::Node* node);
+
+      void SetActive(bool enable, osg::Node* node);
+      bool GetActive() const;
+
+      osg::Node* GetProxyNode();
+      const osg::Node* GetProxyNode() const;
+      void SetProxyNode(osg::Node* proxyNode);
+
+      void OnOrphaned();
+
+      void SetDescription(const std::string& description);
+      const std::string& GetDescription() const;
+
+   private:
+      ///Insert a new Switch Node above GetOSGNode() and below it's parents
+      void InsertSwitchNode(osg::Node *node);
+
+      ///Remove Switch Node above GetOSGNode()
+      void RemoveSwitchNode(osg::Node* node);
+
+      DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
+
+      typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
+      ChildList mChildList; ///< List of children DeltaDrawable added
+      Scene* mParentScene; ///< The Scene this Drawable was added to (Weak pointer to prevent circular reference).
+      RefPtr<osg::Node> mProxyNode; ///< Handle to the rendered proxy node (or NULL)
+      bool mIsActive; ///<Is this DeltaDrawable active (rendering)
+      std::string mDescription; ///<description string
+   };
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetParent(DeltaDrawable* parent)
+   {
+      mParent = parent;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DeltaDrawable* DeltaDrawablePrivate::GetParent()
+   {
+      return mParent;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const DeltaDrawable* DeltaDrawablePrivate::GetParent() const
+   {
+      return mParent;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   Scene* DeltaDrawablePrivate::GetSceneParent()
+   {
+      return mParentScene;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const Scene* DeltaDrawablePrivate::GetSceneParent() const
+   {
+      return mParentScene;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::RemoveChild(DeltaDrawable* child)
+   {
+      if (!child) return;
+
+      unsigned int pos = GetChildIndex(child);
+      if (pos < mChildList.size())
+      {
+         child->SetParent(NULL);
+         child->AddedToScene(NULL);
+         mChildList.erase(mChildList.begin() + pos);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::Emancipate(DeltaDrawable* that)
+   {
+      if (mParent != NULL)
+      {
+         mParent->RemoveChild(that);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int DeltaDrawablePrivate::GetNumChildren() const
+   {
+      return mChildList.size();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DeltaDrawable* DeltaDrawablePrivate::GetChild(unsigned int idx)
+   {
+      if (idx >= GetNumChildren())
+      {
+         return NULL;
+      }
+
+      return mChildList[idx].get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const DeltaDrawable* DeltaDrawablePrivate::GetChild(unsigned int idx) const
+   {
+      if (idx >= GetNumChildren())
+      {
+         return NULL;
+      }
+
+      return mChildList[idx].get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   unsigned int DeltaDrawablePrivate::GetChildIndex(const DeltaDrawable* child) const
+   {
+      for (unsigned int childNum = 0; childNum < mChildList.size(); ++childNum)
+      {
+         if (mChildList[childNum] == child)
+         {
+            return childNum;
+         }
+      }
+
+      return mChildList.size(); // node not found.
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::RenderProxyNode(bool enable)
+   {
+      if (!mProxyNode.valid())
+      {
+         LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawablePrivate::GetIsRenderingProxyNode() const
+   {
+      return mProxyNode.valid();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::GetBoundingSphere(osg::Vec3* center,
+                                                float* radius,
+                                                osg::Node* node)
+   {
+      if (node != NULL)
+      {
+         osg::BoundingSphere bs = node->getBound();
+         center->set(bs.center());
+         *radius = bs.radius();
+      }
+      else
+      {
+         LOG_WARNING("Can't calculate Bounding Sphere, there is no geometry associated with this DeltaDrawable");
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetActive(bool enable, osg::Node* node)
+   {
+      if (mIsActive == enable)
+      {
+         return; //nothing to do here
+      }
+
+      mIsActive = enable;
+
+      if (mParentScene == NULL)
+      {
+         // if we haven't been added to a Scene yet, then we are already effectively
+         // inactive.  Once we get added to a Scene, we'll make sure we remain inactive.
+         return;
+      }
+
+      if (mIsActive == false)
+      {
+         InsertSwitchNode(node);
+      }
+      else
+      {
+         RemoveSwitchNode(node);
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawablePrivate::GetActive() const
+   {
+      return mIsActive;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetProxyNode(osg::Node* proxyNode)
+   {
+      mProxyNode = proxyNode;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::OnOrphaned()
+   {
+      mParent = NULL;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::InsertSwitchNode(osg::Node *node)
+   {
+      // save off all parents of the Node
+      osg::Node::ParentList parents = node->getParents();
+
+      // remove the Node from all its parents
+      osg::Node::ParentList::iterator parentItr = parents.begin();
+      while (parentItr != parents.end())
+      {
+         (*parentItr)->removeChild(node);
+         ++parentItr;
+      }
+
+      osg::ref_ptr<osg::Switch> parentSwitch = new osg::Switch();
+      parentSwitch->setAllChildrenOff();
+
+      // add the Node as a child of parentSwitch
+      parentSwitch->addChild(node);
+
+      // add parentSwitch to all of the Node's parents
+      parentItr = parents.begin();
+      while (parentItr != parents.end())
+      {
+         (*parentItr)->addChild(parentSwitch.get());
+         ++parentItr;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::RemoveSwitchNode(osg::Node* node)
+   {
+      if (node == NULL) { return; }  // no geometry?
+
+      if (node->getNumParents() == 0) { return; }  // no parents?
+
+      osg::Switch* parentSwitch = dynamic_cast<osg::Switch*>(node->getParent(0));
+      if (parentSwitch == NULL) { return; }
+
+      // save off all parents of the Switch Node
+      osg::Node::ParentList parents = parentSwitch->getParents();
+
+      // remove the Switch node from all its parents
+      osg::Node::ParentList::iterator parentItr = parents.begin();
+      while (parentItr != parents.end())
+      {
+         (*parentItr)->removeChild(parentSwitch);
+         ++parentItr;
+      }
+
+      // Add the Node as a child to what was the Switch node's parents
+      parentItr = parents.begin();
+      while (parentItr != parents.end())
+      {
+         (*parentItr)->addChild(node);
+         ++parentItr;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   osg::Node* DeltaDrawablePrivate::GetProxyNode()
+   {
+      return mProxyNode.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const osg::Node* DeltaDrawablePrivate::GetProxyNode() const
+   {
+      return mProxyNode.get();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::SetDescription(const std::string& description)
+   {
+      mDescription = description;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   const std::string& DeltaDrawablePrivate::GetDescription() const
+   {
+      return mDescription;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void DeltaDrawablePrivate::AddedToScene(Scene* scene, osg::Node* node)
+   {
+      if (mParentScene == scene) { return; } //nothing to do here.
+
+      mParentScene = scene;
+
+      for (ChildList::iterator itr = mChildList.begin();
+         itr != mChildList.end();
+         ++itr)
+      {
+         (*itr)->AddedToScene(scene);
+      }
+
+      // If we've been set to inactive before being added to a Scene,
+      // then we need to do add in our Switch node.  If we've just been
+      // removed from a Scene and we're inactive, then we should remove our Switch
+      if (mParentScene != NULL)
+      {
+         if (GetActive() == false)
+         {
+            InsertSwitchNode(node);
+         }
+      }
+      else
+      {
+         //we've just been removed from a scene
+         if (GetActive() == false)
+         {
+            RemoveSwitchNode(node);
+         }
+      }
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawablePrivate::AddChild(DeltaDrawable* child, DeltaDrawable* parent)
+   {
+      if (!CanBeChild(child))
+      {
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
+            "DeltaDrawable: '%s' cannot be added as a child to '%s'",
+            child->GetName().c_str(), parent->GetName().c_str());
+         return false;
+      }
+
+      child->SetParent(parent);
+      mChildList.push_back(child);
+
+      if (mParentScene)
+      {
+         child->AddedToScene(mParentScene);
+      }
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool DeltaDrawablePrivate::CanBeChild(DeltaDrawable* child) const
+   {
+      if (child->GetParent() != NULL)
+      {
+         return false;
+      }
+
+      //loop through parent's parents and make sure they're not == child
+      RefPtr<const DeltaDrawable> t = GetParent();
+      while (t != NULL)
+      {
+         if (t == child)
+         {
+            return false;
+         }
+         t = t->GetParent();
+      }
+
+      return true;
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DeltaDrawablePrivate::DeltaDrawablePrivate():
+   mParent(NULL)
+      , mParentScene(NULL)
+      , mIsActive(true)
+   {
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DeltaDrawablePrivate::~DeltaDrawablePrivate()
+   {
+   }
+}//namespace dtCore
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
 DeltaDrawable::DeltaDrawable(const std::string& name)
    : Base(name)
-   , mParent(NULL)
-   , mParentScene(NULL)
-   , mIsActive(true)
+   , mPvt(new DeltaDrawablePrivate())
 {
    RegisterInstance(this);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable::~DeltaDrawable()
 {
    DeregisterInstance(this);
 
-   // Alert all children of this parent's demise
-   for(ChildList::iterator itr = mChildList.begin(); itr != mChildList.end(); ++itr)
+   for (unsigned int i=0;i<mPvt->GetNumChildren(); i++)
    {
-      (*itr)->OnOrphaned();
+      DeltaDrawable* child = mPvt->GetChild(i);
+      child->OnOrphaned();
    }
+
+   delete mPvt;
 }
 
 /** This virtual method can be overwritten
@@ -38,45 +458,20 @@ DeltaDrawable::~DeltaDrawable()
  */
 bool DeltaDrawable::AddChild(DeltaDrawable* child)
 {
-   if (!CanBeChild(child))
-   {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__,
-         "DeltaDrawable: '%s' cannot be added as a child to '%s'",
-         child->GetName().c_str(), this->GetName().c_str());
-      return false;
-   }
-
-   mChildList.push_back(child);
-   child->SetParent(this);
-
-   if (mParentScene)
-   {
-      child->AddedToScene(mParentScene);
-   }
-   return true;
+   return mPvt->AddChild(child, this);
 }
 
 //////////////////////////////////////////////////////////////////////////
 DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx)
 {
-   if (idx >= GetNumChildren())
-   {
-      return NULL;
-   }
-
-   return mChildList[idx].get();
+   return mPvt->GetChild(idx);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 const DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx) const
 {
-   if (idx >= GetNumChildren())
-   {
-      return NULL;
-   }
-
-   return mChildList[idx].get();
+   return mPvt->GetChild(idx);
 }
 
 /*!
@@ -87,17 +482,12 @@ const DeltaDrawable* DeltaDrawable::GetChild(unsigned int idx) const
 */
 void DeltaDrawable::RemoveChild(DeltaDrawable* child)
 {
-   if (!child) return;
-
-   if (child->GetParent() != this && child->GetParent() != NULL) return;
-
-   unsigned int pos = GetChildIndex(child);
-   if (pos < mChildList.size())
+   if (child->GetParent() != this && child->GetParent() != NULL)
    {
-      child->SetParent(NULL);
-      child->AddedToScene(NULL);
-      mChildList.erase(mChildList.begin() + pos);
+      return;
    }
+
+   return mPvt->RemoveChild(child);
 }
 
 /**
@@ -107,15 +497,7 @@ void DeltaDrawable::RemoveChild(DeltaDrawable* child)
  */
 unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
 {
-   for (unsigned int childNum = 0; childNum < mChildList.size(); ++childNum)
-   {
-      if (mChildList[childNum] == child)
-      {
-         return childNum;
-      }
-   }
-
-   return mChildList.size(); // node not found.
+   return mPvt->GetChildIndex(child);
 }
 
 /*!
@@ -129,41 +511,23 @@ unsigned int DeltaDrawable::GetChildIndex(const DeltaDrawable* child) const
  */
 bool DeltaDrawable::CanBeChild(DeltaDrawable* child) const
 {
-   if (child->GetParent() != NULL)
-   {
-      return false;
-   }
    if (this == child)
    {
       return false;
    }
 
-   //loop through parent's parents and make sure they're not == child
-   RefPtr<const DeltaDrawable> t = GetParent();
-   while (t != NULL)
-   {
-      if (t == child)
-      {
-         return false;
-      }
-      t = t->GetParent();
-   }
-
-   return true;
+   return mPvt->CanBeChild(child);
 }
 
 void DeltaDrawable::RenderProxyNode(bool enable)
 {
-   if (!mProxyNode.valid())
-   {
-      LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
-   }
+   mPvt->RenderProxyNode(enable);
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
 {
-   return mProxyNode.valid();
+   return mPvt->GetIsRenderingProxyNode();
 }
 
 /**
@@ -178,35 +542,7 @@ bool dtCore::DeltaDrawable::GetIsRenderingProxyNode() const
  */
 void DeltaDrawable::AddedToScene(Scene* scene)
 {
-   if (mParentScene == scene) { return; } //nothing to do here.
-
-   mParentScene = scene;
-
-   for (ChildList::iterator itr = mChildList.begin();
-        itr != mChildList.end();
-        ++itr)
-   {
-      (*itr)->AddedToScene(scene);
-   }
-
-   // If we've been set to inactive before being added to a Scene,
-   // then we need to do add in our Switch node.  If we've just been
-   // removed from a Scene and we're inactive, then we should remove our Switch
-   if (mParentScene != NULL)
-   {
-      if (GetActive() == false)
-      {
-         InsertSwitchNode();
-      }
-   }
-   else
-   {
-      //we've just been removed from a scene
-      if (GetActive() == false)
-      {
-         RemoveSwitchNode();
-      }
-   }
+   mPvt->AddedToScene(scene, GetOSGNode());
 }
 
 /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
@@ -216,175 +552,93 @@ void DeltaDrawable::AddedToScene(Scene* scene)
   */
 void DeltaDrawable::Emancipate()
 {
-   if (mParent != NULL)
-   {
-      mParent->RemoveChild(this);
-   }
+   mPvt->Emancipate(this);
 }
 
 
 void DeltaDrawable::SetProxyNode(osg::Node* proxyNode)
 {
-   mProxyNode = proxyNode;
+   mPvt->SetProxyNode(proxyNode);
 }
 
 void DeltaDrawable::OnOrphaned()
 {
-   mParent = NULL;
+   mPvt->OnOrphaned();
 }
 
 void DeltaDrawable::GetBoundingSphere(osg::Vec3* center, float* radius)
 {
-   osg::Node* node = GetOSGNode();
-   if (node != NULL)
-   {
-      osg::BoundingSphere bs = node->getBound();
-      center->set(bs.center());
-      *radius = bs.radius();
-   }
-   else
-   {
-      LOG_WARNING("Can't calculate Bounding Sphere, there is no geometry associated with this DeltaDrawable");
-   }
+   mPvt->GetBoundingSphere(center, radius, GetOSGNode());
 }
 
 //////////////////////////////////////////////////////////////////////////
 void DeltaDrawable::SetActive(bool enable)
 {
-   if (mIsActive == enable)
-   {
-      return; //nothing to do here
-   }
-
-   mIsActive = enable;
-
-   if (mParentScene == NULL)
-   {
-      // if we haven't been added to a Scene yet, then we are already effectively
-      // inactive.  Once we get added to a Scene, we'll make sure we remain inactive.
-      return;
-   }
-
-   if (mIsActive == false)
-   {
-      InsertSwitchNode();
-   }
-   else
-   {
-      RemoveSwitchNode();
-   }
+   mPvt->SetActive(enable, GetOSGNode());
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool DeltaDrawable::GetActive() const
 {
-   return mIsActive;
-}
-
-//////////////////////////////////////////////////////////////////////////
-void DeltaDrawable::InsertSwitchNode()
-{
-   // save off all parents of the Node
-   osg::Node::ParentList parents = GetOSGNode()->getParents();
-
-   // remove the Node from all its parents
-   osg::Node::ParentList::iterator parentItr = parents.begin();
-   while (parentItr != parents.end())
-   {
-      (*parentItr)->removeChild(GetOSGNode());
-      ++parentItr;
-   }
-
-   osg::ref_ptr<osg::Switch> parentSwitch = new osg::Switch();
-   parentSwitch->setAllChildrenOff();
-
-   // add the Node as a child of parentSwitch
-   parentSwitch->addChild(GetOSGNode());
-
-   // add parentSwitch to all of the Node's parents
-   parentItr = parents.begin();
-   while (parentItr != parents.end())
-   {
-      (*parentItr)->addChild(parentSwitch.get());
-      ++parentItr;
-   }
-}
-
-//////////////////////////////////////////////////////////////////////////
-void dtCore::DeltaDrawable::RemoveSwitchNode()
-{
-   osg::Node* node = GetOSGNode();
-   if (node == NULL) { return; }  // no geometry?
-
-   if (node->getNumParents() == 0) { return; }  // no parents?
-
-   osg::Switch* parentSwitch = dynamic_cast<osg::Switch*>(node->getParent(0));
-   if (parentSwitch == NULL) { return; }
-
-   // save off all parents of the Switch Node
-   osg::Node::ParentList parents = parentSwitch->getParents();
-
-   // remove the Switch node from all its parents
-   osg::Node::ParentList::iterator parentItr = parents.begin();
-   while (parentItr != parents.end())
-   {
-      (*parentItr)->removeChild(parentSwitch);
-      ++parentItr;
-   }
-
-   // Add the Node as a child to what was the Switch node's parents
-   parentItr = parents.begin();
-   while (parentItr != parents.end())
-   {
-      (*parentItr)->addChild(GetOSGNode());
-      ++parentItr;
-   }
+   return mPvt->GetActive();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void dtCore::DeltaDrawable::SetParent(DeltaDrawable* parent)
 {
-   mParent = parent;
+   mPvt->SetParent(parent);
 }
 
 //////////////////////////////////////////////////////////////////////////
 DeltaDrawable* dtCore::DeltaDrawable::GetParent()
 {
-   return mParent;
+   return mPvt->GetParent();
 }
 
 //////////////////////////////////////////////////////////////////////////
 const DeltaDrawable* dtCore::DeltaDrawable::GetParent() const
 {
-   return mParent;
+   return mPvt->GetParent();
 }
 
 //////////////////////////////////////////////////////////////////////////
 Scene* dtCore::DeltaDrawable::GetSceneParent()
 {
-   return mParentScene;
+   return mPvt->GetSceneParent();
 }
 
 //////////////////////////////////////////////////////////////////////////
 const Scene* dtCore::DeltaDrawable::GetSceneParent() const
 {
-   return mParentScene;
+   return mPvt->GetSceneParent();
 }
 
 //////////////////////////////////////////////////////////////////////////
 unsigned int dtCore::DeltaDrawable::GetNumChildren() const
 {
-   return mChildList.size();
+   return mPvt->GetNumChildren();
 }
 
 //////////////////////////////////////////////////////////////////////////
 osg::Node* dtCore::DeltaDrawable::GetProxyNode()
 {
-   return mProxyNode.get();
+   return mPvt->GetProxyNode();
 }
 
 //////////////////////////////////////////////////////////////////////////
 const osg::Node* dtCore::DeltaDrawable::GetProxyNode() const
 {
-   return mProxyNode.get();
+   return mPvt->GetProxyNode();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtCore::DeltaDrawable::SetDescription(const std::string& description)
+{
+   mPvt->SetDescription(description);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const std::string& dtCore::DeltaDrawable::GetDescription() const
+{
+   return mPvt->GetDescription();
 }
