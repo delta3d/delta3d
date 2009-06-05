@@ -66,7 +66,7 @@ static ParamBlockDesc2 doftrans_param_blk ( doftrans_params, _T("doftrans_params
 										 // rollout
 										 IDD_DOFTRANSFORM, IDS_DOF, 0, 0, &theHelperProc,		
 										 doftrans_nodes,		_T("NODES"),		TYPE_INODE_TAB,	0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_DOF_NODES,
-                               p_ui,			TYPE_NODELISTBOX, IDC_LIST,IDC_PICKNODE,0,IDC_SWITCH_REMNODE,
+                               p_ui,			TYPE_NODELISTBOX, IDC_LIST,0,0,IDC_SWITCH_REMNODE,
 										 p_prompt,		IDS_PICK_GEOM_OBJECT,
 										 end,
 
