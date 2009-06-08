@@ -620,6 +620,12 @@ namespace dtEditQt
       fileUtils.PushDirectory(dtDAL::Project::GetInstance().GetContext());
       try
       {
+         // If the prefab directory does not exist, create it first.
+         if (!fileUtils.DirExists(EditorActions::PREFAB_DIRECTORY))
+         {
+            fileUtils.MakeDirectory(EditorActions::PREFAB_DIRECTORY);
+         }
+
          ViewportOverlay* overlay = ViewportManager::GetInstance().getViewportOverlay();
          ViewportOverlay::ActorProxyList& selection = overlay->getCurrentActorSelection();
 
