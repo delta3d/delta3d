@@ -137,7 +137,7 @@ namespace dtDAL
            i != DataType::EnumerateType().end(); ++i)
       {
          std::map<std::string, std::string> defFilter;
-         defFilter.insert(std::make_pair("*","Any File"));
+         //defFilter.insert(std::make_pair("*","Any File"));
          DataType& d = **i;
          if (d.IsResource())
          {
@@ -170,8 +170,8 @@ namespace dtDAL
             {
                description = "Prefab Files";
             }
-            DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
-            mDefaultTypeHandlers.insert(std::make_pair(&d, dtCore::RefPtr<ResourceTypeHandler>(def)));
+            //DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
+            //mDefaultTypeHandlers.insert(std::make_pair(&d, dtCore::RefPtr<ResourceTypeHandler>(def)));
          }
 
          if (d.IsResource())
@@ -434,7 +434,10 @@ namespace dtDAL
          DataType* dt = const_cast<DataType*>(&resourceType);
 
          //insert the default handler
-         tempSet.insert(mDefaultTypeHandlers.find(dt)->second.get());
+         if (mDefaultTypeHandlers.find(dt) != mDefaultTypeHandlers.end())
+         {
+            tempSet.insert(mDefaultTypeHandlers.find(dt)->second.get());
+         }
 
          //lookup the handlers by type.
          std::map<DataType*, std::map<std::string, dtCore::RefPtr<ResourceTypeHandler> > >::const_iterator found
