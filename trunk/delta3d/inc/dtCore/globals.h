@@ -41,7 +41,7 @@ namespace dtCore
    DT_CORE_EXPORT std::string GetDeltaRootPath();
 
    /// Convienence method to get the supplied environment variable
-   DT_CORE_EXPORT std::string GetEnvironment(const std::string& env );
+   DT_CORE_EXPORT std::string GetEnvironment(const std::string& env);
 
    /**
     * Sets an environment variable.

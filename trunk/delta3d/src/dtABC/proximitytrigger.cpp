@@ -9,6 +9,7 @@ using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER(ProximityTrigger)
 
+////////////////////////////////////////////////////////////////////////////////
 ProximityTrigger::ProximityTrigger(const std::string& name)
    : Transformable(name)
    , mTrigger(new Trigger("InternalProximityTrigger"))
@@ -27,9 +28,10 @@ ProximityTrigger::ProximityTrigger(const std::string& name)
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PROXIMITYTRIGGER);
 
    // Set the update callback which keeps track of traversal numbers.
-   GetOSGNode()->setUpdateCallback( new NodeCallback(this) );
+   GetOSGNode()->setUpdateCallback(new NodeCallback(this));
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool ProximityTrigger::FilterContact(dContact* contact, Transformable* collider)
 {
    // If the difference between our last known traversal number and the
@@ -45,7 +47,7 @@ bool ProximityTrigger::FilterContact(dContact* contact, Transformable* collider)
 
    mTraversalNumberMap[collider] = mLastTraversalNumber;
 
-   //Return false because we this is not a physical and we do not want physics applied
-   //in Scene. The dynamic_cast in there would filter it out anyways, but still...
+   // Return false because we know this is not a physical and we do not want physics applied
+   // in Scene. The dynamic_cast in there would filter it out anyways, but still...
    return false;
 }

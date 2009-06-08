@@ -44,12 +44,12 @@ class TestTrigger : public dtABC::Application
    {
       public:
 
-         LightAction( dtCore::PositionalLight* light );
+         LightAction(dtCore::PositionalLight* light);
 
       protected:
 
          virtual ~LightAction() {}
-         LightAction( const LightAction& ); // Not implemented by design
+         LightAction(const LightAction&); // Not implemented by design
 
          //returning false will tell this not to update again
          virtual bool OnNextStep()  { return false; }
@@ -61,25 +61,24 @@ class TestTrigger : public dtABC::Application
       
       private:
 
-         dtCore::RefPtr< dtCore::PositionalLight > mPositionalLight;
+         dtCore::RefPtr<dtCore::PositionalLight> mPositionalLight;
 
    };
 
    public:
 
-      TestTrigger( const std::string& configFilename = "config.xml" );
+      TestTrigger(const std::string& configFilename = "config.xml");
       virtual ~TestTrigger() {}
    
       virtual void Config();
 
    private:
       
-      dtCore::RefPtr< dtCore::Object >          mWarehouse;
-      dtCore::RefPtr< dtCore::Object >          mHappySphere;
-      dtCore::RefPtr< dtCore::PositionalLight > mPositionalLight;
-      dtCore::RefPtr< dtCore::WalkMotionModel > mWalkMotionModel;
-      dtCore::RefPtr< dtABC::ProximityTrigger > mProximityTrigger;
-   
+      dtCore::RefPtr<dtCore::Object>          mWarehouse;
+      dtCore::RefPtr<dtCore::Object>          mHappySphere;
+      dtCore::RefPtr<dtCore::PositionalLight> mPositionalLight;
+      dtCore::RefPtr<dtCore::WalkMotionModel> mWalkMotionModel;
+      dtCore::RefPtr<dtABC::ProximityTrigger> mProximityTrigger;
 };
 
 #endif // DELTA_TEST_TRIGGER
