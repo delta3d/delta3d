@@ -658,6 +658,41 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   void PrefabBrowser::checkBoxSelected()
+   {
+      if (mPreviewChk->isChecked())
+      {
+         ResourceTreeWidget* selection = NULL;
+
+         if (mTree != NULL)
+         {
+            QList <QTreeWidgetItem*> list = mTree->selectedItems();
+
+            if (!list.isEmpty())
+            {
+               selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
+            }
+            if (selection != NULL)
+            {
+               if (selection->isResource())
+               {
+                  EditorData::GetInstance().setCurrentPrefabResource(selection->getResourceDescriptor());
+               }
+               else
+               {
+                  EditorData::GetInstance().setCurrentPrefabResource(dtDAL::ResourceDescriptor());
+               }
+            }
+         }
+
+         if (selection->isResource())
+         {
+            displaySelection();
+         }
+      }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void PrefabBrowser::refreshPrefabs()
    {
       // resets everything and marks the current expansion

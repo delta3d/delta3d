@@ -105,6 +105,11 @@ namespace dtEditQt
          void treeSelectionChanged();
 
          /**
+         * Slot - Called when the preview checkbox is selected.
+         */
+         void checkBoxSelected();
+
+         /**
          * Slot - Handles refreshing the prefabs.
          */
          void refreshPrefabs();
