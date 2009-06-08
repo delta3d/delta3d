@@ -11,6 +11,16 @@
     </xsd:documentation>
   </xsd:annotation>
 
+  <xsd:element name="prefab" type="PrefabType"/>
+  
+  <xsd:complexType name="PrefabType">
+    <xsd:sequence>
+      <xsd:element name="header" type="HeaderType"/>
+      <xsd:element name="actors" type="ActorsType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  
   <xsd:element name="map" type="MapType"/>
 
   <xsd:complexType name="MapType">
@@ -19,6 +29,7 @@
       <xsd:element name="libraries" type="LibrariesType"/>
       <xsd:element name="events" type="EventsType" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="actors" type="ActorsType"/>
+      <xsd:element name="groups" type="GroupsType"/>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -109,6 +120,18 @@
           <xsd:element name="group" type="GroupType"/>
           <xsd:element name="gameevent" type="xsd:string"/>
         </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="GroupsType">
+    <xsd:sequence>
+      <xsd:element name="group" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="actor" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
     </xsd:sequence>
   </xsd:complexType>
 
