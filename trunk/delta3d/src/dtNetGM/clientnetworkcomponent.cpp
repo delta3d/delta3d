@@ -36,7 +36,7 @@ namespace dtNetGM
       : NetworkComponent(gameName, gameVersion, logFile)
       , mAcceptedClient(false)
    {
-      SetName("ClientNetworkComponent");
+      SetName(DEFAULT_NAME);
       mConnectedClients.empty();
    }
 
