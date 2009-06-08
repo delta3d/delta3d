@@ -101,118 +101,120 @@ void TripodActorProxy::BuildPropertyMap()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetCamera( ActorProxy* cameraProxy )
+void TripodActorProxy::SetCamera(ActorProxy* cameraProxy)
 {
-   SetLinkedActor( "Camera", cameraProxy );
+   SetLinkedActor("Camera", cameraProxy);
 
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
    Camera* camera(0);
 
-   if( cameraProxy != 0 )
+   if(cameraProxy != 0)
    {
-      camera = dynamic_cast< Camera* >( cameraProxy->GetActor() );
+      camera = dynamic_cast<Camera*>(cameraProxy->GetActor());
    }
 
-   tripod->SetCamera(camera);      
+   tripod->SetCamera(camera);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetCamera()
 {
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
    
    return tripod->GetCamera();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetAttachToTransformable( ActorProxy* transformableProxy )
+void TripodActorProxy::SetAttachToTransformable(ActorProxy* transformableProxy)
 {
-   SetLinkedActor( "Parent", transformableProxy );
+   SetLinkedActor("Parent", transformableProxy);
 
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
 
    Transformable* parent(0);
 
-   if( transformableProxy != 0 )
+   if(transformableProxy != 0)
    {
-      parent = dynamic_cast< Transformable* >( transformableProxy->GetActor() );
+      parent = dynamic_cast<Transformable*>(transformableProxy->GetActor());
    }
 
-   tripod->SetAttachToTransformable(parent);         
+   tripod->SetAttachToTransformable(parent);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
 {
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
 
    return tripod->GetAttachedTransformable();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetLookAtTarget( ActorProxy* targetProxy )
+void TripodActorProxy::SetLookAtTarget(ActorProxy* targetProxy)
 {
-   SetLinkedActor( "Look-At Target", targetProxy );
+   SetLinkedActor("Look-At Target", targetProxy);
 
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
  
    Transformable* target(0);
 
-   if( targetProxy != 0 )
+   if(targetProxy != 0)
    {
-      target = dynamic_cast< Transformable* >( targetProxy->GetActor() );
+      target = dynamic_cast<Transformable*>(targetProxy->GetActor());
    }
 
-   tripod->SetLookAtTarget(target);         
+   tripod->SetLookAtTarget(target);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 DeltaDrawable* TripodActorProxy::GetLookAtTarget()
 {
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
 
    return tripod->GetLookAtTarget();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetRotationOffset( const osg::Vec3 &rotation )
+void TripodActorProxy::SetRotationOffset(const osg::Vec3& rotation)
 {
-   Tripod* tripod = static_cast< Tripod* >( GetActor() );
+   Tripod* tripod = static_cast<Tripod*>(GetActor());
 
    osg::Vec3 hpr = rotation;
 
    //Normalize the rotation.
-   if( hpr.x() < 0.0f )
+   if(hpr.x() < 0.0f)
    {
       hpr.x() += 360.0f;
    }
-   if( hpr.x() > 360.0f )
+
+   if(hpr.x() > 360.0f)
    {
       hpr.x() -= 360.0f;
    }
 
-   if( hpr.y() < 0.0f )
+   if(hpr.y() < 0.0f)
    {
       hpr.y() += 360.0f;
    }
-   if( hpr.y() > 360.0f )
+   if(hpr.y() > 360.0f)
    {
       hpr.y() -= 360.0f;
    }
 
-   if( hpr.z() < 0.0f )
+   if(hpr.z() < 0.0f)
    {
       hpr.z() += 360.0f;
    }
-   if( hpr.z() > 360.0f )
+
+   if(hpr.z() > 360.0f)
    {
       hpr.z() -= 360.0f;
    }
 
    osg::Vec3 xyz;
    osg::Vec3 oldHPR;
-   tripod->GetOffset( xyz, oldHPR );
-   tripod->SetOffset( xyz, hpr );
+   tripod->GetOffset(xyz, oldHPR);
+   tripod->SetOffset(xyz, hpr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

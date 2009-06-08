@@ -5,6 +5,7 @@ using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER(Trigger)
 
+////////////////////////////////////////////////////////////////////////////////
 Trigger::Trigger(const std::string& name)
    : DeltaDrawable(name)
    , mEnabled(false)
@@ -17,11 +18,13 @@ Trigger::Trigger(const std::string& name)
    RegisterInstance(this);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 Trigger::~Trigger()
 {
    DeregisterInstance(this);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void Trigger::OnMessage(dtCore::Base::MessageData* data)
 {
    if (data->message == dtCore::System::MESSAGE_PRE_FRAME)
@@ -31,13 +34,14 @@ void Trigger::OnMessage(dtCore::Base::MessageData* data)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void Trigger::Fire()
 {
    if (mEnabled)
    {
       if (mTimesActive < 0)
       {
-         //Infintie activations
+         // Infinite activations
          AddSender(&dtCore::System::GetInstance());
       }
       else if (mTimesTriggered < mTimesActive)
@@ -48,6 +52,7 @@ void Trigger::Fire()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void Trigger::Update(double time)
 {
    if (mEnabled)

@@ -7,11 +7,13 @@
 using namespace dtCore;
 using namespace dtABC;
 
-TestTrigger::LightAction::LightAction( dtCore::PositionalLight* light )
+////////////////////////////////////////////////////////////////////////////////
+TestTrigger::LightAction::LightAction(dtCore::PositionalLight* light)
    : mPositionalLight(light)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestTrigger::LightAction::OnStart()
 {
    // When this action is started, we want it to invert the light's LightingMode.
@@ -25,6 +27,7 @@ void TestTrigger::LightAction::OnStart()
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 TestTrigger::TestTrigger(const std::string& configFilename)
    : Application(configFilename)
    , mWarehouse(0)
@@ -35,6 +38,7 @@ TestTrigger::TestTrigger(const std::string& configFilename)
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestTrigger::Config()
 {
    // Load up a dark 'n scary warehouse...

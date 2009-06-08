@@ -67,7 +67,7 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void GameMeshActor::LoadMesh()
    {
-      osg::Node *model = mLoader.LoadFile(mLoader.GetFilename(), mUseCache);
+      osg::Node* model = mLoader.LoadFile(mLoader.GetFilename(), mUseCache);
 
       if (model != NULL)
       {

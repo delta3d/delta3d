@@ -71,7 +71,7 @@ namespace dtCore
 //      void ResetCameraScenes(Scene* sceneRootChanged);
 
       ///Deprecated Mar 10 2009 in favor of SetRenderOrder
-      DEPRECATE_FUNC void SetFrameBin( unsigned int frameBin );
+      DEPRECATE_FUNC void SetFrameBin(unsigned int frameBin);
 
       ///Deprecated Mar 10 2009 in favor of GetRenderOrder
       DEPRECATE_FUNC unsigned int GetFrameBin() const;
@@ -128,7 +128,7 @@ namespace dtCore
        * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
        * is NULL.  The original Keyboard will still be used.
        */
-      void SetKeyboard( Keyboard* keyboard );
+      void SetKeyboard(Keyboard* keyboard);
 
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard();
@@ -146,25 +146,22 @@ namespace dtCore
        *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
        *  is NULL.  The original Mouse will still be used.
        */
-      void SetMouse( Mouse* mouse );
+      void SetMouse(Mouse* mouse);
 
       ///Get a handle to the Mouse associated with the DeltaWin
       Mouse* GetMouse();
       const Mouse* GetMouse() const;
 
-
       //this method is commented out in the implementation
       //void Frame();
-
-
 
        /** Use the mouse cursor position to do an intersection into the view.
          * @param intersectionPoint : the world coordinate intersection point
          * @param traversalMask : the bit mask to use for the intersection traversal
          * @return true if geometry was intersected, false otherwise
          */
-       bool GetMousePickPosition( osg::Vec3 &intersectionPoint,
-                                  unsigned int traversalMask = 0xffffffff);
+       bool GetMousePickPosition(osg::Vec3 &intersectionPoint,
+                                 unsigned int traversalMask = 0xffffffff);
 
        /** Use the supplied mouse position to do an intersection into the view.
          * @param intersectionPoiont : the world coordinate intersection point
@@ -172,9 +169,9 @@ namespace dtCore
          * @param traversalMask : the bit mask to use for the intersection traversal
          * @return true if geometry was intersected, false otherwise
          */
-       bool GetPickPosition( osg::Vec3 &intersectionPoint,
-                             const osg::Vec2 &mousePos,
-                             unsigned int traversalMask = 0xffffffff );
+       bool GetPickPosition(osg::Vec3 &intersectionPoint,
+                            const osg::Vec2 &mousePos,
+                            unsigned int traversalMask = 0xffffffff);
 
        /** Use the mouse cursor position to do an intersection into the view.  Return
          * back the first DeltaDrawable if one was intersected.
@@ -194,7 +191,7 @@ namespace dtCore
        /** Supply a DatabasePager instance to overwrite the internal default pager.
          * @param pager : A custom DatabasePager (or NULL to disable database paging)
          */
-       void SetDatabasePager( dtCore::DatabasePager *pager );
+       void SetDatabasePager(dtCore::DatabasePager* pager);
 
        /** Get the DatabasePager instance this View is using.
          * @return The internal DatabasePager (could be NULL)

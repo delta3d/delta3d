@@ -46,8 +46,8 @@ namespace dtABC
 
       public:
 
-         NodeCallback( ProximityTrigger* trigger )
-            : mTrigger( trigger )
+         NodeCallback(ProximityTrigger* trigger)
+            : mTrigger(trigger)
          {}
 
          /**
@@ -58,7 +58,7 @@ namespace dtABC
          */
          virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
          {            
-            mTrigger->SetTraversalNumber( nv->getFrameStamp()->getFrameNumber() );
+            mTrigger->SetTraversalNumber(nv->getFrameStamp()->getFrameNumber());
          
             traverse(node, nv);
          }
@@ -72,7 +72,7 @@ namespace dtABC
       };
 
    public:
-      ProximityTrigger( const std::string& name = "ProximityTrigger" );
+      ProximityTrigger(const std::string& name = "ProximityTrigger");
    protected:
       virtual ~ProximityTrigger() {}
    public:
@@ -98,7 +98,7 @@ namespace dtABC
       * filter out Transformable that you do not want to perform expensive
       * physics calculations on, but here we use it to fire our Trigger.
       */
-      virtual bool FilterContact( dContact* contact, Transformable* collider );
+      virtual bool FilterContact(dContact* contact, Transformable* collider);
 
       bool IsPointInVolume(float x, float y, float z);
 
@@ -108,14 +108,14 @@ namespace dtABC
 
    protected:
 
-      void SetTraversalNumber( int number ) { mLastTraversalNumber = number; }
+      void SetTraversalNumber(int number) { mLastTraversalNumber = number; }
 
    private:
 
       dtCore::RefPtr<Trigger>                   mTrigger;
       int                                       mLastTraversalNumber;
 
-      typedef std::map< Transformable*, int >   TransformableIntMap;
+      typedef std::map<Transformable*, int>     TransformableIntMap;
       TransformableIntMap                       mTraversalNumberMap;
 
    };
