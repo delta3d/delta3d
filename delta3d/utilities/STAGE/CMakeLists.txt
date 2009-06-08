@@ -38,6 +38,7 @@ TARGET_LINK_LIBRARIES( ${APP_NAME}
                        ${DTABC_LIBRARY}
                        ${DTGAME_LIBRARY}
                        ${DTQT_LIBRARY}
+                       ${DTACTORS_LIBRARY}
                      )
                      
 #MESSAGE(STATUS ${QT_LIBRARIES})
