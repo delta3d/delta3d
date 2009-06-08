@@ -40,6 +40,9 @@ namespace dtNetGM
    class DT_NETGM_EXPORT ServerNetworkComponent : public NetworkComponent
    {
    public:
+      // Use this name when constructing your component - component names are unique
+      static const dtUtil::RefString DEFAULT_NAME;
+
 
       /**
        * Construct a ServerNetworkComponent with a game name and version to be used by GNE

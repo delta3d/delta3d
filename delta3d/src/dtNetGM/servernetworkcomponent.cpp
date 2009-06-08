@@ -27,17 +27,22 @@
 
 namespace dtNetGM
 {
+   const dtUtil::RefString ServerNetworkComponent::DEFAULT_NAME("ServerNetworkComponent");
+
+   ////////////////////////////////////////////////////////////////////////////////
    ServerNetworkComponent::ServerNetworkComponent(const std::string& gameName, const int gameVersion, const std::string& logFile)
       : NetworkComponent(gameName, gameVersion, logFile)
       , mAcceptClients(true)
    {
-      SetName("ServerNetworkComponent");
+      SetName(DEFAULT_NAME);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    ServerNetworkComponent::~ServerNetworkComponent(void)
    {
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool ServerNetworkComponent::SetupServer(int portNum)
    {
       if (!IsGneInitialized())
@@ -81,16 +86,19 @@ namespace dtNetGM
       return ret;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenSuccess()
    {
       LOG_INFO("On Listen success");
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
    {
       LOG_ERROR("onListenFailure");
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::OnDisconnect(NetworkBridge& networkBridge)
    {
       mMutex.acquire();
@@ -115,6 +123,7 @@ namespace dtNetGM
    }
 
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::ProcessNetClientRequestConnection(const MachineInfoMessage& msg)
    {
       std::string rejectReason = "";
@@ -149,6 +158,7 @@ namespace dtNetGM
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::ProcessNetClientNotifyDisconnect(const dtGame::Message& msg)
    {
       if (*msg.GetDestination() != GetGameManager()->GetMachineInfo())
@@ -160,6 +170,7 @@ namespace dtNetGM
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::SendInfoClientConnectedMessage(const dtGame::MachineInfo& machineInfo)
    {
       dtCore::RefPtr<dtGame::Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_CLIENT_CONNECTED);
@@ -171,6 +182,7 @@ namespace dtNetGM
       SendNetworkMessage(*machineMsg, DestinationType::ALL_CLIENTS);
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    void ServerNetworkComponent::SendConnectedClientMessage(const dtGame::MachineInfo& machineInfo)
    {
       // Retrieve All Connected Clients
@@ -195,6 +207,7 @@ namespace dtNetGM
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
    bool ServerNetworkComponent::AcceptClient(const dtGame::MachineInfo& machineInfo, std::string& rejectionReason)
    {
       if (!mAcceptClients)
