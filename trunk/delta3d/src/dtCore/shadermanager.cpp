@@ -350,7 +350,7 @@ namespace dtCore
       //I realize const-cast is not a great idea here, but I did not want the have a non-const version
       //of the GetShaderProgram() method on the shader class.
       stateSet->setAttributeAndModes(const_cast<osg::Program*>(newShader->GetShaderProgram()),
-         osg::StateAttribute::ON);
+         osg::StateAttribute::ON | osg::StateAttribute::PROTECTED);
 
       //Now add all the shader's parameters to the render state.  Each class of shader parameter
       //is responcible for knowning how to attach itself to the render state.
