@@ -65,12 +65,29 @@ namespace dtNetGM
 
    void NetworkComponent::OnAddedToGM()
    {
-      // Register Network specific messages
-      GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
-      GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::INFO_CLIENT_CONNECTED);
+      // Register Network specific messages - only if not registered by a separate network component
+      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION))
+      {
+         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>
+            (dtGame::MessageType::NETCLIENT_REQUEST_CONNECTION);
+      }
+      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::INFO_CLIENT_CONNECTED))
+      {
+         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>
+            (dtGame::MessageType::INFO_CLIENT_CONNECTED);
+      }
 
-      GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
-      GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
+      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION))
+      {
+         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>
+            (dtGame::MessageType::NETSERVER_ACCEPT_CONNECTION);
+      }
+
+      if (!GetGameManager()->GetMessageFactory().IsMessageTypeSupported(dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT))
+      {
+         GetGameManager()->GetMessageFactory().RegisterMessageType<MachineInfoMessage>
+            (dtGame::MessageType::NETCLIENT_NOTIFY_DISCONNECT);
+      }
    }
 
    void NetworkComponent::ProcessMessage(const dtGame::Message& message)
