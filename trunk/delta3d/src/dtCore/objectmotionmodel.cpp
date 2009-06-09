@@ -1074,7 +1074,7 @@ void ObjectMotionModel::UpdateTranslation(void)
          {
             float trans = targetPos[index];
 
-            int mul = floor((trans / mSnapTranslation) + 0.5f);
+            int mul = floorf((trans / mSnapTranslation) + 0.5f);
             trans = mSnapTranslation * mul;
 
             targetPos[index] = trans;
@@ -1201,9 +1201,9 @@ void ObjectMotionModel::UpdateRotation(void)
    float fDotAngle = upAxis * vector;
    float fDirection = rightAxis * vector;
 
-   // The first update should not cause a rotation to happen,
-   // Instead, it should set the current mouse position to be
-   // the current angle.
+   // The first update should not cause a rotation to happen
+   // unless we're in snap mode, Instead, it should set the 
+   // current mouse position to be the current angle.
    if (mMouseOffset.x() != 0.0f || mMouseOffset.y() != 0.0f)
    {
       mMouseOffset.set(0.0f, 0.0f);
@@ -1227,7 +1227,6 @@ void ObjectMotionModel::UpdateRotation(void)
       mAngleOriginGeode->addDrawable(mAngleOriginDrawable.get());
 
       osg::Matrix matrix;
-
       if (mCoordinateSpace == LOCAL_SPACE)
       {
          target->GetTransform(transform);
@@ -1436,7 +1435,6 @@ void ObjectMotionModel::UpdateScale(void)
       osg::Vec2 newMousePos = GetMousePosition();
       GetMouseLine(newMousePos + mMouseOffset, mouseStart, mouseEnd);
       osg::Vec2 objectPos = GetObjectScreenCoordinates(targetPos);
-      mMouseOffset = objectPos - newMousePos;
       osg::Vec3 mouse = mouseEnd - mouseStart;
 
       // Calculate the mouse collision in the 3D space relative to the plane
@@ -1457,22 +1455,24 @@ void ObjectMotionModel::UpdateScale(void)
       // Snap
       if (mSnap && mSnapScaleEnabled)
       {
-         fDistance = (int)fDistance / mSnapScale;
+         if (fDistance != 0.0f)
+         {
+            for (int index = 0; index < 3; index++)
+            {
+               float len = scaleAxis[index] * fDistance;
+
+               int mul = floorf((len / mSnapScale) + 0.5f);
+               scaleAxis[index] = (mSnapScale * mul) / fDistance;
+            }
+         }
       }
 
-      //// If we are in world space, we need to change the scale axis
-      //// in relation to the local rotation of the object.
-      //if (mCoordinateSpace == WORLD_SPACE)
-      //{
-      //   dtCore::Transform transform;
-      //   target->GetTransform(transform);
-      //   osg::Matrix matrix;
-      //   transform.GetRotation(matrix);
-      //   matrix.invert(matrix);
-      //   scaleAxis = matrix.inverse(matrix) * scaleAxis;
-      //}
+      if (scaleAxis.length() >= 0.0001f)
+      {
+         mMouseOffset = objectPos - newMousePos;
 
-      OnScale(scaleAxis * fDistance);
+         OnScale(scaleAxis * fDistance);
+      }
    }
 }
 
