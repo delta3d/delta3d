@@ -289,13 +289,13 @@ namespace dtEditQt
       connect(mActionGetGotoPosition, SIGNAL(triggered()), this, SLOT(slotGetGotoPosition()));
 
       // Edit - Group Actors...
-      mActionGroupActors = new QAction(QIcon(UIResources::ICON_EDIT_GROUP.c_str()), "Group Actors Together", this);
-      mActionGroupActors->setStatusTip(tr("Groups or Ungroups selected actors."));
+      mActionGroupActors = new QAction(QIcon(UIResources::ICON_EDIT_GROUP.c_str()), "Group Selection", this);
+      mActionGroupActors->setStatusTip(tr("Groups the selected actors together."));
       connect(mActionGroupActors, SIGNAL(triggered()), this, SLOT(slotEditGroupActors()));
 
       // Edit - Group Actors...
-      mActionUngroupActors = new QAction(QIcon(UIResources::ICON_EDIT_UNGROUP.c_str()), "Ungroup Actors", this);
-      mActionUngroupActors->setStatusTip(tr("Groups or Ungroups selected actors."));
+      mActionUngroupActors = new QAction(QIcon(UIResources::ICON_EDIT_UNGROUP.c_str()), "Ungroup Selection", this);
+      mActionUngroupActors->setStatusTip(tr("Ungroups the selected actors from each other."));
       connect(mActionUngroupActors, SIGNAL(triggered()), this, SLOT(slotEditUngroupActors()));
 
       // Edit - Undo

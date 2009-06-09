@@ -71,7 +71,7 @@ namespace dtEditQt
 
    public slots:
 
-      void setLocalSpace();
+      //void setLocalSpace();
 
       void setSnapTranslation();
       void setSnapRotation();
@@ -90,7 +90,7 @@ namespace dtEditQt
       EditorViewport*   mViewPort;
 
       QBoxLayout*       mLayout;
-      QBoxLayout*       mButtonLayout;
+      //QBoxLayout*       mButtonLayout;
       QFrame*           mToolBar;
       QLineEdit*        mEditTrans;
       QLineEdit*        mEditAngle;
@@ -99,8 +99,8 @@ namespace dtEditQt
       QCheckBox*        mCheckBoxAngle;
       QCheckBox*        mCheckBoxScale;
 
-      // Action objects.
-      QAction*          mSetLocalSpaceAction;
+      //// Action objects.
+      //QAction*          mSetLocalSpaceAction;
 
       void SetupSnapWidgets(QBoxLayout* layout);
    };
