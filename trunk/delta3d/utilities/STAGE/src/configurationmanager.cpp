@@ -5,109 +5,40 @@
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xerceswriter.h>
 
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMText.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/parsers/SAX2XMLReaderImpl.hpp>
+
 #include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/XMLUni.hpp>
+
+#include <strstream>
 
 namespace dtEditQt
 {
+
 ////////////////////////////////////////////////////////////////////////////////
-ConfigurationManager::ConfigurationManager()
-   : mLockViewDimensions(false)
+ConfigurationManager::ConfigurationManager()   
 {
    xercesc::XMLPlatformUtils::Initialize();
+
+   SetDefaultConfigValues();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool ConfigurationManager::ReadXML(const std::string& fileName)
+void ConfigurationManager::ReadXML(const std::string& fileName)
 {
-   xercesc::XercesDOMParser parser;
-   std::map<std::string, std::string> *currentMapPtr = NULL;
+   xercesc::SAX2XMLReaderImpl parser;   
 
-   parser.setValidationScheme(xercesc::XercesDOMParser::Val_Never);
-   parser.setDoNamespaces(false);
-   parser.setDoSchema(false);
-   parser.setLoadExternalDTD(false);
+   parser.setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
+   parser.setFeature(xercesc::XMLUni::fgXercesSchema, true);
+   parser.setFeature(xercesc::XMLUni::fgXercesSchemaFullChecking, true);
+   parser.setFeature(xercesc::XMLUni::fgSAX2CoreNameSpacePrefixes, false);
+   parser.setFeature(xercesc::XMLUni::fgSAX2CoreValidation, true);
+   parser.setFeature(xercesc::XMLUni::fgXercesDynamic, true);
+      
+   parser.setContentHandler(this);
+   parser.setErrorHandler(this);
 
    parser.parse(fileName.c_str());
-
-   xercesc::DOMDocument* xmlDoc  = parser.getDocument();
-
-   if (xmlDoc == NULL)
-   {    
-      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
-          __LINE__, "STAGE config file appears empty -- using default config values.");
-
-      SetDefaultConfigValues();
-
-      return false;
-   }
-
-   xercesc::DOMElement* root = xmlDoc->getDocumentElement();
-
-   //parse all children
-   xercesc::DOMNodeList* children = root->getChildNodes();
-   for(XMLSize_t i = 0; i < children->getLength(); ++i)
-   {
-      xercesc::DOMNode* node = children->item(i);
-      if(node == NULL)
-      {
-         continue;
-      }
-      if(node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
-      {
-         continue;
-      }
-
-      dtUtil::XMLStringConverter sectionStrConv(node->getNodeName());
-      std::string sectionStr = sectionStrConv.ToString();
-      if(sectionStr == "General")
-      {
-         currentMapPtr = &mGeneralVariables;
-      }
-      else if(sectionStr == "Layout")
-      {
-         currentMapPtr = &mLayoutVariables;
-      }
-      else if(sectionStr == "Menu")
-      {
-         currentMapPtr = &mMenuVariables;
-      }
-      else
-      {
-         //Unrecognized group; try the next child of root
-         continue;
-      }
-
-      //If we got here we are in a section and need to parse all variables in
-      //that section
-      xercesc::DOMNodeList* sectionChildren = node->getChildNodes();
-      for(XMLSize_t j = 0; j < sectionChildren->getLength(); ++j)
-      {
-         xercesc::DOMNode* variableNode = sectionChildren->item(j);
-         if(variableNode == NULL)
-         {
-            continue;
-         }
-         if (node->getNodeType() != xercesc::DOMNode::ELEMENT_NODE)
-         {
-            continue;
-         }
-         
-         dtUtil::XMLStringConverter varStrConv(variableNode->getNodeName());
-         //variableNode is supposed to have a text element
-         xercesc::DOMNode* txtNode = variableNode->getFirstChild();
-         if(txtNode != NULL)
-         {
-            //Map the variable name to the value
-            (*currentMapPtr)[varStrConv.ToString()] = 
-               XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(txtNode->getTextContent());
-         }
-      }
-   }
-
-   return true;  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,8 +51,7 @@ void ConfigurationManager::WriteXML(const std::string& fileName)
 
    ToXML(*doc);
 
-   writer->WriteFile(fileName);
-   
+   writer->WriteFile(fileName);   
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -189,22 +119,38 @@ void ConfigurationManager::SetVariable(SectionType section,
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const
-{ 
-   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc.getDocumentElement();   
+{    
+   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc.getDocumentElement();
+
+   //These attributes are getting set on the root node in order to facilitate validation
+   //against the schema (see the .xsd file)
+   XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("xmlns");
+   XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("http://www.w3schools.com");
+
+   root->setAttribute(name, value);
+
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+   name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("xmlns:xsi");
+   value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("http://www.w3.org/2001/XMLSchema-instance");
+
+   root->setAttribute(name, value);
+
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
+
+   name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("xsi:schemaLocation");
+   value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("http://www.w3schools.com StageConfig.xsd");
+
+   root->setAttribute(name, value);
+
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
 
    root->appendChild(WriteSectionToXML(doc, GENERAL));
    root->appendChild(WriteSectionToXML(doc, LAYOUT));
    root->appendChild(WriteSectionToXML(doc, MENU));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-bool ConfigurationManager::FromXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc)
-{
-   //Read each name/value pair
-   //(Ended up just doing it in ReadXML)
-
-   return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -247,11 +193,12 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
       XMLCh* name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(it->first.c_str());
       XMLCh* value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(it->second.c_str());
 
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = doc.createElement(name);      
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMText* txt = doc.createTextNode(value);
+      //XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = doc.createElement(name);
+      groupElement->setAttribute(name, value);
+      //XERCES_CPP_NAMESPACE_QUALIFIER DOMText* txt = doc.createTextNode(value);      
 
-      element->appendChild(txt);
-      groupElement->appendChild(element);
+      //element->appendChild(txt);
+      //groupElement->appendChild(element);
 
       XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&name);
       XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
@@ -261,18 +208,108 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ConfigurationManager::startDocument()
+{   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ConfigurationManager::startElement(const XMLCh* const uri, const XMLCh* const localname,
+                                        const XMLCh* const qname,
+                                        const xercesc::Attributes& attributes)
+{
+   std::map<std::string, std::string> *currentMapPtr = NULL;
+
+   dtUtil::XMLStringConverter qnameConv(qname);
+   std::string sectionStr = qnameConv.ToString();
+   
+   if(sectionStr == "General")
+   {
+      currentMapPtr = &mGeneralVariables;
+   }
+   else if(sectionStr == "Layout")
+   {
+      currentMapPtr = &mLayoutVariables;
+   }
+   else if(sectionStr == "Menu")
+   {
+      currentMapPtr = &mMenuVariables;
+   }
+   else
+   {
+      //Unrecognized element; can't do much with it
+      return;
+   }
+
+   for(XMLSize_t i = 0; i < attributes.getLength(); ++i)
+   {
+      dtUtil::XMLStringConverter varNameConv(attributes.getQName(i));
+      dtUtil::XMLStringConverter varValueConv(attributes.getValue(i));
+
+      (*currentMapPtr)[varNameConv.ToString()] = varValueConv.ToString();
+   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ConfigurationManager::error(const xercesc::SAXParseException& e)
+{
+   std::strstream errStrm;
+   dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
+   dtUtil::XMLStringConverter msgConverter(e.getMessage());
+
+   errStrm << "\nError at file " << sysIDConverter.ToString()
+      << ", line " << e.getLineNumber()
+      << ", char " << e.getColumnNumber()
+      << "\n  Message: " << msgConverter.ToString() << "\n";
+
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
+      __LINE__, errStrm.str());   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ConfigurationManager::fatalError(const xercesc::SAXParseException& e)
+{
+   std::strstream errStrm;
+   dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
+   dtUtil::XMLStringConverter msgConverter(e.getMessage());   
+
+   errStrm << "\nFatal Error at file " << sysIDConverter.ToString()
+      << ", line " << e.getLineNumber()
+      << ", char " << e.getColumnNumber()
+      << "\n  Message: " << msgConverter.ToString() << "\n";
+
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
+      __LINE__, errStrm.str());   
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ConfigurationManager::warning(const xercesc::SAXParseException& e)
+{
+   std::strstream errStrm;
+   dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
+   dtUtil::XMLStringConverter msgConverter(e.getMessage());
+
+   errStrm << "\nWarning at file " << sysIDConverter.ToString()
+      << ", line " << e.getLineNumber()
+      << ", char " << e.getColumnNumber()
+      << "\n  Message: " << msgConverter.ToString() << "\n";
+
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,
+      __LINE__, errStrm.str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::SetDefaultConfigValues()
 {
-   mGeneralVariables["SaveConfigurationOnClose"] = "True";
+   mGeneralVariables["SaveConfigurationOnClose"] = "true";
 
-   mLayoutVariables["ShowFrontView"] = "True";
-   mLayoutVariables["ShowSideView"] = "True";
-   mLayoutVariables["ShowTopView"] = "True";
-   mLayoutVariables["ShowPerspView"] = "True";
+   mLayoutVariables["ShowFrontView"] = "true";
+   mLayoutVariables["ShowSideView"] = "true";
+   mLayoutVariables["ShowTopView"] = "true";
+   mLayoutVariables["ShowPerspView"] = "true";
 
-   mLayoutVariables["ShowPropertyEditor"] = "True";
-   mLayoutVariables["ShowActorTab"] = "True";
-   mLayoutVariables["ShowResourceBrowser"] = "True";
+   mLayoutVariables["ShowPropertyEditor"] = "true";
+   mLayoutVariables["ShowActorTab"] = "true";
+   mLayoutVariables["ShowResourceBrowser"] = "true";
 }
 
 } //namespace dtEditQt

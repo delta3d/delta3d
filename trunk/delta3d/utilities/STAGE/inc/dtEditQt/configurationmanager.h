@@ -3,17 +3,17 @@
 
 #include <map>
 
-#include <dtDAL/serializeable.h>
-
 #include <osg/Vec2>
 
 #include <xercesc/dom/DOMElement.hpp>
 
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/framework/XMLFormatter.hpp>
 
 namespace dtEditQt
 {
 
-class ConfigurationManager : public dtDAL::XMLSerializeable 
+class ConfigurationManager : public xercesc::DefaultHandler
 {
 public:
    enum SectionType
@@ -25,7 +25,7 @@ public:
 
    ConfigurationManager();
 
-   bool ReadXML(const std::string& fileName);
+   void ReadXML(const std::string& fileName);
    void WriteXML(const std::string& fileName);
 
    std::string GetVariable(SectionType section, const std::string& name);
@@ -33,14 +33,24 @@ public:
                     const std::string& value);
    void SetVariable(SectionType section, const std::string& name, int value);
 
-private:
-   //implementations of pure virtuals
-   void ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const;
-   bool FromXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc);
+private:   
+
+   void ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const;   
 
    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* 
       WriteSectionToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc,
                          SectionType section) const;
+
+   void startDocument();
+   void startElement(const XMLCh* const uri, const XMLCh* const localname,
+                     const XMLCh* const qname, const xercesc::Attributes& attributes);
+
+   // -----------------------------------------------------------------------
+   //  Implementations of the SAX ErrorHandler interface
+   // -----------------------------------------------------------------------
+   void warning(const xercesc::SAXParseException& exc);
+   void error(const xercesc::SAXParseException& exc);
+   void fatalError(const xercesc::SAXParseException& exc);
 
    void SetDefaultConfigValues();
 
@@ -48,13 +58,8 @@ private:
    std::map<std::string, std::string> mLayoutVariables;     // name/value pairs
    std::map<std::string, std::string> mMenuVariables;       // name/value pairs
    //To add more sections to the config file, make some more maps here, add a 
-   //value to the SectionType enum, and then add a few lines to the ToXML method,
-   //and the ReadXML method.
-
-   bool mLockViewDimensions;     //if true, user cannot change view dimensions
-                                 //(e.g. if there is a single perspective view, user
-                                 // cannot resize to reveal the other "hidden" views).
-
+   //value to the SectionType enum, and then modify the XML readers/writers   
+   
 };
 
 } //namespace dtEditQt
