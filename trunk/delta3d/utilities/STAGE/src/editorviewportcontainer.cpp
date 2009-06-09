@@ -73,11 +73,11 @@ namespace dtEditQt
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewportContainer::setLocalSpace()
-   {
-      mViewPort->setLocalSpace(mSetLocalSpaceAction->isChecked());
-   }
+   //////////////////////////////////////////////////////////////////////////////////
+   //void EditorViewportContainer::setLocalSpace()
+   //{
+   //   mViewPort->setLocalSpace(mSetLocalSpaceAction->isChecked());
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapTranslation()
@@ -106,11 +106,11 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::createActions()
    {
-      mSetLocalSpaceAction = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()),
-         tr("Local Space Mode"), this);
-      mSetLocalSpaceAction->setCheckable(true);
-      mSetLocalSpaceAction->setChecked(true);
-      connect(mSetLocalSpaceAction, SIGNAL(triggered()), this, SLOT(setLocalSpace()));
+      //mSetLocalSpaceAction = new QAction(QIcon(UIResources::ICON_EDIT_LOCAL_SPACE.c_str()),
+      //   tr("Local Space Mode"), this);
+      //mSetLocalSpaceAction->setCheckable(true);
+      //mSetLocalSpaceAction->setChecked(true);
+      //connect(mSetLocalSpaceAction, SIGNAL(triggered()), this, SLOT(setLocalSpace()));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -124,26 +124,27 @@ namespace dtEditQt
       mToolBar->setFixedHeight(25);
 
       QBoxLayout* layout = new QHBoxLayout(mToolBar);
-      mButtonLayout = new QHBoxLayout();
+      //mButtonLayout = new QHBoxLayout();
 
       layout->setAlignment(Qt::AlignLeft);
       layout->setSpacing(5);
       layout->setMargin(0);
 
-      mButtonLayout->setAlignment(Qt::AlignLeft);
-      mButtonLayout->setSpacing(0);
-      mButtonLayout->setMargin(1);
+      //mButtonLayout->setAlignment(Qt::AlignLeft);
+      //mButtonLayout->setSpacing(0);
+      //mButtonLayout->setMargin(1);
 
-      layout->addStretch(1);
-      layout->addLayout(mButtonLayout);
+      layout->addSpacing(5);
+      //layout->addLayout(mButtonLayout);
 
-      button = new QToolButton(mToolBar);
-      button->setDefaultAction(mSetLocalSpaceAction);
-      button->setAutoRaise(true);
-      button->setFocusPolicy(Qt::NoFocus);
-      mButtonLayout->addWidget(button);
+      //button = new QToolButton(mToolBar);
+      //button->setDefaultAction(mSetLocalSpaceAction);
+      //button->setAutoRaise(true);
+      //button->setFocusPolicy(Qt::NoFocus);
+      //mButtonLayout->addWidget(button);
 
       SetupSnapWidgets(layout);
+      layout->addSpacing(5);
    }
 
    //////////////////////////////////////////////////////////////////////////
