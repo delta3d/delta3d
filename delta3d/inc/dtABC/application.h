@@ -260,6 +260,9 @@ namespace dtABC
          /// @return true, if all went well.
          bool operator ()(const ApplicationConfigData& data, Application* app);
       };
+
+      ///private method to remove a view. Must *not* be called during event traversal.
+      void RemoveViewImpl(dtCore::View& view);
  
       bool mFirstFrame;
       dtCore::RefPtr<osgViewer::CompositeViewer> mCompositeViewer;
@@ -271,6 +274,8 @@ namespace dtABC
       AppConfigPropertyMap mConfigProperties;
 
       dtCore::StatsHandler *mStats; ///<for stats rendering/controlling
+      ViewList mViewsToDelete; ///<list of Views to be removed at the end of the frame
+
    };
 
 }

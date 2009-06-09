@@ -83,6 +83,7 @@ namespace dtTest
       CPPUNIT_TEST( TestReadSystemProperties );
       CPPUNIT_TEST( TestSupplyingWindowToApplicationConstructor );
       CPPUNIT_TEST( TestReadingBadConfigFile );
+      CPPUNIT_TEST( TestRemovingView );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -95,6 +96,7 @@ namespace dtTest
          void TestReadSystemProperties();
          void TestSupplyingWindowToApplicationConstructor();
          void TestReadingBadConfigFile();
+         void TestRemovingView();
 
       private:
          std::string mConfigName;
@@ -627,6 +629,27 @@ namespace dtTest
       dtUtil::FileUtils::GetInstance().FileDelete( filename );
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ApplicationTests::TestRemovingView()
+   {
+      dtCore::RefPtr<dtABC::Application> app = new dtABC::Application();
+      dtCore::RefPtr<dtCore::View> view = new dtCore::View("testView");
+
+      app->AddView(*view);
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should contain the added View",
+                                   true, app->ContainsView(*view));
+
+      app->RemoveView(*view);
+      
+      //Application needs a frame to remove the view
+      dtCore::System::GetInstance().Start();
+      dtCore::System::GetInstance().Step();
+
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Application should not contain the removed View",
+                                    false, app->ContainsView(*view));
+
+      dtCore::System::GetInstance().Stop();
+   }
 
    //////////////////////////////////////////////////////////////////////////
    class ApplicationSetupTests : public CPPUNIT_NS::TestFixture
