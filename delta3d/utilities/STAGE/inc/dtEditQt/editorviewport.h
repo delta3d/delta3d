@@ -101,6 +101,39 @@ namespace dtEditQt {
        */
       void onEditorPreferencesChanged();
 
+      /**
+      * Toggles the gizmos into local or world space.
+      *
+      * @param[in]  enabled  True for local space, false for world.
+      */
+      void setLocalSpace(bool enabled);
+
+      /**
+      * Sets the translation snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapTranslation(float increment);
+
+      /**
+      * Sets the angular snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapRotation(float increment);
+
+      /**
+      * Sets the scalar snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapScale(float increment);
+
+      /**
+      * Sets the enabled status of each snap tool.
+      */
+      void setSnapEnabled(bool translation, bool rotation, bool scale);
+
    protected:
       /**
        * Constructs the perspective viewport.

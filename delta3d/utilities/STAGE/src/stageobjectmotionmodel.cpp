@@ -24,6 +24,34 @@ STAGEObjectMotionModel::STAGEObjectMotionModel(dtCore::View* view)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void STAGEObjectMotionModel::OnLeftMousePressed(void)
+{
+   mLeftMouse = true;
+   mSnap = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void STAGEObjectMotionModel::OnLeftMouseReleased(void)
+{
+   mLeftMouse = false;
+   mSnap = false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void STAGEObjectMotionModel::OnRightMousePressed(void)
+{
+   mRightMouse = true;
+   mSnap = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void STAGEObjectMotionModel::OnRightMouseReleased(void)
+{
+   mRightMouse = false;
+   mSnap = false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::OnMessage(MessageData *data)
 {
    // This function is overritten to do nothing.

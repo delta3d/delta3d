@@ -84,9 +84,6 @@ namespace dtEditQt
    const Viewport::InteractionMode Viewport::InteractionMode::CAMERA("CAMERA");
    const Viewport::InteractionMode Viewport::InteractionMode::ACTOR("ACTOR");
    const Viewport::InteractionMode Viewport::InteractionMode::SELECT_ACTOR("SELECT_ACTOR");
-   //const Viewport::InteractionMode Viewport::InteractionMode::TRANSLATE_ACTOR("TRANSLATE_ACTOR");
-   //const Viewport::InteractionMode Viewport::InteractionMode::ROTATE_ACTOR("ROTATE_ACTOR");
-   //const Viewport::InteractionMode Viewport::InteractionMode::SCALE_ACTOR("SCALE_ACTOR");
    ///////////////////////////////////////////////////////////////////////////////
 
 

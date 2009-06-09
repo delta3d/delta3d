@@ -173,7 +173,7 @@ namespace dtCore
          *
          * @param[in]  increment  The increment length per snap position.
          */
-         void SetSnapTranslation(int increment);
+         void SetSnapTranslation(float increment);
 
          /**
          * Sets the snap rotational degree increment.
@@ -187,7 +187,14 @@ namespace dtCore
          *
          * @param[in]  increment  The increment length per snap position.
          */
-         void SetSnapScale(int increment);
+         void SetSnapScale(float increment);
+
+         /**
+         * Sets snap mode enabled.
+         *
+         * @param[in]  enabled  True to enable.
+         */
+         void SetSnapEnabled(bool translation, bool rotation, bool scale);
 
          /**
          * Gets the current position of the mouse.
@@ -200,25 +207,25 @@ namespace dtCore
          * Presses the left mouse button.
          * Should only use this if Delta3D is not receiving a regular tick update.
          */
-         void OnLeftMousePressed(void);
+         virtual void OnLeftMousePressed(void);
 
          /**
          * Releases the left mouse button.
          * Should only use this if Delta3D is not receiving a regular tick update.
          */
-         void OnLeftMouseReleased(void);
+         virtual void OnLeftMouseReleased(void);
 
          /**
          * Presses the right mouse button.
          * Should only use this if Delta3D is not receiving a regular tick update.
          */
-         void OnRightMousePressed(void);
+         virtual void OnRightMousePressed(void);
 
          /**
          * Releases the right mouse button.
          * Should only use this if Delta3D is not receiving a regular tick update.
          */
-         void OnRightMouseReleased(void);
+         virtual void OnRightMouseReleased(void);
 
          /**
           * Message handler callback.
@@ -409,10 +416,16 @@ namespace dtCore
          bool            mAutoScale;
          bool            mAllowScaleGizmo;
 
-         int             mSnapTranslation;
+         osg::Vec3       mOriginalTargetPos;
+
+         float           mSnapTranslation;
          float           mSnapRotation;
-         int             mSnapScale;
+         float           mSnapScale;
          bool            mSnap;
+
+         bool            mSnapTranslationEnabled;
+         bool            mSnapRotationEnabled;
+         bool            mSnapScaleEnabled;
    };
 } // namespace dtCore
 

@@ -57,6 +57,30 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
    public:
 
       /**
+      * Presses the left mouse button.
+      * Should only use this if Delta3D is not receiving a regular tick update.
+      */
+      void OnLeftMousePressed(void);
+
+      /**
+      * Releases the left mouse button.
+      * Should only use this if Delta3D is not receiving a regular tick update.
+      */
+      void OnLeftMouseReleased(void);
+
+      /**
+      * Presses the right mouse button.
+      * Should only use this if Delta3D is not receiving a regular tick update.
+      */
+      void OnRightMousePressed(void);
+
+      /**
+      * Releases the right mouse button.
+      * Should only use this if Delta3D is not receiving a regular tick update.
+      */
+      void OnRightMouseReleased(void);
+
+      /**
       * Message handler callback.
       *
       * @param[in] data  The message data

@@ -396,27 +396,57 @@ namespace dtEditQt
    {
       mAttachActorToCamera = EditorData::GetInstance().getRigidCamera();
 
+      bool useGlobalOrientation = EditorData::GetInstance().GetUseGlobalOrientationForViewportWidget();
+      setLocalSpace(!useGlobalOrientation);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setLocalSpace(bool enabled)
+   {
       // sync up our local vs world space setting. Affects the actor movement/rotation widget in the viewports
-      bool wasGlobal = true;
+      bool wasLocal = false;
       if (dtCore::ObjectMotionModel::LOCAL_SPACE == mObjectMotionModel->GetCoordinateSpace())
       {
-         wasGlobal = false;
+         wasLocal = true;
       }
 
-      bool useGlobalOrientation = EditorData::GetInstance().GetUseGlobalOrientationForViewportWidget();
-      if (useGlobalOrientation)
-      {
-         mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
-      }
-      else
+      if (enabled)
       {
          mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::LOCAL_SPACE);
       }
+      else
+      {
+         mObjectMotionModel->SetCoordinateSpace(dtCore::ObjectMotionModel::WORLD_SPACE);
+      }
 
-      if (wasGlobal != useGlobalOrientation)
+      if (wasLocal != enabled)
       {
          refresh();
       }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setSnapTranslation(float increment)
+   {
+      mObjectMotionModel->SetSnapTranslation(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setSnapRotation(float increment)
+   {
+      mObjectMotionModel->SetSnapRotation(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setSnapScale(float increment)
+   {
+      mObjectMotionModel->SetSnapScale(increment);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::setSnapEnabled(bool translation, bool rotation, bool scale)
+   {
+      mObjectMotionModel->SetSnapEnabled(translation, rotation, scale);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
