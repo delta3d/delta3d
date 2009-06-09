@@ -685,9 +685,12 @@ namespace dtEditQt
             }
          }
 
-         if (selection->isResource())
+         if(selection != NULL)
          {
-            displaySelection();
+            if (selection->isResource())
+            {
+               displaySelection();
+            }
          }
       }
    }
