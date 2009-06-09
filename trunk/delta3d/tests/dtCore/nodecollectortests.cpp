@@ -39,6 +39,7 @@
 #include <osg/Geometry>
 #include <osg/Geode>
 #include <osg/StateSet>
+#include <osg/LOD>
 
 ///used to test the DeltaWin functionality
 class  NodeCollectorTests : public CPPUNIT_NS::TestFixture
@@ -113,9 +114,13 @@ void NodeCollectorTests::setUp()
    matrix02->setName("matrix_02");
    trans01->addChild(matrix02);
 
+   osg::LOD* lod01 = new osg::LOD();
+   lod01->setName("lod_01");
+   switch01->addChild(lod01);
+
    osgSim::DOFTransform* trans02 = new osgSim::DOFTransform();
    trans02->setName("trans_02");
-   switch01->addChild(trans02); 
+   lod01->addChild(trans02); 
 
    osg::Geode* geo02 = new osg::Geode();
    geo02->setName("geo_02");
@@ -133,10 +138,14 @@ void NodeCollectorTests::setUp()
    switch02->setName("switch_02");
    group02->addChild(switch02);
 
+   osg::LOD* lod02 = new osg::LOD();
+   lod02->setName("lod_02");
+   group02->addChild(lod02);
+
    mNodeCollector2 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::AllNodeTypes);
    mNodeCollector3 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::GroupFlag | dtUtil::NodeCollector::DOFTransformFlag);
    mNodeCollector4 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::SwitchFlag | dtUtil::NodeCollector::MatrixTransformFlag);
-   mNodeCollector5 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::GeodeFlag);
+   mNodeCollector5 = new dtUtil::NodeCollector(mTestTree.get(), dtUtil::NodeCollector::GeodeFlag | dtUtil::NodeCollector::LODFlag);
 
 }
 
@@ -172,6 +181,10 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_02") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector2->GetGeodeNodeMap().empty() == false);
 
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_02") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == false);
+
      mNodeCollector2->ClearAll();
 
      CPPUNIT_ASSERT_MESSAGE("This is a Group MAP Problem", mNodeCollector2->GetGroupNodeMap().empty() == true);
@@ -179,6 +192,7 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Matrix MAP Problem", mNodeCollector2->GetMatrixTransformNodeMap().empty() == true);
      CPPUNIT_ASSERT_MESSAGE("This is a Switch MAP Problem", mNodeCollector2->GetSwitchNodeMap().empty() == true);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector2->GetGeodeNodeMap().empty() == true);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == true);
 
      mNodeCollector2->CollectNodes(mTestTree.get(), dtUtil::NodeCollector::AllNodeTypes);
 
@@ -203,6 +217,10 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_02") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector2->GetGeodeNodeMap().empty() == false);
 
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_02") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == false);
+
      mNodeCollector2->ClearAll();
 
      CPPUNIT_ASSERT_MESSAGE("This is a Group MAP Problem", mNodeCollector2->GetGroupNodeMap().empty() == true);
@@ -210,6 +228,7 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Matrix MAP Problem", mNodeCollector2->GetMatrixTransformNodeMap().empty() == true);
      CPPUNIT_ASSERT_MESSAGE("This is a Switch MAP Problem", mNodeCollector2->GetSwitchNodeMap().empty() == true);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector2->GetGeodeNodeMap().empty() == true);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == true);
 
      ////////////////////////////////////////////
 
@@ -234,6 +253,10 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector3->GetGeode("geo_02") == NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector3->GetGeodeNodeMap().empty() == true);
 
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") == NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_02") == NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == true);
+
      //////////////////////////////////////////////
 
      CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector4->GetGroup("group_01") == NULL);
@@ -257,6 +280,10 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector4->GetGeode("geo_02") == NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector4->GetGeodeNodeMap().empty() == true);
 
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") == NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_02") == NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector2->GetLODNodeMap().empty() == true);
+
      //////////////////////////////////////////////////
 
      CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector5->GetGroup("group_01") == NULL);
@@ -279,6 +306,10 @@ void NodeCollectorTests::TestModel()
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector5->GetGeode("geo_01") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector5->GetGeode("geo_02") != NULL);
      CPPUNIT_ASSERT_MESSAGE("This is a Geode MAP Problem", mNodeCollector5->GetGeodeNodeMap().empty() == false);
+
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector5->GetLOD("lod_01") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector5->GetLOD("lod_02") != NULL);
+     CPPUNIT_ASSERT_MESSAGE("This is a LOD MAP Problem", mNodeCollector5->GetLODNodeMap().empty() == false);
      
 }
 
@@ -308,6 +339,8 @@ void NodeCollectorTests::TestNodeRemoval()
    CPPUNIT_ASSERT_MESSAGE("This is a Switch Problem", mNodeCollector2->GetSwitch("switch_02") != NULL);
    CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_01") != NULL);
    CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_02") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_02") != NULL);
 
    // Test removal of other types of nodes
    curNodeName = "trans_02";
@@ -326,6 +359,10 @@ void NodeCollectorTests::TestNodeRemoval()
    mNodeCollector2->RemoveGeode(curNodeName);
    CPPUNIT_ASSERT( mNodeCollector2->GetGeode(curNodeName) == NULL );
 
+   curNodeName = "lod_02";
+   mNodeCollector2->RemoveLOD(curNodeName);
+   CPPUNIT_ASSERT( mNodeCollector2->GetLOD(curNodeName) == NULL );
+
    // Again, ensure all other nodes still exist
    CPPUNIT_ASSERT_MESSAGE("This is a Group Problem", mNodeCollector2->GetGroup("group_01") != NULL);
    CPPUNIT_ASSERT_MESSAGE("This is a DOF Problem", mNodeCollector2->GetDOFTransform("trans_01") != NULL);
@@ -333,4 +370,5 @@ void NodeCollectorTests::TestNodeRemoval()
    CPPUNIT_ASSERT_MESSAGE("This is a Matrix Problem", mNodeCollector2->GetMatrixTransform("matrix_03") != NULL);
    CPPUNIT_ASSERT_MESSAGE("This is a Switch Problem", mNodeCollector2->GetSwitch("switch_01") != NULL);
    CPPUNIT_ASSERT_MESSAGE("This is a Geode Problem", mNodeCollector2->GetGeode("geo_01") != NULL);
+   CPPUNIT_ASSERT_MESSAGE("This is a LOD Problem", mNodeCollector2->GetLOD("lod_01") != NULL);
 }

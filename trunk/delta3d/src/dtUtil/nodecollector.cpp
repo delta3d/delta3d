@@ -32,6 +32,7 @@
 #include <osgSim/MultiSwitch>
 #include <osg/Drawable>
 #include <osg/Geode>
+#include <osg/LOD>
 
 
 namespace dtUtil
@@ -43,6 +44,7 @@ namespace dtUtil
    const NodeCollector::NodeFlag NodeCollector::SwitchFlag = dtUtil::Bits::Add(0,8);
    const NodeCollector::NodeFlag NodeCollector::MultiSwitchFlag = dtUtil::Bits::Add(0,16);
    const NodeCollector::NodeFlag NodeCollector::GeodeFlag = dtUtil::Bits::Add(0,32);
+   const NodeCollector::NodeFlag NodeCollector::LODFlag = dtUtil::Bits::Add(0,64);
 
    //A Flag that will return all nodes and Drawable / Material objects that it finds
    const NodeCollector::NodeFlag NodeCollector::AllNodeTypes = (NodeCollector::GroupFlag | 
@@ -50,7 +52,8 @@ namespace dtUtil
                                                                 NodeCollector::MatrixTransformFlag | 
                                                                 NodeCollector::SwitchFlag |
                                                                 NodeCollector::MultiSwitchFlag |
-                                                                NodeCollector::GeodeFlag);
+                                                                NodeCollector::GeodeFlag |
+                                                                NodeCollector::LODFlag);
   
    //GroupVisitor Class
    //This object is used to traverse nodes and visit different the different kinds of nodes / objects that it runs into
@@ -84,7 +87,7 @@ namespace dtUtil
        */
       virtual void apply(osg::Geode& geode)
       {
-         if((dtUtil::Bits::Has(mNodeMask, NodeCollector::GeodeFlag)) && (geode.getName() != mNodeNamesIgnored))
+         if ((dtUtil::Bits::Has(mNodeMask, NodeCollector::GeodeFlag)) && (geode.getName() != mNodeNamesIgnored))
          {
             mNodeManager->AddGeode(geode.getName(), geode);
             dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
@@ -99,17 +102,17 @@ namespace dtUtil
        * to any of the Group Nodes children.
        * @param group A Group Node Object that will be checked
        */
-      virtual void apply(osg::Group & group)
+      virtual void apply(osg::Group& group)
       { 
         //Check if we should add this node using the flag
-        if( dtUtil::Bits::Has(mNodeMask, NodeCollector::GroupFlag)  && ( group.getName() != mNodeNamesIgnored ) )
+        if (dtUtil::Bits::Has(mNodeMask, NodeCollector::GroupFlag)  && (group.getName() != mNodeNamesIgnored))
         {   
                //Add Group to node collector's std::map
                mNodeManager->AddGroup(group.getName(), group);
                dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
                logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added Group Node: " + group.getName());
         }
-         //Traverse through the Group Nodes Children
+         //Traverse through the Group Node's Children
          traverse(group);
       }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////// 
@@ -118,20 +121,20 @@ namespace dtUtil
       * to any of the Transform Nodes children.
       * @param transform A Transform Node Object that will be checked
       */
-      virtual void apply(osg::Transform & transform)
+      virtual void apply(osg::Transform& transform)
       { 
          //Dynamically Cast any Transform Objects found to osgSim::DOFTransform Objects
          osgSim::DOFTransform * DOF = dynamic_cast<osgSim::DOFTransform *>(& transform);
          
          //Check if we should add this node using the flag
-         if( (DOF != NULL) && (dtUtil::Bits::Has(mNodeMask, NodeCollector::DOFTransformFlag)) && ( transform.getName() != mNodeNamesIgnored ) )
+         if ((DOF != NULL) && (dtUtil::Bits::Has(mNodeMask, NodeCollector::DOFTransformFlag)) && (transform.getName() != mNodeNamesIgnored))
          {
             //Add DOFTransform to node collector's std::map
             mNodeManager->AddDOFTransform(transform.getName(), (*DOF));
             dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
             logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added DOFTransform Node: " + transform.getName());
          }
-         //Traverse through the Transform Nodes Children
+         //Traverse through the Transform Node's Children
          traverse(transform);
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -140,17 +143,17 @@ namespace dtUtil
       * to any of the MatrixTransform Nodes children.
       * @param matrix_transform A MatrixTransform Node Object that will be checked
       */
-      virtual void apply(osg::MatrixTransform & matrix_transform)
+      virtual void apply(osg::MatrixTransform& matrix_transform)
       { 
          //Check if we should add this node using the flag
-         if( dtUtil::Bits::Has(mNodeMask, NodeCollector::MatrixTransformFlag) && ( matrix_transform.getName() != mNodeNamesIgnored ) )
+         if (dtUtil::Bits::Has(mNodeMask, NodeCollector::MatrixTransformFlag) && (matrix_transform.getName() != mNodeNamesIgnored))
          {
             //Add MatrixTransform to node collector's std::map
             mNodeManager->AddMatrixTransform(matrix_transform.getName(), matrix_transform);
             dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
             logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added MatrixTransform Node: " + matrix_transform.getName());
          }
-         //Traverses through the MatrixTransform Nodes Children
+         //Traverses through the MatrixTransform Node's Children
          traverse(matrix_transform);
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -169,7 +172,7 @@ namespace dtUtil
             dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
             logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added Switch Node: " + pSwitch.getName());
          }
-         //Traverses through the Switch Nodes Children
+         //Traverses through the Switch Node's Children
          traverse(pSwitch);
       }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////     
@@ -188,8 +191,28 @@ namespace dtUtil
           dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
           logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added MultiSwitch Node: " + pMultiSwitch.getName());
         }
-        //Traverses through the MultiSwitch Nodes Children
+        //Traverses through the MultiSwitch Node's Children
         traverse(pMultiSwitch);
+      }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////     
+      /**
+      * Function that Checks to see if the LOD Node is a node that we wish to collect and than traverses down the
+      * to any of the LOD Nodes children.
+      * @param LOD A LOD Node Object that will be checked
+      */
+      virtual void apply(osg::LOD& pLOD)
+      { 
+         //Check if we should add this node using the flag
+         if (dtUtil::Bits::Has(mNodeMask, NodeCollector::LODFlag) && (pLOD.getName() != mNodeNamesIgnored))
+         {
+            //Add MultiSwitch to node collector's std::map
+            mNodeManager->AddLOD(pLOD.getName(), pLOD);
+            dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+            logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Added LOD Node: " + pLOD.getName());
+         }
+         //Traverses through the LOD Node's Children
+         traverse(pLOD);
       }
    private:
       //Manages the nodes that we wish to collect
@@ -210,15 +233,14 @@ namespace dtUtil
    //Default Constructor
    NodeCollector::NodeCollector()
    {
-
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
    //Constructor that when called will automatically generate the node maps or geode maps that you request  
-   NodeCollector::NodeCollector(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNamesIgnored)
+   NodeCollector::NodeCollector(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string& nodeNamesIgnored)
    {
-      if(NodeToLoad !=  NULL)
+      if (NodeToLoad !=  NULL)
       {
          GroupVisitor mVisitor(this, mask, nodeNamesIgnored);
          NodeToLoad->accept(mVisitor);
@@ -235,7 +257,7 @@ namespace dtUtil
    //Function that when called will automatically generate the node maps or geode maps that you request
    void NodeCollector::CollectNodes(osg::Node* NodeToLoad, NodeCollector::NodeFlag mask, const std::string & nodeNamesIgnored)
    {
-      if(NodeToLoad !=  NULL)
+      if (NodeToLoad !=  NULL)
       {
          GroupVisitor mVisitor(this, mask, nodeNamesIgnored);
          NodeToLoad->accept(mVisitor);
@@ -258,6 +280,7 @@ namespace dtUtil
       mSwitchNodeMap.clear();
       mMultiSwitchNodeMap.clear();
       mGeodeNodeMap.clear();
+      mLODNodeMap.clear();
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +288,7 @@ namespace dtUtil
    //Function that is used to add a Geode Node to the Geode Node map
    void NodeCollector::AddGeode(const std::string& key, osg::Geode& data)
    {
-      if( !CollectorUtil::AddNode(key, &data, mGeodeNodeMap) )
+      if (!CollectorUtil::AddNode(key, &data, mGeodeNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can NOT add Geode with Duplicate Key: " + key);
@@ -276,9 +299,9 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a Geode Node from the Geode Node map
-   void NodeCollector::RemoveGeode( const std::string& key )
+   void NodeCollector::RemoveGeode(const std::string& key)
    {
-      if( !CollectorUtil::RemoveNode(key, mGeodeNodeMap) )
+      if (!CollectorUtil::RemoveNode(key, mGeodeNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove geode node \"" + key + "\" because it does not exist");
@@ -288,21 +311,21 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    //Function that is used to add a Group Node to the Group Node map
-   void NodeCollector::AddGroup(const std::string & key, osg::Group & data)
+   void NodeCollector::AddGroup(const std::string& key, osg::Group& data)
    {      
-      if( !CollectorUtil::AddNode(key, & data, mGroupNodeMap) )
+      if (!CollectorUtil::AddNode(key, & data, mGroupNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Group Node With Duplicate Key: " + key);
       }
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a Group Node from the Group Node map
-   void NodeCollector::RemoveGroup( const std::string& key )
+   void NodeCollector::RemoveGroup(const std::string& key)
    {
-      if( !CollectorUtil::RemoveNode(key, mGroupNodeMap) )
+      if (!CollectorUtil::RemoveNode(key, mGroupNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove group node \"" + key + "\" because it does not exist");
@@ -312,21 +335,21 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
    //Function that is used to add a DOFTransform Node to the DOFTransform Node map
-   void NodeCollector::AddDOFTransform(const std::string & key, osgSim::DOFTransform & data)
+   void NodeCollector::AddDOFTransform(const std::string& key, osgSim::DOFTransform& data)
    {
-      if ( !CollectorUtil::AddNode(key, & data, mTranformNodeMap) )
+      if (!CollectorUtil::AddNode(key, &data, mTranformNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add DOF Node With Duplicate Key: " + key);
       }
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a DOFTransform Node from the DOFTransform Node map
-   void NodeCollector::RemoveDOFTransform( const std::string& key )
+   void NodeCollector::RemoveDOFTransform(const std::string& key)
    {
-      if( !CollectorUtil::RemoveNode(key, mTranformNodeMap) )
+      if (!CollectorUtil::RemoveNode(key, mTranformNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove DOF transform node \"" + key + "\" because it does not exist");
@@ -336,21 +359,21 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
    //Function that is used to add a MatrixTransform Node to the MatrixTransform Node map
-   void NodeCollector::AddMatrixTransform(const std::string & key, osg::MatrixTransform & data)
+   void NodeCollector::AddMatrixTransform(const std::string& key, osg::MatrixTransform& data)
    {
-     if( !CollectorUtil::AddNode(key, & data, mMatrixTransformNodeMap) )
+     if (!CollectorUtil::AddNode(key, &data, mMatrixTransformNodeMap))
      {
         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-        logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+        logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Matrix Transform Node With Duplicate Key: " + key);
      }
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a MatrixTransform Node from the MatrixTransform Node map
-   void NodeCollector::RemoveMatrixTransform( const std::string& key )
+   void NodeCollector::RemoveMatrixTransform(const std::string& key)
    {
-      if( !CollectorUtil::RemoveNode(key, mMatrixTransformNodeMap) )
+      if (!CollectorUtil::RemoveNode(key, mMatrixTransformNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Cannot remove matrix transform node \"" + key + "\" because it does not exist");
@@ -360,21 +383,21 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
    //Function that is used to add a Switch Node to the Switch Node map
-   void NodeCollector::AddSwitch(const std::string & key, osg::Switch & data)
+   void NodeCollector::AddSwitch(const std::string& key, osg::Switch& data)
    {
-      if( !CollectorUtil::AddNode(key, & data, mSwitchNodeMap) )
+      if (!CollectorUtil::AddNode(key, &data, mSwitchNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Switch Node With Duplicate Key: " + key);
       }
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a Switch Node from the Switch Node map
-   void NodeCollector::RemoveSwitch( const std::string& key )
+   void NodeCollector::RemoveSwitch(const std::string& key)
    {
-      if( !CollectorUtil::RemoveNode(key, mSwitchNodeMap) )
+      if (!CollectorUtil::RemoveNode(key, mSwitchNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
          logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove switch node \"" + key + "\" because it does not exist");
@@ -384,12 +407,12 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    //Function that is used to add a MultiSwitch Node to the MultiSwitch Node map
-   void NodeCollector::AddMultiSwitch(const std::string & key, osgSim::MultiSwitch & data)
+   void NodeCollector::AddMultiSwitch(const std::string& key, osgSim::MultiSwitch& data)
    {
-     if( !CollectorUtil::AddNode(key, & data, mMultiSwitchNodeMap) )
+     if (!CollectorUtil::AddNode(key, &data, mMultiSwitchNodeMap))
      {
        dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-       logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Node With Duplicate Key: " + key);
+       logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add MulitSwitch Node With Duplicate Key: " + key);
      }
    }
 
@@ -397,13 +420,34 @@ namespace dtUtil
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Function that is used to remove a MultiSwitch Node from the MultiSwitch Node map
-   void NodeCollector::RemoveMultiSwitch( const std::string& key )
+   void NodeCollector::RemoveMultiSwitch(const std::string& key)
    {
-     if( !CollectorUtil::RemoveNode(key, mMultiSwitchNodeMap) )
+     if (!CollectorUtil::RemoveNode(key, mMultiSwitchNodeMap))
      {
        dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
        logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove multi switch node \"" + key + "\" because it does not exist");
      }
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   void NodeCollector::AddLOD(const std::string& key, osg::LOD& data)
+   {
+      if (!CollectorUtil::AddNode(key, &data, mLODNodeMap))
+      {
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add LOD Node With Duplicate Key: " + key);
+      }
+   }
+
+
+   /////////////////////////////////////////////////////////////////////////////
+   void NodeCollector::RemoveLOD(const std::string& key)
+   {
+      if (!CollectorUtil::RemoveNode(key, mLODNodeMap))
+      {
+         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Cannot remove LOD node \"" + key + "\" because it does not exist");
+      }
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -458,6 +502,12 @@ namespace dtUtil
      return CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   const osg::LOD* NodeCollector::GetLOD(const std::string& nodeName) const
+   {
+      return CollectorUtil::FindNodePointer(nodeName, mLODNodeMap);
+   }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////NON CONST RETURNS/////////////////////////////////////////////////////
 ///////////////////////////////////ADDED SUPPORT FOR DRAWABLES AND MATERIALS/////////////////////////////////////////
@@ -507,6 +557,12 @@ namespace dtUtil
    osgSim::MultiSwitch* NodeCollector::GetMultiSwitch(const std::string& nodeName)
    {
      return CollectorUtil::FindNodePointer(nodeName, mMultiSwitchNodeMap);
+   }
+
+   /////////////////////////////////////////////////////////////////////////////
+   osg::LOD* NodeCollector::GetLOD(const std::string& nodeName)
+   {
+      return CollectorUtil::FindNodePointer(nodeName, mLODNodeMap);
    }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -560,6 +616,12 @@ namespace dtUtil
       return mGeodeNodeMap;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   const NodeCollector::LODNodeMap& NodeCollector::GetLODNodeMap() const
+   {
+      return mLODNodeMap;
+   }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////NON CONST RETURNS/////////////////////////////////////////////////////
 //////////////////////////////////////////////Return the Node Maps///////////////////////////////////////////////////
@@ -611,12 +673,17 @@ namespace dtUtil
       return mGeodeNodeMap;
    }
 
+   /////////////////////////////////////////////////////////////////////////////
+   NodeCollector::LODNodeMap& NodeCollector::GetLODNodeMap()
+   {
+      return mLODNodeMap;
+   }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
    //Destructor
    NodeCollector::~NodeCollector()
    {
-
    }
 
  }//namespace dtUtil

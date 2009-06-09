@@ -37,6 +37,7 @@ namespace osg
    class Switch;
    class Node;
    class Geode;
+   class LOD;
 }
 //Forward Declare the necessary osgSim classes that will be used by the NodeCollector class
 namespace osgSim
@@ -72,6 +73,7 @@ namespace dtUtil
       typedef std::map<std::string, dtCore::RefPtr <osg::MatrixTransform> >   MatrixTransformNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osg::Switch> >            SwitchNodeMap;
       typedef std::map<std::string, dtCore::RefPtr <osgSim::MultiSwitch> >    MultiSwitchNodeMap;
+      typedef std::map<std::string, dtCore::RefPtr <osg::LOD> >               LODNodeMap;
 
       //Type Definitions for the two different geode node maps
       typedef std::map<std::string, dtCore::RefPtr<osg::Geode> >     GeodeNodeMap;
@@ -86,6 +88,7 @@ namespace dtUtil
       static const NodeFlag SwitchFlag;
       static const NodeFlag MultiSwitchFlag;
       static const NodeFlag GeodeFlag;
+      static const NodeFlag LODFlag;
 
       ///NodeFlag that when defined will represent all kinds of nodes and Geode nodes
       static const NodeFlag AllNodeTypes;
@@ -164,6 +167,13 @@ namespace dtUtil
        */
       const osg::Geode* GetGeode(const std::string& name) const;
 
+      /**
+       * Function that is used to request a CONST pointer to an LOD Node
+       * @param name A String that represents the name of the node you are looking for
+       * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+       */
+      const osg::LOD* GetLOD(const std::string& name) const;
+
       /////////////////////////////////////////////////////////////////////////////////
       //The Following Five Methods are all used to return pointers to requested nodes//
       /////////////////////////////////////////////////////////////////////////////////
@@ -204,11 +214,18 @@ namespace dtUtil
       osgSim::MultiSwitch* GetMultiSwitch(const std::string& name);
 
       /**
-       * Function that is used to request a CONST pointer to a Geode Node
+       * Function that is used to request a pointer to a Geode Node
        * @param name A String that represents the name of the node you are looking for
-       * @return A CONST pointer to the node you were looking for or NULL if the node was not found
+       * @return A pointer to the node you were looking for or NULL if the node was not found
        */
       osg::Geode* GetGeode(const std::string& name);
+
+      /**
+       * Function that is used to request a pointer to an LOD Node
+       * @param name A String that represents the name of the node you are looking for
+       * @return A pointer to the node you were looking for or NULL if the node was not found
+       */
+      osg::LOD* GetLOD(const std::string& name);
 
 
       /////////////////////////////////////////////////////////////////////////////////
@@ -293,6 +310,19 @@ namespace dtUtil
        */
       void RemoveGeode(const std::string& name);
 
+      /**
+       * Function that is used to add an LOD Node to the LOD Node map
+       * @param name A String that represents the name of the Node
+       * @param node The LOD Node that you wish to add to the map
+       */
+      void AddLOD(const std::string& name, osg::LOD& node);
+
+      /**
+       * Function that is used to remove an LOD Node to the LOD Node map
+       * @param name A String that represents the name of the Node
+       */
+      void RemoveLOD(const std::string& name);
+
 
       ////////////////////////////////////////////////////////////////////////////////
       //The Following Methods are all used to return CONST maps populated with nodes//
@@ -334,6 +364,12 @@ namespace dtUtil
        */
       const NodeCollector::GeodeNodeMap& GetGeodeNodeMap() const;
 
+      /**
+       * Function that returns CONST an LOD map
+       * @return A map with the names of Geode LOD and osg LOD Nodes
+       */
+      const NodeCollector::LODNodeMap& GetLODNodeMap() const;
+
       //////////////////////////////////////////////////////////////////////////
       //The Following Methods are all used to return maps populated with nodes//
       //////////////////////////////////////////////////////////////////////////
@@ -374,6 +410,12 @@ namespace dtUtil
        */
       NodeCollector::GeodeNodeMap& GetGeodeNodeMap();
 
+      /**
+      * Function that returns an LOD map
+      * @return A map with the names of LOD Nodes and osg LOD Nodes
+      */
+      NodeCollector::LODNodeMap& GetLODNodeMap();
+
    protected:
 
       /**
@@ -391,6 +433,7 @@ namespace dtUtil
       NodeCollector::SwitchNodeMap          mSwitchNodeMap;
       NodeCollector::MultiSwitchNodeMap     mMultiSwitchNodeMap;
       NodeCollector::GeodeNodeMap           mGeodeNodeMap;
+      NodeCollector::LODNodeMap             mLODNodeMap;
 
    };
 } // namespace
