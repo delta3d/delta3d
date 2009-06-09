@@ -288,24 +288,12 @@ const osgViewer::View* View::GetOsgViewerView() const
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetMouse(Mouse* mouse)
 {
-   if (mouse == 0)
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Mouse is invalid", __FILE__, __LINE__);
-   }
-
    mImpl->mKeyboardMouseHandler->SetMouse(mouse);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void View::SetKeyboard(Keyboard* keyboard)
 {
-   if (keyboard == 0)
-   {
-      throw dtUtil::Exception(dtCore::ExceptionEnum::INVALID_PARAMETER,
-         "Supplied dtCore::Keyboard is invalid", __FILE__, __LINE__);
-   }
-
    mImpl->mKeyboardMouseHandler->SetKeyboard(keyboard);
 }
 

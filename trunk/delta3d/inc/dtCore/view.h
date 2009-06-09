@@ -124,9 +124,6 @@ namespace dtCore
        * Supply an instance of a Keyboard to be used instead of the default,
        * internal Keyboard, or the one supplied in the constructor.
        * @param keyboard : instance of a valid Keyboard to use
-       * @pre keyboard != 0
-       * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-       * is NULL.  The original Keyboard will still be used.
        */
       void SetKeyboard(Keyboard* keyboard);
 
@@ -142,9 +139,6 @@ namespace dtCore
       /** Supply an instance of a Mouse to be used instead of the default internal
        *  Mouse, or the one supplied in the constructor.
        *  @param mouse : Instance of a valid Mouse
-       *  @pre mouse != 0
-       *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
-       *  is NULL.  The original Mouse will still be used.
        */
       void SetMouse(Mouse* mouse);
 

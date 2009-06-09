@@ -216,6 +216,11 @@ void Application::PreFrame(const double deltaSimTime)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::PostFrame(const double deltaSimTime)
 {
+   while (!mViewsToDelete.empty())
+   {
+      RemoveViewImpl(*mViewsToDelete.back());
+      mViewsToDelete.pop_back();
+   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -590,6 +595,12 @@ bool Application::ContainsView(dtCore::View &view)
 
 ////////////////////////////////////////////////////////
 void Application::RemoveView(dtCore::View &view)
+{
+   mViewsToDelete.push_back(&view);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Application::RemoveViewImpl(dtCore::View& view)
 {
    ViewList::iterator it = std::find(mViewList.begin(), mViewList.end(), &view);
    if (it != mViewList.end())
