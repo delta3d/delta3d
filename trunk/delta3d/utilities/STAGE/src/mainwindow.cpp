@@ -50,6 +50,7 @@
 #include <dtEditQt/orthoviewport.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/viewportcontainer.h>
+#include <dtEditQt/editorviewportcontainer.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/actortab.h>
 #include <dtEditQt/resourcebrowser.h>
@@ -341,23 +342,32 @@ namespace dtEditQt
       // We now wrap each viewport in a viewport container to provide the
       // toolbar and right click menu add-ons which are needed by the editor
       // for each viewport.
+      EditorViewportContainer* editorContainer;
       ViewportContainer* container;
 
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "False")
       {
-         container = new ViewportContainer(mSideView,  vSplit2);
+         editorContainer = new EditorViewportContainer(mSideView, vSplit2);
+         container = new ViewportContainer(mSideView, editorContainer);
+         editorContainer->setChild(container);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "False")
       {
-         container = new ViewportContainer(mPerspView, vSplit2);
+         editorContainer = new EditorViewportContainer(mPerspView, vSplit2);
+         container = new ViewportContainer(mPerspView, editorContainer);
+         editorContainer->setChild(container);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "False")
       {
-         container = new ViewportContainer(mTopView,   vSplit1);
+         editorContainer = new EditorViewportContainer(mTopView, vSplit1);
+         container = new ViewportContainer(mTopView, editorContainer);
+         editorContainer->setChild(container);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "False")
       {
-         container = new ViewportContainer(mFrontView, vSplit1);
+         editorContainer = new EditorViewportContainer(mFrontView, vSplit1);
+         container = new ViewportContainer(mFrontView, editorContainer);
+         editorContainer->setChild(container);
       }
 
       // Returns the root of the viewport widget hierarchy.

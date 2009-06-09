@@ -46,9 +46,12 @@ ObjectMotionModel::ObjectMotionModel(dtCore::View* view)
    , mAutoScale(true)
    , mAllowScaleGizmo(false)
    , mSnap(false)
+   , mSnapTranslationEnabled(false)
+   , mSnapRotationEnabled(false)
+   , mSnapScaleEnabled(false)
 {
    mSnapRotation = osg::DegreesToRadians(45.0f);
-   mSnapTranslation = 1;
+   mSnapTranslation = 1.0f;
    mSnapScale = 1;
 
    RegisterInstance(this);
@@ -262,7 +265,7 @@ void ObjectMotionModel::SetCoordinateSpace(CoordinateSpace coordinateSpace)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::SetSnapTranslation(int increment)
+void ObjectMotionModel::SetSnapTranslation(float increment)
 {
    mSnapTranslation = increment;
 }
@@ -274,9 +277,17 @@ void ObjectMotionModel::SetSnapRotation(float degrees)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ObjectMotionModel::SetSnapScale(int increment)
+void ObjectMotionModel::SetSnapScale(float increment)
 {
    mSnapScale = increment;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectMotionModel::SetSnapEnabled(bool translation, bool rotation, bool scale)
+{
+   mSnapTranslationEnabled = translation;
+   mSnapRotationEnabled = rotation;
+   mSnapScaleEnabled = scale;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -301,14 +312,14 @@ void ObjectMotionModel::OnLeftMouseReleased(void)
 void ObjectMotionModel::OnRightMousePressed(void)
 {
    mRightMouse = true;
-   mSnap = mRightMouse;
+   mSnap = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ObjectMotionModel::OnRightMouseReleased(void)
 {
    mRightMouse = false;
-   mSnap = mRightMouse;
+   mSnap = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -387,6 +398,7 @@ ObjectMotionModel::MotionType ObjectMotionModel::Update(osg::Vec2 pos)
                   osg::Vec2 objectPos = GetObjectScreenCoordinates(transform.GetTranslation());
                   mMouseOrigin = GetMousePosition();
                   mMouseOffset = objectPos - mMouseOrigin;
+                  mOriginalTargetPos = transform.GetTranslation();
                   mOriginAngle = 0.0f;
                }
                return mMotionType;
@@ -961,7 +973,8 @@ void ObjectMotionModel::UpdateTranslation(void)
       dtCore::Transform transform;
       target->GetTransform(transform);
       transform.GetOrientation(targetRight, targetUp, targetAt);
-      targetPos = transform.GetTranslation();
+      targetPos = mOriginalTargetPos;
+      //targetPos = transform.GetTranslation();
    }
    else // World Space
    {
@@ -1045,15 +1058,33 @@ void ObjectMotionModel::UpdateTranslation(void)
       // Find the translation vector.
       fDistance = axis * vector;
 
+      osg::Vec3 desiredPos = targetPos + (axis * fDistance);
+
+      dtCore::Transform transform;
+      target->GetTransform(transform);
+      osg::Vec3 actualPos = transform.GetTranslation();
+
       // Snap
-      if (mSnap)
+      if (mSnap && mSnapTranslationEnabled)
       {
-         fDistance = (int)fDistance / mSnapTranslation;
+         // Find the closest grid point to snap to.
+         targetPos += axis * fDistance;
+
+         for (int index = 0; index < 3; index++)
+         {
+            float trans = targetPos[index];
+
+            int mul = floor((trans / mSnapTranslation) + 0.5f);
+            trans = mSnapTranslation * mul;
+
+            targetPos[index] = trans;
+         }
+
+         desiredPos = targetPos;
       }
 
-      //targetPos += axis * fDistance;
-
-      OnTranslate(axis * fDistance);
+      osg::Vec3 offset = desiredPos - actualPos;
+      OnTranslate(offset);
    }
 }
 
@@ -1183,8 +1214,8 @@ void ObjectMotionModel::UpdateRotation(void)
          mOriginAngle = -mOriginAngle;
       }
 
-      // Snap angle to 45 degree angles.
-      if (mSnap)
+      // Snap angle to fixed degree angles.
+      if (mSnap && mSnapRotationEnabled)
       {
          float snaps = ceilf((mOriginAngle - 0.5f) / mSnapRotation);
          mOriginAngle = (mSnapRotation * snaps);
@@ -1227,8 +1258,8 @@ void ObjectMotionModel::UpdateRotation(void)
          angle = -angle;
       }
 
-      // Snap angle to 45 degree angles.
-      if (mSnap)
+      // Snap angle to fixed degree angles.
+      if (mSnap && mSnapRotationEnabled)
       {
          float snaps = ceilf((angle - 0.5f) / mSnapRotation);
          angle = (mSnapRotation * snaps);
@@ -1424,7 +1455,7 @@ void ObjectMotionModel::UpdateScale(void)
       fDistance = axis * vector;
 
       // Snap
-      if (mSnap)
+      if (mSnap && mSnapScaleEnabled)
       {
          fDistance = (int)fDistance / mSnapScale;
       }
