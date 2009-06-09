@@ -205,7 +205,7 @@ namespace dtEditQt
       mEditScale->setToolTip(tr("Sets the scalar snap increment for the editor gizmos."));
       mEditScale->setValidator(new QDoubleValidator(0.01, 99999.99, 2, mEditScale));
       mEditScale->setMinimumWidth(35);
-      mEditScale->setText(QString::number(10, 'f', 2));
+      mEditScale->setText(QString::number(1, 'f', 2));
       layout->addWidget(mEditScale);
 
       setSnapTranslation();
