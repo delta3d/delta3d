@@ -49,17 +49,32 @@
 namespace dtEditQt
 {
    ///////////////////////////////////////////////////////////////////////////////
-   EditorViewportContainer::EditorViewportContainer(Viewport* vp, QWidget* parent)
+   EditorViewportContainer::EditorViewportContainer(QWidget* child, QWidget* parent)
       : QWidget(parent)
       , mLayout(new QVBoxLayout(this))
    {
-      mViewPort = dynamic_cast<EditorViewport*>(vp);
-      
       mLayout->setMargin(0);
       mLayout->setSpacing(0);
 
       createActions();
       createToolBar();
+
+      setChild(child);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewportContainer::addViewport(Viewport* viewport)
+   {
+      EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
+      if (editorView)
+      {
+         mViewportList.push_back(editorView);
+      }
+
+      setSnapTranslation();
+      setSnapRotation();
+      setSnapScale();
+      setSnapEnabled(0);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -76,31 +91,46 @@ namespace dtEditQt
    //////////////////////////////////////////////////////////////////////////////////
    //void EditorViewportContainer::setLocalSpace()
    //{
-   //   mViewPort->setLocalSpace(mSetLocalSpaceAction->isChecked());
+   //   for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
+   //   {
+   //      mViewportList[viewIndex]->setLocalSpace(mSetLocalSpaceAction->isChecked());
+   //   }
    //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapTranslation()
    {
-      mViewPort->setSnapTranslation(mEditTrans->text().toFloat());
+      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
+      {
+         mViewportList[viewIndex]->setSnapTranslation(mEditTrans->text().toFloat());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapRotation()
    {
-      mViewPort->setSnapRotation(mEditAngle->text().toFloat());
+      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
+      {
+         mViewportList[viewIndex]->setSnapRotation(mEditAngle->text().toFloat());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapScale()
    {
-      mViewPort->setSnapScale(mEditScale->text().toFloat());
+      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
+      {
+         mViewportList[viewIndex]->setSnapScale(mEditScale->text().toFloat());
+      }
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapEnabled(int state)
    {
-      mViewPort->setSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
+      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
+      {
+         mViewportList[viewIndex]->setSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -208,10 +238,6 @@ namespace dtEditQt
       mEditScale->setMinimumWidth(35);
       mEditScale->setText(QString::number(1, 'f', 2));
       layout->addWidget(mEditScale);
-
-      setSnapTranslation();
-      setSnapRotation();
-      setSnapScale();
 
       connect(mEditTrans, SIGNAL(editingFinished()), this, SLOT(setSnapTranslation()));
       connect(mEditAngle, SIGNAL(editingFinished()), this, SLOT(setSnapRotation()));

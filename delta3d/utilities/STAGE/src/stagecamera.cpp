@@ -207,6 +207,9 @@ namespace dtEditQt
    void StageCamera::resetRotation()
    {
       mOrientation = osg::Quat(osg::DegreesToRadians(-90.0), osg::Vec3(1, 0, 0));
+      mCamPitch = 0;
+      mCamYaw = 0;
+      mCamRoll = 0;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

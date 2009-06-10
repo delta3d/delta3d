@@ -61,12 +61,19 @@ namespace dtEditQt
       /**
        * Constructs the viewport container.  Note, there is no viewport currently assigned
        * to it.
-       * @param vp     The viewport contained in this container.
        * @param child  The child widget this container contains.
        * @param parent The parent widget to assign to this container.
        */
-      EditorViewportContainer(Viewport* vp = NULL, QWidget* parent = NULL);
+      EditorViewportContainer(QWidget* child = NULL, QWidget* parent = NULL);
 
+      /**
+      * Adds a viewport into our window.
+      */
+      void addViewport(Viewport* viewport);
+
+      /**
+      * Sets the current child of the container.
+      */
       void setChild(QWidget* child);
 
    public slots:
@@ -87,7 +94,7 @@ namespace dtEditQt
       void createToolBar();
 
    private:
-      EditorViewport*   mViewPort;
+      std::vector<EditorViewport*> mViewportList;
 
       QBoxLayout*       mLayout;
       //QBoxLayout*       mButtonLayout;
