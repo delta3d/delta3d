@@ -211,6 +211,7 @@ namespace dtEditQt
       mFileToolBar = new QToolBar(this);
       mFileToolBar->setObjectName("FileToolBar");
       mFileToolBar->setWindowTitle(tr("File Toolbar"));
+      mFileToolBar->setMinimumWidth(10);
       mFileToolBar->addAction(EditorActions::GetInstance().mActionFileNewMap);
       mFileToolBar->addAction(EditorActions::GetInstance().mActionFileOpenMap);
       mFileToolBar->addAction(EditorActions::GetInstance().mActionFileSaveMap);
@@ -219,7 +220,7 @@ namespace dtEditQt
       mEditToolBar = new QToolBar(this);
       mEditToolBar->setObjectName("EditToolBar");
       mEditToolBar->setWindowTitle(tr("Edit Toolbar"));
-      mEditToolBar->setMinimumWidth(4);
+      mEditToolBar->setMinimumWidth(10);
       mEditToolBar->addAction(EditorActions::GetInstance().mActionLocalSpace);
       mEditToolBar->addSeparator();
       mEditToolBar->addAction(EditorActions::GetInstance().mActionGroupActors);
@@ -234,6 +235,7 @@ namespace dtEditQt
       mUndoToolBar = new QToolBar(this);
       mUndoToolBar->setObjectName("UndoToolBar");
       mUndoToolBar->setWindowTitle(tr("Undo Toolbar"));
+      mUndoToolBar->setMinimumWidth(10);
       mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditUndo);
       mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditRedo);
       addToolBar(mUndoToolBar);
@@ -340,36 +342,34 @@ namespace dtEditQt
       // We now wrap each viewport in a viewport container to provide the
       // toolbar and right click menu add-ons which are needed by the editor
       // for each viewport.
-      EditorViewportContainer* editorContainer;
-      ViewportContainer* container;
+      ViewportContainer* container = NULL;
 
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
-         editorContainer = new EditorViewportContainer(mSideView, vSplit2);
-         container = new ViewportContainer(mSideView, editorContainer);
-         editorContainer->setChild(container);
+         container = new ViewportContainer(mSideView, vSplit2);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
       {
-         editorContainer = new EditorViewportContainer(mPerspView, vSplit2);
-         container = new ViewportContainer(mPerspView, editorContainer);
-         editorContainer->setChild(container);
+         container = new ViewportContainer(mPerspView, vSplit2);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
-         editorContainer = new EditorViewportContainer(mTopView, vSplit1);
-         container = new ViewportContainer(mTopView, editorContainer);
-         editorContainer->setChild(container);
+         container = new ViewportContainer(mTopView, vSplit1);
       }
       if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
       {
-         editorContainer = new EditorViewportContainer(mFrontView, vSplit1);
-         container = new ViewportContainer(mFrontView, editorContainer);
-         editorContainer->setChild(container);
+         container = new ViewportContainer(mFrontView, vSplit1);
       }
 
+      // Create our editor container for all of our views.
+      EditorViewportContainer* editorContainer = new EditorViewportContainer(hSplit);
+      editorContainer->addViewport(mPerspView);
+      editorContainer->addViewport(mSideView);
+      editorContainer->addViewport(mTopView);
+      editorContainer->addViewport(mFrontView);
+
       // Returns the root of the viewport widget hierarchy.
-      return hSplit;
+      return editorContainer;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

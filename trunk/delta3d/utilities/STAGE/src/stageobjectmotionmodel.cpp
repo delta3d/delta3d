@@ -269,17 +269,17 @@ void STAGEObjectMotionModel::OnScale(osg::Vec3 delta)
             osg::Vec3 newScale = oldScale + delta;
 
             // It causes problems when the scale is negative.
-            if (newScale.x() < 0.0f)
+            if (newScale.x() < 0.01f)
             {
-               newScale.x() = 0.0f;
+               newScale.x() = 0.01f;
             }
-            if (newScale.y() < 0.0f)
+            if (newScale.y() < 0.01f)
             {
-               newScale.y() = 0.0f;
+               newScale.y() = 0.01f;
             }
-            if (newScale.z() < 0.0f)
+            if (newScale.z() < 0.01f)
             {
-               newScale.z() = 0.0f;
+               newScale.z() = 0.01f;
             }
 
             scaleProp->SetValue(newScale);
