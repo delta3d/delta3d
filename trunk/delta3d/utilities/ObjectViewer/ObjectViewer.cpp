@@ -763,6 +763,9 @@ void ObjectViewer::InitWireDecorator()
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF );
 
    mWireDecorator->setStateSet(stateset);
+
+   stateset->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE |
+         osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
