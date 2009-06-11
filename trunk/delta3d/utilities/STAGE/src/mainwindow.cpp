@@ -69,10 +69,8 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::MainWindow(const std::string& stagePath)
-      : mSTAGEFullPath(stagePath)
-      , mPropertyWindow(NULL)
-      , mActorTab(NULL)
-      , mResourceBrowser(NULL)
+      : mCfgMgr()
+      , mSTAGEFullPath(stagePath)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -81,7 +79,9 @@ namespace dtEditQt
       , mRecentProjs(NULL)
       , mRecentMaps(NULL)
       , mToolsMenu(NULL)
-      , mCfgMgr()
+      , mPropertyWindow(NULL)
+      , mActorTab(NULL)
+      , mResourceBrowser(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();

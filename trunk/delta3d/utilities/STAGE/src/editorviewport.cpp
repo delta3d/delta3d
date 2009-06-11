@@ -362,6 +362,9 @@ namespace dtEditQt
       case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
          saveSelectedActorOrigValues("Scale");
          break;
+
+      default:
+      break;
       }
    }
 
@@ -386,6 +389,9 @@ namespace dtEditQt
       case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
          updateActorSelectionProperty("Scale");
          break;
+
+      default:
+      break;
       }
 
       EditorEvents::GetInstance().emitEndChangeTransaction();
