@@ -20,17 +20,16 @@ class PoseMeshView;
 class PoseMeshScene;
 class PoseMeshProperties;
 class QDoubleSpinBox;
+class QHBoxLayout;
 
-namespace dtQt
-{
-   class ViewWindow;
-}
 
 namespace dtAnim
 {
    class PoseMesh;
    class CharDrawable;
 }
+
+class Viewer; ///<The animation viewer application
 
 class MainWindow : public QMainWindow
 {
@@ -40,9 +39,8 @@ public:
    MainWindow();
    ~MainWindow();
 
-   dtQt::ViewWindow* GetGLWidget() { return mGLWidget; }
-
    void LoadCharFile(const QString& filename);
+   void SetViewer(Viewer* viewer);
 
 protected:
    virtual void dragEnterEvent(QDragEnterEvent* event);
@@ -113,6 +111,7 @@ private:
    void OnStopAnimation(int row);
    void OnStartAction(int row);
    bool IsAnimNodeBuildingUsingHW() const;
+   void SetupConnectionsWithViewer();
 
    ///turns color into "R:rrr "G:ggg B:bbb A:aaa" format
    QString MakeColorString(const QColor& color) const;
@@ -152,7 +151,8 @@ private:
    PoseMeshScene*      mPoseMeshScene;
    PoseMeshProperties* mPoseMeshProperties;
 
-   dtQt::ViewWindow* mGLWidget;
+   Viewer*             mViewer;
+   QHBoxLayout*        mCentralLayout;
 
 private slots:
    void OnOpenCharFile();

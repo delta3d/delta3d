@@ -4,14 +4,16 @@
 #include "PoseMeshScene.h"
 #include "PoseMeshProperties.h"
 #include "PoseMeshItem.h"
-#include <dtQt/viewwindow.h>
+#include "Viewer.h"
+#include <dtQt/osggraphicswindowqt.h>
 
 #include <osg/Geode> ///needed for the node builder
 #include <dtAnim/cal3ddatabase.h>
 #include <dtAnim/animnodebuilder.h>
 #include <dtAnim/chardrawable.h>
-
+#include <dtCore/deltawin.h>
 #include <dtUtil/fileutils.h>
+#include <dtUtil/log.h>
 
 #include <QtGui/QApplication>
 #include <QtGui/QMenuBar>
@@ -26,6 +28,7 @@
 #include <QtGui/QDockWidget>
 #include <QtGui/QMessageBox>
 #include <QtGui/QDoubleSpinBox>
+#include <QtGui/QDragEnterEvent>
 #include <QtGui/QTabWidget>
 #include <QtGui/QListWidget>
 #include <QtGui/QGraphicsScene>
@@ -33,6 +36,7 @@
 #include <QtGui/QProgressBar>
 #include <QtGui/QTreeWidgetItem>
 #include <QtCore/QUrl>
+#include <QtOpenGL/QGLWidget>
 
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QStandardItem>
@@ -54,7 +58,6 @@ MainWindow::MainWindow()
   , mPoseMeshViewer(NULL)
   , mPoseMeshScene(NULL)
   , mPoseMeshProperties(NULL)
-  , mGLWidget(NULL)
 {
    resize(800, 800);
 
@@ -108,14 +111,11 @@ MainWindow::MainWindow()
    mTabs->addTab(mMaterialView, tr("Materials"));
    mTabs->addTab(mSubMorphTargetListWidget, tr("SubMorphTargets"));
 
-   QWidget* glParent = new QWidget(this);
+   QWidget* glParent = new QWidget();
 
-   mGLWidget = new dtQt::ViewWindow(false, glParent);
-
-   QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
-   hbLayout->setMargin(0);
-   glParent->setLayout(hbLayout);
-   hbLayout->addWidget(mGLWidget);
+   mCentralLayout = new QHBoxLayout(glParent);
+   mCentralLayout->setMargin(0);
+   glParent->setLayout(mCentralLayout);
    setCentralWidget(glParent);
 
    QDockWidget* tabsDockWidget = new QDockWidget();
@@ -1085,5 +1085,75 @@ void MainWindow::OnClearCharacterData()
 
    // reset the scale spinbox
    mScaleFactorSpinner->setValue(1.0f);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetViewer(Viewer* viewer)
+{
+   mViewer = viewer;
+
+   dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
+
+   if (osgGraphWindow == NULL)
+   {
+      LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
+      return;
+   }
+
+   //stuff the QGLWidget into it's parent widget placeholder and ensure it gets
+   //resized to fit the parent
+   QWidget* widget = osgGraphWindow->GetQGLWidget();
+   if (widget != NULL)
+   {
+      widget->setGeometry(centralWidget()->geometry());
+      mCentralLayout->addWidget(widget);
+   }
+
+   SetupConnectionsWithViewer();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void MainWindow::SetupConnectionsWithViewer()
+{
+   connect(this, SIGNAL(FileToLoad(const QString&)), mViewer, SLOT(OnLoadCharFile(const QString&)));
+   connect(this, SIGNAL(UnloadFile()), mViewer, SLOT(OnUnloadCharFile()) );
+   connect(mViewer, SIGNAL(ClearCharacterData()), this, SLOT(OnClearCharacterData()));
+
+   connect(mViewer, SIGNAL(AnimationLoaded(unsigned int,const QString &,unsigned int,unsigned int,float)),
+      this, SLOT(OnNewAnimation(unsigned int,const QString&,unsigned int,unsigned int,float)));
+
+   connect(mViewer, SIGNAL(MeshLoaded(int,const QString&)), this, SLOT(OnNewMesh(int,const QString&)));
+
+   connect(mViewer, SIGNAL(PoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)),
+      this, SLOT(OnPoseMeshesLoaded(const std::vector<dtAnim::PoseMesh*>&, dtAnim::CharDrawable*)));
+
+   connect(mViewer, SIGNAL(MaterialLoaded(int,const QString&,const QColor&,const QColor&,const QColor&,float)),
+      this, SLOT(OnNewMaterial(int,const QString&,const QColor&,const QColor&,const QColor&,float)));
+
+   connect(this, SIGNAL(ShowMesh(int)), mViewer, SLOT(OnShowMesh(int)));
+   connect(this, SIGNAL(HideMesh(int)), mViewer, SLOT(OnHideMesh(int)));
+
+   connect(mViewer, SIGNAL(ErrorOccured(const QString&)), this, SLOT(OnDisplayError(const QString&)));
+
+   connect(this, SIGNAL(StartAnimation(unsigned int,float,float)), mViewer, SLOT(OnStartAnimation(unsigned int,float,float)));
+   connect(this, SIGNAL(StopAnimation(unsigned int,float)), mViewer, SLOT(OnStopAnimation(unsigned int,float)));
+   connect(this, SIGNAL(StartAction(unsigned int,float,float)), mViewer, SLOT(OnStartAction(unsigned int,float,float)));
+   connect(this, SIGNAL(LODScale_Changed(float)), mViewer, SLOT(OnLODScale_Changed(float)));
+   connect(this, SIGNAL(SpeedChanged(float)), mViewer, SLOT(OnSpeedChanged(float)));
+   connect(this, SIGNAL(ScaleFactorChanged(float)), mViewer, SLOT(OnScaleFactorChanged(float)));
+
+   //connect(&mTimer, SIGNAL(timeout()), mViewer, SLOT(OnTimeout()));
+   connect(mViewer, SIGNAL(BlendUpdate(const std::vector<float>&)), this, SLOT(OnBlendUpdate(const std::vector<float>&)));
+
+   connect(this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
+   connect(this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
+   connect(this->mShadedWireAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShadedWireframe()));
+   connect(this->mBoneBasisAction, SIGNAL(toggled(bool)), mViewer, SLOT(OnSetBoneBasisDisplay(bool)));
+   connect(this->mBoneLabelAction, SIGNAL(toggled(bool)), mViewer, SLOT(OnSetBoneLabelDisplay(bool)));
+
+   connect(mViewer, SIGNAL(SubMorphTargetLoaded(int,int,int,const QString&)), this, SLOT(OnNewSubMorphTarget(int,int,int,const QString&)));
+   connect(this, SIGNAL(SubMorphTargetChanged(int,int,int,float)), mViewer, SLOT(OnMorphChanged(int,int,int,float)));
+   connect(this, SIGNAL(PlayMorphAnimation(int)), mViewer, SLOT(OnPlayMorphAnimation(int)));
 
 }
