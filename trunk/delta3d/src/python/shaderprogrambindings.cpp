@@ -10,3 +10,4 @@ void initShaderProgramBindings()
       .def("GetName", &ShaderProgram::GetName, return_internal_reference<>())
       ;
 }
+

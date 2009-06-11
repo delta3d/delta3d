@@ -46,9 +46,10 @@ TestBumpMapApp::TestBumpMapApp(const std::string& customObjectName,
                                bool usePrecomputedTangents /*= false*/)
    : Application(configFilename)
    , mTotalTime(0.0f)
+   , mUsePrecomputedTangents(usePrecomputedTangents)
    , mDiffuseTexture(NULL)
    , mNormalTexture(NULL)
-   , mUsePrecomputedTangents(usePrecomputedTangents)
+
 {
    //load the xml file which specifies our shaders
    dtCore::ShaderManager& sm = dtCore::ShaderManager::GetInstance();

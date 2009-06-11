@@ -206,7 +206,6 @@ namespace dtEditQt
    void PrefabBrowser::displaySelection()
    {
       ResourceTreeWidget* selection = getSelectedPrefabWidget();
-      bool validFile = false;
 
       if (selection)
       {
@@ -465,7 +464,6 @@ namespace dtEditQt
             EditorEvents::GetInstance().emitBeginChangeTransaction();
 
             std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > proxyList;
-            dtDAL::Map* map = EditorData::GetInstance().getCurrentMap();
             dtCore::RefPtr<dtDAL::MapParser> parser = new dtDAL::MapParser;
             parser->ParsePrefab(fullPath, proxyList);
 

@@ -471,3 +471,4 @@ void FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum side, const std::st
    mTextureList[side]->setImage(newImage);
    mTextureList[side]->dirtyTextureObject();
 }
+

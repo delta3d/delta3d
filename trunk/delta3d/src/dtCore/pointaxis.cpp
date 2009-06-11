@@ -645,3 +645,4 @@ void PointAxis::LabelSetup(osg::Geode* g, const char* l, osg::Vec3 p, osg::Vec4 
    txt->setColor(c);
    txt->setPosition(p);
 }
+

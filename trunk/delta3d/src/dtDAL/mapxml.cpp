@@ -677,8 +677,8 @@ namespace dtDAL
       {
          mFormatter << MapXMLConstants::BEGIN_XML_DECL << mFormatter.getEncodingName() << MapXMLConstants::END_XML_DECL << chLF;
 
-         const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
-            dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
+         //const std::string& utcTime = dtUtil::DateTime::ToString(dtUtil::DateTime(dtUtil::DateTime::TimeOrigin::LOCAL_TIME),
+            //dtUtil::DateTime::TimeFormat::CALENDAR_DATE_AND_TIME_FORMAT);
 
          BeginElement(MapXMLConstants::PREFAB_ELEMENT, MapXMLConstants::PREFAB_NAMESPACE);
 
