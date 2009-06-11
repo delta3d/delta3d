@@ -2,7 +2,7 @@
 #define _STAGE_CONFIGURATION_MANAGER_H__
 
 #include <map>
-
+#include <string>
 #include <osg/Vec2>
 
 #include <xercesc/dom/DOMElement.hpp>

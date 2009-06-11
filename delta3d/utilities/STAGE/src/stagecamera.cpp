@@ -40,18 +40,19 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    StageCamera::StageCamera()
-      : mDeltaCamera(new dtCore::Camera("StageCamera"))
-      , mUpdateProjectionMatrix(true)
-      , mUpdateWorldViewMatrix(true)
+      : 
+        mCamPitch(0.0)
+      , mCamYaw(0.0)
+      , mCamRoll(0.0)
       , mFovY(60.0f)
       , mAspectRatio(1.3333333333f)
       , mZNear(1.0f)
       , mZFar(10000.0f)
       , mZoomFactor(1.0f)
+      , mUpdateProjectionMatrix(true)
+      , mUpdateWorldViewMatrix(true)
       , mProjType(PERSPECTIVE)
-      , mCamPitch(0.0)
-      , mCamYaw(0.0)
-      , mCamRoll(0.0)
+      , mDeltaCamera(new dtCore::Camera("StageCamera"))
    {
       resetRotation();
       setPosition(osg::Vec3(0, 0, 0));

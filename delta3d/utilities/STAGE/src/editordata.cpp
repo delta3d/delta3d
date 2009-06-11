@@ -51,9 +51,9 @@ namespace dtEditQt
       , mGridSize(16)
       , mLoadLastProject(true)
       , mLoadLastMap(true)
-      , mUseGlobalOrientationForViewportWidget(false)
       , mRigidCamera(true)
-      , mActorCreationDistance(5.0)
+      , mUseGlobalOrientationForViewportWidget(false)
+      , mActorCreationDistance(5.f)
       , mSelectionColor(Qt::red)
    {
       LOG_DEBUG("Initializing Editor Data.");

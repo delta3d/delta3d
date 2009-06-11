@@ -277,6 +277,9 @@ namespace dtEditQt
             case ChangeEvent::PROXY_CREATED:
                handleUndoRedoCreateObject(event, proxy, isUndo);
                return; // best to return because event can be modified as a side effect
+    
+            default:
+            break;
             }
          }
       }
