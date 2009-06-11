@@ -1,6 +1,7 @@
 #include <dtEditQt/configurationmanager.h>
 
 #include <dtCore/refptr.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xerceswriter.h>
@@ -38,7 +39,10 @@ void ConfigurationManager::ReadXML(const std::string& fileName)
    parser.setContentHandler(this);
    parser.setErrorHandler(this);
 
-   parser.parse(fileName.c_str());
+   //if the file isn't valid (usually means STAGEConfig.xml is missing,
+   // -- then we'll just use the default config so don't log an error
+   if (dtUtil::FileUtils::GetInstance().FileExists(fileName))
+      parser.parse(fileName.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +55,7 @@ void ConfigurationManager::WriteXML(const std::string& fileName)
 
    ToXML(*doc);
 
-   writer->WriteFile(fileName);   
+   writer->WriteFile(fileName);  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
