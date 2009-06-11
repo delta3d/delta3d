@@ -1,15 +1,12 @@
 #include "ObjectWorkspace.h"
-#include <dtQt/viewwindow.h>
+#include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/projectcontextdialog.h>
 #include "ResourceDock.h"
-
-#include <osg/Geode> ///needed for the node builder
-#include <dtAnim/cal3ddatabase.h>
-#include <dtAnim/animnodebuilder.h>
-#include <dtAnim/chardrawable.h>
+#include "ObjectViewer.h"
 
 #include <dtUtil/fileutils.h>
 #include <dtDAL/project.h>
+#include <dtCore/deltawin.h>
 
 #include <QtGui/QMenuBar>
 #include <QtGui/QAction>
@@ -21,21 +18,20 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QHBoxLayout>
 
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QStandardItem>
 
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
 #include <QtCore/QUrl>
+#include <QtGui/QDragEnterEvent>
+#include <QtOpenGL/QGLWidget>
 
-#include <assert.h>
+#include <cassert>
 
 ////////////////////////////////////////////////////////////////////////////////
 ObjectWorkspace::ObjectWorkspace()
   : mLoadShaderDefAction(NULL)
   , mLoadGeometryAction(NULL)
   , mExitAct(NULL)
-  , mGLWidget(NULL)
 {
    resize(1024, 768);
 
@@ -53,14 +49,11 @@ ObjectWorkspace::ObjectWorkspace()
    statusBar();
    CreateToolbars();
 
-   QWidget* glParent = new QWidget(this);
+   QWidget* glParent = new QWidget();
 
-   mGLWidget = new dtQt::ViewWindow(false, this);
-
-   QHBoxLayout* hbLayout = new QHBoxLayout(glParent);
-   hbLayout->setMargin(0);
-   glParent->setLayout(hbLayout);
-   hbLayout->addWidget(mGLWidget);
+   mCentralLayout = new QHBoxLayout();
+   mCentralLayout->setMargin(0);
+   glParent->setLayout(mCentralLayout);
    setCentralWidget(glParent);
 
    setAcceptDrops(true);
@@ -565,4 +558,131 @@ void ObjectWorkspace::SaveCurrentShaderFiles()
    {
       QMessageBox::critical((QWidget *)this, tr("Error"), tr(e.What().c_str()), tr("Ok"));
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SetViewer(ObjectViewer* viewer)
+{
+   mViewer = viewer;
+
+   dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mViewer->GetWindow()->GetOsgViewerGraphicsWindow());
+
+   if (osgGraphWindow == NULL)
+   {
+      LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
+      return;
+   }
+
+   //stuff the QGLWidget into it's parent widget placeholder and ensure it gets
+   //resized to fit the parent
+   QWidget* widget = osgGraphWindow->GetQGLWidget();
+   if (widget != NULL)
+   {
+      widget->setGeometry(centralWidget()->geometry());
+      mCentralLayout->addWidget(widget);
+   }
+
+   SetupConnectionsWithViewer();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+void ObjectWorkspace::SetupConnectionsWithViewer()
+{
+   // Menu connections
+   connect(this, SIGNAL(LoadShaderDefinition(const QString&)),
+      mViewer, SLOT(OnLoadShaderFile(const QString&)));
+
+   connect((QObject*)this, SIGNAL(SetGenerateTangentAttribute(bool)),
+      mViewer, SLOT(OnSetGenerateTangentAttribute(bool)));
+
+   connect(this, SIGNAL(ReloadShaderDefinition()),
+      this->GetResourceObject(), SLOT(OnReloadShaderFiles()));
+
+   // Resource dock connections
+   connect(this->GetResourceObject(), SIGNAL(LoadGeometry(const std::string&)),
+      mViewer, SLOT(OnLoadGeometryFile(const std::string&)));
+
+   connect(this->GetResourceObject(), SIGNAL(LoadMap(const std::string&)),
+      mViewer, SLOT(OnLoadMapFile(const std::string&)));
+
+   connect(this->GetResourceObject(), SIGNAL(UnloadGeometry()),
+      mViewer, SLOT(OnUnloadGeometryFile()));
+
+   connect(mViewer, SIGNAL(ShaderLoaded(const std::string&, const std::string&, const std::string&)),
+      this->GetResourceObject(), SLOT(OnNewShader(const std::string&, const std::string&, const std::string&)));
+
+   connect(this->GetResourceObject(), SIGNAL(ApplyShader(const std::string&, const std::string&)),
+      mViewer, SLOT(OnApplyShader(const std::string&, const std::string&)));
+
+   connect(mViewer, SIGNAL(LightUpdate(const LightInfo&)),
+      this->GetResourceObject(), SLOT(OnLightUpdate(const LightInfo&)));
+
+   connect(this->GetResourceObject(), SIGNAL(RemoveShader()),
+      mViewer, SLOT(OnRemoveShader()));
+
+   connect(this->GetResourceObject(), SIGNAL(FixLights()),
+      mViewer, SLOT(OnFixLights()));
+
+   connect(this->GetResourceObject(), SIGNAL(SetCurrentLight(int)),
+      mViewer, SLOT(OnSetCurrentLight(int)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightEnabled(int, bool)),
+      mViewer, SLOT(OnSetLightEnabled(int, bool)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightType(int, int)),
+      mViewer, SLOT(OnSetLightType(int, int)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightPosition(int, const osg::Vec3&)),
+      mViewer, SLOT(OnSetLightPosition(int, const osg::Vec3&)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightRotation(int, const osg::Vec3&)),
+      mViewer, SLOT(OnSetLightRotation(int, const osg::Vec3&)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetAmbient(int, const osg::Vec4&)),
+      mViewer, SLOT(OnSetAmbient(int, const osg::Vec4&)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetDiffuse(int, const osg::Vec4&)),
+      mViewer, SLOT(OnSetDiffuse(int, const osg::Vec4&)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetSpecular(int, const osg::Vec4&)),
+      mViewer, SLOT(OnSetSpecular(int, const osg::Vec4&)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightCutoff(int, float)),
+      mViewer, SLOT(OnSetLightCutoff(int, float)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightExponent(int, float)),
+      mViewer, SLOT(OnSetLightExponent(int, float)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightConstant(int, float)),
+      mViewer, SLOT(OnSetLightConstant(int, float)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightLinear(int, float)),
+      mViewer, SLOT(OnSetLightLinear(int, float)));
+
+   connect(this->GetResourceObject(), SIGNAL(SetLightQuadratic(int, float)),
+      mViewer, SLOT(OnSetLightQuadratic(int, float)));
+
+   connect(this, SIGNAL(ToggleGrid(bool)), mViewer, SLOT(OnToggleGrid(bool)));
+
+   connect(this->GetResourceObject(), SIGNAL(ToggleVertexShaderSources(bool)),
+      this, SLOT(OnToggleVertexShaderSource(bool)));
+
+   connect(this->GetResourceObject(), SIGNAL(ToggleFragmentShaderSources(bool)),
+      this, SLOT(OnToggleFragmentShaderSource(bool)));
+
+   connect(this->GetResourceObject(), SIGNAL(RemoveShaderDef(const std::string&)),
+      this, SLOT(OnRemoveShaderDef(const std::string&)));
+
+   // Toolbar connections
+   connect((QObject*)this->mShadedAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShaded()));
+   connect((QObject*)this->mWireframeAction, SIGNAL(triggered()), mViewer, SLOT(OnSetWireframe()));
+   connect((QObject*)this->mShadedWireAction, SIGNAL(triggered()), mViewer, SLOT(OnSetShadedWireframe()));
+   connect((QObject*)this->mLightModeAction, SIGNAL(triggered()), mViewer, SLOT(OnEnterLightMode()));
+   connect((QObject*)this->mObjectModeAction, SIGNAL(triggered()), mViewer, SLOT(OnEnterObjectMode()));
+
+   // Editing connections
+   connect((QObject*)this->mWorldSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnWorldSpaceMode()));
+   connect((QObject*)this->mLocalSpaceAction, SIGNAL(triggered()), mViewer, SLOT(OnLocalSpaceMode()));
+
 }

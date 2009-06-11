@@ -1,37 +1,52 @@
-#include <cstdio>
 #include <QtGui/QApplication>
+#include <QtCore/QFileInfo>
+#include <dtQt/qtguiwindowsystemwrapper.h>
+#include <dtQt/deltastepper.h>
 
 #include "ObjectWorkspace.h"
-#include "Delta3DThread.h"
-#include <dtUtil/macros.h>
+#include "ObjectViewer.h"
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
-
-#include <iostream>
 
 int main(int argc, char* argv[]) 
 {
    QApplication qapp(argc, argv);
 
+   //Create special QGLWidget's when we create DeltaWin instances
+   dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
+
+   //The main UI window
    ObjectWorkspace win;
-   win.show();
 
-   Delta3DThread* thread = new Delta3DThread(&qapp);
+   //The object viewer Application
+   dtCore::RefPtr<ObjectViewer> mViewer = new ObjectViewer();
+   mViewer->Config();
 
-   QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
+   win.SetViewer(mViewer.get());
+   win.OnInitialization();
+   win.show(); //show the UI
 
-   thread->SetObjectWorkspace(&win);   
-   thread->run();
+   //create a little class to ensure Delta3D performs Window "steps"
+   dtCore::System::GetInstance().Start();
+   dtQt::DeltaStepper stepper;
+   stepper.Start();
+
+   // If we have an argument(possibly from drag and drop)
+   if (argc >= 2)
+   {
+      QFileInfo fileInfo(QCoreApplication::arguments().at(1));
+
+      if (fileInfo.fileName().endsWith(QString("xml"), Qt::CaseInsensitive))
+      {
+         win.OnLoadMap(fileInfo.baseName().toStdString());
+      }
+      else
+      {
+         win.OnLoadGeometry(QCoreApplication::arguments().at(1).toStdString());
+      }
+   }
    
    qapp.exec();
-  
-   delete thread;
+   stepper.Stop();
 
    return EXIT_SUCCESS;
 }

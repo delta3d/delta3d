@@ -22,30 +22,28 @@
 #define DELTA_OBJECTWORKSPACE
 
 #include <QtGui/QMainWindow>
+#include <dtCore/refptr.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 
 class ResourceDock;
 class QAction;
 class QToolBar;
+class QHBoxLayout;
 
-namespace dtQt
-{
-   class ViewWindow;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 
+class ObjectViewer;
+
 class ObjectWorkspace : public QMainWindow
 {
-   friend class Delta3DThread;
    Q_OBJECT
 public:
    ObjectWorkspace();
    ~ObjectWorkspace();
 
-   dtQt::ViewWindow* GetGLWidget() { return mGLWidget; }
-   QObject* GetResourceObject();
+   void SetViewer(ObjectViewer* viewer);
 
    virtual void dragEnterEvent(QDragEnterEvent* event);
    virtual void dropEvent(QDropEvent* event);
@@ -72,8 +70,11 @@ public slots:
    void OnToggleVertexShaderSource(bool enabled);
    void OnToggleFragmentShaderSource(bool enabled);
    void OnRemoveShaderDef(const std::string& filename);
+   void OnLoadMap(const std::string& mapName);
+   void OnLoadGeometry(const std::string& fullName);
 
 private:
+   QObject* GetResourceObject();
    void CreateMenus();
    void CreateFileMenuActions();
    void CreateModeToolbarActions();
@@ -83,6 +84,8 @@ private:
    void CreateToolbars();
    void UpdateResourceLists();
    void LoadObjectFile(const QString& filename);
+
+   QHBoxLayout* mCentralLayout;
 
    // File menu
    QAction* mLoadShaderDefAction;
@@ -126,15 +129,13 @@ private:
 
    QList<std::string> mAdditionalShaderFiles;
 
-   dtQt::ViewWindow* mGLWidget;
+   ObjectViewer* mViewer;
 
 private slots:
 
    // File menu callbacks
    void OnLoadShaderDefinition();
-   void OnLoadMap(const std::string& mapName);
    void OnLoadGeometry();
-   void OnLoadGeometry(const std::string& fullName);
    void OnChangeContext();
 
    void OnToggleGridClicked(bool toggledOn);
@@ -142,6 +143,7 @@ private slots:
    std::string GetContextPathFromUser();
    void SaveCurrentContextPath();
    void SaveCurrentShaderFiles();
+   void SetupConnectionsWithViewer();
 };
 
 #endif // DELTA_OBJECTWORKSPACE
