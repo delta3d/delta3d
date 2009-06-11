@@ -1,27 +1,27 @@
 /* -*-c++-*-
- * testAnim - testanim (.h & .cpp) - Using 'The MIT License'
- * Copyright (C) 2007-2008, Alion Science and Technology Corporation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * Bradley Anderegg
- */
+* testAnim - testanim (.h & .cpp) - Using 'The MIT License'
+* Copyright (C) 2007-2008, Alion Science and Technology Corporation
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in
+* all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+* THE SOFTWARE.
+*
+* Bradley Anderegg
+*/
 
 #include "testanim.h"
 #include "testaniminput.h"
@@ -67,35 +67,35 @@
 #include <osg/ShapeDrawable>
 #include <osg/Shape>
 
+////////////////////////////////////////////////////////////////////////////////
 
 extern "C" TEST_ANIM_EXPORT dtGame::GameEntryPoint* CreateGameEntryPoint()
 {
    return new TestAnim;
 }
 
-//////////////////////////////////////////////////////////////////////////
 extern "C" TEST_ANIM_EXPORT void DestroyGameEntryPoint(dtGame::GameEntryPoint* entryPoint)
 {
    delete entryPoint;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 TestAnim::TestAnim()
-: dtGame::GameEntryPoint()
-, mAnimationHelper(NULL)
-, mFMM(NULL)
-, mPerformanceTest(false)
+   : dtGame::GameEntryPoint()
+   , mAnimationHelper(NULL)
+   , mFMM(NULL)
+   , mPerformanceTest(false)
 {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 TestAnim::~TestAnim()
 {
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 {
    if (argc > 1)
@@ -120,14 +120,14 @@ void TestAnim::Initialize(dtGame::GameApplication& app, int argc, char **argv)
 }
 
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void TestAnim::OnStartup(dtGame::GameApplication& app)
 {
    app.GetWindow()->SetWindowTitle("TestAnim");
 
    std::string dataPath = dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(dataPath + ";" +
-                               dtCore::GetDeltaRootPath() + "/examples/data" + ";");
+      dtCore::GetDeltaRootPath() + "/examples/data" + ";");
 
    std::string context = dtCore::GetDeltaRootPath() + "/examples/data/demoMap";
 
@@ -215,7 +215,7 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
          startPos[1] = 0.0f;
       }
 
-//      app.GetCamera()->SetNextStatisticsType();
+      //      app.GetCamera()->SetNextStatisticsType();
 
    }
 
@@ -238,69 +238,71 @@ void TestAnim::OnStartup(dtGame::GameApplication& app)
 
    gameManager.DebugStatisticsTurnOn(false, false, 5);
 
-//   app.GetWindow()->SetKeyRepeat(false);
+   //   app.GetWindow()->SetKeyRepeat(false);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void TestAnim::OnShutdown(dtGame::GameApplication& app)
 {
 }
 
-void TestAnim::InitializeAnimationActor( dtAnim::AnimationGameActorProxy* gameProxy,
+////////////////////////////////////////////////////////////////////////////////
+void TestAnim::InitializeAnimationActor(dtAnim::AnimationGameActorProxy* gameProxy,
                                         dtAnim::AnimationComponent* animComp,
-                                        bool isPlayer, dtCore::Camera *camera )
+                                        bool isPlayer, dtCore::Camera *camera)
 {
-      dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
+   dtAnim::AnimationGameActor* actor = dynamic_cast<dtAnim::AnimationGameActor*>(&gameProxy->GetGameActor());
 
-      if (actor != NULL)
+   if (actor != NULL)
+   {
+      dtAnim::AnimationHelper* helper = actor->GetHelper();
+
+      if (helper != NULL)
       {
-         dtAnim::AnimationHelper* helper = actor->GetHelper();
+         //we must register the helper with the animation component
+         animComp->RegisterActor(*gameProxy, *helper);
 
-         if (helper != NULL)
+
+         //since we are doing hardware skinning there is no need for
+         //the physique driver
+         //TODO: this should be refactored out of here and into the place that decides
+         //      whether or not we are doing hardware skinning
+         helper->GetAnimator()->SetPhysiqueDriver(NULL);
+
+         if (isPlayer)
          {
-            //we must register the helper with the animation component
-            animComp->RegisterActor(*gameProxy, *helper);
+            mAnimationHelper = helper;
+            mAnimationHelper->SetGroundClamp(true);
+
+            //attach the Camera to the Actor using a Tripod
+            dtCore::Tripod *tripod = new dtCore::Tripod(camera, actor);
+            tripod->SetTetherMode( dtCore::Tripod::TETHER_WORLD_REL );
+            tripod->SetOffset( 0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
 
 
-            //since we are doing hardware skinning there is no need for
-            //the physique driver
-            //TODO: this should be refactored out of here and into the place that decides
-            //      whether or not we are doing hardware skinning
-            helper->GetAnimator()->SetPhysiqueDriver(NULL);
+            //attach a pack to the guy's back
+            dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
+            attachment->LoadFile("/models/camelpack.ive");
 
-            if (isPlayer)
-            {
-               mAnimationHelper = helper;
-               mAnimationHelper->SetGroundClamp(true);
+            dtUtil::HotSpotDefinition hotspotDef;
+            hotspotDef.mName = "backpack";
+            hotspotDef.mParentName = "Bip02 Spine2";
+            hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
 
-               //attach the Camera to the Actor using a Tripod
-               dtCore::Tripod *tripod = new dtCore::Tripod(camera, actor);
-               tripod->SetTetherMode( dtCore::Tripod::TETHER_WORLD_REL );
-               tripod->SetOffset( 0.f, -5.f, 1.25f, 0.f, 0.f, 0.f);
+            osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
+            attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
+            hotspotDef.mLocalRotation = attRot.getRotate();
 
-
-               //attach a pack to the guy's back
-               dtCore::RefPtr<dtCore::Object> attachment = new dtCore::Object("CamelPack");
-               attachment->LoadFile("/models/camelpack.ive");
-
-               dtUtil::HotSpotDefinition hotspotDef;
-               hotspotDef.mName = "backpack";
-               hotspotDef.mParentName = "Bip02 Spine2";
-               hotspotDef.mLocalTranslation.set(0.25f, -0.125f, 0.0f);
-
-               osg::Matrix attRot = osg::Matrix::rotate(osg::DegreesToRadians(90.f), osg::Vec3(0.f,1.f,0.f));
-               attRot *= osg::Matrix::rotate(osg::DegreesToRadians(180.f), osg::Vec3(0.f,0.f,1.f));
-               hotspotDef.mLocalRotation = attRot.getRotate();
-
-               mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
-               actor->AddChild(attachment.get());
-            }
-            else
-            {
-               helper->PlayAnimation("Walk");
-               helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
-               helper->GetSequenceMixer().ForceRecalculate();
-            }
+            mAnimationHelper->GetAttachmentController().AddAttachment(*attachment, hotspotDef);
+            actor->AddChild(attachment.get());
+         }
+         else
+         {
+            helper->PlayAnimation("Walk");
+            helper->GetSequenceMixer().GetActiveAnimation("Walk")->SetStartDelay(dtUtil::RandFloat(20.0f, 40.0f));
+            helper->GetSequenceMixer().ForceRecalculate();
          }
       }
+   }
 }
 
