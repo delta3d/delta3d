@@ -383,6 +383,8 @@ namespace dtEditQt
 
          ss->setAttributeAndModes(pm, turnOn);
          ss->setAttributeAndModes(po, turnOn);
+
+         ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE | osg::StateAttribute::PROTECTED | osg::StateAttribute::OFF);
       }
    }
 
