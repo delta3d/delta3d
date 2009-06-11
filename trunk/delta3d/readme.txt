@@ -56,13 +56,16 @@ package or are on Linux you need to set them youself.
 
 Microsoft Windows
 --------------------
-Make sure the Delta3D environment variables are set:
+Make sure the Delta3D environment variables are set.  Note: Delta3D
+libraries are typically contained under a "build" sub-folder that is
+named based on the compiler.  The DELTA_LIB and DELTA_BIN variables
+may need to be customized based on the installation.
 
 DELTA_ROOT = "C:\Program Files\delta3d"  (or wherever Delta3D is installed)
 DELTA_INC = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI
-DELTA_LIB = %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
+DELTA_LIB = %DELTA_ROOT%\build\lib;%DELTA_ROOT%\ext\lib
 DELTA_DATA = %DELTA_ROOT%\data
-DELTA_BIN = %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin
+DELTA_BIN = %DELTA_ROOT%\build\bin;%DELTA_ROOT%\ext\bin
 
 By adding DELTA_BIN to your PATH environment, all Delta3D applications
 will find the Delta3D .dll files.
