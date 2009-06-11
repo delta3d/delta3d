@@ -64,7 +64,7 @@ namespace dtAnim
    {
       public:
          //we will hold all the animation wrappers for each CalCoreModel
-         typedef std::vector< dtCore::RefPtr<AnimationWrapper> > AnimationWrapperArray;
+         typedef std::vector<dtCore::RefPtr<AnimationWrapper> > AnimationWrapperArray;
          //we will hold a vector of animatables for each CalCoreModel
          typedef std::vector<dtCore::RefPtr<Animatable> > AnimatableArray;
 

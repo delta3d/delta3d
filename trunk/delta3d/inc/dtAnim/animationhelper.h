@@ -56,12 +56,7 @@ namespace dtAnim
    /**
     * The AnimationHelper class is a utility class to simplify adding animation
     * to an articulated entity, it provides support for loading, rendering and
-    * animating.
-    *
-    * @usage The constructor takes an AnimNodeBuilder which will create an
-    *        osg::Geode given a Cal3DModelWrapper.  The builder will be used to
-    *        create the geode on LoadModel(), after that call GetGeode() and
-    *        add this as a child of your actor's osg::Node
+    * animating.  
     */
    class DT_ANIM_EXPORT AnimationHelper: public osg::Referenced
    {

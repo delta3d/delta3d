@@ -114,8 +114,6 @@ namespace dtAnim
       * creates the real actor and returns it.
       */
       virtual void CreateActor();
-
-   private:
    };
 
 }

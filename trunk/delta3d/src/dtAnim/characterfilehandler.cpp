@@ -70,6 +70,7 @@ const std::string CharacterFileHandler::MAX_VISIBLE_DISTANCE_ELEMENT("maxVisible
 const std::string CharacterFileHandler::SCALE_ELEMENT("scale");
 const std::string CharacterFileHandler::SCALE_FACTOR_ELEMENT("scalingFactor");
 
+////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimatableStruct::AnimatableStruct()
    : mStartDelay(0.0f)
    , mFadeIn(0.0f)
@@ -79,6 +80,7 @@ CharacterFileHandler::AnimatableStruct::AnimatableStruct()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimationChannelStruct::AnimationChannelStruct()
    : mMaxDuration(0.0f)
    , mIsLooping(false)
@@ -86,10 +88,12 @@ CharacterFileHandler::AnimationChannelStruct::AnimationChannelStruct()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::AnimationSequenceStruct::AnimationSequenceStruct()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::CharacterFileHandler()
    : mName()
    , mAnimations()
@@ -115,10 +119,12 @@ CharacterFileHandler::CharacterFileHandler()
    mLogger = &dtUtil::Log::GetInstance(CHARACTER_XML_LOGGER);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 CharacterFileHandler::~CharacterFileHandler()
 {
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::startDocument()
 {
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -147,6 +153,7 @@ void CharacterFileHandler::startDocument()
    mInSequence = false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::endDocument()
 {
    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -156,7 +163,7 @@ void CharacterFileHandler::endDocument()
    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* const localname,
                                                  const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs )
 {
@@ -350,10 +357,10 @@ void CharacterFileHandler::startElement( const XMLCh* const uri,const XMLCh* con
    mElements.push(elementStr);
 }
 
-void CharacterFileHandler::endElement(
-   const XMLCh* const uri,
-   const XMLCh* const localname,
-   const XMLCh* const qname)
+////////////////////////////////////////////////////////////////////////////////
+void CharacterFileHandler::endElement(const XMLCh* const uri,
+                                      const XMLCh* const localname,
+                                      const XMLCh* const qname)
 {
 
    if (mElements.empty())
@@ -399,8 +406,7 @@ void CharacterFileHandler::endElement(
    mElements.pop();
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::characters(const XMLCh* const chars,
                                       const unsigned int length)
 {
@@ -434,6 +440,7 @@ void CharacterFileHandler::characters(const XMLCh* const chars,
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
 {
    std::string& topEl = mElements.top();
@@ -451,6 +458,7 @@ void CharacterFileHandler::SkinningShaderCharacters(const XMLCh* const chars)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
 {
    std::string& topEl = mElements.top();
@@ -471,6 +479,7 @@ void CharacterFileHandler::LODCharacters(const XMLCh* const chars)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::ScaleCharacters(const XMLCh* const chars)
 {
    mScale = dtUtil::ToType<float>(dtUtil::XMLStringConverter(chars).ToString());
@@ -478,6 +487,7 @@ void CharacterFileHandler::ScaleCharacters(const XMLCh* const chars)
    assert (topEl == SCALE_FACTOR_ELEMENT);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, AnimatableStruct& animatable)
 {
    bool result = true;
@@ -521,6 +531,7 @@ bool CharacterFileHandler::AnimatableCharacters(const XMLCh* const chars, Animat
    return result;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
 {
    std::string& topEl = mElements.top();
@@ -562,6 +573,7 @@ void CharacterFileHandler::AnimChannelCharacters(const XMLCh* const chars)
    }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
 {
    std::string& topEl = mElements.top();
@@ -598,5 +610,7 @@ void CharacterFileHandler::AnimSequenceCharacters(const XMLCh* const chars)
                            topEl.c_str(), dtUtil::XMLStringConverter(chars).c_str());
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 } // namespace dtAnim
