@@ -580,6 +580,8 @@ void Viewer::PostFrame(const double)
 
       mMeshesToHide.clear();
    }
+
+   OnTimeout();
 }
 
 //////////////////////////////////////////////////////////////////////////

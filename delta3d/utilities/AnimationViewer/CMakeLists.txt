@@ -7,9 +7,24 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                                            )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
-file(GLOB PROG_HEADERS "*.h")
-file(GLOB PROG_SOURCES "*.cpp" "*.rc")
-list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
+SET(PROG_HEADERS ${SOURCE_PATH}/AnimationTableWidget.h
+                 ${SOURCE_PATH}/MainWindow.h
+                 ${SOURCE_PATH}/PoseMeshItem.h
+                 ${SOURCE_PATH}/PoseMeshProperties.h
+                 ${SOURCE_PATH}/PoseMeshScene.h
+                 ${SOURCE_PATH}/PoseMeshView.h
+                 ${SOURCE_PATH}/Viewer.h  )
+                 
+SET(PROG_SOURCES ${SOURCE_PATH}/AnimationTableWidget.cpp
+                 ${SOURCE_PATH}/main.cpp
+                 ${SOURCE_PATH}/MainWindow.cpp
+                 ${SOURCE_PATH}/PoseMeshItem.cpp
+                 ${SOURCE_PATH}/PoseMeshProperties.cpp
+                 ${SOURCE_PATH}/PoseMeshScene.cpp
+                 ${SOURCE_PATH}/PoseMeshView.cpp
+                 ${SOURCE_PATH}/Viewer.cpp
+                 ${SOURCE_PATH}/AnimationViewer.rc )
+
 
 QT4_ADD_RESOURCES(RCC_SOURCES AnimationViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})

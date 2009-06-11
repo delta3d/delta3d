@@ -1,31 +1,32 @@
-#include <cstdio>
 #include <QtGui/QApplication>
-
+#include <dtQt/qtguiwindowsystemwrapper.h>
+#include <dtQt/deltastepper.h>
+#include <dtCore/system.h>
 #include "MainWindow.h"
-#include "Delta3DThread.h"
-#include <dtUtil/macros.h>
+#include "Viewer.h"
 
-#ifdef DELTA_WIN32
-   #include <Windows.h>
-   #define SLEEP(milliseconds) Sleep((milliseconds))
-#else
-   #include <unistd.h>
-   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
-#endif
 
 int main(int argc, char *argv[]) 
 {
    QApplication qapp(argc, argv);  
 
-   Delta3DThread *thread = new Delta3DThread(&qapp);
+   //Create special QGLWidget's when we create DeltaWin instances
+   dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
 
-   QObject::connect(QApplication::instance(), SIGNAL(lastWindowClosed()), thread, SLOT(quit()));
-
+   //The main UI window
    MainWindow win;
+
+   dtCore::RefPtr<Viewer> mViewer = new Viewer();
+   mViewer->Config();
+
+   win.SetViewer(mViewer.get());
+   win.OnConfiged();
    win.show();
 
-   thread->SetMainWindow(&win);
-   thread->run();
+   //create a little class to ensure Delta3D performs Window "steps"
+   dtCore::System::GetInstance().Start();
+   dtQt::DeltaStepper stepper;
+   stepper.Start();
 
    if (argc >= 2)
    {
@@ -33,8 +34,7 @@ int main(int argc, char *argv[])
    }
 
    qapp.exec();
-
-   delete thread;
+   stepper.Stop();
 
    return EXIT_SUCCESS;
 }
