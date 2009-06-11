@@ -133,7 +133,6 @@ namespace dtDAL
       }
 
       // Iterate through each property in the container and append the strings.
-      char buffer[20] = {0,};
       std::string data;
       for (int index = 0; index < (int)mProperties.size(); index++)
       {

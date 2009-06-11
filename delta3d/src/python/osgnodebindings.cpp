@@ -9,3 +9,4 @@ void initOSGNodeBindings()
    class_<osg::Node, dtCore::RefPtr<osg::Node>, boost::noncopyable>("Node", no_init)
       ;
 }
+

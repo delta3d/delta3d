@@ -42,3 +42,4 @@ void initODEBodyWrapBindings()
       .def("UpdateBodyTransform", &ODEBodyWrap::UpdateBodyTransform)
       ;
 }
+
