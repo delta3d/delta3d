@@ -7,7 +7,6 @@
 
 #include "ObjectViewer.h"
 #include "ObjectViewerData.h"
-//#include "ObjectWorkspace.h"
 
 #include <dtCore/system.h>
 #include <dtCore/transform.h>

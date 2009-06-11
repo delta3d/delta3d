@@ -6,9 +6,20 @@ INCLUDE_DIRECTORIES(${QT_INCLUDE_DIR}
                                   )
 
 SET(SOURCE_PATH ${DELTA3D_SOURCE_DIR}/utilities/${APP_NAME})
-file(GLOB PROG_HEADERS "*.h")
-file(GLOB PROG_SOURCES "*.cpp" "*.rc")
-list(REMOVE_ITEM PROG_SOURCES ${SOURCE_PATH}/precomp.cpp)
+
+SET(PROG_HEADERS ${SOURCE_PATH}/ObjectViewer.h
+                 ${SOURCE_PATH}/ObjectViewerData.h
+                 ${SOURCE_PATH}/ObjectWorkspace.h
+                 ${SOURCE_PATH}/ResourceDock.h
+                 ${SOURCE_PATH}/TextEdit.h)
+                 
+SET(PROG_SOURCES ${SOURCE_PATH}/main.cpp
+                 ${SOURCE_PATH}/ObjectViewer.cpp
+                 ${SOURCE_PATH}/ObjectWorkspace.cpp
+                 ${SOURCE_PATH}/ResourceDock.cpp
+                 ${SOURCE_PATH}/TextEdit.cpp
+                 ${SOURCE_PATH}/ObjectViewer.rc)
+                 
 
 QT4_ADD_RESOURCES(RCC_SOURCES ObjectViewerResources.qrc)
 qt4_wrap_cpp(MOC_SOURCES ${PROG_HEADERS})
