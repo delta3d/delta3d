@@ -17,27 +17,27 @@ class TestPythonApp : public Application
 
 public:
 
-   TestPythonApp( const std::string& configFile = "config.xml" )
-      :  Application( configFile ),
-         mScriptManager( 0 )
+   TestPythonApp(const std::string& configFile = "config.xml")
+      : Application(configFile)
+      , mScriptManager(0)
    {
-      Object* obj = new Object( "UH-1N" );
+      Object* obj = new Object("UH-1N");
 
-      obj->LoadFile( "models/uh-1n.ive" );
+      obj->LoadFile("models/uh-1n.ive");
 
-      Transform transform( 0.0f, 50.0f, 0.0f );
-      obj->SetTransform( transform );
+      Transform transform(0.0f, 50.0f, 0.0f);
+      obj->SetTransform(transform);
 
       AddDrawable(obj);
 
       mScriptManager = new dtScript::ScriptManager();
 
       // Pre-load the Python script
-      std::string filename = dtCore::FindFileInPathList( "flyhelo.py" );
+      std::string filename = dtCore::FindFileInPathList("flyhelo.py");
 
-      if( !filename.empty() )
+      if(!filename.empty())
       {
-         mScriptManager->Load( filename );
+         mScriptManager->Load(filename);
       }
 
    }
@@ -48,7 +48,7 @@ protected:
 
 public:
 
-   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc )
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, int kc)
    {
       bool verdict(false);
       switch( kc )
@@ -78,18 +78,18 @@ public:
 
 private:
 
-   dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;
+   dtCore::RefPtr<dtScript::ScriptManager> mScriptManager;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
 
 int main()
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
-                                dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
-                                dtCore::GetDeltaRootPath() + "/examples/testPython");
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/data" + ";" +
+                               dtCore::GetDeltaRootPath() + "/examples/testPython");
 
-   dtCore::RefPtr< TestPythonApp > app = new TestPythonApp( "config.xml" );
+   dtCore::RefPtr<TestPythonApp> app = new TestPythonApp("config.xml");
 
    app->Config();
    app->Run();

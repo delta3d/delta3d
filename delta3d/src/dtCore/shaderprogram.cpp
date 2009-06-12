@@ -192,6 +192,19 @@ namespace dtCore
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ShaderProgram::AddBindAttributeLocation(const std::string& name, unsigned int index)
+   {
+      if (mGLSLProgram.valid())
+      {
+         mGLSLProgram->addBindAttribLocation(name, index);
+      }
+      else
+      {
+         LOG_ERROR("Trying to add a shader attribute binding without a shader to bind to.");
+      }
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ShaderProgram::AddGeometryShader(const std::string& fileName)
    {
@@ -302,5 +315,4 @@ namespace dtCore
 
       return newShader;
    }
-
 }
