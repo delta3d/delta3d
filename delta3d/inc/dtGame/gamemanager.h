@@ -38,6 +38,7 @@
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
 
+
 namespace dtUtil
 {
    class Log;
@@ -223,6 +224,25 @@ namespace dtGame
             {
                dtCore::RefPtr<dtDAL::ActorProxy> baseProxy = CreateActorFromPrototype(uniqueID);
                proxy = dynamic_cast<T*>(baseProxy.get());
+            }
+
+            /**
+             * Wraps up several methods used to lookup and create actors from prototypes. 
+             * It attempts to create a new actor from a prototype by using the name.  Assumes only 1 match.
+             * @param prototypeName The unique name to look for. 
+             * @param proxy Where the new actor proxy will go (with correct type) - ex dtCore::RefPtr<dtDAL::ActorProxy> newProxy
+             */
+            template <typename T>
+            void CreateActorFromPrototype(const std::string& prototypeName, dtCore::RefPtr<T>& proxy)
+            {
+               dtDAL::ActorProxy* prototypeProxy = NULL;
+               FindPrototypeByName(prototypeName, prototypeProxy);
+               if (prototypeProxy != NULL)
+               {
+                  dtCore::RefPtr<dtDAL::ActorProxy> newActorProxy = 
+                     CreateActorFromPrototype(prototypeProxy->GetId());
+                  proxy = dynamic_cast<T*>(newActorProxy.get());
+               }
             }
 
             /**
