@@ -30,6 +30,7 @@
 #ifndef DELTA_RESOURCE_TREE_WIDGET
 #define DELTA_RESOURCE_TREE_WIDGET
 
+#include <QtGui/QListWidget>
 #include <QtCore/QList>
 #include <QtGui/QTreeWidget>
 #include <QtGui/QTreeWidgetItem>
@@ -51,6 +52,25 @@ namespace dtEditQt
    public:
       ResourceTree(QWidget* parent = 0) {}
       virtual ~ResourceTree() {}
+   };
+
+   /**
+   * Class ResourceDragTree
+   * @note Created this sub class to handle tree's with drag/drop.
+   */
+   class ResourceDragTree : public ResourceTree
+   {
+   public:
+      ResourceDragTree(std::string resourceName, QWidget* parent = 0);
+      virtual ~ResourceDragTree() {}
+
+   protected:
+      void dragEnterEvent(QDragEnterEvent *event);
+      void dragMoveEvent(QDragMoveEvent *event);
+      void dropEvent(QDropEvent *event);
+      void startDrag(Qt::DropActions supportedActions);
+
+      std::string mResourceName;
    };
 
    /**

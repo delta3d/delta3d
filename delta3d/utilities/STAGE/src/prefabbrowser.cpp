@@ -310,7 +310,7 @@ namespace dtEditQt
       QHBoxLayout* hbox     = new QHBoxLayout();
 
       // Create Tree
-      mTree = new ResourceTree(groupBox);
+      mTree = new ResourceDragTree("Prefab", groupBox);
       mTree->setColumnCount(1);
       mTree->header()->hide();
       connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));

@@ -40,9 +40,17 @@
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
+#include <dtDAL/librarymanager.h>
 #include <dtCore/isector.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/exceptionenum.h>
+#include <QtGui/QDrag>
+#include <QtGui/QDragMoveEvent>
+#include <QtGui/QDragEnterEvent>
+#include <QtGui/QDragLeaveEvent>
+
+#include <osg/PolygonMode>
+#include <osg/BlendFunc>
 
 
 namespace dtEditQt
@@ -54,6 +62,8 @@ namespace dtEditQt
       QGLWidget* shareWith)
       : Viewport(type, name, parent, shareWith)
       , mObjectMotionModel(NULL)
+      //, mGhostTransformable(NULL)
+      , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
    {
       mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
@@ -62,6 +72,27 @@ namespace dtEditQt
       mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
       mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
+
+      //mGhostTransformable = new dtCore::Transformable("Ghost");
+      //osg::Group* groupNode = mGhostTransformable->GetOSGNode()->asGroup();
+      //if (groupNode)
+      //{
+      //   // Make this now render transparently.
+      //   osg::StateSet* stateSet = groupNode->getOrCreateStateSet();
+      //   if (stateSet)
+      //   {
+      //      stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+      //      stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
+
+      //      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
+      //      stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
+
+      //      osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
+      //      stateSet->setAttribute(blend, osg::StateAttribute::ON);
+      //   }
+      //}
+
+      setAcceptDrops(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -75,15 +106,24 @@ namespace dtEditQt
    {
       Viewport::setScene(scene);
 
-      if (mObjectMotionModel.valid())
+      osg::Group* node = getSceneView()->getSceneData()->asGroup();
+      if (node)
       {
-         osg::Group* node = getSceneView()->getSceneData()->asGroup();
-         if (node)
+         if (mObjectMotionModel.valid())
          {
             mObjectMotionModel->SetSceneNode(node);
+
+            mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
 
-         mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
+         //if (mGhostTransformable.valid())
+         //{
+         //   osg::Node* ghostNode = mGhostTransformable->GetOSGNode();
+         //   if (ghostNode)
+         //   {
+         //      node->addChild(ghostNode);
+         //   }
+         //}
       }
    }
 
@@ -197,6 +237,162 @@ namespace dtEditQt
       getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
 
       return osg::Vec2(screenPos.x(), screenPos.y());
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::ClearGhostProxy()
+   {
+      if (mGhostProxy.valid())
+      {
+         dtCore::DeltaDrawable* drawable = NULL;
+         mGhostProxy->GetActor(drawable);
+         //mGhostTransformable->RemoveChild(drawable);
+
+         ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(drawable);
+
+         mGhostProxy = NULL;
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::dragEnterEvent(QDragEnterEvent* event)
+   {
+      // Create a ghost of the object being dragged into the view.
+      if (event->mimeData()->hasFormat("Prefab"))
+      {
+         ClearGhostProxy();
+         
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
+         if (mGhostProxy.valid())
+         {
+            QByteArray ghostData = event->mimeData()->data("Prefab");
+            QDataStream dataStream(&ghostData, QIODevice::ReadOnly);
+            QString resourceIdentity;
+            dataStream >> resourceIdentity;
+
+            // Set the prefab resource of the actor to the current prefab.
+            dtDAL::ResourceActorProperty* resourceProp = NULL;
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
+            if (resourceProp)
+            {
+               dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
+               resourceProp->SetValue(&descriptor);
+            }
+
+            dtCore::DeltaDrawable* drawable = NULL;
+            mGhostProxy->GetActor(drawable);
+            //mGhostTransformable->AddChild(drawable);
+
+            ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
+            ViewportManager::GetInstance().refreshAllViewports();
+         }
+
+         event->accept();
+         return;
+      }
+
+      event->ignore();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::dragLeaveEvent(QDragLeaveEvent* event)
+   {
+      // Remove the ghost.
+      ClearGhostProxy();
+
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::dragMoveEvent(QDragMoveEvent* event)
+   {
+      if (event->mimeData()->hasFormat("Prefab"))
+      {
+         // Move the position of the ghost.
+         if (mGhostProxy.valid())
+         {
+            dtCore::DeltaDrawable* ghostDrawable = NULL;
+            mGhostProxy->GetActor(ghostDrawable);
+
+            osg::Vec3 position;
+
+            if (!getPickPosition(event->pos().x(), event->pos().y(), position, ghostDrawable))
+            {
+               // Get the current position and direction the camera is facing.
+               osg::Vec3 pos = mCamera->getPosition();
+               osg::Vec3 viewDir = mCamera->getViewDir();
+
+               const osg::BoundingSphere& bs = mGhostProxy->GetActor()->GetOSGNode()->getBound();
+
+               float actorCreationOffset = EditorData::GetInstance().GetActorCreationOffset();
+               float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
+               if (offset <= 0.0f)
+               {
+                  offset = actorCreationOffset;
+               }
+               position = pos + (viewDir * offset * 2);
+            }
+
+            dtDAL::TransformableActorProxy* tProxy =
+               dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
+
+            if (tProxy)
+            {
+               tProxy->SetTranslation(position);
+            }
+
+            ViewportManager::GetInstance().refreshAllViewports();
+         }
+
+         event->setDropAction(Qt::MoveAction);
+         event->accept();
+      }
+      else
+      {
+         event->ignore();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::dropEvent(QDropEvent* event)
+   {
+      if (event->mimeData()->hasFormat("Prefab"))
+      {
+         if (mGhostProxy.valid())
+         {
+            // add the new proxy to the map
+            dtCore::RefPtr<dtDAL::Map> mapPtr = EditorData::GetInstance().getCurrentMap();
+            if (mapPtr.valid())
+            {
+               mapPtr->AddProxy(*(mGhostProxy.get()));
+            }
+
+            // let the world know that a new proxy exists
+            EditorEvents::GetInstance().emitBeginChangeTransaction();
+            EditorEvents::GetInstance().emitActorProxyCreated(mGhostProxy.get(), false);
+            EditorEvents::GetInstance().emitEndChangeTransaction();
+
+            // Now, let the world that it should select the new actor proxy.
+            std::vector< dtCore::RefPtr<dtDAL::ActorProxy> > actors;
+            actors.push_back(mGhostProxy.get());
+            EditorEvents::GetInstance().emitActorsSelected(actors);
+
+            dtCore::DeltaDrawable* drawable = NULL;
+            mGhostProxy->GetActor(drawable);
+            //mGhostTransformable->RemoveChild(drawable);
+
+            mGhostProxy = NULL;
+         }
+
+         event->setDropAction(Qt::MoveAction);
+         event->accept();
+
+         ViewportManager::GetInstance().refreshAllViewports();
+      }
+      else
+      {
+         event->ignore();
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////

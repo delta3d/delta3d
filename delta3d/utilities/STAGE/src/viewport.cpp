@@ -480,7 +480,7 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
+   bool Viewport::calculatePickISector(int x, int y)
    {
       if (!mScene.valid())
       {
@@ -504,7 +504,7 @@ namespace dtEditQt
       }
 
       mIsector->Reset();
-      mIsector->SetScene( getScene());
+      mIsector->SetScene(getScene());
       osg::Vec3 nearPoint, farPoint;
       int yLoc = int(mSceneView->getViewport()->height()-y);
 
@@ -515,6 +515,55 @@ namespace dtEditQt
       // If we found no intersections no need to continue so emit an empty selection
       // and return.
       if (!mIsector->Update())
+      {
+         return false;
+      }
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   {
+      if (!calculatePickISector(x, y))
+      {
+         return false;
+      }
+
+      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+      for (int index = 0; index < (int)hitList.size(); index++)
+      {
+         osg::NodePath &nodePath = hitList[index].getNodePath();
+         dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+
+         // Make sure the drawable and none of its parents are the ignored drawable.
+         bool isIgnored = false;
+         while (drawable)
+         {
+            if (drawable == ignoredDrawable)
+            {
+               isIgnored = true;
+               break;
+            }
+
+            drawable = drawable->GetParent();
+         }
+
+         if (!isIgnored)
+         {
+            position = hitList[index].getWorldIntersectPoint();
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
+   {
+      // If we found no intersections no need to continue so emit an empty selection
+      // and return.
+      if (!calculatePickISector(x, y))
       {
          return NULL;
       }

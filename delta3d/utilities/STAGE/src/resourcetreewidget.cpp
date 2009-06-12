@@ -31,6 +31,8 @@
 #include <QtCore/QList>
 #include <QtGui/QPixmap>
 #include <QtGui/QIcon>
+#include <QtGui/QDrag>
+#include <QtGui/QDragMoveEvent>
 
 #include "dtEditQt/resourcetreewidget.h"
 #include <dtUtil/log.h>
@@ -39,7 +41,108 @@
 namespace dtEditQt
 {
 
+   ////////////////////////////////////////////////////////////////////////////////
+   // RESOURCE DRAG TREE
+   ////////////////////////////////////////////////////////////////////////////////
+   
+   ResourceDragTree::ResourceDragTree(std::string resourceName, QWidget* parent)
+   {
+      setDragEnabled(true);
+      //setAcceptDrops(true);
+      setDropIndicatorShown(true);
+
+      mResourceName = resourceName;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDragTree::dragEnterEvent(QDragEnterEvent *event)
+   {
+      if (event->mimeData()->hasFormat(mResourceName.c_str()))
+      {
+         event->accept();
+      }
+      else
+      {
+         event->ignore();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDragTree::dragMoveEvent(QDragMoveEvent *event)
+   {
+      if (event->mimeData()->hasFormat(mResourceName.c_str()))
+      {
+         event->setDropAction(Qt::MoveAction);
+         event->accept();
+      }
+      else
+      {
+         event->ignore();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDragTree::dropEvent(QDropEvent *event)
+   {
+      if (event->mimeData()->hasFormat(mResourceName.c_str()))
+      {
+         event->setDropAction(Qt::MoveAction);
+         event->accept();
+      }
+      else
+      {
+         event->ignore();
+      }
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDragTree::startDrag(Qt::DropActions /*supportedActions*/)
+   {
+      ResourceTreeWidget *item = dynamic_cast<ResourceTreeWidget*>(currentItem());
+
+      // Only resource items can be dragged.
+      if (!item || !item->isResource())
+      {
+         return;
+      }
+
+      QByteArray itemData;
+      QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+      QIcon icon = item->icon(0);
+      QPixmap pixmap = icon.pixmap(16);
+      dtDAL::ResourceDescriptor resource = item->getResourceDescriptor();
+      QString resourceIdentity = resource.GetResourceIdentifier().c_str();
+
+      dataStream << resourceIdentity;
+
+      ////
+      //QDataStream readStream(&itemData, QIODevice::ReadOnly);
+      //QString compareId;
+      //readStream >> compareId;
+      //dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(compareId.toStdString());
+      ////
+
+      int width = pixmap.width();
+      int height = pixmap.height();
+
+      QMimeData *mimeData = new QMimeData;
+      mimeData->setData(mResourceName.c_str(), itemData);
+
+      QDrag *drag = new QDrag(this);
+      drag->setMimeData(mimeData);
+      drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+      drag->setPixmap(pixmap);
+
+      if (drag->exec(Qt::MoveAction) == Qt::MoveAction)
+      {
+      }
+   }
+
+
+   ////////////////////////////////////////////////////////////////////////////////
+   // RESOURCE TREE WIDGET
    ///////////////////////////////////////////////////////////////////////////////
+   
    ResourceTreeWidget::ResourceTreeWidget(ResourceTree* parent)
       : QTreeWidgetItem(parent)
    {

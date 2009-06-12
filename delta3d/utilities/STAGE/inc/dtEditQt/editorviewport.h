@@ -208,6 +208,19 @@ namespace dtEditQt {
       virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
       /**
+      * Clears the current Ghost Proxy.
+      */
+      void ClearGhostProxy();
+
+      /**
+      * Drag events.
+      */
+      void dragEnterEvent(QDragEnterEvent* event);
+      void dragLeaveEvent(QDragLeaveEvent* event);
+      void dragMoveEvent(QDragMoveEvent* event);
+      void dropEvent(QDropEvent* event);
+
+      /**
        * Called when the user presses a mouse button in the viewport.  Based on
        * the combination of buttons pressed, the viewport's current mode will
        * be set.
@@ -283,6 +296,9 @@ namespace dtEditQt {
 
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
       STAGEObjectMotionModel::MotionType     mMotionType;
+
+      //dtCore::RefPtr<dtCore::Transformable>  mGhostTransformable;
+      dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
 
       Qt::MouseButton                        mMouseButton;
       Qt::MouseButtons                       mMouseButtons;
