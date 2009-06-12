@@ -253,6 +253,27 @@ namespace dtEditQt
       virtual void pick(int x, int y);
 
       /**
+      * Projects the 2D window coordinates into the current scene and determines
+      * if a ray whose origin is at the projected point intersects any actors
+      * in the current scene.  Window coordinates are such that the origin is
+      * in the upper left corner of the window.
+      * @param x Horizonal window coordinate.
+      * @param y Vertical window coordinate.
+      * @retrun True if there was a collision.
+      */
+      bool calculatePickISector(int x, int y);
+
+      /**
+      * Projects the 2D window coordinates into the current scene and determines
+      * if a ray whose origin is at the projected point intersects any actors
+      * in the current scene.  Window coordinates are such that the origin is
+      * in the upper left corner of the window.
+      * @param x Horizonal window coordinate.
+      * @param y Vertical window coordinate.
+      */
+      bool getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+
+      /**
        * Projects the 2D window coordinates into the current scene and determines
        * if a ray whose origin is at the projected point intersects any actors
        * in the current scene.  Window coordinates are such that the origin is

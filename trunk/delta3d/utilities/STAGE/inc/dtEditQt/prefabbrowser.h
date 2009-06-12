@@ -56,7 +56,7 @@ namespace dtCore
 
 namespace dtEditQt
 {
-   class ResourceTree;
+   class ResourceDragTree;
    class ResourceTreeWidget;
 
    class PerspectiveViewport;
@@ -181,11 +181,11 @@ namespace dtEditQt
       QPushButton* mPreviewBtn;
 
       // Tree
-      QIcon          mResourceIcon;
-      ResourceTree*  mTree;
-      QPushButton*   mCreatePrefabBtn;
-      QPushButton*   mCreateInstanceBtn;
-      QPushButton*   mRefreshPrefabBtn;
+      QIcon                mResourceIcon;
+      ResourceDragTree*    mTree;
+      QPushButton*         mCreatePrefabBtn;
+      QPushButton*         mCreateInstanceBtn;
+      QPushButton*         mRefreshPrefabBtn;
 
       ResourceTreeWidget*  mRootPrefabTree;
 
