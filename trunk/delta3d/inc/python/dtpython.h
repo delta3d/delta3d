@@ -35,24 +35,24 @@ namespace boost
    namespace python
    {
       template <typename T>
-      struct pointee< osg::ref_ptr<T> >
+      struct pointee<osg::ref_ptr<T> >
       {
          typedef T type;
       };
       
-      template <class T> T const* get_pointer( dtCore::RefPtr<T> const& p)
+      template <class T> T const* get_pointer(dtCore::RefPtr<T> const& p)
       {
          return p.get();
       }
-      template <class T> T const* get_pointer( osg::ref_ptr<T> const& p)
+      template <class T> T const* get_pointer(osg::ref_ptr<T> const& p)
       {
          return p.get(); 
       }
-      template <class T> T* get_pointer( dtCore::RefPtr<T>& p)
+      template <class T> T* get_pointer(dtCore::RefPtr<T>& p)
       {
          return p.get();
       }
-      template <class T> T* get_pointer( osg::ref_ptr<T>& p)
+      template <class T> T* get_pointer(osg::ref_ptr<T>& p)
       {
          return p.get(); 
       }

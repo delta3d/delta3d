@@ -184,6 +184,12 @@ namespace dtCore
           */
          void GetParameterList(std::vector<dtCore::RefPtr<ShaderParameter> >& toFill) const;
 
+         /** Add an attribute location binding. In Open GL Shader Language, each vertex
+          * can have a number of attributes (minimum supported is 16 = 0 to 15).  You can use these 
+          * attributes to put a single value for each vertex.
+          */
+         void AddBindAttributeLocation(const std::string& name, unsigned int index);
+
          /**
           * Updates any parameter state which may have changed on this shader since the
           * last update.
