@@ -151,7 +151,7 @@ void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc
    XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&value);
 
    name = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("xsi:schemaLocation");
-   value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("http://www.w3schools.com StageConfig.xsd");
+   value = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("http://www.w3schools.com STAGEConfig.xsd");
 
    root->setAttribute(name, value);
 
