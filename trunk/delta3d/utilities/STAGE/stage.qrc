@@ -54,6 +54,6 @@
 	  <file>icons/ungroup.png</file>
       <file>icons/viewer.ico</file>
       <file>icons/wireframemode_tiny.png</file>
-      <file>gpl.txt</file>
+      <file>license.txt</file>
     </qresource>
 </RCC>

@@ -43,7 +43,7 @@ namespace dtEditQt
    public:
       static void staticInitialize();
 
-      static std::string GPL_LICENSE_FILE;
+      static std::string LICENSE_FILE;
 
       static std::string ICON_FILE_NEW_MAP;
       static std::string ICON_FILE_OPEN_MAP;
