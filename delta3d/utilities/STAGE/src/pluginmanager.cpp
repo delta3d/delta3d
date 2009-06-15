@@ -29,17 +29,10 @@ namespace dtEditQt
       // take care of debug/release library stuff on windows
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)     
          std::string libExtension = ".dll";
-         #ifdef _DEBUG
-            int extLength = 5;
-         #else
-            int extLength = 4;
-         #endif
       #elif defined(__APPLE__)
          std::string libExtension = ".dylib";
-         int extLength = 6;
       #else
          std::string libExtension = ".so";
-         int extLength = 3;
       #endif
 
       // get libs from directory
@@ -54,8 +47,15 @@ namespace dtEditQt
       catch (const dtUtil::Exception& e)
       {
          //in case the path is bogus	
+         DTUNREFERENCED_PARAMETER(e);
       }
       
+
+      if (!files.empty())
+      {
+         //add the path to the list of paths to search for libraries.
+         LibrarySharingManager::GetInstance().AddToSearchPath(path);
+      }
 
       // for each library in dir
       DirectoryContents::const_iterator i;
@@ -63,26 +63,12 @@ namespace dtEditQt
       {
          
          std::string fileName = *i;
-         int length = fileName.size();
-
-         // take care of windows debug library extension
-         #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-            
-            std::string e = fileName.substr(length - 5, length);
-            #if defined _DEBUG
-               // for windows debug build: only include dlls that end with a 'd'
-               if(e.compare("d.dll") != 0) continue;
-            #else
-               // for windows release build: only include dlls that DON'T end with a 'd'
-               if(e.compare("d.dll") == 0) continue;
-            #endif
-         #endif
 
          try
          {
             // load the plugin library
-            std::string pluginpath = path + "/" + fileName.substr(0, length - extLength);
-            PluginFactory* factory = LoadPluginFactory(pluginpath);
+            const std::string basePluginName = LibrarySharingManager::GetPlatformIndependentLibraryName(fileName);
+            PluginFactory* factory = LoadPluginFactory(basePluginName);
             std::string name = factory->GetName();
 
             // check if a plugin with this name already exists
@@ -114,7 +100,7 @@ namespace dtEditQt
    }
 
 
-   PluginFactory* PluginManager::LoadPluginFactory(const std::string& libName)
+   PluginFactory* PluginManager::LoadPluginFactory(const std::string& baseLibName)
    {
       // use library sharing manager to do the actual library loading
       LibrarySharingManager& lsm = LibrarySharingManager::GetInstance();
@@ -122,12 +108,12 @@ namespace dtEditQt
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> libHandle;
       try
       {
-         libHandle = lsm.LoadSharedLibrary(libName);
+         libHandle = lsm.LoadSharedLibrary(baseLibName);
       }
       catch (Exception)
       {
          std::ostringstream msg;
-         msg << "Unable to load plugin " << libName;
+         msg << "Unable to load plugin " << baseLibName;
          throw Exception(msg.str(), __FILE__, __LINE__);
       }
         
@@ -139,7 +125,7 @@ namespace dtEditQt
       if (!createFn)
       {
          std::ostringstream msg;
-         msg << "Plugin " << libName << " does not contain symbol 'CreatePluginFactory'";
+         msg << "Plugin " << baseLibName << " does not contain symbol 'CreatePluginFactory'";
          throw Exception(msg.str(), __FILE__, __LINE__);
       }
 
@@ -154,7 +140,7 @@ namespace dtEditQt
       if(factory->GetExpectedSTAGEVersion() != "$Revision$")
       {
          std::ostringstream msg;
-         msg << "Can't load plugin " << libName << ": Built against wrong version";
+         msg << "Can't load plugin " << baseLibName << ": Built against wrong version";
          throw Exception(msg.str(), __FILE__, __LINE__);
       }
       else
