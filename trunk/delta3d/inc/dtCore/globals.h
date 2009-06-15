@@ -43,6 +43,9 @@ namespace dtCore
    /// Convienence method to get the supplied environment variable
    DT_CORE_EXPORT std::string GetEnvironment(const std::string& env);
 
+   /// Is the supplied environment variable defined?
+   DT_CORE_EXPORT bool IsEnvironment(const std::string& env);
+
    /**
     * Sets an environment variable.
     * @param name the name of the variable to set.
@@ -57,9 +60,6 @@ namespace dtCore
     * @return The full path to the file requested or empty string if it's not found. 
     */
    DT_CORE_EXPORT std::string FindFileInPathList(const std::string& fileName);
-
-
 }
-
 
 #endif // DELTA_GLOBALS
