@@ -185,7 +185,8 @@ void MassImporterPlugin::CreateActorFromMesh(const dtDAL::ActorType& type, const
 
 ////////////////////////////////////////////////////////////
 
-
+namespace MassImporter
+{
 class DT_MASS_IMPORTER_EXPORT PluginFactory : public dtEditQt::PluginFactory
 {
 public:
@@ -221,8 +222,9 @@ private:
 
    dtEditQt::Plugin* mPlugin;
 }; 
+} //namespace MassImporter
 
 extern "C" DT_MASS_IMPORTER_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
 {
-   return new PluginFactory;
+   return new MassImporter::PluginFactory;
 }
