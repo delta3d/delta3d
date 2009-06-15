@@ -72,8 +72,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::MainWindow(const std::string& stagePath)
       : mCfgMgr()
-      , mSTAGEFullPath(stagePath)
       , mPluginManager(new PluginManager(this))
+      , mSTAGEFullPath(stagePath)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
