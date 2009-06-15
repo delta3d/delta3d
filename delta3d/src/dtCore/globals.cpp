@@ -191,4 +191,17 @@ namespace dtCore
    {
       return GetEnvironment("DELTA_ROOT");
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   DT_CORE_EXPORT bool IsEnvironment(const std::string& env)
+   {
+      if (char* ptr = getenv(env.c_str()))
+      {
+         return true;
+      }
+      else
+      {
+         return false;
+      }
+   }
 }
