@@ -41,6 +41,7 @@
 #include <dtDAL/actorproperty.h>
 #include <dtCore/timer.h>
 #include "dtEditQt/typedefs.h"
+#include "export.h"
 
 class QGLWidget;
 class QWidget;
@@ -68,7 +69,7 @@ namespace dtEditQt
     *  If this behavior is not desired, calling enableContextSharing(false) before creating
     *  any viewports will disable context sharing.
     */
-   class ViewportManager : public QObject, public osg::Referenced
+   class DT_EDITQT_EXPORT ViewportManager : public QObject, public osg::Referenced
    {
       Q_OBJECT
 
