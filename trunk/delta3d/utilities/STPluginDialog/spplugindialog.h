@@ -5,7 +5,7 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 #include "ui_spplugin.h"
-#include <QtGUI/QMenu>
+#include <QtGui/QMenu>
 #include <QtGui/QWidget>
 
 /**
@@ -51,4 +51,4 @@ private:
 
 };
 
-#endif PLUGIN_DIALOG_PLUGIN
+#endif //PLUGIN_DIALOG_PLUGIN

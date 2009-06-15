@@ -5,7 +5,7 @@
 #include <dtEditQt/mainwindow.h>
 #include <dtEditQt/plugininterface.h>
 #include <QtGui/QComboBox>
-#include <QtGUI/QDockWidget>
+#include <QtGui/QDockWidget>
 #include <QtGui/QLineEdit>
 
 /**
