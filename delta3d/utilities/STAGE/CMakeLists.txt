@@ -41,6 +41,9 @@ TARGET_LINK_LIBRARIES( ${APP_NAME}
                        ${DTACTORS_LIBRARY}
                      )
                      
+SET_TARGET_PROPERTIES(${APP_NAME}
+                     PROPERTIES DEFINE_SYMBOL DT_EDITQT_LIBRARY)                     
+                     
 #MESSAGE(STATUS ${QT_LIBRARIES})
 
 #Not Sure if this is needed
@@ -58,6 +61,10 @@ IF (MSVC_IDE)
 ENDIF (MSVC_IDE)
 
 IF (MSVC)
+
+  # export symbols so plugins get access
+  SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES ENABLE_EXPORTS true)
+  
   SET_TARGET_PROPERTIES(${APP_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 ENDIF (MSVC)
 

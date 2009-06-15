@@ -29,6 +29,7 @@
 #ifndef DELTA_EDITOR_EVENTS
 #define DELTA_EDITOR_EVENTS
 
+#include <dtEditQt/export.h>
 #include <QtCore/QObject>
 #include <osg/Referenced>
 #include <vector>
@@ -52,7 +53,7 @@ namespace dtEditQt
     * is not technically required, it acts as a single point of implementation for signals.
     * This class is a singleton
     */
-   class EditorEvents : public QObject, public osg::Referenced
+   class DT_EDITQT_EXPORT EditorEvents : public QObject, public osg::Referenced
    {
       Q_OBJECT
 

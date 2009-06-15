@@ -29,6 +29,7 @@
 #ifndef DELTA_EDITOR_DATA
 #define DELTA_EDITOR_DATA
 
+#include <dtEditQt/export.h>
 #include <QtGui/QColor>
 #include <osg/Referenced>
 #include <vector>
@@ -54,7 +55,7 @@ namespace dtEditQt
     * repository.  Go here to get to the main window, the current map, selected actors, etc...
     * @note The EditorData class follows the Singleton pattern.
     */
-   class EditorData : public osg::Referenced
+   class DT_EDITQT_EXPORT EditorData : public osg::Referenced
    {
    public:
       /**

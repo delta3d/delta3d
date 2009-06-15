@@ -30,6 +30,7 @@
 #ifndef DELTA_MAIN_WINDOW
 #define DELTA_MAIN_WINDOW
 
+#include <dtEditQt/export.h>
 #include <QtGui/QMainWindow>
 #include <dtCore/uniqueid.h>
 #include <dtDAL/actorproxy.h>
@@ -47,12 +48,13 @@ namespace dtEditQt
    class PropertyEditor;
    class ActorTab;
    class ResourceBrowser;   
+   class PluginManager;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
     * toolbar, statusbar, and main UI interface.
     */
-   class MainWindow : public QMainWindow
+   class DT_EDITQT_EXPORT MainWindow : public QMainWindow
    {
       Q_OBJECT
 
@@ -94,6 +96,28 @@ namespace dtEditQt
        * @return the property editor.
        */
       PropertyEditor* GetPropertyEditor();
+
+      
+      /**
+       * menu accessors 
+       */
+      QMenu* GetFileMenu() const    { return mFileMenu; }
+      QMenu* GetEditMenu() const    { return mEditMenu; }
+      QMenu* GetProjectMenu() const { return mProjectMenu; }
+      QMenu* GetWindowMenu() const  { return mWindowMenu; }
+      QMenu* GetHelpMenu() const    { return mHelpMenu; }
+      QMenu* GetToolsMenu() const   { return mToolsMenu; }
+
+      /**
+       * @return the plugin manager
+       */
+      PluginManager* GetPluginManager() { return mPluginManager; }
+
+      /**
+       * @return the configuration manager
+       */
+      ConfigurationManager* GetConfigurationManager() { return &mCfgMgr; }
+      
 
    public slots:
       /**
@@ -203,6 +227,7 @@ namespace dtEditQt
 
    private:      
       ConfigurationManager mCfgMgr;
+      PluginManager* mPluginManager;
       std::string mSTAGEFullPath;
 
       QMenu* mFileMenu;

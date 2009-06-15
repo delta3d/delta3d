@@ -36,6 +36,7 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QMessageBox>
 #include <QtGui/QCloseEvent>
+#include <QtCore/QDir>
 #include <QtCore/QTimer>
 #include <dtCore/uniqueid.h>
 #include <QtGui/QIcon>
@@ -51,6 +52,7 @@
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/viewportcontainer.h>
 #include <dtEditQt/editorviewportcontainer.h>
+#include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/actortab.h>
 #include <dtEditQt/resourcebrowser.h>
@@ -71,6 +73,7 @@ namespace dtEditQt
    MainWindow::MainWindow(const std::string& stagePath)
       : mCfgMgr()
       , mSTAGEFullPath(stagePath)
+      , mPluginManager(new PluginManager(this))
       , mFileMenu(NULL)
       , mEditMenu(NULL)
       , mProjectMenu(NULL)
@@ -114,6 +117,30 @@ namespace dtEditQt
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
       setWindowIcon(icon);
+      
+      // set plugin path
+      std::string pluginPath;
+      if (dtCore::IsEnvironment("STAGE_PLUGIN_PATH"))
+      {
+         pluginPath = dtCore::GetEnvironment("STAGE_PLUGIN_PATH");;
+      }
+
+      if (pluginPath.empty())
+      {
+         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
+         if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
+         {
+            pluginPath = "."; // if nothing else, try to load plugins from the current dir
+         }
+      }
+
+      LOG_INFO("Trying to load plugins from directory " + pluginPath);
+         
+      // instantiate all plugin factories and immediately start system plugins
+      mPluginManager->LoadPluginsInDir(pluginPath);
+
+      // start plugins that were set in config file
+      mPluginManager->StartPluginsInConfigFile();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

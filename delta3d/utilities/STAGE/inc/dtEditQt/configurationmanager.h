@@ -20,7 +20,8 @@ public:
    {
       GENERAL,
       LAYOUT,
-      MENU
+      MENU,
+      PLUGINS
    };
 
    ConfigurationManager();
@@ -57,6 +58,7 @@ private:
    std::map<std::string, std::string> mGeneralVariables;    // name/value pairs
    std::map<std::string, std::string> mLayoutVariables;     // name/value pairs
    std::map<std::string, std::string> mMenuVariables;       // name/value pairs
+   std::map<std::string, std::string> mPluginVariables;     // name/value pairs
    //To add more sections to the config file, make some more maps here, add a 
    //value to the SectionType enum, and then modify the XML readers/writers   
    

@@ -73,6 +73,9 @@ std::string ConfigurationManager::GetVariable(SectionType section,
       case MENU:
          return mMenuVariables[name];
          break;
+      case PLUGINS:
+         return mPluginVariables[name];
+         break;
       default:
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
                    __FUNCTION__, __LINE__, "Unrecognized SectionType");
@@ -98,6 +101,9 @@ void ConfigurationManager::SetVariable(SectionType section,
          break;
       case MENU:
          mMenuVariables[name] = value;
+         break;
+      case PLUGINS:
+         mPluginVariables[name] = value;
          break;
       default:
          errString = "Unrecognized SectionType, unable to set variable: ";
@@ -155,6 +161,7 @@ void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc
    root->appendChild(WriteSectionToXML(doc, GENERAL));
    root->appendChild(WriteSectionToXML(doc, LAYOUT));
    root->appendChild(WriteSectionToXML(doc, MENU));
+   root->appendChild(WriteSectionToXML(doc, PLUGINS));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -181,6 +188,11 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
          beginIt = mMenuVariables.begin();
          endIt = mMenuVariables.end();
          groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Menu");
+         break;
+      case PLUGINS:
+         beginIt = mPluginVariables.begin();
+         endIt = mPluginVariables.end();
+         groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Plugins");
          break;
       default:
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
@@ -237,6 +249,10 @@ void ConfigurationManager::startElement(const XMLCh* const uri, const XMLCh* con
    else if(sectionStr == "Menu")
    {
       currentMapPtr = &mMenuVariables;
+   }
+   else if(sectionStr == "Plugins")
+   {
+      currentMapPtr = &mPluginVariables;
    }
    else
    {
@@ -314,6 +330,8 @@ void ConfigurationManager::SetDefaultConfigValues()
    mLayoutVariables["ShowPropertyEditor"] = "true";
    mLayoutVariables["ShowActorTab"] = "true";
    mLayoutVariables["ShowResourceBrowser"] = "true";
+
+   mPluginVariables["Activated"] = "";
 }
 
 } //namespace dtEditQt
