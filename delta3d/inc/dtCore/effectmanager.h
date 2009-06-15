@@ -153,10 +153,10 @@ namespace dtCore
           * none
           * @return a pointer to the detonation object
           */
-         Detonation* AddDetonation( const osg::Vec3& position,
-                                    const std::string& detonationName = "HighExplosiveDetonation",
-                                    double timeToLive = 5.0,
-                                    Transformable* parent = 0 );
+         Detonation* AddDetonation(const osg::Vec3& position,
+                                   const std::string& detonationName = "HighExplosiveDetonation",
+                                   double timeToLive = 5.0,
+                                   Transformable* parent = 0);
 
          /**
           * Removes an effect from this manager.
@@ -192,7 +192,7 @@ namespace dtCore
           *
           * @param data the message structure
           */
-         virtual void OnMessage(MessageData *data);
+         virtual void OnMessage(MessageData* data);
 
 
       protected:
@@ -215,19 +215,19 @@ namespace dtCore
          /**
           * Maps detonation names to filenames.
           */
-         typedef std::map< std::string, std::string > StringMap;
+         typedef std::map<std::string, std::string> StringMap;
          StringMap mDetonationTypeFilenameMap;
 
          /**
           * The vector of active effects.
           */
-         typedef std::vector< dtCore::RefPtr<Effect> > EffectVector;
+         typedef std::vector<dtCore::RefPtr<Effect> > EffectVector;
          EffectVector mEffects;
 
          /**
           * The set of effect listeners.
           */         
-         typedef std::vector< dtCore::RefPtr<EffectListener> > EffectListenerVector;
+         typedef std::vector<dtCore::RefPtr<EffectListener> > EffectListenerVector;
          EffectListenerVector mEffectListeners;
 
          /**
@@ -236,8 +236,8 @@ namespace dtCore
          double mLastTime;
    };
 
-   DetonationType StringToDetonationType( const std::string& stringType );
-   std::string DetonationTypeToString( DetonationType detonationType );
+   DetonationType StringToDetonationType(const std::string& stringType);
+   std::string DetonationTypeToString(DetonationType detonationType);
      
    /**
     * An interface for objects interested in the addition and removal
@@ -254,7 +254,7 @@ namespace dtCore
           * the event
           * @param effect the effect object
           */
-         virtual void EffectAdded( EffectManager* effectManager, Effect* effect ) = 0;
+         virtual void EffectAdded(EffectManager* effectManager, Effect* effect) = 0;
 
          /**
           * Called when an effect is removed from the manager.
@@ -263,7 +263,7 @@ namespace dtCore
           * the event
           * @param effect the effect object
           */
-         virtual void EffectRemoved( EffectManager* effectManager, Effect* effect ) = 0;
+         virtual void EffectRemoved(EffectManager* effectManager, Effect* effect) = 0;
    };
 
    /**
@@ -368,11 +368,11 @@ namespace dtCore
           * @param parent the parent of the detonation, or NULL
           * for none
           */
-         Detonation( osg::Node* node,
-                     double timeToLive,
-                     const osg::Vec3& position,
-                     const std::string& detonationName,
-                     Transformable* parent);
+         Detonation(osg::Node* node,
+                    double timeToLive,
+                    const osg::Vec3& position,
+                    const std::string& detonationName,
+                    Transformable* parent);
 
          /**
           * Retrieves the position of this detonation.
@@ -388,7 +388,7 @@ namespace dtCore
           * @return the type of this detonation
           */
          const std::string& GetType();
-         void GetType( DetonationType& detonationType );
+         void GetType(DetonationType& detonationType);
 
          /**
           * Returns the Transformable parent of the detonation, or
