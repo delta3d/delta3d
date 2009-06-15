@@ -152,14 +152,14 @@ namespace dtEditQt
    ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget* parent)
       : QTreeWidgetItem(parent)
    {
-      LOG_INFO("Initializing ResourceTreeWidget - as a root node (QTreeWidget parent)");
+      LOG_DEBUG("Initializing ResourceTreeWidget - as a root node (QTreeWidget parent)");
       // null object - category
    }
    ///////////////////////////////////////////////////////////////////////////////
    ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget* parent, dtDAL::ResourceDescriptor newResource)
       : QTreeWidgetItem(parent)
    {
-      LOG_INFO("Initializing ResourceTreeWidget - Resource node");
+      LOG_DEBUG("Initializing ResourceTreeWidget - Resource node");
 
       mIsResource = false;
       // store the resource assocated with this treeitem

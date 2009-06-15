@@ -46,7 +46,7 @@ namespace dtEditQt
    ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, dtCore::RefPtr<const dtDAL::ActorType> actorType)
       : QTreeWidgetItem(parent)
    {
-      LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
+      LOG_DEBUG("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
 
       mActorType = actorType;
 
@@ -67,7 +67,7 @@ namespace dtEditQt
    ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, const QString& str)
       : QTreeWidgetItem(parent)
    {
-      LOG_INFO("Initializing ActorTypeTreeWidget - Internal node:"  + str.toStdString());
+      LOG_DEBUG("Initializing ActorTypeTreeWidget - Internal node:"  + str.toStdString());
 
       mActorType = NULL;
 
@@ -85,7 +85,7 @@ namespace dtEditQt
    ActorTypeTreeWidget::ActorTypeTreeWidget(QTreeWidget* parent, const QString& str)
       : QTreeWidgetItem(parent)
    {
-      LOG_INFO("Initializing ActorTypeTreeWidget - as a root node (QTreeWidget parent):" + str.toStdString());
+      LOG_DEBUG("Initializing ActorTypeTreeWidget - as a root node (QTreeWidget parent):" + str.toStdString());
 
       mActorType = NULL;
 
