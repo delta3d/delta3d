@@ -24,7 +24,7 @@ namespace dtEditQt
       typedef std::map<std::string,PluginFactory*> PluginFactoryMap;
       typedef std::map<std::string, Plugin*> ActivePluginMap;
 
-      /** load all dlls in dir and check for plugin factories */
+      /** load all libraries in dir and check for plugin factories */
       void LoadPluginsInDir(const std::string& path);
 
       /** start all plugins that are saved as active in the config file */
@@ -71,7 +71,7 @@ namespace dtEditQt
    private:
 
       /** load plugin factory from library given by path */
-      PluginFactory* LoadPluginFactory(const std::string& path);
+      PluginFactory* LoadPluginFactory(const std::string& baseLibName);
 
       /** get factory for plugin with this name */
       PluginFactory* GetPluginFactory(const std::string& name);
