@@ -118,7 +118,8 @@ void PluginManagerPlugin::onApplyChanges()
 
 /////////////////////////////////////////////////
 
-
+namespace PluginDialog
+{
 class DT_PLUGIN_MANAGER_EXPORT PluginFactory : public dtEditQt::PluginFactory
 {
 public:
@@ -151,9 +152,10 @@ private:
    dtEditQt::Plugin* mPlugin;
 
 }; 
+} //namespace PluginDialog
 
 // library entry point
 extern "C" DT_PLUGIN_MANAGER_EXPORT dtEditQt::PluginFactory* CreatePluginFactory()
 {
-   return new PluginFactory;
+   return new PluginDialog::PluginFactory;
 }
