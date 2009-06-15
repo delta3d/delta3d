@@ -5,6 +5,7 @@
 #include <dtEditQt/plugininterface.h>
 #include <list>
 #include <map>
+#include <string>
 #include <QtCore/QObject>
 
 namespace dtEditQt

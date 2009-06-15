@@ -2,6 +2,7 @@
 #define DELTA_PLUGIN_INTERFACE
 
 #include <list>
+#include <string>
 
 namespace dtEditQt
 {
