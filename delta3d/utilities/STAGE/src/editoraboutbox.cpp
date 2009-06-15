@@ -129,7 +129,7 @@ namespace dtEditQt
    QTextEdit* EditorAboutBox::createLicenseTab()
    {
       QTextEdit* textEdit = new QTextEdit();
-      QFile file(UIResources::GPL_LICENSE_FILE.c_str());
+      QFile file(UIResources::LICENSE_FILE.c_str());
 
       if (!file.open(QFile::ReadOnly | QFile::Text))
       {

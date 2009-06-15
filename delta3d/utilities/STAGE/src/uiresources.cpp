@@ -35,7 +35,7 @@ namespace dtEditQt
 {
    void UIResources::staticInitialize()
    {
-      UIResources::GPL_LICENSE_FILE = ":gpl.txt";
+      UIResources::LICENSE_FILE = ":license.txt";
 
       ICON_FILE_NEW_MAP = ":/icons/newmap_small.png";
       ICON_FILE_OPEN_MAP = ":/icons/openmap_small.png";
@@ -98,7 +98,7 @@ namespace dtEditQt
    }
 
    //STATIC VARS...
-   std::string UIResources::GPL_LICENSE_FILE("");
+   std::string UIResources::LICENSE_FILE("");
 
    std::string UIResources::ICON_FILE_NEW_MAP("");
    std::string UIResources::ICON_FILE_OPEN_MAP("");
