@@ -39,8 +39,8 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 #put the binary into a "STAGE plugins" folder
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/stplugins)
 
-#little hack to get the .dll into /bin/plugins and .lib into /lib
+#little hack to get the .dll into /bin/stplugins and .lib into /lib
 IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../bin/stplugins/")
+  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../../bin/stplugins/")
   SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
 ENDIF (MSVC_IDE)
