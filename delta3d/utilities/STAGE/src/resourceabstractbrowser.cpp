@@ -59,7 +59,7 @@ namespace dtEditQt
    ResourceAbstractBrowser::ResourceAbstractBrowser(dtDAL::DataType* type, QWidget* parent)
       : QWidget(parent)
    {
-      mTree = new ResourceTree(parent);
+      mTree = new ResourceDragTree(parent);
       mTree->setColumnCount(1);
       mTree->header()->hide();
       mTree->setFocusPolicy(Qt::StrongFocus);

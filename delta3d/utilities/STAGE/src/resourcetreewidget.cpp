@@ -45,12 +45,16 @@ namespace dtEditQt
    // RESOURCE DRAG TREE
    ////////////////////////////////////////////////////////////////////////////////
    
-   ResourceDragTree::ResourceDragTree(std::string resourceName, QWidget* parent)
+   ResourceDragTree::ResourceDragTree(QWidget* parent)
    {
       setDragEnabled(true);
       //setAcceptDrops(true);
       setDropIndicatorShown(true);
+   }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void ResourceDragTree::setResourceName(const std::string& resourceName)
+   {
       mResourceName = resourceName;
    }
 
@@ -114,13 +118,6 @@ namespace dtEditQt
       QString resourceIdentity = resource.GetResourceIdentifier().c_str();
 
       dataStream << resourceIdentity;
-
-      ////
-      //QDataStream readStream(&itemData, QIODevice::ReadOnly);
-      //QString compareId;
-      //readStream >> compareId;
-      //dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(compareId.toStdString());
-      ////
 
       int width = pixmap.width();
       int height = pixmap.height();

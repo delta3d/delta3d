@@ -81,7 +81,7 @@ namespace dtEditQt
       //vBox->setMargin(3);
 
       // create root
-      mTree = new QTreeWidget(groupBox);
+      mTree = new ActorDragTree(groupBox);
       mTree->setColumnCount(1);
       connect(mTree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
       mTree->header()->hide();

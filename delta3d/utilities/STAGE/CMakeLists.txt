@@ -1,6 +1,6 @@
 
 SET(APP_NAME STAGE)
-
+ 
 SET(SOURCE_PATH ${CMAKE_SOURCE_DIR}/utilities/${APP_NAME})
 file(GLOB PROG_HEADERS "inc/dtEditQt/*.h")
 file(GLOB PROG_SOURCES "src/*.cpp" "*.rc")

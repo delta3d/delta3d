@@ -64,7 +64,7 @@ namespace dtEditQt
 {
    class StageCamera;
    class ResourceTreeWidget;
-   class ResourceTree;
+   class ResourceDragTree;
 
    class ResourceAbstractBrowser: public QWidget
    {
@@ -248,7 +248,7 @@ namespace dtEditQt
       dtUtil::tree<dtDAL::ResourceTreeNode> mIterTree;
       dtDAL::ResourceDescriptor*            mSelectedDescriptor;
       dtDAL::DataType*                      mResourceType;
-      ResourceTree*                         mTree;
+      ResourceDragTree*                     mTree;
       ResourceTreeWidget*                   mRoot;
       ResourceTreeWidget*                   mSelection;
 
