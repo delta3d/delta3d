@@ -118,29 +118,8 @@ namespace dtEditQt
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
       setWindowIcon(icon);
       
-      // set plugin path
-      std::string pluginPath;
-      if (dtCore::IsEnvironment("STAGE_PLUGIN_PATH"))
-      {
-         pluginPath = dtCore::GetEnvironment("STAGE_PLUGIN_PATH");;
-      }
-
-      if (pluginPath.empty())
-      {
-         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
-         if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
-         {
-            pluginPath = "."; // if nothing else, try to load plugins from the current dir
-         }
-      }
-
-      LOG_INFO("Trying to load plugins from directory " + pluginPath);
-         
-      // instantiate all plugin factories and immediately start system plugins
-      mPluginManager->LoadPluginsInDir(pluginPath);
-
-      // start plugins that were set in config file
-      mPluginManager->StartPluginsInConfigFile();
+      // setup plugins
+      SetupPlugins();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1288,4 +1267,33 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::SetupPlugins()
+   {
+      std::string pluginPath;
+      if (dtCore::IsEnvironment("STAGE_PLUGIN_PATH"))
+      {
+         pluginPath = dtCore::GetEnvironment("STAGE_PLUGIN_PATH");;
+      }
+
+      if (pluginPath.empty())
+      {
+         pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
+      }
+
+      if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
+      {
+         //no plugin path found...lets not try to load any plugins
+         LOG_INFO("No plugin path was found. No plugins will be loaded.");
+         return;
+      }
+
+      LOG_INFO("Trying to load plugins from directory " + pluginPath);
+
+      // instantiate all plugin factories and immediately start system plugins
+      mPluginManager->LoadPluginsInDir(pluginPath);
+
+      // start plugins that were set in config file
+      mPluginManager->StartPluginsInConfigFile();
+   }
 } // namespace dtEditQt
