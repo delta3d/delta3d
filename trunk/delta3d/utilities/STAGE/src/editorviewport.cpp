@@ -41,6 +41,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
 #include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproxyicon.h>
 #include <dtCore/isector.h>
 #include <dtUtil/exception.h>
 #include <dtDAL/exceptionenum.h>
@@ -62,7 +63,6 @@ namespace dtEditQt
       QGLWidget* shareWith)
       : Viewport(type, name, parent, shareWith)
       , mObjectMotionModel(NULL)
-      //, mGhostTransformable(NULL)
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
    {
@@ -72,25 +72,6 @@ namespace dtEditQt
       mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
       mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
-
-      //mGhostTransformable = new dtCore::Transformable("Ghost");
-      //osg::Group* groupNode = mGhostTransformable->GetOSGNode()->asGroup();
-      //if (groupNode)
-      //{
-      //   // Make this now render transparently.
-      //   osg::StateSet* stateSet = groupNode->getOrCreateStateSet();
-      //   if (stateSet)
-      //   {
-      //      stateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-      //      stateSet->setMode(GL_BLEND, osg::StateAttribute::ON);
-
-      //      osg::PolygonMode* polygonMode = new osg::PolygonMode(osg::PolygonMode::FRONT, osg::PolygonMode::FILL);
-      //      stateSet->setAttribute(polygonMode, osg::StateAttribute::ON);
-
-      //      osg::BlendFunc* blend = new osg::BlendFunc(osg::BlendFunc::SRC_ALPHA, osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-      //      stateSet->setAttribute(blend, osg::StateAttribute::ON);
-      //   }
-      //}
 
       setAcceptDrops(true);
    }
@@ -115,15 +96,6 @@ namespace dtEditQt
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
-
-         //if (mGhostTransformable.valid())
-         //{
-         //   osg::Node* ghostNode = mGhostTransformable->GetOSGNode();
-         //   if (ghostNode)
-         //   {
-         //      node->addChild(ghostNode);
-         //   }
-         //}
       }
    }
 
@@ -246,7 +218,17 @@ namespace dtEditQt
       {
          dtCore::DeltaDrawable* drawable = NULL;
          mGhostProxy->GetActor(drawable);
-         //mGhostTransformable->RemoveChild(drawable);
+
+         const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+         {
+            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            if (billBoard)
+            {
+               ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(billBoard->GetDrawable());
+            }
+         }
 
          ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(drawable);
 
@@ -257,31 +239,121 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::dragEnterEvent(QDragEnterEvent* event)
    {
+      bool validDrag = false;
+      dtCore::DeltaDrawable* drawable = NULL;
+      QByteArray ghostData;
+      dtDAL::ResourceActorProperty* resourceProp = NULL;
+
       // Create a ghost of the object being dragged into the view.
       if (event->mimeData()->hasFormat("Prefab"))
       {
+         validDrag = true;
          ClearGhostProxy();
          
          mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtActors", "Prefab");
          if (mGhostProxy.valid())
          {
-            QByteArray ghostData = event->mimeData()->data("Prefab");
+            ghostData = event->mimeData()->data("Prefab");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
+            mGhostProxy->GetActor(drawable);
+         }
+      }
+      else if (event->mimeData()->hasFormat("StaticMesh"))
+      {
+         validDrag = true;
+         ClearGhostProxy();
+
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
+         if (mGhostProxy.valid())
+         {
+            ghostData = event->mimeData()->data("StaticMesh");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
+            mGhostProxy->GetActor(drawable);
+         }
+      }
+      else if (event->mimeData()->hasFormat("SkeletalMesh"))
+      {
+         //validDrag = true;
+         //ClearGhostProxy();
+
+         //mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.Game.Actors", "Game Mesh Actor");
+         //if (mGhostProxy.valid())
+         //{
+         //   ghostData = event->mimeData()->data("StaticMesh");
+         //   resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("static mesh"));
+         //   mGhostProxy->GetActor(drawable);
+         //}
+      }
+      else if (event->mimeData()->hasFormat("Particle"))
+      {
+         validDrag = true;
+         ClearGhostProxy();
+
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
+         if (mGhostProxy.valid())
+         {
+            ghostData = event->mimeData()->data("Particle");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
+            mGhostProxy->GetActor(drawable);
+         }
+      }
+      else if (event->mimeData()->hasFormat("Sound"))
+      {
+         validDrag = true;
+         ClearGhostProxy();
+
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore", "Particle System");
+         if (mGhostProxy.valid())
+         {
+            ghostData = event->mimeData()->data("Particle");
+            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("Particle(s) File"));
+            mGhostProxy->GetActor(drawable);
+         }
+      }
+      else if (event->mimeData()->hasFormat("Actor"))
+      {
+         validDrag = true;
+         ClearGhostProxy();
+
+         ghostData = event->mimeData()->data("Actor");
+         QDataStream dataStream(&ghostData, QIODevice::ReadOnly);
+         QString category, name;
+         dataStream >> category >> name;
+
+         mGhostProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy(category.toStdString(), name.toStdString());
+         if (mGhostProxy.valid())
+         {
+            mGhostProxy->GetActor(drawable);
+         }
+      }
+
+      if (validDrag)
+      {
+         // Set the prefab resource of the actor to the current prefab.
+         if (resourceProp)
+         {
             QDataStream dataStream(&ghostData, QIODevice::ReadOnly);
             QString resourceIdentity;
             dataStream >> resourceIdentity;
 
-            // Set the prefab resource of the actor to the current prefab.
-            dtDAL::ResourceActorProperty* resourceProp = NULL;
-            resourceProp = dynamic_cast<dtDAL::ResourceActorProperty*>(mGhostProxy->GetProperty("PrefabResource"));
-            if (resourceProp)
-            {
-               dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
-               resourceProp->SetValue(&descriptor);
-            }
+            dtDAL::ResourceDescriptor descriptor = dtDAL::ResourceDescriptor(resourceIdentity.toStdString());
+            resourceProp->SetValue(&descriptor);
+         }
 
-            dtCore::DeltaDrawable* drawable = NULL;
-            mGhostProxy->GetActor(drawable);
-            //mGhostTransformable->AddChild(drawable);
+         // Setup the drawable to be visible in the scene.
+         if (drawable && mGhostProxy.valid())
+         {
+            const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+                renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+            {
+               dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+               //billBoard->LoadImages();
+               if (billBoard)
+               {
+                  ViewportManager::GetInstance().getMasterScene()->AddDrawable(billBoard->GetDrawable());
+               }
+            }
 
             ViewportManager::GetInstance().getMasterScene()->AddDrawable(drawable);
             ViewportManager::GetInstance().refreshAllViewports();
@@ -306,7 +378,12 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::dragMoveEvent(QDragMoveEvent* event)
    {
-      if (event->mimeData()->hasFormat("Prefab"))
+      if (event->mimeData()->hasFormat("Prefab")      ||
+         event->mimeData()->hasFormat("StaticMesh")   ||
+         event->mimeData()->hasFormat("SkeletalMesh") ||
+         event->mimeData()->hasFormat("Particle")     ||
+         event->mimeData()->hasFormat("Sound")        ||
+         event->mimeData()->hasFormat("Actor"))
       {
          // Move the position of the ghost.
          if (mGhostProxy.valid())
@@ -341,6 +418,12 @@ namespace dtEditQt
                tProxy->SetTranslation(position);
             }
 
+            dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+            if (billBoard)
+            {
+               billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation().inverse()));
+            }
+
             ViewportManager::GetInstance().refreshAllViewports();
          }
 
@@ -356,7 +439,12 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::dropEvent(QDropEvent* event)
    {
-      if (event->mimeData()->hasFormat("Prefab"))
+      if (event->mimeData()->hasFormat("Prefab")      ||
+         event->mimeData()->hasFormat("StaticMesh")   ||
+         event->mimeData()->hasFormat("SkeletalMesh") ||
+         event->mimeData()->hasFormat("Particle")     ||
+         event->mimeData()->hasFormat("Sound")        ||
+         event->mimeData()->hasFormat("Actor"))
       {
          if (mGhostProxy.valid())
          {
@@ -377,9 +465,19 @@ namespace dtEditQt
             actors.push_back(mGhostProxy.get());
             EditorEvents::GetInstance().emitActorsSelected(actors);
 
-            dtCore::DeltaDrawable* drawable = NULL;
-            mGhostProxy->GetActor(drawable);
-            //mGhostTransformable->RemoveChild(drawable);
+            //dtCore::DeltaDrawable* drawable = NULL;
+            //mGhostProxy->GetActor(drawable);
+
+            const dtDAL::ActorProxy::RenderMode& renderMode = mGhostProxy->GetRenderMode();
+            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+               renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+            {
+               dtDAL::ActorProxyIcon* billBoard = mGhostProxy->GetBillBoardIcon();
+               if (billBoard)
+               {
+                  ViewportManager::GetInstance().getMasterScene()->RemoveDrawable(billBoard->GetDrawable());
+               }
+            }
 
             mGhostProxy = NULL;
          }

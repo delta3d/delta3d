@@ -37,6 +37,7 @@
 #include <dtUtil/tree.h>
 #include <dtDAL/actortype.h>
 #include <dtEditQt/actortypetreewidget.h>
+#include <dtEditQt/actortreewidget.h>
 
 class QGroupBox;
 class QTreeWidget;
@@ -45,6 +46,8 @@ class QModelIndex;
 
 namespace dtEditQt
 {
+   class ActorDragTree;
+
    /**
     * @class ActorBrowser
     * @brief This class displays the currently available actors loaded with the map
@@ -114,7 +117,7 @@ namespace dtEditQt
        */
       ActorTypeTreeWidget* getSelectedActorTreeWidget();
 
-      QTreeWidget* mTree;
+      ActorDragTree* mTree;
       QPushButton* mCreateActorBtn;
 
       ActorTypeTreeWidget* mRootActorType;

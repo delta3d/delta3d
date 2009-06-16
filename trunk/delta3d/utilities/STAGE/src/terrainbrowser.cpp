@@ -88,6 +88,7 @@ namespace dtEditQt
       QGridLayout* grid = new QGridLayout(group);
 
       grid->addWidget(mTree, 0, 0);
+      mTree->setResourceName("Terrain");
 
       return group;
    }

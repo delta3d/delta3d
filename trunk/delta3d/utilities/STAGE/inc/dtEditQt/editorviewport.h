@@ -297,7 +297,6 @@ namespace dtEditQt {
       dtCore::RefPtr<STAGEObjectMotionModel> mObjectMotionModel;
       STAGEObjectMotionModel::MotionType     mMotionType;
 
-      //dtCore::RefPtr<dtCore::Transformable>  mGhostTransformable;
       dtCore::RefPtr<dtDAL::ActorProxy>      mGhostProxy;
 
       Qt::MouseButton                        mMouseButton;

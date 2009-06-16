@@ -173,6 +173,7 @@ namespace dtEditQt
       hbox->addWidget(previewBtn, 0, Qt::AlignRight);
       grid->addLayout(hbox, 0, 0);
       grid->addWidget(mTree, 1, 0);
+      mTree->setResourceName("SkeletalMesh");
 
       return groupBox;
    }

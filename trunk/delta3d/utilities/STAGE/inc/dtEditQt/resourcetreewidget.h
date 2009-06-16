@@ -61,8 +61,15 @@ namespace dtEditQt
    class ResourceDragTree : public ResourceTree
    {
    public:
-      ResourceDragTree(std::string resourceName, QWidget* parent = 0);
+      ResourceDragTree(QWidget* parent = 0);
       virtual ~ResourceDragTree() {}
+
+      /**
+      * Sets the name of the resource.
+      *
+      * @param[in]  resourceName  The name of the resource.
+      */
+      void setResourceName(const std::string& resourceName);
 
    protected:
       void dragEnterEvent(QDragEnterEvent *event);

@@ -111,6 +111,8 @@ namespace dtEditQt
 
       grid->addWidget(mTree,0,0);
 
+      mTree->setResourceName("Sound");
+
       return group;
    }
 
