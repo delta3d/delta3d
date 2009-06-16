@@ -381,9 +381,9 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::enableActions()
    {
-      bool hasProject    = dtDAL::Project::GetInstance().IsContextValid();
-      bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
-      bool hasBoth       = hasProject && hasCurrentMap;
+      const bool hasProject    = dtDAL::Project::GetInstance().IsContextValid();
+      const bool hasCurrentMap = (EditorData::GetInstance().getCurrentMap() != NULL);
+      const bool hasBoth       = hasProject && hasCurrentMap;
 
       EditorActions::GetInstance().mActionFileNewMap->setEnabled(hasProject);
       EditorActions::GetInstance().mActionFileOpenMap->setEnabled(hasProject);
@@ -402,18 +402,19 @@ namespace dtEditQt
       EditorActions::GetInstance().mActionEditMapProperties->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionEditMapLibraries->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionEditTaskEditor->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionEditMapEvents->setEnabled(hasBoth);
 
       EditorActions::GetInstance().mActionWindowsActorSearch->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsPropertyEditor->setEnabled(hasBoth);
       EditorActions::GetInstance().mActionWindowsResourceBrowser->setEnabled(hasBoth);
-      EditorActions::GetInstance().mActionWindowsResetWindows->setEnabled(hasBoth);
+      EditorActions::GetInstance().mActionWindowsResetWindows->setEnabled(true);
 
       EditorActions::GetInstance().mActionHelpAboutEditor->setEnabled(true);
       EditorActions::GetInstance().mActionHelpAboutQT->setEnabled(true);
 
       // enable main window areas
       if(mPropertyWindow != NULL)
-	  {
+      {
          mPropertyWindow->setEnabled(hasBoth);
       }
       if(mActorTab != NULL)
@@ -424,16 +425,8 @@ namespace dtEditQt
       {
          mResourceBrowser->setEnabled(hasProject);
       }
-      mMainViewportParent->setEnabled(hasBoth);
 
-      if(mEditMenu != NULL)
-      {
-         mEditMenu->setEnabled(hasBoth);
-      }
-      if(mWindowMenu != NULL)
-      {
-         mWindowMenu->setEnabled(hasBoth);
-      }
+      mMainViewportParent->setEnabled(true);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
