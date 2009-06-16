@@ -51,9 +51,10 @@
       <file>icons/trash_large.png</file>
       <file>icons/trash_small.png</file>
       <file>icons/undo.png</file>
-	  <file>icons/ungroup.png</file>
+      <file>icons/ungroup.png</file>
       <file>icons/viewer.ico</file>
       <file>icons/wireframemode_tiny.png</file>
       <file>license.txt</file>
+      <file>help.html</file>
     </qresource>
 </RCC>

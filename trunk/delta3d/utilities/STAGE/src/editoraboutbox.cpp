@@ -81,28 +81,17 @@ namespace dtEditQt
       QTextEdit* textEdit = new QTextEdit();
 
       textEdit->setReadOnly(true);
-      textEdit->setHtml(
-         "<h3>Tools</h3>"
-         "'Ctrl + Shift + C' = Camera Mode<br>"
-         "'Ctrl + Shift + S' = Select Actors Mode<br>"
-         "'Ctrl + Shift + T' = Translate Actors Mode<br>"
-         "'Ctrl + Shift + R' = Rotate Actors Mode<br>"
-         "Space = Cycle between modes"
-         "<h3>Select</h3>"
-         "'Ctrl LMB' = select mesh<br>"
-         "'Crtl + Alt LMB' = multi select mesh"
-         "<h3>Rotate</h3>"
-         "'Alt LMB' = rotate object local X axis<br>"
-         "'Alt MMB' = &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; Y axis<br>"
-         "'Alt RMB' = &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; \"  &nbsp; &nbsp; Z axis"
-         "<h3>Move/Translate</h3>"
-         "<h4>Orthographic Views</h4>"
-         "'Shift LMB' = moves along both horizontal and vertical  axes of view window<br>"
-         "'Shift MMB' = move only on vertical axis of view window<br>"
-         "'Shift RMB' = move only on horizontal axis of view window"
-         "<h4>Perspective View</h4>"
-         "Selected objects seem to remain in place as the World moves about it.  What actually happens is that the object is moving but the Perspective View makes it seem like the World is moving.<br><br>"
-         "Remember you need to be in 'Camera Mode', little camera icon selected, and pressing the keys allows access to those other modes but does not really switch the Modes (Notice your icons don't change).<br>");
+      QFile file(":/help.html");
+
+      if (!file.open(QFile::ReadOnly | QFile::Text))
+      {
+         textEdit->setPlainText("Could not locate help file.");
+      }
+      else
+      {
+         QTextStream in(&file);
+         textEdit->setHtml(in.readAll());
+      }
 
       return textEdit;
    }
