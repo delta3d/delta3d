@@ -301,6 +301,9 @@ namespace dtEditQt
        */
       void ResetSplitters();
 
+      /** Try to find and load any plugins */
+      void SetupPlugins();
+
       friend class EditorActions;
    };
 
