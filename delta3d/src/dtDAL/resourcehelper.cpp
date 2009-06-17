@@ -216,6 +216,11 @@ namespace dtDAL
                extFilter.insert(std::make_pair("3ds","3D Studio Max."));
                handler = new DefaultResourceTypeHandler(d, "3D Studio Max.", extFilter);
                extMap.insert(std::make_pair("3ds", dtCore::RefPtr<ResourceTypeHandler>(handler)));
+
+               extFilter.clear();
+               extFilter.insert(std::make_pair("ai","Waypoint file."));
+               handler = new DefaultResourceTypeHandler(d, "Waypoint File.", extFilter);
+               extMap.insert(std::make_pair("ai", dtCore::RefPtr<ResourceTypeHandler>(handler)));
             }
             else if (d == DataType::SKELETAL_MESH)
             {
