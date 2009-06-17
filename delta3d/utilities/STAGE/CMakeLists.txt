@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(plugins/STPluginDialog)
+ADD_SUBDIRECTORY(plugins/STMassImporter)
 
 SET(APP_NAME STAGE)
  
@@ -70,3 +72,4 @@ ENDIF (MSVC)
 IF (PCHSupport_FOUND)
    ADD_PRECOMPILED_HEADER(${APP_NAME} ${SOURCE_PATH}/src/precomp.cpp prefix/dtstageprefix-src.h true)
 ENDIF (PCHSupport_FOUND)
+
