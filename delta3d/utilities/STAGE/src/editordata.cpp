@@ -217,12 +217,6 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorData::setOriginalOsgLibraryPath(const std::string& path)
-   {
-      mOsgLibraryPath = path;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
    void EditorData::setCurrentSkeletalModelResource(const dtDAL::ResourceDescriptor selectedResource)
    {
       mSkeletalModelResource = selectedResource;
