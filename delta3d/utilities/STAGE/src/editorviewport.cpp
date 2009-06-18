@@ -520,6 +520,11 @@ namespace dtEditQt
                return;
             }
 
+            if (mapPtr.valid())
+            {
+               mapPtr->AddProxy(*mGhostProxy.get());
+            }
+
             // let the world know that a new proxy exists
             EditorEvents::GetInstance().emitBeginChangeTransaction();
             EditorEvents::GetInstance().emitActorProxyCreated(mGhostProxy.get(), false);
@@ -564,6 +569,13 @@ namespace dtEditQt
 
       setFocus();
 
+      //bool isHandled = false;
+      //ViewportManager::GetInstance().emitMousePressEvent(this, e, &isHandled);
+      //if (isHandled)
+      //{
+      //   return;
+      //}
+
       if (mMouseButton == Qt::LeftButton)
       {
          mObjectMotionModel->OnLeftMousePressed();
@@ -607,6 +619,13 @@ namespace dtEditQt
       mMouseButton = e->button();
       mMouseButtons = e->buttons();
       mKeyMods = e->modifiers();
+
+      //bool isHandled = false;
+      //ViewportManager::GetInstance().emitMouseReleaseEvent(this, e, &isHandled);
+      //if (isHandled)
+      //{
+      //   return;
+      //}
 
       if (mMouseButton == Qt::LeftButton)
       {
@@ -653,6 +672,13 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {
+      //bool isHandled = false;
+      //ViewportManager::GetInstance().emitMouseMoveEvent(this, e, dx, dy, &isHandled);
+      //if (isHandled)
+      //{
+      //   return;
+      //}
+
       // Get the position of the mouse.
       osg::Vec2 pos = convertMousePosition(e->pos());
 
