@@ -1,4 +1,4 @@
-#include <dtActors/volumeEditActor.h>
+#include <dtActors/volumeeditactor.h>
 #include <dtCore/model.h>
 #include <dtCore/transform.h>
 #include <dtDAL/enginepropertytypes.h>

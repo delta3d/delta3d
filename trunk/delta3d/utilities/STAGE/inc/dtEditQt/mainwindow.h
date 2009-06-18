@@ -300,7 +300,7 @@ namespace dtEditQt
       QWidget* setupViewports();
 
       /**
-      /* Creates the pseudo-actor (it's not in the map) that functions as a "cursor"
+       * Creates the pseudo-actor (it's not in the map) that functions as a "cursor"
        * or "stamp" that allows us to perform operations inside it.  For example:
        * create a random number of Actors inside this volume.
        */
