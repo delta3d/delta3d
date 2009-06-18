@@ -41,6 +41,7 @@
 #include <dtCore/uniqueid.h>
 #include <QtGui/QIcon>
 #include <dtCore/globals.h>
+#include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/fileutils.h>
@@ -1273,6 +1274,14 @@ namespace dtEditQt
       {
          pluginPath = QCoreApplication::applicationDirPath().toStdString() + "/stplugins";
       }
+
+      #ifdef DELTA_WIN32
+         #ifdef _DEBUG
+           pluginPath += "/Debug";
+         #else
+           pluginPath += "/Release";
+         #endif
+      #endif
 
       if (!dtUtil::FileUtils::GetInstance().DirExists(pluginPath))
       {
