@@ -126,6 +126,9 @@ namespace dtUtil
          DataStream& operator>>(double& value) { Read(value); return *this; }
          DataStream& operator<<(double value) { Write(value); return *this; }
 
+         DataStream& operator>>(long long& value) { Read(value); return *this; }
+         DataStream& operator<<(long long value) { Write(value); return *this; }
+
          DataStream& operator>>(std::string& value) { Read(value); return *this; }
          DataStream& operator<<(const std::string& value) { Write(value); return *this; }
 
@@ -182,6 +185,9 @@ namespace dtUtil
 
          void Read(double& d);
          void Write(double d);
+
+         void Read(long long& d);
+         void Write(long long d);
 
          void Read(std::string& string);
          void Write(const std::string& string);
