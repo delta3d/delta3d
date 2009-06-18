@@ -28,6 +28,7 @@
  */
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QApplication>
+#include <QtGui/QIcon>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
 #include <QtGui/QToolBar>
@@ -38,9 +39,11 @@
 #include <QtGui/QCloseEvent>
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
+
+#include <dtActors/volumeeditactor.h>
 #include <dtCore/uniqueid.h>
-#include <QtGui/QIcon>
 #include <dtCore/globals.h>
+#include <dtCore/transform.h>
 #include <dtUtil/macros.h>
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
@@ -108,6 +111,8 @@ namespace dtEditQt
       setupMenus();
       setupToolbar();
 
+      setupVolumeEditActor();
+
       //EditorData::GetInstance().setUndoManager(new UndoManager());
 
       // Make sure some default UI states are correctly initialized.
@@ -117,7 +122,7 @@ namespace dtEditQt
       // add the application icon
       QIcon icon;
       icon.addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
-      setWindowIcon(icon);
+      setWindowIcon(icon);      
       
       // setup plugins
       SetupPlugins();
@@ -377,6 +382,29 @@ namespace dtEditQt
 
       // Returns the root of the viewport widget hierarchy.
       return editorContainer;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void MainWindow::setupVolumeEditActor()
+   {
+      //The persistent pseudo-actor that is used for special-purpose editing
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy =         
+         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get();      
+      ViewportManager::GetInstance().getMasterScene()->AddDrawable(proxy->GetActor());
+
+      //move the VolumeEditActor away from the Perspective camera so we can see it.
+      dtCore::Transformable* volEditAct = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+      if(volEditAct != NULL)
+      {
+         dtCore::Transform xForm;
+         volEditAct->GetTransform(xForm);
+
+         osg::Vec3 xyz = xForm.GetTranslation();
+         xyz[1] += 50.0f;
+         xForm.SetTranslation(xyz);
+
+         volEditAct->SetTransform(xForm);
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -910,6 +938,12 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
+   const std::string& MainWindow::GetSTAGEPath()
+   {
+      return mSTAGEFullPath;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
    void MainWindow::findAndLoadPreferences()
    {
       EditorSettings settings;
@@ -1288,7 +1322,7 @@ namespace dtEditQt
          //no plugin path found...lets not try to load any plugins
          LOG_INFO("No plugin path was found. No plugins will be loaded.");
          return;
-      }
+      }     
 
       LOG_INFO("Trying to load plugins from directory " + pluginPath);
 
