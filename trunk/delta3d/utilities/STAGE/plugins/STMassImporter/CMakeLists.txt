@@ -12,7 +12,7 @@ INCLUDE_DIRECTORIES(	${CMAKE_SOURCE_DIR}/utilities/STAGE/inc
 qt4_wrap_cpp(MOC_SOURCES ${LIB_HEADERS})
 QT4_WRAP_UI(UI_SOURCES massimporter.ui)
 
-ADD_LIBRARY(${LIB_NAME} SHARED
+ADD_LIBRARY(${LIB_NAME} MODULE
    ${LIB_HEADERS}
    ${LIB_SOURCES}
    ${UI_SOURCES}
@@ -39,8 +39,3 @@ SET_TARGET_PROPERTIES(${LIB_NAME}
 #put the binary into a "STAGE plugins" folder
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/stplugins)
 
-#little hack to get the .dll into /bin/stplugins and .lib into /lib
-IF (MSVC_IDE)
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../../../bin/stplugins/")
-  SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES IMPORT_PREFIX "../")
-ENDIF (MSVC_IDE)
