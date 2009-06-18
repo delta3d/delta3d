@@ -63,6 +63,7 @@
 #include <dtDAL/actorproxyicon.h>
 
 #include <dtActors/prefabactorproxy.h>
+#include <dtActors/volumeeditactor.h>
 
 #include <cmath>
 #include <sstream>
@@ -385,7 +386,18 @@ namespace dtEditQt
       // First see if the selected drawable is an actor.
       dtDAL::ActorProxy* newSelection = currMap->GetProxyById(drawable->GetUniqueId());
 
-      // if its not an actor that is directly part of the map then it may be an actor under a prefab.
+      // if its not an actor that is directly part of the map then it may be the main VolumeEditActor
+      if (newSelection == NULL)
+      {
+         dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
+         
+         if (volEditActTest)
+         {
+            newSelection = volEditActTest->GetProxy();
+         }
+      }
+
+      // if its not an actor that is directly part of the map then it may be an actor under a prefab.      
       if (newSelection == NULL)
       {
          dtCore::DeltaDrawable* parent = drawable->GetParent();

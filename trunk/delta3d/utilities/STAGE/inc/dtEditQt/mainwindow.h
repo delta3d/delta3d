@@ -99,6 +99,11 @@ namespace dtEditQt
 
       
       /**
+       * @return the full path to the currently running STAGE                                                                      
+       **/
+      const std::string& GetSTAGEPath();
+
+      /**
        * menu accessors 
        */
       QMenu* GetFileMenu() const    { return mFileMenu; }
@@ -293,6 +298,13 @@ namespace dtEditQt
        * @return The root splitter pane for the viewports.
        */
       QWidget* setupViewports();
+
+      /**
+      /* Creates the pseudo-actor (it's not in the map) that functions as a "cursor"
+       * or "stamp" that allows us to perform operations inside it.  For example:
+       * create a random number of Actors inside this volume.
+       */
+      void setupVolumeEditActor();
 
       void checkAndLoadBackup(const std::string& str);
 

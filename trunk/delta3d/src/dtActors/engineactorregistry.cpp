@@ -55,6 +55,7 @@
 #include <dtActors/waypointvolumeactor.h>
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/prefabactorproxy.h>
+#include <dtActors/volumeeditactor.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -90,6 +91,7 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", "Game Actor that supports a single Mesh geometry"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", "Game Actor that wraps and triggers a dtAI distance sensor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtDAL::ActorType("Prefab", "dtActors", "dtActors::Prefab actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::VOLUME_EDIT_ACTOR_TYPE(new dtDAL::ActorType("Volume Edit", "dtutil", "dtutil::VolumeEdit actor"));
    
    /// deprecated types
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
@@ -173,8 +175,9 @@ namespace dtActors
       mActorFactory->RegisterType<WaypointVolumeActorProxy>(WAYPOINT_VOLUME_ACTOR_TYPE.get());
       mActorFactory->RegisterType<LabelActorProxy>(LABEL_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PrefabActorProxy>(PREFAB_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<VolumeEditActorProxy>(VOLUME_EDIT_ACTOR_TYPE.get());
 
-      // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
+      // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
 
       mActorFactory->RegisterType<DistanceSensorActorProxy>(DISTANCE_SENSOR_ACTOR_TYPE.get());
