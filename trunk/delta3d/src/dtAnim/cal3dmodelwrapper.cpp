@@ -246,8 +246,8 @@ namespace dtAnim
       if (bone)
       {
          const CalQuaternion& calQuat = bone->getRotationAbsolute();
-         osg::Quat FixedQuat(calQuat.x, calQuat.y, calQuat.z, calQuat.w);
-         return FixedQuat.inverse();
+         osg::Quat FixedQuat(calQuat.x, calQuat.y, calQuat.z, -calQuat.w);
+         return FixedQuat;
       }
 
       return osg::Quat();
