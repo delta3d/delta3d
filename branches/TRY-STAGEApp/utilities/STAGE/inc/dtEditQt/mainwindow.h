@@ -49,6 +49,7 @@ namespace dtEditQt
    class ActorTab;
    class ResourceBrowser;   
    class PluginManager;
+   class STAGEApplication;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -122,6 +123,9 @@ namespace dtEditQt
        * @return the configuration manager
        */
       ConfigurationManager* GetConfigurationManager() { return &mCfgMgr; }
+
+
+      void SetupViewer(STAGEApplication* viewer);
       
 
    public slots:

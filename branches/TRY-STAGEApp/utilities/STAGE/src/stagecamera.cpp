@@ -63,6 +63,10 @@ namespace dtEditQt
    {
       mPosition = pos;
       mUpdateWorldViewMatrix = true;
+      dtCore::Transform xform;
+      xform.SetTranslation(mPosition);
+      mDeltaCamera->SetTransform(xform);
+
       emit PositionMoved(pos.x(), pos.y(), pos.z());
    }
 
@@ -70,6 +74,9 @@ namespace dtEditQt
    void StageCamera::move(const osg::Vec3& relPos)
    {
       mPosition += relPos;
+      dtCore::Transform xform;
+      xform.SetTranslation(mPosition);
+      mDeltaCamera->SetTransform(xform);
       mUpdateWorldViewMatrix = true;
    }
 
@@ -91,6 +98,13 @@ namespace dtEditQt
       {
          mCamPitch -= 360.0;
       }
+
+      dtCore::Transform xform;
+      mDeltaCamera->GetTransform(xform);
+      osg::Vec3 hpr;
+      xform.GetRotation(hpr);
+      xform.SetRotation(hpr[0], mCamPitch, hpr[2]);
+      mDeltaCamera->SetTransform(xform);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -111,6 +125,13 @@ namespace dtEditQt
       {
          mCamYaw -= 360.0;
       }
+
+      dtCore::Transform xform;
+      mDeltaCamera->GetTransform(xform);
+      osg::Vec3 hpr;
+      xform.GetRotation(hpr);
+      xform.SetRotation(mCamYaw, hpr[1], hpr[2]);
+      mDeltaCamera->SetTransform(xform);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -131,6 +152,13 @@ namespace dtEditQt
       {
          mCamRoll -= 360.0;
       }
+
+      dtCore::Transform xform;
+      mDeltaCamera->GetTransform(xform);
+      osg::Vec3 hpr;
+      xform.GetRotation(hpr);
+      xform.SetRotation(hpr[0], hpr[1], mCamRoll);
+      mDeltaCamera->SetTransform(xform);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

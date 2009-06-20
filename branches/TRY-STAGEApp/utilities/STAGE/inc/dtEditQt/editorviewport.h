@@ -154,7 +154,7 @@ namespace dtEditQt {
        * Initializes the viewport.  This just sets the render style to be
        * textured and un-lit.
        */
-      void initializeGL();
+      //void initializeGL();
 
       /**
        * Sets the perspective projection viewing parameters of this viewport's
@@ -162,7 +162,7 @@ namespace dtEditQt {
        * @param width The new width of the viewport.
        * @param height The new height of the viewport.
        */
-      void resizeGL(int width, int height);
+      //void resizeGL(int width, int height);
 
       /**
        * Called when the user presses a key on the keyboard in the viewport.
@@ -170,7 +170,7 @@ namespace dtEditQt {
        * mode will be set.
        * @param e
        */
-      void keyPressEvent(QKeyEvent* e);
+      //void keyPressEvent(QKeyEvent* e);
 
       /**
        * Called when the user releases a key on the keyboard in the viewport.
@@ -178,7 +178,7 @@ namespace dtEditQt {
        * updated accordingly.
        * @param e
        */
-      void keyReleaseEvent(QKeyEvent* e);
+      //void keyReleaseEvent(QKeyEvent* e);
 
       /**
        * Converts pixel mouse position to delta normalized format.

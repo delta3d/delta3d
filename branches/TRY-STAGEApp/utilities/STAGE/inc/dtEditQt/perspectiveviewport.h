@@ -86,13 +86,13 @@ namespace dtEditQt
        * Sets the scene to be rendered by this viewport.
        * @param scene The new scene to be rendered.
        */
-      virtual void setScene(dtCore::Scene* scene);
+      //virtual void setScene(dtCore::Scene* scene);
 
       /**
        * Initializes the viewport.  This just sets the render style to be
        * textured and un-lit.
        */
-      void initializeGL();
+      //void initializeGL();
 
       /**
        * Sets the perspective projection viewing parameters of this viewport's
@@ -100,7 +100,7 @@ namespace dtEditQt
        * @param width The new width of the viewport.
        * @param height The new height of the viewport.
        */
-      void resizeGL(int width, int height);
+      //void resizeGL(int width, int height);
 
    public slots:
 
@@ -133,7 +133,7 @@ namespace dtEditQt
        * updated accordingly.
        * @param e
        */
-      void keyReleaseEvent(QKeyEvent* e);
+      //void keyReleaseEvent(QKeyEvent* e);
 
       /**
        * Called when the user presses a mouse button in the viewport.  Based on
@@ -142,7 +142,7 @@ namespace dtEditQt
        * @param e
        * @see ModeType
        */
-      void mousePressEvent(QMouseEvent* e);
+      //void mousePressEvent(QMouseEvent* e);
 
       /**
        * Called when the user releases a mouse button in the viewport.  Based on
@@ -150,7 +150,7 @@ namespace dtEditQt
        * accordingly.
        * @param e
        */
-      void mouseReleaseEvent(QMouseEvent* e);
+      //void mouseReleaseEvent(QMouseEvent* e);
 
       /**
        * Called when the user moves the mouse while pressing any combination of
@@ -158,7 +158,7 @@ namespace dtEditQt
        * @param dx the adjusted change in x that the mouse moved.
        * @param dy the adjusted change in y that the mouse moved.
        */
-      virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
+      //virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
 
       /**
        * Called from the mousePressEvent handler.  This sets the viewport state

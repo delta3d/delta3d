@@ -77,7 +77,7 @@ namespace dtEditQt
       mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
 
-      setAcceptDrops(true);
+      this->GetQGLWidget()->setAcceptDrops(true);
    }
 
    /////////////////////////////////////////////////////////////////////////////
@@ -91,12 +91,12 @@ namespace dtEditQt
    {
       Viewport::setScene(scene);
 
-      osg::Group* node = getSceneView()->getSceneData()->asGroup();
-      if (node)
+      //osg::Group* node = getSceneView()->getSceneData()->asGroup();
+      if (scene->GetSceneNode())
       {
          if (mObjectMotionModel.valid())
          {
-            mObjectMotionModel->SetSceneNode(node);
+            mObjectMotionModel->SetSceneNode(scene->GetSceneNode());
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
@@ -157,39 +157,39 @@ namespace dtEditQt
    {
       mObjectMotionModel->UpdateWidgets();
 
-      Viewport::refresh();
+      //TODO Viewport::refresh();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::resizeGL(int width, int height)
-   {
-      Viewport::resizeGL(width, height);
-   }
+   //void EditorViewport::resizeGL(int width, int height)
+   //{
+   //   Viewport::resizeGL(width, height);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::initializeGL()
-   {
-      Viewport::initializeGL();
-   }
+   //void EditorViewport::initializeGL()
+   //{
+   //   Viewport::initializeGL();
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::keyPressEvent(QKeyEvent* e)
-   {
-      Viewport::keyPressEvent(e);
-   }
+   //void EditorViewport::keyPressEvent(QKeyEvent* e)
+   //{
+   //   Viewport::keyPressEvent(e);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::keyReleaseEvent(QKeyEvent* e)
-   {
-      Viewport::keyReleaseEvent(e);
-   }
+   //void EditorViewport::keyReleaseEvent(QKeyEvent* e)
+   //{
+   //   Viewport::keyReleaseEvent(e);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec2 EditorViewport::convertMousePosition(QPoint pixelPos)
    {
       osg::Vec2 pos;
       pos.x() = pixelPos.x();
-      pos.y() = getSceneView()->getViewport()->height() - pixelPos.y();
+      pos.y() = 0.0;//TODO getSceneView()->getViewport()->height() - pixelPos.y();
       return pos;
    }
 
@@ -199,18 +199,20 @@ namespace dtEditQt
       int xLoc = mousePos.x();
       int yLoc = mousePos.y();
 
-      if (getSceneView()->getViewport()->height() > 0 ||
-          getSceneView()->getViewport()->width()  > 0)
-      {
-         getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
-      }
+      //TODO
+      //if (getSceneView()->getViewport()->height() > 0 ||
+      //    getSceneView()->getViewport()->width()  > 0)
+      //{
+      //   getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
+      //}
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
    {
       osg::Vec3 screenPos;
-      getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
+      //TODO
+      //getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
 
       return osg::Vec2(screenPos.x(), screenPos.y());
    }
@@ -567,7 +569,7 @@ namespace dtEditQt
       mMouseButtons = e->buttons();
       mKeyMods = e->modifiers();
 
-      setFocus();
+      this->GetQGLWidget()->setFocus();
 
       //bool isHandled = false;
       //ViewportManager::GetInstance().emitMousePressEvent(this, e, &isHandled);

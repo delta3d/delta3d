@@ -63,40 +63,40 @@ namespace dtEditQt
    {
       mCameraMode = &CameraMode::NOTHING;
 
-      mCamera = ViewportManager::GetInstance().getWorldViewCamera();
-      mCamera->setFarClipPlane(250000.0f);
+      //mCamera = ViewportManager::GetInstance().getWorldViewCamera();
+      //mCamera->setFarClipPlane(250000.0f);
       setMoveActorWithCamera(EditorData::GetInstance().getRigidCamera());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::setScene(dtCore::Scene* scene)
-   {
-      EditorViewport::setScene(scene);
-   }
+   //void PerspectiveViewport::setScene(dtCore::Scene* scene)
+   //{
+   //   EditorViewport::setScene(scene);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::resizeGL(int width, int height)
-   {
-      if (height == 0)
-      {
-         height = 1;
-      }
+   //void PerspectiveViewport::resizeGL(int width, int height)
+   //{
+   //   if (height == 0)
+   //   {
+   //      height = 1;
+   //   }
 
-      getCamera()->setAspectRatio((double)width / (double)height);
-      EditorViewport::resizeGL(width, height);
-   }
+   //   getCamera()->setAspectRatio((double)width / (double)height);
+   //   EditorViewport::resizeGL(width, height);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::initializeGL()
-   {
-      EditorViewport::initializeGL();
-      setRenderStyle(Viewport::RenderStyle::TEXTURED, false);
-   }
+   //void PerspectiveViewport::initializeGL()
+   //{
+   //   EditorViewport::initializeGL();
+   //   setRenderStyle(Viewport::RenderStyle::TEXTURED, false);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::keyPressEvent(QKeyEvent* e)
    {
-      EditorViewport::keyPressEvent(e);
+      //EditorViewport::keyPressEvent(e);
 
       if (e->key()==Qt::Key_A)
       {
@@ -106,28 +106,28 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::keyReleaseEvent(QKeyEvent* e)
-   {
-      EditorViewport::keyReleaseEvent(e);
-   }
+   //void PerspectiveViewport::keyReleaseEvent(QKeyEvent* e)
+   //{
+   //   EditorViewport::keyReleaseEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::mousePressEvent(QMouseEvent* e)
-   {
-      EditorViewport::mousePressEvent(e);
-   }
+   //void PerspectiveViewport::mousePressEvent(QMouseEvent* e)
+   //{
+   //   EditorViewport::mousePressEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::mouseReleaseEvent(QMouseEvent* e)
-   {
-      EditorViewport::mouseReleaseEvent(e);
-   }
+   //void PerspectiveViewport::mouseReleaseEvent(QMouseEvent* e)
+   //{
+   //   EditorViewport::mouseReleaseEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
-   {
-      EditorViewport::onMouseMoveEvent(e, dx, dy);
-   }
+   //void PerspectiveViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
+   //{
+   //   EditorViewport::onMouseMoveEvent(e, dx, dy);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::beginCameraMode(QMouseEvent* e)

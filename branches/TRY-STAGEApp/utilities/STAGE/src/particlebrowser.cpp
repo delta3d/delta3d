@@ -216,7 +216,7 @@ namespace dtEditQt
          c->LoadFile(file.toStdString());
          particleScene->RemoveAllDrawables();
          particleScene->AddDrawable(c.get());
-         perspView->setFocus();
+         perspView->GetQGLWidget()->setFocus();
          SetCameraLookAt(*camera, *c);
       }
    }

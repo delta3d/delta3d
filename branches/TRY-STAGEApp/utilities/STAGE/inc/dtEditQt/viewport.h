@@ -31,24 +31,27 @@
 #ifndef DELTA_STAGE_VIEWPORT
 #define DELTA_STAGE_VIEWPORT
 
-#include <QtCore/QTimer>
+//#include <QtCore/QTimer>
 #include <QtOpenGL/QGLWidget>
+#include <QtGui/QWidget>
 #include <QtGui/QCursor>
 
 #include <map>
 
-#include <dtABC/application.h>
-#include <osgUtil/SceneView>
+//#include <dtABC/application.h>
+//#include <osgUtil/SceneView>
 #include <dtCore/base.h>
 #include <dtCore/system.h>
-#include <dtCore/transformable.h>
+//#include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
 #include <dtEditQt/stagecamera.h>
 #include <dtEditQt/viewportmanager.h>
 #include <dtEditQt/typedefs.h>
 #include <dtCore/refptr.h>
-#include <dtCore/objectmotionmodel.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/view.h>
+//#include <dtCore/objectmotionmodel.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -83,7 +86,7 @@ namespace dtEditQt
     * @see PerspectiveViewport
     * @see OrthoViewport
     */
-   class Viewport : public QGLWidget
+   class Viewport : public QObject /*: public QWidget */
    {
       Q_OBJECT
 
@@ -329,7 +332,7 @@ namespace dtEditQt
        * from which the current scene is rendered.
        * @param cam The new camera to use.
        */
-      void setCamera(StageCamera* cam) { mCamera = cam; }
+      void setCamera(StageCamera* cam);
 
       /**
        * Gets this viewport's camera.
@@ -395,7 +398,7 @@ namespace dtEditQt
       /**
        * Tells the viewport to repaint itself.
        */
-      virtual void refresh();
+      //virtual void refresh();
 
       /**
        * Sets the background color of this viewport.
@@ -403,6 +406,15 @@ namespace dtEditQt
        * @param color The new color of the viewport background.
        */
       void setClearColor(const osg::Vec4& color);
+
+      QGLWidget* GetQGLWidget();
+
+      /**
+      * Returns the underlying scene view that is attached to this viewport.
+      * @return
+      */
+      //osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
+      dtCore::View* GetView();
 
    public slots:
       ///Moves the camera such that the actor is clearly visible.
@@ -445,12 +457,12 @@ namespace dtEditQt
       /**
        * Called by the Qt windowing system when the viewport is resized by the user.
        */
-      virtual void resizeGL(int width, int height);
+      //virtual void resizeGL(int width, int height);
 
       /**
        * Called when the viewport needs to redraw itself.
        */
-      virtual void paintGL();
+      //virtual void paintGL();
 
       /**
        * Renders the scene as is viewed from the viewport's currently assigned
@@ -461,11 +473,6 @@ namespace dtEditQt
       void SetRedrawContinuously(bool contRedraw);
       bool GetRedrawContinuously() const { return mRedrawContinuously; }
 
-      /**
-       * Returns the underlying scene view that is attached to this viewport.
-       * @return
-       */
-      osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
 
       /**
        * Returns the state set for this viewport.  This determines how the scene is
@@ -518,7 +525,7 @@ namespace dtEditQt
        * Called when the user moves the mouse while pressing any combination of
        * mouse buttons.  Based on the current mode, the camera is updated.
        */
-      void mouseMoveEvent(QMouseEvent* e);
+      virtual void mouseMoveEvent(QMouseEvent* e);
 
       /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need.
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy) = 0;
@@ -542,7 +549,6 @@ namespace dtEditQt
        */
       bool mInChangeTransaction;
 
-   protected:
       osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
 
    private:
@@ -570,7 +576,7 @@ namespace dtEditQt
       bool    mIsMouseTrapped;
 
       QPoint mLastMouseUpdateLocation;
-      QTimer mTimer;
+      //QTimer mTimer;
 
       // holds the original values of translation and/or rotation.  This should
       // be set in BeginEdit and cleared in EndEdit
@@ -579,7 +585,8 @@ namespace dtEditQt
       dtCore::RefPtr<ViewportOverlay>  mOverlay;
       dtCore::RefPtr<dtCore::Scene>    mScene;
       osg::ref_ptr<osg::FrameStamp>    mFrameStamp;
-      osg::ref_ptr<osgUtil::SceneView> mSceneView;
+      //osg::ref_ptr<osgUtil::SceneView> mSceneView;
+      dtCore::RefPtr<dtCore::View>     mView;
       osg::ref_ptr<osg::StateSet>      mGlobalStateSet;
       osg::ref_ptr<osg::ClearNode>     mClearNode;
 
@@ -592,6 +599,8 @@ namespace dtEditQt
       osg::ref_ptr<osg::Group> mRootNodeGroup;
 
       dtCore::RefPtr<dtCore::Isector> mIsector;
+
+      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
    };
 
 } // namespace dtEditQt

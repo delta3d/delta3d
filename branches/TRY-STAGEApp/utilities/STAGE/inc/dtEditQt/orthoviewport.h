@@ -146,14 +146,14 @@ namespace dtEditQt
        * Initializes the viewport.  This just sets the current render style
        * to be wireframe and the view type to be OrthoViewType::TOP.
        */
-      void initializeGL();
+      //void initializeGL();
 
       /**
        * Sets the orthographic projection parameters of the current camera.
        * @param width The width of the viewport.
        * @param height The height of the viewport.
        */
-      void resizeGL(int width, int height);
+      //void resizeGL(int width, int height);
 
       /**
        * Called when the user presses a key on the keyboard in the viewport.
@@ -161,7 +161,7 @@ namespace dtEditQt
        * mode will be set.
        * @param e
        */
-      void keyPressEvent(QKeyEvent* e);
+      //void keyPressEvent(QKeyEvent* e);
 
       /**
        * Called when the user releases a key on the keyboard in the viewport.
@@ -169,7 +169,7 @@ namespace dtEditQt
        * updated accordingly.
        * @param e
        */
-      void keyReleaseEvent(QKeyEvent* e);
+      //void keyReleaseEvent(QKeyEvent* e);
 
       /**
        * Called when the user releases a mouse button in the viewport.  Based on
@@ -177,7 +177,7 @@ namespace dtEditQt
        * accordingly.
        * @param e
        */
-      void mouseReleaseEvent(QMouseEvent* e);
+      //void mouseReleaseEvent(QMouseEvent* e);
 
       /**
        * Called when the user presses a mouse button in the viewport.  Based on
@@ -186,7 +186,7 @@ namespace dtEditQt
        * @param e
        * @see ModeType
        */
-      void mousePressEvent(QMouseEvent*);
+      //void mousePressEvent(QMouseEvent*);
 
       /**
        * Called when the user moves the mouse while pressing any combination of

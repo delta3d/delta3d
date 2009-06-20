@@ -109,6 +109,8 @@ namespace dtEditQt
        */
       dtCore::View* getMasterView() { return mMasterView.get(); }
 
+      Viewport* GetMasterViewport() { return mMasterViewport;}
+
       /**
        * Gets a handle to the master scene.  Once the handle is retrieved, use it to
        * add/remove objects from the scene.

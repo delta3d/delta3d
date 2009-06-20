@@ -298,7 +298,7 @@ namespace dtEditQt
             SetCameraLookAt(*camera, *previewObject);
 
             perspView->refresh();
-            perspView->setFocus();
+            perspView->GetQGLWidget()->setFocus();
          }
       }
    }

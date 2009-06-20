@@ -64,7 +64,7 @@ namespace dtEditQt
       QGLWidget* shareWith)
       : EditorViewport(ViewportManager::ViewportType::ORTHOGRAPHIC, name, parent, shareWith)
    {
-      mCamera = new StageCamera();
+      //mCamera = new StageCamera();
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setViewType(OrthoViewType::TOP,false);
 
@@ -73,27 +73,28 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::initializeGL()
-   {
-      EditorViewport::initializeGL();
+   //void OrthoViewport::initializeGL()
+   //{
+   //   EditorViewport::initializeGL();
 
-      // We do not want OSG to compute our near and far clipping planes when in
-      // orthographic view
-      getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+   //   // We do not want OSG to compute our near and far clipping planes when in
+   //   // orthographic view
+   //   //TODO
+   //   //getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 
-      // Default to wireframe view.
-      setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
-   }
+   //   // Default to wireframe view.
+   //   setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::resizeGL(int width, int height)
-   {
-      double xDim = (double)width * 0.5;
-      double yDim = (double)height * 0.5;
+   //void OrthoViewport::resizeGL(int width, int height)
+   //{
+   //   double xDim = (double)width * 0.5;
+   //   double yDim = (double)height * 0.5;
 
-      getCamera()->makeOrtho(-xDim, xDim, -yDim, yDim, -5000.0, 5000.0);
-      EditorViewport::resizeGL(width, height);
-   }
+   //   getCamera()->makeOrtho(-xDim, xDim, -yDim, yDim, -5000.0, 5000.0);
+   //   EditorViewport::resizeGL(width, height);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::setViewType(const OrthoViewType& type, bool refreshView)
@@ -128,28 +129,28 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::keyPressEvent(QKeyEvent* e)
-   {
-      EditorViewport::keyPressEvent(e);
-   }
+   //void OrthoViewport::keyPressEvent(QKeyEvent* e)
+   //{
+   //   EditorViewport::keyPressEvent(e);
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::keyReleaseEvent(QKeyEvent* e)
-   {
-      EditorViewport::keyReleaseEvent(e);
-   }
+   //void OrthoViewport::keyReleaseEvent(QKeyEvent* e)
+   //{
+   //   EditorViewport::keyReleaseEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::mousePressEvent(QMouseEvent* e)
-   {
-      EditorViewport::mousePressEvent(e);
-   }
+   //void OrthoViewport::mousePressEvent(QMouseEvent* e)
+   //{
+   //   EditorViewport::mousePressEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::mouseReleaseEvent(QMouseEvent* e)
-   {
-      EditorViewport::mouseReleaseEvent(e);
-   }
+   //void OrthoViewport::mouseReleaseEvent(QMouseEvent* e)
+   //{
+   //   EditorViewport::mouseReleaseEvent(e);
+   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
@@ -218,9 +219,10 @@ namespace dtEditQt
       else if (mMouseButton == Qt::RightButton)
       {
          osg::Vec3 nearPoint,farPoint;
-         int xLoc = e->pos().x();
-         int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
-         getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
+         //TODO
+         //int xLoc = e->pos().x();
+         //int yLoc = int(getSceneView()->getViewport()->height()-e->pos().y());
+         //getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, nearPoint, farPoint);
          mZoomToPosition = nearPoint;
          mCameraMode = &OrthoViewport::CameraMode::CAMERA_ZOOM;
       }

@@ -33,13 +33,14 @@
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtEditQt/mainwindow.h>
-#include <dtEditQt/viewportmanager.h>
-#include <dtDAL/librarymanager.h>
 #include <dtEditQt/editorevents.h>
-#include <dtEditQt/editoractions.h>
 #include <dtEditQt/uiresources.h>
 #include <dtUtil/log.h>
+#include <dtUtil/exception.h>
 #include <dtAudio/audiomanager.h>
+#include <dtQt/qtguiwindowsystemwrapper.h>
+#include <dtQt/deltastepper.h>
+#include <dtEditQt/stageapplication.h>
 
 int main(int argc, char* argv[])
 {
@@ -57,14 +58,29 @@ int main(int argc, char* argv[])
    QSplashScreen* splash = new QSplashScreen(pixmap);
    splash->show();
 
+   //Create special QGLWidget's when we create DeltaWin instances
+   dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
+   
+
    try
    {
-      //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
-
       // Now that everything is initialized, show the main window.
       // Construct the application...
       dtEditQt::MainWindow mainWindow(argv[0]);
+      //mainWindow.show();
+
+      dtCore::RefPtr<dtEditQt::STAGEApplication> viewer = new dtEditQt::STAGEApplication();
+      viewer->Config();
+      viewer->SetWindow(NULL);
+      viewer->RemoveView(*viewer->GetView());
+
+      mainWindow.SetupViewer(viewer.get());
       mainWindow.show();
+
+      //create a little class to ensure Delta3D performs Window "steps"
+      dtCore::System::GetInstance().Start();
+      dtQt::DeltaStepper stepper;
+      stepper.Start();
 
       splash->finish(&mainWindow);
       delete splash;
@@ -73,11 +89,13 @@ int main(int argc, char* argv[])
       dtEditQt::EditorEvents::GetInstance().emitEditorInitiationEvent();
       mainWindow.setWindowMenuTabsChecked();
 
-      dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
-      dtCore::System::GetInstance().Start();
-      dtCore::System::GetInstance().Config();
+      //dtCore::System::GetInstance().SetShutdownOnWindowClose(false);
+      //dtCore::System::GetInstance().Start();
+      //dtCore::System::GetInstance().Config();
+
       result = app.exec();
-      dtCore::System::GetInstance().Stop();
+      //dtCore::System::GetInstance().Stop();
+      stepper.Stop();
    }
    catch (const dtUtil::Exception& e)
    {

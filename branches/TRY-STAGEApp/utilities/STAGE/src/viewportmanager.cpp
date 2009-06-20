@@ -67,6 +67,8 @@ namespace dtEditQt
       mInChangeTransaction = false;
       mStartTick = 0;
 
+      mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
+
       EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
       connect(editorEvents, SIGNAL(actorProxyCreated(ActorProxyRefPtr, bool)),
@@ -126,7 +128,7 @@ namespace dtEditQt
          }
          else
          {
-            vp = createViewportImpl(name, type, parent, mMasterViewport);
+            vp = createViewportImpl(name, type, parent, mMasterViewport->GetQGLWidget());
          }
       }
       else
@@ -135,7 +137,7 @@ namespace dtEditQt
       }
 
       // Now make sure the viewport we created has a valid OpenGL context.
-      if (!vp || !vp->isValid())
+      if (!vp || !vp->GetQGLWidget()->isValid())
       {
          LOG_ERROR("Error creating viewport.");
          return NULL;
@@ -195,7 +197,7 @@ namespace dtEditQt
       {
          if (itor->second->getAutoInteractionMode())
          {
-            itor->second->refresh();
+            //TODO itor->second->refresh();
          }
       }
    }

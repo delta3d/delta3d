@@ -76,7 +76,7 @@ namespace dtEditQt
       mViewPort = viewPort;
       mViewportTitle->setText(tr(viewPort->getName().c_str()));
       mViewPort->setParent(this);
-      mLayout->addWidget(mViewPort);
+      mLayout->addWidget(mViewPort->GetQGLWidget());
       connect(mViewPort,SIGNAL(renderStyleChanged()),
               this, SLOT(onViewportRenderStyleChanged()));
 

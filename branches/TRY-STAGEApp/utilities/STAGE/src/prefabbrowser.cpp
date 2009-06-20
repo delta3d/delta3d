@@ -223,7 +223,7 @@ namespace dtEditQt
             SetCameraLookAt();
 
             mPerspView->refresh();
-            mPerspView->setFocus();
+            mPerspView->GetQGLWidget()->setFocus();
          }
       }
    }

@@ -43,6 +43,7 @@
 #include <dtActors/volumeeditactor.h>
 #include <dtCore/uniqueid.h>
 #include <dtCore/globals.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtUtil/macros.h>
 #include <dtDAL/project.h>
@@ -66,6 +67,8 @@
 #include <dtEditQt/projectcontextdialog.h>
 #include <dtEditQt/uiresources.h>
 #include <dtEditQt/externaltool.h>
+#include <dtEditQt/stageapplication.h>
+#include <dtQt/osggraphicswindowqt.h>
 
 #include <osgDB/FileNameUtils>
 #include <osgDB/Registry>
@@ -1331,5 +1334,40 @@ namespace dtEditQt
 
       // start plugins that were set in config file
       mPluginManager->StartPluginsInConfigFile();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::SetupViewer(STAGEApplication* viewer)
+   {
+      //dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(viewer->GetWindow()->GetOsgViewerGraphicsWindow());
+      //if (osgGraphWindow == NULL)
+      //{
+      //   LOG_ERROR("Unable to initialize. The deltawin could not be created with a QGLWidget.");
+      //   return;
+      //}
+
+      ////stuff the QGLWidget into it's parent widget placeholder and ensure it gets
+      ////resized to fit the parent
+      //QWidget* widget = osgGraphWindow->GetQGLWidget();
+      //if (widget != NULL)
+      //{
+      //   widget->setGeometry(mMainViewportParent->geometry());
+      //   widget->setParent(mMainViewportParent);         
+      //}
+
+
+      Viewport* masterViewport = ViewportManager::GetInstance().GetMasterViewport();
+      if (masterViewport)
+      {
+         viewer->AddView(*masterViewport->GetView());
+      }
+
+      viewer->AddView(*mSideView->GetView());
+      viewer->AddView(*mTopView->GetView());
+      viewer->AddView(*mFrontView->GetView());
+      viewer->AddView(*mPerspView->GetView());
+
+      //ViewportManager::GetInstance().getWorldViewCamera()->getDeltaCamera()->SetWindow(viewer->GetWindow());
+      
    }
 } // namespace dtEditQt
