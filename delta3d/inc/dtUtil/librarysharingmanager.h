@@ -40,14 +40,14 @@ namespace dtUtil
    /**
     * @class LibrarySharingManager
     * @brief Singleton for controlling loading and unloading libraries shared by mulitple bodies of code.
-    * 
+    *
     * @note This class will search a configured list of paths for a library
     * before letting the OS use its search path. The default list may vary per OS.
     */
    class DT_UTIL_EXPORT LibrarySharingManager : public osg::Referenced
    {
       public:
-         static LibrarySharingManager& GetInstance() 
+         static LibrarySharingManager& GetInstance()
          {
             if (!mInstance.valid())
                mInstance = new LibrarySharingManager;
@@ -58,14 +58,14 @@ namespace dtUtil
          {
                DECLARE_ENUM(ExceptionEnum);
             public:
-               static ExceptionEnum LibraryLoadingError;        
+               static ExceptionEnum LibraryLoadingError;
             protected:
                ExceptionEnum(const std::string &name) : Enumeration(name)
                {
                   AddInstance(this);
                }
          };
-         
+
          /**
           * @class LibraryHandle
           * @brief pure virtual class abstracting a checked-out handle to a library.  It has both a DynamicLibrary and
@@ -73,47 +73,48 @@ namespace dtUtil
           */
          class LibraryHandle : public osg::Referenced
          {
-            public:               
+            public:
                typedef void* HANDLE;
                typedef void* SYMBOL_ADDRESS;
-               
+
                virtual HANDLE GetHandle() const = 0;
-               
+
                /**
                 * @return The address of the given symbol or NULL if it was not found.
                 */
                virtual SYMBOL_ADDRESS FindSymbol(const std::string& symbolName) const = 0;
-               
+
                /**
                 * @return the system-independent name of the library.
                 */
                virtual const std::string& GetLibName() const = 0;
-               
+
             protected:
                LibraryHandle() {}
                virtual ~LibraryHandle() {}
                void release();
-               bool IsShuttingDown() const; 
+               bool IsShuttingDown() const;
             private:
-               
+
                // -----------------------------------------------------------------------
                //  Unimplemented constructors and operators
                // -----------------------------------------------------------------------
                LibraryHandle(const LibraryHandle&) {}
                LibraryHandle& operator=(const LibraryHandle&) { return *this; }
          };
-         
+
          /**
-          * Loads a library based on a system independent name.  The class holds onto already opened 
-          * libraries, so if the library is being used already, a new handle to it will be 
+          * Loads a library based on a system independent name.  The class holds onto already opened
+          * libraries, so if the library is being used already, a new handle to it will be
           * returned and no system calls will be made.
           * @param libName the system-independent name of the library to load.
+          * @param assumeModule  This hint is used for platforms that differentiate between modules and dynamic libraries.
           * @return a pointer to a handle representing the library.
           * @throws dtUtil::Exception with key dtUtil::LibrarySharingManager::ExceptionEnum::LibraryLoadingError if the library
           *         can't be loaded for some reason.
           */
-         dtCore::RefPtr<LibraryHandle> LoadSharedLibrary(const std::string& libName);
-            
+         dtCore::RefPtr<LibraryHandle> LoadSharedLibrary(const std::string& libName, bool assumeModule = false);
+
          /**
           * This class will search a configured list of paths for a library
           * before letting the OS use its search path.  This method
@@ -121,16 +122,16 @@ namespace dtUtil
           * @return the list of directories this will search for libraries
           */
          void GetSearchPath(std::vector<std::string>& toFill) const;
-         
+
          /**
           * @param the file name of the library to find.
           * @note this will not return a path to a library is the OS search path.
           * @return the path to the library just searching in the search path list
           */
          const std::string FindLibraryInSearchPath(const std::string& libraryFileName) const;
-         
+
          /**
-          * Adds a new path to the search path.  It will not convert the path to 
+          * Adds a new path to the search path.  It will not convert the path to
           * an absolute path, so be careful when using relative ones.  It will also
           * not validate that the path exists so that the app won't blow up of a directory
           * is removed that was being added to the list.
@@ -148,11 +149,12 @@ namespace dtUtil
           * Clears the search path completely
           */
          void ClearSearchPath();
-                  
+
          /**
           * Determines which platform we are running on and returns a
           * platform dependent library name.
           * @param libBase Platform independent library name.
+          * @param assumeModule on some platforms, such as Mac OS X, module library types have a different extension.
           * @return A platform dependent library name.
           * @note
           *  For example.  If the platform independent library name is
@@ -160,8 +162,8 @@ namespace dtUtil
           *  library name would be ExampleActors.dll, however, on Unix based
           *  platforms, the resulting name would be libExampleActors.so.
           */
-         static std::string GetPlatformSpecificLibraryName(const std::string &libBase);
-  
+         static std::string GetPlatformSpecificLibraryName(const std::string &libBase, bool assumeModule = false);
+
          /**
           * Strips off the path and platform specific library prefixs and extensions
           * and returns a system independent file name.
@@ -177,13 +179,13 @@ namespace dtUtil
          virtual ~LibrarySharingManager();
          //map of the platform independent name to the actual library
          std::map<std::string, dtCore::RefPtr<LibraryHandle> > mLibraries;
-         
+
          std::set<std::string> mSearchPath;
 
          bool mShuttingDown;
 
          /**
-          * This releases the handle to a loaded library.  If there are no other handles to 
+          * This releases the handle to a loaded library.  If there are no other handles to
           * referenced library in use, the library will be closed.
           * @param a pointer to the handle to release.  This should not be NULL.
           */

@@ -27,29 +27,27 @@ namespace dtEditQt
    {
       // find out library extension for this system
       // take care of debug/release library stuff on windows
-      #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)     
+      #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          std::string libExtension = ".dll";
-      #elif defined(__APPLE__)
-         std::string libExtension = ".dylib";
       #else
          std::string libExtension = ".so";
       #endif
 
       // get libs from directory
       FileExtensionList ext;
-      ext.push_back(libExtension);      
+      ext.push_back(libExtension);
       DirectoryContents files;
-      
+
       try
       {
          files = FileUtils::GetInstance().DirGetFiles(path, ext);
       }
       catch (const dtUtil::Exception& e)
       {
-         //in case the path is bogus	
+         //in case the path is bogus
          DTUNREFERENCED_PARAMETER(e);
       }
-      
+
 
       if (!files.empty())
       {
@@ -61,7 +59,7 @@ namespace dtEditQt
       DirectoryContents::const_iterator i;
       for(i = files.begin(); i != files.end(); ++i)
       {
-         
+
          std::string fileName = *i;
 
          try
@@ -78,14 +76,14 @@ namespace dtEditQt
                msg << "Unable to load plugin " << name <<": A plugin with that name was already loaded!";
                throw Exception(msg.str(), __FILE__, __LINE__);
             }
-            
+
             // insert factory into factory list
             mFactories[name] = factory;
 
             // factory exists, but plugin is not instantiated yet
             mActivePlugins[name] = NULL;
 
-            
+
             // start system plugins immediately
             if(factory->IsSystemPlugin())
             {
@@ -104,11 +102,11 @@ namespace dtEditQt
    {
       // use library sharing manager to do the actual library loading
       LibrarySharingManager& lsm = LibrarySharingManager::GetInstance();
-        
+
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> libHandle;
       try
       {
-         libHandle = lsm.LoadSharedLibrary(baseLibName);
+         libHandle = lsm.LoadSharedLibrary(baseLibName, true);
       }
       catch (Exception)
       {
@@ -116,7 +114,7 @@ namespace dtEditQt
          msg << "Unable to load plugin " << baseLibName;
          throw Exception(msg.str(), __FILE__, __LINE__);
       }
-        
+
       LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createFn;
       createFn = libHandle->FindSymbol("CreatePluginFactory");
 
@@ -149,12 +147,12 @@ namespace dtEditQt
       }
    }
 
-   
+
    /** get the list of plugins to start from config file and start them */
    void PluginManager::StartPluginsInConfigFile()
    {
       // get config string from manager
-      ConfigurationManager* cm = mMainWindow->GetConfigurationManager(); 
+      ConfigurationManager* cm = mMainWindow->GetConfigurationManager();
       std::string activated = cm->GetVariable(ConfigurationManager::PLUGINS, "Activated");
 
       if(activated == "")
@@ -182,7 +180,7 @@ namespace dtEditQt
 
 
    /**
-    * write the list of active plugins to config file so 
+    * write the list of active plugins to config file so
     * they can be started next time
     */
    void PluginManager::StoreActivePluginsToConfigFile()
@@ -256,10 +254,10 @@ namespace dtEditQt
       factory->GetDependencies(deps);
 
       while(!deps.empty())
-      {  
+      {
          std::string dependency = deps.front();
          deps.pop_front();
-         
+
          // check if dependency can be fulfilled
          if(!FactoryExists(dependency))
          {
@@ -300,7 +298,7 @@ namespace dtEditQt
       }
 
       LOG_ALWAYS("Stopping plugin " + name);
-      
+
       Plugin* plugin = GetPlugin(name);
 
       // call Destroy() callback of plugin
@@ -316,7 +314,7 @@ namespace dtEditQt
       if(storeToConfig)
       {
          StoreActivePluginsToConfigFile();
-      }     
+      }
    }
 
 
@@ -344,5 +342,5 @@ namespace dtEditQt
          return NULL;
       }
       return i->second;
-   }  
+   }
 }

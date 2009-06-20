@@ -51,43 +51,43 @@ namespace dtUtil
    bool LibrarySharingManager::LibraryHandle::IsShuttingDown() const
    {
       return (!LibrarySharingManager::mInstance.valid()) || LibrarySharingManager::mInstance->mShuttingDown;
-   } 
+   }
 
    void LibrarySharingManager::LibraryHandle::release()
    {
       if (!IsShuttingDown())
          LibrarySharingManager::GetInstance().ReleaseSharedLibraryHandle(this);
-      
-   }  
-   
-   class InternalLibraryHandle : public LibrarySharingManager::LibraryHandle 
+
+   }
+
+   class InternalLibraryHandle : public LibrarySharingManager::LibraryHandle
    {
       public:
-         InternalLibraryHandle(const string& libName, HANDLE libHandle, bool close): 
+         InternalLibraryHandle(const string& libName, HANDLE libHandle, bool close):
             LibrarySharingManager::LibraryHandle(), mLibName(libName), mHandle(libHandle), mClose(close)  {}
-         
+
          ///Loads the library and returns a ref pointer to it.  This will not reload libraries that are already
          ///loaded.
          static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadSharedLibrary(const string& libraryName)
          {
             HANDLE handle  = NULL;
-            
-            string fullLibraryName = osgDB::findLibraryFile(libraryName);            
+
+            string fullLibraryName = osgDB::findLibraryFile(libraryName);
             if (fullLibraryName.empty())
-            {               
+            {
                fullLibraryName = LibrarySharingManager::GetInstance().FindLibraryInSearchPath(libraryName);
-                              
+
                //if It's still empty, just set it to the plain name and
-               //use the OS search path.   
+               //use the OS search path.
                if (fullLibraryName.empty())
                   fullLibraryName = libraryName;
             }
-            
+
             //close is only used in windows so that it can be false if the lib is already
             //loaded and a handle is found for it.  Freeing a library that is linked it at
             //compile time would be bad.
             bool close = true;
-            
+
 #if defined(WIN32) && !defined(__CYGWIN__)
             // Make sure the error state is set to a non-garbage value
             SetLastError(0);
@@ -98,20 +98,20 @@ namespace dtUtil
                close = false;
             else
                handle = LoadLibrary( fullLibraryName.c_str() );
-            
+
             if (handle == NULL)
             {
                LPVOID lpMsgBuf;
-               FormatMessage( 
-                  FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-                  FORMAT_MESSAGE_FROM_SYSTEM | 
+               FormatMessage(
+                  FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                  FORMAT_MESSAGE_FROM_SYSTEM |
                   FORMAT_MESSAGE_IGNORE_INSERTS,
                   NULL,
                   GetLastError(),
                   0, // Default language
                   (LPTSTR) &lpMsgBuf,
                   0,
-                  NULL 
+                  NULL
                   );
 
                std::string errorDisplay = std::string(reinterpret_cast<char*>(lpMsgBuf));
@@ -128,18 +128,18 @@ namespace dtUtil
                localLibraryName = "./" + fullLibraryName;
             else
                localLibraryName = fullLibraryName;
-            
+
             handle = dlopen( localLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
             if( handle == NULL )
                LOG_ERROR("Error loading library \"" + fullLibraryName + "\" with dlopen(): " + dlerror());
-            
+
 #endif
             if (handle != NULL) return new InternalLibraryHandle(fullLibraryName, handle, close);
-            
+
             return NULL;
          }
-         
-         virtual LibrarySharingManager::LibraryHandle::HANDLE GetHandle() const 
+
+         virtual LibrarySharingManager::LibraryHandle::HANDLE GetHandle() const
          {
             return mHandle;
          }
@@ -157,16 +157,16 @@ namespace dtUtil
                LOG_WARNING("Failed looking up \"" + symbolName + "\" in library \"" + GetLibName() + "\": " + dlerror() );
             }
             return sym;
-#endif            
+#endif
          }
-         
+
          virtual const string& GetLibName() const
          {
             return mLibName;
-         } 
+         }
 
       protected:
-         virtual ~InternalLibraryHandle() 
+         virtual ~InternalLibraryHandle()
          {
             if (mHandle != NULL)
             {
@@ -177,11 +177,11 @@ namespace dtUtil
                   FreeLibrary((HMODULE)mHandle);
 #else // other unix
                dlclose(mHandle);
-#endif    
+#endif
             }
             release();
          }
-      
+
       private:
          string mLibName;
          HANDLE mHandle;
@@ -192,7 +192,7 @@ namespace dtUtil
          InternalLibraryHandle(const InternalLibraryHandle&): LibrarySharingManager::LibraryHandle()  {}
          /// disable copy operator.
          InternalLibraryHandle& operator=(const InternalLibraryHandle&) { return *this; }
-                  
+
    };
 
 
@@ -202,14 +202,14 @@ namespace dtUtil
    LibrarySharingManager::LibrarySharingManager(): mShuttingDown(false)
    {
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    LibrarySharingManager::~LibrarySharingManager()
    {
       mShuttingDown = true;
       //mLibraries.clear();
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    LibrarySharingManager::LibrarySharingManager(const LibrarySharingManager&){}
    ///////////////////////////////////////////////////////////////////////////////
@@ -219,34 +219,48 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const string& libName) 
+   dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const string& libName, bool assumeModule)
    {
       if (mShuttingDown)
-         throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, 
-            "Library Manager is shutting down.", __FILE__, __LINE__);  
-         
+         throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError,
+            "Library Manager is shutting down.", __FILE__, __LINE__);
+
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> dynLib;
-        
-        
+
+
       std::map<string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(libName);
       if (itor == mLibraries.end())
       {
          string actualLibName;
 
          //Get the system dependent name of the library.
-         actualLibName = GetPlatformSpecificLibraryName(libName);
+         actualLibName = GetPlatformSpecificLibraryName(libName, assumeModule);
          std::ostringstream msg;
          //First, try and load the dynamic library.
          msg << "Loading library " << actualLibName;
          LOG_INFO(msg.str());
          dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName);
+
+         if (dynLib == NULL)
+         {
+            std::string actualLibName2 = GetPlatformSpecificLibraryName(libName, !assumeModule);
+            if (actualLibName != actualLibName2)
+            {
+               std::ostringstream msg;
+               //First, try and load the dynamic library.
+               msg << "Re-attempting using the module extension: " << actualLibName;
+               LOG_ALWAYS(msg.str());
+               dynLib = InternalLibraryHandle::LoadSharedLibrary(actualLibName2);
+            }
+         }
+
          if (dynLib == NULL)
          {
             msg.clear();
             msg.str("");
             msg << "Unable to load library " << actualLibName;
             throw dtUtil::Exception(LibrarySharingManager::ExceptionEnum::LibraryLoadingError,
-               msg.str(), __FILE__, __LINE__);  
+               msg.str(), __FILE__, __LINE__);
          }
          else
          {
@@ -258,14 +272,14 @@ namespace dtUtil
       {
          dynLib = itor->second;
       }
-      
+
       if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
          ss << dynLib->referenceCount();
-         LOG_DEBUG(ss.str());         
+         LOG_DEBUG(ss.str());
       }
-      
+
       return dynLib;
    }
 
@@ -277,15 +291,15 @@ namespace dtUtil
 
       if (mShuttingDown)
          return;
-         
+
       std::map<string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(handle->GetLibName());
-      if (itor != mLibraries.end()) 
+      if (itor != mLibraries.end())
       {
          //if the the reference in the data structure is the last reference, then erase the library, causing it to be
          //uploaded.
          if (itor->second->referenceCount() == 1)
             mLibraries.erase(itor);
-      }      
+      }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -295,12 +309,12 @@ namespace dtUtil
       toFill.reserve(mSearchPath.size());
       toFill.insert(toFill.begin(), mSearchPath.begin(), mSearchPath.end());
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    const std::string LibrarySharingManager::FindLibraryInSearchPath(const std::string& libraryFileName) const
    {
       dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
-      
+
       string path;
       for (set<string>::const_iterator itor = mSearchPath.begin(); itor != mSearchPath.end(); ++itor)
       {
@@ -313,19 +327,19 @@ namespace dtUtil
             return  path + dtUtil::FileUtils::PATH_SEPARATOR + libraryFileName;
       }
       return string();
-   }  
+   }
    ///////////////////////////////////////////////////////////////////////////////
    void LibrarySharingManager::AddToSearchPath(const string& newPath)
    {
       mSearchPath.insert(newPath);
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void LibrarySharingManager::RemoveFromSearchPath(const string& path)
    {
       set<string>::iterator i = mSearchPath.find(path);
       if (i != mSearchPath.end())
-         mSearchPath.erase(i);      
+         mSearchPath.erase(i);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -335,7 +349,7 @@ namespace dtUtil
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   string LibrarySharingManager::GetPlatformSpecificLibraryName(const string &libBase)
+   string LibrarySharingManager::GetPlatformSpecificLibraryName(const string &libBase, bool assumeModule)
    {
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          #ifdef _DEBUG
@@ -344,17 +358,25 @@ namespace dtUtil
          return libBase + ".dll";
          #endif
       #elif defined(__APPLE__)
-         return "lib" + libBase + ".dylib";
+         if (assumeModule)
+         {
+            return "lib" + libBase + ".so";
+         }
+         else
+         {
+            return "lib" + libBase + ".dylib";
+         }
+
       #else
          return "lib" + libBase + ".so";
       #endif
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    string LibrarySharingManager::GetPlatformIndependentLibraryName(const string &libName)
    {
       string iName = osgDB::getStrippedName(libName);
-   
+
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          #ifdef _DEBUG
          //Pull off the final "d"
