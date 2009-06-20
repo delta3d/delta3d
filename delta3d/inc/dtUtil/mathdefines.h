@@ -112,6 +112,26 @@ namespace dtUtil
       #endif
    }
 
+   template <typename VecType>
+   bool IsFiniteVec(const VecType value)
+   {
+      for (size_t i = 0; i < VecType::num_components; ++i)
+      {
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+         if (!_finite(value[i]))
+         {
+            return false;
+         }
+#else
+         if (!std::isfinite(value[i]))
+         {
+            return false;
+         }
+#endif
+      }
+      return true;
+   }
+
    template <typename T>
    bool IsNAN(const T value)
    {

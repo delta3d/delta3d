@@ -46,6 +46,7 @@ namespace dtUtil
    {
       CPPUNIT_TEST_SUITE(MathTests);
          CPPUNIT_TEST( TestFiniteAndNAN );
+         CPPUNIT_TEST( TestVecFinite );
          CPPUNIT_TEST( TestNormalizer );
          CPPUNIT_TEST( TestEquivalentVec2 );
          CPPUNIT_TEST( TestEquivalentVec3);
@@ -62,6 +63,7 @@ namespace dtUtil
          void tearDown();
 
          void TestFiniteAndNAN();
+         void TestVecFinite();
          void TestNormalizer();
          void TestEquivalentVec2();
          void TestEquivalentVec3();
@@ -84,6 +86,45 @@ namespace dtUtil
 
    void MathTests::tearDown()
    {
+   }
+
+   void MathTests::TestVecFinite()
+   {
+      osg::Vec3f vecf1;
+      osg::Vec4f vecf2;
+
+      CPPUNIT_ASSERT(dtUtil::IsFiniteVec(vecf1));
+      CPPUNIT_ASSERT(dtUtil::IsFiniteVec(vecf2));
+
+      vecf1[1] = std::numeric_limits<float>::infinity();
+      vecf2[3] = std::numeric_limits<float>::infinity();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecf1));
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecf2));
+
+      vecf1[1] = std::numeric_limits<float>::signaling_NaN();
+      vecf2[3] = std::numeric_limits<float>::signaling_NaN();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecf1));
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecf2));
+
+      osg::Vec3d vecd1;
+      osg::Vec4d vecd2;
+
+      CPPUNIT_ASSERT(dtUtil::IsFiniteVec(vecd1));
+      CPPUNIT_ASSERT(dtUtil::IsFiniteVec(vecd2));
+
+      vecd1[1] = std::numeric_limits<double>::infinity();
+      vecd2[3] = std::numeric_limits<double>::infinity();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecd1));
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecd2));
+
+      vecd1[1] = std::numeric_limits<double>::signaling_NaN();
+      vecd2[3] = std::numeric_limits<double>::signaling_NaN();
+
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecd1));
+      CPPUNIT_ASSERT(!dtUtil::IsFiniteVec(vecd2));
    }
 
    void MathTests::TestFiniteAndNAN()
