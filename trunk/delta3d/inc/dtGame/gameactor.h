@@ -139,7 +139,7 @@ namespace dtGame
       * processor, it will attempt to look up the prototype first. Extremely useful for networking.
       * @return The prototype that was used to create this actor. Set by the GM.
       */
-      std::string GetPrototypeName() const { return mPrototypeName; }
+      const std::string& GetPrototypeName() const;
 
    protected:
 
