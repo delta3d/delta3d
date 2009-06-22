@@ -738,4 +738,10 @@ namespace dtGame
       mPrototypeName = prototypeName;
    }
 
+   //////////////////////////////////////////////////////////////////////////////
+   const std::string& GameActor::GetPrototypeName() const
+   {
+      return mPrototypeName;
+   }
+
 }
