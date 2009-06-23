@@ -62,16 +62,6 @@ static ParamBlockDesc2 osghelper_param_blk ( osghelper_params, _T("params"),  0,
 	end
 	);
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// OSG HELPER
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& OSGHelper::GetClassDesc()
-{
-   return OSGHelperDesc;
-}
-
 /**
  * This method is called by the system when the user may edit the item's 
  * (object, modifier, controller, etc.) parameters.
@@ -79,8 +69,7 @@ ClassDesc2& OSGHelper::GetClassDesc()
 void OSGHelper::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
 	this->ip = ip;
-   theHelperProc.SetCurrentOSGHelper(this);
-   GetClassDesc().BeginEditParams(ip, this, flags, prev);	
+   OSGHelperDesc.BeginEditParams(ip, this, flags, prev);	
 }
 
 /**
@@ -92,7 +81,7 @@ void OSGHelper::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 void OSGHelper::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
 {
 	this->ip = NULL;
-   GetClassDesc().EndEditParams(ip, this, flags, next);
+	OSGHelperDesc.EndEditParams(ip, this, flags, next);
 	ClearAFlag(A_OBJ_CREATING);
 }
 

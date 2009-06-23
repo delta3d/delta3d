@@ -64,8 +64,6 @@ class OSGHelper : public HelperObject {
 		// The name of the helper object.
 		TSTR name;
 
-      virtual ClassDesc2& GetClassDesc();
-
 		// From BaseObject
 		int HitTest(TimeValue t, INode* inode, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
 		int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
