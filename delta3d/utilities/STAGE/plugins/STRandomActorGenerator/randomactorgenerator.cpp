@@ -190,8 +190,7 @@ osg::Vec3 RandomActorGeneratorPlugin::RandomPointInsideBox()
    dtActors::VolumeEditActor* volEditActor = mMainWindow->GetVolumeEditActor();
    osg::Vec3 volEAScale = volEditActor->GetScale();   
    double baseLength = volEditActor->GetBaseLength();
-   double baseRadius = volEditActor->GetBaseRadius(); 
-
+   
    //apply volEditActor's scale to each dimension of the box      
    double xLen = baseLength * volEAScale[0];      
    double yLen = baseLength * volEAScale[1];      
