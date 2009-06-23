@@ -31,7 +31,8 @@ extern ParamBlockDesc2 NodeMask_param_blk;
 class NodeMask:public OSGHelper{
 	public:
 		NodeMask(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&NodeMask_param_blk,0);};
-      virtual ClassDesc2& GetClassDesc();
+		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 		Class_ID ClassID() {return NODEMASK_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -76,10 +77,19 @@ static ParamBlockDesc2 NodeMask_param_blk ( NodeMask_params, _T("NodeMask_params
 	end
 	);
 
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& NodeMask::GetClassDesc()
+void NodeMask::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
-   return NodeMaskDesc;
+	this->ip = ip;
+	theHelperProc.SetCurrentOSGHelper(this);
+	NodeMaskDesc.BeginEditParams(ip, this, flags, prev);	
+}
+
+void NodeMask::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
+	this->ip = NULL;
+	theHelperProc.SetCurrentOSGHelper(NULL);
+	NodeMaskDesc.EndEditParams(ip, this, flags, next);
+	ClearAFlag(A_OBJ_CREATING);
 }
 
 RefTargetHandle NodeMask::Clone(RemapDir& remap){

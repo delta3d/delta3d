@@ -33,7 +33,8 @@ extern ParamBlockDesc2 sequence_param_blk;
 class Sequence:public OSGHelper{
 	public:
 		Sequence(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&sequence_param_blk,0);};
-      virtual ClassDesc2& GetClassDesc();
+		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 		Class_ID ClassID() {return SEQUENCE_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 };
@@ -150,10 +151,17 @@ static ParamBlockDesc2 sequence_param_blk ( sequence_params, _T("sequence_params
 	end
 	);
 
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& Sequence::GetClassDesc()
+void Sequence::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
-   return SequenceDesc;
+	this->ip = ip;
+	SequenceDesc.BeginEditParams(ip, this, flags, prev);	
+}
+
+void Sequence::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
+	this->ip = NULL;
+	SequenceDesc.EndEditParams(ip, this, flags, next);
+	ClearAFlag(A_OBJ_CREATING);
 }
 
 RefTargetHandle Sequence::Clone(RemapDir& remap){

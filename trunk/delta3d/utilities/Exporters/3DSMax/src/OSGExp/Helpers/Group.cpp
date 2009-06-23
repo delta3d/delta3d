@@ -32,7 +32,8 @@ extern ParamBlockDesc2 group_param_blk;
 class OSGGroup:public OSGHelper{
 public:
 	OSGGroup(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&group_param_blk,0);};
-   virtual ClassDesc2& GetClassDesc();
+	void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+	void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 	Class_ID ClassID() {return OSGGROUP_CLASS_ID;}
 	RefTargetHandle Clone(RemapDir& remap);
 };
@@ -68,10 +69,19 @@ static ParamBlockDesc2 group_param_blk ( group_params, _T("group_params"),  0, &
 										 end
 										 );
 
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& OSGGroup::GetClassDesc()
+void OSGGroup::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
-   return GroupDesc;
+	this->ip = ip;
+	theHelperProc.SetCurrentOSGHelper(this);
+	GroupDesc.BeginEditParams(ip, this, flags, prev);	
+}
+
+void OSGGroup::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
+	this->ip = NULL;
+	theHelperProc.SetCurrentOSGHelper(NULL);
+	GroupDesc.EndEditParams(ip, this, flags, next);
+	ClearAFlag(A_OBJ_CREATING);
 }
 
 RefTargetHandle OSGGroup::Clone(RemapDir& remap){

@@ -36,7 +36,8 @@ extern ParamBlockDesc2 lod_param_blk;
 class LOD:public OSGHelper{
 	public:
 		LOD(TSTR name) : OSGHelper(name){	pblock2 = CreateParameterBlock2(&lod_param_blk,0);};
-      virtual ClassDesc2& GetClassDesc();
+		void BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev);
+		void EndEditParams(IObjParam *ip, ULONG flags,Animatable *next);
 		Class_ID ClassID() {return LOD_CLASS_ID;}
 		RefTargetHandle Clone(RemapDir& remap);
 		int DrawAndHit(TimeValue t, INode *inode, ViewExp *vpt);
@@ -149,10 +150,19 @@ static ParamBlockDesc2 lod_param_blk ( lod_params, _T("lod_params"),  0, &LODDes
 	end
 	);
 
-////////////////////////////////////////////////////////////////////////////////
-ClassDesc2& LOD::GetClassDesc()
+void LOD::BeginEditParams(IObjParam *ip, ULONG flags,Animatable *prev)
 {
-   return LODDesc;
+	this->ip = ip;
+   theHelperProc.SetCurrentOSGHelper(this);
+   LODDesc.BeginEditParams(ip, this, flags, prev);	
+}
+
+void LOD::EndEditParams(IObjParam *ip, ULONG flags,Animatable *next)
+{
+	this->ip = NULL;
+   theHelperProc.SetCurrentOSGHelper(NULL);
+   LODDesc.EndEditParams(ip, this, flags, next);
+	ClearAFlag(A_OBJ_CREATING);
 }
 
 RefTargetHandle LOD::Clone(RemapDir& remap){
