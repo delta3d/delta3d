@@ -41,6 +41,12 @@
 
 class QSplitter;
 
+namespace dtActors
+{
+   class VolumeEditActor;
+   class VolumeEditActorProxy;
+}
+
 namespace dtEditQt
 {
    class PerspectiveViewport;
@@ -48,7 +54,7 @@ namespace dtEditQt
    class PropertyEditor;
    class ActorTab;
    class ResourceBrowser;   
-   class PluginManager;
+   class PluginManager;   
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -122,6 +128,16 @@ namespace dtEditQt
        * @return the configuration manager
        */
       ConfigurationManager* GetConfigurationManager() { return &mCfgMgr; }
+
+      /**
+      * @return the volume edit "actor"
+      */
+      dtActors::VolumeEditActor* GetVolumeEditActor();
+
+      /**
+       * @return the volume edit actor proxy
+       */
+      dtActors::VolumeEditActorProxy* GetVolumeEditActorProxy();
       
 
    public slots:
@@ -234,6 +250,8 @@ namespace dtEditQt
       ConfigurationManager mCfgMgr;
       PluginManager* mPluginManager;
       std::string mSTAGEFullPath;
+  
+      dtCore::RefPtr<dtActors::VolumeEditActorProxy> mVolEditActorProxy;
 
       QMenu* mFileMenu;
       QMenu* mEditMenu;

@@ -30,6 +30,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QMouseEvent>
 
+#include <dtEditQt/mainwindow.h>
 #include <dtEditQt/viewport.h>
 #include <dtEditQt/viewportoverlay.h>
 #include <dtEditQt/viewportmanager.h>
@@ -392,8 +393,8 @@ namespace dtEditQt
          dtActors::VolumeEditActor* volEditActTest = dynamic_cast<dtActors::VolumeEditActor*>(drawable);
          
          if (volEditActTest)
-         {
-            newSelection = volEditActTest->GetProxy();
+         {          
+            newSelection = EditorData::GetInstance().getMainWindow()->GetVolumeEditActorProxy();
          }
       }
 

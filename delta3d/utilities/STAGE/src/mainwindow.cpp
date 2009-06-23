@@ -89,6 +89,7 @@ namespace dtEditQt
       , mPropertyWindow(NULL)
       , mActorTab(NULL)
       , mResourceBrowser(NULL)
+      , mVolEditActorProxy(NULL)
    {
       // Ensure that the global singletons are lazily instantiated now
       dtDAL::LibraryManager::GetInstance();
@@ -388,12 +389,13 @@ namespace dtEditQt
    void MainWindow::setupVolumeEditActor()
    {
       //The persistent pseudo-actor that is used for special-purpose editing
-      dtCore::RefPtr<dtDAL::ActorProxy> proxy =         
-         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get();      
-      ViewportManager::GetInstance().getMasterScene()->AddDrawable(proxy->GetActor());
+      mVolEditActorProxy = 
+         dynamic_cast<dtActors::VolumeEditActorProxy*>(dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtutil", "Volume Edit").get());
+      ViewportManager::GetInstance().getMasterScene()->AddDrawable(mVolEditActorProxy->GetActor());
 
       //move the VolumeEditActor away from the Perspective camera so we can see it.
-      dtCore::Transformable* volEditAct = dynamic_cast<dtCore::Transformable*>(proxy->GetActor());
+      dtActors::VolumeEditActor* volEditAct = 
+            dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy->GetActor());
       if(volEditAct != NULL)
       {
          dtCore::Transform xForm;
@@ -941,6 +943,18 @@ namespace dtEditQt
    const std::string& MainWindow::GetSTAGEPath()
    {
       return mSTAGEFullPath;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtActors::VolumeEditActor* MainWindow::GetVolumeEditActor()
+   {
+      return dynamic_cast<dtActors::VolumeEditActor*>(mVolEditActorProxy.get()->GetActor());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtActors::VolumeEditActorProxy* MainWindow::GetVolumeEditActorProxy() 
+   {
+      return mVolEditActorProxy.get();
    }
 
    ///////////////////////////////////////////////////////////////////////////////

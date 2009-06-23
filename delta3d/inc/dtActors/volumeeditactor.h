@@ -54,10 +54,11 @@ public:
       }
    };
 
-   VolumeEditActor(dtActors::VolumeEditActorProxy *prox);
+   VolumeEditActor();
    virtual ~VolumeEditActor();
 
-   VolumeEditActorProxy* GetProxy();
+   double GetBaseLength();
+   double GetBaseRadius();   
    osg::Vec3 GetScale() const;
    VolumeShapeType& GetShape();
 
@@ -65,14 +66,15 @@ public:
    void SetShape(VolumeShapeType& shape);
 
 private:
-   dtCore::ObserverPtr<VolumeEditActorProxy>  mProxy;
-
    dtCore::RefPtr<osg::Geode>          mVolumeGeode;
    dtCore::RefPtr<osg::Shape>          mVolumeShape;
    dtCore::RefPtr<osg::ShapeDrawable>  mVolumeDrawable;
 
    //used so I can scale (see GameMeshActor -- where I stole this idea from)
    dtCore::RefPtr<dtCore::Model>       mModel;
+
+   const double                        mBaseRadius;
+   const double                        mBaseLength;
 };
 
 class DT_PLUGIN_EXPORT VolumeEditActorProxy : public dtDAL::TransformableActorProxy
@@ -84,7 +86,7 @@ public:
    void CreateActor();
 
    void BuildPropertyMap();
-
+   
    VolumeEditActor::VolumeShapeType& GetShape();
    void SetShape(VolumeEditActor::VolumeShapeType& shape);
 };
