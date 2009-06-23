@@ -1,5 +1,6 @@
 ADD_SUBDIRECTORY(plugins/STPluginDialog)
 ADD_SUBDIRECTORY(plugins/STMassImporter)
+ADD_SUBDIRECTORY(plugins/STRandomActorGenerator)
 
 SET(APP_NAME STAGE)
  

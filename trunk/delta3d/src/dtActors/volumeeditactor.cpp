@@ -22,11 +22,12 @@ VolumeEditActor::VolumeShapeType VolumeEditActor::VolumeShapeType::CAPSULE("CAPS
 VolumeEditActor::VolumeShapeType VolumeEditActor::VolumeShapeType::CONE("CONE");
 
 ////////////////////////////////////////////////////////////////////////////////
-VolumeEditActor::VolumeEditActor(VolumeEditActorProxy *prox)
-   : dtCore::Transformable("VolumeEditActor")
-   , mProxy(prox)
+VolumeEditActor::VolumeEditActor()
+   : dtCore::Transformable("VolumeEditActor")   
    , mVolumeGeode(new osg::Geode())
    , mModel(new dtCore::Model())
+   , mBaseRadius(10.0)
+   , mBaseLength(10.0)
 {
    //For volume to get added to scene, make the Geode a child of the
    //Transformable's OSGNode (Transformable Actor is already in scene)
@@ -45,9 +46,16 @@ VolumeEditActor::~VolumeEditActor()
 {
 }
 
-VolumeEditActorProxy* VolumeEditActor::GetProxy()
+////////////////////////////////////////////////////////////////////////////////
+double VolumeEditActor::GetBaseLength()
 {
-   return mProxy.get();
+   return mBaseLength;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double VolumeEditActor::GetBaseRadius()
+{
+   return mBaseRadius;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,23 +119,28 @@ void VolumeEditActor::SetShape(VolumeShapeType& shape)
 {
    if (shape == VolumeShapeType::BOX)
    {
-      mVolumeShape = new osg::Box(osg::Vec3(0.0f, 0.0f, 0.0f), 10.0f, 10.0f, 10.0f);
+      mVolumeShape = new osg::Box(osg::Vec3(0.0, 0.0, 0.0), mBaseLength, 
+                                                            mBaseLength,
+                                                            mBaseLength);
    }
    else if (shape == VolumeShapeType::SPHERE)
    {
-      mVolumeShape = new osg::Sphere(osg::Vec3(0.0f, 0.0f, 0.0f), 10.0f);
+      mVolumeShape = new osg::Sphere(osg::Vec3(0.0, 0.0, 0.0), mBaseRadius);
    }
    else if (shape == VolumeShapeType::CYLINDER)
    {
-      mVolumeShape = new osg::Cylinder(osg::Vec3(0.0f, 0.0f, 0.0f), 10.0f, 10.0f);
+      mVolumeShape = new osg::Cylinder(osg::Vec3(0.0, 0.0, 0.0), mBaseRadius,
+                                                                 mBaseLength);
    }
    else if (shape == VolumeShapeType::CAPSULE)
    {
-      mVolumeShape = new osg::Capsule(osg::Vec3(0.0f, 0.0f, 0.0f), 10.0f, 10.0f);
+      mVolumeShape = new osg::Capsule(osg::Vec3(0.0, 0.0, 0.0), mBaseRadius, 
+                                                                mBaseLength);
    }
    else if (shape == VolumeShapeType::CONE)
    {
-      mVolumeShape = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.0f), 10.0f, 10.0f);
+      mVolumeShape = new osg::Cone(osg::Vec3(0.0, 0.0, 0.0), mBaseRadius,
+                                                             mBaseLength);
    }
    else
    {
@@ -181,7 +194,7 @@ VolumeEditActorProxy::~VolumeEditActorProxy()
 void VolumeEditActorProxy::CreateActor()
 {
    //defaults to box, but the properties should allow a switch to other shapes
-   SetActor(*new dtActors::VolumeEditActor(this));
+   SetActor(*new dtActors::VolumeEditActor());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
