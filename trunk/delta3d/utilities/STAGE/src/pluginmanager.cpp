@@ -1,5 +1,6 @@
 #include <dtEditQt/pluginmanager.h>
 
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/mainwindow.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>

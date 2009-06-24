@@ -26,6 +26,8 @@
  *
  * Matthew W. Campbell
  */
+#include <dtEditQt/mainwindow.h>
+
 #include <prefix/dtstageprefix-src.h>
 #include <QtGui/QApplication>
 #include <QtGui/QIcon>
@@ -48,7 +50,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/fileutils.h>
-#include <dtEditQt/mainwindow.h>
+#include <dtEditQt/configurationmanager.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/editorsettings.h>
 #include <dtEditQt/perspectiveviewport.h>
@@ -59,6 +61,7 @@
 #include <dtEditQt/pluginmanager.h>
 #include <dtEditQt/propertyeditor.h>
 #include <dtEditQt/actortab.h>
+#include <dtEditQt/actorsearchtab.h>
 #include <dtEditQt/resourcebrowser.h>
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editorevents.h>
@@ -301,6 +304,14 @@ namespace dtEditQt
          mActorTab->setObjectName("ActorTab");
          mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
          addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
+      }
+
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowSearchTab") != "false")
+      {
+         mActorSearchTab = new ActorSearchTab(this);
+         mActorSearchTab->setObjectName("ActorSearchTab");
+         mActorTab->setFeatures(QDockWidget::AllDockWidgetFeatures);
+         addDockWidget(Qt::LeftDockWidgetArea, mActorSearchTab);
       }
 
       if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")

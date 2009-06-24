@@ -76,13 +76,9 @@ namespace dtEditQt
     private:
         TabContainer* mTabC;
         TabWrapper*   mTabActorBrowser;
-        TabWrapper*   mTabActorSearch;
-        TabWrapper*   mTabGlobalActor;
         TabWrapper*   mTabPrefabBrowser;
 
         ActorBrowser*       mActorBrowserWidget;
-        ActorSearcher*      mActorSearchWidget;
-        ActorGlobalBrowser* mActorGlobalWidget;
         PrefabBrowser*      mPrefabBrowserWidget;
 
         void closeEvent(QCloseEvent* e);
