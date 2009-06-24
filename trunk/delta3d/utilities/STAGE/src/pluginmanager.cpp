@@ -151,9 +151,9 @@ namespace dtEditQt
    /** get the list of plugins to start from config file and start them */
    void PluginManager::StartPluginsInConfigFile()
    {
-      // get config string from manager
-      ConfigurationManager* cm = mMainWindow->GetConfigurationManager();
-      std::string activated = cm->GetVariable(ConfigurationManager::PLUGINS, "Activated");
+      // get config string from manager      
+      std::string activated = 
+         ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::PLUGINS, "Activated");
 
       if(activated == "")
       {
@@ -197,9 +197,8 @@ namespace dtEditQt
             os << *i << "/";
          }
       }
-
-      ConfigurationManager* cm = mMainWindow->GetConfigurationManager();
-      cm->SetVariable(ConfigurationManager::PLUGINS, "Activated", os.str());
+      
+      ConfigurationManager::GetInstance().SetVariable(ConfigurationManager::PLUGINS, "Activated", os.str());
    }
 
 

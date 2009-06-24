@@ -75,8 +75,7 @@ namespace dtEditQt
 
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::MainWindow(const std::string& stagePath)
-      : mCfgMgr()
-      , mPluginManager(new PluginManager(this))
+      : mPluginManager(new PluginManager(this))
       , mSTAGEFullPath(stagePath)
       , mFileMenu(NULL)
       , mEditMenu(NULL)
@@ -104,7 +103,7 @@ namespace dtEditQt
       ViewportManager::GetInstance();
       
       //Read STAGE configuration file      
-      mCfgMgr.ReadXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+      ConfigurationManager::GetInstance().ReadXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
 
       connectSlots();
       setupDockWindows();
@@ -132,8 +131,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    MainWindow::~MainWindow()
    {
-      if(mCfgMgr.GetVariable(ConfigurationManager::GENERAL,
-                              "SaveConfigurationOnClose") == "true")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::GENERAL,
+                                                  "SaveConfigurationOnClose") == "true")
       {
          //Save configuration
          
@@ -144,7 +143,7 @@ namespace dtEditQt
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "ShowTopView", hSize.height());
          //mCfgMgr.SetVariable(ConfigurationManager::LAYOUT, "HorizontalViewFrameWidth", hSize.width());
 
-         mCfgMgr.WriteXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
+         ConfigurationManager::GetInstance().WriteXML(dtCore::GetDeltaRootPath() + "/utilities/STAGE/STAGEConfig.xml");
       }
    }
 
@@ -158,7 +157,7 @@ namespace dtEditQt
 
       mRecentProjs->addAction(editorActions.mActionFileRecentProject0);
 
-      if (mCfgMgr.GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
+      if (ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::MENU, "MenuType") == "Basic")
       {
          mFileMenu = menuBar()->addMenu(tr("&Edit Map"));         
       }
@@ -273,7 +272,7 @@ namespace dtEditQt
       setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea/*Qt::DockWindowAreaLeft*/);
 
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPropertyEditor") != "false")
       {      
          // create the main left dock window
          mPropertyWindow = new PropertyEditor(this);
@@ -296,7 +295,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea,  mPropertyWindow);
       }
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowActorTab") != "false")
       {
          mActorTab = new ActorTab(this);
          mActorTab->setObjectName("ActorTab");
@@ -304,7 +303,7 @@ namespace dtEditQt
          addDockWidget(Qt::LeftDockWidgetArea, mActorTab);
       }
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowResourceBrowser") != "false")
       {
          mResourceBrowser = new ResourceBrowser(this);
          mResourceBrowser->setObjectName("ResourceBrowser");
@@ -357,19 +356,19 @@ namespace dtEditQt
       // for each viewport.
       ViewportContainer* container = NULL;
 
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
          container = new ViewportContainer(mSideView, vSplit2);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowPerspView") != "false")
       {
          container = new ViewportContainer(mPerspView, vSplit2);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowTopView") != "false")
       {
          container = new ViewportContainer(mTopView, vSplit1);
       }
-      if(mCfgMgr.GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
+      if(ConfigurationManager::GetInstance().GetVariable(ConfigurationManager::LAYOUT, "ShowFrontView") != "false")
       {
          container = new ViewportContainer(mFrontView, vSplit1);
       }
