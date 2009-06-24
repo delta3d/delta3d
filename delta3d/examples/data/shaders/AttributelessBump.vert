@@ -1,8 +1,11 @@
 uniform mat4 osg_ViewMatrixInverse;
 
+uniform mat4 RotationMatrix; //Rotation matrix from model
+
 varying vec3 vNormal;
 varying vec3 vLightDir;
 varying vec3 vViewDir;
+varying vec3 position;	//view space pos
 
 void main()
 {   
@@ -17,12 +20,8 @@ void main()
    
    mat4 worldMatrix = gl_ModelViewMatrix * osg_ViewMatrixInverse;
    
-   // Get the world space normal
-   vec3 test = (gl_NormalMatrix * gl_Normal);
-   test = osg_ViewMatrixInverse * vec4(test, 0.0);
-   vNormal = normalize(test);
-  
-   //vNormal = normalize(gl_NormalMatrix * gl_Normal);
+   vNormal = gl_NormalMatrix * gl_Normal;
+   position = normalize(gl_ModelViewMatrix * gl_Vertex);
    
    //Compute the final vertex position in clip space.
    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

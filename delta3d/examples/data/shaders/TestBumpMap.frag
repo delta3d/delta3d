@@ -32,9 +32,48 @@ void main(void)
    // Calculate the contributions from each shading component
    vec3 ambientColor = vec3(0.2, 0.2, 0.2) * baseColor.rgb;
    vec3 diffuseColor = NdotL * vec3(gl_LightSource[0].diffuse.rgb) * baseColor.rgb;
-   vec3 specularColor = specColor.rgb * pow(max(0.0, reflectionAngle), 128.0);
+   vec3 specularColor = specColor.rgb * pow(max(0.0, reflectionAngle), 8.0);
 
    vec3 result = ambientColor + diffuseColor + specularColor;
 
-   gl_FragColor = vec4(result, 1.0);
+   if (mode == 0)
+   {
+      gl_FragColor = vec4(result, 1.0);
+   }
+   else if (mode == 1)
+   {
+      gl_FragColor = baseColor;
+   }
+   else if (mode == 2)
+   {
+      gl_FragColor = normalColor;
+   }
+   else if (mode == 3)
+   {
+      gl_FragColor = specColor;
+   }
+   else if (mode == 4)
+   {
+      gl_FragColor = vec4(NdotL, NdotL, NdotL, 1.0);
+   }
+   else if (mode == 5)
+   {
+      gl_FragColor = vec4(ambientColor, 1.0);
+   }
+   else if (mode == 6)
+   {
+      gl_FragColor = vec4(diffuseColor, 1.0);
+   }
+   else if (mode == 7)
+   {
+      gl_FragColor = vec4(specularColor, 1.0);
+   }
+   else if (mode == 8)
+   {
+      gl_FragColor = vec4(lightDir, 1.0);
+   }
+   else if (mode == 9)
+   {
+      gl_FragColor = vec4(reflectionDir, 1.0);
+   } 
 }
