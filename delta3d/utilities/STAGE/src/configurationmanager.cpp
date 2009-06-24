@@ -15,6 +15,8 @@
 
 namespace dtEditQt
 {
+//Singleton global variable for the ConfigurationManager
+ConfigurationManager* ConfigurationManager::mInstance(NULL);
 
 ////////////////////////////////////////////////////////////////////////////////
 ConfigurationManager::ConfigurationManager()   
@@ -22,6 +24,16 @@ ConfigurationManager::ConfigurationManager()
    xercesc::XMLPlatformUtils::Initialize();
 
    SetDefaultConfigValues();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+ConfigurationManager& ConfigurationManager::GetInstance()
+{
+   if (ConfigurationManager::mInstance == NULL)
+   {
+      ConfigurationManager::mInstance = new ConfigurationManager(); 
+   }
+   return *(ConfigurationManager::mInstance);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

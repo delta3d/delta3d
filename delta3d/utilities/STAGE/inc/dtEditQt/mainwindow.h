@@ -125,11 +125,6 @@ namespace dtEditQt
       PluginManager* GetPluginManager() { return mPluginManager; }
 
       /**
-       * @return the configuration manager
-       */
-      ConfigurationManager* GetConfigurationManager() { return &mCfgMgr; }
-
-      /**
       * @return the volume edit "actor"
       */
       dtActors::VolumeEditActor* GetVolumeEditActor();
@@ -247,7 +242,6 @@ namespace dtEditQt
       void keyPressEvent(QKeyEvent* e);
 
    private:      
-      ConfigurationManager mCfgMgr;
       PluginManager* mPluginManager;
       std::string mSTAGEFullPath;
   
