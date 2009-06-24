@@ -59,11 +59,7 @@ private:
 };
 
 
-/**
- * Constructor.
- *
- * @param name the instance name
- */
+////////////////////////////////////////////////////////////////////////////////
 ParticleSystem::ParticleSystem(std::string name)
    : mEnabled(true),
      mParentRelative(false)
@@ -75,9 +71,7 @@ ParticleSystem::ParticleSystem(std::string name)
    SetCollisionCategoryBits(COLLISION_CATEGORY_MASK_PARTICLESYSTEM);
 }
 
-/**
- * Destructor.
- */
+////////////////////////////////////////////////////////////////////////////////
 ParticleSystem::~ParticleSystem()
 {
    mLayers.clear();
@@ -170,12 +164,13 @@ protected:
    psGeodeTransform* psGeodeXForm;
 };
 
-
+////////////////////////////////////////////////////////////////////////////////
 ParticleLayer::ParticleLayer() : mProgTypeIsModular(false) {}
-/// Destructor
+
+////////////////////////////////////////////////////////////////////////////////
 ParticleLayer::~ParticleLayer(){}
 
-/// Copy Constructor
+////////////////////////////////////////////////////////////////////////////////
 ParticleLayer::ParticleLayer(const ParticleLayer &copyLayer)
 {
    mGeode             = copyLayer.mGeode;
@@ -187,94 +182,109 @@ ParticleLayer::ParticleLayer(const ParticleLayer &copyLayer)
    mProgTypeIsModular = copyLayer.mProgTypeIsModular;
 }
 
-/// mutators for RefPtr Variables and string
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetGeode(osg::Geode& geode)
 {
    mGeode = &geode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetParticleSystem(osgParticle::ParticleSystem& particleSystem)
 {
    mParticleSystem = &particleSystem;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetEmitterTransform(osg::MatrixTransform& matrixtransform)
 {
    mEmitterTransform = &matrixtransform;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetModularEmitter(osgParticle::ModularEmitter& modularEmitter)
 {
    mModularEmitter = &modularEmitter;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetProgram(osgParticle::Program& program)
 {
    mProgram = &program;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void ParticleLayer::SetLayerName(const std::string& name)
 {
    mLayerName = name;
 }
 
-/// accessors for RefPtrVariables and string
+////////////////////////////////////////////////////////////////////////////////
 osg::Geode& ParticleLayer::GetGeode()
 {
    return *mGeode;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const osg::Geode& ParticleLayer::GetGeode() const
 {
    return *mGeode;
 }
 
-osgParticle::ParticleSystem&  ParticleLayer::GetParticleSystem()
+////////////////////////////////////////////////////////////////////////////////
+osgParticle::ParticleSystem& ParticleLayer::GetParticleSystem()
 {
    return *mParticleSystem;
 }
 
-const osgParticle::ParticleSystem&  ParticleLayer::GetParticleSystem() const
+////////////////////////////////////////////////////////////////////////////////
+const osgParticle::ParticleSystem& ParticleLayer::GetParticleSystem() const
 {
    return *mParticleSystem;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osg::MatrixTransform& ParticleLayer::GetEmitterTransform()
 {
    return *mEmitterTransform;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const osg::MatrixTransform& ParticleLayer::GetEmitterTransform() const
 {
    return *mEmitterTransform;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgParticle::ModularEmitter& ParticleLayer::GetModularEmitter()
 {
    return *mModularEmitter;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const osgParticle::ModularEmitter& ParticleLayer::GetModularEmitter() const
 {
    return *mModularEmitter;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 osgParticle::Program& ParticleLayer::GetProgram()
 {
    return *mProgram;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 const osgParticle::Program& ParticleLayer::GetProgram() const
 {
    return *mProgram;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
 {
    return testLayer.mLayerName == mLayerName;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 {
    //First, cleanup
@@ -365,7 +375,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 }
 
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::SetEnabled(bool enable)
 {
    mEnabled = enable;
@@ -382,19 +392,19 @@ void ParticleSystem::SetEnabled(bool enable)
    }
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool ParticleSystem::IsEnabled() const
 {
    return mEnabled;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::SetParentRelative(bool parentRelative)
 {
    mParentRelative = parentRelative;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 bool ParticleSystem::IsParentRelative() const
 {
    return mParentRelative;
@@ -404,43 +414,43 @@ bool ParticleSystem::IsParentRelative() const
 // Particle Layer Code Below
 //////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* ParticleSystem::GetLoadedParticleSystemRoot()
 {
    return mLoadedFile.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const osg::Node* ParticleSystem::GetLoadedParticleSystemRoot() const
 {
    return mLoadedFile.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 osg::Node* ParticleSystem::GetCachedOriginalParticleSystemRoot()
 {
    return mOriginalLoadedParticleSystem.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const osg::Node* ParticleSystem::GetCachedOriginalParticleSystemRoot() const
 {
    return mOriginalLoadedParticleSystem.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::ParseParticleLayers(osg::Node& ps, LayerList& layers, dtCore::RefPtr<osgParticle::ParticleSystemUpdater>& particleSystemUpdater)
 {
    // particle system group of the root note from the loaded particle system file.
    // will only be valid after you call load file on an object, thus its protected
-   osg::Group*     newParticleSystemGroup  = static_cast<const osg::Group*>(&ps);
+   osg::Group* newParticleSystemGroup = static_cast<osg::Group*>(&ps);
 
    // node we are going to reuse over and over again to search through all the children of
    // the osg root node
-   osg::Node*      searchingNode           = NULL;
+   osg::Node* searchingNode = NULL;
 
    // iterating through children var
-   unsigned int    i                       = 0;
+   unsigned int i = 0;
 
    // clear the list in case it is loaded twice.
    layers.clear();
@@ -574,7 +584,7 @@ void ParticleSystem::ParseParticleLayers(osg::Node& ps, LayerList& layers, dtCor
    }
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::CloneParticleSystemDrawables()
 {
    LayerList::iterator nextLayerIt;
@@ -610,7 +620,7 @@ void ParticleSystem::CloneParticleSystemDrawables()
    }
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::ResetTime()
 {
    LayerList::iterator i, iend;
@@ -624,7 +634,7 @@ void ParticleSystem::ResetTime()
    }
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
 {
    for (LayerList::iterator pLayerIter = mLayers.begin();
@@ -637,7 +647,7 @@ ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
    return NULL;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName) const
 {
    for (LayerList::const_iterator pLayerIter = mLayers.begin();
@@ -653,25 +663,25 @@ const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName
    return NULL;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 osgParticle::ParticleSystemUpdater* ParticleSystem::GetParticleSystemUpdater()
 {
    return mParticleSystemUpdater.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 const osgParticle::ParticleSystemUpdater* ParticleSystem::GetParticleSystemUpdater() const
 {
    return mParticleSystemUpdater.get();
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::SetAllLayers(const LayerList& layersToSet)
 {
    mLayers = layersToSet;
 }
 
-///////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 void ParticleSystem::SetSingleLayer(ParticleLayer& layerToSet)
 {
    for (LayerList::iterator pLayerIter = mLayers.begin();
