@@ -37,7 +37,6 @@
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/map.h>
 #include <dtEditQt/typedefs.h>
-#include <dtEditQt/configurationmanager.h>
 
 class QSplitter;
 
@@ -53,6 +52,7 @@ namespace dtEditQt
    class OrthoViewport;
    class PropertyEditor;
    class ActorTab;
+   class ActorSearchTab;
    class ResourceBrowser;   
    class PluginManager;   
 
@@ -269,6 +269,7 @@ namespace dtEditQt
       // main controls
       PropertyEditor*  mPropertyWindow;
       ActorTab*        mActorTab;
+      ActorSearchTab*  mActorSearchTab;
       ResourceBrowser* mResourceBrowser;
 
       QWidget*          mMainViewportParent;

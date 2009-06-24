@@ -20,8 +20,19 @@
                <xs:attribute name="ShowFrontView" type="xs:boolean"/>
                <xs:attribute name="ShowSideView" type="xs:boolean"/>
                <xs:attribute name="ShowPerspView" type="xs:boolean"/>
-            
+
+               <!-- Note: if ShowActorTab is false, none of the other
+               ShowActor stuff will be visible either. -->
                <xs:attribute name="ShowActorTab" type="xs:boolean"/>
+               <xs:attribute name="ShowActorBrowser" type="xs:boolean"/>
+               <xs:attribute name="ShowPrefabBrowser" type="xs:boolean"/>
+
+               <!-- Note: if the ShowSearchTab is false, none of the other
+               Search stuff will be visible either. -->
+               <xs:attribute name="ShowSearchTab" type="xs:boolean"/>
+               <xs:attribute name="ShowActorSearch" type="xs:boolean"/>
+               <xs:attribute name="ShowGlobalActors" type="xs:boolean"/>        
+
                <xs:attribute name="ShowResourceBrowser" type="xs:boolean"/>
                <xs:attribute name="ShowPropertyEditor" type="xs:boolean"/>
             </xs:complexType>
