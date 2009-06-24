@@ -11,7 +11,7 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
-#include <strstream>
+#include <sstream>
 
 namespace dtEditQt
 {
@@ -19,7 +19,7 @@ namespace dtEditQt
 ConfigurationManager* ConfigurationManager::mInstance(NULL);
 
 ////////////////////////////////////////////////////////////////////////////////
-ConfigurationManager::ConfigurationManager()   
+ConfigurationManager::ConfigurationManager()
 {
    xercesc::XMLPlatformUtils::Initialize();
 
@@ -31,7 +31,7 @@ ConfigurationManager& ConfigurationManager::GetInstance()
 {
    if (ConfigurationManager::mInstance == NULL)
    {
-      ConfigurationManager::mInstance = new ConfigurationManager(); 
+      ConfigurationManager::mInstance = new ConfigurationManager();
    }
    return *(ConfigurationManager::mInstance);
 }
@@ -39,7 +39,7 @@ ConfigurationManager& ConfigurationManager::GetInstance()
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::ReadXML(const std::string& fileName)
 {
-   xercesc::SAX2XMLReaderImpl parser;   
+   xercesc::SAX2XMLReaderImpl parser;
 
    parser.setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, true);
    parser.setFeature(xercesc::XMLUni::fgXercesSchema, true);
@@ -47,7 +47,7 @@ void ConfigurationManager::ReadXML(const std::string& fileName)
    parser.setFeature(xercesc::XMLUni::fgSAX2CoreNameSpacePrefixes, false);
    parser.setFeature(xercesc::XMLUni::fgSAX2CoreValidation, true);
    parser.setFeature(xercesc::XMLUni::fgXercesDynamic, true);
-      
+
    parser.setContentHandler(this);
    parser.setErrorHandler(this);
 
@@ -67,11 +67,11 @@ void ConfigurationManager::WriteXML(const std::string& fileName)
 
    ToXML(*doc);
 
-   writer->WriteFile(fileName);  
+   writer->WriteFile(fileName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::string ConfigurationManager::GetVariable(SectionType section, 
+std::string ConfigurationManager::GetVariable(SectionType section,
                                                const std::string& name)
 {
    switch(section)
@@ -98,7 +98,7 @@ std::string ConfigurationManager::GetVariable(SectionType section,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ConfigurationManager::SetVariable(SectionType section, 
+void ConfigurationManager::SetVariable(SectionType section,
                                        const std::string& name, const std::string& value)
 {
    std::string errString;
@@ -125,11 +125,11 @@ void ConfigurationManager::SetVariable(SectionType section,
          dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR,
             __FUNCTION__, __LINE__, errString.c_str());
          break;
-   }   
+   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ConfigurationManager::SetVariable(SectionType section, 
+void ConfigurationManager::SetVariable(SectionType section,
                                        const std::string& name, int value)
 {
    char val[1024];
@@ -141,7 +141,7 @@ void ConfigurationManager::SetVariable(SectionType section,
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc) const
-{    
+{
    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc.getDocumentElement();
 
    //These attributes are getting set on the root node in order to facilitate validation
@@ -177,8 +177,8 @@ void ConfigurationManager::ToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* 
-   ConfigurationManager::WriteSectionToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc, 
+XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
+   ConfigurationManager::WriteSectionToXML(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument& doc,
                                            SectionType section) const
 {
    std::map<std::string, std::string>::const_iterator beginIt, endIt, it;
@@ -189,7 +189,7 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
       case GENERAL:
          beginIt = mGeneralVariables.begin();
          endIt = mGeneralVariables.end();
-         groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("General");      
+         groupName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("General");
          break;
       case LAYOUT:
          beginIt = mLayoutVariables.begin();
@@ -211,10 +211,10 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
             __FUNCTION__, __LINE__, "Unrecognized Section.");
          return NULL;
          break;
-   }   
-   
-   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc.createElement(groupName);   
-   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);   
+   }
+
+   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* groupElement = doc.createElement(groupName);
+   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&groupName);
 
    for(it = beginIt; it != endIt; ++it)
    {
@@ -223,7 +223,7 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
 
       //XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = doc.createElement(name);
       groupElement->setAttribute(name, value);
-      //XERCES_CPP_NAMESPACE_QUALIFIER DOMText* txt = doc.createTextNode(value);      
+      //XERCES_CPP_NAMESPACE_QUALIFIER DOMText* txt = doc.createTextNode(value);
 
       //element->appendChild(txt);
       //groupElement->appendChild(element);
@@ -237,7 +237,7 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::startDocument()
-{   
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +249,7 @@ void ConfigurationManager::startElement(const XMLCh* const uri, const XMLCh* con
 
    dtUtil::XMLStringConverter qnameConv(qname);
    std::string sectionStr = qnameConv.ToString();
-   
+
    if(sectionStr == "General")
    {
       currentMapPtr = &mGeneralVariables;
@@ -284,7 +284,7 @@ void ConfigurationManager::startElement(const XMLCh* const uri, const XMLCh* con
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::error(const xercesc::SAXParseException& e)
 {
-   std::strstream errStrm;
+   std::ostringstream errStrm;
    dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
    dtUtil::XMLStringConverter msgConverter(e.getMessage());
 
@@ -294,15 +294,15 @@ void ConfigurationManager::error(const xercesc::SAXParseException& e)
       << "\n  Message: " << msgConverter.ToString() << "\n";
 
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
-      __LINE__, errStrm.str());   
+      __LINE__, errStrm.str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::fatalError(const xercesc::SAXParseException& e)
 {
-   std::strstream errStrm;
+   std::ostringstream errStrm;
    dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
-   dtUtil::XMLStringConverter msgConverter(e.getMessage());   
+   dtUtil::XMLStringConverter msgConverter(e.getMessage());
 
    errStrm << "\nFatal Error at file " << sysIDConverter.ToString()
       << ", line " << e.getLineNumber()
@@ -310,13 +310,13 @@ void ConfigurationManager::fatalError(const xercesc::SAXParseException& e)
       << "\n  Message: " << msgConverter.ToString() << "\n";
 
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,
-      __LINE__, errStrm.str());   
+      __LINE__, errStrm.str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ConfigurationManager::warning(const xercesc::SAXParseException& e)
 {
-   std::strstream errStrm;
+   std::ostringstream errStrm;
    dtUtil::XMLStringConverter sysIDConverter(e.getSystemId());
    dtUtil::XMLStringConverter msgConverter(e.getMessage());
 
