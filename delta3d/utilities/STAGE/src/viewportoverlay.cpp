@@ -264,6 +264,20 @@ namespace dtEditQt
       return false;
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   bool ViewportOverlay::isActorSelectedFirst(dtDAL::ActorProxy* proxy) const
+   {
+      if (mCurrentActorSelection.size() > 0)
+      {
+         if (mCurrentActorSelection[0] == proxy)
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy* proxy, bool clearAll)
    {

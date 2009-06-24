@@ -39,6 +39,7 @@
 #include <dtEditQt/typedefs.h>
 
 class QSplitter;
+class QActionGroup;
 
 namespace dtActors
 {
@@ -54,7 +55,8 @@ namespace dtEditQt
    class ActorTab;
    class ActorSearchTab;
    class ResourceBrowser;   
-   class PluginManager;   
+   class PluginManager;
+   class EditorViewportContainer;
 
    /**
     * This class is the main window of the application.  It contains the menu bar,
@@ -99,6 +101,21 @@ namespace dtEditQt
       void findAndLoadPreferences();
 
       /**
+      * Adds an exclusive tool into the tool mode bar.
+      */
+      void AddExclusiveToolMode(QAction* action);
+
+      /**
+      * Removes an exclusive tool from the tool mode bar.
+      */
+      void RemoveExclusiveToolMode(QAction* action);
+
+      /**
+      * Returns to the normal tool mode.
+      */
+      void SetNormalToolMode();
+
+      /**
        * @return the property editor.
        */
       PropertyEditor* GetPropertyEditor();
@@ -118,6 +135,24 @@ namespace dtEditQt
       QMenu* GetWindowMenu() const  { return mWindowMenu; }
       QMenu* GetHelpMenu() const    { return mHelpMenu; }
       QMenu* GetToolsMenu() const   { return mToolsMenu; }
+
+      /**
+      * toolbar accessors.
+      */
+      QToolBar* GetFileToolbar() const          { return mFileToolBar; }
+      QToolBar* GetEditToolbar() const          { return mEditToolBar; }
+      QToolBar* GetUndoToolbar() const          { return mUndoToolBar; }
+      QToolBar* GetToolsToolbar() const         { return mToolsToolBar; }
+      QToolBar* GetExternalToolsToolbar() const { return mExternalToolsToolBar; }
+
+      /**
+      * viewport accessors.
+      */
+      PerspectiveViewport* GetPerspView() const { return mPerspView; }
+      OrthoViewport*       GetTopView() const   { return mTopView; }
+      OrthoViewport*       GetSideView() const  { return mSideView; }
+      OrthoViewport*       GetFrontView() const { return mFrontView; }
+      EditorViewportContainer* GetViewContainer() const { return mEditorContainer; }
 
       /**
        * @return the plugin manager
@@ -259,12 +294,17 @@ namespace dtEditQt
       QToolBar* mFileToolBar;
       QToolBar* mEditToolBar;
       QToolBar* mUndoToolBar;
+      QToolBar* mToolsToolBar;
       QToolBar* mExternalToolsToolBar;
+
+      QActionGroup* mToolModeActionGroup;
+      QAction*      mNormalToolMode;
 
       PerspectiveViewport* mPerspView;
       OrthoViewport* mTopView;
       OrthoViewport* mSideView;
       OrthoViewport* mFrontView;
+      EditorViewportContainer* mEditorContainer;
 
       // main controls
       PropertyEditor*  mPropertyWindow;

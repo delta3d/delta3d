@@ -39,6 +39,7 @@
 #include <QtGui/QStatusBar>
 #include <QtGui/QMessageBox>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QActionGroup>
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
 
@@ -255,6 +256,19 @@ namespace dtEditQt
       mUndoToolBar->addAction(EditorActions::GetInstance().mActionEditRedo);
       addToolBar(mUndoToolBar);
 
+      mToolsToolBar = new QToolBar(this);
+      mToolsToolBar->setObjectName("ToolsToolBar");
+      mToolsToolBar->setWindowTitle(tr("Tools Toolbar"));
+      mToolsToolBar->setMinimumWidth(10);
+      addToolBar(mToolsToolBar);
+
+      mToolModeActionGroup = new QActionGroup(this);
+      mToolModeActionGroup->setExclusive(true);
+
+      mNormalToolMode = new QAction(QIcon(UIResources::ICON_TOOLMODE_NORMAL.c_str()), "Normal Tools", this);
+      AddExclusiveToolMode(mNormalToolMode);
+      mNormalToolMode->setChecked(true);
+
       mExternalToolsToolBar = new QToolBar(this);
       mExternalToolsToolBar->setObjectName("ExternalToolsToolBar");
       mExternalToolsToolBar->setWindowTitle(tr("External Tools ToolBar"));
@@ -385,14 +399,11 @@ namespace dtEditQt
       }
 
       // Create our editor container for all of our views.
-      EditorViewportContainer* editorContainer = new EditorViewportContainer(hSplit);
-      editorContainer->addViewport(mPerspView);
-      editorContainer->addViewport(mSideView);
-      editorContainer->addViewport(mTopView);
-      editorContainer->addViewport(mFrontView);
+      mEditorContainer = new EditorViewportContainer(hSplit);
+      mEditorContainer->updateSnaps();
 
       // Returns the root of the viewport widget hierarchy.
-      return editorContainer;
+      return mEditorContainer;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -941,6 +952,38 @@ namespace dtEditQt
 
       connect(&editorActions, SIGNAL(ExternalToolsModified(const QList<QAction*>&)),
          this, SLOT(RebuildToolsMenu(const QList<QAction*>&)));
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::AddExclusiveToolMode(QAction* action)
+   {
+      if (!action)
+      {
+         return;
+      }
+
+      mToolsToolBar->addAction(action);
+      action->setActionGroup(mToolModeActionGroup);
+      action->setCheckable(true);
+
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::RemoveExclusiveToolMode(QAction* action)
+   {
+      if (!action)
+      {
+         return;
+      }
+
+      action->setActionGroup(NULL);
+      mToolsToolBar->removeAction(action);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   void MainWindow::SetNormalToolMode()
+   {
+      mNormalToolMode->setChecked(true);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

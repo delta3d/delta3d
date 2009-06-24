@@ -44,6 +44,8 @@ namespace dtActors
 
       void SetPrefab(const std::string& fileName);
 
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& GetPrefabProxies();
+
    protected:
       virtual ~PrefabActorProxy();
 

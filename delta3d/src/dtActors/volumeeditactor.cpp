@@ -151,7 +151,7 @@ void VolumeEditActor::SetShape(VolumeShapeType& shape)
 
    dtCore::RefPtr<osg::TessellationHints> tessHints = new osg::TessellationHints();
 
-   mVolumeDrawable = new osg::ShapeDrawable(mVolumeShape.get(), tessHints.get());
+   mVolumeDrawable = new osg::ShapeDrawable(mVolumeShape.get(), tessHints.get());   
    mVolumeDrawable->setColor(osg::Vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
    //Volume should only ever contain one shape drawable,

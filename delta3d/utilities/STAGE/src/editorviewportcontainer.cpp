@@ -63,14 +63,8 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewportContainer::addViewport(Viewport* viewport)
+   void EditorViewportContainer::updateSnaps()
    {
-      EditorViewport* editorView = dynamic_cast<EditorViewport*>(viewport);
-      if (editorView)
-      {
-         mViewportList.push_back(editorView);
-      }
-
       setSnapTranslation();
       setSnapRotation();
       setSnapScale();
@@ -88,49 +82,28 @@ namespace dtEditQt
       }
    }
 
-   //////////////////////////////////////////////////////////////////////////////////
-   //void EditorViewportContainer::setLocalSpace()
-   //{
-   //   for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-   //   {
-   //      mViewportList[viewIndex]->setLocalSpace(mSetLocalSpaceAction->isChecked());
-   //   }
-   //}
-
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapTranslation()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapTranslation(mEditTrans->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapTranslation(mEditTrans->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapRotation()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapRotation(mEditAngle->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapRotation(mEditAngle->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapScale()
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapScale(mEditScale->text().toFloat());
-      }
+      ViewportManager::GetInstance().emitSetSnapScale(mEditScale->text().toFloat());
    }
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewportContainer::setSnapEnabled(int state)
    {
-      for (int viewIndex = 0; viewIndex < (int)mViewportList.size(); viewIndex++)
-      {
-         mViewportList[viewIndex]->setSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
-      }
+      ViewportManager::GetInstance().emitSetSnapEnabled(mCheckBoxTrans->isChecked(), mCheckBoxAngle->isChecked(), mCheckBoxScale->isChecked());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

@@ -398,18 +398,15 @@ namespace dtEditQt
          }
       }
 
-      // if its not an actor that is directly part of the map then it may be an actor under a prefab.      
+      // If it's not an actor that is directly part of the map, then it may be a child of one.
       if (newSelection == NULL)
       {
          dtCore::DeltaDrawable* parent = drawable->GetParent();
-         if (parent)
+         while(parent && !newSelection)
          {
-            // If the parent is a prefab actor, then we want to select that instead.
-            dtActors::PrefabActor* prefabActor = dynamic_cast<dtActors::PrefabActor*>(parent);
-            if (prefabActor)
-            {
-               newSelection = currMap->GetProxyById(prefabActor->GetUniqueId());
-            }
+            newSelection = currMap->GetProxyById(parent->GetUniqueId());
+
+            parent = parent->GetParent();
          }
       }
 
@@ -443,8 +440,7 @@ namespace dtEditQt
       if (newSelection)
       {
          // Determine if this new selection is part of a group.
-         std::vector<dtDAL::ActorProxy*> groupActors;
-         groupActors.push_back(newSelection);
+         toSelect.push_back(newSelection);
 
          int groupIndex = currMap->FindGroupForActor(newSelection);
 
@@ -456,23 +452,8 @@ namespace dtEditQt
                dtDAL::ActorProxy* proxy = currMap->GetActorFromGroup(groupIndex, actorIndex);
                if (proxy != newSelection)
                {
-                  groupActors.push_back(proxy);
+                  toSelect.push_back(proxy);
                }
-            }
-         }
-
-         if (overlay->isActorSelected(newSelection))
-         {
-            for (int index = 0; index < (int)groupActors.size(); index++)
-            {
-               overlay->removeActorFromCurrentSelection(groupActors[index]);
-            }
-         }
-         else
-         {
-            for (int index = 0; index < (int)groupActors.size(); index++)
-            {
-               toSelect.push_back(groupActors[index]);
             }
          }
       }
@@ -482,7 +463,19 @@ namespace dtEditQt
       // key is pressed) add the current selection to the newly selected proxy.
       if (overlay->getMultiSelectMode())
       {
-         ViewportOverlay::ActorProxyList::iterator itor;
+         for (int index = 0; index < (int)toSelect.size(); index++)
+         {
+            for (int selIndex = 0; selIndex < (int)selection.size(); selIndex++)
+            {
+               if (toSelect[index] == selection[selIndex])
+               {
+                  selection.erase(selection.begin() + selIndex);
+                  break;
+               }
+            }
+         }
+
+         ViewportOverlay::ActorProxyList::iterator itor = selection.begin();
          for (itor = selection.begin(); itor != selection.end(); ++itor)
          {
             toSelect.push_back(const_cast<dtDAL::ActorProxy*>(itor->get()));
@@ -581,6 +574,17 @@ namespace dtEditQt
          return NULL;
       }
 
+      dtCore::DeltaDrawable* drawable = getPickDrawable();
+
+      // Tell the manager the last drawable picked.
+      ViewportManager::GetInstance().setLastDrawable(drawable);
+
+      return drawable;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   dtCore::DeltaDrawable* Viewport::getPickDrawable()
+   {
       if (mIsector->GetClosestDeltaDrawable()== NULL)
       {
          LOG_ERROR("Intersection query reported an intersection but returned an "
@@ -590,6 +594,7 @@ namespace dtEditQt
 
       return mIsector->GetClosestDeltaDrawable();
    }
+
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::onGotoActor(dtCore::RefPtr<dtDAL::ActorProxy> proxy)

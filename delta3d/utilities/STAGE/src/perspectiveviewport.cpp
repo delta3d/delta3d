@@ -130,9 +130,12 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::beginCameraMode(QMouseEvent* e)
+   bool PerspectiveViewport::beginCameraMode(QMouseEvent* e)
    {
-      EditorViewport::beginCameraMode(e);
+      if (!EditorViewport::beginCameraMode(e))
+      {
+         return false;
+      }
 
       setInteractionMode(Viewport::InteractionMode::CAMERA);
 
@@ -163,24 +166,31 @@ namespace dtEditQt
       else
       {
          mCameraMode = &CameraMode::NOTHING;
-         return;
+         return true;
       }
 
       trapMouseCursor();
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::endCameraMode(QMouseEvent* e)
+   bool PerspectiveViewport::endCameraMode(QMouseEvent* e)
    {
-      EditorViewport::endCameraMode(e);
+      if (!EditorViewport::endCameraMode(e))
+      {
+         return false;
+      }
 
       if (mMouseButton == Qt::LeftButton && mMouseButtons == Qt::RightButton)
       {
          mCameraMode = &CameraMode::CAMERA_LOOK;
+         EditorViewport::beginCameraMode(e);
       }
       else if (mMouseButton == Qt::RightButton && mMouseButtons == Qt::LeftButton)
       {
          mCameraMode = &CameraMode::CAMERA_NAVIGATE;
+         EditorViewport::beginCameraMode(e);
       }
       else
       {
@@ -204,26 +214,43 @@ namespace dtEditQt
             getCamera()->removeAllActorAttachments();
          }
       }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::beginActorMode(QMouseEvent* e)
+   bool PerspectiveViewport::beginActorMode(QMouseEvent* e)
    {
-      EditorViewport::beginActorMode(e);
+      if (!EditorViewport::beginActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::endActorMode(QMouseEvent* e)
+   bool PerspectiveViewport::endActorMode(QMouseEvent* e)
    {
-      EditorViewport::endActorMode(e);
+      if (!EditorViewport::endActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void PerspectiveViewport::moveCamera(float dx, float dy)
+   bool PerspectiveViewport::moveCamera(float dx, float dy)
    {
+      if (!EditorViewport::moveCamera(dx, dy))
+      {
+         return false;
+      }
+
       if (*mCameraMode == CameraMode::NOTHING || getCamera() == NULL)
       {
-         return;
+         return true;
       }
 
       if (*mCameraMode == CameraMode::CAMERA_NAVIGATE)
@@ -248,6 +275,8 @@ namespace dtEditQt
          getCamera()->move(getCamera()->getRightDir() *
             (dx / getMouseSensitivity()));
       }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
