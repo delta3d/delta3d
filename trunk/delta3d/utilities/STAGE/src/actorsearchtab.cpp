@@ -27,7 +27,7 @@
  * Curtiss Murphy
  */
 #include <prefix/dtstageprefix-src.h>
-#include "dtEditQt/ActorSearchTab.h"
+#include "dtEditQt/actorsearchtab.h"
 #include <dtEditQt/configurationmanager.h>
 #include "dtEditQt/tabcontainer.h"
 #include "dtEditQt/tabwrapper.h"
