@@ -56,6 +56,7 @@
 #include <dtActors/labelactorproxy.h>
 #include <dtActors/prefabactorproxy.h>
 #include <dtActors/volumeeditactor.h>
+#include <dtActors/linkedpointsactorproxy.h>
 
 namespace dtActors
 { // "display name", "category", "description/tooltip"
@@ -90,8 +91,9 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LABEL_ACTOR_TYPE(new dtDAL::ActorType("Label", "dtcore", "Simple 3D label drawable."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", "Game Actor that supports a single Mesh geometry"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::DISTANCE_SENSOR_ACTOR_TYPE(new dtDAL::ActorType("Distance Sensor", "dtai.Game.Actors", "Game Actor that wraps and triggers a dtAI distance sensor."));
-   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtDAL::ActorType("Prefab", "dtActors", "dtActors::Prefab actor"));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::VOLUME_EDIT_ACTOR_TYPE(new dtDAL::ActorType("Volume Edit", "dtutil", "dtutil::VolumeEdit actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PREFAB_ACTOR_TYPE(new dtDAL::ActorType("Prefab", "dtActors", "dtActors.Prefab actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::LINKED_POINTS_ACTOR_TYPE(new dtDAL::ActorType("LinkedPoints", "dtActors", "dtActors.LinkedPoints actor"));
    
    /// deprecated types
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
@@ -176,6 +178,7 @@ namespace dtActors
       mActorFactory->RegisterType<LabelActorProxy>(LABEL_ACTOR_TYPE.get());
       mActorFactory->RegisterType<PrefabActorProxy>(PREFAB_ACTOR_TYPE.get());
       mActorFactory->RegisterType<VolumeEditActorProxy>(VOLUME_EDIT_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<LinkedPointsActorProxy>(LINKED_POINTS_ACTOR_TYPE.get());
 
       // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered)
       mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());

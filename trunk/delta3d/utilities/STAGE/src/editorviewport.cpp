@@ -81,9 +81,16 @@ namespace dtEditQt
    }
 
    /////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::moveCamera(float dx, float dy)
+   bool EditorViewport::moveCamera(float dx, float dy)
    {
-      // This should be overloaded for proper camera control.
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitMoveCamera(this, dx, dy, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -569,12 +576,7 @@ namespace dtEditQt
 
       setFocus();
 
-      //bool isHandled = false;
-      //ViewportManager::GetInstance().emitMousePressEvent(this, e, &isHandled);
-      //if (isHandled)
-      //{
-      //   return;
-      //}
+      ViewportManager::GetInstance().emitMousePressEvent(this, e);
 
       if (mMouseButton == Qt::LeftButton)
       {
@@ -592,8 +594,12 @@ namespace dtEditQt
       {
          // If this returns true, it means we are hovering our mouse over a
          // valid motion model widget so we should go into actor mode.
-         mMotionType = mObjectMotionModel->Update(pos);
-         if (mMotionType != STAGEObjectMotionModel::MOTION_TYPE_MAX)
+         //mMotionType = mObjectMotionModel->Update(pos);
+         //if (mMotionType != STAGEObjectMotionModel::MOTION_TYPE_MAX)
+         //{
+         //   beginActorMode(e);
+         //}
+         if (shouldBeginActorMode(pos))
          {
             beginActorMode(e);
          }
@@ -620,12 +626,7 @@ namespace dtEditQt
       mMouseButtons = e->buttons();
       mKeyMods = e->modifiers();
 
-      //bool isHandled = false;
-      //ViewportManager::GetInstance().emitMouseReleaseEvent(this, e, &isHandled);
-      //if (isHandled)
-      //{
-      //   return;
-      //}
+      ViewportManager::GetInstance().emitMouseReleaseEvent(this, e);
 
       if (mMouseButton == Qt::LeftButton)
       {
@@ -650,34 +651,14 @@ namespace dtEditQt
       // released, it means we want to select actors.
       else if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
       {
-         setInteractionMode(Viewport::InteractionMode::NOTHING);
-
-         if (mMouseButton == Qt::LeftButton)
-         {
-            if (mKeyMods == Qt::ControlModifier)
-            {
-               ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
-            }
-            else
-            {
-               ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
-            }
-
-            pick(e->pos().x(), e->pos().y());
-            ViewportManager::GetInstance().refreshAllViewports();
-         }
+         selectActors(e);
       }
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {
-      //bool isHandled = false;
-      //ViewportManager::GetInstance().emitMouseMoveEvent(this, e, dx, dy, &isHandled);
-      //if (isHandled)
-      //{
-      //   return;
-      //}
+      ViewportManager::GetInstance().emitMouseMoveEvent(this, e);
 
       // Get the position of the mouse.
       osg::Vec2 pos = convertMousePosition(e->pos());
@@ -692,6 +673,9 @@ namespace dtEditQt
          beginCameraMode(e);
          mSkipUpdateForCam = true;
       }
+      // We skip the first camera update so we have time to snap the mouse
+      // cursor to the center of the window without having it be recognized
+      // as a mouse movement, therefore eliminating the initial camera pop.
       else if (mSkipUpdateForCam)
       {
          mSkipUpdateForCam = false;
@@ -719,64 +703,154 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::beginCameraMode(QMouseEvent* e)
+   bool EditorViewport::beginCameraMode(QMouseEvent* e)
    {
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitBeginCameraMode(this, e, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::endCameraMode(QMouseEvent* e)
+   bool EditorViewport::endCameraMode(QMouseEvent* e)
    {
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitEndCameraMode(this, e, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EditorViewport::shouldBeginActorMode(osg::Vec2 position)
+   {
+      bool overrideDefault = false;
+      bool result = false;
+      ViewportManager::GetInstance().emitShouldBeginActorMode(this, position, &overrideDefault, &result);
+      if (overrideDefault)
+      {
+         return result;
+      }
+
+      if (mObjectMotionModel->Update(position) != STAGEObjectMotionModel::MOTION_TYPE_MAX)
+      {
+         return true;
+      }
+
+      return false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::beginActorMode(QMouseEvent* e)
+   bool EditorViewport::beginActorMode(QMouseEvent* e)
    {
       setInteractionMode(Viewport::InteractionMode::ACTOR);
 
-      switch (mMotionType)
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitBeginActorMode(this, e, &overrideDefault);
+      if (overrideDefault)
       {
-      case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-         break;
-      case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
-         saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-         break;
-      case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
-         saveSelectedActorOrigValues("Scale");
-         break;
-
-      default:
-      break;
+         return false;
       }
+
+      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+      saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      saveSelectedActorOrigValues("Scale");
+
+      //switch (mMotionType)
+      //{
+      //case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
+      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+      //   break;
+      //case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
+      //   saveSelectedActorOrigValues(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      //   break;
+      //case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
+      //   saveSelectedActorOrigValues("Scale");
+      //   break;
+
+      //default:
+      //break;
+      //}
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::endActorMode(QMouseEvent* e)
+   bool EditorViewport::endActorMode(QMouseEvent* e)
    {
       setInteractionMode(Viewport::InteractionMode::NOTHING);
+
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitEndActorMode(this, e, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
 
       // we could send hundreds of translation and rotation events, so make sure
       // we surround it in a change transaction
       EditorEvents::GetInstance().emitBeginChangeTransaction();
+      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+      updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      updateActorSelectionProperty("Scale");
 
-      // Update the selected actor proxies with their new values.
-      switch (mMotionType)
-      {
-      case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
-         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
-         break;
-      case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
-         updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
-         break;
-      case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
-         updateActorSelectionProperty("Scale");
-         break;
+      //// Update the selected actor proxies with their new values.
+      //switch (mMotionType)
+      //{
+      //case STAGEObjectMotionModel::MOTION_TYPE_TRANSLATION:
+      //   updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_TRANSLATION);
+      //   break;
+      //case STAGEObjectMotionModel::MOTION_TYPE_ROTATION:
+      //   updateActorSelectionProperty(dtDAL::TransformableActorProxy::PROPERTY_ROTATION);
+      //   break;
+      //case STAGEObjectMotionModel::MOTION_TYPE_SCALE:
+      //   updateActorSelectionProperty("Scale");
+      //   break;
 
-      default:
-      break;
-      }
+      //default:
+      //break;
+      //}
 
       EditorEvents::GetInstance().emitEndChangeTransaction();
+
+      return true;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool EditorViewport::selectActors(QMouseEvent* e)
+   {
+      setInteractionMode(Viewport::InteractionMode::NOTHING);
+
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitSelectActors(this, e, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
+
+      if (mMouseButton == Qt::LeftButton)
+      {
+         if (mKeyMods == Qt::ControlModifier)
+         {
+            ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(true);
+         }
+         else
+         {
+            ViewportManager::GetInstance().getViewportOverlay()->setMultiSelectMode(false);
+         }
+
+         pick(e->pos().x(), e->pos().y());
+         ViewportManager::GetInstance().refreshAllViewports();
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -841,10 +915,17 @@ namespace dtEditQt
    void EditorViewport::connectInteractionModeSlots()
    {
       Viewport::connectInteractionModeSlots();
-      EditorEvents* editorEvents = &EditorEvents::GetInstance();
 
-      connect(editorEvents, SIGNAL(editorPreferencesChanged()),
+      connect(&EditorEvents::GetInstance(), SIGNAL(editorPreferencesChanged()),
          this, SLOT(onEditorPreferencesChanged()));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapTranslation(float)),
+         this, SLOT(setSnapTranslation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapRotation(float)),
+         this, SLOT(setSnapRotation(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapScale(float)),
+         this, SLOT(setSnapScale(float)));
+      connect(&ViewportManager::GetInstance(), SIGNAL(setSnapEnabled(bool, bool, bool)),
+         this, SLOT(setSnapEnabled(bool, bool, bool)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -858,8 +939,15 @@ namespace dtEditQt
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::DuplicateActors()
+   bool EditorViewport::DuplicateActors()
    {
+      bool overrideDefault = false;
+      ViewportManager::GetInstance().emitDuplicateActors(this, &overrideDefault);
+      if (overrideDefault)
+      {
+         return false;
+      }
+
       LOG_INFO("Duplicating current actor selection.");
 
       // This commits any changes in the property editor.
@@ -877,7 +965,7 @@ namespace dtEditQt
       if (!currMap.valid())
       {
          LOG_ERROR("Current map is not valid.");
-         return;
+         return true;
       }
 
       // We're about to do a LOT of work, especially if lots of things are select
@@ -961,5 +1049,7 @@ namespace dtEditQt
       EditorEvents::GetInstance().emitEndChangeTransaction();
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
+
+      return true;
    }
 } // namespace dtEditQt

@@ -84,12 +84,6 @@ void STAGEObjectMotionModel::SetObjectToScreenFunc(ObjectToScreenFunc func)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::SetTarget(dtCore::Transformable* target)
-{
-   // This does nothing and shoule not be used.
-}
-
-////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::AddTarget(dtDAL::TransformableActorProxy* target)
 {
    // Skip if there is no target to add.

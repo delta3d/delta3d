@@ -19,10 +19,10 @@
  * Author: Jeffrey P Houde
  */
 
-#ifndef DELTA_STAGEOBJECTMOTIONMODEL
-#define DELTA_STAGEOBJECTMOTIONMODEL
+#ifndef DELTA_TOOLOBJECTMOTIONMODEL
+#define DELTA_TOOLOBJECTMOTIONMODEL
 
-// stageobjectmotionmodel.h: Declaration of the STAGEObjectMotionModel class.
+// toolobjectmotionmodel.h: Declaration of the ToolObjectMotionModel class.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,11 +34,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * A motion model used to manipulate object positioning (used in STAGE).
+ * A motion model used to manipulate object positioning (used in STAGE Linked Points Actor Tool).
  */
-class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
+class ToolObjectMotionModel : public dtCore::ObjectMotionModel
 {
-   DECLARE_MANAGEMENT_LAYER(STAGEObjectMotionModel)
+   DECLARE_MANAGEMENT_LAYER(ToolObjectMotionModel)
 
    typedef dtUtil::Functor<void, TYPELIST_3(osg::Vec2, osg::Vec3&, osg::Vec3&)> GetMouseLineFunc;
    typedef dtUtil::Functor<osg::Vec2, TYPELIST_1(osg::Vec3)> ObjectToScreenFunc;
@@ -50,7 +50,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @param[in]  view      The View.
       */
-      STAGEObjectMotionModel(dtCore::View* view);
+      ToolObjectMotionModel(dtCore::View* view);
 
    protected:
 
@@ -111,41 +111,6 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       */
       void SetObjectToScreenFunc(ObjectToScreenFunc func);
 
-      /**
-      * Adds a target to the target list.
-      *
-      * @param[in]  target  The target to add.
-      */
-      void AddTarget(dtDAL::TransformableActorProxy* target);
-
-      /**
-      * Removes a target from the subtarget list.
-      *
-      * @param[in]  target  The target to remove.
-      */
-      void RemoveTarget(dtDAL::TransformableActorProxy* target);
-
-      /**
-      * Removes all targets from the sub target list.
-      */
-      void ClearTargets(void);
-
-      /**
-      * Gets the total number of sub targets.
-      *
-      * @return  Total number of sub targets.
-      */
-      int GetNumTargets(void) {return (int)mTargets.size();}
-
-      /**
-      * Gets the current sub target at an index.
-      *
-      * @param[in]  index  The index
-      *
-      * @return            The sub target at the index.
-      */
-      dtDAL::TransformableActorProxy* GetTarget(int index) {return mTargets[index];}
-
    protected:
 
       /**
@@ -188,34 +153,10 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       */
       osg::Vec2 DefaultGetObjectScreenCoordinates(osg::Vec3 objectPos);
 
-      /**
-      * This callback handles the actual translation of the target.
-      *
-      * @param[in]  delta  The amount of translation to be performed.
-      */
-      virtual void OnTranslate(osg::Vec3 delta);
-
-      /**
-      * This callback handles the actual rotation of the target.
-      *
-      * @param[in]  delta  The amount of rotation to apply.
-      * @param[in]  axis   The axis of rotation.
-      */
-      virtual void OnRotate(float delta, osg::Vec3 axis);
-
-      /**
-      * This callback handles the action scale of the target.
-      *
-      * @param[in]  delta  The amount of scale to apply.
-      */
-      virtual void OnScale(osg::Vec3 delta);
-
-      std::vector<dtDAL::TransformableActorProxy*> mTargets;
-
       GetMouseLineFunc mGetMouseLineFunc;
       ObjectToScreenFunc mObjectToScreenFunc;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // DELTA_STAGEOBJECTMOTIONMODEL
+#endif // DELTA_TOOLOBJECTMOTIONMODEL

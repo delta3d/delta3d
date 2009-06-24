@@ -261,7 +261,7 @@ namespace dtEditQt
       * @param y Vertical window coordinate.
       * @retrun True if there was a collision.
       */
-      bool calculatePickISector(int x, int y);
+      virtual bool calculatePickISector(int x, int y);
 
       /**
       * Projects the 2D window coordinates into the current scene and determines
@@ -271,7 +271,7 @@ namespace dtEditQt
       * @param x Horizonal window coordinate.
       * @param y Vertical window coordinate.
       */
-      bool getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+      virtual bool getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
 
       /**
        * Projects the 2D window coordinates into the current scene and determines
@@ -281,7 +281,8 @@ namespace dtEditQt
        * @param x Horizonal window coordinate.
        * @param y Vertical window coordinate.
        */
-      dtCore::DeltaDrawable* getPickDrawable(int x, int y);
+      virtual dtCore::DeltaDrawable* getPickDrawable(int x, int y);
+      virtual dtCore::DeltaDrawable* getPickDrawable();
 
       /**
        * After each mouse move event, this method will reset the cursor position to
@@ -461,6 +462,7 @@ namespace dtEditQt
       void SetRedrawContinuously(bool contRedraw);
       bool GetRedrawContinuously() const { return mRedrawContinuously; }
 
+   public:
       /**
        * Returns the underlying scene view that is attached to this viewport.
        * @return
@@ -474,6 +476,7 @@ namespace dtEditQt
        */
       osg::StateSet* getGlobalStateSet() { return mGlobalStateSet.get(); }
 
+   protected:
       /**
        * Tells this viewport to listen to global UI events.
        */

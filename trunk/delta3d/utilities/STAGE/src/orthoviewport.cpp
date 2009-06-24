@@ -160,11 +160,16 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::moveCamera(float dx, float dy)
+   bool OrthoViewport::moveCamera(float dx, float dy)
    {
+      if (!EditorViewport::moveCamera(dx, dy))
+      {
+         return false;
+      }
+
       if (*mCameraMode == OrthoViewport::CameraMode::NOTHING || getCamera() == NULL)
       {
-         return;
+         return true;
       }
 
       float xAmount = (-dx/getMouseSensitivity()*4.0f) / getCamera()->getZoom();
@@ -189,6 +194,16 @@ namespace dtEditQt
             getCamera()->zoom(0.9f);
          }
       }
+
+      return true;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void OrthoViewport::setScene(dtCore::Scene* scene)
+   {
+      EditorViewport::setScene(scene);
+
+      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -207,9 +222,12 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::beginCameraMode(QMouseEvent* e)
+   bool OrthoViewport::beginCameraMode(QMouseEvent* e)
    {
-      EditorViewport::beginCameraMode(e);
+      if (!EditorViewport::beginCameraMode(e))
+      {
+         return false;
+      }
 
       if (mMouseButton == Qt::LeftButton)
       {
@@ -227,28 +245,45 @@ namespace dtEditQt
 
       setInteractionMode(Viewport::InteractionMode::CAMERA);
       trapMouseCursor();
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::endCameraMode(QMouseEvent* e)
+   bool OrthoViewport::endCameraMode(QMouseEvent* e)
    {
-      EditorViewport::endCameraMode(e);
+      if (!EditorViewport::endCameraMode(e))
+      {
+         return false;
+      }
 
       mCameraMode = &OrthoViewport::CameraMode::NOTHING;
       setInteractionMode(Viewport::InteractionMode::NOTHING);
       releaseMouseCursor();
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::beginActorMode(QMouseEvent* e)
+   bool OrthoViewport::beginActorMode(QMouseEvent* e)
    {
-      EditorViewport::beginActorMode(e);
+      if (!EditorViewport::beginActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::endActorMode(QMouseEvent* e)
+   bool OrthoViewport::endActorMode(QMouseEvent* e)
    {
-      EditorViewport::endActorMode(e);
+      if (!EditorViewport::endActorMode(e))
+      {
+         return false;
+      }
+
+      return true;
    }
 
    ///////////////////////////////////////////////////////////////////////////////

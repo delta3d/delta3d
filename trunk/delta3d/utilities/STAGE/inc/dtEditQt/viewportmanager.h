@@ -36,6 +36,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/view.h>
 #include <dtCore/uniqueid.h>
+#include <dtCore/deltadrawable.h>
 #include <dtUtil/enumeration.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
@@ -45,6 +46,7 @@
 
 class QGLWidget;
 class QWidget;
+class QMouseEvent;
 
 namespace dtEditQt
 {
@@ -139,6 +141,18 @@ namespace dtEditQt
       ViewportOverlay* getViewportOverlay() { return mViewportOverlay.get(); }
 
       /**
+      * Sets the last drawable picked.
+      *
+      * @param[in]  drawable  The picked drawable.
+      */
+      void setLastDrawable(dtCore::DeltaDrawable* drawable) { mLastDrawable = drawable; }
+
+      /**
+      * Gets the last drawable picked.
+      */
+      dtCore::DeltaDrawable* getLastDrawable() { return mLastDrawable.get(); }
+
+      /**
        * Gets a reference to the static singleton instance of the viewport manager.
        * @return
        */
@@ -180,6 +194,254 @@ namespace dtEditQt
       dtCore::Timer_t GetStartTick() { return mStartTick; }
 
       void SetStartTick(unsigned int time) { mStartTick = time; }
+
+      /**
+      * Signal used when a mouse has been pressed in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void emitMousePressEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when a mouse has been released in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void emitMouseReleaseEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when a mouse has been moved in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void emitMouseMoveEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when testing whether actor mode should be activated.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   position         The position of the mouse click.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      * @param[out]  result           The result of the test if it is overridden.
+      */
+      void emitShouldBeginActorMode(Viewport* vp, osg::Vec2 position, bool* overrideDefault = NULL, bool* result = NULL);
+
+      /**
+      * Signal used when actor mode is begun.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitBeginActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when actor mode is ended.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitEndActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when camera mode is begun.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitBeginCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when camera mode is ended.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitEndCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when the camera is moved.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   dx               Horizontal delta movement.
+      * @param[in]   dy               Vertical delta movement.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitMoveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when to select actors.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitSelectActors(Viewport* vp, QMouseEvent* e, bool* overrideDefault = NULL);
+
+      /**
+      * Signal used when duplicating the current selection.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void emitDuplicateActors(Viewport* vp, bool* overrideDefault = NULL);
+
+      /**
+      * Sets the translation snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void emitSetSnapTranslation(float increment);
+
+      /**
+      * Sets the angular snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void emitSetSnapRotation(float increment);
+
+      /**
+      * Sets the scalar snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void emitSetSnapScale(float increment);
+
+      /**
+      * Sets the enabled status of each snap tool.
+      */
+      void emitSetSnapEnabled(bool translation, bool rotation, bool scale);
+
+   signals:
+
+      /**
+      * Signal used when a mouse has been pressed in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void mousePressEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when a mouse has been released in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void mouseReleaseEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when a mouse has been moved in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse event.
+      */
+      void mouseMoveEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when testing whether actor mode should be activated.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   position         The position of the mouse click.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      * @param[out]  result           The result of the test if it is overridden.
+      */
+      void shouldBeginActorMode(Viewport* vp, osg::Vec2 position, bool* overrideDefault, bool* result);
+
+      /**
+      * Signal used when actor mode is begun.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void beginActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
+
+      /**
+      * Signal used when actor mode is ended.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void endActorMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
+
+      /**
+      * Signal used when camera mode is begun.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void beginCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
+
+      /**
+      * Signal used when camera mode is ended.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void endCameraMode(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
+
+      /**
+      * Signal used when the camera is moved.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   dx               Horizontal delta movement.
+      * @param[in]   dy               Vertical delta movement.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void moveCamera(Viewport* vp, float dx, float dy, bool* overrideDefault);
+
+      /**
+      * Signal used when to select actors.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[in]   e                The mouse event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void selectActors(Viewport* vp, QMouseEvent* e, bool* overrideDefault);
+
+      /**
+      * Signal used when duplicating the current selection.
+      *
+      * @param[in]   vp               The viewport triggering this event.
+      * @param[out]  overrideDefault  Should be set true if you don't want the default behavior to handle this.
+      */
+      void duplicateActors(Viewport* vp, bool* overrideDefault);
+
+      /**
+      * Sets the translation snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapTranslation(float increment);
+
+      /**
+      * Sets the angular snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapRotation(float increment);
+
+      /**
+      * Sets the scalar snap increment.
+      *
+      * @param[in]  increment  The size of the increment.
+      */
+      void setSnapScale(float increment);
+
+      /**
+      * Sets the enabled status of each snap tool.
+      */
+      void setSnapEnabled(bool translation, bool rotation, bool scale);
 
    public slots:
       /**
@@ -263,6 +525,8 @@ namespace dtEditQt
 
    private:
       static dtCore::RefPtr<ViewportManager> sInstance;
+
+      dtCore::RefPtr<dtCore::DeltaDrawable> mLastDrawable;
 
       bool                            mShareMasterContext;
       std::map<std::string,Viewport*> mViewportList;

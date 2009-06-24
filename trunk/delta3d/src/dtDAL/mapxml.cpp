@@ -707,6 +707,10 @@ namespace dtDAL
                continue;
             }
 
+            //ghost proxies arent saved
+            if (proxy->IsGhostProxy())
+               continue;
+
             // If this is the first proxy, store the translation as the origin.
             dtDAL::TransformableActorProxy* tProxy = dynamic_cast<dtDAL::TransformableActorProxy*>(proxy);
             if (tProxy)
@@ -719,10 +723,6 @@ namespace dtDAL
 
                tProxy->SetTranslation(tProxy->GetTranslation() - origin);
             }
-
-            //ghost proxies arent saved
-            if (proxy->IsGhostProxy())
-               continue;
 
             BeginElement(MapXMLConstants::ACTOR_ELEMENT);
             BeginElement(MapXMLConstants::ACTOR_TYPE_ELEMENT);

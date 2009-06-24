@@ -117,4 +117,10 @@ namespace dtActors
          fileUtils.PopDirectory();
       }
    }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> >& PrefabActorProxy::GetPrefabProxies()
+   {
+      return mProxies;
+   }
 }

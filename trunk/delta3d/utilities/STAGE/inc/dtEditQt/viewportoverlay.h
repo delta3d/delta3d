@@ -132,6 +132,7 @@ namespace dtEditQt
        * @return True if the proxy is already selected, false otherwise.
        */
       bool isActorSelected(dtDAL::ActorProxy* proxy) const;
+      bool isActorSelectedFirst(dtDAL::ActorProxy* proxy) const;
 
       /**
        * Removes the specified actor proxy from the current selection.
