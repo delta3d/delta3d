@@ -6,6 +6,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/collisioncategorydefaults.h>
 #include <dtUtil/log.h>
+#include <dtCore/observerptr.h>
 
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -102,18 +103,6 @@ public:
             if (!fullNodePath.empty())
             {
                fullNodePath.pop_back();
-
-               #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 1 && OSG_VERSION_MINOR == 0
-               // Luckily, this behavior is redundant with OSG 1.1
-
-               //if ( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
-               // This dynamic_cast should be much faster than constructing two strings and
-               // comparing them
-               if (dynamic_cast<osg::CameraNode*>(fullNodePath[0]) != NULL)
-               {
-                  fullNodePath = osg::NodePath( fullNodePath.begin()+1, fullNodePath.end() );
-               }
-               #endif // OSG 1.1
 
                osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
                osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );
@@ -285,42 +274,64 @@ bool ParticleLayer::operator==(const ParticleLayer& testLayer) const
    return testLayer.mLayerName == mLayerName;
 }
 
-/** This method will load the particle effect from a file.  The loaded particle
-  * system will be broken apart, with the Emitter added to the parent
-  * MatrixTransform node and the geometry added directly to the Scene.
-  *
-  * @param filename : The file to load.  This will use the search paths to
-  *                   locate the file.
-  * @param useCache : This param gets ignored and is forced to false
-  */
+///////////////////////////////////////////////////
 osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 {
-   osg::Node* node = NULL;
-   node = Loadable::LoadFile(filename, false); //force it not to use cache
-
-   if (node != NULL)
+   //First, cleanup
+   if (GetMatrixNode()->getNumChildren() > 0)
    {
-      mLoadedFile = node;
+      GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
+   }
 
-      if (GetMatrixNode()->getNumChildren() > 0)
+   mLoadedFile = NULL;
+   mOriginalLoadedParticleSystem = NULL;
+   mParticleSystemUpdater = NULL;
+
+   dtCore::RefPtr<osg::Node> node = Loadable::LoadFile(filename, useCache); //force it to use cache
+   //node = Loadable::LoadFile(filename, false); //force it not to use cache
+
+   if (node.valid())
+   {
+      if (useCache)
       {
-         GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
+         //This is weird, but DON'T copy the drawables yet.  It must be don't later...
+         static const unsigned int COPY_OPS_SHARED_GEOMETRY =
+              osg::CopyOp::DEEP_COPY_OBJECTS
+            | osg::CopyOp::DEEP_COPY_NODES
+            | osg::CopyOp::DEEP_COPY_STATESETS
+            | osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
+            | osg::CopyOp::DEEP_COPY_UNIFORMS;
+
+         dtCore::RefPtr<osg::Node> copy = static_cast<osg::Node*>(node->clone(COPY_OPS_SHARED_GEOMETRY));
+
+         mLoadedFile = copy;
+         mOriginalLoadedParticleSystem = node;
+      }
+      else
+      {
+         mLoadedFile = node;
       }
 
-
       // Set up all the particle layers
-      SetupParticleLayers();
+      ParseParticleLayers(*mLoadedFile, mLayers, mParticleSystemUpdater);
+
+      if (useCache)
+      {
+         // Now clone the drawables that weren't cloned in the clone before and fix
+         // all the crosslinks.
+         CloneParticleSystemDrawables();
+      }
 
       if (mParentRelative)
       {
          // Attach the particle system tree directly to the transform node.
-         GetMatrixNode()->addChild((osg::Group*)mLoadedFile.get());
+         GetMatrixNode()->addChild(mLoadedFile.get());
 
          //Presumably, osg 2.8.0 and greater doesn't need to do this.
          #if defined(OSG_VERSION_MAJOR) && defined(OSG_VERSION_MINOR) && OSG_VERSION_MAJOR == 2 && OSG_VERSION_MINOR < 8
          // Modify the reference frame of both the emitter and program
          // for each particle layer.
-         for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+         for (LayerList::iterator pLayerIter = mLayers.begin();
             pLayerIter != mLayers.end(); ++pLayerIter)
          {
             // Set the emitter and program to run from the origin
@@ -332,7 +343,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       }
       else // Emit particles into world space
       {
-         particleSystemHelper* psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
+         particleSystemHelper* psh = new particleSystemHelper(static_cast<osg::Group*>(mLoadedFile.get()));
 
          GetMatrixNode()->addChild(psh);
       }
@@ -340,6 +351,8 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       // Enable/disable particle system
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor(mEnabled);
       mLoadedFile->accept(pspv);
+
+      ResetTime();
    }
    else
    {
@@ -352,60 +365,36 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 }
 
 
-/**
- * Enables or disables this particle system.
- *
- * @param enable true to enable the particle system, false
- * to disable it
- */
+///////////////////////////////////////////////////
 void ParticleSystem::SetEnabled(bool enable)
 {
-   mEnabled = enable;  
+   mEnabled = enable;
 
    ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor(mEnabled);
    GetOSGNode()->accept(pspv);
 
-   std::list<dtCore::ParticleLayer> layerList = GetAllLayers();
-   std::list<dtCore::ParticleLayer>::iterator nextLayerIt;   
+   LayerList layerList = GetAllLayers();
+   LayerList::iterator nextLayerIt;
 
    for(nextLayerIt = layerList.begin(); nextLayerIt != layerList.end(); ++nextLayerIt)
-   {      
+   {
       nextLayerIt->GetParticleSystem().setFrozen(!mEnabled);
-   }      
+   }
 }
 
-/**
- * Checks whether this particle system is enabled.
- *
- * @return true if the particle system is enabled, false
- * otherwise
- */
+///////////////////////////////////////////////////
 bool ParticleSystem::IsEnabled() const
 {
    return mEnabled;
 }
 
-/**
- * Sets the parent-relative state of this particle system.  If
- * parent-relative mode is enabled, the entire particle system
- * will be positioned relative to the parent.  If disabled, only
- * the emitter will be positioned relative to the parent.  By
- * default, particle systems are not parent-relative.
- *
- * @param parentRelative true to enable parent-relative mode,
- * false to disable it
- */
+///////////////////////////////////////////////////
 void ParticleSystem::SetParentRelative(bool parentRelative)
 {
    mParentRelative = parentRelative;
 }
 
-/**
- * Returns the parent-relative state of this particle system.
- *
- * @return true if the particle system is in parent-relative mode,
- * false if not
- */
+///////////////////////////////////////////////////
 bool ParticleSystem::IsParentRelative() const
 {
    return mParentRelative;
@@ -415,15 +404,36 @@ bool ParticleSystem::IsParentRelative() const
 // Particle Layer Code Below
 //////////////////////////////////////////////////////////////////////////
 
-/**
- *  Called from LoadFile() function, should never be called
- *  from user
- */
-void ParticleSystem::SetupParticleLayers()
+///////////////////////////////////////////////////
+osg::Node* ParticleSystem::GetLoadedParticleSystemRoot()
+{
+   return mLoadedFile.get();
+}
+
+///////////////////////////////////////////////////
+const osg::Node* ParticleSystem::GetLoadedParticleSystemRoot() const
+{
+   return mLoadedFile.get();
+}
+
+///////////////////////////////////////////////////
+osg::Node* ParticleSystem::GetCachedOriginalParticleSystemRoot()
+{
+   return mOriginalLoadedParticleSystem.get();
+}
+
+///////////////////////////////////////////////////
+const osg::Node* ParticleSystem::GetCachedOriginalParticleSystemRoot() const
+{
+   return mOriginalLoadedParticleSystem.get();
+}
+
+///////////////////////////////////////////////////
+void ParticleSystem::ParseParticleLayers(osg::Node& ps, LayerList& layers, dtCore::RefPtr<osgParticle::ParticleSystemUpdater>& particleSystemUpdater)
 {
    // particle system group of the root note from the loaded particle system file.
    // will only be valid after you call load file on an object, thus its protected
-   osg::Group*     newParticleSystemGroup  = static_cast<osg::Group*>(mLoadedFile.get());
+   osg::Group*     newParticleSystemGroup  = static_cast<const osg::Group*>(&ps);
 
    // node we are going to reuse over and over again to search through all the children of
    // the osg root node
@@ -433,7 +443,10 @@ void ParticleSystem::SetupParticleLayers()
    unsigned int    i                       = 0;
 
    // clear the list in case it is loaded twice.
-   mLayers.clear();
+   layers.clear();
+
+   // This should already be NULL, but just in case
+   particleSystemUpdater = NULL;
 
    //    Not everything has a name.... which sucks. usually only the geode
    //    we will bind the geode name to the whole struct with newly created var
@@ -444,17 +457,15 @@ void ParticleSystem::SetupParticleLayers()
       searchingNode = newParticleSystemGroup->getChild(i);
       ParticleLayer layer;
 
-      //if (dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
-      //{
-         // This is when you import multiple osg files in one system. This wont be done in
-         // delta3d since it was set up where you can only load in 1 per system. Which
-         // makes sense.
-         // Auto loads one for each file, to tell the system everything else is in here.
+      if (dynamic_cast<osgParticle::ParticleSystemUpdater*>(searchingNode)!= NULL)
+      {
+         if (particleSystemUpdater.valid())
+         {
+            LOG_ERROR("Found a second particle system updater.  This is not supported.")
+         }
+         particleSystemUpdater = static_cast<osgParticle::ParticleSystemUpdater*>(searchingNode);
 
-         // printf without a formatting string causes a warning on gcc. Why is this here
-         // anyways??? -osb
-         //printf("");
-      //}
+      }
 
       // See if this is the particle system of the geode
       osg::Geode* geode = dynamic_cast<osg::Geode*>(searchingNode);
@@ -477,13 +488,13 @@ void ParticleSystem::SetupParticleLayers()
                layer.SetLayerName(layer.GetGeode().getName());
 
                // We're done setting values up, push it onto the list
-               mLayers.push_back(layer);
+               layers.push_back(layer);
             }
          }
       }
    }
 
-   // we do this in two seperate processes since the top particle system nodes and the cousins
+   // we do this in two separate processes since the top particle system nodes and the cousins
    // could be in any order.
    for (i = 0; i<newParticleSystemGroup->getNumChildren(); i++)
    {
@@ -505,8 +516,8 @@ void ParticleSystem::SetupParticleLayers()
 
                // Go through the populated particle system list and see where this
                // belongs too.
-               for (std::list<ParticleLayer>::iterator layerIter = mLayers.begin();
-                     layerIter != mLayers.end(); ++layerIter)
+               for (LayerList::iterator layerIter = layers.begin();
+                     layerIter != layers.end(); ++layerIter)
                {
                   // check for pointers, osg comparison
                   if (&layerIter->GetParticleSystem() == newModularEmitter->getParticleSystem())
@@ -526,8 +537,8 @@ void ParticleSystem::SetupParticleLayers()
             osgParticle::ModularProgram* newModularProgram = static_cast<osgParticle::ModularProgram*>(searchingNode);
             // Go through the populated particle system list and see where this
             // belongs too.
-            for (std::list<ParticleLayer>::iterator layerIter = mLayers.begin();
-                 layerIter != mLayers.end();
+            for (LayerList::iterator layerIter = layers.begin();
+                 layerIter != layers.end();
                  ++layerIter)
             {
                // check for pointers, osg comparison
@@ -547,8 +558,8 @@ void ParticleSystem::SetupParticleLayers()
          osgParticle::FluidProgram* newFluidProgram = static_cast<osgParticle::FluidProgram*>(searchingNode);
          // Go through the populated particle system list and see where this
          // belongs too.
-         for (std::list<ParticleLayer>::iterator layerIter = mLayers.begin();
-            layerIter != mLayers.end(); ++layerIter)
+         for (LayerList::iterator layerIter = layers.begin();
+            layerIter != layers.end(); ++layerIter)
          {
             // check for pointers, osg comparison
             if (&layerIter->GetParticleSystem() == newFluidProgram->getParticleSystem())
@@ -563,15 +574,60 @@ void ParticleSystem::SetupParticleLayers()
    }
 }
 
-/**
- * GetSingleLayer will return the Layer of said name,
- * Null will return if bad name sent in.
- *
- * @return Will return the link list you requested by name
- */
+///////////////////////////////////////////////////
+void ParticleSystem::CloneParticleSystemDrawables()
+{
+   LayerList::iterator nextLayerIt;
+
+   static const unsigned int COPY_OPS_DRAWABLE = (osg::CopyOp::DEEP_COPY_OBJECTS
+      | osg::CopyOp::DEEP_COPY_NODES
+      | osg::CopyOp::DEEP_COPY_STATESETS
+      | osg::CopyOp::DEEP_COPY_STATEATTRIBUTES
+      | osg::CopyOp::DEEP_COPY_UNIFORMS
+      | osg::CopyOp::DEEP_COPY_DRAWABLES);
+
+   if (!mParticleSystemUpdater.valid())
+   {
+      LOG_ERROR("No instance of osgParticle::ParticleSystemUpdater was found.  "
+               "The particle system cloning will not work.  Current file :\"" + GetFilename() + "\".");
+      return;
+   }
+
+   for(nextLayerIt = mLayers.begin(); nextLayerIt != mLayers.end(); ++nextLayerIt)
+   {
+      ParticleLayer& layer = *nextLayerIt;
+
+      dtCore::RefPtr<osgParticle::ParticleSystem> newPSDrawable =
+         static_cast<osgParticle::ParticleSystem*>(layer.GetParticleSystem().clone(COPY_OPS_DRAWABLE));
+
+      mParticleSystemUpdater->removeParticleSystem(&layer.GetParticleSystem());
+      mParticleSystemUpdater->addParticleSystem(newPSDrawable.get());
+      layer.GetGeode().removeDrawable(&layer.GetParticleSystem());
+      layer.GetGeode().addDrawable(newPSDrawable.get());
+      layer.SetParticleSystem(*newPSDrawable);
+      layer.GetModularEmitter().setParticleSystem(newPSDrawable.get());
+      layer.GetProgram().setParticleSystem(newPSDrawable.get());
+   }
+}
+
+///////////////////////////////////////////////////
+void ParticleSystem::ResetTime()
+{
+   LayerList::iterator i, iend;
+   i = mLayers.begin();
+   iend = mLayers.end();
+   for (; i != iend; ++i)
+   {
+      ParticleLayer& layer = *i;
+      layer.GetProgram().setCurrentTime(0.0);
+      layer.GetModularEmitter().setCurrentTime(0.0);
+   }
+}
+
+///////////////////////////////////////////////////
 ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
 {
-   for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+   for (LayerList::iterator pLayerIter = mLayers.begin();
        pLayerIter != mLayers.end(); ++pLayerIter)
    {
       // check if the name is what they want, send it back
@@ -581,9 +637,10 @@ ParticleLayer* ParticleSystem::GetSingleLayer(const std::string& layerName)
    return NULL;
 }
 
+///////////////////////////////////////////////////
 const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName) const
 {
-   for (std::list<ParticleLayer>::const_iterator pLayerIter = mLayers.begin();
+   for (LayerList::const_iterator pLayerIter = mLayers.begin();
       pLayerIter != mLayers.end();
       ++pLayerIter)
    {
@@ -596,23 +653,28 @@ const ParticleLayer* ParticleSystem::GetSingleLayer(const std::string &layerName
    return NULL;
 }
 
-/**
-* SetAllLayers Will take in the new list of layers
-* and set all the current layers to those of that
-* sent in
-*/
-void ParticleSystem::SetAllLayers(const std::list<ParticleLayer>& layersToSet)
+///////////////////////////////////////////////////
+osgParticle::ParticleSystemUpdater* ParticleSystem::GetParticleSystemUpdater()
+{
+   return mParticleSystemUpdater.get();
+}
+
+///////////////////////////////////////////////////
+const osgParticle::ParticleSystemUpdater* ParticleSystem::GetParticleSystemUpdater() const
+{
+   return mParticleSystemUpdater.get();
+}
+
+///////////////////////////////////////////////////
+void ParticleSystem::SetAllLayers(const LayerList& layersToSet)
 {
    mLayers = layersToSet;
 }
 
-/**
-* SetSingleLayer will take in the layerToSet
-* and set the layer in mlLayers to that sent in
-*/
+///////////////////////////////////////////////////
 void ParticleSystem::SetSingleLayer(ParticleLayer& layerToSet)
 {
-   for (std::list<ParticleLayer>::iterator pLayerIter = mLayers.begin();
+   for (LayerList::iterator pLayerIter = mLayers.begin();
        pLayerIter != mLayers.end(); ++pLayerIter)
    {
       if (layerToSet.GetLayerName() == pLayerIter->GetLayerName())
