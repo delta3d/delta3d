@@ -15,7 +15,7 @@ void main()
    
    vec3 tangent   = normalize(gl_NormalMatrix * tangentAttrib.xyz);
    vec3 bitangent = cross(vNormal, tangent);
- 
+
    // gram-schmidt tangent orthonormalization
    float tangentDOTnormal = dot(tangent, vNormal);
    vec3 tempNormal = vNormal * tangentDOTnormal;
