@@ -19,8 +19,8 @@ IMPLEMENT_MANAGEMENT_LAYER(STAGEObjectMotionModel)
 STAGEObjectMotionModel::STAGEObjectMotionModel(dtCore::View* view)
    : dtCore::ObjectMotionModel(view)
 {
-   ResetGetMouseLineFunc();
-   ResetObjectToScreenFunc();
+   //ResetGetMouseLineFunc();
+   //ResetObjectToScreenFunc();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,30 +58,30 @@ void STAGEObjectMotionModel::OnMessage(MessageData *data)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::ResetGetMouseLineFunc(void)
-{
-   mGetMouseLineFunc = dtDAL::MakeFunctor(
-      *this, &STAGEObjectMotionModel::DefaultGetMouseLineFunc);
-}
+//void STAGEObjectMotionModel::ResetGetMouseLineFunc(void)
+//{
+//   mGetMouseLineFunc = dtDAL::MakeFunctor(
+//      *this, &STAGEObjectMotionModel::DefaultGetMouseLineFunc);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::SetGetMouseLineFunc(GetMouseLineFunc func)
-{
-   mGetMouseLineFunc = func;
-}
+//void STAGEObjectMotionModel::SetGetMouseLineFunc(GetMouseLineFunc func)
+//{
+//   mGetMouseLineFunc = func;
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::ResetObjectToScreenFunc(void)
-{
-   mObjectToScreenFunc = dtDAL::MakeFunctorRet(
-      *this, &STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates);
-}
+//void STAGEObjectMotionModel::ResetObjectToScreenFunc(void)
+//{
+//   mObjectToScreenFunc = dtDAL::MakeFunctorRet(
+//      *this, &STAGEObjectMotionModel::DefaultGetObjectScreenCoordinates);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::SetObjectToScreenFunc(ObjectToScreenFunc func)
-{
-   mObjectToScreenFunc = func;
-}
+//void STAGEObjectMotionModel::SetObjectToScreenFunc(ObjectToScreenFunc func)
+//{
+//   mObjectToScreenFunc = func;
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::SetTarget(dtCore::Transformable* target)
@@ -170,16 +170,16 @@ void STAGEObjectMotionModel::ClearTargets(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void STAGEObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-{
-   mGetMouseLineFunc(mousePos, start, end);
-}
+//void STAGEObjectMotionModel::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
+//{
+//   mGetMouseLineFunc(mousePos, start, end);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
-osg::Vec2 STAGEObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
-{
-   return mObjectToScreenFunc(objectPos);
-}
+//osg::Vec2 STAGEObjectMotionModel::GetObjectScreenCoordinates(osg::Vec3 objectPos)
+//{
+//   return mObjectToScreenFunc(objectPos);
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void STAGEObjectMotionModel::DefaultGetMouseLineFunc(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)

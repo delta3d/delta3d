@@ -67,6 +67,8 @@ namespace dtEditQt
       mInChangeTransaction = false;
       mStartTick = 0;
 
+      mMasterScene->GetSceneNode()->addChild(mViewportOverlay->getOverlayGroup()); //TODO testing
+
       mMasterView->SetCamera(mWorldCamera->getDeltaCamera());     
 
       EditorEvents* editorEvents = &EditorEvents::GetInstance();

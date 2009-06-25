@@ -40,8 +40,8 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 {
    DECLARE_MANAGEMENT_LAYER(STAGEObjectMotionModel)
 
-   typedef dtUtil::Functor<void, TYPELIST_3(osg::Vec2, osg::Vec3&, osg::Vec3&)> GetMouseLineFunc;
-   typedef dtUtil::Functor<osg::Vec2, TYPELIST_1(osg::Vec3)> ObjectToScreenFunc;
+   //typedef dtUtil::Functor<void, TYPELIST_3(osg::Vec2, osg::Vec3&, osg::Vec3&)> GetMouseLineFunc;
+   //typedef dtUtil::Functor<osg::Vec2, TYPELIST_1(osg::Vec3)> ObjectToScreenFunc;
 
    public:
 
@@ -90,26 +90,26 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       /**
       * Resets the GetMouseLine callback function.
       */
-      void ResetGetMouseLineFunc(void);
+      //void ResetGetMouseLineFunc(void);
 
       /**
       * Sets the GetMouseLine callback function.
       *
       * @param[in]  func  The functor.
       */
-      void SetGetMouseLineFunc(GetMouseLineFunc func);
+      //void SetGetMouseLineFunc(GetMouseLineFunc func);
 
       /**
       * Resets the Object to screen callback function.
       */
-      void ResetObjectToScreenFunc(void);
+      //void ResetObjectToScreenFunc(void);
 
       /**
       * Sets the Object to Screen callback function.
       *
       * @param[in]  func  The functor.
       */
-      void SetObjectToScreenFunc(ObjectToScreenFunc func);
+      //void SetObjectToScreenFunc(ObjectToScreenFunc func);
 
       /**
       * Sets the primary Target.
@@ -160,7 +160,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       * @param[in]  start     The start position of the line.
       * @param[in]  end       The end position of the line.
       */
-      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+      //virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
 
       /**
       * Calculates the screen coordinates of a 3d position in the world.
@@ -169,7 +169,7 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
       *
       * @return                The position of the object in screen coords.
       */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
+      //virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
    private:
 
@@ -217,8 +217,8 @@ class STAGEObjectMotionModel : public dtCore::ObjectMotionModel
 
       std::vector<dtDAL::TransformableActorProxy*> mTargets;
 
-      GetMouseLineFunc mGetMouseLineFunc;
-      ObjectToScreenFunc mObjectToScreenFunc;
+      //GetMouseLineFunc mGetMouseLineFunc;
+      //ObjectToScreenFunc mObjectToScreenFunc;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

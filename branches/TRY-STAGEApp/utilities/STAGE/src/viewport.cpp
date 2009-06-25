@@ -120,7 +120,7 @@ namespace dtEditQt
       //mSceneView->setDefaults();
       //mSceneView->setFrameStamp(mFrameStamp.get());
       //mSceneView->setSceneData(mRootNodeGroup.get());
-      mScene->GetSceneNode()->addChild(mRootNodeGroup.get());
+      //mScene->GetSceneNode()->addChild(mRootNodeGroup.get());
       setOverlay(ViewportManager::GetInstance().getViewportOverlay());
 
       this->GetQGLWidget()->setMouseTracking(true);
@@ -163,7 +163,9 @@ namespace dtEditQt
       //First, remove the old scene, then add the new one.
       if (mView.valid())
       {
-         mRootNodeGroup->addChild(scene->GetSceneNode());
+         //mRootNodeGroup->addChild(scene->GetSceneNode());
+         mView->SetScene(scene);
+         mScene = scene;
 
          //scene->GetSceneNode()->setStateSet(mGlobalStateSet.get());
       }
@@ -172,6 +174,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::setOverlay(ViewportOverlay* overlay)
    {
+      return; //TODO
       //if (mSceneView.valid())
       {
          //If the new overlay is NULL, clear the current overlay.
@@ -240,7 +243,7 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::refresh()
    {
-      GetQGLWidget()->updateGL();
+      //TODO GetQGLWidget()->updateGL(); 
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -527,9 +530,9 @@ namespace dtEditQt
       mIsector->Reset();
       mIsector->SetScene(getScene());
       osg::Vec3 nearPoint, farPoint;
-      //int yLoc = int(mSceneView->getViewport()->height()-y);
+      //int yLoc = int(mSceneView->getViewport()->height()-y); //TODO
 
-      //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
+      //mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint); //TODO
       mIsector->SetStartPosition(nearPoint);
       mIsector->SetDirection(farPoint-nearPoint);
 
@@ -582,21 +585,23 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    dtCore::DeltaDrawable* Viewport::getPickDrawable(int x, int y)
    {
-      // If we found no intersections no need to continue so emit an empty selection
-      // and return.
-      if (!calculatePickISector(x, y))
-      {
-         return NULL;
-      }
+      return mView->GetMousePickedObject(); 
 
-      if (mIsector->GetClosestDeltaDrawable()== NULL)
-      {
-         LOG_ERROR("Intersection query reported an intersection but returned an "
-            "invalid DeltaDrawable.");
-         return NULL;
-      }
+      //// If we found no intersections no need to continue so emit an empty selection
+      //// and return.
+      //if (!calculatePickISector(x, y))
+      //{
+      //   return NULL;
+      //}
 
-      return mIsector->GetClosestDeltaDrawable();
+      //if (mIsector->GetClosestDeltaDrawable()== NULL)
+      //{
+      //   LOG_ERROR("Intersection query reported an intersection but returned an "
+      //      "invalid DeltaDrawable.");
+      //   return NULL;
+      //}
+
+      //return mIsector->GetClosestDeltaDrawable();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -924,7 +929,8 @@ namespace dtEditQt
       mGlobalStateSet->setAttributeAndModes(cf, osg::StateAttribute::ON);
 
       //mSceneView->setGlobalStateSet(mGlobalStateSet.get());
-      mRootNodeGroup->setStateSet(mGlobalStateSet.get());
+      //mRootNodeGroup->setStateSet(mGlobalStateSet.get()); //TODO
+      mCamera->getDeltaCamera()->GetOSGCamera()->setStateSet(mGlobalStateSet.get());
    }
 
    ///////////////////////////////////////////////////////////////////////////////

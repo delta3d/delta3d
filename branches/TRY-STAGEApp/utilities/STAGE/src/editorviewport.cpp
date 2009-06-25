@@ -71,11 +71,12 @@ namespace dtEditQt
       , mGhostProxy(NULL)
       , mSkipUpdateForCam(false)
    {
-      mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+      //mObjectMotionModel = new STAGEObjectMotionModel(ViewportManager::GetInstance().getMasterView());
+      mObjectMotionModel = new STAGEObjectMotionModel(GetView());
       mObjectMotionModel->SetEnabled(false);
       mObjectMotionModel->ClearTargets();
-      mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
-      mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
+      //mObjectMotionModel->SetGetMouseLineFunc(dtDAL::MakeFunctor(*this, &EditorViewport::GetMouseLine));
+      //mObjectMotionModel->SetObjectToScreenFunc(dtDAL::MakeFunctorRet(*this, &EditorViewport::GetObjectScreenCoordinates));
       mObjectMotionModel->SetScale(1.5f);
 
       this->GetQGLWidget()->setAcceptDrops(true);
@@ -165,7 +166,7 @@ namespace dtEditQt
    {
       mObjectMotionModel->UpdateWidgets();
 
-      //TODO Viewport::refresh();
+      Viewport::refresh();
    }
 
 
@@ -174,33 +175,38 @@ namespace dtEditQt
    {
       osg::Vec2 pos;
       pos.x() = pixelPos.x();
-      pos.y() = 0.0;//TODO getSceneView()->getViewport()->height() - pixelPos.y();
+      pos.y() = 0.0;
+      osg::Viewport* viewport = mCamera->getDeltaCamera()->GetOSGCamera()->getViewport();
+      if (viewport)
+      {
+         pos.y() = viewport->height() - pixelPos.y();
+      }
       return pos;
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
-   {
-      int xLoc = mousePos.x();
-      int yLoc = mousePos.y();
+   //void EditorViewport::GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end)
+   //{
+   //   int xLoc = mousePos.x();
+   //   int yLoc = mousePos.y();
 
-      //TODO
-      //if (getSceneView()->getViewport()->height() > 0 ||
-      //    getSceneView()->getViewport()->width()  > 0)
-      //{
-      //   getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
-      //}
-   }
+   //   //TODO
+   //   //if (getSceneView()->getViewport()->height() > 0 ||
+   //   //    getSceneView()->getViewport()->width()  > 0)
+   //   //{
+   //   //   getSceneView()->projectWindowXYIntoObject(xLoc, yLoc, start, end);
+   //   //}
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
-   osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
-   {
-      osg::Vec3 screenPos;
-      //TODO
-      //getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
+   //osg::Vec2 EditorViewport::GetObjectScreenCoordinates(osg::Vec3 objectPos)
+   //{
+   //   osg::Vec3 screenPos;
+   //   //TODO
+   //   //getSceneView()->projectObjectIntoWindow(objectPos, screenPos);
 
-      return osg::Vec2(screenPos.x(), screenPos.y());
-   }
+   //   return osg::Vec2(screenPos.x(), screenPos.y());
+   //}
 
    ////////////////////////////////////////////////////////////////////////////////
    void EditorViewport::ClearGhostProxy()
