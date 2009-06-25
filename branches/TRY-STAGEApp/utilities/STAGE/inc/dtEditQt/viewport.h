@@ -430,6 +430,12 @@ namespace dtEditQt
       */
       virtual void paintGL();
 
+      /**
+      * Called by the Qt windowing system when the viewport is to be initialized.
+      */
+      virtual void initializeGL();
+
+
    public slots:
       ///Moves the camera such that the actor is clearly visible.
       void onGotoActor(ActorProxyRefPtr proxy);
@@ -463,10 +469,6 @@ namespace dtEditQt
        */
       virtual ~Viewport();
 
-      /**
-       * Called by the Qt windowing system when the viewport is to be initialized.
-       */
-      virtual void initializeGL();
 
       /**
        * Called by the Qt windowing system when the viewport is resized by the user.

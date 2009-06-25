@@ -104,3 +104,12 @@ void dtEditQt::STAGEGLWidget::paintGL()
       mViewport->paintGL();
    }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::initializeGL()
+{
+   if (mViewport != NULL)
+   {
+      mViewport->initializeGL();
+   }
+}

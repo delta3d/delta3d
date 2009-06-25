@@ -73,18 +73,17 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::initializeGL()
-   //{
-   //   EditorViewport::initializeGL();
+   void OrthoViewport::initializeGL()
+   {
+      EditorViewport::initializeGL();
 
-   //   // We do not want OSG to compute our near and far clipping planes when in
-   //   // orthographic view
-   //   //TODO
-   //   //getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+      // We do not want OSG to compute our near and far clipping planes when in
+      // orthographic view
+      mCamera->getDeltaCamera()->SetNearFarCullingMode(dtCore::Camera::NO_AUTO_NEAR_FAR);
 
-   //   // Default to wireframe view.
-   //   setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
-   //}
+      // Default to wireframe view.
+      setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    //void OrthoViewport::resizeGL(int width, int height)

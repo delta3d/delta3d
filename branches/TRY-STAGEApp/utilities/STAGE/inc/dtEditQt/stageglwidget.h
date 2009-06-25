@@ -55,6 +55,7 @@ namespace dtEditQt
       */
       virtual void paintGL();
 
+      virtual void initializeGL();
 
    private:
 

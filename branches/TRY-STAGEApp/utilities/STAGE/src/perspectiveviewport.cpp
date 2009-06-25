@@ -87,11 +87,11 @@ namespace dtEditQt
    //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::initializeGL()
-   //{
-   //   EditorViewport::initializeGL();
-   //   setRenderStyle(Viewport::RenderStyle::TEXTURED, false);
-   //}
+   void PerspectiveViewport::initializeGL()
+   {
+      EditorViewport::initializeGL();
+      setRenderStyle(Viewport::RenderStyle::TEXTURED, false);
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::keyPressEvent(QKeyEvent* e)

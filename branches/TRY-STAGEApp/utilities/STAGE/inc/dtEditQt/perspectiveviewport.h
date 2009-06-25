@@ -92,7 +92,7 @@ namespace dtEditQt
        * Initializes the viewport.  This just sets the render style to be
        * textured and un-lit.
        */
-      //void initializeGL();
+      virtual void initializeGL();
 
       /**
        * Sets the perspective projection viewing parameters of this viewport's

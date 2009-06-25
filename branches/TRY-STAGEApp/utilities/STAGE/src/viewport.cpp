@@ -165,9 +165,7 @@ namespace dtEditQt
       {
          mRootNodeGroup->addChild(scene->GetSceneNode());
 
-         //mScene = scene;
-         //mView->SetScene(scene);
-         //mScene->GetSceneNode()->setStateSet(mGlobalStateSet.get());
+         //scene->GetSceneNode()->setStateSet(mGlobalStateSet.get());
       }
    }
 

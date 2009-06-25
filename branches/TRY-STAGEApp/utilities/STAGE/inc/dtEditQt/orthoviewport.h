@@ -130,6 +130,13 @@ namespace dtEditQt
        */
       void moveCamera(float dx, float dy);
 
+      /**
+      * Initializes the viewport.  This just sets the current render style
+      * to be wireframe and the view type to be OrthoViewType::TOP.
+      */
+      virtual void initializeGL();
+
+
    protected:
       /**
        * Constructs the orthographic viewport.
@@ -142,11 +149,6 @@ namespace dtEditQt
        */
       virtual ~OrthoViewport() { }
 
-      /**
-       * Initializes the viewport.  This just sets the current render style
-       * to be wireframe and the view type to be OrthoViewType::TOP.
-       */
-      //void initializeGL();
 
       /**
        * Sets the orthographic projection parameters of the current camera.
