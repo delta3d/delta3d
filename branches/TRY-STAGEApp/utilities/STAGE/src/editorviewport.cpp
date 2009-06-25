@@ -656,6 +656,11 @@ namespace dtEditQt
       }
    }
 
+   ////////////////////////////////////////////////////////////////////////////////
+   void EditorViewport::wheelEvent(QWheelEvent* e)
+   {
+   }
+
    ///////////////////////////////////////////////////////////////////////////////
    void EditorViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
    {
@@ -949,4 +954,5 @@ namespace dtEditQt
 
       EditorData::GetInstance().getMainWindow()->endWaitCursor();
    }
+
 } // namespace dtEditQt

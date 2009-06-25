@@ -127,3 +127,14 @@ void dtEditQt::STAGEGLWidget::resizeGL(int width, int height)
    }
 
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::wheelEvent(QWheelEvent* e)
+{
+   dtQt::OSGAdapterWidget::wheelEvent(e);
+
+   if (mViewport != NULL)
+   {
+      mViewport->wheelEvent(e);
+   }
+}

@@ -143,6 +143,14 @@ namespace dtEditQt
       */
       void resizeGL(int width, int height);
 
+      /**
+      * Called when the user moves the wheel on a mouse containing a scroll wheel.
+      * This causes the scene to be zoomed in and out.
+      * @param e
+      */
+      void wheelEvent(QWheelEvent* e);
+
+
    protected:
       /**
        * Constructs the orthographic viewport.
@@ -166,12 +174,6 @@ namespace dtEditQt
        */
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy);
 
-      /**
-       * Called when the user moves the wheel on a mouse containing a scroll wheel.
-       * This causes the scene to be zoomed in and out.
-       * @param e
-       */
-      void wheelEvent(QWheelEvent* e);
 
       /**
        * Called from the mousePressEvent handler.  This sets the viewport state

@@ -102,7 +102,7 @@ namespace dtEditQt {
       * @param e
       * @see ModeType
       */
-      void mousePressEvent(QMouseEvent* e);
+      virtual void mousePressEvent(QMouseEvent* e);
 
       /**
       * Called when the user releases a mouse button in the viewport.  Based on
@@ -110,7 +110,14 @@ namespace dtEditQt {
       * accordingly.
       * @param e
       */
-      void mouseReleaseEvent(QMouseEvent* e);
+      virtual void mouseReleaseEvent(QMouseEvent* e);
+
+      /**
+      * Called when the user moves the wheel on a mouse containing a scroll wheel.
+      * This causes the scene to be zoomed in and out.
+      * @param e
+      */
+      virtual void wheelEvent(QWheelEvent* e);
 
       /**
       * Drag events.
