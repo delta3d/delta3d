@@ -75,16 +75,16 @@ namespace dtEditQt
    //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void PerspectiveViewport::resizeGL(int width, int height)
-   //{
-   //   if (height == 0)
-   //   {
-   //      height = 1;
-   //   }
+   void PerspectiveViewport::resizeGL(int width, int height)
+   {
+      if (height == 0)
+      {
+         height = 1;
+      }
 
-   //   getCamera()->setAspectRatio((double)width / (double)height);
-   //   EditorViewport::resizeGL(width, height);
-   //}
+      getCamera()->setAspectRatio((double)width / (double)height);
+      EditorViewport::resizeGL(width, height);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void PerspectiveViewport::initializeGL()

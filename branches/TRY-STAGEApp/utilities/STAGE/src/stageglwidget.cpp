@@ -108,8 +108,22 @@ void dtEditQt::STAGEGLWidget::paintGL()
 ////////////////////////////////////////////////////////////////////////////////
 void dtEditQt::STAGEGLWidget::initializeGL()
 {
+   dtQt::OSGAdapterWidget::initializeGL();
+
    if (mViewport != NULL)
    {
       mViewport->initializeGL();
    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void dtEditQt::STAGEGLWidget::resizeGL(int width, int height)
+{
+   dtQt::OSGAdapterWidget::resizeGL(width, height);
+
+   if (mViewport != NULL)
+   {
+      mViewport->resizeGL(width, height);
+   }
+
 }

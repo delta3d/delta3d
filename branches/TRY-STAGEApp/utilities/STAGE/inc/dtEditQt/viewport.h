@@ -435,6 +435,10 @@ namespace dtEditQt
       */
       virtual void initializeGL();
 
+      /**
+      * Called by the Qt windowing system when the viewport is resized by the user.
+      */
+      virtual void resizeGL(int width, int height);
 
    public slots:
       ///Moves the camera such that the actor is clearly visible.
@@ -469,11 +473,6 @@ namespace dtEditQt
        */
       virtual ~Viewport();
 
-
-      /**
-       * Called by the Qt windowing system when the viewport is resized by the user.
-       */
-      //virtual void resizeGL(int width, int height);
 
 
       /**

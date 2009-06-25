@@ -86,14 +86,14 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::resizeGL(int width, int height)
-   //{
-   //   double xDim = (double)width * 0.5;
-   //   double yDim = (double)height * 0.5;
+   void OrthoViewport::resizeGL(int width, int height)
+   {
+      double xDim = (double)width * 0.5;
+      double yDim = (double)height * 0.5;
 
-   //   getCamera()->makeOrtho(-xDim, xDim, -yDim, yDim, -5000.0, 5000.0);
-   //   EditorViewport::resizeGL(width, height);
-   //}
+      getCamera()->makeOrtho(-xDim, xDim, -yDim, yDim, -5000.0, 5000.0);
+      EditorViewport::resizeGL(width, height);
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::setViewType(const OrthoViewType& type, bool refreshView)
@@ -127,29 +127,6 @@ namespace dtEditQt
       }
    }
 
-   ////////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::keyPressEvent(QKeyEvent* e)
-   //{
-   //   EditorViewport::keyPressEvent(e);
-   //}
-
-   ////////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::keyReleaseEvent(QKeyEvent* e)
-   //{
-   //   EditorViewport::keyReleaseEvent(e);
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::mousePressEvent(QMouseEvent* e)
-   //{
-   //   EditorViewport::mousePressEvent(e);
-   //}
-
-   ///////////////////////////////////////////////////////////////////////////////
-   //void OrthoViewport::mouseReleaseEvent(QMouseEvent* e)
-   //{
-   //   EditorViewport::mouseReleaseEvent(e);
-   //}
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
@@ -240,17 +217,6 @@ namespace dtEditQt
       releaseMouseCursor();
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::beginActorMode(QMouseEvent* e)
-   {
-      EditorViewport::beginActorMode(e);
-   }
-
-   ///////////////////////////////////////////////////////////////////////////////
-   void OrthoViewport::endActorMode(QMouseEvent* e)
-   {
-      EditorViewport::endActorMode(e);
-   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::warpWorldCamera(int x, int y)

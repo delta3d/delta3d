@@ -100,7 +100,7 @@ namespace dtEditQt
        * @param width The new width of the viewport.
        * @param height The new height of the viewport.
        */
-      //void resizeGL(int width, int height);
+      void resizeGL(int width, int height);
 
    public slots:
 

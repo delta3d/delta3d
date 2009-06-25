@@ -57,6 +57,9 @@ namespace dtEditQt
 
       virtual void initializeGL();
 
+      virtual void resizeGL(int width, int height);
+
+
    private:
 
       dtEditQt::EditorViewport* mViewport; ///<The Viewport that's using this widget

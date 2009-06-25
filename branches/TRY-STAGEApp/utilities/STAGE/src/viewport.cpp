@@ -216,10 +216,10 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void Viewport::resizeGL(int width, int height)
-   //{
-   //   mSceneView->setViewport(0, 0, width, height); //TODO
-   //}
+   void Viewport::resizeGL(int width, int height)
+   {
+      //mSceneView->setViewport(0, 0, width, height); //TODO
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::paintGL()

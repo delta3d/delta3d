@@ -301,6 +301,13 @@ namespace dtEditQt
          mZoomFactor = 0.0001;
       }
 
+      mDeltaCamera->SetOrtho(mOrthoLeft / mZoomFactor,
+                            mOrthoRight  / mZoomFactor,
+                            mOrthoBottom / mZoomFactor,
+                            mOrthoTop    / mZoomFactor,
+                            mZNear, mZFar);
+
+
       //mUpdateProjectionMatrix = true;
    }
 
