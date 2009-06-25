@@ -223,14 +223,14 @@ namespace dtEditQt
        * @see makePerspective
        * @see makeOrtho
        */
-      const osg::Matrix& getProjectionMatrix();
+      //const osg::Matrix& getProjectionMatrix();
 
       /**
        * Gets the camera's current view matrix.
        * @return The view matrix is generated from its current position and its
        * current orientation.
        */
-      const osg::Matrix& getWorldViewMatrix();
+      //const osg::Matrix& getWorldViewMatrix();
 
       void getOrthoParams(double& left, double& right, double& bottom, double& top,
          double& nearZ, double& farZ);
@@ -272,7 +272,7 @@ namespace dtEditQt
       /**
        * Updates the delta camera.
        */
-      void updateDeltaCamera();
+      //void updateDeltaCamera();
 
       /**
        * Returns a count of the number of actor proxies currently attached to this
@@ -314,7 +314,7 @@ namespace dtEditQt
       };
 
       osg::Vec3 mPosition;
-      osg::Quat mOrientation;
+      //osg::Quat mOrientation;
       double mCamPitch, mCamYaw, mCamRoll;
 
       osg::Matrixd mProjectionMat;
@@ -325,10 +325,10 @@ namespace dtEditQt
       double mZNear, mZFar;
       double mZoomFactor;
 
-      bool mUpdateProjectionMatrix;
-      bool mUpdateWorldViewMatrix;
+      //bool mUpdateProjectionMatrix;
+      //bool mUpdateWorldViewMatrix;
 
-      ProjectionType mProjType;
+      //ProjectionType mProjType;
 
       dtCore::RefPtr<dtCore::Camera> mDeltaCamera;
 
