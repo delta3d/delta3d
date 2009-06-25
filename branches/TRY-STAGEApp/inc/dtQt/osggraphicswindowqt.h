@@ -39,13 +39,16 @@ class QGLWidget;
 namespace dtQt
 {
    class OSGAdapterWidget;
+   class GLWidgetFactory;
 
    class DT_QT_EXPORT OSGGraphicsWindowQt : public osgViewer::GraphicsWindow
    {
    public:
       typedef osgViewer::GraphicsWindow BaseClass;
 
-      OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits, dtQt::OSGAdapterWidget* adapter = NULL);
+      OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits, 
+                          dtQt::GLWidgetFactory* factory = NULL, 
+                          dtQt::OSGAdapterWidget* adapter = NULL);
       virtual ~OSGGraphicsWindowQt();
 
       void SetQGLWidget(QGLWidget* qwidget);

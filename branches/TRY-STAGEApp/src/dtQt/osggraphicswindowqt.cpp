@@ -28,11 +28,14 @@
 
 #include <dtQt/osggraphicswindowqt.h>
 #include <dtQt/osgadapterwidget.h>
+#include <dtQt/glwidgetfactory.h>
 
 namespace dtQt
 {
    ////////////////////////////////////////////////////////////
-   OSGGraphicsWindowQt::OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits, dtQt::OSGAdapterWidget* adapter)
+   OSGGraphicsWindowQt::OSGGraphicsWindowQt(osg::GraphicsContext::Traits* traits,
+                                             dtQt::GLWidgetFactory* factory, 
+                                             dtQt::OSGAdapterWidget* adapter)
    : BaseClass()
    , mValid(false)
    , mRealized(false)
@@ -48,7 +51,15 @@ namespace dtQt
          {
             flags |= Qt::FramelessWindowHint;
          }
-         adapter = new dtQt::OSGAdapterWidget(false, NULL, NULL, flags);
+
+         if (factory != NULL)
+         {
+            adapter = factory->CreateWidget();
+         }
+         else
+         {
+            adapter = new dtQt::OSGAdapterWidget(false, NULL, NULL, flags);
+         }
       }
       adapter->SetGraphicsWindow(*this);
       adapter->setFocusPolicy(Qt::StrongFocus);
