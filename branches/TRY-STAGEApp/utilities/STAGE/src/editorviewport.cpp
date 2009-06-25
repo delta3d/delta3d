@@ -38,6 +38,7 @@
 #include <dtEditQt/editordata.h>
 #include <dtEditQt/editoractions.h>
 #include <dtEditQt/propertyeditor.h>
+#include <dtEditQt/stageglwidget.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/map.h>
@@ -78,6 +79,13 @@ namespace dtEditQt
       mObjectMotionModel->SetScale(1.5f);
 
       this->GetQGLWidget()->setAcceptDrops(true);
+
+      STAGEGLWidget* glWidget = dynamic_cast<STAGEGLWidget*>(this->GetQGLWidget());
+      if (NULL != glWidget)
+      {
+         glWidget->SetViewport(this);      	
+      }
+
    }
 
    /////////////////////////////////////////////////////////////////////////////

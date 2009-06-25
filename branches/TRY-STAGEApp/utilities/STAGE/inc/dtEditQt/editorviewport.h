@@ -95,6 +95,31 @@ namespace dtEditQt {
        */
       virtual void refresh();
 
+      /**
+      * Called when the user presses a mouse button in the viewport.  Based on
+      * the combination of buttons pressed, the viewport's current mode will
+      * be set.
+      * @param e
+      * @see ModeType
+      */
+      void mousePressEvent(QMouseEvent* e);
+
+      /**
+      * Called when the user releases a mouse button in the viewport.  Based on
+      * the buttons released, the viewport's current mode is updated
+      * accordingly.
+      * @param e
+      */
+      void mouseReleaseEvent(QMouseEvent* e);
+
+      /**
+      * Drag events.
+      */
+      void dragEnterEvent(QDragEnterEvent* event);
+      void dragLeaveEvent(QDragLeaveEvent* event);
+      void dragMoveEvent(QDragMoveEvent* event);
+      void dropEvent(QDropEvent* event);
+
    public slots:
       /**
        * Puts the perspective viewport options in sync with the editor preferences.
@@ -212,30 +237,8 @@ namespace dtEditQt {
       */
       void ClearGhostProxy();
 
-      /**
-      * Drag events.
-      */
-      void dragEnterEvent(QDragEnterEvent* event);
-      void dragLeaveEvent(QDragLeaveEvent* event);
-      void dragMoveEvent(QDragMoveEvent* event);
-      void dropEvent(QDropEvent* event);
 
-      /**
-       * Called when the user presses a mouse button in the viewport.  Based on
-       * the combination of buttons pressed, the viewport's current mode will
-       * be set.
-       * @param e
-       * @see ModeType
-       */
-      void mousePressEvent(QMouseEvent* e);
 
-      /**
-       * Called when the user releases a mouse button in the viewport.  Based on
-       * the buttons released, the viewport's current mode is updated
-       * accordingly.
-       * @param e
-       */
-      void mouseReleaseEvent(QMouseEvent* e);
 
       /**
        * Called when the user moves the mouse while pressing any combination of

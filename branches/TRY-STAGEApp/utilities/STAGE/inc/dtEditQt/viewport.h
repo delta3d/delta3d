@@ -86,7 +86,7 @@ namespace dtEditQt
     * @see PerspectiveViewport
     * @see OrthoViewport
     */
-   class Viewport : public QObject /*: public QWidget */
+   class Viewport : public QObject
    {
       Q_OBJECT
 
@@ -398,7 +398,7 @@ namespace dtEditQt
       /**
        * Tells the viewport to repaint itself.
        */
-      //virtual void refresh();
+      virtual void refresh();
 
       /**
        * Sets the background color of this viewport.
@@ -409,12 +409,26 @@ namespace dtEditQt
 
       QGLWidget* GetQGLWidget();
 
+      QWidget* GetQWidget();
+
+
       /**
       * Returns the underlying scene view that is attached to this viewport.
       * @return
       */
       //osgUtil::SceneView* getSceneView() { return mSceneView.get(); }
       dtCore::View* GetView();
+
+      /**
+      * Called when the user moves the mouse while pressing any combination of
+      * mouse buttons.  Based on the current mode, the camera is updated.
+      */
+      virtual void mouseMoveEvent(QMouseEvent* e);
+
+      /**
+      * Called when the viewport needs to redraw itself.
+      */
+      virtual void paintGL();
 
    public slots:
       ///Moves the camera such that the actor is clearly visible.
@@ -459,10 +473,6 @@ namespace dtEditQt
        */
       //virtual void resizeGL(int width, int height);
 
-      /**
-       * Called when the viewport needs to redraw itself.
-       */
-      //virtual void paintGL();
 
       /**
        * Renders the scene as is viewed from the viewport's currently assigned
@@ -521,11 +531,6 @@ namespace dtEditQt
        */
       void updateActorProxyBillboards();
 
-      /**
-       * Called when the user moves the mouse while pressing any combination of
-       * mouse buttons.  Based on the current mode, the camera is updated.
-       */
-      virtual void mouseMoveEvent(QMouseEvent* e);
 
       /// Called by the mouse move event with the adjusted x and y so that subclasses can do what they need.
       virtual void onMouseMoveEvent(QMouseEvent* e, float dx, float dy) = 0;
@@ -550,6 +555,8 @@ namespace dtEditQt
       bool mInChangeTransaction;
 
       osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
+
+      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
 
    private:
       ///Sets up the initial render state of this viewport.
@@ -600,7 +607,6 @@ namespace dtEditQt
 
       dtCore::RefPtr<dtCore::Isector> mIsector;
 
-      dtCore::RefPtr<dtCore::DeltaWin> mWindow;
    };
 
 } // namespace dtEditQt

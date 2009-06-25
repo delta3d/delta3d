@@ -41,6 +41,7 @@
 #include <dtQt/qtguiwindowsystemwrapper.h>
 #include <dtQt/deltastepper.h>
 #include <dtEditQt/stageapplication.h>
+#include <dtEditQt/stageglwidgetfactory.h>
 
 int main(int argc, char* argv[])
 {
@@ -60,6 +61,13 @@ int main(int argc, char* argv[])
 
    //Create special QGLWidget's when we create DeltaWin instances
    dtQt::QtGuiWindowSystemWrapper::EnableQtGUIWrapper();
+
+   osg::GraphicsContext::WindowingSystemInterface* winSys = osg::GraphicsContext::getWindowingSystemInterface();
+   dtQt::QtGuiWindowSystemWrapper* qtgui = dynamic_cast<dtQt::QtGuiWindowSystemWrapper*>(winSys);
+   if (qtgui)
+   {
+      qtgui->SetGLWidgetFactory(new dtEditQt::STAGEGLWidgetFactory());
+   }
    
 
    try

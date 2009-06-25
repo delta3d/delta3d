@@ -93,7 +93,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    Viewport::Viewport(ViewportManager::ViewportType& type, const std::string& name, QWidget* parent, QGLWidget* shareWith)
       //: QWidget(parent)
-      : mInChangeTransaction(false)
+      : QObject(parent)
+      , mInChangeTransaction(false)
       , mName(name)
       , mViewPortType(type)
       , mRedrawContinuously(false)
@@ -133,7 +134,8 @@ namespace dtEditQt
       mView->SetCamera(mCamera->getDeltaCamera());
       mView->SetScene(mScene.get());
 
-      //GetQGLWidget()->setParent(this);
+      //GetQWidget()->setParent(GetQGLWidget());
+      //GetQGLWidget()->setParent(GetQWidget());
 
       initializeGL();
    }
@@ -222,15 +224,15 @@ namespace dtEditQt
    //}
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void Viewport::paintGL()
-   //{
-   //   if (!mSceneView.valid() || !mScene.valid() || !mCamera.valid())
-   //   {
-   //      return;
-   //   }
+   void Viewport::paintGL()
+   {
+      //if (!mSceneView.valid() || !mScene.valid() || !mCamera.valid())
+      //{
+      //   return;
+      //}
 
-   //   renderFrame();
-   //}
+      renderFrame();
+   }
 
    ////////////////////////////////////////////////////////////////////////////////
    void Viewport::refreshActorSelection(const std::vector< dtCore::RefPtr<dtDAL::ActorProxy> >& actors)
@@ -238,10 +240,10 @@ namespace dtEditQt
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   //void Viewport::refresh()
-   //{
-   //   this->updateGL();
-   //}
+   void Viewport::refresh()
+   {
+      GetQGLWidget()->updateGL();
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void Viewport::setClearColor(const osg::Vec4& color)
@@ -623,7 +625,7 @@ namespace dtEditQt
             getCamera()->move(viewDir*-offset*1.5f);
          }
 
-         //refresh(); //TODO
+         refresh();
       }
    }
 
@@ -636,7 +638,7 @@ namespace dtEditQt
          cam->setPosition(osg::Vec3(x, y, z));
       }
 
-    //TODO  refresh(); // manually redraw the viewport to show new position
+      refresh(); // manually redraw the viewport to show new position
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -726,7 +728,7 @@ namespace dtEditQt
 
       mLastMouseUpdateLocation = mousePos;
 
-      //TODO refresh();
+      refresh();
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -945,6 +947,13 @@ namespace dtEditQt
    {
       dtQt::OSGGraphicsWindowQt* osgGraphWindow = dynamic_cast<dtQt::OSGGraphicsWindowQt*>(mWindow->GetOsgViewerGraphicsWindow());
       return osgGraphWindow->GetQGLWidget();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   QWidget* Viewport::GetQWidget()
+   {
+      //return this;
+      return GetQGLWidget();
    }
 
    ////////////////////////////////////////////////////////////////////////////////

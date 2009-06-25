@@ -82,7 +82,7 @@ namespace dtEditQt
    {
       if (child)
       {
-         child->setParent(this);
+         //child->setParent(this); //TODO  is this required?
          mLayout->addWidget(child);
          mLayout->addWidget(mToolBar);
       }
