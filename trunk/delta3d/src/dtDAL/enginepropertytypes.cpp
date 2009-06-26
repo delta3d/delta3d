@@ -219,7 +219,7 @@ namespace dtDAL
    dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor()
    {
       dtDAL::ActorProxy* proxy = GetActorProxy();
-      if (proxy)
+      if (proxy != NULL)
       {
          return proxy->GetActor();
       }
@@ -231,7 +231,7 @@ namespace dtDAL
    const dtCore::DeltaDrawable* ActorIDActorProperty::GetRealActor() const
    {
       const dtDAL::ActorProxy* proxy = GetActorProxy();
-      if (proxy)
+      if (proxy != NULL)
       {
          return proxy->GetActor();
       }
@@ -332,7 +332,7 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ActorIDActorProperty::SetValue(dtCore::UniqueId value)
+   void ActorIDActorProperty::SetValue(const dtCore::UniqueId& value)
    {
       if (IsReadOnly())
       {

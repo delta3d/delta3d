@@ -135,7 +135,7 @@ namespace dtDAL
    class DT_DAL_EXPORT ActorIDActorProperty : public ActorProperty
    {
    public:
-      typedef dtUtil::Functor<void, TYPELIST_1(dtCore::UniqueId)> SetFuncType;
+      typedef dtUtil::Functor<void, TYPELIST_1(const dtCore::UniqueId&)> SetFuncType;
       typedef dtUtil::Functor<dtCore::UniqueId, TYPELIST_0()> GetFuncType;
       ActorIDActorProperty(ActorProxy& actorProxy,
          const dtUtil::RefString& name,
@@ -160,7 +160,7 @@ namespace dtDAL
       * @param value the value to set or NULL to clear it.  The passed in pointer is
       * not stored.  The values are extracted and stored in a separate object.
       */
-      void SetValue(dtCore::UniqueId value);
+      void SetValue(const dtCore::UniqueId& value);
 
       /**
       * Gets the value proxy assiged to this property.
