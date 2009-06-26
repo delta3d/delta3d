@@ -72,8 +72,8 @@ namespace dtGame
       RegisterMessageType<ServerMessageRejected>(MessageType::SERVER_REQUEST_REJECTED);
       RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_CREATED);
       RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_UPDATED);
-      RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_DELETED);
-      RegisterMessageType<ActorPublishedMessage>(MessageType::INFO_ACTOR_PUBLISHED);
+      RegisterMessageType<Message>(MessageType::INFO_ACTOR_DELETED);
+      RegisterMessageType<Message>(MessageType::INFO_ACTOR_PUBLISHED);
       RegisterMessageType<Message>(MessageType::INFO_ENVIRONMENT_CHANGED);
 
       RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);

@@ -6,7 +6,7 @@
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -30,7 +30,6 @@ namespace dtGame
    class TickMessage;
    class TimeChangeMessage;
    class ActorUpdateMessage;
-   class ActorDeletedMessage;
    class RestartMessage;
    class GameActorProxy;
 
@@ -44,7 +43,7 @@ namespace dtGame
          DefaultMessageProcessor(const std::string& name = DEFAULT_NAME);
 
          /**
-          * Called publicly from other classes to process a message and 
+          * Called publicly from other classes to process a message and
           * pass it off to its correct handler function based on its type
           * @param msg The message
           */
@@ -77,7 +76,7 @@ namespace dtGame
           * Processes a local actor delete message
           * @param msg The message
           */
-         virtual void ProcessLocalDeleteActor(const ActorDeletedMessage& msg) {}
+         virtual void ProcessLocalDeleteActor(const Message& msg) {}
 
          /**
           * Processes a remote create actor message
@@ -97,11 +96,11 @@ namespace dtGame
           * Processes a remote delete actor message
           * @param msg The message
           */
-         virtual void ProcessRemoteDeleteActor(const ActorDeletedMessage& msg);
+         virtual void ProcessRemoteDeleteActor(const Message& msg);
 
          /**
           * Processes a create actor message
-          * Note - It is recommended that you do not override this unless you provide all of the 
+          * Note - It is recommended that you do not override this unless you provide all of the
           * primary behavior.
           * @param msg The message
           */
@@ -117,14 +116,14 @@ namespace dtGame
           * Processes a delete actor message
           * @param msg The message
           */
-         virtual void ProcessDeleteActor(const ActorDeletedMessage& msg);
+         virtual void ProcessDeleteActor(const Message& msg);
 
          /**
           * Called when a pause command message is received.
           * @param msg the pause message.
           */
          virtual void ProcessPauseCommand(const Message& msg);
-          
+
          /**
           * Called when a resume command message is received.
           * @param msg the resume message.
@@ -133,7 +132,7 @@ namespace dtGame
 
          /**
           * Called when a restart command message is received.
-          * This should be overridden to handle restarting the game, 
+          * This should be overridden to handle restarting the game,
           * whatever that means to the current game or simulation.
           * @param msg the restart message.
           */

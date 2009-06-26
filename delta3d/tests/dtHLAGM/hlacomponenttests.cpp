@@ -19,7 +19,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
-* 
+*
 * This software was developed by Alion Science and Technology Corporation under
 * circumstances in which the U. S. Government may have rights in the software.
 *
@@ -82,14 +82,14 @@ class TestHLAComponent: public dtHLAGM::HLAComponent
          DeleteActor(actorId);
       }
 
-      void TestPrepareInteraction(const dtGame::Message& message, 
-            RTI::ParameterHandleValuePairSet& interactionParams, 
+      void TestPrepareInteraction(const dtGame::Message& message,
+            RTI::ParameterHandleValuePairSet& interactionParams,
             const dtHLAGM::InteractionToMessage& interactionToMessage)
       {
          PrepareInteraction(message, interactionParams, interactionToMessage);
       }
 
-      void TestPrepareUpdate(const dtGame::ActorUpdateMessage& message, 
+      void TestPrepareUpdate(const dtGame::ActorUpdateMessage& message,
          RTI::AttributeHandleValuePairSet& updateAttrs,
          const dtHLAGM::ObjectToActor& objectToActor, bool newObject)
       {
@@ -114,7 +114,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE(HLAComponentTests);
 
       //All the tests are run in one method
-      //they all use the RTI, which takes a long time 
+      //they all use the RTI, which takes a long time
       //to start and stop it setup and teardown.
       //CPPUNIT_TEST(RunAllTests);
 
@@ -122,7 +122,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
       //Temporarily removing this test from the suite due to a failing test
       //caused by an unknown issue.  Until the root of the problem is fixed,
       //these tests will have to remain off-line.
-      // "ObjectClassNotPublished (Object class 16 is not published) 
+      // "ObjectClassNotPublished (Object class 16 is not published)
       //    'BaseEntity.PhysicalEntity.CulturalFeature'"
 
    CPPUNIT_TEST_SUITE_END();
@@ -204,7 +204,7 @@ class HLAComponentTests : public CPPUNIT_NS::TestFixture
          testMsg.SetName("Rubber Chicken");
          testMsg.SetActorTypeCategory("TestHLA");
          testMsg.SetActorTypeName("Tank");
-         
+
          testMsg.AddUpdateParameter(dtDAL::TransformableActorProxy::PROPERTY_ROTATION, dtDAL::DataType::VEC3);
       }
 
@@ -258,7 +258,7 @@ void HLAComponentTests::setUp()
    {
       dtCore::RefPtr<dtHLAGM::DDMCameraCalculatorGeographic> cameraCalculator = new dtHLAGM::DDMCameraCalculatorGeographic;
       cameraCalculator->SetCamera(new dtCore::Camera("Geographic"));
-      
+
       mHLAComponent->GetDDMSubscriptionCalculators().AddCalculator(*cameraCalculator);
       mGameManager->AddComponent(*mHLAComponent, dtGame::GameManager::ComponentPriority::NORMAL);
       dtHLAGM::HLAComponentConfig config;
@@ -291,7 +291,7 @@ void HLAComponentTests::setUp()
    {
       CPPUNIT_FAIL(std::string("Error joining federation : ") + ex.ToString());
    }
-   
+
 }
 
 // Called implicitly by CPPUNIT when the app terminates
@@ -326,8 +326,8 @@ void HLAComponentTests::BetweenTestSetUp()
                                                       "TestObject1");
    }
    catch (const RTI::Exception &e)
-   {      
-      std::ostringstream ss; 
+   {
+      std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle1) << "'";
       CPPUNIT_FAIL(ss.str());
    }
@@ -341,7 +341,7 @@ void HLAComponentTests::BetweenTestSetUp()
    }
    catch (const RTI::Exception &e)
    {
-      std::ostringstream ss; 
+      std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle2) << "'";
       CPPUNIT_FAIL(ss.str());
    }
@@ -355,7 +355,7 @@ void HLAComponentTests::BetweenTestSetUp()
    }
    catch (const RTI::Exception &e)
    {
-      std::ostringstream ss; 
+      std::ostringstream ss;
       ss << e << " '" << rtiamb->getObjectClassName(mClassHandle3) << "'";
       CPPUNIT_FAIL(ss.str());
    }
@@ -377,7 +377,7 @@ void HLAComponentTests::BetweenTestTearDown()
    }
    catch (const RTI::Exception &e)
    {
-      std::ostringstream ss; 
+      std::ostringstream ss;
       ss << e;
       CPPUNIT_FAIL(ss.str());
    }
@@ -397,7 +397,7 @@ void HLAComponentTests::RunAllTests()
       BetweenTestSetUp();
       TestReflectAttributes();
       BetweenTestTearDown();
-      
+
       BetweenTestSetUp();
       TestReflectAttributesNoEntityType();
       BetweenTestTearDown();
@@ -460,7 +460,7 @@ void HLAComponentTests::RunAllTests()
             deleteCount++;
          }
       }
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of messages in the process list should equal the number of deletes", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The number of messages in the process list should equal the number of deletes",
          unsigned(deleteCount), unsigned(actorIdList.size()));
    }
    catch (RTI::ObjectNotKnown &)
@@ -487,7 +487,7 @@ void HLAComponentTests::TestRuntimeMappingInfo()
    try
    {
       std::vector<dtCore::UniqueId> actorIdList;
-      
+
       dtCore::UniqueId id1;
       dtCore::UniqueId id2;
       std::string rtiid1 = "TestRTIID01";
@@ -641,7 +641,7 @@ void HLAComponentTests::TestRuntimeMappingInfo()
       CPPUNIT_ASSERT(mappingInfo.GetIdByRTIId(rtiid1) == NULL);
 
       mappingInfo.GetAllActorIds(actorIdList);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.",
          unsigned(0), unsigned(actorIdList.size()));
 
       //Fill the mapping again to make sure it can be cleared.
@@ -659,9 +659,9 @@ void HLAComponentTests::TestRuntimeMappingInfo()
          unsigned(2), unsigned(actorIdList.size()));
 
       mappingInfo.Clear();
-      
+
       mappingInfo.GetAllActorIds(actorIdList);
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The mapping info object has be cleared out, so it should have no actor id's.",
          unsigned(0), unsigned(actorIdList.size()));
 
       CPPUNIT_ASSERT(mappingInfo.GetId(mObjectHandle1) == NULL);
@@ -695,7 +695,7 @@ void HLAComponentTests::TestSubscription()
          const dtHLAGM::ObjectToActor& ota = **i;
 
          std::ostringstream ss;
-         ss << message << " \"" << ota.GetObjectClassName() << "\" \"" << ota.GetActorType().GetCategory() << "." 
+         ss << message << " \"" << ota.GetObjectClassName() << "\" \"" << ota.GetActorType().GetCategory() << "."
             << ota.GetActorType().GetName()
             << "  IsRemoteOnly " << ota.IsRemoteOnly() << " IsLocalOnly " << ota.IsLocalOnly() << "\"";
 
@@ -704,13 +704,13 @@ void HLAComponentTests::TestSubscription()
          if (!ota.GetEntityIdAttributeName().empty())
             CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetEntityIdAttributeHandle() != 0);
          else
-            CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.", 
+            CPPUNIT_ASSERT_MESSAGE("The entity id attribute should be null if it is not being used.",
                   ota.GetEntityIdAttributeHandle() == 0);
 
-         if (ota.GetDisID() != NULL)         
+         if (ota.GetDisID() != NULL)
             CPPUNIT_ASSERT_MESSAGE(ss.str(), ota.GetDisIDAttributeHandle() != 0);
          else
-            CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.", 
+            CPPUNIT_ASSERT_MESSAGE("The DIS ID attribute should be null if it is not being used.",
                   ota.GetDisIDAttributeHandle() == 0);
 
          for (std::vector<dtHLAGM::AttributeToPropertyList>::const_iterator j = ota.GetOneToManyMappingVector().begin();
@@ -727,7 +727,7 @@ void HLAComponentTests::TestSubscription()
             oss << "HLA attribute \"" << hlaName.c_str() << "\"";
 
             // --- Check the property mapping for its special state.
-            if( hlaName == dtHLAGM::HLAComponent::ATTR_NAME_ENTITY_TYPE 
+            if( hlaName == dtHLAGM::HLAComponent::ATTR_NAME_ENTITY_TYPE
                || hlaName == dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME )
             {
                oss << " MUST be marked as special" << std::endl;
@@ -747,10 +747,10 @@ void HLAComponentTests::TestSubscription()
    {
       std::vector<const dtHLAGM::InteractionToMessage*> toFillItm;
       mHLAComponent->GetAllInteractionToMessageMappings(toFillItm);
-      
+
       unsigned sizeitm = toFillItm.size();
       CPPUNIT_ASSERT(sizeitm > 0);
-      
+
       for (std::vector<const dtHLAGM::InteractionToMessage*>::iterator i = toFillItm.begin();
          i != toFillItm.end(); ++i)
       {
@@ -764,7 +764,7 @@ void HLAComponentTests::TestSubscription()
             const dtHLAGM::ParameterToParameterList& atpl = *j;
             if (atpl.GetHLAName() == dtHLAGM::HLAComponent::ATTR_NAME_MAPPING_NAME)
             {
-               CPPUNIT_ASSERT_MESSAGE("The parameter handle for the MAPPING_NAME should be 0", 
+               CPPUNIT_ASSERT_MESSAGE("The parameter handle for the MAPPING_NAME should be 0",
                         atpl.GetParameterHandle() == 0);
             }
             else
@@ -774,18 +774,18 @@ void HLAComponentTests::TestSubscription()
          }
       }
    }
-   
+
    std::vector<std::vector<const dtHLAGM::DDMRegionData*> > toFill;
    mHLAComponent->GetDDMSubscriptionCalculatorRegions(toFill);
    CPPUNIT_ASSERT(!toFill.empty());
    CPPUNIT_ASSERT(toFill.size() == mHLAComponent->GetDDMSubscriptionCalculators().GetSize());
-   
+
    dtHLAGM::DDMCameraCalculatorGeographic* camCalc = dynamic_cast<dtHLAGM::DDMCameraCalculatorGeographic*>(mHLAComponent->GetDDMSubscriptionCalculators()[0]);
    CPPUNIT_ASSERT(camCalc != NULL);
-   
-   
+
+
    const dtHLAGM::DDMRegionData* data = toFill[0][0];
-   
+
    CPPUNIT_ASSERT_EQUAL(3U, data->GetNumberOfExtents());
 
    const dtHLAGM::DDMRegionData::DimensionValues* dv = data->GetDimensionValue(0);
@@ -793,55 +793,55 @@ void HLAComponentTests::TestSubscription()
 
    dv = data->GetDimensionValue(1);
    CPPUNIT_ASSERT_EQUAL(camCalc->GetSecondDimensionName(), dv->mName);
-   
+
    dv = data->GetDimensionValue(2);
    CPPUNIT_ASSERT_EQUAL(camCalc->GetThirdDimensionName(), dv->mName);
-   
+
 }
 
 void HLAComponentTests::TestConfigurationLocking()
 {
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not enable or disable DDM while connected.", mHLAComponent->SetDDMEnabled(!mHLAComponent->IsDDMEnabled()), dtUtil::Exception);
    CPPUNIT_ASSERT_THROW_MESSAGE("One may not clear the configuration which connected.", mHLAComponent->ClearConfiguration(), dtUtil::Exception);
-   
+
    dtCore::RefPtr<dtDAL::ActorType> at = new dtDAL::ActorType("a", "b");
    dtHLAGM::EntityType et(1,2,3,4,5,6,7);
    std::vector<dtHLAGM::AttributeToPropertyList> testVec;
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.",
          mHLAComponent->RegisterActorMapping(*at, "", &et, testVec), dtUtil::Exception);
 
    dtCore::RefPtr<dtHLAGM::ObjectToActor> ota = new dtHLAGM::ObjectToActor;
    ota->SetActorType(*at);
    ota->SetObjectClassName("test1");
    ota->SetDisID(&et);
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an actor mapping while it's connected.",
          mHLAComponent->RegisterActorMapping(*ota), dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.",
          mHLAComponent->UnregisterActorMapping(*at), dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.",
          mHLAComponent->UnregisterObjectMapping("test1", &et), dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an actor mapping while it's connected.",
          mHLAComponent->UnregisterObjectMapping("test1", &et), dtUtil::Exception);
-   
+
    dtCore::RefPtr<dtHLAGM::InteractionToMessage> itm = new dtHLAGM::InteractionToMessage;
-   
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.", 
+
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.",
          mHLAComponent->RegisterMessageMapping(*itm), dtUtil::Exception);
-   
+
    std::string interactionTypeName("");
    std::vector<dtHLAGM::ParameterToParameterList> testOneToOneMessageVector;
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not register an interaction mapping while it's connected.",
          mHLAComponent->RegisterMessageMapping(dtGame::MessageType::INFO_ACTOR_UPDATED,
                interactionTypeName, testOneToOneMessageVector), dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an message mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an message mapping while it's connected.",
          mHLAComponent->UnregisterMessageMapping(dtGame::MessageType::INFO_ACTOR_UPDATED), dtUtil::Exception);
 
-   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an interaction mapping while it's connected.", 
+   CPPUNIT_ASSERT_THROW_MESSAGE("One may not Unregister an interaction mapping while it's connected.",
          mHLAComponent->UnregisterInteractionMapping(interactionTypeName), dtUtil::Exception);
 }
 
@@ -1075,7 +1075,7 @@ void HLAComponentTests::TestReflectAttributes()
 
       //There is a mapping to set the sending id to the new actor as well.
       CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
-      
+
       const dtGame::ActorUpdateMessage& createMsg = static_cast<const dtGame::ActorUpdateMessage&>(*msg);
       CPPUNIT_ASSERT(createMsg.GetUpdateParameter("Mesh") != NULL);
 
@@ -1091,7 +1091,7 @@ void HLAComponentTests::TestReflectAttributes()
 
       // Test that the object name has been assigned to the update message if it
       // has been mapped.
-      const dtGame::StringMessageParameter* mappingNameParam = 
+      const dtGame::StringMessageParameter* mappingNameParam =
          dynamic_cast<const dtGame::StringMessageParameter*>(createMsg.GetUpdateParameter(TEST_ATTR_MAPPING_NAME));
       if( mappingNameParam != NULL )
       {
@@ -1100,7 +1100,7 @@ void HLAComponentTests::TestReflectAttributes()
 
       // Test that the Entity Type can be mapped to a string if it has been mapped
       // as a string parameter to one of the object mappings.
-      const dtGame::StringMessageParameter* entityTypeParam = 
+      const dtGame::StringMessageParameter* entityTypeParam =
          dynamic_cast<const dtGame::StringMessageParameter*>(createMsg.GetUpdateParameter(TEST_ATTR_ENTITY_TYPE));
       if( entityTypeParam != NULL )
       {
@@ -1140,7 +1140,7 @@ void HLAComponentTests::TestReflectAttributes()
 
       //Clear the resource value.
       rap->SetValue(NULL);
-      
+
       //run the same reflect call again to make sure the mesh value is not sent the second time.
       mHLAComponent->reflectAttributeValues(mObjectHandle1, *ahs, "");
 
@@ -1154,8 +1154,8 @@ void HLAComponentTests::TestReflectAttributes()
 
       //There is a mapping to set the sending id to the new actor as well.
       CPPUNIT_ASSERT(msg->GetSendingActorId() == *id);
-      
-      CPPUNIT_ASSERT_MESSAGE("Non-required default values should only be sent in the actor created message", 
+
+      CPPUNIT_ASSERT_MESSAGE("Non-required default values should only be sent in the actor created message",
          static_cast<const dtGame::ActorUpdateMessage&>(*msg).GetUpdateParameter("Mesh") == NULL);
 
       CPPUNIT_ASSERT_MESSAGE("The value should still be null because it didn't send the property the second time.",
@@ -1189,20 +1189,20 @@ void HLAComponentTests::TestDispatchUpdate()
    {
       dtCore::RefPtr<dtGame::ActorUpdateMessage> testMsg;
       mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, testMsg);
-      
+
       PopulateTestActorUpdate(*testMsg);
-      
+
       const dtCore::UniqueId& fakeActorId = testMsg->GetAboutActorId();
 
       dtHLAGM::EntityIdentifier entityId(3,3,2);
 
       //insert a bogus mapping to see if the object maps properly.
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
-      
+
       dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
 
       CPPUNIT_ASSERT(testTankType.valid());
-      
+
       mHLAComponent->DispatchNetworkMessage(*testMsg);
       const std::string* rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
       const RTI::ObjectHandle* ptrHandle = mHLAComponent->GetRuntimeMappings().GetHandle(fakeActorId);
@@ -1212,13 +1212,13 @@ void HLAComponentTests::TestDispatchUpdate()
             ptrHandle != NULL);
       //save off a copy
       //const RTI::ObjectHandle handle = *ptrHandle;
-      
-      dtCore::RefPtr<dtGame::ActorDeletedMessage> deletedMsg;
+
+      dtCore::RefPtr<dtGame::Message> deletedMsg;
       mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_DELETED, deletedMsg);
-      
+
       deletedMsg->SetAboutActorId(fakeActorId);
       mHLAComponent->DispatchNetworkMessage(*deletedMsg);
-      
+
       rtiID = mHLAComponent->GetRuntimeMappings().GetRTIId(fakeActorId);
       ptrHandle = mHLAComponent->GetRuntimeMappings().GetHandle(fakeActorId);
       CPPUNIT_ASSERT_MESSAGE("The RTI Object ID  should be NULL",
@@ -1239,26 +1239,26 @@ void HLAComponentTests::TestPrepareUpdate()
    {
       RTI::AttributeHandleValuePairSet* ahs =
          RTI::AttributeSetFactory::create(4);
-      
+
       dtCore::RefPtr<dtGame::ActorUpdateMessage> testMsg;
       mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED, testMsg);
 
       PopulateTestActorUpdate(*testMsg);
-      
+
       const dtCore::UniqueId& fakeActorId = testMsg->GetAboutActorId();
-      
+
       dtHLAGM::EntityIdentifier entityId(3,3,2);
 
       //insert a bogus mapping to see if the object maps properly.
       mHLAComponent->GetRuntimeMappings().Put(entityId, fakeActorId);
 
-      
+
       dtCore::RefPtr<const dtDAL::ActorType> testTankType = mGameManager->FindActorType(testMsg->GetActorTypeCategory(), testMsg->GetActorTypeName());
-      
+
       CPPUNIT_ASSERT(testTankType.valid());
-      
+
       const dtHLAGM::ObjectToActor* oToA = mHLAComponent->GetActorMapping(*testTankType);
-      
+
       if (oToA != NULL)
       {
          mHLAComponent->TestPrepareUpdate(*testMsg, *ahs, *oToA, true);
@@ -1281,7 +1281,7 @@ void HLAComponentTests::TestPrepareUpdate()
             CPPUNIT_ASSERT_MESSAGE( oss.str(), false );
          }
 
-         
+
          bool foundEntityTypeAttr = false;
          //There are two entity id's to be mapped because
          //one is coming from the sendingActorId and the other
@@ -1292,24 +1292,24 @@ void HLAComponentTests::TestPrepareUpdate()
          bool foundEntityIdAttr2 = false;
          bool foundOrientationAttr = false;
          bool foundDamageStateAttr = false;
-         
+
          for (unsigned i = 0; i < ahs->size(); ++i)
          {
             RTI::AttributeHandle attrHandle = ahs->getHandle(i);
-            
+
             if (attrHandle == oToA->GetDisIDAttributeHandle())
             {
                foundEntityTypeAttr = true;
                unsigned long length;
                char* buffer = ahs->getValuePointer(i, length);
-               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the DISID should be of the proper length.", 
+               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the DISID should be of the proper length.",
                   length == oToA->GetDisID()->EncodedLength());
-                  
+
                dtHLAGM::EntityType actual;
                actual.Decode(buffer);
-                        
+
                CPPUNIT_ASSERT_MESSAGE("The encoded entity type should match the value.",
-                  *oToA->GetDisID() == actual);                  
+                  *oToA->GetDisID() == actual);
             }
             if (attrHandle == oToA->GetEntityIdAttributeHandle())
             {
@@ -1319,15 +1319,15 @@ void HLAComponentTests::TestPrepareUpdate()
                {
                   foundEntityIdAttr2 = true;
                }
-               
+
                unsigned long length;
                char* buffer = ahs->getValuePointer(i, length);
-               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the about actor id should be the length of an entity Id.", 
+               CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the about actor id should be the length of an entity Id.",
                   length == entityId.EncodedLength());
-                  
+
                dtHLAGM::EntityIdentifier actual;
                actual.Decode(buffer);
-                        
+
                CPPUNIT_ASSERT_MESSAGE("The encoded entity id should match the test value.",
                   entityId == actual);
             }
@@ -1348,9 +1348,9 @@ void HLAComponentTests::TestPrepareUpdate()
                         foundDamageStateAttr = true;
                         unsigned long length;
                         char* buffer = ahs->getValuePointer(i, length);
-                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the damage state should be the size of an unsigned int.", 
+                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the damage state should be the size of an unsigned int.",
                            length == aToPList.GetHLAType().GetEncodedLength() && length == sizeof(unsigned));
-                           
+
                         unsigned actual = *((unsigned*)buffer);
                         if (osg::getCpuByteOrder() == osg::LittleEndian)
                            osg::swapBytes((char*)&actual, sizeof(unsigned));
@@ -1364,7 +1364,7 @@ void HLAComponentTests::TestPrepareUpdate()
                         unsigned long length;
                         //I just want the length.
                         ahs->getValuePointer(i, length);
-                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.", 
+                        CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the orientation should be the size of three floats.",
                            length == aToPList.GetHLAType().GetEncodedLength() && length == 3 * sizeof(float));
                         //There are other tests that check the converter for rotation.
                      }
@@ -1380,9 +1380,9 @@ void HLAComponentTests::TestPrepareUpdate()
          delete ahs;
          ahs = NULL;
 
-         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the aboutActorId should have been found.", 
+         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the aboutActorId should have been found.",
             foundEntityIdAttr1);
-         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the sendingActorId should have been found.", 
+         CPPUNIT_ASSERT_MESSAGE("The entity id attribute based on the sendingActorId should have been found.",
             foundEntityIdAttr2);
          CPPUNIT_ASSERT(foundEntityTypeAttr);
          CPPUNIT_ASSERT(foundDamageStateAttr);
@@ -1392,7 +1392,7 @@ void HLAComponentTests::TestPrepareUpdate()
       {
          delete ahs;
          ahs = NULL;
-         
+
          CPPUNIT_FAIL("No object to actor mapping was found for actor type TestHLA.Tank.");
       }
    }
@@ -1400,7 +1400,7 @@ void HLAComponentTests::TestPrepareUpdate()
    {
       CPPUNIT_FAIL(ex.What());
    }
-   
+
 }
 
 
@@ -1410,10 +1410,10 @@ void HLAComponentTests::TestPrepareInteraction()
    {
       RTI::ParameterHandleValuePairSet* phs =
          RTI::ParameterSetFactory::create(4);
-      
+
       dtCore::RefPtr<dtGame::TimerElapsedMessage> testMsg;
       mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_TIMER_ELAPSED, testMsg);
-      
+
       dtHLAGM::EntityIdentifier entityId(3,3,2);
       dtCore::UniqueId fakeActorId;
 
@@ -1424,9 +1424,9 @@ void HLAComponentTests::TestPrepareInteraction()
 
       testMsg->SetAboutActorId(fakeActorId);
       testMsg->SetLateTime(testFloat);
-      
+
       const dtHLAGM::InteractionToMessage* iToM = mHLAComponent->GetMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED);
-      
+
       if (iToM != NULL)
       {
          mHLAComponent->TestPrepareInteraction(*testMsg, *phs, *iToM);
@@ -1437,10 +1437,10 @@ void HLAComponentTests::TestPrepareInteraction()
          CPPUNIT_ASSERT_MESSAGE("Outgoing interactions should NOT be sending out the special incoming-only Mapping Name parameter.",
             testMsg->GetParameter("Mapping Name") == NULL );
 
-         
+
          bool foundEntityIdParameter = false;
          bool foundLateTimeParameter = false;
-         
+
          for (unsigned i = 0; i < phs->size(); ++i)
          {
             RTI::ParameterHandle paramHandle = phs->getHandle(i);
@@ -1454,12 +1454,12 @@ void HLAComponentTests::TestPrepareInteraction()
                      foundEntityIdParameter = true;
                      unsigned long length;
                      char* buffer = phs->getValuePointer(i, length);
-                     CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the actor id should be the length of an entity Id.", 
+                     CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the actor id should be the length of an entity Id.",
                         length == entityId.EncodedLength());
-                        
+
                      dtHLAGM::EntityIdentifier actual;
                      actual.Decode(buffer);
-                     
+
                      CPPUNIT_ASSERT_MESSAGE("The encoded entity id should match the value set.", entityId == actual);
                   }
                   else if (pToPList.GetParameterDefinitions()[0].GetGameName() == "LateTime")
@@ -1467,23 +1467,23 @@ void HLAComponentTests::TestPrepareInteraction()
                      foundLateTimeParameter = true;
                      unsigned long length;
                      char* buffer = phs->getValuePointer(i, length);
-                     CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the late time should be the size of float.", 
+                     CPPUNIT_ASSERT_MESSAGE("The mapped parameter for the late time should be the size of float.",
                         length == pToPList.GetHLAType().GetEncodedLength() && length == sizeof(float));
-                        
+
                      float actual = *((float*)buffer);
                      if (osg::getCpuByteOrder() == osg::LittleEndian)
                         osg::swapBytes((char*)&actual, sizeof(float));
 
                      CPPUNIT_ASSERT_EQUAL_MESSAGE("The encoded float should match the value from the message.", testFloat, actual);
-                     
+
                   }
                }
             }
          }
-         
+
          delete phs;
          phs = NULL;
-         
+
          CPPUNIT_ASSERT(foundEntityIdParameter);
          CPPUNIT_ASSERT(foundLateTimeParameter);
       }
@@ -1491,7 +1491,7 @@ void HLAComponentTests::TestPrepareInteraction()
       {
          delete phs;
          phs = NULL;
-         
+
          CPPUNIT_FAIL("No interaction to message mapping was found for message INFO_TIMER_ELAPSED.");
       }
    }
@@ -1499,7 +1499,7 @@ void HLAComponentTests::TestPrepareInteraction()
    {
       CPPUNIT_FAIL(ex.What());
    }
-   
+
 }
 
 void HLAComponentTests::TestReceiveInteraction()
@@ -1562,7 +1562,7 @@ void HLAComponentTests::TestReceiveInteraction()
 
       // Test that the object name has been assigned to the update message if it
       // has been mapped.
-      const dtGame::StringMessageParameter* mappingNameParam = 
+      const dtGame::StringMessageParameter* mappingNameParam =
          dynamic_cast<const dtGame::StringMessageParameter*>(msg->GetParameter(TEST_PARAM_MAPPING_NAME));
       if( mappingNameParam != NULL )
       {
@@ -1582,14 +1582,14 @@ void HLAComponentTests::TestGMLookup()
    {
       CPPUNIT_ASSERT(mGameManager.valid());
 
-      CPPUNIT_ASSERT_EQUAL_MESSAGE("The default name should equal the constant", 
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("The default name should equal the constant",
          dtHLAGM::HLAComponent::DEFAULT_NAME, mHLAComponent->GetName());
 
-      dtGame::GMComponent *component = 
+      dtGame::GMComponent *component =
          mGameManager->GetComponentByName(dtHLAGM::HLAComponent::DEFAULT_NAME);
 
       CPPUNIT_ASSERT(component != NULL);
-      CPPUNIT_ASSERT_MESSAGE("The component found should match the component added to the GM", 
+      CPPUNIT_ASSERT_MESSAGE("The component found should match the component added to the GM",
          component == mHLAComponent.get());
    }
    catch(const dtUtil::Exception &e)

@@ -75,7 +75,7 @@ namespace dtGame
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
          ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
-         ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
+         ProcessDeleteActor(msg);
       else if (msg.GetMessageType() == MessageType::INFO_PLAYER_ENTERED_WORLD)
          ProcessPlayerEnteredWorldMessage(msg);
       else if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
@@ -158,7 +158,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessRemoteDeleteActor(const ActorDeletedMessage &msg)
+   void DefaultMessageProcessor::ProcessRemoteDeleteActor(const Message& msg)
    {
       dtGame::GameActorProxy *ap = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (ap == NULL)
@@ -221,7 +221,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DefaultMessageProcessor::ProcessDeleteActor(const ActorDeletedMessage &msg)
+   void DefaultMessageProcessor::ProcessDeleteActor(const Message& msg)
    {
       GameActorProxy *proxy = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
       if (proxy != NULL)

@@ -56,13 +56,13 @@ namespace dtGame
          {
             GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
-               ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg), *ga);
+               ProcessPublishActor(msg, *ga);
          }
          else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
          {
             GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
             if (ga != NULL && ga->IsPublished())
-               ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
+               ProcessDeleteActor(msg);
          }
          else if (msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
          {
@@ -121,7 +121,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////
-   void DefaultNetworkPublishingComponent::ProcessPublishActor(const ActorPublishedMessage& msg, GameActorProxy& gap)
+   void DefaultNetworkPublishingComponent::ProcessPublishActor(const Message& msg, GameActorProxy& gap)
    {
       dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
       gap.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
@@ -129,7 +129,7 @@ namespace dtGame
    }
 
    /////////////////////////////////////////////
-   void DefaultNetworkPublishingComponent::ProcessDeleteActor(const ActorDeletedMessage& msg)
+   void DefaultNetworkPublishingComponent::ProcessDeleteActor(const Message& msg)
    {
       GetGameManager()->SendNetworkMessage(msg);
    }
