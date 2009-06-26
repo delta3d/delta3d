@@ -338,20 +338,28 @@ namespace dtEditQt
       mPerspView = (PerspectiveViewport*)vpMgr.createViewport("Perspective View",
          ViewportManager::ViewportType::PERSPECTIVE);
       mPerspView->setAutoInteractionMode(true);
+      mPerspView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F00000F);  //magic number, based on ObjectMotionModel's mask
+      mPerspView->GetRootNode()->setNodeMask(0x0000000F);
 
       mTopView = (OrthoViewport*)vpMgr.createViewport("Top View (XY)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mTopView->setAutoInteractionMode(true);
+      mTopView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F0000F0);
+      mTopView->GetRootNode()->setNodeMask(0x000000F0);
 
       mSideView = (OrthoViewport*)vpMgr.createViewport("Side View (YZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mSideView->setViewType(OrthoViewport::OrthoViewType::SIDE,false);
       mSideView->setAutoInteractionMode(true);
+      mSideView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F000F00);
+      mSideView->GetRootNode()->setNodeMask(0x00000F00);
 
       mFrontView = (OrthoViewport*)vpMgr.createViewport("Front View (XZ)",
          ViewportManager::ViewportType::ORTHOGRAPHIC);
       mFrontView->setViewType(OrthoViewport::OrthoViewType::FRONT,false);
       mFrontView->setAutoInteractionMode(true);
+      mFrontView->getCamera()->getDeltaCamera()->GetOSGCamera()->setCullMask(0x0F00F000);
+      mFrontView->GetRootNode()->setNodeMask(0x0000F000);
 
 
       // We now wrap each viewport in a viewport container to provide the

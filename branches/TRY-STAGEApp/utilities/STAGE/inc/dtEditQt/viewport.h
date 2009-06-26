@@ -440,6 +440,8 @@ namespace dtEditQt
       */
       virtual void resizeGL(int width, int height);
 
+      osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
+
    public slots:
       ///Moves the camera such that the actor is clearly visible.
       void onGotoActor(ActorProxyRefPtr proxy);
@@ -555,7 +557,6 @@ namespace dtEditQt
        */
       bool mInChangeTransaction;
 
-      osg::Group* GetRootNode() { return mRootNodeGroup.get(); }
 
       dtCore::RefPtr<dtCore::DeltaWin> mWindow;
 

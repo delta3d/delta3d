@@ -163,9 +163,12 @@ namespace dtEditQt
       //First, remove the old scene, then add the new one.
       if (mView.valid())
       {
+         mScene->GetSceneNode()->removeChild(mRootNodeGroup.get());
+
          //mRootNodeGroup->addChild(scene->GetSceneNode());
          mView->SetScene(scene);
          mScene = scene;
+         mScene->GetSceneNode()->addChild(mRootNodeGroup.get());
 
          //scene->GetSceneNode()->setStateSet(mGlobalStateSet.get());
       }

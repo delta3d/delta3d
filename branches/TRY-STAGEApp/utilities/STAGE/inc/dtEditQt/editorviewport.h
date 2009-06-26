@@ -199,7 +199,7 @@ namespace dtEditQt {
        * @param[in]  start     The start position of the line.
        * @param[in]  end       The end position of the line.
        */
-      virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
+      //virtual void GetMouseLine(osg::Vec2 mousePos, osg::Vec3& start, osg::Vec3& end);
 
       /**
        * Calculates the screen coordinates of a 3d position in the world.
@@ -208,7 +208,7 @@ namespace dtEditQt {
        *
        * @return                The position of the object in screen coords.
        */
-      virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
+      //virtual osg::Vec2 GetObjectScreenCoordinates(osg::Vec3 objectPos);
 
       /**
       * Clears the current Ghost Proxy.

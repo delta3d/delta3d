@@ -105,7 +105,8 @@ namespace dtEditQt
       {
          if (mObjectMotionModel.valid())
          {
-            mObjectMotionModel->SetSceneNode(scene->GetSceneNode());
+            //mObjectMotionModel->SetSceneNode(scene->GetSceneNode());
+            mObjectMotionModel->SetSceneNode(GetRootNode());
 
             mObjectMotionModel->SetCamera(mCamera->getDeltaCamera());
          }
