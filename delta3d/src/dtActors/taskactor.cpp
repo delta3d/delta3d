@@ -254,8 +254,8 @@ namespace dtActors
       // A Task in the Task List
       dtDAL::ActorIDActorProperty* actorProp = new dtDAL::ActorIDActorProperty(
          *this, "Task", "Task",
-         dtDAL::MakeFunctor(*this, &TaskActorProxy::SetSubTask),
-         dtDAL::MakeFunctorRet(*this, &TaskActorProxy::GetSubTask),
+         dtDAL::ActorIDActorProperty::SetFuncType(this, &TaskActorProxy::SetSubTask),
+         dtDAL::ActorIDActorProperty::GetFuncType(this, &TaskActorProxy::GetSubTask),
          "dtActors::TaskActor", "A sub task", GROUPNAME);
 
       // The Task List.
