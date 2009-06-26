@@ -268,31 +268,26 @@ namespace dtGame
             {
                helper.SetLastTranslationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta);
                //helper.SetLastTranslationUpdatedTime(helper.mLastTimeTag);
-               helper.SetTranslationCurrentSmoothingTime( 0.0 );
+               helper.SetTranslationElapsedTimeSinceUpdate(0.0);
             }
 
             if ( helper.IsRotationUpdated() )
             {
                helper.SetLastRotationUpdatedTime(tickMessage.GetSimulationTime() - simTimeDelta );
                //helper.SetLastRotationUpdatedTime(helper.mLastTimeTag);
-               helper.SetRotationCurrentSmoothingTime( 0.0 );
+               helper.SetRotationElapsedTimeSinceUpdate(0.0);
                helper.SetRotationResolved( false );
             }
          }
 
-         //We want to do this every time.
-         helper.SetTranslationCurrentSmoothingTime( helper.GetTranslationCurrentSmoothingTime() + simTimeDelta );
-         helper.SetRotationCurrentSmoothingTime( helper.GetRotationCurrentSmoothingTime() + simTimeDelta );
+         //We want to do this every time. make sure it's greater than 0 in case of time being set.
+         float transElapsedTime = helper.GetTranslationElapsedTimeSinceUpdate() + simTimeDelta;
+         if (transElapsedTime < 0.0) transElapsedTime = 0.0f;
+         helper.SetTranslationElapsedTimeSinceUpdate(transElapsedTime);
+         float rotElapsedTime = helper.GetRotationElapsedTimeSinceUpdate() + simTimeDelta;
+         if (rotElapsedTime < 0.0) rotElapsedTime = 0.0f;
+         helper.SetRotationElapsedTimeSinceUpdate(rotElapsedTime);
 
-         //make sure it's greater than 0 in case of time being set.
-         if (helper.GetTranslationCurrentSmoothingTime() < 0.0) 
-         {
-            helper.SetTranslationCurrentSmoothingTime( 0.0 );
-         }
-         if (helper.GetRotationCurrentSmoothingTime() < 0.0) 
-         {
-            helper.SetRotationCurrentSmoothingTime( 0.0 );
-         }
 
          // Actual dead reckoning code moved into the helper..
          BaseGroundClamper::GroundClampingType* groundClampingType = &BaseGroundClamper::GroundClampingType::NONE;
@@ -304,7 +299,7 @@ namespace dtGame
                == DeadReckoningHelper::UpdateMode::CALCULATE_AND_MOVE_ACTOR)
          {
             // Get the object's velocity for the current frame.
-            osg::Vec3 velocity( helper.GetVelocityVector() + helper.GetAccelerationVector() * simTimeDelta );
+            osg::Vec3 velocity( helper.GetLastKnownVelocity() + helper.GetLastKnownAcceleration() * simTimeDelta );
 
             // Call the ground clamper for the current object.
             // The ground clamper should be smart enough to know
@@ -318,7 +313,7 @@ namespace dtGame
                std::ostringstream ss;
                ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " has attitude "
                   << "\"" << helper.GetCurrentDeadReckonedRotation() << "\" and position \"" << helper.GetCurrentDeadReckonedTranslation() << "\" at time " 
-                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationCurrentSmoothingTime() << "";
+                  << helper.GetLastRotationUpdatedTime() +  helper.GetRotationElapsedTimeSinceUpdate() << "";
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                      ss.str().c_str());
             }

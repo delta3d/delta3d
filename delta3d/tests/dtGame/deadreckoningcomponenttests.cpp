@@ -205,9 +205,9 @@ namespace dtGame
 
             CPPUNIT_ASSERT(helper->GetLastKnownTranslation() == vec);
             CPPUNIT_ASSERT(helper->GetLastKnownRotation() == vec);
-            CPPUNIT_ASSERT(helper->GetVelocityVector() == vec);
-            CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
-            CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownVelocity() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAcceleration() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocity() == vec);
             CPPUNIT_ASSERT(helper->GetGroundOffset() == 0.0f);
             CPPUNIT_ASSERT(helper->GetMaxRotationSmoothingTime() ==
                dtGame::DeadReckoningHelper::DEFAULT_MAX_SMOOTHING_TIME_ROT);
@@ -264,21 +264,21 @@ namespace dtGame
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
-            helper->SetVelocityVector(vec);
-            CPPUNIT_ASSERT(helper->GetVelocityVector() == vec);
-            CPPUNIT_ASSERT(helper->GetVelocityVectorByCopy() == vec);
+            helper->SetLastKnownVelocity(vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownVelocity() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownVelocityByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
-            helper->SetAccelerationVector(vec);
-            CPPUNIT_ASSERT(helper->GetAccelerationVector() == vec);
-            CPPUNIT_ASSERT(helper->GetAccelerationVectorByCopy() == vec);
+            helper->SetLastKnownAcceleration(vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAcceleration() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAccelerationByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
-            helper->SetAngularVelocityVector(vec);
-            CPPUNIT_ASSERT(helper->GetAngularVelocityVector() == vec);
-            CPPUNIT_ASSERT(helper->GetAngularVelocityVectorByCopy() == vec);
+            helper->SetLastKnownAngularVelocity(vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocity() == vec);
+            CPPUNIT_ASSERT(helper->GetLastKnownAngularVelocityByCopy() == vec);
             CPPUNIT_ASSERT(helper->IsUpdated());
             helper->ClearUpdated();
 
@@ -668,7 +668,7 @@ namespace dtGame
 
             helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
-            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+            helper->SetLastKnownVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
 
             //make sure the average update time is high.
             helper->SetLastTranslationUpdatedTime(20.0);
@@ -696,7 +696,7 @@ namespace dtGame
             CPPUNIT_ASSERT_MESSAGE("The average time between updates is too low for the rest of the test to be valid",
                helper->GetAverageTimeBetweenRotationUpdates() > 10.0);
 
-            helper->SetVelocityVector(osg::Vec3(100.0f, 100.0f, 100.0f));
+            helper->SetLastKnownVelocity(osg::Vec3(100.0f, 100.0f, 100.0f));
             helper->SetDeadReckoningAlgorithm(DeadReckoningAlgorithm::VELOCITY_ONLY);
 
             mDeadReckoningComponent->InternalCalcTotSmoothingSteps(*helper, xform);
@@ -715,7 +715,7 @@ namespace dtGame
 
             helper->SetLastKnownTranslation(osg::Vec3(-0.4f, -0.3f, -2.7f));
             helper->SetLastKnownRotation(osg::Vec3(-0.4f, -0.3f, -2.7f));
-            helper->SetVelocityVector(osg::Vec3(0.0f, 0.0f, 0.0f));
+            helper->SetLastKnownVelocity(osg::Vec3(0.0f, 0.0f, 0.0f));
 
             //make sure the average update time is very low.
             helper->SetLastTranslationUpdatedTime(0.01);

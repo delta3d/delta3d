@@ -74,8 +74,8 @@ namespace dtGame
       mAverageTimeBetweenRotationUpdates(0.0f),
       mMaxTranslationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_POS),
       mMaxRotationSmoothingTime(DEFAULT_MAX_SMOOTHING_TIME_ROT),
-      mTranslationCurrentSmoothingTime(0.0f),
-      mRotationCurrentSmoothingTime(0.0f),
+      mTranslationElapsedTimeSinceUpdate(0.0f),
+      mRotationElapsedTimeSinceUpdate(0.0f),
       mTranslationEndSmoothingTime(0.0f),
       mRotationEndSmoothingTime(0.0f),
       mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE),
@@ -136,7 +136,7 @@ namespace dtGame
       {
          mTransBeforeLastUpdate = mCurrentDeadReckonedTranslation;
          mLastTranslation = vec;
-         mTranslationCurrentSmoothingTime = 0.0;
+         mTranslationElapsedTimeSinceUpdate = 0.0;
          mTranslationUpdated = true;
          mUpdated = true;
       }
@@ -145,7 +145,7 @@ namespace dtGame
          mTranslationInitiated = true;
          mTransBeforeLastUpdate = vec;
          mLastTranslation = vec;
-         mTranslationCurrentSmoothingTime = 0.0;
+         mTranslationElapsedTimeSinceUpdate = 0.0;
          mTranslationUpdated = true;
          mUpdated = true;
       }
@@ -163,7 +163,7 @@ namespace dtGame
          mLastRotation = vec;
          mRotQuatBeforeLastUpdate = mCurrentDeadReckonedRotation;
          mLastRotationMatrix.get(mLastQuatRotation);
-         mRotationCurrentSmoothingTime = 0.0;
+         mRotationElapsedTimeSinceUpdate = 0.0;
          mRotationUpdated = true;
          mUpdated = true;
       }
@@ -176,7 +176,7 @@ namespace dtGame
          mLastRotation = vec;
          mLastRotationMatrix.get(mRotQuatBeforeLastUpdate);
          mLastRotationMatrix.get(mLastQuatRotation);
-         mRotationCurrentSmoothingTime = 0.0;
+         mRotationElapsedTimeSinceUpdate = 0.0;
          mRotationInitiated = true;
          mRotationUpdated = true;
          mUpdated = true;
@@ -184,21 +184,25 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetVelocityVector(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownVelocity(const osg::Vec3 &vec)
    {
-      mVelocityVector = vec;
+      mVelocityBeforeLastUpdate = mLastVelocity;
+      mLastVelocity = vec;
+      mTranslationElapsedTimeSinceUpdate = 0.0;
+      // If velocity is updated, the effect is the same as if the trans was updated
+      mTranslationUpdated = true;
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetAccelerationVector(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownAcceleration(const osg::Vec3 &vec)
    {
       mAccelerationVector = vec;
       mUpdated = true;
    }
 
    //////////////////////////////////////////////////////////////////////
-   void DeadReckoningHelper::SetAngularVelocityVector(const osg::Vec3 &vec)
+   void DeadReckoningHelper::SetLastKnownAngularVelocity(const osg::Vec3 &vec)
    {
       mAngularVelocityVector = vec;
       mUpdated = true;
@@ -422,52 +426,58 @@ namespace dtGame
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Translation", "Last Known Translation",
          dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownTranslation),
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownTranslationByCopy),
-         "Sets the last know position of this Entity", ""));
+         "Sets the last know position of this Entity", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Last Known Rotation", "Last Known Rotation",
          dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownRotation),
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownRotationByCopy),
-         "Sets the last known rotation of this Entity", ""));
+         "Sets the last known rotation of this Entity","Dead Reckoning"));
 
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Velocity Vector", "Velocity Vector",
-         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetVelocityVector),
-         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetVelocityVectorByCopy),
-         "Sets the velocity vector of this Entity", ""));
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownVelocity),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownVelocityByCopy),
+         "Sets the last known velocity vector of this Entity", "Dead Reckoning"));
 
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Acceleration Vector", "Acceleration Vector",
-         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAccelerationVector),
-         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAccelerationVectorByCopy),
-         "Sets the acceleration vector of this Entity", ""));
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownAcceleration),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownAccelerationByCopy),
+         "Sets the last known acceleration vector of this Entity", "Dead Reckoning"));
 
+      // Note - the member vars were changed to LastKnownXYZ, but the properties were left the same
+      // so as to not break MANY maps in production.
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Angular Velocity Vector", "Angular Velocity Vector",
-         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetAngularVelocityVector),
-         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetAngularVelocityVectorByCopy),
-         "Sets the acceleration vector of this Entity", ""));
+         dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetLastKnownAngularVelocity),
+         dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetLastKnownAngularVelocityByCopy),
+         "Sets the last known angular velocity vector of this Entity", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::EnumActorProperty<dtGame::DeadReckoningAlgorithm>("Dead Reckoning Algorithm", "Dead Reckoning Algorithm",
          dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetDeadReckoningAlgorithm),
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetDeadReckoningAlgorithm),
-         "Sets the enumerated dead reckoning algorithm to use.", ""));
+         "Sets the enumerated dead reckoning algorithm to use.", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::BooleanActorProperty("Flying", "Should Not Follow the Ground",
          dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetFlying),
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::IsFlying),
-         "Flags if the dead-reckoning code should not make this actor follow the ground as it moves."));
+         "Flags if the dead-reckoning code should not make this actor follow the ground as it moves.", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::FloatActorProperty("Ground Offset", "Ground Offset",
          dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetGroundOffset),
          dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetGroundOffset),
-         "Sets the offset from the ground this entity should have.  This only matters if it is not flying."));
+         "Sets the offset from the ground this entity should have.  This only matters if it is not flying.", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::Vec3ActorProperty("Model Dimensions", "Actor Model Dimensions",
             dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetModelDimensions),
             dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::GetModelDimensionsByCopy),
-            "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code."));
+            "Sets the x,y,z dimensions of the model the actor loads.  This is used by the ground clamping code.", "Dead Reckoning"));
 
       pFillVector.push_back(new dtDAL::BooleanActorProperty("Use Model Dimensions", "Use Model Dimensions",
             dtDAL::MakeFunctor(*this, &DeadReckoningHelper::SetUseModelDimensions),
             dtDAL::MakeFunctorRet(*this, &DeadReckoningHelper::UseModelDimensions),
-            "Should the DR Component use the currently set model dimension values when ground clamping?"));
+            "Should the DR Component use the currently set model dimension values when ground clamping?", "Dead Reckoning"));
    }
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -553,7 +563,7 @@ namespace dtGame
       if ( IsUpdated() ||
          mLastTranslation != unclampedTranslation ||
          !mRotationResolved ||
-         mVelocityVector.length2() > 1e-2f ||
+         mLastVelocity.length2() > 1e-2f ||
          (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION
             && mAccelerationVector.length2() > 1e-2f)||
          (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION
@@ -622,10 +632,10 @@ namespace dtGame
       osg::Vec3 pos;
       xform.GetTranslation(pos);
 
-      //If the player could not possible get to the new position in 10 seconds
-      //based on the magnitude of it's velocity vector, then just warp the entity in 1 second.
-      if (mVelocityVector.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
-         mTranslationEndSmoothingTime = std::min(1.0f, mAverageTimeBetweenTranslationUpdates);
+      //Order of magnitude check - if the entity could not possibly get to the new position 
+      // in max smoothing time based on the magnitude of it's velocity, then smooth quicker (ie 1 second).
+      if (mLastVelocity.length2() * (mTranslationEndSmoothingTime*mTranslationEndSmoothingTime) < (mLastTranslation - pos).length2() )
+         mTranslationEndSmoothingTime = std::min(1.0f, mTranslationEndSmoothingTime);
    }
 
    //////////////////////////////////////////////////////////////////////
@@ -650,7 +660,7 @@ namespace dtGame
             // Compute The change in the rotation based Dead Reckoning matrix
             // The Dead Reckoning Matrix
             osg::Matrix angularRotation;
-            ComputeRotationChangeWithAngularVelocity(mRotationCurrentSmoothingTime, angularRotation);
+            ComputeRotationChangeWithAngularVelocity(mRotationElapsedTimeSinceUpdate, angularRotation);
 
             // Expected DR'ed rotation - Take the last rot and add the change over time
             osg::Quat angularRotAsQuat;
@@ -674,9 +684,9 @@ namespace dtGame
          // If there is a difference in the rotations and we still have time to smooth, then
          // slerp between the two quats: 1) the old rotation plus the expected change using angular
          //    velocity and 2) the desired new rotation
-         if ((mRotationEndSmoothingTime > 0.0f) && (mRotationCurrentSmoothingTime <  mRotationEndSmoothingTime))
+         if ((mRotationEndSmoothingTime > 0.0f) && (mRotationElapsedTimeSinceUpdate <  mRotationEndSmoothingTime))
          {
-            float smoothingFactor = mRotationCurrentSmoothingTime/mRotationEndSmoothingTime;
+            float smoothingFactor = mRotationElapsedTimeSinceUpdate/mRotationEndSmoothingTime;
             dtUtil::Clamp(smoothingFactor, 0.0f, 1.0f);
             newRot.slerp(smoothingFactor, startRotation, drQuat);
          }
@@ -696,25 +706,44 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////
    void DeadReckoningHelper::DeadReckonThePosition( osg::Vec3& pos, dtUtil::Log* pLogger, GameActor &gameActor )
    {
-      osg::Vec3 positionChange;
-      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_ONLY)
+      osg::Vec3 accelerationEffect; 
+      if (GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION)
       {
-         positionChange = mVelocityVector * mTranslationCurrentSmoothingTime;
-      }
-      else
-      {
-         positionChange = mVelocityVector * mTranslationCurrentSmoothingTime +
-            ((mAccelerationVector * 0.5f) * (mTranslationCurrentSmoothingTime * mTranslationCurrentSmoothingTime));
+         accelerationEffect = ((mAccelerationVector * 0.5f) * 
+            (mTranslationElapsedTimeSinceUpdate * mTranslationElapsedTimeSinceUpdate));
       }
 
-      osg::Vec3 drPos = mLastTranslation + positionChange;
+      // True - meaning as if we just used the best known position & velocity. 
+      osg::Vec3 truePositionChange; 
+      // Blended - meaning using the last velocity & actual drawn position.
+      osg::Vec3 blendedPositionChange;
+
+      // COMPUTE BLENDED VELOCITY - this smooths out some of the harsh blends. We do 
+      // it in a fraction of the time of the translation else we get big overblown curves.
+      osg::Vec3 mBlendedVelocity = mLastVelocity; mVelocityBeforeLastUpdate;
+      float velBlendTime = mTranslationEndSmoothingTime/3.0f;
+      if ((velBlendTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate < velBlendTime))
+      {
+         float smoothingFactor = mTranslationElapsedTimeSinceUpdate/velBlendTime;
+         mBlendedVelocity = mVelocityBeforeLastUpdate * (1.0F - smoothingFactor) + 
+            mLastVelocity * smoothingFactor;
+      }
+      else 
+         mBlendedVelocity = mLastVelocity;
+
+
+      // COMPUTE CHANGE IN POSITION
+      truePositionChange = mLastVelocity * mTranslationElapsedTimeSinceUpdate + accelerationEffect;
+      blendedPositionChange = mBlendedVelocity * mTranslationElapsedTimeSinceUpdate + accelerationEffect;
+
+      osg::Vec3 drPos = mLastTranslation + truePositionChange;
 
       // If we still have time left in our smoothing, then
       // blend the positions.
-      if ((mTranslationEndSmoothingTime > 0.0f) && (mTranslationCurrentSmoothingTime < mTranslationEndSmoothingTime))
+      if ((mTranslationEndSmoothingTime > 0.0f) && (mTranslationElapsedTimeSinceUpdate < mTranslationEndSmoothingTime))
       {
-         pos = mTransBeforeLastUpdate + positionChange;
-         float smoothingFactor = mTranslationCurrentSmoothingTime/mTranslationEndSmoothingTime;
+         pos = mTransBeforeLastUpdate + blendedPositionChange;
+         float smoothingFactor = mTranslationElapsedTimeSinceUpdate/mTranslationEndSmoothingTime;
          //a bit of smoothing.
          pos = pos + (drPos - pos) * smoothingFactor;
 
@@ -736,9 +765,9 @@ namespace dtGame
       {
          std::ostringstream ss;
          ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " target pos "
-            << "\"" << drPos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"\n";
+            << "\"" << drPos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationElapsedTimeSinceUpdate << "\"\n";
          ss << "Actor " << gameActor.GetUniqueId() << " - " << gameActor.GetName() << " current pos "
-            << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationCurrentSmoothingTime << "\"";
+            << "\"" << pos << "\", temp\"" << mLastTranslationUpdatedTime + mTranslationElapsedTimeSinceUpdate << "\"";
          pLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
       }
    }
@@ -751,7 +780,7 @@ namespace dtGame
          << "  IsFlying():                           " << IsFlying() << std::endl
          << "  mLastTranslation:                     " << mLastTranslation << std::endl
          << "  unclampedTranslation:                 " << unclampedTranslation << std::endl
-         << "  mVelocityVector.length2():     " << mVelocityVector.length2() << std::endl
+         << "  mLastVelocity.length2():     " << mLastVelocity.length2() << std::endl
          << "  mAccelerationVector.length2(): " << mAccelerationVector.length2() << std::endl
          << "  rot Matrix is: " << rot << std::endl
          << "  mLastRotationMatrix is: " << mLastRotationMatrix << std::endl;

@@ -291,7 +291,7 @@ namespace dtUtil
       if (!CollectorUtil::AddNode(key, &data, mGeodeNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can NOT add Geode with Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can NOT add Geode with Duplicate Key: " + key);
       }
 
    }
@@ -316,7 +316,7 @@ namespace dtUtil
       if (!CollectorUtil::AddNode(key, & data, mGroupNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Group Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add Group Node With Duplicate Key: " + key);
       }
    }
 
@@ -340,7 +340,7 @@ namespace dtUtil
       if (!CollectorUtil::AddNode(key, &data, mTranformNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add DOF Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add DOF Node With Duplicate Key: " + key);
       }
    }
 
@@ -364,7 +364,7 @@ namespace dtUtil
      if (!CollectorUtil::AddNode(key, &data, mMatrixTransformNodeMap))
      {
         dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-        logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Matrix Transform Node With Duplicate Key: " + key);
+        logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add Matrix Transform Node With Duplicate Key: " + key);
      }
    }
 
@@ -388,7 +388,7 @@ namespace dtUtil
       if (!CollectorUtil::AddNode(key, &data, mSwitchNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add Switch Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add Switch Node With Duplicate Key: " + key);
       }
    }
 
@@ -412,7 +412,7 @@ namespace dtUtil
      if (!CollectorUtil::AddNode(key, &data, mMultiSwitchNodeMap))
      {
        dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-       logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add MulitSwitch Node With Duplicate Key: " + key);
+       logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add MulitSwitch Node With Duplicate Key: " + key);
      }
    }
 
@@ -435,7 +435,7 @@ namespace dtUtil
       if (!CollectorUtil::AddNode(key, &data, mLODNodeMap))
       {
          dtUtil::Log& logger = dtUtil::Log::GetInstance("nodecollector.cpp");
-         logger.LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can Not Add LOD Node With Duplicate Key: " + key);
+         logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Can Not Add LOD Node With Duplicate Key: " + key);
       }
    }
 

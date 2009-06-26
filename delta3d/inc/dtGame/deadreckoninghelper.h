@@ -278,40 +278,40 @@ namespace dtGame
           * Sets this entity's DIS/RPR-FOM velocity vector.
           * @param vec the velocity vector to copy
           */
-         void SetVelocityVector(const osg::Vec3 &vec);
+         void SetLastKnownVelocity(const osg::Vec3 &vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM velocity vector.
           * @return the velocity vector
           */
-         const osg::Vec3& GetVelocityVector() const { return mVelocityVector; }
-         osg::Vec3 GetVelocityVectorByCopy() const { return mVelocityVector; }
+         const osg::Vec3& GetLastKnownVelocity() const { return mLastVelocity; }
+         osg::Vec3 GetLastKnownVelocityByCopy() const { return mLastVelocity; }
 
          /**
           * Sets this entity's DIS/RPR-FOM acceleration vector.
           * @param accelerationVector the acceleration vector to copy
           */
-         void SetAccelerationVector(const osg::Vec3 &vec);
+         void SetLastKnownAcceleration(const osg::Vec3 &vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM acceleration vector.
           * @return the acceleration vector
           */
-         const osg::Vec3& GetAccelerationVector() const { return mAccelerationVector; }
-         osg::Vec3 GetAccelerationVectorByCopy() const { return mAccelerationVector; }
+         const osg::Vec3& GetLastKnownAcceleration() const { return mAccelerationVector; }
+         osg::Vec3 GetLastKnownAccelerationByCopy() const { return mAccelerationVector; }
 
          /**
           * Sets this entity's DIS/RPR-FOM angular velocity vector.
           * @param angularVelocityVector the angular velocity vector to copy
           */
-         void SetAngularVelocityVector(const osg::Vec3 &vec);
+         void SetLastKnownAngularVelocity(const osg::Vec3 &vec);
 
          /**
           * Retrieves this entity's DIS/RPR-FOM angular velocity vector.
           * @return the angular velocity vector
           */
-         const osg::Vec3& GetAngularVelocityVector() const { return mAngularVelocityVector; }
-         osg::Vec3 GetAngularVelocityVectorByCopy() const { return mAngularVelocityVector; }
+         const osg::Vec3& GetLastKnownAngularVelocity() const { return mAngularVelocityVector; }
+         osg::Vec3 GetLastKnownAngularVelocityByCopy() const { return mAngularVelocityVector; }
 
          ///@return the total amount of time to use when smoothing the translation for this last update.
          float GetTranslationEndSmoothingTime() const { return mTranslationEndSmoothingTime; }
@@ -368,11 +368,13 @@ namespace dtGame
          bool IsTranslationUpdated() const { return mTranslationUpdated; }
          bool IsRotationUpdated() const { return mRotationUpdated; }
 
-         void SetTranslationCurrentSmoothingTime(float smoothing) { mTranslationCurrentSmoothingTime=smoothing; }
-         float GetTranslationCurrentSmoothingTime() const { return mTranslationCurrentSmoothingTime; }
+         //void SetTranslationCurrentSmoothingTime(float smoothing) { mTranslationCurrentSmoothingTime=smoothing; }
+         //float GetTranslationCurrentSmoothingTime() const { return mTranslationCurrentSmoothingTime; }
+         void SetTranslationElapsedTimeSinceUpdate(float value) { mTranslationElapsedTimeSinceUpdate = value; }
+         float GetTranslationElapsedTimeSinceUpdate() const { return mTranslationElapsedTimeSinceUpdate; }
 
-         void SetRotationCurrentSmoothingTime(float smoothing) { mRotationCurrentSmoothingTime=smoothing; }
-         float GetRotationCurrentSmoothingTime() const { return mRotationCurrentSmoothingTime; }
+         void SetRotationElapsedTimeSinceUpdate(float value) { mRotationElapsedTimeSinceUpdate = value; }
+         float GetRotationElapsedTimeSinceUpdate() const { return mRotationElapsedTimeSinceUpdate; }
          
          void SetRotationResolved(bool resolved) { mRotationResolved=resolved; }
 
@@ -441,8 +443,8 @@ namespace dtGame
          float mMaxRotationSmoothingTime;
 
          ///the amount of time since this actor started smoothing.
-         float mTranslationCurrentSmoothingTime;
-         float mRotationCurrentSmoothingTime;
+         float mTranslationElapsedTimeSinceUpdate;
+         float mRotationElapsedTimeSinceUpdate;
 
          ///the end amount of time to use when smoothing the translation.  At this point, the blend should be finished. 
          float mTranslationEndSmoothingTime;
@@ -470,7 +472,8 @@ namespace dtGame
          osg::Vec3 mCurrentAttitudeVector;
 
          /// The velocity vector.
-         osg::Vec3 mVelocityVector;
+         osg::Vec3 mLastVelocity;
+         osg::Vec3 mVelocityBeforeLastUpdate; /// The velocity we were using just before we got an update
 
          /// The acceleration vector.
          osg::Vec3 mAccelerationVector;
