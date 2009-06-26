@@ -35,10 +35,10 @@ namespace dtDAL
    class ArrayActorProperty : public ArrayActorPropertyBase
    {
    public:
+      typedef dtUtil::Functor<void, TYPELIST_1(int)> SetIndexFuncType;
+      typedef dtUtil::Functor<T, TYPELIST_0()> GetDefaultFuncType;
       typedef dtUtil::Functor<std::vector<T>, TYPELIST_0()> GetArrayFuncType;
       typedef dtUtil::Functor<void, TYPELIST_1(const std::vector<T>&)> SetArrayFuncType;
-      typedef dtUtil::Functor<T, TYPELIST_0()> GetDefaultFuncType;
-      typedef dtUtil::Functor<void, TYPELIST_1(int)> SetIndexFuncType;
 
       /**
        * Creates a new array actor property.
