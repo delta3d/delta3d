@@ -371,7 +371,7 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
       return NULL;
    }
 
-   return node;
+   return node.get();
 }
 
 

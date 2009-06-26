@@ -529,7 +529,7 @@ void LinkedPointsActorToolPlugin::onModeButtonPressed()
    {
       if (mActiveProxy.valid())
       {
-         initialize(mActiveProxy);
+         initialize(mActiveProxy.get());
       }
    }
    else
