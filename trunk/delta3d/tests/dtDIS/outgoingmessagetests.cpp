@@ -38,7 +38,7 @@ namespace dtDIS
    {
    public:
       void setup();
-      void teardown(); 
+      void teardown();
 
       void TestAddRemove();
       void TestHandle();
@@ -142,7 +142,7 @@ void OutgoingMessageTests::TestHandle()
    dtGame::MessageFactory mfact("blah", *blah, "blah");
 
    // execute the handle
-   dtCore::RefPtr<dtGame::ActorDeletedMessage> dmsg;
+   dtCore::RefPtr<dtGame::Message> dmsg;
    mfact.CreateMessage(dtGame::MessageType::INFO_ACTOR_DELETED,dmsg);
    outgoing.Handle( *dmsg );
 
@@ -165,34 +165,34 @@ void OutgoingMessageTests::TestHandle()
 
 void OutgoingMessageTests::TestMultimap()
 {
-   OutgoingMessage outgoing( DIS::BIG, 3 );  
+   OutgoingMessage outgoing( DIS::BIG, 3 );
    SampleAdapter firstAdapter;
    SampleAdapter secondAdapter;
 
-   const dtGame::MessageType* subscribed_type = &dtGame::MessageType::INFO_ACTOR_UPDATED;  
+   const dtGame::MessageType* subscribed_type = &dtGame::MessageType::INFO_ACTOR_UPDATED;
 
    // test a single mapping
-   outgoing.AddAdaptor( subscribed_type, &firstAdapter );   
+   outgoing.AddAdaptor( subscribed_type, &firstAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(1) );
 
-   outgoing.RemoveAdaptor( subscribed_type, &firstAdapter );   
+   outgoing.RemoveAdaptor( subscribed_type, &firstAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(0) );
 
    // test the multimap
-   outgoing.AddAdaptor( subscribed_type, &firstAdapter );   
+   outgoing.AddAdaptor( subscribed_type, &firstAdapter );
    CPPUNIT_ASSERT_EQUAL(  outgoing.GetAdapters().size(), size_t(1) );
 
-   outgoing.AddAdaptor( subscribed_type, &secondAdapter );   
+   outgoing.AddAdaptor( subscribed_type, &secondAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(2) );
 
    // This should not allow multiples of the exact same pair
-   outgoing.AddAdaptor( subscribed_type, &firstAdapter );   
+   outgoing.AddAdaptor( subscribed_type, &firstAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(2) );
 
-   outgoing.RemoveAdaptor( subscribed_type, &firstAdapter );   
+   outgoing.RemoveAdaptor( subscribed_type, &firstAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(1) );
 
-   outgoing.RemoveAdaptor( subscribed_type, &secondAdapter );   
+   outgoing.RemoveAdaptor( subscribed_type, &secondAdapter );
    CPPUNIT_ASSERT_EQUAL( outgoing.GetAdapters().size(), size_t(0) );
 
    CPPUNIT_ASSERT( outgoing.GetAdapters().empty() );
