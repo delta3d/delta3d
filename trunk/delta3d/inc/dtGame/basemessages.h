@@ -29,8 +29,8 @@
 
 namespace dtGame
 {
-   typedef ActorDeletedMessage Message;
-   typedef ActorPublishedMessage  Message;
+   typedef Message ActorDeletedMessage;
+   typedef Message ActorPublishedMessage;
 
    class DT_GAME_EXPORT TickMessage : public Message
    {
