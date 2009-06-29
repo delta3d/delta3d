@@ -180,7 +180,7 @@ namespace dtDAL
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
-         ResourceDescriptor* GetResource(const std::string& name);
+         virtual ResourceDescriptor* GetResource(const std::string& name);
 
          /**
           * Gets a ResourceDescriptor of the requested property name.
@@ -188,7 +188,7 @@ namespace dtDAL
           * @return A pointer to the resource descripter or NULL if it
           * is not found.
           */
-         const ResourceDescriptor* GetResource(const std::string& name) const;
+         virtual const ResourceDescriptor* GetResource(const std::string& name) const;
 
          /**
           * Sets a resource in the map

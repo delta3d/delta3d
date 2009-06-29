@@ -82,11 +82,11 @@ namespace dtActors
       /**
       * Retrieves the index of a point given a transformable.
       *
-      * @param[in]  transformable  The transformable to find.
+      * @param[in]  drawable  The drawable to find.
       *
       * @return     Returns the index of the found transformable or -1 if it doesn't exist.
       */
-      int GetPointIndex(dtCore::Transformable* transformable);
+      int GetPointIndex(dtCore::DeltaDrawable* drawable);
 
       /**
       * Retrieves the total number of points in the array.

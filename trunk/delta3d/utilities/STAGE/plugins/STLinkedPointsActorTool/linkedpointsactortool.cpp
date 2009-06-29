@@ -296,6 +296,8 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
       ToolObjectMotionModel* motion = GetMotionModelForView(vp);
       if (motion)
       {
+         bool refresh = false;
+
          if (motion->Update(pos) != ToolObjectMotionModel::MOTION_TYPE_MAX)
          {
             HidePlacementGhost();
@@ -303,26 +305,27 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
          else
          {
             UpdatePlacementGhost(vp, osg::Vec2(e->pos().x(), e->pos().y()));
+            refresh = true;
          }
 
          // Update ortho view motion model scales.
-         if (motion != mPerspMotionModel.get())
+         if (mIsInCameraMode && motion != mPerspMotionModel.get())
          {
             motion->SetScale(300.0f / editorView->getCamera()->getZoom());
+            refresh = true;
          }
-
-         if (mIsInActorMode)
+         else if (mIsInActorMode)
          {
             // Visualize the updated actor.
             mActiveActor->Visualize(mCurrentPoint);
-            mActiveActor->Visualize(mCurrentPoint + 1);
+            mActiveActor->Visualize(mCurrentPoint - 1);
          }
 
-         mPerspMotionModel->UpdateWidgets();
-         mTopMotionModel->UpdateWidgets();
-         mSideMotionModel->UpdateWidgets();
-         mFrontMotionModel->UpdateWidgets();
-         ViewportManager::GetInstance().refreshAllViewports();
+         if (refresh)
+         {
+            motion->UpdateWidgets();
+            //ViewportManager::GetInstance().refreshAllViewports();
+         }
       }
    }
 }
@@ -483,7 +486,7 @@ void LinkedPointsActorToolPlugin::onEditorPreferencesChanged()
    mSideMotionModel->UpdateWidgets();
    mFrontMotionModel->UpdateWidgets();
 
-   ViewportManager::GetInstance().refreshAllViewports();
+   //ViewportManager::GetInstance().refreshAllViewports();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -587,7 +590,7 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
 
       if (!mIsDocked)
       {
-         mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, this);
+         mMainWindow->addDockWidget(Qt::RightDockWidgetArea, this);
          mIsDocked = true;
       }
 
@@ -600,7 +603,7 @@ void LinkedPointsActorToolPlugin::initialize(dtActors::LinkedPointsActorProxy* a
       mTopMotionModel->SetEnabled(true);
       mSideMotionModel->SetEnabled(true);
       mFrontMotionModel->SetEnabled(true);
-      ViewportManager::GetInstance().refreshAllViewports();
+      //ViewportManager::GetInstance().refreshAllViewports();
    }
 
    mActiveProxy = activeProxy;
@@ -639,19 +642,19 @@ void LinkedPointsActorToolPlugin::shutdown()
    mTopMotionModel->SetEnabled(false);
    mSideMotionModel->SetEnabled(false);
    mFrontMotionModel->SetEnabled(false);
-   ViewportManager::GetInstance().refreshAllViewports();
+   //ViewportManager::GetInstance().refreshAllViewports();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable)
 {
-   if (drawable && mActiveActor && drawable->GetParent() == mActiveActor)
+   if (drawable && mActiveActor)
    {
       // Check if the drawable is a valid point on the actor.
-      dtCore::Transformable* point = dynamic_cast<dtCore::Transformable*>(drawable);
-      int pointIndex = mActiveActor->GetPointIndex(point);
-      if (point && pointIndex >= 0)
+      int pointIndex = mActiveActor->GetPointIndex(drawable);
+      if (pointIndex >= 0)
       {
+         dtCore::Transformable* point = mActiveActor->GetPointDrawable(pointIndex);
          mCurrentPoint = pointIndex;
 
          mPerspMotionModel->SetTarget(point);
@@ -664,7 +667,7 @@ bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable
          mSideMotionModel->UpdateWidgets();
          mFrontMotionModel->UpdateWidgets();
 
-         ViewportManager::GetInstance().refreshAllViewports();
+         //ViewportManager::GetInstance().refreshAllViewports();
          return true;
       }
    }
@@ -730,6 +733,13 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       return;
    }
 
+   // Bail out early if we are not even supposed to see the placement ghost.
+   if (mIsInCameraMode || !mCreationModeCheckbox->isChecked())
+   {
+      HidePlacementGhost();
+      return;
+   }
+
    // If the mouse is hovering over an existing point, we don't need to show the ghost.
    bool hideGhost = false;
    dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(mousePos.x(), mousePos.y());
@@ -747,7 +757,7 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       }
    }
 
-   if (hideGhost || mIsInCameraMode || !mCreationModeCheckbox->isChecked())
+   if (hideGhost)
    {
       HidePlacementGhost();
    }

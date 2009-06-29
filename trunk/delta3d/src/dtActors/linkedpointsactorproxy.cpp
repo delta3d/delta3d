@@ -66,13 +66,13 @@ namespace dtActors
          pointGroup->addChild(geode);
 
          // Now create a cylinder to connect this point with the previous.
-         if (pointIndex > 0)
+         if (pointIndex < GetPointCount() - 1)
          {
-            int prevPoint = pointIndex -1;
+            int nextPoint = pointIndex + 1;
 
             // First calculate the cylinder size.
             osg::Vec3 start = GetPointPosition(pointIndex);
-            osg::Vec3 end = GetPointPosition(prevPoint);
+            osg::Vec3 end = GetPointPosition(nextPoint);
 
             osg::Vec3 dir = end - start;
             float height = dir.length();
@@ -115,16 +115,17 @@ namespace dtActors
       {
          mPointList.push_back(point);
 
-         // Update the new point.
+         // Update the new point and the previous one.
+         Visualize(GetPointCount() - 2);
          Visualize(GetPointCount() - 1);
       }
       else
       {
          mPointList.insert(mPointList.begin() + index, point);
 
-         // Update both the new point and the next one.
+         // Update both the new point and the previous one.
          Visualize(index);
-         Visualize(index + 1);
+         Visualize(index - 1);
       }
    }
 
@@ -146,8 +147,8 @@ namespace dtActors
 
       mPointList.erase(mPointList.begin() + index);
 
-      // Update the next point that was connected to the removed point.
-      Visualize(index);
+      // Update the previous point that was connected to the removed point.
+      Visualize(index - 1);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +164,7 @@ namespace dtActors
       transform.SetTranslation(location);
       mPointList[index]->SetTransform(transform);
 
-      Visualize(index);
+      Visualize(index - 1);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -178,8 +179,6 @@ namespace dtActors
       mPointList[index]->GetTransform(transform);
       transform.SetRotation(rotation);
       mPointList[index]->SetTransform(transform);
-
-      Visualize(index);
    }
 
    ////////////////////////////////////////////////////////////////////////////////
@@ -223,14 +222,21 @@ namespace dtActors
    }
 
    ////////////////////////////////////////////////////////////////////////////////
-   int LinkedPointsActor::GetPointIndex(dtCore::Transformable* transformable)
+   int LinkedPointsActor::GetPointIndex(dtCore::DeltaDrawable* drawable)
    {
       int pointCount = GetPointCount();
       for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
       {
-         if (mPointList[pointIndex] == transformable)
+         // Make sure we check the transformable as well as all its parents.
+         dtCore::DeltaDrawable* parent = drawable;
+         while (parent)
          {
-            return pointIndex;
+            if (mPointList[pointIndex] == parent)
+            {
+               return pointIndex;
+            }
+
+            parent = parent->GetParent();
          }
       }
 
