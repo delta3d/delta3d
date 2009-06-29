@@ -21,6 +21,7 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QWheelEvent>
 #include <QtGui/QToolBar>
 
 
@@ -65,6 +66,8 @@ LinkedPointsActorToolPlugin::LinkedPointsActorToolPlugin(MainWindow* mw)
       this, SLOT(onMouseReleaseEvent(Viewport*, QMouseEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(mouseMoveEvent(Viewport*, QMouseEvent*)),
       this, SLOT(onMouseMoveEvent(Viewport*, QMouseEvent*)));
+   connect(&ViewportManager::GetInstance(), SIGNAL(wheelEvent(Viewport*, QWheelEvent*)),
+      this, SLOT(onWheelEvent(Viewport*, QWheelEvent*)));
    connect(&ViewportManager::GetInstance(), SIGNAL(shouldBeginActorMode(Viewport*, osg::Vec2, bool*, bool*)),
       this, SLOT(onShouldBeginActorMode(Viewport*, osg::Vec2, bool*, bool*)));
 
@@ -309,12 +312,13 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
          }
 
          // Update ortho view motion model scales.
-         if (mIsInCameraMode && motion != mPerspMotionModel.get())
-         {
-            motion->SetScale(300.0f / editorView->getCamera()->getZoom());
-            refresh = true;
-         }
-         else if (mIsInActorMode)
+         //if (mIsInCameraMode && motion != mPerspMotionModel.get())
+         //{
+         //   motion->SetScale(300.0f / editorView->getCamera()->getZoom());
+         //   refresh = true;
+         //}
+         //else
+         if (mIsInActorMode)
          {
             // Visualize the updated actor.
             mActiveActor->Visualize(mCurrentPoint);
@@ -329,6 +333,30 @@ void LinkedPointsActorToolPlugin::onMouseMoveEvent(Viewport* vp, QMouseEvent* e)
       }
    }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void LinkedPointsActorToolPlugin::onWheelEvent(Viewport* vp, QWheelEvent* e)
+{
+   ToolObjectMotionModel* motion = GetMotionModelForView(vp);
+   if (motion && motion != mPerspMotionModel.get())
+   {
+      double zoom = vp->getCamera()->getZoom();
+
+      if (e->delta() > 0)
+      {
+         zoom *= 1.3;
+      }
+      else
+      {
+         zoom *= 0.7;
+         if (zoom < 0.0001) zoom = 0.0001;
+      }
+
+      motion->SetScale(300.0f / zoom);
+      motion->UpdateWidgets();
+   }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void LinkedPointsActorToolPlugin::onShouldBeginActorMode(Viewport* vp, osg::Vec2 position, bool* overrideDefault, bool* result)
