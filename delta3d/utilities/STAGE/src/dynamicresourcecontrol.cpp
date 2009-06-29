@@ -320,6 +320,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControl::useCurrentPressed()
    {
+      NotifyParentOfPreUpdate();
+
       // get the old and the new
       dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
       dtDAL::ResourceDescriptor newResource = getCurrentResource();
@@ -352,6 +354,8 @@ namespace dtEditQt
    /////////////////////////////////////////////////////////////////////////////////
    void DynamicResourceControl::clearPressed()
    {
+      NotifyParentOfPreUpdate();
+
       dtDAL::ResourceDescriptor* curResource = mProperty->GetValue();
       bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
 
