@@ -122,7 +122,7 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
    //applied correctly. This process is more thoroughly tested in
    //espduapplicatortests.cpp
    dtDAL::Vec3ActorProperty *v3Prop = NULL;
-   proxies[0]->GetProperty(dtDIS::EnginePropertyName::ROTATION,v3Prop);
+   proxies[0]->GetProperty(dtDIS::EnginePropertyName::ENTITY_ORIENTATION,v3Prop);
   
    if (v3Prop != NULL)
    {
