@@ -1,4 +1,4 @@
-#include <dtDIS/plugins/default/comparehelpers.h>
+#include "comparehelpers.h"
 
 #include <dtGame/actorupdatemessage.h>
 #include <cppunit/extensions/HelperMacros.h>

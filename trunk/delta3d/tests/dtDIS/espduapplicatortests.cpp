@@ -10,9 +10,9 @@
 #include <dtGame/messageparameter.h>
 #include <dtDIS/propertyname.h>
 
-#include <dtDIS/plugins/default/initializepdu.h>
-#include <dtDIS/plugins/default/initializeupdatemessage.h>
-#include <dtDIS/plugins/default/comparehelpers.h>
+#include "initializepdu.h"
+#include "initializeupdatemessage.h"
+#include "comparehelpers.h"
 
 namespace dtTest
 {

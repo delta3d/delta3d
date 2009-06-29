@@ -1,4 +1,4 @@
-#include <dtDIS/plugins/default/initializeupdatemessage.h>
+#include "initializeupdatemessage.h"
 
 #include <dtGame/messageparameter.h>
 #include <dtDIS/propertyname.h>

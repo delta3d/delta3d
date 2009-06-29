@@ -1,4 +1,4 @@
-#include <dtDIS/plugins/default/samplegameactorproxy.h>
+#include "samplegameactorproxy.h"
 
 using namespace dtTest;
 
