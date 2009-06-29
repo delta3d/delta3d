@@ -112,7 +112,7 @@ namespace dtAI
 
         /**
          * Returns a non const version of the particle list
-         * NOTE: unexpected behavoir will result if agent particles
+         * NOTE: unexpected Behavior will result if agent particles
          * are removed from this list, please use RemoveAgent() for that
          */
          ParticleList& GetParticleList();

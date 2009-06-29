@@ -121,7 +121,7 @@ namespace dtAI
       }
 
       /**
-       * Allows sensor to work with SteeringBehavoir error handling
+       * Allows sensor to work with SteeringBehavior error handling
        */
       typename dtUtil::TypeTraits<ReportData>::param_type operator()(typename dtUtil::TypeTraits<ReportData>::reference result)
       {

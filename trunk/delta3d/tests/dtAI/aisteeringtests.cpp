@@ -23,11 +23,19 @@
 */
 #include <prefix/dtgameprefix-src.h>
 #include <cppunit/extensions/HelperMacros.h>
+
 #include <dtUtil/templateutility.h>
+
+#include <dtDAL/propertymacros.h>
+#include <dtDAL/propertycontainer.h>
+
+#include <dtCore/refptr.h>
+
 #include <dtAI/sensor.h>
 #include <dtAI/steeringutility.h>
 #include <dtAI/steeringbehavior.h>
-#include <dtCore/refptr.h>
+#include <dtAI/steeringpipeline.h>
+#include <dtAI/controllable.h>
 
 namespace dtAI
 {
@@ -119,6 +127,153 @@ namespace dtAI
    };
 
 
+   struct TestState
+   {
+      TestState(){}
+      ~TestState(){}
+
+      DECLARE_PROPERTY(osg::Vec3, Pos);
+      DECLARE_PROPERTY(osg::Vec3, Forward);
+      DECLARE_PROPERTY(osg::Vec3, Up);
+
+      DECLARE_PROPERTY(osg::Vec3, Vel);
+      DECLARE_PROPERTY(osg::Vec3, Accel);
+
+      DECLARE_PROPERTY(float, AngularVel);
+      DECLARE_PROPERTY(float, AngularAccel);
+
+      DECLARE_PROPERTY(float, Pitch);
+      DECLARE_PROPERTY(float, Roll);
+
+      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      {
+      }
+   };
+
+   struct  TestGoalState: public TestState
+   {
+      TestGoalState(){}
+      ~TestGoalState(){}
+
+      DECLARE_PROPERTY(float, DragCoef);
+      DECLARE_PROPERTY(float, AngularDragCoef);
+
+      DECLARE_PROPERTY(float, MaxVel);
+      DECLARE_PROPERTY(float, MaxAccel);
+
+      DECLARE_PROPERTY(float, MaxAngularVel);
+      DECLARE_PROPERTY(float, MaxAngularAccel);
+
+      DECLARE_PROPERTY(float, MaxPitch);
+      DECLARE_PROPERTY(float, MaxRoll);
+
+      DECLARE_PROPERTY(float, MinElevation);
+      DECLARE_PROPERTY(float, MaxElevation);
+
+      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      {
+      }
+   };
+
+   struct TestControls
+   {
+      TestControls(){}
+      ~TestControls(){}
+
+      //these are the control inputs
+      //all are floats from 1 to -1 
+      //which represents percentage of maximum
+      DECLARE_PROPERTY(float, Thrust);
+      DECLARE_PROPERTY(float, Lift);
+      DECLARE_PROPERTY(float, Yaw);
+
+      void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      {
+      }
+   };
+
+   class TestTargeter: public dtAI::Targeter<TestState, TestGoalState>
+   {
+   public:
+      typedef Targeter<TestState, TestGoalState> BaseClass;
+
+      TestTargeter(){}
+      virtual ~TestTargeter(){}
+
+      /*virtual*/ bool GetGoal(const BaseClass::StateType& current_state, BaseClass::GoalStateType& result) const
+      {
+         result.mPos.set(250.0f, 50.0f, 20.0f);
+         return true;
+      }
+
+   private:
+   };
+
+   class TestDecomposer: public dtAI::Decomposer<TestState, TestGoalState>
+   {
+   public:
+      typedef Decomposer<TestState, TestGoalState> BaseClass;
+
+      TestDecomposer(){}
+      ~TestDecomposer(){}
+
+      /*virtual*/ void Decompose(const TestState& current_state, TestGoalState& result) const
+      {
+      }
+   };
+
+   class TestConstraint: public dtAI::Constraint<TestState, TestGoalState>
+   {
+   public:
+      typedef Constraint<TestState, TestGoalState> BaseClass;
+
+      TestConstraint(){}
+      ~TestConstraint(){}
+
+      /*virtual*/ bool WillViolate(const BaseClass::PathType& pathToFollow) const
+      {
+         return false;
+      }
+      /*virtual*/ void Suggest(const BaseClass::PathType& pathToFollow, const TestState& current_state, TestGoalState& result) const
+      {
+      }
+   };
+
+
+   class TestControllable: public dtAI::Controllable<TestState, TestGoalState, TestControls>
+   {
+   public:
+      typedef Controllable<TestState, TestGoalState, TestControls> BaseClass;
+
+      TestControllable(){}
+      ~TestControllable(){}
+
+      /*virtual*/ bool FindPath(const AIState& fromState, const AIGoal& goal, AIPath& resultingPath) const
+      {
+         resultingPath.push_back(goal);
+         return true;
+      }
+      
+      /*virtual*/ void OutputControl(const PathType& pathToFollow, const StateType& current_state, ControlType& result) const 
+      {
+         result = mDefaultControls;
+      }
+      
+      /*virtual*/ void UpdateState(float dt, const AIControlState& steerData)
+      {
+         mCurrentState = mDefaultState;
+      }
+
+      /*virtual*/ void RegisterProperties(dtDAL::PropertyContainer& pc, const std::string& group)
+      {
+         BaseClass::RegisterProperties(pc, group);
+      }
+
+   };
+
+   typedef SteeringPipeline<TestControllable> TestAISteeringModel;
+
+
    /// Math unit tests for dtUtil
    class AISteeringTests : public CPPUNIT_NS::TestFixture
    {
@@ -142,6 +297,8 @@ namespace dtAI
       dtCore::RefPtr<GenericSensor::CompareSensor> mSensor;
       dtCore::RefPtr<TestSteeringBehavoir> mSteeringBehavoir;
       dtCore::RefPtr<ErrorHandler<bool> > mErrorHandler;
+
+      TestAISteeringModel mTestSteeringPipeline;
    };
 
    CPPUNIT_TEST_SUITE_REGISTRATION(AISteeringTests);
