@@ -4,9 +4,9 @@
 
 #include <DIS/EntityStatePdu.h>                                      // for usage
 
-#include <dtDIS/plugins/default/initializepdu.h>            // for usage
-#include <dtDIS/plugins/default/initializeupdatemessage.h>  // for usage
-#include <dtDIS/plugins/default/samplegameactorproxy.h>     // for usage
+#include "initializepdu.h"            // for usage
+#include "initializeupdatemessage.h"  // for usage
+#include "samplegameactorproxy.h"     // for usage
 #include <dtDIS/sharedstate.h>
 #include <dtDIS/propertyname.h>
 
@@ -133,8 +133,9 @@ void ESPduProcessorTests::CreateRemoteActorFromEntityStatePDU()
                            0.00001f));
    } 
 
-   dtDAL::ActorProperty *velProp = proxies[0]->GetProperty(dtDIS::EnginePropertyName::VELOCITY);
-   CPPUNIT_ASSERT_MESSAGE("Doesn't have VELOCITY property", velProp != NULL);
+   //Commented out since this type of actor doesn't have this Property added to it.
+   //dtDAL::ActorProperty *velProp = proxies[0]->GetProperty(dtDIS::EnginePropertyName::VELOCITY);
+   //CPPUNIT_ASSERT_MESSAGE("Doesn't have VELOCITY property", velProp != NULL);
 }
 
 void ESPduProcessorTests::TestNoActor()

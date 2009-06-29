@@ -1,4 +1,4 @@
-#include <dtDIS/plugins/default/initializepdu.h>
+#include "initializepdu.h"
 
 #include <DIS/EntityStatePdu.h>
 
@@ -93,7 +93,9 @@ void InitializePdu::operator ()(DIS::EntityStatePdu& pdu) const
 
    //                   0   1   2   3   4   5   6   7   8   9   10  11
    char marking[12] = { 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55};
-   pdu.setMarking(marking);
+   DIS::Marking disMarking;
+   disMarking.setCharacters(marking);
+   pdu.setMarking(disMarking);
 
    ///\todo the pdu should probably assign this and the interface should not be public
    pdu.setPadding(56);
