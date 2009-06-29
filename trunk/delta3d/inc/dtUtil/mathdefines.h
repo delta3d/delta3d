@@ -179,9 +179,9 @@ namespace dtUtil
     * @param float2 The second float
     * @return True if the values are equal within the relative precision of their values.
     */
-   inline bool Equivalent(float float1, float float2)
+   inline bool Equivalent(float float1, float float2, float baseEpsilon = FLT_EPSILON)
    {
-      return (Abs(float1 - float2) <= FLT_EPSILON * Max(1.0f, Max(float1, float2)));
+      return (Abs(float1 - float2) <= baseEpsilon * Max(1.0f, Max(float1, float2)));
    }
 
    /**
@@ -195,9 +195,9 @@ namespace dtUtil
    * @param double2 The second value
    * @return True if the values are equal within the relative precision of their values.
    */
-   inline bool Equivalent(double double1, double double2)
+   inline bool Equivalent(double double1, double double2, double baseEpsilon = DBL_EPSILON)
    {
-      return (Abs(double1 - double2) <= DBL_EPSILON * Max(1.0, Max(double1, double2)));
+      return (Abs(double1 - double2) <= baseEpsilon * Max(1.0, Max(double1, double2)));
    }
 
    /**
