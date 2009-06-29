@@ -41,7 +41,7 @@ namespace dtAI
       public:
          typedef AIPipelineFunctorsBase<State_, GoalState_, Controls_, PathType_> BaseClass;
          typedef Controllable<State_, GoalState_, Controls_, PathType_> ControllableType;
-        
+
          typedef typename BaseClass::StateType AIState;
          typedef typename BaseClass::GoalStateType AIGoal;
          typedef typename BaseClass::ControlType AIControlState;
@@ -60,7 +60,7 @@ namespace dtAI
          typedef dtUtil::Functor<void, TYPELIST_3(const AIPath&, const AIState&, AIControlState&)> OutputControlFunctor;
          typedef dtUtil::Functor<bool, TYPELIST_3(const AIState&, AIGoal&, AIPath&)> GetPathFunctor;
          typedef dtUtil::Functor<void, TYPELIST_2(float, const AIControlState&)> UpdateStateFunctor;
-         
+
       public:
 
          Controllable()
@@ -104,17 +104,17 @@ namespace dtAI
          }
 
 
-         virtual void OutputControl(const PathType& pathToFollow, const StateType& current_state, ControlType& result) const
+         virtual void OutputControl(const AIPath& pathToFollow, const AIState& current_state, AIControlState& result) const
          {
             //by default we call the functor
             mOutputControlFunc(pathToFollow, current_state, result);
          }
 
-         void DefaultOutputControl(const PathType& pathToFollow, const StateType& current_state, ControlType& result) const
+         void DefaultOutputControl(const AIPath& pathToFollow, const AIState& current_state, AIControlState& result) const
          {
          }
 
-         
+
          virtual void UpdateState(float dt, const AIControlState& steerData)
          {
             //by default we call the functor
@@ -130,12 +130,12 @@ namespace dtAI
          {
             mDefaultControls.RegisterProperties(pc, "Default Values");
             mDefaultState.RegisterProperties(pc, "Default Values");
-            
+
             mStateConstraints.RegisterProperties(pc, "Constraints");
             mControlConstraints.RegisterProperties(pc, "Constraints");
          };
 
-      
+
          AIControlState mCurrentControls;
          AIState mCurrentState;
          AIState NextPredictedState;
@@ -153,7 +153,7 @@ namespace dtAI
          AIState mDefaultState;
          AIState mStateConstraints;
          AIControlState mControlConstraints;
-         
+
          AIPath mPathToFollow;
          AIPath PredictedPath;
    };
