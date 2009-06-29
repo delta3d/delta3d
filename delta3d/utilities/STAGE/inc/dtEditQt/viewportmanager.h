@@ -47,6 +47,7 @@
 class QGLWidget;
 class QWidget;
 class QMouseEvent;
+class QWheelEvent;
 
 namespace dtEditQt
 {
@@ -231,6 +232,14 @@ namespace dtEditQt
       void emitMouseMoveEvent(Viewport* vp, QMouseEvent* e);
 
       /**
+      * Signal used when mouse wheel has been moved in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse wheel event.
+      */
+      void emitWheelEvent(Viewport* vp, QWheelEvent* e);
+
+      /**
       * Signal used when testing whether actor mode should be activated.
       *
       * @param[in]   vp               The viewport triggering this event.
@@ -354,6 +363,14 @@ namespace dtEditQt
       * @param[in]  e   The mouse event.
       */
       void mouseMoveEvent(Viewport* vp, QMouseEvent* e);
+
+      /**
+      * Signal used when mouse wheel has been moved in a viewport.
+      *
+      * @param[in]  vp  The viewport triggering this event.
+      * @param[in]  e   The mouse wheel event.
+      */
+      void wheelEvent(Viewport* vp, QWheelEvent* e);
 
       /**
       * Signal used when testing whether actor mode should be activated.

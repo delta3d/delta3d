@@ -92,6 +92,14 @@ public slots:
    void onMouseMoveEvent(Viewport* vp, QMouseEvent* e);
 
    /**
+   * Signal used when the mouse wheel is moved.
+   *
+   * @param[in]  vp  The viewport triggering this event.
+   * @param[in]  e   The mouse wheel event.
+   */
+   void onWheelEvent(Viewport* vp, QWheelEvent* e);
+
+   /**
    * Signal used when testing whether actor mode should be activated.
    *
    * @param[in]   vp               The viewport triggering this event.

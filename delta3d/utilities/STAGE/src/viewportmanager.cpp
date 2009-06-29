@@ -338,6 +338,13 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   void ViewportManager::emitWheelEvent(Viewport* vp, QWheelEvent* e)
+   {
+      LOG_INFO("Emitting event - [wheelEvent]");
+      emit wheelEvent(vp, e);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitShouldBeginActorMode(Viewport* vp, osg::Vec2 position, bool* overrideDefault, bool* result)
    {
       LOG_INFO("Emitting event - [shouldBeginActorMode]");

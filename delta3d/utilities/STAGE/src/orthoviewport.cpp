@@ -209,6 +209,8 @@ namespace dtEditQt
    ///////////////////////////////////////////////////////////////////////////////
    void OrthoViewport::wheelEvent(QWheelEvent* e)
    {
+      ViewportManager::GetInstance().emitWheelEvent(this, e);
+
       if (e->delta() > 0)
       {
          getCamera()->zoom(1.3f);
@@ -218,6 +220,7 @@ namespace dtEditQt
          getCamera()->zoom(0.7f);
       }
 
+      mObjectMotionModel->SetScale(450.0f / getCamera()->getZoom());
       refresh();
    }
 
