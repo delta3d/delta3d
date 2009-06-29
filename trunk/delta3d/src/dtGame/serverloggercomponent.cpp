@@ -41,7 +41,8 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream, const std::string &name) :
       GMComponent(name), 
-      mLogComponentMachineInfo(new MachineInfo("__Server Logger Component__"))
+      mLogComponentMachineInfo(new MachineInfo("__Server Logger Component__")),
+      mPreviousLogState(&LogStateEnumeration::LOGGER_STATE_IDLE)
    {
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
       mLogStream = &logStream;
@@ -152,18 +153,22 @@ namespace dtGame
          // with lots of messages and state changes.
          if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_IDLE)
          {
-            try
-            {
-               // close any open records or playbacks.
-               if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
-                  mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
-               mLogStream->Close();
-            }
-            catch(const dtUtil::Exception &e)
-            {
-               LOG_ERROR("FAILURE:changing state to IDLE from a map change event.");
-               e.LogException(dtUtil::Log::LOG_ERROR);
-            }
+            mPreviousLogState = &mLogStatus.GetStateEnum();
+            mPreviousRecordDuration = mLogStatus.GetCurrentRecordDuration();
+            mPreviousNumberOfMessages = mLogStatus.GetNumMessages();
+
+            //try
+            //{
+            //   // close any open records or playbacks.
+            //   if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_RECORD)
+            //      mLogStream->SetRecordDuration(mLogStatus.GetCurrentRecordDuration());
+            //   mLogStream->Close();
+            //}
+            //catch(const dtUtil::Exception &e)
+            //{
+            //   LOG_ERROR("FAILURE:changing state to IDLE from a map change event.");
+            //   e.LogException(dtUtil::Log::LOG_ERROR);
+            //}
 
             SetToIdleState();
             DoSendStatusMessage(NULL); // notify the world of our status change
@@ -959,6 +964,13 @@ namespace dtGame
          LogStatus::NameVector mapNames;
          loadedMsg.GetMapNames(mapNames);
          mLogStatus.SetActiveMaps(mapNames);
+
+         if (*mPreviousLogState != LogStateEnumeration::LOGGER_STATE_IDLE)
+         {
+            mLogStatus.SetStateEnum(*mPreviousLogState);
+            mLogStatus.SetCurrentRecordDuration(mPreviousRecordDuration);
+            mLogStatus.SetNumMessages(mPreviousNumberOfMessages);
+         }
       }
    }
 

@@ -382,6 +382,15 @@ namespace dtGame
          //The list of actor ids of actors who join the simulation during
          //the playback state.
          std::set<dtCore::UniqueId> mPlaybackList;
+
+         // Previous log status before map load sets it to idle
+         const LogStateEnumeration* mPreviousLogState;
+
+         // Previous record duration before map load resets it
+         double mPreviousRecordDuration;
+
+         // Previous number of messages before map load reset it
+         unsigned long mPreviousNumberOfMessages;
    };
 
 }
