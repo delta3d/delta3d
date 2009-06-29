@@ -196,6 +196,17 @@ namespace dtEditQt
       void SetStartTick(unsigned int time) { mStartTick = time; }
 
       /**
+      * Retrieves the nearest snap position to the given position.
+      *
+      * @param[in]  position         The original position.
+      * @param[in]  groundClamp      Ground clamps the translation.
+      * @param[in]  ignoredDrawable  Any drawable to ignore ground clamping with.
+      *
+      * @return                      The snapped position.
+      */
+      osg::Vec3 GetSnapPosition(osg::Vec3 position, bool groundClamp = false, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+
+      /**
       * Signal used when a mouse has been pressed in a viewport.
       *
       * @param[in]  vp  The viewport triggering this event.
@@ -525,6 +536,9 @@ namespace dtEditQt
 
    private:
       static dtCore::RefPtr<ViewportManager> sInstance;
+
+      float                           mSnapTranslation;
+      bool                            mSnapTranslationEnabled;
 
       dtCore::RefPtr<dtCore::DeltaDrawable> mLastDrawable;
 

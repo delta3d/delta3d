@@ -133,6 +133,8 @@ void ObjectMotionModel::SetEnabled(bool enabled)
             mSceneNode->removeChild(mTargetTransform->GetOSGNode());
          }
       }
+
+      UpdateWidgets();
    }
 }
 

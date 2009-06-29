@@ -421,6 +421,9 @@ namespace dtEditQt
                position = pos + (viewDir * offset * 2);
             }
 
+            // Clamp the spawn position to the snap grid.
+            position = ViewportManager::GetInstance().GetSnapPosition(position, true, ghostDrawable);
+
             dtDAL::TransformableActorProxy* tProxy =
                dynamic_cast<dtDAL::TransformableActorProxy*>(mGhostProxy.get());
 
