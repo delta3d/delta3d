@@ -278,6 +278,45 @@ namespace dtEditQt
    }
 
    ////////////////////////////////////////////////////////////////////////////////
+   osg::Vec3 ViewportManager::GetSnapPosition(osg::Vec3 position, bool groundClamp, dtCore::DeltaDrawable* ignoredDrawable)
+   {
+      osg::Vec3 snapPos = position;
+
+      // If snapping is not enabled, return the original position.
+      if (mSnapTranslationEnabled)
+      {
+         for (int index = 0; index < 3; index++)
+         {
+            float trans = position[index];
+
+            int mul = floorf((trans / mSnapTranslation) + 0.5f);
+            trans = mSnapTranslation * mul;
+
+            snapPos[index] = trans;
+         }
+      }
+
+      // Clamp the position to the ground.
+      if (groundClamp)
+      {
+         if (mViewportList.size())
+         {
+            Viewport* viewport = mViewportList["Perspective View"];
+            if (viewport)
+            {
+               osg::Vec3 nearPos, farPos;
+               nearPos = farPos = snapPos;
+               nearPos.z() -= 10000;
+               farPos.z() += 10000;
+               viewport->getPickPosition(nearPos, farPos, snapPos, ignoredDrawable);
+            }
+         }
+      }
+
+      return snapPos;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitMousePressEvent(Viewport* vp, QMouseEvent* e)
    {
       LOG_INFO("Emitting event - [mousePressEvent]");
@@ -357,6 +396,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitSetSnapTranslation(float increment)
    {
+      mSnapTranslation = increment;
       LOG_INFO("Emitting event - [setSnapTranslation]");
       emit setSnapTranslation(increment);
    }
@@ -378,6 +418,7 @@ namespace dtEditQt
    ////////////////////////////////////////////////////////////////////////////////
    void ViewportManager::emitSetSnapEnabled(bool translation, bool rotation, bool scale)
    {
+      mSnapTranslationEnabled = translation;
       LOG_INFO("Emitting event - [setSnapEnabled]");
       emit setSnapEnabled(translation, rotation, scale);
    }

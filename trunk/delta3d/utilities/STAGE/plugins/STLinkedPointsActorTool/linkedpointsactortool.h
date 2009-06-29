@@ -238,8 +238,8 @@ private:
    /**
    * Shows or Hides the placement ghost.
    */
-   void ShowPlacementGhost();
-   void HidePlacementGhost();
+   void ShowPlacementGhost(bool forceRefresh = false);
+   void HidePlacementGhost(bool forceRefresh = false);
    void UpdatePlacementGhost(Viewport* vp, osg::Vec2 mousePos);
 
    MainWindow* mMainWindow;

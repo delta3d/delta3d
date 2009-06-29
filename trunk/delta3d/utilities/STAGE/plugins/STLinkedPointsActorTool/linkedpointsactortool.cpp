@@ -544,9 +544,17 @@ void LinkedPointsActorToolPlugin::onModeButtonPressed()
 ////////////////////////////////////////////////////////////////////////////////
 void LinkedPointsActorToolPlugin::onCreationModePressed()
 {
-   if (!mCreationModeCheckbox->isChecked())
+   if (mCreationModeCheckbox->isChecked())
    {
-      HidePlacementGhost();
+      mPerspMotionModel->SetEnabled(false);
+      mTopMotionModel->SetEnabled(false);
+      mSideMotionModel->SetEnabled(false);
+      mFrontMotionModel->SetEnabled(false);
+      ViewportManager::GetInstance().refreshAllViewports();
+   }
+   else
+   {
+      HidePlacementGhost(true);
    }
 }
 
@@ -667,7 +675,7 @@ bool LinkedPointsActorToolPlugin::selectDrawable(dtCore::DeltaDrawable* drawable
          mSideMotionModel->UpdateWidgets();
          mFrontMotionModel->UpdateWidgets();
 
-         //ViewportManager::GetInstance().refreshAllViewports();
+         ViewportManager::GetInstance().refreshAllViewports();
          return true;
       }
    }
@@ -700,17 +708,27 @@ ToolObjectMotionModel* LinkedPointsActorToolPlugin::GetMotionModelForView(Viewpo
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void LinkedPointsActorToolPlugin::ShowPlacementGhost()
+void LinkedPointsActorToolPlugin::ShowPlacementGhost(bool forceRefresh)
 {
    if (!mShowingPlacementGhost && mActiveActor)
    {
       mActiveActor->AddPoint(osg::Vec3());
       mShowingPlacementGhost = true;
+      forceRefresh = true;
+   }
+
+   if (forceRefresh)
+   {
+      mPerspMotionModel->SetEnabled(false);
+      mTopMotionModel->SetEnabled(false);
+      mSideMotionModel->SetEnabled(false);
+      mFrontMotionModel->SetEnabled(false);
+      ViewportManager::GetInstance().refreshAllViewports();
    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void LinkedPointsActorToolPlugin::HidePlacementGhost()
+void LinkedPointsActorToolPlugin::HidePlacementGhost(bool forceRefresh)
 {
    if (mShowingPlacementGhost && mActiveActor)
    {
@@ -720,6 +738,15 @@ void LinkedPointsActorToolPlugin::HidePlacementGhost()
          mActiveActor->RemovePoint(index - 1);
       }
       mShowingPlacementGhost = false;
+      forceRefresh = true;
+   }
+
+   if (forceRefresh)
+   {
+      mPerspMotionModel->SetEnabled(true);
+      mTopMotionModel->SetEnabled(true);
+      mSideMotionModel->SetEnabled(true);
+      mFrontMotionModel->SetEnabled(true);
       ViewportManager::GetInstance().refreshAllViewports();
    }
 }
@@ -740,35 +767,41 @@ void LinkedPointsActorToolPlugin::UpdatePlacementGhost(Viewport* vp, osg::Vec2 m
       return;
    }
 
-   // If the mouse is hovering over an existing point, we don't need to show the ghost.
-   bool hideGhost = false;
-   dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(mousePos.x(), mousePos.y());
-   dtCore::Transformable* point = dynamic_cast<dtCore::Transformable*>(drawable);
-   int pointIndex = mActiveActor->GetPointIndex(point);
-   // If we have a valid point index, it means we are colliding with a point.
-   if (pointIndex >= 0)
-   {
-      hideGhost = true;
+   //// If the mouse is hovering over an existing point, we don't need to show the ghost.
+   //bool hideGhost = false;
+   //dtCore::DeltaDrawable* drawable = editorView->getPickDrawable(mousePos.x(), mousePos.y());
+   //dtCore::Transformable* point = dynamic_cast<dtCore::Transformable*>(drawable);
+   //int pointIndex = mActiveActor->GetPointIndex(point);
+   //// If we have a valid point index, it means we are colliding with a point.
+   //if (pointIndex >= 0)
+   //{
+   //   bool isDirectPoint = (point == mActiveActor->GetPointDrawable(pointIndex));
+   //   if (isDirectPoint)
+   //   {
+   //      hideGhost = true;
 
-      // If we are showing the placement ghost, we want to ignore collision with that ghost.
-      if (mShowingPlacementGhost && pointIndex == mActiveActor->GetPointCount() - 1)
-      {
-         hideGhost = false;
-      }
-   }
+   //      // If we are showing the placement ghost, we want to ignore collision with that ghost.
+   //      if (mShowingPlacementGhost && pointIndex == mActiveActor->GetPointCount() - 1)
+   //      {
+   //         hideGhost = false;
+   //      }
+   //   }
+   //}
 
-   if (hideGhost)
-   {
-      HidePlacementGhost();
-   }
-   else
+   //if (hideGhost)
+   //{
+   //   HidePlacementGhost();
+   //}
+   //else
    {
       // If the ghost is being shown, update the position of it.
       ShowPlacementGhost();
 
       osg::Vec3 position;
-      if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position))
+      if (editorView->getPickPosition(mousePos.x(), mousePos.y(), position, mActiveActor))
       {
+         // Convert the pick position to the snap grid if needed.
+         position = ViewportManager::GetInstance().GetSnapPosition(position, true, mActiveActor);
          int index = mActiveActor->GetPointCount() - 1;
          if (index > 0)
          {

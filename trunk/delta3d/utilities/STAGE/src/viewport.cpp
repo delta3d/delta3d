@@ -509,12 +509,19 @@ namespace dtEditQt
          updateActorProxyBillboards();
       }
 
-      mIsector->Reset();
-      mIsector->SetScene(getScene());
       osg::Vec3 nearPoint, farPoint;
       int yLoc = int(mSceneView->getViewport()->height()-y);
 
       mSceneView->projectWindowXYIntoObject(x, yLoc, nearPoint, farPoint);
+
+      return calculatePickISector(nearPoint, farPoint);
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::calculatePickISector(osg::Vec3 nearPoint, osg::Vec3 farPoint)
+   {
+      mIsector->Reset();
+      mIsector->SetScene(getScene());
       mIsector->SetStartPosition(nearPoint);
       mIsector->SetDirection(farPoint-nearPoint);
 
@@ -531,6 +538,43 @@ namespace dtEditQt
    bool Viewport::getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
    {
       if (!calculatePickISector(x, y))
+      {
+         return false;
+      }
+
+      osgUtil::IntersectVisitor::HitList& hitList = mIsector->GetHitList();
+      for (int index = 0; index < (int)hitList.size(); index++)
+      {
+         osg::NodePath &nodePath = hitList[index].getNodePath();
+         dtCore::DeltaDrawable* drawable = mIsector->MapNodePathToDrawable(nodePath);
+
+         // Make sure the drawable and none of its parents are the ignored drawable.
+         bool isIgnored = false;
+         while (drawable)
+         {
+            if (drawable == ignoredDrawable)
+            {
+               isIgnored = true;
+               break;
+            }
+
+            drawable = drawable->GetParent();
+         }
+
+         if (!isIgnored)
+         {
+            position = hitList[index].getWorldIntersectPoint();
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////////
+   bool Viewport::getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable)
+   {
+      if (!calculatePickISector(nearPoint, farPoint))
       {
          return false;
       }

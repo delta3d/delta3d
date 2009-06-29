@@ -259,9 +259,17 @@ namespace dtEditQt
       * in the upper left corner of the window.
       * @param x Horizonal window coordinate.
       * @param y Vertical window coordinate.
-      * @retrun True if there was a collision.
+      * @return True if there was a collision.
       */
       virtual bool calculatePickISector(int x, int y);
+
+      /**
+      * Projects a line into the current scene and does a collision test.
+      * @param nearPoint The near point of the line.
+      * @param farPoint The far point of the line.
+      * @return True if there was a collision.
+      */
+      virtual bool calculatePickISector(osg::Vec3 nearPoint, osg::Vec3 farPoint);
 
       /**
       * Projects the 2D window coordinates into the current scene and determines
@@ -270,8 +278,18 @@ namespace dtEditQt
       * in the upper left corner of the window.
       * @param x Horizonal window coordinate.
       * @param y Vertical window coordinate.
+      * @param ignoredDrawable A drawable to ignore.
       */
       virtual bool getPickPosition(int x, int y, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
+
+      /**
+      * Projects a line into the current scene and returns the nearest point of collision.
+      * @param nearPoint The near point of the line.
+      * @param farPoint The far point of the line.
+      * @param position The returned closest point of collision.
+      * @param ignoredDrawable A drawable to ignore.
+      */
+      virtual bool getPickPosition(osg::Vec3 nearPoint, osg::Vec3 farPoint, osg::Vec3& position, dtCore::DeltaDrawable* ignoredDrawable = NULL);
 
       /**
        * Projects the 2D window coordinates into the current scene and determines
